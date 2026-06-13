@@ -14,7 +14,7 @@ package boom.exu
 import chisel3._
 import chisel3.util._
 
-import freechips.rocketchip.config.{Parameters}
+import org.chipsalliance.cde.config.{Parameters}
 import freechips.rocketchip.rocket
 import freechips.rocketchip.tile
 
@@ -41,6 +41,7 @@ class FpPipeline(implicit p: Parameters) extends BoomModule with tile.HasFPUPara
 
     val dis_uops         = Vec(dispatchWidth, Flipped(Decoupled(new MicroOp)))
 
+    val iss_valids     = Vec(fpIssueParams.issueWidth,Bool())
     // +1 for recoding.
     val ll_wports        = Flipped(Vec(memWidth, Decoupled(new ExeUnitResp(fLen+1))))// from memory unit
     val from_int         = Flipped(Decoupled(new ExeUnitResp(fLen+1)))// from integer RF
@@ -53,6 +54,8 @@ class FpPipeline(implicit p: Parameters) extends BoomModule with tile.HasFPUPara
 
     val debug_tsc_reg    = Input(UInt(width=xLen.W))
     val debug_wb_wdata   = Output(Vec(numWakeupPorts, UInt((fLen+1).W)))
+    val debug_rs1_data   = Output(Vec(numWakeupPorts, UInt((fLen+1).W)))
+    val debug_rs2_data   = Output(Vec(numWakeupPorts, UInt((fLen+1).W)))
   })
 
   //**********************************
@@ -105,6 +108,7 @@ class FpPipeline(implicit p: Parameters) extends BoomModule with tile.HasFPUPara
   //-------------------------------------------------------------
 
   // Input (Dispatch)
+  io.iss_valids := issue_unit.io.iss_valids
   for (w <- 0 until dispatchWidth) {
     issue_unit.io.dis_uops(w) <> io.dis_uops(w)
   }
@@ -253,6 +257,12 @@ class FpPipeline(implicit p: Parameters) extends BoomModule with tile.HasFPUPara
 
   for ((wdata, wakeup) <- io.debug_wb_wdata zip io.wakeups) {
     wdata := ieee(wakeup.bits.data)
+  }
+  for ((rs1, wakeup) <- io.debug_rs1_data zip io.wakeups) {
+    rs1 := ieee(wakeup.bits.rs1_data)
+  }
+  for ((rs2, wakeup) <- io.debug_rs2_data zip io.wakeups) {
+    rs2 := ieee(wakeup.bits.rs2_data)
   }
 
   exe_units.map(_.io.fcsr_rm := io.fcsr_rm)

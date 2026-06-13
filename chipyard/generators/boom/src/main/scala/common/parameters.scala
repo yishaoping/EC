@@ -12,7 +12,7 @@ import freechips.rocketchip.rocket._
 import freechips.rocketchip.tile._
 import freechips.rocketchip.util._
 import freechips.rocketchip.subsystem.{MemoryPortParams}
-import freechips.rocketchip.config.{Parameters, Field}
+import org.chipsalliance.cde.config.{Parameters, Field}
 import freechips.rocketchip.devices.tilelink.{BootROMParams, CLINTParams, PLICParams}
 
 import boom.ifu._
@@ -49,7 +49,7 @@ case class BoomCoreParams(
   ftq: FtqParameters = FtqParameters(),
   intToFpLatency: Int = 2,
   imulLatency: Int = 3,
-  nPerfCounters: Int = 0,
+  nPerfCounters: Int = 29,
   numRXQEntries: Int = 4,
   numRCQEntries: Int = 8,
   numDCacheBanks: Int = 1,
@@ -99,7 +99,7 @@ case class BoomCoreParams(
   trace: Boolean = false,
 
   /* debug stuff */
-  enableCommitLogPrintf: Boolean = false,
+  enableCommitLogPrintf: Boolean = true,
   enableBranchPrintf: Boolean = false,
   enableMemtracePrintf: Boolean = false
 
@@ -143,6 +143,9 @@ class BoomCustomCSRs(implicit p: Parameters) extends freechips.rocketchip.tile.C
     Some(CustomCSR(chickenCSRId, mask, Some(init)))
   }
   def disableOOO = getOrElse(chickenCSR, _.value(3), true.B)
+  def marchid = CustomCSR.constant(CSRs.marchid, BigInt(2))
+
+  override def decls: Seq[CustomCSR] = super.decls :+ marchid
 }
 
 /**

@@ -7,12 +7,14 @@ import chisel3._
 import chisel3.util._
 import chisel3.util.HasBlackBoxResource
 import chisel3.experimental.IntParam
-import freechips.rocketchip.config._
+import org.chipsalliance.cde.config._
 import freechips.rocketchip.diplomacy._
 import freechips.rocketchip.rocket._
 import freechips.rocketchip.tilelink._
 import freechips.rocketchip.util.InOrderArbiter
-
+//===== GuardianCouncil Function: Start ====//
+import freechips.rocketchip.guardiancouncil._
+//===== GuardianCouncil Function: End   ====//
 case object BuildRoCC extends Field[Seq[Parameters => LazyRoCC]](Nil)
 
 class RoCCInstruction extends Bundle {
@@ -45,12 +47,67 @@ class RoCCCoreIO(implicit p: Parameters) extends CoreBundle()(p) {
   val busy = Output(Bool())
   val interrupt = Output(Bool())
   val exception = Input(Bool())
+ //===== GuardianCouncil Function: Start ====//
+  val RAW_cnt_in = Input(UInt(32.W))
+  val csr_counter_in = Input(Vec(84, UInt(32.W)))
+  val store_commit_count_in = Input(UInt(128.W))
+  val store_commit_cycle_sum_in = Input(UInt(128.W))
+  val ghe_packet_in = Input(UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W))
+  val ghe_status_in = Input(UInt(32.W))
+  val bigcore_comp  = Input(UInt(3.W))
+  val ghe_event_out = Output(UInt(5.W))
+  val ght_mask_out = Output(UInt(1.W))
+  val ght_status_out = Output(UInt(32.W))
+  val ght_cfg_out = Output(UInt(32.W))
+  val ght_cfg_valid = Output(UInt(1.W))
+  val debug_bp_reset = Output(UInt(1.W))
+
+  val agg_packet_out = Output(UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W))
+  val report_fi_detection_out = Output(UInt(57.W))
+  val fi_sel_out = Output(UInt(8.W))
+  val agg_buffer_full = Input(UInt(1.W))
+  val agg_core_status = Output(UInt(2.W))
+  val ght_sch_na = Output(UInt(1.W))
+  val ght_sch_refresh = Input(UInt(1.W))
+  val ght_sch_dorefresh = Output(UInt(32.W))
+  val ght_buffer_status = Input(UInt(2.W))
+
+  val ght_satp_ppn  = Input(UInt(44.W))
+  val ght_sys_mode  = Input(UInt(2.W))
+  val if_correct_process = Output(UInt(1.W))
+  
+  val debug_mcounter = Input(UInt(64.W))
+  val debug_icounter = Input(UInt(64.W))
+  val debug_gcounter = Input(UInt(64.W))
+
+  val debug_bp_checker = Input(UInt(64.W))
+  val debug_bp_cdc = Input(UInt(64.W))
+  val debug_bp_filter = Input(UInt(64.W))
+  val fi_latency = Input(UInt(64.W))
+
+  /* R Features */
+  val t_value_out = Output(UInt(15.W))
+  val icctrl_out = Output(UInt(4.W))
+  val arf_copy_out = Output(UInt(1.W))
+  val rsu_status_in = Input(UInt(2.W))
+  val s_or_r_out = Output(UInt(2.W))
+  val elu_data_in = Input(UInt(GH_GlobalParams.GH_WIDITH_PERF.W))
+  val elu_deq_out = Output(UInt(1.W))
+  val elu_sel_out = Output(UInt(1.W))
+  val record_pc_out = Output(UInt(1.W))
+  val elu_status_in = Input(UInt(2.W))
+  val gtimer_reset_out = Output(UInt(1.W))
+  val core_trace_out = Output(UInt(2.W))
+  val record_and_store_out = Output(UInt(2.W))
+  val debug_perf_ctrl = Output(UInt(5.W))
+  //===== GuardianCouncil Function: End   ====//
 }
 
 class RoCCIO(val nPTWPorts: Int)(implicit p: Parameters) extends RoCCCoreIO()(p) {
   val ptw = Vec(nPTWPorts, new TLBPTWIO)
   val fpu_req = Decoupled(new FPInput)
   val fpu_resp = Flipped(Decoupled(new FPResult))
+
 }
 
 /** Base classes for Diplomatic TL2 RoCC units **/
@@ -93,6 +150,55 @@ trait HasLazyRoCCModule extends CanHavePTWModule
       dcIF.io.requestor <> rocc.module.io.mem
       dcachePorts += dcIF.io.cache
       respArb.io.in(i) <> Queue(rocc.module.io.resp)
+ //===== GuardianCouncil Function: Start ====//
+      for(i <- 0 until 84){
+        rocc.module.io.csr_counter_in(i) := 0.U
+      }
+      rocc.module.io.store_commit_count_in := cmdRouter.io.store_commit_count_out
+      rocc.module.io.store_commit_cycle_sum_in := cmdRouter.io.store_commit_cycle_sum_out
+      dontTouch(cmdRouter.io.store_commit_count_out)
+      dontTouch(cmdRouter.io.store_commit_cycle_sum_out)
+      dontTouch(rocc.module.io.store_commit_count_in)
+      dontTouch(rocc.module.io.store_commit_cycle_sum_in)
+      rocc.module.io.RAW_cnt_in := cmdRouter.io.RAW_cnt_out
+      rocc.module.io.ghe_packet_in := cmdRouter.io.ghe_packet_in
+      rocc.module.io.ghe_status_in := cmdRouter.io.ghe_status_in
+      rocc.module.io.bigcore_comp  := cmdRouter.io.bigcore_comp_out
+      cmdRouter.io.ght_mask_in := rocc.module.io.ght_mask_out
+      cmdRouter.io.ght_status_in := rocc.module.io.ght_status_out
+      cmdRouter.io.ghe_event_in := rocc.module.io.ghe_event_out
+      cmdRouter.io.ght_cfg_in := rocc.module.io.ght_cfg_out
+      cmdRouter.io.ght_cfg_valid_in := rocc.module.io.ght_cfg_valid
+      cmdRouter.io.debug_bp_reset_in := rocc.module.io.debug_bp_reset
+
+      cmdRouter.io.agg_packet_in := rocc.module.io.agg_packet_out
+      cmdRouter.io.report_fi_detection_in := rocc.module.io.report_fi_detection_out
+      rocc.module.io.agg_buffer_full := cmdRouter.io.agg_buffer_full
+      cmdRouter.io.agg_core_status_in := rocc.module.io.agg_core_status
+      cmdRouter.io.ght_sch_na_in := rocc.module.io.ght_sch_na
+      rocc.module.io.ght_sch_refresh := cmdRouter.io.ght_sch_refresh
+      rocc.module.io.ght_buffer_status := cmdRouter.io.ght_buffer_status
+      cmdRouter.io.ght_sch_dorefresh_in := rocc.module.io.ght_sch_dorefresh
+      cmdRouter.io.if_correct_process_in := rocc.module.io.if_correct_process
+
+      /* R Features */
+      cmdRouter.io.icctrl_in := rocc.module.io.icctrl_out
+      cmdRouter.io.t_value_in := rocc.module.io.t_value_out
+      cmdRouter.io.s_or_r_in := rocc.module.io.s_or_r_out
+      cmdRouter.io.arf_copy_in := rocc.module.io.arf_copy_out
+      cmdRouter.io.core_trace_in := rocc.module.io.core_trace_out
+      cmdRouter.io.debug_perf_ctrl_in := rocc.module.io.debug_perf_ctrl
+      cmdRouter.io.record_and_store_in := rocc.module.io.record_and_store_out
+      cmdRouter.io.record_pc_in := rocc.module.io.record_pc_out
+      cmdRouter.io.gtimer_reset_in := rocc.module.io.gtimer_reset_out
+      rocc.module.io.rsu_status_in := cmdRouter.io.rsu_status_out
+      rocc.module.io.ght_satp_ppn := cmdRouter.io.ght_satp_ppn
+      rocc.module.io.ght_sys_mode := cmdRouter.io.ght_sys_mode
+      rocc.module.io.elu_data_in := cmdRouter.io.elu_data_in
+      cmdRouter.io.elu_deq_in := rocc.module.io.elu_deq_out
+      cmdRouter.io.elu_sel_in := rocc.module.io.elu_sel_out
+      rocc.module.io.elu_status_in := cmdRouter.io.elu_status_in
+      //===== GuardianCouncil Function: End   ====//
     }
 
     fpuOpt foreach { fpu =>
@@ -243,7 +349,7 @@ class  CharacterCountExample(opcodes: OpcodeSet)(implicit p: Parameters) extends
 class CharacterCountExampleModuleImp(outer: CharacterCountExample)(implicit p: Parameters) extends LazyRoCCModuleImp(outer)
   with HasCoreParameters
   with HasL1CacheParameters {
-  val cacheParams = tileParams.icache.get
+  val cacheParams = tileParams.dcache.get
 
   private val blockOffset = blockOffBits
   private val beatOffset = log2Up(cacheDataBits/8)
@@ -314,6 +420,7 @@ class CharacterCountExampleModuleImp(outer: CharacterCountExample)(implicit p: P
     when (recv_beat === cacheDataBeats.U) {
       addr := next_addr
       state := Mux(zero_found || finished, s_resp, s_acq)
+      recv_beat := 0.U
     } .otherwise {
       state := s_gnt
     }
@@ -403,6 +510,220 @@ class RoccCommandRouter(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
     val in = Flipped(Decoupled(new RoCCCommand))
     val out = Vec(opcodes.size, Decoupled(new RoCCCommand))
     val busy = Output(Bool())
+ //===== GuardianCouncil Function: Start ====//
+    val RAW_cnt_in = Input(UInt(32.W))
+    val RAW_cnt_out = Output(UInt(32.W))
+    val store_commit_count_in = Input(UInt(128.W))
+    val store_commit_count_out = Output(UInt(128.W))
+    val store_commit_cycle_sum_in = Input(UInt(128.W))
+    val store_commit_cycle_sum_out = Output(UInt(128.W))
+    val ghe_packet_in = Input(UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W))
+    val ghe_status_in = Input(UInt(32.W))
+    val bigcore_comp  = Input(UInt(3.W))
+    val bigcore_comp_out = Output(UInt(3.W))
+    val ghe_event_in = Input(UInt(5.W))
+    val ghe_event_out = Output(UInt(5.W))
+    val ght_mask_out  = Output(UInt(1.W))
+    val ght_mask_in = Input(UInt(1.W))
+    val ght_status_out  = Output(UInt(32.W))
+    val ght_status_in = Input(UInt(32.W))
+    val ght_cfg_out = Output(UInt(32.W))
+    val ght_cfg_in = Input(UInt(32.W))
+    val ght_cfg_valid = Output(UInt(1.W))
+    val ght_cfg_valid_in = Input(UInt(1.W))
+
+    val debug_bp_reset = Output(UInt(1.W))
+    val debug_bp_reset_in = Input(UInt(1.W))
+
+    val agg_packet_out = Output(UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W))
+    val agg_packet_in  = Input(UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W))
+    val report_fi_detection_out = Output(UInt(57.W))
+    val report_fi_detection_in  = Input(UInt(57.W))
+    val agg_buffer_full = Input(UInt(1.W))
+    val agg_core_status_out = Output(UInt(2.W))
+    val agg_core_status_in = Input(UInt(2.W))
+
+    val ght_sch_na_in = Input(UInt(1.W))
+    val ght_sch_na_out = Output(UInt(1.W))
+    val ght_sch_refresh = Input(UInt(1.W))
+    val ght_buffer_status = Input(UInt(2.W))
+
+    val ght_sch_dorefresh_in = Input(UInt(32.W))
+    val ght_sch_dorefresh_out = Output(UInt(32.W))
+
+    val if_correct_process_in = Input(UInt(1.W))
+    val if_correct_process_out = Output(UInt(1.W))
+
+    /* R Features */
+    val icctrl_out = Output(UInt(4.W))
+    val icctrl_in = Input(UInt(4.W))
+    val t_value_out = Output(UInt(15.W))
+    val t_value_in = Input(UInt(15.W))
+    val arf_copy_out = Output(UInt(1.W))
+    val arf_copy_in = Input(UInt(1.W))
+    val core_trace_out = Output(UInt(2.W))
+    val core_trace_in = Input(UInt(2.W))
+    val debug_perf_ctrl_out = Output(UInt(5.W))
+    val debug_perf_ctrl_in = Input(UInt(5.W))
+    val record_and_store_out = Output(UInt(2.W))
+    val record_and_store_in = Input(UInt(2.W))
+    val record_pc_out = Output(UInt(1.W))
+    val record_pc_in = Input(UInt(1.W))
+    val gtimer_reset_out = Output(UInt(1.W))
+    val gtimer_reset_in = Input(UInt(1.W))
+
+    val rsu_status_in = Input(UInt(2.W))
+    val rsu_status_out = Output(UInt(2.W))
+    val s_or_r_out = Output(UInt(2.W))
+    val s_or_r_in = Input(UInt(2.W))
+    val ght_satp_ppn  = Input(UInt(44.W))
+    val ght_sys_mode  = Input(UInt(2.W))
+    val elu_data_in = Input(UInt(GH_GlobalParams.GH_WIDITH_PERF.W))
+    val elu_deq_out = Output(UInt(1.W))
+    val elu_deq_in = Input(UInt(1.W))
+    val elu_sel_out = Output(UInt(1.W))
+    val elu_sel_in = Input(UInt(1.W))
+    val elu_status_in = Input(UInt(2.W))
+    //===== GuardianCouncil Function: End   ====//
+  }
+
+  val cmd = (io.in)
+  val cmdReadys = io.out.zip(opcodes).map { case (out, opcode) =>
+    val me = opcode.matches(cmd.bits.inst.opcode)
+    out.valid := cmd.valid && me
+    out.bits := cmd.bits
+    out.ready && me
+  }
+  cmd.ready := cmdReadys.reduce(_ || _)
+  io.busy := cmd.valid
+//===== GuardianCouncil Function: Start ====//
+  io.RAW_cnt_out := io.RAW_cnt_in
+  io.store_commit_count_out := io.store_commit_count_in
+  io.store_commit_cycle_sum_out := io.store_commit_cycle_sum_in
+  dontTouch(io.store_commit_count_in)
+  dontTouch(io.store_commit_count_out)
+  dontTouch(io.store_commit_cycle_sum_in)
+  dontTouch(io.store_commit_cycle_sum_out)
+  io.ghe_event_out := io.ghe_event_in
+  io.ght_mask_out := io.ght_mask_in
+  io.ght_status_out := io.ght_status_in
+  io.ght_cfg_out := io.ght_cfg_in
+  io.ght_cfg_valid := io.ght_cfg_valid_in
+  io.debug_bp_reset := io.debug_bp_reset_in
+  io.bigcore_comp_out := io.bigcore_comp
+
+  io.rsu_status_out := io.rsu_status_in
+
+  io.agg_packet_out := io.agg_packet_in
+  io.report_fi_detection_out := io.report_fi_detection_in
+  io.agg_core_status_out := io.agg_core_status_in
+  io.ght_sch_na_out := io.ght_sch_na_in
+  io.ght_sch_dorefresh_out := io.ght_sch_dorefresh_in
+
+  io.if_correct_process_out := io.if_correct_process_in
+
+  /* R Features */
+  io.icctrl_out := io.icctrl_in
+  io.t_value_out := io.t_value_in
+  io.arf_copy_out := io.arf_copy_in
+  io.core_trace_out := io.core_trace_in
+  io.debug_perf_ctrl_out := io.debug_perf_ctrl_in
+  io.record_and_store_out := io.record_and_store_in
+  io.record_pc_out := io.record_pc_in
+  io.gtimer_reset_out := io.gtimer_reset_in
+  io.s_or_r_out := io.s_or_r_in
+  io.elu_deq_out := io.elu_deq_in
+  io.elu_sel_out := io.elu_sel_in
+  //===== GuardianCouncil Function: End   ====//
+  assert(PopCount(cmdReadys) <= 1.U,
+    "Custom opcode matched for more than one accelerator")
+
+  dontTouch(io.rsu_status_in)
+  dontTouch(io.rsu_status_out)
+  dontTouch(io)
+}
+class RoccCommandRouterBoom(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
+    extends CoreModule()(p) {
+  val io = new Bundle {
+    val in = Flipped(Decoupled(new RoCCCommand))
+    val out = Vec(opcodes.size, Decoupled(new RoCCCommand))
+    val busy = Output(Bool())
+    //===== GuardianCouncil Function: Start ====//
+    val csr_counter_in = Input(Vec(84, UInt(32.W)))
+    val csr_counter_out = Output(Vec(84, UInt(32.W)))
+    val store_commit_count_in = Input(UInt(128.W))
+    val store_commit_count_out = Output(UInt(128.W))
+    val store_commit_cycle_sum_in = Input(UInt(128.W))
+    val store_commit_cycle_sum_out = Output(UInt(128.W))
+    val ghe_packet_in = Input(UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W))
+    val ghe_status_in = Input(UInt(32.W))
+    val bigcore_comp  = Input(UInt(3.W))
+    val bigcore_comp_out = Output(UInt(3.W))
+    val ghe_event_in = Input(UInt(5.W))
+    val ghe_event_out = Output(UInt(5.W))
+    val ght_mask_out  = Output(UInt(1.W))
+    val ght_mask_in = Input(UInt(1.W))
+    val ght_status_out  = Output(UInt(32.W))
+    val ght_status_in = Input(UInt(32.W))
+    val ght_cfg_out = Output(UInt(32.W))
+    val ght_cfg_in = Input(UInt(32.W))
+    val ght_cfg_valid = Output(UInt(1.W))
+    val ght_cfg_valid_in = Input(UInt(1.W))
+
+    val debug_bp_reset = Output(UInt(1.W))
+    val debug_bp_reset_in = Input(UInt(1.W))
+    
+
+    val agg_packet_out = Output(UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W))
+    val agg_packet_in  = Input(UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W))
+    val agg_buffer_full = Input(UInt(1.W))
+    val agg_core_status_out = Output(UInt(2.W))
+    val agg_core_status_in = Input(UInt(2.W))
+
+    val ght_sch_na_in = Input(UInt(1.W))
+    val ght_sch_na_out = Output(UInt(1.W))
+    val ght_sch_refresh = Input(UInt(1.W))
+    val ght_buffer_status = Input(UInt(2.W))
+
+    val ght_sch_dorefresh_in = Input(UInt(32.W))
+    val ght_sch_dorefresh_out = Output(UInt(32.W))
+
+    val ght_satp_ppn  = Input(UInt(44.W))
+    val ght_sys_mode  = Input(UInt(2.W))
+
+    val if_correct_process_in = Input(UInt(1.W))
+    val if_correct_process_out = Output(UInt(1.W))
+
+    val debug_mcounter  = Input(UInt(64.W))
+    val debug_icounter  = Input(UInt(64.W))
+    val debug_gcounter  = Input(UInt(64.W))
+
+    val debug_bp_checker = Input(UInt(64.W))
+    val debug_bp_cdc = Input(UInt(64.W))
+    val debug_bp_filter = Input(UInt(64.W))
+
+    /* R Features */
+    val icctrl_out = Output(UInt(4.W))
+    val icctrl_in = Input(UInt(4.W))
+    val t_value_out = Output(UInt(15.W))
+    val t_value_in = Input(UInt(15.W))
+    val arf_copy_out = Output(UInt(1.W))
+    val arf_copy_in = Input(UInt(1.W))
+    val core_trace_out = Output(UInt(2.W))
+    val core_trace_in = Input(UInt(2.W))
+    val s_or_r_out = Output(UInt(2.W))
+    val s_or_r_in = Input(UInt(2.W))
+    val gtimer_reset_out = Output(UInt(1.W))
+    val gtimer_reset_in = Input(UInt(1.W))
+    val fi_sel_out = Output(UInt(8.W))
+    val fi_sel_in  = Input(UInt(8.W))
+    val fi_latency = Input(UInt(64.W))
+    val rsu_status_in = Input(UInt(2.W))
+    val elu_data_in = Input(UInt(GH_GlobalParams.GH_WIDITH_PERF.W))
+
+    val debug_perf_ctrl_out = Output(UInt(5.W))
+    val debug_perf_ctrl_in = Input(UInt(5.W))
+    //===== GuardianCouncil Function: End   ====//
   }
 
   val cmd = Queue(io.in)
@@ -414,7 +735,39 @@ class RoccCommandRouter(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
   }
   cmd.ready := cmdReadys.reduce(_ || _)
   io.busy := cmd.valid
+  //===== GuardianCouncil Function: Start ====//
+  io.ghe_event_out := io.ghe_event_in
+  io.ght_mask_out := io.ght_mask_in
+  io.ght_status_out := io.ght_status_in
+  io.ght_cfg_out := io.ght_cfg_in
+  io.ght_cfg_valid := io.ght_cfg_valid_in
+  io.debug_bp_reset := io.debug_bp_reset_in
+  io.bigcore_comp_out := io.bigcore_comp
+  io.csr_counter_out := io.csr_counter_in
+  io.store_commit_count_out := io.store_commit_count_in
+  io.store_commit_cycle_sum_out := io.store_commit_cycle_sum_in
+  dontTouch(io.store_commit_count_in)
+  dontTouch(io.store_commit_count_out)
+  dontTouch(io.store_commit_cycle_sum_in)
+  dontTouch(io.store_commit_cycle_sum_out)
 
+  io.agg_packet_out := io.agg_packet_in
+  io.agg_core_status_out := io.agg_core_status_in
+  io.ght_sch_na_out := io.ght_sch_na_in
+  io.ght_sch_dorefresh_out := io.ght_sch_dorefresh_in
+  io.if_correct_process_out := io.if_correct_process_in
+
+  /* R Features */
+  io.icctrl_out := io.icctrl_in
+  io.gtimer_reset_out := io.gtimer_reset_in
+  io.fi_sel_out := io.fi_sel_in
+  io.t_value_out := io.t_value_in
+  io.s_or_r_out := io.s_or_r_in
+  io.arf_copy_out := io.arf_copy_in
+  io.core_trace_out := io.core_trace_in
+
+  io.debug_perf_ctrl_out := io.debug_perf_ctrl_in
+  //===== GuardianCouncil Function: End   ====//
   assert(PopCount(cmdReadys) <= 1.U,
     "Custom opcode matched for more than one accelerator")
 }

@@ -6,7 +6,7 @@ import chisel3._
 import chisel3.experimental.{IntParam, noPrefix}
 import chisel3.util._
 import chisel3.util.HasBlackBoxResource
-import freechips.rocketchip.config.{Field, Parameters}
+import org.chipsalliance.cde.config.{Field, Parameters}
 import freechips.rocketchip.subsystem._
 import freechips.rocketchip.amba.apb._
 import freechips.rocketchip.diplomacy._
@@ -14,6 +14,7 @@ import freechips.rocketchip.jtag._
 import freechips.rocketchip.util._
 import freechips.rocketchip.prci.{ClockSinkParameters, ClockSinkNode}
 import freechips.rocketchip.tilelink._
+import freechips.rocketchip.interrupts.{NullIntSyncSource, IntSyncXbar}
 
 /** Protocols used for communicating with external debugging tools */
 sealed trait DebugExportProtocol
@@ -71,16 +72,16 @@ class ResetCtrlIO(val nComponents: Int)(implicit val p: Parameters) extends Bund
   */
 
 trait HasPeripheryDebug { this: BaseSubsystem =>
-  private val tlbus = locateTLBusWrapper(p(ExportDebug).slaveWhere)
+  private lazy val tlbus = locateTLBusWrapper(p(ExportDebug).slaveWhere)
 
-  val debugCustomXbarOpt = p(DebugModuleKey).map(params => LazyModule( new DebugCustomXbar(outputRequiresInput = false)))
-  val apbDebugNodeOpt = p(ExportDebug).apb.option(APBMasterNode(Seq(APBMasterPortParameters(Seq(APBMasterParameters("debugAPB"))))))
+  lazy val debugCustomXbarOpt = p(DebugModuleKey).map(params => LazyModule( new DebugCustomXbar(outputRequiresInput = false)))
+  lazy val apbDebugNodeOpt = p(ExportDebug).apb.option(APBMasterNode(Seq(APBMasterPortParameters(Seq(APBMasterParameters("debugAPB"))))))
   val debugTLDomainOpt = p(DebugModuleKey).map { _ =>
     val domain = ClockSinkNode(Seq(ClockSinkParameters()))
     domain := tlbus.fixedClockNode
     domain
   }
-  val debugOpt = p(DebugModuleKey).map { params =>
+  lazy val debugOpt = p(DebugModuleKey).map { params =>
     val tlDM = LazyModule(new TLDebugModule(tlbus.beatBytes))
 
     tlDM.node := tlbus.coupleTo("debug"){ TLFragmenter(tlbus) := _ }
@@ -97,6 +98,8 @@ trait HasPeripheryDebug { this: BaseSubsystem =>
     }
     tlDM
   }
+
+  lazy val debugNode = debugOpt.map(_.intnode).getOrElse(IntSyncXbar() := NullIntSyncSource())
 }
 
 trait HasPeripheryDebugModuleImp extends LazyModuleImp {
@@ -168,7 +171,7 @@ trait HasPeripheryDebugModuleImp extends LazyModuleImp {
     dtm.io.jtag_version := sj.version
     dtm.rf_reset := sj.reset
 
-    outer.debugOpt.map { outerdebug => 
+    outer.debugOpt.map { outerdebug =>
       outerdebug.module.io.dmi.get.dmi <> dtm.io.dmi
       outerdebug.module.io.dmi.get.dmiClock := sj.jtag.TCK
       outerdebug.module.io.dmi.get.dmiReset := sj.reset

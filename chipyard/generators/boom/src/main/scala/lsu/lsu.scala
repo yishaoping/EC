@@ -46,7 +46,7 @@ package boom.lsu
 import chisel3._
 import chisel3.util._
 
-import freechips.rocketchip.config.Parameters
+import org.chipsalliance.cde.config.Parameters
 import freechips.rocketchip.rocket
 import freechips.rocketchip.tilelink._
 import freechips.rocketchip.util.Str
@@ -54,11 +54,16 @@ import freechips.rocketchip.util.Str
 import boom.common._
 import boom.exu.{BrUpdateInfo, Exception, FuncUnitResp, CommitSignals, ExeUnitResp}
 import boom.util.{BoolToChar, AgePriorityEncoder, IsKilledByBranch, GetNewBrMask, WrapInc, IsOlder, UpdateBrMask}
-
+//===== GuardianCouncil Function: Start ====//
+import freechips.rocketchip.r._
+import freechips.rocketchip.guardiancouncil._
+//===== GuardianCouncil Function: End   ====//
 class LSUExeIO(implicit p: Parameters) extends BoomBundle()(p)
 {
   // The "resp" of the maddrcalc is really a "req" to the LSU
   val req       = Flipped(new ValidIO(new FuncUnitResp(xLen)))
+
+
   // Send load data to regfiles
   val iresp    = new DecoupledIO(new boom.exu.ExeUnitResp(xLen))
   val fresp    = new DecoupledIO(new boom.exu.ExeUnitResp(xLen+1)) // TODO: Should this be fLen?
@@ -111,6 +116,7 @@ class LSUDMemIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
 class LSUCoreIO(implicit p: Parameters) extends BoomBundle()(p)
 {
   val exe = Vec(memWidth, new LSUExeIO)
+  val stq_debug = Vec(coreWidth, Output(Valid(new STQEntry)))
 
   val dis_uops    = Flipped(Vec(coreWidth, Valid(new MicroOp)))
   val dis_ldq_idx = Output(Vec(coreWidth, UInt(ldqAddrSz.W)))
@@ -159,6 +165,12 @@ class LSUCoreIO(implicit p: Parameters) extends BoomBundle()(p)
 
 class LSUIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
 {
+  //===== GuardianCouncil Function: Start ====//
+  val ldq_head                                    = Output(Vec(coreWidth, UInt((2*xLen).W)))
+  val stq_head                                    = Output(Vec(coreWidth, UInt((2*xLen).W)))
+  
+  val core_trace                                  = Input(UInt(1.W))
+  //===== GuardianCouncil Function: End ====//
   val ptw   = new rocket.TLBPTWIO
   val core  = new LSUCoreIO
   val dmem  = new LSUDMemIO
@@ -170,6 +182,7 @@ class LDQEntry(implicit p: Parameters) extends BoomBundle()(p)
     with HasBoomUOP
 {
   val addr                = Valid(UInt(coreMaxAddrBits.W))
+  val vaddr               = Valid(UInt(coreMaxAddrBits.W))
   val addr_is_virtual     = Bool() // Virtual address, we got a TLB miss
   val addr_is_uncacheable = Bool() // Uncacheable, wait until head of ROB to execute
 
@@ -191,6 +204,7 @@ class STQEntry(implicit p: Parameters) extends BoomBundle()(p)
    with HasBoomUOP
 {
   val addr                = Valid(UInt(coreMaxAddrBits.W))
+  val vaddr               = Valid(UInt(coreMaxAddrBits.W))
   val addr_is_virtual     = Bool() // Virtual address, we got a TLB miss
   val data                = Valid(UInt(xLen.W))
 
@@ -308,6 +322,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       ldq(ld_enq_idx).bits.st_dep_mask     := next_live_store_mask
 
       ldq(ld_enq_idx).bits.addr.valid      := false.B
+      ldq(ld_enq_idx).bits.vaddr.valid     := false.B
       ldq(ld_enq_idx).bits.executed        := false.B
       ldq(ld_enq_idx).bits.succeeded       := false.B
       ldq(ld_enq_idx).bits.order_fail      := false.B
@@ -322,6 +337,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       stq(st_enq_idx).valid           := true.B
       stq(st_enq_idx).bits.uop        := io.core.dis_uops(w).bits
       stq(st_enq_idx).bits.addr.valid := false.B
+      stq(st_enq_idx).bits.vaddr.valid:= false.B
       stq(st_enq_idx).bits.data.valid := false.B
       stq(st_enq_idx).bits.committed  := false.B
       stq(st_enq_idx).bits.succeeded  := false.B
@@ -838,7 +854,9 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     {
       val ldq_idx = Mux(will_fire_load_incoming(w), ldq_incoming_idx(w), ldq_retry_idx)
       ldq(ldq_idx).bits.addr.valid          := true.B
+      ldq(ldq_idx).bits.vaddr.valid         := true.B
       ldq(ldq_idx).bits.addr.bits           := Mux(exe_tlb_miss(w), exe_tlb_vaddr(w), exe_tlb_paddr(w))
+      ldq(ldq_idx).bits.vaddr.bits          := exe_tlb_vaddr(w)
       ldq(ldq_idx).bits.uop.pdst            := exe_tlb_uop(w).pdst
       ldq(ldq_idx).bits.addr_is_virtual     := exe_tlb_miss(w)
       ldq(ldq_idx).bits.addr_is_uncacheable := exe_tlb_uncacheable(w) && !exe_tlb_miss(w)
@@ -853,7 +871,9 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         stq_incoming_idx(w), stq_retry_idx)
 
       stq(stq_idx).bits.addr.valid := !pf_st(w) // Prevent AMOs from executing!
+      stq(stq_idx).bits.vaddr.valid:= !pf_st(w) // Prevent AMOs from executing!
       stq(stq_idx).bits.addr.bits  := Mux(exe_tlb_miss(w), exe_tlb_vaddr(w), exe_tlb_paddr(w))
+      stq(stq_idx).bits.vaddr.bits := exe_tlb_vaddr(w)
       stq(stq_idx).bits.uop.pdst   := exe_tlb_uop(w).pdst // Needed for AMOs
       stq(stq_idx).bits.addr_is_virtual := exe_tlb_miss(w)
 
@@ -1313,12 +1333,16 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         val send_iresp = ldq(ldq_idx).bits.uop.dst_rtype === RT_FIX
         val send_fresp = ldq(ldq_idx).bits.uop.dst_rtype === RT_FLT
 
-        io.core.exe(w).iresp.bits.uop  := ldq(ldq_idx).bits.uop
-        io.core.exe(w).fresp.bits.uop  := ldq(ldq_idx).bits.uop
-        io.core.exe(w).iresp.valid     := send_iresp
-        io.core.exe(w).iresp.bits.data := io.dmem.resp(w).bits.data
-        io.core.exe(w).fresp.valid     := send_fresp
-        io.core.exe(w).fresp.bits.data := io.dmem.resp(w).bits.data
+        io.core.exe(w).iresp.bits.uop      := ldq(ldq_idx).bits.uop
+        io.core.exe(w).fresp.bits.uop      := ldq(ldq_idx).bits.uop
+        io.core.exe(w).iresp.valid         := send_iresp
+        io.core.exe(w).iresp.bits.data     := io.dmem.resp(w).bits.data
+        io.core.exe(w).iresp.bits.rs1_data := ldq(ldq_idx).bits.vaddr.bits
+        io.core.exe(w).iresp.bits.rs2_data := DontCare
+        io.core.exe(w).fresp.valid         := send_fresp
+        io.core.exe(w).fresp.bits.data     := io.dmem.resp(w).bits.data
+        io.core.exe(w).fresp.bits.rs1_data := ldq(ldq_idx).bits.vaddr.bits
+        io.core.exe(w).fresp.bits.rs2_data := DontCare
 
         assert(send_iresp ^ send_fresp)
         dmem_resp_fired(w) := true.B
@@ -1410,6 +1434,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       {
         stq(i).valid           := false.B
         stq(i).bits.addr.valid := false.B
+        stq(i).bits.vaddr.valid:= false.B
         stq(i).bits.data.valid := false.B
         st_brkilled_mask(i)    := true.B
       }
@@ -1429,6 +1454,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       {
         ldq(i).valid           := false.B
         ldq(i).bits.addr.valid := false.B
+        ldq(i).bits.vaddr.valid:= false.B
       }
     }
   }
@@ -1463,6 +1489,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
 
       ldq(idx).valid                 := false.B
       ldq(idx).bits.addr.valid       := false.B
+      ldq(idx).bits.vaddr.valid      := false.B
       ldq(idx).bits.executed         := false.B
       ldq(idx).bits.succeeded        := false.B
       ldq(idx).bits.order_fail       := false.B
@@ -1507,6 +1534,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   {
     stq(stq_head).valid           := false.B
     stq(stq_head).bits.addr.valid := false.B
+    stq(stq_head).bits.vaddr.valid:= false.B
     stq(stq_head).bits.data.valid := false.B
     stq(stq_head).bits.succeeded  := false.B
     stq(stq_head).bits.committed  := false.B
@@ -1611,6 +1639,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       {
         stq(i).valid           := false.B
         stq(i).bits.addr.valid := false.B
+        stq(i).bits.vaddr.valid:= false.B
         stq(i).bits.data.valid := false.B
         stq(i).bits.uop        := NullMicroOp
       }
@@ -1625,6 +1654,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         {
           stq(i).valid           := false.B
           stq(i).bits.addr.valid := false.B
+          stq(i).bits.vaddr.valid:= false.B
           stq(i).bits.data.valid := false.B
           st_exc_killed_mask(i)  := true.B
         }
@@ -1635,6 +1665,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     {
       ldq(i).valid           := false.B
       ldq(i).bits.addr.valid := false.B
+      ldq(i).bits.vaddr.valid:= false.B
       ldq(i).bits.executed   := false.B
     }
   }
@@ -1649,7 +1680,33 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
                     ~(st_brkilled_mask.asUInt) &
                     ~(st_exc_killed_mask.asUInt)
 
-
+//===== GuardianCouncil Function: Start ====//
+  val ldq_head_delay                               = Reg(Vec(coreWidth, UInt((2*xLen).W)))
+  val stq_head_delay                               = Reg(Vec(coreWidth, UInt((2*xLen).W)))
+  val zeros_24bits                                 = WireInit(0.U(24.W))
+  val debug_ldq_cnt                                = WireInit(VecInit.fill(coreWidth)(0.U(log2Ceil(numLdqEntries).W)))
+  val debug_stq_cnt                                = WireInit(VecInit.fill(coreWidth)(0.U(log2Ceil(numStqEntries).W)))
+  for (i <- 0 to coreWidth - 1){
+    debug_ldq_cnt(i)                              := Mux(ldq_head+i.U>=numLdqEntries.U,
+                                                    ldq_head+i.U-numLdqEntries.U,
+                                                    ldq_head+i.U)
+    debug_stq_cnt(i)                              := Mux(stq_commit_head+i.U>=numStqEntries.U,
+                                                    stq_commit_head+i.U-numStqEntries.U,
+                                                    stq_commit_head+i.U)
+    ldq_head_delay(i)                             := Cat(ldq(debug_ldq_cnt(i)).bits.debug_wb_data, zeros_24bits, ldq(debug_ldq_cnt(i)).bits.vaddr.bits)
+    stq_head_delay(i)                             := Cat(stq(debug_stq_cnt(i)).bits.data.bits, zeros_24bits, stq(debug_stq_cnt(i)).bits.vaddr.bits)
+  }
+  dontTouch(debug_ldq_cnt)
+  dontTouch(debug_stq_cnt)
+  for (i <- 0 to coreWidth - 1){
+    io.ldq_head(i)                                := ldq_head_delay(i)
+    io.stq_head(i)                                := stq_head_delay(i)
+  }
+  for(w <- 0 until coreWidth){
+    io.core.stq_debug(w) := stq(debug_stq_cnt(w))
+  }
+  
+  //===== GuardianCouncil Function: End ====//
 }
 
 /**

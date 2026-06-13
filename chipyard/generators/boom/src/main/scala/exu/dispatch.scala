@@ -15,7 +15,7 @@ package boom.exu
 import chisel3._
 import chisel3.util._
 
-import freechips.rocketchip.config.Parameters
+import org.chipsalliance.cde.config.Parameters
 
 import boom.common._
 import boom.util._
@@ -58,6 +58,8 @@ class BasicDispatcher(implicit p: Parameters) extends Dispatcher
     dis(w).valid := io.ren_uops(w).valid && ((io.ren_uops(w).bits.iq_type & issueParam.iqType.U) =/= 0.U)
     dis(w).bits  := io.ren_uops(w).bits
   }
+  dontTouch(io.ren_uops)
+  dontTouch(io.dis_uops)
 }
 
 /**
@@ -71,6 +73,8 @@ class CompactingDispatcher(implicit p: Parameters) extends Dispatcher
 {
   issueParams.map(ip => require(ip.dispatchWidth >= ip.issueWidth))
 
+  dontTouch(io.ren_uops)
+  dontTouch(io.dis_uops)
   val ren_readys = Wire(Vec(issueParams.size, Vec(coreWidth, Bool())))
 
   for (((ip, dis), rdy) <- issueParams zip io.dis_uops zip ren_readys) {

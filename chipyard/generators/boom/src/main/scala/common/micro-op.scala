@@ -14,7 +14,7 @@ package boom.common
 import chisel3._
 import chisel3.util._
 
-import freechips.rocketchip.config.Parameters
+import org.chipsalliance.cde.config.Parameters
 
 import boom.exu.FUConstants
 
@@ -98,6 +98,8 @@ class MicroOp(implicit p: Parameters) extends BoomBundle
   val is_fence         = Bool()
   val is_fencei        = Bool()
   val is_amo           = Bool()
+
+  val is_csr           = Bool()
   val uses_ldq         = Bool()
   val uses_stq         = Bool()
   val is_sys_pc2epc    = Bool()                      // Is a ECall or Breakpoint -- both set EPC to PC.

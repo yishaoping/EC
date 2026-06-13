@@ -13,6 +13,9 @@ import freechips.rocketchip.tilelink._
 import freechips.rocketchip.devices.tilelink._
 import freechips.rocketchip.diplomacy._
 import freechips.rocketchip.util.{DontTouch}
+//===== EC Config: Start =====//
+import freechips.rocketchip.guardiancouncil._
+//===== EC Config: End   =====//
 
 // ---------------------------------------------------------------------
 // Base system that uses the debug test module (dtm) to bringup the core
@@ -31,6 +34,10 @@ class ChipyardSystem(implicit p: Parameters) extends ChipyardSubsystem
 
   val bootROM  = p(BootROMLocated(location)).map { BootROM.attach(_, this, CBUS) }
   val maskROMs = p(MaskROMLocated(location)).map { MaskROM.attach(_, this, CBUS) }
+  //===== EC Config: Start =====//
+  val ghm      = p(GHMCoreLocated(location)).map { GHMCore.attach(_, this, SBUS) }
+  val gagg     = p(GAGGCoreLocated(location)).map { GAGGCore.attach(_, this, GBUS) }
+  //===== EC Config: End   =====//
   override lazy val module = new ChipyardSystemModule(this)
 }
 

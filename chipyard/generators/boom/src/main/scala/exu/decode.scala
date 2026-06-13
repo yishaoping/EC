@@ -8,7 +8,7 @@ package boom.exu
 import chisel3._
 import chisel3.util._
 
-import freechips.rocketchip.config.Parameters
+import org.chipsalliance.cde.config.Parameters
 import freechips.rocketchip.rocket.Instructions._
 import freechips.rocketchip.rocket.Instructions32
 import freechips.rocketchip.rocket.CustomInstructions._
@@ -562,6 +562,10 @@ class DecodeUnit(implicit p: Parameters) extends BoomModule
   uop.fp_val     := cs.fp_val
   uop.fp_single  := cs.fp_single // TODO use this signal instead of the FPU decode's table signal?
 
+  uop.ctrl.imm_sel := cs.imm_sel
+  uop.ctrl.csr_cmd := Mux(csr_ren, CSR.R, cs.csr_cmd)
+  uop.csr_addr   := io.csr_decode.csr_addr
+  uop.is_csr     := csr_en
   uop.mem_cmd    := cs.mem_cmd
   uop.mem_size   := Mux(cs.mem_cmd.isOneOf(M_SFENCE, M_FLUSH_ALL), Cat(uop.lrs2 =/= 0.U, uop.lrs1 =/= 0.U), inst(13,12))
   uop.mem_signed := !inst(14)

@@ -4,14 +4,20 @@
 package freechips.rocketchip.subsystem
 
 import chisel3.util._
-import freechips.rocketchip.config._
+import org.chipsalliance.cde.config._
 import freechips.rocketchip.devices.debug._
 import freechips.rocketchip.devices.tilelink._
 import freechips.rocketchip.diplomacy._
 import freechips.rocketchip.rocket._
 import freechips.rocketchip.tile._
 import freechips.rocketchip.util._
+import freechips.rocketchip.npu._
 
+//==========================================//
+//===== GuardianCouncil Function: Start ====//
+import freechips.rocketchip.guardiancouncil._
+//===== GuardianCouncil Function: End ======//
+//==========================================//
 class BaseSubsystemConfig extends Config ((site, here, up) => {
   // Tile parameters
   case PgLevels => if (site(XLen) == 64) 3 /* Sv39 */ else 2 /* Sv32 */
@@ -36,6 +42,20 @@ class BaseSubsystemConfig extends Config ((site, here, up) => {
   case FrontBusKey => FrontBusParams(
     beatBytes = site(XLen)/8,
     blockBytes = site(CacheBlockBytes))
+//==========================================//
+  //===== GuardianCouncil Function: Start ====//
+  case GCBusKey => PeripheryBusParams(beatBytes = site(XLen)/8,
+                                      blockBytes = site(CacheBlockBytes)) // An unused bus, only providing the clocks
+  //===== GuardianCouncil Function: End ======//
+  //==========================================//
+//==========================================//
+  //===== GuardianCouncil Function: Start ====//
+  // ((site(TilesLocated(InSubsystem)).map(_.tileParams.hartId).max+1) gives the number of tiles
+  // -1 (big core) indicates the number of little cores
+  case GHMCoreLocated(InSubsystem) => Some(GHMParams(((site(TilesLocated(InSubsystem)).map(_.tileParams.hartId).max+1)-1), GH_GlobalParams.GH_WIDITH_PACKETS))
+  case GAGGCoreLocated(InSubsystem) => Some(GAGGParams(((site(TilesLocated(InSubsystem)).map(_.tileParams.hartId).max+1)-1), GH_GlobalParams.GH_WIDITH_PACKETS))
+  //===== GuardianCouncil Function: End ======//
+  //==========================================//
   // Additional device Parameters
   case BootROMLocated(InSubsystem) => Some(BootROMParams(contentFileName = "./bootrom/bootrom.img"))
   case SubsystemExternalResetVectorKey => false
@@ -60,6 +80,9 @@ class WithIncoherentBusTopology extends Config((site, here, up) => {
       pbus = site(PeripheryBusKey),
       fbus = site(FrontBusKey),
       cbus = site(ControlBusKey),
+      //===== GuardianCouncil Function: Start ======//
+      gbus = site(GCBusKey),
+      //===== GuardianCouncil Function: End ======//
       xTypes = SubsystemCrossingParams(
         sbusToCbusXType = site(SbusToCbusXTypeKey),
         cbusToPbusXType = site(CbusToPbusXTypeKey),
@@ -74,6 +97,9 @@ class WithCoherentBusTopology extends Config((site, here, up) => {
       pbus = site(PeripheryBusKey),
       fbus = site(FrontBusKey),
       cbus = site(ControlBusKey),
+      //===== GuardianCouncil Function: Start ======//
+      gbus = site(GCBusKey),
+      //===== GuardianCouncil Function: End ======//
       xTypes = SubsystemCrossingParams(
         sbusToCbusXType = site(SbusToCbusXTypeKey),
         cbusToPbusXType = site(CbusToPbusXTypeKey),
@@ -108,6 +134,33 @@ class WithNBigCores(
         rowBits = site(SystemBusKey).beatBits,
         blockBytes = site(CacheBlockBytes))))
     List.tabulate(n)(i => RocketTileAttachParams(
+      big.copy(hartId = i + idOffset),
+      crossing
+    )) ++ prev
+  }
+})
+
+class WithNBigNpuCores(
+  n: Int,
+  overrideIdOffset: Option[Int] = None,
+  crossing: RocketCrossingParams = RocketCrossingParams()
+) extends Config((site, here, up) => {
+  case TilesLocated(InSubsystem) => {
+    val prev = up(TilesLocated(InSubsystem), site)
+    val idOffset = overrideIdOffset.getOrElse(prev.size)
+    val big = RocketTileNpuParams(
+      core   = RocketCoreParams(mulDiv = Some(MulDivParams(
+        mulUnroll = 8,
+        mulEarlyOut = true,
+        divEarlyOut = true))),
+      dcache = Some(DCacheParams(
+        rowBits = site(SystemBusKey).beatBits,
+        nMSHRs = 0,
+        blockBytes = site(CacheBlockBytes))),
+      icache = Some(ICacheParams(
+        rowBits = site(SystemBusKey).beatBits,
+        blockBytes = site(CacheBlockBytes))))
+    List.tabulate(n)(i => RocketTileNpuAttachParams(
       big.copy(hartId = i + idOffset),
       crossing
     )) ++ prev
@@ -179,7 +232,70 @@ class WithNSmallCores(
     )) ++ prev
   }
 })
+//==========================================//
+//===== GuardianCouncil Function: Start ====//
 
+
+class WithNGCCheckers(n: Int, overrideIdOffset: Option[Int] = None,crossing: RocketCrossingParams = RocketCrossingParams()) extends Config((site, here, up) => {
+  // case RocketTilesKey => {
+  //   val prev = up(RocketTilesKey, site)
+  //   val idOffset = overrideIdOffset.getOrElse(prev.size)
+  //   val checker = RocketTileParams(
+  //     core = RocketCoreParams(useDebug = false,
+  //     mulDiv = Some(MulDivParams(
+  //       mulUnroll = 8,
+  //       mulEarlyOut = true,
+  //       divEarlyOut = true))),
+  //     dcache = Some(DCacheParams(
+  //       rowBits = site(SystemBusKey).beatBits,
+  //       nSets = 32,
+  //       nWays = 2,
+  //       nTLBSets = 1,
+  //       nTLBWays = 4,
+  //       nMSHRs = 0,
+  //       blockBytes = site(CacheBlockBytes))),
+  //     icache = Some(ICacheParams(
+  //       rowBits = site(SystemBusKey).beatBits,
+  //       nSets = 64,
+  //       nWays = 8,
+  //       nTLBSets = 1,
+  //       nTLBWays = 32,
+  //       blockBytes = site(CacheBlockBytes))))
+  //   List.tabulate(n)(i => checker.copy(hartId = i + idOffset)) ++ prev
+  // }
+  case TilesLocated(InSubsystem) => {
+    val prev = up(TilesLocated(InSubsystem), site)
+    val idOffset = overrideIdOffset.getOrElse(prev.size)
+    val checker = RocketTileParams(
+      core = RocketCoreParams(useDebug = false,
+      mulDiv = Some(MulDivParams(
+        mulUnroll = 8,
+        divUnroll = 8,
+        mulEarlyOut = true,
+        divEarlyOut = true))),
+      dcache = Some(DCacheParams(
+        rowBits = site(SystemBusKey).beatBits,
+        nSets = 32,
+        nWays = 2,
+        nTLBSets = 1,
+        nTLBWays = 4,
+        nMSHRs = 0,
+        blockBytes = site(CacheBlockBytes))),
+      icache = Some(ICacheParams(
+        rowBits = site(SystemBusKey).beatBits,
+        nSets = 64,
+        nWays = 8,
+        nTLBSets = 1,
+        nTLBWays = 32,
+        blockBytes = site(CacheBlockBytes))))
+    List.tabulate(n)(i => RocketTileAttachParams(
+      checker.copy(hartId = i + idOffset),
+      crossing
+    )) ++ prev
+  }
+})
+//===== GuardianCouncil Function: End ======//
+//==========================================//
 class With1TinyCore extends Config((site, here, up) => {
   case XLen => 32
   case TilesLocated(InSubsystem) => {
@@ -600,7 +716,11 @@ class WithFrontBusFrequency(freqMHz: Double) extends Config((site, here, up) => 
 class WithControlBusFrequency(freqMHz: Double) extends Config((site, here, up) => {
   case ControlBusKey => up(ControlBusKey, site).copy(dtsFrequency = Some(BigInt((freqMHz * 1e6).round)))
 })
-
+//===== GuardianCouncil Function: Start ====//
+class WithGCBusFrequency(freqMHz: Double) extends Config((site, here, up) => {
+  case GCBusKey => up(GCBusKey, site).copy(dtsFrequency = Some(BigInt((freqMHz * 1e6).round)))
+})
+//===== GuardianCouncil Function: End ====//
 /** Under the default multi-bus topologies, this leaves bus ClockSinks undriven by the topology itself */
 class WithDontDriveBusClocksFromSBus extends Config((site, here, up) => {
   case DriveClocksFromSBus => false

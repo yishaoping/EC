@@ -19,7 +19,12 @@ import freechips.rocketchip.amba.axi4._
 // Event sets for core CSR
 // This object simply disable all performance counters
 object CSREvents {
-  val events = new EventSets(Seq(new EventSet((mask, hit) => false.B, Seq(("placeholder", () => false.B)))))
+  val events = new EventSets(
+    Seq(new EventSet((mask, hit) => false.B, 
+        Seq(("placeholder", () => (false.B, false.B, 0.U))) // EC 修改返回类型
+      )
+    )
+  )
 }
 
 // Abstract core and tile base class for all cores

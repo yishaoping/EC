@@ -4,7 +4,7 @@ package freechips.rocketchip.subsystem
 
 import chisel3._
 import chisel3.dontTouch
-import freechips.rocketchip.config.{Field, Parameters}
+import org.chipsalliance.cde.config.{Field, Parameters}
 import freechips.rocketchip.devices.debug.{HasPeripheryDebug, HasPeripheryDebugModuleImp}
 import freechips.rocketchip.devices.tilelink.{BasicBusBlocker, BasicBusBlockerParams, CLINTConsts, PLICKey, CanHavePeripheryPLIC, CanHavePeripheryCLINT}
 import freechips.rocketchip.diplomacy._
@@ -13,7 +13,9 @@ import freechips.rocketchip.tile._
 import freechips.rocketchip.tilelink._
 import freechips.rocketchip.prci.{ClockGroup, ResetCrossingType, ClockGroupNode}
 import freechips.rocketchip.util._
-
+//===== GuardianCouncil Function: Start ====//
+import freechips.rocketchip.guardiancouncil._
+//===== GuardianCouncil Function: End   ====//
 /** Entry point for Config-uring the presence of Tiles */
 case class TilesLocated(loc: HierarchicalLocation) extends Field[Seq[CanAttachTile]](Nil)
 
@@ -207,18 +209,79 @@ trait HasTileInputConstants extends InstantiatesTiles { this: BaseSubsystem =>
   * They need to be instantiated before tiles are attached to the subsystem containing them.
   */
 trait HasTileNotificationSinks { this: LazyModule =>
-  val tileHaltXbarNode = IntXbar(p)
+  val tileHaltXbarNode = IntXbar()
   val tileHaltSinkNode = IntSinkNode(IntSinkPortSimple())
   tileHaltSinkNode := tileHaltXbarNode
 
-  val tileWFIXbarNode = IntXbar(p)
+  val tileWFIXbarNode = IntXbar()
   val tileWFISinkNode = IntSinkNode(IntSinkPortSimple())
   tileWFISinkNode := tileWFIXbarNode
 
-  val tileCeaseXbarNode = IntXbar(p)
+  val tileCeaseXbarNode = IntXbar()
   val tileCeaseSinkNode = IntSinkNode(IntSinkPortSimple())
   tileCeaseSinkNode := tileCeaseXbarNode
 }
+//===== GuardianCouncil Function: Start ====//
+trait HasGHnodes extends InstantiatesTiles { this: BaseSubsystem =>
+  val tile_ghm_agg_core_id_EPNode                = BundleBridgeEphemeralNode[UInt]()
+  val tile_ght_packet_out_EPNode                 = BundleBridgeEphemeralNode[UInt]()
+  val tile_core_r_arfs_EPNode                    = BundleBridgeEphemeralNode[UInt]()
+  val tile_ic_counter_out_EPNode                 = BundleBridgeEphemeralNode[UInt]()
+  // val tile_icsl_ack_EPNode                       = BundleBridgeEphemeralNode[UInt]()
+
+  // val tile_big_checker_switch_EPNode             = BundleBridgeEphemeralNode[UInt]()
+  val debug_maincore_status_out_EPNode           = BundleBridgeEphemeralNode[UInt]()
+
+  // val big_complete_ack_EPNode           = BundleBridgeEphemeralNode[UInt]() 
+
+  val tile_ght_packet_dest_EPNode                = BundleBridgeEphemeralNode[UInt]()
+  val tile_ght_status_out_EPNode                 = BundleBridgeEphemeralNode[UInt]()
+
+  var tile_clock_EPNodes                         = Seq[BundleBridgeEphemeralNode[Clock]]()
+  var tile_reset_EPNodes                         = Seq[BundleBridgeEphemeralNode[Bool]]()
+
+  // var tile_big_complete_EPNodes                  = Seq[BundleBridgeEphemeralNode[Bool]]()//from little
+  // var tile_if_big_complete_EPNodes               = Seq[BundleBridgeEphemeralNode[Bool]]()//to little
+  
+  var tile_ghe_event_out_EPNodes                 = Seq[BundleBridgeEphemeralNode[UInt]]()
+  var tile_ghe_revent_out_EPNodes                = Seq[BundleBridgeEphemeralNode[UInt]]()
+  var tile_ghe_packet_in_EPNodes                 = Seq[BundleBridgeEphemeralNode[UInt]]()
+  var core_r_arfs_c_EPNodes                      = Seq[BundleBridgeEphemeralNode[UInt]]()
+  var tile_icsl_counter_in_EPNodes               = Seq[BundleBridgeEphemeralNode[UInt]]()
+  var tile_clear_ic_status_out_EPNodes           = Seq[BundleBridgeEphemeralNode[UInt]]()
+  var tile_ghe_status_in_EPNodes                 = Seq[BundleBridgeEphemeralNode[UInt]]()
+  var clear_ic_status_tomainEPNodes              = Seq[BundleBridgeEphemeralNode[UInt]]()
+  // var icsl_ack_tocheckerEPNodes                  = Seq[BundleBridgeEphemeralNode[Bool]]()
+
+  // var big_switch_tocheckerEPNodes                  = Seq[BundleBridgeEphemeralNode[Bool]]()
+  var cdc_empty_tocheckerEPNodes                 = Seq[BundleBridgeEphemeralNode[Bool]]()
+  var icsl_naEPNodes                             = Seq[BundleBridgeEphemeralNode[UInt]]()
+
+  val tile_bigcore_hang_EPNode                   = BundleBridgeEphemeralNode[UInt]()
+  val tile_bigcore_comp_EPNode                   = BundleBridgeEphemeralNode[UInt]()
+  val tile_debug_bp_EPNode                       = BundleBridgeEphemeralNode[UInt]()
+  // val tile_if_big_complete_req_EPNode            = BundleBridgeEphemeralNode[UInt]()
+
+
+  var tile_agg_packet_out_EPNodes                = Seq[BundleBridgeEphemeralNode[UInt]]()
+  var tile_report_fi_detection_EPNodes           = Seq[BundleBridgeEphemeralNode[UInt]]()
+  var tile_report_fi_detection_in_EPNodes        = Seq[BundleBridgeEphemeralNode[UInt]]()
+  var tile_agg_buffer_full_in_EPNodes            = Seq[BundleBridgeEphemeralNode[UInt]]()
+  var tile_agg_core_status_out_EPNodes           = Seq[BundleBridgeEphemeralNode[UInt]]()
+
+  var tile_ght_sch_na_out_EPNodes                = Seq[BundleBridgeEphemeralNode[UInt]]()
+  var tile_ghe_sch_refresh_in_EPNodes            = Seq[BundleBridgeEphemeralNode[UInt]]()
+
+  val tile_sch_na_EPNode                         = BundleBridgeEphemeralNode[UInt]()
+  var tile_ght_sch_dorefresh_EPNodes             = Seq[BundleBridgeEphemeralNode[UInt]]()
+
+  val tile_debug_gcounter_EPNode                 = BundleBridgeEphemeralNode[UInt]()
+  
+  var tile_agg_packet_in_EPNodes                 = Seq[BundleBridgeEphemeralNode[UInt]]()
+  val tile_agg_empty_EPNode                      = BundleBridgeEphemeralNode[UInt]()
+  val tile_agg_free_EPNode                       = BundleBridgeEphemeralNode[UInt]()
+}
+//===== GuardianCouncil Function: End ======//
 
 /** Most tile types require only these traits in order for their standardized connect functions to apply.
   *
@@ -230,7 +293,10 @@ trait DefaultTileContextType
   with HasTileInterruptSources
   with HasTileNotificationSinks
   with HasTileInputConstants
-{ this: BaseSubsystem => } // TODO: ideally this bound would be softened to LazyModule
+  with HasGHnodes
+{ this: BaseSubsystem =>
+  val debugNode: IntSyncOutwardNode
+} // TODO: ideally this bound would be softened to LazyModule
 
 /** Standardized interface by which parameterized tiles can be attached to contexts containing interconnect resources.
   *
@@ -261,6 +327,9 @@ trait CanAttachTile {
     connectPRC(domain, context)
     connectOutputNotifications(domain, context)
     connectInputConstants(domain, context)
+    //===== GuardianCouncil Function: Start ====//
+    connectGHSingals(domain, context)
+    //===== GuardianCouncil Function: End   ====//
   }
 
   /** Connect the port where the tile is the master to a TileLink interconnect. */
@@ -291,10 +360,7 @@ trait CanAttachTile {
     //       we stub out missing interrupts with constant sources here.
 
     // 1. Debug interrupt is definitely asynchronous in all cases.
-    domain.tile.intInwardNode :=
-      context.debugOpt
-        .map { domain { IntSyncAsyncCrossingSink(3) } := _.intnode }
-        .getOrElse { NullIntSource() }
+    domain.tile.intInwardNode := domain { IntSyncAsyncCrossingSink(3) } := context.debugNode
 
     // 2. The CLINT and PLIC output interrupts are synchronous to the TileLink bus clock,
     //    so might need to be synchronized depending on the Tile's crossing type.
@@ -374,6 +440,168 @@ trait CanAttachTile {
       domain.tile_reset_domain.clockNode := crossingParams.resetCrossingType.injectClockNode := domain.clockNode
     }
   }
+  //===== GuardianCouncil Function: Start ====//
+  def connectGHSingals(domain: TilePRCIDomain[TileType], context: TileContextType): Unit = {
+    implicit val p = context.p
+
+    // GHT connections
+    if (tileParams.hartId == 0) {
+      context.tile_ic_counter_out_EPNode  := domain.tile.ic_counter_SRNode
+      // context.tile_icsl_ack_EPNode        := domain.tile.icsl_ack_SRNode  
+      // context.tile_big_checker_switch_EPNode:= domain.tile.big_checker_switch_SRNode
+      context.debug_maincore_status_out_EPNode := domain.tile.debug_maincore_status_SRNode
+      // context.big_complete_ack_EPNode     := domain.tile.big_complete_ack_SRNode
+      context.tile_ght_packet_out_EPNode  := domain.tile.ght_packet_out_SRNode
+      context.tile_core_r_arfs_EPNode     := domain.tile.core_r_arfs_SRNode
+      context.tile_ghm_agg_core_id_EPNode := domain.tile.ghm_agg_core_id_out_SRNode
+      context.tile_ght_packet_dest_EPNode := domain.tile.ght_packet_dest_SRNode
+      context.tile_ght_status_out_EPNode  := domain.tile.ght_status_out_SRNode
+      domain.tile.bigcore_hang_in_SKNode  := context.tile_bigcore_hang_EPNode
+      domain.tile.bigcore_comp_in_SKNode  := context.tile_bigcore_comp_EPNode
+      domain.tile.debug_bp_in_SKNode      := context.tile_debug_bp_EPNode
+      // domain.tile.if_big_complete_req_SKNode:= context.tile_if_big_complete_req_EPNode
+      domain.tile.sch_na_inSKNode         := context.tile_sch_na_EPNode
+      domain.tile.debug_gcounter_SKNode   := context.tile_debug_gcounter_EPNode
+      context.tile_agg_free_EPNode        := context.tile_agg_empty_EPNode
+      println("#### Jessica #### Connecting GHT **Nodes** on the sub-system, HartID:", tileParams.hartId, "...!!")
+    } else {
+      val useless_bigcore_ic_counter_SRNode= BundleBridgeSink[UInt](Some(() => UInt((16*GH_GlobalParams.GH_NUM_CORES).W)))
+      val useless_debug_maincore_status_SRNode= BundleBridgeSink[UInt](Some(() => UInt((4.W))))
+      val useless_bigcore_hang_SRNode      = BundleBridgeSource[UInt](Some(() => UInt(1.W)))
+      val useless_bigcore_comp_SRNode      = BundleBridgeSource[UInt](Some(() => UInt(3.W)))
+      val useless_debug_bp_SRNode          = BundleBridgeSource[UInt](Some(() => UInt(2.W)))
+      // val useless_if_big_complete_req_SRNode          = BundleBridgeSource[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES-1).W)))
+      val useless_packet_SKNode            = BundleBridgeSink[UInt](Some(() => UInt((2*GH_GlobalParams.GH_WIDITH_PACKETS).W)))
+      val useless_core_r_arfs_SKNode       = BundleBridgeSink[UInt](Some(() => UInt((152+1).W)))
+      val useless_agg_core_id_SKNode       = BundleBridgeSink[UInt](Some(() => UInt(16.W)))
+      val useless_packet_dest_SKNode       = BundleBridgeSink[UInt](Some(() => UInt(32.W)))
+      val useless_status_SKNode            = BundleBridgeSink[UInt](Some(() => UInt(32.W)))
+      val useless_sch_na_inSKNode          = BundleBridgeSource[UInt](Some(() => UInt(16.W)))
+      val useless_debug_gcounter_SKNode    = BundleBridgeSource[UInt](Some(() => UInt(64.W)))
+      // val useless_icsl_ack_SKNode          = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES-1).W)))
+      // useless_icsl_ack_SKNode             := domain.tile.icsl_ack_SRNode
+      useless_bigcore_ic_counter_SRNode   := domain.tile.ic_counter_SRNode
+      useless_debug_maincore_status_SRNode:= domain.tile.debug_maincore_status_SRNode
+      useless_packet_SKNode               := domain.tile.ght_packet_out_SRNode
+      useless_core_r_arfs_SKNode          := domain.tile.core_r_arfs_SRNode
+      useless_agg_core_id_SKNode          := domain.tile.ghm_agg_core_id_out_SRNode
+      useless_packet_dest_SKNode          := domain.tile.ght_packet_dest_SRNode
+      useless_status_SKNode               := domain.tile.ght_status_out_SRNode
+      domain.tile.bigcore_hang_in_SKNode  := useless_bigcore_hang_SRNode
+      domain.tile.bigcore_comp_in_SKNode  := useless_bigcore_comp_SRNode
+      domain.tile.debug_bp_in_SKNode      := useless_debug_bp_SRNode
+      // domain.tile.if_big_complete_req_SKNode:= useless_if_big_complete_req_SRNode
+      domain.tile.sch_na_inSKNode         := useless_sch_na_inSKNode
+      domain.tile.debug_gcounter_SKNode   := useless_debug_gcounter_SKNode
+      println("#### Jessica #### Tieing off GHT **Nodes** on the sub-system, HartID:", tileParams.hartId,"...!!")
+    }
+
+    // GHE connections
+    val tile_ghe_packet_in_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.tile_ghe_packet_in_EPNodes = context.tile_ghe_packet_in_EPNodes :+ tile_ghe_packet_in_EPNode
+    domain.tile.ghe_packet_in_SKNode := tile_ghe_packet_in_EPNode
+
+    val core_r_arfs_c_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.core_r_arfs_c_EPNodes = context.core_r_arfs_c_EPNodes :+ core_r_arfs_c_EPNode
+    domain.tile.core_r_arfs_c_SKNode := core_r_arfs_c_EPNode
+
+
+    val tile_icsl_counter_in_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.tile_icsl_counter_in_EPNodes = context.tile_icsl_counter_in_EPNodes :+ tile_icsl_counter_in_EPNode
+    domain.tile.ic_counter_SKNode := tile_icsl_counter_in_EPNode
+
+    val tile_clear_ic_status_out_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.tile_clear_ic_status_out_EPNodes = context.tile_clear_ic_status_out_EPNodes :+ tile_clear_ic_status_out_EPNode
+    tile_clear_ic_status_out_EPNode := domain.tile.clear_ic_status_SRNode
+
+    val clear_ic_status_tomainEPNode = BundleBridgeEphemeralNode[UInt]()
+    context.clear_ic_status_tomainEPNodes = context.clear_ic_status_tomainEPNodes :+ clear_ic_status_tomainEPNode
+    domain.tile.clear_ic_status_tomainSKNode := clear_ic_status_tomainEPNode
+
+    // val icsl_ack_tocheckerEPNode = BundleBridgeEphemeralNode[Bool]()
+    // context.icsl_ack_tocheckerEPNodes = context.icsl_ack_tocheckerEPNodes :+ icsl_ack_tocheckerEPNode
+    // domain.tile.icsl_ack_tocheckerSKNode := icsl_ack_tocheckerEPNode
+
+    // val big_switch_tocheckerEPNode = BundleBridgeEphemeralNode[Bool]()
+    // context.big_switch_tocheckerEPNodes = context.big_switch_tocheckerEPNodes :+ big_switch_tocheckerEPNode
+    // domain.tile.big_switch_tocheckerSKNode := big_switch_tocheckerEPNode
+
+    val cdc_empty_tocheckerEPNode = BundleBridgeEphemeralNode[Bool]()
+    context.cdc_empty_tocheckerEPNodes = context.cdc_empty_tocheckerEPNodes :+ cdc_empty_tocheckerEPNode
+    domain.tile.cdc_empty_tocheckerSKNode := cdc_empty_tocheckerEPNode
+
+    val icsl_naEPNode = BundleBridgeEphemeralNode[UInt]()
+    context.icsl_naEPNodes = context.icsl_naEPNodes :+ icsl_naEPNode
+    domain.tile.icsl_naSKNode := icsl_naEPNode
+
+    val tile_ghe_status_in_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.tile_ghe_status_in_EPNodes = context.tile_ghe_status_in_EPNodes :+ tile_ghe_status_in_EPNode
+    domain.tile.ghe_status_in_SKNode := tile_ghe_status_in_EPNode
+
+    val tile_ghe_event_out_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.tile_ghe_event_out_EPNodes = context.tile_ghe_event_out_EPNodes :+ tile_ghe_event_out_EPNode
+    tile_ghe_event_out_EPNode := domain.tile.ghe_event_out_SRNode
+
+    val tile_clock_EPNode = BundleBridgeEphemeralNode[Clock]()
+    context.tile_clock_EPNodes = context.tile_clock_EPNodes :+ tile_clock_EPNode
+    tile_clock_EPNode := domain.tile.clock_SRNode
+
+    val tile_reset_EPNode = BundleBridgeEphemeralNode[Bool]()
+    context.tile_reset_EPNodes = context.tile_reset_EPNodes :+ tile_reset_EPNode
+    tile_reset_EPNode := domain.tile.reset_SRNode
+
+    // val tile_if_big_complete_EPNode = BundleBridgeEphemeralNode[Bool]()
+    // context.tile_if_big_complete_EPNodes = context.tile_if_big_complete_EPNodes :+ tile_if_big_complete_EPNode
+    // tile_if_big_complete_EPNode := domain.tile.if_big_complete_SRNode
+
+    // val tile_big_complete_EPNode = BundleBridgeEphemeralNode[Bool]()
+    // context.tile_big_complete_EPNodes = context.tile_big_complete_EPNodes :+ tile_big_complete_EPNode
+    // domain.tile.big_complete_SKNode := tile_big_complete_EPNode
+
+    val tile_ghe_revent_out_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.tile_ghe_revent_out_EPNodes = context.tile_ghe_revent_out_EPNodes :+ tile_ghe_revent_out_EPNode
+    tile_ghe_revent_out_EPNode := domain.tile.ghe_revent_out_SRNode
+
+    val tile_agg_packet_out_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.tile_agg_packet_out_EPNodes = context.tile_agg_packet_out_EPNodes :+ tile_agg_packet_out_EPNode
+    tile_agg_packet_out_EPNode := domain.tile.agg_packet_out_SRNode
+
+    val tile_report_fi_detection_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.tile_report_fi_detection_EPNodes = context.tile_report_fi_detection_EPNodes :+ tile_report_fi_detection_EPNode
+    tile_report_fi_detection_EPNode := domain.tile.report_fi_detection_SRNode
+
+    val tile_report_fi_detection_in_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.tile_report_fi_detection_in_EPNodes = context.tile_report_fi_detection_in_EPNodes :+ tile_report_fi_detection_in_EPNode
+    domain.tile.report_fi_detection_in_SKNode := tile_report_fi_detection_in_EPNode
+
+
+    val tile_agg_buffer_full_in_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.tile_agg_buffer_full_in_EPNodes = context.tile_agg_buffer_full_in_EPNodes :+ tile_agg_buffer_full_in_EPNode
+    domain.tile.agg_buffer_full_in_SKNode := tile_agg_buffer_full_in_EPNode
+
+    val tile_agg_core_status_out_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.tile_agg_core_status_out_EPNodes = context.tile_agg_core_status_out_EPNodes :+ tile_agg_core_status_out_EPNode
+    tile_agg_core_status_out_EPNode := domain.tile.agg_core_status_SRNode
+
+    val tile_ght_sch_na_out_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.tile_ght_sch_na_out_EPNodes = context.tile_ght_sch_na_out_EPNodes :+ tile_ght_sch_na_out_EPNode
+    tile_ght_sch_na_out_EPNode := domain.tile.ght_sch_na_out_SRNode
+
+    val tile_ghe_sch_refresh_in_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.tile_ghe_sch_refresh_in_EPNodes = context.tile_ghe_sch_refresh_in_EPNodes :+ tile_ghe_sch_refresh_in_EPNode
+    domain.tile.ghe_sch_refresh_in_SKNode := tile_ghe_sch_refresh_in_EPNode
+
+    val tile_ght_sch_dorefresh_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.tile_ght_sch_dorefresh_EPNodes = context.tile_ght_sch_dorefresh_EPNodes :+ tile_ght_sch_dorefresh_EPNode
+    tile_ght_sch_dorefresh_EPNode := domain.tile.ght_sch_dorefresh_SRNode
+
+    val tile_agg_packet_in_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.tile_agg_packet_in_EPNodes = context.tile_agg_packet_in_EPNodes :+ tile_agg_packet_in_EPNode
+    domain.tile.agg_packet_in_SKNode := tile_agg_packet_in_EPNode
+
+    println("#### Jessica #### Connecting GHE **Nodes** on the sub-system, HartID:", tileParams.hartId, "...!!")
+  }
+  //===== GuardianCouncil Function: End ======//
 }
 
 case class CloneTileAttachParams(

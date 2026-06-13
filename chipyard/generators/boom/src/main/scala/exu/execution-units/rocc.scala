@@ -15,7 +15,7 @@ package boom.exu
 import chisel3._
 import chisel3.util._
 
-import freechips.rocketchip.config.Parameters
+import org.chipsalliance.cde.config.Parameters
 import freechips.rocketchip.tile.{RoCCCoreIO, RoCCInstruction}
 import freechips.rocketchip.rocket._
 
@@ -76,6 +76,8 @@ class RoCCShim(implicit p: Parameters) extends BoomModule
 
   // RoCC commit queue. Wait for response, or immediate unbusy
   val rcq           = Module(new Queue(new MicroOp(), numRcqEntries))
+  val rcq_rs1       = Module(new Queue(UInt(xLen.W), numRcqEntries))
+  val rcq_rs2       = Module(new Queue(UInt(xLen.W), numRcqEntries))
 
   // The instruction we are waiting for response from
   val rxq_head     = RegInit(0.U(log2Ceil(numRxqEntries).W))
@@ -135,7 +137,11 @@ class RoCCShim(implicit p: Parameters) extends BoomModule
   // Execute
   io.core.rocc.cmd.valid := false.B
   rcq.io.enq.valid       := false.B
+  rcq_rs1.io.enq.valid   := false.B
+  rcq_rs2.io.enq.valid   := false.B
   rcq.io.enq.bits        := rxq_uop(rxq_head)
+  rcq_rs1.io.enq.bits    := rxq_rs1(rxq_head)
+  rcq_rs2.io.enq.bits    := rxq_rs2(rxq_head)
   when (rxq_op_val   (rxq_head) &&
         rxq_val      (rxq_head) &&
         rxq_committed(rxq_head) &&
@@ -147,6 +153,8 @@ class RoCCShim(implicit p: Parameters) extends BoomModule
     io.core.rocc.cmd.bits.rs2      := rxq_rs2(rxq_head)
     io.core.rocc.cmd.bits.status   := io.status
     rcq.io.enq.valid               := true.B
+    rcq_rs1.io.enq.valid           := true.B
+    rcq_rs2.io.enq.valid           := true.B
 
     rxq_val(rxq_head)              := false.B
     rxq_head                       := WrapInc(rxq_head, numRxqEntries)
@@ -207,6 +215,8 @@ class RoCCShim(implicit p: Parameters) extends BoomModule
   io.core.rocc.resp.ready := io.resp.ready && rcq.io.deq.bits.dst_rtype =/= RT_X
   io.resp.valid           := false.B
   rcq.io.deq.ready        := false.B
+  rcq_rs1.io.deq.ready    := false.B
+  rcq_rs2.io.deq.ready    := false.B
   when (handle_resp) {
     assert((rcq.io.deq.bits.dst_rtype === RT_X)
         || io.core.rocc.resp.bits.rd === rcq.io.deq.bits.ldst,
@@ -215,7 +225,10 @@ class RoCCShim(implicit p: Parameters) extends BoomModule
     io.resp.valid              := true.B
     io.resp.bits.uop           := rcq.io.deq.bits
     io.resp.bits.data          := io.core.rocc.resp.bits.data
-
+    io.resp.bits.rs1_data      := rcq_rs1.io.deq.bits
+    io.resp.bits.rs2_data      := rcq_rs2.io.deq.bits
     rcq.io.deq.ready           := true.B
+    rcq_rs1.io.deq.ready       := true.B
+    rcq_rs2.io.deq.ready       := true.B
   }
 }

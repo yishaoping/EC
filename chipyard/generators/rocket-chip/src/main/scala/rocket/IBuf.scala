@@ -4,7 +4,7 @@ package freechips.rocketchip.rocket
 
 import chisel3._
 import chisel3.util.{Decoupled,log2Ceil,Cat,UIntToOH,Fill}
-import freechips.rocketchip.config.Parameters
+import org.chipsalliance.cde.config.Parameters
 import freechips.rocketchip.tile._
 import freechips.rocketchip.util._
 
@@ -24,19 +24,23 @@ class IBuf(implicit p: Parameters) extends CoreModule {
     val kill = Input(Bool())
     val pc = Output(UInt(vaddrBitsExtended.W))
     val btb_resp = Output(new BTBResp())
+    //===== GuardianCouncil Function: Start ====//  
+    val checker_mode = Input(Bool())
+    //===== GuardianCouncil Function: End ====//
     val inst = Vec(retireWidth, Decoupled(new Instruction))
   })
 
   // This module is meant to be more general, but it's not there yet
   require(decodeWidth == 1)
 
-  val n = fetchWidth - 1
+  val n = fetchWidth - 1 // 1
   val nBufValid = if (n == 0) 0.U else RegInit(init=0.U(log2Ceil(fetchWidth).W))
   val buf = Reg(chiselTypeOf(io.imem.bits))
   val ibufBTBResp = Reg(new BTBResp)
   val pcWordMask = (coreInstBytes*fetchWidth-1).U(vaddrBitsExtended.W)
-
+  dontTouch(io)
   val pcWordBits = io.imem.bits.pc.extract(log2Ceil(fetchWidth*coreInstBytes)-1, log2Ceil(coreInstBytes))
+  dontTouch(pcWordBits)
   val nReady = WireDefault(0.U(log2Ceil(fetchWidth+1).W))
   val nIC = Mux(io.imem.bits.btb.taken, io.imem.bits.btb.bridx +& 1.U, fetchWidth.U) - pcWordBits
   val nICReady = nReady - nBufValid
@@ -69,8 +73,16 @@ class IBuf(implicit p: Parameters) extends CoreModule {
   val icData = shiftInsnLeft(Cat(io.imem.bits.data, Fill(fetchWidth, io.imem.bits.data(coreInstBits-1, 0))), icShiftAmt)
     .extract(3*fetchWidth*coreInstBits-1, 2*fetchWidth*coreInstBits)
   val icMask = (~0.U((fetchWidth*coreInstBits).W) << (nBufValid << log2Ceil(coreInstBits)))(fetchWidth*coreInstBits-1,0)
-  val inst = icData & icMask | buf.data & ~icMask
-
+  dontTouch(icData)
+  dontTouch(icMask)
+  dontTouch(icShiftAmt)
+  // val inst = icData & icMask | buf.data & ~icMask
+//===== GuardianCouncil Function: Start ====//
+  val inst_checker = icData & icMask | buf.data & ~icMask
+  val inst_if_ebreak = Mux(((inst_checker === 0x00100073.U) || (inst_checker === 0x9002.U)), true.B, false.B)
+  val inst_if_ecall = Mux(inst_checker === 0x00000073.U, true.B, false.B)
+  val inst = Mux(io.checker_mode.asBool && (inst_if_ebreak || inst_if_ecall), 0x00000013.U, inst_checker) // An sys-call should not be executed in checker mode
+//===== GuardianCouncil Function: End ====//
   val valid = (UIntToOH(nValid) - 1.U)(fetchWidth-1, 0)
   val bufMask = UIntToOH(nBufValid) - 1.U
   val xcpt = (0 until bufMask.getWidth).map(i => Mux(bufMask(i), buf.xcpt, io.imem.bits.xcpt))

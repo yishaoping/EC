@@ -28,11 +28,13 @@ import scala.math.ceil
 import chisel3._
 import chisel3.util._
 
-import freechips.rocketchip.config.Parameters
+import org.chipsalliance.cde.config.Parameters
 import freechips.rocketchip.util.Str
 
 import boom.common._
 import boom.util._
+import boom.lsu.STQEntry
+import freechips.rocketchip.tile.EnableROBDebug
 
 /**
  * IO bundle to interact with the ROB
@@ -80,6 +82,11 @@ class RobIo(
   val debug_wb_valids = Input(Vec(numWakeupPorts, Bool()))
   val debug_wb_wdata  = Input(Vec(numWakeupPorts, Bits(xLen.W)))
 
+  val debug_rs1_data  = Input(Vec(numWakeupPorts, Bits(xLen.W)))
+  val debug_rs2_data  = Input(Vec(numWakeupPorts, Bits(xLen.W)))
+
+  val debug_st        = Vec(coreWidth, Input(Valid(new STQEntry)))
+
   val fflags = Flipped(Vec(numFpuPorts, new ValidIO(new FFlagsResp())))
   val lxcpt = Flipped(new ValidIO(new Exception())) // LSU
 
@@ -109,6 +116,15 @@ class RobIo(
 
 
   val debug_tsc = Input(UInt(xLen.W))
+  //===== GuardianCouncil Function: Start ====//
+  val gh_stall                                  = Input(Bool())
+  val can_commit_withoutGC                      = Output(Bool())
+
+  val gh_effective_jalr_target                  = Input(UInt(xLen.W)) // Revisit: make it is generic
+  val gh_effective_rob_idx                      = Input(UInt(7.W))    // Revisit: make it is generic
+  val gh_effective_valid                        = Input(UInt(1.W))    // Revisit: make it is generic
+  val r_next_pc                                 = Output(UInt(40.W))    // Revisit: make it is generic
+  //===== GuardianCouncil Function: End  ====//
 }
 
 /**
@@ -129,6 +145,11 @@ class CommitSignals(implicit p: Parameters) extends BoomBundle
   val rollback   = Bool()
 
   val debug_wdata = Vec(retireWidth, UInt(xLen.W))
+  val debug_rs1   = Vec(retireWidth, UInt(xLen.W))
+  val debug_rs2   = Vec(retireWidth, UInt(xLen.W))
+  //===== GuardianCouncil Function: Start ====//
+  val gh_effective_alu_out                  = Vec(retireWidth, UInt(xLen.W)) // Revisit: make it is generic
+  //===== GuardianCouncil Function: End  ====//
 }
 
 /**
@@ -214,6 +235,8 @@ class Rob(
 {
   val io = IO(new RobIo(numWakeupPorts, numFpuPorts))
 
+  val enDebug = p(EnableROBDebug)
+
   // ROB Finite State Machine
   val s_reset :: s_normal :: s_rollback :: s_wait_till_empty :: Nil = Enum(4)
   val rob_state = RegInit(s_reset)
@@ -240,6 +263,10 @@ class Rob(
 
   val will_commit         = Wire(Vec(coreWidth, Bool()))
   val can_commit          = Wire(Vec(coreWidth, Bool()))
+//===== GuardianCouncil Function: Start ====//
+  val can_commit_noGC     = Wire(Vec(coreWidth, Bool()))
+  val will_commit_noGC    = Wire(Vec(coreWidth, Bool()))
+//===== GuardianCouncil Function: End ====//
   val can_throw_exception = Wire(Vec(coreWidth, Bool()))
 
   val rob_pnr_unsafe      = Wire(Vec(coreWidth, Bool())) // are the instructions at the pnr unsafe?
@@ -248,9 +275,17 @@ class Rob(
   val rob_head_uses_stq   = Wire(Vec(coreWidth, Bool()))
   val rob_head_uses_ldq   = Wire(Vec(coreWidth, Bool()))
   val rob_head_fflags     = Wire(Vec(coreWidth, UInt(freechips.rocketchip.tile.FPConstants.FLAGS_SZ.W)))
-
+//===== GuardianCouncil Function: Start ====//
+  val rob_head_pcs        = Wire(Vec(coreWidth, UInt(40.W)))
+  io.r_next_pc           := rob_head_pcs(rob_head_lsb)
+  io.can_commit_withoutGC:= can_commit_noGC.reduce(_|_)
+//===== GuardianCouncil Function: End ====//
   val exception_thrown = Wire(Bool())
 
+  dontTouch(io.commit)
+  dontTouch(io.commit.uops)
+  dontTouch(io.debug_rs1_data)
+  dontTouch(io.debug_rs2_data)
   // exception info
   // TODO compress xcpt cause size. Most bits in the middle are zero.
   val r_xcpt_val       = RegInit(false.B)
@@ -292,11 +327,11 @@ class Rob(
   val rob_unsafe_masked = WireInit(VecInit(Seq.fill(numRobRows << log2Ceil(coreWidth)){false.B}))
 
   // Used for trace port, for debug purposes only
-  val rob_debug_inst_mem   = SyncReadMem(numRobRows, Vec(coreWidth, UInt(32.W)))
+  val rob_debug_inst_mem   = if(enDebug) Some(SyncReadMem(numRobRows, Vec(coreWidth, UInt(32.W)))) else None
   val rob_debug_inst_wmask = WireInit(VecInit(0.U(coreWidth.W).asBools))
   val rob_debug_inst_wdata = Wire(Vec(coreWidth, UInt(32.W)))
-  rob_debug_inst_mem.write(rob_tail, rob_debug_inst_wdata, rob_debug_inst_wmask)
-  val rob_debug_inst_rdata = rob_debug_inst_mem.read(rob_head, will_commit.reduce(_||_))
+  rob_debug_inst_mem.getOrElse{SyncReadMem(1, Vec(coreWidth, UInt(32.W)))}.write(rob_tail, rob_debug_inst_wdata, rob_debug_inst_wmask)
+  val rob_debug_inst_rdata = rob_debug_inst_mem.getOrElse{SyncReadMem(1, Vec(coreWidth, UInt(32.W)))}.read(rob_head, will_commit.reduce(_||_))
 
   for (w <- 0 until coreWidth) {
     def MatchBank(bank_idx: UInt): Bool = (bank_idx === w.U)
@@ -311,7 +346,13 @@ class Rob(
     val rob_fflags    = Mem(numRobRows, Bits(freechips.rocketchip.tile.FPConstants.FLAGS_SZ.W))
 
     val rob_debug_wdata = Mem(numRobRows, UInt(xLen.W))
+    val rob_debug_rs1   = if(enDebug) Some(Mem(numRobRows, UInt(xLen.W))) else None
+    val rob_debug_rs2   = if(enDebug) Some(Mem(numRobRows, UInt(xLen.W))) else None
 
+  
+    //===== GuardianCouncil Function: Start ====//
+    val gh_effective_alu_out_reg                  = Reg(Vec(numRobRows, UInt(xLen.W)))
+    //===== GuardianCouncil Function: End   ====//
     //-----------------------------------------------
     // Dispatch: Add Entry to ROB
 
@@ -399,9 +440,19 @@ class Rob(
     // Commit or Rollback
 
     // Can this instruction commit? (the check for exceptions/rob_state happens later).
-    can_commit(w) := rob_val(rob_head) && !(rob_bsy(rob_head)) && !io.csr_stall
+    // can_commit(w) := rob_val(rob_head) && !(rob_bsy(rob_head)) && !io.csr_stall
 
-
+ //===== GuardianCouncil Function: Start ====//
+    can_commit(w)                                := rob_val(rob_head) && !(rob_bsy(rob_head)) && !io.csr_stall && !io.gh_stall
+    // can_commit(w)                                := rob_val(rob_head) && !(rob_bsy(rob_head)) && !io.csr_stall
+    can_commit_noGC(w)                           := rob_val(rob_head) && !(rob_bsy(rob_head)) && !io.csr_stall
+    
+    when ((io.gh_effective_valid === 1.U) && (GetBankIdx(io.gh_effective_rob_idx) === w.U)) {
+      gh_effective_alu_out_reg (GetRowIdx(io.gh_effective_rob_idx)) := io.gh_effective_jalr_target
+    }
+    
+    io.commit.gh_effective_alu_out(w)            := gh_effective_alu_out_reg (com_idx)   
+    //===== GuardianCouncil Function: End  ====//
     // use the same "com_uop" for both rollback AND commit
     // Perform Commit
     io.commit.valids(w) := will_commit(w)
@@ -481,7 +532,9 @@ class Rob(
     rob_head_fflags(w)   := rob_fflags(rob_head)
     rob_head_uses_stq(w) := rob_uop(rob_head).uses_stq
     rob_head_uses_ldq(w) := rob_uop(rob_head).uses_ldq
-
+    //===== GuardianCouncil Function: Start  ====//
+    rob_head_pcs(w)      := rob_uop(rob_head).debug_pc
+    //===== GuardianCouncil Function: End  ====//
     //------------------------------------------------
     // Invalid entries are safe; thrown exceptions are unsafe.
     for (i <- 0 until numRobRows) {
@@ -506,8 +559,11 @@ class Rob(
       val rob_idx = io.wb_resps(i).bits.uop.rob_idx
       when (io.debug_wb_valids(i) && MatchBank(GetBankIdx(rob_idx))) {
         rob_debug_wdata(GetRowIdx(rob_idx)) := io.debug_wb_wdata(i)
+        rob_debug_rs1.getOrElse{Mem(1, UInt(64.W))}(GetRowIdx(rob_idx))   := io.debug_rs1_data(i)
+        rob_debug_rs2.getOrElse{Mem(1, UInt(64.W))}(GetRowIdx(rob_idx))   := io.debug_rs2_data(i)
       }
       val temp_uop = rob_uop(GetRowIdx(rob_idx))
+      dontTouch(rob_idx)
 
       assert (!(io.wb_resps(i).valid && MatchBank(GetBankIdx(rob_idx)) &&
                !rob_val(GetRowIdx(rob_idx))),
@@ -520,7 +576,18 @@ class Rob(
                "[rob] writeback (" + i + ") occurred to the wrong pdst.")
     }
     io.commit.debug_wdata(w) := rob_debug_wdata(rob_head)
-
+    when(io.commit.valids(w) && io.commit.uops(w).uses_stq){
+      io.commit.debug_rs1(w) := io.debug_st(w).bits.vaddr.bits
+      io.commit.debug_rs2(w) := io.debug_st(w).bits.data.bits
+    }.elsewhen(io.commit.valids(w) && io.commit.uops(w).lrs2_rtype === RT_X){
+      io.commit.debug_rs1(w)   := rob_debug_rs1.getOrElse{Mem(1, UInt(64.W))}(rob_head)
+      io.commit.debug_rs2(w)   := Cat(0.U(32.W), ImmGen(io.commit.uops(w).imm_packed, io.commit.uops(w).ctrl.imm_sel).asUInt)
+    }
+    .otherwise{
+      io.commit.debug_rs1(w)   := rob_debug_rs1.getOrElse{Mem(1, UInt(64.W))}(rob_head)
+      io.commit.debug_rs2(w)   := rob_debug_rs2.getOrElse{Mem(1, UInt(64.W))}(rob_head)
+    }
+    
   } //for (w <- 0 until coreWidth)
 
   // **************************************************************************
@@ -535,7 +602,23 @@ class Rob(
   // Finally, don't throw an exception if there are instructions in front of
   // it that want to commit (only throw exception when head of the bundle).
 
+  // var block_commit = (rob_state =/= s_normal) && (rob_state =/= s_wait_till_empty) || RegNext(exception_thrown) || RegNext(RegNext(exception_thrown))
+  // var will_throw_exception = false.B
+  // var block_xcpt   = false.B
+
+  // for (w <- 0 until coreWidth) {
+  //   will_throw_exception = (can_throw_exception(w) && !block_commit && !block_xcpt) || will_throw_exception
+
+  //   will_commit(w)       := can_commit(w) && !can_throw_exception(w) && !block_commit
+  //   block_commit         = (rob_head_vals(w) &&
+  //                          (!can_commit(w) || can_throw_exception(w))) || block_commit
+  //   block_xcpt           = will_commit(w)
+  // }
+
   var block_commit = (rob_state =/= s_normal) && (rob_state =/= s_wait_till_empty) || RegNext(exception_thrown) || RegNext(RegNext(exception_thrown))
+  //===== GuardianCouncil Function: Start ====//
+  var block_commit_noGC = (rob_state =/= s_normal) && (rob_state =/= s_wait_till_empty) || RegNext(exception_thrown) || RegNext(RegNext(exception_thrown))
+  //===== GuardianCouncil Function: End ====//
   var will_throw_exception = false.B
   var block_xcpt   = false.B
 
@@ -545,9 +628,14 @@ class Rob(
     will_commit(w)       := can_commit(w) && !can_throw_exception(w) && !block_commit
     block_commit         = (rob_head_vals(w) &&
                            (!can_commit(w) || can_throw_exception(w))) || block_commit
+
+    //===== GuardianCouncil Function: Start ====//                       
+    will_commit_noGC(w)  := can_commit_noGC(w) && !can_throw_exception(w) && !block_commit_noGC
+    block_commit_noGC    = (rob_head_vals(w) &&
+                           (!can_commit_noGC(w) || can_throw_exception(w))) || block_commit_noGC
+    //===== GuardianCouncil Function: End ====//
     block_xcpt           = will_commit(w)
   }
-
   // Note: exception must be in the commit bundle.
   // Note: exception must be the first valid instruction in the commit bundle.
   exception_thrown := will_throw_exception
@@ -620,6 +708,8 @@ class Rob(
   // only store the oldest exception, since only one can happen!
 
   val next_xcpt_uop = Wire(new MicroOp())
+  dontTouch(next_xcpt_uop)
+  dontTouch(r_xcpt_uop)
   next_xcpt_uop := r_xcpt_uop
   val enq_xcpts = Wire(Vec(coreWidth, Bool()))
   for (i <- 0 until coreWidth) {
@@ -861,7 +951,7 @@ class Rob(
   // Outputs
 
   io.com_load_is_at_rob_head := RegNext(rob_head_uses_ldq(PriorityEncoder(rob_head_vals.asUInt)) &&
-                                        !will_commit.reduce(_||_))
+                                        !will_commit_noGC.reduce(_||_))
 
 
 

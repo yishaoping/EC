@@ -14,7 +14,7 @@ package boom.exu
 import chisel3._
 import chisel3.util._
 
-import freechips.rocketchip.config.Parameters
+import org.chipsalliance.cde.config.Parameters
 import freechips.rocketchip.util.{Str}
 
 import boom.common._
@@ -166,6 +166,9 @@ abstract class IssueUnit(
 
   val count = PopCount(slots.map(_.io.valid))
   dontTouch(count)
+
+  dontTouch(io.dis_uops)
+  dontTouch(io.iss_uops)
 
   //-------------------------------------------------------------
 

@@ -18,6 +18,8 @@ class MultiplierReq(dataBits: Int, tagBits: Int, aluFn: ALUFN = new ALUFN) exten
 class MultiplierResp(dataBits: Int, tagBits: Int) extends Bundle {
   val data = Bits(dataBits.W)
   val tag = UInt(tagBits.W)
+  val rs1 = Bits(dataBits.W)
+  val rs2 = Bits(dataBits.W)
 }
 
 class MultiplierIO(val dataBits: Int, val tagBits: Int, aluFn: ALUFN = new ALUFN) extends Bundle {
@@ -175,6 +177,8 @@ class MulDiv(cfg: MulDivParams, width: Int, nXpr: Int = 32, aluFn: ALUFN = new A
   io.resp.bits.tag := req.tag
 
   io.resp.bits.data := Cat(hiOut, loOut)
+  io.resp.bits.rs1  := req.in1
+  io.resp.bits.rs2  := req.in2
   io.resp.valid := (state === s_done_mul || state === s_done_div)
   io.req.ready := state === s_ready
 }
@@ -204,5 +208,7 @@ class PipelinedMultiplier(width: Int, latency: Int, nXpr: Int = 32, aluFn: ALUFN
   val resp = Pipe(in, latency-1)
   io.resp.valid := resp.valid
   io.resp.bits.tag := resp.bits.tag
+  io.resp.bits.rs1 := resp.bits.in1
+  io.resp.bits.rs2 := resp.bits.in2
   io.resp.bits.data := Pipe(in.valid, muxed, latency-1).bits
 }

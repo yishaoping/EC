@@ -19,7 +19,7 @@ package boom.exu
 import chisel3._
 import chisel3.util._
 
-import freechips.rocketchip.config.Parameters
+import org.chipsalliance.cde.config.Parameters
 import freechips.rocketchip.util._
 import freechips.rocketchip.tile
 import freechips.rocketchip.rocket.{PipelinedMultiplier,BP,BreakpointUnit,Causes,CSR}
@@ -105,6 +105,8 @@ class FuncUnitResp(val dataWidth: Int)(implicit p: Parameters) extends BoomBundl
 {
   val predicated = Bool() // Was this response from a predicated-off instruction
   val data = UInt(dataWidth.W)
+  val rs1_data = UInt(dataWidth.W)
+  val rs2_data = UInt(dataWidth.W)
   val fflags = new ValidIO(new FFlagsResp)
   val addr = UInt((vaddrBits+1).W) // only for maddr -> LSU
   val mxcpt = new ValidIO(UInt((freechips.rocketchip.rocket.Causes.all.max+2).W)) //only for maddr->LSU
@@ -186,6 +188,7 @@ abstract class FunctionalUnit(
     val scontext = if (isMemAddrCalcUnit) Input(UInt(coreParams.scontextWidth.W)) else null
 
   })
+  dontTouch(io.resp.bits)
 }
 
 /**
@@ -225,17 +228,23 @@ abstract class PipelinedFunctionalUnit(
   if (numStages > 0) {
     val r_valids = RegInit(VecInit(Seq.fill(numStages) { false.B }))
     val r_uops   = Reg(Vec(numStages, new MicroOp()))
+    val r_rs1    = Reg(Vec(numStages, UInt(dataWidth.W)))
+    val r_rs2    = Reg(Vec(numStages, UInt(dataWidth.W)))
 
     // handle incoming request
     r_valids(0) := io.req.valid && !IsKilledByBranch(io.brupdate, io.req.bits.uop) && !io.req.bits.kill
     r_uops(0)   := io.req.bits.uop
     r_uops(0).br_mask := GetNewBrMask(io.brupdate, io.req.bits.uop)
+    r_rs1(0)    := Mux(io.req.valid && !IsKilledByBranch(io.brupdate, io.req.bits.uop) && !io.req.bits.kill, io.req.bits.rs1_data, 0.U)
+    r_rs2(0)    := Mux(io.req.valid && !IsKilledByBranch(io.brupdate, io.req.bits.uop) && !io.req.bits.kill, io.req.bits.rs2_data, 0.U)
 
     // handle middle of the pipeline
     for (i <- 1 until numStages) {
       r_valids(i) := r_valids(i-1) && !IsKilledByBranch(io.brupdate, r_uops(i-1)) && !io.req.bits.kill
       r_uops(i)   := r_uops(i-1)
       r_uops(i).br_mask := GetNewBrMask(io.brupdate, r_uops(i-1))
+      r_rs1(i)    := r_rs1(i - 1)
+      r_rs2(i)    := r_rs2(i - 1)
 
       if (numBypassStages > 0) {
         io.bypass(i-1).bits.uop := r_uops(i-1)
@@ -248,6 +257,8 @@ abstract class PipelinedFunctionalUnit(
     io.resp.bits.predicated := false.B
     io.resp.bits.uop := r_uops(numStages-1)
     io.resp.bits.uop.br_mask := GetNewBrMask(io.brupdate, r_uops(numStages-1))
+    io.resp.bits.rs1_data := r_rs1(numStages - 1)
+    io.resp.bits.rs2_data := r_rs2(numStages - 1)
 
     // bypassing (TODO allow bypass vector to have a different size from numStages)
     if (numBypassStages > 0 && earliestBypassStage == 0) {
@@ -267,6 +278,8 @@ abstract class PipelinedFunctionalUnit(
     io.resp.bits.predicated := false.B
     io.resp.bits.uop := io.req.bits.uop
     io.resp.bits.uop.br_mask := GetNewBrMask(io.brupdate, io.req.bits.uop)
+    io.resp.bits.rs1_data := io.req.bits.rs1_data
+    io.resp.bits.rs2_data := io.req.bits.rs2_data
   }
 }
 
@@ -687,6 +700,8 @@ class DivUnit(dataWidth: Int)(implicit p: Parameters)
   io.resp.valid       := div.io.resp.valid && !this.do_kill
   div.io.resp.ready   := io.resp.ready
   io.resp.bits.data   := div.io.resp.bits.data
+  io.resp.bits.rs1_data := div.io.resp.bits.rs1
+  io.resp.bits.rs2_data := div.io.resp.bits.rs2
 }
 
 /**

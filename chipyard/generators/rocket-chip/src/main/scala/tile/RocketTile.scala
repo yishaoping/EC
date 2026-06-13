@@ -4,7 +4,7 @@
 package freechips.rocketchip.tile
 
 import Chisel._
-import freechips.rocketchip.config._
+import org.chipsalliance.cde.config._
 import freechips.rocketchip.devices.tilelink._
 import freechips.rocketchip.diplomacy._
 import freechips.rocketchip.interrupts._
@@ -13,8 +13,11 @@ import freechips.rocketchip.rocket._
 import freechips.rocketchip.subsystem.TileCrossingParamsLike
 import freechips.rocketchip.util._
 import freechips.rocketchip.prci.{ClockSinkParameters}
-
-
+//===== GuardianCouncil Function: Start ====//
+import freechips.rocketchip.guardiancouncil._
+import chisel3.dontTouch
+//===== GuardianCouncil Function: End   ====//
+//这里使用的Chisel包,里面东西都很旧,
 case class RocketTileParams(
     core: RocketCoreParams = RocketCoreParams(),
     icache: Option[ICacheParams] = Some(ICacheParams()),
@@ -126,7 +129,136 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
   Annotated.params(this, outer.rocketParams)
 
   val core = Module(new Rocket(outer)(outer.p))
+  val ght_bridge = Module(new GH_Bridge(GH_BridgeParams(1)))
+  val ghe_bridge = Module(new GH_Bridge(GH_BridgeParams(5)))
+  val ght_cfg_bridge = Module(new GH_Bridge(GH_BridgeParams(32)))
+  val ght_cfg_v_bridge = Module(new GH_Bridge(GH_BridgeParams(1)))
+  val if_correct_process_bridge = Module(new GH_Bridge(GH_BridgeParams(1)))
+  val record_pc_bridge = Module(new GH_Bridge(GH_BridgeParams(1)))
+  val elu_deq_bridge = Module(new GH_Bridge(GH_BridgeParams(1)))
+  val elu_sel_bridge = Module(new GH_Bridge(GH_BridgeParams(1)))
 
+  /* R Features */
+  // A mini-decoder for packets
+  val s_or_r = RegInit(0.U(1.W))
+
+  val core_trace = Wire(0.U(2.W))
+  val debug_perf_ctrl = Wire(0.U(5.W))
+  val record_and_store = Wire(0.U(2.W))
+//make it generic
+  
+  //arfs 是固定的
+  val arfs_in = outer.core_r_arfs_c_SKNode.bundle
+  val arfs_index = arfs_in (143+1, 136+1)
+  val ptype_rcu = Mux(s_or_r.asBool && ((arfs_index(2,0) === 7.U)), true.B, false.B)
+  val arfs_if_CPS = Mux(ptype_rcu.asBool && (arfs_index (6, 3) === outer.rocketParams.hartId.U), 1.U, 0.U)
+  val packet_rcu = Mux((ptype_rcu), arfs_in, 0.U)
+
+  // val icsl_ack          = outer.icsl_ack_tocheckerSKNode.bundle
+  // dontTouch(icsl_ack)//for debug
+  // core.io.icsl_ack := icsl_ack
+  core.io.cdc_empty    := outer.cdc_empty_tocheckerSKNode.bundle
+  // core.io.big_switch   := outer.big_switch_tocheckerSKNode.bundle
+  val packet_in         = Wire(0.U((2*GH_GlobalParams.GH_WIDITH_PACKETS+1).W))
+  //极度旧的chisel写法
+  val packet_vec        = Wire(Vec.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U((GH_GlobalParams.GH_WIDITH_PACKETS).W)))
+  val packet_en         = Wire(Vec.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
+  val packet_index_vec  = Wire(Vec.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U(8.W)))
+  // val packet_cdc_flag   = packet_in(GH_GlobalParams.GH_TOTAL_PACKETS*GH_GlobalParams.GH_WIDITH_PACKETS)
+  val packet_vec_in     = Wire(Vec.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U((GH_GlobalParams.GH_WIDITH_PACKETS).W)))
+
+  val packet_bj_en         = Wire(Vec.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
+  val packet_bjvec_in      = Wire(Vec.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U((xLen * 2).W)))
+
+  packet_in := outer.ghe_packet_in_SKNode.bundle
+  // dontTouch(packet_in)
+  // dontTouch(packet_en)
+  // val ptype_fg = ((packet_index_vec(0)(2) === 0.U) && (packet_index_vec(0)(1,0) =/= 0.U) && (s_or_r === 0.U))
+  // val ptype_lsl = (s_or_r.asBool && (packet_index_vec(0)(2,0) =/= 7.U) && (packet_index_vec(0)(2,0) =/= 0.U))
+
+
+
+
+  for( i<- 0 until GH_GlobalParams.GH_TOTAL_PACKETS){
+    packet_vec(i)       := packet_in(GH_GlobalParams.GH_WIDITH_PACKETS*(i+1)-1,i*GH_GlobalParams.GH_WIDITH_PACKETS)
+    packet_index_vec(i) := packet_vec(i)(GH_GlobalParams.GH_WIDITH_PACKETS-1,GH_GlobalParams.GH_WIDITH_PACKETS-8)
+    packet_en(i)        := s_or_r.asBool && (packet_index_vec(i)(2,0) =/= 7.U) && (packet_index_vec(i)(2,0) =/= 4.U) && (packet_index_vec(i)(2,0) =/= 0.U)&&packet_index_vec(i)(6,3)===outer.rocketParams.hartId.U
+    packet_vec_in(i)    := Mux(packet_en(i),packet_vec(i),0.U)
+
+    packet_bj_en(i)     := s_or_r.asBool && (packet_index_vec(i)(2,0) === 4.U) && packet_index_vec(i)(6,3)===outer.rocketParams.hartId.U
+    packet_bjvec_in(i)  := Mux(packet_bj_en(i), packet_vec(i)((xLen * 2) - 1, 0), 0.U)
+  }
+
+  dontTouch(packet_vec_in)
+  dontTouch(packet_en)
+  dontTouch(packet_index_vec)
+  dontTouch(packet_vec)
+  dontTouch(packet_bjvec_in)
+  dontTouch(packet_bj_en)
+
+  outer.frontend.module.io.packet_bj := packet_bjvec_in
+
+
+
+
+
+
+
+  val arf_copy_bridge   = Module(new GH_Bridge(GH_BridgeParams(1)))
+  //===== GuardianCouncil Function: Start ====//
+  outer.clock_SRNode.bundle  := clock
+  outer.reset_SRNode.bundle  := reset
+  // outer.if_big_complete_SRNode.bundle := core.io.if_big_complete
+  // core.io.big_complete:=outer.big_complete_SKNode.bundle
+
+  if (outer.tileParams.hartId == 0) {
+    println("#### Jessica #### Generating GHT for the big core, HartID: ", outer.rocketParams.hartId, "...!!!")
+    val ght = Module(new GHT(GHTParams(vaddrBitsExtended, p(XLen), 32, 32, 16, 128, 1, false)))    // revisit: set 32 as the total number of checkers.
+                                                                                                   // revisit: total types of insts is 32
+                                                                                                   // revisit: total number of SEs is 16 
+                                                                                                   // revisit: packet size: 128 bits
+    ght.io.ght_pcaddr_in := core.io.pc
+    ght.io.ght_inst_in := core.io.inst
+    ght.io.ght_alu_in := core.io.alu_2cycle_delay
+    ght.io.ght_mask_in := ght_bridge.io.out
+    ght.io.ght_cfg_in := ght_cfg_bridge.io.out
+    ght.io.ght_cfg_valid := ght_cfg_v_bridge.io.out
+    outer.ght_packet_out_SRNode.bundle := ght.io.ght_packet_out
+    outer.ght_packet_dest_SRNode.bundle := ght.io.ght_packet_dest
+    core.io.clk_enable_gh := ~(outer.bigcore_hang_in_SKNode.bundle) 
+    outer.ghe_event_out_SRNode.bundle := ghe_bridge.io.out
+    ght.io.core_na := outer.sch_na_inSKNode.bundle
+    ght.io.new_commit := core.io.new_commit
+    outer.ghm_agg_core_id_out_SRNode.bundle := ght.io.ghm_agg_core_id
+    core.io.arf_copy_in := 0.U
+    core.io.s_or_r := 0.U
+  } else
+  { // Other cores:
+    // For other cores: no GHT is required, and hence tied-off
+    core.io.clk_enable_gh := 1.U // the core is never gated
+    outer.ght_packet_out_SRNode.bundle := 0.U
+    outer.ght_packet_dest_SRNode.bundle := 0.U
+    val zeros_4bits = Wire(0.U(4.W))
+
+  
+
+    outer.ghe_event_out_SRNode.bundle := Cat(0.U, (ghe_bridge.io.out | Cat(core.io.packet_cdc_ready, zeros_4bits) | Cat(zeros_4bits, core.io.log_near_full)))
+    outer.ghe_revent_out_SRNode.bundle := core.io.log_highwatermark
+    core.io.arfs_if_CPS := arfs_if_CPS
+    core.io.packet_arfs := packet_rcu
+    core.io.packet_lsl := packet_vec_in
+    core.io.arf_copy_in := arf_copy_bridge.io.out
+    core.io.s_or_r := s_or_r
+    core.io.if_correct_process := if_correct_process_bridge.io.out
+    core.io.record_pc := record_pc_bridge.io.out
+    core.io.elu_deq := elu_deq_bridge.io.out
+    core.io.elu_sel := elu_sel_bridge.io.out
+    core.io.ic_counter := outer.ic_counter_SKNode.bundle
+    outer.clear_ic_status_SRNode.bundle := core.io.clear_ic_status
+  }
+  core.io.core_trace := core_trace(0)
+  core.io.debug_perf_ctrl := debug_perf_ctrl
+  core.io.record_and_store := record_and_store
   // Report unrecoverable error conditions; for now the only cause is cache ECC errors
   outer.reportHalt(List(outer.dcache.module.io.errors))
 
@@ -170,6 +302,51 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
     core.io.rocc.resp <> respArb.get.io.out
     core.io.rocc.busy <> (cmdRouter.get.io.busy || outer.roccs.map(_.module.io.busy).reduce(_ || _))
     core.io.rocc.interrupt := outer.roccs.map(_.module.io.interrupt).reduce(_ || _)
+    //===== GuardianCouncil Function: Start ====//
+    cmdRouter.get.io.ghe_packet_in := 0.U
+    cmdRouter.get.io.ghe_status_in := outer.ghe_status_in_SKNode.bundle
+    ghe_bridge.io.in := cmdRouter.get.io.ghe_event_out
+    ght_bridge.io.in := cmdRouter.get.io.ght_mask_out
+    ght_cfg_bridge.io.in := cmdRouter.get.io.ght_cfg_out
+    ght_cfg_v_bridge.io.in := cmdRouter.get.io.ght_cfg_valid
+    outer.ght_status_out_SRNode.bundle := cmdRouter.get.io.ght_status_out
+
+    // agg
+    outer.agg_packet_out_SRNode.bundle := cmdRouter.get.io.agg_packet_out
+    outer.report_fi_detection_SRNode.bundle := cmdRouter.get.io.report_fi_detection_out
+    cmdRouter.get.io.agg_buffer_full := outer.agg_buffer_full_in_SKNode.bundle
+    outer.agg_core_status_SRNode.bundle := Mux(!s_or_r.asBool, cmdRouter.get.io.agg_core_status_out, core.io.icsl_status)
+    outer.ght_sch_na_out_SRNode.bundle := cmdRouter.get.io.ght_sch_na_out
+    cmdRouter.get.io.ght_sch_refresh := outer.ghe_sch_refresh_in_SKNode.bundle
+    cmdRouter.get.io.ght_buffer_status := 0.U
+    // For big_core GHT
+    cmdRouter.get.io.bigcore_comp := outer.bigcore_comp_in_SKNode.bundle
+    outer.ght_sch_dorefresh_SRNode.bundle := cmdRouter.get.io.ght_sch_dorefresh_out    
+
+    arf_copy_bridge.io.in := cmdRouter.get.io.arf_copy_out
+
+    /* R Features */
+    cmdRouter.get.io.RAW_cnt_in    := core.io.RAW_cnt
+    cmdRouter.get.io.store_commit_count_in := core.io.store_commit_count
+    cmdRouter.get.io.store_commit_cycle_sum_in := core.io.store_commit_cycle_sum
+    dontTouch(core.io.store_commit_count)
+    dontTouch(core.io.store_commit_cycle_sum)
+    dontTouch(cmdRouter.get.io.store_commit_count_in)
+    dontTouch(cmdRouter.get.io.store_commit_cycle_sum_in)
+    cmdRouter.get.io.rsu_status_in := core.io.rsu_status
+    cmdRouter.get.io.elu_status_in := core.io.elu_status
+    s_or_r := cmdRouter.get.io.s_or_r_out(0)
+    core_trace := cmdRouter.get.io.core_trace_out
+    debug_perf_ctrl := cmdRouter.get.io.debug_perf_ctrl_out
+    record_and_store := cmdRouter.get.io.record_and_store_out
+    cmdRouter.get.io.ght_satp_ppn := core.io.ptw.ptbr.ppn
+    cmdRouter.get.io.ght_sys_mode := core.io.ght_prv
+    if_correct_process_bridge.io.in := cmdRouter.get.io.if_correct_process_out
+    record_pc_bridge.io.in := cmdRouter.get.io.record_pc_out
+    cmdRouter.get.io.elu_data_in := core.io.elu_data
+    elu_deq_bridge.io.in := cmdRouter.get.io.elu_deq_out
+    elu_sel_bridge.io.in := cmdRouter.get.io.elu_sel_out
+    //===== GuardianCouncil Function: End   ====//
   }
 
   // Rocket has higher priority to DTIM than other TileLink clients

@@ -8,7 +8,7 @@ import chisel3.util._
 import freechips.rocketchip.util.CompileOptions.NotStrictInferReset
 import chisel3.{DontCare, WireInit, withClock, withReset}
 import chisel3.internal.sourceinfo.SourceInfo
-import freechips.rocketchip.config.Parameters
+import org.chipsalliance.cde.config.Parameters
 import freechips.rocketchip.rocket._
 import freechips.rocketchip.rocket.Instructions._
 import freechips.rocketchip.util._
@@ -203,8 +203,22 @@ class FPUCoreIO(implicit p: Parameters) extends CoreBundle()(p) {
   val sboard_set = Output(Bool())
   val sboard_clr = Output(Bool())
   val sboard_clra = Output(UInt(5.W))
-
-  val keep_clock_enabled = Input(Bool())
+//===== GuardianCouncil Function: Start ====//
+  // val keep_clock_enabled = Input(Bool())
+  /* R Features */
+  val r_farf_bits = Input(UInt(64.W))
+  val r_farf_idx = Input(UInt(8.W))
+  val r_farf_valid = Input(UInt(1.W))
+  val farfs = Output(Vec(32, UInt(64.W)))
+  val retire = Input(UInt(1.W))
+  val keep_clock_enabled        = Input(Bool())
+  val core_trace                = Input(Bool())
+  val checker_mode              = Input(Bool())
+  val checker_priv_mode          = Input(Bool())
+  val if_overtaking             = Input(Bool())
+  val if_overtaking_next_cycle  = Input(Bool())
+  val fpu_inflight              = Output(Bool())
+//===== GuardianCouncil Function: END ====//
 }
 
 class FPUIO(implicit p: Parameters) extends FPUCoreIO ()(p) {
@@ -791,17 +805,50 @@ class FPU(cfg: FPUParams)(implicit p: Parameters) extends FPUModule()(p) {
 
   // regfile
   val regfile = Mem(32, Bits((fLen+1).W))
-  when (load_wb) {
+  // when (load_wb) {
+  //   val wdata = recode(load_wb_data, load_wb_typeTag)
+  //   regfile(load_wb_tag) := wdata
+  //   assert(consistent(wdata))
+  //   if (enableCommitLog)
+  //     printf("f%d p%d 0x%x\n", load_wb_tag, load_wb_tag + 32.U, load_wb_data)
+  //   frfWriteBundle(0).wrdst := load_wb_tag
+  //   frfWriteBundle(0).wrenf := true.B
+  //   frfWriteBundle(0).wrdata := ieee(wdata)
+  // }
+//===== GuardianCouncil Function: Start ====//
+  for (i <-0 until 32) { 
+    io.farfs(i) := ieee(regfile(i))
+  }
+  val retire_1cycle = Reg(Bool())
+  val retire_2cycle = Reg(Bool())
+  val wen_1cycle = RegInit(0.U(3.W))
+  val wen_2cycle = RegInit(0.U(3.W))
+
+  // There is one cycle delay for the F-REG's loading
+  val r_cannot_load_wb = Wire(Bool())
+  r_cannot_load_wb := Mux(!(io.checker_mode || io.checker_priv_mode), false.B, Mux(retire_1cycle, false.B, true.B))
+
+  when (load_wb && !r_cannot_load_wb) {
     val wdata = recode(load_wb_data, load_wb_typeTag)
     regfile(load_wb_tag) := wdata
     assert(consistent(wdata))
-    if (enableCommitLog)
-      printf("f%d p%d 0x%x\n", load_wb_tag, load_wb_tag + 32.U, load_wb_data)
+    /*
+    if (GH_GlobalParams.GH_DEBUG == 1) {
+    when (io.core_trace.asBool) {
+      printf(midas.targetutils.SynthesizePrintf("FLT-LD: f%d p%d 0x%x\n", load_wb_tag, load_wb_tag + 32, load_wb_data))
+    }
+    }*/
     frfWriteBundle(0).wrdst := load_wb_tag
     frfWriteBundle(0).wrenf := true.B
     frfWriteBundle(0).wrdata := ieee(wdata)
+  } .elsewhen (io.r_farf_valid === 1.U) {
+    val r_farf_wbtype = Wire(0.U(2.W))
+    // FFFFr_farf_wbtype := 1.U
+    r_farf_wbtype := Mux((io.r_farf_bits(63, 32) === "hFFFFFFFF".U), 0.U, 1.U)
+    val r_farf_wb = recode(io.r_farf_bits, r_farf_wbtype)
+    regfile(io.r_farf_idx) := r_farf_wb
   }
-
+//===== GuardianCouncil Function: End ====//
   val ex_rs = ex_ra.map(a => regfile(a))
   when (io.valid) {
     when (id_ctrl.ren1) {
@@ -914,7 +961,9 @@ class FPU(cfg: FPUParams)(implicit p: Parameters) extends FPUModule()(p) {
   wen := wen >> 1
   when (mem_wen) {
     when (!killm) {
-      wen := wen >> 1 | memLatencyMask
+      //===== GuardianCouncil Function: Start ====//
+      wen := wen >> 1 | Mux(((io.checker_mode === 1.U) || io.checker_priv_mode) && io.if_overtaking_next_cycle, 0.U, memLatencyMask)
+      //===== GuardianCouncil Function: End ====//
     }
     for (i <- 0 until maxLatency-1) {
       when (!write_port_busy && memLatencyMask(i)) {
@@ -925,7 +974,18 @@ class FPU(cfg: FPUParams)(implicit p: Parameters) extends FPUModule()(p) {
       }
     }
   }
-
+  //===== GuardianCouncil Function: Start ====//
+  retire_1cycle := io.retire
+  retire_2cycle := retire_1cycle
+  wen_1cycle := wen
+  wen_2cycle := wen_1cycle
+  
+  val r_cannot_wb = Wire(Bool())
+  r_cannot_wb        := Mux(!(io.checker_mode || io.checker_priv_mode) , false.B,
+                        Mux(((wen(0) === 1.U) && (wen_1cycle(1) === 0.U) && io.retire.asBool), false.B,
+                        Mux(((wen(0) === 1.U) && (wen_1cycle(1) === 1.U) && (wen_2cycle(2) === 0.U) && retire_1cycle), false.B,
+                        Mux(((wen(0) === 1.U) && (wen_1cycle(1) === 1.U) && (wen_2cycle(2) === 1.U) && retire_2cycle), false.B, true.B))))
+//===== GuardianCouncil Function: End ====//
   val waddr = Mux(divSqrt_wen, divSqrt_waddr, wbInfo(0).rd)
   val wtypeTag = Mux(divSqrt_wen, divSqrt_typeTag, wbInfo(0).typeTag)
   val wdata = box(Mux(divSqrt_wen, divSqrt_wdata, (pipes.map(_.res.data): Seq[UInt])(wbInfo(0).pipeid)), wtypeTag)
@@ -968,7 +1028,10 @@ class FPU(cfg: FPUParams)(implicit p: Parameters) extends FPUModule()(p) {
 
   if (cfg.divSqrt) {
     val divSqrt_inValid = mem_reg_valid && (mem_ctrl.div || mem_ctrl.sqrt) && !divSqrt_inFlight
-    val divSqrt_killed = RegNext(divSqrt_inValid && killm, true.B)
+    // val divSqrt_killed = RegNext(divSqrt_inValid && killm, true.B)
+    //===== GuardianCouncil Function: Start ====//
+    val divSqrt_killed = RegNext(divSqrt_inValid && killm, true.B) || (RegNext(divSqrt_inValid) && (Mux(io.checker_mode.asBool || io.checker_priv_mode, io.if_overtaking, false.B)))
+    //===== GuardianCouncil Function: End ====//
     when (divSqrt_inValid) {
       divSqrt_waddr := mem_reg_inst(11,7)
     }
@@ -998,6 +1061,7 @@ class FPU(cfg: FPUParams)(implicit p: Parameters) extends FPUModule()(p) {
     }
 
     when (divSqrt_killed) { divSqrt_inFlight := false.B }
+    io.fpu_inflight := divSqrt_inFlight || divSqrt_inValid || divSqrt_wen || (wen =/= 0.U)
   } else {
     when (id_ctrl.div || id_ctrl.sqrt) { io.illegal_rm := true.B }
   }

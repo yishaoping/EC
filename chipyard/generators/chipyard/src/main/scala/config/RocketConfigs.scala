@@ -2,11 +2,36 @@ package chipyard
 
 import freechips.rocketchip.config.{Config}
 import freechips.rocketchip.diplomacy.{AsynchronousCrossing}
+//===== EC Config: Start =====//
+import freechips.rocketchip.guardiancouncil.GH_GlobalParams
+//===== EC Config: End   =====//
+
+//===== EC Config: Start =====//
+class v0Config extends Config(
+  new chipyard.config.WithTileFrequency(200, Some(0)) ++
+  new chipyard.config.WithTileFrequency(100, Some(1)) ++
+  new chipyard.config.WithTileFrequency(100, Some(2)) ++
+  new chipyard.config.WithTileFrequency(100, Some(3)) ++
+  new chipyard.config.WithTileFrequency(100, Some(3)) ++
+  new chipyard.config.WithGCBusFrequency(100) ++ 
+  new chipyard.config.WithSystemBusFrequency(200) ++
+  new chipyard.config.WithMemoryBusFrequency(200) ++
+  new chipyard.config.WithPeripheryBusFrequency(200) ++
+  new chipyard.config.WithSystemBusFrequencyAsDefault ++
+  new freechips.rocketchip.guardiancouncil.WithGHE ++
+  new freechips.rocketchip.guardiancouncil.WithDisableROBDebug ++
+  new freechips.rocketchip.subsystem.WithAsynchronousRocketTiles(
+  AsynchronousCrossing().depth,
+  AsynchronousCrossing().sourceSync) ++
+  new boom.common.WithNLargeBooms(1, overrideIdOffset = Some(0)) ++
+  new freechips.rocketchip.subsystem.WithNGCCheckers(GH_GlobalParams.GH_NUM_CORES - 1, overrideIdOffset=Some(1)) ++
+  new chipyard.config.AbstractConfig
+)
+//===== EC Config: End   =====//
 
 // --------------
 // Rocket Configs
 // --------------
-
 class RocketConfig extends Config(
   new freechips.rocketchip.subsystem.WithNBigCores(1) ++         // single rocket-core
   new chipyard.config.AbstractConfig)

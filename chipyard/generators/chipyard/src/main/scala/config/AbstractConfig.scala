@@ -40,6 +40,10 @@ class AbstractConfig extends Config(
   new chipyard.iobinders.WithTraceIOPunchthrough ++
   new chipyard.iobinders.WithExtInterruptIOCells ++
   new chipyard.iobinders.WithCustomBootPin ++
+
+  // Default behavior is to use a divider-only clock-generator
+  // This works in VCS, Verilator, and FireSim/
+  // This should get replaced with a PLL-like config instead
   new chipyard.iobinders.WithDividerOnlyClockGenerator ++
 
   new testchipip.WithSerialTLWidth(32) ++                           // fatten the serialTL interface to improve testing performance
@@ -60,4 +64,5 @@ class AbstractConfig extends Config(
   new freechips.rocketchip.subsystem.WithNExtTopInterrupts(0) ++    // no external interrupts
   new freechips.rocketchip.subsystem.WithDontDriveBusClocksFromSBus ++ // leave the bus clocks undriven by sbus
   new freechips.rocketchip.subsystem.WithCoherentBusTopology ++     // hierarchical buses including sbus/mbus/pbus/fbus/cbus/l2
+  new freechips.rocketchip.subsystem.WithDTS("ucb-bar,chipyard", Nil) ++ // EC 修改 custom device name for DTS
   new freechips.rocketchip.system.BaseConfig)                       // "base" rocketchip system

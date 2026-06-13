@@ -6,13 +6,16 @@ package freechips.rocketchip.rocket
 import chisel3._
 import chisel3.util._
 import chisel3.withClock
-import freechips.rocketchip.config.Parameters
+import org.chipsalliance.cde.config.Parameters
 import freechips.rocketchip.tile._
 import freechips.rocketchip.util._
 import freechips.rocketchip.util.property
 import freechips.rocketchip.scie._
 import scala.collection.mutable.ArrayBuffer
-
+//===== EC: Start =====//
+import freechips.rocketchip.r._
+import freechips.rocketchip.guardiancouncil._
+//===== EC: End   =====//
 case class RocketCoreParams(
   bootFreqHz: BigInt = 0,
   useVM: Boolean = true,
@@ -135,47 +138,48 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     RegEnable(RegEnable(RegEnable(x, !ctrl_killd), ex_pc_valid), mem_pc_valid)
   val perfEvents = new EventSets(Seq(
     new EventSet((mask, hits) => Mux(wb_xcpt, mask(0), wb_valid && pipelineIDToWB((mask & hits).orR)), Seq(
-      ("exception", () => false.B),
-      ("load", () => id_ctrl.mem && id_ctrl.mem_cmd === M_XRD && !id_ctrl.fp),
-      ("store", () => id_ctrl.mem && id_ctrl.mem_cmd === M_XWR && !id_ctrl.fp),
-      ("amo", () => usingAtomics.B && id_ctrl.mem && (isAMO(id_ctrl.mem_cmd) || id_ctrl.mem_cmd.isOneOf(M_XLR, M_XSC))),
-      ("system", () => id_ctrl.csr =/= CSR.N),
-      ("arith", () => id_ctrl.wxd && !(id_ctrl.jal || id_ctrl.jalr || id_ctrl.mem || id_ctrl.fp || id_ctrl.mul || id_ctrl.div || id_ctrl.csr =/= CSR.N)),
-      ("branch", () => id_ctrl.branch),
-      ("jal", () => id_ctrl.jal),
-      ("jalr", () => id_ctrl.jalr))
+      ("exception",   () => (false.B,false.B,0.U)),
+      ("load"     ,   () => (id_ctrl.mem && id_ctrl.mem_cmd === M_XRD && !id_ctrl.fp,false.B,0.U)),
+      ("store",       () => (id_ctrl.mem && id_ctrl.mem_cmd === M_XWR && !id_ctrl.fp,false.B,0.U)),
+      ("amo",         () => (usingAtomics.B && id_ctrl.mem && (isAMO(id_ctrl.mem_cmd) || id_ctrl.mem_cmd.isOneOf(M_XLR, M_XSC)),false.B,0.U)),
+      ("system",      () => (id_ctrl.csr =/= CSR.N,false.B,0.U)),
+      ("arith",       () => (id_ctrl.wxd && !(id_ctrl.jal || id_ctrl.jalr || id_ctrl.mem || id_ctrl.fp || id_ctrl.mul || id_ctrl.div || id_ctrl.csr =/= CSR.N),false.B,0.U)),
+      ("branch",      () => (id_ctrl.branch,false.B,0.U)),
+      ("jal",         () => (id_ctrl.jal,false.B,0.U)),
+      ("jalr",        () => (id_ctrl.jalr,false.B,0.U)))
       ++ (if (!usingMulDiv) Seq() else Seq(
-        ("mul", () => if (pipelinedMul) id_ctrl.mul else id_ctrl.div && (id_ctrl.alu_fn & aluFn.FN_DIV) =/= aluFn.FN_DIV),
-        ("div", () => if (pipelinedMul) id_ctrl.div else id_ctrl.div && (id_ctrl.alu_fn & aluFn.FN_DIV) === aluFn.FN_DIV)))
+        ("mul", () => if (pipelinedMul) (id_ctrl.mul,false.B,0.U) else (id_ctrl.div && (id_ctrl.alu_fn & aluFn.FN_DIV) =/= aluFn.FN_DIV,false.B,0.U)),
+        ("div", () => if (pipelinedMul) (id_ctrl.div,false.B,0.U) else (id_ctrl.div && (id_ctrl.alu_fn & aluFn.FN_DIV) === aluFn.FN_DIV,false.B,0.U))))
       ++ (if (!usingFPU) Seq() else Seq(
-        ("fp load", () => id_ctrl.fp && io.fpu.dec.ldst && io.fpu.dec.wen),
-        ("fp store", () => id_ctrl.fp && io.fpu.dec.ldst && !io.fpu.dec.wen),
-        ("fp add", () => id_ctrl.fp && io.fpu.dec.fma && io.fpu.dec.swap23),
-        ("fp mul", () => id_ctrl.fp && io.fpu.dec.fma && !io.fpu.dec.swap23 && !io.fpu.dec.ren3),
-        ("fp mul-add", () => id_ctrl.fp && io.fpu.dec.fma && io.fpu.dec.ren3),
-        ("fp div/sqrt", () => id_ctrl.fp && (io.fpu.dec.div || io.fpu.dec.sqrt)),
-        ("fp other", () => id_ctrl.fp && !(io.fpu.dec.ldst || io.fpu.dec.fma || io.fpu.dec.div || io.fpu.dec.sqrt))))),
+        ("fp load",     () => (id_ctrl.fp && io.fpu.dec.ldst && io.fpu.dec.wen,false.B,0.U)  ),
+        ("fp store",    () => (id_ctrl.fp && io.fpu.dec.ldst && !io.fpu.dec.wen,false.B,0.U)),
+        ("fp add",      () => (id_ctrl.fp && io.fpu.dec.fma && io.fpu.dec.swap23,false.B,0.U)),
+        ("fp mul",      () => (id_ctrl.fp && io.fpu.dec.fma && !io.fpu.dec.swap23 && !io.fpu.dec.ren3,false.B,0.U)),
+        ("fp mul-add",  () => (id_ctrl.fp && io.fpu.dec.fma && io.fpu.dec.ren3,false.B,0.U)),
+        ("fp div/sqrt", () => (id_ctrl.fp && (io.fpu.dec.div || io.fpu.dec.sqrt),false.B,0.U)),
+        ("fp other",    () => (id_ctrl.fp && !(io.fpu.dec.ldst || io.fpu.dec.fma || io.fpu.dec.div || io.fpu.dec.sqrt),false.B,0.U))))),
     new EventSet((mask, hits) => (mask & hits).orR, Seq(
-      ("load-use interlock", () => id_ex_hazard && ex_ctrl.mem || id_mem_hazard && mem_ctrl.mem || id_wb_hazard && wb_ctrl.mem),
-      ("long-latency interlock", () => id_sboard_hazard),
-      ("csr interlock", () => id_ex_hazard && ex_ctrl.csr =/= CSR.N || id_mem_hazard && mem_ctrl.csr =/= CSR.N || id_wb_hazard && wb_ctrl.csr =/= CSR.N),
-      ("I$ blocked", () => icache_blocked),
-      ("D$ blocked", () => id_ctrl.mem && dcache_blocked),
-      ("branch misprediction", () => take_pc_mem && mem_direction_misprediction),
-      ("control-flow target misprediction", () => take_pc_mem && mem_misprediction && mem_cfi && !mem_direction_misprediction && !icache_blocked),
-      ("flush", () => wb_reg_flush_pipe),
-      ("replay", () => replay_wb))
+      ("load-use interlock",        () => (id_ex_hazard && ex_ctrl.mem || id_mem_hazard && mem_ctrl.mem || id_wb_hazard && wb_ctrl.mem,false.B,0.U)),
+      ("long-latency interlock",    () => (id_sboard_hazard,false.B,0.U)),
+      ("csr interlock",             () => (id_ex_hazard && ex_ctrl.csr =/= CSR.N || id_mem_hazard && mem_ctrl.csr =/= CSR.N || id_wb_hazard && wb_ctrl.csr =/= CSR.N,false.B,0.U)),
+      ("I$ blocked",                () => (icache_blocked,false.B,0.U)),
+      ("D$ blocked",                () => (id_ctrl.mem && dcache_blocked,false.B,0.U)),
+      ("branch misprediction",      () => (take_pc_mem && mem_direction_misprediction,false.B,0.U)),
+      ("control-flow target misprediction", () => (take_pc_mem && mem_misprediction && mem_cfi && !mem_direction_misprediction && !icache_blocked,false.B,0.U)),
+      ("flush",                     () => (wb_reg_flush_pipe,false.B,0.U)),
+      ("replay",                    () => (replay_wb,false.B,0.U)))
       ++ (if (!usingMulDiv) Seq() else Seq(
-        ("mul/div interlock", () => id_ex_hazard && (ex_ctrl.mul || ex_ctrl.div) || id_mem_hazard && (mem_ctrl.mul || mem_ctrl.div) || id_wb_hazard && wb_ctrl.div)))
+        ("mul/div interlock", () => (id_ex_hazard && (ex_ctrl.mul || ex_ctrl.div) || id_mem_hazard && (mem_ctrl.mul || mem_ctrl.div) || id_wb_hazard && wb_ctrl.div,false.B,0.U))))
       ++ (if (!usingFPU) Seq() else Seq(
-        ("fp interlock", () => id_ex_hazard && ex_ctrl.fp || id_mem_hazard && mem_ctrl.fp || id_wb_hazard && wb_ctrl.fp || id_ctrl.fp && id_stall_fpu)))),
+        ("fp interlock", () => (id_ex_hazard && ex_ctrl.fp || id_mem_hazard && mem_ctrl.fp || id_wb_hazard && wb_ctrl.fp || id_ctrl.fp && id_stall_fpu,false.B,0.U))))),
     new EventSet((mask, hits) => (mask & hits).orR, Seq(
-      ("I$ miss", () => io.imem.perf.acquire),
-      ("D$ miss", () => io.dmem.perf.acquire),
-      ("D$ release", () => io.dmem.perf.release),
-      ("ITLB miss", () => io.imem.perf.tlbMiss),
-      ("DTLB miss", () => io.dmem.perf.tlbMiss),
-      ("L2 TLB miss", () => io.ptw.perf.l2miss)))))
+      ("I$ miss",     () => (io.imem.perf.acquire,false.B,0.U)),
+      ("D$ miss",     () => (io.dmem.perf.acquire,false.B,0.U)),
+      ("D$ release",  () => (io.dmem.perf.release,false.B,0.U)),
+      ("ITLB miss",   () => (io.imem.perf.tlbMiss,false.B,0.U)),
+      ("DTLB miss",   () => (io.dmem.perf.tlbMiss,false.B,0.U)),
+      ("L2 TLB miss", () => (io.ptw.perf.l2miss,false.B,0.U))))
+        ))
 
   val pipelinedMul = usingMulDiv && mulDivParams.mulUnroll == xLen
   val decode_table = {
@@ -207,6 +211,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     Seq(new IDecode(aluFn))
   } flatMap(_.table)
 
+  // val kill_each_pipe  = WireInit(false.B)
   val ex_ctrl = Reg(new IntCtrlSigs(aluFn))
   val mem_ctrl = Reg(new IntCtrlSigs(aluFn))
   val wb_ctrl = Reg(new IntCtrlSigs(aluFn))
@@ -270,6 +275,10 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val wb_reg_wdata = Reg(Bits())
   val wb_reg_rs2 = Reg(Bits())
   val take_pc_wb = Wire(Bool())
+
+  val check_exception = Wire(Bool())
+  val check_privret  = Wire(Bool())
+  val excpt_mode = RegInit(false.B)
   val wb_reg_wphit           = Reg(Vec(nBreakpoints, Bool()))
 
   val take_pc_mem_wb = take_pc_wb || take_pc_mem
@@ -311,7 +320,50 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val id_csr_ren = id_ctrl.csr.isOneOf(CSR.S, CSR.C) && id_expanded_inst(0).rs1 === 0.U
   val id_csr = Mux(id_system_insn && id_ctrl.mem, CSR.N, Mux(id_csr_ren, CSR.R, id_ctrl.csr))
   val id_csr_flush = id_system_insn || (id_csr_en && !id_csr_ren && csr.io.decode(0).write_flush)
+  
+  //===== EC: Start =====//
+  io.pc := wb_reg_pc
+  io.inst := wb_reg_inst
+  io.new_commit := csr.io.trace(0).valid && !csr.io.trace(0).exception
+  io.csr_rw_wdata := csr.io.rw.wdata
 
+  /* R Features */
+  val rsu_pc = Reg(UInt(40.W))
+  val checker_mode = Wire(UInt(1.W))
+  val checker_priv_mode = Wire(UInt(1.W))
+  dontTouch(checker_mode)
+  dontTouch(checker_priv_mode)
+  ibuf.io.checker_mode := checker_mode
+  dontTouch(io.dmem)
+
+  val lsl_req_ready     = Wire(Bool())
+  val lsl_req_valid     = Wire(Bool())
+  val lsl_req_addr      = Wire(UInt(40.W))
+  val lsl_req_tag       = Wire(UInt(8.W))
+  val lsl_req_cmd       = Wire(UInt(2.W))
+  val lsl_req_data      = Wire(UInt(xLen.W))
+
+  val lsl_resp_valid    = Wire(Bool())
+  val lsl_resp_tag      = Wire(UInt(8.W))
+  val lsl_resp_size     = Wire(UInt(2.W))
+  val lsl_resp_addr     = Wire(UInt(40.W))
+  val lsl_resp_data     = Wire(UInt(xLen.W))
+  val lsl_resp_has_data = Wire(Bool())
+  val lsl_resp_replay   = Wire(Bool())
+  val lsl_req_size      = Wire(UInt(2.W))
+  val lsl_req_kill      = Wire(Bool())
+  
+  val lsl_req_valid_csr = Wire(Bool())
+  val lsl_req_valid_csr_test = Wire(Bool())
+  val lsl_resp_data_csr = Wire(UInt(xLen.W))
+  val lsl_resp_replay_csr = Wire(Bool())
+  val lsl_req_ready_csr = Wire(Bool())
+
+  val icsl_if_overtaking = Wire(UInt(1.W))
+  // val icsl_just_overtaking = Wire(UInt(1.W))
+  val icsl_if_ret_special_pc = Wire(UInt(1.W))
+  val if_overtaking_next_cycle = Wire(UInt(1.W))
+  //===== EC: End   =====//
   val id_scie_decoder = if (!rocketParams.useSCIE) WireDefault(0.U.asTypeOf(new SCIEDecoderInterface)) else {
     val d = Module(new SCIEDecoder)
     assert(!io.imem.resp.valid || PopCount(d.io.unpipelined :: d.io.pipelined :: d.io.multicycle :: Nil) <= 1.U)
@@ -342,7 +394,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val id_fence_pred = id_inst(0)(27,24)
   val id_fence_succ = id_inst(0)(23,20)
   val id_fence_next = id_ctrl.fence || id_ctrl.amo && id_amo_aq
-  val id_mem_busy = !io.dmem.ordered || io.dmem.req.valid
+  val id_mem_busy = Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), lsl_req_valid.asBool, !io.dmem.ordered || io.dmem.req.valid)
   when (!id_mem_busy) { id_reg_fence := false.B }
   val id_rocc_busy = usingRoCC.B &&
     (io.rocc.busy || ex_reg_valid && ex_ctrl.rocc ||
@@ -383,11 +435,18 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   ) else Nil)
   coverExceptions(id_xcpt, id_cause, "DECODE", idCoverCauses)
 
+  // val dcache_bypass_data =
+  //   if (fastLoadByte) io.dmem.resp.bits.data(xLen-1, 0)
+  //   else if (fastLoadWord) io.dmem.resp.bits.data_word_bypass(xLen-1, 0)
+  //   else wb_reg_wdata
+  //===== EC: Start =====//
+  // Enabling data bypass for RoCC commands
   val dcache_bypass_data =
-    if (fastLoadByte) io.dmem.resp.bits.data(xLen-1, 0)
-    else if (fastLoadWord) io.dmem.resp.bits.data_word_bypass(xLen-1, 0)
+    if (fastLoadByte) Mux(wb_ctrl.rocc, io.rocc.resp.bits.data, Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), lsl_resp_data, io.dmem.resp.bits.data(xLen-1, 0)))
+    else if (fastLoadWord) Mux(wb_ctrl.rocc, io.rocc.resp.bits.data, Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), lsl_resp_data, io.dmem.resp.bits.data_word_bypass(xLen-1, 0)))
     else wb_reg_wdata
-
+  dontTouch(dcache_bypass_data)
+  //===== GuardianCouncil Function: End ====//
   // detect bypass opportunities
   val ex_waddr = ex_reg_inst(11,7) & regAddrMask.U
   val mem_waddr = mem_reg_inst(11,7) & regAddrMask.U
@@ -395,9 +454,27 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val bypass_sources = IndexedSeq(
     (true.B, 0.U, 0.U), // treat reading x0 as a bypass
     (ex_reg_valid && ex_ctrl.wxd, ex_waddr, mem_reg_wdata),
-    (mem_reg_valid && mem_ctrl.wxd && !mem_ctrl.mem, mem_waddr, wb_reg_wdata),
+    (mem_reg_valid && mem_ctrl.wxd && !mem_ctrl.mem && !mem_ctrl.rocc, mem_waddr, wb_reg_wdata),
     (mem_reg_valid && mem_ctrl.wxd, mem_waddr, dcache_bypass_data))
   val id_bypass_src = id_raddr.map(raddr => bypass_sources.map(s => s._1 && s._2 === raddr))
+
+
+  val bypass_mux_2 = bypass_sources.map(_._2)
+  val bypass_mux_1 = bypass_sources.map(_._1)
+  dontTouch(ex_waddr)
+  dontTouch(mem_waddr)
+  dontTouch(wb_waddr)
+  
+  for(i <- 0 until id_raddr.size){
+    dontTouch(id_raddr(i))
+  }
+
+  // for(i <- 0 until id_raddr.size){
+  //   for(j <- 0 until bypass_sources.size){
+  //     dontTouch(id_bypass_src(i)(j))
+  //   }
+  // }
+
 
   // execute stage
   val bypass_mux = bypass_sources.map(_._3)
@@ -415,6 +492,12 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     A2_IMM -> ex_imm,
     A2_SIZE -> Mux(ex_reg_rvc, 2.S, 4.S)))
 
+  //   for(i <- 0 until bypass_sources.size){
+  //   dontTouch(bypass_mux_2(i))
+  //   dontTouch(bypass_mux_1(i))
+  //   dontTouch(bypass_mux(i))
+  // }
+
   val alu = Module(aluFn match {
     case _: ABLUFN => new ABLU
     case _: ALUFN => new ALU
@@ -431,6 +514,17 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     u.io.rs2 := ex_rs(1)
     u.io.rd
   }
+  //===== EC: Start =====//
+  val alu_1cycle_delay_reg = Reg(UInt())
+  val alu_2cycle_delay_reg = Reg(UInt())
+  alu_1cycle_delay_reg := alu.io.out
+  alu_2cycle_delay_reg := alu_1cycle_delay_reg
+  io.alu_2cycle_delay := alu_2cycle_delay_reg
+  val record_pc = Reg(UInt())
+  val pc_special = Reg(UInt())
+  record_pc := io.record_pc
+  pc_special := Mux(record_pc === 1.U, wb_reg_pc + 4.U, pc_special)
+  //===== EC: Start =====//
 
   val mem_scie_pipelined_wdata = if (!rocketParams.useSCIE) 0.U else {
     val u = Module(new SCIEPipelined(xLen))
@@ -456,7 +550,6 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     zkn.io.fn   := ex_ctrl.alu_fn
     zkn.io.hl   := ex_reg_inst(27)
     zkn.io.bs   := ex_reg_inst(31,30)
-    zkn.io.rnum := ex_reg_inst(23,20)
     zkn.io.rs1  := ex_op1.asUInt
     zkn.io.rs2  := ex_op2.asUInt
     zkn.io.rd
@@ -558,12 +651,12 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
 
   // replay inst in ex stage?
   val ex_pc_valid = ex_reg_valid || ex_reg_replay || ex_reg_xcpt_interrupt
-  val wb_dcache_miss = wb_ctrl.mem && !io.dmem.resp.valid
-  val replay_ex_structural = ex_ctrl.mem && !io.dmem.req.ready ||
-                             ex_ctrl.div && !div.io.req.ready
+  val wb_dcache_miss = Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), false.B, wb_ctrl.mem && !io.dmem.resp.valid)
+  val replay_ex_structural = Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), (ex_ctrl.div && !div.io.req.ready), ex_ctrl.mem && !io.dmem.req.ready ||
+                                                                                           ex_ctrl.div && !div.io.req.ready)
   val replay_ex_load_use = wb_dcache_miss && ex_reg_load_use
   val replay_ex = ex_reg_replay || (ex_reg_valid && (replay_ex_structural || replay_ex_load_use))
-  val ctrl_killx = take_pc_mem_wb || replay_ex || !ex_reg_valid
+  val ctrl_killx = take_pc_mem_wb || replay_ex || !ex_reg_valid 
   // detect 2-cycle load-use delay for LB/LH/SC
   val ex_slow_bypass = ex_ctrl.mem_cmd === M_XSC || ex_reg_mem_size < 2.U
   val ex_sfence = usingVM.B && ex_ctrl.mem && (ex_ctrl.mem_cmd === M_SFENCE || ex_ctrl.mem_cmd === M_HFENCEV || ex_ctrl.mem_cmd === M_HFENCEG)
@@ -583,14 +676,20 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val mem_npc = (Mux(mem_ctrl.jalr || mem_reg_sfence, encodeVirtualAddress(mem_reg_wdata, mem_reg_wdata).asSInt, mem_br_target) & (-2).S).asUInt
   val mem_wrong_npc =
     Mux(ex_pc_valid, mem_npc =/= ex_reg_pc,
-    Mux(ibuf.io.inst(0).valid || ibuf.io.imem.valid, mem_npc =/= ibuf.io.pc, true.B))
+    Mux(ibuf.io.inst(0).valid || ibuf.io.imem.valid, mem_npc =/= ibuf.io.pc, Mux(checker_mode.asBool || checker_priv_mode.asBool, false.B, true.B)))
   val mem_npc_misaligned = !csr.io.status.isa('c'-'a') && mem_npc(1) && !mem_reg_sfence
   val mem_int_wdata = Mux(!mem_reg_xcpt && (mem_ctrl.jalr ^ mem_npc_misaligned), mem_br_target, mem_reg_wdata.asSInt).asUInt
   val mem_cfi = mem_ctrl.branch || mem_ctrl.jalr || mem_ctrl.jal
   val mem_cfi_taken = (mem_ctrl.branch && mem_br_taken) || mem_ctrl.jalr || mem_ctrl.jal
   val mem_direction_misprediction = mem_ctrl.branch && mem_br_taken =/= (usingBTB.B && mem_reg_btb_resp.taken)
   val mem_misprediction = if (usingBTB) mem_wrong_npc else mem_cfi_taken
-  take_pc_mem := mem_reg_valid && !mem_reg_xcpt && (mem_misprediction || mem_reg_sfence)
+  // take_pc_mem := mem_reg_valid && !mem_reg_xcpt && (Mux((checker_mode.asBool || checker_priv_mode.asBool) && (mem_ctrl.branch || (mem_ctrl.jalr && mem_reg_inst(12) =/= 1.U) || mem_ctrl.jal), false.B, mem_misprediction) || mem_reg_sfence)
+  take_pc_mem := mem_reg_valid && !mem_reg_xcpt && (Mux((checker_mode.asBool || checker_priv_mode.asBool), (mem_ctrl.jalr && mem_reg_inst(12) === 1.U), mem_misprediction) || mem_reg_sfence)
+
+  dontTouch(mem_npc)
+  dontTouch(mem_br_target)
+  dontTouch(mem_reg_wdata)
+  dontTouch(mem_ctrl)
 
   mem_reg_valid := !ctrl_killx
   mem_reg_replay := !take_pc_mem_wb && replay_ex
@@ -621,14 +720,15 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     mem_reg_hls_or_dv := io.dmem.req.bits.dv
     mem_reg_pc := ex_reg_pc
     // IDecode ensured they are 1H
-    mem_reg_wdata := Mux1H(Seq(
+    mem_reg_wdata := Mux((ex_ctrl.jalr && ex_reg_inst(12) === 1.U), rsu_pc,  
+      Mux1H(Seq(
       ex_scie_unpipelined -> ex_scie_unpipelined_wdata,
       ex_ctrl.zbk         -> ex_zbk_wdata,
       ex_ctrl.zkn         -> ex_zkn_wdata,
       ex_ctrl.zks         -> ex_zks_wdata,
       (!ex_scie_unpipelined && !ex_ctrl.zbk && !ex_ctrl.zkn && !ex_ctrl.zks)
                           -> alu.io.out,
-    ))
+    )))
     mem_br_taken := alu.io.cmp_out
 
     when (ex_ctrl.rxs2 && (ex_ctrl.mem || ex_ctrl.rocc || ex_sfence)) {
@@ -660,12 +760,18 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   )).distinct
   coverExceptions(mem_xcpt, mem_cause, "MEMORY", memCoverCauses)
 
-  val dcache_kill_mem = mem_reg_valid && mem_ctrl.wxd && io.dmem.replay_next // structural hazard on writeback port
+  val dcache_kill_mem = Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), false.B, mem_reg_valid && mem_ctrl.wxd && io.dmem.replay_next) // structural hazard on writeback port
   val fpu_kill_mem = mem_reg_valid && mem_ctrl.fp && io.fpu.nack_mem
   val replay_mem  = dcache_kill_mem || mem_reg_replay || fpu_kill_mem
   val killm_common = dcache_kill_mem || take_pc_wb || mem_reg_xcpt || !mem_reg_valid
-  div.io.kill := killm_common && RegNext(div.io.req.fire)
-  val ctrl_killm = killm_common || mem_xcpt || fpu_kill_mem
+  
+  val ctrl_killm = killm_common || mem_xcpt || fpu_kill_mem 
+
+  val if_kill_div_r =  Mux(checker_mode === 0.U && checker_priv_mode === 0.U, false.B, Mux(!ctrl_killm && mem_ctrl.div && if_overtaking_next_cycle.asBool, true.B, false.B))
+  div.io.kill := (killm_common && RegNext(div.io.req.fire)) || if_kill_div_r
+
+  val wb_pc_valid = wb_reg_valid || wb_reg_replay || wb_reg_xcpt
+
 
   // writeback stage
   wb_reg_valid := !ctrl_killm
@@ -694,16 +800,52 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
 
   val (wb_xcpt, wb_cause) = checkExceptions(List(
     (wb_reg_xcpt,  wb_reg_cause),
-    (wb_reg_valid && wb_ctrl.mem && io.dmem.s2_xcpt.pf.st, Causes.store_page_fault.U),
-    (wb_reg_valid && wb_ctrl.mem && io.dmem.s2_xcpt.pf.ld, Causes.load_page_fault.U),
-    (wb_reg_valid && wb_ctrl.mem && io.dmem.s2_xcpt.gf.st, Causes.store_guest_page_fault.U),
-    (wb_reg_valid && wb_ctrl.mem && io.dmem.s2_xcpt.gf.ld, Causes.load_guest_page_fault.U),
-    (wb_reg_valid && wb_ctrl.mem && io.dmem.s2_xcpt.ae.st, Causes.store_access.U),
-    (wb_reg_valid && wb_ctrl.mem && io.dmem.s2_xcpt.ae.ld, Causes.load_access.U),
-    (wb_reg_valid && wb_ctrl.mem && io.dmem.s2_xcpt.ma.st, Causes.misaligned_store.U),
-    (wb_reg_valid && wb_ctrl.mem && io.dmem.s2_xcpt.ma.ld, Causes.misaligned_load.U)
+    (wb_reg_valid && wb_ctrl.mem && Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), false.B, io.dmem.s2_xcpt.pf.st), Causes.store_page_fault.U),
+    (wb_reg_valid && wb_ctrl.mem && Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), false.B, io.dmem.s2_xcpt.pf.ld), Causes.load_page_fault.U),
+    (wb_reg_valid && wb_ctrl.mem && Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), false.B, io.dmem.s2_xcpt.gf.st), Causes.store_guest_page_fault.U),
+    (wb_reg_valid && wb_ctrl.mem && Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), false.B, io.dmem.s2_xcpt.gf.ld), Causes.load_guest_page_fault.U),
+    (wb_reg_valid && wb_ctrl.mem && Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), false.B, io.dmem.s2_xcpt.ae.st), Causes.store_access.U),
+    (wb_reg_valid && wb_ctrl.mem && Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), false.B, io.dmem.s2_xcpt.ae.ld), Causes.load_access.U),
+    (wb_reg_valid && wb_ctrl.mem && Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), false.B, io.dmem.s2_xcpt.ma.st), Causes.misaligned_store.U),
+    (wb_reg_valid && wb_ctrl.mem && Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), false.B, io.dmem.s2_xcpt.ma.ld), Causes.misaligned_load.U)
   ))
+  //===== EC: Start ===== //
+  /* R Features */
+  val rsu_slave = Module(new R_RSUSL(R_RSUSLParams(xLen, 32)))
+  val lsl = Module(new R_LSL(R_LSLParams(255, xLen)))
+  val icsl = Module(new R_ICSL(R_ICSLParams(16)))
+  // val csrshadow_seq = (CSRshadows.allshadows_for_filter.map(_.asUInt)).toSeq
+  // val csrshadow_seq                               = Seq(CSRs.fflags.U, CSRs.fcsr.U, CSRs.frm.U)
+  // Original design:
+  // val wb_wxd = wb_reg_valid && wb_ctrl.wxd
+  // val replay_wb_rocc = wb_reg_valid && wb_ctrl.rocc && !io.rocc.cmd.ready
+  // In GuardianCouncil, RoCC response can be replied in a single cycle, therefore !io.rocc.resp.valid is added
+  val wb_wxd = wb_reg_valid && wb_ctrl.wxd && !io.rocc.resp.valid
+  val replay_wb_rocc = wb_reg_valid && wb_ctrl.rocc && (false).B // in guardian council, rocc.cmd.ready is always ready
+  val replay_wb_lsl = Mux(((checker_mode === 1.U) || (checker_priv_mode === 1.U)), lsl_resp_replay.asBool || lsl_resp_replay_csr.asBool , false.B)
+  val wb_csr = (wb_reg_inst(6,0) === 0x73.U) && ((wb_reg_inst(14,12) === 0x2.U) || (wb_reg_inst(14,12) === 0x1.U) || (wb_reg_inst(14,12) === 0x3.U) || (wb_reg_inst(14,12) === 0x5.U) || (wb_reg_inst(14,12) === 0x6.U) || (wb_reg_inst(14,12) === 0x7.U)) && !wb_reg_inst(31, 20).isOneOf(CSRshadows.csrshadow_seq) && wb_reg_valid
+  lsl_resp_replay_csr := Mux(checker_mode.asBool, wb_csr && !lsl_req_ready_csr, false.B)
 
+  /* IN GC, ROCC IS NOT A LONG-LATENCY INSTRUCTION ANY MORE */
+  val wb_set_sboard = wb_ctrl.div || wb_dcache_miss
+  val replay_wb_common = Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), false.B, io.dmem.s2_nack) || wb_reg_replay
+  val replay_wb_without_overtaken = replay_wb_common || replay_wb_rocc
+  val wb_should_be_valid_but_be_overtaken = Mux(checker_mode.asBool || checker_priv_mode.asBool, icsl_if_overtaking.asBool && wb_reg_valid && !replay_wb_without_overtaken && !replay_wb_lsl && !wb_xcpt && !io.rocc.resp.valid, false.B)
+  val let_ret_s_commit = wb_reg_valid && !wb_xcpt && !io.rocc.resp.valid && (wb_reg_pc === pc_special)
+  val wb_r_replay = ((wb_should_be_valid_but_be_overtaken || replay_wb_lsl) && !let_ret_s_commit)
+  val replay_wb = replay_wb_without_overtaken || (wb_r_replay && (icsl.io.debug_state =/= 6.U))
+  val if_ret_special = icsl_if_ret_special_pc.asBool && (!RegNext(icsl_if_ret_special_pc.asBool))
+  take_pc_wb := replay_wb || wb_xcpt || csr.io.eret || wb_reg_flush_pipe || check_exception || check_privret || if_ret_special
+
+  /*
+  if (GH_GlobalParams.GH_DEBUG == 1) {
+    when (replay_wb && io.core_trace.asBool) {
+      printf(midas.targetutils.SynthesizePrintf("C%d: re-wb[%x], [%x], [%x], [%x].\n",
+          io.hartid, replay_wb_common.asUInt, wb_should_be_valid_but_be_overtaken.asUInt, replay_wb_lsl.asUInt, let_ret_s_commit.asUInt))
+    }
+  } 
+  */
+  //===== EC: End   =====//
   val wbCoverCauses = List(
     (Causes.misaligned_store, "MISALIGNED_STORE"),
     (Causes.misaligned_load, "MISALIGNED_LOAD"),
@@ -718,53 +860,372 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   ) else Nil)
   coverExceptions(wb_xcpt, wb_cause, "WRITEBACK", wbCoverCauses)
 
-  val wb_pc_valid = wb_reg_valid || wb_reg_replay || wb_reg_xcpt
-  val wb_wxd = wb_reg_valid && wb_ctrl.wxd
-  val wb_set_sboard = wb_ctrl.div || wb_dcache_miss || wb_ctrl.rocc
-  val replay_wb_common = io.dmem.s2_nack || wb_reg_replay
-  val replay_wb_rocc = wb_reg_valid && wb_ctrl.rocc && !io.rocc.cmd.ready
-  val replay_wb = replay_wb_common || replay_wb_rocc
-  take_pc_wb := replay_wb || wb_xcpt || csr.io.eret || wb_reg_flush_pipe
+  
 
+  //===== EC: Start =====//
+  // Original design:
+  // val wb_valid = wb_reg_valid && !replay_wb && !wb_xcpt
+  // In GuardianCouncil, RoCC response can be replied in a single cycle, therefore !io.rocc.resp.valid is added
+  val wb_valid = wb_reg_valid && !replay_wb && !wb_xcpt && !check_exception
+  // Count only architecturally committed store-class instructions while the checker is active.
+  val storeCommitInCheckState = (checker_mode === 1.U) || (checker_priv_mode === 1.U)
+  val storeCommitValid = wb_valid && wb_ctrl.mem && wb_ctrl.mem_cmd.isOneOf(M_XWR, M_PWR) && storeCommitInCheckState
+  // Use wide counters to reduce overflow risk in long-running measurements.
+  val storeCommitCountReg = RegInit(0.U(128.W))
+  val storeCommitCycleSumReg = RegInit(0.U(128.W))
+  when (storeCommitValid) {
+    storeCommitCountReg := storeCommitCountReg + 1.U(128.W)
+    storeCommitCycleSumReg := storeCommitCycleSumReg + csr.io.time.pad(128)
+  }
+  io.store_commit_count := storeCommitCountReg
+  io.store_commit_cycle_sum := storeCommitCycleSumReg
+  dontTouch(io.store_commit_count)
+  dontTouch(io.store_commit_cycle_sum)
+  dontTouch(storeCommitValid)
+  dontTouch(storeCommitCountReg)
+  dontTouch(storeCommitCycleSumReg)
+  /*
+  if (GH_GlobalParams.GH_DEBUG == 1) {
+    when (wb_reg_valid && !wb_valid && io.core_trace.asBool) {
+      printf(midas.targetutils.SynthesizePrintf("C%d: bl-wb[%x], [%x].\n",
+          io.hartid, replay_wb.asUInt, wb_xcpt.asUInt))
+    }
+  }
+  */
+  
   // writeback arbitration
-  val dmem_resp_xpu = !io.dmem.resp.bits.tag(0).asBool
-  val dmem_resp_fpu =  io.dmem.resp.bits.tag(0).asBool
-  val dmem_resp_waddr = io.dmem.resp.bits.tag(5, 1)
-  val dmem_resp_valid = io.dmem.resp.valid && io.dmem.resp.bits.has_data
-  val dmem_resp_replay = dmem_resp_valid && io.dmem.resp.bits.replay
+  val dmem_resp_xpu = Mux(((checker_mode === 1.U) || (checker_priv_mode === 1.U)), !lsl_resp_tag(0).asBool, !io.dmem.resp.bits.tag(0).asBool)
+  val dmem_resp_fpu = Mux(((checker_mode === 1.U) || (checker_priv_mode === 1.U)), lsl_resp_tag(0).asBool, io.dmem.resp.bits.tag(0).asBool)
+  val dmem_resp_waddr = Mux(((checker_mode === 1.U) || (checker_priv_mode === 1.U)), lsl_resp_tag(5,1), io.dmem.resp.bits.tag(5, 1))
+  val dmem_resp_valid = Mux(((checker_mode === 1.U) || (checker_priv_mode === 1.U)), lsl_resp_valid.asBool && lsl_resp_has_data.asBool, io.dmem.resp.valid && io.dmem.resp.bits.has_data)
+  val dmem_resp_replay = Mux(((checker_mode === 1.U) || (checker_priv_mode === 1.U)), dmem_resp_valid && lsl_resp_replay.asBool, dmem_resp_valid && io.dmem.resp.bits.replay)
 
   div.io.resp.ready := !wb_wxd
-  val ll_wdata = WireDefault(div.io.resp.bits.data)
-  val ll_waddr = WireDefault(div.io.resp.bits.tag)
-  val ll_wen = WireDefault(div.io.resp.fire)
+  val ll_wdata = WireInit(div.io.resp.bits.data)
+  val ll_waddr = WireInit(div.io.resp.bits.tag)
+  val ll_wen = WireInit(div.io.resp.fire())
+
   if (usingRoCC) {
-    io.rocc.resp.ready := !wb_wxd
-    when (io.rocc.resp.fire) {
-      div.io.resp.ready := false.B
+    io.rocc.resp.ready := (true).B
+    when (io.rocc.resp.fire()) {
+      div.io.resp.ready := (false).B
       ll_wdata := io.rocc.resp.bits.data
       ll_waddr := io.rocc.resp.bits.rd
-      ll_wen := true.B
+      // ll_wen := wb_valid /* THIS IS A BLACK HACK, BECAUSE THE ROCC ISA IS NOW HANDLED AT MEM STAGE AND MUST BE REPLIED AT 1 CYCLE */
+      ll_wen := wb_valid
     }
   }
   when (dmem_resp_replay && dmem_resp_xpu) {
-    div.io.resp.ready := false.B
+    div.io.resp.ready := (false).B
     if (usingRoCC)
-      io.rocc.resp.ready := false.B
+      io.rocc.resp.ready := (false).B
     ll_waddr := dmem_resp_waddr
-    ll_wen := true.B
+    ll_wen := (true).B
   }
 
-  val wb_valid = wb_reg_valid && !replay_wb && !wb_xcpt
-  val wb_wen = wb_valid && wb_ctrl.wxd
+
+  
+  
+  // // writeback arbitration
+  // val dmem_resp_xpu = !io.dmem.resp.bits.tag(0).asBool
+  // val dmem_resp_fpu =  io.dmem.resp.bits.tag(0).asBool
+  // val dmem_resp_waddr = io.dmem.resp.bits.tag(5, 1)
+  // val dmem_resp_valid = io.dmem.resp.valid && io.dmem.resp.bits.has_data
+  // val dmem_resp_replay = dmem_resp_valid && io.dmem.resp.bits.replay
+
+  // div.io.resp.ready := !wb_wxd
+  // val ll_wdata = WireDefault(div.io.resp.bits.data)
+  // val ll_waddr = WireDefault(div.io.resp.bits.tag)
+  // val ll_wen = WireDefault(div.io.resp.fire)
+  // if (usingRoCC) {
+  //   io.rocc.resp.ready := !wb_wxd
+  //   when (io.rocc.resp.fire) {
+  //     div.io.resp.ready := false.B
+  //     ll_wdata := io.rocc.resp.bits.data
+  //     ll_waddr := io.rocc.resp.bits.rd
+  //     ll_wen := true.B
+  //   }
+  // }
+  // when (dmem_resp_replay && dmem_resp_xpu) {
+  //   div.io.resp.ready := false.B
+  //   if (usingRoCC)
+  //     io.rocc.resp.ready := false.B
+  //   ll_waddr := dmem_resp_waddr
+  //   ll_wen := true.B
+  // }
+
+  // val wb_valid = wb_reg_valid && !replay_wb && !wb_xcpt
+  
+  val wb_wen = wb_valid && wb_ctrl.wxd && !lsl_resp_replay_csr
   val rf_wen = wb_wen || ll_wen
   val rf_waddr = Mux(ll_wen, ll_waddr, wb_waddr)
-  val rf_wdata = Mux(dmem_resp_valid && dmem_resp_xpu, io.dmem.resp.bits.data(xLen-1, 0),
-                 Mux(ll_wen, ll_wdata,
-                 Mux(wb_ctrl.csr =/= CSR.N, csr.io.rw.rdata,
-                 Mux(wb_ctrl.mul, mul.map(_.io.resp.bits.data).getOrElse(wb_reg_wdata),
-                 wb_reg_wdata))))
-  when (rf_wen) { rf.write(rf_waddr, rf_wdata) }
+  val rf_wdata = Mux(dmem_resp_valid && dmem_resp_xpu, Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), lsl_resp_data, io.dmem.resp.bits.data(xLen-1, 0)),
+                  Mux(ll_wen, ll_wdata,
+                  Mux(wb_ctrl.csr =/= CSR.N, Mux((checker_mode.asBool || checker_priv_mode.asBool) && wb_csr, lsl_resp_data_csr, csr.io.rw.rdata),
+                  Mux(wb_ctrl.mul, mul.map(_.io.resp.bits.data).getOrElse(wb_reg_wdata),
+                  wb_reg_wdata))))
 
+
+  dontTouch(rf_wdata)
+  dontTouch(ll_wdata)
+  dontTouch(rf_wen)
+  dontTouch(ll_wen)
+  dontTouch(rf_waddr)
+  dontTouch(ll_waddr)
+  
+  // lsl_req_valid_csr := Mux(rf_wen, 
+  //                      Mux(dmem_resp_valid && dmem_resp_xpu, false.B,
+  //                      Mux(ll_wen, false.B,
+  //                      Mux(wb_ctrl.csr =/= CSR.N, Mux(checker_mode.asBool && wb_csr, true.B, false.B), false.B))), false.B)
+  lsl_req_valid_csr := Mux(rf_wen, 
+                       Mux(dmem_resp_valid && dmem_resp_xpu, false.B,
+                       Mux(ll_wen, false.B,
+                       Mux(wb_ctrl.csr =/= CSR.N, Mux((checker_mode.asBool || checker_priv_mode.asBool) && wb_csr, true.B, false.B), false.B))), false.B)
+  lsl_req_valid_csr_test := Mux(rf_wen, 
+                            Mux(dmem_resp_valid && dmem_resp_xpu, false.B,
+                            Mux(ll_wen, false.B,
+                            Mux(wb_ctrl.csr =/= CSR.N, Mux((checker_mode.asBool || checker_priv_mode.asBool) && wb_csr && !wb_reg_inst(31, 20).isOneOf(CSRshadows.csrshadow_seq), true.B, false.B), false.B))), false.B)  
+  dontTouch(lsl_req_valid_csr_test)          
+  dontTouch(lsl_req_valid_csr)         
+  // when (rf_wen) { rf.write(rf_waddr, rf_wdata) }
+  //===== EC: End   =====//
+//===== EC: Start =====//
+  /* R Features */
+  val arfs_shadow = Reg(Vec(32, UInt(xLen.W)))
+
+
+  // Instantiate RSU
+  val priv_status  = Reg(UInt(2.W))
+  val check_priv   = Reg(UInt(2.W))
+  val check_ret_priv = Reg(UInt(2.W))
+  val arfs_is_CSR  = (io.packet_arfs(135+1) === 0x01.U) && (io.packet_arfs(138+1, 136+1) === 0x07.U)
+  val arfs_is_ARFS = (io.packet_arfs(138+1, 136+1) === 0x07.U) && (io.packet_arfs(135+1) === 0x00.U)
+  
+
+  val priv_cps_done = io.arfs_if_CPS.asBool && arfs_is_CSR && (io.packet_arfs(134-1, 128) === 7.U) && (io.packet_arfs(135, 134) =/= 0.U)
+  priv_status := Mux(priv_cps_done, 1.U, Mux(check_exception, 0.U, priv_status))
+  check_priv  := Mux(io.arfs_if_CPS.asBool && arfs_is_CSR, io.packet_arfs(135, 134), Mux(check_exception, 0.U, check_priv))
+  check_ret_priv := Mux(!io.arfs_if_CPS.asBool && arfs_is_CSR, io.packet_arfs(135, 134), Mux(csr.io.if_priv_checkcomp, 0.U, check_ret_priv))
+
+  check_exception := (RegNext(priv_cps_done) && !excpt_mode) || ((priv_status === 1.U) && RegNext(csr.io.eret))
+  check_privret   := RegNext(icsl.io.if_check_privret)
+  csr.io.checker_priv_mode := checker_priv_mode.asBool
+  csr.io.checker_mode := checker_mode.asBool
+  csr.io.arfs_is_CSR  := arfs_is_CSR
+  csr.io.arfs_is_CPS  := io.arfs_if_CPS.asBool
+  csr.io.csr_shadows  := Mux(arfs_is_CSR, io.packet_arfs(127, 0), 0.U)
+  csr.io.shadow_idx   := Mux(arfs_is_CSR, io.packet_arfs(134-1, 128), 0.U)
+  csr.io.check_priv   := check_priv
+  csr.io.check_ret_priv := check_ret_priv
+  csr.io.check_exception := check_exception
+  csr.io.check_priv_ret := check_privret
+  csr.io.check_epc    := pc_special
+  csr.io.check_tvec   := rsu_pc
+  csr.io.ic_check_done := icsl.io.if_check_done && !(!div.io.req.ready || io.fpu.fpu_inflight)
+  csr.io.clear_ic_status := icsl.io.clear_ic_status.asBool
+  val self_xcpt_flag = RegInit(0.U(3.W))
+  val self_eret_flag = RegInit(0.U(3.W))
+  self_xcpt_flag := Mux(csr.io.trace(0).exception && excpt_mode, self_xcpt_flag + 1.U, Mux(!excpt_mode, 0.U, self_xcpt_flag))
+  self_eret_flag := Mux(csr.io.eret && excpt_mode, self_eret_flag + 1.U, Mux(!excpt_mode, 0.U, self_eret_flag))
+  when(csr.io.trace(0).exception){
+    excpt_mode := true.B
+  }.elsewhen(csr.io.eret && (self_eret_flag === self_xcpt_flag)){
+    excpt_mode := false.B
+  }
+  dontTouch(csr.io)
+  dontTouch(check_exception)
+  dontTouch(check_privret)
+  // rsu_slave.io.id_raddr := VecInit(id_raddr)
+  rsu_slave.io.excpt := csr.io.trace(0).exception
+  rsu_slave.io.eret  := csr.io.eret
+  rsu_slave.io.arfs_if_CPS := io.arfs_if_CPS
+  rsu_slave.io.arfs_if_ARFS := Mux(arfs_is_ARFS, 1.U, 0.U)
+  rsu_slave.io.arfs_index := Mux(arfs_is_ARFS, io.packet_arfs(134-1, 128), 0.U)
+  rsu_slave.io.arfs_merge := Mux(arfs_is_ARFS, io.packet_arfs(127, 0), 0.U)
+  rsu_slave.io.check_done := icsl.io.if_check_done
+  rsu_slave.io.check_priv := Mux(arfs_is_CSR, io.packet_arfs(135, 134), 0.U)
+  val rf_wen_rsu = WireInit(0.U(1.W))
+  rf_wen_rsu := rsu_slave.io.arfs_valid_out
+  rsu_pc := rsu_slave.io.pcarf_out
+  io.rsu_status := rsu_slave.io.rsu_status
+  rsu_slave.io.do_cp_check := icsl.io.if_check_done.asUInt & (rsu_slave.io.rsu_status === 3.U).asUInt & (!(!div.io.req.ready || io.fpu.fpu_inflight)).asUInt
+
+  for (i <-0 until 32){
+    rsu_slave.io.core_arfs_in(i) := rf.read(i.U)
+    rsu_slave.io.core_farfs_in(i) := io.fpu.farfs(i)
+  }
+  rsu_slave.io.elu_cp_deq := Mux(io.elu_sel.asBool && io.elu_deq.asBool, 1.U, 0.U)
+  rsu_slave.io.core_trace := io.core_trace
+  csr.io.core_trace := io.core_trace
+
+  csr.io.pfarf_valid := rsu_slave.io.pfarf_valid_out
+  csr.io.fcsr_in := rsu_slave.io.fcsr_out
+
+  // Added one cycle delay to ensure the RCU being operated at commited stage 
+  // Avodiing uninteded reg write after arf_copy
+  val arf_paste_reg = RegInit(0.U(1.W))
+  val start_check   = RegInit(false.B)
+  arf_paste_reg := io.arf_copy_in
+  rsu_slave.io.paste_arfs := arf_paste_reg | check_exception.asUInt
+  rsu_slave.io.clear_ic_status := icsl.io.clear_ic_status
+  rsu_slave.io.record_context := io.record_and_store(1)
+  rsu_slave.io.store_from_checker := io.record_and_store(0)
+  rsu_slave.io.core_id := io.hartid
+
+  rsu_slave.io.rf_wen := rf_wen
+  rsu_slave.io.rf_waddr := rf_waddr
+  rsu_slave.io.rf_wdata := rf_wdata
+  rsu_slave.io.checker_mode := checker_mode.asBool || checker_priv_mode.asBool
+  icsl.io.core_id := io.hartid
+  when(checker_mode.asBool || checker_priv_mode.asBool){
+    start_check := true.B
+  }.elsewhen(rsu_slave.io.store_from_checker.asBool){
+    start_check := false.B
+  }
+  // Instantiate ICSL
+  val r_exception_record = RegInit(0.U(1.W))
+  r_exception_record := Mux(csr.io.r_exception.asBool, 1.U, Mux(csr.io.trace(0).valid && !csr.io.trace(0).exception && r_exception_record.asBool, 0.U, r_exception_record))
+
+
+  icsl.io.ic_counter := io.ic_counter(15,0)
+  icsl.io.main_core_status := io.ic_counter(19,16)
+  icsl.io.icsl_run := arf_paste_reg & (~io.record_and_store(0))
+  icsl.io.new_commit := csr.io.trace(0).valid && !csr.io.trace(0).exception
+  icsl.io.if_correct_process := io.if_correct_process & !excpt_mode.asUInt
+  checker_mode := icsl.io.icsl_checkermode
+  checker_priv_mode := icsl.io.icsl_checkerpriv_mode
+  io.clear_ic_status := icsl.io.clear_ic_status
+  icsl_if_overtaking := (icsl.io.if_overtaking | rsu_slave.io.core_hang_up) & !r_exception_record
+  icsl_if_ret_special_pc := icsl.io.if_ret_special_pc
+  if_overtaking_next_cycle := icsl.io.if_overtaking_next_cycle
+  val returned_to_special_address_valid = Wire(Bool())
+  icsl.io.returned_to_special_address_valid := returned_to_special_address_valid
+  icsl.io.if_check_completed := rsu_slave.io.if_cp_check_completed
+  icsl.io.core_trace := io.core_trace
+  icsl.io.if_check_privrun := RegNext(check_exception)
+  icsl.io.self_xcpt := csr.io.trace(0).exception
+  icsl.io.self_ret  := csr.io.eret
+
+  val zeros_3bits = WireInit(0.U(3.W))
+
+  val icsl_if_valid = WireInit(0.U(4.W))
+  val icsl_ex_valid = WireInit(0.U(4.W))
+  val icsl_mem_valid = WireInit(0.U(4.W))
+  val icsl_wb_valid = WireInit(0.U(4.W))
+
+  icsl_if_valid := Cat(zeros_3bits, !ctrl_killd.asUInt)
+  icsl_ex_valid := Cat(zeros_3bits, ex_reg_valid.asUInt)
+  icsl_mem_valid := Cat(zeros_3bits, mem_reg_valid.asUInt)
+  icsl_wb_valid := Cat(zeros_3bits, wb_reg_valid.asUInt)
+  icsl.io.num_valid_insts_in_pipeline := icsl_if_valid + icsl_ex_valid + icsl_mem_valid + icsl_wb_valid
+  
+  icsl.io.debug_perf_reset := io.debug_perf_ctrl(0)
+  icsl.io.debug_perf_sel := io.debug_perf_ctrl(4,1)
+  val debug_perf_reset = WireInit(0.U(1.W))
+  val debug_perf_sel = WireInit(0.U(4.W))
+  val debug_perf_val = WireInit(0.U(64.W))
+  
+
+
+  icsl.io.debug_perf_reset := io.debug_perf_ctrl(0)
+  icsl.io.debug_perf_sel := io.debug_perf_ctrl(4,1)
+  // icsl.io.icsl_ack       := io.icsl_ack
+  icsl.io.big_switch     := io.big_switch
+  icsl.io.cdc_empty      := io.cdc_empty
+  icsl.io.lsl_empty      := lsl.io.if_empty
+  icsl.io.excpt_mode     := excpt_mode
+  // io.if_big_complete     := icsl.io.if_big_complete 
+  // icsl.io.big_complete   := io.big_complete    
+  /*
+  debug_perf_reset := io.debug_perf_ctrl(0)
+  debug_perf_sel := io.debug_perf_ctrl(4,1)
+  */
+  
+  icsl.io.debug_starting_CPS := rsu_slave.io.starting_CPS
+  icsl.io.st_deq := lsl.io.st_deq
+  icsl.io.ld_deq := lsl.io.ld_deq
+  // kill_each_pipe := icsl.io.kill_pipe
+  val lsl_index = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U(8.W)))
+  for(i <- 0 until GH_GlobalParams.GH_TOTAL_PACKETS){
+    lsl_index(i)          := io.packet_lsl(i)(GH_GlobalParams.GH_WIDITH_PACKETS-1,GH_GlobalParams.GH_WIDITH_PACKETS-8)
+    // Instantiate LSL
+    lsl.io.m_st_valid(i)  := lsl_index(i)(2,0)=== 2.U
+    lsl.io.m_ld_valid(i)  := lsl_index(i)(2,0)=== 1.U
+    lsl.io.m_csr_valid(i) := lsl_index(i)(2,0)=== 3.U
+    lsl.io.m_csr_data(i)  := io.packet_lsl(i)(63, 0)
+    lsl.io.m_ldst_data(i) := io.packet_lsl(i)(127,64)
+    lsl.io.m_ldst_addr(i) := io.packet_lsl(i)(63,0)
+  }
+
+  lsl_req_ready     := lsl.io.req_ready
+  lsl.io.req_valid  := lsl_req_valid
+  lsl.io.req_addr   := lsl_req_addr
+  lsl.io.req_tag    := lsl_req_tag
+  lsl.io.req_cmd    := lsl_req_cmd
+  lsl.io.req_data   := lsl_req_data
+  lsl.io.req_size   := lsl_req_size
+  lsl.io.req_kill   := lsl_req_kill
+  lsl.io.req_valid_csr := lsl_req_valid_csr
+
+  lsl_resp_valid := lsl.io.resp_valid
+  lsl_resp_tag := lsl.io.resp_tag
+  lsl_resp_size := lsl.io.resp_size
+  lsl_resp_addr := lsl.io.resp_addr
+  lsl_resp_data := lsl.io.resp_data
+  lsl_resp_has_data := lsl.io.resp_has_data
+  lsl_resp_replay := lsl.io.resp_replay
+  io.log_near_full := lsl.io.near_full.asUInt | io.imem.bjl_nearfull.asUInt
+  io.log_highwatermark := lsl.io.lsl_highwatermark.asUInt | io.imem.bjl_highwatermark.asUInt
+  lsl_resp_data_csr := lsl.io.resp_data_csr
+  lsl_req_ready_csr := lsl.io.req_ready_csr
+
+  // Instantiate ELU
+  val elu = Module(new R_ELU(R_ELUParams(4, xLen, 40)))
+  elu.io.lsl_req_valid := lsl_req_valid
+  elu.io.lsl_req_addr := lsl_req_addr
+  elu.io.lsl_req_cmd := lsl_req_cmd
+  elu.io.lsl_req_data := lsl_req_data
+  elu.io.lsl_req_ready := lsl_req_ready
+  elu.io.lsl_req_kill := lsl_req_kill
+  elu.io.lsl_req_size := lsl_req_size
+  elu.io.lsl_resp_valid := lsl_resp_valid
+  elu.io.lsl_resp_addr := lsl_resp_addr
+  elu.io.lsl_resp_data := lsl_resp_data
+  elu.io.wb_pc := Mux(wb_reg_valid, wb_reg_pc, 0.U)
+  elu.io.wb_inst := Mux(wb_reg_valid, wb_reg_inst, 0.U)
+
+  // io.elu_data := Mux(io.elu_sel.asBool, rsu_slave.io.elu_cp_data, elu.io.elu_data)
+  // Faking ELU data
+  // io.elu_data := debug_perf_val
+  io.elu_data := icsl.io.debug_perf_val
+
+  io.elu_status := Cat(rsu_slave.io.elu_status, elu.io.elu_status)
+  elu.io.elu_deq := Mux(!io.elu_sel.asBool && io.elu_deq.asBool, 1.U, 0.U)
+  elu.io.lsl_resp_addr := lsl_resp_addr
+  elu.io.core_trace := io.core_trace
+
+
+  when (rf_wen_rsu === 1.U) {
+    rf.write(rsu_slave.io.arfs_idx_out, rsu_slave.io.arfs_out)
+    arfs_shadow(rsu_slave.io.arfs_idx_out) := rsu_slave.io.arfs_out
+  } .elsewhen (rf_wen) {
+    rf.write(rf_waddr, rf_wdata)
+    arfs_shadow(rf_waddr) := rf_wdata
+  }
+  when(start_check && RegNext(csr.io.trace(0).exception)){
+    rf.write(2.U, rsu_slave.io.rf_sp)
+    rf.write(3.U, rsu_slave.io.rf_gp)
+  }.elsewhen(start_check && RegNext(csr.io.eret) && (checker_mode.asBool || checker_priv_mode.asBool)){
+    rf.write(2.U, rsu_slave.io.rf_sp)
+    rf.write(3.U, rsu_slave.io.rf_gp)
+  }
+
+  dontTouch(rf_wen_rsu)
+
+  io.packet_cdc_ready := rsu_slave.io.cdc_ready | lsl.io.cdc_ready.asUInt | io.imem.bjl_cdc_ready.asUInt
+  //===== EC: End   =====//
+
+  dontTouch(csr.io.counters)
   // hook up control/status regfile
   csr.io.ungated_clock := clock
   csr.io.decode(0).inst := id_inst(0)
@@ -805,9 +1266,10 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   io.ptw.hstatus := csr.io.hstatus
   io.ptw.gstatus := csr.io.gstatus
   io.ptw.pmp := csr.io.pmp
-  csr.io.rw.addr := wb_reg_inst(31,20)
-  csr.io.rw.cmd := CSR.maskCmd(wb_reg_valid, wb_ctrl.csr)
-  csr.io.rw.wdata := wb_reg_wdata
+  val if_sysret = wb_reg_valid && ((wb_reg_inst(31, 20) === 0x30200073.U) || wb_reg_inst(31, 0) === 0x10200073.U)
+  csr.io.rw.addr := Mux((checker_priv_mode === 1.U) && if_sysret, 0.U, wb_reg_inst(31,20))
+  csr.io.rw.cmd := Mux((checker_priv_mode === 1.U) && if_sysret, 0.U, CSR.maskCmd(wb_reg_valid, wb_ctrl.csr))
+  csr.io.rw.wdata := Mux((checker_priv_mode === 1.U) && if_sysret, 0.U, wb_reg_wdata)
   io.trace := csr.io.trace
   for (((iobpw, wphit), bp) <- io.bpwatch zip wb_reg_wphit zip csr.io.bp) {
     iobpw.valid(0) := wphit
@@ -872,7 +1334,13 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   rocc_blocked := !wb_xcpt && !io.rocc.cmd.ready && (io.rocc.cmd.valid || rocc_blocked)
 
   val ctrl_stalld =
-    id_ex_hazard || id_mem_hazard || id_wb_hazard || id_sboard_hazard ||
+    //===== EC: Start =====//
+    // Original design:
+    // id_ex_hazard || id_mem_hazard || id_wb_hazard || id_sboard_hazard ||
+    // In GuardianCouncil, RoCC response can be replied in a single cycle, therefore RoCC does not cause a hazzard
+    rsu_slave.io.core_hang_up.asBool || id_ex_hazard || (id_mem_hazard) || (id_wb_hazard && !wb_ctrl.rocc) || id_sboard_hazard ||
+    //===== EC: End   =====//
+    //id_ex_hazard || id_mem_hazard || id_wb_hazard || id_sboard_hazard ||
     csr.io.singleStep && (ex_reg_valid || mem_reg_valid || wb_reg_valid) ||
     id_csr_en && csr.io.decode(0).fp_csr && !io.fpu.fcsr_rdy ||
     id_ctrl.fp && id_stall_fpu ||
@@ -883,21 +1351,83 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     id_do_fence ||
     csr.io.csr_stall ||
     id_reg_pause ||
-    io.traceStall
-  ctrl_killd := !ibuf.io.inst(0).valid || ibuf.io.inst(0).bits.replay || take_pc_mem_wb || ctrl_stalld || csr.io.interrupt
+    io.traceStall ||
+    !io.clk_enable_gh ||
+    icsl.io.icsl_stalld
+  
+  ctrl_killd := !ibuf.io.inst(0).valid || ibuf.io.inst(0).bits.replay || take_pc_mem_wb || ctrl_stalld || csr.io.interrupt 
+  dontTouch(ctrl_stalld)
+  dontTouch(id_ex_hazard)
+  dontTouch(id_mem_hazard)
+  dontTouch(id_wb_hazard)
+  dontTouch(id_sboard_hazard)
+  dontTouch(id_stall_fpu)
 
+  val load_use_RAW = id_ex_hazard && ex_ctrl.mem || id_mem_hazard && mem_ctrl.mem || id_wb_hazard && wb_ctrl.mem
+  dontTouch(load_use_RAW)
+  val RAW_counter = RegInit(0.U(32.W))
+  RAW_counter := Mux(load_use_RAW && (checker_mode.asBool || checker_priv_mode.asBool), RAW_counter + 1.U, RAW_counter)
+  dontTouch(RAW_counter)
+  val RAW_Cnt = Counter(load_use_RAW && (checker_mode.asBool || checker_priv_mode.asBool), 100000000)
+  dontTouch(RAW_Cnt._1)
+  dontTouch(RAW_Cnt._2)
+
+  io.RAW_cnt := RAW_counter
+
+  //===== EC: Start =====//
+  val debug_perf_blocking_CP                      = RegInit(0.U(64.W))
+  val debug_perf_blocking_id_ex_h                 = RegInit(0.U(64.W))
+  val debug_perf_blocking_id_mem_h                = RegInit(0.U(64.W))
+  val debug_perf_blocking_id_wb_h                 = RegInit(0.U(64.W))
+  val debug_perf_blocking_id_sb_h                 = RegInit(0.U(64.W))
+  val debug_perf_blocking_CSR_S                   = RegInit(0.U(64.W))
+  val debug_perf_blocking_FP                      = RegInit(0.U(64.W))
+  val debug_perf_blocking_MEM                     = RegInit(0.U(64.W))
+  val debug_perf_blocking_DIV                     = RegInit(0.U(64.W))
+  val debug_perf_blocking_FENCE                   = RegInit(0.U(64.W))
+  val debug_perf_blocking_ST                      = RegInit(0.U(64.W))
+  val checker_blocked                             = (icsl.io.checker_core_status === 1.U) && ctrl_stalld
+  val fpu_or_div_not_busy                         = !(id_ctrl.fp && id_stall_fpu) && !(id_ctrl.div && (!(div.io.req.ready || (div.io.resp.valid && !wb_wxd)) || div.io.req.valid))
+  debug_perf_blocking_CP                         := Mux(debug_perf_reset.asBool, 0.U, Mux(checker_blocked && rsu_slave.io.core_hang_up.asBool, debug_perf_blocking_CP + 1.U, debug_perf_blocking_CP))
+  debug_perf_blocking_id_ex_h                    := Mux(debug_perf_reset.asBool, 0.U, Mux(checker_blocked && id_ex_hazard && fpu_or_div_not_busy, debug_perf_blocking_id_ex_h + 1.U, debug_perf_blocking_id_ex_h))
+  debug_perf_blocking_id_mem_h                   := Mux(debug_perf_reset.asBool, 0.U, Mux(checker_blocked && id_mem_hazard && fpu_or_div_not_busy, debug_perf_blocking_id_mem_h + 1.U, debug_perf_blocking_id_mem_h))
+  debug_perf_blocking_id_wb_h                    := Mux(debug_perf_reset.asBool, 0.U, Mux(checker_blocked && id_wb_hazard && fpu_or_div_not_busy, debug_perf_blocking_id_wb_h + 1.U, debug_perf_blocking_id_wb_h))
+  debug_perf_blocking_id_sb_h                    := Mux(debug_perf_reset.asBool, 0.U, Mux(checker_blocked && id_sboard_hazard && fpu_or_div_not_busy, debug_perf_blocking_id_sb_h + 1.U, debug_perf_blocking_id_sb_h))
+  debug_perf_blocking_CSR_S                      := 0.U
+  debug_perf_blocking_FP                         := Mux(debug_perf_reset.asBool, 0.U, Mux(checker_blocked && id_ctrl.fp && id_stall_fpu, debug_perf_blocking_FP + 1.U, debug_perf_blocking_FP))
+  debug_perf_blocking_MEM                        := 0.U
+  debug_perf_blocking_DIV                        := Mux(debug_perf_reset.asBool, 0.U, Mux(checker_blocked && id_ctrl.div && (!(div.io.req.ready || (div.io.resp.valid && !wb_wxd)) || div.io.req.valid), debug_perf_blocking_DIV + 1.U, debug_perf_blocking_DIV))
+  debug_perf_blocking_FENCE                      := Mux(debug_perf_reset.asBool, 0.U, Mux(checker_blocked && id_do_fence, debug_perf_blocking_FENCE + 1.U, debug_perf_blocking_FENCE))
+  debug_perf_blocking_ST                         := 0.U
+
+  debug_perf_val                                := Mux(debug_perf_sel === 7.U, debug_perf_blocking_CP, 
+                                                   Mux(debug_perf_sel === 1.U, debug_perf_blocking_id_ex_h,
+                                                   Mux(debug_perf_sel === 2.U, debug_perf_blocking_id_mem_h,
+                                                   Mux(debug_perf_sel === 3.U, debug_perf_blocking_id_wb_h,
+                                                   Mux(debug_perf_sel === 4.U, debug_perf_blocking_id_sb_h, 
+                                                   Mux(debug_perf_sel === 5.U, debug_perf_blocking_CSR_S,
+                                                   Mux(debug_perf_sel === 6.U, debug_perf_blocking_FP,
+                                                   Mux(debug_perf_sel === 8.U, debug_perf_blocking_MEM,
+                                                   Mux(debug_perf_sel === 9.U, debug_perf_blocking_DIV, 
+                                                   Mux(debug_perf_sel === 11.U, debug_perf_blocking_FENCE,
+                                                   Mux(debug_perf_sel === 10.U, debug_perf_blocking_ST, 0.U)))))))))))
+  returned_to_special_address_valid := (wb_valid || io.rocc.resp.valid) && (wb_reg_pc === pc_special)
+  
+  io.imem.bjl_commit := wb_valid && (wb_ctrl.jal || wb_ctrl.jalr || wb_ctrl.branch)
+  io.imem.if_check_completed := (icsl.io.debug_state === 6.U) || (icsl.io.debug_state === 7.U)
+  io.imem.if_overtaking := icsl.io.icsl_stalld && (icsl.io.debug_state === 2.U) || (icsl.io.debug_state === 3.U)
+  io.imem.if_check_already_done := icsl.io.already_done
   io.imem.req.valid := take_pc
-  io.imem.req.bits.speculative := !take_pc_wb
+  io.imem.req.bits.speculative := !take_pc_wb && !checker_mode.asBool
   io.imem.req.bits.pc :=
-    Mux(wb_xcpt || csr.io.eret, csr.io.evec, // exception or [m|s]ret
-    Mux(replay_wb,              wb_reg_pc,   // replay
-                                mem_npc))    // flush or branch misprediction
-  io.imem.flush_icache := wb_reg_valid && wb_ctrl.fence_i && !io.dmem.s2_nack
+    Mux(wb_xcpt || csr.io.eret || check_exception || check_privret, csr.io.evec, // exception or [m|s]ret
+    Mux(replay_wb,  wb_reg_pc,   // replay
+    Mux(icsl_if_ret_special_pc.asBool, pc_special, mem_npc)))   // flush or branch misprediction
+  io.imem.flush_icache := wb_reg_valid && wb_ctrl.fence_i && (Mux(checker_mode === 1.U || checker_priv_mode === 1.U, false.B, !io.dmem.s2_nack))
   io.imem.might_request := {
-    imem_might_request_reg := ex_pc_valid || mem_pc_valid || io.ptw.customCSRs.disableICacheClockGate
+    imem_might_request_reg := ex_pc_valid || mem_pc_valid || io.ptw.customCSRs.disableICacheClockGate || true.B  // We do not wish the IMM to sleep as it can have a replay at any time!
     imem_might_request_reg
   }
-  io.imem.progress := RegNext(wb_reg_valid && !replay_wb_common)
   io.imem.sfence.valid := wb_reg_valid && wb_reg_sfence
   io.imem.sfence.bits.rs1 := wb_reg_mem_size(0)
   io.imem.sfence.bits.rs2 := wb_reg_mem_size(1)
@@ -927,42 +1457,106 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   io.imem.bht_update.bits.mispredict := mem_wrong_npc
   io.imem.bht_update.bits.branch := mem_ctrl.branch
   io.imem.bht_update.bits.prediction := mem_reg_btb_resp.bht
+  io.imem.checker_mode := checker_mode.asBool || checker_priv_mode.asBool
 
   io.fpu.valid := !ctrl_killd && id_ctrl.fp
   io.fpu.killx := ctrl_killx
   io.fpu.killm := killm_common
   io.fpu.inst := id_inst(0)
   io.fpu.fromint_data := ex_rs(0)
+  /* R Features */
   io.fpu.dmem_resp_val := dmem_resp_valid && dmem_resp_fpu
-  io.fpu.dmem_resp_data := (if (minFLen == 32) io.dmem.resp.bits.data_word_bypass else io.dmem.resp.bits.data)
-  io.fpu.dmem_resp_type := io.dmem.resp.bits.size
+  io.fpu.dmem_resp_data := Mux(checker_mode === 1.U || checker_priv_mode === 1.U, lsl_resp_data, io.dmem.resp.bits.data_word_bypass)
+  io.fpu.dmem_resp_type := Mux(checker_mode === 1.U || checker_priv_mode === 1.U, lsl_resp_size, io.dmem.resp.bits.size)
   io.fpu.dmem_resp_tag := dmem_resp_waddr
   io.fpu.keep_clock_enabled := io.ptw.customCSRs.disableCoreClockGate
+  
+  io.fpu.r_farf_bits := rsu_slave.io.farfs_out
+  io.fpu.r_farf_idx := rsu_slave.io.arfs_idx_out
+  io.fpu.r_farf_valid := rsu_slave.io.arfs_valid_out
+  io.fpu.retire := wb_valid || io.rocc.resp.valid
+  io.fpu.checker_mode := checker_mode.asBool
+  io.fpu.checker_priv_mode := checker_priv_mode.asBool
+  io.fpu.core_trace := io.core_trace.asBool
+  io.fpu.if_overtaking := icsl.io.if_overtaking
+  io.fpu.if_overtaking_next_cycle := icsl.io.if_overtaking_next_cycle
+  icsl.io.something_inflight := !div.io.req.ready || io.fpu.fpu_inflight
+  
+  // Simply tied-off the signals sent to D$, when the core is in the checker mode.
+  // It might be fine only mask the io.dmem.req.valid, but for safety -- let us amsk all dmem.req signals.
+  val checker_mode_1cycle_delay = Reg(UInt())
+  val checker_priv_mode_1cycle_delay = Reg(UInt())
+  checker_mode_1cycle_delay := checker_mode
+  checker_priv_mode_1cycle_delay := checker_priv_mode
 
-  io.dmem.req.valid     := ex_reg_valid && ex_ctrl.mem
-  val ex_dcache_tag = Cat(ex_waddr, ex_ctrl.fp)
+  io.dmem.req.valid     := Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), 0.U, ex_reg_valid && ex_ctrl.mem)
+  val ex_dcache_tag      = Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), 0.U, Cat(ex_waddr, ex_ctrl.fp))
   require(coreParams.dcacheReqTagBits >= ex_dcache_tag.getWidth)
-  io.dmem.req.bits.tag  := ex_dcache_tag
-  io.dmem.req.bits.cmd  := ex_ctrl.mem_cmd
-  io.dmem.req.bits.size := ex_reg_mem_size
-  io.dmem.req.bits.signed := !Mux(ex_reg_hls, ex_reg_inst(20), ex_reg_inst(14))
-  io.dmem.req.bits.phys := false.B
-  io.dmem.req.bits.addr := encodeVirtualAddress(ex_rs(0), alu.io.adder_out)
-  io.dmem.req.bits.idx.foreach(_ := io.dmem.req.bits.addr)
-  io.dmem.req.bits.dprv := Mux(ex_reg_hls, csr.io.hstatus.spvp, csr.io.status.dprv)
-  io.dmem.req.bits.dv := ex_reg_hls || csr.io.status.dv
-  io.dmem.s1_data.data := (if (fLen == 0) mem_reg_rs2 else Mux(mem_ctrl.fp, Fill((xLen max fLen) / fLen, io.fpu.store_data), mem_reg_rs2))
-  io.dmem.s1_kill := killm_common || mem_ldst_xcpt || fpu_kill_mem
+  io.dmem.req.bits.tag  := Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), 0.U, ex_dcache_tag)
+  io.dmem.req.bits.cmd  := Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), 0.U, ex_ctrl.mem_cmd)
+  io.dmem.req.bits.size := Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), 0.U, ex_reg_mem_size)
+  io.dmem.req.bits.signed := Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), 0.U, !Mux(ex_reg_hls, ex_reg_inst(20), ex_reg_inst(14)))
+  io.dmem.req.bits.phys := (false).B
+  io.dmem.req.bits.addr := Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), 0.U, encodeVirtualAddress(ex_rs(0), alu.io.adder_out))
+  io.dmem.req.bits.idx.foreach(_ := Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), 0.U, io.dmem.req.bits.addr))
+  io.dmem.req.bits.dprv := Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), 0.U, Mux(ex_reg_hls, csr.io.hstatus.spvp, csr.io.status.dprv))
+  io.dmem.req.bits.dv := Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), 0.U, ex_reg_hls || csr.io.status.dv)
+  io.dmem.s1_data.data := Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), 0.U, (if (fLen == 0) mem_reg_rs2 else Mux(mem_ctrl.fp, Fill((xLen max fLen) / fLen, io.fpu.store_data), mem_reg_rs2)))
+  io.dmem.s1_kill := Mux(((checker_mode === 1.U) && (checker_mode_1cycle_delay === 1.U)) || ((checker_priv_mode === 1.U) && (checker_priv_mode_1cycle_delay === 1.U)), 0.U, killm_common || mem_ldst_xcpt || fpu_kill_mem)
   io.dmem.s2_kill := false.B
+
+  if (GH_GlobalParams.GH_DEBUG == 1) {
+    val mem_valid = Reg(UInt())
+    val mem_addr = Reg(UInt())
+    val mem_data = Reg(UInt())
+    val mem_cmd = Reg(UInt())
+    val mem_s1_kill = Wire(UInt())
+    mem_valid := Mux(checker_mode === 1.U, 0.U, ex_reg_valid && ex_ctrl.mem)
+    mem_addr := Mux(checker_mode === 1.U, 0.U, encodeVirtualAddress(ex_rs(0), alu.io.adder_out))
+    mem_data := Mux(checker_mode === 1.U, 0.U, (if (fLen == 0) mem_reg_rs2 else Mux(mem_ctrl.fp, Fill((xLen max fLen) / fLen, io.fpu.store_data), mem_reg_rs2)))
+    mem_cmd := Mux(checker_mode === 1.U, 0.U, ex_ctrl.mem_cmd)
+    mem_s1_kill := Mux(checker_mode === 1.U, 0.U, killm_common || mem_ldst_xcpt || fpu_kill_mem)
+
+    when (io.core_trace.asBool && (mem_valid === 1.U) && (mem_s1_kill =/= 1.U)){
+      printf(midas.targetutils.SynthesizePrintf("C%d: %d-%x, addr-%x, data-%x, ",
+      io.hartid, checker_mode, mem_cmd, mem_addr, mem_data))
+    }
+  }
+
+  lsl_req_valid             := Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), (mem_reg_valid && mem_ctrl.mem), 0.U)
+  val mem_dcache_tag         = Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), Cat(mem_waddr, mem_ctrl.fp), 0.U)
+  lsl_req_tag               := mem_dcache_tag
+  val alu_adder_out          = Reg(UInt())
+  val mem_rs0                = Reg(UInt())
+  alu_adder_out             := alu.io.adder_out
+  mem_rs0                   := ex_rs(0)
+  lsl_req_addr              := Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), encodeVirtualAddress(mem_rs0, alu_adder_out), 0.U)
+  lsl_req_cmd               := Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), Cat(isWrite(mem_ctrl.mem_cmd).asUInt, isRead(mem_ctrl.mem_cmd).asUInt), 0.U)
+  lsl_req_size              := Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), mem_reg_mem_size, 0.U)
+  lsl_req_data              := Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), (if (fLen == 0) mem_reg_rs2 else Mux(mem_ctrl.fp, Fill((xLen max fLen) / fLen, io.fpu.store_data), mem_reg_rs2)), 0.U)
+  lsl_req_kill              := Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), (killm_common || mem_ldst_xcpt || fpu_kill_mem), 0.U)
+  io.icsl_status            := Mux((icsl.io.icsl_status === 1.U) && (rsu_slave.io.rsu_status === 0.U) && (lsl.io.if_empty === 1.U), 1.U, 0.U)
+  
+
   // don't let D$ go to sleep if we're probably going to use it soon
   io.dmem.keep_clock_enabled := ibuf.io.inst(0).valid && id_ctrl.mem && !csr.io.csr_stall
-
-  io.rocc.cmd.valid := wb_reg_valid && wb_ctrl.rocc && !replay_wb_common
-  io.rocc.exception := wb_xcpt && csr.io.status.xs.orR
+  //===== GuardianCouncil Function: End ====//
+//===== EC: Start =====//  
+  io.rocc.cmd.valid := mem_reg_valid && mem_ctrl.rocc && !wb_reg_replay
+  io.rocc.exception := mem_xcpt && csr.io.status.xs.orR
   io.rocc.cmd.bits.status := csr.io.status
-  io.rocc.cmd.bits.inst := wb_reg_inst.asTypeOf(new RoCCInstruction())
-  io.rocc.cmd.bits.rs1 := wb_reg_wdata
-  io.rocc.cmd.bits.rs2 := wb_reg_rs2
+  io.rocc.cmd.bits.inst := mem_reg_inst.asTypeOf(new RoCCInstruction())
+  io.rocc.cmd.bits.rs1 := mem_reg_wdata
+  io.rocc.cmd.bits.rs2 := mem_reg_rs2
+
+  io.ght_prv := csr.io.status.prv
+  //===== GuardianCouncil Function: End  ====//
+  // io.rocc.cmd.valid := wb_reg_valid && wb_ctrl.rocc && !replay_wb_common
+  // io.rocc.exception := wb_xcpt && csr.io.status.xs.orR
+  // io.rocc.cmd.bits.status := csr.io.status
+  // io.rocc.cmd.bits.inst := wb_reg_inst.asTypeOf(new RoCCInstruction())
+  // io.rocc.cmd.bits.rs1 := wb_reg_wdata
+  // io.rocc.cmd.bits.rs2 := wb_reg_rs2
 
   // gate the clock
   val unpause = csr.io.time(rocketParams.lgPauseCycles-1, 0) === 0.U || csr.io.inhibit_cycle || io.dmem.perf.release || take_pc
@@ -984,6 +1578,18 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   }
 
   // evaluate performance counters
+  val ibuf_notvalid_cnt = RegInit(0.U(64.W))
+  ibuf_notvalid_cnt := Mux(!ibuf.io.inst(0).valid && (checker_mode.asBool || checker_priv_mode.asBool), ibuf_notvalid_cnt + 1.U, ibuf_notvalid_cnt)
+  dontTouch(ibuf_notvalid_cnt)
+
+  val mispred_cnt = RegInit(0.U(64.W))
+  mispred_cnt := Mux((take_pc_mem && mem_misprediction) && (checker_mode.asBool || checker_priv_mode.asBool), mispred_cnt + 1.U, mispred_cnt)
+  dontTouch(mispred_cnt)
+
+  val imiss_cnt = RegInit(0.U(64.W))
+  imiss_cnt := Mux(io.imem.perf.acquire && (checker_mode.asBool || checker_priv_mode.asBool), imiss_cnt + 1.U, imiss_cnt)
+  dontTouch(imiss_cnt)
+
   val icache_blocked = !(io.imem.resp.valid || RegNext(io.imem.resp.valid))
   csr.io.counters foreach { c => c.inc := RegNext(perfEvents.evaluate(c.eventSel)) }
 
@@ -1048,6 +1654,17 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
          coreMonitorBundle.inst, coreMonitorBundle.inst)
     }
   }
+  // printf("C%d: lsl_req:%d%d empty:%d%d req_a:%x req_d:%x " +
+  //   "enq_v:%d%d%d%d u_enq_v:%d%d deq_i:%x enq_d:%x %x enq_a:%x %x" +
+  //   "mcount:%x scount:%x " +
+  //   "ck_comp:%d valid_ins:%x\n",
+  //   io.hartid, lsl_req_valid, lsl_req_ready, lsl.io.vec_empty(0), lsl.io.vec_empty(1), lsl_req_addr, lsl_req_data,
+  //   lsl.io.m_st_valid(0), lsl.io.m_st_valid(1), lsl.io.m_ld_valid(0), lsl.io.m_ld_valid(1), lsl.io.vec_enq_valid(0), lsl.io.vec_enq_valid(1), lsl.io.lsl_deq_ptr, lsl.io.m_ldst_data(0), lsl.io.m_ldst_data(1), lsl.io.m_ldst_addr(0), lsl.io.m_ldst_addr(1),
+  //   icsl.io.ic_counter, icsl.io.debug_sl_counter, 
+  //   icsl.io.if_check_completed, icsl.io.num_valid_insts_in_pipeline)
+  printf("C%d: ibuf_cnt:[%d] mispred:[%d] imiss:[%d]\n",
+        io.hartid, ibuf_notvalid_cnt, mispred_cnt, imiss_cnt)
+  
 
   // CoreMonitorBundle for late latency writes
   val xrfWriteBundle = Wire(new CoreMonitorBundle(xLen, fLen))
@@ -1093,9 +1710,10 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   def encodeVirtualAddress(a0: UInt, ea: UInt) = if (vaddrBitsExtended == vaddrBits) ea else {
     // efficient means to compress 64-bit VA into vaddrBits+1 bits
     // (VA is bad if VA(vaddrBits) != VA(vaddrBits-1))
-    val a = a0.asSInt >> vaddrBits
-    val msb = Mux(a === 0.S || a === -1.S, ea(vaddrBits), !ea(vaddrBits-1))
-    Cat(msb, ea(vaddrBits-1,0))
+    val b = vaddrBitsExtended-1
+    val a = (a0 >> b).asSInt
+    val msb = Mux(a === 0.S || a === -1.S, ea(b), !ea(b-1))
+    Cat(msb, ea(b-1, 0))
   }
 
   class Scoreboard(n: Int, zero: Boolean = false)
@@ -1119,6 +1737,27 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
 }
 
 class RegFile(n: Int, w: Int, zero: Boolean = false) {
+  val rf = Mem(n, UInt(w.W))
+  private def access(addr: UInt) = rf(~addr(log2Up(n)-1,0))
+  private val reads = ArrayBuffer[(UInt,UInt)]()
+  private var canRead = true
+  def read(addr: UInt) = {
+    require(canRead)
+    reads += addr -> Wire(UInt())
+    reads.last._2 := Mux(zero.B && addr === 0.U, 0.U, access(addr))
+    reads.last._2
+  }
+  def write(addr: UInt, data: UInt) = {
+    canRead = false
+    when (addr =/= 0.U) {
+      access(addr) := data
+      for ((raddr, rdata) <- reads)
+        when (addr === raddr) { rdata := data }
+    }
+  }
+}
+
+class RegFileshadow(n: Int, w: Int, zero: Boolean = false) {
   val rf = Mem(n, UInt(w.W))
   private def access(addr: UInt) = rf(~addr(log2Up(n)-1,0))
   private val reads = ArrayBuffer[(UInt,UInt)]()

@@ -4,9 +4,12 @@ package freechips.rocketchip.tile
 
 import Chisel._
 
-import freechips.rocketchip.config._
+import org.chipsalliance.cde.config._
 import freechips.rocketchip.rocket._
 import freechips.rocketchip.util._
+//===== GuardianCouncil Function: Start ====//
+import freechips.rocketchip.guardiancouncil._
+//===== GuardianCouncil Function: End   ====//
 
 case object XLen extends Field[Int]
 case object MaxHartIdBits extends Field[Int]
@@ -60,7 +63,7 @@ trait CoreParams {
   def hasSupervisorMode: Boolean = useSupervisor || useVM
   def hasBitManipCrypto: Boolean = useBitManipCrypto || useCryptoNIST || useCryptoSM
   def instBytes: Int = instBits / 8
-  def fetchBytes: Int = fetchWidth * instBytes
+  def fetchBytes: Int = fetchWidth * instBytes // 2 * 16 = 32
   def lrscCycles: Int
 
   def dcacheReqTagBits: Int = 6
@@ -164,5 +167,48 @@ trait HasCoreIO extends HasTileParameters {
     val cease = Bool().asOutput
     val wfi = Bool().asOutput
     val traceStall = Bool().asInput
+    //===== GuardianCouncil Function: Start ====//
+    val arfs_if_CPS = UInt(1.W).asInput
+    val record_pc = UInt(1.W).asInput
+    val ic_counter = UInt(20.W).asInput
+    val clear_ic_status = UInt(1.W).asOutput
+    val pc = UInt(vaddrBitsExtended.W).asOutput
+    val inst = UInt(32.W).asOutput
+    val new_commit = UInt(1.W).asOutput
+    val clk_enable_gh = Bool().asInput
+    val icsl_ack     = Bool().asInput
+    val cdc_empty    = (Bool()).asInput
+    val big_switch   = Bool().asInput
+    val alu_2cycle_delay = UInt(p(XLen).W).asOutput
+    val csr_rw_wdata = UInt(p(XLen).W).asOutput
+
+
+    val if_big_complete                            = Output(Bool())
+    val big_complete                               = Input(Bool()) 
+    val packet_arfs = UInt((GH_GlobalParams.GH_WIDITH_PACKETS+8).W).asInput
+    val packet_lsl = Vec(GH_GlobalParams.GH_TOTAL_PACKETS,UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W)).asInput
+    // val packet_lsl1 = UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W).asInput
+
+    val packet_cdc_ready = UInt(1.W).asOutput
+    val arf_copy_in = UInt(1.W).asInput
+    val rsu_status = UInt(2.W).asOutput
+    val s_or_r = UInt(1.W).asInput
+    val log_near_full = UInt(1.W).asOutput
+    val ght_prv = UInt(2.W).asOutput
+    val if_correct_process = UInt(1.W).asInput
+    val elu_data = UInt(GH_GlobalParams.GH_WIDITH_PERF.W).asOutput
+    val elu_deq = UInt(1.W).asInput
+    val elu_sel = UInt(1.W).asInput
+    val elu_status = UInt(2.W).asOutput
+    val icsl_status = UInt(2.W).asOutput
+    val core_trace = UInt(1.W).asInput
+    val record_and_store = UInt(2.W).asInput
+    val debug_perf_ctrl = UInt(5.W).asInput
+    val log_highwatermark = UInt(1.W).asOutput
+
+    val RAW_cnt = Output(UInt(32.W))
+    val store_commit_count = Output(UInt(128.W))
+    val store_commit_cycle_sum = Output(UInt(128.W))
+    //===== GuardianCouncil Function: End ====//
   }
 }

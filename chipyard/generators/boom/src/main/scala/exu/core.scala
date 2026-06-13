@@ -33,17 +33,23 @@ import java.nio.file.{Paths}
 import chisel3._
 import chisel3.util._
 
-import freechips.rocketchip.config.Parameters
+import org.chipsalliance.cde.config.Parameters
 import freechips.rocketchip.rocket.Instructions._
 import freechips.rocketchip.rocket.{Causes, PRV, TracedInstruction}
 import freechips.rocketchip.util.{Str, UIntIsOneOf, CoreMonitorBundle}
 import freechips.rocketchip.devices.tilelink.{PLICConsts, CLINTConsts}
+import freechips.rocketchip.rocket._
 
 import boom.common._
 import boom.ifu.{GlobalHistory, HasBoomFrontendParameters}
 import boom.exu.FUConstants._
 import boom.util._
-
+//===== GuardianCouncil Function: Start ====//
+import freechips.rocketchip.r._
+import freechips.rocketchip.guardiancouncil._
+import java.awt.peer.PopupMenuPeer
+import boom.lsu.STQEntry
+//===== GuardianCouncil Function: End   ====//
 /**
  * Top level core object that connects the Frontend to the rest of the pipeline.
  */
@@ -61,6 +67,57 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     val ptw_tlb = new freechips.rocketchip.rocket.TLBPTWIO()
     val trace = Output(Vec(coreParams.retireWidth, new TracedInstruction))
     val fcsr_rm = UInt(freechips.rocketchip.tile.FPConstants.RM_SZ.W)
+//===== GuardianCouncil Function: Start ====//
+
+    val commit_valids = Output(Vec(coreWidth, UInt(1.W)))
+    val commit_uops   = Output(Vec(coreWidth, new MicroOp))
+    val commit_rs1    = Output(Vec(coreWidth, UInt(xLen.W)))
+
+    val jalr_target   = Output(Vec(coreWidth, UInt(xLen.W)))
+
+    val prf_rd = Output(Vec(coreWidth, UInt(xLen.W)))
+    val alu_out = Output(Vec(coreWidth, UInt(xLen.W)))
+
+    val csr_addr = Output(Vec(coreWidth, UInt(CSR_ADDR_SZ.W)))
+    val big_hang = Input(Bool())//cdc not ready
+    val ght_prv  = Output(UInt(2.W))
+
+    val gh_stall = Input(Bool())
+    val bigComp  = Input(UInt(3.W))
+
+    val csr_counter = Output(Vec(84, UInt(32.W)))
+    // Wide observability counters for store retirement statistics.
+    val store_commit_count = Output(UInt(128.W))
+    val store_commit_cycle_sum = Output(UInt(128.W))
+    
+    /* R Features */
+    val num_of_checker = Input(UInt(8.W))
+    val icctrl = Input(UInt(4.W))
+    val t_value = Input(UInt(4.W))
+    // val ght_filters_ready = Input(UInt(1.W))
+    val r_arfs = Output (Vec(1, (UInt((xLen*2+8+1).W))))
+    val r_arfs_pidx = Output(Vec(1, UInt(8.W)))
+    val rsu_merging = Output(UInt(1.W))
+    val ic_crnt_target = Output(UInt(6.W))
+    val if_correct_process = Input(UInt(1.W))
+    val ic_counter = Output(Vec(GH_GlobalParams.GH_NUM_CORES, (UInt(16.W))))
+    val clear_ic_status_tomain = Input(UInt(GH_GlobalParams.GH_NUM_CORES.W))
+    val icsl_na = Input(UInt(GH_GlobalParams.GH_NUM_CORES.W))
+    val core_trace = Input(UInt(1.W))
+    val debug_maincore_status = Output(UInt(4.W))
+    val ic_trace = Input(UInt(1.W))
+    val debug_perf_ctrl = Input(UInt(4.W))
+    val debug_perf_val = Output(UInt(64.W))
+    val shared_CP_CFG = Output(UInt(13.W))
+    val arfs_ecp_dest = Output(UInt(8.W))
+
+    // val if_big_complete_req = Input(UInt((GH_GlobalParams.GH_NUM_CORES-1).W))
+    // val if_big_complete_ack                        = Output(Vec(GH_GlobalParams.GH_NUM_CORES-1, Bool()))
+
+    val rsu_merging_valid = Output(Bool())
+    // val icsl_na_ack                                = Output(Vec(GH_GlobalParams.GH_NUM_CORES, Bool()))
+    // val big_checker_switch                         = Output(Vec(GH_GlobalParams.GH_NUM_CORES, Bool()))//大核事件导致切换
+    //===== GuardianCouncil Function: End ====//
   }
   //**********************************
   // construct all of the modules
@@ -108,12 +165,22 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   val issue_units      = Seq(mem_iss_unit, int_iss_unit)
   val dispatcher       = Module(new BasicDispatcher)
 
+  // val iregfile         = Module(new RegisterFileSynthesizable(
+  //                            numIntPhysRegs,
+  //                            numIrfReadPorts,
+  //                            numIrfWritePorts,
+  //                            xLen,
+  //                            Seq.fill(memWidth) {true} ++ exe_units.bypassable_write_port_mask)) // bypassable ll_wb
+//===== GuardianCouncil Function: Start ====//
+  val r_syscall                                    = Wire(Bool())
   val iregfile         = Module(new RegisterFileSynthesizable(
                              numIntPhysRegs,
-                             numIrfReadPorts,
+                             numIrfReadPorts + coreWidth, // additional ports for GH_Subsystem
                              numIrfWritePorts,
                              xLen,
                              Seq.fill(memWidth) {true} ++ exe_units.bypassable_write_port_mask)) // bypassable ll_wb
+  //===== GuardianCouncil Function: End  ====//
+
   val pregfile         = Module(new RegisterFileSynthesizable(
                             ftqSz,
                             exe_units.numIrfReaders,
@@ -144,6 +211,11 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   val pred_wakeup  = Wire(Valid(new ExeUnitResp(1)))
 
   require (exe_units.length == issue_units.map(_.issueWidth).sum)
+
+  val bigcompreg = Reg(UInt())
+  bigcompreg := io.bigComp
+  dontTouch(bigcompreg)
+  dontTouch(io.bigComp)
 
   //***********************************
   // Pipeline State Registers and Wires
@@ -238,31 +310,337 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
 
   //-------------------------------------------------------------
   // Uarch Hardware Performance Events (HPEs)
+    val load_commit  = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && rob.io.commit.uops(i).mem_cmd===M_XRD && rob.io.commit.uops(i).iq_type===IQT_MEM)
+  val store_commit = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && rob.io.commit.uops(i).mem_cmd===M_XWR && rob.io.commit.uops(i).iq_type===IQT_MEM)
+  val fp_commit    = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && rob.io.commit.uops(i).fp_val)
+  val int_commit   = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && rob.io.commit.uops(i).iq_type===IQT_INT)
+  val storeCommitCounterWidth   = 128
+  val storeCommitCycleSumWidth  = 128
+  // Count only stores retired by the ROB while the big core is in the checking state.
+  val storeCommitCountReg       = RegInit(0.U(storeCommitCounterWidth.W))
+  // Sum the CSR cycle value sampled at store commit time. If multiple stores retire together,
+  // the same cycle value is added once per retired store.
+  val storeCommitCycleSumReg    = RegInit(0.U(storeCommitCycleSumWidth.W))
+  val storeCommitInCheckState   = WireDefault(false.B)
+  val storeCommitValid          = store_commit.reduce(_ || _)
+  val storeCommitNum            = PopCount(store_commit)
+  val csr_counter             = RegInit(VecInit(Seq.fill(84)(0.U(32.W))))
+  val csr_counter_valid       = WireInit(VecInit(Seq.fill(84)(false.B)))
+  val csr_counter_num         = WireInit(VecInit(Seq.fill(84)(0.U(log2Ceil(coreWidth).W))))
+  //csr commit signals
+  //--------machine level csr---------//
+  val inst_commit              = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i))
+  val csrw_commit             = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd))
+  
+  val csrw_commit_mstatus     = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.mstatus.U)
+  val csrw_commit_misa        = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.misa.U)
+  val csrw_commit_medeleg     = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.medeleg.U)
+  val csrw_commit_mideleg     = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.mideleg.U)
+  val csrw_commit_mie         = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.mie.U)
+  val csrw_commit_mtvec       = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.mtvec.U)
+  
+  val csrw_commit_mcounteren  = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.mcounteren.U)
+  val csrw_commit_mscratch    = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.mscratch.U)
+  val csrw_commit_mepc        = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.mepc.U)
+  val csrw_commit_mcause      = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.mcause.U)
+  val csrw_commit_mtval       = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.mtval.U)
+  val csrw_commit_mip         = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.mip.U)
+  val csrw_commit_mtval2      = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.mtval2.U)
+  
+  val csrw_commit_menvcfg     = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.menvcfg.U)
+  val csrw_commit_mseccfg     = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.mseccfg.U)
+  
+  val csrw_commit_pmpcfg0     = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.pmpcfg0.U)
+  val csrw_commit_pmpaddr0    = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.pmpaddr0.U)
+  val csrw_commit_pmpaddr     = (0 until 8).map(k => ((0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === (CSRs.pmpaddr0 + k).U)))
+  
+  val csrw_commit_mcountinh   = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.mcountinhibit.U)
+  val csrw_commit_event       = (0 until nPerfCounters).map(k => ((0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === (CSRs.mhpmevent3 + k).U)))
+  
+  val csrw_commit_mncause     = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CustomCSRs.mncause.U)
+  val csrw_commit_mnepc       = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CustomCSRs.mnepc.U)
+  val csrw_commit_mnscratch   = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CustomCSRs.mnscratch.U)
+  val csrw_commit_mnstatus    = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CustomCSRs.mnstatus.U)
+  
+  val csrw_commit_dcsr        = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.dcsr.U)
+  val csrw_commit_dpc         = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.dpc.U)
+  val csrw_commit_dscratch0   = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.dscratch0.U)
+  val csrw_commit_dscratch1   = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.dscratch1.U)
 
+  val csrw_commit_tselect     = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.tselect.U)
+  val csrw_commit_tdata1      = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.tdata1.U)
+  val csrw_commit_tdata2      = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.tdata2.U)
+  val csrw_commit_tdata3      = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.tdata3.U)
+  val csrw_commit_mcontext    = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.mcontext.U)
+
+  /*-----------user level csr---------------*/
+  val csrw_commit_fflags      = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.fflags.U)
+  val csrw_commit_fcsr        = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.fcsr.U)
+  val csrw_commit_frm         = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.frm.U)
+
+
+
+  /*-----------supervisor level csr-----------*/
+  val csrw_commit_sstatus     = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.sstatus.U)
+  val csrw_commit_sie         = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.sie.U)
+  val csrw_commit_stvec       = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.stvec.U)
+  val csrw_commit_scounteren  = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.scounteren.U)
+  
+  val csrw_commit_senvcfg     = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.senvcfg.U)
+
+  val csrw_commit_sscratch    = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.sscratch.U)
+  val csrw_commit_sepc        = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.sepc.U)
+  val csrw_commit_scause      = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.scause.U)
+  val csrw_commit_stval       = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.stval.U)
+  val csrw_commit_sip         = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.sip.U)
+
+  val csrw_commit_satp        = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.satp.U)
+
+  val csrw_commit_scontext    = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && CSR.isWriteCSR(rob.io.commit.uops(i).ctrl.csr_cmd) && rob.io.commit.uops(i).csr_addr === CSRs.scontext.U)
+  //end
+
+  //counter valid
+  //--------machine level csr---------//
+  csr_counter_valid(0)        := inst_commit.reduce(_ || _)
+  csr_counter_valid(1)        := csrw_commit.reduce(_ || _)
+
+  csr_counter_valid(2)        := csrw_commit_mstatus.reduce(_ || _)
+  csr_counter_valid(3)        := csrw_commit_misa.reduce(_ || _)
+  csr_counter_valid(4)        := csrw_commit_medeleg.reduce(_ || _)
+  csr_counter_valid(5)        := csrw_commit_mideleg.reduce(_ || _)
+  csr_counter_valid(6)        := csrw_commit_mie.reduce(_ || _)
+  csr_counter_valid(7)        := csrw_commit_mtvec.reduce(_ || _)
+  csr_counter_valid(8)        := csrw_commit_mcounteren.reduce(_ || _)
+
+  csr_counter_valid(9)        := csrw_commit_mscratch.reduce(_ || _)
+  csr_counter_valid(10)       := csrw_commit_mepc.reduce(_ || _)
+  csr_counter_valid(11)       := csrw_commit_mcause.reduce(_ || _)
+  csr_counter_valid(12)       := csrw_commit_mtval.reduce(_ || _)
+  csr_counter_valid(13)       := csrw_commit_mip.reduce(_ || _)
+  csr_counter_valid(14)       := csrw_commit_mtval2.reduce(_ || _)
+
+  csr_counter_valid(15)       := csrw_commit_menvcfg.reduce(_ || _)
+  csr_counter_valid(16)       := csrw_commit_mseccfg.reduce(_ || _)
+
+  csr_counter_valid(17)       := csrw_commit_pmpcfg0.reduce(_ || _)
+  for(i <- 0 until 8){
+    csr_counter_valid(18 + i) := csrw_commit_pmpaddr(i).reduce(_ || _)
+  }
+
+  csr_counter_valid(26)       := csrw_commit_mcountinh.reduce(_ || _)
+  for(i <- 0 until nPerfCounters){
+    csr_counter_valid(27 + i) := csrw_commit_event(i).reduce(_ || _)
+  }
+
+  csr_counter_valid(56)       := csrw_commit_mncause.reduce(_ || _)
+  csr_counter_valid(57)       := csrw_commit_mnepc.reduce(_ || _)
+  csr_counter_valid(58)       := csrw_commit_mnscratch.reduce(_ || _)
+  csr_counter_valid(59)       := csrw_commit_mnstatus.reduce(_ || _)
+
+  csr_counter_valid(60)       := csrw_commit_dcsr.reduce(_ || _)
+  csr_counter_valid(61)       := csrw_commit_dpc.reduce(_ || _)
+  csr_counter_valid(62)       := csrw_commit_dscratch0.reduce(_ || _)
+  csr_counter_valid(63)       := csrw_commit_dscratch1.reduce(_ || _)
+
+  csr_counter_valid(64)       := csrw_commit_tselect.reduce(_ || _)
+  csr_counter_valid(65)       := csrw_commit_tdata1.reduce(_ || _)
+  csr_counter_valid(66)       := csrw_commit_tdata2.reduce(_ || _)
+  csr_counter_valid(67)       := csrw_commit_tdata3.reduce(_ || _)
+  csr_counter_valid(68)       := csrw_commit_mcontext.reduce(_ || _)
+
+  /*-----------user level csr---------------*/
+  csr_counter_valid(69)       := csrw_commit_fflags.reduce(_ || _)
+  csr_counter_valid(70)       := csrw_commit_fcsr.reduce(_ || _)
+  csr_counter_valid(71)       := csrw_commit_frm.reduce(_ || _)
+
+  /*-----------supervisor level csr-----------*/
+  csr_counter_valid(72)       := csrw_commit_sstatus.reduce(_ || _)
+  csr_counter_valid(73)       := csrw_commit_sie.reduce(_ || _)
+  csr_counter_valid(74)       := csrw_commit_stvec.reduce(_ || _)
+  csr_counter_valid(75)       := csrw_commit_scounteren.reduce(_ || _)
+
+  csr_counter_valid(76)       := csrw_commit_senvcfg.reduce(_ || _)
+
+  csr_counter_valid(77)       := csrw_commit_sscratch.reduce(_ || _)
+  csr_counter_valid(78)       := csrw_commit_sepc.reduce(_ || _)
+  csr_counter_valid(79)       := csrw_commit_scause.reduce(_ || _)
+  csr_counter_valid(80)       := csrw_commit_stval.reduce(_ || _)
+  csr_counter_valid(81)       := csrw_commit_sip.reduce(_ || _)
+
+  csr_counter_valid(82)       := csrw_commit_satp.reduce(_ || _)
+  csr_counter_valid(83)       := csrw_commit_scontext.reduce(_ || _)
+  //end
+  //counter num one cycle
+  /*-----------machine level csr-----------*/
+  csr_counter_num(0)          := PopCount(inst_commit)
+  csr_counter_num(1)          := PopCount(csrw_commit)
+
+  csr_counter_num(2)          := PopCount(csrw_commit_mstatus)
+  csr_counter_num(3)          := PopCount(csrw_commit_misa)
+  csr_counter_num(4)          := PopCount(csrw_commit_medeleg)
+  csr_counter_num(5)          := PopCount(csrw_commit_mideleg)
+  csr_counter_num(6)          := PopCount(csrw_commit_mie)
+  csr_counter_num(7)          := PopCount(csrw_commit_mtvec)
+  csr_counter_num(8)          := PopCount(csrw_commit_mcounteren)
+
+  csr_counter_num(9)          := PopCount(csrw_commit_mscratch)
+  csr_counter_num(10)         := PopCount(csrw_commit_mepc)
+  csr_counter_num(11)         := PopCount(csrw_commit_mcause)
+  csr_counter_num(12)         := PopCount(csrw_commit_mtval)
+  csr_counter_num(13)         := PopCount(csrw_commit_mip)
+  csr_counter_num(14)         := PopCount(csrw_commit_mtval2)
+
+  csr_counter_num(15)         := PopCount(csrw_commit_menvcfg)
+  csr_counter_num(16)         := PopCount(csrw_commit_mseccfg)
+
+  csr_counter_num(17)         := PopCount(csrw_commit_pmpcfg0)
+  for(i <- 0 until 8){
+    csr_counter_num(18 + i)   := PopCount(csrw_commit_pmpaddr(i))
+  }
+
+  csr_counter_num(26)         := PopCount(csrw_commit_mcountinh)
+  for(i <- 0 until nPerfCounters){
+    csr_counter_num(27 + i)   := PopCount(csrw_commit_event(i))
+  }
+
+  csr_counter_num(56)         := PopCount(csrw_commit_mncause)
+  csr_counter_num(57)         := PopCount(csrw_commit_mnepc)
+  csr_counter_num(58)         := PopCount(csrw_commit_mnscratch)
+  csr_counter_num(59)         := PopCount(csrw_commit_mnstatus)
+
+  csr_counter_num(60)         := PopCount(csrw_commit_dcsr)
+  csr_counter_num(61)         := PopCount(csrw_commit_dpc)
+  csr_counter_num(62)         := PopCount(csrw_commit_dscratch0)
+  csr_counter_num(63)         := PopCount(csrw_commit_dscratch1)
+
+  csr_counter_num(64)         := PopCount(csrw_commit_tselect)
+  csr_counter_num(65)         := PopCount(csrw_commit_tdata1)
+  csr_counter_num(66)         := PopCount(csrw_commit_tdata2)
+  csr_counter_num(67)         := PopCount(csrw_commit_tdata3)
+  csr_counter_num(68)         := PopCount(csrw_commit_mcontext)
+
+  // User-level CSRs
+  csr_counter_num(69)         := PopCount(csrw_commit_fflags)
+  csr_counter_num(70)         := PopCount(csrw_commit_fcsr)
+  csr_counter_num(71)         := PopCount(csrw_commit_frm)
+
+  // Supervisor-level CSRs
+  csr_counter_num(72)         := PopCount(csrw_commit_sstatus)
+  csr_counter_num(73)         := PopCount(csrw_commit_sie)
+  csr_counter_num(74)         := PopCount(csrw_commit_stvec)
+  csr_counter_num(75)         := PopCount(csrw_commit_scounteren)
+
+  csr_counter_num(76)         := PopCount(csrw_commit_senvcfg)
+
+  csr_counter_num(77)         := PopCount(csrw_commit_sscratch)
+  csr_counter_num(78)         := PopCount(csrw_commit_sepc)
+  csr_counter_num(79)         := PopCount(csrw_commit_scause)
+  csr_counter_num(80)         := PopCount(csrw_commit_stval)
+  csr_counter_num(81)         := PopCount(csrw_commit_sip)
+
+  csr_counter_num(82)         := PopCount(csrw_commit_satp)
+  csr_counter_num(83)         := PopCount(csrw_commit_scontext)
+
+
+  //end
+
+  for(i <- 0 until 84){
+    csr_counter(i) := Mux(csr_counter_valid(i), csr_counter(i) + csr_counter_num(i), csr_counter(i))
+  }
+  io.csr_counter <> csr_counter
+
+  dontTouch(csr_counter)
+  dontTouch(csr_counter_num)
+  dontTouch(csr_counter_valid)
+  val csr_commit_valid = inst_commit.reduce(_ || _)
+  val csr_commit_num   = PopCount(inst_commit)
+  dontTouch(csr_commit_num)
+  dontTouch(csr_commit_valid)
+
+  // val load_commit  = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && rob.io.commit.uops(i).mem_cmd===M_XRD && rob.io.commit.uops(i).iq_type===IQT_MEM)
+  // val store_commit = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && rob.io.commit.uops(i).mem_cmd===M_XWR && rob.io.commit.uops(i).iq_type===IQT_MEM)
+  // val fp_commit    = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && rob.io.commit.uops(i).fp_val)
+  // val int_commit   = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && rob.io.commit.uops(i).iq_type===IQT_INT)
+  /*由于boom是一次送入decode所有的slot，所以只有Fetch Latency Bound
+  是否有必要去做分辨 call ret指令的信号
+  17 个计数器
+  一种做法是：先跑一边看一级bound，再跑一边看二级bound，每次使能不同的性能事件
+  */
+  val issue_valids = VecInit(
+  issue_units.flatMap(_.io.iss_valids) ++ fp_pipeline.io.iss_valids)  
+  val br_commit    = (0 until coreWidth).map(i=>rob.io.commit.arch_valids(i)&&(rob.io.commit.uops(i).is_br))
+  val jal_commit   = (0 until coreWidth).map(i=>rob.io.commit.arch_valids(i)&&(rob.io.commit.uops(i).is_jal))
+  val jalr_commit  = (0 until coreWidth).map(i=>rob.io.commit.arch_valids(i)&&(rob.io.commit.uops(i).is_jalr))
+
+  val total_mispred   = (0 until coreWidth).map(i=>rob.io.commit.arch_valids(i)&&(rob.io.commit.uops(i).is_br||rob.io.commit.uops(i).is_jal||rob.io.commit.uops(i).is_jalr)&&(rob.io.commit.uops(i).debug_fsrc===BSRC_C))
+  val br_mispred      = (0 until coreWidth).map(i=>rob.io.commit.arch_valids(i)&&(rob.io.commit.uops(i).is_br)&&(rob.io.commit.uops(i).debug_fsrc===BSRC_C))
   val perfEvents = new freechips.rocketchip.rocket.EventSets(Seq(
     new freechips.rocketchip.rocket.EventSet((mask, hits) => (mask & hits).orR, Seq(
-      ("exception", () => rob.io.com_xcpt.valid),
-      ("nop",       () => false.B),
-      ("nop",       () => false.B),
-      ("nop",       () => false.B))),
+      ("exception"    ,       () => (rob.io.com_xcpt.valid,false.B,0.U)),
+      ("Slots Retired",       () => (rob.io.commit.arch_valids.reduce(_|_),true.B,PopCount(rob.io.commit.arch_valids))),
+      ("csr   commit" ,       () => (inst_commit.reduce(_|_)    ,true.B,PopCount(inst_commit))),
+      ("csrw  commit" ,       () => (csrw_commit.reduce(_|_)   ,true.B,PopCount(csrw_commit))),
+      ("mstatus write",       () => (csrw_commit_mstatus.reduce(_|_)   ,true.B,PopCount(csrw_commit_mstatus))),
+      ("misa write",          () => (csrw_commit_misa.reduce(_|_)   ,true.B,PopCount(csrw_commit_misa))),
+      ("medeleg write",       () => (csrw_commit_medeleg.reduce(_|_)   ,true.B,PopCount(csrw_commit_medeleg))),
+      ("mideleg write",       () => (csrw_commit_mideleg.reduce(_|_)   ,true.B,PopCount(csrw_commit_mideleg))),
+      ("mie write",           () => (csrw_commit_mie.reduce(_|_)   ,true.B,PopCount(csrw_commit_mie))),
+      ("mtvec write",         () => (csrw_commit_mtvec.reduce(_|_)   ,true.B,PopCount(csrw_commit_mtvec))),
+      ("mcounen write",       () => (csrw_commit_mcounteren.reduce(_|_)   ,true.B,PopCount(csrw_commit_mcounteren))),
+      ("mscratch write",      () => (csrw_commit_mscratch.reduce(_|_)   ,true.B,PopCount(csrw_commit_mscratch))),
+      ("mepc write",          () => (csrw_commit_mepc.reduce(_|_)   ,true.B,PopCount(csrw_commit_mepc))),
+      ("mcause write",        () => (csrw_commit_mcause.reduce(_|_)   ,true.B,PopCount(csrw_commit_mcause))),
+      ("mtval write",         () => (csrw_commit_mtval.reduce(_|_)   ,true.B,PopCount(csrw_commit_mtval))),
+      ("mip write",           () => (csrw_commit_mip.reduce(_|_)   ,true.B,PopCount(csrw_commit_mip))),
+      ("mtval2 write",        () => (csrw_commit_mtval2.reduce(_|_)   ,true.B,PopCount(csrw_commit_mtval2))),
+      ("menvcfg write",       () => (csrw_commit_menvcfg.reduce(_|_)   ,true.B,PopCount(csrw_commit_menvcfg))),
+      ("mseccfg write",       () => (csrw_commit_mseccfg.reduce(_|_)   ,true.B,PopCount(csrw_commit_mseccfg))),
+      ("pmpcfg0 write",       () => (csrw_commit_pmpcfg0.reduce(_|_)   ,true.B,PopCount(csrw_commit_pmpcfg0))),
+      ("pmpaddr0 write",      () => (csrw_commit_pmpaddr0.reduce(_|_)   ,true.B,PopCount(csrw_commit_pmpaddr0))),
+      ("mcountinh write",     () => (csrw_commit_mcountinh.reduce(_|_)   ,true.B,PopCount(csrw_commit_mcountinh))),
+      ("fflags write",        () => (csrw_commit_fflags.reduce(_|_)   ,true.B,PopCount(csrw_commit_fflags))),
+      ("nop",       () => (false.B,false.B,0.U)))),
+      
+      new freechips.rocketchip.rocket.EventSet((mask, hits) => (mask & hits).orR, Seq(
+      ("nop",       () => (false.B,false.B,0.U)),
+      ("nop",       () => (false.B,false.B,0.U)),
+      ("nop",       () => (false.B,false.B,0.U))
+      ))
 
-    new freechips.rocketchip.rocket.EventSet((mask, hits) => (mask & hits).orR, Seq(
-//      ("I$ blocked",                        () => icache_blocked),
-      ("nop",                               () => false.B),
-      // ("branch misprediction",              () => br_unit.brinfo.mispredict),
-      // ("control-flow target misprediction", () => br_unit.brinfo.mispredict &&
-      //                                             br_unit.brinfo.cfi_type === CFI_JALR),
-      ("flush",                             () => rob.io.flush.valid)
-      //("branch resolved",                   () => br_unit.brinfo.valid)
-    )),
+      )     
+      
+    )
 
-    new freechips.rocketchip.rocket.EventSet((mask, hits) => (mask & hits).orR, Seq(
-      ("I$ miss",     () => io.ifu.perf.acquire),
-      ("D$ miss",     () => io.lsu.perf.acquire),
-      ("D$ release",  () => io.lsu.perf.release),
-      ("ITLB miss",   () => io.ifu.perf.tlbMiss),
-      ("DTLB miss",   () => io.lsu.perf.tlbMiss),
-      ("L2 TLB miss", () => io.ptw.perf.l2miss)))))
+  // val perfEvents = new freechips.rocketchip.rocket.EventSets(Seq(
+  //   new freechips.rocketchip.rocket.EventSet((mask, hits) => (mask & hits).orR, Seq(
+  //     ("exception"    ,       () => (rob.io.com_xcpt.valid,false.B,0.U)),
+  //     ("Slots Retired",       () => (rob.io.commit.arch_valids.reduce(_|_),true.B,PopCount(rob.io.commit.arch_valids))),
+  //     ("Slots Issued" ,       () => (issue_valids.reduce(_|_)  ,true.B,PopCount(issue_valids))),
+  //     ("Fetch Bubbles",       () => ((!io.ifu.fetchpacket.valid)&&dec_ready,true.B,coreWidth.U)),
+  //     ("Load  commit" ,       () => (load_commit.reduce(_|_)   ,true.B,PopCount(load_commit))),
+  //     ("Store commit" ,       () => (store_commit.reduce(_|_)  ,true.B,PopCount(store_commit))),
+  //     ("fp    commit" ,       () => (fp_commit.reduce(_|_)     ,true.B,PopCount(fp_commit))),
+  //     ("br    commit" ,       () => (br_commit.reduce(_|_)     ,true.B,PopCount(br_commit))),
+  //     ("jal   commit" ,       () => (jal_commit.reduce(_|_)    ,true.B,PopCount(jal_commit))),
+  //     ("jalr  commit" ,       () => (jalr_commit.reduce(_|_)   ,true.B,PopCount(jalr_commit))),
+  //     ("int   commit" ,       () => (int_commit.reduce(_|_)    ,true.B,PopCount(int_commit))),
+  //     ("csr   commit" ,       () => (inst_commit.reduce(_|_)    ,true.B,PopCount(inst_commit))),
+  //     ("csrw  commit" ,       () => (csrw_commit.reduce(_|_)   ,true.B,PopCount(csrw_commit))),
+  //     ("nop",       () => (false.B,false.B,0.U)))),
+
+  //   new freechips.rocketchip.rocket.EventSet((mask, hits) => (mask & hits).orR, Seq(
+  //     ("total mispred" ,         () => (total_mispred.reduce(_|_)    ,true.B,PopCount(total_mispred))),
+  //     ("br    mispred" ,         () => (br_mispred.reduce(_|_)       ,true.B,PopCount(br_mispred))),
+  //     ("flush",                  () => (rob.io.flush.valid,false.B,0.U))
+  //   )),
+
+  //   new freechips.rocketchip.rocket.EventSet((mask, hits) => (mask & hits).orR, Seq(
+  //     ("I$ miss",     () => (io.ifu.perf.acquire,false.B,0.U)),
+  //     ("D$ miss",     () => (io.lsu.perf.acquire,false.B,0.U)),
+  //     ("D$ release",  () => (io.lsu.perf.release,false.B,0.U)),
+  //     ("ITLB miss",   () => (io.ifu.perf.tlbMiss,false.B,0.U)),
+  //     ("DTLB miss",   () => (io.lsu.perf.tlbMiss,false.B,0.U)),
+  //     ("L2 TLB miss", () => (io.ptw.perf.l2miss,false.B,0.U))))))
   val csr = Module(new freechips.rocketchip.rocket.CSRFile(perfEvents, boomParams.customCSRs.decls))
   csr.io.inst foreach { c => c := DontCare }
   csr.io.rocc_interrupt := io.rocc.interrupt
@@ -273,6 +651,17 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   //val icache_blocked = !(io.ifu.fetchpacket.valid || RegNext(io.ifu.fetchpacket.valid))
   val icache_blocked = false.B
   csr.io.counters foreach { c => c.inc := RegNext(perfEvents.evaluate(c.eventSel)) }
+  val storeCommitCycleContribution = Wire(UInt(storeCommitCycleSumWidth.W))
+  storeCommitCycleContribution := storeCommitNum * csr.io.time
+
+  when (storeCommitValid && storeCommitInCheckState) {
+    storeCommitCountReg    := storeCommitCountReg +% storeCommitNum
+    storeCommitCycleSumReg := storeCommitCycleSumReg +% storeCommitCycleContribution
+  }
+
+  dontTouch(storeCommitValid)
+  dontTouch(storeCommitCountReg)
+  dontTouch(storeCommitCycleSumReg)
 
   //****************************************
   // Time Stamp Counter & Retired Instruction Counter
@@ -717,13 +1106,22 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
 
   //-------------------------------------------------------------
   // Rob Allocation Logic
-
+//===== GuardianCouncil Function: Start   ====//
+  val rsu_stall = WireInit(0.U(1.W))
+  val ic_stall = WireInit(0.U(1.W))
+  val r_exception_record = RegInit(0.U(1.W))
+  rob.io.gh_stall  := (io.gh_stall|rsu_stall|ic_stall|io.big_hang)
+  // rob.io.gh_stall  := (io.gh_stall|rsu_stall|ic_stall|io.big_hang) & (~r_exception_record) & (io.if_correct_process) & (~csr.io.r_exception) & (~csr.io.trace(0).exception.asUInt)
+  //  rob.io.gh_stall  := (io.gh_stall|rsu_stall|ic_stall) & (~r_exception_record) & (io.if_correct_process) & (~csr.io.r_exception) & (~csr.io.trace(0).exception.asUInt)
+  //===== GuardianCouncil Function: End   ====//
   rob.io.enq_valids := dis_fire
   rob.io.enq_uops   := dis_uops
   rob.io.enq_partial_stall := dis_stalls.last // TODO come up with better ROB compacting scheme.
   rob.io.debug_tsc := debug_tsc_reg
   rob.io.csr_stall := csr.io.csr_stall
+  rob.io.debug_st  := io.lsu.stq_debug
 
+ 
   // Minor hack: ecall and breaks need to increment the FTQ deq ptr earlier than commit, since
   // they write their PC into the CSR the cycle before they commit.
   // Since these are also unique, increment the FTQ ptr when they are dispatched
@@ -858,6 +1256,8 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   pred_wakeup.bits.uop := iss_uops(jmp_unit_idx)
   pred_wakeup.bits.fflags := DontCare
   pred_wakeup.bits.data := DontCare
+  pred_wakeup.bits.rs1_data := DontCare
+  pred_wakeup.bits.rs2_data := DontCare
   pred_wakeup.bits.predicated := DontCare
 
   // Perform load-hit speculative wakeup through a special port (performs a poison wake-up).
@@ -962,7 +1362,23 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   //-------------------------------------------------------------
 
   // Register Read <- Issue (rrd <- iss)
-  iregister_read.io.rf_read_ports <> iregfile.io.read_ports
+  // iregister_read.io.rf_read_ports <> iregfile.io.read_ports
+//===== GuardianCouncil Function: Start ====//
+  // Register Read <- Issue (rrd <- iss)
+  for (i <- 0 until numIrfReadPorts) {
+    iregister_read.io.rf_read_ports(i) <> iregfile.io.read_ports(i)
+  }
+
+  /* 
+  TODO:need add reg to cut the critical path
+   */
+  // val rob_io_commit_uops_pdst_reg                   = Reg(Vec(coreWidth, UInt(maxPregSz.W)))
+  
+  for (w <- 0 until coreWidth) {
+    // rob_io_commit_uops_pdst_reg(w)                 := rob.io.commit.uops(w).pdst
+    iregfile.io.read_ports(numIrfReadPorts+w).addr := rob.io.commit.uops(w).pdst//rob_io_commit_uops_pdst_reg(w)
+  }
+  //===== GuardianCouncil Function: End ====//
   iregister_read.io.prf_read_ports := DontCare
   if (enableSFBOpt) {
     iregister_read.io.prf_read_ports <> pregfile.io.read_ports
@@ -1202,16 +1618,24 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   // First connect the ll_wport
   val ll_uop = ll_wbarb.io.out.bits.uop
   rob.io.wb_resps(0).valid  := ll_wbarb.io.out.valid && !(ll_uop.uses_stq && !ll_uop.is_amo)
+  // rob.io.wb_resps(0).valid  := ll_wbarb.io.out.valid
   rob.io.wb_resps(0).bits   <> ll_wbarb.io.out.bits
-  rob.io.debug_wb_valids(0) := ll_wbarb.io.out.valid && ll_uop.dst_rtype =/= RT_X
+  // rob.io.debug_wb_valids(0) := ll_wbarb.io.out.valid && ll_uop.dst_rtype =/= RT_X
+  rob.io.debug_wb_valids(0) := ll_wbarb.io.out.valid
   rob.io.debug_wb_wdata(0)  := ll_wbarb.io.out.bits.data
+  rob.io.debug_rs1_data(0)  := ll_wbarb.io.out.bits.rs1_data
+  rob.io.debug_rs2_data(0)  := ll_wbarb.io.out.bits.rs2_data
   var cnt = 1
   for (i <- 1 until memWidth) {
     val mem_uop = mem_resps(i).bits.uop
     rob.io.wb_resps(cnt).valid := mem_resps(i).valid && !(mem_uop.uses_stq && !mem_uop.is_amo)
+    // rob.io.wb_resps(cnt).valid := mem_resps(i).valid
     rob.io.wb_resps(cnt).bits  := mem_resps(i).bits
-    rob.io.debug_wb_valids(cnt) := mem_resps(i).valid && mem_uop.dst_rtype =/= RT_X
+    // rob.io.debug_wb_valids(cnt) := mem_resps(i).valid && mem_uop.dst_rtype =/= RT_X
+    rob.io.debug_wb_valids(cnt) := mem_resps(i).valid
     rob.io.debug_wb_wdata(cnt)  := mem_resps(i).bits.data
+    rob.io.debug_rs1_data(cnt)  := mem_resps(i).bits.rs1_data
+    rob.io.debug_rs2_data(cnt)  := mem_resps(i).bits.rs2_data
     cnt += 1
   }
   var f_cnt = 0 // rob fflags port index
@@ -1221,10 +1645,16 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
       val resp   = eu.io.iresp
       val wb_uop = resp.bits.uop
       val data   = resp.bits.data
+      val rs1_data = resp.bits.rs1_data
+      val rs2_data = resp.bits.rs2_data
 
       rob.io.wb_resps(cnt).valid := resp.valid && !(wb_uop.uses_stq && !wb_uop.is_amo)
+      // rob.io.wb_resps(cnt).valid := resp.valid
       rob.io.wb_resps(cnt).bits  <> resp.bits
-      rob.io.debug_wb_valids(cnt) := resp.valid && wb_uop.rf_wen && wb_uop.dst_rtype === RT_FIX
+      rob.io.debug_rs1_data(cnt) := rs1_data
+      rob.io.debug_rs2_data(cnt) := rs2_data
+      // rob.io.debug_wb_valids(cnt) := resp.valid && wb_uop.rf_wen && wb_uop.dst_rtype === RT_FIX
+      rob.io.debug_wb_valids(cnt) := resp.valid
       if (eu.hasFFlags) {
         rob.io.fflags(f_cnt) <> resp.bits.fflags
         f_cnt += 1
@@ -1242,11 +1672,13 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
 
   require(cnt == numIrfWritePorts)
   if (usingFPU) {
-    for ((wdata, wakeup) <- fp_pipeline.io.debug_wb_wdata zip fp_pipeline.io.wakeups) {
+    for ((((wdata, wakeup), rs1), rs2) <- (fp_pipeline.io.debug_wb_wdata.zip(fp_pipeline.io.wakeups).zip(fp_pipeline.io.debug_rs1_data).zip(fp_pipeline.io.debug_rs2_data))) {
       rob.io.wb_resps(cnt) <> wakeup
       rob.io.fflags(f_cnt) <> wakeup.bits.fflags
       rob.io.debug_wb_valids(cnt) := wakeup.valid
       rob.io.debug_wb_wdata(cnt) := wdata
+      rob.io.debug_rs1_data(cnt) := rs1
+      rob.io.debug_rs2_data(cnt) := rs2
       cnt += 1
       f_cnt += 1
 
@@ -1281,6 +1713,13 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   rob.io.lsu_clr_unsafe := io.lsu.clr_unsafe
   rob.io.lxcpt          <> io.lsu.lxcpt
 
+  //===== GuardianCouncil Function: Start ====//
+  val gh_effective_jalr_target_reg                = RegInit(0.U(xLen.W))
+  gh_effective_jalr_target_reg                   := jmp_unit.io.brinfo.jalr_target
+  rob.io.gh_effective_rob_idx                    := jmp_unit.io.iresp.bits.uop.rob_idx
+  rob.io.gh_effective_valid                      := jmp_unit.io.iresp.valid
+  rob.io.gh_effective_jalr_target                := gh_effective_jalr_target_reg
+  //===== GuardianCouncil Function: End   ====//
   assert (!(csr.io.singleStep), "[core] single-step is unsupported.")
 
 
@@ -1314,7 +1753,12 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
         reset.asBool) {
     idle_cycles := 0.U
   }
-  assert (!(idle_cycles.value(13)), "Pipeline has hung.")
+  assert (!(idle_cycles.value(20)), "Pipeline has hung.")
+
+  val little_status1 = freechips.rocketchip.util.WideCounter(32)
+  val little_status2 = freechips.rocketchip.util.WideCounter(32)
+  val little_status3 = freechips.rocketchip.util.WideCounter(32)
+  val little_status4 = freechips.rocketchip.util.WideCounter(32)
 
   if (usingFPU) {
     fp_pipeline.io.debug_tsc_reg := debug_tsc_reg
@@ -1343,9 +1787,11 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
       }
 
       when (rob.io.commit.arch_valids(w)) {
-        printf("%d 0x%x ",
+        printf("C:%d %d 0x%x bigcomp:%x ",
+          io.hartid,
           priv,
-          Sext(rob.io.commit.uops(w).debug_pc(vaddrBits-1,0), xLen))
+          Sext(rob.io.commit.uops(w).debug_pc(vaddrBits-1,0), xLen),
+          io.bigComp)
         printf_inst(rob.io.commit.uops(w))
         when (rob.io.commit.uops(w).dst_rtype === RT_FIX && rob.io.commit.uops(w).ldst =/= 0.U) {
           printf(" x%d 0x%x\n",
@@ -1409,6 +1855,8 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
 
   io.rocc := DontCare
   io.rocc.exception := csr.io.exception && csr.io.status.xs.orR
+  dontTouch(io.rocc)
+  dontTouch(exe_units.rocc_unit.io)
   if (usingRoCC) {
     exe_units.rocc_unit.io.rocc.rocc         <> io.rocc
     exe_units.rocc_unit.io.rocc.dis_uops     := dis_uops
@@ -1476,4 +1924,237 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     io.trace map (t => t.valid := false.B)
     io.ifu.debug_ftq_idx := DontCare
   }
+
+//===== GuardianCouncil Function: Start ====//
+  // val ght_prfs_forward_prf_reg                    = Reg(Vec(coreWidth, Bool()))
+  // val ght_prfs_forward_prf_reg_test               = Reg(Vec(coreWidth, Bool()))
+  val if_mret_or_sret                             = Wire(Vec(coreWidth, Bool()))
+  val if_ecall                                    = Wire(Vec(coreWidth, Bool()))
+  val exception_mode_test                         = RegInit(false.B)
+  when(csr.io.trace(0).exception || csr.io.trace(0).interrupt || if_ecall.reduce(_ || _)){
+    exception_mode_test := true.B
+  }.elsewhen(if_mret_or_sret.reduce(_ || _)){
+    exception_mode_test := false.B
+  }
+
+  val crnt_priv                                   = csr.io.status.prv    
+  val old_priv                                    = RegNext(csr.io.status.prv) 
+  val priv_higher                                 = (crnt_priv > old_priv)
+  val priv_lower                                  = (crnt_priv < old_priv)
+  val mode_switch_forverilator                    = RegNext(csr.io.r_exception_nocall) || RegNext(if_ecall.reduce(_ || _))//打一拍够不够//ecall先于commit生效，此时rob next pc未生效，在commit时才进行switch保证next pc是真正的下一条
+
+  // val csrshadow_seq                               = (CSRshadows.allshadows.map(_.asUInt)).toSeq ++ Seq(CSRs.fflags.U, CSRs.fcsr.U, CSRs.frm.U)
+  // val csrshadow_seq                               = Seq(CSRs.fflags.U, CSRs.fcsr.U, CSRs.frm.U)
+  for (w <- 0 until coreWidth) {
+    // ght_prfs_forward_prf_reg_test(w)             := (io.ght_prfs_forward_prf(w) && !RegNext(RegNext(rob.io.commit.uops(w).csr_addr)).isOneOf(csrshadow_seq))
+    // ght_prfs_forward_prf_reg(w)                  := io.ght_prfs_forward_prf(w)
+    // ght_prfs_forward_prf_reg(w)                  := io.ght_prfs_forward_prf(w) && !RegNext(RegNext(rob.io.commit.uops(w).csr_addr)).isOneOf(csrshadow_seq)
+
+    // io.pc(w)                                     := rob.io.commit.uops(w).debug_pc(31,0)
+    // io.inst(w)                                   := rob.io.commit.uops(w).debug_inst(31,0)
+    // io.new_commit(w)                             := Mux(r_syscall, 0.U, rob.io.commit.arch_valids(w))
+    io.prf_rd(w)                                    := iregfile.io.read_ports(numIrfReadPorts + w).data
+
+    io.csr_addr(w)                               := rob.io.commit.uops(w).csr_addr
+    
+    // io.uses_ldq(w)                               := rob.io.commit.uops(w).uses_ldq
+    // io.uses_stq(w)                               := rob.io.commit.uops(w).uses_stq
+    // io.is_jal_or_jalr(w)                         := rob.io.commit.uops(w).is_jal|rob.io.commit.uops(w).is_jalr
+    // io.ft_idx(w)                                 := rob.io.commit.uops(w).ftq_idx
+    // io.is_rvc(w)                                 := rob.io.commit.uops(w).is_rvc
+    io.alu_out(w)                                := rob.io.commit.gh_effective_alu_out(w);
+    if_mret_or_sret(w)                           := rob.io.commit.arch_valids(w) && ((rob.io.commit.uops(w).debug_inst(31,0) === 0x30200073.U) || (rob.io.commit.uops(w).debug_inst(31,0) === 0x10200073.U))
+    if_ecall(w)                                  := rob.io.commit.arch_valids(w) && (rob.io.commit.uops(w).debug_inst(31,0) === 0x00000073.U)
+  }
+  // dontTouch(ght_prfs_forward_prf_reg)
+  // dontTouch(io.ght_prfs_forward_prf)
+  // dontTouch(ght_prfs_forward_prf_reg_test)
+  io.ght_prv                                     := RegNext(csr.io.status.prv)
+
+  val gh_commit_valids                           = Wire(Vec(coreWidth, Bool()))
+  for (i <- 0 until coreWidth) {
+    gh_commit_valids(i)                          := rob.io.commit.arch_valids(i) && !exception_mode_test && !if_mret_or_sret(i) && !if_ecall(i)
+  }
+  dontTouch(exception_mode_test)
+  dontTouch(gh_commit_valids)
+
+  val zero_2bits                                  = WireInit(0.U(2.W))
+  val arch_valids_extended                        = Wire(Vec(coreWidth, UInt(3.W)))
+  for (i <- 0 until coreWidth) {
+    arch_valids_extended(i)                      := Cat(zero_2bits, gh_commit_valids(i).asUInt)
+  }
+  
+  val ic_incr                                     = arch_valids_extended.reduce(_ + _)
+
+
+  val numARFS                                     = 32
+  val pcarf                                       = RegInit(0.U(40.W))
+  val arfs                                        = Reg(Vec(numARFS, UInt(xLen.W)))
+  val farfs                                       = Reg(Vec(numARFS, UInt(xLen.W)))
+  // val csrrfs                                      = Reg(Vec(CSRshadows.allshadows.size, UInt(xLen.W)))
+
+  for (w <- 0 until coreWidth) {
+    when (rob.io.commit.arch_valids(w)) {
+      when (rob.io.commit.uops(w).dst_rtype === RT_FIX && rob.io.commit.uops(w).ldst =/= 0.U) {
+        arfs(rob.io.commit.uops(w).ldst)          := rob.io.commit.debug_wdata(w)
+      } .elsewhen (rob.io.commit.uops(w).dst_rtype === RT_FLT) {
+        farfs(rob.io.commit.uops(w).ldst)         := rob.io.commit.debug_wdata(w)
+      }
+    }
+  }
+
+  // dontTouch(csrrfs)
+
+  if (GH_GlobalParams.GH_DEBUG == 1) {
+    val debug_instruction_counter = RegInit(0.U(64.W))
+    val ic_trace_reg = RegInit(0.U(1.W))
+    ic_trace_reg := io.ic_trace
+
+    when ((io.ic_trace === 1.U) && (ic_trace_reg === 0.U)){
+      debug_instruction_counter := 0.U
+    }
+    when ((ic_incr =/= 0.U) && (io.ic_trace.asBool) && io.if_correct_process.asBool) {
+      debug_instruction_counter := debug_instruction_counter + ic_incr
+    }
+
+    when ((io.ic_trace === 0.U) && (ic_trace_reg === 1.U)){
+      printf(midas.targetutils.SynthesizePrintf("Debug_IC=[0x%x]\n", debug_instruction_counter))
+    } .otherwise {
+      when (((debug_instruction_counter & 0x3FFF.U) === 0.U) && (io.ic_trace.asBool)){
+        printf(midas.targetutils.SynthesizePrintf("Debug_IC=[0x%x]\n", debug_instruction_counter))
+      }
+    }
+  }
+  
+
+  /* R Features */
+  val rsu_master = Module(new R_RSU(R_RSUParams(xLen, numARFS, 1)))
+  val ic_master = Module(new R_IC(R_ICParams(GH_GlobalParams.GH_NUM_CORES, 16)))
+
+  when(!ic_master.io.ic_status(1).asBool){
+    little_status1 := 0.U
+  }
+  when(!ic_master.io.ic_status(2).asBool){
+    little_status2 := 0.U
+  }
+  when(!ic_master.io.ic_status(3).asBool){
+    little_status3 := 0.U
+  }
+  when(!ic_master.io.ic_status(4).asBool){
+    little_status4 := 0.U
+  }
+  assert(!little_status1(16), "little core 1 has hung")
+  assert(!little_status2(16), "little core 2 has hung")
+  assert(!little_status3(16), "little core 3 has hung")
+  assert(!little_status4(16), "little core 4 has hung")
+
+
+  val r_exception_record_2                         = RegInit(0.U(1.W))
+  r_exception_record_2                            := Mux(csr.io.r_exception.asBool, 1.U, Mux(ic_incr =/= 0.U && r_exception_record_2.asBool, 0.U, r_exception_record_2))
+  r_exception_record                              := Mux(csr.io.r_exception.asBool, 1.U, Mux(ic_incr =/= 0.U && r_exception_record.asBool && !r_exception_record_2.asBool, 0.U, r_exception_record))
+  r_syscall                                       := Mux((ic_incr =/= 0.U) && (r_exception_record.asBool || csr.io.r_exception.asBool), true.B, false.B)
+  
+  ic_master.io.ic_run_isax                        := io.icctrl(0)
+  ic_master.io.ic_exit_isax                       := io.icctrl(1)
+  ic_master.io.ic_syscall                         := io.icctrl(2) | RegNext(r_syscall)
+  ic_master.io.ic_syscall_back                    := (io.icctrl(3) | if_mret_or_sret.reduce(_||_)) && (csr.io.r_exception === 0.U)
+  ic_master.io.if_ready_snap_shot                 := rob.io.can_commit_withoutGC.asUInt
+  ic_master.io.rsu_busy                           := rsu_master.io.rsu_busy
+  ic_master.io.ic_threshold                       := GH_GlobalParams.GH_TOTAL_INSTS.U
+  // ic_master.io.ic_incr                            := Mux(r_syscall, 0.U, ic_incr)
+  ic_master.io.ic_incr                            := ic_incr
+  ic_master.io.priv_higher                        := priv_higher
+  ic_master.io.priv_lower                         := priv_lower
+  ic_master.io.mode_switch                        := mode_switch_forverilator
+  ic_master.io.mode_ret                           := RegNext(if_mret_or_sret.reduce(_ || _))
+  ic_master.io.excp_mode                          := exception_mode_test
+  ic_stall                                        := ic_master.io.if_pipeline_stall
+
+  // io.big_checker_switch                           := ic_master.io.big_checker_switch
+  // io.icsl_na_ack                                  := ic_master.io.icsl_na_ack
+  val num_activated_cores                          = RegInit(0.U(8.W))
+  num_activated_cores                             := io.num_of_checker
+  ic_master.io.num_of_checker                     := io.num_of_checker
+  ic_master.io.changing_num_of_checker            := Mux((num_activated_cores =/= io.num_of_checker), 1.U, 0.U)
+  ic_master.io.core_trace                         := io.core_trace
+  csr.io.core_trace                               := io.core_trace
+  storeCommitInCheckState                         := ic_master.io.debug_maincore_status === 2.U
+  io.debug_maincore_status                        := ic_master.io.debug_maincore_status
+  dontTouch(io.debug_maincore_status)
+  
+  io.ic_crnt_target                               := ic_master.io.crnt_target
+  for (i <-0 until GH_GlobalParams.GH_NUM_CORES){
+    io.ic_counter(i)                              := ic_master.io.ic_counter(i)
+    ic_master.io.clear_ic_status(i)               := io.clear_ic_status_tomain(i)
+    ic_master.io.icsl_na(i)                       := io.icsl_na(i)
+  }
+  ic_master.io.if_correct_process                 := io.if_correct_process
+  ic_master.io.ic_trace                           := io.ic_trace
+  
+  // ic_master.io.if_big_complete_req                := io.if_big_complete_req
+
+  // revisit 
+  val if_filtering                                 = ic_master.io.if_filtering // NOT USED YET!
+  val snapshot_reg                                 = RegInit(0.U(1.W))
+  snapshot_reg                                    := ic_master.io.if_dosnap
+  
+  for (i <- 0 until numARFS) {
+    rsu_master.io.arfs_in(i)                      := arfs(i)
+    rsu_master.io.farfs_in(i)                     := farfs(i)
+  }
+  rsu_master.io.excp_mode                         := exception_mode_test
+  rsu_master.io.priv                              := csr.io.status.prv
+  rsu_master.io.snapshot_priv                     := ic_master.io.if_dosnap_priv
+  rsu_master.io.merge_priv                        := RegNext(ic_master.io.if_dosnap_priv.asBool)
+  rsu_master.io.pcarf_in                          := rob.io.r_next_pc
+  rsu_master.io.fcsr_in                           := csr.io.fcsr_read
+  rsu_master.io.snapshot                          := ic_master.io.if_dosnap
+  csr.io.pfarf_valid                              := 0.U
+  csr.io.fcsr_in                                  := 0.U
+  csr.io.arfs_is_CPS                              := false.B
+  csr.io.arfs_is_CSR                              := false.B
+  csr.io.csr_shadows                              := 0.U
+  csr.io.shadow_idx                               := 0.U
+  csr.io.checker_mode                             := false.B
+  csr.io.check_priv                               := 0.U
+  csr.io.check_exception                          := false.B
+  csr.io.check_tvec                               := 0.U
+  csr.io.check_epc                                := 0.U
+  csr.io.check_priv_ret                           := false.B
+  csr.io.checker_priv_mode                        := false.B
+  csr.io.ic_check_done                            := false.B
+  csr.io.clear_ic_status                          := false.B
+  csr.io.check_ret_priv                           := 0.U
+  rsu_master.io.shadowcsr_in                      := csr.io.shadow_read
+  rsu_master.io.merge                             := snapshot_reg
+  // rsu_master.io.ght_filters_ready                 := io.ght_filters_ready
+  rsu_master.io.ic_crnt_target                    := ic_master.io.crnt_target
+  rsu_master.io.ic_old_crnt_target                := ic_master.io.old_crnt_target
+  rsu_master.io.core_trace                        := io.core_trace
+  rsu_master.io.ic_trace                          := io.ic_trace 
+  rsu_stall                                       := rsu_master.io.core_hang_up
+  rsu_master.io.big_hang                          := io.big_hang
+  io.arfs_ecp_dest                                := rsu_master.io.arfs_ecp_dest
+  for (w <- 0 until 1){
+    io.r_arfs(w)                                  := Cat(rsu_master.io.arfs_index(w), rsu_master.io.arfs_merge(w))
+    io.r_arfs_pidx(w)                             := rsu_master.io.arfs_pidx(w)
+  }
+  io.rsu_merging                                  := rsu_master.io.rsu_merging
+  io.rsu_merging_valid                            := rsu_master.io.rsu_merging_valid
+  io.debug_perf_val                               := ic_master.io.debug_perf_val
+  ic_master.io.debug_perf_sel                     := io.debug_perf_ctrl(3,1)
+  ic_master.io.debug_perf_reset                   := io.debug_perf_ctrl(0)
+  io.shared_CP_CFG                                := ic_master.io.shared_CP_CFG
+
+
+  io.commit_valids                                := gh_commit_valids
+  io.commit_uops                                  := rob.io.commit.uops
+  io.commit_rs1                                   := rob.io.commit.debug_rs1
+  io.jalr_target                                  := rob.io.commit.gh_effective_alu_out
+  io.store_commit_count                           := storeCommitCountReg
+  io.store_commit_cycle_sum                       := storeCommitCycleSumReg
+  dontTouch(io.store_commit_count)
+  dontTouch(io.store_commit_cycle_sum)
+  // io.if_big_complete_ack                           := ic_master.io.if_big_complete_ack
+  //===== GuardianCouncil Function: End ====//
 }
