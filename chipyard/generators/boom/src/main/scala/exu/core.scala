@@ -316,14 +316,25 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   val int_commit   = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && rob.io.commit.uops(i).iq_type===IQT_INT)
   val storeCommitCounterWidth   = 128
   val storeCommitCycleSumWidth  = 128
-  // Count only stores retired by the ROB while the big core is in the checking state.
+  // Count stores that have been written to L1 DCache.
+  // The count increments when the DCache acknowledges a store write.
   val storeCommitCountReg       = RegInit(0.U(storeCommitCounterWidth.W))
-  // Sum the CSR cycle value sampled at store commit time. If multiple stores retire together,
-  // the same cycle value is added once per retired store.
+  // Sum the CSR cycle value (csr.io.time) sampled at the moment each store
+  // is written into L1 DCache. If multiple stores are written in the same cycle,
+  // the same cycle value is added once per store.
   val storeCommitCycleSumReg    = RegInit(0.U(storeCommitCycleSumWidth.W))
+  // Detect store DCache write from LSU: io.lsu.st_dcache_write fires when a store
+  // response is received from the DCache, indicating the store has been committed
+  // to L1 DCache.
+  // Only count stores whose accompanied check-state tag is true, meaning they were
+  // committed by the ROB while the core was in checking state.
+  val stDcacheWriteWithCheckState = (io.lsu.st_dcache_write zip io.lsu.st_dcache_write_check_state)
+      .map { case (w, cs) => w && cs }
+  val stDcacheWriteValid        = stDcacheWriteWithCheckState.reduce(_ || _)
+  val stDcacheWriteNum          = PopCount(stDcacheWriteWithCheckState)
+  // Only count stores when the core is in the checking state (debug_maincore_status == 2).
+  // This is used to tag stores at ROB commit time (sent to LSU via commit_in_check_state).
   val storeCommitInCheckState   = WireDefault(false.B)
-  val storeCommitValid          = store_commit.reduce(_ || _)
-  val storeCommitNum            = PopCount(store_commit)
   val csr_counter             = RegInit(VecInit(Seq.fill(84)(0.U(32.W))))
   val csr_counter_valid       = WireInit(VecInit(Seq.fill(84)(false.B)))
   val csr_counter_num         = WireInit(VecInit(Seq.fill(84)(0.U(log2Ceil(coreWidth).W))))
@@ -651,15 +662,17 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   //val icache_blocked = !(io.ifu.fetchpacket.valid || RegNext(io.ifu.fetchpacket.valid))
   val icache_blocked = false.B
   csr.io.counters foreach { c => c.inc := RegNext(perfEvents.evaluate(c.eventSel)) }
-  val storeCommitCycleContribution = Wire(UInt(storeCommitCycleSumWidth.W))
-  storeCommitCycleContribution := storeCommitNum * csr.io.time
+  val stDcacheCycleContribution = Wire(UInt(storeCommitCycleSumWidth.W))
+  stDcacheCycleContribution := stDcacheWriteNum * csr.io.time
 
-  when (storeCommitValid && storeCommitInCheckState) {
-    storeCommitCountReg    := storeCommitCountReg +% storeCommitNum
-    storeCommitCycleSumReg := storeCommitCycleSumReg +% storeCommitCycleContribution
+  // Accumulate store count and cycle sum at DCache write time,
+  // only when the core is in the checking state.
+  when (stDcacheWriteValid && storeCommitInCheckState) {
+    storeCommitCountReg    := storeCommitCountReg +% stDcacheWriteNum
+    storeCommitCycleSumReg := storeCommitCycleSumReg +% stDcacheCycleContribution
   }
 
-  dontTouch(storeCommitValid)
+  dontTouch(stDcacheWriteValid)
   dontTouch(storeCommitCountReg)
   dontTouch(storeCommitCycleSumReg)
 
@@ -1532,6 +1545,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   io.lsu.rob_pnr_idx  := rob.io.rob_pnr_idx
 
   io.lsu.tsc_reg := debug_tsc_reg
+  io.lsu.commit_in_check_state := storeCommitInCheckState
 
 
   if (usingFPU) {

@@ -56,7 +56,6 @@ class TLBReq(lgMaxSize: Int)(implicit p: Parameters) extends CoreBundle()(p) {
   val prv = UInt(PRV.SZ.W)
   /** virtualization mode */
   val v = Bool()
-
 }
 
 class TLBExceptions(implicit p: Parameters) extends CoreBundle()(p) {

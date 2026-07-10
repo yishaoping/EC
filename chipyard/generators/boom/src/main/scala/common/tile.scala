@@ -362,7 +362,7 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
         hellaCachePorts += dcIF.io.cache
         respArb.io.in(i) <> Queue(rocc.module.io.resp)
         dontTouch(rocc.module.io)
-//===== GuardianCouncil Function: Start ====//
+        //===== EC: Start =====//
         rocc.module.io.RAW_cnt_in                    := 0.U
         rocc.module.io.csr_counter_in                := cmdRouter.io.csr_counter_out
         rocc.module.io.store_commit_count_in         := cmdRouter.io.store_commit_count_out

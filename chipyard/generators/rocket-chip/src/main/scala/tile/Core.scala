@@ -167,7 +167,7 @@ trait HasCoreIO extends HasTileParameters {
     val cease = Bool().asOutput
     val wfi = Bool().asOutput
     val traceStall = Bool().asInput
-    //===== GuardianCouncil Function: Start ====//
+    //===== EC: Start =====//
     val arfs_if_CPS = UInt(1.W).asInput
     val record_pc = UInt(1.W).asInput
     val ic_counter = UInt(20.W).asInput
@@ -209,6 +209,6 @@ trait HasCoreIO extends HasTileParameters {
     val RAW_cnt = Output(UInt(32.W))
     val store_commit_count = Output(UInt(128.W))
     val store_commit_cycle_sum = Output(UInt(128.W))
-    //===== GuardianCouncil Function: End ====//
+    //===== EC: End   =====//
   }
 }

@@ -183,7 +183,14 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
     dontTouch(data_cdc_ready)
     
     //所有信号都需要展宽
-    val cdc_ghe_event                              = WireInit(VecInit(b_rctrl.map{i=>i(5,0)}))  //可以采样，3周期一采样,但这样做就无法去得到正确的反压信号
+    // 改为锁存型 (sticky)：一旦收到 checker 完成信号就不再清零，
+    // 避免不同 checker 的 CDC 脉冲不对齐导致 reduce(_&_) 永远为 0。
+    val cdc_ghe_event                              = RegInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U(6.W))))
+    for (i <- 0 until params.number_of_little_cores) {
+      when (b_rctrl(i) =/= 0.U) {
+        cdc_ghe_event(i) := b_rctrl(i)(5, 0)
+      }
+    }
     val cdc_ghe_revent                             = WireInit(VecInit(b_rctrl.map{i=>i(6)} ))   //只采样高信号
     val cdc_clear_ic_status                        = WireInit(VecInit(b_rctrl.map{i=>i(7)} ))   //只采样高信号
     // val cdc_if_big_complete                        = WireInit(VecInit(b_rctrl.map{i=>i(8)} ))   //只采样高信号 not uesd

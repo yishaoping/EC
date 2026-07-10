@@ -241,7 +241,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
       if_filtering                              := 0.U
       if_pipeline_stall                         := io.if_correct_process.asBool
       for (i <- 0 to params.totalnumber_of_cores - 1) {
-        ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U,  ic_status(i))
+        ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U,  Mux((crnt_target === i.U), 0.U, ic_status(i)))
         ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U,  Mux((crnt_target === i.U), (ic_counter(i) | 0x8000.U), ic_counter(i)))
       }
       fsm_state                                 := Mux((ctrl === 0.U) || (ctrl === 4.U), fsm_sch, fsm_cooling)

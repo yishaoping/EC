@@ -156,6 +156,15 @@ class LSUCoreIO(implicit p: Parameters) extends BoomBundle()(p)
 
   val tsc_reg     = Input(UInt())
 
+  // Signal that a store has been written to L1 DCache (DCache response received for a store)
+  val st_dcache_write = Output(Vec(memWidth, Bool()))
+  // Accompanied check-state tag: true if the store was committed while core was in checking state.
+  // This tag is sampled at ROB commit time and carried alongside the store through the DCache.
+  val st_dcache_write_check_state = Output(Vec(memWidth, Bool()))
+
+  // Sampled at ROB commit: indicates whether the core is in checking state this cycle.
+  val commit_in_check_state = Input(Bool())
+
   val perf        = Output(new Bundle {
     val acquire = Bool()
     val release = Bool()
@@ -209,6 +218,7 @@ class STQEntry(implicit p: Parameters) extends BoomBundle()(p)
   val data                = Valid(UInt(xLen.W))
 
   val committed           = Bool() // committed by ROB
+  val committed_in_check_state = Bool() // committed while core was in checking state
   val succeeded           = Bool() // D$ has ack'd this, we don't need to maintain this anymore
 
   val debug_wb_data       = UInt(xLen.W)
@@ -340,6 +350,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       stq(st_enq_idx).bits.vaddr.valid:= false.B
       stq(st_enq_idx).bits.data.valid := false.B
       stq(st_enq_idx).bits.committed  := false.B
+      stq(st_enq_idx).bits.committed_in_check_state := false.B
       stq(st_enq_idx).bits.succeeded  := false.B
 
       assert (st_enq_idx === io.core.dis_uops(w).bits.stq_idx, "[lsu] mismatch enq store tag.")
@@ -1275,6 +1286,12 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   io.core.lxcpt.valid := r_xcpt_valid && !io.core.exception && !IsKilledByBranch(io.core.brupdate, r_xcpt.uop)
   io.core.lxcpt.bits  := r_xcpt
 
+  // Default: no store DCache write this cycle
+  for (w <- 0 until memWidth) {
+    io.core.st_dcache_write(w)             := false.B
+    io.core.st_dcache_write_check_state(w) := false.B
+  }
+
   // Task 4: Speculatively wakeup loads 1 cycle before they come back
   for (w <- 0 until memWidth) {
     io.core.spec_ld_wakeup(w).valid := enableFastLoadUse.B          &&
@@ -1354,6 +1371,9 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       {
         assert(!io.dmem.resp(w).bits.is_hella)
         stq(io.dmem.resp(w).bits.uop.stq_idx).bits.succeeded := true.B
+        // Signal that a store has been written to L1 DCache, with check-state tag
+        io.core.st_dcache_write(w)             := true.B
+        io.core.st_dcache_write_check_state(w) := stq(io.dmem.resp(w).bits.uop.stq_idx).bits.committed_in_check_state
         when (io.dmem.resp(w).bits.uop.is_amo) {
           dmem_resp_fired(w) := true.B
           io.core.exe(w).iresp.valid     := true.B
@@ -1436,6 +1456,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         stq(i).bits.addr.valid := false.B
         stq(i).bits.vaddr.valid:= false.B
         stq(i).bits.data.valid := false.B
+        stq(i).bits.committed_in_check_state := false.B
         st_brkilled_mask(i)    := true.B
       }
     }
@@ -1482,6 +1503,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     when (commit_store)
     {
       stq(idx).bits.committed := true.B
+      stq(idx).bits.committed_in_check_state := io.core.commit_in_check_state
     } .elsewhen (commit_load) {
       assert (ldq(idx).valid, "[lsu] trying to commit an un-allocated load entry.")
       assert ((ldq(idx).bits.executed || ldq(idx).bits.forward_std_val) && ldq(idx).bits.succeeded ,
@@ -1538,6 +1560,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     stq(stq_head).bits.data.valid := false.B
     stq(stq_head).bits.succeeded  := false.B
     stq(stq_head).bits.committed  := false.B
+    stq(stq_head).bits.committed_in_check_state := false.B
 
     stq_head := WrapInc(stq_head, numStqEntries)
     when (stq(stq_head).bits.uop.is_fence)
