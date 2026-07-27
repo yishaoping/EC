@@ -67,8 +67,8 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     val ptw_tlb = new freechips.rocketchip.rocket.TLBPTWIO()
     val trace = Output(Vec(coreParams.retireWidth, new TracedInstruction))
     val fcsr_rm = UInt(freechips.rocketchip.tile.FPConstants.RM_SZ.W)
-//===== GuardianCouncil Function: Start ====//
 
+    //===== EC: Start =====//
     val commit_valids = Output(Vec(coreWidth, UInt(1.W)))
     val commit_uops   = Output(Vec(coreWidth, new MicroOp))
     val commit_rs1    = Output(Vec(coreWidth, UInt(xLen.W)))
@@ -2169,6 +2169,5 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   io.store_commit_cycle_sum                       := storeCommitCycleSumReg
   dontTouch(io.store_commit_count)
   dontTouch(io.store_commit_cycle_sum)
-  // io.if_big_complete_ack                           := ic_master.io.if_big_complete_ack
-  //===== GuardianCouncil Function: End ====//
+  //===== EC: End =====//
 }

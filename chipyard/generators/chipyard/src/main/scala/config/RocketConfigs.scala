@@ -12,7 +12,7 @@ class v0Config extends Config(
   new chipyard.config.WithTileFrequency(100, Some(1)) ++
   new chipyard.config.WithTileFrequency(100, Some(2)) ++
   new chipyard.config.WithTileFrequency(100, Some(3)) ++
-  new chipyard.config.WithTileFrequency(100, Some(3)) ++
+  new chipyard.config.WithTileFrequency(100, Some(4)) ++
   new chipyard.config.WithGCBusFrequency(100) ++ 
   new chipyard.config.WithSystemBusFrequency(200) ++
   new chipyard.config.WithMemoryBusFrequency(200) ++
