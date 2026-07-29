@@ -2,7 +2,7 @@ package chipyard.config
 
 import chisel3._
 
-import freechips.rocketchip.config.{Field, Parameters, Config}
+import org.chipsalliance.cde.config.{Field, Parameters, Config}
 import freechips.rocketchip.tile._
 import freechips.rocketchip.diplomacy._
 
@@ -85,3 +85,17 @@ class WithMultiRoCCGemmini[T <: Data : Arithmetic, U <: Data, V <: Data](
     }))
   }
 })
+
+ //以官方给的accumulator为例子，后面可以换成我们自己的RoCC模块
+class WithMultiSingleRoCCExample(harts: Int*) extends Config(
+  new Config((site, here, up) => {
+    case MultiRoCCKey => {
+      up(MultiRoCCKey, site) ++ harts.distinct.map{ i =>
+        (i -> Seq((p: Parameters) => {
+          val accumulator = LazyModule(new AccumulatorExample(OpcodeSet.custom0, n = 4)(p))
+        accumulator
+        }))
+      }
+    }
+  })
+)

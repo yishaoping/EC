@@ -11,7 +11,6 @@ import freechips.rocketchip.diplomacy._
 import freechips.rocketchip.rocket._
 import freechips.rocketchip.tile._
 import freechips.rocketchip.util._
-import freechips.rocketchip.npu._
 
 //==========================================//
 //===== GuardianCouncil Function: Start ====//
@@ -50,10 +49,9 @@ class BaseSubsystemConfig extends Config ((site, here, up) => {
   //==========================================//
 //==========================================//
   //===== GuardianCouncil Function: Start ====//
-  // ((site(TilesLocated(InSubsystem)).map(_.tileParams.hartId).max+1) gives the number of tiles
-  // -1 (big core) indicates the number of little cores
-  case GHMCoreLocated(InSubsystem) => Some(GHMParams(((site(TilesLocated(InSubsystem)).map(_.tileParams.hartId).max+1)-1), GH_GlobalParams.GH_WIDITH_PACKETS))
-  case GAGGCoreLocated(InSubsystem) => Some(GAGGParams(((site(TilesLocated(InSubsystem)).map(_.tileParams.hartId).max+1)-1), GH_GlobalParams.GH_WIDITH_PACKETS))
+  // (total tiles) - (big cores) = number of checker (little) cores
+  case GHMCoreLocated(InSubsystem) => Some(GHMParams(((site(TilesLocated(InSubsystem)).map(_.tileParams.hartId).max+1) - GH_GlobalParams.GH_NUM_BIG_CORES), GH_GlobalParams.GH_WIDITH_PACKETS))
+  case GAGGCoreLocated(InSubsystem) => Some(GAGGParams(((site(TilesLocated(InSubsystem)).map(_.tileParams.hartId).max+1) - GH_GlobalParams.GH_NUM_BIG_CORES), GH_GlobalParams.GH_WIDITH_PACKETS))
   //===== GuardianCouncil Function: End ======//
   //==========================================//
   // Additional device Parameters
@@ -134,33 +132,6 @@ class WithNBigCores(
         rowBits = site(SystemBusKey).beatBits,
         blockBytes = site(CacheBlockBytes))))
     List.tabulate(n)(i => RocketTileAttachParams(
-      big.copy(hartId = i + idOffset),
-      crossing
-    )) ++ prev
-  }
-})
-
-class WithNBigNpuCores(
-  n: Int,
-  overrideIdOffset: Option[Int] = None,
-  crossing: RocketCrossingParams = RocketCrossingParams()
-) extends Config((site, here, up) => {
-  case TilesLocated(InSubsystem) => {
-    val prev = up(TilesLocated(InSubsystem), site)
-    val idOffset = overrideIdOffset.getOrElse(prev.size)
-    val big = RocketTileNpuParams(
-      core   = RocketCoreParams(mulDiv = Some(MulDivParams(
-        mulUnroll = 8,
-        mulEarlyOut = true,
-        divEarlyOut = true))),
-      dcache = Some(DCacheParams(
-        rowBits = site(SystemBusKey).beatBits,
-        nMSHRs = 0,
-        blockBytes = site(CacheBlockBytes))),
-      icache = Some(ICacheParams(
-        rowBits = site(SystemBusKey).beatBits,
-        blockBytes = site(CacheBlockBytes))))
-    List.tabulate(n)(i => RocketTileNpuAttachParams(
       big.copy(hartId = i + idOffset),
       crossing
     )) ++ prev
@@ -738,4 +709,3 @@ class WithCloneRocketTiles(n: Int = 1, cloneHart: Int = 0, overrideIdOffset: Opt
     } ++ prev
   }
 })
-

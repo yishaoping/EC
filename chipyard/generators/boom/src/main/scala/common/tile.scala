@@ -185,7 +185,12 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
   val fi_sel = Wire(UInt(8.W))
   val fi_latency = Wire(UInt(57.W))
   val debug_perf_sel = Wire(UInt(4.W))
-
+  /* Runtime Configurable Mapping bridges */
+  val checker_cfg_bridge = Module(new GH_Bridge(GH_BridgeParams(GH_GlobalParams.GH_CHECKER_MASK_WIDTH)))
+  val checker_cfg_we_bridge = Module(new GH_Bridge(GH_BridgeParams(1)))
+  val checker_state_sel_bridge = Module(new GH_Bridge(GH_BridgeParams(4)))
+  val checker_state_data_bridge = Module(new GH_Bridge(GH_BridgeParams(64)))
+  val checker_mask_rd_bridge = Module(new GH_Bridge(GH_BridgeParams(GH_GlobalParams.GH_CHECKER_MASK_WIDTH)))
   val debug_gtimer_reset = Reg(UInt(1.W))
   val debug_gtimer = Reg(UInt(62.W))
   val debug_gtimer_tiny = Reg(UInt(4.W))
@@ -201,8 +206,8 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
   outer.clock_SRNode.bundle := clock
   outer.reset_SRNode.bundle := reset
 
-  if (outer.tileParams.hartId == 0) {
-    println("#### Jessica #### Generating GH BUF for the big core, HartID: ", outer.boomParams.hartId, "...!!!")
+  if (outer.tileParams.hartId < GH_GlobalParams.GH_NUM_BIG_CORES) {
+    println("#### Jessica #### Generating GH BUF for big core, HartID: ", outer.boomParams.hartId, "...!!!")
    
 
     val gh_buf = Module(new GH_BUF(GH_BUF_Params(p(XLen),GH_GlobalParams.GH_WIDITH_PACKETS,gc_core_width, true)))
@@ -226,6 +231,17 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
     outer.clear_ic_status_SRNode.bundle          := 0.U
     core.io.clear_ic_status_tomain               := outer.clear_ic_status_tomainSKNode.bundle
     core.io.icsl_na                              := outer.icsl_naSKNode.bundle
+
+    // Global ic_status: send local to GHM, receive global from GHM
+    outer.ic_status_SRNode.bundle                := core.io.ic_status
+    core.io.global_ic_status                     := outer.global_ic_status_SKNode.bundle
+
+    // Global checker_big_owner: pack Vec into UInt → GHM, receive global ← GHM
+    outer.checker_big_owner_SRNode.bundle        :=
+      core.io.checker_big_owner.zipWithIndex.map { case (o, i) =>
+        o << (i * 4).U
+      }.reduce(_|_)
+    core.io.global_checker_big_owner             := outer.global_checker_big_owner_SKNode.bundle
 
     
 
@@ -285,9 +301,14 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
       gh_buf.io.jalr_target(w)                   := RegNext(core.io.jalr_target(w))
     }
     gh_buf.io.gh_can_fwd                         := (ght_bridge.io.out | (!if_correct_process_bridge.io.out))
-    gh_buf.io.cdc_not_ready                      := outer.bigcore_hang_in_SKNode.bundle
+    // Per-checker hang filtered by checker_enable_mask: only stall on my own checkers
+    val num_chk = GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES
+    val hang_bits = outer.bigcore_hang_in_SKNode.bundle(num_chk-1, 0)
+    val mask_bits = checker_mask_rd_bridge.io.in(num_chk-1, 0)  // persistent reg from R_IC
+    gh_buf.io.cdc_not_ready                      := (hang_bits & mask_bits).orR
     gh_buf.io.ic_crnt_target                     := RegNext(core.io.ic_crnt_target)
-    
+    dontTouch(hang_bits)
+    dontTouch(mask_bits)
                         
     core.io.big_hang                             := false.B
 
@@ -306,6 +327,13 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
                                                         /* (152, 145)8.W                   (144, 137)8.W                         (136, 0)(137.W(128+9))     */
     outer.core_r_arfs_SRNode.bundle              := Cat(core.io.arfs_ecp_dest, core.io.r_arfs_pidx(0), core.io.r_arfs(0))
     
+    /* Runtime Configurable Mapping */
+    core.io.big_core_id                           := (outer.tileParams.hartId + 1).U(4.W) // 1-indexed: hartId0→1, hartId1→2
+    core.io.checker_enable_mask                  := checker_cfg_bridge.io.out
+    core.io.checker_enable_we                    := checker_cfg_we_bridge.io.out
+    core.io.checker_state_sel                    := checker_state_sel_bridge.io.out
+    checker_state_data_bridge.io.in              := core.io.checker_state_data
+    
 
     
     
@@ -323,6 +351,15 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
     core.io.gh_stall                             := 0.U
     core.io.icctrl                               := 0.U
     core.io.t_value                              := 0.U
+    /* Runtime Configurable Mapping */
+    core.io.big_core_id                          := 0.U
+    core.io.checker_enable_mask                  := 0.U
+    core.io.checker_enable_we                    := 0.U
+    core.io.checker_state_sel                    := 0.U
+    core.io.global_ic_status                     := 0.U
+    outer.ic_status_SRNode.bundle                := 0.U
+    core.io.global_checker_big_owner             := 0.U
+    outer.checker_big_owner_SRNode.bundle        := 0.U
   }
   //===== GuardianCouncil Function: End   ====//
 
@@ -362,15 +399,9 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
         hellaCachePorts += dcIF.io.cache
         respArb.io.in(i) <> Queue(rocc.module.io.resp)
         dontTouch(rocc.module.io)
-        //===== EC: Start =====//
+//===== GuardianCouncil Function: Start ====//
         rocc.module.io.RAW_cnt_in                    := 0.U
         rocc.module.io.csr_counter_in                := cmdRouter.io.csr_counter_out
-        rocc.module.io.store_commit_count_in         := cmdRouter.io.store_commit_count_out
-        rocc.module.io.store_commit_cycle_sum_in     := cmdRouter.io.store_commit_cycle_sum_out
-        dontTouch(cmdRouter.io.store_commit_count_out)
-        dontTouch(cmdRouter.io.store_commit_cycle_sum_out)
-        dontTouch(rocc.module.io.store_commit_count_in)
-        dontTouch(rocc.module.io.store_commit_cycle_sum_in)
         rocc.module.io.ghe_packet_in                 := cmdRouter.io.ghe_packet_in
         rocc.module.io.ghe_status_in                 := cmdRouter.io.ghe_status_in
         rocc.module.io.bigcore_comp                  := cmdRouter.io.bigcore_comp
@@ -413,6 +444,12 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
         cmdRouter.io.core_trace_in                   := rocc.module.io.core_trace_out
         rocc.module.io.elu_data_in                   := cmdRouter.io.elu_data_in
         cmdRouter.io.debug_perf_ctrl_in              := rocc.module.io.debug_perf_ctrl        
+        /* Runtime Configurable Mapping */
+        cmdRouter.io.checker_mask_in               := rocc.module.io.checker_mask_out
+        cmdRouter.io.checker_mask_we_in            := rocc.module.io.checker_mask_we
+        cmdRouter.io.checker_state_sel_in          := rocc.module.io.checker_state_sel
+        rocc.module.io.checker_mask_rd             := cmdRouter.io.checker_mask_rd_out
+        rocc.module.io.checker_state_data          := cmdRouter.io.checker_state_data_out
         //===== GuardianCouncil Function: End   ====//
       }
       // Create this FPU just for RoCC
@@ -478,12 +515,6 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
     cmdRouter.io.ght_satp_ppn                    := core.io.ptw.ptbr.ppn
     cmdRouter.io.ght_sys_mode                    := core.io.ght_prv
     cmdRouter.io.csr_counter_in                  := core.io.csr_counter
-    cmdRouter.io.store_commit_count_in           := core.io.store_commit_count
-    cmdRouter.io.store_commit_cycle_sum_in       := core.io.store_commit_cycle_sum
-    dontTouch(core.io.store_commit_count)
-    dontTouch(core.io.store_commit_cycle_sum)
-    dontTouch(cmdRouter.io.store_commit_count_in)
-    dontTouch(cmdRouter.io.store_commit_cycle_sum_in)
     if_correct_process_bridge.io.in              := cmdRouter.io.if_correct_process_out
 
     cmdRouter.io.debug_mcounter                  := debug_mcounter_bridge.io.out
@@ -493,6 +524,14 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
     cmdRouter.io.debug_bp_cdc                    := debug_bp_cdc_bridge.io.out
     cmdRouter.io.debug_bp_filter                 := debug_bp_filter_bridge.io.out
     cmdRouter.io.debug_gcounter                  := outer.debug_gcounter_SKNode.bundle
+
+    /* Runtime Configurable Mapping wiring */
+    checker_cfg_bridge.io.in                     := cmdRouter.io.checker_mask_out
+    checker_cfg_we_bridge.io.in                  := cmdRouter.io.checker_mask_we_out
+    checker_state_sel_bridge.io.in               := cmdRouter.io.checker_state_sel_out
+    cmdRouter.io.checker_state_data_in           := checker_state_data_bridge.io.out
+    checker_mask_rd_bridge.io.in                 := core.io.checker_enable_rd
+    cmdRouter.io.checker_mask_rd_in              := checker_mask_rd_bridge.io.out
 
     /* R Features */
     icctrl_bridge.io.in                          := cmdRouter.io.icctrl_out

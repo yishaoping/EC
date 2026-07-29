@@ -4,7 +4,7 @@ import scala.util.matching.Regex
 import chisel3._
 import chisel3.util.{log2Up}
 
-import freechips.rocketchip.config.{Field, Parameters, Config}
+import org.chipsalliance.cde.config.{Field, Parameters, Config}
 import freechips.rocketchip.subsystem._
 import freechips.rocketchip.prci._
 import freechips.rocketchip.diplomacy._
@@ -66,10 +66,10 @@ class WithInheritBusFrequencyAssignments extends Config(
   new BusFrequencyAssignment("subsystem_pbus_\\d+".r, PeripheryBusKey) ++
   new BusFrequencyAssignment("subsystem_cbus_\\d+".r, ControlBusKey) ++
   new BusFrequencyAssignment("subsystem_fbus_\\d+".r, FrontBusKey) ++
-  new BusFrequencyAssignment("subsystem_mbus_\\d+".r, MemoryBusKey) ++
-  //===== EC Config: Start =====//
+  new BusFrequencyAssignment("subsystem_mbus_\\d+".r, MemoryBusKey)++
+  //===== GuardianCouncil Function: Start ====//
   new BusFrequencyAssignment("subsystem_gbus_\\d+".r, GCBusKey)
-  //===== EC Config: End   =====//
+  //===== GuardianCouncil Function: End ====//
 )
 
 /**
@@ -115,12 +115,11 @@ class WithFrontBusFrequency(freqMHz: Double) extends Config((site, here, up) => 
 class WithControlBusFrequency(freqMHz: Double) extends Config((site, here, up) => {
   case ControlBusKey => up(ControlBusKey, site).copy(dtsFrequency = Some(BigInt((freqMHz * 1e6).toLong)))
 })
-//===== EC Config: Start =====//
+//===== GuardianCouncil Function: Start ====//
 class WithGCBusFrequency(freqMHz: Double) extends Config((site, here, up) => {
   case GCBusKey => up(GCBusKey, site).copy(dtsFrequency = Some(BigInt((freqMHz * 1e6).toLong)))
 })
-//===== EC Config: End   =====//
-
+//===== GuardianCouncil Function: End ====//
 class WithRationalMemoryBusCrossing extends WithSbusToMbusCrossingType(RationalCrossing(Symmetric))
 class WithAsynchrousMemoryBusCrossing extends WithSbusToMbusCrossingType(AsynchronousCrossing())
 

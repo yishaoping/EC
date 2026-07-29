@@ -9,9 +9,9 @@ import chisel3._
 import chisel3.internal.sourceinfo.{SourceInfo}
 
 import freechips.rocketchip.prci._
-import freechips.rocketchip.config.{Field, Parameters}
+import org.chipsalliance.cde.config.{Field, Parameters}
 import freechips.rocketchip.devices.tilelink._
-import freechips.rocketchip.devices.debug.{HasPeripheryDebug, HasPeripheryDebugModuleImp, ExportDebug, DebugModuleKey}
+import freechips.rocketchip.devices.debug.{HasPeripheryDebug, ExportDebug, DebugModuleKey}
 import freechips.rocketchip.diplomacy._
 import freechips.rocketchip.tile._
 import freechips.rocketchip.tilelink._
@@ -47,6 +47,7 @@ trait CanHaveHTIF { this: BaseSubsystem =>
 
 class ChipyardSubsystem(implicit p: Parameters) extends BaseSubsystem
   with HasTiles
+  with HasPeripheryDebug
   with CanHaveHTIF
 {
   def coreMonitorBundles = tiles.map {
@@ -88,9 +89,13 @@ class ChipyardSubsystem(implicit p: Parameters) extends BaseSubsystem
   // bus clocks to be given names of the form "subsystem_sbus_[0-9]*".
   // Conversly, if an async crossing is used, they instead receive names of the
   // form "subsystem_cbus_[0-9]*". The assignment below provides the latter names in all cases.
-  Seq(PBUS, FBUS, MBUS, CBUS, GBUS).foreach { loc =>
+    //==========================================//
+  //===== GuardianCouncil Function: Start ====//
+  Seq(PBUS, FBUS, MBUS, CBUS,GBUS).foreach { loc =>
     tlBusWrapperLocationMap.lift(loc).foreach { _.clockGroupNode := asyncClockGroupsNode }
   }
+    //==========================================//
+  //===== GuardianCouncil Function: Start ====//
   override lazy val module = new ChipyardSubsystemModuleImp(this)
 }
 

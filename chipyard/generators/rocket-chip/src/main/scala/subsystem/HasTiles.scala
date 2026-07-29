@@ -5,7 +5,7 @@ package freechips.rocketchip.subsystem
 import chisel3._
 import chisel3.dontTouch
 import org.chipsalliance.cde.config.{Field, Parameters}
-import freechips.rocketchip.devices.debug.{HasPeripheryDebug, HasPeripheryDebugModuleImp}
+import freechips.rocketchip.devices.debug.HasPeripheryDebug
 import freechips.rocketchip.devices.tilelink.{BasicBusBlocker, BasicBusBlockerParams, CLINTConsts, PLICKey, CanHavePeripheryPLIC, CanHavePeripheryCLINT}
 import freechips.rocketchip.diplomacy._
 import freechips.rocketchip.interrupts._
@@ -223,19 +223,14 @@ trait HasTileNotificationSinks { this: LazyModule =>
 }
 //===== GuardianCouncil Function: Start ====//
 trait HasGHnodes extends InstantiatesTiles { this: BaseSubsystem =>
-  val tile_ghm_agg_core_id_EPNode                = BundleBridgeEphemeralNode[UInt]()
-  val tile_ght_packet_out_EPNode                 = BundleBridgeEphemeralNode[UInt]()
-  val tile_core_r_arfs_EPNode                    = BundleBridgeEphemeralNode[UInt]()
-  val tile_ic_counter_out_EPNode                 = BundleBridgeEphemeralNode[UInt]()
-  // val tile_icsl_ack_EPNode                       = BundleBridgeEphemeralNode[UInt]()
-
-  // val tile_big_checker_switch_EPNode             = BundleBridgeEphemeralNode[UInt]()
-  val debug_maincore_status_out_EPNode           = BundleBridgeEphemeralNode[UInt]()
-
-  // val big_complete_ack_EPNode           = BundleBridgeEphemeralNode[UInt]() 
-
+  val tile_ght_packet_out_EPNodes                = Seq.fill(GH_GlobalParams.GH_NUM_BIG_CORES)(BundleBridgeEphemeralNode[UInt]())
+  val tile_core_r_arfs_EPNodes                   = Seq.fill(GH_GlobalParams.GH_NUM_BIG_CORES)(BundleBridgeEphemeralNode[UInt]())
+  val tile_ic_counter_out_EPNodes                = Seq.fill(GH_GlobalParams.GH_NUM_BIG_CORES)(BundleBridgeEphemeralNode[UInt]())
   val tile_ght_packet_dest_EPNode                = BundleBridgeEphemeralNode[UInt]()
-  val tile_ght_status_out_EPNode                 = BundleBridgeEphemeralNode[UInt]()
+  val tile_ght_status_out_EPNodes                = Seq.fill(GH_GlobalParams.GH_NUM_BIG_CORES)(BundleBridgeEphemeralNode[UInt]())
+
+  val tile_ghm_agg_core_id_EPNode                = BundleBridgeEphemeralNode[UInt]()
+  val debug_maincore_status_out_EPNode           = BundleBridgeEphemeralNode[UInt]()
 
   var tile_clock_EPNodes                         = Seq[BundleBridgeEphemeralNode[Clock]]()
   var tile_reset_EPNodes                         = Seq[BundleBridgeEphemeralNode[Bool]]()
@@ -257,9 +252,15 @@ trait HasGHnodes extends InstantiatesTiles { this: BaseSubsystem =>
   var cdc_empty_tocheckerEPNodes                 = Seq[BundleBridgeEphemeralNode[Bool]]()
   var icsl_naEPNodes                             = Seq[BundleBridgeEphemeralNode[UInt]]()
 
-  val tile_bigcore_hang_EPNode                   = BundleBridgeEphemeralNode[UInt]()
-  val tile_bigcore_comp_EPNode                   = BundleBridgeEphemeralNode[UInt]()
-  val tile_debug_bp_EPNode                       = BundleBridgeEphemeralNode[UInt]()
+  val tile_bigcore_hang_EPNode: BundleBridgeNexusNode[UInt] = BundleBroadcast[UInt](inputRequiresOutput = false)
+  val tile_bigcore_comp_EPNodes                  = Seq.fill(GH_GlobalParams.GH_NUM_BIG_CORES)(BundleBridgeEphemeralNode[UInt]())
+  val tile_debug_bp_EPNode: BundleBridgeNexusNode[UInt] = BundleBroadcast[UInt](inputRequiresOutput = false)
+
+  val tile_ic_status_out_EPNodes                 = Seq.fill(GH_GlobalParams.GH_NUM_BIG_CORES)(BundleBridgeEphemeralNode[UInt]())
+  val tile_ic_status_global_EPNode: BundleBridgeNexusNode[UInt] = BundleBroadcast[UInt](inputRequiresOutput = false)
+
+  val tile_checker_big_owner_out_EPNodes          = Seq.fill(GH_GlobalParams.GH_NUM_BIG_CORES)(BundleBridgeEphemeralNode[UInt]())
+  val tile_checker_big_owner_global_EPNode: BundleBridgeNexusNode[UInt] = BundleBroadcast[UInt](inputRequiresOutput = false)
   // val tile_if_big_complete_req_EPNode            = BundleBridgeEphemeralNode[UInt]()
 
 
@@ -272,10 +273,10 @@ trait HasGHnodes extends InstantiatesTiles { this: BaseSubsystem =>
   var tile_ght_sch_na_out_EPNodes                = Seq[BundleBridgeEphemeralNode[UInt]]()
   var tile_ghe_sch_refresh_in_EPNodes            = Seq[BundleBridgeEphemeralNode[UInt]]()
 
-  val tile_sch_na_EPNode                         = BundleBridgeEphemeralNode[UInt]()
+  val tile_sch_na_EPNode: BundleBridgeNexusNode[UInt] = BundleBroadcast[UInt](inputRequiresOutput = false)
   var tile_ght_sch_dorefresh_EPNodes             = Seq[BundleBridgeEphemeralNode[UInt]]()
 
-  val tile_debug_gcounter_EPNode                 = BundleBridgeEphemeralNode[UInt]()
+  val tile_debug_gcounter_EPNode: BundleBridgeNexusNode[UInt] = BundleBroadcast[UInt](inputRequiresOutput = false)
   
   var tile_agg_packet_in_EPNodes                 = Seq[BundleBridgeEphemeralNode[UInt]]()
   val tile_agg_empty_EPNode                      = BundleBridgeEphemeralNode[UInt]()
@@ -444,30 +445,47 @@ trait CanAttachTile {
   def connectGHSingals(domain: TilePRCIDomain[TileType], context: TileContextType): Unit = {
     implicit val p = context.p
 
-    // GHT connections
-    if (tileParams.hartId == 0) {
-      context.tile_ic_counter_out_EPNode  := domain.tile.ic_counter_SRNode
-      // context.tile_icsl_ack_EPNode        := domain.tile.icsl_ack_SRNode  
-      // context.tile_big_checker_switch_EPNode:= domain.tile.big_checker_switch_SRNode
-      context.debug_maincore_status_out_EPNode := domain.tile.debug_maincore_status_SRNode
-      // context.big_complete_ack_EPNode     := domain.tile.big_complete_ack_SRNode
-      context.tile_ght_packet_out_EPNode  := domain.tile.ght_packet_out_SRNode
-      context.tile_core_r_arfs_EPNode     := domain.tile.core_r_arfs_SRNode
-      context.tile_ghm_agg_core_id_EPNode := domain.tile.ghm_agg_core_id_out_SRNode
-      context.tile_ght_packet_dest_EPNode := domain.tile.ght_packet_dest_SRNode
-      context.tile_ght_status_out_EPNode  := domain.tile.ght_status_out_SRNode
+    // GHT connections — big cores each drive their own Vec entry
+    if (tileParams.hartId < GH_GlobalParams.GH_NUM_BIG_CORES) {
+      val b = tileParams.hartId
+      context.tile_ic_counter_out_EPNodes(b)     := domain.tile.ic_counter_SRNode
+      context.tile_ght_packet_out_EPNodes(b)     := domain.tile.ght_packet_out_SRNode
+      context.tile_core_r_arfs_EPNodes(b)        := domain.tile.core_r_arfs_SRNode
+      // Single-source signals (only big core 0 drives these)
+      if (b == 0) {
+        context.tile_ghm_agg_core_id_EPNode := domain.tile.ghm_agg_core_id_out_SRNode
+        context.debug_maincore_status_out_EPNode := domain.tile.debug_maincore_status_SRNode
+        context.tile_ght_packet_dest_EPNode    := domain.tile.ght_packet_dest_SRNode
+      } else {
+        // Big core 1: dummy sinks for single-source signals
+        val dummy_dest_SKNode  = BundleBridgeSink[UInt](Some(() => UInt(32.W)))
+        val dummy_agg_SKNode   = BundleBridgeSink[UInt](Some(() => UInt(16.W)))
+        val dummy_dbg_SKNode   = BundleBridgeSink[UInt](Some(() => UInt(4.W)))
+        dummy_dest_SKNode   := domain.tile.ght_packet_dest_SRNode
+        dummy_agg_SKNode    := domain.tile.ghm_agg_core_id_out_SRNode
+        dummy_dbg_SKNode    := domain.tile.debug_maincore_status_SRNode
+      }
+      // Per-big-core: ght_status (each big core sends its own status to GHM)
+      context.tile_ght_status_out_EPNodes(b) := domain.tile.ght_status_out_SRNode
       domain.tile.bigcore_hang_in_SKNode  := context.tile_bigcore_hang_EPNode
-      domain.tile.bigcore_comp_in_SKNode  := context.tile_bigcore_comp_EPNode
+      domain.tile.bigcore_comp_in_SKNode  := context.tile_bigcore_comp_EPNodes(b)
       domain.tile.debug_bp_in_SKNode      := context.tile_debug_bp_EPNode
-      // domain.tile.if_big_complete_req_SKNode:= context.tile_if_big_complete_req_EPNode
       domain.tile.sch_na_inSKNode         := context.tile_sch_na_EPNode
       domain.tile.debug_gcounter_SKNode   := context.tile_debug_gcounter_EPNode
-      context.tile_agg_free_EPNode        := context.tile_agg_empty_EPNode
+      // Global ic_status: big core sends local to GHM, receives OR-merged global
+      context.tile_ic_status_out_EPNodes(b) := domain.tile.ic_status_SRNode
+      domain.tile.global_ic_status_SKNode := context.tile_ic_status_global_EPNode
+      // Global checker_big_owner: big core sends local to GHM, receives OR-merged global
+      context.tile_checker_big_owner_out_EPNodes(b) := domain.tile.checker_big_owner_SRNode
+      domain.tile.global_checker_big_owner_SKNode := context.tile_checker_big_owner_global_EPNode
+      if (b == 0) {
+        context.tile_agg_free_EPNode        := context.tile_agg_empty_EPNode
+      }
       println("#### Jessica #### Connecting GHT **Nodes** on the sub-system, HartID:", tileParams.hartId, "...!!")
     } else {
       val useless_bigcore_ic_counter_SRNode= BundleBridgeSink[UInt](Some(() => UInt((16*GH_GlobalParams.GH_NUM_CORES).W)))
       val useless_debug_maincore_status_SRNode= BundleBridgeSink[UInt](Some(() => UInt((4.W))))
-      val useless_bigcore_hang_SRNode      = BundleBridgeSource[UInt](Some(() => UInt(1.W)))
+      val useless_bigcore_hang_SRNode      = BundleBridgeSource[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES).W)))  // per-checker
       val useless_bigcore_comp_SRNode      = BundleBridgeSource[UInt](Some(() => UInt(3.W)))
       val useless_debug_bp_SRNode          = BundleBridgeSource[UInt](Some(() => UInt(2.W)))
       // val useless_if_big_complete_req_SRNode          = BundleBridgeSource[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES-1).W)))
@@ -478,6 +496,10 @@ trait CanAttachTile {
       val useless_status_SKNode            = BundleBridgeSink[UInt](Some(() => UInt(32.W)))
       val useless_sch_na_inSKNode          = BundleBridgeSource[UInt](Some(() => UInt(16.W)))
       val useless_debug_gcounter_SKNode    = BundleBridgeSource[UInt](Some(() => UInt(64.W)))
+      val useless_ic_status_SKNode         = BundleBridgeSink[UInt](Some(() => UInt(GH_GlobalParams.GH_NUM_CORES.W)))
+      val useless_global_ic_status_SRNode  = BundleBridgeSource[UInt](Some(() => UInt(GH_GlobalParams.GH_NUM_CORES.W)))
+      val useless_checker_big_owner_SKNode = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES * 4).W)))
+      val useless_global_checker_big_owner_SRNode = BundleBridgeSource[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES * 4).W)))
       // val useless_icsl_ack_SKNode          = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES-1).W)))
       // useless_icsl_ack_SKNode             := domain.tile.icsl_ack_SRNode
       useless_bigcore_ic_counter_SRNode   := domain.tile.ic_counter_SRNode
@@ -493,6 +515,10 @@ trait CanAttachTile {
       // domain.tile.if_big_complete_req_SKNode:= useless_if_big_complete_req_SRNode
       domain.tile.sch_na_inSKNode         := useless_sch_na_inSKNode
       domain.tile.debug_gcounter_SKNode   := useless_debug_gcounter_SKNode
+      useless_ic_status_SKNode            := domain.tile.ic_status_SRNode
+      domain.tile.global_ic_status_SKNode := useless_global_ic_status_SRNode
+      useless_checker_big_owner_SKNode    := domain.tile.checker_big_owner_SRNode
+      domain.tile.global_checker_big_owner_SKNode := useless_global_checker_big_owner_SRNode
       println("#### Jessica #### Tieing off GHT **Nodes** on the sub-system, HartID:", tileParams.hartId,"...!!")
     }
 
@@ -668,7 +694,7 @@ trait HasTiles extends InstantiatesTiles with HasCoreMonitorBundles with Default
 }
 
 /** Provides some Chisel connectivity to certain tile IOs */
-trait HasTilesModuleImp extends LazyModuleImp with HasPeripheryDebugModuleImp {
+trait HasTilesModuleImp extends LazyModuleImp {
   val outer: HasTiles with HasTileInterruptSources with HasTileInputConstants
 
   val reset_vector = outer.tileResetVectorIONodes.zipWithIndex.map { case (n, i) => n.makeIO(s"reset_vector_$i") }

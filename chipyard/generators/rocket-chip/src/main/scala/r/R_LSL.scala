@@ -17,6 +17,8 @@ class R_LSLIO(params: R_LSLParams) extends Bundle {
   val m_ldst_addr = Input(Vec(GH_GlobalParams.GH_TOTAL_PACKETS,UInt(params.xLen.W)))
   val m_csr_valid = Input(Vec(GH_GlobalParams.GH_TOTAL_PACKETS,Bool()))
   val m_csr_data  = Input(Vec(GH_GlobalParams.GH_TOTAL_PACKETS,UInt(params.xLen.W)))
+  val m_rocc_valid = Input(Vec(GH_GlobalParams.GH_TOTAL_PACKETS,Bool()))
+  val m_rocc_data  = Input(Vec(GH_GlobalParams.GH_TOTAL_PACKETS,UInt(params.xLen.W)))
 
 
   val cdc_ready = Output(Bool())
@@ -32,6 +34,8 @@ class R_LSLIO(params: R_LSLParams) extends Bundle {
   val req_kill = Input(Bool())
   val req_valid_csr = Input(Bool())
   val req_ready_csr = Output(Bool())
+  val req_valid_rocc = Input(Bool())
+  val req_ready_rocc = Output(Bool())
 
   val resp_valid = Output(Bool())
   val resp_tag = Output(UInt(8.W))
@@ -42,6 +46,7 @@ class R_LSLIO(params: R_LSLParams) extends Bundle {
   val resp_replay = Output(Bool())
   val near_full = Output(Bool())
   val resp_data_csr = Output(UInt(params.xLen.W))
+  val resp_data_rocc = Output(UInt(params.xLen.W))
   val if_empty = Output(Bool())
   val lsl_highwatermark = Output(Bool())
   // val resp_replay_csr = Output(UInt(1.W))
@@ -58,6 +63,7 @@ class R_LSL(val params: R_LSLParams) extends Module with HasR_RLSLIO {
   val fifowidth               = 2*params.xLen + 2 // extra two bits added to indicate inst type
   val u_channel               = Seq.fill(GH_GlobalParams.GH_TOTAL_PACKETS) {Module(new GH_MemFIFO(FIFOParams (fifowidth, params.nEntries)))}
   val u_channel_csr           = Seq.fill(GH_GlobalParams.GH_TOTAL_PACKETS) {Module(new GH_FIFO(FIFOParams (params.xLen, 11)))}
+  val u_channel_rocc          = Seq.fill(GH_GlobalParams.GH_TOTAL_PACKETS) {Module(new GH_FIFO(FIFOParams (params.xLen, 11)))}
   
   val lsl_enq_ptr                            = RegInit(0.U((log2Ceil(GH_GlobalParams.GH_TOTAL_PACKETS)+1).W))//to avoid overflow
   val lsl_deq_ptr                            = RegInit(0.U((log2Ceil(GH_GlobalParams.GH_TOTAL_PACKETS)+1).W))
@@ -200,12 +206,65 @@ CSR DEQ logic
   }
   io.resp_data_csr           := csr_out_packet
 
+/*
+ROCC ENQ logic (same pattern as CSR)
+*/
+  val rocc_enq_ptr                            = RegInit(0.U((log2Ceil(GH_GlobalParams.GH_TOTAL_PACKETS)+1).W))
+  val rocc_deq_ptr                            = RegInit(0.U((log2Ceil(GH_GlobalParams.GH_TOTAL_PACKETS)+1).W))
+  val rocc_enq_data                = RegInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U(params.xLen.W)))
+  val rocc_enq_valid               = RegInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U(false.B)))
+
+  for(i<- 0 until GH_GlobalParams.GH_TOTAL_PACKETS){
+    rocc_enq_data(i)  := io.m_rocc_data(i)
+    rocc_enq_valid(i) := io.m_rocc_valid(i)
+  }
+  val rocc_numEnq = WireInit(PopCount(rocc_enq_valid))
+
+  when(rocc_enq_valid.reduce(_|_)){
+    rocc_enq_ptr := Mux(rocc_enq_ptr + rocc_numEnq>=GH_GlobalParams.GH_TOTAL_PACKETS.U,rocc_enq_ptr+rocc_numEnq-GH_GlobalParams.GH_TOTAL_PACKETS.U,rocc_enq_ptr + rocc_numEnq)
+  }
+
+  val rocc_enq_idxs    = VecInit.tabulate(GH_GlobalParams.GH_TOTAL_PACKETS)(i => PopCount(rocc_enq_valid.take(i)))
+  val rocc_enq_offset  = rocc_enq_idxs.map(i=>Mux(rocc_enq_ptr + i>=GH_GlobalParams.GH_TOTAL_PACKETS.U,rocc_enq_ptr+i-GH_GlobalParams.GH_TOTAL_PACKETS.U,rocc_enq_ptr+i))
+  
+  for (i <- 0 to GH_GlobalParams.GH_TOTAL_PACKETS - 1) {
+    val rocc_enq_OH    = (0 until GH_GlobalParams.GH_TOTAL_PACKETS).map(idx => (rocc_enq_offset(idx) === i.U)&(rocc_enq_valid(idx)))
+    val rocc_wdata  = Mux1H(rocc_enq_OH, rocc_enq_data) 
+    u_channel_rocc(i).io.enq_valid := rocc_enq_OH.reduce(_|_)
+    u_channel_rocc(i).io.enq_bits  := rocc_wdata
+  }
+
+/*
+ROCC DEQ logic
+*/
+  val rocc_deq_data                = RegInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U(params.xLen.W)))
+  val rocc_deq_valid               = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
+  val rocc_lsl_empty               = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(true.B))
+  val rocc_out_packet              = WireInit(Mux1H(rocc_deq_valid,rocc_deq_data))
+  val rocc_nearly_full             = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
+  val rocc_highwatermark           = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
+
+  for (i <- 0 to GH_GlobalParams.GH_TOTAL_PACKETS - 1) {
+    rocc_deq_valid(i)                               := rocc_deq_ptr===i.U&&io.req_valid_rocc & !u_channel_rocc(i).io.empty
+    u_channel_rocc(i).io.deq_ready                  := rocc_deq_valid(i)
+    rocc_deq_data(i)                                := u_channel_rocc(i).io.deq_bits
+    rocc_lsl_empty(i)                               := u_channel_rocc(i).io.empty
+    rocc_nearly_full(i)                             := u_channel_rocc(i).io.status_twoslots
+    rocc_highwatermark(i)                           := u_channel_rocc(i).io.status_threeslots
+  }
+
+  when(rocc_deq_valid.reduce(_|_)){
+    rocc_deq_ptr := Mux(rocc_deq_ptr + 1.U>=GH_GlobalParams.GH_TOTAL_PACKETS.U,rocc_deq_ptr+1.U-GH_GlobalParams.GH_TOTAL_PACKETS.U,rocc_deq_ptr + 1.U)
+  }
+  io.resp_data_rocc           := rocc_out_packet
+  io.req_ready_rocc           := !rocc_lsl_empty(rocc_deq_ptr)
+
 
   //之前有数据来过?
 
   io.cdc_ready               :=(!io.near_full )
-  io.near_full               := lsl_nearly_full.reduce(_|_)|csr_nearly_full.reduce(_|_)
+  io.near_full               := lsl_nearly_full.reduce(_|_)|csr_nearly_full.reduce(_|_)|rocc_nearly_full.reduce(_|_)
   io.req_ready_csr           := !csr_lsl_empty(csr_deq_ptr)
-  io.if_empty                := csr_lsl_empty.reduce(_&_)&lsl_empty.reduce(_&_)
-  io.lsl_highwatermark       := lsl_highwatermark.reduce(_|_)|csr_highwatermark.reduce(_|_)
+  io.if_empty                := csr_lsl_empty.reduce(_&_)&lsl_empty.reduce(_&_)&rocc_lsl_empty.reduce(_&_)
+  io.lsl_highwatermark       := lsl_highwatermark.reduce(_|_)|csr_highwatermark.reduce(_|_)|rocc_highwatermark.reduce(_|_)
 }

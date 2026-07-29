@@ -149,9 +149,10 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
   
   //arfs 是固定的
   val arfs_in = outer.core_r_arfs_c_SKNode.bundle
+  val checker_num = outer.rocketParams.hartId.U - GH_GlobalParams.GH_NUM_BIG_CORES.U + 1.U  // hartId→checker#: 2→1, 7→6
   val arfs_index = arfs_in (143+1, 136+1)
   val ptype_rcu = Mux(s_or_r.asBool && ((arfs_index(2,0) === 7.U)), true.B, false.B)
-  val arfs_if_CPS = Mux(ptype_rcu.asBool && (arfs_index (6, 3) === outer.rocketParams.hartId.U), 1.U, 0.U)
+  val arfs_if_CPS = Mux(ptype_rcu.asBool && (arfs_index (6, 3) === checker_num), 1.U, 0.U)
   val packet_rcu = Mux((ptype_rcu), arfs_in, 0.U)
 
   // val icsl_ack          = outer.icsl_ack_tocheckerSKNode.bundle
@@ -182,10 +183,10 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
   for( i<- 0 until GH_GlobalParams.GH_TOTAL_PACKETS){
     packet_vec(i)       := packet_in(GH_GlobalParams.GH_WIDITH_PACKETS*(i+1)-1,i*GH_GlobalParams.GH_WIDITH_PACKETS)
     packet_index_vec(i) := packet_vec(i)(GH_GlobalParams.GH_WIDITH_PACKETS-1,GH_GlobalParams.GH_WIDITH_PACKETS-8)
-    packet_en(i)        := s_or_r.asBool && (packet_index_vec(i)(2,0) =/= 7.U) && (packet_index_vec(i)(2,0) =/= 4.U) && (packet_index_vec(i)(2,0) =/= 0.U)&&packet_index_vec(i)(6,3)===outer.rocketParams.hartId.U
+    packet_en(i)        := s_or_r.asBool && (packet_index_vec(i)(2,0) =/= 7.U) && (packet_index_vec(i)(2,0) =/= 4.U) && (packet_index_vec(i)(2,0) =/= 0.U)&&packet_index_vec(i)(6,3)===checker_num
     packet_vec_in(i)    := Mux(packet_en(i),packet_vec(i),0.U)
 
-    packet_bj_en(i)     := s_or_r.asBool && (packet_index_vec(i)(2,0) === 4.U) && packet_index_vec(i)(6,3)===outer.rocketParams.hartId.U
+    packet_bj_en(i)     := s_or_r.asBool && (packet_index_vec(i)(2,0) === 4.U) && packet_index_vec(i)(6,3)===checker_num
     packet_bjvec_in(i)  := Mux(packet_bj_en(i), packet_vec(i)((xLen * 2) - 1, 0), 0.U)
   }
 
@@ -255,6 +256,7 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
     core.io.elu_sel := elu_sel_bridge.io.out
     core.io.ic_counter := outer.ic_counter_SKNode.bundle
     outer.clear_ic_status_SRNode.bundle := core.io.clear_ic_status
+    outer.ic_status_SRNode.bundle := 0.U  // checker: no R_IC, ic_status always 0
   }
   core.io.core_trace := core_trace(0)
   core.io.debug_perf_ctrl := debug_perf_ctrl
@@ -327,12 +329,6 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
 
     /* R Features */
     cmdRouter.get.io.RAW_cnt_in    := core.io.RAW_cnt
-    cmdRouter.get.io.store_commit_count_in := core.io.store_commit_count
-    cmdRouter.get.io.store_commit_cycle_sum_in := core.io.store_commit_cycle_sum
-    dontTouch(core.io.store_commit_count)
-    dontTouch(core.io.store_commit_cycle_sum)
-    dontTouch(cmdRouter.get.io.store_commit_count_in)
-    dontTouch(cmdRouter.get.io.store_commit_cycle_sum_in)
     cmdRouter.get.io.rsu_status_in := core.io.rsu_status
     cmdRouter.get.io.elu_status_in := core.io.elu_status
     s_or_r := cmdRouter.get.io.s_or_r_out(0)

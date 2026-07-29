@@ -7,15 +7,18 @@ package chipyard
 
 import chisel3._
 
-import freechips.rocketchip.config.{Parameters, Field}
+import org.chipsalliance.cde.config.{Field, Parameters}
 import freechips.rocketchip.subsystem._
 import freechips.rocketchip.tilelink._
 import freechips.rocketchip.devices.tilelink._
 import freechips.rocketchip.diplomacy._
 import freechips.rocketchip.util.{DontTouch}
-//===== EC Config: Start =====//
+//==========================================//
+//===== GuardianCouncil Function: Start ====//
 import freechips.rocketchip.guardiancouncil._
-//===== EC Config: End   =====//
+//===== GuardianCouncil Function: End ======//
+//==========================================//
+
 
 // ---------------------------------------------------------------------
 // Base system that uses the debug test module (dtm) to bringup the core
@@ -34,12 +37,15 @@ class ChipyardSystem(implicit p: Parameters) extends ChipyardSubsystem
 
   val bootROM  = p(BootROMLocated(location)).map { BootROM.attach(_, this, CBUS) }
   val maskROMs = p(MaskROMLocated(location)).map { MaskROM.attach(_, this, CBUS) }
-  //===== EC Config: Start =====//
+  //==========================================//
+  //===== GuardianCouncil Function: Start ====//
   val ghm      = p(GHMCoreLocated(location)).map { GHMCore.attach(_, this, SBUS) }
   val gagg     = p(GAGGCoreLocated(location)).map { GAGGCore.attach(_, this, GBUS) }
-  //===== EC Config: End   =====//
+  //===== GuardianCouncil Function: End ======//
+  //==========================================//
   override lazy val module = new ChipyardSystemModule(this)
 }
+
 
 /**
  * Base top module implementation with periphery devices and ports, and a BOOM + Rocket subsystem
@@ -48,6 +54,13 @@ class ChipyardSystemModule[+L <: ChipyardSystem](_outer: L) extends ChipyardSubs
   with HasRTCModuleImp
   with HasExtInterruptsModuleImp
   with DontTouch
+  {
+ 
+   outer.tiles.map {t=>
+     println("#### Jessica #### Connecting GHM **Clock** on the sub-system, HartID:", t.tileParams.hartId, "...!!")
+     // t.module.clock
+   }
+ }
 
 // ------------------------------------
 // TL Mem Port Mixin
@@ -67,7 +80,7 @@ trait CanHaveMasterTLMemPort { this: BaseSubsystem =>
   private val device = new MemoryDevice
   private val idBits = memPortParamsOpt.map(_.master.idBits).getOrElse(1)
 
-  val memTLNode = TLManagerNode(memPortParamsOpt.map({ case MemoryPortParams(memPortParams, nMemoryChannels, _) =>
+  val memTLNode = TLManagerNode(memPortParamsOpt.map({ case MemoryPortParams(memPortParams, nMemoryChannels,_) =>
     Seq.tabulate(nMemoryChannels) { channel =>
       val base = AddressSet.misaligned(memPortParams.base, memPortParams.size)
       val filter = AddressSet(channel * mbus.blockBytes, ~((nMemoryChannels-1) * mbus.blockBytes))

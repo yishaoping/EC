@@ -114,8 +114,11 @@ build_test() {
         performance_read_cycles performance_read_instruction_count
         performance_begin_big_core performance_end_big_core
         performance_begin_checker performance_end_checker
-        performance_report_checker performance_report
+        performance_report_checkers performance_report
         store_stats_publish store_stats_wait_all store_stats_print_report
+        printf _printf_r _vfiprintf_r
+        putc _putc_r fputc _fputc_r __sputc_r __sfputc_r __swbuf_r
+        write _write _write_r
         r_ini perfstart perfend
     )
 

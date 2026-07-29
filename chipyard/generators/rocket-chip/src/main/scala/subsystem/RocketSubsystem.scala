@@ -7,7 +7,6 @@ import freechips.rocketchip.diplomacy._
 import freechips.rocketchip.prci.{ResetCrossingType, NoResetCrossing}
 import freechips.rocketchip.tile._
 import freechips.rocketchip.devices.debug.{HasPeripheryDebug}
-import freechips.rocketchip.npu._
 
 case class RocketCrossingParams(
   crossingType: ClockCrossingType = SynchronousCrossing(),
@@ -22,14 +21,6 @@ case class RocketTileAttachParams(
   tileParams: RocketTileParams,
   crossingParams: RocketCrossingParams
 ) extends CanAttachTile { type TileType = RocketTile }
-
-case class RocketTileNpuAttachParams(
-  tileParams: RocketTileNpuParams,
-  crossingParams: RocketCrossingParams
-) extends CanAttachTile { 
-  type TileType = RocketTileNpu
-  val lookup = PriorityMuxHartIdFromSeq(Seq(tileParams))
-  }
 
 trait HasRocketTiles extends HasTiles { this: BaseSubsystem =>
   val rocketTiles = tiles.collect { case r: RocketTile => r }

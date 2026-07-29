@@ -27,7 +27,7 @@ int checker(uint64_t hart_id)
     ghe_initailised(1);
 
 #if MEEK_ENABLE_CHECKER_PERF
-    performance_begin_checker(hart_id);
+    performance_begin_checker();
 #endif
 
     /* Capture the checker context, import BOOM's checkpoint, and record PC. */
@@ -59,7 +59,7 @@ int checker(uint64_t hart_id)
     }
 
 #if MEEK_ENABLE_CHECKER_PERF
-    performance_end_checker(hart_id);
+    performance_end_checker();
 #endif
 
     /* Save the checker endpoint and ask RSU/ELU to perform final comparison. */
@@ -70,13 +70,19 @@ int checker(uint64_t hart_id)
     while (ghe_checkght_status() != TEST_CHECKER_COMPLETE_STATUS) {
     }
 
-    /* Publish this checker's final store counters before releasing its GHE. */
+    /*
+     * Checkpoint restore may have replaced the register holding hart_id with
+     * BOOM's saved value.  Re-read mhartid before indexing the shared result.
+     */
+    asm volatile("csrr %0, mhartid" : "=r"(hart_id));
     store_stats_publish(hart_id);
 
-#if MEEK_ENABLE_CHECKER_PERF
-    performance_report_checker(hart_id);
-#endif
-
+    /*
+     * Do not print on a checker: GHT completion requires every release event,
+     * so a slow HTIF/UART printf here would keep BOOM in its status poll and
+     * the other checkers spinning on uart_lock.  Hart 0 prints the snapshots
+     * after observing every store_stats ready flag.
+     */
     ghe_release();
     ght_unset_satp_priv();
 

@@ -49,7 +49,25 @@ typedef struct {
     int valid;
 } checker_snapshot_t;
 
-static checker_snapshot_t checker_snapshots[TEST_NUM_CHECKERS];
+/*
+ * Each checker writes one slot and hart 0 reads all slots after the
+ * store_stats ready/fence handshake.  Volatile prevents either side from
+ * caching shared fields across that cross-hart synchronization point.
+ */
+static volatile checker_snapshot_t checker_snapshots[TEST_NUM_CHECKERS];
+
+/*
+ * The checker checkpoint restores general-purpose registers.  In particular,
+ * a hart_id kept in a callee-saved register by checker() can become BOOM's
+ * saved value after replay.  Read the architectural hart ID at each API entry
+ * instead of accepting a value that crossed a checkpoint restore.
+ */
+static uint64_t current_hart_id(void)
+{
+    uint64_t hart_id;
+    asm volatile("csrr %0, mhartid" : "=r"(hart_id));
+    return hart_id;
+}
 #endif
 
 uint64_t performance_read_cycles(void)
@@ -124,8 +142,9 @@ static int checker_index(uint64_t hart_id)
     return (int)(hart_id - TEST_FIRST_CHECKER_HART_ID);
 }
 
-void performance_begin_checker(uint64_t hart_id)
+void performance_begin_checker(void)
 {
+    uint64_t hart_id = current_hart_id();
     int index = checker_index(hart_id);
     if (index < 0) {
         return;
@@ -135,10 +154,11 @@ void performance_begin_checker(uint64_t hart_id)
     ghe_perf_reset();
 }
 
-void performance_end_checker(uint64_t hart_id)
+void performance_end_checker(void)
 {
+    uint64_t hart_id = current_hart_id();
     int index = checker_index(hart_id);
-    checker_snapshot_t *snapshot;
+    volatile checker_snapshot_t *snapshot;
     if (index < 0) {
         return;
     }
@@ -166,38 +186,36 @@ void performance_end_checker(uint64_t hart_id)
     snapshot->valid = 1;
 }
 
-void performance_report_checker(uint64_t hart_id)
+void performance_report_checkers(void)
 {
-    int index = checker_index(hart_id);
-    checker_snapshot_t *snapshot;
-
-    if (index < 0) {
-        return;
-    }
-    snapshot = &checker_snapshots[index];
-
+    /* Pair with the fence preceding each checker's store_stats ready flag. */
+    asm volatile("fence rw, rw" ::: "memory");
     lock_acquire(&uart_lock);
-    if (!snapshot->valid) {
-        printf("[CHECKER_GHE_PERF] hart=%" PRIu64
-               " snapshot=not-ready\r\n", hart_id);
-        lock_release(&uart_lock);
-        return;
-    }
+    for (uint32_t index = 0; index < TEST_NUM_CHECKERS; ++index) {
+        uint64_t hart_id = TEST_FIRST_CHECKER_HART_ID + index;
+        volatile checker_snapshot_t *snapshot = &checker_snapshots[index];
 
-    printf("[CHECKER_GHE_PERF] hart=%" PRIu64
-           " checking=%" PRIu64 " postchecking=%" PRIu64
-           " other_thread=%" PRIu64 " nonchecking=%" PRIu64 "\r\n",
-           hart_id, snapshot->checking_cycles,
-           snapshot->postchecking_cycles, snapshot->other_thread_cycles,
-           snapshot->nonchecking_cycles);
-    printf("[CHECKER_GHE_PERF] hart=%" PRIu64
-           " checkpoints=%" PRIu64 " cps_transfer=%" PRIu64
-           " worst_latency=%" PRIu64 " stores=%" PRIu64
-           " loads=%" PRIu64 "\r\n",
-           hart_id, snapshot->checkpoints,
-           snapshot->checkpoint_transfer_cycles,
-           snapshot->worst_check_latency, snapshot->replay_stores,
-           snapshot->replay_loads);
+        if (!snapshot->valid) {
+            printf("[CHECKER_GHE_PERF] hart=%" PRIu64
+                   " snapshot=not-ready\r\n", hart_id);
+            continue;
+        }
+
+        printf("[CHECKER_GHE_PERF] hart=%" PRIu64
+               " checking=%" PRIu64 " postchecking=%" PRIu64
+               " other_thread=%" PRIu64 " nonchecking=%" PRIu64 "\r\n",
+               hart_id, snapshot->checking_cycles,
+               snapshot->postchecking_cycles, snapshot->other_thread_cycles,
+               snapshot->nonchecking_cycles);
+        printf("[CHECKER_GHE_PERF] hart=%" PRIu64
+               " checkpoints=%" PRIu64 " cps_transfer=%" PRIu64
+               " worst_latency=%" PRIu64 " stores=%" PRIu64
+               " loads=%" PRIu64 "\r\n",
+               hart_id, snapshot->checkpoints,
+               snapshot->checkpoint_transfer_cycles,
+               snapshot->worst_check_latency, snapshot->replay_stores,
+               snapshot->replay_loads);
+    }
     lock_release(&uart_lock);
 }
 #endif

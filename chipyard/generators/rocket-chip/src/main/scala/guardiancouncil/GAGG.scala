@@ -141,7 +141,7 @@ object GAGGCore {
     subsystem.tile_agg_empty_EPNode               := agg_empty_SRNode
 
     val sch_na_SRNode                              = BundleBridgeSource[UInt](Some(() => UInt(16.W)))
-    subsystem.tile_sch_na_EPNode                  := sch_na_SRNode
+    subsystem.tile_sch_na_EPNode                  :*= sch_na_SRNode
 
     val bus = subsystem.locateTLBusWrapper(where)
     val gagg = LazyModule (new GAGG (GAGGParams (params.number_of_little_cores, params.width_GH_packet)))
@@ -155,21 +155,22 @@ object GAGGCore {
       gagg.module.io.agg_core_id                  := ghm_agg_core_id_SKNode.bundle 
 
       for (i <- 0 to number_of_ghes-1) {
-        if (i == 0) { // The big core
-          // GHE is not connected to the big core
+        if (i < GH_GlobalParams.GH_NUM_BIG_CORES) { // The big cores
+          // GHE is not connected to big cores
           agg_packet_out_SRNodes(i).bundle        := 0.U 
           agg_buffer_full_out_SRNodes(i).bundle   := 0.U
           report_fi_detection_out_SRNodes(i).bundle := gagg.module.io.fi_d_out
-        } else {// -1 big core
-          agg_packet_out_SRNodes(i).bundle        := gagg.module.io.agg_packet_outs(i-1)
-          gagg.module.io.agg_core_status(i-1)     := agg_core_status_in_SKNodes(i).bundle
-          gagg.module.io.sch_do_refresh(i-1)      := ghm_ght_sch_dorefresh_in_SKNodes(i).bundle
-          gagg.module.io.agg_packet_in(i-1)       := agg_packet_in_SKNodes(i).bundle
-          agg_buffer_full_out_SRNodes(i).bundle   := gagg.module.io.agg_buffer_full(i-1)
-          gagg.module.io.sch_na_in(i-1)           := ghm_ght_sch_na_in_SKNodes(i).bundle
-          ghm_ghe_sch_refresh_out_SRNodes(i).bundle:= gagg.module.io.sch_refresh_out(i-1)
+        } else {// checker cores
+          val ci = i - GH_GlobalParams.GH_NUM_BIG_CORES
+          agg_packet_out_SRNodes(i).bundle        := gagg.module.io.agg_packet_outs(ci)
+          gagg.module.io.agg_core_status(ci)     := agg_core_status_in_SKNodes(i).bundle
+          gagg.module.io.sch_do_refresh(ci)      := ghm_ght_sch_dorefresh_in_SKNodes(i).bundle
+          gagg.module.io.agg_packet_in(ci)       := agg_packet_in_SKNodes(i).bundle
+          agg_buffer_full_out_SRNodes(i).bundle   := gagg.module.io.agg_buffer_full(ci)
+          gagg.module.io.sch_na_in(ci)           := ghm_ght_sch_na_in_SKNodes(i).bundle
+          ghm_ghe_sch_refresh_out_SRNodes(i).bundle:= gagg.module.io.sch_refresh_out(ci)
           
-          gagg.module.io.fi_d(i-1)                := report_fi_detection_in_SKNodes(i).bundle
+          gagg.module.io.fi_d(ci)                := report_fi_detection_in_SKNodes(i).bundle
           report_fi_detection_out_SRNodes(i).bundle := 0.U
         }
       }

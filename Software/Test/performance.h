@@ -19,12 +19,12 @@ void performance_begin_big_core(void);
 void performance_end_big_core(void);
 #endif
 #if MEEK_ENABLE_CHECKER_PERF
-/** Reset one checker hart's counters at the beginning of replay. */
-void performance_begin_checker(uint64_t hart_id);
-/** Snapshot one checker hart's counters before final context comparison. */
-void performance_end_checker(uint64_t hart_id);
-/** Print a previously captured checker snapshot under the shared UART lock. */
-void performance_report_checker(uint64_t hart_id);
+/** Reset the calling checker hart's counters at the beginning of replay. */
+void performance_begin_checker(void);
+/** Snapshot the calling checker hart's counters before final comparison. */
+void performance_end_checker(void);
+/** Have hart 0 print all captured checker snapshots under the UART lock. */
+void performance_report_checkers(void);
 #endif
 void performance_report(uint64_t cycle_start, uint64_t cycle_end,
                         uint64_t instruction_start,

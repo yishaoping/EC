@@ -47,7 +47,7 @@ import boom.util._
 //===== GuardianCouncil Function: Start ====//
 import freechips.rocketchip.r._
 import freechips.rocketchip.guardiancouncil._
-import java.awt.peer.PopupMenuPeer
+// import java.awt.peer.PopupMenuPeer
 import boom.lsu.STQEntry
 //===== GuardianCouncil Function: End   ====//
 /**
@@ -67,8 +67,8 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     val ptw_tlb = new freechips.rocketchip.rocket.TLBPTWIO()
     val trace = Output(Vec(coreParams.retireWidth, new TracedInstruction))
     val fcsr_rm = UInt(freechips.rocketchip.tile.FPConstants.RM_SZ.W)
+//===== GuardianCouncil Function: Start ====//
 
-    //===== EC: Start =====//
     val commit_valids = Output(Vec(coreWidth, UInt(1.W)))
     val commit_uops   = Output(Vec(coreWidth, new MicroOp))
     val commit_rs1    = Output(Vec(coreWidth, UInt(xLen.W)))
@@ -86,9 +86,6 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     val bigComp  = Input(UInt(3.W))
 
     val csr_counter = Output(Vec(84, UInt(32.W)))
-    // Wide observability counters for store retirement statistics.
-    val store_commit_count = Output(UInt(128.W))
-    val store_commit_cycle_sum = Output(UInt(128.W))
     
     /* R Features */
     val num_of_checker = Input(UInt(8.W))
@@ -110,6 +107,24 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     val debug_perf_val = Output(UInt(64.W))
     val shared_CP_CFG = Output(UInt(13.W))
     val arfs_ecp_dest = Output(UInt(8.W))
+
+    /* Runtime Configurable Mapping */
+    val big_core_id         = Input(UInt(4.W))   // which big core this is (1-indexed: 1=hartId0)
+    val checker_enable_mask = Input(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))
+    val checker_enable_we   = Input(UInt(1.W))
+    val checker_enable_rd   = Output(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))
+    val checker_big_owner   = Output(Vec(GH_GlobalParams.GH_NUM_CORES, UInt(4.W)))
+    val checker_segment_id  = Output(Vec(GH_GlobalParams.GH_NUM_CORES, UInt(16.W)))
+    val checker_state_sel   = Input(UInt(4.W))
+    val checker_state_data  = Output(UInt(64.W))
+
+    // Global ic_status: per-big-core ic_status sent to GHM for OR-merge
+    val ic_status           = Output(UInt(GH_GlobalParams.GH_NUM_CORES.W))
+    // Global ic_status from GHM (OR of all big cores), used by R_IC scheduler
+    val global_ic_status    = Input(UInt(GH_GlobalParams.GH_NUM_CORES.W))
+
+    // Global checker_big_owner: packed (NUM_CORES * 4) bits, OR-merged by GHM, broadcast back
+    val global_checker_big_owner = Input(UInt((GH_GlobalParams.GH_NUM_CORES * 4).W))
 
     // val if_big_complete_req = Input(UInt((GH_GlobalParams.GH_NUM_CORES-1).W))
     // val if_big_complete_ack                        = Output(Vec(GH_GlobalParams.GH_NUM_CORES-1, Bool()))
@@ -314,27 +329,6 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   val store_commit = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && rob.io.commit.uops(i).mem_cmd===M_XWR && rob.io.commit.uops(i).iq_type===IQT_MEM)
   val fp_commit    = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && rob.io.commit.uops(i).fp_val)
   val int_commit   = (0 until coreWidth).map(i => rob.io.commit.arch_valids(i) && rob.io.commit.uops(i).iq_type===IQT_INT)
-  val storeCommitCounterWidth   = 128
-  val storeCommitCycleSumWidth  = 128
-  // Count stores that have been written to L1 DCache.
-  // The count increments when the DCache acknowledges a store write.
-  val storeCommitCountReg       = RegInit(0.U(storeCommitCounterWidth.W))
-  // Sum the CSR cycle value (csr.io.time) sampled at the moment each store
-  // is written into L1 DCache. If multiple stores are written in the same cycle,
-  // the same cycle value is added once per store.
-  val storeCommitCycleSumReg    = RegInit(0.U(storeCommitCycleSumWidth.W))
-  // Detect store DCache write from LSU: io.lsu.st_dcache_write fires when a store
-  // response is received from the DCache, indicating the store has been committed
-  // to L1 DCache.
-  // Only count stores whose accompanied check-state tag is true, meaning they were
-  // committed by the ROB while the core was in checking state.
-  val stDcacheWriteWithCheckState = (io.lsu.st_dcache_write zip io.lsu.st_dcache_write_check_state)
-      .map { case (w, cs) => w && cs }
-  val stDcacheWriteValid        = stDcacheWriteWithCheckState.reduce(_ || _)
-  val stDcacheWriteNum          = PopCount(stDcacheWriteWithCheckState)
-  // Only count stores when the core is in the checking state (debug_maincore_status == 2).
-  // This is used to tag stores at ROB commit time (sent to LSU via commit_in_check_state).
-  val storeCommitInCheckState   = WireDefault(false.B)
   val csr_counter             = RegInit(VecInit(Seq.fill(84)(0.U(32.W))))
   val csr_counter_valid       = WireInit(VecInit(Seq.fill(84)(false.B)))
   val csr_counter_num         = WireInit(VecInit(Seq.fill(84)(0.U(log2Ceil(coreWidth).W))))
@@ -662,19 +656,6 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   //val icache_blocked = !(io.ifu.fetchpacket.valid || RegNext(io.ifu.fetchpacket.valid))
   val icache_blocked = false.B
   csr.io.counters foreach { c => c.inc := RegNext(perfEvents.evaluate(c.eventSel)) }
-  val stDcacheCycleContribution = Wire(UInt(storeCommitCycleSumWidth.W))
-  stDcacheCycleContribution := stDcacheWriteNum * csr.io.time
-
-  // Accumulate store count and cycle sum at DCache write time,
-  // only when the core is in the checking state.
-  when (stDcacheWriteValid && storeCommitInCheckState) {
-    storeCommitCountReg    := storeCommitCountReg +% stDcacheWriteNum
-    storeCommitCycleSumReg := storeCommitCycleSumReg +% stDcacheCycleContribution
-  }
-
-  dontTouch(stDcacheWriteValid)
-  dontTouch(storeCommitCountReg)
-  dontTouch(storeCommitCycleSumReg)
 
   //****************************************
   // Time Stamp Counter & Retired Instruction Counter
@@ -1545,7 +1526,6 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   io.lsu.rob_pnr_idx  := rob.io.rob_pnr_idx
 
   io.lsu.tsc_reg := debug_tsc_reg
-  io.lsu.commit_in_check_state := storeCommitInCheckState
 
 
   if (usingFPU) {
@@ -1945,7 +1925,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   val if_mret_or_sret                             = Wire(Vec(coreWidth, Bool()))
   val if_ecall                                    = Wire(Vec(coreWidth, Bool()))
   val exception_mode_test                         = RegInit(false.B)
-  when(csr.io.trace(0).exception || csr.io.trace(0).interrupt || if_ecall.reduce(_ || _)){
+  when(csr.io.trace(0).exception){
     exception_mode_test := true.B
   }.elsewhen(if_mret_or_sret.reduce(_ || _)){
     exception_mode_test := false.B
@@ -1985,17 +1965,10 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   // dontTouch(ght_prfs_forward_prf_reg_test)
   io.ght_prv                                     := RegNext(csr.io.status.prv)
 
-  val gh_commit_valids                           = Wire(Vec(coreWidth, Bool()))
-  for (i <- 0 until coreWidth) {
-    gh_commit_valids(i)                          := rob.io.commit.arch_valids(i) && !exception_mode_test && !if_mret_or_sret(i) && !if_ecall(i)
-  }
-  dontTouch(exception_mode_test)
-  dontTouch(gh_commit_valids)
-
   val zero_2bits                                  = WireInit(0.U(2.W))
   val arch_valids_extended                        = Wire(Vec(coreWidth, UInt(3.W)))
   for (i <- 0 until coreWidth) {
-    arch_valids_extended(i)                      := Cat(zero_2bits, gh_commit_valids(i).asUInt)
+    arch_valids_extended(i)                      := Cat(zero_2bits, (rob.io.commit.arch_valids(i) && !if_mret_or_sret(i) && !if_ecall(i)).asUInt)
   }
   
   val ic_incr                                     = arch_valids_extended.reduce(_ + _)
@@ -2092,9 +2065,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   ic_master.io.changing_num_of_checker            := Mux((num_activated_cores =/= io.num_of_checker), 1.U, 0.U)
   ic_master.io.core_trace                         := io.core_trace
   csr.io.core_trace                               := io.core_trace
-  storeCommitInCheckState                         := ic_master.io.debug_maincore_status === 2.U
   io.debug_maincore_status                        := ic_master.io.debug_maincore_status
-  dontTouch(io.debug_maincore_status)
   
   io.ic_crnt_target                               := ic_master.io.crnt_target
   for (i <-0 until GH_GlobalParams.GH_NUM_CORES){
@@ -2160,14 +2131,37 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   ic_master.io.debug_perf_reset                   := io.debug_perf_ctrl(0)
   io.shared_CP_CFG                                := ic_master.io.shared_CP_CFG
 
+  /* Runtime Configurable Mapping */
+  ic_master.io.big_core_id                        := io.big_core_id
+  ic_master.io.checker_enable_mask                := io.checker_enable_mask
+  ic_master.io.checker_enable_we                  := io.checker_enable_we
+  io.checker_enable_rd                            := ic_master.io.checker_enable_rd
+  for (i <- 0 until GH_GlobalParams.GH_NUM_CORES) {
+    io.checker_big_owner(i)                       := ic_master.io.checker_big_owner(i)
+    io.checker_segment_id(i)                      := ic_master.io.checker_segment_id(i)
+  }
+  // checker_state_data mux: sel=0 → mask, sel!=0 → {global_owner(36:33), local_owner(30:27), global_ic_status(26), 0}
+  // sel is 1-indexed checker#; add chk_adj (GH_NUM_BIG_CORES-1) for full core index
+  val chk_idx = io.checker_state_sel + (GH_GlobalParams.GH_NUM_BIG_CORES - 1).U
+  val gco_vec = io.global_checker_big_owner.asTypeOf(Vec(GH_GlobalParams.GH_NUM_CORES, UInt(4.W)))
+  io.checker_state_data                           := Mux(io.checker_state_sel === 0.U,
+    Cat(0.U(48.W), ic_master.io.checker_enable_rd),
+    Cat(0.U(27.W),                              // bits 63:37 padding
+        gco_vec(chk_idx),                        // bits 36:33 — global checker_big_owner (OR of all big cores)
+        0.U(2.W),                                // bits 32:31 padding
+        ic_master.io.checker_big_owner(chk_idx), // bits 30:27 — local checker_big_owner
+        io.global_ic_status(chk_idx),             // bit  26    — global ic_status from GHM
+        0.U(26.W)))                              // bits 25:0  padding
 
-  io.commit_valids                                := gh_commit_valids
+  // ic_status to GHM for global OR-merge
+  io.ic_status                                    := ic_master.io.ic_status.asUInt
+  ic_master.io.global_ic_status                   := io.global_ic_status.asTypeOf(Vec(GH_GlobalParams.GH_NUM_CORES, UInt(1.W)))
+
+
+  io.commit_valids                                := rob.io.commit.arch_valids  
   io.commit_uops                                  := rob.io.commit.uops
   io.commit_rs1                                   := rob.io.commit.debug_rs1
   io.jalr_target                                  := rob.io.commit.gh_effective_alu_out
-  io.store_commit_count                           := storeCommitCountReg
-  io.store_commit_cycle_sum                       := storeCommitCycleSumReg
-  dontTouch(io.store_commit_count)
-  dontTouch(io.store_commit_cycle_sum)
-  //===== EC: End =====//
+  // io.if_big_complete_ack                           := ic_master.io.if_big_complete_ack
+  //===== GuardianCouncil Function: End ====//
 }

@@ -13,7 +13,6 @@ import freechips.rocketchip.rocket._
 import freechips.rocketchip.tilelink._
 import freechips.rocketchip.util._
 import freechips.rocketchip.prci.{ClockSinkParameters}
-import freechips.rocketchip.npu.BuildRoCCNpu
 //===== GuardianCouncil Function: Start ====//
 import freechips.rocketchip.guardiancouncil._
 //===== GuardianCouncil Function: End   ====//
@@ -52,7 +51,7 @@ trait HasNonDiplomaticTileParameters {
   def usingSupervisor: Boolean = tileParams.core.hasSupervisorMode
   def usingHypervisor: Boolean = usingVM && tileParams.core.useHypervisor
   def usingDebug: Boolean = tileParams.core.useDebug
-  def usingRoCC: Boolean = !p(BuildRoCC).isEmpty || !p(BuildRoCCNpu).isEmpty
+  def usingRoCC: Boolean = !p(BuildRoCC).isEmpty
   def usingBTB: Boolean = tileParams.btb.isDefined && tileParams.btb.get.nEntries > 0
   def usingPTW: Boolean = usingVM
   def usingDataScratchpad: Boolean = tileParams.dcache.flatMap(_.scratch).isDefined
@@ -98,7 +97,7 @@ trait HasNonDiplomaticTileParameters {
 
   // TODO make HellaCacheIO diplomatic and remove this brittle collection of hacks
   //                  Core   PTW                DTIM                    coprocessors           
-  def dcacheArbPorts = 1 + usingVM.toInt + usingDataScratchpad.toInt + p(BuildRoCC).size + p(BuildRoCCNpu).size + tileParams.core.useVector.toInt
+  def dcacheArbPorts = 1 + usingVM.toInt + usingDataScratchpad.toInt + p(BuildRoCC).size + tileParams.core.useVector.toInt
 
   // TODO merge with isaString in CSR.scala
   def isaDTS: String = {
@@ -280,7 +279,7 @@ abstract class BaseTile private (val crossing: ClockCrossingType, q: Parameters)
   val ghe_revent_out_SRNode       = BundleBridgeSource[UInt](Some(() => UInt(1.W)))
 
   println("#### Jessica #### Generating GHE **Nodes** on the tile, HartID:", tileParams.hartId, "...!!")
-  val bigcore_hang_in_SKNode      = BundleBridgeSink[UInt](Some(() => UInt(1.W)))
+  val bigcore_hang_in_SKNode      = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES).W)))  // per-checker hang
   val bigcore_comp_in_SKNode      = BundleBridgeSink[UInt](Some(() => UInt(3.W)))
   val debug_bp_in_SKNode          = BundleBridgeSink[UInt](Some(() => UInt(2.W)))
   // val if_big_complete_req_SKNode  = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES-1).W)))
@@ -297,6 +296,14 @@ abstract class BaseTile private (val crossing: ClockCrossingType, q: Parameters)
   val ght_sch_dorefresh_SRNode    = BundleBridgeSource[UInt](Some(() => UInt(32.W)))
   
   val debug_gcounter_SKNode       = BundleBridgeSink[UInt](Some(() => UInt(64.W)))
+
+  // Global ic_status: per-big-core source → GHM, broadcast sink ← GHM
+  val ic_status_SRNode            = BundleBridgeSource[UInt](Some(() => UInt(GH_GlobalParams.GH_NUM_CORES.W)))
+  val global_ic_status_SKNode     = BundleBridgeSink[UInt](Some(() => UInt(GH_GlobalParams.GH_NUM_CORES.W)))
+
+  // Global checker_big_owner: per-big-core source → GHM, broadcast sink ← GHM
+  val checker_big_owner_SRNode        = BundleBridgeSource[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES * 4).W)))
+  val global_checker_big_owner_SKNode = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES * 4).W)))
 
   val agg_packet_in_SKNode        = BundleBridgeSink[UInt](Some(() => UInt(128.W)))
   //===== GuardianCouncil Function: End ====//

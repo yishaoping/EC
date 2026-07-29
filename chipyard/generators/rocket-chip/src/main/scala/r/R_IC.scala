@@ -53,6 +53,17 @@ class R_ICIO(params: R_ICParams) extends Bundle {
   val debug_perf_val                             = Output(UInt(64.W))
   val debug_maincore_status                      = Output(UInt(4.W))
   val shared_CP_CFG                              = Output(UInt(13.W))
+  //===== Runtime Configurable Mapping =====//
+  val big_core_id                                = Input(UInt(4.W))                                      // which big core this R_IC belongs to (1-indexed: 1=hartId0, 2=hartId1)
+  val checker_enable_mask                        = Input(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W)) // per-checker enable bitmap
+  val checker_enable_we                          = Input(UInt(1.W))                                     // write strobe
+  val checker_enable_rd                          = Output(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))// readback
+  val checker_big_owner                          = Output(Vec(params.totalnumber_of_cores, UInt(4.W)))  // which big core owns this checker
+  val checker_segment_id                         = Output(Vec(params.totalnumber_of_cores, UInt(params.width_of_ic.W))) // segment counter
+
+  // Global ic_status: OR of all big cores' local ic_status, broadcast from GHM
+  // Used by scheduler to avoid dispatching to a checker already busy under another big core
+  val global_ic_status                           = Input(Vec(params.totalnumber_of_cores, UInt(1.W)))
 }
 
 trait HasR_ICIO extends BaseModule {
@@ -77,18 +88,56 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   val ic_status                                 = RegInit(VecInit(Seq.fill(params.totalnumber_of_cores)(0.U(1.W)))) // 0: idle; 1: running
   val clear_ic_status                           = WireInit(VecInit(Seq.fill(params.totalnumber_of_cores)(0.U(1.W)))) // 0: idle; 1: running
 
-  // FPS scheduler
+  // Multi-big-core: checker indices in the full ic_status vector are offset by GH_NUM_BIG_CORES
+  val num_checkers                               = params.totalnumber_of_cores - GH_GlobalParams.GH_NUM_BIG_CORES
+  val chk_adj                                    = (GH_GlobalParams.GH_NUM_BIG_CORES - 1).U
+
+  //===== Runtime Configurable Mapping =====//
+  // checker_enable_mask: per-checker enable, default all enabled (padded to CHECKER_MASK_WIDTH)
+  val checker_enable_reg                         = RegInit(((1 << num_checkers) - 1).U(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))
+  when (io.checker_enable_we === 1.U) {
+    checker_enable_reg                          := io.checker_enable_mask
+  }
+  io.checker_enable_rd                          := checker_enable_reg
+
+  // checker_big_owner: which big core last dispatched to this checker (persists across segments)
+  val checker_big_owner_reg                      = RegInit(VecInit(Seq.fill(params.totalnumber_of_cores)(0.U(4.W))))
+
+  // Track owner: capture on first idle→busy transition, clear when idle & excluded from mask
+  for (i <- 0 until num_checkers) {
+    val idx = i + GH_GlobalParams.GH_NUM_BIG_CORES  // full ic_status index
+    when ((ic_status(idx) === 1.U) && (checker_big_owner_reg(idx) === 0.U)) {
+      checker_big_owner_reg(idx)                := io.big_core_id
+    }
+    // Release owner when checker becomes idle AND is no longer in our partition mask
+    when ((!checker_enable_reg(i))) {
+      checker_big_owner_reg(idx)                := 0.U
+    }
+    io.checker_big_owner(idx)                   := checker_big_owner_reg(idx)
+    io.checker_segment_id(idx)                  := 0.U
+  }
+  for (i <- 0 until GH_GlobalParams.GH_NUM_BIG_CORES) {
+    io.checker_big_owner(i)                     := 0.U
+    io.checker_segment_id(i)                    := 0.U
+  }
+
+  // FPS scheduler — checker_enable_mask restricts available checkers
   val sch_result                                = WireInit(0.U(5.W))
-  val u_sch_fp                                  = Module (new GHT_SCH_ANYAVILIABLE(GHT_SCH_Params (params.totalnumber_of_cores-1)))
+  val u_sch_fp                                  = Module (new GHT_SCH_ANYAVILIABLE(GHT_SCH_Params (num_checkers)))
   u_sch_fp.io.core_s                           := 1.U
-  u_sch_fp.io.core_e                           := io.num_of_checker
+  u_sch_fp.io.core_e                           := num_checkers.U
   u_sch_fp.io.inst_c                           := 1.U // Holding the scheduling results
 
-  for (i <- 1 to params.totalnumber_of_cores - 1) {
-    u_sch_fp.io.core_na(i-1)                   := ic_status(i)
+  for (i <- 0 until num_checkers) {
+    // core_na = 1 means checker is NOT available (busy under ANY big core OR disabled by mask)
+    u_sch_fp.io.core_na(i)                     := io.global_ic_status(i + GH_GlobalParams.GH_NUM_BIG_CORES) | (!checker_enable_reg(i))
   }
   sch_result                                   := u_sch_fp.io.sch_dest
   u_sch_fp.io.rst_sch                          := sch_reset
+
+  // Full-core-index views — use these everywhere in the FSM
+  val crnt_target_ic                             = WireInit(crnt_target + chk_adj)
+  val sch_result_ic                              = WireInit(sch_result  + chk_adj)
 
 
   // FSM to control the R_IC
@@ -105,8 +154,8 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   if_dosnap_priv                               := Mux((fsm_state === fsm_snap) && (io.if_ready_snap_shot.asBool), Mux(((ctrl === 2.U) && (io.mode_switch || io.mode_ret ||io.excp_mode)) || (ctrl === 4.U), io.if_correct_process, Mux((ctrl === 5.U), 1.U, 0.U)), 0.U)
   // val if_t_and_na                               = Mux(((io.ic_exit_isax.asBool || io.ic_syscall.asBool || (ic_counter(crnt_target) >= io.ic_threshold) || io.icsl_na(crnt_target).asBool) && (ic_status(sch_result).asBool)), 1.U, 0.U)
   // val if_t_and_a                                = Mux(((io.ic_exit_isax.asBool || io.ic_syscall.asBool || (ic_counter(crnt_target) >= io.ic_threshold) || io.icsl_na(crnt_target).asBool) && (!ic_status(sch_result).asBool)), 1.U, 0.U)
-  val if_t_and_na                               = Mux(((io.ic_exit_isax.asBool || io.mode_switch || io.mode_ret || (ic_counter(crnt_target) >= io.ic_threshold) || io.icsl_na(crnt_target).asBool) && (ic_status(sch_result).asBool)), 1.U, 0.U)
-  val if_t_and_a                                = Mux(((io.ic_exit_isax.asBool || io.mode_switch || io.mode_ret || (ic_counter(crnt_target) >= io.ic_threshold) || io.icsl_na(crnt_target).asBool) && (!ic_status(sch_result).asBool)), 1.U, 0.U)
+  val if_t_and_na                               = Mux(((io.ic_exit_isax.asBool || io.mode_switch || io.mode_ret || (ic_counter(crnt_target_ic) >= io.ic_threshold) || io.icsl_na(crnt_target_ic).asBool) && (ic_status(sch_result_ic).asBool)), 1.U, 0.U)
+  val if_t_and_a                                = Mux(((io.ic_exit_isax.asBool || io.mode_switch || io.mode_ret || (ic_counter(crnt_target_ic) >= io.ic_threshold) || io.icsl_na(crnt_target_ic).asBool) && (!ic_status(sch_result_ic).asBool)), 1.U, 0.U)
   fsm_ini                                      := Mux(fsm_state === fsm_reset, 1.U, Mux(fsm_state === fsm_presch, fsm_ini, 0.U))
   val ic_exit_isax_buffer                       = RegInit(0.U(1.W))
   val end                                       = RegInit(0.U(1.W))
@@ -151,7 +200,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
       ctrl                                      := Mux((io.mode_switch || io.excp_mode) && if_t_and_a.asBool && (ctrl === 0.U), 4.U, ctrl)
       crnt_target                               := crnt_target
       crnt_mask                                 := crnt_mask
-      nxt_target                                := Mux(!ic_status(sch_result).asBool && io.if_correct_process.asBool, sch_result, nxt_target)
+      nxt_target                                := Mux(!ic_status(sch_result_ic).asBool && io.if_correct_process.asBool, sch_result, nxt_target)
       if_filtering                              := 0.U
       if_pipeline_stall                         := io.if_correct_process.asBool
       for (i <- 0 to params.totalnumber_of_cores - 1) {
@@ -159,7 +208,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
         ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U, ic_counter(i))
       }
       // fsm_state                                 := Mux(!ic_status(sch_result).asBool && io.if_correct_process.asBool, fsm_cooling, Mux(io.ic_syscall.asBool, fsm_cooling, fsm_sch))
-      fsm_state                                 := Mux(!ic_status(sch_result).asBool && io.if_correct_process.asBool, fsm_cooling, fsm_sch)
+      fsm_state                                 := Mux(!ic_status(sch_result_ic).asBool && io.if_correct_process.asBool, fsm_cooling, fsm_sch)
     }
 
     is (fsm_cooling){ // 011
@@ -188,7 +237,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
       if_filtering                              := 0.U
       if_pipeline_stall                         := io.if_correct_process.asBool
       for (i <- 0 to params.totalnumber_of_cores - 1) {
-        ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U, Mux((crnt_target === i.U) && (ctrl(0) === 0.U), 1.U, ic_status(i)))
+        ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U, Mux((crnt_target_ic === i.U) && (ctrl(0) === 0.U), 1.U, ic_status(i)))
         ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U, ic_counter(i))
       }
       //  fsm_state                                 := Mux((ctrl === 2.U) || (ctrl === 0.U), Mux(io.if_ready_snap_shot.asBool && io.if_correct_process.asBool, fsm_trans, fsm_snap), Mux(io.if_ready_snap_shot.asBool, fsm_trans, fsm_snap))
@@ -220,16 +269,13 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
       crnt_target                               := crnt_target
       crnt_mask                                 := crnt_mask
       nxt_target                                := nxt_target 
-      if_filtering                              := Mux(io.ic_exit_isax.asBool || io.ic_syscall.asBool || (ic_counter(crnt_target) >= io.ic_threshold) || io.icsl_na(crnt_target).asBool, 0.U, 1.U)
-      // if_pipeline_stall                         := Mux(io.ic_exit_isax.asBool || io.ic_syscall.asBool || (ic_counter(crnt_target) >= io.ic_threshold) || io.icsl_na(crnt_target).asBool, 1.U, 0.U)
-      if_pipeline_stall                         := Mux(io.ic_exit_isax.asBool || (io.mode_switch || io.mode_ret) || (ic_counter(crnt_target) >= io.ic_threshold) || io.icsl_na(crnt_target).asBool, 1.U, 0.U)
+      if_filtering                              := Mux(io.ic_exit_isax.asBool || io.ic_syscall.asBool || (ic_counter(crnt_target_ic) >= io.ic_threshold) || io.icsl_na(crnt_target_ic).asBool, 0.U, 1.U)
+      if_pipeline_stall                         := Mux(io.ic_exit_isax.asBool || (io.mode_switch || io.mode_ret) || (ic_counter(crnt_target_ic) >= io.ic_threshold) || io.icsl_na(crnt_target_ic).asBool, 1.U, 0.U)
       for (i <- 0 to params.totalnumber_of_cores - 1) {
         ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U,  ic_status(i))
-        ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U,  Mux((crnt_target === i.U) && (io.if_correct_process.asBool), (ic_counter(i) + io.ic_incr), ic_counter(i)))
-        // ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U,  Mux((crnt_target === i.U) && (io.if_correct_process.asBool) && (!io.ic_syscall.asBool), (ic_counter(i) + io.ic_incr), ic_counter(i)))
+        ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U,  Mux((crnt_target_ic === i.U) && (io.if_correct_process.asBool), (ic_counter(i) + io.ic_incr), ic_counter(i)))
       }
-      // fsm_state                                 := Mux(io.ic_exit_isax.asBool || io.ic_syscall.asBool || (ic_counter(crnt_target) >= io.ic_threshold) || io.icsl_na(crnt_target).asBool, fsm_postcheck, fsm_check)
-      fsm_state                                 := Mux(io.ic_exit_isax.asBool || (io.mode_switch || io.mode_ret) || (ic_counter(crnt_target) >= io.ic_threshold) || io.icsl_na(crnt_target).asBool, fsm_postcheck, fsm_check)
+      fsm_state                                 := Mux(io.ic_exit_isax.asBool || (io.mode_switch || io.mode_ret) || (ic_counter(crnt_target_ic) >= io.ic_threshold) || io.icsl_na(crnt_target_ic).asBool, fsm_postcheck, fsm_check)
     }
 
     is (fsm_postcheck){ // 111
@@ -241,8 +287,8 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
       if_filtering                              := 0.U
       if_pipeline_stall                         := io.if_correct_process.asBool
       for (i <- 0 to params.totalnumber_of_cores - 1) {
-        ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U,  Mux((crnt_target === i.U), 0.U, ic_status(i)))
-        ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U,  Mux((crnt_target === i.U), (ic_counter(i) | 0x8000.U), ic_counter(i)))
+        ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U,  ic_status(i))
+        ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U,  Mux((crnt_target_ic === i.U), (ic_counter(i) | 0x8000.U), ic_counter(i)))
       }
       fsm_state                                 := Mux((ctrl === 0.U) || (ctrl === 4.U), fsm_sch, fsm_cooling)
     }
@@ -264,7 +310,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
 
   if (GH_GlobalParams.GH_DEBUG == 1) {
     when ((io.ic_incr =/= 0.U) && (fsm_state === fsm_check) && (io.core_trace.asBool)) {
-      printf(midas.targetutils.SynthesizePrintf("sl_counter=[%x]\n", (ic_counter(crnt_target)+io.ic_incr)))
+      printf(midas.targetutils.SynthesizePrintf("sl_counter=[%x]\n", (ic_counter(crnt_target_ic)+io.ic_incr)))
     }
 
     val fsm_state_delay                          = RegInit(fsm_reset)
@@ -285,7 +331,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   io.old_crnt_target                            := old_crnt_target
   for (i <- 0 to params.totalnumber_of_cores - 1){
     io.icsl_na_ack(i)         := RegNext(io.icsl_na(i)&(fsm_state===fsm_check))
-    io.big_checker_switch(i)  := (io.ic_exit_isax.asBool || io.ic_syscall.asBool || (ic_counter(i) >= io.ic_threshold))&&(crnt_target===i.U)&&(fsm_state===fsm_check)
+    io.big_checker_switch(i)  := (io.ic_exit_isax.asBool || io.ic_syscall.asBool || (ic_counter(i) >= io.ic_threshold))&&(crnt_target_ic===i.U)&&(fsm_state===fsm_check)
   }
 
   io.ic_counter                                 := ic_counter
@@ -294,7 +340,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
     clear_ic_status(i)                          := io.clear_ic_status(i)
   }
   var nocore_available                           = WireInit(1.U(1.W))
-  for (i <- 1 to params.totalnumber_of_cores - 1){
+  for (i <- GH_GlobalParams.GH_NUM_BIG_CORES to params.totalnumber_of_cores - 1){
     nocore_available                             = nocore_available & ic_status(i)
   }
 
@@ -309,7 +355,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
 
 
   val if_blocked_bySched                         = WireInit(false.B)
-  if_blocked_bySched                            := ((fsm_state === fsm_sch) && io.if_correct_process.asBool) && ic_status(sch_result).asBool
+  if_blocked_bySched                            := ((fsm_state === fsm_sch) && io.if_correct_process.asBool) && ic_status(sch_result_ic).asBool
 
   debug_perf_CCounter                           := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_CCounter + 1.U)
   debug_perf_BCounter                           := Mux(io.debug_perf_reset.asBool, 0.U, Mux(if_blocked_bySched && !nocore_available.asBool, debug_perf_BCounter + 1.U, debug_perf_BCounter))
@@ -331,6 +377,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   io.debug_maincore_status                      := Mux(!io.if_correct_process.asBool, 3.U,
                                                    Mux(fsm_state === fsm_sch, 1.U,
                                                    Mux(fsm_state === fsm_check, 2.U, 0.U)))
+  // io.debug_perf_val                             := 0.U
 
   val one                                        = WireInit(1.U(1.W))
   val one_fourbits                               = WireInit(1.U(4.W))
@@ -343,5 +390,5 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   cp_bitmap                                     := Cat(sch_result, seven_threebits)
   
 
-  io.shared_CP_CFG                              := Mux(((fsm_state === fsm_sch) && !ic_status(sch_result).asBool && io.if_correct_process.asBool && (ctrl === 0.U)), Cat(one, cp_bitmap, core_bitmap), 0.U)
+  io.shared_CP_CFG                              := Mux(((fsm_state === fsm_sch) && !ic_status(sch_result_ic).asBool && io.if_correct_process.asBool && (ctrl === 0.U)), Cat(one, cp_bitmap, core_bitmap), 0.U)
 }

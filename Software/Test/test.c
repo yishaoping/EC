@@ -101,6 +101,9 @@ int main(void)
 
     performance_report(cycle_start, cycle_end,
                        instruction_start, instruction_end);
+#if MEEK_ENABLE_CHECKER_PERF
+    performance_report_checkers();
+#endif
 
     lock_acquire(&uart_lock);
     store_stats_print_report(all_store_stats_ready);

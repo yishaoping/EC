@@ -12,10 +12,10 @@ import freechips.rocketchip.util._
 import freechips.rocketchip.util.property
 import freechips.rocketchip.scie._
 import scala.collection.mutable.ArrayBuffer
-//===== EC: Start =====//
+//===== GuardianCouncil Function: Start ====//
 import freechips.rocketchip.r._
 import freechips.rocketchip.guardiancouncil._
-//===== EC: End   =====//
+//===== GuardianCouncil Function: End   ====//
 case class RocketCoreParams(
   bootFreqHz: BigInt = 0,
   useVM: Boolean = true,
@@ -320,8 +320,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val id_csr_ren = id_ctrl.csr.isOneOf(CSR.S, CSR.C) && id_expanded_inst(0).rs1 === 0.U
   val id_csr = Mux(id_system_insn && id_ctrl.mem, CSR.N, Mux(id_csr_ren, CSR.R, id_ctrl.csr))
   val id_csr_flush = id_system_insn || (id_csr_en && !id_csr_ren && csr.io.decode(0).write_flush)
-  
-  //===== EC: Start =====//
+//===== GuardianCouncil Function: Start ====//
   io.pc := wb_reg_pc
   io.inst := wb_reg_inst
   io.new_commit := csr.io.trace(0).valid && !csr.io.trace(0).exception
@@ -331,8 +330,6 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val rsu_pc = Reg(UInt(40.W))
   val checker_mode = Wire(UInt(1.W))
   val checker_priv_mode = Wire(UInt(1.W))
-  dontTouch(checker_mode)
-  dontTouch(checker_priv_mode)
   ibuf.io.checker_mode := checker_mode
   dontTouch(io.dmem)
 
@@ -359,11 +356,16 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val lsl_resp_replay_csr = Wire(Bool())
   val lsl_req_ready_csr = Wire(Bool())
 
+  val lsl_req_valid_rocc = Wire(Bool())
+  val lsl_resp_data_rocc = Wire(UInt(xLen.W))
+  val lsl_resp_replay_rocc = Wire(Bool())
+  val lsl_req_ready_rocc = Wire(Bool())
+
   val icsl_if_overtaking = Wire(UInt(1.W))
   // val icsl_just_overtaking = Wire(UInt(1.W))
   val icsl_if_ret_special_pc = Wire(UInt(1.W))
   val if_overtaking_next_cycle = Wire(UInt(1.W))
-  //===== EC: End   =====//
+  //===== GuardianCouncil Function: End   ====//
   val id_scie_decoder = if (!rocketParams.useSCIE) WireDefault(0.U.asTypeOf(new SCIEDecoderInterface)) else {
     val d = Module(new SCIEDecoder)
     assert(!io.imem.resp.valid || PopCount(d.io.unpipelined :: d.io.pipelined :: d.io.multicycle :: Nil) <= 1.U)
@@ -439,7 +441,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   //   if (fastLoadByte) io.dmem.resp.bits.data(xLen-1, 0)
   //   else if (fastLoadWord) io.dmem.resp.bits.data_word_bypass(xLen-1, 0)
   //   else wb_reg_wdata
-  //===== EC: Start =====//
+  //===== GuardianCouncil Function: Start ====//
   // Enabling data bypass for RoCC commands
   val dcache_bypass_data =
     if (fastLoadByte) Mux(wb_ctrl.rocc, io.rocc.resp.bits.data, Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), lsl_resp_data, io.dmem.resp.bits.data(xLen-1, 0)))
@@ -514,7 +516,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     u.io.rs2 := ex_rs(1)
     u.io.rd
   }
-  //===== EC: Start =====//
+  //===== GuardianCouncil Function: Start ====//
   val alu_1cycle_delay_reg = Reg(UInt())
   val alu_2cycle_delay_reg = Reg(UInt())
   alu_1cycle_delay_reg := alu.io.out
@@ -524,7 +526,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val pc_special = Reg(UInt())
   record_pc := io.record_pc
   pc_special := Mux(record_pc === 1.U, wb_reg_pc + 4.U, pc_special)
-  //===== EC: Start =====//
+  //===== GuardianCouncil Function: Start ====//
 
   val mem_scie_pipelined_wdata = if (!rocketParams.useSCIE) 0.U else {
     val u = Module(new SCIEPipelined(xLen))
@@ -809,7 +811,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     (wb_reg_valid && wb_ctrl.mem && Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), false.B, io.dmem.s2_xcpt.ma.st), Causes.misaligned_store.U),
     (wb_reg_valid && wb_ctrl.mem && Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), false.B, io.dmem.s2_xcpt.ma.ld), Causes.misaligned_load.U)
   ))
-  //===== EC: Start ===== //
+//===== GuardianCouncil Function: Start ====//
   /* R Features */
   val rsu_slave = Module(new R_RSUSL(R_RSUSLParams(xLen, 32)))
   val lsl = Module(new R_LSL(R_LSLParams(255, xLen)))
@@ -822,9 +824,13 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   // In GuardianCouncil, RoCC response can be replied in a single cycle, therefore !io.rocc.resp.valid is added
   val wb_wxd = wb_reg_valid && wb_ctrl.wxd && !io.rocc.resp.valid
   val replay_wb_rocc = wb_reg_valid && wb_ctrl.rocc && (false).B // in guardian council, rocc.cmd.ready is always ready
-  val replay_wb_lsl = Mux(((checker_mode === 1.U) || (checker_priv_mode === 1.U)), lsl_resp_replay.asBool || lsl_resp_replay_csr.asBool , false.B)
+  val replay_wb_lsl = Mux(((checker_mode === 1.U) || (checker_priv_mode === 1.U)), lsl_resp_replay.asBool || lsl_resp_replay_csr.asBool || lsl_resp_replay_rocc.asBool, false.B)
   val wb_csr = (wb_reg_inst(6,0) === 0x73.U) && ((wb_reg_inst(14,12) === 0x2.U) || (wb_reg_inst(14,12) === 0x1.U) || (wb_reg_inst(14,12) === 0x3.U) || (wb_reg_inst(14,12) === 0x5.U) || (wb_reg_inst(14,12) === 0x6.U) || (wb_reg_inst(14,12) === 0x7.U)) && !wb_reg_inst(31, 20).isOneOf(CSRshadows.csrshadow_seq) && wb_reg_valid
+  val wb_rocc = wb_reg_valid && wb_ctrl.rocc
+  val wb_rocc_wb = wb_rocc && wb_ctrl.wxd  // ROCC with register writeback (ROCC_INSTRUCTION_D/DS/DSS)
   lsl_resp_replay_csr := Mux(checker_mode.asBool, wb_csr && !lsl_req_ready_csr, false.B)
+  
+  lsl_resp_replay_rocc := Mux(checker_mode.asBool, wb_rocc_wb && !lsl_req_ready_rocc, false.B)
 
   /* IN GC, ROCC IS NOT A LONG-LATENCY INSTRUCTION ANY MORE */
   val wb_set_sboard = wb_ctrl.div || wb_dcache_miss
@@ -845,7 +851,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     }
   } 
   */
-  //===== EC: End   =====//
+  //===== GuardianCouncil Function: End   ====//
   val wbCoverCauses = List(
     (Causes.misaligned_store, "MISALIGNED_STORE"),
     (Causes.misaligned_load, "MISALIGNED_LOAD"),
@@ -862,28 +868,11 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
 
   
 
-  //===== EC: Start =====//
+  //===== GuardianCouncil Function: Start ====//
   // Original design:
   // val wb_valid = wb_reg_valid && !replay_wb && !wb_xcpt
   // In GuardianCouncil, RoCC response can be replied in a single cycle, therefore !io.rocc.resp.valid is added
   val wb_valid = wb_reg_valid && !replay_wb && !wb_xcpt && !check_exception
-  // Count only architecturally committed store-class instructions while the checker is active.
-  val storeCommitInCheckState = (checker_mode === 1.U) || (checker_priv_mode === 1.U)
-  val storeCommitValid = wb_valid && wb_ctrl.mem && wb_ctrl.mem_cmd.isOneOf(M_XWR, M_PWR) && storeCommitInCheckState
-  // Use wide counters to reduce overflow risk in long-running measurements.
-  val storeCommitCountReg = RegInit(0.U(128.W))
-  val storeCommitCycleSumReg = RegInit(0.U(128.W))
-  when (storeCommitValid) {
-    storeCommitCountReg := storeCommitCountReg + 1.U(128.W)
-    storeCommitCycleSumReg := storeCommitCycleSumReg + csr.io.time.pad(128)
-  }
-  io.store_commit_count := storeCommitCountReg
-  io.store_commit_cycle_sum := storeCommitCycleSumReg
-  dontTouch(io.store_commit_count)
-  dontTouch(io.store_commit_cycle_sum)
-  dontTouch(storeCommitValid)
-  dontTouch(storeCommitCountReg)
-  dontTouch(storeCommitCycleSumReg)
   /*
   if (GH_GlobalParams.GH_DEBUG == 1) {
     when (wb_reg_valid && !wb_valid && io.core_trace.asBool) {
@@ -909,7 +898,8 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     io.rocc.resp.ready := (true).B
     when (io.rocc.resp.fire()) {
       div.io.resp.ready := (false).B
-      ll_wdata := io.rocc.resp.bits.data
+      ll_wdata := Mux(checker_mode.asBool || checker_priv_mode.asBool,
+                      lsl_resp_data_rocc, io.rocc.resp.bits.data)
       ll_waddr := io.rocc.resp.bits.rd
       // ll_wen := wb_valid /* THIS IS A BLACK HACK, BECAUSE THE ROCC ISA IS NOW HANDLED AT MEM STAGE AND MUST BE REPLIED AT 1 CYCLE */
       ll_wen := wb_valid
@@ -956,7 +946,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
 
   // val wb_valid = wb_reg_valid && !replay_wb && !wb_xcpt
   
-  val wb_wen = wb_valid && wb_ctrl.wxd && !lsl_resp_replay_csr
+  val wb_wen = wb_valid && wb_ctrl.wxd && !lsl_resp_replay_csr && !lsl_resp_replay_rocc
   val rf_wen = wb_wen || ll_wen
   val rf_waddr = Mux(ll_wen, ll_waddr, wb_waddr)
   val rf_wdata = Mux(dmem_resp_valid && dmem_resp_xpu, Mux((checker_mode === 1.U) || (checker_priv_mode === 1.U), lsl_resp_data, io.dmem.resp.bits.data(xLen-1, 0)),
@@ -986,10 +976,12 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
                             Mux(ll_wen, false.B,
                             Mux(wb_ctrl.csr =/= CSR.N, Mux((checker_mode.asBool || checker_priv_mode.asBool) && wb_csr && !wb_reg_inst(31, 20).isOneOf(CSRshadows.csrshadow_seq), true.B, false.B), false.B))), false.B)  
   dontTouch(lsl_req_valid_csr_test)          
-  dontTouch(lsl_req_valid_csr)         
+  dontTouch(lsl_req_valid_csr)
+  // ROCC: in checker mode, only forward writeback-type ROCC (ROCC_INSTRUCTION_D/DS/DSS)
+  lsl_req_valid_rocc := io.rocc.resp.fire() && (checker_mode.asBool || checker_priv_mode.asBool) && wb_ctrl.rocc && wb_ctrl.wxd         
   // when (rf_wen) { rf.write(rf_waddr, rf_wdata) }
-  //===== EC: End   =====//
-//===== EC: Start =====//
+  //===== GuardianCouncil Function: End   ====//
+//===== GuardianCouncil Function: Start ====//
   /* R Features */
   val arfs_shadow = Reg(Vec(32, UInt(xLen.W)))
 
@@ -1094,7 +1086,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   icsl.io.if_correct_process := io.if_correct_process & !excpt_mode.asUInt
   checker_mode := icsl.io.icsl_checkermode
   checker_priv_mode := icsl.io.icsl_checkerpriv_mode
-  io.clear_ic_status := icsl.io.clear_ic_status
+  io.clear_ic_status := RegNext(icsl.io.clear_ic_status)
   icsl_if_overtaking := (icsl.io.if_overtaking | rsu_slave.io.core_hang_up) & !r_exception_record
   icsl_if_ret_special_pc := icsl.io.if_ret_special_pc
   if_overtaking_next_cycle := icsl.io.if_overtaking_next_cycle
@@ -1153,6 +1145,8 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     lsl.io.m_ld_valid(i)  := lsl_index(i)(2,0)=== 1.U
     lsl.io.m_csr_valid(i) := lsl_index(i)(2,0)=== 3.U
     lsl.io.m_csr_data(i)  := io.packet_lsl(i)(63, 0)
+    lsl.io.m_rocc_valid(i) := lsl_index(i)(2,0)=== 5.U
+    lsl.io.m_rocc_data(i)  := io.packet_lsl(i)(63, 0)
     lsl.io.m_ldst_data(i) := io.packet_lsl(i)(127,64)
     lsl.io.m_ldst_addr(i) := io.packet_lsl(i)(63,0)
   }
@@ -1166,6 +1160,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   lsl.io.req_size   := lsl_req_size
   lsl.io.req_kill   := lsl_req_kill
   lsl.io.req_valid_csr := lsl_req_valid_csr
+  lsl.io.req_valid_rocc := lsl_req_valid_rocc
 
   lsl_resp_valid := lsl.io.resp_valid
   lsl_resp_tag := lsl.io.resp_tag
@@ -1178,6 +1173,8 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   io.log_highwatermark := lsl.io.lsl_highwatermark.asUInt | io.imem.bjl_highwatermark.asUInt
   lsl_resp_data_csr := lsl.io.resp_data_csr
   lsl_req_ready_csr := lsl.io.req_ready_csr
+  lsl_resp_data_rocc := lsl.io.resp_data_rocc
+  lsl_req_ready_rocc := lsl.io.req_ready_rocc
 
   // Instantiate ELU
   val elu = Module(new R_ELU(R_ELUParams(4, xLen, 40)))
@@ -1223,7 +1220,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   dontTouch(rf_wen_rsu)
 
   io.packet_cdc_ready := rsu_slave.io.cdc_ready | lsl.io.cdc_ready.asUInt | io.imem.bjl_cdc_ready.asUInt
-  //===== EC: End   =====//
+  //===== GuardianCouncil Function: End   ====//
 
   dontTouch(csr.io.counters)
   // hook up control/status regfile
@@ -1334,12 +1331,12 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   rocc_blocked := !wb_xcpt && !io.rocc.cmd.ready && (io.rocc.cmd.valid || rocc_blocked)
 
   val ctrl_stalld =
-    //===== EC: Start =====//
+    //===== GuardianCouncil Function: Start ====//
     // Original design:
     // id_ex_hazard || id_mem_hazard || id_wb_hazard || id_sboard_hazard ||
     // In GuardianCouncil, RoCC response can be replied in a single cycle, therefore RoCC does not cause a hazzard
     rsu_slave.io.core_hang_up.asBool || id_ex_hazard || (id_mem_hazard) || (id_wb_hazard && !wb_ctrl.rocc) || id_sboard_hazard ||
-    //===== EC: End   =====//
+    //===== GuardianCouncil Function: End   ====//
     //id_ex_hazard || id_mem_hazard || id_wb_hazard || id_sboard_hazard ||
     csr.io.singleStep && (ex_reg_valid || mem_reg_valid || wb_reg_valid) ||
     id_csr_en && csr.io.decode(0).fp_csr && !io.fpu.fcsr_rdy ||
@@ -1374,7 +1371,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
 
   io.RAW_cnt := RAW_counter
 
-  //===== EC: Start =====//
+  //===== GuardianCouncil Function: Start ====//
   val debug_perf_blocking_CP                      = RegInit(0.U(64.W))
   val debug_perf_blocking_id_ex_h                 = RegInit(0.U(64.W))
   val debug_perf_blocking_id_mem_h                = RegInit(0.U(64.W))
@@ -1541,7 +1538,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   // don't let D$ go to sleep if we're probably going to use it soon
   io.dmem.keep_clock_enabled := ibuf.io.inst(0).valid && id_ctrl.mem && !csr.io.csr_stall
   //===== GuardianCouncil Function: End ====//
-//===== EC: Start =====//  
+//===== GuardianCouncil Function: Start ====//  
   io.rocc.cmd.valid := mem_reg_valid && mem_ctrl.rocc && !wb_reg_replay
   io.rocc.exception := mem_xcpt && csr.io.status.xs.orR
   io.rocc.cmd.bits.status := csr.io.status

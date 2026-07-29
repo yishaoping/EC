@@ -1,13 +1,12 @@
 package chipyard
 
-import freechips.rocketchip.config.{Config}
+import org.chipsalliance.cde.config.{Config}
 import freechips.rocketchip.diplomacy.{AsynchronousCrossing}
-//===== EC Config: Start =====//
 import freechips.rocketchip.guardiancouncil.GH_GlobalParams
-//===== EC Config: End   =====//
+import org.chipsalliance.cde.config._
 
 //===== EC Config: Start =====//
-class v0Config extends Config(
+class v1Config extends Config(
   new chipyard.config.WithTileFrequency(200, Some(0)) ++
   new chipyard.config.WithTileFrequency(100, Some(1)) ++
   new chipyard.config.WithTileFrequency(100, Some(2)) ++
@@ -23,8 +22,8 @@ class v0Config extends Config(
   new freechips.rocketchip.subsystem.WithAsynchronousRocketTiles(
   AsynchronousCrossing().depth,
   AsynchronousCrossing().sourceSync) ++
-  new boom.common.WithNLargeBooms(1, overrideIdOffset = Some(0)) ++
-  new freechips.rocketchip.subsystem.WithNGCCheckers(GH_GlobalParams.GH_NUM_CORES - 1, overrideIdOffset=Some(1)) ++
+  new boom.common.WithNLargeBooms(GH_GlobalParams.GH_NUM_BIG_CORES, overrideIdOffset = Some(0)) ++
+  new freechips.rocketchip.subsystem.WithNGCCheckers(GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES, overrideIdOffset=Some(GH_GlobalParams.GH_NUM_BIG_CORES)) ++
   new chipyard.config.AbstractConfig
 )
 //===== EC Config: End   =====//
@@ -35,8 +34,60 @@ class v0Config extends Config(
 class RocketConfig extends Config(
   new freechips.rocketchip.subsystem.WithNBigCores(1) ++         // single rocket-core
   new chipyard.config.AbstractConfig)
+class MyRocketConfig extends Config(
+  new chipyard.config.WithTileFrequency(200, Some(0)) ++
+  new chipyard.config.WithTileFrequency(200, Some(1)) ++  // 2nd big core
+  // Checker tiles 2-7 (6 checkers)
+  new chipyard.config.WithTileFrequency(100, Some(2)) ++
+  new chipyard.config.WithTileFrequency(100, Some(3)) ++
+  new chipyard.config.WithTileFrequency(100, Some(4)) ++
+  new chipyard.config.WithTileFrequency(100, Some(5)) ++
+  new chipyard.config.WithTileFrequency(100, Some(6)) ++
+  new chipyard.config.WithTileFrequency(100, Some(7)) ++
+  new chipyard.config.WithGCBusFrequency(100) ++ 
+  new chipyard.config.WithSystemBusFrequency(200) ++
+  new chipyard.config.WithMemoryBusFrequency(200) ++
+  new chipyard.config.WithPeripheryBusFrequency(200) ++
+  new chipyard.config.WithSystemBusFrequencyAsDefault ++
+  new freechips.rocketchip.guardiancouncil.WithGHE ++
+  new freechips.rocketchip.guardiancouncil.WithDisableROBDebug ++
+  new freechips.rocketchip.subsystem.WithAsynchronousRocketTiles(
+  AsynchronousCrossing().depth,
+  AsynchronousCrossing().sourceSync) ++
+  // 2 big BOOM cores, 6 checker Rocket cores
+  new boom.common.WithNLargeBooms(2, overrideIdOffset = Some(0)) ++
+  new freechips.rocketchip.subsystem.WithNGCCheckers(GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES, overrideIdOffset=Some(GH_GlobalParams.GH_NUM_BIG_CORES)) ++
+  new chipyard.config.AbstractConfig
+)
+
+class MEEKConfig extends Config(
+  new chipyard.config.WithTileFrequency(100, Some(0)) ++
+  new chipyard.config.WithTileFrequency(100, Some(1)) ++  // 2nd big core
+  // Checker tiles 2-7
+  new chipyard.config.WithTileFrequency(100, Some(2)) ++
+  new chipyard.config.WithTileFrequency(100, Some(3)) ++
+  new chipyard.config.WithTileFrequency(100, Some(4)) ++
+  new chipyard.config.WithTileFrequency(100, Some(5)) ++
+  new chipyard.config.WithTileFrequency(100, Some(6)) ++
+  new chipyard.config.WithTileFrequency(100, Some(7)) ++
+  new chipyard.config.WithGCBusFrequency(100) ++ 
+  new chipyard.config.WithSystemBusFrequency(100) ++
+  new chipyard.config.WithMemoryBusFrequency(100) ++
+  new chipyard.config.WithPeripheryBusFrequency(100) ++
+  new chipyard.config.WithSystemBusFrequencyAsDefault ++
+  new freechips.rocketchip.guardiancouncil.WithGHE ++
+  // new freechips.rocketchip.guardiancouncil.WithDisableROBDebug ++
+  new freechips.rocketchip.subsystem.WithAsynchronousRocketTiles(
+  AsynchronousCrossing().depth,
+  AsynchronousCrossing().sourceSync) ++
+  // 2 big BOOM cores, 6 checker Rocket cores
+  new boom.common.WithNLargeBooms(2, overrideIdOffset = Some(0)) ++
+  new freechips.rocketchip.subsystem.WithNGCCheckers(GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES, overrideIdOffset=Some(GH_GlobalParams.GH_NUM_BIG_CORES)) ++
+  new chipyard.config.AbstractConfig
+)
 
 class TinyRocketConfig extends Config(
+  new chipyard.iobinders.WithDontTouchIOBinders(false) ++         // TODO FIX: Don't dontTouch the ports
   new chipyard.config.WithTLSerialLocation(
     freechips.rocketchip.subsystem.FBUS,
     freechips.rocketchip.subsystem.PBUS) ++                       // attach TL serial adapter to f/p busses
@@ -110,6 +161,7 @@ class MbusScratchpadRocketConfig extends Config(
 // DOC include end: mbusscratchpadrocket
 
 class MulticlockRocketConfig extends Config(
+  new freechips.rocketchip.subsystem.WithRationalRocketTiles ++   // Add rational crossings between RocketTile and uncore
   new freechips.rocketchip.subsystem.WithNBigCores(1) ++
   // Frequency specifications
   new chipyard.config.WithTileFrequency(1600.0) ++       // Matches the maximum frequency of U540
@@ -120,7 +172,6 @@ class MulticlockRocketConfig extends Config(
   //  Crossing specifications
   new chipyard.config.WithCbusToPbusCrossingType(AsynchronousCrossing()) ++ // Add Async crossing between PBUS and CBUS
   new chipyard.config.WithSbusToMbusCrossingType(AsynchronousCrossing()) ++ // Add Async crossings between backside of L2 and MBUS
-  new freechips.rocketchip.subsystem.WithRationalRocketTiles ++   // Add rational crossings between RocketTile and uncore
   new testchipip.WithAsynchronousSerialSlaveCrossing ++ // Add Async crossing between serial and MBUS. Its master-side is tied to the FBUS
   new chipyard.config.AbstractConfig)
 
@@ -151,3 +202,9 @@ class MulticlockAXIOverSerialConfig extends Config(
   new freechips.rocketchip.subsystem.WithNBigCores(2) ++
   new chipyard.config.AbstractConfig)
 // DOC include end: MulticlockAXIOverSerialConfig
+
+class CustomIOChipTopRocketConfig extends Config(
+  new chipyard.example.WithCustomChipTop ++
+  new chipyard.example.WithCustomIOCells ++
+  new freechips.rocketchip.subsystem.WithNBigCores(1) ++         // single rocket-core
+  new chipyard.config.AbstractConfig)

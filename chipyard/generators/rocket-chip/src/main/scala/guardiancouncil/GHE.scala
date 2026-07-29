@@ -28,8 +28,6 @@ class GHEImp(outer: GHE)(implicit p: Parameters) extends LazyRoCCModuleImp(outer
     val xs2                     = cmd.bits.inst.xs2
     val rd                      = cmd.bits.inst.rd
     val opcode                  = cmd.bits.inst.opcode
-    dontTouch(io.store_commit_count_in)
-    dontTouch(io.store_commit_cycle_sum_in)
 
     val rs1_val                 = cmd.bits.rs1
     val rs2_val                 = cmd.bits.rs2
@@ -94,7 +92,10 @@ class GHEImp(outer: GHE)(implicit p: Parameters) extends LazyRoCCModuleImp(outer
     val doPerfCtrl              = (cmd.fire && (funct === 0x76.U))
     val doPerfRead              = (cmd.fire && (funct === 0x77.U))
     val doPerfReadRAW           = (cmd.fire && (funct === 0x78.U))
-    val doGetStoreCounters      = (cmd.fire && (funct === 0x79.U))
+    /* Runtime Configurable Mapping */
+    val doSetCheckerMask        = (cmd.fire && (funct === 0x7D.U))
+    val doGetCheckerMask        = (cmd.fire && (funct === 0x7E.U))
+    val doGetCheckerState       = (cmd.fire && (funct === 0x7F.U))
 
     dontTouch(doCheckBigStatus)
     dontTouch(doBigCheckComp)
@@ -145,12 +146,8 @@ class GHEImp(outer: GHE)(implicit p: Parameters) extends LazyRoCCModuleImp(outer
                                           doPerfRead          -> io.elu_data_in(63,0),
                                           doGetCsrPerf        -> Cat(0.U(32.W), io.csr_counter_in(rs1_val)),
                                           doPerfReadRAW       -> Cat(0.U(32.W), io.RAW_cnt_in),
-                                          doGetStoreCounters  -> MuxLookup(rs1_val(2,0), 0.U(xLen.W), Seq(
-                                                                      0.U -> io.store_commit_count_in(63, 0),
-                                                                      1.U -> io.store_commit_count_in(127, 64),
-                                                                      2.U -> io.store_commit_cycle_sum_in(63, 0),
-                                                                      3.U -> io.store_commit_cycle_sum_in(127, 64)
-                                                                    ))
+                                          doGetCheckerMask    -> Cat(zeros_20bits, io.checker_mask_rd),
+                                          doGetCheckerState   -> Cat(io.checker_state_data)
                                           )
                                           )
                                           
@@ -258,6 +255,11 @@ class GHEImp(outer: GHE)(implicit p: Parameters) extends LazyRoCCModuleImp(outer
     io.s_or_r_out             := s_or_r
     io.elu_deq_out            := doDeqELU
     io.record_pc_out          := Mux(doRecordPC, 1.U, 0.U)
+
+    /* Runtime Configurable Mapping outputs */
+    io.checker_mask_out       := Mux(doSetCheckerMask, rs1_val(GH_GlobalParams.GH_CHECKER_MASK_WIDTH-1, 0), 0.U)
+    io.checker_mask_we        := doSetCheckerMask
+    io.checker_state_sel      := Mux(doGetCheckerState, rs1_val(3,0), 0.U)
 
     /* Core Trace */
     val core_trace              = RegInit(0.U(2.W))

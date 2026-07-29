@@ -50,8 +50,6 @@ class RoCCCoreIO(implicit p: Parameters) extends CoreBundle()(p) {
  //===== GuardianCouncil Function: Start ====//
   val RAW_cnt_in = Input(UInt(32.W))
   val csr_counter_in = Input(Vec(84, UInt(32.W)))
-  val store_commit_count_in = Input(UInt(128.W))
-  val store_commit_cycle_sum_in = Input(UInt(128.W))
   val ghe_packet_in = Input(UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W))
   val ghe_status_in = Input(UInt(32.W))
   val bigcore_comp  = Input(UInt(3.W))
@@ -100,6 +98,12 @@ class RoCCCoreIO(implicit p: Parameters) extends CoreBundle()(p) {
   val core_trace_out = Output(UInt(2.W))
   val record_and_store_out = Output(UInt(2.W))
   val debug_perf_ctrl = Output(UInt(5.W))
+  /* Runtime Configurable Mapping */
+  val checker_mask_out = Output(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))
+  val checker_mask_we  = Output(UInt(1.W))
+  val checker_mask_rd  = Input(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))
+  val checker_state_sel = Output(UInt(4.W))
+  val checker_state_data = Input(UInt(64.W))
   //===== GuardianCouncil Function: End   ====//
 }
 
@@ -154,12 +158,6 @@ trait HasLazyRoCCModule extends CanHavePTWModule
       for(i <- 0 until 84){
         rocc.module.io.csr_counter_in(i) := 0.U
       }
-      rocc.module.io.store_commit_count_in := cmdRouter.io.store_commit_count_out
-      rocc.module.io.store_commit_cycle_sum_in := cmdRouter.io.store_commit_cycle_sum_out
-      dontTouch(cmdRouter.io.store_commit_count_out)
-      dontTouch(cmdRouter.io.store_commit_cycle_sum_out)
-      dontTouch(rocc.module.io.store_commit_count_in)
-      dontTouch(rocc.module.io.store_commit_cycle_sum_in)
       rocc.module.io.RAW_cnt_in := cmdRouter.io.RAW_cnt_out
       rocc.module.io.ghe_packet_in := cmdRouter.io.ghe_packet_in
       rocc.module.io.ghe_status_in := cmdRouter.io.ghe_status_in
@@ -198,6 +196,14 @@ trait HasLazyRoCCModule extends CanHavePTWModule
       cmdRouter.io.elu_deq_in := rocc.module.io.elu_deq_out
       cmdRouter.io.elu_sel_in := rocc.module.io.elu_sel_out
       rocc.module.io.elu_status_in := cmdRouter.io.elu_status_in
+      /* Runtime Configurable Mapping */
+      cmdRouter.io.checker_mask_in := rocc.module.io.checker_mask_out
+      cmdRouter.io.checker_mask_we_in := rocc.module.io.checker_mask_we
+      cmdRouter.io.checker_state_sel_in := rocc.module.io.checker_state_sel
+      rocc.module.io.checker_mask_rd := cmdRouter.io.checker_mask_rd_out
+      rocc.module.io.checker_state_data := cmdRouter.io.checker_state_data_out
+      cmdRouter.io.checker_mask_rd_in := 0.U  // Rocket tiles: no R_IC, readback unused
+      cmdRouter.io.checker_state_data_in := 0.U // Rocket tiles: no R_IC
       //===== GuardianCouncil Function: End   ====//
     }
 
@@ -513,10 +519,6 @@ class RoccCommandRouter(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
  //===== GuardianCouncil Function: Start ====//
     val RAW_cnt_in = Input(UInt(32.W))
     val RAW_cnt_out = Output(UInt(32.W))
-    val store_commit_count_in = Input(UInt(128.W))
-    val store_commit_count_out = Output(UInt(128.W))
-    val store_commit_cycle_sum_in = Input(UInt(128.W))
-    val store_commit_cycle_sum_out = Output(UInt(128.W))
     val ghe_packet_in = Input(UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W))
     val ghe_status_in = Input(UInt(32.W))
     val bigcore_comp  = Input(UInt(3.W))
@@ -584,6 +586,17 @@ class RoccCommandRouter(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
     val elu_sel_out = Output(UInt(1.W))
     val elu_sel_in = Input(UInt(1.W))
     val elu_status_in = Input(UInt(2.W))
+    /* Runtime Configurable Mapping */
+    val checker_mask_out = Output(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))
+    val checker_mask_in  = Input(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))
+    val checker_mask_we_out = Output(UInt(1.W))
+    val checker_mask_we_in  = Input(UInt(1.W))
+    val checker_state_sel_out = Output(UInt(4.W))
+    val checker_state_sel_in  = Input(UInt(4.W))
+    val checker_state_data_in  = Input(UInt(64.W))
+    val checker_state_data_out = Output(UInt(64.W))
+    val checker_mask_rd_out = Output(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))
+    val checker_mask_rd_in  = Input(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))
     //===== GuardianCouncil Function: End   ====//
   }
 
@@ -598,12 +611,6 @@ class RoccCommandRouter(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
   io.busy := cmd.valid
 //===== GuardianCouncil Function: Start ====//
   io.RAW_cnt_out := io.RAW_cnt_in
-  io.store_commit_count_out := io.store_commit_count_in
-  io.store_commit_cycle_sum_out := io.store_commit_cycle_sum_in
-  dontTouch(io.store_commit_count_in)
-  dontTouch(io.store_commit_count_out)
-  dontTouch(io.store_commit_cycle_sum_in)
-  dontTouch(io.store_commit_cycle_sum_out)
   io.ghe_event_out := io.ghe_event_in
   io.ght_mask_out := io.ght_mask_in
   io.ght_status_out := io.ght_status_in
@@ -634,6 +641,12 @@ class RoccCommandRouter(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
   io.s_or_r_out := io.s_or_r_in
   io.elu_deq_out := io.elu_deq_in
   io.elu_sel_out := io.elu_sel_in
+  /* Runtime Configurable Mapping */
+  io.checker_mask_out := io.checker_mask_in
+  io.checker_mask_we_out := io.checker_mask_we_in
+  io.checker_state_sel_out := io.checker_state_sel_in
+  io.checker_state_data_out := io.checker_state_data_in
+  io.checker_mask_rd_out := io.checker_mask_rd_in
   //===== GuardianCouncil Function: End   ====//
   assert(PopCount(cmdReadys) <= 1.U,
     "Custom opcode matched for more than one accelerator")
@@ -651,10 +664,6 @@ class RoccCommandRouterBoom(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
     //===== GuardianCouncil Function: Start ====//
     val csr_counter_in = Input(Vec(84, UInt(32.W)))
     val csr_counter_out = Output(Vec(84, UInt(32.W)))
-    val store_commit_count_in = Input(UInt(128.W))
-    val store_commit_count_out = Output(UInt(128.W))
-    val store_commit_cycle_sum_in = Input(UInt(128.W))
-    val store_commit_cycle_sum_out = Output(UInt(128.W))
     val ghe_packet_in = Input(UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W))
     val ghe_status_in = Input(UInt(32.W))
     val bigcore_comp  = Input(UInt(3.W))
@@ -723,6 +732,17 @@ class RoccCommandRouterBoom(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
 
     val debug_perf_ctrl_out = Output(UInt(5.W))
     val debug_perf_ctrl_in = Input(UInt(5.W))
+    /* Runtime Configurable Mapping */
+    val checker_mask_out = Output(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))
+    val checker_mask_in  = Input(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))
+    val checker_mask_we_out = Output(UInt(1.W))
+    val checker_mask_we_in  = Input(UInt(1.W))
+    val checker_state_sel_out = Output(UInt(4.W))
+    val checker_state_sel_in  = Input(UInt(4.W))
+    val checker_state_data_in  = Input(UInt(64.W))
+    val checker_state_data_out = Output(UInt(64.W))
+    val checker_mask_rd_out = Output(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))
+    val checker_mask_rd_in  = Input(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))
     //===== GuardianCouncil Function: End   ====//
   }
 
@@ -744,12 +764,6 @@ class RoccCommandRouterBoom(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
   io.debug_bp_reset := io.debug_bp_reset_in
   io.bigcore_comp_out := io.bigcore_comp
   io.csr_counter_out := io.csr_counter_in
-  io.store_commit_count_out := io.store_commit_count_in
-  io.store_commit_cycle_sum_out := io.store_commit_cycle_sum_in
-  dontTouch(io.store_commit_count_in)
-  dontTouch(io.store_commit_count_out)
-  dontTouch(io.store_commit_cycle_sum_in)
-  dontTouch(io.store_commit_cycle_sum_out)
 
   io.agg_packet_out := io.agg_packet_in
   io.agg_core_status_out := io.agg_core_status_in
@@ -767,6 +781,12 @@ class RoccCommandRouterBoom(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
   io.core_trace_out := io.core_trace_in
 
   io.debug_perf_ctrl_out := io.debug_perf_ctrl_in
+  /* Runtime Configurable Mapping */
+  io.checker_mask_out := io.checker_mask_in
+  io.checker_mask_we_out := io.checker_mask_we_in
+  io.checker_state_sel_out := io.checker_state_sel_in
+  io.checker_state_data_out := io.checker_state_data_in
+  io.checker_mask_rd_out := io.checker_mask_rd_in
   //===== GuardianCouncil Function: End   ====//
   assert(PopCount(cmdReadys) <= 1.U,
     "Custom opcode matched for more than one accelerator")

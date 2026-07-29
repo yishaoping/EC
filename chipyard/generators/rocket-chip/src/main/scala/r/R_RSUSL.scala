@@ -4,7 +4,6 @@ import chisel3._
 import chisel3.util._
 import chisel3.experimental.{BaseModule}
 import freechips.rocketchip.guardiancouncil._
-import freechips.rocketchip.npu.RegFile
 import freechips.rocketchip.rocket.RegFileshadow
 
 case class R_RSUSLParams(

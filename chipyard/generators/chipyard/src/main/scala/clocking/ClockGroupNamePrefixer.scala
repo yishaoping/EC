@@ -2,7 +2,7 @@ package chipyard.clocking
 
 import chisel3._
 
-import freechips.rocketchip.config.{Parameters, Config, Field}
+import org.chipsalliance.cde.config.{Parameters, Config, Field}
 import freechips.rocketchip.diplomacy._
 import freechips.rocketchip.prci._
 
@@ -74,7 +74,10 @@ object ClockGroupFrequencySpecifier {
         case Some(cp) =>
           println(s"Clock ${clock.name.get}: using diplomatically specified frequency of ${cp.freqMHz}.")
           Some(cp)
-        case None => Some(ClockParameters(clockFreq))
+        // case None => Some(ClockParameters(clockFreq))
+        case None => 
+          println(s"Clock ${clock.name.get}: using specified frequency of ${clockFreq}.")
+          Some(ClockParameters(clockFreq))
       })
     }
 
