@@ -1,30 +1,26 @@
-/**
- * @file spin_lock.h
- * @brief Minimal RV64A spin lock used to serialize multi-hart UART output.
- */
+#ifndef SPIN_LOCK_H
+#define SPIN_LOCK_H
 
-#ifndef TEST_SPIN_LOCK_H
-#define TEST_SPIN_LOCK_H
+extern int uart_lock;
 
 static inline void lock_acquire(int *lock)
 {
-    int previous = 1;
+    int temp0 = 1;
 
-    asm volatile(
-        "1:\n\t"
-        "amoswap.w.aq %0, %0, (%1)\n\t"
-        "bnez %0, 1b"
-        : "+r"(previous)
-        : "r"(lock)
-        : "memory");
+    __asm__(
+        "loop%=: "
+        "amoswap.w.aq %1, %1, (%0);"
+        "bnez %1,loop%="
+        :
+        : "r"(lock), "r"(temp0));
 }
 
 static inline void lock_release(int *lock)
 {
-    asm volatile("amoswap.w.rl zero, zero, (%0)"
-                 :
-                 : "r"(lock)
-                 : "memory");
+    __asm__(
+        "amoswap.w.rl x0, x0, (%0);"
+        :
+        : "r"(lock));
 }
 
-#endif /* TEST_SPIN_LOCK_H */
+#endif
