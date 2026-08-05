@@ -994,6 +994,30 @@ class NonBlockingDCacheModule(outer: NonBlockingDCache) extends HellaCacheModule
   val s2_nack = s2_nack_hit || s2_nack_victim || s2_nack_miss
   s2_valid_masked := s2_valid && !s2_nack && !io.cpu.s2_kill
 
+  // 六个流量计数器。s2_valid_masked 过滤 nack，s2_replay 过滤内部 refill
+  // 重放，因此每条核心请求只统计一次；此时地址已经是物理地址。
+  val store_out     = RegInit(0.U(64.W))
+  val store_cache   = RegInit(0.U(64.W))
+  val store_uncache = RegInit(0.U(64.W))
+  val load_out      = RegInit(0.U(64.W))
+  val load_cache    = RegInit(0.U(64.W))
+  val load_uncache  = RegInit(0.U(64.W))
+  io.traffic_counter := VecInit(Seq(store_out, store_cache, store_uncache,
+                                     load_out, load_cache, load_uncache))
+  val traffic_cacheable = edge.manager.supportsAcquireBFast(s2_req.addr, lgCacheBlockBytes.U)
+  val traffic_store = s2_valid_masked && !s2_replay && s2_req.cmd === M_XWR
+  val traffic_load  = s2_valid_masked && !s2_replay && s2_req.cmd === M_XRD
+  when (traffic_store) {
+    store_out := store_out + 1.U
+    when (traffic_cacheable) { store_cache := store_cache + 1.U }
+      .otherwise             { store_uncache := store_uncache + 1.U }
+  }
+  when (traffic_load) {
+    load_out := load_out + 1.U
+    when (traffic_cacheable) { load_cache := load_cache + 1.U }
+      .otherwise             { load_uncache := load_uncache + 1.U }
+  }
+
   val s2_recycle_ecc = (s2_valid || s2_replay) && s2_hit && s2_data_correctable
   val s2_recycle_next = RegInit(false.B)
   when (s1_valid || s1_replay) { s2_recycle_next := s2_recycle_ecc }

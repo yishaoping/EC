@@ -391,6 +391,7 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
     val (respArb, cmdRouter) = {
       val respArb = Module(new RRArbiter(new RoCCResponse()(outer.p), outer.roccs.size))
       val cmdRouter = Module(new RoccCommandRouterBoom(outer.roccs.map(_.opcodes))(outer.p))
+      cmdRouter.io.traffic_counter_in := outer.dcache.module.io.traffic_counter
       outer.roccs.zipWithIndex.foreach { case (rocc, i) =>
         ptwPorts ++= rocc.module.io.ptw
         rocc.module.io.cmd <> cmdRouter.io.out(i)
@@ -402,6 +403,7 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
 //===== GuardianCouncil Function: Start ====//
         rocc.module.io.RAW_cnt_in                    := 0.U
         rocc.module.io.csr_counter_in                := cmdRouter.io.csr_counter_out
+        rocc.module.io.traffic_counter_in             := cmdRouter.io.traffic_counter_out
         rocc.module.io.ghe_packet_in                 := cmdRouter.io.ghe_packet_in
         rocc.module.io.ghe_status_in                 := cmdRouter.io.ghe_status_in
         rocc.module.io.bigcore_comp                  := cmdRouter.io.bigcore_comp

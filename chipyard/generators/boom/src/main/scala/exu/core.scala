@@ -2030,10 +2030,12 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   when(!ic_master.io.ic_status(4).asBool){
     little_status4 := 0.U
   }
-  assert(!little_status1(16), "little core 1 has hung")
-  assert(!little_status2(16), "little core 2 has hung")
-  assert(!little_status3(16), "little core 3 has hung")
-  assert(!little_status4(16), "little core 4 has hung")
+  // Allow the 100 MHz checkers enough progress at the 300/100 MHz clock ratio.
+  val checkerHangWatchdogBit = 20
+  assert(!little_status1(checkerHangWatchdogBit), "little core 1 has hung")
+  assert(!little_status2(checkerHangWatchdogBit), "little core 2 has hung")
+  assert(!little_status3(checkerHangWatchdogBit), "little core 3 has hung")
+  assert(!little_status4(checkerHangWatchdogBit), "little core 4 has hung")
 
 
   val r_exception_record_2                         = RegInit(0.U(1.W))

@@ -26,7 +26,7 @@
 == 顶层配置、核数与时钟域
 
 当前协同校验系统的直接入口是 `chipyard.v1Config`。它位于
-`/home/gzh/EC/chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala:9-28`，而不是通用的 `LargeBoomAndRocketConfig`。配置按 hart ID 固定了一个 BOOM 大核和四个 Rocket checker：hart 0 为大核，hart 1--4 为小核。核数不是在 `v1Config` 中写成字面量，而是由 `GH_GlobalParams` 提供；该对象位于
+`/home/gzh/EC/chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala:9-28`。配置按 hart ID 固定了一个 BOOM 大核和四个 Rocket checker：hart 0 为大核，hart 1--4 为小核。核数不是在 `v1Config` 中写成字面量，而是由 `GH_GlobalParams` 提供；该对象位于
 `/home/gzh/EC/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_GlobalParams.scala:4-16`。
 
 #table(
@@ -198,30 +198,68 @@ ParaMedic 允许未经检查的 store 先进入主核私有 L1D，以便后续�
 
 == 对齐原则与实施层次
 
-建议把“贴近”分成三层，逐层验证，而不是一次把全部频率和容量改到论文数字。
+这里的“贴近”应首先理解为性能行为接近，而不是参数字符串相同。论文使用的是 ARMv8 gem5 模型，本项目使用 RISC-V BOOM/Rocket RTL；即使把频率、核数、ROB 或 cache 容量改成同样的数值，IPC、cache miss 代价和 checker 服务时间仍可能不同。因此先固定可复现的工作负载和基线，测出性能指标，再把核数、频率、队列和日志容量作为达到目标的手段。
 
 #table(
-  columns: (1.15fr, 2.1fr, 3.3fr),
+  columns: (1.25fr, 2.1fr, 3.2fr),
   inset: 5pt,
   stroke: 0.5pt + rgb("#c7cdd1"),
   table.header([*层次*], [*目标*], [*实现范围*]),
-  [A：拓扑对齐], [1 BOOM + 12 checker、hart ID、分配与 CDC 正确], [主要改 `GH_GlobalParams` 和顶层 Config；先保证 elaboration、boot、checker 使能和 packet 路由通过。],
-  [B：容量/时序对齐], [BOOM、L1、L2、日志和频率接近 Table I], [新增 BOOM/checker/cache Config fragment，并为无法表达的 predictor、L2 并发和 checker cache 拓扑补 RTL。],
+  [A：功能与拓扑对齐], [BOOM/checker 的 hart ID、分配、CDC 和 packet 路由正确], [先用当前 1+4、200/100 MHz 配置保证 elaboration、boot、checker 使能和错误注入流程通过；12 个 checker 只是扩展实验点。],
+  [B：性能等效], [在相同工作负载下控制 IPC、校验吞吐和检测延迟的相对差异], [采集 BOOM commit IPC、checker 有效 IPC、cache miss、packet/日志 occupancy、P50/P95/P99 检查延迟和大核停顿占比，再据此调整核数、频率、队列和 cache。],
   [C：纠错语义对齐], [未提交数据不离开 L1，可按 timestamp 回滚], [实现 undo log、ECC、L1 timestamp、eviction/Probe gate、MMIO barrier、AIMD checkpoint；这是 ParaMedic 正确性的核心。],
 )
 
-只完成 A/B 可以做吞吐与检测延迟对比，但不能称为 ParaMedic 式完整纠错系统；只有完成 C 后，才可验证回滚和“错误数据不逃逸”的性质。
+只完成 A/B 可以做吞吐与检测延迟对比，但不能称为 ParaMedic 式完整纠错系统；只有完成 C 后，才可验证回滚和“错误数据不逃逸”的性质。论文的 slowdown 可以作为参考结果，但不应在未完成 C 或未校准内存模型时直接宣称复现。
+
+== 性能等效指标与校准闭环
+
+每个配置点至少记录以下量，并同时给出无校验 BOOM 基线。大核 IPC 用测量区间内的提交指令数除以大核总周期数；checker IPC 用已验证的原程序指令数除以 checker 执行已分配 segment 的周期数，其中包含日志、CDC 和 cache stall。checker 没有任务时的空闲则由利用率 $eta$ 单独表示，不能把 Rocket 的理论单发射上限当成有效服务率。
+
+#table(
+  columns: (1.55fr, 2.25fr, 2.75fr),
+  inset: 5pt,
+  stroke: 0.5pt + rgb("#c7cdd1"),
+  table.header([*指标*], [*定义*], [*用于决策*]),
+  [BOOM commit IPC], [`committed_insts / core_cycles`], [判断主核是否因校验机制降速；与论文的 3-wide 不能直接等同。],
+  [checker 有效 IPC], [`verified_program_insts / assigned_segment_cycles`], [反映 Rocket 流水、分支、访存和长延迟指令的真实服务能力；不使用 checker 辅助代码的 raw retire 数。],
+  [checker 利用率 $eta$], [`checker_assigned_cycles / checker_wall_cycles`], [反映 segment 调度、负载不均和前序 timestamp 等待造成的空闲。],
+  [校验服务率], [$N_c times "IPC"_c times f_c times eta$], [决定增加 checker 还是提高 checker 频率；必须使用测得的 IPC 和利用率。],
+  [积压压力 $rho$], [$("IPC"_b times f_b) / (N_c times "IPC"_c times f_c times eta)$], [$rho < 1$ 才能长期清空队列；建议留出 10--20% 余量，而不是追求论文的频率比。],
+  [检查延迟], [BOOM commit/checkpoint 到 checker 完成的 wall-clock 周期，报告 P50/P95/P99], [限制错误暴露时间和未提交状态窗口；平均值不能替代尾延迟。],
+  [校验开销], [(校验模式运行时间 / 无校验基线时间) - 1，以及 BOOM 因 backpressure 停顿的周期占比], [与论文 slowdown 做相对比较；区分核 IPC 损失和 CDC/日志等待。],
+)
+
+推荐采用“测量--调参--复测”的闭环：先在当前 1+4 配置上测出 $"IPC_b"$、$"IPC_c"$、$eta$ 和 $rho$，再逐步增加 checker 或调整时钟，直到 $rho$ 稳定低于 1 且 P95 检查延迟不再因队列积压增长；最后才比较 cache、预测器和日志容量。所需 checker 数可按
+$N_c >= ("IPC_b" times f_b) / ("IPC_c" times f_c times eta times (1 - "margin"))$
+估算，其中 `margin` 取 0.1--0.2，并用实测结果验证。这个公式比直接复制论文的 12 个 checker 或 3.2/1 GHz 更适合当前 RTL。
+
+性能实验应至少包含下列配置点，除被扫描变量外，其余微结构和 workload 必须保持不变：
+
+#table(
+  columns: (1.1fr, 2.35fr, 3.15fr),
+  inset: 5pt,
+  stroke: 0.5pt + rgb("#c7cdd1"),
+  table.header([*配置点*], [*设置*], [*用途与判定*]),
+  [B0], [关闭校验框架的 BOOM], [得到 `IPC_base`、MPKI 和基线运行时间。],
+  [B1], [当前 1+4、200/100 MHz], [得到 `IPC_checked`、$"IPC_c"$、$eta$、$rho$、队列斜率和检查延迟，定位当前主要瓶颈。],
+  [S8 / S12], [保持 BOOM 和 checker 单核参数不变，仅扩展到 8/12 个 checker], [检查总服务率是否近似线性增长；若单 checker IPC 或总线效率下降，说明已经受互连/cache 限制。],
+  [F-sweep], [固定 checker 数，只扫描 checker 频率或大核/checker 周期比], [分离“核数不足”和“单核服务率不足”；选取满足 $rho <= 1 - "margin"$ 的最低资源点。],
+  [P-ref], [论文 Table I 的可实现参数组合], [只作为参考点；比较相对 slowdown、IPC loss 和尾延迟，不把参数相同视为复现成功。],
+)
+
+对固定指令轨迹，`IPC_loss = 1 - IPC_checked / IPC_base` 用于隔离微结构和校验停顿造成的周期损失；若配置点频率不同，还必须用实际运行时间计算论文采用的 slowdown。一个配置只有在 $rho <= 1 - "margin"$、长时间队列 occupancy 无上升趋势、P95/P99 检查延迟稳定，并且 BOOM backpressure 停顿占比可接受时，才算达到性能平衡；不能只看平均 IPC。
 
 == 核数、hart ID 与 GuardianCouncil 参数
 
-第一步把全局核数改为 13，保持一个大核，并保留 16-bit checker mask：
+不要把全局核数直接改为 13。先把当前 1+4 作为基线，测量不同负载下的 $"IPC_b"$、$"IPC_c"$、$eta$、$rho$ 和 P95 检查延迟；只有当 $rho >= 1$ 或日志长期满时，才按 1+8、1+12 的阶梯扩展。保留 16-bit checker mask，使这些规模都能在同一套 RTL 中切换。用于扩展实验的参数示例如下：
 
 ```scala
 object GH_GlobalParams {
-  val GH_NUM_CORES = 13          // 1 BOOM + 12 Rocket checker
+  val GH_NUM_CORES = 5           // 基线：1 BOOM + 4 Rocket checker
   val GH_NUM_BIG_CORES = 1
-  val GH_TOTAL_PACKETS = 2       // 先保持，后续按吞吐实验调节
-  val GH_TOTAL_INSTS = 5000      // 只对齐最大指令阈值，不代表 36 KiB 日志
+  val GH_TOTAL_PACKETS = 2       // 先由 packet lane 利用率决定是否增加
+  val GH_TOTAL_INSTS = 3970      // 基线阈值；上限 5000 是待校准变量
   val GH_WIDITH_PACKETS = 136
   val IF_THERE_IS_CDC = true
   val GH_CHECKER_MASK_WIDTH = 16
@@ -230,32 +268,32 @@ object GH_GlobalParams {
 
 修改位置是 `generators/rocket-chip/src/main/scala/guardiancouncil/GH_GlobalParams.scala`。顶层继续使用
 `WithNLargeBooms(GH_NUM_BIG_CORES, Some(0))` 和
-`WithNGCCheckers(GH_NUM_CORES-GH_NUM_BIG_CORES, Some(1))`，即可生成 hart 0 大核与 hart 1--12 checker。由于 GHM、GAGG、BaseTile 和 checker 状态中存在大量按 `GH_NUM_CORES` 展开的 `Vec`、拼接和索引，不能只修改 `v1Config` 的频率行；必须重新 elaboration，并检查所有硬编码目的编号和位宽。特别是 `GHM.scala:89-98` 的 packet 目的字段只有 4 bit，编号 1--12 可以容纳，但已经接近其结构上限。
+`WithNGCCheckers(GH_NUM_CORES-GH_NUM_BIG_CORES, Some(1))`，核数只作为性能扫描的自变量。由于 GHM、GAGG、BaseTile 和 checker 状态中存在大量按 `GH_NUM_CORES` 展开的 `Vec`、拼接和索引，每个扫描点都必须重新 elaboration，并检查所有硬编码目的编号和位宽。特别是 `GHM.scala:89-98` 的 packet 目的字段只有 4 bit，编号 1--12 可以容纳，但已经接近其结构上限。
 
 == 时钟配置
 
-若目标是复现实验比例而非真实流片频率，可为 hart 0 设置 3200 MHz、hart 1--12 设置 1000 MHz，GBUS 设置 1000 MHz。频率行应由循环式自定义 Config fragment 生成，避免在 `v1Config` 中复制 12 行。逻辑目标如下：
+不要把 3200 MHz、1000 MHz 或 3.2:1 的时钟比当成默认目标。先保持当前 200/100 MHz，使用同一 workload 扫描 checker 数量和频率，令实测 $rho$ 低于 1 并观察 IPC 和 P95 检查延迟是否达到平台稳定区；之后再把周期数归一化，与论文的相对 slowdown 和检查延迟比较。只有在需要研究频率敏感性或物理实现时，才增加下列独立时钟实验：
 
 ```scala
-new chipyard.config.WithTileFrequency(3200, Some(0)) ++
-// 对 hart 1..12 分别应用 WithTileFrequency(1000, Some(id))
-new chipyard.config.WithGCBusFrequency(1000) ++
+new chipyard.config.WithTileFrequency(200, Some(0)) ++
+// checker 频率按 rho 扫描结果设置，而不是固定为论文的 1000 MHz
+new chipyard.config.WithGCBusFrequency(100) ++
 new freechips.rocketchip.subsystem.WithAsynchronousRocketTiles(...) ++
 ```
 
-然而绝对 MHz 只对支持独立时钟的仿真/实现流程有意义。Verilator 的逻辑吞吐测试更适合先保持 200/100 MHz，同时把大核:checker 的周期比从当前 2:1 改为论文的 3.2:1；VCS/FPGA/ASIC 流程再验证真实时钟约束。还应修正 `WithAsynchronousRocketTiles`，让 `depth` 和 `sync` 真正传入 `AsynchronousCrossing(depth=..., sourceSync=..., sinkSync=...)`，否则修改调用参数不会产生硬件变化。
+绝对 MHz 只对支持独立时钟的仿真/实现流程有意义。Verilator 更应报告每条指令的周期、IPC 和 wall-clock 检查延迟；VCS/FPGA/ASIC 流程再验证真实时钟约束。还应修正 `WithAsynchronousRocketTiles`，让 `depth` 和 `sync` 真正传入 `AsynchronousCrossing(depth=..., sourceSync=..., sinkSync=...)`，否则修改调用参数不会产生硬件变化。
 
-SBUS、MBUS、L2 和外设不应机械地设为 3.2 GHz。论文只明确主核、checker 与 DRAM 频率，没有给出 Chipyard 总线频率。合理做法是先保持 128-bit SBUS 与独立 uncore 时钟，在性能模型中校准出 12-cycle L2 hit 和 DDR3 时延；物理实现阶段再以时序收敛为约束选择总线频率。
+SBUS、MBUS、L2 和外设不应机械地设为 3.2 GHz。论文只明确主核、checker 与 DRAM 频率，没有给出 Chipyard 总线频率。合理做法是先保留当前 64-bit SBUS 与独立 uncore 时钟作为基线；只有当总线利用率、仲裁等待和 checker IPC 显示互连饱和时，再增加 128-bit 对照点。在性能模型中应校准实际 L2 hit 和 DRAM 往返周期；物理实现阶段再以时序收敛为约束选择总线频率。
 
-== BOOM 参数对齐
+== BOOM 参数与 IPC 校准
 
-应新增一个 `WithNParaMedicBooms`，从 `WithNLargeBooms` 复制最小必要结构，并显式覆盖以下参数；不要直接改全局 Large BOOM preset，以免影响仓库其他 Config。
+BOOM 参数首先决定无校验基线的 IPC、MPKI 和 memory-level parallelism。下表中的论文数值应作为受控扫描点，而不是必须全部覆盖的默认目标。若需要做微结构敏感性实验，可新增 `WithNParaMedicBooms`，从 `WithNLargeBooms` 复制最小必要结构；不要直接改全局 Large BOOM preset，以免影响仓库其他 Config。
 
 #table(
   columns: (1.4fr, 1.25fr, 1.3fr, 2.4fr),
   inset: 5pt,
   stroke: 0.5pt + rgb("#c7cdd1"),
-  table.header([*参数*], [*当前*], [*目标*], [*设置方式/限制*]),
+  table.header([*参数*], [*当前*], [*论文参考值*], [*设置方式/限制*]),
   [decode/retire width], [3], [3], [保持 `decodeWidth=3`。],
   [ROB], [96], [40], [设置 `numRobEntries`；但当前 BOOM 要求 `numRobEntries % coreWidth == 0`，40 不能被 3 整除，故不能直接填 40。可选 42 作为最近合法值，或修改 ROB 行组织后精确实现 40。],
   [IQ], [16/32/24], [32 total], [论文只给总 IQ，BOOM 分 MEM/INT/FP。建议先保留 INT 32，并用 12/32/16 做近似；精确对齐需要先明确论文 32 是否全局共享。],
@@ -266,15 +304,15 @@ SBUS、MBUS、L2 和外设不应机械地设为 3.2 GHz。论文只明确主核�
 )
 
 当前 BOOM 的 `require(numRobEntries % coreWidth == 0)` 位于
-`generators/boom/src/main/scala/common/parameters.scala:281`。因此建议对性能比较同时报告“论文 40、实现近似 42”，不要无声地把 96 当成已对齐。
+`generators/boom/src/main/scala/common/parameters.scala:281`。因此敏感性实验可报告“论文 40、实现近似 42”，但应根据 `IPC_base`、分支 MPKI、L1 MPKI 和 $"IPC_b"/"IPC_c"$ 供需关系判断 42 是否比 96 更接近论文的性能行为，不能仅凭 entry 数下结论。
 
-分支预测应新增 `WithParaMedicTournamentBPD`。仓库已有 `TourneyBranchPredictorBank`、`BIMBranchPredictorBank`、`BTBBranchPredictorBank` 等组件，但当前 `WithTAGELBPD` 没有按论文的 local/global/chooser 容量组织它们。应构造 2048-entry local、8192-entry global、2048-entry chooser、2048-entry BTB，并把 RAS 设为 16。若不实现该组合，保留 TAGE-L 也可以完成校验框架实验，但必须将其标注为“非论文预测器”，因为预测准确率会改变主核 packet 产生的突发性和校验落后量。
+仓库已有 `TourneyBranchPredictorBank`、`BIMBranchPredictorBank`、`BTBBranchPredictorBank` 等组件，但当前 `WithTAGELBPD` 没有按论文的 local/global/chooser 容量组织它们。如果分支 MPKI 差异是影响 $"IPC_b"$ 和 packet 突发性的主因，再实现 `WithParaMedicTournamentBPD`，构造论文的 2048-entry local、8192-entry global、2048-entry chooser、2048-entry BTB，并把 RAS 设为 16。否则可以保留 TAGE-L，但必须标注为“非论文预测器”，并报告实际 MPKI。
 
-== 缓存与内存层次对齐
+== 缓存与内存性能校准
 
-大核 L1 可以直接改到 32 KiB、2-way：64-B line 下使用 256 sets × 2 ways。但 BOOM 当前前端含 `icacheParams.nSets <= 64` 的 alias 限制（`common/parameters.scala:229`），所以 ICache 不能直接设 256 sets。可采用以下两种实现：保持 64 sets × 8 ways 以匹配容量但不匹配相联度，或者修复 alias 处理后使用 256 × 2。DCache 可先使用 256 × 2、`nMSHRs=6`；ICache 将 `latency=1`、DCache 将命中流水校准为 2 cycles。这里必须通过 elaborated 参数和仿真波形确认实际 hit latency，不能只依据 Scala 字段名。
+缓存应按 I/D MPKI、命中延迟、miss latency、MSHR occupancy 和由 cache stall 导致的 IPC 损失校准。论文的 32 KiB、2-way 对应 64-B line 下的 256 sets × 2 ways，但 BOOM 当前前端含 `icacheParams.nSets <= 64` 的 alias 限制（`common/parameters.scala:229`），所以 ICache 不能直接设 256 sets。可以先保留 64 sets × 8 ways 作为容量等同点，再用 trace 或小型 cache sweep 判断相联度差异是否显著；只有差异显著时才修复 alias 处理并测试 256 × 2。DCache 的 256 × 2、`nMSHRs=6` 以及 ICache 1-cycle、DCache 2-cycle 也应作为对照点，通过仿真波形和计数器确认实际性能，不能只依据 Scala 字段名。
 
-共享 L2 可直接把容量与相联度改为：
+共享 L2 的论文参数对照点可以写为：
 
 ```scala
 new freechips.rocketchip.subsystem.WithNBanks(1) ++
@@ -286,15 +324,15 @@ new freechips.rocketchip.subsystem.WithInclusiveCache(
 new chipyard.config.WithSystemBusWidth(128) ++
 ```
 
-这能对齐 1 MiB、16-way 和配置中的外侧延迟常量，但不能自动得到“12-cycle L2 hit、16 MSHRs、stride prefetcher”。需要为 Inclusive Cache 建立可测的 hit-latency 基准，确认 `outerLatencyCycles` 的真实含义，并另行实现/配置足够的并发 tracker 和 stride prefetch。内存侧应接入 DRAMSim2、Ramulator 或等价时序模型，配置 DDR3-1600 11-11-11-28、800 MHz；当前 SimDRAM/harness 不能代表论文 DRAM。
+这能给出 1 MiB、16-way 和外侧延迟常量的参考配置，但不能自动得到“12-cycle L2 hit、16 MSHRs、stride prefetcher”。需要为 Inclusive Cache 建立可测的 hit-latency 基准，记录 L2 MPKI、tracker occupancy 和平均/尾部 miss latency，再判断是否需要增容、增加并发 tracker 或实现 stride prefetch。内存侧只有在 memory-bound workload 的 IPC 对 DRAM 延迟敏感时，才需要接入并校准 DRAMSim2、Ramulator 或等价 DDR3-1600 时序模型；当前 SimDRAM/harness 不能代表论文 DRAM。
 
 == checker 与日志层次对齐
 
-拓扑上先生成 12 个 Rocket checker，频率设为 1 GHz；微结构上再评估是否需要自定义 4-stage in-order 核。当前 Rocket 是单发射顺序核，功能上接近，但其阶段划分、FPU/VM、私有缓存均不匹配论文。为了减少 checker 单条指令延迟，可新增 `WithNParaMedicCheckers`：保留 GuardianCouncil 接口，按工作负载决定是否关闭 FPU/VM，显式设置乘除法 latency，并对长延迟指令做性能计数。
+当前 Rocket checker 是单发射顺序核，功能上接近论文的 in-order checker，但阶段划分、FPU/VM 和私有缓存均不匹配。先在 4 个 checker 上测量有效 IPC、每段服务周期和日志等待周期；只有当实测 checker 服务率不足以使 $rho < 1$ 时，才扩展到 8 或 12 个 checker，或提高 checker 时钟。可以新增 `WithNParaMedicCheckers` 保留 GuardianCouncil 接口，并按工作负载决定是否关闭 FPU/VM、设置乘除法 latency；这些选择应以 checker IPC 和 P95 服务时间为验收指标，而不是以“4-stage”名称相同为验收条件。
 
-论文的 checker cache 是“每核 2 KiB L0 ICache + 12 核共享 16 KiB L1”。当前每核 32 KiB ICache + 4 KiB DCache，且所有 L1 私有。仅修改 `ICacheParams` 无法形成共享 checker L1；建议先用每核 2 KiB ICache 近似 L0，例如 32 sets × 1 way × 64 B，然后在 checker cluster 与 SBUS 之间新增共享 16 KiB cache/scratchpad。若暂不实现共享 L1，应把私有 cache miss 和 SBUS 流量视为模型偏差。
+论文的 checker cache 是“每核 2 KiB L0 ICache + 12 核共享 16 KiB L1”。当前每核 32 KiB ICache + 4 KiB DCache，且所有 L1 私有。仅修改 `ICacheParams` 无法形成共享 checker L1；可把每核 2 KiB ICache（32 sets × 1 way × 64 B）作为性能扫描点。只有当 checker ICache MPKI、SBUS 请求和 $"IPC_c"$ 表明当前私有 cache 明显偏离目标时，再在 checker cluster 与 SBUS 之间新增共享 16 KiB cache/scratchpad。若暂不实现共享 L1，应把私有 cache miss 和 SBUS 流量视为模型偏差。
 
-日志必须独立实现 36 KiB，并按 12 个 checker 划分为 12 × 3 KiB。日志 entry 至少包括类型、virtual address、load/store data；用于纠错时还需 old value、地址 ECC、旧值 ECC、timestamp/segment ID。`GH_TOTAL_INSTS=5000` 只作为上限，实际 checkpoint length 由 AIMD 控制。应分别暴露以下可统计量：每段指令数、每段日志字节数、等待 checker 的周期数、日志 full 次数、提前 checkpoint 次数和完成乱序但等待前序 timestamp 的周期数。
+日志容量也不应先验地固定为 36 KiB。应先按实际 entry 宽度和 load/store 比例测量日志 bytes per instruction、分区 high-watermark、日志 full 次数和提前 checkpoint 次数，再决定总容量及分区数。论文的 36 KiB（12 个 3 KiB 分区）作为对照点保留；`GH_TOTAL_INSTS=5000` 仅是 segment 最大指令数，实际 checkpoint length 由 AIMD 和 P95 检查延迟共同校准。日志 entry 至少包括类型、virtual address、load/store data；用于纠错时还需 old value、地址 ECC、旧值 ECC、timestamp/segment ID。
 
 == 必须补充的正确性机制
 
@@ -312,11 +350,15 @@ new chipyard.config.WithSystemBusWidth(128) ++
 
 == 吞吐供需不平衡
 
-校验是否积压首先取决于大核产生工作的速率与 checker 消化工作的速率。可用近似指标
+校验是否积压首先取决于大核产生工作的速率与 checker 消化工作的速率。不要用提交宽度代替实际 IPC，应使用测得的提交/验证指令数定义
 
-$ R = (W_b times f_b) / (N_c times "IPC"_c times f_c) $
+$ rho = ("IPC"_b times f_b) / (N_c times "IPC"_c times f_c times eta) $
 
-描述压力，其中 $W_b$ 是大核提交宽度，$f_b$ 是大核频率，$N_c$ 是 checker 数，$"IPC"_c$ 与 $f_c$ 分别是单个 checker 的有效 IPC 和频率。$R$ 越大，日志、GHM 队列和待校验窗口越容易持续增长。忽略 cache miss 和长延迟指令时，当前配置的分子约为 `3 × 200`，分母上限约为 `4 × 1 × 100`，即 $R approx 1.5$；论文配置为 `3 × 3.2 / (12 × 1 × 1.0)≈0.8`。这说明当前 4 个 100 MHz checker 即使满速也可能落后于 BOOM，而论文用 12 个 checker 提供了更大的并行余量。真实 $"IPC"_c < 1$ 时压力还会进一步增大。
+其中 $"IPC"_b$ 是 BOOM 的实际 commit IPC，$"IPC"_c$ 是单个 checker 执行已分配 segment 时的有效验证 IPC，$eta$ 是 checker 平均利用率，$f_b/f_c$ 是各自时钟，$N_c$ 是 checker 数。$rho < 1$ 只表示长期平均服务能力足够；还要通过队列 occupancy 和 P95 检查延迟确认短时突发不会造成持续 backpressure。可以用
+$N_c >= ("IPC"_b times f_b) / ("IPC"_c times f_c times eta times (1 - "margin"))$
+估算最小核数，`margin` 建议为 0.1--0.2。
+
+例如，假设实测大核 IPC 为 1.8、checker IPC 为 0.65，并暂按理想利用率 $eta=1$ 计算，当前 4 个 checker 和 200/100 MHz 的 $rho$ 约为 1.38；实际 $eta < 1$ 时压力更大。此时直接把频率改成论文数值并不能说明性能已对齐，应该先扩展 checker 或降低大核产生速率，再观察 IPC 和尾延迟是否进入稳定区。论文的 `3 × 3.2 / (12 × 1 × 1.0)` 只能作为无 stall 的粗略上界，不能替代 RTL 实测值。
 
 直接导致 $"IPC"_c$ 降低的因素包括 checker 的 load/use hazard、分支误预测、乘除法和浮点长延迟、日志数据未到齐、共享 cache miss、TLB miss，以及 checker 在 checkpoint 边界保存/比较寄存器状态。仅提高 checker 数量也可能因共享总线和调度争用而收益递减。
 
@@ -337,11 +379,11 @@ $ R = (W_b times f_b) / (N_c times "IPC"_c times f_c) $
 
 == CDC、时钟与互连瓶颈
 
-当前 checker tile 与 SBUS、GHM packet 路径均跨 200/100 MHz 时钟域。同步级数会加入固定延迟，异步 FIFO 的读写指针同步会让 ready/valid 反馈滞后；频率差使 200 MHz 大核产生的突发在 100 MHz 域排队。若按论文设置 3.2/1.0 GHz，周期比扩大为 3.2:1，必须依靠 12 路 checker 并行吸收，而不能只扩大单个 FIFO。
+当前 checker tile 与 SBUS、GHM packet 路径均跨 200/100 MHz 时钟域。同步级数会加入固定延迟，异步 FIFO 的读写指针同步会让 ready/valid 反馈滞后；频率差使大核产生的突发在 checker 域排队。应把 CDC 延迟计入 checker wall-clock 服务时间和 $rho$，通过 occupancy、full、empty 和 head wait 计数判断瓶颈；不能根据论文的 3.2/1.0 GHz 比例直接推断必须使用 12 路 checker。
 
 `WithAsynchronousRocketTiles(depth, sync)` 忽略形参会造成一个隐蔽瓶颈：配置文件看似加深队列，实际 elaborated hardware 仍使用默认值。应把 crossing 参数修正后，从 elaboration 的 `*.dts`、FIRRTL/MLIR 注解或生成 Verilog 中反查队列深度和同步级数。
 
-从 4 个扩到 12 个 checker 会同时增加 SBUS master 数、GHM/GAGG 端口数、状态归并扇入、广播控制扇出和中断/时钟树负载。若所有 checker 同时取指 miss 或访问共享日志，64-bit SBUS 会成为热点。建议把 SBUS 改为 128 bit、增加 checker cluster 本地共享 L1，并对 GHM 的目的选择和状态归并插入流水级；否则 checker 数量增加可能换来更长的互连等待。
+从 4 个扩到 12 个 checker 会同时增加 SBUS master 数、GHM/GAGG 端口数、状态归并扇入、广播控制扇出和中断/时钟树负载。若所有 checker 同时取指 miss 或访问共享日志，64-bit SBUS 会成为热点。只有当实测 checker IPC 随核数增加明显下降、或 SBUS 利用率接近饱和时，才考虑改为 128 bit、增加 checker cluster 本地共享 L1，或对 GHM 的目的选择和状态归并插入流水级；否则扩核可能换来更长的互连等待。
 
 == 缓存、coherence 与内存瓶颈
 
@@ -355,7 +397,7 @@ checker cache 拓扑也会改变结果。当前每核 32 KiB ICache 的命中率
 
 == 大核微结构与工作负载因素
 
-当前 96-entry ROB、24-entry LDQ/STQ 比论文 40/16/16 更大。它们提高大核隐藏延迟和制造在途工作的能力，也让 checker 落后时累积更多尚未验证的指令、store 与 checkpoint 状态。若大核继续高速前进，错误从产生到被 checker 定位的 wall-clock latency 会增加；若日志或缓存先满，则体现为大核 backpressure 和性能下降。
+当前 96-entry ROB、24-entry LDQ/STQ 比论文 40/16/16 更大。它们可能提高无校验 BOOM IPC，但也可能在 checker 落后时累积更多尚未验证的指令、store 与 checkpoint 状态。应同时报告无校验和有校验 IPC、最大未验证指令数、检查延迟及大核停顿占比；只有当 ROB/LSQ 调整使这些性能指标更接近目标，才有理由修改容量。不能因为论文写成 40/16/16 就忽略 BOOM 的 3-wide 行组织约束。
 
 分支预测器差异同样会干扰对比。TAGE-L 与论文 tournament 的误预测率不同，误预测会清空大核错误路径、改变有效提交速率及 packet 突发；checker 自身的分支、mul/div、FP 和访存组合则决定 segment 服务时间方差。方差越大，分区式调度越容易出现短任务完成但等待长任务前序 timestamp 的情况。
 
@@ -375,4 +417,4 @@ checker cache 拓扑也会改变结果。当前每核 32 KiB ICache 的命中率
   [内存时序], [设置 MBUS 频率和端口。], [接入并校准 DDR3-1600 timing model；区分总线 MHz 与 DRAM 设备 MHz。],
 )
 
-配置优化的优先顺序应是：先解决 checker 总吞吐不足和 packet backpressure，再实现日志/AIMD 与 L1 timestamp 正确性，随后校准 checker cache、L2 和 DRAM，最后微调预测器和精确流水周期。否则，较深的队列或更大的日志只会把积压隐藏得更久，并不会降低最终校验延迟。
+配置优化的优先顺序应是：先建立无校验/有校验的 IPC、校验服务率、$rho$、P95/P99 检查延迟和停顿占比基线；再用 checker 数量、频率和 packet 并行度消除长期积压；随后实现日志/AIMD 与 L1 timestamp 正确性；最后校准 checker cache、L2、DRAM、预测器和精确流水周期。较深的队列或更大的日志只有在这些指标证明需要时才增加，否则只会把积压隐藏得更久。

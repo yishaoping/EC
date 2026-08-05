@@ -75,6 +75,8 @@ class BoomDCacheReq(implicit p: Parameters) extends BoomBundle()(p)
   val addr  = UInt(coreMaxAddrBits.W)
   val data  = Bits(coreDataBits.W)
   val is_hella = Bool() // Is this the hellacache req? If so this is not tracked in LDQ or STQ
+  // 由 LSU 队列项携带，防止同一条指令在 nack/retry 时重复统计。
+  val traffic_seen = Bool()
 }
 
 class BoomDCacheResp(implicit p: Parameters) extends BoomBundle()(p)
@@ -190,6 +192,8 @@ class LDQEntry(implicit p: Parameters) extends BoomBundle()(p)
   val succeeded           = Bool()
   val order_fail          = Bool()
   val observed            = Bool()
+  // 第一次被 DCache 接收后置位，队列项回收后随新项清零。
+  val traffic_seen        = Bool()
 
   val st_dep_mask         = UInt(numStqEntries.W) // list of stores older than us
   val youngest_stq_idx    = UInt(stqAddrSz.W) // index of the oldest store younger than us
@@ -210,6 +214,8 @@ class STQEntry(implicit p: Parameters) extends BoomBundle()(p)
 
   val committed           = Bool() // committed by ROB
   val succeeded           = Bool() // D$ has ack'd this, we don't need to maintain this anymore
+  // 第一次被 DCache 接收后置位，队列项回收后随新项清零。
+  val traffic_seen        = Bool()
 
   val debug_wb_data       = UInt(xLen.W)
 }
@@ -257,6 +263,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   val hella_data            = Reg(new rocket.HellaCacheWriteData)
   val hella_paddr           = Reg(UInt(paddrBits.W))
   val hella_xcpt            = Reg(new rocket.HellaCacheExceptions)
+  // HellaCache 请求不占用 LDQ/STQ，用独立位抑制其重发重复计数。
+  val hella_traffic_seen    = RegInit(false.B)
 
 
   val dtlb = Module(new NBDTLB(
@@ -328,6 +336,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       ldq(ld_enq_idx).bits.order_fail      := false.B
       ldq(ld_enq_idx).bits.observed        := false.B
       ldq(ld_enq_idx).bits.forward_std_val := false.B
+      ldq(ld_enq_idx).bits.traffic_seen     := false.B
 
       assert (ld_enq_idx === io.core.dis_uops(w).bits.ldq_idx, "[lsu] mismatch enq load tag.")
       assert (!ldq(ld_enq_idx).valid, "[lsu] Enqueuing uop is overwriting ldq entries")
@@ -341,6 +350,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       stq(st_enq_idx).bits.data.valid := false.B
       stq(st_enq_idx).bits.committed  := false.B
       stq(st_enq_idx).bits.succeeded  := false.B
+      stq(st_enq_idx).bits.traffic_seen := false.B
 
       assert (st_enq_idx === io.core.dis_uops(w).bits.stq_idx, "[lsu] mismatch enq store tag.")
       assert (!stq(st_enq_idx).valid, "[lsu] Enqueuing uop is overwriting stq entries")
@@ -778,6 +788,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     dmem_req(w).bits.addr  := 0.U
     dmem_req(w).bits.data  := 0.U
     dmem_req(w).bits.is_hella := false.B
+    dmem_req(w).bits.traffic_seen := false.B
 
     io.dmem.s1_kill(w) := false.B
 
@@ -785,6 +796,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       dmem_req(w).valid      := !exe_tlb_miss(w) && !exe_tlb_uncacheable(w)
       dmem_req(w).bits.addr  := exe_tlb_paddr(w)
       dmem_req(w).bits.uop   := exe_tlb_uop(w)
+      dmem_req(w).bits.traffic_seen := ldq_incoming_e(w).bits.traffic_seen
 
       s0_executing_loads(ldq_incoming_idx(w)) := dmem_req_fire(w)
       assert(!ldq_incoming_e(w).bits.executed)
@@ -792,6 +804,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       dmem_req(w).valid      := !exe_tlb_miss(w) && !exe_tlb_uncacheable(w)
       dmem_req(w).bits.addr  := exe_tlb_paddr(w)
       dmem_req(w).bits.uop   := exe_tlb_uop(w)
+      dmem_req(w).bits.traffic_seen := ldq_retry_e.bits.traffic_seen
 
       s0_executing_loads(ldq_retry_idx) := dmem_req_fire(w)
       assert(!ldq_retry_e.bits.executed)
@@ -803,6 +816,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
                                     stq_commit_e.bits.data.bits,
                                     coreDataBytes)).data
       dmem_req(w).bits.uop      := stq_commit_e.bits.uop
+      dmem_req(w).bits.traffic_seen := stq_commit_e.bits.traffic_seen
 
       stq_execute_head                     := Mux(dmem_req_fire(w),
                                                 WrapInc(stq_execute_head, numStqEntries),
@@ -813,6 +827,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       dmem_req(w).valid      := true.B
       dmem_req(w).bits.addr  := ldq_wakeup_e.bits.addr.bits
       dmem_req(w).bits.uop   := ldq_wakeup_e.bits.uop
+      dmem_req(w).bits.traffic_seen := ldq_wakeup_e.bits.traffic_seen
 
       s0_executing_loads(ldq_wakeup_idx) := dmem_req_fire(w)
 
@@ -830,6 +845,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       dmem_req(w).bits.uop.mem_size   := hella_req.size
       dmem_req(w).bits.uop.mem_signed := hella_req.signed
       dmem_req(w).bits.is_hella       := true.B
+      dmem_req(w).bits.traffic_seen   := hella_traffic_seen
 
       hella_paddr := exe_tlb_paddr(w)
     }
@@ -846,6 +862,20 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       dmem_req(w).bits.uop.mem_size   := hella_req.size
       dmem_req(w).bits.uop.mem_signed := hella_req.signed
       dmem_req(w).bits.is_hella       := true.B
+      dmem_req(w).bits.traffic_seen   := hella_traffic_seen
+    }
+
+    // 只有 DCache 真正 fire 才把队列项标记为已统计；nack 后重发会复用该位。
+    when (dmem_req_fire(w)) {
+      when (dmem_req(w).bits.uop.uses_ldq) {
+        ldq(dmem_req(w).bits.uop.ldq_idx).bits.traffic_seen := true.B
+      }
+      when (dmem_req(w).bits.uop.uses_stq) {
+        stq(dmem_req(w).bits.uop.stq_idx).bits.traffic_seen := true.B
+      }
+      when (dmem_req(w).bits.is_hella) {
+        hella_traffic_seen := true.B
+      }
     }
 
     //-------------------------------------------------------------
@@ -1436,6 +1466,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         stq(i).bits.addr.valid := false.B
         stq(i).bits.vaddr.valid:= false.B
         stq(i).bits.data.valid := false.B
+        stq(i).bits.traffic_seen := false.B
         st_brkilled_mask(i)    := true.B
       }
     }
@@ -1455,6 +1486,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         ldq(i).valid           := false.B
         ldq(i).bits.addr.valid := false.B
         ldq(i).bits.vaddr.valid:= false.B
+        ldq(i).bits.traffic_seen := false.B
       }
     }
   }
@@ -1494,6 +1526,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       ldq(idx).bits.succeeded        := false.B
       ldq(idx).bits.order_fail       := false.B
       ldq(idx).bits.forward_std_val  := false.B
+      ldq(idx).bits.traffic_seen     := false.B
 
     }
 
@@ -1538,6 +1571,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     stq(stq_head).bits.data.valid := false.B
     stq(stq_head).bits.succeeded  := false.B
     stq(stq_head).bits.committed  := false.B
+    stq(stq_head).bits.traffic_seen := false.B
 
     stq_head := WrapInc(stq_head, numStqEntries)
     when (stq(stq_head).bits.uop.is_fence)
@@ -1558,6 +1592,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     io.hellacache.req.ready := true.B
     when (io.hellacache.req.fire) {
       hella_req   := io.hellacache.req.bits
+      hella_traffic_seen := false.B
       hella_state := h_s1
     }
   } .elsewhen (hella_state === h_s1) {
@@ -1642,6 +1677,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         stq(i).bits.vaddr.valid:= false.B
         stq(i).bits.data.valid := false.B
         stq(i).bits.uop        := NullMicroOp
+        stq(i).bits.traffic_seen := false.B
       }
     }
       .otherwise // exception
@@ -1656,6 +1692,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
           stq(i).bits.addr.valid := false.B
           stq(i).bits.vaddr.valid:= false.B
           stq(i).bits.data.valid := false.B
+          stq(i).bits.traffic_seen := false.B
           st_exc_killed_mask(i)  := true.B
         }
       }
@@ -1667,6 +1704,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       ldq(i).bits.addr.valid := false.B
       ldq(i).bits.vaddr.valid:= false.B
       ldq(i).bits.executed   := false.B
+      ldq(i).bits.traffic_seen := false.B
     }
   }
 

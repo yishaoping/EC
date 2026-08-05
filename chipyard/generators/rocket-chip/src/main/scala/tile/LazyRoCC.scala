@@ -50,6 +50,7 @@ class RoCCCoreIO(implicit p: Parameters) extends CoreBundle()(p) {
  //===== GuardianCouncil Function: Start ====//
   val RAW_cnt_in = Input(UInt(32.W))
   val csr_counter_in = Input(Vec(84, UInt(32.W)))
+  val traffic_counter_in = Input(Vec(6, UInt(64.W)))
   val ghe_packet_in = Input(UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W))
   val ghe_status_in = Input(UInt(32.W))
   val bigcore_comp  = Input(UInt(3.W))
@@ -147,6 +148,7 @@ trait HasLazyRoCCModule extends CanHavePTWModule
   val (respArb, cmdRouter) = if(outer.roccs.nonEmpty) {
     val respArb = Module(new RRArbiter(new RoCCResponse()(outer.p), outer.roccs.size))
     val cmdRouter = Module(new RoccCommandRouter(outer.roccs.map(_.opcodes))(outer.p))
+    cmdRouter.io.traffic_counter_in := outer.dcache.module.io.traffic_counter
     outer.roccs.zipWithIndex.foreach { case (rocc, i) =>
       rocc.module.io.ptw ++=: ptwPorts
       rocc.module.io.cmd <> cmdRouter.io.out(i)
@@ -158,6 +160,7 @@ trait HasLazyRoCCModule extends CanHavePTWModule
       for(i <- 0 until 84){
         rocc.module.io.csr_counter_in(i) := 0.U
       }
+      rocc.module.io.traffic_counter_in := cmdRouter.io.traffic_counter_out
       rocc.module.io.RAW_cnt_in := cmdRouter.io.RAW_cnt_out
       rocc.module.io.ghe_packet_in := cmdRouter.io.ghe_packet_in
       rocc.module.io.ghe_status_in := cmdRouter.io.ghe_status_in
@@ -519,6 +522,8 @@ class RoccCommandRouter(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
  //===== GuardianCouncil Function: Start ====//
     val RAW_cnt_in = Input(UInt(32.W))
     val RAW_cnt_out = Output(UInt(32.W))
+    val traffic_counter_in = Input(Vec(6, UInt(64.W)))
+    val traffic_counter_out = Output(Vec(6, UInt(64.W)))
     val ghe_packet_in = Input(UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W))
     val ghe_status_in = Input(UInt(32.W))
     val bigcore_comp  = Input(UInt(3.W))
@@ -611,6 +616,7 @@ class RoccCommandRouter(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
   io.busy := cmd.valid
 //===== GuardianCouncil Function: Start ====//
   io.RAW_cnt_out := io.RAW_cnt_in
+  io.traffic_counter_out := io.traffic_counter_in
   io.ghe_event_out := io.ghe_event_in
   io.ght_mask_out := io.ght_mask_in
   io.ght_status_out := io.ght_status_in
@@ -664,6 +670,8 @@ class RoccCommandRouterBoom(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
     //===== GuardianCouncil Function: Start ====//
     val csr_counter_in = Input(Vec(84, UInt(32.W)))
     val csr_counter_out = Output(Vec(84, UInt(32.W)))
+    val traffic_counter_in = Input(Vec(6, UInt(64.W)))
+    val traffic_counter_out = Output(Vec(6, UInt(64.W)))
     val ghe_packet_in = Input(UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W))
     val ghe_status_in = Input(UInt(32.W))
     val bigcore_comp  = Input(UInt(3.W))
@@ -764,6 +772,7 @@ class RoccCommandRouterBoom(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
   io.debug_bp_reset := io.debug_bp_reset_in
   io.bigcore_comp_out := io.bigcore_comp
   io.csr_counter_out := io.csr_counter_in
+  io.traffic_counter_out := io.traffic_counter_in
 
   io.agg_packet_out := io.agg_packet_in
   io.agg_core_status_out := io.agg_core_status_in

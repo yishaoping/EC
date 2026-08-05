@@ -12,9 +12,15 @@
 #include "test_config.h"
 
 #define TOTAL_CSR_PERF 84
+#define TRAFFIC_COUNTERS 6
+#define NUM_HARTS (NUM_CHECKERS + 1)
 
 uint64_t csr_read_s[TOTAL_CSR_PERF];
 uint64_t csr_read_e[TOTAL_CSR_PERF];
+/* 每个 hart 保存自己的六个流量计数器，hart 0 负责最后统一打印。 */
+volatile uint64_t hart_traffic[NUM_HARTS][TRAFFIC_COUNTERS];
+/* hart 1--4 完成统计读取后分别置位，避免改动原有 GHT 等待逻辑。 */
+volatile uint32_t hart_traffic_ready[NUM_HARTS];
 
 int main(void)
 {
@@ -67,7 +73,7 @@ int main(void)
     double j = a + b + c + d + e + f + g + h + i;
 
     if ((j * Hart_id) == 0) {
-        for (int i; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             e = i * 1.2 + 3;
             b = j + 1.7;
             a = (e + b) * 2.2;
@@ -77,66 +83,57 @@ int main(void)
             a = a + CSR;
             __asm__ volatile("ecall");
             if (a > Hart_id) {
+                /* Keep the register-carrying microbenchmark in one asm block. */
                 __asm__ volatile(
-                    "li   t0,   0x81000000;"
-                    "li   t1,   0x55552000;"
-                    "li   t2,   0x55553000;"
-                    "j    .loop_store1;");
-
-                __asm__ volatile(
-                    ".loop_store1:"
-                    "li   a5,   0x810008FF;"
-                    "lr.w a0,   (t0);"
-                    "sc.w a0,   t1,   (t0);"
-                    "sd         t1,   (t0);"
-                    "sd         t2,   16(t0);"
-                    "sd         t1,   32(t0);"
-                    "sd         t2,   64(t0);"
-                    "divw       t3,   t1, t2;"
-                    "addi t0,   t0,   0x10;"
-                    "frflags    a3;"
-                    "fsflags    a3;"
-                    "csrrc  a3, fflags, a3;"
-                    "csrrwi a3, frm, 0x3;"
-                    "csrrsi a3, fflags, 0x1F;"
-                    "csrrci a3, fflags, 0x0F;"
-                    "blt  t0,   a5,  .loop_store1;");
-
-                __asm__ volatile(
-                    "li   t0,   0x81000000;"
-                    "j    .loop_load1;");
-
-                __asm__ volatile(
-                    ".loop_load1:"
-                    "li   a5,   0x810008FF;"
-                    "lr.w a0,   (t0);"
-                    "sc.w a0,   t1,   (t0);"
-                    "ld         t1,   (t0);"
-                    "ld         t2,   16(t0);"
-                    "ld         t1,   32(t0);"
-                    "ld         t2,   64(t0);"
-                    "mulw       t3,   t1, t2;"
-                    "divw       t3,   t1, t2;"
-                    "frflags    a3;"
-                    "li         a3,   0x55;"
-                    "fsflags    a3;"
-                    "divu       t2,t2,t1;"
-                    "addi t0,   t0,   0x10;"
-                    "blt  t0,   a5,  .loop_load1;");
-
-                __asm__ volatile(
-                    "li   t0,   0x81000000;"
-                    "li   t1,   0x81000100;"
-                    "li   t2,   1;"
-                    "j    .loop_add1;");
-
-                __asm__ volatile(
-                    ".loop_add1:"
-                    "li   a5,   0x810008FF;"
-                    "amoadd.w.aq t1,   t2, (t0);"
-                    "addi t2,   t2,   0x01;"
-                    "addi t0,   t0,   0x10;"
-                    "blt  t0,   a5,  .loop_add1;");
+                    "li   t0, 0x81000000\n"
+                    "li   t1, 0x55552000\n"
+                    "li   t2, 0x55553000\n"
+                    "1:\n"
+                    "li   a5, 0x810008FF\n"
+                    "lr.w a0, (t0)\n"
+                    "sc.w a0, t1, (t0)\n"
+                    "sd   t1, 0(t0)\n"
+                    "sd   t2, 16(t0)\n"
+                    "sd   t1, 32(t0)\n"
+                    "sd   t2, 64(t0)\n"
+                    "divw t3, t1, t2\n"
+                    "addi t0, t0, 0x10\n"
+                    "frflags a3\n"
+                    "fsflags a3\n"
+                    "csrrc a3, fflags, a3\n"
+                    "csrrwi a3, frm, 0x3\n"
+                    "csrrsi a3, fflags, 0x1F\n"
+                    "csrrci a3, fflags, 0x0F\n"
+                    "blt  t0, a5, 1b\n"
+                    "li   t0, 0x81000000\n"
+                    "2:\n"
+                    "li   a5, 0x810008FF\n"
+                    "lr.w a0, (t0)\n"
+                    "sc.w a0, t1, (t0)\n"
+                    "ld   t1, 0(t0)\n"
+                    "ld   t2, 16(t0)\n"
+                    "ld   t1, 32(t0)\n"
+                    "ld   t2, 64(t0)\n"
+                    "mulw t3, t1, t2\n"
+                    "divw t3, t1, t2\n"
+                    "frflags a3\n"
+                    "li   a3, 0x55\n"
+                    "fsflags a3\n"
+                    "divu t2, t2, t1\n"
+                    "addi t0, t0, 0x10\n"
+                    "blt  t0, a5, 2b\n"
+                    "li   t0, 0x81000000\n"
+                    "li   t1, 0x81000100\n"
+                    "li   t2, 1\n"
+                    "3:\n"
+                    "li   a5, 0x810008FF\n"
+                    "amoadd.w.aq t1, t2, (t0)\n"
+                    "addi t2, t2, 0x01\n"
+                    "addi t0, t0, 0x10\n"
+                    "blt  t0, a5, 3b\n"
+                    :
+                    :
+                    : "a0", "a3", "a5", "t0", "t1", "t2", "t3", "memory");
             }
         }
     }
@@ -178,6 +175,16 @@ int main(void)
 
     uint64_t end_cpu = read_cycles();
 
+    /* hart 0 直接把本地六个流量计数器写入自己的统计行。 */
+    for (int counter = 0; counter < TRAFFIC_COUNTERS; counter++) {
+        hart_traffic[0][counter] = ghe_traffic_counter_read(counter);
+    }
+    /* GHT 同步完成后，再独立等待各 checker 的统计读取完成。 */
+    while (hart_traffic_ready[1] == 0 || hart_traffic_ready[2] == 0 ||
+           hart_traffic_ready[3] == 0 || hart_traffic_ready[4] == 0) {
+    }
+    __sync_synchronize();
+
     lock_acquire(&uart_lock);
     printf("CPU execution took %" PRIu64 " cycles\n", end_cpu - start_cpu);
     lock_release(&uart_lock);
@@ -185,6 +192,16 @@ int main(void)
     lock_acquire(&uart_lock);
     printf("Boom-Perf: CSR execution-inst = %" PRIu64 " \r\n",
            csr_read_e[0] - csr_read_s[0]);
+    for (int hart = 0; hart < NUM_HARTS; hart++) {
+        printf("hart%d traffic: store_out=%" PRIu64
+               " store_cache=%" PRIu64 " store_uncache=%" PRIu64 "\r\n",
+               hart, hart_traffic[hart][0], hart_traffic[hart][1],
+               hart_traffic[hart][2]);
+        printf("hart%d traffic: load_out=%" PRIu64
+               " load_cache=%" PRIu64 " load_uncache=%" PRIu64 "\r\n",
+               hart, hart_traffic[hart][3], hart_traffic[hart][4],
+               hart_traffic[hart][5]);
+    }
     printf("[Boom-C%lx]: Test is now completed. \r\n", Hart_id);
     lock_release(&uart_lock);
 

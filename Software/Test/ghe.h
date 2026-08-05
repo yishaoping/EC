@@ -93,6 +93,16 @@ static inline uint64_t ghe_csr_perf_read(int csr_index)
     return perf_val;
 }
 
+/* 读取当前 hart 所在 tile 的流量统计：索引 0--5 依次是
+ * STORE 总数、可缓存 STORE、不可缓存 STORE、LOAD 总数、
+ * 可缓存 LOAD、不可缓存 LOAD。 */
+static inline uint64_t ghe_traffic_counter_read(int counter_index)
+{
+    uint64_t value;
+    ROCC_INSTRUCTION_DS(1, value, counter_index, 0x7B);
+    return value;
+}
+
 static inline void ghe_set_checker_mask(uint64_t mask)
 {
     ROCC_INSTRUCTION_S(1, mask, 0x7D);

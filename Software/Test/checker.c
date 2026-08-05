@@ -51,11 +51,10 @@ int checker(int hart_id)
     while (ghe_checkght_status() != 0x02) {
     }
 
+    /* 先通知 GHT 当前 checker 已完成，避免统计读取阻塞完成同步。 */
     ghe_release();
     ght_unset_satp_priv();
 
-    while (1) {
-    }
-
+    /* 返回 secondary.c，由当前 hart 读取并保存本地流量统计。 */
     return 0;
 }

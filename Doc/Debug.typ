@@ -1,4 +1,5 @@
 
+结合/home/gzh/EC/chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.vcd和软硬件代码，不做仿真，分析问题。发现过程要可信的硬件信号和指令行为做支撑。
 
 = BOOM
 

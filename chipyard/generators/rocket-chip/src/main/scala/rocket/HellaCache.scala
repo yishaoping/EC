@@ -225,6 +225,8 @@ class HellaCacheBundle(val outer: HellaCache)(implicit p: Parameters) extends Co
   val cpu = Flipped((new HellaCacheIO))
   val ptw = new TLBPTWIO()
   val errors = new DCacheErrors
+  // Traffic counters: store/load requests split by cacheability.
+  val traffic_counter = Output(Vec(6, UInt(64.W)))
 }
 
 class HellaCacheModule(outer: HellaCache) extends LazyModuleImp(outer)

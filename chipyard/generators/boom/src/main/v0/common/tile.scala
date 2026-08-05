@@ -196,7 +196,7 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
   debug_gtimer := Mux(debug_gtimer_reset.asBool, 0.U, Mux((s_or_r === 1.U), Mux(debug_gtimer_tiny === 3.U, debug_gtimer + 1.U, debug_gtimer), 0.U))
 
 
-  //===== GuardianCouncil Function: Start ====//
+  //===== EC: Start =====//
   val gc_core_width                               = outer.boomParams.core.decodeWidth
   outer.clock_SRNode.bundle := clock
   outer.reset_SRNode.bundle := reset

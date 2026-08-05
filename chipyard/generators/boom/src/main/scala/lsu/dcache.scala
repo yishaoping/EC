@@ -409,6 +409,7 @@ class BoomNonBlockingDCache(staticIdForMetadataUseOnly: Int)(implicit p: Paramet
 class BoomDCacheBundle(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p) {
   val errors = new DCacheErrors
   val lsu   = Flipped(new LSUDMemIO)
+  val traffic_counter = Output(Vec(6, UInt(64.W)))
 }
 
 class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModuleImp(outer)
@@ -490,6 +491,37 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     dataReadArb.io.in(2).bits.valid(w)      := io.lsu.req.bits(w).valid
     dataReadArb.io.in(2).bits.req(w).addr   := io.lsu.req.bits(w).bits.addr
     dataReadArb.io.in(2).bits.req(w).way_en := ~0.U(nWays.W)
+  }
+
+  // 统计 BOOM LSU 的访存队列项：traffic_seen 已在 LSU 队列项中去重，
+  // 因此同一条指令因 nack/retry 再次进入 DCache 时不会重复加一。
+  val store_out     = RegInit(0.U(64.W))
+  val store_cache   = RegInit(0.U(64.W))
+  val store_uncache = RegInit(0.U(64.W))
+  val load_out      = RegInit(0.U(64.W))
+  val load_cache    = RegInit(0.U(64.W))
+  val load_uncache  = RegInit(0.U(64.W))
+  io.traffic_counter := VecInit(Seq(store_out, store_cache, store_uncache,
+                                     load_out, load_cache, load_uncache))
+  val traffic_store = VecInit((0 until memWidth).map(w =>
+    io.lsu.req.bits(w).valid && !io.lsu.req.bits(w).bits.traffic_seen &&
+      io.lsu.req.bits(w).bits.uop.mem_cmd === M_XWR))
+  val traffic_load = VecInit((0 until memWidth).map(w =>
+    io.lsu.req.bits(w).valid && !io.lsu.req.bits(w).bits.traffic_seen &&
+      io.lsu.req.bits(w).bits.uop.mem_cmd === M_XRD))
+  val traffic_store_cache = VecInit((0 until memWidth).map(w =>
+    traffic_store(w) && edge.manager.supportsAcquireBFast(
+      io.lsu.req.bits(w).bits.addr, lgCacheBlockBytes.U)))
+  val traffic_load_cache = VecInit((0 until memWidth).map(w =>
+    traffic_load(w) && edge.manager.supportsAcquireBFast(
+      io.lsu.req.bits(w).bits.addr, lgCacheBlockBytes.U)))
+  when (io.lsu.req.fire) {
+    store_out     := store_out + PopCount(traffic_store)
+    store_cache   := store_cache + PopCount(traffic_store_cache)
+    store_uncache := store_uncache + PopCount(traffic_store) - PopCount(traffic_store_cache)
+    load_out      := load_out + PopCount(traffic_load)
+    load_cache    := load_cache + PopCount(traffic_load_cache)
+    load_uncache  := load_uncache + PopCount(traffic_load) - PopCount(traffic_load_cache)
   }
 
   // ------------
