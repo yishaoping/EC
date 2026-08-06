@@ -2,7 +2,7 @@
 
 set -ex
 
-RDIR=$(git rev-parse --show-toplevel)
+RDIR=$(cd "$(dirname "$0")/.." && pwd)
 
 cd $RDIR
 

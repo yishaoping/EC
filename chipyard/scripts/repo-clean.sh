@@ -3,7 +3,7 @@
 set -e
 
 # this should be run from chipyard repo top
-RDIR=$(git rev-parse --show-toplevel)
+RDIR=$(cd "$(dirname "$0")/.." && pwd)
 
 rm -rf $RDIR/toolchains/libgloss/build.log
 rm -rf $RDIR/toolchains/riscv-tools/riscv-isa-sim/build.log

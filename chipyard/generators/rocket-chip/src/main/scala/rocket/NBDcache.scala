@@ -994,8 +994,8 @@ class NonBlockingDCacheModule(outer: NonBlockingDCache) extends HellaCacheModule
   val s2_nack = s2_nack_hit || s2_nack_victim || s2_nack_miss
   s2_valid_masked := s2_valid && !s2_nack && !io.cpu.s2_kill
 
-  // 六个流量计数器。s2_valid_masked 过滤 nack，s2_replay 过滤内部 refill
-  // 重放，因此每条核心请求只统计一次；此时地址已经是物理地址。
+  // 六个流量计数器只统计检查态请求。s2_valid_masked 过滤 nack，s2_replay
+  // 过滤内部 refill 重放，因此每条核心请求只统计一次；此时地址已经是物理地址。
   val store_out     = RegInit(0.U(64.W))
   val store_cache   = RegInit(0.U(64.W))
   val store_uncache = RegInit(0.U(64.W))
@@ -1005,8 +1005,11 @@ class NonBlockingDCacheModule(outer: NonBlockingDCache) extends HellaCacheModule
   io.traffic_counter := VecInit(Seq(store_out, store_cache, store_uncache,
                                      load_out, load_cache, load_uncache))
   val traffic_cacheable = edge.manager.supportsAcquireBFast(s2_req.addr, lgCacheBlockBytes.U)
-  val traffic_store = s2_valid_masked && !s2_replay && s2_req.cmd === M_XWR
-  val traffic_load  = s2_valid_masked && !s2_replay && s2_req.cmd === M_XRD
+  // 请求从 fire 依次进入 s1、s2，检查状态同步延迟两拍，避免切换边界误计数。
+  val s1_traffic_check_state = RegNext(io.traffic_check_state, false.B)
+  val s2_traffic_check_state = RegNext(s1_traffic_check_state, false.B)
+  val traffic_store = s2_valid_masked && s2_traffic_check_state && !s2_replay && s2_req.cmd === M_XWR
+  val traffic_load  = s2_valid_masked && s2_traffic_check_state && !s2_replay && s2_req.cmd === M_XRD
   when (traffic_store) {
     store_out := store_out + 1.U
     when (traffic_cacheable) { store_cache := store_cache + 1.U }

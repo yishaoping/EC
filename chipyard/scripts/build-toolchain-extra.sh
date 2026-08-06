@@ -4,7 +4,7 @@
 set -e
 set -o pipefail
 
-RDIR=$(git rev-parse --show-toplevel)
+RDIR=$(cd "$(dirname "$0")/.." && pwd)
 
 # get helpful utilities
 source $RDIR/scripts/utils.sh

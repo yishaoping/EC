@@ -402,7 +402,7 @@ class DCacheModule(outer: DCache) extends HellaCacheModule(outer) {
   val s2_valid_cached_miss = s2_valid_miss && !s2_uncached && !uncachedInFlight.asUInt.orR
   dontTouch(s2_valid_cached_miss)
 
-  // 六个流量计数器。s2_valid_masked 只保留最终未 nack 的请求，
+  // 六个流量计数器只统计检查态请求。s2_valid_masked 只保留最终未 nack 的请求，
   // 因此核心重发同一条指令时不会重复计数；PMA 已在此阶段完成分类。
   val store_out     = RegInit(0.U(64.W))
   val store_cache   = RegInit(0.U(64.W))
@@ -412,8 +412,11 @@ class DCacheModule(outer: DCache) extends HellaCacheModule(outer) {
   val load_uncache  = RegInit(0.U(64.W))
   io.traffic_counter := VecInit(Seq(store_out, store_cache, store_uncache,
                                      load_out, load_cache, load_uncache))
-  val traffic_store = s2_valid_masked && s2_req.cmd === M_XWR
-  val traffic_load  = s2_valid_masked && s2_req.cmd === M_XRD
+  // 请求从 fire 依次进入 s1、s2，检查状态同步延迟两拍后再参与计数。
+  val s1_traffic_check_state = RegNext(io.traffic_check_state, false.B)
+  val s2_traffic_check_state = RegNext(s1_traffic_check_state, false.B)
+  val traffic_store = s2_valid_masked && s2_traffic_check_state && s2_req.cmd === M_XWR
+  val traffic_load  = s2_valid_masked && s2_traffic_check_state && s2_req.cmd === M_XRD
   when (traffic_store) {
     store_out := store_out + 1.U
     when (s2_uncached) { store_uncache := store_uncache + 1.U }

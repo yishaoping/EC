@@ -1,5 +1,19 @@
 
-结合/home/gzh/EC/chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.vcd和软硬件代码，不做仿真，分析问题。发现过程要可信的硬件信号和指令行为做支撑。
+结合/home/gzh/EC/chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.vcd，/home/gzh/EC/Software/Test和硬件代码，不做仿真，分析问题。发现过程要可信的硬件信号和指令行为做支撑，便于我自己看波形图分析。
+
+hart0从80000164:	f8ba                	sd	a4,112(sp)进入80000404:	001026f3          	frflags	a3后不断在附近重复。
+
+hart1，3，4在
+    80000fa8:	0100006f          	j	80000fb8 \<checker+0xcc>
+    80000fac:	c200452b          	.word	0xc200452b
+    80000fb0:	01857513          	andi	a0,a0,24
+    80000fb4:	06e50863          	beq	a0,a4,80001024 \<checker+0x138>
+    80000fb8:	0e00452b          	.word	0x0e00452b
+循环中重复。
+
+hart2在80000fb4:	06e50863          	beq	a0,a4,80001024 \<checker+0x138>后跳转到80001024:	c000002b          	.word	0xc000002b，随后又跳转到800003ac:	d0377753          	fcvt.s.lu	fa4,a4，之后一直在循环里。
+
+似乎是大小核心之间没有正确同步？分析发生该现象原因。
 
 = BOOM
 

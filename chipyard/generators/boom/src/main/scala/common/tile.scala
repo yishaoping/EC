@@ -558,7 +558,8 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
   hellaCacheArb.io.requestor <> hellaCachePorts.toSeq
   lsu.io.hellacache <> hellaCacheArb.io.mem
   outer.dcache.module.io.lsu <> lsu.io.dmem
-
+  // R_IC 状态编码 2 表示 fsm_check；只有该状态下的 BOOM 访存进入统计。
+  outer.dcache.module.io.traffic_check_state := core.io.debug_maincore_status === 2.U
   
   // Generate a descriptive string
   val frontendStr = outer.frontend.module.toString

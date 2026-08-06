@@ -294,6 +294,9 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
   // Connect the core pipeline to other intra-tile modules
   outer.frontend.module.io.cpu <> core.io.imem
   dcachePorts += core.io.dmem // TODO outer.dcachePorts += () => module.core.io.dmem ??
+  // icsl_status 仅在非检查且 RSU/LSL 均空闲时为 1，检查会话期间为 0；
+  // DCache 只在检查会话内统计六类 STORE/LOAD 流量。
+  outer.dcache.module.io.traffic_check_state := core.io.icsl_status === 0.U
   fpuOpt foreach { fpu => core.io.fpu <> fpu.io }
   core.io.ptw <> ptw.io.dpath
 

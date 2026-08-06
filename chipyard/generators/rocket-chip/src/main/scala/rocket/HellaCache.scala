@@ -225,6 +225,9 @@ class HellaCacheBundle(val outer: HellaCache)(implicit p: Parameters) extends Co
   val cpu = Flipped((new HellaCacheIO))
   val ptw = new TLBPTWIO()
   val errors = new DCacheErrors
+  // 只有协同校验阶段产生的访存才进入六个流量计数器。
+  // 该信号由 tile 根据核心的检查状态产生，并在 DCache 内按流水级对齐。
+  val traffic_check_state = Input(Bool())
   // Traffic counters: store/load requests split by cacheability.
   val traffic_counter = Output(Vec(6, UInt(64.W)))
 }
