@@ -164,6 +164,18 @@ SFC_MFC_TARGETS = \
 SFC_REPL_SEQ_MEM = --infer-rw --repl-seq-mem -c:$(MODEL):-o:$(SFC_SMEMS_CONF)
 MFC_BASE_LOWERING_OPTIONS = emittedLineLength=2048,noAlwaysComb,disallowLocalVariables,verifLabels,locationInfoStyle=wrapInAtSquareBracket
 
+# SFC_LEVEL is assigned with `eval` while the FIRRTL target is built.  That
+# assignment is skipped when FIRRTL/annotation files are already up to date,
+# but downstream Verilog targets still need a value for GenerateModelStageMain's
+# `-X` option.  Derive a fallback from the existing FIRRTL so `-X` is never
+# emitted without its required argument.
+SFC_LEVEL_FOR_MFC = $(if $(SFC_LEVEL),$(SFC_LEVEL),$(if $(ENABLE_CUSTOM_FIRRTL_PASS),low,$(if $(shell test -f $(FIRRTL_FILE) && grep -q "Fixed<" $(FIRRTL_FILE) && echo low),low,none)))
+MFC_LOWERING_OPTIONS_DEFAULT = $(MFC_BASE_LOWERING_OPTIONS)
+ifneq (,$(ENABLE_YOSYS_FLOW))
+MFC_LOWERING_OPTIONS_DEFAULT = $(MFC_BASE_LOWERING_OPTIONS),disallowPackedArrays
+endif
+MFC_LOWERING_OPTIONS_FOR_MFC = $(if $(MFC_LOWERING_OPTIONS),$(MFC_LOWERING_OPTIONS),$(MFC_LOWERING_OPTIONS_DEFAULT))
+
 # DOC include start: FirrtlCompiler
 # There are two possible cases for this step. In the first case, SFC
 # compiles Chisel to CHIRRTL, and MFC compiles CHIRRTL to Verilog. Otherwise,
@@ -188,8 +200,8 @@ ifeq (,$(ENABLE_YOSYS_FLOW))
 else
 	$(eval MFC_LOWERING_OPTIONS = $(MFC_BASE_LOWERING_OPTIONS),disallowPackedArrays)
 endif
-	if [ $(SFC_LEVEL) = low ]; then jq -s '[.[][]]' $(EXTRA_ANNO_FILE) $(SFC_EXTRA_ANNO_FILE) > $(FINAL_ANNO_FILE); fi
-	if [ $(SFC_LEVEL) = none ]; then cat $(EXTRA_ANNO_FILE) > $(FINAL_ANNO_FILE); fi
+	if [ "$(SFC_LEVEL_FOR_MFC)" = low ]; then jq -s '[.[][]]' $(EXTRA_ANNO_FILE) $(SFC_EXTRA_ANNO_FILE) > $(FINAL_ANNO_FILE); fi
+	if [ "$(SFC_LEVEL_FOR_MFC)" = none ]; then cat $(EXTRA_ANNO_FILE) > $(FINAL_ANNO_FILE); fi
 
 $(SFC_MFC_TARGETS) &: private TMP_DIR := $(shell mktemp -d -t cy-XXXXXXXX)
 $(SFC_MFC_TARGETS) &: $(FIRRTL_FILE) $(FINAL_ANNO_FILE) $(SFC_LEVEL) $(EXTRA_FIRRTL_OPTIONS)
@@ -203,12 +215,12 @@ $(SFC_MFC_TARGETS) &: $(FIRRTL_FILE) $(FINAL_ANNO_FILE) $(SFC_LEVEL) $(EXTRA_FIR
 		--annotation-file $(FINAL_ANNO_FILE) \
 		--log-level $(FIRRTL_LOGLEVEL) \
 		--allow-unrecognized-annotations \
-		-X $(SFC_LEVEL) \
+		-X $(SFC_LEVEL_FOR_MFC) \
 		$(EXTRA_FIRRTL_OPTIONS))
-	-mv $(SFC_FIRRTL_BASENAME).lo.fir $(SFC_FIRRTL_FILE) 2> /dev/null # Optionally change file type when SFC generates LowFIRRTL
-	@if [ $(SFC_LEVEL) = low ]; then cat $(SFC_ANNO_FILE) | jq 'del(.[] | select(.target | test("io.cpu"))?)' > $(TMP_DIR)/unnec-anno-deleted.sfc.anno.json; fi
-	@if [ $(SFC_LEVEL) = low ]; then cat $(TMP_DIR)/unnec-anno-deleted.sfc.anno.json | jq 'del(.[] | select(.class | test("SRAMAnnotation"))?)' > $(TMP_DIR)/unnec-anno-deleted2.sfc.anno.json; fi
-	@if [ $(SFC_LEVEL) = low ]; then cat $(TMP_DIR)/unnec-anno-deleted2.sfc.anno.json > $(SFC_ANNO_FILE) && rm $(TMP_DIR)/unnec-anno-deleted.sfc.anno.json && rm $(TMP_DIR)/unnec-anno-deleted2.sfc.anno.json; fi
+	@if [ "$(SFC_LEVEL_FOR_MFC)" = low ] && [ -f "$(SFC_FIRRTL_BASENAME).lo.fir" ]; then mv "$(SFC_FIRRTL_BASENAME).lo.fir" "$(SFC_FIRRTL_FILE)"; fi
+	@if [ "$(SFC_LEVEL_FOR_MFC)" = low ]; then cat $(SFC_ANNO_FILE) | jq 'del(.[] | select(.target | test("io.cpu"))?)' > $(TMP_DIR)/unnec-anno-deleted.sfc.anno.json; fi
+	@if [ "$(SFC_LEVEL_FOR_MFC)" = low ]; then cat $(TMP_DIR)/unnec-anno-deleted.sfc.anno.json | jq 'del(.[] | select(.class | test("SRAMAnnotation"))?)' > $(TMP_DIR)/unnec-anno-deleted2.sfc.anno.json; fi
+	@if [ "$(SFC_LEVEL_FOR_MFC)" = low ]; then cat $(TMP_DIR)/unnec-anno-deleted2.sfc.anno.json > $(SFC_ANNO_FILE) && rm $(TMP_DIR)/unnec-anno-deleted.sfc.anno.json && rm $(TMP_DIR)/unnec-anno-deleted2.sfc.anno.json; fi
 	firtool \
 		--format=fir \
 		--dedup \
@@ -219,7 +231,7 @@ $(SFC_MFC_TARGETS) &: $(FIRRTL_FILE) $(FINAL_ANNO_FILE) $(SFC_LEVEL) $(EXTRA_FIR
 		--disable-annotation-classless \
 		--disable-annotation-unknown \
 		--mlir-timing \
-		--lowering-options=$(MFC_LOWERING_OPTIONS) \
+		--lowering-options=$(MFC_LOWERING_OPTIONS_FOR_MFC) \
 		--repl-seq-mem \
 		--repl-seq-mem-file=$(MFC_SMEMS_CONF) \
 		--repl-seq-mem-circuit=$(MODEL) \
@@ -239,7 +251,8 @@ $(TOP_MODS_FILELIST) $(MODEL_MODS_FILELIST) $(ALL_MODS_FILELIST) $(BB_MODS_FILEL
 		--out-model-filelist $(MODEL_MODS_FILELIST) \
 		--in-all-filelist $(MFC_FILELIST) \
 		--target-dir $(GEN_COLLATERAL_DIR)
-	$(SED) -e 's;^;$(GEN_COLLATERAL_DIR)/;' $(MFC_BB_MODS_FILELIST) > $(BB_MODS_FILELIST)
+	# firtool may emit absolute black-box paths; prefix only relative entries.
+	$(SED) -e 's;^\./;;' -e '\|^/|! s;^;$(GEN_COLLATERAL_DIR)/;' $(MFC_BB_MODS_FILELIST) > $(BB_MODS_FILELIST)
 	$(SED) -i 's/\.\///' $(TOP_MODS_FILELIST)
 	$(SED) -i 's/\.\///' $(MODEL_MODS_FILELIST)
 	$(SED) -i 's/\.\///' $(BB_MODS_FILELIST)

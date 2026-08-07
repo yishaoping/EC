@@ -67,8 +67,9 @@ class NLPrefetcher(implicit edge: TLEdgeOut, p: Parameters) extends DataPrefetch
   io.prefetch.bits.uop         := NullMicroOp
   io.prefetch.bits.uop.mem_cmd := req_cmd
   io.prefetch.bits.data        := DontCare
+  io.prefetch.bits.traffic_seen  := false.B
+  io.prefetch.bits.traffic_check := false.B
+  io.prefetch.bits.traffic_cacheable := false.B
 
 
 }
-
-

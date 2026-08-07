@@ -409,9 +409,9 @@ class BoomNonBlockingDCache(staticIdForMetadataUseOnly: Int)(implicit p: Paramet
 class BoomDCacheBundle(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p) {
   val errors = new DCacheErrors
   val lsu   = Flipped(new LSUDMemIO)
-  // BOOM R_IC 的 fsm_check 状态。六个流量计数器只统计该状态下的访存。
+  // BOOM R_IC 的 fsm_check 状态。七个流量计数器只统计该状态下的访存。
   val traffic_check_state = Input(Bool())
-  val traffic_counter = Output(Vec(6, UInt(64.W)))
+  val traffic_counter = Output(Vec(7, UInt(64.W)))
 }
 
 class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModuleImp(outer)
@@ -495,38 +495,6 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     dataReadArb.io.in(2).bits.req(w).way_en := ~0.U(nWays.W)
   }
 
-  // 统计 BOOM LSU 的访存队列项：traffic_seen 已在 LSU 队列项中去重，
-  // 因此同一条指令因 nack/retry 再次进入 DCache 时不会重复加一。
-  // 另外只接受 R_IC 的 fsm_check 状态，排除正常执行、调度和收尾阶段的访存。
-  val store_out     = RegInit(0.U(64.W))
-  val store_cache   = RegInit(0.U(64.W))
-  val store_uncache = RegInit(0.U(64.W))
-  val load_out      = RegInit(0.U(64.W))
-  val load_cache    = RegInit(0.U(64.W))
-  val load_uncache  = RegInit(0.U(64.W))
-  io.traffic_counter := VecInit(Seq(store_out, store_cache, store_uncache,
-                                     load_out, load_cache, load_uncache))
-  val traffic_store = VecInit((0 until memWidth).map(w =>
-    io.traffic_check_state && io.lsu.req.bits(w).valid && !io.lsu.req.bits(w).bits.traffic_seen &&
-      io.lsu.req.bits(w).bits.uop.mem_cmd === M_XWR))
-  val traffic_load = VecInit((0 until memWidth).map(w =>
-    io.traffic_check_state && io.lsu.req.bits(w).valid && !io.lsu.req.bits(w).bits.traffic_seen &&
-      io.lsu.req.bits(w).bits.uop.mem_cmd === M_XRD))
-  val traffic_store_cache = VecInit((0 until memWidth).map(w =>
-    traffic_store(w) && edge.manager.supportsAcquireBFast(
-      io.lsu.req.bits(w).bits.addr, lgCacheBlockBytes.U)))
-  val traffic_load_cache = VecInit((0 until memWidth).map(w =>
-    traffic_load(w) && edge.manager.supportsAcquireBFast(
-      io.lsu.req.bits(w).bits.addr, lgCacheBlockBytes.U)))
-  when (io.lsu.req.fire) {
-    store_out     := store_out + PopCount(traffic_store)
-    store_cache   := store_cache + PopCount(traffic_store_cache)
-    store_uncache := store_uncache + PopCount(traffic_store) - PopCount(traffic_store_cache)
-    load_out      := load_out + PopCount(traffic_load)
-    load_cache    := load_cache + PopCount(traffic_load_cache)
-    load_uncache  := load_uncache + PopCount(traffic_load) - PopCount(traffic_load_cache)
-  }
-
   // ------------
   // MSHR Replays
   val replay_req = Wire(Vec(memWidth, new BoomDCacheReq))
@@ -535,6 +503,9 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   replay_req(0).addr       := mshrs.io.replay.bits.addr
   replay_req(0).data       := mshrs.io.replay.bits.data
   replay_req(0).is_hella   := mshrs.io.replay.bits.is_hella
+  replay_req(0).traffic_seen := mshrs.io.replay.bits.traffic_seen
+  replay_req(0).traffic_check := mshrs.io.replay.bits.traffic_check
+  replay_req(0).traffic_cacheable := mshrs.io.replay.bits.traffic_cacheable
   mshrs.io.replay.ready    := metaReadArb.io.in(0).ready && dataReadArb.io.in(0).ready
   // Tag read for MSHR replays
   // We don't actually need to read the metadata, for replays we already know our way
@@ -615,12 +586,22 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val s0_valid = Mux(io.lsu.req.fire, VecInit(io.lsu.req.bits.map(_.valid)),
                  Mux(mshrs.io.replay.fire || wb_fire || prober_fire || prefetch_fire || mshrs.io.meta_read.fire,
                                         VecInit(1.U(memWidth.W).asBools), VecInit(0.U(memWidth.W).asBools)))
-  val s0_req   = Mux(io.lsu.req.fire        , VecInit(io.lsu.req.bits.map(_.bits)),
-                 Mux(wb_fire                  , wb_req,
-                 Mux(prober_fire              , prober_req,
-                 Mux(prefetch_fire            , prefetch_req,
-                 Mux(mshrs.io.meta_read.fire, mshr_read_req
-                                              , replay_req)))))
+  val s0_req   = Wire(Vec(memWidth, new BoomDCacheReq))
+  s0_req := Mux(io.lsu.req.fire        , VecInit(io.lsu.req.bits.map(_.bits)),
+            Mux(wb_fire                  , wb_req,
+            Mux(prober_fire              , prober_req,
+            Mux(prefetch_fire            , prefetch_req,
+            Mux(mshrs.io.meta_read.fire, mshr_read_req
+                                             , replay_req)))))
+  // The request is classified at DCache ingress. This bit then follows the
+  // request through MSHR refill/replay, so a late completion remains in scope.
+  when (io.lsu.req.fire) {
+    for (w <- 0 until memWidth) {
+      s0_req(w).traffic_check := io.traffic_check_state
+      s0_req(w).traffic_cacheable := edge.manager.supportsAcquireBFast(
+        io.lsu.req.bits(w).bits.addr, lgCacheBlockBytes.U)
+    }
+  }
   val s0_type  = Mux(io.lsu.req.fire        , t_lsu,
                  Mux(wb_fire                  , t_wb,
                  Mux(prober_fire              , t_probe,
@@ -802,6 +783,9 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
 
     mshrs.io.req(w).bits.data        := s2_req(w).data
     mshrs.io.req(w).bits.is_hella    := s2_req(w).is_hella
+    mshrs.io.req(w).bits.traffic_seen := s2_req(w).traffic_seen
+    mshrs.io.req(w).bits.traffic_check := s2_req(w).traffic_check
+    mshrs.io.req(w).bits.traffic_cacheable := s2_req(w).traffic_cacheable
     mshrs.io.req_is_probe(w)         := s2_type === t_probe && s2_valid(w)
   }
 
@@ -872,6 +856,9 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     cache_resp(w).bits.uop      := s2_req(w).uop
     cache_resp(w).bits.data     := loadgen(w).data | s2_sc_fail
     cache_resp(w).bits.is_hella := s2_req(w).is_hella
+    cache_resp(w).bits.traffic_check := s2_req(w).traffic_check
+    cache_resp(w).bits.traffic_seen  := s2_req(w).traffic_seen
+    cache_resp(w).bits.traffic_cacheable := s2_req(w).traffic_cacheable
   }
 
   val uncache_resp = Wire(Valid(new BoomDCacheResp))
@@ -901,6 +888,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     io.lsu.nack(w).bits  := UpdateBrMask(io.lsu.brupdate, s2_req(w))
     assert(!(io.lsu.nack(w).valid && s2_type =/= t_lsu))
   }
+  io.lsu.traffic_check_state := io.traffic_check_state
 
   // Store/amo hits
   val s3_req   = RegNext(s2_req(0))
@@ -945,6 +933,47 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   dataWriteArb.io.in(0).bits.data   := Fill(rowWords, s3_req.data)
   dataWriteArb.io.in(0).bits.way_en := s3_way
 
+  // BOOM 完成路径：cacheable store 只在 data-array 写入握手点统计；
+  // uncacheable store 在 TileLink A 通道接受时统计；load 只在成功响应
+  // LSU 时统计。nack/replay 本身不计数，traffic_seen 排除成功后的重复响应，
+  // 精确命令匹配排除 LR/SC/AMO 及其他使用 LDQ/STQ 的操作。
+  val completed_store_cache = dataWriteArb.io.in(0).fire &&
+    s3_req.traffic_check && !s3_req.traffic_seen &&
+    s3_req.traffic_cacheable &&
+    s3_req.uop.uses_stq && s3_req.uop.mem_cmd === M_XWR
+  val completed_store_uncache = mshrs.io.traffic_store_complete
+  val completed_load_cache   = io.lsu.traffic_load_cache_complete
+  val completed_load_uncache = io.lsu.traffic_load_uncache_complete
+  val completed_load_forward = io.lsu.traffic_load_forward_complete
+  val store_cache_count   = RegInit(0.U(64.W))
+  val store_uncache_count = RegInit(0.U(64.W))
+  val load_cache_count    = RegInit(0.U(64.W))
+  val load_uncache_count  = RegInit(0.U(64.W))
+  val load_forward_count  = RegInit(0.U(64.W))
+  when (completed_store_cache) {
+    store_cache_count := store_cache_count + 1.U
+  }
+  when (completed_store_uncache) {
+    store_uncache_count := store_uncache_count + 1.U
+  }
+  when (completed_load_cache.reduce(_|_)) {
+    load_cache_count := load_cache_count + PopCount(completed_load_cache)
+  }
+  when (completed_load_uncache.reduce(_|_)) {
+    load_uncache_count := load_uncache_count + PopCount(completed_load_uncache)
+  }
+  when (completed_load_forward.reduce(_|_)) {
+    load_forward_count := load_forward_count + PopCount(completed_load_forward)
+  }
+  // load_total includes all three mutually-exclusive BOOM completion paths.
+  io.traffic_counter := VecInit(Seq(
+    store_cache_count + store_uncache_count,
+    store_cache_count,
+    store_uncache_count,
+    load_cache_count + load_uncache_count + load_forward_count,
+    load_cache_count,
+    load_uncache_count,
+    load_forward_count))
 
   io.lsu.ordered := mshrs.io.fence_rdy && !s1_valid.reduce(_||_) && !s2_valid.reduce(_||_)
 }

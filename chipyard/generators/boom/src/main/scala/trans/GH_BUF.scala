@@ -32,6 +32,7 @@ class GH_BUF_IO (params: GH_BUF_Params)(implicit p: Parameters) extends Bundle {
   val commit_uops                               = Input(Vec(params.core_width, new MicroOp()))
   val jalr_target                               = Input(Vec(params.core_width, UInt(params.xlen.W)))
   val alu_in                                    = Input(Vec(params.core_width, UInt((2*params.xlen).W)))
+  val commit_cacheable                          = Input(Vec(params.core_width, Bool()))
   val gh_prfs_rd                                = Input(Vec(params.core_width, UInt(params.xlen.W)))//csr read data
   val cdc_not_ready                             = Input(Bool())
   // val gh_csr_addr_in                            = Input(Vec(params.core_width, UInt(12.W)))
@@ -127,8 +128,8 @@ class GH_BUF (val params: GH_BUF_Params)(implicit p: Parameters) extends BoomMod
     can_fwd(i)                                 := (io.gh_can_fwd===0.U) && io.commit_valids(i) && (io.commit_uops(i).uses_ldq || (io.commit_uops(i).uses_stq && !io.commit_uops(i).is_fence) || (io.commit_valids(i)&&io.commit_uops(i).uopc===uopROCC && io.commit_uops(i).ldst_val) || io.commit_valids(i) && io.commit_uops(i).is_csr && (!(csr_addr(i)).isOneOf(CSRshadows.csrshadow_seq)) || is_branch(i))
     filter_inst_index(i)                       := Mux(can_fwd(i), Cat(one, io.ic_crnt_target(3,0),inst_type_enc(i)), 0.U)
     filter_packet(i)                           := MuxCase(0.U, 
-                                                      Seq((io.commit_valids(i)&&io.commit_uops(i).uses_ldq) -> io.alu_in(i),
-                                                          (io.commit_valids(i)&&io.commit_uops(i).uses_stq&(!is_amo(i))) -> io.alu_in(i),
+                                                      Seq((io.commit_valids(i)&&io.commit_uops(i).uses_ldq) -> Cat(io.alu_in(i)(127,64), io.commit_cacheable(i), io.alu_in(i)(62,0)),
+                                                          (io.commit_valids(i)&&io.commit_uops(i).uses_stq&(!is_amo(i))) -> Cat(io.alu_in(i)(127,64), io.commit_cacheable(i), io.alu_in(i)(62,0)),
                                                           (io.commit_valids(i)&&io.commit_uops(i).uses_stq&(is_amo(i)))  -> Cat(io.gh_prfs_rd(i),io.alu_in(i)(63,0)),
                                                           (io.commit_valids(i)&&is_roccwb(i)) -> io.gh_prfs_rd(i),
                                                           (io.commit_valids(i)&&io.commit_uops(i).is_csr&&(!(csr_addr(i)).isOneOf(CSRshadows.csrshadow_seq))) -> io.gh_prfs_rd(i),

@@ -12,12 +12,12 @@
 #include "test_config.h"
 
 #define TOTAL_CSR_PERF 84
-#define TRAFFIC_COUNTERS 6
+#define TRAFFIC_COUNTERS 7
 #define NUM_HARTS (NUM_CHECKERS + 1)
 
 uint64_t csr_read_s[TOTAL_CSR_PERF];
 uint64_t csr_read_e[TOTAL_CSR_PERF];
-/* 每个 hart 保存自己的六个流量计数器，hart 0 负责最后统一打印。 */
+/* 每个 hart 保存自己的七个流量计数器，hart 0 负责最后统一打印。 */
 volatile uint64_t hart_traffic[NUM_HARTS][TRAFFIC_COUNTERS];
 /* hart 1--4 完成统计读取后分别置位，避免改动原有 GHT 等待逻辑。 */
 volatile uint32_t hart_traffic_ready[NUM_HARTS];
@@ -175,7 +175,7 @@ int main(void)
 
     uint64_t end_cpu = read_cycles();
 
-    /* hart 0 直接把本地六个流量计数器写入自己的统计行。 */
+    /* hart 0 直接把本地七个流量计数器写入自己的统计行。 */
     for (int counter = 0; counter < TRAFFIC_COUNTERS; counter++) {
         hart_traffic[0][counter] = ghe_traffic_counter_read(counter);
     }
@@ -198,9 +198,10 @@ int main(void)
                hart, hart_traffic[hart][0], hart_traffic[hart][1],
                hart_traffic[hart][2]);
         printf("hart%d traffic: load_out=%" PRIu64
-               " load_cache=%" PRIu64 " load_uncache=%" PRIu64 "\r\n",
+               " load_cache=%" PRIu64 " load_uncache=%" PRIu64
+               " load_forward=%" PRIu64 "\r\n",
                hart, hart_traffic[hart][3], hart_traffic[hart][4],
-               hart_traffic[hart][5]);
+               hart_traffic[hart][5], hart_traffic[hart][6]);
     }
     printf("[Boom-C%lx]: Test is now completed. \r\n", Hart_id);
     lock_release(&uart_lock);

@@ -54,11 +54,16 @@ class R_ICSLIO(params: R_ICSLParams) extends Bundle {
   val debug_state                                = Output(UInt(3.W))
   val debug_perf_sel                             = Input(UInt(4.W))
   val debug_perf_val                             = Output(UInt(64.W))   
+  val traffic_counter                            = Output(Vec(7, UInt(64.W)))
   val debug_starting_CPS                         = Input(UInt(1.W))
   val main_core_status                           = Input(UInt(4.W))
   val checker_core_status                        = Output(UInt(4.W))
   val st_deq                                     = Input(UInt(1.W))
   val ld_deq                                     = Input(UInt(1.W))
+  val st_cache_deq                               = Input(UInt(1.W))
+  val st_uncache_deq                             = Input(UInt(1.W))
+  val ld_cache_deq                               = Input(UInt(1.W))
+  val ld_uncache_deq                             = Input(UInt(1.W))
 }
 
 trait HasR_ICSLIO extends BaseModule {
@@ -310,12 +315,26 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   // debug_perf_nonchecking_MSched                 := Mux(io.debug_perf_reset.asBool, 0.U, Mux((fsm_state === fsm_nonchecking) && (io.if_correct_process.asBool) && (io.main_core_status === 1.U), debug_perf_nonchecking_MSched + 1.U, debug_perf_nonchecking_MSched))
 
 
-  val debug_perf_num_st                          = RegInit(0.U(64.W))
-  val debug_perf_num_ld                          = RegInit(0.U(64.W))
+  val debug_perf_num_st_cache                    = RegInit(0.U(64.W))
+  val debug_perf_num_st_uncache                  = RegInit(0.U(64.W))
+  val debug_perf_num_ld_cache                    = RegInit(0.U(64.W))
+  val debug_perf_num_ld_uncache                  = RegInit(0.U(64.W))
+  val debug_perf_num_st                          = debug_perf_num_st_cache + debug_perf_num_st_uncache
+  val debug_perf_num_ld                          = debug_perf_num_ld_cache + debug_perf_num_ld_uncache
   val debug_L_timer_worest                       = RegInit(0.U(64.W))
 
-  debug_perf_num_st                             := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_st + io.st_deq)
-  debug_perf_num_ld                             := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_ld + io.ld_deq)
+  debug_perf_num_st_cache                       := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_st_cache + io.st_cache_deq)
+  debug_perf_num_st_uncache                     := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_st_uncache + io.st_uncache_deq)
+  debug_perf_num_ld_cache                       := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_ld_cache + io.ld_cache_deq)
+  debug_perf_num_ld_uncache                     := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_ld_uncache + io.ld_uncache_deq)
+  // Software protocol: [store_total, store_cache, store_uncache,
+  //                     load_total, load_cache, load_uncache, load_forward].
+  // Rocket re-executes loads through LSL and therefore never uses BOOM's
+  // STQ-to-load forwarding path.
+  io.traffic_counter                            := VecInit(Seq(debug_perf_num_st, debug_perf_num_st_cache,
+                                                               debug_perf_num_st_uncache, debug_perf_num_ld,
+                                                               debug_perf_num_ld_cache, debug_perf_num_ld_uncache,
+                                                               0.U(64.W)))
 
   val u_channel                                  = Module(new GH_MemFIFO(FIFOParams (32, 50)))
   val debug_L_timer                              = RegInit(0.U(64.W))

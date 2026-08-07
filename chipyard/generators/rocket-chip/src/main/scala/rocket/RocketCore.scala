@@ -344,6 +344,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val lsl_resp_tag      = Wire(UInt(8.W))
   val lsl_resp_size     = Wire(UInt(2.W))
   val lsl_resp_addr     = Wire(UInt(40.W))
+  val lsl_resp_cacheable = Wire(Bool())
   val lsl_resp_data     = Wire(UInt(xLen.W))
   val lsl_resp_has_data = Wire(Bool())
   val lsl_resp_replay   = Wire(Bool())
@@ -873,6 +874,16 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   // val wb_valid = wb_reg_valid && !replay_wb && !wb_xcpt
   // In GuardianCouncil, RoCC response can be replied in a single cycle, therefore !io.rocc.resp.valid is added
   val wb_valid = wb_reg_valid && !replay_wb && !wb_xcpt && !check_exception
+  // Rocket 重执行完成路径：LSL 已返回且指令成功通过 WB，才算 checker 执行完成。
+  // wb_valid 已排除 replay/exception，精确命令匹配排除 LR/SC/AMO。
+  val checker_mem_complete = (checker_mode.asBool || checker_priv_mode.asBool) &&
+    wb_valid && wb_ctrl.mem && lsl_resp_valid && !lsl_resp_replay
+  val checker_store_complete = checker_mem_complete && wb_ctrl.mem_cmd === M_XWR
+  val checker_load_complete = checker_mem_complete && wb_ctrl.mem_cmd === M_XRD
+  val checker_store_cache_complete = checker_store_complete && lsl_resp_cacheable
+  val checker_store_uncache_complete = checker_store_complete && !lsl_resp_cacheable
+  val checker_load_cache_complete = checker_load_complete && lsl_resp_cacheable
+  val checker_load_uncache_complete = checker_load_complete && !lsl_resp_cacheable
   /*
   if (GH_GlobalParams.GH_DEBUG == 1) {
     when (wb_reg_valid && !wb_valid && io.core_trace.asBool) {
@@ -1134,8 +1145,13 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   */
   
   icsl.io.debug_starting_CPS := rsu_slave.io.starting_CPS
-  icsl.io.st_deq := lsl.io.st_deq
-  icsl.io.ld_deq := lsl.io.ld_deq
+  icsl.io.st_deq := checker_store_complete
+  icsl.io.ld_deq := checker_load_complete
+  icsl.io.st_cache_deq := checker_store_cache_complete
+  icsl.io.st_uncache_deq := checker_store_uncache_complete
+  icsl.io.ld_cache_deq := checker_load_cache_complete
+  icsl.io.ld_uncache_deq := checker_load_uncache_complete
+  io.traffic_counter := icsl.io.traffic_counter
   // kill_each_pipe := icsl.io.kill_pipe
   val lsl_index = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U(8.W)))
   for(i <- 0 until GH_GlobalParams.GH_TOTAL_PACKETS){
@@ -1166,6 +1182,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   lsl_resp_tag := lsl.io.resp_tag
   lsl_resp_size := lsl.io.resp_size
   lsl_resp_addr := lsl.io.resp_addr
+  lsl_resp_cacheable := lsl.io.resp_cacheable
   lsl_resp_data := lsl.io.resp_data
   lsl_resp_has_data := lsl.io.resp_has_data
   lsl_resp_replay := lsl.io.resp_replay

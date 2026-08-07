@@ -296,6 +296,11 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
                                                             (gh_buf.io.commit_uops(w).uses_stq === true.B) -> Cat(zeros_8bits, stq_header(w))
                                                           )
                                                             )
+      val commit_addr = Mux(gh_buf.io.commit_uops(w).uses_ldq,
+        ldq_header(w)(39, 0), stq_header(w)(39, 0))
+      gh_buf.io.commit_cacheable(w) :=
+        outer.dcache.node.edges.out(0).manager.supportsAcquireBFast(
+          commit_addr, log2Ceil(outer.boomParams.dcache.get.blockBytes).U)
       // gh_buf.io.gh_csr_addr_in(w)                := core.io.csr_addr(w)
       gh_buf.io.gh_prfs_rd(w)                    := RegNext(core.io.prf_rd(w))
       gh_buf.io.jalr_target(w)                   := RegNext(core.io.jalr_target(w))
@@ -391,6 +396,8 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
     val (respArb, cmdRouter) = {
       val respArb = Module(new RRArbiter(new RoCCResponse()(outer.p), outer.roccs.size))
       val cmdRouter = Module(new RoccCommandRouterBoom(outer.roccs.map(_.opcodes))(outer.p))
+      // BOOM 路径读取 DCache completion counters：store 为 data-array 写入，
+      // load 为成功响应 LSU，时间点对应真实访存执行完成。
       cmdRouter.io.traffic_counter_in := outer.dcache.module.io.traffic_counter
       outer.roccs.zipWithIndex.foreach { case (rocc, i) =>
         ptwPorts ++= rocc.module.io.ptw

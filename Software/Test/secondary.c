@@ -5,7 +5,7 @@
 #include "interrupt.h"
 #include "test_config.h"
 
-#define TRAFFIC_COUNTERS 6
+#define TRAFFIC_COUNTERS 7
 #define NUM_HARTS (NUM_CHECKERS + 1)
 
 extern volatile uint64_t hart_traffic[NUM_HARTS][TRAFFIC_COUNTERS];

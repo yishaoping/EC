@@ -13,5 +13,5 @@ source ./env.sh
 
 make -j48 CONFIG=v1Config run-binary-debug-hex BINARY=../../../Software/Test/test.riscv
 = Code
-你是计算机架构领域的专家，我正在进行基于chipyard的开发，设计小核rocket校验大核boom的协同工作框架。不要做仿真。现在/home/gzh/EC/chipyard/generators/boom/src/main/scala/lsu/dcache.scala和/home/gzh/EC/chipyard/generators/rocket-chip/src/main/scala/rocket/DCache.scala中关于store和load的六个计数器统计口径宽泛，应该只统计检查状态下的，这样才能确保大核和4个小核最后的统计结果相等，修改硬件代码实现这一点，做好中文注释。
-
+你是计算机架构领域的专家，我正在进行基于chipyard的开发，设计小核rocket校验大核boom的协同工作框架。不要做仿真和硬件生成。
+/home/gzh/EC/chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.log中大核store和load次数相较于小核store和load次数和还有差距，说明硬件设置的计数方案有问题，分析原因，看看存在哪些多计漏计。

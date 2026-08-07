@@ -75,8 +75,13 @@ class BoomDCacheReq(implicit p: Parameters) extends BoomBundle()(p)
   val addr  = UInt(coreMaxAddrBits.W)
   val data  = Bits(coreDataBits.W)
   val is_hella = Bool() // Is this the hellacache req? If so this is not tracked in LDQ or STQ
-  // 由 LSU 队列项携带，防止同一条指令在 nack/retry 时重复统计。
+  // 由 LSU 队列项携带，防止同一条指令在成功响应后再次执行时重复统计。
   val traffic_seen = Bool()
+  // 在 DCache 接收请求时锁存，跨 miss/refill/replay 保持统计区间。
+  val traffic_check = Bool()
+  // Cacheability is classified at DCache ingress and follows the request to
+  // its eventual completion point.
+  val traffic_cacheable = Bool()
 }
 
 class BoomDCacheResp(implicit p: Parameters) extends BoomBundle()(p)
@@ -84,6 +89,9 @@ class BoomDCacheResp(implicit p: Parameters) extends BoomBundle()(p)
 {
   val data = Bits(coreDataBits.W)
   val is_hella = Bool()
+  val traffic_check = Bool()
+  val traffic_seen = Bool()
+  val traffic_cacheable = Bool()
 }
 
 class LSUDMemIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
@@ -112,6 +120,13 @@ class LSUDMemIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
     val acquire = Bool()
     val release = Bool()
   })
+
+  // Traffic accounting is kept in the DCache, while the LSU supplies the
+  // mutually-exclusive completion events needed to de-duplicate LDQ entries.
+  val traffic_check_state          = Input(Bool())
+  val traffic_load_cache_complete  = Output(Vec(memWidth, Bool()))
+  val traffic_load_uncache_complete = Output(Vec(memWidth, Bool()))
+  val traffic_load_forward_complete = Output(Vec(memWidth, Bool()))
 
 }
 
@@ -789,6 +804,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     dmem_req(w).bits.data  := 0.U
     dmem_req(w).bits.is_hella := false.B
     dmem_req(w).bits.traffic_seen := false.B
+    dmem_req(w).bits.traffic_check := false.B
+    dmem_req(w).bits.traffic_cacheable := false.B
 
     io.dmem.s1_kill(w) := false.B
 
@@ -863,19 +880,6 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       dmem_req(w).bits.uop.mem_signed := hella_req.signed
       dmem_req(w).bits.is_hella       := true.B
       dmem_req(w).bits.traffic_seen   := hella_traffic_seen
-    }
-
-    // 只有 DCache 真正 fire 才把队列项标记为已统计；nack 后重发会复用该位。
-    when (dmem_req_fire(w)) {
-      when (dmem_req(w).bits.uop.uses_ldq) {
-        ldq(dmem_req(w).bits.uop.ldq_idx).bits.traffic_seen := true.B
-      }
-      when (dmem_req(w).bits.uop.uses_stq) {
-        stq(dmem_req(w).bits.uop.stq_idx).bits.traffic_seen := true.B
-      }
-      when (dmem_req(w).bits.is_hella) {
-        hella_traffic_seen := true.B
-      }
     }
 
     //-------------------------------------------------------------
@@ -1117,6 +1121,10 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   val wb_forward_ldq_idx  = RegNext(mem_forward_ldq_idx)
   val wb_forward_ld_addr  = RegNext(mem_forward_ld_addr)
   val wb_forward_stq_idx  = RegNext(mem_forward_stq_idx)
+  // Match the check-state sample to the request which reaches the forwarding
+  // writeback stage two cycles later.
+  val mem_forward_traffic_check = RegNext(io.dmem.traffic_check_state)
+  val wb_forward_traffic_check  = RegNext(mem_forward_traffic_check)
 
   for (i <- 0 until numLdqEntries) {
     val l_valid = ldq(i).valid
@@ -1329,6 +1337,9 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   }
 
   val dmem_resp_fired = WireInit(widthMap(w => false.B))
+  io.dmem.traffic_load_cache_complete   := VecInit.fill(memWidth)(false.B)
+  io.dmem.traffic_load_uncache_complete := VecInit.fill(memWidth)(false.B)
+  io.dmem.traffic_load_forward_complete := VecInit.fill(memWidth)(false.B)
 
   for (w <- 0 until memWidth) {
     // Handle nacks
@@ -1379,11 +1390,25 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
 
         ldq(ldq_idx).bits.succeeded      := io.core.exe(w).iresp.valid || io.core.exe(w).fresp.valid
         ldq(ldq_idx).bits.debug_wb_data  := io.dmem.resp(w).bits.data
+        // Only an in-scope M_XRD completion consumes traffic_seen. An
+        // out-of-scope speculative response must not hide a later in-scope
+        // re-execution of the same LDQ entry.
+        val count_load = io.dmem.resp(w).bits.traffic_check &&
+          !ldq(ldq_idx).bits.traffic_seen &&
+          io.dmem.resp(w).bits.uop.mem_cmd === rocket.M_XRD
+        io.dmem.traffic_load_cache_complete(w) :=
+          count_load && io.dmem.resp(w).bits.traffic_cacheable
+        io.dmem.traffic_load_uncache_complete(w) :=
+          count_load && !io.dmem.resp(w).bits.traffic_cacheable
+        when (count_load) {
+          ldq(ldq_idx).bits.traffic_seen := true.B
+        }
       }
         .elsewhen (io.dmem.resp(w).bits.uop.uses_stq)
       {
         assert(!io.dmem.resp(w).bits.is_hella)
         stq(io.dmem.resp(w).bits.uop.stq_idx).bits.succeeded := true.B
+        stq(io.dmem.resp(w).bits.uop.stq_idx).bits.traffic_seen := true.B
         when (io.dmem.resp(w).bits.uop.is_amo) {
           dmem_resp_fired(w) := true.B
           io.core.exe(w).iresp.valid     := true.B
@@ -1428,6 +1453,13 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         ldq(f_idx).bits.forward_stq_idx := wb_forward_stq_idx(w)
 
         ldq(f_idx).bits.debug_wb_data   := loadgen.data
+
+        val count_forward = wb_forward_traffic_check &&
+          !ldq(f_idx).bits.traffic_seen && forward_uop.mem_cmd === rocket.M_XRD
+        io.dmem.traffic_load_forward_complete(w) := count_forward
+        when (count_forward) {
+          ldq(f_idx).bits.traffic_seen := true.B
+        }
       }
     }
   }
