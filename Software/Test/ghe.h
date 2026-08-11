@@ -93,9 +93,24 @@ static inline uint64_t ghe_csr_perf_read(int csr_index)
     return perf_val;
 }
 
-/* 读取当前 hart 所在 tile 的流量统计：索引 0--6 依次是
+enum ghe_traffic_counter {
+    GHE_TRAFFIC_STORE_TOTAL = 0,
+    GHE_TRAFFIC_STORE_CACHE,
+    GHE_TRAFFIC_STORE_UNCACHE,
+    GHE_TRAFFIC_LOAD_TOTAL,
+    GHE_TRAFFIC_LOAD_CACHE,
+    GHE_TRAFFIC_LOAD_UNCACHE,
+    GHE_TRAFFIC_LOAD_FORWARD,
+    GHE_TRAFFIC_LR,
+    GHE_TRAFFIC_SC_SUCCESS,
+    GHE_TRAFFIC_SC_FAIL,
+    GHE_TRAFFIC_COUNTERS
+};
+
+/* 读取当前 hart 所在 tile 的流量统计：索引 0--9 依次是
  * STORE 总数、可缓存 STORE、不可缓存 STORE、LOAD 总数、
- * 可缓存 LOAD、不可缓存 LOAD、LOAD 转发。 */
+ * 可缓存 LOAD、不可缓存 LOAD、LOAD 转发、LR 完成、
+ * SC 成功、SC 失败。 */
 static inline uint64_t ghe_traffic_counter_read(int counter_index)
 {
     uint64_t value;

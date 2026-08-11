@@ -409,9 +409,9 @@ class BoomNonBlockingDCache(staticIdForMetadataUseOnly: Int)(implicit p: Paramet
 class BoomDCacheBundle(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p) {
   val errors = new DCacheErrors
   val lsu   = Flipped(new LSUDMemIO)
-  // BOOM R_IC 的 fsm_check 状态。七个流量计数器只统计该状态下的访存。
+  // BOOM R_IC 的 fsm_check 状态。流量计数器只统计该状态下的访存。
   val traffic_check_state = Input(Bool())
-  val traffic_counter = Output(Vec(7, UInt(64.W)))
+  val traffic_counter = Output(Vec(10, UInt(64.W)))
 }
 
 class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModuleImp(outer)
@@ -677,6 +677,10 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val lrsc_count = RegInit(0.U(log2Ceil(lrscCycles).W))
   val lrsc_valid = lrsc_count > lrscBackoff.U
   val lrsc_addr  = Reg(UInt())
+  // Keep the most recent completed LR's accounting scope until its SC
+  // completes, even if the R_IC FSM changes state between the pair.
+  val lr_traffic_check = RegInit(false.B)
+  val lr_traffic_check_valid = RegInit(false.B)
   val s2_lr = s2_req(0).uop.mem_cmd === M_XLR && (!RegNext(s1_nack(0)) || s2_type === t_replay)
   val s2_sc = s2_req(0).uop.mem_cmd === M_XSC && (!RegNext(s1_nack(0)) || s2_type === t_replay)
   val s2_lrsc_addr_match = widthMap(w => lrsc_valid && lrsc_addr === (s2_req(w).addr >> blockOffBits))
@@ -881,12 +885,24 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
                             !(io.lsu.exception && resp(w).bits.uop.uses_ldq) &&
                             !IsKilledByBranch(io.lsu.brupdate, resp(w).bits.uop)
     io.lsu.resp(w).bits  := UpdateBrMask(io.lsu.brupdate, resp(w).bits)
+    if (w == 0) {
+      io.lsu.resp(w).bits.traffic_check := Mux(
+        resp(w).bits.uop.mem_cmd === M_XSC && lr_traffic_check_valid,
+        lr_traffic_check,
+        resp(w).bits.traffic_check)
+    }
 
     io.lsu.nack(w).valid := s2_valid(w) && s2_send_nack(w) &&
                             !(io.lsu.exception && s2_req(w).uop.uses_ldq) &&
                             !IsKilledByBranch(io.lsu.brupdate, s2_req(w).uop)
     io.lsu.nack(w).bits  := UpdateBrMask(io.lsu.brupdate, s2_req(w))
     assert(!(io.lsu.nack(w).valid && s2_type =/= t_lsu))
+  }
+  when (io.lsu.resp(0).valid && io.lsu.resp(0).bits.uop.mem_cmd === M_XLR) {
+    lr_traffic_check := io.lsu.resp(0).bits.traffic_check
+    lr_traffic_check_valid := true.B
+  } .elsewhen (io.lsu.resp(0).valid && io.lsu.resp(0).bits.uop.mem_cmd === M_XSC) {
+    lr_traffic_check_valid := false.B
   }
   io.lsu.traffic_check_state := io.traffic_check_state
 
@@ -945,11 +961,17 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val completed_load_cache   = io.lsu.traffic_load_cache_complete
   val completed_load_uncache = io.lsu.traffic_load_uncache_complete
   val completed_load_forward = io.lsu.traffic_load_forward_complete
+  val completed_lr           = io.lsu.traffic_lr_complete
+  val completed_sc_success   = io.lsu.traffic_sc_success_complete
+  val completed_sc_fail      = io.lsu.traffic_sc_fail_complete
   val store_cache_count   = RegInit(0.U(64.W))
   val store_uncache_count = RegInit(0.U(64.W))
   val load_cache_count    = RegInit(0.U(64.W))
   val load_uncache_count  = RegInit(0.U(64.W))
   val load_forward_count  = RegInit(0.U(64.W))
+  val lr_count            = RegInit(0.U(64.W))
+  val sc_success_count    = RegInit(0.U(64.W))
+  val sc_fail_count       = RegInit(0.U(64.W))
   when (completed_store_cache) {
     store_cache_count := store_cache_count + 1.U
   }
@@ -965,6 +987,15 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   when (completed_load_forward.reduce(_|_)) {
     load_forward_count := load_forward_count + PopCount(completed_load_forward)
   }
+  when (completed_lr.reduce(_|_)) {
+    lr_count := lr_count + PopCount(completed_lr)
+  }
+  when (completed_sc_success.reduce(_|_)) {
+    sc_success_count := sc_success_count + PopCount(completed_sc_success)
+  }
+  when (completed_sc_fail.reduce(_|_)) {
+    sc_fail_count := sc_fail_count + PopCount(completed_sc_fail)
+  }
   // load_total includes all three mutually-exclusive BOOM completion paths.
   io.traffic_counter := VecInit(Seq(
     store_cache_count + store_uncache_count,
@@ -973,7 +1004,10 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     load_cache_count + load_uncache_count + load_forward_count,
     load_cache_count,
     load_uncache_count,
-    load_forward_count))
+    load_forward_count,
+    lr_count,
+    sc_success_count,
+    sc_fail_count))
 
   io.lsu.ordered := mshrs.io.fence_rdy && !s1_valid.reduce(_||_) && !s2_valid.reduce(_||_)
 }

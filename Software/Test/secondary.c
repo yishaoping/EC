@@ -5,10 +5,9 @@
 #include "interrupt.h"
 #include "test_config.h"
 
-#define TRAFFIC_COUNTERS 7
 #define NUM_HARTS (NUM_CHECKERS + 1)
 
-extern volatile uint64_t hart_traffic[NUM_HARTS][TRAFFIC_COUNTERS];
+extern volatile uint64_t hart_traffic[NUM_HARTS][GHE_TRAFFIC_COUNTERS];
 extern volatile uint32_t hart_traffic_ready[NUM_HARTS];
 
 void idle(void)
@@ -24,7 +23,7 @@ static void save_checker_traffic(uint64_t hart_id)
         return;
     }
 
-    for (int counter = 0; counter < TRAFFIC_COUNTERS; counter++) {
+    for (int counter = 0; counter < GHE_TRAFFIC_COUNTERS; counter++) {
         hart_traffic[hart_id][counter] = ghe_traffic_counter_read(counter);
     }
     __sync_synchronize();

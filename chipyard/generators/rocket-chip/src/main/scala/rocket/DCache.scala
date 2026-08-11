@@ -404,7 +404,7 @@ class DCacheModule(outer: DCache) extends HellaCacheModule(outer) {
 
   // Traffic counters are owned by RocketCore/ICSL, not by the DCache request
   // pipeline. Keep this legacy interface tied off for non-RocketCore users.
-  io.traffic_counter := VecInit(Seq.fill(7)(0.U(64.W)))
+  io.traffic_counter := VecInit(Seq.fill(10)(0.U(64.W)))
   val s2_want_victimize = (!usingDataScratchpad).B && (s2_valid_cached_miss || s2_valid_flush_line || s2_valid_data_error || s2_flush_valid)
   val s2_cannot_victimize = !s2_flush_valid && io.cpu.s2_kill
   val s2_victimize = s2_want_victimize && !s2_cannot_victimize

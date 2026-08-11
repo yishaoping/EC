@@ -229,7 +229,7 @@ class HellaCacheBundle(val outer: HellaCache)(implicit p: Parameters) extends Co
   // RocketCore/ICSL at successful re-execution completion.
   val traffic_check_state = Input(Bool())
   // Legacy DCache counter interface; RocketCore/ICSL owns the live counters.
-  val traffic_counter = Output(Vec(7, UInt(64.W)))
+  val traffic_counter = Output(Vec(10, UInt(64.W)))
 }
 
 class HellaCacheModule(outer: HellaCache) extends LazyModuleImp(outer)

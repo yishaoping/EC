@@ -996,7 +996,7 @@ class NonBlockingDCacheModule(outer: NonBlockingDCache) extends HellaCacheModule
 
   // Traffic counters are owned by RocketCore/ICSL, not by the DCache request
   // pipeline. Keep this legacy interface tied off for non-RocketCore users.
-  io.traffic_counter := VecInit(Seq.fill(7)(0.U(64.W)))
+  io.traffic_counter := VecInit(Seq.fill(10)(0.U(64.W)))
 
   val s2_recycle_ecc = (s2_valid || s2_replay) && s2_hit && s2_data_correctable
   val s2_recycle_next = RegInit(false.B)

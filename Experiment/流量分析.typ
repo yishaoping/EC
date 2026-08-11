@@ -1,11 +1,16 @@
 
 hart0 traffic: store_out=2349 store_cache=2333 store_uncache=16
-hart0 traffic: load_out=2430 load_cache=2334 load_uncache=96
-hart1 traffic: store_out=752 store_cache=747 store_uncache=5
-hart1 traffic: load_out=983 load_cache=953 load_uncache=30
-hart2 traffic: store_out=785 store_cache=782 store_uncache=3
-hart2 traffic: load_out=995 load_cache=977 load_uncache=18
-hart3 traffic: store_out=746 store_cache=740 store_uncache=6
-hart3 traffic: load_out=394 load_cache=358 load_uncache=36
-hart4 traffic: store_out=66 store_cache=64 store_uncache=2
-hart4 traffic: load_out=78 load_cache=66 load_uncache=12
+hart0 traffic: load_out=2447 load_cache=2334 load_uncache=96 load_forward=17
+hart0 traffic: lr_out=864 sc_success=860 sc_fail=4
+hart1 traffic: store_out=739 store_cache=735 store_uncache=4
+hart1 traffic: load_out=860 load_cache=836 load_uncache=24 load_forward=0
+hart1 traffic: lr_out=316 sc_success=313 sc_fail=0
+hart2 traffic: store_out=711 store_cache=706 store_uncache=5
+hart2 traffic: load_out=733 load_cache=703 load_uncache=30 load_forward=0
+hart2 traffic: lr_out=240 sc_success=239 sc_fail=1
+hart3 traffic: store_out=800 store_cache=796 store_uncache=4
+hart3 traffic: load_out=740 load_cache=716 load_uncache=24 load_forward=0
+hart3 traffic: lr_out=308 sc_success=308 sc_fail=3
+hart4 traffic: store_out=99 store_cache=96 store_uncache=3
+hart4 traffic: load_out=117 load_cache=99 load_uncache=18 load_forward=0
+hart4 traffic: lr_out=0 sc_success=0 sc_fail=0

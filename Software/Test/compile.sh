@@ -3,30 +3,43 @@
 set -euo pipefail
 
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+repo_dir=$(cd -- "$script_dir/../.." && pwd)
+chipyard_dir="$repo_dir/chipyard"
 cd "$script_dir"
 
 gcc_name=riscv64-unknown-elf-gcc
 gcc_path=
 
+compiler_has_newlib() {
+    local compiler=$1
+
+    [[ -x $compiler ]] || return 1
+    "$compiler" -E -x c -o /dev/null - >/dev/null 2>&1 <<'EOF'
+#include <stdint.h>
+#include <inttypes.h>
+#include <stdio.h>
+EOF
+}
+
+candidates=()
+if [[ -n ${RISCV:-} ]]; then
+    candidates+=("$RISCV/bin/$gcc_name")
+fi
+candidates+=("$chipyard_dir/.conda-env/riscv-tools/bin/$gcc_name")
 if command -v "$gcc_name" >/dev/null 2>&1; then
-    gcc_path=$(command -v "$gcc_name")
-elif [[ -n ${RISCV:-} && -x ${RISCV}/bin/${gcc_name} ]]; then
-    gcc_path=${RISCV}/bin/${gcc_name}
-else
-    candidates=(
-        "$script_dir/../../../Chipyard1130/.conda-env/riscv-tools/bin/$gcc_name"
-        "$script_dir/../../chipyard/.conda-env/riscv-tools/bin/$gcc_name"
-    )
-    for candidate in "${candidates[@]}"; do
-        if [[ -x $candidate ]]; then
-            gcc_path=$candidate
-            break
-        fi
-    done
+    candidates+=("$(command -v "$gcc_name")")
 fi
 
+for candidate in "${candidates[@]}"; do
+    if compiler_has_newlib "$candidate"; then
+        gcc_path=$candidate
+        break
+    fi
+done
+
 if [[ -z $gcc_path ]]; then
-    echo "error: $gcc_name was not found; activate the Chipyard toolchain" >&2
+    echo "error: no complete $gcc_name toolchain was found" >&2
+    echo "       expected $chipyard_dir/.conda-env/riscv-tools or a valid RISCV prefix" >&2
     exit 1
 fi
 
@@ -36,32 +49,64 @@ if [[ ! -x $objdump_path ]]; then
     exit 1
 fi
 
+libgloss_dir="$chipyard_dir/toolchains/libgloss"
+htif_specs="$libgloss_dir/util/htif_nano.specs"
+htif_linker_script="$libgloss_dir/util/htif.ld"
+htif_library_dir="$libgloss_dir/build"
+encoding_header="$chipyard_dir/toolchains/riscv-tools/riscv-pk/machine/encoding.h"
+
+required_files=(
+    "$htif_specs"
+    "$htif_linker_script"
+    "$htif_library_dir/libgloss_htif.a"
+    "$encoding_header"
+)
+for required_file in "${required_files[@]}"; do
+    if [[ ! -f $required_file ]]; then
+        echo "error: required build input is missing: $required_file" >&2
+        exit 1
+    fi
+done
+
 build_dir=$(mktemp -d "${TMPDIR:-/tmp}/meek-test.XXXXXX")
 trap 'rm -rf -- "$build_dir"' EXIT
 
+mkdir -p "$build_dir/riscv-pk"
+ln -s "$encoding_header" "$build_dir/riscv-pk/encoding.h"
+ln -s "$htif_linker_script" "$build_dir/htif.ld"
+
 sources=(
-    interrupt.c
-    test.c
-    secondary.c
-    checker_config.c
-    checker.c
-    spin_lock.c
+    "$script_dir/interrupt.c"
+    "$script_dir/test.c"
+    "$script_dir/secondary.c"
+    "$script_dir/checker_config.c"
+    "$script_dir/checker.c"
+    "$script_dir/spin_lock.c"
 )
 
-"$gcc_path" \
-    -fno-common \
-    -fno-builtin-printf \
-    -specs=htif_nano.specs \
-    -march=rv64imafd \
-    -O2 \
-    -DMEEK_ENABLE_BIG_CORE_PERF=0 \
-    -DMEEK_ENABLE_CHECKER_SEGMENT_PERF=1 \
-    -static \
-    "${sources[@]}" \
-    -o "$build_dir/test.riscv"
+(
+    cd "$build_dir"
+    "$gcc_path" \
+        -fno-common \
+        -fno-builtin-printf \
+        -specs="$htif_specs" \
+        -L"$htif_library_dir" \
+        -I"$build_dir" \
+        -I"$script_dir" \
+        -march=rv64imafd \
+        -O2 \
+        -DMEEK_ENABLE_BIG_CORE_PERF=0 \
+        -DMEEK_ENABLE_CHECKER_SEGMENT_PERF=1 \
+        -static \
+        "${sources[@]}" \
+        -o test.riscv
+)
 
+(
+    cd "$build_dir"
+    "$objdump_path" -d -S test.riscv > test.dump
+)
 mv -- "$build_dir/test.riscv" test.riscv
-"$objdump_path" -d -S test.riscv > "$build_dir/test.dump"
 mv -- "$build_dir/test.dump" test.dump
 
 echo "generated: $script_dir/test.riscv"

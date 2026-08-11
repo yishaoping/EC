@@ -127,6 +127,9 @@ class LSUDMemIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
   val traffic_load_cache_complete  = Output(Vec(memWidth, Bool()))
   val traffic_load_uncache_complete = Output(Vec(memWidth, Bool()))
   val traffic_load_forward_complete = Output(Vec(memWidth, Bool()))
+  val traffic_lr_complete           = Output(Vec(memWidth, Bool()))
+  val traffic_sc_success_complete   = Output(Vec(memWidth, Bool()))
+  val traffic_sc_fail_complete      = Output(Vec(memWidth, Bool()))
 
 }
 
@@ -1340,6 +1343,9 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   io.dmem.traffic_load_cache_complete   := VecInit.fill(memWidth)(false.B)
   io.dmem.traffic_load_uncache_complete := VecInit.fill(memWidth)(false.B)
   io.dmem.traffic_load_forward_complete := VecInit.fill(memWidth)(false.B)
+  io.dmem.traffic_lr_complete           := VecInit.fill(memWidth)(false.B)
+  io.dmem.traffic_sc_success_complete   := VecInit.fill(memWidth)(false.B)
+  io.dmem.traffic_sc_fail_complete      := VecInit.fill(memWidth)(false.B)
 
   for (w <- 0 until memWidth) {
     // Handle nacks
@@ -1390,32 +1396,44 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
 
         ldq(ldq_idx).bits.succeeded      := io.core.exe(w).iresp.valid || io.core.exe(w).fresp.valid
         ldq(ldq_idx).bits.debug_wb_data  := io.dmem.resp(w).bits.data
-        // Only an in-scope M_XRD completion consumes traffic_seen. An
+        // Only an in-scope load or LR completion consumes traffic_seen. An
         // out-of-scope speculative response must not hide a later in-scope
         // re-execution of the same LDQ entry.
         val count_load = io.dmem.resp(w).bits.traffic_check &&
           !ldq(ldq_idx).bits.traffic_seen &&
           io.dmem.resp(w).bits.uop.mem_cmd === rocket.M_XRD
+        val count_lr = io.dmem.resp(w).bits.traffic_check &&
+          !ldq(ldq_idx).bits.traffic_seen &&
+          io.dmem.resp(w).bits.uop.mem_cmd === rocket.M_XLR
         io.dmem.traffic_load_cache_complete(w) :=
           count_load && io.dmem.resp(w).bits.traffic_cacheable
         io.dmem.traffic_load_uncache_complete(w) :=
           count_load && !io.dmem.resp(w).bits.traffic_cacheable
-        when (count_load) {
+        io.dmem.traffic_lr_complete(w) := count_lr
+        when (count_load || count_lr) {
           ldq(ldq_idx).bits.traffic_seen := true.B
         }
       }
         .elsewhen (io.dmem.resp(w).bits.uop.uses_stq)
       {
         assert(!io.dmem.resp(w).bits.is_hella)
-        stq(io.dmem.resp(w).bits.uop.stq_idx).bits.succeeded := true.B
-        stq(io.dmem.resp(w).bits.uop.stq_idx).bits.traffic_seen := true.B
+        val stq_idx = io.dmem.resp(w).bits.uop.stq_idx
+        val count_sc = io.dmem.resp(w).bits.traffic_check &&
+          !stq(stq_idx).bits.traffic_seen &&
+          io.dmem.resp(w).bits.uop.mem_cmd === rocket.M_XSC
+        io.dmem.traffic_sc_success_complete(w) :=
+          count_sc && (io.dmem.resp(w).bits.data === 0.U)
+        io.dmem.traffic_sc_fail_complete(w) :=
+          count_sc && (io.dmem.resp(w).bits.data =/= 0.U)
+        stq(stq_idx).bits.succeeded := true.B
+        stq(stq_idx).bits.traffic_seen := true.B
         when (io.dmem.resp(w).bits.uop.is_amo) {
           dmem_resp_fired(w) := true.B
           io.core.exe(w).iresp.valid     := true.B
-          io.core.exe(w).iresp.bits.uop  := stq(io.dmem.resp(w).bits.uop.stq_idx).bits.uop
+          io.core.exe(w).iresp.bits.uop  := stq(stq_idx).bits.uop
           io.core.exe(w).iresp.bits.data := io.dmem.resp(w).bits.data
 
-          stq(io.dmem.resp(w).bits.uop.stq_idx).bits.debug_wb_data := io.dmem.resp(w).bits.data
+          stq(stq_idx).bits.debug_wb_data := io.dmem.resp(w).bits.data
         }
       }
     }
