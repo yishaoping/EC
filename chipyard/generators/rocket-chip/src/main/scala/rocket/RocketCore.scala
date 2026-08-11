@@ -882,10 +882,13 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val checker_load_complete = checker_mem_complete && wb_ctrl.mem_cmd === M_XRD
   val checker_lr_complete = checker_mem_complete && wb_ctrl.mem_cmd === M_XLR
   val checker_sc_complete = checker_mem_complete && wb_ctrl.mem_cmd === M_XSC
+  val checker_amo_complete = checker_mem_complete && isAMO(wb_ctrl.mem_cmd)
   // SC writes zero on success and a non-zero value on failure. LR has no
   // architectural failure result, so only its successful completion is counted.
   val checker_sc_success_complete = checker_sc_complete && (lsl_resp_data === 0.U)
   val checker_sc_fail_complete = checker_sc_complete && (lsl_resp_data =/= 0.U)
+  val checker_amo_cache_complete = checker_amo_complete && lsl_resp_cacheable
+  val checker_amo_uncache_complete = checker_amo_complete && !lsl_resp_cacheable
   val checker_store_cache_complete = checker_store_complete && lsl_resp_cacheable
   val checker_store_uncache_complete = checker_store_complete && !lsl_resp_cacheable
   val checker_load_cache_complete = checker_load_complete && lsl_resp_cacheable
@@ -1160,6 +1163,8 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   icsl.io.lr_deq := checker_lr_complete
   icsl.io.sc_success_deq := checker_sc_success_complete
   icsl.io.sc_fail_deq := checker_sc_fail_complete
+  icsl.io.amo_cache_deq := checker_amo_cache_complete
+  icsl.io.amo_uncache_deq := checker_amo_uncache_complete
   io.traffic_counter := icsl.io.traffic_counter
   // kill_each_pipe := icsl.io.kill_pipe
   val lsl_index = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U(8.W)))

@@ -15,6 +15,7 @@ import freechips.rocketchip.tilelink._
 import freechips.rocketchip.tile._
 import freechips.rocketchip.util._
 import freechips.rocketchip.rocket._
+import freechips.rocketchip.guardiancouncil.GH_GlobalParams
 
 import boom.common._
 import boom.exu.BrUpdateInfo
@@ -411,7 +412,7 @@ class BoomDCacheBundle(implicit p: Parameters, edge: TLEdgeOut) extends BoomBund
   val lsu   = Flipped(new LSUDMemIO)
   // BOOM R_IC 的 fsm_check 状态。流量计数器只统计该状态下的访存。
   val traffic_check_state = Input(Bool())
-  val traffic_counter = Output(Vec(10, UInt(64.W)))
+  val traffic_counter = Output(Vec(GH_GlobalParams.GH_TRAFFIC_COUNTERS, UInt(64.W)))
 }
 
 class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModuleImp(outer)
@@ -964,6 +965,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val completed_lr           = io.lsu.traffic_lr_complete
   val completed_sc_success   = io.lsu.traffic_sc_success_complete
   val completed_sc_fail      = io.lsu.traffic_sc_fail_complete
+  val completed_amo_cache    = io.lsu.traffic_amo_cache_complete
+  val completed_amo_uncache  = io.lsu.traffic_amo_uncache_complete
   val store_cache_count   = RegInit(0.U(64.W))
   val store_uncache_count = RegInit(0.U(64.W))
   val load_cache_count    = RegInit(0.U(64.W))
@@ -972,6 +975,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val lr_count            = RegInit(0.U(64.W))
   val sc_success_count    = RegInit(0.U(64.W))
   val sc_fail_count       = RegInit(0.U(64.W))
+  val amo_cache_count     = RegInit(0.U(64.W))
+  val amo_uncache_count   = RegInit(0.U(64.W))
   when (completed_store_cache) {
     store_cache_count := store_cache_count + 1.U
   }
@@ -996,6 +1001,12 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   when (completed_sc_fail.reduce(_|_)) {
     sc_fail_count := sc_fail_count + PopCount(completed_sc_fail)
   }
+  when (completed_amo_cache.reduce(_|_)) {
+    amo_cache_count := amo_cache_count + PopCount(completed_amo_cache)
+  }
+  when (completed_amo_uncache.reduce(_|_)) {
+    amo_uncache_count := amo_uncache_count + PopCount(completed_amo_uncache)
+  }
   // load_total includes all three mutually-exclusive BOOM completion paths.
   io.traffic_counter := VecInit(Seq(
     store_cache_count + store_uncache_count,
@@ -1007,7 +1018,10 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     load_forward_count,
     lr_count,
     sc_success_count,
-    sc_fail_count))
+    sc_fail_count,
+    amo_cache_count + amo_uncache_count,
+    amo_cache_count,
+    amo_uncache_count))
 
   io.lsu.ordered := mshrs.io.fence_rdy && !s1_valid.reduce(_||_) && !s2_valid.reduce(_||_)
 }

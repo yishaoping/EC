@@ -10,6 +10,9 @@ object GH_GlobalParams {
   val GH_TOTAL_INSTS = 3970;
   //一次128bit数据+8bit状态
   val GH_WIDITH_PACKETS = 2*GH_WIDITH_PERF+8;//136
+  // Stable software-visible flow counter vector length. Keep existing
+  // store/load/LR/SC indices 0..9 and append AMO counters at 10..12.
+  val GH_TRAFFIC_COUNTERS = 13
   val IF_THERE_IS_CDC = true;
   //===== Runtime Configurable Mapping =====//
   val GH_MAX_BIG_CORES = 2;   // 支持的大核数量

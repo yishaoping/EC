@@ -104,13 +104,16 @@ enum ghe_traffic_counter {
     GHE_TRAFFIC_LR,
     GHE_TRAFFIC_SC_SUCCESS,
     GHE_TRAFFIC_SC_FAIL,
+    GHE_TRAFFIC_AMO_TOTAL,
+    GHE_TRAFFIC_AMO_CACHE,
+    GHE_TRAFFIC_AMO_UNCACHE,
     GHE_TRAFFIC_COUNTERS
 };
 
-/* 读取当前 hart 所在 tile 的流量统计：索引 0--9 依次是
+/* 读取当前 hart 所在 tile 的流量统计：索引 0--12 依次是
  * STORE 总数、可缓存 STORE、不可缓存 STORE、LOAD 总数、
  * 可缓存 LOAD、不可缓存 LOAD、LOAD 转发、LR 完成、
- * SC 成功、SC 失败。 */
+ * SC 成功、SC 失败、AMO 总数、可缓存 AMO、不可缓存 AMO。 */
 static inline uint64_t ghe_traffic_counter_read(int counter_index)
 {
     uint64_t value;

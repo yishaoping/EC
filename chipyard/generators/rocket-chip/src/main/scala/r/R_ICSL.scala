@@ -54,7 +54,7 @@ class R_ICSLIO(params: R_ICSLParams) extends Bundle {
   val debug_state                                = Output(UInt(3.W))
   val debug_perf_sel                             = Input(UInt(4.W))
   val debug_perf_val                             = Output(UInt(64.W))   
-  val traffic_counter                            = Output(Vec(10, UInt(64.W)))
+  val traffic_counter                            = Output(Vec(GH_GlobalParams.GH_TRAFFIC_COUNTERS, UInt(64.W)))
   val debug_starting_CPS                         = Input(UInt(1.W))
   val main_core_status                           = Input(UInt(4.W))
   val checker_core_status                        = Output(UInt(4.W))
@@ -67,6 +67,8 @@ class R_ICSLIO(params: R_ICSLParams) extends Bundle {
   val lr_deq                                     = Input(UInt(1.W))
   val sc_success_deq                             = Input(UInt(1.W))
   val sc_fail_deq                                = Input(UInt(1.W))
+  val amo_cache_deq                              = Input(UInt(1.W))
+  val amo_uncache_deq                            = Input(UInt(1.W))
 }
 
 trait HasR_ICSLIO extends BaseModule {
@@ -325,6 +327,9 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   val debug_perf_num_lr                          = RegInit(0.U(64.W))
   val debug_perf_num_sc_success                  = RegInit(0.U(64.W))
   val debug_perf_num_sc_fail                     = RegInit(0.U(64.W))
+  val debug_perf_num_amo_cache                   = RegInit(0.U(64.W))
+  val debug_perf_num_amo_uncache                 = RegInit(0.U(64.W))
+  val debug_perf_num_amo                         = debug_perf_num_amo_cache + debug_perf_num_amo_uncache
   val debug_perf_num_st                          = debug_perf_num_st_cache + debug_perf_num_st_uncache
   val debug_perf_num_ld                          = debug_perf_num_ld_cache + debug_perf_num_ld_uncache
   val debug_L_timer_worest                       = RegInit(0.U(64.W))
@@ -336,16 +341,21 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   debug_perf_num_lr                             := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_lr + io.lr_deq)
   debug_perf_num_sc_success                     := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_sc_success + io.sc_success_deq)
   debug_perf_num_sc_fail                        := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_sc_fail + io.sc_fail_deq)
+  debug_perf_num_amo_cache                      := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_amo_cache + io.amo_cache_deq)
+  debug_perf_num_amo_uncache                    := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_amo_uncache + io.amo_uncache_deq)
   // Software protocol: [store_total, store_cache, store_uncache,
   //                     load_total, load_cache, load_uncache, load_forward,
-  //                     lr, sc_success, sc_fail].
+  //                     lr, sc_success, sc_fail, amo_total,
+  //                     amo_cache, amo_uncache].
   // Rocket re-executes loads through LSL and therefore never uses BOOM's
   // STQ-to-load forwarding path.
   io.traffic_counter                            := VecInit(Seq(debug_perf_num_st, debug_perf_num_st_cache,
                                                                debug_perf_num_st_uncache, debug_perf_num_ld,
                                                                debug_perf_num_ld_cache, debug_perf_num_ld_uncache,
                                                                0.U(64.W), debug_perf_num_lr,
-                                                               debug_perf_num_sc_success, debug_perf_num_sc_fail))
+                                                               debug_perf_num_sc_success, debug_perf_num_sc_fail,
+                                                               debug_perf_num_amo, debug_perf_num_amo_cache,
+                                                               debug_perf_num_amo_uncache))
 
   val u_channel                                  = Module(new GH_MemFIFO(FIFOParams (32, 50)))
   val debug_L_timer                              = RegInit(0.U(64.W))

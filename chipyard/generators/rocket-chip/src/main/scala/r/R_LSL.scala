@@ -143,7 +143,9 @@ DEQ logic
   // Revisit
   io.resp_size               := Mux((resp_valid_reg), req_size_reg, 0.U)
   io.resp_data               := Mux((resp_valid_reg), out_packet(127,64), 0.U)
-  io.resp_addr               := Mux((resp_valid_reg), out_packet(63, 0), 0.U)
+  // Memory packets store cacheability in bit 63; only the low 40 address bits
+  // participate in checker address comparison.
+  io.resp_addr               := Mux((resp_valid_reg), out_packet(39, 0), 0.U)
   io.resp_cacheable          := Mux(resp_valid_reg, out_packet(63), false.B)
   io.resp_has_data           := Mux((resp_valid_reg) && (cmd(0) === 1.U), 1.U, 0.U)
   io.resp_replay             := req_valid_reg && !resp_valid_reg && !resp_kill_reg

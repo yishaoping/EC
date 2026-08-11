@@ -205,7 +205,7 @@ trait HasCoreIO extends HasTileParameters {
     val record_and_store = UInt(2.W).asInput
     val debug_perf_ctrl = UInt(5.W).asInput
     val log_highwatermark = UInt(1.W).asOutput
-    val traffic_counter = Vec(10, UInt(64.W)).asOutput
+    val traffic_counter = Vec(GH_GlobalParams.GH_TRAFFIC_COUNTERS, UInt(64.W)).asOutput
 
     val RAW_cnt = Output(UInt(32.W))
     //===== GuardianCouncil Function: End ====//

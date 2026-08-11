@@ -130,7 +130,9 @@ class GH_BUF (val params: GH_BUF_Params)(implicit p: Parameters) extends BoomMod
     filter_packet(i)                           := MuxCase(0.U, 
                                                       Seq((io.commit_valids(i)&&io.commit_uops(i).uses_ldq) -> Cat(io.alu_in(i)(127,64), io.commit_cacheable(i), io.alu_in(i)(62,0)),
                                                           (io.commit_valids(i)&&io.commit_uops(i).uses_stq&(!is_amo(i))) -> Cat(io.alu_in(i)(127,64), io.commit_cacheable(i), io.alu_in(i)(62,0)),
-                                                          (io.commit_valids(i)&&io.commit_uops(i).uses_stq&(is_amo(i)))  -> Cat(io.gh_prfs_rd(i),io.alu_in(i)(63,0)),
+                                                          // Atomic packets keep the architectural result in the
+                                                          // upper half and carry cacheability alongside the 40b address.
+                                                          (io.commit_valids(i)&&io.commit_uops(i).uses_stq&(is_amo(i)))  -> Cat(io.gh_prfs_rd(i), io.commit_cacheable(i), io.alu_in(i)(62,0)),
                                                           (io.commit_valids(i)&&is_roccwb(i)) -> io.gh_prfs_rd(i),
                                                           (io.commit_valids(i)&&io.commit_uops(i).is_csr&&(!(csr_addr(i)).isOneOf(CSRshadows.csrshadow_seq))) -> io.gh_prfs_rd(i),
                                                           (is_branch(i)) -> Cat(0.U((params.xlen - coreMaxAddrBits - 2).W), is_rvc(i), is_taken(i), io.commit_uops(i).debug_pc, branch_target_addr(i))

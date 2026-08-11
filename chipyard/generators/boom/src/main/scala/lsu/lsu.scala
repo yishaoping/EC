@@ -130,6 +130,8 @@ class LSUDMemIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
   val traffic_lr_complete           = Output(Vec(memWidth, Bool()))
   val traffic_sc_success_complete   = Output(Vec(memWidth, Bool()))
   val traffic_sc_fail_complete      = Output(Vec(memWidth, Bool()))
+  val traffic_amo_cache_complete    = Output(Vec(memWidth, Bool()))
+  val traffic_amo_uncache_complete  = Output(Vec(memWidth, Bool()))
 
 }
 
@@ -1346,6 +1348,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   io.dmem.traffic_lr_complete           := VecInit.fill(memWidth)(false.B)
   io.dmem.traffic_sc_success_complete   := VecInit.fill(memWidth)(false.B)
   io.dmem.traffic_sc_fail_complete      := VecInit.fill(memWidth)(false.B)
+  io.dmem.traffic_amo_cache_complete    := VecInit.fill(memWidth)(false.B)
+  io.dmem.traffic_amo_uncache_complete  := VecInit.fill(memWidth)(false.B)
 
   for (w <- 0 until memWidth) {
     // Handle nacks
@@ -1425,6 +1429,13 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
           count_sc && (io.dmem.resp(w).bits.data === 0.U)
         io.dmem.traffic_sc_fail_complete(w) :=
           count_sc && (io.dmem.resp(w).bits.data =/= 0.U)
+        val count_amo = io.dmem.resp(w).bits.traffic_check &&
+          !stq(stq_idx).bits.traffic_seen &&
+          rocket.isAMO(io.dmem.resp(w).bits.uop.mem_cmd)
+        io.dmem.traffic_amo_cache_complete(w) :=
+          count_amo && io.dmem.resp(w).bits.traffic_cacheable
+        io.dmem.traffic_amo_uncache_complete(w) :=
+          count_amo && !io.dmem.resp(w).bits.traffic_cacheable
         stq(stq_idx).bits.succeeded := true.B
         stq(stq_idx).bits.traffic_seen := true.B
         when (io.dmem.resp(w).bits.uop.is_amo) {

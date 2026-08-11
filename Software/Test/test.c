@@ -16,7 +16,7 @@
 
 uint64_t csr_read_s[TOTAL_CSR_PERF];
 uint64_t csr_read_e[TOTAL_CSR_PERF];
-/* 每个 hart 保存自己的十个流量计数器，hart 0 负责最后统一打印。 */
+/* 每个 hart 保存自己的流量计数器，hart 0 负责最后统一打印。 */
 volatile uint64_t hart_traffic[NUM_HARTS][GHE_TRAFFIC_COUNTERS];
 /* hart 1--4 完成统计读取后分别置位，避免改动原有 GHT 等待逻辑。 */
 volatile uint32_t hart_traffic_ready[NUM_HARTS];
@@ -174,7 +174,7 @@ int main(void)
 
     uint64_t end_cpu = read_cycles();
 
-    /* hart 0 直接把本地十个流量计数器写入自己的统计行。 */
+    /* hart 0 直接把本地流量计数器写入自己的统计行。 */
     for (int counter = 0; counter < GHE_TRAFFIC_COUNTERS; counter++) {
         hart_traffic[0][counter] = ghe_traffic_counter_read(counter);
     }
@@ -209,6 +209,11 @@ int main(void)
                hart, hart_traffic[hart][GHE_TRAFFIC_LR],
                hart_traffic[hart][GHE_TRAFFIC_SC_SUCCESS],
                hart_traffic[hart][GHE_TRAFFIC_SC_FAIL]);
+        printf("hart%d traffic: amo_out=%" PRIu64
+               " amo_cache=%" PRIu64 " amo_uncache=%" PRIu64 "\r\n",
+               hart, hart_traffic[hart][GHE_TRAFFIC_AMO_TOTAL],
+               hart_traffic[hart][GHE_TRAFFIC_AMO_CACHE],
+               hart_traffic[hart][GHE_TRAFFIC_AMO_UNCACHE]);
     }
     printf("[Boom-C%lx]: Test is now completed. \r\n", Hart_id);
     lock_release(&uart_lock);
