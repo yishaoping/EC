@@ -214,7 +214,17 @@ int main(void)
                hart, hart_traffic[hart][GHE_TRAFFIC_AMO_TOTAL],
                hart_traffic[hart][GHE_TRAFFIC_AMO_CACHE],
                hart_traffic[hart][GHE_TRAFFIC_AMO_UNCACHE]);
+        if (hart == 0) {
+            printf("hart0 dcache traffic: l1_l2_wb_total=%" PRIu64
+                   " l1_l2_wb_dirty=%" PRIu64 "\r\n",
+                   hart_traffic[hart][GHE_TRAFFIC_L1_L2_WB_TOTAL],
+                   hart_traffic[hart][GHE_TRAFFIC_L1_L2_WB_DIRTY]);
+        }
     }
+    printf("shared dcache traffic: l2_dram_wb_total=%" PRIu64
+           " l2_dram_wb_dirty=%" PRIu64 "\r\n",
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_TOTAL],
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_DIRTY]);
     printf("[Boom-C%lx]: Test is now completed. \r\n", Hart_id);
     lock_release(&uart_lock);
 

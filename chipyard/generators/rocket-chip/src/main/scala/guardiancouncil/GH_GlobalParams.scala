@@ -10,9 +10,17 @@ object GH_GlobalParams {
   val GH_TOTAL_INSTS = 3970;
   //一次128bit数据+8bit状态
   val GH_WIDITH_PACKETS = 2*GH_WIDITH_PERF+8;//136
-  // Stable software-visible flow counter vector length. Keep existing
-  // store/load/LR/SC indices 0..9 and append AMO counters at 10..12.
-  val GH_TRAFFIC_COUNTERS = 13
+  // Stable software-visible traffic counter vector length. Keep existing
+  // store/load/LR/SC/AMO indices 0..12 and append DCache writeback counters:
+  // BOOM L1->L2 total/dirty at 13..14 and DCache-originated shared-L2->DRAM
+  // total/dirty at 15..16. Indices 13..16 are zero on checker harts.
+  val GH_TRAFFIC_COUNTERS = 17
+  val GH_TRAFFIC_L1_L2_WB_TOTAL = 13
+  val GH_TRAFFIC_L1_L2_WB_DIRTY = 14
+  val GH_TRAFFIC_L2_DRAM_WB_TOTAL = 15
+  val GH_TRAFFIC_L2_DRAM_WB_DIRTY = 16
+  val GH_L2_WB_CLEAN_GRAY_BORE = "gh_l2_dram_wb_clean_gray"
+  val GH_L2_WB_DIRTY_GRAY_BORE = "gh_l2_dram_wb_dirty_gray"
   val IF_THERE_IS_CDC = true;
   //===== Runtime Configurable Mapping =====//
   val GH_MAX_BIG_CORES = 2;   // 支持的大核数量

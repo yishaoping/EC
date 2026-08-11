@@ -251,13 +251,15 @@ AMO 总数由两个子计数器相加得到，不另设一个可能与分类项�
 
 == 4.1 固定索引协议
 
-统计向量长度集中定义为 `GH_GlobalParams.GH_TRAFFIC_COUNTERS = 13`。旧索引 `0..9` 保持原含义，新增 AMO 索引位于末尾：
+统计向量长度现统一为 `GH_GlobalParams.GH_TRAFFIC_COUNTERS = 17`。旧索引 `0..9` 保持原含义，AMO 固定使用 `10..12`；后续追加的写回项位于 `13..16`，不改变 AMO 软件协议：
 
 ```text
 0..2   store_total, store_cache, store_uncache
 3..6   load_total, load_cache, load_uncache, load_forward
 7..9   lr, sc_success, sc_fail
 10..12 amo_out, amo_cache, amo_uncache
+13..14 l1_l2_wb_total, l1_l2_wb_dirty
+15..16 l2_dram_wb_total, l2_dram_wb_dirty
 ```
 
 GHE 使用既有 `funct=0x7B` 指令读回统计，`rs1` 是计数器索引：
@@ -268,7 +270,7 @@ doGetTrafficCounter -> Mux(
   io.traffic_counter_in(rs1_val), 0.U)
 ```
 
-索引越界返回零。公共 `traffic_counter` Vec 接口在 BOOM DCache、Rocket R_ICSL、Core、RoCC command router、GHE 输入之间统一为 13 项，避免不同 tile 的 Bundle 宽度不一致。
+索引越界返回零。公共 `traffic_counter` Vec 接口在 BOOM DCache、Rocket R_ICSL、Core、RoCC command router、GHE 输入之间统一为 17 项，避免不同 tile 的 Bundle 宽度不一致。
 
 == 4.2 BOOM 到 GHE 的传输
 
@@ -350,14 +352,14 @@ GH memory packet 的 payload 为 128 位。bit 63 作为 cacheability 元数据�
   stroke: 0.5pt + rgb("#c7cdd1"),
   table.header([*文件*], [*职责*]),
   [`generators/boom/src/main/scala/lsu/lsu.scala`], [AMO response 精确判定、STQ 去重和 cache/uncache 完成脉冲。],
-  [`generators/boom/src/main/scala/lsu/dcache.scala`], [两个分类计数器、总数构造和 13 项向量输出。],
+  [`generators/boom/src/main/scala/lsu/dcache.scala`], [两个 AMO 分类计数器、总数构造和固定索引向量输出。],
   [`generators/boom/src/main/scala/lsu/mshrs.scala`], [uncacheable AMO 的 IOMSHR/TileLink 路径；当前统计仍在 LSU response 完成点。],
   [`generators/boom/src/main/scala/trans/GH_BUF.scala`], [AMO 架构结果、cacheability 和地址的 packet 布局。],
   [`generators/boom/src/main/scala/common/tile.scala`], [BOOM manager cacheability 判定及 packet 元数据输入。],
   [`generators/rocket-chip/src/main/scala/rocket/RocketCore.scala`], [checker AMO WB/LSL 完成判定和 cache 分类。],
   [`generators/rocket-chip/src/main/scala/r/R_LSL.scala`], [从 packet 返回 AMO 数据、低 40 位地址和 cacheability。],
-  [`generators/rocket-chip/src/main/scala/r/R_ICSL.scala`], [Rocket AMO 两项分类计数器和 13 项输出。],
-  [`generators/rocket-chip/src/main/scala/guardiancouncil/GHE.scala`], [funct 0x7B 的 13 项索引读回。],
+  [`generators/rocket-chip/src/main/scala/r/R_ICSL.scala`], [Rocket AMO 两项分类计数器和固定索引向量输出。],
+  [`generators/rocket-chip/src/main/scala/guardiancouncil/GHE.scala`], [funct 0x7B 的统一索引读回。],
   [`Software/Test/ghe.h`, `test.c`, `secondary.c`], [AMO 枚举、按 hart 读取保存、同步和打印。],
 )
 

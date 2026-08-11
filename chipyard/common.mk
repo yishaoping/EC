@@ -164,12 +164,19 @@ SFC_MFC_TARGETS = \
 SFC_REPL_SEQ_MEM = --infer-rw --repl-seq-mem -c:$(MODEL):-o:$(SFC_SMEMS_CONF)
 MFC_BASE_LOWERING_OPTIONS = emittedLineLength=2048,noAlwaysComb,disallowLocalVariables,verifLabels,locationInfoStyle=wrapInAtSquareBracket
 
-# SFC_LEVEL is assigned with `eval` while the FIRRTL target is built.  That
+# BoringUtils' WiringTransform can partially lower CHIRRTL and leave validif
+# expressions that firtool cannot parse. Finish the Scala FIRRTL pipeline to
+# Low FIRRTL whenever that transform is present.
+SFC_NEEDS_LOW = $(strip \
+	$(ENABLE_CUSTOM_FIRRTL_PASS) \
+	$(shell test -f $(FIRRTL_FILE) && grep -q "Fixed<" $(FIRRTL_FILE) && echo 1) \
+	$(shell test -f $(EXTRA_ANNO_FILE) && grep -q "firrtl.passes.wiring.WiringTransform" $(EXTRA_ANNO_FILE) && echo 1))
+
+# SFC_LEVEL is assigned with `eval` while the FIRRTL target is built. That
 # assignment is skipped when FIRRTL/annotation files are already up to date,
-# but downstream Verilog targets still need a value for GenerateModelStageMain's
-# `-X` option.  Derive a fallback from the existing FIRRTL so `-X` is never
-# emitted without its required argument.
-SFC_LEVEL_FOR_MFC = $(if $(SFC_LEVEL),$(SFC_LEVEL),$(if $(ENABLE_CUSTOM_FIRRTL_PASS),low,$(if $(shell test -f $(FIRRTL_FILE) && grep -q "Fixed<" $(FIRRTL_FILE) && echo low),low,none)))
+# so downstream Verilog targets also derive the level from existing artifacts.
+SFC_LEVEL_FOR_MFC = $(if $(SFC_LEVEL),$(SFC_LEVEL),$(if $(SFC_NEEDS_LOW),low,none))
+EXTRA_FIRRTL_OPTIONS_FOR_SFC = $(strip $(EXTRA_FIRRTL_OPTIONS) $(if $(filter low,$(SFC_LEVEL_FOR_MFC)),$(SFC_REPL_SEQ_MEM)))
 MFC_LOWERING_OPTIONS_DEFAULT = $(MFC_BASE_LOWERING_OPTIONS)
 ifneq (,$(ENABLE_YOSYS_FLOW))
 MFC_LOWERING_OPTIONS_DEFAULT = $(MFC_BASE_LOWERING_OPTIONS),disallowPackedArrays
@@ -188,13 +195,7 @@ MFC_LOWERING_OPTIONS_FOR_MFC = $(if $(MFC_LOWERING_OPTIONS),$(MFC_LOWERING_OPTIO
 # hack: when using dontTouch, io.cpu annotations are not removed by SFC,
 # hence we remove them manually by using jq before passing them to firtool
 $(SFC_LEVEL) $(EXTRA_FIRRTL_OPTIONS) $(FINAL_ANNO_FILE) $(MFC_LOWERING_OPTIONS) &: $(FIRRTL_FILE) $(EXTRA_ANNO_FILE) $(SFC_EXTRA_ANNO_FILE) $(VLOG_SOURCES)
-ifeq (,$(ENABLE_CUSTOM_FIRRTL_PASS))
-	$(eval SFC_LEVEL := $(if $(shell grep "Fixed<" $(FIRRTL_FILE)), low, none))
-	$(eval EXTRA_FIRRTL_OPTIONS += $(if $(shell grep "Fixed<" $(FIRRTL_FILE)), $(SFC_REPL_SEQ_MEM),))
-else
-	$(eval SFC_LEVEL := low)
-	$(eval EXTRA_FIRRTL_OPTIONS += $(SFC_REPL_SEQ_MEM))
-endif
+	$(eval SFC_LEVEL := $(if $(SFC_NEEDS_LOW),low,none))
 ifeq (,$(ENABLE_YOSYS_FLOW))
 	$(eval MFC_LOWERING_OPTIONS = $(MFC_BASE_LOWERING_OPTIONS))
 else
@@ -209,14 +210,14 @@ $(SFC_MFC_TARGETS) &: $(FIRRTL_FILE) $(FINAL_ANNO_FILE) $(SFC_LEVEL) $(EXTRA_FIR
 	$(call run_scala_main,tapeout,barstools.tapeout.transforms.GenerateModelStageMain,\
 		--no-dedup \
 		--output-file $(SFC_FIRRTL_BASENAME) \
-		--output-annotation-file $(SFC_ANNO_FILE) \
+		--out-anno-file $(SFC_ANNO_FILE) \
 		--target-dir $(GEN_COLLATERAL_DIR) \
 		--input-file $(FIRRTL_FILE) \
 		--annotation-file $(FINAL_ANNO_FILE) \
 		--log-level $(FIRRTL_LOGLEVEL) \
 		--allow-unrecognized-annotations \
 		-X $(SFC_LEVEL_FOR_MFC) \
-		$(EXTRA_FIRRTL_OPTIONS))
+		$(EXTRA_FIRRTL_OPTIONS_FOR_SFC))
 	@if [ "$(SFC_LEVEL_FOR_MFC)" = low ] && [ -f "$(SFC_FIRRTL_BASENAME).lo.fir" ]; then mv "$(SFC_FIRRTL_BASENAME).lo.fir" "$(SFC_FIRRTL_FILE)"; fi
 	@if [ "$(SFC_LEVEL_FOR_MFC)" = low ]; then cat $(SFC_ANNO_FILE) | jq 'del(.[] | select(.target | test("io.cpu"))?)' > $(TMP_DIR)/unnec-anno-deleted.sfc.anno.json; fi
 	@if [ "$(SFC_LEVEL_FOR_MFC)" = low ]; then cat $(TMP_DIR)/unnec-anno-deleted.sfc.anno.json | jq 'del(.[] | select(.class | test("SRAMAnnotation"))?)' > $(TMP_DIR)/unnec-anno-deleted2.sfc.anno.json; fi
@@ -252,7 +253,10 @@ $(TOP_MODS_FILELIST) $(MODEL_MODS_FILELIST) $(ALL_MODS_FILELIST) $(BB_MODS_FILEL
 		--in-all-filelist $(MFC_FILELIST) \
 		--target-dir $(GEN_COLLATERAL_DIR)
 	# firtool may emit absolute black-box paths; prefix only relative entries.
-	$(SED) -e 's;^\./;;' -e '\|^/|! s;^;$(GEN_COLLATERAL_DIR)/;' $(MFC_BB_MODS_FILELIST) > $(BB_MODS_FILELIST)
+	$(SED) -e 's;^\./;;' \
+		-e 's;^.*$(GEN_COLLATERAL_DIR)/;$(GEN_COLLATERAL_DIR)/;' \
+		-e '\|^/|! s;^;$(GEN_COLLATERAL_DIR)/;' \
+		$(MFC_BB_MODS_FILELIST) > $(BB_MODS_FILELIST)
 	$(SED) -i 's/\.\///' $(TOP_MODS_FILELIST)
 	$(SED) -i 's/\.\///' $(MODEL_MODS_FILELIST)
 	$(SED) -i 's/\.\///' $(BB_MODS_FILELIST)

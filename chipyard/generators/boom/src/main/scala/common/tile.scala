@@ -8,6 +8,7 @@ package boom.common
 import chisel3._
 import chisel3.util.{RRArbiter, Queue}
 import chisel3.util._
+import chisel3.util.experimental.BoringUtils
 import scala.collection.mutable.{ListBuffer}
 
 import org.chipsalliance.cde.config._
@@ -398,7 +399,32 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
       val cmdRouter = Module(new RoccCommandRouterBoom(outer.roccs.map(_.opcodes))(outer.p))
       // BOOM 路径读取 DCache completion counters：store 为 data-array 写入，
       // load 为成功响应 LSU，时间点对应真实访存执行完成。
-      cmdRouter.io.traffic_counter_in := outer.dcache.module.io.traffic_counter
+      val trafficCounter = Wire(Vec(GH_GlobalParams.GH_TRAFFIC_COUNTERS, UInt(64.W)))
+      trafficCounter := outer.dcache.module.io.traffic_counter
+      if (outer.boomParams.hartId == 0) {
+        def grayToBinary(gray: UInt): UInt =
+          VecInit((0 until gray.getWidth).map(i => gray(gray.getWidth - 1, i).xorR)).asUInt
+
+        def synchronizedL2Count(boreName: String): UInt = {
+          val bankCounts = (0 until outer.p(BankedL2Key).nBanks).map { bank =>
+            // BoringUtils wiring is applied after FIRRTL initialization checks
+            // in this toolchain, so the sink needs a deterministic default.
+            val gray = WireDefault(0.U(64.W))
+            BoringUtils.addSink(gray, s"${boreName}_$bank")
+            val synchronizedGray = AsyncResetSynchronizerShiftReg(
+              gray, sync = 3, name = Some(s"${boreName}_${bank}_sync"))
+            grayToBinary(synchronizedGray)
+          }
+          bankCounts.foldLeft(0.U(64.W))(_ + _)
+        }
+
+        val l2DramWbClean = synchronizedL2Count(GH_GlobalParams.GH_L2_WB_CLEAN_GRAY_BORE)
+        val l2DramWbDirty = synchronizedL2Count(GH_GlobalParams.GH_L2_WB_DIRTY_GRAY_BORE)
+        trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_WB_TOTAL) :=
+          l2DramWbClean + l2DramWbDirty
+        trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_WB_DIRTY) := l2DramWbDirty
+      }
+      cmdRouter.io.traffic_counter_in := trafficCounter
       outer.roccs.zipWithIndex.foreach { case (rocc, i) =>
         ptwPorts ++= rocc.module.io.ptw
         rocc.module.io.cmd <> cmdRouter.io.out(i)

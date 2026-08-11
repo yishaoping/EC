@@ -18,6 +18,7 @@
 package sifive.blocks.inclusivecache
 
 import Chisel._
+import chisel3.util.experimental.BoringUtils
 
 import freechips.rocketchip.config._
 import freechips.rocketchip.diplomacy._
@@ -25,6 +26,7 @@ import freechips.rocketchip.diplomacy._
 
 import freechips.rocketchip.regmapper._
 import freechips.rocketchip.tilelink._
+import freechips.rocketchip.guardiancouncil.GH_GlobalParams
 import freechips.rocketchip.subsystem.BankedL2Key
 import freechips.rocketchip.util._
 
@@ -173,7 +175,8 @@ class InclusiveCache(
     }
 
     // Create the L2 Banks
-    val mods = (node.in zip node.out) map { case ((in, edgeIn), (out, edgeOut)) =>
+    val mods = (node.in zip node.out).zipWithIndex map {
+      case (((in, edgeIn), (out, edgeOut)), bank) =>
       edgeOut.manager.managers.foreach { m =>
         require (m.supportsAcquireB.contains(xfer),
           s"All managers behind the L2 must support acquireB($xfer) " +
@@ -206,6 +209,23 @@ class InclusiveCache(
       out.a.bits.address := params.restoreAddress(scheduler.io.out.a.bits.address)
       in .b.bits.address := params.restoreAddress(scheduler.io.in .b.bits.address)
       out.c.bits.address := params.restoreAddress(scheduler.io.out.c.bits.address)
+
+      // Count only L2 victims whose directory provenance says that the line
+      // was used by a DCache. ICache-only clean evictions are intentionally
+      // excluded. SourceC accepts each line exactly once and never cancels it.
+      val writeback = scheduler.io.dcacheWriteback
+      val dirty = scheduler.io.dcacheWritebackDirty
+      val cleanCount = RegInit(UInt(0, width = 64))
+      val dirtyCount = RegInit(UInt(0, width = 64))
+      when (writeback && !dirty) { cleanCount := cleanCount + UInt(1) }
+      when (writeback && dirty)  { dirtyCount := dirtyCount + UInt(1) }
+
+      val cleanGray = Wire(UInt(width = 64))
+      val dirtyGray = Wire(UInt(width = 64))
+      cleanGray := cleanCount ^ (cleanCount >> 1)
+      dirtyGray := dirtyCount ^ (dirtyCount >> 1)
+      BoringUtils.addSource(cleanGray, s"${GH_GlobalParams.GH_L2_WB_CLEAN_GRAY_BORE}_$bank")
+      BoringUtils.addSource(dirtyGray, s"${GH_GlobalParams.GH_L2_WB_DIRTY_GRAY_BORE}_$bank")
 
       scheduler
     }

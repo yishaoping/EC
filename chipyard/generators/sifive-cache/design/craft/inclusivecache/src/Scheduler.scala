@@ -33,6 +33,9 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
     // Control port
     val req = Decoupled(new SinkXRequest(params)).flip
     val resp = Decoupled(new SourceXRequest(params))
+    // One-cycle, line-level pulses for DCache-originated L2 evictions.
+    val dcacheWriteback = Bool()
+    val dcacheWritebackDirty = Bool()
   }
 
   val sourceA = Module(new SourceA(params))
@@ -138,6 +141,9 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
   sourceX.io.req := schedule.x
   directory.io.write := schedule.dir
 
+  io.dcacheWriteback := sourceC.io.req.fire() && sourceC.io.req.bits.dcache
+  io.dcacheWritebackDirty := io.dcacheWriteback && sourceC.io.req.bits.dirty
+
   // Forward meta-data changes from nested transaction completion
   val select_c  = mshr_selectOH(params.mshrs-1)
   val select_bc = mshr_selectOH(params.mshrs-2)
@@ -147,6 +153,7 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
   nestedwb.b_toB       := select_bc && bc_mshr.io.schedule.bits.dir.valid && bc_mshr.io.schedule.bits.dir.bits.data.state === MetaData.BRANCH
   nestedwb.b_clr_dirty := select_bc && bc_mshr.io.schedule.bits.dir.valid
   nestedwb.c_set_dirty := select_c  &&  c_mshr.io.schedule.bits.dir.valid && c_mshr.io.schedule.bits.dir.bits.data.dirty
+  nestedwb.c_set_dcache := select_c && c_mshr.io.schedule.bits.dir.valid && c_mshr.io.schedule.bits.dir.bits.data.dcache
 
   // Pick highest priority request
   val request = Wire(Decoupled(new FullRequest(params)))

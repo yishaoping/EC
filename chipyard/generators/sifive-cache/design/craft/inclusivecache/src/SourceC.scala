@@ -29,6 +29,7 @@ class SourceCRequest(params: InclusiveCacheParameters) extends InclusiveCacheBun
   val set    = UInt(width = params.setBits)
   val way    = UInt(width = params.wayBits)
   val dirty  = Bool()
+  val dcache = Bool()
 }
 
 class SourceC(params: InclusiveCacheParameters) extends Module

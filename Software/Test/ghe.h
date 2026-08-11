@@ -107,13 +107,19 @@ enum ghe_traffic_counter {
     GHE_TRAFFIC_AMO_TOTAL,
     GHE_TRAFFIC_AMO_CACHE,
     GHE_TRAFFIC_AMO_UNCACHE,
+    GHE_TRAFFIC_L1_L2_WB_TOTAL,
+    GHE_TRAFFIC_L1_L2_WB_DIRTY,
+    GHE_TRAFFIC_L2_DRAM_WB_TOTAL,
+    GHE_TRAFFIC_L2_DRAM_WB_DIRTY,
     GHE_TRAFFIC_COUNTERS
 };
 
-/* 读取当前 hart 所在 tile 的流量统计：索引 0--12 依次是
+/* 读取当前 hart 所在 tile 的流量统计：索引 0--16 依次是
  * STORE 总数、可缓存 STORE、不可缓存 STORE、LOAD 总数、
  * 可缓存 LOAD、不可缓存 LOAD、LOAD 转发、LR 完成、
- * SC 成功、SC 失败、AMO 总数、可缓存 AMO、不可缓存 AMO。 */
+ * SC 成功、SC 失败、AMO 总数、可缓存 AMO、不可缓存 AMO、
+ * BOOM DCache L1->L2 写回总数/脏写回数、DCache 来源的共享 L2->DRAM
+ * 写回总数/脏写回数。四项只由 BOOM hart 0 返回，checker 对应项为 0。 */
 static inline uint64_t ghe_traffic_counter_read(int counter_index)
 {
     uint64_t value;

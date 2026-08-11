@@ -178,6 +178,16 @@ case class InclusiveCacheParameters(
   val clientBits = max(1, clientBitsRaw)
   val stateBits = 2
 
+  // Cacheable DCache clients are the coherent clients whose diplomatic path
+  // terminates at a dcache node. Keep their remapped source ranges so L2 can
+  // distinguish data-cache lines from ICache-only lines.
+  private val dcacheSourceRanges = inner.client.clients
+    .filter(c => c.supports.probe && c.nodePath.last.name == "dcache.node")
+    .map(_.sourceId)
+
+  def isDCacheSource(source: UInt): Bool =
+    dcacheSourceRanges.map(_.contains(source)).foldLeft(Bool(false))(_ || _)
+
   val wayBits    = log2Ceil(cache.ways)
   val setBits    = log2Ceil(cache.sets)
   val offsetBits = log2Ceil(cache.blockBytes)

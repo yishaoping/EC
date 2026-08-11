@@ -21,6 +21,6 @@ class ExtraLowTransforms extends Transform with DependencyAPIMigration {
   override def invalidates(a: Transform): Boolean = false
 
   def execute(state: CircuitState): CircuitState = {
-    state
+    passes.RemoveValidIf.runTransform(state)
   }
 }

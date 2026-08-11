@@ -403,9 +403,10 @@ class DCacheModule(outer: DCache) extends HellaCacheModule(outer) {
   val s2_valid_cached_miss = s2_valid_miss && !s2_uncached && !uncachedInFlight.asUInt.orR
   dontTouch(s2_valid_cached_miss)
 
-  // Traffic counters are owned by RocketCore/ICSL, not by the DCache request
-  // pipeline. Keep this legacy interface tied off for non-RocketCore users.
+  // Traffic counters are owned by RocketCore/ICSL. Writeback traffic is a
+  // BOOM-DCache-only metric, so checker DCache instances remain tied off.
   io.traffic_counter := VecInit(Seq.fill(GH_GlobalParams.GH_TRAFFIC_COUNTERS)(0.U(64.W)))
+
   val s2_want_victimize = (!usingDataScratchpad).B && (s2_valid_cached_miss || s2_valid_flush_line || s2_valid_data_error || s2_flush_valid)
   val s2_cannot_victimize = !s2_flush_valid && io.cpu.s2_kill
   val s2_victimize = s2_want_victimize && !s2_cannot_victimize

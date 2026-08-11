@@ -995,8 +995,8 @@ class NonBlockingDCacheModule(outer: NonBlockingDCache) extends HellaCacheModule
   val s2_nack = s2_nack_hit || s2_nack_victim || s2_nack_miss
   s2_valid_masked := s2_valid && !s2_nack && !io.cpu.s2_kill
 
-  // Traffic counters are owned by RocketCore/ICSL, not by the DCache request
-  // pipeline. Keep this legacy interface tied off for non-RocketCore users.
+  // Traffic counters are owned by RocketCore/ICSL. Writeback traffic is a
+  // BOOM-DCache-only metric, so checker DCache instances remain tied off.
   io.traffic_counter := VecInit(Seq.fill(GH_GlobalParams.GH_TRAFFIC_COUNTERS)(0.U(64.W)))
 
   val s2_recycle_ecc = (s2_valid || s2_replay) && s2_hit && s2_data_correctable

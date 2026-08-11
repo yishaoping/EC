@@ -56,6 +56,7 @@ class NestedWriteback(params: InclusiveCacheParameters) extends InclusiveCacheBu
   val b_toB       = Bool() // nested Probes may demote us
   val b_clr_dirty = Bool() // nested Probes clear dirty
   val c_set_dirty = Bool() // nested Releases MAY set dirty
+  val c_set_dcache = Bool() // nested DCache releases mark data provenance
 }
 
 sealed trait CacheState
@@ -102,6 +103,7 @@ class MSHR(params: InclusiveCacheParameters) extends Module
     when (meta.state === INVALID) {
       assert (!meta.clients.orR)
       assert (!meta.dirty)
+      assert (!meta.dcache)
     }
     when (meta.state === BRANCH) {
       assert (!meta.dirty)
@@ -154,6 +156,7 @@ class MSHR(params: InclusiveCacheParameters) extends Module
         io.nestedwb.set === request.set && io.nestedwb.tag === meta.tag) {
     when (io.nestedwb.b_clr_dirty) { meta.dirty := Bool(false) }
     when (io.nestedwb.c_set_dirty) { meta.dirty := Bool(true) }
+    when (io.nestedwb.c_set_dcache) { meta.dcache := Bool(true) }
     when (io.nestedwb.b_toB) { meta.state := BRANCH }
     when (io.nestedwb.b_toN) { meta.hit := Bool(false) }
   }
@@ -220,18 +223,21 @@ class MSHR(params: InclusiveCacheParameters) extends Module
 
   when (request.prio(2) && Bool(!params.firstLevel)) { // always a hit
     final_meta_writeback.dirty   := meta.dirty || request.opcode(0)
+    final_meta_writeback.dcache  := meta.dcache || params.isDCacheSource(request.source)
     final_meta_writeback.state   := Mux(request.param =/= TtoT && meta.state === TRUNK, TIP, meta.state)
     final_meta_writeback.clients := meta.clients & ~Mux(isToN(request.param), req_clientBit, UInt(0))
     final_meta_writeback.hit     := Bool(true) // chained requests are hits
   } .elsewhen (request.control && Bool(params.control)) { // request.prio(0)
     when (meta.hit) {
       final_meta_writeback.dirty   := Bool(false)
+      final_meta_writeback.dcache  := Bool(false)
       final_meta_writeback.state   := INVALID
       final_meta_writeback.clients := meta.clients & ~probes_toN
     }
     final_meta_writeback.hit := Bool(false)
   } .otherwise {
     final_meta_writeback.dirty := (meta.hit && meta.dirty) || !request.opcode(2)
+    final_meta_writeback.dcache := (meta.hit && meta.dcache) || params.isDCacheSource(request.source)
     final_meta_writeback.state := Mux(req_needT,
                                     Mux(req_acquire, TRUNK, TIP),
                                     Mux(!meta.hit, Mux(gotT, Mux(req_acquire, TRUNK, TIP), BRANCH),
@@ -252,12 +258,14 @@ class MSHR(params: InclusiveCacheParameters) extends Module
       assert (!meta_valid || meta.state === BRANCH)
       final_meta_writeback.hit     := Bool(true)
       final_meta_writeback.dirty   := Bool(false)
+      final_meta_writeback.dcache  := meta.dcache
       final_meta_writeback.state   := BRANCH
       final_meta_writeback.clients := meta.clients & ~probes_toN
     } .otherwise {
       // failed N -> (T or B)
       final_meta_writeback.hit     := Bool(false)
       final_meta_writeback.dirty   := Bool(false)
+      final_meta_writeback.dcache  := Bool(false)
       final_meta_writeback.state   := INVALID
       final_meta_writeback.clients := UInt(0)
     }
@@ -265,6 +273,7 @@ class MSHR(params: InclusiveCacheParameters) extends Module
 
   val invalid = Wire(new DirectoryEntry(params))
   invalid.dirty   := Bool(false)
+  invalid.dcache  := Bool(false)
   invalid.state   := INVALID
   invalid.clients := UInt(0)
   invalid.tag     := UInt(0)
@@ -292,6 +301,7 @@ class MSHR(params: InclusiveCacheParameters) extends Module
   io.schedule.bits.c.bits.set     := request.set
   io.schedule.bits.c.bits.way     := meta.way
   io.schedule.bits.c.bits.dirty   := meta.dirty
+  io.schedule.bits.c.bits.dcache  := meta.dcache
   io.schedule.bits.d.bits         := request
   io.schedule.bits.d.bits.param   := Mux(!req_acquire, request.param,
                                        MuxLookup(request.param, Wire(request.param), Seq(

@@ -27,6 +27,10 @@ import freechips.rocketchip.util.DescribedSRAM
 class DirectoryEntry(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
 {
   val dirty   = Bool() // true => TRUNK or TIP
+  // Sticky while the resident line has been accessed by a DCache. This lets
+  // L2 eviction accounting exclude ICache-only lines after all L1 sharers have
+  // released the block.
+  val dcache  = Bool()
   val state   = UInt(width = params.stateBits)
   val clients = UInt(width = params.clientBits)
   val tag     = UInt(width = params.tagBits)

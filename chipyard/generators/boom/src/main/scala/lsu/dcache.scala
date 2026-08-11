@@ -843,6 +843,21 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
 
   TLArbiter.lowest(edge, tl_out.c, wb.io.release, prober.io.rep)
 
+  // Count each L1->L2 release/probe-response once, when its first C-channel
+  // beat is accepted. Data-bearing messages are dirty writebacks.
+  val (c_first, _, _, _) = edge.count(tl_out.c)
+  val l1_l2_wb_event = tl_out.c.fire && c_first
+  val l1_l2_wb_dirty_event = l1_l2_wb_event &&
+    tl_out.c.bits.opcode.isOneOf(TLMessages.ReleaseData, TLMessages.ProbeAckData)
+  val l1_l2_wb_total_count = RegInit(0.U(64.W))
+  val l1_l2_wb_dirty_count = RegInit(0.U(64.W))
+  when (l1_l2_wb_event) {
+    l1_l2_wb_total_count := l1_l2_wb_total_count + 1.U
+  }
+  when (l1_l2_wb_dirty_event) {
+    l1_l2_wb_dirty_count := l1_l2_wb_dirty_count + 1.U
+  }
+
   io.lsu.perf.release := edge.done(tl_out.c)
   io.lsu.perf.acquire := edge.done(tl_out.a)
 
@@ -1021,7 +1036,11 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     sc_fail_count,
     amo_cache_count + amo_uncache_count,
     amo_cache_count,
-    amo_uncache_count))
+    amo_uncache_count,
+    l1_l2_wb_total_count,
+    l1_l2_wb_dirty_count,
+    0.U(64.W),
+    0.U(64.W)))
 
   io.lsu.ordered := mshrs.io.fence_rdy && !s1_valid.reduce(_||_) && !s2_valid.reduce(_||_)
 }

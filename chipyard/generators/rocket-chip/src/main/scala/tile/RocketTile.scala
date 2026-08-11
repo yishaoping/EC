@@ -132,6 +132,9 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
   // HasLazyRoCCModule is initialized before this class body, so connect the
   // checker-owned counters only after the Rocket core has been constructed.
   if (outer.roccs.nonEmpty) {
+    // Checker harts expose only their core execution counters. Cache
+    // writeback counters (indices 13--16) stay at the zero values supplied by
+    // R_ICSL and are reported only through BOOM hart 0.
     cmdRouter.get.io.traffic_counter_in := core.io.traffic_counter
   }
   val ght_bridge = Module(new GH_Bridge(GH_BridgeParams(1)))

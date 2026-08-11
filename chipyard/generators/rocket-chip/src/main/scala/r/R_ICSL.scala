@@ -346,7 +346,10 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   // Software protocol: [store_total, store_cache, store_uncache,
   //                     load_total, load_cache, load_uncache, load_forward,
   //                     lr, sc_success, sc_fail, amo_total,
-  //                     amo_cache, amo_uncache].
+  //                     amo_cache, amo_uncache, l1_l2_wb_total,
+  //                     l1_l2_wb_dirty, l2_dram_wb_total,
+  //                     l2_dram_wb_dirty]. Indices 13--16 are BOOM/shared-L2
+  //                     metrics and therefore remain zero on checker harts.
   // Rocket re-executes loads through LSL and therefore never uses BOOM's
   // STQ-to-load forwarding path.
   io.traffic_counter                            := VecInit(Seq(debug_perf_num_st, debug_perf_num_st_cache,
@@ -355,7 +358,8 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
                                                                0.U(64.W), debug_perf_num_lr,
                                                                debug_perf_num_sc_success, debug_perf_num_sc_fail,
                                                                debug_perf_num_amo, debug_perf_num_amo_cache,
-                                                               debug_perf_num_amo_uncache))
+                                                               debug_perf_num_amo_uncache, 0.U(64.W), 0.U(64.W),
+                                                               0.U(64.W), 0.U(64.W)))
 
   val u_channel                                  = Module(new GH_MemFIFO(FIFOParams (32, 50)))
   val debug_L_timer                              = RegInit(0.U(64.W))
