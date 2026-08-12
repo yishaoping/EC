@@ -21,6 +21,88 @@ volatile uint64_t hart_traffic[NUM_HARTS][GHE_TRAFFIC_COUNTERS];
 /* hart 1--4 完成统计读取后分别置位，避免改动原有 GHT 等待逻辑。 */
 volatile uint32_t hart_traffic_ready[NUM_HARTS];
 
+typedef unsigned __int128 uint128_t;
+
+static void print_uint128(uint128_t value)
+{
+    char buffer[40];
+    int index = (int)sizeof(buffer) - 1;
+
+    buffer[index] = '\0';
+    do {
+        buffer[--index] = (char)('0' + value % 10);
+        value /= 10;
+    } while (value != 0);
+    printf("%s", &buffer[index]);
+}
+
+static uint128_t cycle_sum_to_ns(uint64_t cycle_sum, uint64_t frequency_hz)
+{
+    return (uint128_t)cycle_sum * UINT64_C(1000000000) / frequency_hz;
+}
+
+static void print_store_uncache_latency(void)
+{
+    uint128_t hart_time_ns[NUM_HARTS];
+    uint128_t checker_time_ns = 0;
+    uint128_t checker_count = 0;
+    uint64_t boom_count = hart_traffic[0][GHE_TRAFFIC_STORE_UNCACHE];
+
+    for (int hart = 0; hart < NUM_HARTS; hart++) {
+        uint64_t frequency_hz = hart == 0 ? BOOM_CORE_FREQUENCY_HZ
+                                         : CHECKER_CORE_FREQUENCY_HZ;
+        uint64_t cycle_sum =
+            hart_traffic[hart][GHE_TRAFFIC_STORE_UNCACHE_CYCLE_SUM];
+
+        hart_time_ns[hart] = cycle_sum_to_ns(cycle_sum, frequency_hz);
+        printf("hart%d store_uncache timestamp_cycle_sum=%" PRIu64
+               " frequency_hz=%" PRIu64 " time_sum_ns=",
+               hart, cycle_sum, frequency_hz);
+        print_uint128(hart_time_ns[hart]);
+        printf("\r\n");
+
+        if (hart != 0) {
+            checker_time_ns += hart_time_ns[hart];
+            checker_count +=
+                hart_traffic[hart][GHE_TRAFFIC_STORE_UNCACHE];
+        }
+    }
+
+    printf("store_uncache latency inputs: boom_count=%" PRIu64
+           " checker_count=", boom_count);
+    print_uint128(checker_count);
+    printf(" boom_time_sum_ns=");
+    print_uint128(hart_time_ns[0]);
+    printf(" checker_time_sum_ns=");
+    print_uint128(checker_time_ns);
+    printf("\r\n");
+
+    if (checker_count != (uint128_t)boom_count) {
+        printf("store_uncache average detection latency unavailable: "
+               "event counts do not match\r\n");
+        return;
+    }
+    if (boom_count == 0) {
+        printf("store_uncache average detection latency unavailable: "
+               "no events\r\n");
+        return;
+    }
+
+    int negative = checker_time_ns < hart_time_ns[0];
+    uint128_t difference_ns = negative ? hart_time_ns[0] - checker_time_ns
+                                       : checker_time_ns - hart_time_ns[0];
+    uint128_t average_ns = difference_ns / boom_count;
+    uint64_t average_fraction =
+        (uint64_t)(((difference_ns % boom_count) * 1000) / boom_count);
+
+    printf("store_uncache approx_average_detection_latency_ns=");
+    if (negative) {
+        printf("-");
+    }
+    print_uint128(average_ns);
+    printf(".%03" PRIu64 "\r\n", average_fraction);
+}
+
 int main(void)
 {
     r_ini(NUM_CHECKERS);
@@ -225,6 +307,7 @@ int main(void)
            " l2_dram_wb_dirty=%" PRIu64 "\r\n",
            hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_TOTAL],
            hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_DIRTY]);
+    print_store_uncache_latency();
     printf("[Boom-C%lx]: Test is now completed. \r\n", Hart_id);
     lock_release(&uart_lock);
 

@@ -54,6 +54,7 @@ class R_ICSLIO(params: R_ICSLParams) extends Bundle {
   val debug_state                                = Output(UInt(3.W))
   val debug_perf_sel                             = Input(UInt(4.W))
   val debug_perf_val                             = Output(UInt(64.W))   
+  val csr_cycle                                  = Input(UInt(64.W))
   val traffic_counter                            = Output(Vec(GH_GlobalParams.GH_TRAFFIC_COUNTERS, UInt(64.W)))
   val debug_starting_CPS                         = Input(UInt(1.W))
   val main_core_status                           = Input(UInt(4.W))
@@ -322,6 +323,8 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
 
   val debug_perf_num_st_cache                    = RegInit(0.U(64.W))
   val debug_perf_num_st_uncache                  = RegInit(0.U(64.W))
+  val debug_perf_num_st_uncache_in_packet        = RegInit(0.U(params.width_of_ic.W))
+  val debug_perf_st_uncache_cycle_sum            = RegInit(0.U(64.W))
   val debug_perf_num_ld_cache                    = RegInit(0.U(64.W))
   val debug_perf_num_ld_uncache                  = RegInit(0.U(64.W))
   val debug_perf_num_lr                          = RegInit(0.U(64.W))
@@ -336,6 +339,19 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
 
   debug_perf_num_st_cache                       := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_st_cache + io.st_cache_deq)
   debug_perf_num_st_uncache                     := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_st_uncache + io.st_uncache_deq)
+  val st_uncache_count_at_packet_completion      = debug_perf_num_st_uncache_in_packet + io.st_uncache_deq
+  val st_uncache_packet_cycle_contribution       = io.csr_cycle * st_uncache_count_at_packet_completion
+  when (io.debug_perf_reset.asBool) {
+    debug_perf_num_st_uncache_in_packet          := 0.U
+    debug_perf_st_uncache_cycle_sum              := 0.U
+  }.elsewhen (io.if_check_completed.asBool) {
+    // All uncache stores in this packet share the timestamp at which the
+    // packet's architectural checkpoint comparison completes.
+    debug_perf_num_st_uncache_in_packet          := 0.U
+    debug_perf_st_uncache_cycle_sum              := debug_perf_st_uncache_cycle_sum + st_uncache_packet_cycle_contribution(63, 0)
+  }.elsewhen (io.st_uncache_deq.asBool) {
+    debug_perf_num_st_uncache_in_packet          := st_uncache_count_at_packet_completion
+  }
   debug_perf_num_ld_cache                       := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_ld_cache + io.ld_cache_deq)
   debug_perf_num_ld_uncache                     := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_ld_uncache + io.ld_uncache_deq)
   debug_perf_num_lr                             := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_lr + io.lr_deq)
@@ -348,8 +364,9 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   //                     lr, sc_success, sc_fail, amo_total,
   //                     amo_cache, amo_uncache, l1_l2_wb_total,
   //                     l1_l2_wb_dirty, l2_dram_wb_total,
-  //                     l2_dram_wb_dirty]. Indices 13--16 are BOOM/shared-L2
-  //                     metrics and therefore remain zero on checker harts.
+  //                     l2_dram_wb_dirty, store_uncache_cycle_sum].
+  //                     Indices 13--16 are BOOM/shared-L2 metrics and remain
+  //                     zero on checker harts. Index 17 is local to each hart.
   // Rocket re-executes loads through LSL and therefore never uses BOOM's
   // STQ-to-load forwarding path.
   io.traffic_counter                            := VecInit(Seq(debug_perf_num_st, debug_perf_num_st_cache,
@@ -359,7 +376,8 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
                                                                debug_perf_num_sc_success, debug_perf_num_sc_fail,
                                                                debug_perf_num_amo, debug_perf_num_amo_cache,
                                                                debug_perf_num_amo_uncache, 0.U(64.W), 0.U(64.W),
-                                                               0.U(64.W), 0.U(64.W)))
+                                                               0.U(64.W), 0.U(64.W),
+                                                               debug_perf_st_uncache_cycle_sum))
 
   val u_channel                                  = Module(new GH_MemFIFO(FIFOParams (32, 50)))
   val debug_L_timer                              = RegInit(0.U(64.W))

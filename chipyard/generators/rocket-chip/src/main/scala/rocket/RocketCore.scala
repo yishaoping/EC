@@ -1154,6 +1154,9 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   */
   
   icsl.io.debug_starting_CPS := rsu_slave.io.starting_CPS
+  // R_ICSL counts each completed uncache store here, then samples this CSR
+  // clock when RSUSL reports that the packet's checkpoint check has completed.
+  icsl.io.csr_cycle := csr.io.time
   icsl.io.st_deq := checker_store_complete
   icsl.io.ld_deq := checker_load_complete
   icsl.io.st_cache_deq := checker_store_cache_complete

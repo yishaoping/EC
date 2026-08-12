@@ -412,6 +412,7 @@ class BoomDCacheBundle(implicit p: Parameters, edge: TLEdgeOut) extends BoomBund
   val lsu   = Flipped(new LSUDMemIO)
   // BOOM R_IC 的 fsm_check 状态。流量计数器只统计该状态下的访存。
   val traffic_check_state = Input(Bool())
+  val csr_cycle = Input(UInt(64.W))
   val traffic_counter = Output(Vec(GH_GlobalParams.GH_TRAFFIC_COUNTERS, UInt(64.W)))
 }
 
@@ -984,6 +985,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val completed_amo_uncache  = io.lsu.traffic_amo_uncache_complete
   val store_cache_count   = RegInit(0.U(64.W))
   val store_uncache_count = RegInit(0.U(64.W))
+  val store_uncache_cycle_sum = RegInit(0.U(64.W))
   val load_cache_count    = RegInit(0.U(64.W))
   val load_uncache_count  = RegInit(0.U(64.W))
   val load_forward_count  = RegInit(0.U(64.W))
@@ -997,6 +999,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   }
   when (completed_store_uncache) {
     store_uncache_count := store_uncache_count + 1.U
+    // The event and CSR timestamp are sampled on the same BOOM clock edge.
+    store_uncache_cycle_sum := store_uncache_cycle_sum + io.csr_cycle
   }
   when (completed_load_cache.reduce(_|_)) {
     load_cache_count := load_cache_count + PopCount(completed_load_cache)
@@ -1040,7 +1044,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     l1_l2_wb_total_count,
     l1_l2_wb_dirty_count,
     0.U(64.W),
-    0.U(64.W)))
+    0.U(64.W),
+    store_uncache_cycle_sum))
 
   io.lsu.ordered := mshrs.io.fence_rdy && !s1_valid.reduce(_||_) && !s2_valid.reduce(_||_)
 }

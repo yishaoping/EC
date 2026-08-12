@@ -67,7 +67,7 @@ class GHEImp(outer: GHE)(implicit p: Parameters) extends LazyRoCCModuleImp(outer
     val doPID_Cfg               = (cmd.fire && (funct === 0x16.U))
     val doGHT_Cfg               = (cmd.fire && (funct === 0x6.U) && ((rs2_val === 2.U) || (rs2_val === 3.U) || (rs2_val === 4.U)))
     val doGetCsrPerf            = (cmd.fire && (funct === 0x55.U))
-    // Flow-statistics readback: rs1 is the counter index 0..12.
+    // Flow-statistics readback: rs1 is the counter index 0..17.
     val doGetTrafficCounter     = (cmd.fire && (funct === 0x7B.U))
     val doGHTBufferCheck        = (cmd.fire && (funct === 0x8.U))
     // val doCheckM_PPN            = (cmd.fire && (funct === 0x17.U))

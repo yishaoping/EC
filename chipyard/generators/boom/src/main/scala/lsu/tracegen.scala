@@ -235,6 +235,8 @@ class BoomTraceGenTileModuleImp(outer: BoomTraceGenTile)
   val boom_shim = Module(new BoomLSUShim()(outer.boom_params))
   ptw.io.requestors.head <> lsu.io.ptw
   outer.dcache.module.io.lsu <> lsu.io.dmem
+  outer.dcache.module.io.traffic_check_state := false.B
+  outer.dcache.module.io.csr_cycle := 0.U
   boom_shim.io.tracegen <> tracegen.io.mem
   tracegen.io.fence_rdy := boom_shim.io.tracegen.ordered
   boom_shim.io.lsu <> lsu.io.core

@@ -86,6 +86,8 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     val bigComp  = Input(UInt(3.W))
 
     val csr_counter = Output(Vec(84, UInt(32.W)))
+    // Live mcycle/cycle value from this BOOM core's CSRFile.
+    val csr_cycle = Output(UInt(xLen.W))
     
     /* R Features */
     val num_of_checker = Input(UInt(8.W))
@@ -649,6 +651,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   val csr = Module(new freechips.rocketchip.rocket.CSRFile(perfEvents, boomParams.customCSRs.decls))
   csr.io.inst foreach { c => c := DontCare }
   csr.io.rocc_interrupt := io.rocc.interrupt
+  io.csr_cycle := csr.io.time
 
   val custom_csrs = Wire(new BoomCustomCSRs)
   (custom_csrs.csrs zip csr.io.customCSRs).map { case (lhs, rhs) => lhs := rhs }
