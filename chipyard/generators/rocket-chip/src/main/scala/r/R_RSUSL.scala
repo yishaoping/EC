@@ -53,6 +53,7 @@ class R_RSUSLIO(params: R_RSUSLParams) extends Bundle {
 
   val do_cp_check = Input(UInt(1.W))
   val if_cp_check_completed = Output(UInt(1.W))
+  val check_error = Output(Bool())
   val core_arfs_in = Input(Vec(params.numARFS, UInt(params.xLen.W)))
   val core_farfs_in = Input(Vec(params.numARFS, UInt(params.xLen.W)))
   val elu_cp_deq = Input(UInt(1.W))
@@ -305,7 +306,13 @@ class R_RSUSL(val params: R_RSUSLParams) extends Module with HasR_RSUSLIO {
     checking_counter                             := Mux(checking_counter === 0x1f.U, checking_counter, checking_counter + 1.U)
   }
 
-  channel_enq_valid                              := do_check.asBool && (checking_counter =/= 0.U) && !if_check_completed.asBool && ((io.core_arfs_in(checking_counter_memdelay) =/= arf_data_ECP) ||  (io.core_farfs_in(checking_counter_memdelay) =/= farf_data_ECP))
+  val arf_mismatch                                 = do_check.asBool && (checking_counter =/= 0.U) &&
+    ((io.core_arfs_in(checking_counter_memdelay) =/= arf_data_ECP) ||
+      (io.core_farfs_in(checking_counter_memdelay) =/= farf_data_ECP))
+  // Preserve the legacy ELU FIFO boundary: the terminal compare is reported
+  // through check_error but is not enqueued for a later ELU dequeue.
+  channel_enq_valid                              := arf_mismatch && !if_check_completed.asBool
+  io.check_error                                 := arf_mismatch
   channel_enq_data                               := Mux(channel_enq_valid.asBool, Cat(checking_counter_memdelay, farf_data_ECP, io.core_farfs_in(checking_counter_memdelay), arf_data_ECP, io.core_arfs_in(checking_counter_memdelay)), 0.U)
   channel_deq_ready                              := io.elu_cp_deq.asBool
   io.elu_cp_data                                 := channel_deq_data

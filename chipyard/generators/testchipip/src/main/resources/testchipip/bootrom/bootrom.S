@@ -7,6 +7,10 @@ _start:
   li a1, 0x2000000 // base address of clint
   csrr a0, mhartid
   bnez a0, boot_core
+  // CustomBootPin wakes hart 0 by setting msip[0].  Clear that request
+  // before waking secondary harts; otherwise boot_core waits for msip[0]
+  // while hart 0 waits for a secondary hart to clear its own msip.
+  sw zero, 0(a1)
   addi a2, a1, 4
   li a3, 1
 interrupt_loop: // trigger MSIP interrupts for other harts so that they also boot

@@ -59,7 +59,10 @@ class R_ICIO(params: R_ICParams) extends Bundle {
   val checker_enable_we                          = Input(UInt(1.W))                                     // write strobe
   val checker_enable_rd                          = Output(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))// readback
   val checker_big_owner                          = Output(Vec(params.totalnumber_of_cores, UInt(4.W)))  // which big core owns this checker
-  val checker_segment_id                         = Output(Vec(params.totalnumber_of_cores, UInt(params.width_of_ic.W))) // segment counter
+  val checker_segment_id                         = Output(Vec(params.totalnumber_of_cores, UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))
+  val active_packet_seq                          = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val packet_alloc_valid                         = Output(Bool())
+  val packet_alloc_seq                           = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
 
   // Global ic_status: OR of all big cores' local ic_status, broadcast from GHM
   // Used by scheduler to avoid dispatching to a checker already busy under another big core
@@ -102,6 +105,9 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
 
   // checker_big_owner: which big core last dispatched to this checker (persists across segments)
   val checker_big_owner_reg                      = RegInit(VecInit(Seq.fill(params.totalnumber_of_cores)(0.U(4.W))))
+  val checker_segment_id_reg                     = RegInit(VecInit(Seq.fill(params.totalnumber_of_cores)(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))))
+  val packet_seq_counter                         = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val active_packet_seq                          = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
 
   // Track owner: capture on first idle→busy transition, clear when idle & excluded from mask
   for (i <- 0 until num_checkers) {
@@ -114,7 +120,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
       checker_big_owner_reg(idx)                := 0.U
     }
     io.checker_big_owner(idx)                   := checker_big_owner_reg(idx)
-    io.checker_segment_id(idx)                  := 0.U
+    io.checker_segment_id(idx)                  := checker_segment_id_reg(idx)
   }
   for (i <- 0 until GH_GlobalParams.GH_NUM_BIG_CORES) {
     io.checker_big_owner(i)                     := 0.U
@@ -152,6 +158,17 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   // if_dosnap                                    := Mux((fsm_state === fsm_snap) && (io.if_ready_snap_shot.asBool), Mux((ctrl === 2.U) || (ctrl === 0.U), io.if_correct_process, 1.U), 0.U)
   if_dosnap                                    := Mux((fsm_state === fsm_snap) && (io.if_ready_snap_shot.asBool), Mux(((ctrl === 2.U) && !(io.mode_switch || io.mode_ret ||io.excp_mode)) || (ctrl === 0.U), io.if_correct_process, Mux(((ctrl === 1.U)) || (ctrl === 3.U), 1.U, 0.U)), 0.U)
   if_dosnap_priv                               := Mux((fsm_state === fsm_snap) && (io.if_ready_snap_shot.asBool), Mux(((ctrl === 2.U) && (io.mode_switch || io.mode_ret ||io.excp_mode)) || (ctrl === 4.U), io.if_correct_process, Mux((ctrl === 5.U), 1.U, 0.U)), 0.U)
+  val snapshot_accepted = (if_dosnap | if_dosnap_priv).asBool
+  val package_allocated = snapshot_accepted && !ctrl(0).asBool
+  val allocated_packet_seq = packet_seq_counter + 1.U
+  when (package_allocated) {
+    packet_seq_counter := allocated_packet_seq
+    active_packet_seq := allocated_packet_seq
+    checker_segment_id_reg(crnt_target_ic) := allocated_packet_seq
+  }
+  io.active_packet_seq := active_packet_seq
+  io.packet_alloc_valid := package_allocated
+  io.packet_alloc_seq := allocated_packet_seq
   // val if_t_and_na                               = Mux(((io.ic_exit_isax.asBool || io.ic_syscall.asBool || (ic_counter(crnt_target) >= io.ic_threshold) || io.icsl_na(crnt_target).asBool) && (ic_status(sch_result).asBool)), 1.U, 0.U)
   // val if_t_and_a                                = Mux(((io.ic_exit_isax.asBool || io.ic_syscall.asBool || (ic_counter(crnt_target) >= io.ic_threshold) || io.icsl_na(crnt_target).asBool) && (!ic_status(sch_result).asBool)), 1.U, 0.U)
   val if_t_and_na                               = Mux(((io.ic_exit_isax.asBool || io.mode_switch || io.mode_ret || (ic_counter(crnt_target_ic) >= io.ic_threshold) || io.icsl_na(crnt_target_ic).asBool) && (ic_status(sch_result_ic).asBool)), 1.U, 0.U)
@@ -232,7 +249,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
       ctrl                                      := Mux((io.mode_switch || io.excp_mode) && if_t_and_a.asBool && (ctrl === 0.U), 4.U, ctrl)
       crnt_target                               := crnt_target
       // crnt_mask                                 := Mux((ctrl === 2.U) || (ctrl === 0.U), Mux(io.if_ready_snap_shot.asBool && io.if_correct_process.asBool, Cat(ctrl, crnt_target), crnt_mask), Mux(io.if_ready_snap_shot.asBool, Cat(ctrl, crnt_target), crnt_mask))      
-      crnt_mask                                 := Mux((ctrl === 2.U) || (ctrl === 0.U) || (ctrl === 4.U), Mux(io.if_ready_snap_shot.asBool && io.if_correct_process.asBool, Cat(ctrl, crnt_target), crnt_mask), Mux(io.if_ready_snap_shot.asBool, Cat(ctrl, crnt_target), crnt_mask))      
+      crnt_mask                                 := Mux((ctrl === 2.U) || (ctrl === 0.U) || (ctrl === 4.U), Mux(io.if_ready_snap_shot.asBool && io.if_correct_process.asBool, Cat(ctrl, crnt_target), crnt_mask), Mux(io.if_ready_snap_shot.asBool, Cat(ctrl, crnt_target), crnt_mask))
       nxt_target                                := nxt_target
       if_filtering                              := 0.U
       if_pipeline_stall                         := io.if_correct_process.asBool

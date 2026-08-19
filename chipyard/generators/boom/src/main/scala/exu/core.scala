@@ -68,7 +68,6 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     val trace = Output(Vec(coreParams.retireWidth, new TracedInstruction))
     val fcsr_rm = UInt(freechips.rocketchip.tile.FPConstants.RM_SZ.W)
 //===== GuardianCouncil Function: Start ====//
-
     val commit_valids = Output(Vec(coreWidth, UInt(1.W)))
     val commit_uops   = Output(Vec(coreWidth, new MicroOp))
     val commit_rs1    = Output(Vec(coreWidth, UInt(xLen.W)))
@@ -105,7 +104,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     val core_trace = Input(UInt(1.W))
     val debug_maincore_status = Output(UInt(4.W))
     val ic_trace = Input(UInt(1.W))
-    val debug_perf_ctrl = Input(UInt(4.W))
+    val debug_perf_ctrl = Input(UInt(GH_GlobalParams.GH_PERF_CTRL_BITS.W))
     val debug_perf_val = Output(UInt(64.W))
     val shared_CP_CFG = Output(UInt(13.W))
     val arfs_ecp_dest = Output(UInt(8.W))
@@ -116,7 +115,10 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     val checker_enable_we   = Input(UInt(1.W))
     val checker_enable_rd   = Output(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))
     val checker_big_owner   = Output(Vec(GH_GlobalParams.GH_NUM_CORES, UInt(4.W)))
-    val checker_segment_id  = Output(Vec(GH_GlobalParams.GH_NUM_CORES, UInt(16.W)))
+    val checker_segment_id  = Output(Vec(GH_GlobalParams.GH_NUM_CORES, UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))
+    val active_packet_seq   = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+    val packet_alloc_valid  = Output(Bool())
+    val packet_alloc_seq    = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
     val checker_state_sel   = Input(UInt(4.W))
     val checker_state_data  = Output(UInt(64.W))
 
@@ -2110,6 +2112,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   csr.io.check_exception                          := false.B
   csr.io.check_tvec                               := 0.U
   csr.io.check_epc                                := 0.U
+  csr.io.check_boundary_pc                        := 0.U
   csr.io.check_priv_ret                           := false.B
   csr.io.checker_priv_mode                        := false.B
   csr.io.ic_check_done                            := false.B
@@ -2145,6 +2148,13 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     io.checker_big_owner(i)                       := ic_master.io.checker_big_owner(i)
     io.checker_segment_id(i)                      := ic_master.io.checker_segment_id(i)
   }
+  io.active_packet_seq                           := ic_master.io.active_packet_seq
+  io.packet_alloc_valid                         := ic_master.io.packet_alloc_valid
+  io.packet_alloc_seq                           := ic_master.io.packet_alloc_seq
+  io.lsu.active_packet_seq                      := Mux(ic_master.io.packet_alloc_valid,
+    ic_master.io.packet_alloc_seq,
+    Mux(ic_master.io.debug_maincore_status === 2.U,
+      ic_master.io.active_packet_seq, 0.U))
   // checker_state_data mux: sel=0 → mask, sel!=0 → {global_owner(36:33), local_owner(30:27), global_ic_status(26), 0}
   // sel is 1-indexed checker#; add chk_adj (GH_NUM_BIG_CORES-1) for full core index
   val chk_idx = io.checker_state_sel + (GH_GlobalParams.GH_NUM_BIG_CORES - 1).U

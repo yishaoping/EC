@@ -264,8 +264,8 @@ abstract class BaseTile private (val crossing: ClockCrossingType, q: Parameters)
   val ght_packet_dest_SRNode      = BundleBridgeSource[UInt](Some(() => UInt(32.W)))
   val ght_status_out_SRNode       = BundleBridgeSource[UInt](Some(() => UInt(32.W)))
   println("#### Jessica #### Generating GHT **Nodes** on the tile, HartID:", tileParams.hartId, "...!!")
-  val ghe_packet_in_SKNode        = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_TOTAL_PACKETS*GH_GlobalParams.GH_WIDITH_PACKETS+1).W)))
-  val core_r_arfs_c_SKNode        = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_WIDITH_PACKETS+1+8).W)))
+  val ghe_packet_in_SKNode        = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_TOTAL_PACKETS*GH_GlobalParams.GH_WIDITH_PACKETS+GH_GlobalParams.GH_PACKET_SEQ_BITS+1).W)))
+  val core_r_arfs_c_SKNode        = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_WIDITH_PACKETS+1+8+GH_GlobalParams.GH_PACKET_SEQ_BITS+1).W)))
   val ghe_status_in_SKNode        = BundleBridgeSink[UInt](Some(() => UInt(32.W)))
   val ghe_event_out_SRNode        = BundleBridgeSource[UInt](Some(() => UInt(6.W)))
 
@@ -304,6 +304,10 @@ abstract class BaseTile private (val crossing: ClockCrossingType, q: Parameters)
   // Global checker_big_owner: per-big-core source → GHM, broadcast sink ← GHM
   val checker_big_owner_SRNode        = BundleBridgeSource[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES * 4).W)))
   val global_checker_big_owner_SKNode = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES * 4).W)))
+  val checker_segment_id_SRNode       = BundleBridgeSource[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES * GH_GlobalParams.GH_PACKET_SEQ_BITS).W)))
+  val checker_result_SRNode           = BundleBridgeSource[UInt](Some(() => UInt(GH_GlobalParams.GH_CHECKER_RESULT_BITS.W)))
+  val checker_results_SKNode          = BundleBridgeSink[UInt](Some(() => UInt(((GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES) * GH_GlobalParams.GH_CHECKER_RESULT_BITS).W)))
+  val checker_result_ready_SKNode     = BundleBridgeSink[Bool](Some(() => Bool()))
 
   val agg_packet_in_SKNode        = BundleBridgeSink[UInt](Some(() => UInt(128.W)))
   //===== GuardianCouncil Function: End ====//

@@ -266,6 +266,9 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val wb_reg_cause           = Reg(UInt())
   val wb_reg_sfence = Reg(Bool())
   val wb_reg_pc = Reg(UInt())
+  // Architectural next PC captured with the same WB entry. Unlike ibuf.io.pc,
+  // this value follows the committed instruction's actual branch/jump result.
+  val wb_reg_npc = Reg(UInt(vaddrBitsExtended.W))
   val wb_reg_mem_size = Reg(UInt())
   val wb_reg_hls_or_dv = Reg(Bool())
   val wb_reg_hfence_v = Reg(Bool())
@@ -768,9 +771,12 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val replay_mem  = dcache_kill_mem || mem_reg_replay || fpu_kill_mem
   val killm_common = dcache_kill_mem || take_pc_wb || mem_reg_xcpt || !mem_reg_valid
   
-  val ctrl_killm = killm_common || mem_xcpt || fpu_kill_mem 
-
-  val if_kill_div_r =  Mux(checker_mode === 0.U && checker_priv_mode === 0.U, false.B, Mux(!ctrl_killm && mem_ctrl.div && if_overtaking_next_cycle.asBool, true.B, false.B))
+  val ctrl_killm_without_overtake = killm_common || mem_xcpt || fpu_kill_mem
+  val if_kill_div_r = Mux(checker_mode === 0.U && checker_priv_mode === 0.U, false.B,
+    !ctrl_killm_without_overtake && mem_ctrl.div && if_overtaking_next_cycle.asBool)
+  // Overtaking cancels the accepted divider request. Kill its pipeline entry as
+  // well, otherwise WB allocates a scoreboard bit for a response that cannot arrive.
+  val ctrl_killm = ctrl_killm_without_overtake || if_kill_div_r
   div.io.kill := (killm_common && RegNext(div.io.req.fire)) || if_kill_div_r
 
   val wb_pc_valid = wb_reg_valid || wb_reg_replay || wb_reg_xcpt
@@ -793,6 +799,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     wb_reg_inst := mem_reg_inst
     wb_reg_raw_inst := mem_reg_raw_inst
     wb_reg_mem_size := mem_reg_mem_size
+    wb_reg_npc := mem_npc
     wb_reg_hls_or_dv := mem_reg_hls_or_dv
     wb_reg_hfence_v := mem_ctrl.mem_cmd === M_HFENCEV
     wb_reg_hfence_g := mem_ctrl.mem_cmd === M_HFENCEG
@@ -1033,7 +1040,15 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   csr.io.check_priv_ret := check_privret
   csr.io.check_epc    := pc_special
   csr.io.check_tvec   := rsu_pc
-  csr.io.ic_check_done := icsl.io.if_check_done && !(!div.io.req.ready || io.fpu.fpu_inflight)
+  val checker_arch_check_done = icsl.io.if_check_done &&
+    !(!div.io.req.ready || io.fpu.fpu_inflight)
+  val checker_arch_check_done_prev = RegNext(checker_arch_check_done, false.B)
+  val checker_boundary_pc = RegInit(0.U(vaddrBitsExtended.W))
+  when (checker_arch_check_done && !checker_arch_check_done_prev) {
+    checker_boundary_pc := wb_reg_npc
+  }
+  csr.io.check_boundary_pc := checker_boundary_pc
+  csr.io.ic_check_done := checker_arch_check_done
   csr.io.clear_ic_status := icsl.io.clear_ic_status.asBool
   val self_xcpt_flag = RegInit(0.U(3.W))
   val self_eret_flag = RegInit(0.U(3.W))
@@ -1073,11 +1088,12 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   csr.io.pfarf_valid := rsu_slave.io.pfarf_valid_out
   csr.io.fcsr_in := rsu_slave.io.fcsr_out
 
-  // Added one cycle delay to ensure the RCU being operated at commited stage 
+  // Added one cycle delay to ensure the RCU being operated at commited stage
   // Avodiing uninteded reg write after arf_copy
   val arf_paste_reg = RegInit(0.U(1.W))
   val start_check   = RegInit(false.B)
   arf_paste_reg := io.arf_copy_in
+  val icsl_copy_start_accepted = arf_paste_reg.asBool && !io.record_and_store(0).asBool
   rsu_slave.io.paste_arfs := arf_paste_reg | check_exception.asUInt
   rsu_slave.io.clear_ic_status := icsl.io.clear_ic_status
   rsu_slave.io.record_context := io.record_and_store(1)
@@ -1101,18 +1117,20 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
 
   icsl.io.ic_counter := io.ic_counter(15,0)
   icsl.io.main_core_status := io.ic_counter(19,16)
-  icsl.io.icsl_run := arf_paste_reg & (~io.record_and_store(0))
+  icsl.io.icsl_run := icsl_copy_start_accepted.asUInt
   icsl.io.new_commit := csr.io.trace(0).valid && !csr.io.trace(0).exception
   icsl.io.if_correct_process := io.if_correct_process & !excpt_mode.asUInt
   checker_mode := icsl.io.icsl_checkermode
   checker_priv_mode := icsl.io.icsl_checkerpriv_mode
-  io.clear_ic_status := RegNext(icsl.io.clear_ic_status)
+  // R_ICSL uses clear_ic_status to reset its local checker state.  Do not
+  // expose that local reset directly to BOOM: the reset state is entered
+  // before the packet result has necessarily crossed the result CDC.  GHM
+  // derives the external release from the sequenced result instead.
   icsl_if_overtaking := (icsl.io.if_overtaking | rsu_slave.io.core_hang_up) & !r_exception_record
   icsl_if_ret_special_pc := icsl.io.if_ret_special_pc
   if_overtaking_next_cycle := icsl.io.if_overtaking_next_cycle
   val returned_to_special_address_valid = Wire(Bool())
   icsl.io.returned_to_special_address_valid := returned_to_special_address_valid
-  icsl.io.if_check_completed := rsu_slave.io.if_cp_check_completed
   icsl.io.core_trace := io.core_trace
   icsl.io.if_check_privrun := RegNext(check_exception)
   icsl.io.self_xcpt := csr.io.trace(0).exception
@@ -1132,6 +1150,8 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   icsl.io.num_valid_insts_in_pipeline := icsl_if_valid + icsl_ex_valid + icsl_mem_valid + icsl_wb_valid
   
   icsl.io.debug_perf_reset := io.debug_perf_ctrl(0)
+  icsl.io.debug_perf_start := io.debug_perf_ctrl(GH_GlobalParams.GH_PERF_CTRL_START_BIT)
+  icsl.io.debug_perf_stop := io.debug_perf_ctrl(GH_GlobalParams.GH_PERF_CTRL_STOP_BIT)
   icsl.io.debug_perf_sel := io.debug_perf_ctrl(4,1)
   val debug_perf_reset = WireInit(0.U(1.W))
   val debug_perf_sel = WireInit(0.U(4.W))
@@ -1155,7 +1175,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   
   icsl.io.debug_starting_CPS := rsu_slave.io.starting_CPS
   // R_ICSL counts each completed uncache store here, then samples this CSR
-  // clock when RSUSL reports that the packet's checkpoint check has completed.
+  // clock when the complete package result is formed below.
   icsl.io.csr_cycle := csr.io.time
   icsl.io.st_deq := checker_store_complete
   icsl.io.ld_deq := checker_load_complete
@@ -1234,6 +1254,141 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   elu.io.elu_deq := Mux(!io.elu_sel.asBool && io.elu_deq.asBool, 1.U, 0.U)
   elu.io.lsl_resp_addr := lsl_resp_addr
   elu.io.core_trace := io.core_trace
+
+  // The checker result is packet-scoped. ARF/FARF and CSR shadow checks run
+  // independently, so neither completion pulse alone is the package tail.
+  val package_seq_reg = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val package_check_active = RegInit(false.B)
+  val package_error = RegInit(false.B)
+  val arf_check_done_seen = RegInit(false.B)
+  val csr_check_required_seen = RegInit(false.B)
+  val csr_check_done_seen = RegInit(false.B)
+  val package_error_now = elu.io.error_ld || elu.io.error_st ||
+    rsu_slave.io.check_error || csr.io.shadow_check_error
+  // Data and ARF packets use independent CDC queues.  A late fragment from
+  // the current package must not move the checker sequence backwards; only a
+  // strictly newer sequence can start a new package.
+  val new_package = io.packet_seq_valid && io.packet_seq > package_seq_reg
+  // R_ICSL has two independent entry paths. COPY starts normal checking while
+  // a completed privileged CPS starts checking_priv; both own the current
+  // sequenced package and must therefore produce the same result tail.
+  val icsl_priv_start_accepted = icsl.io.if_check_privrun
+  val package_start_accepted = (icsl_copy_start_accepted || icsl_priv_start_accepted) &&
+    (package_seq_reg =/= 0.U || (new_package && io.packet_seq =/= 0.U))
+  val arf_check_complete = arf_check_done_seen || rsu_slave.io.if_cp_check_completed.asBool
+  // A CSR fragment alone does not imply that this checker can compare it. At
+  // a mode boundary the same snapshot can be an ECP for the old checker and a
+  // CPS for the new checker. CSRFile asserts shadow_check_required only after
+  // this checker has received a matching CSR CPS/ECP pair.
+  val csr_check_required = csr_check_required_seen || csr.io.shadow_check_required
+  val csr_check_complete = csr_check_done_seen || csr.io.if_priv_checkcomp
+  // R_LSL registers incoming packet valids before writing its FIFOs. Requiring
+  // two consecutive empty indications prevents a transient CDC-empty/LSL-empty
+  // cycle from completing the package ahead of that local enqueue stage.
+  val packet_ingress_empty_prev = RegNext(io.cdc_empty, false.B)
+  val packet_ingress_drained = io.cdc_empty && packet_ingress_empty_prev
+  val full_check_complete = package_check_active && packet_ingress_drained && lsl.io.if_empty &&
+    arf_check_complete && (!csr_check_required || csr_check_complete)
+  // A newer snapshot arriving before the current package completed is a real
+  // overlap/cancellation.  The normal R_ICSL reset pulse is deliberately not
+  // included here: it is local FSM cleanup, not evidence that checking was
+  // cancelled.
+  val package_cancelled = package_check_active && !full_check_complete &&
+    new_package
+  val package_result_event = full_check_complete || package_cancelled
+  val package_result_waiting = RegInit(false.B)
+  val package_result_status_waiting = RegInit(0.U(GH_GlobalParams.GH_CHECKER_STATUS_BITS.W))
+  val package_result_seq_waiting = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val package_completion_pulse = full_check_complete && !package_result_waiting
+  val package_result_status = Mux(package_cancelled,
+    GH_GlobalParams.GH_CHECKER_STATUS_CANCELLED.U,
+    Mux(package_error || package_error_now,
+      GH_GlobalParams.GH_CHECKER_STATUS_FAIL.U,
+      GH_GlobalParams.GH_CHECKER_STATUS_PASS.U))
+
+  val package_result_queue = Module(new Queue(UInt((GH_GlobalParams.GH_PACKET_SEQ_BITS +
+    GH_GlobalParams.GH_CHECKER_STATUS_BITS).W), 4))
+  // full_check_complete remains asserted while blocked, but cancellation is a
+  // pulse. Hold both the valid state and status until the result is enqueued.
+  package_result_queue.io.enq.valid := package_result_event || package_result_waiting
+  package_result_queue.io.enq.bits := Cat(
+    Mux(package_result_waiting, package_result_status_waiting, package_result_status),
+    Mux(package_result_waiting, package_result_seq_waiting, package_seq_reg))
+  val package_result_fire = package_result_queue.io.enq.fire
+  // R_ICSL can reach its local reset before or after the independent ARF/CSR
+  // comparisons finish.  Hold the result locally until both the complete
+  // result and that reset have occurred.  GHM then derives the BOOM-side
+  // checker release from this result's dequeue in the BOOM clock domain.
+  val package_local_clear_seen = RegInit(false.B)
+  val package_local_clear_event = icsl.io.clear_ic_status.asBool &&
+    (package_check_active || package_result_waiting || package_result_queue.io.deq.valid)
+  val package_locally_ready = package_local_clear_seen || package_local_clear_event
+  package_result_queue.io.deq.ready := io.package_result_ready && package_locally_ready
+  val package_result_handoff_fire = package_result_queue.io.deq.fire
+  io.package_result_valid := package_result_queue.io.deq.valid && package_locally_ready
+  io.package_result_seq := package_result_queue.io.deq.bits(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0)
+  io.package_result_status := package_result_queue.io.deq.bits(
+    GH_GlobalParams.GH_PACKET_SEQ_BITS + GH_GlobalParams.GH_CHECKER_STATUS_BITS - 1,
+    GH_GlobalParams.GH_PACKET_SEQ_BITS)
+
+  // If the result queue is temporarily full, package_result_event is retained
+  // in the waiting registers below; it is still a valid handoff, not a lost
+  // package.  The waiting sequence register preserves the old package id.
+  assert(!new_package || !package_check_active || package_result_fire || package_result_event,
+    "checker package sequence changed before the previous result was captured")
+  when (package_result_fire) {
+    package_result_waiting := false.B
+  }.elsewhen (package_result_event) {
+    package_result_waiting := true.B
+    package_result_status_waiting := package_result_status
+    package_result_seq_waiting := package_seq_reg
+  }
+
+  when (package_local_clear_event) {
+    package_local_clear_seen := true.B
+  }
+  when (package_result_handoff_fire) {
+    package_local_clear_seen := false.B
+  }
+  // The legacy checker-to-GHM clear control path is no longer used for BOOM
+  // release; tying it low prevents a second, independently reordered pulse.
+  io.clear_ic_status := 0.U
+  when (new_package) {
+    package_seq_reg := io.packet_seq
+    // Packet fragments may arrive before checker software issues COPY.  The
+    // sequence is observed here, but the package owns execution state only
+    // after R_ICSL has accepted the matching start request.
+    package_check_active := package_start_accepted
+    package_error := Mux(package_result_fire, false.B, package_error_now)
+    arf_check_done_seen := false.B
+    // Do not inherit an unfinished CSR comparison from the superseded package.
+    csr_check_required_seen := false.B
+    csr_check_done_seen := false.B
+  }.elsewhen (package_result_fire) {
+    package_check_active := false.B
+    arf_check_done_seen := false.B
+    csr_check_required_seen := false.B
+    csr_check_done_seen := false.B
+  }.otherwise {
+    when (package_start_accepted) {
+      package_check_active := true.B
+    }
+    when (package_error_now) {
+      package_error := true.B
+    }
+    when (package_check_active && csr.io.shadow_check_required) {
+      csr_check_required_seen := true.B
+    }
+    when (rsu_slave.io.if_cp_check_completed.asBool) {
+      arf_check_done_seen := true.B
+    }
+    when (csr.io.if_priv_checkcomp) {
+      csr_check_done_seen := true.B
+    }
+  }
+  // This pulse also timestamps all store_uncache events in this package.
+  icsl.io.if_check_completed := package_completion_pulse.asUInt
+  icsl.io.if_check_cancelled := package_cancelled
 
 
   when (rf_wen_rsu === 1.U) {

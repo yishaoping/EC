@@ -31,6 +31,10 @@ class BoomWritebackUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1Hella
     val data_req = Decoupled(new L1DataReadReq)
     val data_resp = Input(UInt(encRowBits.W))
     val mem_grant = Input(Bool())
+    val packet_seq = Input(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+    val packet_tracked = Input(Bool())
+    val active_packet_seq = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+    val active_packet_tracked = Output(Bool())
     val release = Decoupled(new TLBundleC(edge.bundle))
     val lsu_release = Decoupled(new TLBundleC(edge.bundle))
   })
@@ -46,6 +50,10 @@ class BoomWritebackUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1Hella
   val (_, last_beat, all_beats_done, beat_count) = edge.count(io.release)
   val wb_buffer = Reg(Vec(refillCycles, UInt(encRowBits.W)))
   val acked = RegInit(false.B)
+  val packet_seq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val packet_tracked = RegInit(false.B)
+  io.active_packet_seq := packet_seq
+  io.active_packet_tracked := packet_tracked
 
   io.idx.valid       := state =/= s_invalid
   io.idx.bits        := req.idx
@@ -84,6 +92,8 @@ class BoomWritebackUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1Hella
       state := s_fill_buffer
       data_req_cnt := 0.U
       req := io.req.bits
+      packet_seq := io.packet_seq
+      packet_tracked := io.packet_tracked
       acked := false.B
     }
   } .elsewhen (state === s_fill_buffer) {
@@ -412,8 +422,16 @@ class BoomDCacheBundle(implicit p: Parameters, edge: TLEdgeOut) extends BoomBund
   val lsu   = Flipped(new LSUDMemIO)
   // BOOM R_IC 的 fsm_check 状态。流量计数器只统计该状态下的访存。
   val traffic_check_state = Input(Bool())
+  val traffic_reset = Input(Bool())
+  val traffic_start = Input(Bool())
+  val traffic_stop = Input(Bool())
   val csr_cycle = Input(UInt(64.W))
   val traffic_counter = Output(Vec(GH_GlobalParams.GH_TRAFFIC_COUNTERS, UInt(64.W)))
+  val packet_alloc_valid = Input(Bool())
+  val packet_alloc_seq = Input(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val packet_seq_baseline = Input(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val checker_results = Input(Vec(GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES,
+    UInt(GH_GlobalParams.GH_CHECKER_RESULT_BITS.W)))
 }
 
 class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModuleImp(outer)
@@ -423,6 +441,19 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   implicit val edge = outer.node.edges.out(0)
   val (tl_out, _) = outer.node.out(0)
   val io = IO(new BoomDCacheBundle)
+
+  val trafficEnabled = RegInit(false.B)
+  when (io.traffic_reset) {
+    trafficEnabled := false.B
+  }.elsewhen (io.traffic_start) {
+    trafficEnabled := true.B
+  }.elsewhen (io.traffic_stop) {
+    trafficEnabled := false.B
+  }
+  val trafficCounting = (trafficEnabled || io.traffic_start) &&
+    !io.traffic_stop && !io.traffic_reset
+  val trafficStopPrev = RegNext(io.traffic_stop, false.B)
+  val trafficStopPulse = io.traffic_stop && !trafficStopPrev
 
   private val fifoManagers = edge.manager.managers.filter(TLFIFOFixer.allVolatile)
   fifoManagers.foreach { m =>
@@ -447,6 +478,10 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   def onReset = L1Metadata(0.U, ClientMetadata.onReset)
   val meta = Seq.fill(memWidth) { Module(new L1MetadataArray(onReset _)) }
   val metaWriteArb = Module(new Arbiter(new L1MetaWriteReq, 2))
+  val dirtyPacketSeq = RegInit(VecInit(Seq.fill(nSets)(VecInit(
+    Seq.fill(nWays)(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))))))
+  val dirtyPacketTracked = RegInit(VecInit(Seq.fill(nSets)(VecInit(
+    Seq.fill(nWays)(false.B)))))
   // 0 goes to MSHR refills, 1 goes to prober
   val metaReadArb = Module(new Arbiter(new BoomL1MetaReadReq, 6))
   // 0 goes to MSHR replays, 1 goes to prober, 2 goes to wb, 3 goes to MSHR meta read,
@@ -508,6 +543,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   replay_req(0).traffic_seen := mshrs.io.replay.bits.traffic_seen
   replay_req(0).traffic_check := mshrs.io.replay.bits.traffic_check
   replay_req(0).traffic_cacheable := mshrs.io.replay.bits.traffic_cacheable
+  replay_req(0).packet_seq := mshrs.io.replay.bits.packet_seq
   mshrs.io.replay.ready    := metaReadArb.io.in(0).ready && dataReadArb.io.in(0).ready
   // Tag read for MSHR replays
   // We don't actually need to read the metadata, for replays we already know our way
@@ -792,6 +828,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     mshrs.io.req(w).bits.traffic_seen := s2_req(w).traffic_seen
     mshrs.io.req(w).bits.traffic_check := s2_req(w).traffic_check
     mshrs.io.req(w).bits.traffic_cacheable := s2_req(w).traffic_cacheable
+    mshrs.io.req(w).bits.packet_seq := s2_req(w).packet_seq
     mshrs.io.req_is_probe(w)         := s2_type === t_probe && s2_valid(w)
   }
 
@@ -833,6 +870,10 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   wbArb.io.in(0)       <> prober.io.wb_req
   wbArb.io.in(1)       <> mshrs.io.wb_req
   wb.io.req            <> wbArb.io.out
+  val wbReqSet = wbArb.io.out.bits.idx
+  val wbReqWay = OHToUInt(wbArb.io.out.bits.way_en)
+  wb.io.packet_seq := dirtyPacketSeq(wbReqSet)(wbReqWay)
+  wb.io.packet_tracked := dirtyPacketTracked(wbReqSet)(wbReqWay)
   wb.io.data_resp       := s2_data_muxed(0)
   mshrs.io.wb_resp      := wb.io.resp
   wb.io.mem_grant       := tl_out.d.fire && tl_out.d.bits.source === cfg.nMSHRs.U
@@ -844,19 +885,302 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
 
   TLArbiter.lowest(edge, tl_out.c, wb.io.release, prober.io.rep)
 
-  // Count each L1->L2 release/probe-response once, when its first C-channel
-  // beat is accepted. Data-bearing messages are dirty writebacks.
+  // Count each L1->L2 C-channel transaction once, when its first C-channel
+  // beat is accepted. A ReleaseData/ProbeAckData transaction is a dirty
+  // writeback; this single-core design currently has no ProbeAck traffic from
+  // another coherent tile, so the C-channel count is the useful total here.
   val (c_first, _, _, _) = edge.count(tl_out.c)
-  val l1_l2_wb_event = tl_out.c.fire && c_first
-  val l1_l2_wb_dirty_event = l1_l2_wb_event &&
+  val l1_l2_c_event = tl_out.c.fire && c_first
+  val l1_l2_dirty_wb_event = l1_l2_c_event &&
     tl_out.c.bits.opcode.isOneOf(TLMessages.ReleaseData, TLMessages.ProbeAckData)
-  val l1_l2_wb_total_count = RegInit(0.U(64.W))
-  val l1_l2_wb_dirty_count = RegInit(0.U(64.W))
-  when (l1_l2_wb_event) {
-    l1_l2_wb_total_count := l1_l2_wb_total_count + 1.U
+  val l1_l2_c_count = RegInit(0.U(64.W))
+  val l1_l2_dirty_wb_count = RegInit(0.U(64.W))
+
+  // Completion bitmap and per-package writeback buckets share the BOOM clock.
+  // Thus io.csr_cycle is sampled at both the C-channel writeback and the exact
+  // cycle at which an out-of-order completion advances the safe watermark.
+  val statsWindow = 256
+  val statsIndexBits = log2Ceil(statsWindow)
+  val bitmapAllocated = RegInit(VecInit(Seq.fill(statsWindow)(false.B)))
+  val bitmapCompleted = RegInit(VecInit(Seq.fill(statsWindow)(false.B)))
+  val bitmapPassed = RegInit(VecInit(Seq.fill(statsWindow)(false.B)))
+  val bitmapSeq = RegInit(VecInit(Seq.fill(statsWindow)(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))))
+  val safePacketWatermark = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val measurementSeqFloor = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+
+  val allocatedNext = WireInit(bitmapAllocated)
+  val completedNext = WireInit(bitmapCompleted)
+  val passedNext = WireInit(bitmapPassed)
+  val seqNext = WireInit(bitmapSeq)
+  val allocationCollision = WireDefault(false.B)
+  val measuredPacketAlloc = io.packet_alloc_valid && trafficCounting
+  when (measuredPacketAlloc) {
+    val idx = io.packet_alloc_seq(statsIndexBits - 1, 0)
+    when (io.packet_alloc_seq === 0.U || bitmapAllocated(idx)) {
+      allocationCollision := true.B
+    }.otherwise {
+      allocatedNext(idx) := true.B
+      completedNext(idx) := false.B
+      passedNext(idx) := false.B
+      seqNext(idx) := io.packet_alloc_seq
+    }
   }
-  when (l1_l2_wb_dirty_event) {
-    l1_l2_wb_dirty_count := l1_l2_wb_dirty_count + 1.U
+
+  val resultAccepted = Wire(Vec(io.checker_results.length, Bool()))
+  val resultFailed = Wire(Vec(io.checker_results.length, Bool()))
+  val resultCancelled = Wire(Vec(io.checker_results.length, Bool()))
+  val resultStale = Wire(Vec(io.checker_results.length, Bool()))
+  for (i <- io.checker_results.indices) {
+    val result = io.checker_results(i)
+    val valid = result(GH_GlobalParams.GH_CHECKER_RESULT_BITS - 1)
+    val status = result(GH_GlobalParams.GH_PACKET_SEQ_BITS +
+      GH_GlobalParams.GH_CHECKER_STATUS_BITS - 1, GH_GlobalParams.GH_PACKET_SEQ_BITS)
+    val seq = result(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0)
+    val idx = seq(statsIndexBits - 1, 0)
+    val allocatedThisCycle = measuredPacketAlloc && io.packet_alloc_seq === seq
+    val resultRelevant = trafficCounting ||
+      (bitmapAllocated(idx) && bitmapSeq(idx) === seq) || allocatedThisCycle
+    val statusKnown = status =/= 3.U
+    val duplicateThisCycle = if (i == 0) false.B else
+      (0 until i).map(j => resultAccepted(j) &&
+        io.checker_results(j)(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0) === seq).reduce(_ || _)
+    resultStale(i) := valid && seq =/= 0.U && seq <= measurementSeqFloor
+    resultAccepted(i) := valid && !resultStale(i) && statusKnown && seq =/= 0.U &&
+      ((bitmapAllocated(idx) && bitmapSeq(idx) === seq) || allocatedThisCycle) &&
+      !bitmapCompleted(idx) && !duplicateThisCycle
+    val pass = status === GH_GlobalParams.GH_CHECKER_STATUS_PASS.U
+    resultFailed(i) := resultAccepted(i) &&
+      status === GH_GlobalParams.GH_CHECKER_STATUS_FAIL.U
+    resultCancelled(i) := resultAccepted(i) &&
+      status === GH_GlobalParams.GH_CHECKER_STATUS_CANCELLED.U
+    when (resultAccepted(i)) {
+      completedNext(idx) := true.B
+      passedNext(idx) := pass
+    }
+    // Results from packages allocated after STOP are outside the frozen
+    // measurement window and must not invalidate the completed snapshot.
+    when (valid && !resultRelevant) {
+      resultStale(i) := true.B
+    }
+  }
+
+  var contiguous = true.B
+  var safeAdvance = 0.U((statsIndexBits + 1).W)
+  for (offset <- 1 to statsWindow) {
+    val seq = safePacketWatermark + offset.U
+    val idx = seq(statsIndexBits - 1, 0)
+    val slotPass = allocatedNext(idx) && seqNext(idx) === seq &&
+      completedNext(idx) && passedNext(idx)
+    contiguous = contiguous && slotPass
+    safeAdvance = Mux(contiguous, offset.U, safeAdvance)
+  }
+  val newSafePacketWatermark = safePacketWatermark + safeAdvance
+
+  val bitmapAllocatedFinal = WireInit(allocatedNext)
+  val bitmapCompletedFinal = WireInit(completedNext)
+  val bitmapPassedFinal = WireInit(passedNext)
+  for (i <- 0 until statsWindow) {
+    when (allocatedNext(i) && seqNext(i) <= newSafePacketWatermark) {
+      bitmapAllocatedFinal(i) := false.B
+      bitmapCompletedFinal(i) := false.B
+      bitmapPassedFinal(i) := false.B
+    }
+  }
+  bitmapAllocated := bitmapAllocatedFinal
+  bitmapCompleted := bitmapCompletedFinal
+  bitmapPassed := bitmapPassedFinal
+  bitmapSeq := seqNext
+  safePacketWatermark := newSafePacketWatermark
+
+  val bucketValid = RegInit(VecInit(Seq.fill(statsWindow)(false.B)))
+  val bucketSeq = RegInit(VecInit(Seq.fill(statsWindow)(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))))
+  val bucketCount = RegInit(VecInit(Seq.fill(statsWindow)(0.U(64.W))))
+  val bucketWritebackCycleSum = RegInit(VecInit(Seq.fill(statsWindow)(0.U(64.W))))
+  val bucketResolve = Wire(Vec(statsWindow, Bool()))
+  for (i <- 0 until statsWindow) {
+    bucketResolve(i) := bucketValid(i) && bucketSeq(i) <= newSafePacketWatermark
+  }
+  // 256 buckets can resolve together, and one new writeback can settle on the
+  // same edge. Keep a 73rd bit so that all 257 contributions are observable.
+  val resolvedBucketsThisCycleWide = (0 until statsWindow).map(i =>
+    Mux(bucketResolve(i), bucketCount(i), 0.U(64.W)).pad(73)).reduce(_ + _)
+  val writebackCyclesResolvedFromBucketsWide = (0 until statsWindow).map(i =>
+    Mux(bucketResolve(i), bucketWritebackCycleSum(i), 0.U(64.W)).pad(73)).reduce(_ + _)
+
+  // A tracked non-zero sequence is the line-level verify_required metadata.
+  // The two writeback-time classes are deliberately decided only from the
+  // safe watermark sampled before this edge; completion/result details do not
+  // change the meaning of "verified at writeback".
+  val verifyRequiredDirtyWb = trafficCounting && l1_l2_dirty_wb_event &&
+    wb.io.active_packet_tracked && wb.io.active_packet_seq =/= 0.U
+  val unverifiedDirtyWb = verifyRequiredDirtyWb &&
+    wb.io.active_packet_seq > safePacketWatermark
+  // A result and writeback may arrive on the same BOOM edge. Classify against
+  // the pre-edge watermark, then settle the new event immediately at zero
+  // cycles if this edge also makes its package safe.
+  val wbResolvedImmediately = unverifiedDirtyWb &&
+    wb.io.active_packet_seq <= newSafePacketWatermark
+  val wbBucketIdx = wb.io.active_packet_seq(statsIndexBits - 1, 0)
+  val wbBucketAvailable = !bucketValid(wbBucketIdx) || bucketResolve(wbBucketIdx) ||
+    bucketSeq(wbBucketIdx) === wb.io.active_packet_seq
+  val wbNeedsBucket = unverifiedDirtyWb && !wbResolvedImmediately
+  val wbBucketAccepted = wbNeedsBucket && wbBucketAvailable
+  val wbBucketDropped = wbNeedsBucket && !wbBucketAvailable
+  val verifiedDirtyWb = verifyRequiredDirtyWb &&
+    wb.io.active_packet_seq <= safePacketWatermark
+  val nonverifyDirtyWb = trafficCounting && l1_l2_dirty_wb_event &&
+    !verifyRequiredDirtyWb
+
+  val resolvedThisCycleWide = resolvedBucketsThisCycleWide +
+    Mux(wbResolvedImmediately, 1.U(73.W), 0.U(73.W))
+  val writebackCyclesResolvedThisCycleWide = writebackCyclesResolvedFromBucketsWide +
+    Mux(wbResolvedImmediately, io.csr_cycle, 0.U).pad(73)
+  val resolvedBucketsThisCycle = resolvedBucketsThisCycleWide(63, 0)
+  val resolvedThisCycle = resolvedThisCycleWide(63, 0)
+  val writebackCyclesResolvedThisCycle = writebackCyclesResolvedThisCycleWide(63, 0)
+  // Every event settled by this watermark advance uses the same BOOM cycle.
+  val safeCyclesResolvedThisCycleProduct = io.csr_cycle * resolvedThisCycleWide
+  val safeCyclesResolvedThisCycle = safeCyclesResolvedThisCycleProduct(63, 0)
+  val perCycleSumOverflow = resolvedThisCycleWide(72, 64).orR ||
+    writebackCyclesResolvedThisCycleWide(72, 64).orR
+  val safeCycleProductOverflow = safeCyclesResolvedThisCycleProduct(136, 64).orR
+
+  for (i <- 0 until statsWindow) {
+    when (bucketResolve(i)) {
+      bucketValid(i) := false.B
+      bucketCount(i) := 0.U
+      bucketWritebackCycleSum(i) := 0.U
+    }
+  }
+  when (wbBucketAccepted) {
+    when (!bucketValid(wbBucketIdx) || bucketResolve(wbBucketIdx)) {
+      bucketValid(wbBucketIdx) := true.B
+      bucketSeq(wbBucketIdx) := wb.io.active_packet_seq
+      bucketCount(wbBucketIdx) := 1.U
+      bucketWritebackCycleSum(wbBucketIdx) := io.csr_cycle
+    }.otherwise {
+      bucketCount(wbBucketIdx) := bucketCount(wbBucketIdx) + 1.U
+      bucketWritebackCycleSum(wbBucketIdx) :=
+        bucketWritebackCycleSum(wbBucketIdx) + io.csr_cycle
+    }
+  }
+
+  val unverifiedDirtyWbSeen = RegInit(0.U(64.W))
+  val unverifiedDirtyWbResolved = RegInit(0.U(64.W))
+  val unverifiedDirtyWbPending = RegInit(0.U(64.W))
+  val unverifiedDirtyWbDropped = RegInit(0.U(64.W))
+  val failedPackages = RegInit(0.U(64.W))
+  val verifiedDirtyWbCount = RegInit(0.U(64.W))
+  val nonverifyDirtyWbCount = RegInit(0.U(64.W))
+  val verifyRequiredDirtyWbCount = RegInit(0.U(64.W))
+  val allocatedPackages = RegInit(0.U(64.W))
+  val completedPackages = RegInit(0.U(64.W))
+  val passedPackages = RegInit(0.U(64.W))
+  val cancelledPackages = RegInit(0.U(64.W))
+  val safeCycleSum = RegInit(0.U(64.W))
+  val writebackCycleSum = RegInit(0.U(64.W))
+  val statsValid = RegInit(true.B)
+  val packageResultDropped = RegInit(0.U(64.W))
+  val statsArithmeticOverflow = RegInit(0.U(64.W))
+  val resetBoundaryInvalid = io.traffic_reset &&
+    (io.traffic_check_state || bitmapAllocated.asUInt.orR ||
+      safePacketWatermark =/= io.packet_seq_baseline)
+  val bucketArithmeticOverflow = wbBucketAccepted && bucketValid(wbBucketIdx) &&
+    !bucketResolve(wbBucketIdx) &&
+    (bucketCount(wbBucketIdx) === ~0.U(64.W) ||
+      bucketWritebackCycleSum(wbBucketIdx) > (~0.U(64.W) - io.csr_cycle))
+  val invalidResultsThisCycle = PopCount(VecInit(io.checker_results.indices.map { i =>
+    io.checker_results(i)(GH_GlobalParams.GH_CHECKER_RESULT_BITS - 1) &&
+      !resultAccepted(i) && !resultStale(i)
+  }))
+  val acceptedResultsThisCycle = PopCount(resultAccepted)
+  val passedResultsThisCycle = PopCount(VecInit(io.checker_results.indices.map { i =>
+    resultAccepted(i) && !resultFailed(i) && !resultCancelled(i)
+  }))
+  when (measuredPacketAlloc) { allocatedPackages := allocatedPackages + 1.U }
+  when (acceptedResultsThisCycle =/= 0.U) {
+    completedPackages := completedPackages + acceptedResultsThisCycle
+  }
+  when (passedResultsThisCycle =/= 0.U) {
+    passedPackages := passedPackages + passedResultsThisCycle
+  }
+  when (unverifiedDirtyWb) { unverifiedDirtyWbSeen := unverifiedDirtyWbSeen + 1.U }
+  when (verifyRequiredDirtyWb) {
+    verifyRequiredDirtyWbCount := verifyRequiredDirtyWbCount + 1.U
+  }
+  when (verifiedDirtyWb) { verifiedDirtyWbCount := verifiedDirtyWbCount + 1.U }
+  when (nonverifyDirtyWb) { nonverifyDirtyWbCount := nonverifyDirtyWbCount + 1.U }
+  when (resolvedThisCycle =/= 0.U) {
+    unverifiedDirtyWbResolved := unverifiedDirtyWbResolved + resolvedThisCycle
+    safeCycleSum := safeCycleSum + safeCyclesResolvedThisCycle
+    writebackCycleSum := writebackCycleSum + writebackCyclesResolvedThisCycle
+  }
+  val resolvedArithmeticOverflow = resolvedThisCycle =/= 0.U &&
+    (perCycleSumOverflow || safeCycleProductOverflow ||
+      unverifiedDirtyWbResolved > (~0.U(64.W) - resolvedThisCycle) ||
+      safeCycleSum > (~0.U(64.W) - safeCyclesResolvedThisCycle) ||
+      writebackCycleSum > (~0.U(64.W) - writebackCyclesResolvedThisCycle))
+  val pendingAccountingInvalid = resolvedBucketsThisCycle.pad(65) >
+    (unverifiedDirtyWbPending.pad(65) + wbBucketAccepted.asUInt)
+  when (bucketArithmeticOverflow || resolvedArithmeticOverflow || pendingAccountingInvalid) {
+    statsArithmeticOverflow := statsArithmeticOverflow +
+      bucketArithmeticOverflow.asUInt + resolvedArithmeticOverflow.asUInt +
+      pendingAccountingInvalid.asUInt
+  }
+  unverifiedDirtyWbPending := unverifiedDirtyWbPending +
+    wbBucketAccepted.asUInt - resolvedBucketsThisCycle
+  when (wbBucketDropped) { unverifiedDirtyWbDropped := unverifiedDirtyWbDropped + 1.U }
+  when (resultFailed.asUInt.orR) { failedPackages := failedPackages + PopCount(resultFailed) }
+  when (resultCancelled.asUInt.orR) {
+    cancelledPackages := cancelledPackages + PopCount(resultCancelled)
+  }
+  when (allocationCollision || invalidResultsThisCycle =/= 0.U) {
+    packageResultDropped := packageResultDropped + allocationCollision.asUInt + invalidResultsThisCycle
+  }
+  when (allocationCollision || invalidResultsThisCycle =/= 0.U || wbBucketDropped ||
+      resultFailed.asUInt.orR || resultCancelled.asUInt.orR ||
+      bucketArithmeticOverflow || resolvedArithmeticOverflow || pendingAccountingInvalid) {
+    statsValid := false.B
+  }
+  when (trafficCounting && l1_l2_c_event) {
+    l1_l2_c_count := l1_l2_c_count + 1.U
+  }
+  when (trafficCounting && l1_l2_dirty_wb_event) {
+    l1_l2_dirty_wb_count := l1_l2_dirty_wb_count + 1.U
+  }
+
+  when (io.traffic_reset) {
+    for (i <- 0 until statsWindow) {
+      bitmapAllocated(i) := false.B
+      bitmapCompleted(i) := false.B
+      bitmapPassed(i) := false.B
+      bitmapSeq(i) := 0.U
+      bucketValid(i) := false.B
+      bucketSeq(i) := 0.U
+      bucketCount(i) := 0.U
+      bucketWritebackCycleSum(i) := 0.U
+    }
+    safePacketWatermark := io.packet_seq_baseline
+    measurementSeqFloor := io.packet_seq_baseline
+    l1_l2_c_count := 0.U
+    l1_l2_dirty_wb_count := 0.U
+    unverifiedDirtyWbSeen := 0.U
+    unverifiedDirtyWbResolved := 0.U
+    unverifiedDirtyWbPending := 0.U
+    unverifiedDirtyWbDropped := 0.U
+    failedPackages := 0.U
+    verifiedDirtyWbCount := 0.U
+    nonverifyDirtyWbCount := 0.U
+    verifyRequiredDirtyWbCount := 0.U
+    allocatedPackages := 0.U
+    completedPackages := 0.U
+    passedPackages := 0.U
+    cancelledPackages := 0.U
+    safeCycleSum := 0.U
+    writebackCycleSum := 0.U
+    statsValid := !resetBoundaryInvalid
+    packageResultDropped := resetBoundaryInvalid.asUInt
+    statsArithmeticOverflow := 0.U
   }
 
   io.lsu.perf.release := edge.done(tl_out.c)
@@ -958,13 +1282,42 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
 
 
   s3_req.data := amoalu.io.out
-  val s3_way   = RegNext(s2_tag_match_way(0))
+  // Give the one-hot way register an explicit width. s2_tag_match_way is
+  // formed through a Mux chain containing legacy widthless registers, so
+  // RegNext alone leaves its width unknown when OHToUInt queries it below.
+  val s3_way   = Reg(UInt(nWays.W))
+  s3_way      := s2_tag_match_way(0)
 
   dataWriteArb.io.in(0).valid       := s3_valid
   dataWriteArb.io.in(0).bits.addr   := s3_req.addr
   dataWriteArb.io.in(0).bits.wmask  := UIntToOH(s3_req.addr.extract(rowOffBits-1,offsetlsb))
   dataWriteArb.io.in(0).bits.data   := Fill(rowWords, s3_req.data)
   dataWriteArb.io.in(0).bits.way_en := s3_way
+
+  // A refill installs a new tag in this set/way and must discard attribution
+  // left by the evicted line before any replayed store dirties the new line.
+  when (dataWriteArb.io.in(1).fire) {
+    val set = dataWriteArb.io.in(1).bits.addr(idxMSB, idxLSB)
+    val way = OHToUInt(dataWriteArb.io.in(1).bits.way_en)
+    dirtyPacketSeq(set)(way) := 0.U
+    dirtyPacketTracked(set)(way) := false.B
+  }
+
+  // Keep conservative line-level verification attribution. Once any checked
+  // operation dirties this resident line, later non-package stores cannot
+  // erase that requirement; another checked store raises the attribution to
+  // the greatest package sequence seen for the line. Refill is the only event
+  // above that clears the attribution because it installs a different line.
+  when (dataWriteArb.io.in(0).fire) {
+    val set = s3_req.addr(idxMSB, idxLSB)
+    val way = OHToUInt(s3_way)
+    when (s3_req.packet_seq =/= 0.U) {
+      dirtyPacketSeq(set)(way) := Mux(dirtyPacketTracked(set)(way) &&
+        dirtyPacketSeq(set)(way) > s3_req.packet_seq,
+        dirtyPacketSeq(set)(way), s3_req.packet_seq)
+      dirtyPacketTracked(set)(way) := true.B
+    }
+  }
 
   // BOOM 完成路径：cacheable store 只在 data-array 写入握手点统计；
   // uncacheable store 在 TileLink A 通道接受时统计；load 只在成功响应
@@ -994,40 +1347,52 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val sc_fail_count       = RegInit(0.U(64.W))
   val amo_cache_count     = RegInit(0.U(64.W))
   val amo_uncache_count   = RegInit(0.U(64.W))
-  when (completed_store_cache) {
+  when (io.traffic_reset) {
+    store_cache_count := 0.U
+    store_uncache_count := 0.U
+    store_uncache_cycle_sum := 0.U
+    load_cache_count := 0.U
+    load_uncache_count := 0.U
+    load_forward_count := 0.U
+    lr_count := 0.U
+    sc_success_count := 0.U
+    sc_fail_count := 0.U
+    amo_cache_count := 0.U
+    amo_uncache_count := 0.U
+  }.elsewhen (trafficCounting && completed_store_cache) {
     store_cache_count := store_cache_count + 1.U
   }
-  when (completed_store_uncache) {
+  when (trafficCounting && completed_store_uncache) {
     store_uncache_count := store_uncache_count + 1.U
     // The event and CSR timestamp are sampled on the same BOOM clock edge.
     store_uncache_cycle_sum := store_uncache_cycle_sum + io.csr_cycle
   }
-  when (completed_load_cache.reduce(_|_)) {
+  when (trafficCounting && completed_load_cache.reduce(_|_)) {
     load_cache_count := load_cache_count + PopCount(completed_load_cache)
   }
-  when (completed_load_uncache.reduce(_|_)) {
+  when (trafficCounting && completed_load_uncache.reduce(_|_)) {
     load_uncache_count := load_uncache_count + PopCount(completed_load_uncache)
   }
-  when (completed_load_forward.reduce(_|_)) {
+  when (trafficCounting && completed_load_forward.reduce(_|_)) {
     load_forward_count := load_forward_count + PopCount(completed_load_forward)
   }
-  when (completed_lr.reduce(_|_)) {
+  when (trafficCounting && completed_lr.reduce(_|_)) {
     lr_count := lr_count + PopCount(completed_lr)
   }
-  when (completed_sc_success.reduce(_|_)) {
+  when (trafficCounting && completed_sc_success.reduce(_|_)) {
     sc_success_count := sc_success_count + PopCount(completed_sc_success)
   }
-  when (completed_sc_fail.reduce(_|_)) {
+  when (trafficCounting && completed_sc_fail.reduce(_|_)) {
     sc_fail_count := sc_fail_count + PopCount(completed_sc_fail)
   }
-  when (completed_amo_cache.reduce(_|_)) {
+  when (trafficCounting && completed_amo_cache.reduce(_|_)) {
     amo_cache_count := amo_cache_count + PopCount(completed_amo_cache)
   }
-  when (completed_amo_uncache.reduce(_|_)) {
+  when (trafficCounting && completed_amo_uncache.reduce(_|_)) {
     amo_uncache_count := amo_uncache_count + PopCount(completed_amo_uncache)
   }
   // load_total includes all three mutually-exclusive BOOM completion paths.
-  io.traffic_counter := VecInit(Seq(
+  val trafficCounterLive = VecInit(Seq(
     store_cache_count + store_uncache_count,
     store_cache_count,
     store_uncache_count,
@@ -1041,11 +1406,40 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     amo_cache_count + amo_uncache_count,
     amo_cache_count,
     amo_uncache_count,
-    l1_l2_wb_total_count,
-    l1_l2_wb_dirty_count,
+    l1_l2_c_count,
+    l1_l2_dirty_wb_count,
     0.U(64.W),
     0.U(64.W),
-    store_uncache_cycle_sum))
+    store_uncache_cycle_sum,
+    unverifiedDirtyWbSeen,
+    unverifiedDirtyWbResolved,
+    unverifiedDirtyWbPending,
+    unverifiedDirtyWbDropped,
+    failedPackages,
+    safeCycleSum,
+    writebackCycleSum,
+    statsValid.asUInt,
+    safePacketWatermark,
+    packageResultDropped,
+    verifiedDirtyWbCount,
+    nonverifyDirtyWbCount,
+    allocatedPackages,
+    completedPackages,
+    passedPackages,
+    cancelledPackages,
+    statsArithmeticOverflow,
+    verifyRequiredDirtyWbCount))
+  val trafficCounterSnapshot = RegInit(VecInit(
+    Seq.fill(GH_GlobalParams.GH_TRAFFIC_COUNTERS)(0.U(64.W))))
+  val trafficCounterSnapshotValid = RegInit(false.B)
+  when (io.traffic_reset || io.traffic_start) {
+    trafficCounterSnapshotValid := false.B
+  }.elsewhen (trafficStopPulse) {
+    trafficCounterSnapshot := trafficCounterLive
+    trafficCounterSnapshotValid := true.B
+  }
+  io.traffic_counter := Mux(trafficCounterSnapshotValid,
+    trafficCounterSnapshot, trafficCounterLive)
 
   io.lsu.ordered := mshrs.io.fence_rdy && !s1_valid.reduce(_||_) && !s2_valid.reduce(_||_)
 }

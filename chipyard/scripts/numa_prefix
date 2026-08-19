@@ -27,11 +27,13 @@ import subprocess
 import re
 import sys
 
-which_proc = subprocess.Popen(["which", "numactl"], stdout=subprocess.PIPE)
+which_proc = subprocess.Popen(["which", "numactl"], stdout=subprocess.PIPE,
+                              text=True)
 out, err = which_proc.communicate()
 
 if out != "":
-    numactl_proc = subprocess.Popen(["numactl", "-H"], stdout=subprocess.PIPE)
+    numactl_proc = subprocess.Popen(["numactl", "-H"], stdout=subprocess.PIPE,
+                                    text=True)
     out, err = numactl_proc.communicate()
 
     lines = out.split("\n")
@@ -41,13 +43,13 @@ if out != "":
     line_idx += 1
     node_match = re.match(r"^ *available: +(\d+) nodes", head_line)
     if node_match:
-        avail_nodes = node_match.group(1)
+        avail_nodes = int(node_match.group(1))
         best_node_id = ""
         best_cpus = ""
         best_free_size = 0
 
         # loop through available nodes, selecting the node with the most free mem
-        for i in avail_nodes:
+        for _ in range(avail_nodes):
             cpu_line      = lines[line_idx]
             # mem. size unused. skip and use mem. free
             mem_free_line = lines[line_idx + 2]

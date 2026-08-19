@@ -174,6 +174,9 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
     when (is_hit_again) {
       new_coh := dirtier_coh
     }
+    when (io.req.packet_seq > req.packet_seq) {
+      req.packet_seq := io.req.packet_seq
+    }
   }
 
   def handle_pri_req(old_state: UInt): UInt = {

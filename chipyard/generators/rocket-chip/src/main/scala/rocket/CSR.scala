@@ -377,10 +377,13 @@ class CSRFileIO(implicit p: Parameters) extends CoreBundle
   val check_tvec      = Input(UInt(vaddrBitsExtended.W))
   val check_priv_ret  = Input(Bool())
   val check_epc       = Input(UInt(vaddrBitsExtended.W))
+  val check_boundary_pc = Input(UInt(vaddrBitsExtended.W))
 
   val ic_check_done     = Input(Bool())
   val clear_ic_status   = Input(Bool())
   val if_priv_checkcomp = Output(Bool())
+  val shadow_check_error = Output(Bool())
+  val shadow_check_required = Output(Bool())
   //===== GuardianCouncil Function: End ====//
 }
 
@@ -547,12 +550,32 @@ class CSRFile(
 
   val if_check_completed                          = (checking_counter_memdelay === (CSRshadows.CSRsize.U - 1.U)).asUInt
   io.if_priv_checkcomp := if_check_completed.asBool
-  val shadow_status = Reg(UInt(2.W))
-  shadow_status := Mux((if_check_completed.asBool && !(io.shadow_idx === 7.U && io.arfs_is_CPS)) || io.checker_mode, 0.U, 
-                      Mux((io.shadow_idx === 7.U && io.arfs_is_CPS), 1.U, Mux((io.shadow_idx === 7.U && !io.arfs_is_CPS && shadow_status === 1.U), 3.U, shadow_status)))
+  // 0: idle, 1: CPS received, 3: CPS/ECP pair ready, 2: comparison complete.
+  val shadow_status = RegInit(0.U(2.W))
+  val csr_cps_tail = io.shadow_idx === 7.U && io.arfs_is_CPS && io.arfs_is_CSR
+  val csr_ecp_tail = io.shadow_idx === 7.U && !io.arfs_is_CPS && io.arfs_is_CSR
+  // Bits 135:134 encode Cat(0, exception_mode), not RISC-V privilege.
+  // Keep both boundary modes locally because the Rocket-side mode registers
+  // are cleared independently of the CSR comparison.
+  val csr_cps_exception_mode = RegInit(false.B)
+  val csr_ecp_exception_mode = RegInit(false.B)
+  when (io.clear_ic_status) {
+    csr_cps_exception_mode := false.B
+    csr_ecp_exception_mode := false.B
+  }.otherwise {
+    when (csr_cps_tail) { csr_cps_exception_mode := io.check_priv.orR }
+    when (csr_ecp_tail) { csr_ecp_exception_mode := io.check_ret_priv.orR }
+  }
+  shadow_status := Mux(io.clear_ic_status, 0.U,
+                      Mux(csr_cps_tail, 1.U,
+                      Mux(if_check_completed.asBool, 2.U,
+                      Mux(csr_ecp_tail && shadow_status === 1.U, 3.U, shadow_status))))
 
   val do_cp_check = io.ic_check_done && shadow_status === 3.U
+  io.shadow_check_required := shadow_status === 3.U || shadow_status === 2.U ||
+    do_check || do_cp_check
 
+  val shadow_check_error = WireDefault(false.B)
   if(tileParams.hartId != 0){
     when(io.arfs_is_CPS && io.arfs_is_CSR){
       reg_shadow.get((io.shadow_idx - 1.U) << 1)         := io.csr_shadows(63, 0)
@@ -569,7 +592,10 @@ class CSRFile(
     val shadow_idx_ECP = Mux(do_check, checking_counter, 0.U)
     val shadow_dat_ECP = reg_shadow_ECP.get.read(shadow_idx_ECP, do_check)
     
-    when (!do_check.asBool) {
+    when (io.clear_ic_status) {
+      do_check                                     := false.B
+      checking_counter                             := 0.U
+    }.elsewhen (!do_check.asBool) {
       do_check                                     := Mux(do_cp_check && !if_check_completed.asBool, 1.U, 0.U)
       // checking_counter                             := Mux(io.clear_ic_status.asBool, 0.U, checking_counter)
       checking_counter                             := Mux(if_check_completed.asBool, 0.U, checking_counter)
@@ -578,9 +604,57 @@ class CSRFile(
       checking_counter                             := Mux(checking_counter === (CSRshadows.CSRsize.U - 1.U), checking_counter, checking_counter + 1.U)
     }
 
-    val check_error = shadow_dat_ECP =/= reg_shadow.get(checking_counter_memdelay) && do_check && checking_counter =/= 0.U
+    val shadow_dat_base = reg_shadow.get(checking_counter_memdelay)
+    val shadow_dat_checker = WireDefault(shadow_dat_base)
+    val exception_entry = !csr_cps_exception_mode && csr_ecp_exception_mode
+    val exception_return = csr_cps_exception_mode && !csr_ecp_exception_mode
+
+    // The checker intentionally does not take the BOOM boundary trap/mret
+    // before comparison. Project only the architectural comparison view.
+    when (checking_counter_memdelay === CSRshadowsindex.mstatus.U) {
+      val base_mstatus = shadow_dat_base.asTypeOf(new MStatusShadow())
+      val projected_mstatus = Wire(new MStatusShadow())
+      projected_mstatus := base_mstatus
+      when (exception_entry) {
+        projected_mstatus.mpie := base_mstatus.mie
+        projected_mstatus.mpp := trimPrivilege(reg_mstatus.prv)
+        projected_mstatus.mie := false.B
+      }.elsewhen (exception_return) {
+        val ret_prv = base_mstatus.mpp
+        projected_mstatus.mie := base_mstatus.mpie
+        projected_mstatus.mpie := true.B
+        projected_mstatus.mpp := legalizePrivilege(PRV.U.U)
+        projected_mstatus.mpv := false.B
+        when (usingUser.B && ret_prv <= PRV.S.U) {
+          projected_mstatus.mprv := false.B
+        }
+      }
+      shadow_dat_checker := projected_mstatus.asUInt
+    }.elsewhen (checking_counter_memdelay === CSRshadowsindex.mepc.U && exception_entry) {
+      shadow_dat_checker := formEPC(io.check_boundary_pc).sextTo(xLen)
+    }
+
+    // External interrupt-pending inputs are sampled independently by BOOM and
+    // Rocket, so they cannot be compared as lockstep architectural state.
+    val asynchronous_pending = WireDefault(0.U.asTypeOf(new MIP()))
+    asynchronous_pending.lip.foreach(_ := true.B)
+    asynchronous_pending.msip := true.B
+    asynchronous_pending.mtip := true.B
+    asynchronous_pending.meip := true.B
+    asynchronous_pending.seip := true.B
+    asynchronous_pending.rocc := true.B
+    val asynchronous_pending_mask = asynchronous_pending.asUInt.pad(xLen)
+    val pending_csr = checking_counter_memdelay === CSRshadowsindex.mip.U ||
+      checking_counter_memdelay === CSRshadowsindex.sip.U
+    val stable_compare_mask = Mux(pending_csr,
+      ~asynchronous_pending_mask, Fill(xLen, 1.U(1.W)))
+
+    val check_error = (((shadow_dat_ECP ^ shadow_dat_checker) & stable_compare_mask).orR &&
+      do_check && checking_counter =/= 0.U)
+    shadow_check_error := check_error
     dontTouch(check_error)
   }
+  io.shadow_check_error := shadow_check_error
   
   /* shadow register for kernel verification */
 
@@ -1212,6 +1286,19 @@ class CSRFile(
       reg_mstatus.spp := reg_mstatus.prv
       reg_mstatus.sie := false.B
       new_prv := PRV.S.U
+      if (tileParams.hartId != 0) {
+        when (io.checker_priv_mode) {
+          val shadow_mstatus = Wire(new MStatusShadow())
+          shadow_mstatus := reg_shadow.get(CSRshadowsindex.mstatus).asTypeOf(new MStatusShadow())
+          shadow_mstatus.spie := shadow_mstatus.sie
+          shadow_mstatus.spp := reg_mstatus.prv(0)
+          shadow_mstatus.sie := false.B
+          reg_shadow.get(CSRshadowsindex.mstatus) := shadow_mstatus.asUInt
+          reg_shadow.get(CSRshadowsindex.sepc) := epc
+          reg_shadow.get(CSRshadowsindex.scause) := cause
+          reg_shadow.get(CSRshadowsindex.stval) := tval
+        }
+      }
     }.otherwise {
       reg_mstatus.v := false.B
       reg_mstatus.mpv := reg_mstatus.v
@@ -1224,6 +1311,19 @@ class CSRFile(
       reg_mstatus.mpp := trimPrivilege(reg_mstatus.prv)
       reg_mstatus.mie := false.B
       new_prv := PRV.M.U
+      if (tileParams.hartId != 0) {
+        when (io.checker_priv_mode) {
+          val shadow_mstatus = Wire(new MStatusShadow())
+          shadow_mstatus := reg_shadow.get(CSRshadowsindex.mstatus).asTypeOf(new MStatusShadow())
+          shadow_mstatus.mpv := reg_mstatus.v
+          shadow_mstatus.gva := io.gva
+          shadow_mstatus.mpie := shadow_mstatus.mie
+          shadow_mstatus.mpp := trimPrivilege(reg_mstatus.prv)
+          shadow_mstatus.mie := false.B
+          reg_shadow.get(CSRshadowsindex.mstatus) := shadow_mstatus.asUInt
+          reg_shadow.get(CSRshadowsindex.mepc) := epc
+        }
+      }
     }
   }.elsewhen(io.check_exception && io.check_priv === 1.U){ //只是为了verilator实验，实际boot linux，这里应该切到S-mode
     reg_mstatus.v := false.B
@@ -1321,7 +1421,8 @@ class CSRFile(
         reg_mstatus.mprv := false.B
       }
 
-      when(io.check_ret_priv === 0.U && shadow_status === 3.U){
+      when(csr_cps_exception_mode && !csr_ecp_exception_mode &&
+        (shadow_status === 3.U || shadow_status === 2.U)){
         if(tileParams.hartId != 0){
           // 1. 将寄存器值转换为 MStatus 类型的 Wire（可修改）
           val mstatus_wire = Wire(new MStatus())
@@ -1339,23 +1440,9 @@ class CSRFile(
     }
 
   
-  when((io.check_ret_priv === 0.U) && shadow_status === 1.U && !io.arfs_is_CPS && io.arfs_is_CSR && io.shadow_idx === 7.U){
-    val mstatus_wire = Wire(new MStatus())
-    val ret_prv = WireInit(UInt(), DontCare)
-
-    mstatus_wire := reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mstatus).asTypeOf(mstatus_wire)
-    mstatus_wire.mie  := mstatus_wire.mpie
-    mstatus_wire.mpie := true.B
-    mstatus_wire.mpp  := legalizePrivilege(PRV.U.U)
-    mstatus_wire.mpv  := false.B
-    ret_prv := reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mstatus).asTypeOf(new MStatusShadow()).mpp
-    when (usingUser.B && ret_prv <= PRV.S.U) {
-      mstatus_wire.mprv := false.B
-    }
-    if(tileParams.hartId != 0){
-      reg_shadow.get(CSRshadowsindex.mstatus) := mstatus_wire.asUInt
-    }
-  }
+  // Receiving the ECP closes the CSR snapshot; it is not a privileged return.
+  // Keep the executed shadow state intact for comparison.  The synthetic
+  // return above runs only after the complete package result is available.
   // .elsewhen(RegNext(io.check_priv_ret)){
   //     io.evec := io.check_epc
   // }

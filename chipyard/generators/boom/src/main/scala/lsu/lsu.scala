@@ -82,6 +82,7 @@ class BoomDCacheReq(implicit p: Parameters) extends BoomBundle()(p)
   // Cacheability is classified at DCache ingress and follows the request to
   // its eventual completion point.
   val traffic_cacheable = Bool()
+  val packet_seq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
 }
 
 class BoomDCacheResp(implicit p: Parameters) extends BoomBundle()(p)
@@ -183,6 +184,7 @@ class LSUCoreIO(implicit p: Parameters) extends BoomBundle()(p)
     val release = Bool()
     val tlbMiss = Bool()
   })
+  val active_packet_seq = Input(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
 }
 
 class LSUIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
@@ -236,6 +238,7 @@ class STQEntry(implicit p: Parameters) extends BoomBundle()(p)
   val succeeded           = Bool() // D$ has ack'd this, we don't need to maintain this anymore
   // 第一次被 DCache 接收后置位，队列项回收后随新项清零。
   val traffic_seen        = Bool()
+  val packet_seq          = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
 
   val debug_wb_data       = UInt(xLen.W)
 }
@@ -371,6 +374,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       stq(st_enq_idx).bits.committed  := false.B
       stq(st_enq_idx).bits.succeeded  := false.B
       stq(st_enq_idx).bits.traffic_seen := false.B
+      stq(st_enq_idx).bits.packet_seq := 0.U
 
       assert (st_enq_idx === io.core.dis_uops(w).bits.stq_idx, "[lsu] mismatch enq store tag.")
       assert (!stq(st_enq_idx).valid, "[lsu] Enqueuing uop is overwriting stq entries")
@@ -811,6 +815,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     dmem_req(w).bits.traffic_seen := false.B
     dmem_req(w).bits.traffic_check := false.B
     dmem_req(w).bits.traffic_cacheable := false.B
+    dmem_req(w).bits.packet_seq := 0.U
 
     io.dmem.s1_kill(w) := false.B
 
@@ -839,6 +844,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
                                     coreDataBytes)).data
       dmem_req(w).bits.uop      := stq_commit_e.bits.uop
       dmem_req(w).bits.traffic_seen := stq_commit_e.bits.traffic_seen
+      dmem_req(w).bits.packet_seq := stq_commit_e.bits.packet_seq
 
       stq_execute_head                     := Mux(dmem_req_fire(w),
                                                 WrapInc(stq_execute_head, numStqEntries),
@@ -1528,6 +1534,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         stq(i).bits.vaddr.valid:= false.B
         stq(i).bits.data.valid := false.B
         stq(i).bits.traffic_seen := false.B
+        stq(i).bits.packet_seq := 0.U
         st_brkilled_mask(i)    := true.B
       }
     }
@@ -1575,6 +1582,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     when (commit_store)
     {
       stq(idx).bits.committed := true.B
+      stq(idx).bits.packet_seq := io.core.active_packet_seq
     } .elsewhen (commit_load) {
       assert (ldq(idx).valid, "[lsu] trying to commit an un-allocated load entry.")
       assert ((ldq(idx).bits.executed || ldq(idx).bits.forward_std_val) && ldq(idx).bits.succeeded ,
@@ -1633,6 +1641,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     stq(stq_head).bits.succeeded  := false.B
     stq(stq_head).bits.committed  := false.B
     stq(stq_head).bits.traffic_seen := false.B
+    stq(stq_head).bits.packet_seq := 0.U
 
     stq_head := WrapInc(stq_head, numStqEntries)
     when (stq(stq_head).bits.uop.is_fence)
@@ -1739,6 +1748,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         stq(i).bits.data.valid := false.B
         stq(i).bits.uop        := NullMicroOp
         stq(i).bits.traffic_seen := false.B
+        stq(i).bits.packet_seq := 0.U
       }
     }
       .otherwise // exception
@@ -1754,6 +1764,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
           stq(i).bits.vaddr.valid:= false.B
           stq(i).bits.data.valid := false.B
           stq(i).bits.traffic_seen := false.B
+          stq(i).bits.packet_seq := 0.U
           st_exc_killed_mask(i)  := true.B
         }
       }

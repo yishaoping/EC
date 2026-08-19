@@ -24,6 +24,7 @@ class BoomLSUShim(implicit p: Parameters) extends BoomModule()(p)
   })
 
   io.lsu.tsc_reg := 0.U(1.W)
+  io.lsu.active_packet_seq := 0.U
 
   val rob_sz = numRobEntries
   val rob = Reg(Vec(rob_sz, new HellaCacheReq))
@@ -236,7 +237,15 @@ class BoomTraceGenTileModuleImp(outer: BoomTraceGenTile)
   ptw.io.requestors.head <> lsu.io.ptw
   outer.dcache.module.io.lsu <> lsu.io.dmem
   outer.dcache.module.io.traffic_check_state := false.B
+  outer.dcache.module.io.traffic_reset := false.B
+  outer.dcache.module.io.traffic_start := false.B
+  outer.dcache.module.io.traffic_stop := false.B
   outer.dcache.module.io.csr_cycle := 0.U
+  outer.dcache.module.io.packet_alloc_valid := false.B
+  outer.dcache.module.io.packet_alloc_seq := 0.U
+  outer.dcache.module.io.packet_seq_baseline := 0.U
+  outer.dcache.module.io.checker_results := 0.U.asTypeOf(
+    outer.dcache.module.io.checker_results)
   boom_shim.io.tracegen <> tracegen.io.mem
   tracegen.io.fence_rdy := boom_shim.io.tracegen.ordered
   boom_shim.io.lsu <> lsu.io.core

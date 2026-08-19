@@ -185,7 +185,7 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
   val core_trace = Wire(UInt(2.W))
   val fi_sel = Wire(UInt(8.W))
   val fi_latency = Wire(UInt(57.W))
-  val debug_perf_sel = Wire(UInt(4.W))
+  val debug_perf_sel = Wire(UInt(GH_GlobalParams.GH_PERF_CTRL_BITS.W))
   /* Runtime Configurable Mapping bridges */
   val checker_cfg_bridge = Module(new GH_Bridge(GH_BridgeParams(GH_GlobalParams.GH_CHECKER_MASK_WIDTH)))
   val checker_cfg_we_bridge = Module(new GH_Bridge(GH_BridgeParams(1)))
@@ -243,6 +243,8 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
         o << (i * 4).U
       }.reduce(_|_)
     core.io.global_checker_big_owner             := outer.global_checker_big_owner_SKNode.bundle
+    outer.checker_segment_id_SRNode.bundle       := core.io.checker_segment_id.asUInt
+    outer.checker_result_SRNode.bundle           := 0.U
 
     
 
@@ -352,7 +354,7 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
     core.io.debug_perf_ctrl                      := debug_perf_sel
     outer.debug_maincore_status_SRNode.bundle    := core.io.debug_maincore_status
     // outer.big_complete_ack_SRNode.bundle         := core.io.if_big_complete_ack.asUInt 
-  } else { 
+  } else {
     // Not be used, added to pass the compile
     core.io.gh_stall                             := 0.U
     core.io.icctrl                               := 0.U
@@ -366,6 +368,8 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
     outer.ic_status_SRNode.bundle                := 0.U
     core.io.global_checker_big_owner             := 0.U
     outer.checker_big_owner_SRNode.bundle        := 0.U
+    outer.checker_segment_id_SRNode.bundle       := 0.U
+    outer.checker_result_SRNode.bundle           := 0.U
   }
   //===== GuardianCouncil Function: End   ====//
 
@@ -533,7 +537,14 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
     cdc_cnt := cdc_cnt+1.U
 
     
-    outer.ght_status_out_SRNode.bundle           := Mux(cdc_cnt===3.U,Cat(if_ght_filters_empty_bridge.io.out, cmdRouter.io.ght_status_out(30,0)),0.U)
+    // Keep the producer-empty indication as a level.  The lower status bits
+    // remain periodically sampled, but package completion needs to know that
+    // GH_BUF has actually drained; a one-cycle pulse can be missed by a
+    // checker running in another clock domain.
+    outer.ght_status_out_SRNode.bundle           := Cat(if_ght_filters_empty_bridge.io.out,
+                                                       Mux(cdc_cnt === 3.U,
+                                                           cmdRouter.io.ght_status_out(30, 0),
+                                                           0.U(31.W)))
     number_checkers_bridge.io.in                 := cmdRouter.io.ght_status_out(30,23)
 
     // agg
@@ -593,7 +604,16 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
   outer.dcache.module.io.lsu <> lsu.io.dmem
   // R_IC 状态编码 2 表示 fsm_check；只有该状态下的 BOOM 访存进入统计。
   outer.dcache.module.io.traffic_check_state := core.io.debug_maincore_status === 2.U
+  outer.dcache.module.io.traffic_reset := debug_perf_sel(GH_GlobalParams.GH_PERF_CTRL_RESET_BIT)
+  outer.dcache.module.io.traffic_start := debug_perf_sel(GH_GlobalParams.GH_PERF_CTRL_START_BIT)
+  outer.dcache.module.io.traffic_stop := debug_perf_sel(GH_GlobalParams.GH_PERF_CTRL_STOP_BIT)
   outer.dcache.module.io.csr_cycle := core.io.csr_cycle
+  outer.dcache.module.io.packet_alloc_valid := core.io.packet_alloc_valid
+  outer.dcache.module.io.packet_alloc_seq := core.io.packet_alloc_seq
+  outer.dcache.module.io.packet_seq_baseline := core.io.active_packet_seq
+  outer.dcache.module.io.checker_results := outer.checker_results_SKNode.bundle.asTypeOf(
+    Vec(GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES,
+      UInt(GH_GlobalParams.GH_CHECKER_RESULT_BITS.W)))
   
   // Generate a descriptive string
   val frontendStr = outer.frontend.module.toString

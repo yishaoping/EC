@@ -246,6 +246,9 @@ class GH_BUF (val params: GH_BUF_Params)(implicit p: Parameters) extends BoomMod
   io.packet_out                               := Cat(packet_out.reverse) // Added inst_type for checker cores
   io.core_hang_up                             := core_hang_up 
   io.ght_buffer_status                        := Cat(buffer_full(params.core_width-1), buf_all_empty)
-  io.ght_filters_empty                        := buf_all_empty//需要去加入cdc cnt
+  // The FIFO empty flags describe the pre-edge state.  Include current
+  // enqueues so an empty FIFO receiving a new packet cannot emit a false
+  // package-drained level for one BOOM cycle.
+  io.ght_filters_empty                        := buf_all_empty && !new_packet.reduce(_|_)
   io.gh_packet_dest                           := out_inst_type.map(i=>i(6,3)).reduce(_|_)
 }

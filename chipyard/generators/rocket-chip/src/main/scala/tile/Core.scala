@@ -187,6 +187,12 @@ trait HasCoreIO extends HasTileParameters {
     val big_complete                               = Input(Bool()) 
     val packet_arfs = UInt((GH_GlobalParams.GH_WIDITH_PACKETS+8).W).asInput
     val packet_lsl = Vec(GH_GlobalParams.GH_TOTAL_PACKETS,UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W)).asInput
+    val packet_seq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W).asInput
+    val packet_seq_valid = Bool().asInput
+    val package_result_valid = Bool().asOutput
+    val package_result_seq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W).asOutput
+    val package_result_status = UInt(GH_GlobalParams.GH_CHECKER_STATUS_BITS.W).asOutput
+    val package_result_ready = Bool().asInput
     // val packet_lsl1 = UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W).asInput
 
     val packet_cdc_ready = UInt(1.W).asOutput
@@ -203,7 +209,7 @@ trait HasCoreIO extends HasTileParameters {
     val icsl_status = UInt(2.W).asOutput
     val core_trace = UInt(1.W).asInput
     val record_and_store = UInt(2.W).asInput
-    val debug_perf_ctrl = UInt(5.W).asInput
+    val debug_perf_ctrl = UInt(GH_GlobalParams.GH_PERF_CTRL_BITS.W).asInput
     val log_highwatermark = UInt(1.W).asOutput
     val traffic_counter = Vec(GH_GlobalParams.GH_TRAFFIC_COUNTERS, UInt(64.W)).asOutput
 

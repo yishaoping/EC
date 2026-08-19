@@ -41,6 +41,7 @@ class R_ICSLIO(params: R_ICSLParams) extends Bundle {
   val if_ret_special_pc                          = Output(UInt(1.W))
   val if_rh_cp_pc                                = Output(UInt(1.W))
   val if_check_completed                         = Input(UInt(1.W))
+  val if_check_cancelled                         = Input(Bool())
   val icsl_status                                = Output(UInt(2.W))
   val debug_sl_counter                           = Output(UInt(params.width_of_ic.W))
   val core_trace                                 = Input(UInt(1.W))
@@ -51,6 +52,8 @@ class R_ICSLIO(params: R_ICSLParams) extends Bundle {
   val already_done                               = Output(Bool())
 
   val debug_perf_reset                           = Input(UInt(1.W))
+  val debug_perf_start                           = Input(Bool())
+  val debug_perf_stop                            = Input(Bool())
   val debug_state                                = Output(UInt(3.W))
   val debug_perf_sel                             = Input(UInt(4.W))
   val debug_perf_val                             = Output(UInt(64.W))   
@@ -101,8 +104,13 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   val if_rh_cp_pc                                = WireInit(0.U(1.W))
 
   val sl_counter                                  = RegInit(0.U(params.width_of_ic.W))
-
-
+  // ARF/CSR/LSL completion is the common terminal condition for normal and
+  // privileged packages. Keep an early pulse until either postchecking state
+  // consumes it.
+  val package_completion_seen                     = RegInit(false.B)
+  val package_completion_ready                    = io.if_check_completed.asBool ||
+                                                    package_completion_seen
+  val privileged_return_issued                    = RegInit(false.B)
   val if_completion                              = Mux((io.if_correct_process.asBool && (fsm_state === fsm_checking) && ((sl_counter>= (ic_counter_shadow+1.U)) || (io.new_commit.asBool && ((sl_counter + 1.U) >= (ic_counter_shadow + 1.U)))) && ic_counter_done.asBool), true.B, false.B)
   val if_completion_priv                         = Mux((io.if_correct_process.asBool && (fsm_state === fsm_checking_priv) && ((sl_counter>= (ic_counter_shadow)) || (io.new_commit.asBool && ((sl_counter + 1.U) >= (ic_counter_shadow)))) && ic_counter_done.asBool), true.B, false.B)
   // val if_slow_completion                         = Mux((io.if_correct_process.asBool && (sl_counter >= ic_counter_shadow) && ic_counter_done.asBool), true.B, false.B)
@@ -193,23 +201,53 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
     is (fsm_postchecking){//post check阶段会去将流水线指令执行完成，然后去return
       self_xcpt_flag                            := 0.U
       self_eret_flag                            := 0.U
-      sl_counter                                := Mux(io.if_check_completed.asBool, 0.U, sl_counter)
+      sl_counter                                := Mux(package_completion_ready, 0.U, sl_counter)
       clear_ic_status                           := 0.U
       icsl_checkermode                          := Mux(io.if_correct_process.asBool, 1.U, 0.U)
       icsl_checkerpriv_mode                     := 0.U
-      if_rh_cp_pc                               := io.if_correct_process & !io.self_xcpt.asUInt
+      // Both package types use package_completion_ready as their terminal
+      // predicate. The remaining terms are normal-path redirect guards.
+      if_rh_cp_pc                               := io.if_correct_process.asBool &&
+                                                   !io.self_xcpt.asBool &&
+                                                   package_completion_ready
       fsm_state                                 := Mux(io.returned_to_special_address_valid.asBool, fsm_reset, fsm_postchecking)
     }
     is(fsm_postchecking_priv){
       self_xcpt_flag                            := 0.U
       self_eret_flag                            := 0.U
-      sl_counter                                := Mux(io.if_check_completed.asBool, 0.U, sl_counter)
+      sl_counter                                := Mux(package_completion_ready, 0.U, sl_counter)
       clear_ic_status                           := 0.U
       icsl_checkermode                          := 0.U
       icsl_checkerpriv_mode                     := 0.U
-      if_rh_cp_pc                               := 1.U
+      if_rh_cp_pc                               := package_completion_ready.asUInt
       fsm_state                                 := Mux(io.returned_to_special_address_valid.asBool, fsm_reset, fsm_postchecking_priv)
     }
+  }
+
+  // A newer sequenced package supersedes an unfinished one.  Reset the local
+  // checker FSM so the cancelled result can cross the result CDC and release
+  // the BOOM ownership bit; otherwise postchecking would wait forever for the
+  // old package's completion pulse.
+  when (io.if_check_cancelled) {
+    fsm_state                                 := fsm_reset
+    sl_counter                                := 0.U
+    if_rh_cp_pc                               := 0.U
+  }
+  val package_start = io.icsl_run.asBool || io.if_check_privrun
+  when (fsm_state === fsm_reset || io.if_check_cancelled ||
+    (fsm_state === fsm_nonchecking && package_start)) {
+    package_completion_seen                   := false.B
+  }.elsewhen (io.if_check_completed.asBool && fsm_state =/= fsm_nonchecking) {
+    package_completion_seen                   := true.B
+  }
+  val privileged_return_ready = io.if_correct_process.asBool &&
+    fsm_state === fsm_postchecking_priv && package_completion_ready &&
+    !io.returned_to_special_address_valid.asBool && !io.excpt_mode
+  when (fsm_state === fsm_reset || io.if_check_cancelled ||
+    (fsm_state === fsm_nonchecking && package_start)) {
+    privileged_return_issued                  := false.B
+  }.elsewhen (privileged_return_ready) {
+    privileged_return_issued                  := true.B
   }
   val fsm_state_delay                            = RegInit(fsm_reset)
   fsm_state_delay                               := fsm_state
@@ -230,8 +268,10 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   }
 
   io.if_check_done := check_done
-  io.if_check_privret := io.if_correct_process.asBool && RegNext((io.new_commit.asBool && ((sl_counter + 1.U) >= (ic_counter_shadow)))) && 
-                         ic_counter_done.asBool && ((fsm_state === fsm_checking_priv) || (fsm_state === fsm_postchecking_priv)) && !(io.returned_to_special_address_valid.asBool) && !io.excpt_mode
+  // A privileged return changes the architectural register state.  Issue it
+  // only after ARF, CSR, LSL and packet ingress have reached the common package
+  // tail, and hold it to one pulse while the redirect is taking effect.
+  io.if_check_privret := privileged_return_ready && !privileged_return_issued
   dontTouch(check_done)
 
   // when()
@@ -253,13 +293,9 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   if_overtaking_priv_next_cycle                 := Mux(if_just_overtaking_priv.asBool || (sl_counter >= (ic_counter_shadow)), 1.U, 0.U)
   
   val stall_checking                            = RegInit(false.B)
-  val stall_postchecking                        = RegInit(false.B)
   val stall_checking_priv                       = RegInit(false.B)
-  val stall_postchecking_priv                   = RegInit(false.B)
   stall_checking           := Mux(ic_counter_shadow + 1.U <= sl_counter + io.num_valid_insts_in_pipeline, true.B,false.B)
-  stall_postchecking       := Mux(io.num_valid_insts_in_pipeline > 0.U, true.B,false.B)
   stall_checking_priv      := Mux(ic_counter_shadow <= sl_counter + io.num_valid_insts_in_pipeline, true.B,false.B)
-  stall_postchecking_priv  := Mux(io.num_valid_insts_in_pipeline > 0.U, true.B,false.B)
 
 
   dontTouch(stall_checking)
@@ -284,12 +320,14 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   // io.icsl_stalld                                := Mux(icsl_checkermode.asBool,
   //                                                 Mux(fsm_state === fsm_checking, stall_checking, 
   //                                                 Mux(fsm_state === fsm_postchecking, (!io.if_check_completed), false.B)), false.B)
-  io.icsl_stalld                                := Mux(icsl_checkermode.asBool,
-                                                      Mux(fsm_state === fsm_checking, stall_checking, 
-                                                      Mux(fsm_state === fsm_postchecking, stall_postchecking, false.B)), 
-                                                   Mux(icsl_checkerpriv_mode.asBool, 
-                                                      Mux(fsm_state === fsm_checking_priv, stall_checking_priv, false.B),
-                                                   Mux(fsm_state === fsm_postchecking_priv, stall_postchecking_priv, false.B)))
+  val waiting_for_package_tail                   =
+    (fsm_state === fsm_postchecking || fsm_state === fsm_postchecking_priv) &&
+      !package_completion_ready
+  io.icsl_stalld                                := waiting_for_package_tail ||
+                                                   Mux(icsl_checkermode.asBool,
+                                                     fsm_state === fsm_checking && stall_checking,
+                                                     icsl_checkerpriv_mode.asBool &&
+                                                       fsm_state === fsm_checking_priv && stall_checking_priv)
   io.kill_pipe                                  := false.B//(fsm_state===fsm_speed_check)&&(sl_counter===(ic_counter_shadow))&&(io.new_commit.asBool)||icsl_exec_done//此时需要去清除其他指令，为什么不用-1，因为小核心会多执行一条
   /* Debug Perf */
   val debug_perf_howmany_checkpoints             = RegInit(0.U(64.W))
@@ -337,34 +375,59 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   val debug_perf_num_ld                          = debug_perf_num_ld_cache + debug_perf_num_ld_uncache
   val debug_L_timer_worest                       = RegInit(0.U(64.W))
 
-  debug_perf_num_st_cache                       := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_st_cache + io.st_cache_deq)
-  debug_perf_num_st_uncache                     := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_st_uncache + io.st_uncache_deq)
-  val st_uncache_count_at_packet_completion      = debug_perf_num_st_uncache_in_packet + io.st_uncache_deq
+  val trafficEnabled                            = RegInit(false.B)
+  when (io.debug_perf_reset.asBool) {
+    trafficEnabled                              := false.B
+  }.elsewhen (io.debug_perf_start) {
+    trafficEnabled                              := true.B
+  }.elsewhen (io.debug_perf_stop) {
+    trafficEnabled                              := false.B
+  }
+  val trafficCounting                           = (trafficEnabled || io.debug_perf_start) &&
+    !io.debug_perf_stop && !io.debug_perf_reset.asBool
+
+  debug_perf_num_st_cache                       := Mux(io.debug_perf_reset.asBool, 0.U,
+    debug_perf_num_st_cache + (io.st_cache_deq & trafficCounting.asUInt))
+  debug_perf_num_st_uncache                     := Mux(io.debug_perf_reset.asBool, 0.U,
+    debug_perf_num_st_uncache + (io.st_uncache_deq & trafficCounting.asUInt))
+  val measured_st_uncache_deq                   = io.st_uncache_deq & trafficCounting.asUInt
+  val st_uncache_count_at_packet_completion      = debug_perf_num_st_uncache_in_packet + measured_st_uncache_deq
   val st_uncache_packet_cycle_contribution       = io.csr_cycle * st_uncache_count_at_packet_completion
   when (io.debug_perf_reset.asBool) {
     debug_perf_num_st_uncache_in_packet          := 0.U
     debug_perf_st_uncache_cycle_sum              := 0.U
   }.elsewhen (io.if_check_completed.asBool) {
     // All uncache stores in this packet share the timestamp at which the
-    // packet's architectural checkpoint comparison completes.
+    // complete package result is formed. A STOP may already have disabled new
+    // events, but stores admitted before STOP still need their tail timestamp.
     debug_perf_num_st_uncache_in_packet          := 0.U
     debug_perf_st_uncache_cycle_sum              := debug_perf_st_uncache_cycle_sum + st_uncache_packet_cycle_contribution(63, 0)
-  }.elsewhen (io.st_uncache_deq.asBool) {
+  }.elsewhen (io.if_check_cancelled) {
+    debug_perf_num_st_uncache_in_packet          := 0.U
+  }.elsewhen (measured_st_uncache_deq.asBool) {
     debug_perf_num_st_uncache_in_packet          := st_uncache_count_at_packet_completion
   }
-  debug_perf_num_ld_cache                       := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_ld_cache + io.ld_cache_deq)
-  debug_perf_num_ld_uncache                     := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_ld_uncache + io.ld_uncache_deq)
-  debug_perf_num_lr                             := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_lr + io.lr_deq)
-  debug_perf_num_sc_success                     := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_sc_success + io.sc_success_deq)
-  debug_perf_num_sc_fail                        := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_sc_fail + io.sc_fail_deq)
-  debug_perf_num_amo_cache                      := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_amo_cache + io.amo_cache_deq)
-  debug_perf_num_amo_uncache                    := Mux(io.debug_perf_reset.asBool, 0.U, debug_perf_num_amo_uncache + io.amo_uncache_deq)
+  debug_perf_num_ld_cache                       := Mux(io.debug_perf_reset.asBool, 0.U,
+    debug_perf_num_ld_cache + (io.ld_cache_deq & trafficCounting.asUInt))
+  debug_perf_num_ld_uncache                     := Mux(io.debug_perf_reset.asBool, 0.U,
+    debug_perf_num_ld_uncache + (io.ld_uncache_deq & trafficCounting.asUInt))
+  debug_perf_num_lr                             := Mux(io.debug_perf_reset.asBool, 0.U,
+    debug_perf_num_lr + (io.lr_deq & trafficCounting.asUInt))
+  debug_perf_num_sc_success                     := Mux(io.debug_perf_reset.asBool, 0.U,
+    debug_perf_num_sc_success + (io.sc_success_deq & trafficCounting.asUInt))
+  debug_perf_num_sc_fail                        := Mux(io.debug_perf_reset.asBool, 0.U,
+    debug_perf_num_sc_fail + (io.sc_fail_deq & trafficCounting.asUInt))
+  debug_perf_num_amo_cache                      := Mux(io.debug_perf_reset.asBool, 0.U,
+    debug_perf_num_amo_cache + (io.amo_cache_deq & trafficCounting.asUInt))
+  debug_perf_num_amo_uncache                    := Mux(io.debug_perf_reset.asBool, 0.U,
+    debug_perf_num_amo_uncache + (io.amo_uncache_deq & trafficCounting.asUInt))
   // Software protocol: [store_total, store_cache, store_uncache,
   //                     load_total, load_cache, load_uncache, load_forward,
   //                     lr, sc_success, sc_fail, amo_total,
-  //                     amo_cache, amo_uncache, l1_l2_wb_total,
+  //                     amo_cache, amo_uncache, l1_l2_c_total,
   //                     l1_l2_wb_dirty, l2_dram_wb_total,
-  //                     l2_dram_wb_dirty, store_uncache_cycle_sum].
+  //                     l2_dram_wb_dirty, store_uncache_cycle_sum,
+  //                     BOOM-only unverified dirty writeback diagnostics].
   //                     Indices 13--16 are BOOM/shared-L2 metrics and remain
   //                     zero on checker harts. Index 17 is local to each hart.
   // Rocket re-executes loads through LSL and therefore never uses BOOM's
@@ -377,7 +440,8 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
                                                                debug_perf_num_amo, debug_perf_num_amo_cache,
                                                                debug_perf_num_amo_uncache, 0.U(64.W), 0.U(64.W),
                                                                0.U(64.W), 0.U(64.W),
-                                                               debug_perf_st_uncache_cycle_sum))
+                                                               debug_perf_st_uncache_cycle_sum) ++
+                                                     Seq.fill(GH_GlobalParams.GH_TRAFFIC_COUNTERS - 18)(0.U(64.W)))
 
   val u_channel                                  = Module(new GH_MemFIFO(FIFOParams (32, 50)))
   val debug_L_timer                              = RegInit(0.U(64.W))

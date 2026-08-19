@@ -151,24 +151,26 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
   val s_or_r = RegInit(0.U(1.W))
 
   val core_trace = Wire(0.U(2.W))
-  val debug_perf_ctrl = Wire(0.U(5.W))
+  val debug_perf_ctrl = Wire(0.U(GH_GlobalParams.GH_PERF_CTRL_BITS.W))
   val record_and_store = Wire(0.U(2.W))
 //make it generic
   
   //arfs 是固定的
   val arfs_in = outer.core_r_arfs_c_SKNode.bundle
+  val arfsPayloadBits = GH_GlobalParams.GH_WIDITH_PACKETS + 1 + 8
+  val arfsSeqValid = arfs_in(arfsPayloadBits + GH_GlobalParams.GH_PACKET_SEQ_BITS)
+  val arfsSeq = arfs_in(arfsPayloadBits + GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, arfsPayloadBits)
   val checker_num = outer.rocketParams.hartId.U - GH_GlobalParams.GH_NUM_BIG_CORES.U + 1.U  // hartId→checker#: 2→1, 7→6
   val arfs_index = arfs_in (143+1, 136+1)
   val ptype_rcu = Mux(s_or_r.asBool && ((arfs_index(2,0) === 7.U)), true.B, false.B)
-  val arfs_if_CPS = Mux(ptype_rcu.asBool && (arfs_index (6, 3) === checker_num), 1.U, 0.U)
-  val packet_rcu = Mux((ptype_rcu), arfs_in, 0.U)
 
   // val icsl_ack          = outer.icsl_ack_tocheckerSKNode.bundle
   // dontTouch(icsl_ack)//for debug
   // core.io.icsl_ack := icsl_ack
   core.io.cdc_empty    := outer.cdc_empty_tocheckerSKNode.bundle
   // core.io.big_switch   := outer.big_switch_tocheckerSKNode.bundle
-  val packet_in         = Wire(0.U((2*GH_GlobalParams.GH_WIDITH_PACKETS+1).W))
+  val packet_in         = Wire(0.U((GH_GlobalParams.GH_TOTAL_PACKETS * GH_GlobalParams.GH_WIDITH_PACKETS +
+    GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W))
   //极度旧的chisel写法
   val packet_vec        = Wire(Vec.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U((GH_GlobalParams.GH_WIDITH_PACKETS).W)))
   val packet_en         = Wire(Vec.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
@@ -180,6 +182,35 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
   val packet_bjvec_in      = Wire(Vec.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U((xLen * 2).W)))
 
   packet_in := outer.ghe_packet_in_SKNode.bundle
+  val dataSeqValid = packet_in(GH_GlobalParams.GH_TOTAL_PACKETS * GH_GlobalParams.GH_WIDITH_PACKETS + GH_GlobalParams.GH_PACKET_SEQ_BITS)
+  val dataSeq = packet_in(GH_GlobalParams.GH_TOTAL_PACKETS * GH_GlobalParams.GH_WIDITH_PACKETS + GH_GlobalParams.GH_PACKET_SEQ_BITS - 1,
+    GH_GlobalParams.GH_TOTAL_PACKETS * GH_GlobalParams.GH_WIDITH_PACKETS)
+
+  // Data and ARF/CSR fragments cross through independent queues, so fragments
+  // dequeued in one checker cycle need not belong to the same package. Advance
+  // with the newest sequence observed in the cycle and discard an older
+  // fragment instead of mixing it into the newer package. Equal-sequence
+  // fragments, including later fragments of the current package, remain valid.
+  val dataSeqUsable = dataSeqValid && dataSeq =/= 0.U
+  val arfsSeqUsable = arfsSeqValid && arfsSeq =/= 0.U
+  val cycleSeqValid = dataSeqUsable || arfsSeqUsable
+  val cycleMaxSeq = Mux(dataSeqUsable && arfsSeqUsable,
+    Mux(dataSeq >= arfsSeq, dataSeq, arfsSeq),
+    Mux(dataSeqUsable, dataSeq, arfsSeq))
+  val packetSeqHighWatermark = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val cycleSeqAccepted = cycleSeqValid && cycleMaxSeq >= packetSeqHighWatermark
+  val dataSeqAccepted = dataSeqUsable && cycleSeqAccepted && dataSeq === cycleMaxSeq
+  val arfsSeqAccepted = arfsSeqUsable && cycleSeqAccepted && arfsSeq === cycleMaxSeq
+
+  when (cycleSeqAccepted && cycleMaxSeq > packetSeqHighWatermark) {
+    packetSeqHighWatermark := cycleMaxSeq
+  }
+  core.io.packet_seq_valid := cycleSeqAccepted
+  core.io.packet_seq := Mux(cycleSeqAccepted, cycleMaxSeq, packetSeqHighWatermark)
+
+  val arfs_if_CPS = Mux(arfsSeqAccepted && ptype_rcu.asBool &&
+    (arfs_index (6, 3) === checker_num), 1.U, 0.U)
+  val packet_rcu = Mux(arfsSeqAccepted && ptype_rcu, arfs_in, 0.U)
   // dontTouch(packet_in)
   // dontTouch(packet_en)
   // val ptype_fg = ((packet_index_vec(0)(2) === 0.U) && (packet_index_vec(0)(1,0) =/= 0.U) && (s_or_r === 0.U))
@@ -191,10 +222,10 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
   for( i<- 0 until GH_GlobalParams.GH_TOTAL_PACKETS){
     packet_vec(i)       := packet_in(GH_GlobalParams.GH_WIDITH_PACKETS*(i+1)-1,i*GH_GlobalParams.GH_WIDITH_PACKETS)
     packet_index_vec(i) := packet_vec(i)(GH_GlobalParams.GH_WIDITH_PACKETS-1,GH_GlobalParams.GH_WIDITH_PACKETS-8)
-    packet_en(i)        := s_or_r.asBool && (packet_index_vec(i)(2,0) =/= 7.U) && (packet_index_vec(i)(2,0) =/= 4.U) && (packet_index_vec(i)(2,0) =/= 0.U)&&packet_index_vec(i)(6,3)===checker_num
+    packet_en(i)        := dataSeqAccepted && s_or_r.asBool && (packet_index_vec(i)(2,0) =/= 7.U) && (packet_index_vec(i)(2,0) =/= 4.U) && (packet_index_vec(i)(2,0) =/= 0.U)&&packet_index_vec(i)(6,3)===checker_num
     packet_vec_in(i)    := Mux(packet_en(i),packet_vec(i),0.U)
 
-    packet_bj_en(i)     := s_or_r.asBool && (packet_index_vec(i)(2,0) === 4.U) && packet_index_vec(i)(6,3)===checker_num
+    packet_bj_en(i)     := dataSeqAccepted && s_or_r.asBool && (packet_index_vec(i)(2,0) === 4.U) && packet_index_vec(i)(6,3)===checker_num
     packet_bjvec_in(i)  := Mux(packet_bj_en(i), packet_vec(i)((xLen * 2) - 1, 0), 0.U)
   }
 
@@ -241,6 +272,8 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
     outer.ghm_agg_core_id_out_SRNode.bundle := ght.io.ghm_agg_core_id
     core.io.arf_copy_in := 0.U
     core.io.s_or_r := 0.U
+    outer.checker_result_SRNode.bundle := 0.U
+    core.io.package_result_ready := false.B
   } else
   { // Other cores:
     // For other cores: no GHT is required, and hence tied-off
@@ -265,7 +298,11 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
     core.io.ic_counter := outer.ic_counter_SKNode.bundle
     outer.clear_ic_status_SRNode.bundle := core.io.clear_ic_status
     outer.ic_status_SRNode.bundle := 0.U  // checker: no R_IC, ic_status always 0
+    outer.checker_result_SRNode.bundle := Cat(core.io.package_result_valid,
+      core.io.package_result_status, core.io.package_result_seq)
+    core.io.package_result_ready := outer.checker_result_ready_SKNode.bundle
   }
+  outer.checker_segment_id_SRNode.bundle := 0.U
   core.io.core_trace := core_trace(0)
   core.io.debug_perf_ctrl := debug_perf_ctrl
   core.io.record_and_store := record_and_store
