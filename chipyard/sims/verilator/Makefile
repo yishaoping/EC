@@ -153,6 +153,11 @@ TIMESCALE_OPTS := $(shell verilator --version | perl -lne 'if (/(\d.\d+)/ && $$1
 # see: https://github.com/ucb-bar/riscv-mini/issues/31
 MAX_WIDTH_OPTS = $(shell verilator --version | perl -lne 'if (/(\d.\d+)/ && $$1 > 4.016) { print "--max-num-width 1048576"; }')
 
+# Verilator 5.x requires an explicit --timing/--no-timing choice when sources
+# contain delay controls (e.g. SimJTAG's `assign #0.1 ...`). --no-timing keeps
+# the pre-5.x behaviour (ignore delays), which is what chipyard expects.
+NO_TIMING_OPTS = $(shell verilator --version | perl -lne 'if (/(\d.\d+)/ && $$1 >= 5.000) { print "--no-timing"; }')
+
 PREPROC_DEFINES := \
 	+define+PRINTF_COND=\$$c\(\"verbose\",\"\&\&\"\,\"done_reset\"\) \
 	+define+STOP_COND=\$$c\(\"done_reset\"\)
@@ -165,6 +170,7 @@ VERILATOR_NONCC_OPTS = \
 	-Wno-fatal \
 	$(TIMESCALE_OPTS) \
 	$(MAX_WIDTH_OPTS) \
+	$(NO_TIMING_OPTS) \
 	$(PREPROC_DEFINES) \
 	--top-module $(VLOG_MODEL) \
 	--vpi \

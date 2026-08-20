@@ -110,7 +110,7 @@ if [ -d "$__DIR/.conda-env" ]; then
 fi
 
 if [ "${CONDA_PREFIX:-}" = "$__DIR/.conda-env" ]; then
-    __chipyard_env_name="$(basename "$__DIR")"
+    __chipyard_env_name="${CHIPYARD_ENV_NAME:-EC}"
     __chipyard_prompt="($__chipyard_env_name) "
     __chipyard_old_prompt="${CONDA_PROMPT_MODIFIER:-}"
 

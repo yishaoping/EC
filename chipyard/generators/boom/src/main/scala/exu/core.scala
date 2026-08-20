@@ -44,12 +44,12 @@ import boom.common._
 import boom.ifu.{GlobalHistory, HasBoomFrontendParameters}
 import boom.exu.FUConstants._
 import boom.util._
-//===== GuardianCouncil Function: Start ====//
+//===== EC: Start =====//
 import freechips.rocketchip.r._
 import freechips.rocketchip.guardiancouncil._
 // import java.awt.peer.PopupMenuPeer
 import boom.lsu.STQEntry
-//===== GuardianCouncil Function: End   ====//
+//===== EC: End   =====//
 /**
  * Top level core object that connects the Frontend to the rest of the pipeline.
  */
@@ -67,7 +67,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     val ptw_tlb = new freechips.rocketchip.rocket.TLBPTWIO()
     val trace = Output(Vec(coreParams.retireWidth, new TracedInstruction))
     val fcsr_rm = UInt(freechips.rocketchip.tile.FPConstants.RM_SZ.W)
-//===== GuardianCouncil Function: Start ====//
+    //===== EC: Start =====//
     val commit_valids = Output(Vec(coreWidth, UInt(1.W)))
     val commit_uops   = Output(Vec(coreWidth, new MicroOp))
     val commit_rs1    = Output(Vec(coreWidth, UInt(xLen.W)))
