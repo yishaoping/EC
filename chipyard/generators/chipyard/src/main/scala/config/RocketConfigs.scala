@@ -17,12 +17,14 @@ class v1Config extends Config(
   new chipyard.config.WithMemoryBusFrequency(200) ++
   new chipyard.config.WithPeripheryBusFrequency(200) ++
   new chipyard.config.WithSystemBusFrequencyAsDefault ++
+  new freechips.rocketchip.subsystem.WithInclusiveCache(
+    nWays = 16, capacityKB = 1024, outerLatencyCycles = 12) ++
   new freechips.rocketchip.guardiancouncil.WithGHE ++
   new freechips.rocketchip.guardiancouncil.WithDisableROBDebug ++
   new freechips.rocketchip.subsystem.WithAsynchronousRocketTiles(
   AsynchronousCrossing().depth,
   AsynchronousCrossing().sourceSync) ++
-  new boom.common.WithNLargeBooms(GH_GlobalParams.GH_NUM_BIG_CORES, overrideIdOffset = Some(0)) ++
+  new boom.common.WithNParaMedicBooms(GH_GlobalParams.GH_NUM_BIG_CORES, overrideIdOffset = Some(0)) ++
   new freechips.rocketchip.subsystem.WithNGCCheckers(GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES, overrideIdOffset=Some(GH_GlobalParams.GH_NUM_BIG_CORES)) ++
   new chipyard.config.AbstractConfig
 )

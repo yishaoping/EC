@@ -218,6 +218,59 @@ class WithNLargeBooms(n: Int = 1, overrideIdOffset: Option[Int] = None) extends 
 // DOC include end: LargeBoomConfig
 
 /**
+ * 3-wide BOOM tuned to approximate the ParaMedic big core
+ * (Ref/大小核配置.typ): 32 KiB L1 I$/D$, 2-way D$ with 6 MSHRs,
+ * 128/128 physical registers, 16-entry LQ/SQ, 16-entry RAS and a
+ * 42-entry ROB (closest legal value to the reference 40 for a 3-wide core).
+ *
+ * The L1 ICache stays 64 sets x 8 ways (32 KiB): a 2-way, 32 KiB ICache
+ * would need 256 sets, which BOOM forbids (alias handling and pgIdxBits
+ * constraints limit icacheParams.nSets to <= 64).
+ */
+class WithNParaMedicBooms(n: Int = 1, overrideIdOffset: Option[Int] = None) extends Config(
+  new WithTAGELBPD ++ // Default to TAGE-L BPD
+  new Config((site, here, up) => {
+    case TilesLocated(InSubsystem) => {
+      val prev = up(TilesLocated(InSubsystem), site)
+      val idOffset = overrideIdOffset.getOrElse(prev.size)
+      (0 until n).map { i =>
+        BoomTileAttachParams(
+          tileParams = BoomTileParams(
+            core = BoomCoreParams(
+              fetchWidth = 8,
+              decodeWidth = 3,
+              numRobEntries = 42,
+              issueParams = Seq(
+                IssueParams(issueWidth=1, numEntries=16, iqType=IQT_MEM.litValue, dispatchWidth=3),
+                IssueParams(issueWidth=3, numEntries=32, iqType=IQT_INT.litValue, dispatchWidth=3),
+                IssueParams(issueWidth=1, numEntries=24, iqType=IQT_FP.litValue , dispatchWidth=3)),
+              numIntPhysRegisters = 128,
+              numFpPhysRegisters = 128,
+              numLdqEntries = 16,
+              numStqEntries = 16,
+              maxBrCount = 16,
+              numFetchBufferEntries = 24,
+              numRasEntries = 16,
+              ftq = FtqParameters(nEntries=32),
+              fpu = Some(freechips.rocketchip.tile.FPUParams(sfmaLatency=4, dfmaLatency=4, divSqrt=true))
+            ),
+            dcache = Some(
+              DCacheParams(rowBits = 128, nSets=256, nWays=2, nMSHRs=6, nTLBWays=16)
+            ),
+            icache = Some(
+              ICacheParams(rowBits = 128, nSets=64, nWays=8, fetchBytes=4*4)
+            ),
+            hartId = i + idOffset
+          ),
+          crossingParams = RocketCrossingParams()
+        )
+      } ++ prev
+    }
+    case XLen => 64
+  })
+)
+
+/**
  * 4-wide BOOM.
  */
 class WithNMegaBooms(n: Int = 1, overrideIdOffset: Option[Int] = None) extends Config(

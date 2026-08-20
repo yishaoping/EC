@@ -7,7 +7,7 @@ object GH_GlobalParams {
   val GH_DEBUG = 0;
   val GH_WIDITH_PERF = 64;
   val GH_TOTAL_PACKETS = 2;
-  val GH_TOTAL_INSTS = 3970;
+  val GH_TOTAL_INSTS = 5000; // 论文 Table I：单个 log segment 最长 5000 条指令
   //一次128bit数据+8bit状态
   val GH_WIDITH_PACKETS = 2*GH_WIDITH_PERF+8;//136
   // Package sequence numbers are global within one BOOM/checker group. Zero is
