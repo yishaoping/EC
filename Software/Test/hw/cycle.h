@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+/* 读取当前 hart 的 RISC-V cycle CSR。 */
 static inline uint64_t read_cycles(void)
 {
     uint64_t cycles;

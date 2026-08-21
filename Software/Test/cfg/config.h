@@ -3,7 +3,11 @@
 
 #include <stdint.h>
 
+/* 协同拓扑：1 个 BOOM hart 加 NUM_CHECKERS 个 Rocket checker hart。 */
 #define NUM_CHECKERS 4
+#define NUM_HARTS (NUM_CHECKERS + 1)
+
+/* CLINT 和定时器相关配置。 */
 #define TIMER_HARTS 4
 #define TIMER_LIMIT 50
 #define TIMER_COMPARE_DELTA UINT64_C(0x20)
@@ -11,6 +15,9 @@
 #define CLINT_MSIP_OFFSET(hart_id) ((hart_id) * 4)
 #define CLINT_MTIMECMP_OFFSET(hart_id) (UINT64_C(0x4000) + (hart_id) * 8)
 #define CLINT_MTIME_ADDRESS (CLINT_BASE + UINT64_C(0xBFF8))
+
+/* CSR 性能计数器数量。 */
+#define TOTAL_CSR_PERF 84
 
 #ifndef BOOM_CORE_FREQUENCY_HZ
 #define BOOM_CORE_FREQUENCY_HZ UINT64_C(200000000)

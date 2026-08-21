@@ -2,13 +2,14 @@
 
 #include <stdio.h>
 
-#include "ghe.h"
-#include "ght.h"
-#include "rocc.h"
-#include "test_config.h"
+#include "../hw/ghe.h"
+#include "../hw/ght.h"
+#include "../hw/rocc.h"
+#include "../cfg/config.h"
 
 int checker(int hart_id)
 {
+    /* 初始化 GHE/GHT，完成 ELU 自检后等待 GHT 通道收敛。 */
     ghe_asR();
     ght_set_satp_priv();
     ghe_go();

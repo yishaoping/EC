@@ -3,6 +3,7 @@
 
 extern int uart_lock;
 
+/* 使用 AMOSWAP 获取自旋锁。 */
 static inline void lock_acquire(int *lock)
 {
     int temp0 = 1;
@@ -15,6 +16,7 @@ static inline void lock_acquire(int *lock)
         : "r"(lock), "r"(temp0));
 }
 
+/* 使用 release 语义释放自旋锁。 */
 static inline void lock_release(int *lock)
 {
     __asm__(

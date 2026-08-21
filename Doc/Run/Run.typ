@@ -16,6 +16,9 @@ chipyard 1.9.0
 source ./env.sh
 
 make -j64 CONFIG=v1Config run-binary-debug-hex BINARY=../../../Software/Test/test.riscv
+make -j64 CONFIG=v1Config BREAK_SIM_PREREQ=1 run-binary-debug-hex BINARY=../../../Software/Test/test.riscv
+
+
 = Code
 你是计算机架构领域的专家，我正在进行基于chipyard的开发，设计小核rocket校验大核boom的协同工作框架。不要做仿真和硬件生成。
 

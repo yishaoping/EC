@@ -1,15 +1,16 @@
-#include "checker_config.h"
+#include "init.h"
 
 #include <stdint.h>
 #include <stdio.h>
 
-#include "ghe.h"
-#include "ght.h"
-#include "spin_lock.h"
-#include "test_config.h"
+#include "../hw/ghe.h"
+#include "../hw/ght.h"
+#include "../hw/spin_lock.h"
+#include "config.h"
 
 void r_ini(int num_checkers)
 {
+    /* 配置 checker 数量、指令过滤器、同步段和 checker 映射关系。 */
     ght_set_numberofcheckers(num_checkers);
 
     ght_cfg_filter(0x01, 0x00, 0x03, 0x02);

@@ -4,6 +4,7 @@
 
 volatile int timer_flags[TIMER_HARTS] = {0};
 
+/* 以高低字顺序一致地读取 CLINT mtime。 */
 uint64_t get_mtime(void)
 {
     volatile uint32_t *mtime_low = (uint32_t *)CLINT_MTIME_ADDRESS;
@@ -19,6 +20,7 @@ uint64_t get_mtime(void)
     return ((uint64_t)hi << 32) | lo;
 }
 
+/* 根据当前 hart 的 mtime 设置下一次 timer 比较值。 */
 void mtimecmp_cfg(void)
 {
     uint64_t hart_id;
@@ -35,6 +37,7 @@ void mtimecmp_cfg(void)
     *mtimecmp_high = (uint32_t)(cmp_val >> 32);
 }
 
+/* 处理中断，并在达到限制后关闭对应 hart 的定时器中断。 */
 void handle_trap(void)
 {
     uint64_t hart_id;

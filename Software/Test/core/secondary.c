@@ -1,17 +1,15 @@
 #include <stdint.h>
 
 #include "checker.h"
-#include "ghe.h"
-#include "interrupt.h"
-#include "test_config.h"
+#include "../hw/ghe.h"
+#include "../hw/interrupt.h"
+#include "../cfg/config.h"
 
-#define NUM_HARTS (NUM_CHECKERS + 1)
-
-extern volatile uint64_t hart_traffic[NUM_HARTS][GHE_TRAFFIC_COUNTERS];
-extern volatile uint32_t hart_traffic_ready[NUM_HARTS];
+#include "../stat/report.h"
 
 void idle(void)
 {
+    /* checker 完成后保持 hart 空闲，避免再次进入测试代码。 */
     while (1) {
     }
 }
