@@ -153,7 +153,10 @@ class R_RSU(val params: R_RSUParams) extends Module with HasR_RSUIO {
     merge_counter                                := 0.U
     merge_cdc_counter                            := 0.U
   } .elsewhen (merging === 1.U) {
-    merging                                      := Mux((merge_counter === 32.U) && merge_cdc_counter === 1.U, 0.U, 1.U)
+    // The destination field is suppressed while GHM applies backpressure.
+    // Do not retire the merge state in that cycle, otherwise the terminal
+    // PC/FCSR ARF entry is lost without an enqueue/fire acknowledgement.
+    merging                                      := Mux((merge_counter === 32.U) && merge_cdc_counter === 1.U && !io.big_hang, 0.U, 1.U)
     merge_counter                                := Mux((!io.big_hang) && merge_cdc_counter === 1.U, Mux((merge_counter === 32.U), 0.U, merge_counter + 1.U), merge_counter)    
     merge_cdc_counter                            := merge_cdc_counter + 1.U
   } .otherwise {
@@ -168,7 +171,9 @@ class R_RSU(val params: R_RSUParams) extends Module with HasR_RSUIO {
       merge_cdc_counter_priv                       := 0.U
       csr_merge_counter                            := 0.U
     } .elsewhen (merging_priv === 1.U) {
-      merging_priv                                 := Mux((merge_counter_priv === 32.U) && (merge_cdc_counter_priv === 1.U) && (csr_merge_counter === 7.U), 0.U, 1.U)
+      // Keep the privileged tail (PC/FCSR and CSR shadows) live until its
+      // destination is accepted; big_hang means the CDC path did not fire.
+      merging_priv                                 := Mux((merge_counter_priv === 32.U) && (merge_cdc_counter_priv === 1.U) && (csr_merge_counter === 7.U) && !io.big_hang, 0.U, 1.U)
       merge_counter_priv                           := Mux(merge_cdc_counter_priv === 1.U&&((!io.big_hang)), Mux((merge_counter_priv === 32.U), Mux(csr_merge_counter === 7.U, 0.U, merge_counter_priv), merge_counter_priv + 1.U), merge_counter_priv)    
       csr_merge_counter                            := Mux(merge_cdc_counter_priv === 1.U&&((!io.big_hang)), Mux(merge_counter_priv === 32.U, Mux(csr_merge_counter === 7.U, 0.U, csr_merge_counter + 1.U), csr_merge_counter), csr_merge_counter)
       merge_cdc_counter_priv                       := merge_cdc_counter_priv + 1.U

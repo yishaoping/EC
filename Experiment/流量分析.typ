@@ -131,4 +131,47 @@ unverified dirty writeback latency inputs: safe_cycle_sum=360353 writeback_cycle
 unverified_dirty_writeback_average_latency_cycles=439.666 average_latency_ns=2198.333
 [Boom-C0]: Test is now completed. 
 
-
+= gapbs
+[UART] UART0 is here (stdin/stdout).
+R: Checker mask set to 0xf
+R: Initialisation is completed!
+Software interrupt test complete!
+[Boom-C0]: Test is now started: 
+[MEEK_PERF_CFG] big=0 checker=1 interval=5000 checker_limit=2000
+GAPBS BFS: source=0 reached_nodes=13 traversed_edges=53 parent_checksum=99 verified=1
+CPU execution took 2238 cycles
+Boom-Perf: CSR execution-inst = 2400 
+hart0 traffic: store_out=140 store_cache=140 store_uncache=0
+hart0 traffic: load_out=406 load_cache=373 load_uncache=0 load_forward=33
+hart0 traffic: lr_out=0 sc_success=0 sc_fail=0
+hart0 traffic: amo_out=0 amo_cache=0 amo_uncache=0
+hart0 dcache traffic: l1_l2_c_total=36 l1_l2_wb_dirty=29 l1_l2_wb_dirty_verify_required=0
+hart1 traffic: store_out=140 store_cache=140 store_uncache=0
+hart1 traffic: load_out=380 load_cache=380 load_uncache=0 load_forward=0
+hart1 traffic: lr_out=0 sc_success=0 sc_fail=0
+hart1 traffic: amo_out=0 amo_cache=0 amo_uncache=0
+hart2 traffic: store_out=0 store_cache=0 store_uncache=0
+hart2 traffic: load_out=0 load_cache=0 load_uncache=0 load_forward=0
+hart2 traffic: lr_out=0 sc_success=0 sc_fail=0
+hart2 traffic: amo_out=0 amo_cache=0 amo_uncache=0
+hart3 traffic: store_out=0 store_cache=0 store_uncache=0
+hart3 traffic: load_out=0 load_cache=0 load_uncache=0 load_forward=0
+hart3 traffic: lr_out=0 sc_success=0 sc_fail=0
+hart3 traffic: amo_out=0 amo_cache=0 amo_uncache=0
+hart4 traffic: store_out=0 store_cache=0 store_uncache=0
+hart4 traffic: load_out=0 load_cache=0 load_uncache=0 load_forward=0
+hart4 traffic: lr_out=0 sc_success=0 sc_fail=0
+hart4 traffic: amo_out=0 amo_cache=0 amo_uncache=0
+shared dcache traffic: l2_dram_wb_total=2 l2_dram_wb_dirty=2
+hart0 store_uncache timestamp_cycle_sum=0 frequency_hz=200000000 time_sum_ns=0
+hart1 store_uncache timestamp_cycle_sum=0 frequency_hz=100000000 time_sum_ns=0
+hart2 store_uncache timestamp_cycle_sum=0 frequency_hz=100000000 time_sum_ns=0
+hart3 store_uncache timestamp_cycle_sum=0 frequency_hz=100000000 time_sum_ns=0
+hart4 store_uncache timestamp_cycle_sum=0 frequency_hz=100000000 time_sum_ns=0
+store_uncache latency inputs: boom_count=0 checker_count=0 boom_time_sum_ns=0 checker_time_sum_ns=0
+store_uncache average detection latency unavailable: no events
+dirty writeback verification: verified=0 unverified_seen=0 pending=0 resolved=0 other=0
+package verification: allocated=1 completed=1 passed=1 failed=0 cancelled=0 safe_watermark=1 result_dropped=0 arithmetic_overflow=0 stats_valid=1
+unverified dirty writeback latency inputs: safe_cycle_sum=0 writeback_cycle_sum=0 boom_frequency_hz=200000000
+unverified dirty writeback average latency unavailable: no resolved events
+[Boom-C0]: Test is now completed. 

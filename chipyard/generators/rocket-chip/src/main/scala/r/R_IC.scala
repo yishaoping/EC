@@ -90,6 +90,11 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   val ic_counter                                = RegInit(VecInit(Seq.fill(params.totalnumber_of_cores)(0.U(params.width_of_ic.W))))
   val ic_status                                 = RegInit(VecInit(Seq.fill(params.totalnumber_of_cores)(0.U(1.W)))) // 0: idle; 1: running
   val clear_ic_status                           = WireInit(VecInit(Seq.fill(params.totalnumber_of_cores)(0.U(1.W)))) // 0: idle; 1: running
+  // Keep a local ownership bit in addition to the broadcast ic_status.  The
+  // latter crosses from BOOM/GHM and can be observed low for a cycle while a
+  // previous package is still being handed off.  Allocation must be
+  // serialized until the matching result-release clear is observed locally.
+  val package_owned                              = RegInit(VecInit(Seq.fill(params.totalnumber_of_cores)(false.B)))
 
   // Multi-big-core: checker indices in the full ic_status vector are offset by GH_NUM_BIG_CORES
   val num_checkers                               = params.totalnumber_of_cores - GH_GlobalParams.GH_NUM_BIG_CORES
@@ -136,7 +141,9 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
 
   for (i <- 0 until num_checkers) {
     // core_na = 1 means checker is NOT available (busy under ANY big core OR disabled by mask)
-    u_sch_fp.io.core_na(i)                     := io.global_ic_status(i + GH_GlobalParams.GH_NUM_BIG_CORES) | (!checker_enable_reg(i))
+    u_sch_fp.io.core_na(i)                     := io.global_ic_status(i + GH_GlobalParams.GH_NUM_BIG_CORES) |
+                                                     package_owned(i + GH_GlobalParams.GH_NUM_BIG_CORES) |
+                                                     (!checker_enable_reg(i))
   }
   sch_result                                   := u_sch_fp.io.sch_dest
   u_sch_fp.io.rst_sch                          := sch_reset
@@ -161,10 +168,16 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   val snapshot_accepted = (if_dosnap | if_dosnap_priv).asBool
   val package_allocated = snapshot_accepted && !ctrl(0).asBool
   val allocated_packet_seq = packet_seq_counter + 1.U
+  for (i <- 0 until params.totalnumber_of_cores) {
+    when (io.clear_ic_status(i).asBool) {
+      package_owned(i)                         := false.B
+    }
+  }
   when (package_allocated) {
     packet_seq_counter := allocated_packet_seq
     active_packet_seq := allocated_packet_seq
     checker_segment_id_reg(crnt_target_ic) := allocated_packet_seq
+    package_owned(crnt_target_ic)            := true.B
   }
   io.active_packet_seq := active_packet_seq
   io.packet_alloc_valid := package_allocated

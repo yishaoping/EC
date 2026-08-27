@@ -1,5 +1,13 @@
 # BOOM checker watchdog: signal-chain analysis
 
+> Version boundary: this document describes an earlier generated RTL/FST
+> revision whose failure was in the BootROM/Scoreboard path.  For the saved
+> `chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.vcd` and
+> the `assert__assert_22` investigation in the current task, use
+> [`watchdog_signal_chain.md`](watchdog_signal_chain.md) and
+> [`trace_watchdog_chain.sh`](trace_watchdog_chain.sh).  The two documents
+> must not be merged into one causal chain.
+
 > Latest-run note: the `wb_dcache_miss` writeback mask described below fixed
 > the stale architectural write but initially removed the corresponding
 > scoreboard set. The resulting `BootAddrReg` dependency failure and its

@@ -313,12 +313,16 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
     val num_chk = GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES
     val hang_bits = outer.bigcore_hang_in_SKNode.bundle(num_chk-1, 0)
     val mask_bits = checker_mask_rd_bridge.io.in(num_chk-1, 0)  // persistent reg from R_IC
-    gh_buf.io.cdc_not_ready                      := (hang_bits & mask_bits).orR
+    val cdc_not_ready = (hang_bits & mask_bits).orR
+    gh_buf.io.cdc_not_ready                      := cdc_not_ready
     gh_buf.io.ic_crnt_target                     := RegNext(core.io.ic_crnt_target)
     dontTouch(hang_bits)
     dontTouch(mask_bits)
                         
-    core.io.big_hang                             := false.B
+    // R_RSU emits ARF/CPS entries without a ready signal.  Feed the GHM CDC
+    // backpressure into the BOOM core so a full ARF queue pauses the merge
+    // counter instead of dropping one-cycle producer pulses.
+    core.io.big_hang                             := cdc_not_ready
 
     ght_buffer_status_bridge.io.in               := gh_buf.io.ght_buffer_status
     debug_mcounter_bridge.io.in                  := 0.U

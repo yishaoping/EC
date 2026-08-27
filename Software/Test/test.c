@@ -10,7 +10,7 @@
 #include "hw/rocc.h"
 #include "hw/spin_lock.h"
 #include "stat/report.h"
-#include "bench/work.h"
+#include "Benchmark/gapbs/gapbs_bfs.h"
 
 /* 启动前配置：初始化 GHT、软件中断、权限和性能统计窗口。 */
 static uint64_t test_setup(void)
@@ -46,14 +46,15 @@ static uint64_t test_setup(void)
 }
 
 /* 执行唯一的协同 benchmark。 */
-static void benchmark(uint64_t hart_id, uint64_t *start_cpu,
-                      uint64_t *end_cpu)
+static void gapbs_bfs(uint64_t hart_id, uint64_t *start_cpu,
+                      uint64_t *end_cpu, gapbs_bfs_result_t *result)
 {
     ROCC_INSTRUCTION(1, 0x31);
     ROCC_INSTRUCTION_S(1, 0X01, 0x70);
 
     *start_cpu = read_cycles();
-    run_work(hart_id);
+    (void)hart_id;
+    gapbs_bfs_run(result);
 
     ROCC_INSTRUCTION_S(1, 0X02, 0x70);
     for (int nop_count = 0; nop_count < 26; nop_count++) {
@@ -70,8 +71,15 @@ static void benchmark(uint64_t hart_id, uint64_t *start_cpu,
 
 /* 收尾阶段：等待 checker、冻结并打印统计结果，然后关闭协同状态。 */
 static void test_report(uint64_t hart_id, uint64_t start_cpu,
-                        uint64_t end_cpu)
+                        uint64_t end_cpu, const gapbs_bfs_result_t *result)
 {
+    lock_acquire(&uart_lock);
+    printf("GAPBS BFS: source=%" PRIu32 " reached_nodes=%" PRIu32
+           " traversed_edges=%" PRIu32 " parent_checksum=%" PRIu64
+           " verified=%" PRIu32 "\r\n",
+           result->source, result->reached_nodes, result->traversed_edges,
+           result->parent_checksum, result->verified);
+    lock_release(&uart_lock);
     report_end(start_cpu, end_cpu, hart_id);
     ght_unset_satp_priv();
     ROCC_INSTRUCTION(1, 0x30);
@@ -82,7 +90,8 @@ int main(void)
     uint64_t hart_id = test_setup();
     uint64_t start_cpu = 0;
     uint64_t end_cpu = 0;
-    benchmark(hart_id, &start_cpu, &end_cpu);
-    test_report(hart_id, start_cpu, end_cpu);
+    gapbs_bfs_result_t result = {0};
+    gapbs_bfs(hart_id, &start_cpu, &end_cpu, &result);
+    test_report(hart_id, start_cpu, end_cpu, &result);
     return 0;
 }

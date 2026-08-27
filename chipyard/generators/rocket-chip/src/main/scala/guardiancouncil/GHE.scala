@@ -177,8 +177,12 @@ class GHEImp(outer: GHE)(implicit p: Parameters) extends LazyRoCCModuleImp(outer
         channel_sch_na         := channel_sch_na
       }
     }
-    when(ghe_status_in===0x2.U){
-      ghe_status_reg             := ghe_status_in
+    // 完成位由 GHM 的会话协议以稳定电平给出。下一次 START 前 GHM 输出
+    // 0，必须清除上一会话的完成状态，避免软件误读到陈旧的 0x02。
+    when (ghe_status_in === 0x2.U) {
+      ghe_status_reg             := 0x2.U
+    } .elsewhen (ghe_status_in === 0.U) {
+      ghe_status_reg             := 0.U
     }
     
     cmd.ready                  := true.B // Currently, it is always ready, because it is never block

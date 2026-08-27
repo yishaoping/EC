@@ -196,6 +196,13 @@ trait HasCoreIO extends HasTileParameters {
     // val packet_lsl1 = UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W).asInput
 
     val packet_cdc_ready = UInt(1.W).asOutput
+    val packet_active_seq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W).asOutput
+    val packet_current_seq_active = Bool().asOutput
+    val packet_accept_new_seq = Bool().asOutput
+    val packet_lsl_mem_ready = Bool().asOutput
+    val packet_lsl_csr_ready = Bool().asOutput
+    val packet_lsl_rocc_ready = Bool().asOutput
+    val packet_protocol_error = Bool().asInput
     val arf_copy_in = UInt(1.W).asInput
     val rsu_status = UInt(2.W).asOutput
     val s_or_r = UInt(1.W).asInput

@@ -2022,25 +2022,44 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   /* R Features */
   val rsu_master = Module(new R_RSU(R_RSUParams(xLen, numARFS, 1)))
   val ic_master = Module(new R_IC(R_ICParams(GH_GlobalParams.GH_NUM_CORES, 16)))
+  // Separate protocol-timeout counters keep the original pipeline watchdog
+  // semantics while detecting a release request that remains asserted but
+  // never clears ownership.  Width and threshold are intentionally unchanged.
+  val release_wait1 = freechips.rocketchip.util.WideCounter(32)
+  val release_wait2 = freechips.rocketchip.util.WideCounter(32)
+  val release_wait3 = freechips.rocketchip.util.WideCounter(32)
+  val release_wait4 = freechips.rocketchip.util.WideCounter(32)
 
-  when(!ic_master.io.ic_status(1).asBool){
+  // A release request is now a held level, not a one-cycle pulse.  While the
+  // request is asserted the checker is in the protocol's RELEASE_WAIT phase;
+  // do not charge that bounded CDC/ownership handoff latency as a pipeline
+  // hang.  The request is still required to clear ic_status in R_IC.
+  when(!ic_master.io.ic_status(1).asBool || io.clear_ic_status_tomain(1).asBool){
     little_status1 := 0.U
   }
-  when(!ic_master.io.ic_status(2).asBool){
+  when(!ic_master.io.ic_status(2).asBool || io.clear_ic_status_tomain(2).asBool){
     little_status2 := 0.U
   }
-  when(!ic_master.io.ic_status(3).asBool){
+  when(!ic_master.io.ic_status(3).asBool || io.clear_ic_status_tomain(3).asBool){
     little_status3 := 0.U
   }
-  when(!ic_master.io.ic_status(4).asBool){
+  when(!ic_master.io.ic_status(4).asBool || io.clear_ic_status_tomain(4).asBool){
     little_status4 := 0.U
   }
+  when(!io.clear_ic_status_tomain(1).asBool || !ic_master.io.ic_status(1).asBool){ release_wait1 := 0.U }
+  when(!io.clear_ic_status_tomain(2).asBool || !ic_master.io.ic_status(2).asBool){ release_wait2 := 0.U }
+  when(!io.clear_ic_status_tomain(3).asBool || !ic_master.io.ic_status(3).asBool){ release_wait3 := 0.U }
+  when(!io.clear_ic_status_tomain(4).asBool || !ic_master.io.ic_status(4).asBool){ release_wait4 := 0.U }
   // Allow the 100 MHz checkers enough progress at the 300/100 MHz clock ratio.
   val checkerHangWatchdogBit = 20
   assert(!little_status1(checkerHangWatchdogBit), "little core 1 has hung")
   assert(!little_status2(checkerHangWatchdogBit), "little core 2 has hung")
   assert(!little_status3(checkerHangWatchdogBit), "little core 3 has hung")
   assert(!little_status4(checkerHangWatchdogBit), "little core 4 has hung")
+  assert(!release_wait1(checkerHangWatchdogBit), "little core 1 release protocol timeout")
+  assert(!release_wait2(checkerHangWatchdogBit), "little core 2 release protocol timeout")
+  assert(!release_wait3(checkerHangWatchdogBit), "little core 3 release protocol timeout")
+  assert(!release_wait4(checkerHangWatchdogBit), "little core 4 release protocol timeout")
 
 
   val r_exception_record_2                         = RegInit(0.U(1.W))

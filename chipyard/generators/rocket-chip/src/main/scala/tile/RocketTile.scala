@@ -182,47 +182,80 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
   val packet_bjvec_in      = Wire(Vec.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U((xLen * 2).W)))
 
   packet_in := outer.ghe_packet_in_SKNode.bundle
-  val dataSeqValid = packet_in(GH_GlobalParams.GH_TOTAL_PACKETS * GH_GlobalParams.GH_WIDITH_PACKETS + GH_GlobalParams.GH_PACKET_SEQ_BITS)
+  val dataHeadValid = packet_in(GH_GlobalParams.GH_TOTAL_PACKETS * GH_GlobalParams.GH_WIDITH_PACKETS + GH_GlobalParams.GH_PACKET_SEQ_BITS)
   val dataSeq = packet_in(GH_GlobalParams.GH_TOTAL_PACKETS * GH_GlobalParams.GH_WIDITH_PACKETS + GH_GlobalParams.GH_PACKET_SEQ_BITS - 1,
     GH_GlobalParams.GH_TOTAL_PACKETS * GH_GlobalParams.GH_WIDITH_PACKETS)
-
-  // Data and ARF/CSR fragments cross through independent queues, so fragments
-  // dequeued in one checker cycle need not belong to the same package. Advance
-  // with the newest sequence observed in the cycle and discard an older
-  // fragment instead of mixing it into the newer package. Equal-sequence
-  // fragments, including later fragments of the current package, remain valid.
-  val dataSeqUsable = dataSeqValid && dataSeq =/= 0.U
-  val arfsSeqUsable = arfsSeqValid && arfsSeq =/= 0.U
-  val cycleSeqValid = dataSeqUsable || arfsSeqUsable
-  val cycleMaxSeq = Mux(dataSeqUsable && arfsSeqUsable,
-    Mux(dataSeq >= arfsSeq, dataSeq, arfsSeq),
-    Mux(dataSeqUsable, dataSeq, arfsSeq))
-  val packetSeqHighWatermark = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
-  val cycleSeqAccepted = cycleSeqValid && cycleMaxSeq >= packetSeqHighWatermark
-  val dataSeqAccepted = dataSeqUsable && cycleSeqAccepted && dataSeq === cycleMaxSeq
-  val arfsSeqAccepted = arfsSeqUsable && cycleSeqAccepted && arfsSeq === cycleMaxSeq
-
-  when (cycleSeqAccepted && cycleMaxSeq > packetSeqHighWatermark) {
-    packetSeqHighWatermark := cycleMaxSeq
-  }
-  core.io.packet_seq_valid := cycleSeqAccepted
-  core.io.packet_seq := Mux(cycleSeqAccepted, cycleMaxSeq, packetSeqHighWatermark)
-
-  val arfs_if_CPS = Mux(arfsSeqAccepted && ptype_rcu.asBool &&
-    (arfs_index (6, 3) === checker_num), 1.U, 0.U)
-  val packet_rcu = Mux(arfsSeqAccepted && ptype_rcu, arfs_in, 0.U)
-  // dontTouch(packet_in)
-  // dontTouch(packet_en)
-  // val ptype_fg = ((packet_index_vec(0)(2) === 0.U) && (packet_index_vec(0)(1,0) =/= 0.U) && (s_or_r === 0.U))
-  // val ptype_lsl = (s_or_r.asBool && (packet_index_vec(0)(2,0) =/= 7.U) && (packet_index_vec(0)(2,0) =/= 0.U))
-
-
-
 
   for( i<- 0 until GH_GlobalParams.GH_TOTAL_PACKETS){
     packet_vec(i)       := packet_in(GH_GlobalParams.GH_WIDITH_PACKETS*(i+1)-1,i*GH_GlobalParams.GH_WIDITH_PACKETS)
     packet_index_vec(i) := packet_vec(i)(GH_GlobalParams.GH_WIDITH_PACKETS-1,GH_GlobalParams.GH_WIDITH_PACKETS-8)
-    packet_en(i)        := dataSeqAccepted && s_or_r.asBool && (packet_index_vec(i)(2,0) =/= 7.U) && (packet_index_vec(i)(2,0) =/= 4.U) && (packet_index_vec(i)(2,0) =/= 0.U)&&packet_index_vec(i)(6,3)===checker_num
+  }
+
+  // The data AsyncQueue presents its head before dequeue. Decide readiness
+  // from that exact head: sequence ownership and every addressed lane must all
+  // agree. This is an atomic beat handshake; unrelated consumers can no
+  // longer make a memory beat look ready.
+  val laneAddressed = Wire(Vec.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
+  val laneKnown = Wire(Vec.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
+  val laneConsumerReady = Wire(Vec.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
+  for (i <- 0 until GH_GlobalParams.GH_TOTAL_PACKETS) {
+    laneAddressed(i) := packet_index_vec(i)(2, 0) =/= 0.U &&
+      packet_index_vec(i)(6, 3) === checker_num
+    laneKnown(i) := packet_index_vec(i)(2, 0).isOneOf(1.U, 2.U, 3.U, 4.U, 5.U)
+    laneConsumerReady(i) := MuxLookup(packet_index_vec(i)(2, 0), true.B, Seq(
+        1.U -> core.io.packet_lsl_mem_ready,
+        2.U -> core.io.packet_lsl_mem_ready,
+        3.U -> core.io.packet_lsl_csr_ready,
+        4.U -> core.io.imem.bjl_cdc_ready,
+        5.U -> core.io.packet_lsl_rocc_ready))
+  }
+  val addressedLanesReady = (0 until GH_GlobalParams.GH_TOTAL_PACKETS).map { i =>
+    !laneAddressed(i) || (s_or_r.asBool && laneConsumerReady(i))
+  }.reduce(_ && _)
+
+  val activeSeq = core.io.packet_active_seq
+  val dataSeqMatchesOwned = core.io.packet_current_seq_active && dataSeq === activeSeq
+  val dataSeqCanStart = core.io.packet_accept_new_seq &&
+    (activeSeq === 0.U || dataSeq > activeSeq)
+  // Drain stale or malformed zero-sequence data without presenting it to a
+  // consumer; otherwise one bad head can permanently block the matching
+  // data/ARF pair behind it. Zero remains reserved and can never own a package.
+  val dataSeqStale = activeSeq =/= 0.U && dataSeq <= activeSeq &&
+    !dataSeqMatchesOwned
+  val dataSeqDiscard = dataSeq === 0.U || dataSeqStale
+  val dataSequenceReady = dataSeqDiscard || dataSeqMatchesOwned || dataSeqCanStart
+  val dataBeatReady = core.io.packet_cdc_ready.asBool && dataSequenceReady &&
+    (dataSeqDiscard || addressedLanesReady)
+  val dataBeatFire = dataHeadValid && dataBeatReady
+  val dataSeqAccepted = dataBeatFire && !dataSeqDiscard &&
+    (dataSeqMatchesOwned || dataSeqCanStart)
+
+  val arfsSeqUsable = arfsSeqValid && arfsSeq =/= 0.U
+  val arfsMatchesData = dataSeqAccepted && arfsSeqUsable && arfsSeq === dataSeq
+  val arfsMatchesOwned = !dataSeqAccepted && arfsSeqUsable &&
+    core.io.packet_current_seq_active && arfsSeq === activeSeq
+  val arfsSeqAccepted = arfsMatchesData || arfsMatchesOwned
+  val cycleSeqAccepted = dataSeqAccepted || arfsSeqAccepted
+  val cycleSeq = Mux(dataSeqAccepted, dataSeq, arfsSeq)
+  val packetSeqHighWatermark = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+
+  when (cycleSeqAccepted && cycleSeq > packetSeqHighWatermark) {
+    packetSeqHighWatermark := cycleSeq
+  }
+  core.io.packet_seq_valid := cycleSeqAccepted
+  core.io.packet_seq := Mux(cycleSeqAccepted, cycleSeq, packetSeqHighWatermark)
+  core.io.packet_protocol_error := dataSeqAccepted &&
+    (0 until GH_GlobalParams.GH_TOTAL_PACKETS).map(i =>
+      laneAddressed(i) && !laneKnown(i)).reduce(_ || _)
+
+  val arfs_if_CPS = Mux(arfsSeqAccepted && ptype_rcu.asBool &&
+    (arfs_index (6, 3) === checker_num), 1.U, 0.U)
+  val packet_rcu = Mux(arfsSeqAccepted && ptype_rcu, arfs_in, 0.U)
+
+  for( i<- 0 until GH_GlobalParams.GH_TOTAL_PACKETS){
+    packet_en(i)        := dataSeqAccepted && s_or_r.asBool &&
+      packet_index_vec(i)(2,0).isOneOf(1.U, 2.U, 3.U, 5.U) &&
+      packet_index_vec(i)(6,3) === checker_num
     packet_vec_in(i)    := Mux(packet_en(i),packet_vec(i),0.U)
 
     packet_bj_en(i)     := dataSeqAccepted && s_or_r.asBool && (packet_index_vec(i)(2,0) === 4.U) && packet_index_vec(i)(6,3)===checker_num
@@ -284,7 +317,7 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
 
   
 
-    outer.ghe_event_out_SRNode.bundle := Cat(0.U, (ghe_bridge.io.out | Cat(core.io.packet_cdc_ready, zeros_4bits) | Cat(zeros_4bits, core.io.log_near_full)))
+    outer.ghe_event_out_SRNode.bundle := Cat(0.U, (ghe_bridge.io.out | Cat(dataBeatReady, zeros_4bits) | Cat(zeros_4bits, core.io.log_near_full)))
     outer.ghe_revent_out_SRNode.bundle := core.io.log_highwatermark
     core.io.arfs_if_CPS := arfs_if_CPS
     core.io.packet_arfs := packet_rcu

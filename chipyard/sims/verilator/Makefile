@@ -65,9 +65,21 @@ SIM_FILE_REQS += \
 	$(ROCKETCHIP_RSRCS_DIR)/csrc/remote_bitbang.h \
 	$(ROCKETCHIP_RSRCS_DIR)/csrc/remote_bitbang.cc
 
+# Keep the copied simulator support sources as real prerequisites. The FIRRTL
+# flow can recreate GEN_COLLATERAL_DIR while leaving sim_files.f in place; in
+# that case a timestamp-only dependency would skip the copies and Verilator's
+# generated makefile would fail on a missing header.
+SIM_FILE_COPIES := $(addprefix $(GEN_COLLATERAL_DIR)/,$(notdir $(SIM_FILE_REQS)))
+
+define copy_sim_file
+$(GEN_COLLATERAL_DIR)/$(notdir $(1)): $(1) $(ALL_MODS_FILELIST) | $(GEN_COLLATERAL_DIR)
+	cp -f $$< $$@
+endef
+$(foreach file,$(SIM_FILE_REQS),$(eval $(call copy_sim_file,$(file))))
+
 # copy files and add -FI for *.h files in *.f
-$(sim_files): $(SIM_FILE_REQS) $(ALL_MODS_FILELIST) | $(GEN_COLLATERAL_DIR)
-	cp -f $(SIM_FILE_REQS) $(GEN_COLLATERAL_DIR)
+$(sim_files): $(SIM_FILE_REQS) $(SIM_FILE_COPIES) $(ALL_MODS_FILELIST) | $(GEN_COLLATERAL_DIR)
+	rm -f $@
 	$(foreach file,\
 		$(SIM_FILE_REQS),\
 		$(if $(filter %.h,$(file)),\
@@ -179,17 +191,31 @@ VERILATOR_NONCC_OPTS = \
 #----------------------------------------------------------------------------------------
 # gcc configuration/optimization
 #----------------------------------------------------------------------------------------
+# Nix's clang wrapper does not search the host /usr/include by default. The
+# Chipyard environment provides the zlib headers and library used by
+# Verilator's FST runtime, so pass that prefix explicitly.
+CHIPYARD_ENV_PREFIX ?= $(base_dir)/.conda-env
+VERILATOR_ZLIB_CXXFLAGS := \
+	-I$(CHIPYARD_ENV_PREFIX)/include
+VERILATOR_ZLIB_LDFLAGS := \
+	-L$(CHIPYARD_ENV_PREFIX)/lib \
+	-Wl,-rpath,$(CHIPYARD_ENV_PREFIX)/lib
+
 VERILATOR_CXXFLAGS = \
 	$(SIM_CXXFLAGS) \
+	$(VERILATOR_ZLIB_CXXFLAGS) \
 	$(RUNTIME_PROFILING_CFLAGS) \
 	$(TRACING_CFLAGS) \
 	-D__STDC_FORMAT_MACROS \
+	-Wno-macro-redefined \
 	-DTEST_HARNESS=V$(VLOG_MODEL) \
 	-DVERILATOR \
 	-include $(build_dir)/$(long_name).plusArgs \
 	-include $(GEN_COLLATERAL_DIR)/verilator.h
 
-VERILATOR_LDFLAGS = $(SIM_LDFLAGS)
+VERILATOR_LDFLAGS = \
+	$(SIM_LDFLAGS) \
+	$(VERILATOR_ZLIB_LDFLAGS)
 
 VERILATOR_CC_OPTS = \
 	-CFLAGS "$(VERILATOR_CXXFLAGS)" \
@@ -212,16 +238,21 @@ model_header_debug = $(model_dir_debug)/V$(VLOG_MODEL).h
 model_mk = $(model_dir)/V$(VLOG_MODEL).mk
 model_mk_debug = $(model_dir_debug)/V$(VLOG_MODEL).mk
 
+# The generated Verilator makefile records compiler flags at generation time.
+# Re-run Verilator when this wrapper Makefile changes so toolchain fixes cannot
+# be hidden by a stale generated makefile.
+VERILATOR_WRAPPER_MAKEFILE := $(abspath $(sim_dir)/Makefile)
+
 #########################################################################################
 # build makefile fragment that builds the verilator sim rules
 #########################################################################################
-$(model_mk): $(sim_common_files) $(EXTRA_SIM_REQS)
+$(model_mk): $(sim_common_files) $(EXTRA_SIM_REQS) $(VERILATOR_WRAPPER_MAKEFILE)
 	rm -rf $(model_dir)
 	mkdir -p $(model_dir)
 	$(VERILATOR) $(VERILATOR_OPTS) $(EXTRA_SIM_SOURCES) -o $(sim) -Mdir $(model_dir) -CFLAGS "-include $(model_header)"
 	touch $@
 
-$(model_mk_debug): $(sim_common_files) $(EXTRA_SIM_REQS)
+$(model_mk_debug): $(sim_common_files) $(EXTRA_SIM_REQS) $(VERILATOR_WRAPPER_MAKEFILE)
 	rm -rf $(model_dir_debug)
 	mkdir -p $(model_dir_debug)
 	$(VERILATOR) $(VERILATOR_OPTS) $(EXTRA_SIM_SOURCES) -o $(sim_debug) $(TRACING_OPTS) -Mdir $(model_dir_debug) -CFLAGS "-include $(model_header_debug)"

@@ -161,6 +161,13 @@ SFC_MFC_TARGETS = \
 	$(MFC_BB_MODS_FILELIST) \
 	$(GEN_COLLATERAL_DIR)
 
+# MacroCompiler emits the synflop SRAM implementations consumed by Verilator.
+# Track its implementation so an updated compiler cannot be hidden by stale
+# generated collateral.
+MACROCOMPILER_SOURCES = \
+	$(base_dir)/tools/barstools/src/main/scala/barstools/macros/MacroCompiler.scala \
+	$(base_dir)/tools/barstools/src/main/scala/barstools/macros/SynFlopsPass.scala
+
 SFC_REPL_SEQ_MEM = --infer-rw --repl-seq-mem -c:$(MODEL):-o:$(SFC_SMEMS_CONF)
 MFC_BASE_LOWERING_OPTIONS = emittedLineLength=2048,noAlwaysComb,disallowLocalVariables,verifLabels,locationInfoStyle=wrapInAtSquareBracket
 
@@ -172,11 +179,19 @@ SFC_NEEDS_LOW = $(strip \
 	$(shell test -f $(FIRRTL_FILE) && grep -q "Fixed<" $(FIRRTL_FILE) && echo 1) \
 	$(shell test -f $(EXTRA_ANNO_FILE) && grep -q "firrtl.passes.wiring.WiringTransform" $(EXTRA_ANNO_FILE) && echo 1))
 
+# WiringTransform requires Low FIRRTL, but it does not require Scala FIRRTL to
+# replace memories. Leave that replacement to firtool, which also emits the
+# memory metadata consumed by MacroCompiler. Keep the historical SFC path for
+# custom passes and Fixed types.
+SFC_NEEDS_SEQ_MEM_REPL = $(strip \
+	$(ENABLE_CUSTOM_FIRRTL_PASS) \
+	$(shell test -f $(FIRRTL_FILE) && grep -q "Fixed<" $(FIRRTL_FILE) && echo 1))
+
 # SFC_LEVEL is assigned with `eval` while the FIRRTL target is built. That
 # assignment is skipped when FIRRTL/annotation files are already up to date,
 # so downstream Verilog targets also derive the level from existing artifacts.
 SFC_LEVEL_FOR_MFC = $(if $(SFC_LEVEL),$(SFC_LEVEL),$(if $(SFC_NEEDS_LOW),low,none))
-EXTRA_FIRRTL_OPTIONS_FOR_SFC = $(strip $(EXTRA_FIRRTL_OPTIONS) $(if $(filter low,$(SFC_LEVEL_FOR_MFC)),$(SFC_REPL_SEQ_MEM)))
+EXTRA_FIRRTL_OPTIONS_FOR_SFC = $(strip $(EXTRA_FIRRTL_OPTIONS) $(if $(and $(filter low,$(SFC_LEVEL_FOR_MFC)),$(SFC_NEEDS_SEQ_MEM_REPL)),$(SFC_REPL_SEQ_MEM)))
 MFC_LOWERING_OPTIONS_DEFAULT = $(MFC_BASE_LOWERING_OPTIONS)
 ifneq (,$(ENABLE_YOSYS_FLOW))
 MFC_LOWERING_OPTIONS_DEFAULT = $(MFC_BASE_LOWERING_OPTIONS),disallowPackedArrays
@@ -205,7 +220,7 @@ endif
 	if [ "$(SFC_LEVEL_FOR_MFC)" = none ]; then cat $(EXTRA_ANNO_FILE) > $(FINAL_ANNO_FILE); fi
 
 $(SFC_MFC_TARGETS) &: private TMP_DIR := $(shell mktemp -d -t cy-XXXXXXXX)
-$(SFC_MFC_TARGETS) &: $(FIRRTL_FILE) $(FINAL_ANNO_FILE) $(SFC_LEVEL) $(EXTRA_FIRRTL_OPTIONS)
+$(SFC_MFC_TARGETS) &: $(FIRRTL_FILE) $(FINAL_ANNO_FILE) $(SFC_LEVEL) $(EXTRA_FIRRTL_OPTIONS) $(base_dir)/common.mk $(MACROCOMPILER_SOURCES)
 	rm -rf $(GEN_COLLATERAL_DIR)
 	$(call run_scala_main,tapeout,barstools.tapeout.transforms.GenerateModelStageMain,\
 		--no-dedup \
@@ -240,7 +255,9 @@ $(SFC_MFC_TARGETS) &: $(FIRRTL_FILE) $(FINAL_ANNO_FILE) $(SFC_LEVEL) $(EXTRA_FIR
 		--split-verilog \
 		-o $(GEN_COLLATERAL_DIR) \
 		$(SFC_FIRRTL_FILE)
-	-mv $(SFC_SMEMS_CONF) $(MFC_SMEMS_CONF) 2> /dev/null
+	@if [ -f "$(SFC_SMEMS_CONF)" ]; then \
+		mv "$(SFC_SMEMS_CONF)" "$(MFC_SMEMS_CONF)"; \
+	fi
 	$(SED) -i 's/.*/& /' $(MFC_SMEMS_CONF) # need trailing space for SFC macrocompiler
 # DOC include end: FirrtlCompiler
 
@@ -281,11 +298,11 @@ $(TOP_SMEMS_CONF) $(MODEL_SMEMS_CONF) &:  $(MFC_SMEMS_CONF) $(MFC_MODEL_HRCHY_JS
 
 # This file is for simulation only. VLSI flows should replace this file with one containing hard SRAMs
 TOP_MACROCOMPILER_MODE ?= --mode synflops
-$(TOP_SMEMS_FILE) $(TOP_SMEMS_FIR) &: $(TOP_SMEMS_CONF)
+$(TOP_SMEMS_FILE) $(TOP_SMEMS_FIR) &: $(TOP_SMEMS_CONF) $(MACROCOMPILER_SOURCES)
 	$(call run_scala_main,tapeout,barstools.macros.MacroCompiler,-n $(TOP_SMEMS_CONF) -v $(TOP_SMEMS_FILE) -f $(TOP_SMEMS_FIR) $(TOP_MACROCOMPILER_MODE))
 
 MODEL_MACROCOMPILER_MODE = --mode synflops
-$(MODEL_SMEMS_FILE) $(MODEL_SMEMS_FIR) &: $(MODEL_SMEMS_CONF) | $(TOP_SMEMS_FILE)
+$(MODEL_SMEMS_FILE) $(MODEL_SMEMS_FIR) &: $(MODEL_SMEMS_CONF) $(MACROCOMPILER_SOURCES) | $(TOP_SMEMS_FILE)
 	$(call run_scala_main,tapeout,barstools.macros.MacroCompiler, -n $(MODEL_SMEMS_CONF) -v $(MODEL_SMEMS_FILE) -f $(MODEL_SMEMS_FIR) $(MODEL_MACROCOMPILER_MODE))
 
 ########################################################################################
@@ -347,7 +364,7 @@ run-binary-hex: override LOADMEM_ADDR = 80000000
 run-binary-hex: override LOADMEM = $(binary_hex)
 run-binary-hex: override SIM_FLAGS += +loadmem=$(LOADMEM) +loadmem_addr=$(LOADMEM_ADDR)
 run-binary-debug-hex: check-binary
-run-binary-debug-hex: $(SIM_DEBUG_REREQ) $(binary_hex) | $(output_dir)
+run-binary-debug-hex: $(SIM_DEBUG_PREREQ) $(binary_hex) | $(output_dir)
 run-binary-debug-hex: run-binary-debug
 run-binary-debug-hex: override LOADMEM_ADDR = 80000000
 run-binary-debug-hex: override LOADMEM = $(binary_hex)

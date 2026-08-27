@@ -282,6 +282,8 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val check_exception = Wire(Bool())
   val check_privret  = Wire(Bool())
   val excpt_mode = RegInit(false.B)
+  val arch_trap_depth = RegInit(0.U(4.W))
+  val arch_trap_depth_overflow = RegInit(false.B)
   val wb_reg_wphit           = Reg(Vec(nBreakpoints, Bool()))
 
   val take_pc_mem_wb = take_pc_wb || take_pc_mem
@@ -822,7 +824,10 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
 //===== GuardianCouncil Function: Start ====//
   /* R Features */
   val rsu_slave = Module(new R_RSUSL(R_RSUSLParams(xLen, 32)))
-  val lsl = Module(new R_LSL(R_LSLParams(255, xLen)))
+  val lsl_flush = WireInit(false.B)
+  val lsl = withReset(reset.asBool || lsl_flush) {
+    Module(new R_LSL(R_LSLParams(255, xLen)))
+  }
   val icsl = Module(new R_ICSL(R_ICSLParams(16)))
   // val csrshadow_seq = (CSRshadows.allshadows_for_filter.map(_.asUInt)).toSeq
   // val csrshadow_seq                               = Seq(CSRs.fflags.U, CSRs.fcsr.U, CSRs.frm.U)
@@ -1050,14 +1055,26 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   csr.io.check_boundary_pc := checker_boundary_pc
   csr.io.ic_check_done := checker_arch_check_done
   csr.io.clear_ic_status := icsl.io.clear_ic_status.asBool
-  val self_xcpt_flag = RegInit(0.U(3.W))
-  val self_eret_flag = RegInit(0.U(3.W))
-  self_xcpt_flag := Mux(csr.io.trace(0).exception && excpt_mode, self_xcpt_flag + 1.U, Mux(!excpt_mode, 0.U, self_xcpt_flag))
-  self_eret_flag := Mux(csr.io.eret && excpt_mode, self_eret_flag + 1.U, Mux(!excpt_mode, 0.U, self_eret_flag))
-  when(csr.io.trace(0).exception){
+  // Track architectural trap nesting explicitly.  The old pair of wrapping
+  // event counters could report equality after overflow and clear excpt_mode
+  // before the matching xRET.  Saturation keeps admission conservatively
+  // blocked if the representable nesting depth is ever exceeded.
+  when (csr.io.trace(0).exception) {
     excpt_mode := true.B
-  }.elsewhen(csr.io.eret && (self_eret_flag === self_xcpt_flag)){
-    excpt_mode := false.B
+    when (!excpt_mode) {
+      arch_trap_depth := 1.U
+    }.elsewhen (arch_trap_depth.andR) {
+      arch_trap_depth_overflow := true.B
+    }.otherwise {
+      arch_trap_depth := arch_trap_depth + 1.U
+    }
+  }.elsewhen (csr.io.eret && excpt_mode && !arch_trap_depth_overflow) {
+    when (arch_trap_depth <= 1.U) {
+      arch_trap_depth := 0.U
+      excpt_mode := false.B
+    }.otherwise {
+      arch_trap_depth := arch_trap_depth - 1.U
+    }
   }
   dontTouch(csr.io)
   dontTouch(check_exception)
@@ -1075,7 +1092,14 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   rf_wen_rsu := rsu_slave.io.arfs_valid_out
   rsu_pc := rsu_slave.io.pcarf_out
   io.rsu_status := rsu_slave.io.rsu_status
-  rsu_slave.io.do_cp_check := icsl.io.if_check_done.asUInt & (rsu_slave.io.rsu_status === 3.U).asUInt & (!(!div.io.req.ready || io.fpu.fpu_inflight)).asUInt
+  // Normally ICSL raises if_check_done after the instruction boundary. If
+  // that notification is lost during an exception/return path, the RSU ECP
+  // tail and drained data/LSL queues provide an idempotent retry condition.
+  // The retry still requires the RSU's internal ECP-tail state, so ARF data
+  // cannot be compared before the complete snapshot has arrived.
+  val arf_check_retry = rsu_slave.io.cp_check_ready && io.cdc_empty && lsl.io.if_empty
+  rsu_slave.io.do_cp_check := (icsl.io.if_check_done || arf_check_retry).asUInt &
+    (!(!div.io.req.ready || io.fpu.fpu_inflight)).asUInt
 
   for (i <-0 until 32){
     rsu_slave.io.core_arfs_in(i) := rf.read(i.U)
@@ -1117,7 +1141,6 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
 
   icsl.io.ic_counter := io.ic_counter(15,0)
   icsl.io.main_core_status := io.ic_counter(19,16)
-  icsl.io.icsl_run := icsl_copy_start_accepted.asUInt
   icsl.io.new_commit := csr.io.trace(0).valid && !csr.io.trace(0).exception
   icsl.io.if_correct_process := io.if_correct_process & !excpt_mode.asUInt
   checker_mode := icsl.io.icsl_checkermode
@@ -1263,18 +1286,86 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val arf_check_done_seen = RegInit(false.B)
   val csr_check_required_seen = RegInit(false.B)
   val csr_check_done_seen = RegInit(false.B)
+  // ARF is transported by an independent CDC channel.  If its routing or
+  // sequence metadata is lost, waiting for arf_check_complete forever would
+  // hold the checker watchdog.  Count only after data and LSL have drained;
+  // this preserves normal workloads while providing a bounded cancellation
+  // path for a missing/mismatched ARF fragment.
+  val arf_wait_timeout_counter = RegInit(0.U(12.W))
   val package_error_now = elu.io.error_ld || elu.io.error_st ||
-    rsu_slave.io.check_error || csr.io.shadow_check_error
+    rsu_slave.io.check_error || csr.io.shadow_check_error ||
+    io.packet_protocol_error || lsl.io.ingress_overflow
   // Data and ARF packets use independent CDC queues.  A late fragment from
   // the current package must not move the checker sequence backwards; only a
   // strictly newer sequence can start a new package.
-  val new_package = io.packet_seq_valid && io.packet_seq > package_seq_reg
+  // A result remains a local ownership transaction until it has been handed
+  // to GHM.  Local R_ICSL cleanup is tracked separately below: it must not
+  // gate result delivery, but it must finish before a newer package starts.
+  val package_result_outstanding = RegInit(false.B)
+  // A full local result queue must also block admission.  The waiting
+  // register owns the previous sequence until it is successfully enqueued;
+  // accepting a new sequence here would overwrite package_seq_reg while the
+  // old result is still pending.
+  val package_result_waiting = RegInit(false.B)
+  // Result handoff and checker cleanup are independent phases.  This bit
+  // prevents a new sequence from entering while R_ICSL is still executing or
+  // returning from the package that produced the previous result.
+  val package_cleanup_pending = RegInit(false.B)
+  // COPY is a pulse from the GHE command path. Hold it across the one-cycle
+  // R_ICSL reset/nonchecking transition so cancellation cleanup cannot lose a
+  // valid start request.
+  val icsl_start_request_pending = RegInit(false.B)
+  // A sequence indication is a pulse at the RocketTile boundary. Preserve a
+  // newer indication seen while the current package/result is owned locally;
+  // otherwise backpressuring admission would simply lose that package.
+  val pending_package_seq_valid = RegInit(false.B)
+  val pending_package_seq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val package_start_pending = RegInit(false.B)
+  // The candidate package itself may still be present in the CDC queue when
+  // it is first observed.  Including io.cdc_empty here makes admission wait
+  // for the very packet that is needed to perform admission.  CDC dequeue is
+  // separately backpressured below, so this predicate only describes the
+  // local checker resources owned by the previous package.
+  val checker_local_cleanup_done = icsl.io.context_idle &&
+    (rsu_slave.io.rsu_status === 0.U) && lsl.io.if_empty
+  val checker_cleanup_done = checker_local_cleanup_done
+  val no_result_pending = !package_result_outstanding &&
+    !package_result_waiting && !package_cleanup_pending
+  val incoming_package_seq = io.packet_seq_valid && io.packet_seq =/= 0.U &&
+    io.packet_seq > package_seq_reg
+  // The first data anchor may arrive before the ARF copy/start pulse. Keep
+  // the boot-time sequence observable so that pulse ordering cannot strand an
+  // already-started R_ICSL instance with package_seq_reg == 0.
+  val package_ready_for_new = !package_check_active && !package_start_pending &&
+    no_result_pending && !csr.io.trace(0).exception &&
+    (checker_cleanup_done || (package_seq_reg === 0.U && !excpt_mode))
+  val pending_new_package = pending_package_seq_valid &&
+    pending_package_seq > package_seq_reg
+  val new_package = package_ready_for_new &&
+    (incoming_package_seq || pending_new_package)
+  val new_package_seq = Mux(pending_new_package &&
+    (!incoming_package_seq || pending_package_seq >= io.packet_seq),
+    pending_package_seq, io.packet_seq)
   // R_ICSL has two independent entry paths. COPY starts normal checking while
   // a completed privileged CPS starts checking_priv; both own the current
   // sequenced package and must therefore produce the same result tail.
   val icsl_priv_start_accepted = icsl.io.if_check_privrun
-  val package_start_accepted = (icsl_copy_start_accepted || icsl_priv_start_accepted) &&
-    (package_seq_reg =/= 0.U || (new_package && io.packet_seq =/= 0.U))
+  val icsl_running = !icsl.io.cleanup_done && icsl.io.icsl_status === 0.U
+  val icsl_start_request = icsl_copy_start_accepted || icsl_start_request_pending
+  // COPY may arrive before the data anchor or while a previous trap is still
+  // unwinding.  Keep the request pending, but do not let it enter R_ICSL until
+  // this exact package owns a clean architectural context.
+  val icsl_normal_start_allowed = icsl_start_request && icsl.io.context_idle &&
+    !csr.io.trace(0).exception && (package_start_pending || new_package)
+  icsl.io.icsl_run := icsl_normal_start_allowed.asUInt
+  when (icsl_copy_start_accepted) {
+    icsl_start_request_pending := true.B
+  }.elsewhen (!icsl.io.cleanup_done) {
+    icsl_start_request_pending := false.B
+  }
+  val package_start_accepted = (icsl_normal_start_allowed || icsl_priv_start_accepted) &&
+    (package_seq_reg =/= 0.U || (new_package && new_package_seq =/= 0.U)) ||
+    ((new_package || package_start_pending) && icsl_running)
   val arf_check_complete = arf_check_done_seen || rsu_slave.io.if_cp_check_completed.asBool
   // A CSR fragment alone does not imply that this checker can compare it. At
   // a mode boundary the same snapshot can be an ECP for the old checker and a
@@ -1287,16 +1378,61 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   // cycle from completing the package ahead of that local enqueue stage.
   val packet_ingress_empty_prev = RegNext(io.cdc_empty, false.B)
   val packet_ingress_drained = io.cdc_empty && packet_ingress_empty_prev
-  val full_check_complete = package_check_active && packet_ingress_drained && lsl.io.if_empty &&
-    arf_check_complete && (!csr_check_required || csr_check_complete)
+  val package_data_complete = package_check_active && packet_ingress_drained &&
+    lsl.io.if_empty && arf_check_complete &&
+    (!csr_check_required || csr_check_complete)
+  // The package tail and the instruction stream are separate completion
+  // domains.  A result is normal only after both have reached a safe boundary.
+  // This prevents the result queue from being filled while R_ICSL is still in
+  // fsm_checking, which was the first half of the release deadlock.
+  val full_check_complete = package_data_complete && icsl.io.package_exec_done
+  val arf_waiting_after_data_drain = package_check_active && packet_ingress_drained &&
+    lsl.io.if_empty && !arf_check_complete
+  val arf_wait_timeout = arf_waiting_after_data_drain &&
+    (arf_wait_timeout_counter === 4095.U)
+  // A complete data/ARF package can still wait forever if the instruction
+  // boundary notification is lost.  Bound that wait below the BOOM ownership
+  // watchdog and use the existing cancellation/reset path to release it.
+  val package_exec_waiting = package_data_complete && !icsl.io.package_exec_done
+  val package_exec_timeout_counter = RegInit(0.U(16.W))
+  val package_exec_timeout_limit = 65535.U(16.W)
+  val package_exec_timeout = package_exec_waiting &&
+    (package_exec_timeout_counter === package_exec_timeout_limit)
+  // Every ownership phase must have a bounded no-progress path.  Count only
+  // events that advance this package; handler or management-loop commits are
+  // deliberately excluded so a lost checker mode cannot mask a deadlock.
+  val package_owned = package_check_active || package_start_pending
+  val package_exec_done_prev = RegNext(icsl.io.package_exec_done, false.B)
+  val checker_instruction_progress =
+    (checker_mode.asBool || checker_priv_mode.asBool) &&
+      csr.io.trace(0).valid && !csr.io.trace(0).exception
+  val package_fragment_progress = io.packet_seq_valid &&
+    (io.packet_seq === package_seq_reg || new_package)
+  val package_replay_progress = lsl.io.st_deq || lsl.io.ld_deq ||
+    (lsl_req_valid_csr && lsl_req_ready_csr) ||
+    (lsl_req_valid_rocc && lsl_req_ready_rocc)
+  val package_progress_event = package_start_accepted || package_fragment_progress ||
+    package_replay_progress || checker_instruction_progress || csr.io.eret ||
+    rsu_slave.io.if_cp_check_completed.asBool || csr.io.if_priv_checkcomp ||
+    (icsl.io.package_exec_done && !package_exec_done_prev)
+  val package_progress_timeout_counter = RegInit(0.U(16.W))
+  val package_progress_timeout_limit = 65535.U(16.W)
+  val package_progress_timeout = package_owned &&
+    package_progress_timeout_counter === package_progress_timeout_limit
   // A newer snapshot arriving before the current package completed is a real
   // overlap/cancellation.  The normal R_ICSL reset pulse is deliberately not
   // included here: it is local FSM cleanup, not evidence that checking was
   // cancelled.
-  val package_cancelled = package_check_active && !full_check_complete &&
-    new_package
+  // A newer package is queued rather than cancelling an active package. Only
+  // the bounded ARF wait can terminate the current ownership transaction.
+  val package_cancelled = package_owned && !full_check_complete &&
+    (arf_wait_timeout || package_exec_timeout || package_progress_timeout ||
+      lsl.io.ingress_overflow)
+  // Delay the local LSL reset by one cycle. In particular, ingress_overflow is
+  // produced by R_LSL itself; registering cancellation avoids feeding a module
+  // output combinationally back into that module's reset tree.
+  lsl_flush := RegNext(package_cancelled, false.B)
   val package_result_event = full_check_complete || package_cancelled
-  val package_result_waiting = RegInit(false.B)
   val package_result_status_waiting = RegInit(0.U(GH_GlobalParams.GH_CHECKER_STATUS_BITS.W))
   val package_result_seq_waiting = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
   val package_completion_pulse = full_check_complete && !package_result_waiting
@@ -1315,17 +1451,13 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     Mux(package_result_waiting, package_result_status_waiting, package_result_status),
     Mux(package_result_waiting, package_result_seq_waiting, package_seq_reg))
   val package_result_fire = package_result_queue.io.enq.fire
-  // R_ICSL can reach its local reset before or after the independent ARF/CSR
-  // comparisons finish.  Hold the result locally until both the complete
-  // result and that reset have occurred.  GHM then derives the BOOM-side
-  // checker release from this result's dequeue in the BOOM clock domain.
-  val package_local_clear_seen = RegInit(false.B)
-  val package_local_clear_event = icsl.io.clear_ic_status.asBool &&
-    (package_check_active || package_result_waiting || package_result_queue.io.deq.valid)
-  val package_locally_ready = package_local_clear_seen || package_local_clear_event
-  package_result_queue.io.deq.ready := io.package_result_ready && package_locally_ready
+  // Result delivery is a sequenced CDC transaction.  It must not wait for the
+  // R_ICSL local reset: that reset is checker cleanup, while GHM result dequeue
+  // is the BOOM ownership release.  Keeping these handshakes independent
+  // breaks the old result->local-clear->R_ICSL->result cycle.
+  package_result_queue.io.deq.ready := io.package_result_ready
   val package_result_handoff_fire = package_result_queue.io.deq.fire
-  io.package_result_valid := package_result_queue.io.deq.valid && package_locally_ready
+  io.package_result_valid := package_result_queue.io.deq.valid
   io.package_result_seq := package_result_queue.io.deq.bits(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0)
   io.package_result_status := package_result_queue.io.deq.bits(
     GH_GlobalParams.GH_PACKET_SEQ_BITS + GH_GlobalParams.GH_CHECKER_STATUS_BITS - 1,
@@ -1344,34 +1476,54 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     package_result_seq_waiting := package_seq_reg
   }
 
-  when (package_local_clear_event) {
-    package_local_clear_seen := true.B
+  when (package_result_fire) {
+    // A queue may dequeue the previous result and enqueue the next one in
+    // the same cycle. The new result remains outstanding in that case.
+    package_result_outstanding := true.B
+    package_cleanup_pending := true.B
+  }.elsewhen (package_result_handoff_fire) {
+    package_result_outstanding := false.B
   }
-  when (package_result_handoff_fire) {
-    package_local_clear_seen := false.B
+  // Result handoff may complete before R_ICSL returns to nonchecking.  Keep
+  // the checker reserved until both the CDC handoff and local cleanup finish.
+  when (package_cleanup_pending && checker_cleanup_done &&
+    !package_result_outstanding && !package_result_waiting) {
+    package_cleanup_pending := false.B
+  }
+  when (incoming_package_seq && !new_package) {
+    pending_package_seq_valid := true.B
+    pending_package_seq := Mux(pending_package_seq_valid &&
+      pending_package_seq > io.packet_seq, pending_package_seq, io.packet_seq)
+  }.elsewhen (new_package) {
+    pending_package_seq_valid := false.B
   }
   // The legacy checker-to-GHM clear control path is no longer used for BOOM
   // release; tying it low prevents a second, independently reordered pulse.
   io.clear_ic_status := 0.U
   when (new_package) {
-    package_seq_reg := io.packet_seq
+    package_seq_reg := new_package_seq
     // Packet fragments may arrive before checker software issues COPY.  The
     // sequence is observed here, but the package owns execution state only
     // after R_ICSL has accepted the matching start request.
     package_check_active := package_start_accepted
+    package_start_pending := !package_start_accepted
     package_error := Mux(package_result_fire, false.B, package_error_now)
     arf_check_done_seen := false.B
     // Do not inherit an unfinished CSR comparison from the superseded package.
     csr_check_required_seen := false.B
     csr_check_done_seen := false.B
+    arf_wait_timeout_counter := 0.U
   }.elsewhen (package_result_fire) {
     package_check_active := false.B
+    package_start_pending := false.B
     arf_check_done_seen := false.B
     csr_check_required_seen := false.B
     csr_check_done_seen := false.B
+    arf_wait_timeout_counter := 0.U
   }.otherwise {
     when (package_start_accepted) {
       package_check_active := true.B
+      package_start_pending := false.B
     }
     when (package_error_now) {
       package_error := true.B
@@ -1385,6 +1537,21 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     when (csr.io.if_priv_checkcomp) {
       csr_check_done_seen := true.B
     }
+    when (!package_check_active || !arf_waiting_after_data_drain || arf_check_complete) {
+      arf_wait_timeout_counter := 0.U
+    }.elsewhen (arf_wait_timeout_counter =/= 4095.U) {
+      arf_wait_timeout_counter := arf_wait_timeout_counter + 1.U
+    }
+  }
+  when (new_package || package_result_fire || !package_exec_waiting) {
+    package_exec_timeout_counter := 0.U
+  }.elsewhen (package_exec_timeout_counter =/= package_exec_timeout_limit) {
+    package_exec_timeout_counter := package_exec_timeout_counter + 1.U
+  }
+  when (new_package || package_result_fire || !package_owned || package_progress_event) {
+    package_progress_timeout_counter := 0.U
+  }.elsewhen (package_progress_timeout_counter =/= package_progress_timeout_limit) {
+    package_progress_timeout_counter := package_progress_timeout_counter + 1.U
   }
   // This pulse also timestamps all store_uncache events in this package.
   icsl.io.if_check_completed := package_completion_pulse.asUInt
@@ -1408,7 +1575,23 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
 
   dontTouch(rf_wen_rsu)
 
-  io.packet_cdc_ready := rsu_slave.io.cdc_ready | lsl.io.cdc_ready.asUInt | io.imem.bjl_cdc_ready.asUInt
+  // Do not dequeue a newer sequence while the previous package/result is
+  // still being cleaned up.  Once a package is admitted (or is already in
+  // its start-pending/checking phase), keep accepting its remaining data
+  // beats.  GHM uses this level as the data-CDC dequeue permission; ARF/CPS
+  // dequeue is already held behind the data anchor in GHM.
+  val package_data_admission_ready = package_seq_reg === 0.U ||
+    package_check_active || package_start_pending || package_ready_for_new
+  // RocketTile combines this package-lifecycle permission with the presented
+  // beat's sequence and per-destination readiness.  Keeping those decisions
+  // separate prevents an unrelated BJL/LSL ready from bypassing backpressure.
+  io.packet_cdc_ready := package_data_admission_ready.asUInt
+  io.packet_active_seq := package_seq_reg
+  io.packet_current_seq_active := package_check_active || package_start_pending
+  io.packet_accept_new_seq := package_ready_for_new
+  io.packet_lsl_mem_ready := lsl.io.cdc_ready_mem
+  io.packet_lsl_csr_ready := lsl.io.cdc_ready_csr
+  io.packet_lsl_rocc_ready := lsl.io.cdc_ready_rocc
   //===== GuardianCouncil Function: End   ====//
 
   dontTouch(csr.io.counters)

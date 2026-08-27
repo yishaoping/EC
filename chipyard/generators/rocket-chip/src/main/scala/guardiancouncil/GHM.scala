@@ -83,16 +83,25 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
     val arfs_cdc_busy                              = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
     val cdc_empty                                  = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
     val packet_ingress_empty                       = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
+    // 每个 checker 的完成位属于其 Rocket 时钟域，并直接送往同域 GHE。
+    val checkerSessionDone                         = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
 
     // OR-merge ic_counters from all big cores (each big core only fills its own checkers)
     val ic_counter_merged                          = io.ic_counter.reduce(_|_)
 
     val data_cdc_ready                             = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
     val checker_result_release                     = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
-    // ghm_status_in(0)(31) is a stable BOOM-domain level.  The legacy
-    // big-to-little control queue only needs an event when that level becomes
-    // true; continuously enqueueing the level would fill the queue whenever
-    // the producer is idle.
+    // Result delivery and BOOM ownership release are separate transactions.
+    // Keep a release request asserted until the global BOOM status confirms
+    // that this checker is actually free.  A one-cycle dequeue pulse is not
+    // sufficient across clock domains and was the source of the watchdog
+    // deadlock seen in the previous protocol.
+    val result_release_pending = RegInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
+    val result_release_seq = RegInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))))
+    val result_release_status = RegInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U(GH_GlobalParams.GH_CHECKER_STATUS_BITS.W))))
+    // ghm_status_in(0)(31) is a stable BOOM-domain level.  It remains in the
+    // legacy control path for diagnostics; session completion itself uses the
+    // acknowledged control protocol below rather than this edge.
     val filterEmptyPrev = withClockAndReset(io.ghm_clock(0).asClock, io.ghm_reset(0).asAsyncReset) {
       RegNext(io.ghm_status_in(0)(31), false.B)
     }
@@ -134,6 +143,9 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
     val u_arfs_cdc                                      = Seq.fill(params.number_of_little_cores) {Module(new AsyncQueue(UInt((arfPayloadBits+GH_GlobalParams.GH_PACKET_SEQ_BITS).W), AsyncQueueParams(8,2)))}//留8个余量防止写入太快
     val u_l2b_ctrl_cdc                                  = Seq.fill(params.number_of_little_cores) {Module(new AsyncQueue(UInt(9.W), AsyncQueueParams(64,2)))}
     val u_b2l_ctrl_cdc                                  = Seq.fill(params.number_of_little_cores) {Module(new AsyncQueue(UInt((22).W), AsyncQueueParams(64,2)))}//早晚会满
+    val u_session_ctrl_cdc                              = Seq.fill(params.number_of_little_cores) {
+      Module(new AsyncQueue(UInt(GH_GlobalParams.GH_SESSION_CTRL_BITS.W), AsyncQueueParams(4, 2)))
+    }
     val resultPayloadBits = GH_GlobalParams.GH_PACKET_SEQ_BITS + GH_GlobalParams.GH_CHECKER_STATUS_BITS
     val u_result_cdc                                    = Seq.fill(params.number_of_little_cores) {Module(new AsyncQueue(UInt(resultPayloadBits.W), AsyncQueueParams(256,2)))}
 
@@ -163,14 +175,89 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
       u_data_cdc(i).io.deq_clock := io.ghm_clock(i+GH_GlobalParams.GH_NUM_BIG_CORES).asClock
       u_data_cdc(i).io.deq_reset := io.ghm_reset(i+GH_GlobalParams.GH_NUM_BIG_CORES)
 
-      u_data_cdc(i).io.enq.valid := if_data_en
       val selected_packet_seq = Mux1H((0 until GH_GlobalParams.GH_NUM_BIG_CORES).map { b =>
         val full_idx = i + GH_GlobalParams.GH_NUM_BIG_CORES
         sel_data(b) -> io.checker_segment_id_bigcore(b)((full_idx + 1) * GH_GlobalParams.GH_PACKET_SEQ_BITS - 1,
           full_idx * GH_GlobalParams.GH_PACKET_SEQ_BITS)
       })
-      u_data_cdc(i).io.enq.bits  := Cat(selected_packet_seq, Mux1H(sel_data, io.ghm_packet_in))
-      data_cdc_ready(i)          := io.ghe_event_in(i)(4)&(!io.ghe_event_in(i)(0))
+      // A segment can be allocated after the last BOOM instruction has
+      // committed. In that case GH_BUF has no entry, but the sequence still
+      // needs one data-side transaction before ARF/CPS may be consumed.
+      // A real data beat is the anchor; otherwise emit one empty anchor.
+      val selected_segment_seq = Mux1H((0 until GH_GlobalParams.GH_NUM_BIG_CORES).map { b =>
+        val full_idx = i + GH_GlobalParams.GH_NUM_BIG_CORES
+        (io.checker_segment_id_bigcore(b)((full_idx + 1) * GH_GlobalParams.GH_PACKET_SEQ_BITS - 1,
+          full_idx * GH_GlobalParams.GH_PACKET_SEQ_BITS) =/= 0.U) ->
+          io.checker_segment_id_bigcore(b)((full_idx + 1) * GH_GlobalParams.GH_PACKET_SEQ_BITS - 1,
+            full_idx * GH_GlobalParams.GH_PACKET_SEQ_BITS)
+      })
+      val selected_segment_valid = (0 until GH_GlobalParams.GH_NUM_BIG_CORES).map { b =>
+        val full_idx = i + GH_GlobalParams.GH_NUM_BIG_CORES
+        io.checker_segment_id_bigcore(b)((full_idx + 1) * GH_GlobalParams.GH_PACKET_SEQ_BITS - 1,
+          full_idx * GH_GlobalParams.GH_PACKET_SEQ_BITS) =/= 0.U
+      }.reduce(_|_)
+      val selected_producer_empty = Mux1H((0 until GH_GlobalParams.GH_NUM_BIG_CORES).map { b =>
+        val full_idx = i + GH_GlobalParams.GH_NUM_BIG_CORES
+        val segment_seq = io.checker_segment_id_bigcore(b)((full_idx + 1) * GH_GlobalParams.GH_PACKET_SEQ_BITS - 1,
+          full_idx * GH_GlobalParams.GH_PACKET_SEQ_BITS)
+        (segment_seq =/= 0.U) -> io.ghm_status_in(b)(31)
+      })
+      // A segment id is allocated before the last committing instruction is
+      // necessarily visible at GH_BUF.  Therefore a low `if_data_en` in the
+      // allocation cycle means only "no data is visible yet".  Do not turn
+      // that observation into an empty packet.  The source-side empty level
+      // must remain high for a settling window that starts after this segment
+      // id is observed.  A later real data beat resets the window and always
+      // wins over the empty-anchor path.
+      val emptyAnchorSettleCycles = 3
+      val emptyAnchorSettleWidth = log2Ceil(emptyAnchorSettleCycles + 1)
+      val emptyAnchorReady = withClockAndReset(
+        io.ghm_clock(0).asClock, io.ghm_reset(0).asAsyncReset) {
+        val waitSeq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+        val waitCount = RegInit(0.U(emptyAnchorSettleWidth.W))
+        val waitActive = RegInit(false.B)
+        val producerEmpty = selected_producer_empty
+
+        when (!selected_segment_valid) {
+          waitActive := false.B
+          waitCount := 0.U
+        } .elsewhen (!waitActive || selected_segment_seq =/= waitSeq) {
+          waitSeq := selected_segment_seq
+          waitCount := 0.U
+          waitActive := true.B
+        } .elsewhen (if_data_en || !producerEmpty) {
+          // Data may still be produced after the allocation edge.  Restart
+          // the observation window whenever the producer is non-empty or a
+          // real packet is visible.
+          waitCount := 0.U
+        } .elsewhen (waitCount < emptyAnchorSettleCycles.U) {
+          waitCount := waitCount + 1.U
+        }
+        waitActive && producerEmpty && !if_data_en &&
+          waitCount >= emptyAnchorSettleCycles.U
+      }
+      val anchor_seq_sent = withClockAndReset(
+        io.ghm_clock(0).asClock, io.ghm_reset(0).asAsyncReset) {
+        val seq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+        when (u_data_cdc(i).io.enq.fire) {
+          seq := Mux(if_data_en, selected_packet_seq, selected_segment_seq)
+        }
+        seq
+      }
+      val empty_anchor_en = selected_segment_valid &&
+        selected_segment_seq =/= anchor_seq_sent && !if_data_en && emptyAnchorReady
+      u_data_cdc(i).io.enq.valid := if_data_en || empty_anchor_en
+      u_data_cdc(i).io.enq.bits  := Cat(
+        Mux(if_data_en, selected_packet_seq, selected_segment_seq),
+        Mux(if_data_en, Mux1H(sel_data, io.ghm_packet_in), 0.U))
+      // Bit 4 is the dedicated checker-side packet dequeue permission.  Bit 0
+      // is a legacy event/near-full indication and is not a reliable level:
+      // it may be sampled from an older GHE event while the checker is already
+      // able to accept a packet.  Gating dequeue with !bit0 creates a cycle:
+      // the checker waits for CDC empty, while the stale bit0 prevents the CDC
+      // queue from being drained.  Use the explicit ready bit only; a checker
+      // that cannot accept data must deassert bit4.
+      data_cdc_ready(i)          := io.ghe_event_in(i)(4)
       // Data and ARF/CSR use independent CDC queues. Compare their head
       // sequences before dequeue so a fragment from package N+1 cannot pass a
       // still-pending fragment from package N. Keeping the newer item in its
@@ -180,10 +267,37 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
         params.width_GH_packet * GH_GlobalParams.GH_TOTAL_PACKETS)
       val arfHeadSeq = u_arfs_cdc(i).io.deq.bits(
         arfPayloadBits + GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, arfPayloadBits)
-      val dataHeadInOrder = !u_arfs_cdc(i).io.deq.valid || dataHeadSeq <= arfHeadSeq
-      val arfHeadInOrder = !u_data_cdc(i).io.deq.valid || arfHeadSeq <= dataHeadSeq
+      // An older ARF fragment can remain at the head after the data side has
+      // advanced to a newer package. It is stale by sequence and must be
+      // drained independently; otherwise data waits for ARF while ARF waits
+      // for the data dequeue, recreating the very CDC deadlock this ordering
+      // check is meant to prevent.
+      val arfHeadStale = u_data_cdc(i).io.deq.valid &&
+        u_arfs_cdc(i).io.deq.valid && arfHeadSeq < dataHeadSeq
+      val dataHeadInOrder = !u_arfs_cdc(i).io.deq.valid ||
+        dataHeadSeq <= arfHeadSeq || arfHeadStale
+      val arfHeadInOrder = !u_data_cdc(i).io.deq.valid ||
+        arfHeadSeq <= dataHeadSeq
+      // Present the ordered head independently of ready. RocketTile decodes
+      // its sequence and every lane type, then returns one atomic beat-ready
+      // level on bit4. This is a standard valid/ready contract: using fire as
+      // valid would hide the payload needed to compute type-correct ready.
       u_data_cdc(i).io.deq.ready := data_cdc_ready(i) && dataHeadInOrder
-      packet_out_wires(i)        := Mux(u_data_cdc(i).io.deq.fire, Cat(true.B, u_data_cdc(i).io.deq.bits), 0.U)
+      packet_out_wires(i)        := Mux(u_data_cdc(i).io.deq.valid && dataHeadInOrder,
+        Cat(true.B, u_data_cdc(i).io.deq.bits), 0.U)
+      // The data vector is the package anchor, but it is dequeued only once
+      // while the ARF/CPS stream has one entry per merge index.  Remember the
+      // last data sequence consumed in the checker clock domain so remaining
+      // ARF entries can continue after the data queue becomes empty.
+      val dataConsumedSeq = withClockAndReset(
+        io.ghm_clock(i + GH_GlobalParams.GH_NUM_BIG_CORES).asClock,
+        io.ghm_reset(i + GH_GlobalParams.GH_NUM_BIG_CORES).asAsyncReset) {
+        val seq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+        when (u_data_cdc(i).io.deq.fire) {
+          seq := dataHeadSeq
+        }
+        seq
+      }
       cdc_busy(i)                := (!u_data_cdc(i).io.enq.ready)
       cdc_empty(i)               := !u_data_cdc(i).io.deq.valid && !u_arfs_cdc(i).io.deq.valid
       // A locally empty pair of CDC queues is not yet a package tail while
@@ -193,7 +307,7 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
       val filterEmptySynced = withClockAndReset(
         io.ghm_clock(i + GH_GlobalParams.GH_NUM_BIG_CORES).asClock,
         io.ghm_reset(i + GH_GlobalParams.GH_NUM_BIG_CORES).asAsyncReset) {
-        AsyncResetSynchronizerShiftReg(io.ghm_status_in(0)(31), sync = 3,
+        AsyncResetSynchronizerShiftReg(selected_producer_empty, sync = 3,
           name = Some(s"ghm_filter_empty_checker_${i}_sync"))
       }
       packet_ingress_empty(i) := cdc_empty(i) && filterEmptySynced
@@ -214,7 +328,15 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
       val selectedArfInput = Mux1H(sel_arfs, io.core_r_arfs_in)
       val selectedArfPayload = selectedArfInput(arfPayloadBits - 1, 0)
       u_arfs_cdc(i).io.enq.bits  := Cat(selectedArfSeq, selectedArfPayload)
-      u_arfs_cdc(i).io.deq.ready := arfHeadInOrder
+      // Before the first data dequeue, hold an early ARF in the CDC queue so
+      // RocketTile cannot see a sequence with no package anchor.  After the
+      // anchor has been consumed, RocketTile's packet sequence watermark lets
+      // it accept the remaining ARF entries even though data.valid is low.
+      // Entries older than the last consumed sequence are safe to drain as
+      // stale fragments; newer entries remain held until their data arrives.
+      val arfAfterData = dataConsumedSeq =/= 0.U && arfHeadSeq <= dataConsumedSeq
+      u_arfs_cdc(i).io.deq.ready := arfHeadInOrder &&
+        (u_data_cdc(i).io.deq.fire || arfAfterData || arfHeadStale)
       io.core_r_arfs_c(i)        := Mux(u_arfs_cdc(i).io.deq.fire,
         Cat(true.B, u_arfs_cdc(i).io.deq.bits), 0.U)
 
@@ -256,6 +378,89 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
       l_rctrl(i)                     := Mux(u_b2l_ctrl_cdc(i).io.deq.fire,u_b2l_ctrl_cdc(i).io.deq.bits,0.U)
       dontTouch(u_b2l_ctrl_cdc(i).io.enq.ready)
 
+      // 会话控制与旧的 22 位计数控制通道分离。源端将 START/FINISH
+      // 保存在 pending 寄存器中，直到 AsyncQueue 接受该消息；因此即使
+      // checker 时钟暂停或 FIFO 暂满，也不会丢失一次 workload 边界。
+      val sessionEpoch = RegInit(0.U(GH_GlobalParams.GH_SESSION_EPOCH_BITS.W))
+      val sessionActive = RegInit(false.B)
+      val startPending = RegInit(false.B)
+      val finishPending = RegInit(false.B)
+      val startEpoch = RegInit(0.U(GH_GlobalParams.GH_SESSION_EPOCH_BITS.W))
+      val finishEpoch = RegInit(0.U(GH_GlobalParams.GH_SESSION_EPOCH_BITS.W))
+      val globalSessionStatus = io.ghm_status_in(0)(4, 0)
+      val startRequested = globalSessionStatus === GH_GlobalParams.GH_SESSION_START.U &&
+        !sessionActive && !finishPending
+      val finishRequested = globalSessionStatus === GH_GlobalParams.GH_SESSION_FINISH.U &&
+        sessionActive
+
+      when (startRequested) {
+        sessionEpoch := sessionEpoch + 1.U
+        sessionActive := true.B
+        startPending := true.B
+        startEpoch := sessionEpoch + 1.U
+      }
+      when (finishRequested) {
+        sessionActive := false.B
+        finishPending := true.B
+        finishEpoch := sessionEpoch
+      }
+
+      u_session_ctrl_cdc(i).io.enq_clock := io.ghm_clock(0).asClock
+      u_session_ctrl_cdc(i).io.enq_reset := io.ghm_reset(0)
+      u_session_ctrl_cdc(i).io.deq_clock := io.ghm_clock(i + GH_GlobalParams.GH_NUM_BIG_CORES).asClock
+      u_session_ctrl_cdc(i).io.deq_reset := io.ghm_reset(i + GH_GlobalParams.GH_NUM_BIG_CORES)
+      u_session_ctrl_cdc(i).io.enq.valid := startPending || finishPending
+      u_session_ctrl_cdc(i).io.enq.bits := Mux(startPending,
+        Cat(GH_GlobalParams.GH_SESSION_PROTOCOL_VERSION.U(GH_GlobalParams.GH_SESSION_VERSION_BITS.W),
+          GH_GlobalParams.GH_SESSION_START.U(GH_GlobalParams.GH_SESSION_TYPE_BITS.W),
+          startEpoch, GH_GlobalParams.GH_SESSION_START.U(GH_GlobalParams.GH_SESSION_STATUS_BITS.W)),
+        Cat(GH_GlobalParams.GH_SESSION_PROTOCOL_VERSION.U(GH_GlobalParams.GH_SESSION_VERSION_BITS.W),
+          GH_GlobalParams.GH_SESSION_FINISH.U(GH_GlobalParams.GH_SESSION_TYPE_BITS.W),
+          finishEpoch, GH_GlobalParams.GH_SESSION_FINISH.U(GH_GlobalParams.GH_SESSION_STATUS_BITS.W)))
+      when (u_session_ctrl_cdc(i).io.enq.fire) {
+        when (startPending) {
+          startPending := false.B
+        } .otherwise {
+          finishPending := false.B
+        }
+      }
+
+      // 接收侧只在 dequeue fire 时更新状态。FINISH 必须匹配已接收的
+      // START epoch；完成状态随后保持为电平，直至下一条 START 清除它。
+      checkerSessionDone(i) := withClockAndReset(
+        io.ghm_clock(i + GH_GlobalParams.GH_NUM_BIG_CORES).asClock,
+        io.ghm_reset(i + GH_GlobalParams.GH_NUM_BIG_CORES).asAsyncReset) {
+        val receivedEpoch = RegInit(0.U(GH_GlobalParams.GH_SESSION_EPOCH_BITS.W))
+        val receivedActive = RegInit(false.B)
+        val finishSeen = RegInit(false.B)
+        val checkerDone = RegInit(false.B)
+        val ctrl = u_session_ctrl_cdc(i).io.deq.bits
+        val ctrlVersion = ctrl(GH_GlobalParams.GH_SESSION_CTRL_BITS - 1,
+          GH_GlobalParams.GH_SESSION_CTRL_BITS - GH_GlobalParams.GH_SESSION_VERSION_BITS)
+        val ctrlType = ctrl(GH_GlobalParams.GH_SESSION_STATUS_BITS + GH_GlobalParams.GH_SESSION_EPOCH_BITS +
+          GH_GlobalParams.GH_SESSION_TYPE_BITS - 1,
+          GH_GlobalParams.GH_SESSION_STATUS_BITS + GH_GlobalParams.GH_SESSION_EPOCH_BITS)
+        val ctrlEpoch = ctrl(GH_GlobalParams.GH_SESSION_STATUS_BITS + GH_GlobalParams.GH_SESSION_EPOCH_BITS - 1,
+          GH_GlobalParams.GH_SESSION_STATUS_BITS)
+        u_session_ctrl_cdc(i).io.deq.ready := true.B
+        when (u_session_ctrl_cdc(i).io.deq.fire &&
+          ctrlVersion === GH_GlobalParams.GH_SESSION_PROTOCOL_VERSION.U) {
+          when (ctrlType === GH_GlobalParams.GH_SESSION_START.U) {
+            receivedEpoch := ctrlEpoch
+            receivedActive := true.B
+            finishSeen := false.B
+            checkerDone := false.B
+          } .elsewhen (ctrlType === GH_GlobalParams.GH_SESSION_FINISH.U &&
+            receivedActive && ctrlEpoch === receivedEpoch) {
+            finishSeen := true.B
+          }
+        }
+        when (receivedActive && finishSeen && packet_ingress_empty(i)) {
+          checkerDone := true.B
+        }
+        checkerDone
+      }
+
       // Complete checker results cross independently from control pulses. The
       // Rocket side holds valid until ready, so a full queue cannot lose one.
       u_result_cdc(i).io.enq_clock := io.ghm_clock(i+GH_GlobalParams.GH_NUM_BIG_CORES).asClock
@@ -265,13 +470,27 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
       u_result_cdc(i).io.enq.valid := io.checker_result_in(i)(GH_GlobalParams.GH_CHECKER_RESULT_BITS-1)
       u_result_cdc(i).io.enq.bits := io.checker_result_in(i)(resultPayloadBits-1, 0)
       io.checker_result_ready(i) := u_result_cdc(i).io.enq.ready
-      u_result_cdc(i).io.deq.ready := true.B
-      // Release the BOOM-side checker on the exact BOOM-domain edge that
-      // delivers its sequenced PASS/FAIL/CANCELLED result.  This removes any
-      // ordering dependency between the result and the legacy control CDC.
-      checker_result_release(i) := u_result_cdc(i).io.deq.fire
-      io.checker_results_out(i) := Mux(u_result_cdc(i).io.deq.fire,
-        Cat(true.B, u_result_cdc(i).io.deq.bits), 0.U)
+      // Only accept a new result after the previous release has been
+      // observed as cleared in the global BOOM status.  The result payload is
+      // latched before asserting the release request, so the request remains
+      // stable for arbitrary CDC latency and can be retried without loss.
+      u_result_cdc(i).io.deq.ready := !result_release_pending(i)
+      val result_deq_fire = u_result_cdc(i).io.deq.fire
+      when (result_deq_fire) {
+        result_release_pending(i) := true.B
+        result_release_seq(i) := u_result_cdc(i).io.deq.bits(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0)
+        result_release_status(i) := u_result_cdc(i).io.deq.bits(resultPayloadBits - 1,
+          GH_GlobalParams.GH_PACKET_SEQ_BITS)
+      }.elsewhen (result_release_pending(i) &&
+        !io.ic_status_bigcore.reduce(_|_)(i + GH_GlobalParams.GH_NUM_BIG_CORES)) {
+        result_release_pending(i) := false.B
+      }
+      // This level is consumed by the BOOM-side R_IC.  It remains asserted
+      // until ic_status is observed low, making the release idempotent.
+      checker_result_release(i) := result_release_pending(i) || result_deq_fire
+      io.checker_results_out(i) := Mux(result_release_pending(i),
+        Cat(true.B, result_release_status(i), result_release_seq(i)),
+        Mux(result_deq_fire, Cat(true.B, u_result_cdc(i).io.deq.bits), 0.U))
     }
     dontTouch(l_wctrl)
     dontTouch(b_wctrl)
@@ -286,8 +505,8 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
     // val cdc_if_big_complete                        = WireInit(VecInit(b_rctrl.map{i=>i(8)} ))   //只采样高信号 not uesd
     
     val cdc_icsl_cnt                               = l_rctrl.map{i=>i(21,6)}
-    val cdc_filter_empty                           = l_rctrl.map{i=>i(5)} //只采样高信号
-    val cdc_ghm_status                             = l_rctrl.map{i=>i(4,0)} //3个周期一采样
+    val cdc_filter_empty                           = l_rctrl.map{i=>i(5)} //旧诊断控制字段
+    val cdc_ghm_status                             = l_rctrl.map{i=>i(4,0)} //旧诊断控制字段
     // val cdc_icsl_ack                               = l_rctrl.map{i=>i(6)}//只采样高信号
     // val cdc_big_complete_ack                       = WireInit(VecInit(l_rctrl.map{i=>i(7)}))//只采样高信号 not used
     
@@ -323,11 +542,13 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
     dontTouch(if_cdc_empty)
     dontTouch(cdc_busy)
     // dontTouch(if_no_inflight_packets)
-    val zeros_59bit                                = WireInit(0.U(59.W))
-    //这里也需要CDC，可以考虑将这个ghm_status_outs存入CDC FIFO //to little 
+    val zeros_30bit                                = WireInit(0.U(30.W))
+    // GHE 只消费稳定的完成电平。START 清除接收端粘滞状态，FINISH 与
+    // 数据 CDC 排空共同置位该电平；不再让软件依赖 FIFO 出队的单周期脉冲。
     for(i <- 0 to params.number_of_little_cores - 1) {
       io.ghm_packet_outs(i)                       := packet_out_wires(i)
-      io.ghm_status_outs(i)                       := Mux(if_no_inflight_packets(i)===1.U, Cat(zeros_59bit, cdc_ghm_status(i)), 1.U)
+      io.ghm_status_outs(i)                       := Mux(checkerSessionDone(i),
+        Cat(zeros_30bit, GH_GlobalParams.GH_SESSION_FINISH.U(2.W)), 0.U)
       // io.ghm_big_complete(i)                      := cdc_big_complete_ack(i)
     }
 

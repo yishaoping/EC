@@ -22,6 +22,9 @@ class R_LSLIO(params: R_LSLParams) extends Bundle {
 
 
   val cdc_ready = Output(Bool())
+  val cdc_ready_mem = Output(Bool())
+  val cdc_ready_csr = Output(Bool())
+  val cdc_ready_rocc = Output(Bool())
 
 
   val req_ready = Output(Bool())
@@ -50,6 +53,7 @@ class R_LSLIO(params: R_LSLParams) extends Bundle {
   val resp_data_rocc = Output(UInt(params.xLen.W))
   val if_empty = Output(Bool())
   val lsl_highwatermark = Output(Bool())
+  val ingress_overflow = Output(Bool())
   // val resp_replay_csr = Output(UInt(1.W))
   val st_deq = Output(Bool())
   val ld_deq = Output(Bool())
@@ -75,6 +79,7 @@ ENQ logic
   //这里打了一拍
   val enq_data                = RegInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U(fifowidth.W)))
   val enq_valid               = RegInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U(false.B)))
+  val lsl_enq_overflow        = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
 
   for(i<- 0 until GH_GlobalParams.GH_TOTAL_PACKETS){
     enq_data(i)  := Cat(io.m_st_valid(i),io.m_ld_valid(i),io.m_ldst_data(i), io.m_ldst_addr(i))
@@ -94,6 +99,8 @@ ENQ logic
     val wdata  = Mux1H(enq_OH, enq_data) 
     u_channel(i).io.enq_valid                   := enq_OH.reduce(_|_)//
     u_channel(i).io.enq_bits                    := wdata
+    lsl_enq_overflow(i)                         := u_channel(i).io.enq_valid &&
+                                                   !u_channel(i).io.enq_ready
   }
 
 /*
@@ -112,12 +119,15 @@ DEQ logic
   val out_packet              = WireInit(Mux1H(RegNext(deq_valid), deq_data))
   val lsl_nearly_full         = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
   val lsl_highwatermark       = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
+  val lsl_nonempty            = VecInit(lsl_empty.map(e => !e))
+  val lsl_deq_bank            = Mux(!lsl_empty(lsl_deq_ptr), lsl_deq_ptr,
+                                    PriorityEncoder(lsl_nonempty.asUInt))
   dontTouch(deq_data)
   dontTouch(deq_valid)
   dontTouch(out_packet)
   // dontTouch(deq_OH)
   for (i <- 0 to GH_GlobalParams.GH_TOTAL_PACKETS - 1) {
-    deq_valid(i)                               := lsl_deq_ptr === i.U && io.req_valid && !u_channel(i).io.empty && !io.req_kill
+    deq_valid(i)                               := lsl_deq_bank === i.U && io.req_valid && !u_channel(i).io.empty && !io.req_kill
     u_channel(i).io.deq_ready                  := deq_valid(i)
     deq_data(i)                                := u_channel(i).io.deq_bits
     lsl_empty(i)                               := u_channel(i).io.empty
@@ -126,11 +136,11 @@ DEQ logic
   }
 
   when(deq_valid.reduce(_|_)){
-    lsl_deq_ptr := Mux(lsl_deq_ptr + 1.U>=GH_GlobalParams.GH_TOTAL_PACKETS.U,lsl_deq_ptr+1.U-GH_GlobalParams.GH_TOTAL_PACKETS.U,lsl_deq_ptr + 1.U)
+    lsl_deq_ptr := Mux(lsl_deq_bank + 1.U>=GH_GlobalParams.GH_TOTAL_PACKETS.U,lsl_deq_bank+1.U-GH_GlobalParams.GH_TOTAL_PACKETS.U,lsl_deq_bank + 1.U)
   }
 
   resp_kill_reg              := io.req_kill // already in the replay procedure.... 
-  val if_lsl_empty            = lsl_empty(lsl_deq_ptr)
+  val if_lsl_empty            = !lsl_nonempty.reduce(_|_)
   req_valid_reg              := io.req_valid
   resp_valid_reg             := io.req_valid && !if_lsl_empty && !io.req_kill
   resp_tag                   := io.req_tag
@@ -162,6 +172,7 @@ CSR ENQ logic
   //这里打了一拍
   val csr_enq_data                = RegInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U(params.xLen.W)))
   val csr_enq_valid               = RegInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U(false.B)))
+  val csr_enq_overflow            = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
 
   for(i<- 0 until GH_GlobalParams.GH_TOTAL_PACKETS){
     csr_enq_data(i)  := io.m_csr_data(i)
@@ -181,6 +192,8 @@ CSR ENQ logic
     val csr_wdata  = Mux1H(csr_enq_OH, csr_enq_data) 
     u_channel_csr(i).io.enq_valid := csr_enq_OH.reduce(_|_)//
     u_channel_csr(i).io.enq_bits  := csr_wdata
+    csr_enq_overflow(i)           := u_channel_csr(i).io.enq_valid &&
+                                     !u_channel_csr(i).io.enq_ready
   }
 
 /*
@@ -192,12 +205,15 @@ CSR DEQ logic
   val csr_out_packet              = WireInit(Mux1H(csr_deq_valid,csr_deq_data))
   val csr_nearly_full             = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
   val csr_highwatermark           = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
+  val csr_nonempty                = VecInit(csr_lsl_empty.map(e => !e))
+  val csr_deq_bank                = Mux(!csr_lsl_empty(csr_deq_ptr), csr_deq_ptr,
+                                       PriorityEncoder(csr_nonempty.asUInt))
 
   dontTouch(csr_deq_data)
   dontTouch(csr_deq_valid)
   dontTouch(csr_out_packet)
   for (i <- 0 to GH_GlobalParams.GH_TOTAL_PACKETS - 1) {
-    csr_deq_valid(i)                               := csr_deq_ptr===i.U&&io.req_valid_csr & !u_channel_csr(i).io.empty
+    csr_deq_valid(i)                               := csr_deq_bank===i.U&&io.req_valid_csr & !u_channel_csr(i).io.empty
     u_channel_csr(i).io.deq_ready                  := csr_deq_valid(i)
     csr_deq_data(i)                                := u_channel_csr(i).io.deq_bits
     csr_lsl_empty(i)                               := u_channel_csr(i).io.empty
@@ -206,7 +222,7 @@ CSR DEQ logic
   }
 
   when(csr_deq_valid.reduce(_|_)){
-    csr_deq_ptr := Mux(csr_deq_ptr + 1.U>=GH_GlobalParams.GH_TOTAL_PACKETS.U,csr_deq_ptr+1.U-GH_GlobalParams.GH_TOTAL_PACKETS.U,csr_deq_ptr + 1.U)
+    csr_deq_ptr := Mux(csr_deq_bank + 1.U>=GH_GlobalParams.GH_TOTAL_PACKETS.U,csr_deq_bank+1.U-GH_GlobalParams.GH_TOTAL_PACKETS.U,csr_deq_bank + 1.U)
   }
   io.resp_data_csr           := csr_out_packet
 
@@ -217,6 +233,7 @@ ROCC ENQ logic (same pattern as CSR)
   val rocc_deq_ptr                            = RegInit(0.U((log2Ceil(GH_GlobalParams.GH_TOTAL_PACKETS)+1).W))
   val rocc_enq_data                = RegInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U(params.xLen.W)))
   val rocc_enq_valid               = RegInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U(false.B)))
+  val rocc_enq_overflow            = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
 
   for(i<- 0 until GH_GlobalParams.GH_TOTAL_PACKETS){
     rocc_enq_data(i)  := io.m_rocc_data(i)
@@ -236,6 +253,8 @@ ROCC ENQ logic (same pattern as CSR)
     val rocc_wdata  = Mux1H(rocc_enq_OH, rocc_enq_data) 
     u_channel_rocc(i).io.enq_valid := rocc_enq_OH.reduce(_|_)
     u_channel_rocc(i).io.enq_bits  := rocc_wdata
+    rocc_enq_overflow(i)           := u_channel_rocc(i).io.enq_valid &&
+                                      !u_channel_rocc(i).io.enq_ready
   }
 
 /*
@@ -247,9 +266,12 @@ ROCC DEQ logic
   val rocc_out_packet              = WireInit(Mux1H(rocc_deq_valid,rocc_deq_data))
   val rocc_nearly_full             = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
   val rocc_highwatermark           = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
+  val rocc_nonempty                = VecInit(rocc_lsl_empty.map(e => !e))
+  val rocc_deq_bank                = Mux(!rocc_lsl_empty(rocc_deq_ptr), rocc_deq_ptr,
+                                        PriorityEncoder(rocc_nonempty.asUInt))
 
   for (i <- 0 to GH_GlobalParams.GH_TOTAL_PACKETS - 1) {
-    rocc_deq_valid(i)                               := rocc_deq_ptr===i.U&&io.req_valid_rocc & !u_channel_rocc(i).io.empty
+    rocc_deq_valid(i)                               := rocc_deq_bank===i.U&&io.req_valid_rocc & !u_channel_rocc(i).io.empty
     u_channel_rocc(i).io.deq_ready                  := rocc_deq_valid(i)
     rocc_deq_data(i)                                := u_channel_rocc(i).io.deq_bits
     rocc_lsl_empty(i)                               := u_channel_rocc(i).io.empty
@@ -258,17 +280,24 @@ ROCC DEQ logic
   }
 
   when(rocc_deq_valid.reduce(_|_)){
-    rocc_deq_ptr := Mux(rocc_deq_ptr + 1.U>=GH_GlobalParams.GH_TOTAL_PACKETS.U,rocc_deq_ptr+1.U-GH_GlobalParams.GH_TOTAL_PACKETS.U,rocc_deq_ptr + 1.U)
+    rocc_deq_ptr := Mux(rocc_deq_bank + 1.U>=GH_GlobalParams.GH_TOTAL_PACKETS.U,rocc_deq_bank+1.U-GH_GlobalParams.GH_TOTAL_PACKETS.U,rocc_deq_bank + 1.U)
   }
   io.resp_data_rocc           := rocc_out_packet
-  io.req_ready_rocc           := !rocc_lsl_empty(rocc_deq_ptr)
+  io.req_ready_rocc           := rocc_nonempty.reduce(_|_)
 
 
   //之前有数据来过?
 
-  io.cdc_ready               :=(!io.near_full )
+  io.cdc_ready_mem           := !lsl_nearly_full.reduce(_|_)
+  io.cdc_ready_csr           := !csr_nearly_full.reduce(_|_)
+  io.cdc_ready_rocc          := !rocc_nearly_full.reduce(_|_)
+  io.cdc_ready               := io.cdc_ready_mem && io.cdc_ready_csr &&
+                                io.cdc_ready_rocc
   io.near_full               := lsl_nearly_full.reduce(_|_)|csr_nearly_full.reduce(_|_)|rocc_nearly_full.reduce(_|_)
-  io.req_ready_csr           := !csr_lsl_empty(csr_deq_ptr)
+  io.req_ready_csr           := csr_nonempty.reduce(_|_)
   io.if_empty                := csr_lsl_empty.reduce(_&_)&lsl_empty.reduce(_&_)&rocc_lsl_empty.reduce(_&_)
   io.lsl_highwatermark       := lsl_highwatermark.reduce(_|_)|csr_highwatermark.reduce(_|_)|rocc_highwatermark.reduce(_|_)
+  io.ingress_overflow        := lsl_enq_overflow.reduce(_|_) ||
+                                csr_enq_overflow.reduce(_|_) ||
+                                rocc_enq_overflow.reduce(_|_)
 }

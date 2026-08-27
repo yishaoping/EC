@@ -42,6 +42,18 @@ class R_ICSLIO(params: R_ICSLParams) extends Bundle {
   val if_rh_cp_pc                                = Output(UInt(1.W))
   val if_check_completed                         = Input(UInt(1.W))
   val if_check_cancelled                         = Input(Bool())
+  // Sticky execution completion is separate from the one-cycle package-tail
+  // notification.  RocketCore uses it to keep result creation ordered with
+  // the instruction stream without making BOOM release depend on local reset.
+  val package_exec_done                          = Output(Bool())
+  // Indicates that this FSM can accept a new package after local cleanup.
+  val cleanup_done                               = Output(Bool())
+  // Package storage can be clean while an architectural trap or a held return
+  // is still outstanding.  New package admission must use context_idle rather
+  // than cleanup_done so execution contexts cannot leak across packages.
+  val context_idle                               = Output(Bool())
+  val return_pending                             = Output(Bool())
+  val trap_depth                                 = Output(UInt(4.W))
   val icsl_status                                = Output(UInt(2.W))
   val debug_sl_counter                           = Output(UInt(params.width_of_ic.W))
   val core_trace                                 = Input(UInt(1.W))
@@ -98,8 +110,12 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   val if_overtaking_priv                         = RegInit(0.U(1.W))
   val if_ret_special_pc                          = RegInit(0.U(1.W))
 
-  val self_xcpt_flag                             = RegInit(0.U(3.W))
-  val self_eret_flag                             = RegInit(0.U(3.W))
+  // Keep exception context orthogonal to package progress.  In particular, an
+  // interrupt in postchecking resumes postchecking after the matching xRET;
+  // it must never fall through to the management PC while the trap is live.
+  val trap_depth                                 = RegInit(0.U(4.W))
+  val trap_depth_overflow                        = RegInit(false.B)
+  val resume_state                               = RegInit(fsm_nonchecking)
 
   val if_rh_cp_pc                                = WireInit(0.U(1.W))
 
@@ -110,12 +126,16 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   val package_completion_seen                     = RegInit(false.B)
   val package_completion_ready                    = io.if_check_completed.asBool ||
                                                     package_completion_seen
+  val package_exec_done_seen                      = RegInit(false.B)
   val privileged_return_issued                    = RegInit(false.B)
+  val cancellation_return_pending                 = RegInit(false.B)
   val if_completion                              = Mux((io.if_correct_process.asBool && (fsm_state === fsm_checking) && ((sl_counter>= (ic_counter_shadow+1.U)) || (io.new_commit.asBool && ((sl_counter + 1.U) >= (ic_counter_shadow + 1.U)))) && ic_counter_done.asBool), true.B, false.B)
   val if_completion_priv                         = Mux((io.if_correct_process.asBool && (fsm_state === fsm_checking_priv) && ((sl_counter>= (ic_counter_shadow)) || (io.new_commit.asBool && ((sl_counter + 1.U) >= (ic_counter_shadow)))) && ic_counter_done.asBool), true.B, false.B)
   // val if_slow_completion                         = Mux((io.if_correct_process.asBool && (sl_counter >= ic_counter_shadow) && ic_counter_done.asBool), true.B, false.B)
   val if_just_overtaking                         = Mux((io.if_correct_process.asBool && io.new_commit.asBool && ((sl_counter + 1.U) >= ic_counter_shadow + 1.U) && (fsm_state === fsm_checking)), 1.U, 0.U)
   val if_just_overtaking_priv                    = Mux((io.if_correct_process.asBool && io.new_commit.asBool && ((sl_counter + 1.U) >= ic_counter_shadow) && (fsm_state === fsm_checking_priv)), 1.U, 0.U)
+  val instruction_completion                     = (if_completion || if_completion_priv) &&
+                                                    !io.something_inflight
 
   
 
@@ -128,8 +148,9 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   dontTouch(if_completion_priv)
   switch (fsm_state) {
     is (fsm_reset) {
-      self_xcpt_flag                            := 0.U
-      self_eret_flag                            := 0.U
+      trap_depth                                := 0.U
+      trap_depth_overflow                       := false.B
+      resume_state                              := fsm_nonchecking
       sl_counter                                := 0.U
       clear_ic_status                           := 1.U
       icsl_checkermode                          := 0.U
@@ -138,8 +159,6 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
       fsm_state                                 := fsm_nonchecking
     }
     is (fsm_nonchecking) {
-      self_xcpt_flag                            := 0.U
-      self_eret_flag                            := 0.U
       sl_counter                                := sl_counter
       clear_ic_status                           := 0.U
       icsl_checkermode                          := 0.U
@@ -149,25 +168,33 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
     }
     //并未对lsl满作出处理
     is (fsm_checking){
-      self_xcpt_flag                            := 0.U
-      self_eret_flag                            := 0.U
       sl_counter                                := Mux(io.if_correct_process.asBool && io.new_commit.asBool, sl_counter + 1.U, sl_counter)
       clear_ic_status                           := 0.U
       icsl_checkermode                          := Mux(io.if_correct_process.asBool, 1.U, 0.U)
       icsl_checkerpriv_mode                     := 0.U
       if_rh_cp_pc                               := 0.U
-      fsm_state                                 := Mux(io.self_xcpt, fsm_self_xcpt, Mux(if_completion && !io.something_inflight, fsm_postchecking, fsm_checking))
+      when (io.self_xcpt) {
+        trap_depth                              := 1.U
+        resume_state                            := fsm_checking
+        fsm_state                               := fsm_self_xcpt
+      }.elsewhen (if_completion && !io.something_inflight) {
+        fsm_state                               := fsm_postchecking
+      }
     }
     //进行高特权级检测
     is (fsm_checking_priv){
-      self_xcpt_flag                            := 0.U
-      self_eret_flag                            := 0.U
       sl_counter                                := Mux(io.if_correct_process.asBool && io.new_commit.asBool, sl_counter + 1.U, sl_counter)
       clear_ic_status                           := 0.U
       icsl_checkermode                          := 0.U
       icsl_checkerpriv_mode                     := Mux(io.if_correct_process.asBool, 1.U, 0.U)
       if_rh_cp_pc                               := 0.U
-      fsm_state                                 := Mux(io.self_xcpt, fsm_self_xcpt_priv, Mux(if_completion_priv && !io.something_inflight, fsm_postchecking_priv, fsm_checking_priv))
+      when (io.self_xcpt) {
+        trap_depth                              := 1.U
+        resume_state                            := fsm_checking_priv
+        fsm_state                               := fsm_self_xcpt_priv
+      }.elsewhen (if_completion_priv && !io.something_inflight) {
+        fsm_state                               := fsm_postchecking_priv
+      }
     }
     // //cdc 真空期
     // is (fsm_cdc_clear){
@@ -179,70 +206,142 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
     //   fsm_state                                 := Mux(if_completion, fsm_postchecking, fsm_cdc_clear)//错误的状态转换
     // }
     is (fsm_self_xcpt){
-      self_xcpt_flag                            := Mux(io.self_xcpt, self_xcpt_flag + 1.U, self_xcpt_flag)
-      self_eret_flag                            := Mux(io.self_ret, self_eret_flag + 1.U, self_eret_flag)
       sl_counter                                := sl_counter
       clear_ic_status                           := 0.U
       icsl_checkermode                          := 0.U
       icsl_checkerpriv_mode                     := 0.U
       if_rh_cp_pc                               := 0.U
-      fsm_state                                 := Mux(io.self_ret && (self_xcpt_flag === self_eret_flag), fsm_checking, fsm_self_xcpt)
+      when (io.self_xcpt) {
+        when (trap_depth.andR) {
+          trap_depth_overflow                   := true.B
+        }.otherwise {
+          trap_depth                            := trap_depth + 1.U
+        }
+      }.elsewhen (io.self_ret && trap_depth =/= 0.U && !trap_depth_overflow) {
+        when (trap_depth === 1.U) {
+          trap_depth                            := 0.U
+          fsm_state                             := resume_state
+        }.otherwise {
+          trap_depth                            := trap_depth - 1.U
+        }
+      }
     }
     is (fsm_self_xcpt_priv){
-      self_xcpt_flag                            := Mux(io.self_xcpt, self_xcpt_flag + 1.U, self_xcpt_flag)
-      self_eret_flag                            := Mux(io.self_ret, self_eret_flag + 1.U, self_eret_flag)
       sl_counter                                := sl_counter
       clear_ic_status                           := 0.U
       icsl_checkermode                          := 0.U
       icsl_checkerpriv_mode                     := 0.U
       if_rh_cp_pc                               := 0.U
-      fsm_state                                 := Mux(io.self_ret && (self_xcpt_flag === self_eret_flag), fsm_checking_priv, fsm_self_xcpt_priv)
+      when (io.self_xcpt) {
+        when (trap_depth.andR) {
+          trap_depth_overflow                   := true.B
+        }.otherwise {
+          trap_depth                            := trap_depth + 1.U
+        }
+      }.elsewhen (io.self_ret && trap_depth =/= 0.U && !trap_depth_overflow) {
+        when (trap_depth === 1.U) {
+          trap_depth                            := 0.U
+          fsm_state                             := resume_state
+        }.otherwise {
+          trap_depth                            := trap_depth - 1.U
+        }
+      }
     }
+    // 后检查必须持续冻结 checker，直到完整包校验和返回重定向均已完成。
+    // RSUSL 会在该状态逐项读取实时 ARF；若此处提前退出 checker mode，
+    // 管理软件可能改写寄存器，导致同一 ECP 出现伪失配。
     is (fsm_postchecking){//post check阶段会去将流水线指令执行完成，然后去return
-      self_xcpt_flag                            := 0.U
-      self_eret_flag                            := 0.U
       sl_counter                                := Mux(package_completion_ready, 0.U, sl_counter)
       clear_ic_status                           := 0.U
-      icsl_checkermode                          := Mux(io.if_correct_process.asBool, 1.U, 0.U)
+      icsl_checkermode                          := 1.U
       icsl_checkerpriv_mode                     := 0.U
-      // Both package types use package_completion_ready as their terminal
-      // predicate. The remaining terms are normal-path redirect guards.
-      if_rh_cp_pc                               := io.if_correct_process.asBool &&
-                                                   !io.self_xcpt.asBool &&
+      // 完成事件是退出冻结区的唯一授权。不能再由 if_correct_process 门控：
+      // checker 被冻结后该信号可能为 0，否则会永远到不了 pc_special。
+      if_rh_cp_pc                               := !io.self_xcpt.asBool &&
+                                                   !io.excpt_mode && trap_depth === 0.U &&
                                                    package_completion_ready
-      fsm_state                                 := Mux(io.returned_to_special_address_valid.asBool, fsm_reset, fsm_postchecking)
+      when (io.self_xcpt) {
+        trap_depth                              := 1.U
+        resume_state                            := fsm_postchecking
+        fsm_state                               := fsm_self_xcpt
+      }.elsewhen (io.returned_to_special_address_valid.asBool) {
+        fsm_state                               := fsm_reset
+      }
     }
     is(fsm_postchecking_priv){
-      self_xcpt_flag                            := 0.U
-      self_eret_flag                            := 0.U
       sl_counter                                := Mux(package_completion_ready, 0.U, sl_counter)
       clear_ic_status                           := 0.U
+      // 特权检查使用独立模式，但同样必须覆盖包尾校验至返回完成。
       icsl_checkermode                          := 0.U
-      icsl_checkerpriv_mode                     := 0.U
-      if_rh_cp_pc                               := package_completion_ready.asUInt
-      fsm_state                                 := Mux(io.returned_to_special_address_valid.asBool, fsm_reset, fsm_postchecking_priv)
+      icsl_checkerpriv_mode                     := 1.U
+      if_rh_cp_pc                               := !io.self_xcpt && !io.excpt_mode &&
+                                                   trap_depth === 0.U && package_completion_ready
+      when (io.self_xcpt) {
+        trap_depth                              := 1.U
+        resume_state                            := fsm_postchecking_priv
+        fsm_state                               := fsm_self_xcpt_priv
+      }.elsewhen (io.returned_to_special_address_valid.asBool) {
+        fsm_state                               := fsm_reset
+      }
     }
   }
 
-  // A newer sequenced package supersedes an unfinished one.  Reset the local
-  // checker FSM so the cancelled result can cross the result CDC and release
-  // the BOOM ownership bit; otherwise postchecking would wait forever for the
-  // old package's completion pulse.
-  when (io.if_check_cancelled) {
-    fsm_state                                 := fsm_reset
-    sl_counter                                := 0.U
-    if_rh_cp_pc                               := 0.U
-  }
+  // A bounded package failure releases BOOM through the independent result
+  // CDC, but an executing checker must still return to its management PC.
+  // If a trap is live, resume into postchecking after the matching xRET and
+  // only then request the special-PC redirect.
   val package_start = io.icsl_run.asBool || io.if_check_privrun
-  when (fsm_state === fsm_reset || io.if_check_cancelled ||
+  val cancel_privileged = fsm_state === fsm_checking_priv ||
+    fsm_state === fsm_self_xcpt_priv || fsm_state === fsm_postchecking_priv ||
+    resume_state === fsm_checking_priv || resume_state === fsm_postchecking_priv
+  when (io.if_check_cancelled) {
+    sl_counter                                := 0.U
+    cancellation_return_pending              := true.B
+    resume_state                              := fsm_nonchecking
+    if_rh_cp_pc                               := 0.U
+    when (fsm_state === fsm_reset || fsm_state === fsm_nonchecking) {
+      fsm_state                               := fsm_reset
+      cancellation_return_pending            := false.B
+      trap_depth                              := 0.U
+      trap_depth_overflow                     := false.B
+    }.elsewhen (io.self_xcpt || io.excpt_mode || trap_depth =/= 0.U) {
+      when (trap_depth === 0.U) {
+        trap_depth                            := 1.U
+      }
+      resume_state                            := Mux(cancel_privileged,
+        fsm_postchecking_priv, fsm_postchecking)
+      fsm_state                               := Mux(cancel_privileged,
+        fsm_self_xcpt_priv, fsm_self_xcpt)
+    }.otherwise {
+      fsm_state                               := Mux(cancel_privileged,
+        fsm_postchecking_priv, fsm_postchecking)
+    }
+  }.elsewhen (io.returned_to_special_address_valid.asBool ||
+    fsm_state === fsm_reset) {
+    cancellation_return_pending              := false.B
+  }
+  when (io.if_check_cancelled &&
+    fsm_state =/= fsm_reset && fsm_state =/= fsm_nonchecking) {
+    package_completion_seen                   := true.B
+  }.elsewhen (fsm_state === fsm_reset ||
     (fsm_state === fsm_nonchecking && package_start)) {
     package_completion_seen                   := false.B
   }.elsewhen (io.if_check_completed.asBool && fsm_state =/= fsm_nonchecking) {
     package_completion_seen                   := true.B
   }
-  val privileged_return_ready = io.if_correct_process.asBool &&
+  when (fsm_state === fsm_reset ||
+    (fsm_state === fsm_nonchecking && package_start)) {
+    package_exec_done_seen                    := false.B
+  }.elsewhen (instruction_completion) {
+    package_exec_done_seen                    := true.B
+  }
+  // 特权返回同样只依赖完整包尾。if_correct_process/excpt_mode 在冻结期间
+  // 可能保持低/高电平，不能把它们作为返回握手的必要条件，否则会造成
+  // checker 资源和 BOOM ic_status 永久占用。
+  val privileged_return_ready =
     fsm_state === fsm_postchecking_priv && package_completion_ready &&
-    !io.returned_to_special_address_valid.asBool && !io.excpt_mode
+    !io.self_xcpt && !io.excpt_mode && trap_depth === 0.U &&
+    !io.returned_to_special_address_valid.asBool
   when (fsm_state === fsm_reset || io.if_check_cancelled ||
     (fsm_state === fsm_nonchecking && package_start)) {
     privileged_return_issued                  := false.B
@@ -268,6 +367,15 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   }
 
   io.if_check_done := check_done
+  io.package_exec_done := package_exec_done_seen
+  io.cleanup_done := fsm_state === fsm_reset || fsm_state === fsm_nonchecking
+  io.return_pending :=
+    (fsm_state === fsm_postchecking || fsm_state === fsm_postchecking_priv) &&
+      package_completion_ready && !io.returned_to_special_address_valid.asBool ||
+      cancellation_return_pending
+  io.context_idle := io.cleanup_done && !io.excpt_mode && trap_depth === 0.U &&
+    !trap_depth_overflow && !io.return_pending
+  io.trap_depth := trap_depth
   // A privileged return changes the architectural register state.  Issue it
   // only after ARF, CSR, LSL and packet ingress have reached the common package
   // tail, and hold it to one pulse while the redirect is taking effect.

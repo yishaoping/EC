@@ -52,6 +52,10 @@ class R_RSUSLIO(params: R_RSUSLParams) extends Bundle {
   val cdc_ready = Output(UInt(1.W))
 
   val do_cp_check = Input(UInt(1.W))
+  // ECP tail has reached the checker. This is independent of the ICSL
+  // completion notification and allows RocketCore to retry a lost
+  // if_check_done boundary without exposing the internal RSU state.
+  val cp_check_ready = Output(Bool())
   val if_cp_check_completed = Output(UInt(1.W))
   val check_error = Output(Bool())
   val core_arfs_in = Input(Vec(params.numARFS, UInt(params.xLen.W)))
@@ -76,6 +80,7 @@ trait HasR_RSUSLIO extends BaseModule {
 class R_RSUSL(val params: R_RSUSLParams) extends Module with HasR_RSUSLIO {
   // Revisit: move it to the instruction counter
   val rsu_status                                  = RegInit(0.U(2.W))
+  val cp_check_ready_reg                          = RegInit(false.B)
   val if_check_completed                          = WireInit(0.U(1.W))
 
   /* Loading snapshot from RSU Master */
@@ -233,6 +238,17 @@ class R_RSUSL(val params: R_RSUSLParams) extends Module with HasR_RSUSLIO {
     apply_counter                                := apply_counter
   }
 
+  // Track the ECP stream boundary separately from rsu_status. The latter is
+  // also exposed as a software status and can remain at 3 across a checker
+  // reset; a new package must first observe its own ECP index zero before the
+  // retry request is allowed again.
+  when (io.clear_ic_status.asBool ||
+    (packet_valid_ECP === 1.U && packet_index_ECP === 0.U)) {
+    cp_check_ready_reg := false.B
+  }.elsewhen (packet_valid_ECP === 1.U && packet_index_ECP === 0x20.U && !has_ECP) {
+    cp_check_ready_reg := true.B
+  }
+
   val arfs_out_printf                             = Mux(((apply_snapshot_memdelay === 1.U) && (apply_counter_memdelay =/= 0x20.U)), arf_data, 0.U)
   val arfs_out_valid_printf                       = Mux(((apply_snapshot_memdelay === 1.U) && (apply_counter_memdelay =/= 0x20.U)), 1.U, 0.U)
   val arfs_out_idx                                = Mux(((apply_snapshot_memdelay === 1.U) && (apply_counter_memdelay =/= 0x20.U)), apply_counter_memdelay, 0.U)
@@ -271,6 +287,7 @@ class R_RSUSL(val params: R_RSUSLParams) extends Module with HasR_RSUSLIO {
   io.cdc_ready                                   := packet_valid | packet_valid_ECP
 
   io.rsu_status                                  := Mux(rsu_status === 0.U, 0.U, Mux(rsu_status === 1.U, 1.U, Mux(rsu_status === 3.U, Mux(io.check_done === 0.U, 1.U, 3.U), rsu_status)))
+  io.cp_check_ready                              := cp_check_ready_reg
 
   // This is wrong, which is just for reducing the size of the design
   
@@ -299,6 +316,12 @@ class R_RSUSL(val params: R_RSUSLParams) extends Module with HasR_RSUSLIO {
 
   when (!do_check.asBool) {
     do_check                                     := Mux(io.do_cp_check.asBool && !if_check_completed.asBool, 1.U, 0.U)
+    when (io.do_cp_check.asBool && !if_check_completed.asBool) {
+      // Consume the retry token once the compare engine accepts it. Keep the
+      // token one-shot until the next ECP tail, otherwise a level retry would
+      // restart the 32-entry compare after completion.
+      cp_check_ready_reg                       := false.B
+    }
     // checking_counter                             := Mux(io.clear_ic_status.asBool, 0.U, checking_counter)
     checking_counter                             := Mux(if_check_completed.asBool, 0.U, checking_counter)
   } .otherwise {

@@ -143,3 +143,36 @@ non-zero `pending` count as an invalid measurement, rather than interpreting
 the partial latency sum as a completed sample.  This is a measurement-policy
 choice, not a BOOM checker-release deadlock: BOOM `ic_status` is released by
 the result CDC dequeue independently of the statistics bitmap.
+
+## 会话控制 CDC 协议
+
+旧实现把 `ghm_status` 放入 BOOM 到 Rocket 的 22 位控制 FIFO，并把
+`deq.fire` 当作 checker 完成通知。该值只存在一个 Rocket 时钟周期；保存的
+波形中 hart1 恰好取到 `0x02`，hart2--4 在该周期未取到，所以软件轮询
+`ghe_checkght_status()` 时会永久等待。该路径没有交付确认，也不能把 FIFO
+出队事件作为跨时钟的完成状态。
+
+当前源代码保留软件和 RoCC ABI：`0x31` 仍表示 START，`0x32` 仍表示
+FINISH，`ghe_go()`、`ghe_initailised()`、`ghe_checkght_status()` 与
+`ghe_release()` 都不需要改动。GHM 另外为每个 checker 使用深度为 4 的
+`AsyncQueue` 传输以下控制消息：
+
+```text
+version[1:0] | type[1:0] | epoch[15:0] | status[4:0]
+```
+
+源端在 BOOM 时钟域把 START 或 FINISH 保存在 pending 寄存器中，直至
+`enq.fire`，故 checker 时钟停止、同步延迟或 FIFO 反压不会吞掉边界消息。
+接收端只在 `deq.fire` 更新本地状态；只有 epoch 与已经收到的 START 相同的
+FINISH 才有效。START 会清除上一次的完成位。收到有效 FINISH 后，checker
+等待本时钟域的 packet/ARF CDC 均为空且同步后的 BOOM producer-empty 为真，
+然后将完成位保持为 `0x02`；下一轮 START 前则为 `0x00`。GHE 同样在收到
+`0x00` 时清除其状态寄存器，避免软件读到陈旧完成结果。
+
+这个完成位仅用于与既有软件 ABI 兼容的统计等待。BOOM 的 checker 资源释放
+仍严格由带 sequence 的结果 CDC 在 BOOM 域 `deq.fire` 触发，不能用
+`ghe_release()` 或会话 FINISH 替代，否则会破坏包结果与资源所有权的顺序。
+
+保存的波形和生成的 RTL 属于旧实现，只能说明旧脉冲丢失问题，不能验证这里的
+新源代码。本文档与本次改动都没有运行仿真或硬件生成；后续验证必须使用重新
+生成且与当前 Scala 源一致的 RTL。

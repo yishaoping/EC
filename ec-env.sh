@@ -89,13 +89,31 @@ done <<EOF
 $ec_env_dump
 EOF
 
+# The Chipyard makefiles use GNU Make's grouped-target (`&:`) syntax, which
+# requires GNU Make 4.3 or newer. Prefer the environment's bundled make over
+# a system make that may be older. Keep Nix's Verilator ahead of Conda's older
+# copy, however; the cache can contain stale Nix store entries, so locate a
+# live one before adjusting PATH.
+ec_conda_bin="$EC_ROOT/chipyard/.conda-env/bin"
+ec_nix_verilator_bin=""
+while IFS= read -r ec_path_entry; do
+    if [ -x "$ec_path_entry/verilator" ] && [[ "$ec_path_entry" == /nix/store/* ]]; then
+        ec_nix_verilator_bin="$ec_path_entry"
+        break
+    fi
+done < <(printf '%s' "$PATH" | tr ':' '\n')
+if [ -x "$ec_conda_bin/make" ]; then
+    PATH="${ec_nix_verilator_bin:+$ec_nix_verilator_bin:}$ec_conda_bin${PATH:+:$PATH}"
+    export PATH
+fi
+
 export EC_ROOT
 export EC_ENV_NAME=EC
 # Not exported: keeps the activation flag local to this shell so every new
 # terminal re-reads the runtime cache and applies the "(EC)" prompt above.
 EC_ENV_ACTIVE=1
 
-unset ec_env_source ec_env_dump ec_var ec_value
+unset ec_env_source ec_env_dump ec_var ec_value ec_conda_bin ec_nix_verilator_bin ec_path_entry
 unset ec_env_cache_dir ec_env_cache
 unset -f ec_env_fail 2>/dev/null || true
 true

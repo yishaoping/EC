@@ -14,7 +14,7 @@ import firrtl.ir._
 import firrtl.options.Dependency
 import firrtl.stage.TransformManager.TransformDependency
 import firrtl.stage.{FirrtlSourceAnnotation, FirrtlStage, Forms, OutputFileAnnotation, RunFirrtlTransformAnnotation}
-import firrtl.transforms.NoDCEAnnotation
+import firrtl.transforms.{NoCircuitDedupAnnotation, NoDCEAnnotation}
 import firrtl.{PrimOps, _}
 import mdf.macrolib.{PolarizedPort, PortPolarity, SRAMCompiler, SRAMGroup, SRAMMacro}
 
@@ -905,6 +905,12 @@ object MacroCompiler extends App {
             RunFirrtlTransformAnnotation(new VerilogEmitter),
             EmitCircuitAnnotation(classOf[VerilogEmitter]),
             NoDCEAnnotation,
+            // Each generated SRAM wrapper has a distinct external module name
+            // (mem_0_ext, mem_1_ext, ...). FIRRTL module deduplication would
+            // collapse identical synflop implementations while leaving the
+            // CIRCT-generated wrappers unchanged, producing unresolved module
+            // references in Verilator.
+            NoCircuitDedupAnnotation,
             FirrtlSourceAnnotation(macroCompiled.circuit.serialize)
           )
         )

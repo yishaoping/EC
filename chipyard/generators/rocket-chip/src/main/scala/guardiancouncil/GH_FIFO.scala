@@ -11,6 +11,7 @@ case class FIFOParams(
 
 class FIFOIO(params: FIFOParams) extends Bundle {
   val enq_valid = Input(Bool())
+  val enq_ready = Output(Bool())
   val full = Output(Bool())
   val enq_bits = Input(UInt(params.width.W))
   val deq_ready= Input(Bool())
@@ -113,6 +114,7 @@ class GH_FIFO(val params: FIFOParams) extends Module with HasFIFOIO {
   
   io.deq_bits                  := memReg(readPtr)
   io.full                      := fullReg
+  io.enq_ready                 := !fullReg
   io.empty                     := emptyReg
   io.num_content               := num_contentReg
   io.debug_fcounter            := debug_fcounter
@@ -192,6 +194,7 @@ class GH_MemFIFO(val params: FIFOParams) extends Module with HasFIFOIO {
   
   io.deq_bits                  := mem.read(readPtr, io.deq_ready)
   io.full                      := fullReg
+  io.enq_ready                 := !fullReg
   io.empty                     := emptyReg
   io.num_content               := num_contentReg
   io.debug_fcounter            := debug_fcounter

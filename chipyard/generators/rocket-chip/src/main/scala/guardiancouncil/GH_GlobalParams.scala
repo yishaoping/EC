@@ -19,6 +19,19 @@ object GH_GlobalParams {
   val GH_CHECKER_STATUS_CANCELLED = 2
   val GH_CHECKER_RESULT_BITS = GH_PACKET_SEQ_BITS + GH_CHECKER_STATUS_BITS + 1
 
+  // BOOM 到 Rocket checker 的会话控制协议。AsyncQueue 的 valid/ready
+  // 是消息交付确认；消息自身带版本、类型和 epoch，接收端只接受当前
+  // epoch 的 FINISH，防止旧会话的尾部控制消息被误用于下一次 workload。
+  val GH_SESSION_PROTOCOL_VERSION = 1
+  val GH_SESSION_VERSION_BITS = 2
+  val GH_SESSION_TYPE_BITS = 2
+  val GH_SESSION_EPOCH_BITS = 16
+  val GH_SESSION_STATUS_BITS = 5
+  val GH_SESSION_START = 1
+  val GH_SESSION_FINISH = 2
+  val GH_SESSION_CTRL_BITS = GH_SESSION_VERSION_BITS + GH_SESSION_TYPE_BITS +
+    GH_SESSION_EPOCH_BITS + GH_SESSION_STATUS_BITS
+
   // Performance control keeps the legacy selector in bits 4:1 and adds
   // explicit measurement-window pulses above it.
   val GH_PERF_CTRL_BITS = 7
