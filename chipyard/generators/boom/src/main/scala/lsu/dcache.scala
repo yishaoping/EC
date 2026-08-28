@@ -450,8 +450,9 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   }.elsewhen (io.traffic_stop) {
     trafficEnabled := false.B
   }
-  val trafficCounting = (trafficEnabled || io.traffic_start) &&
-    !io.traffic_stop && !io.traffic_reset
+  // Include events accepted on the STOP edge. trafficEnabled is cleared by
+  // that edge, so subsequent cycles are outside the measurement window.
+  val trafficCounting = (trafficEnabled || io.traffic_start) && !io.traffic_reset
   val trafficStopPrev = RegNext(io.traffic_stop, false.B)
   val trafficStopPulse = io.traffic_stop && !trafficStopPrev
 
@@ -930,6 +931,11 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val resultFailed = Wire(Vec(io.checker_results.length, Bool()))
   val resultCancelled = Wire(Vec(io.checker_results.length, Bool()))
   val resultStale = Wire(Vec(io.checker_results.length, Bool()))
+  val resultHeldDuplicate = Wire(Vec(io.checker_results.length, Bool()))
+  val resultLevelConsumed = RegInit(VecInit(
+    Seq.fill(io.checker_results.length)(false.B)))
+  val resultLevelPayload = RegInit(VecInit(Seq.fill(io.checker_results.length)(
+    0.U(GH_GlobalParams.GH_CHECKER_RESULT_BITS.W))))
   for (i <- io.checker_results.indices) {
     val result = io.checker_results(i)
     val valid = result(GH_GlobalParams.GH_CHECKER_RESULT_BITS - 1)
@@ -948,6 +954,20 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     resultAccepted(i) := valid && !resultStale(i) && statusKnown && seq =/= 0.U &&
       ((bitmapAllocated(idx) && bitmapSeq(idx) === seq) || allocatedThisCycle) &&
       !bitmapCompleted(idx) && !duplicateThisCycle
+    // A producer may hold one accepted result level until it observes local
+    // release. Only an uninterrupted, bit-identical payload on the same
+    // checker channel is benign; any changed payload remains an error.
+    resultHeldDuplicate(i) := valid && !resultAccepted(i) &&
+      resultLevelConsumed(i) && (result === resultLevelPayload(i))
+    when (io.traffic_reset) {
+      resultLevelConsumed(i) := false.B
+      resultLevelPayload(i) := 0.U
+    }.elsewhen (!valid) {
+      resultLevelConsumed(i) := false.B
+    }.elsewhen (resultAccepted(i)) {
+      resultLevelConsumed(i) := true.B
+      resultLevelPayload(i) := result
+    }
     val pass = status === GH_GlobalParams.GH_CHECKER_STATUS_PASS.U
     resultFailed(i) := resultAccepted(i) &&
       status === GH_GlobalParams.GH_CHECKER_STATUS_FAIL.U
@@ -1091,7 +1111,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       bucketWritebackCycleSum(wbBucketIdx) > (~0.U(64.W) - io.csr_cycle))
   val invalidResultsThisCycle = PopCount(VecInit(io.checker_results.indices.map { i =>
     io.checker_results(i)(GH_GlobalParams.GH_CHECKER_RESULT_BITS - 1) &&
-      !resultAccepted(i) && !resultStale(i)
+      !resultAccepted(i) && !resultStale(i) && !resultHeldDuplicate(i)
   }))
   val acceptedResultsThisCycle = PopCount(resultAccepted)
   val passedResultsThisCycle = PopCount(VecInit(io.checker_results.indices.map { i =>
@@ -1432,11 +1452,19 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val trafficCounterSnapshot = RegInit(VecInit(
     Seq.fill(GH_GlobalParams.GH_TRAFFIC_COUNTERS)(0.U(64.W))))
   val trafficCounterSnapshotValid = RegInit(false.B)
+  val trafficStopCapturePending = RegInit(false.B)
   when (io.traffic_reset || io.traffic_start) {
     trafficCounterSnapshotValid := false.B
+    trafficStopCapturePending := false.B
   }.elsewhen (trafficStopPulse) {
+    // Capture on the following edge so every counter update performed on the
+    // inclusive STOP edge is visible in one coherent snapshot.
+    trafficCounterSnapshotValid := false.B
+    trafficStopCapturePending := true.B
+  }.elsewhen (trafficStopCapturePending) {
     trafficCounterSnapshot := trafficCounterLive
     trafficCounterSnapshotValid := true.B
+    trafficStopCapturePending := false.B
   }
   io.traffic_counter := Mux(trafficCounterSnapshotValid,
     trafficCounterSnapshot, trafficCounterLive)

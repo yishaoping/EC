@@ -97,8 +97,6 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
     // sufficient across clock domains and was the source of the watchdog
     // deadlock seen in the previous protocol.
     val result_release_pending = RegInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
-    val result_release_seq = RegInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))))
-    val result_release_status = RegInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U(GH_GlobalParams.GH_CHECKER_STATUS_BITS.W))))
     // ghm_status_in(0)(31) is a stable BOOM-domain level.  It remains in the
     // legacy control path for diagnostics; session completion itself uses the
     // acknowledged control protocol below rather than this edge.
@@ -470,17 +468,13 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
       u_result_cdc(i).io.enq.valid := io.checker_result_in(i)(GH_GlobalParams.GH_CHECKER_RESULT_BITS-1)
       u_result_cdc(i).io.enq.bits := io.checker_result_in(i)(resultPayloadBits-1, 0)
       io.checker_result_ready(i) := u_result_cdc(i).io.enq.ready
-      // Only accept a new result after the previous release has been
-      // observed as cleared in the global BOOM status.  The result payload is
-      // latched before asserting the release request, so the request remains
-      // stable for arbitrary CDC latency and can be retried without loss.
+      // Only accept a new result after the previous release has been observed
+      // as cleared in the global BOOM status. The result event is a one-cycle
+      // pulse; resource release is the separate held level below.
       u_result_cdc(i).io.deq.ready := !result_release_pending(i)
       val result_deq_fire = u_result_cdc(i).io.deq.fire
       when (result_deq_fire) {
         result_release_pending(i) := true.B
-        result_release_seq(i) := u_result_cdc(i).io.deq.bits(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0)
-        result_release_status(i) := u_result_cdc(i).io.deq.bits(resultPayloadBits - 1,
-          GH_GlobalParams.GH_PACKET_SEQ_BITS)
       }.elsewhen (result_release_pending(i) &&
         !io.ic_status_bigcore.reduce(_|_)(i + GH_GlobalParams.GH_NUM_BIG_CORES)) {
         result_release_pending(i) := false.B
@@ -488,9 +482,8 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
       // This level is consumed by the BOOM-side R_IC.  It remains asserted
       // until ic_status is observed low, making the release idempotent.
       checker_result_release(i) := result_release_pending(i) || result_deq_fire
-      io.checker_results_out(i) := Mux(result_release_pending(i),
-        Cat(true.B, result_release_status(i), result_release_seq(i)),
-        Mux(result_deq_fire, Cat(true.B, u_result_cdc(i).io.deq.bits), 0.U))
+      io.checker_results_out(i) := Mux(result_deq_fire,
+        Cat(true.B, u_result_cdc(i).io.deq.bits), 0.U)
     }
     dontTouch(l_wctrl)
     dontTouch(b_wctrl)

@@ -46,6 +46,9 @@ class R_ICSLIO(params: R_ICSLParams) extends Bundle {
   // notification.  RocketCore uses it to keep result creation ordered with
   // the instruction stream without making BOOM release depend on local reset.
   val package_exec_done                          = Output(Bool())
+  // The checker has reached a trap-free postchecking boundary. RocketCore
+  // adds register-file writeback quiescence before taking the ARF snapshot.
+  val arch_compare_ready                         = Output(Bool())
   // Indicates that this FSM can accept a new package after local cleanup.
   val cleanup_done                               = Output(Bool())
   // Package storage can be clean while an architectural trap or a held return
@@ -248,8 +251,8 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
       }
     }
     // 后检查必须持续冻结 checker，直到完整包校验和返回重定向均已完成。
-    // RSUSL 会在该状态逐项读取实时 ARF；若此处提前退出 checker mode，
-    // 管理软件可能改写寄存器，导致同一 ECP 出现伪失配。
+    // RSUSL 在该状态取得稳定 ARF 快照；若此处提前退出 checker mode，
+    // 管理软件可能在快照前改写寄存器，导致同一 ECP 出现伪失配。
     is (fsm_postchecking){//post check阶段会去将流水线指令执行完成，然后去return
       sl_counter                                := Mux(package_completion_ready, 0.U, sl_counter)
       clear_ic_status                           := 0.U
@@ -341,7 +344,8 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   val privileged_return_ready =
     fsm_state === fsm_postchecking_priv && package_completion_ready &&
     !io.self_xcpt && !io.excpt_mode && trap_depth === 0.U &&
-    !io.returned_to_special_address_valid.asBool
+    !io.returned_to_special_address_valid.asBool &&
+    !io.if_check_cancelled && !cancellation_return_pending
   when (fsm_state === fsm_reset || io.if_check_cancelled ||
     (fsm_state === fsm_nonchecking && package_start)) {
     privileged_return_issued                  := false.B
@@ -360,7 +364,7 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
 
   
   val check_done = RegInit(false.B)
-  when(io.if_check_completed.asBool){
+  when(io.if_check_completed.asBool || io.if_check_cancelled){
     check_done := false.B
   }.elsewhen(((if_completion && icsl_checkermode.asBool) || (icsl_checkerpriv_mode.asBool && if_completion_priv)) && !io.something_inflight && !(io.returned_to_special_address_valid.asBool)){
     check_done := true.B
@@ -368,6 +372,12 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
 
   io.if_check_done := check_done
   io.package_exec_done := package_exec_done_seen
+  val postchecking = fsm_state === fsm_postchecking ||
+    fsm_state === fsm_postchecking_priv
+  io.arch_compare_ready := postchecking && package_exec_done_seen &&
+    !io.self_xcpt && !io.excpt_mode && trap_depth === 0.U &&
+    !trap_depth_overflow && !io.something_inflight &&
+    !io.returned_to_special_address_valid.asBool
   io.cleanup_done := fsm_state === fsm_reset || fsm_state === fsm_nonchecking
   io.return_pending :=
     (fsm_state === fsm_postchecking || fsm_state === fsm_postchecking_priv) &&
@@ -386,7 +396,11 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   // exec_last_one                                 := Mux((fsm_state===fsm_speed_check),Mux(io.big_complete,true.B,exec_last_one),false.B)
   // dontTouch(exec_last_one)
   // if_ret_special_pc                             := Mux(io.if_check_completed.asBool && icsl_checkermode.asBool, 1.U, 0.U)
-  if_ret_special_pc                             := Mux(if_rh_cp_pc.asBool && icsl_checkermode.asBool, 1.U, 0.U)
+  // Cancellation returns through pc_special without invoking CSR's
+  // synthetic privileged-return path, which would change mstatus.prv/mpp.
+  if_ret_special_pc                             := Mux(if_rh_cp_pc.asBool &&
+                                                     (icsl_checkermode.asBool || cancellation_return_pending),
+                                                     1.U, 0.U)
   icsl_run                                      := io.icsl_run
   
   // io.if_big_complete                            := false.B//(fsm_state===fsm_cdc_clear||fsm_state===fsm_checking)&&(icsl_check_speed)
