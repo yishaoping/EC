@@ -78,7 +78,7 @@ ln -s "$htif_linker_script" "$build_dir/htif.ld"
 sources=(
     "$script_dir/hw/interrupt.c"
     "$script_dir/test.c"
-    "$script_dir/bench/work.c"
+    "$script_dir/Benchmark/gapbs/gapbs_bfs.c"
     "$script_dir/stat/report.c"
     "$script_dir/core/secondary.c"
     "$script_dir/cfg/init.c"

@@ -132,52 +132,7 @@ unverified_dirty_writeback_average_latency_cycles=439.666 average_latency_ns=219
 [Boom-C0]: Test is now completed. 
 
 = gapbs
-[UART] UART0 is here (stdin/stdout).
-R: Checker mask set to 0xf
-R: Initialisation is completed!
-Software interrupt test complete!
-[Boom-C0]: Test is now started: 
-[MEEK_PERF_CFG] big=0 checker=1 interval=5000 checker_limit=2000
-GAPBS BFS: source=0 reached_nodes=13 traversed_edges=53 parent_checksum=99 verified=1
-CPU execution took 2238 cycles
-Boom-Perf: CSR execution-inst = 2400 
-hart0 traffic: store_out=140 store_cache=140 store_uncache=0
-hart0 traffic: load_out=406 load_cache=373 load_uncache=0 load_forward=33
-hart0 traffic: lr_out=0 sc_success=0 sc_fail=0
-hart0 traffic: amo_out=0 amo_cache=0 amo_uncache=0
-hart0 dcache traffic: l1_l2_c_total=36 l1_l2_wb_dirty=29 l1_l2_wb_dirty_verify_required=0
-hart1 traffic: store_out=140 store_cache=140 store_uncache=0
-hart1 traffic: load_out=380 load_cache=380 load_uncache=0 load_forward=0
-hart1 traffic: lr_out=0 sc_success=0 sc_fail=0
-hart1 traffic: amo_out=0 amo_cache=0 amo_uncache=0
-hart2 traffic: store_out=0 store_cache=0 store_uncache=0
-hart2 traffic: load_out=0 load_cache=0 load_uncache=0 load_forward=0
-hart2 traffic: lr_out=0 sc_success=0 sc_fail=0
-hart2 traffic: amo_out=0 amo_cache=0 amo_uncache=0
-hart3 traffic: store_out=0 store_cache=0 store_uncache=0
-hart3 traffic: load_out=0 load_cache=0 load_uncache=0 load_forward=0
-hart3 traffic: lr_out=0 sc_success=0 sc_fail=0
-hart3 traffic: amo_out=0 amo_cache=0 amo_uncache=0
-hart4 traffic: store_out=0 store_cache=0 store_uncache=0
-hart4 traffic: load_out=0 load_cache=0 load_uncache=0 load_forward=0
-hart4 traffic: lr_out=0 sc_success=0 sc_fail=0
-hart4 traffic: amo_out=0 amo_cache=0 amo_uncache=0
-shared dcache traffic: l2_dram_wb_total=2 l2_dram_wb_dirty=2
-hart0 store_uncache timestamp_cycle_sum=0 frequency_hz=200000000 time_sum_ns=0
-hart1 store_uncache timestamp_cycle_sum=0 frequency_hz=100000000 time_sum_ns=0
-hart2 store_uncache timestamp_cycle_sum=0 frequency_hz=100000000 time_sum_ns=0
-hart3 store_uncache timestamp_cycle_sum=0 frequency_hz=100000000 time_sum_ns=0
-hart4 store_uncache timestamp_cycle_sum=0 frequency_hz=100000000 time_sum_ns=0
-store_uncache latency inputs: boom_count=0 checker_count=0 boom_time_sum_ns=0 checker_time_sum_ns=0
-store_uncache average detection latency unavailable: no events
-dirty writeback verification: verified=0 unverified_seen=0 pending=0 resolved=0 other=0
-package verification: allocated=1 completed=1 passed=1 failed=0 cancelled=0 safe_watermark=1 result_dropped=0 arithmetic_overflow=0 stats_valid=1
-unverified dirty writeback latency inputs: safe_cycle_sum=0 writeback_cycle_sum=0 boom_frequency_hz=200000000
-unverified dirty writeback average latency unavailable: no resolved events
-[Boom-C0]: Test is now completed. 
-
-
-
+- 512
 [UART] UART0 is here (stdin/stdout).
 R: Checker mask set to 0xf
 R: Initialisation is completed!
@@ -186,7 +141,6 @@ Software interrupt test complete!
 [MEEK_PERF_CFG] big=0 checker=1 interval=5000 checker_limit=2000
 GAPBS BFS: source=0 reached_nodes=512 traversed_edges=8192 parent_checksum=43439728 verified=1
 CPU execution took 397139 cycles
-package statistics drain incomplete: reason=hard_error allocated=245 completed=245 pending=0 result_dropped=245 writeback_dropped=0 arithmetic_overflow=0 elapsed_cycles=69
 Boom-Perf: CSR execution-inst = 570128 
 hart0 traffic: store_out=45615 store_cache=45568 store_uncache=47
 hart0 traffic: load_out=79988 load_cache=78137 load_uncache=282 load_forward=1569
@@ -218,8 +172,54 @@ hart4 store_uncache timestamp_cycle_sum=1614154 frequency_hz=100000000 time_sum_
 store_uncache latency inputs: boom_count=47 checker_count=47 boom_time_sum_ns=54850070 checker_time_sum_ns=54885470
 store_uncache approx_average_detection_latency_ns=753.191
 dirty writeback verification: verified=212 unverified_seen=293 pending=0 resolved=293 other=0
-package verification: allocated=245 completed=245 passed=245 failed=0 cancelled=0 safe_watermark=245 result_dropped=245 arithmetic_overflow=0 stats_valid=0
+package verification: allocated=245 completed=245 passed=245 failed=0 cancelled=0 safe_watermark=245 result_dropped=0 arithmetic_overflow=0 stats_valid=1
 unverified dirty writeback latency inputs: safe_cycle_sum=30251901 writeback_cycle_sum=28198088 boom_frequency_hz=200000000
-unverified dirty writeback average latency unavailable: statistics are incomplete or invalid
+unverified_dirty_writeback_average_latency_cycles=7009.600 average_latency_ns=35048.003
 [Boom-C0]: Test is now completed. 
+
+- 1024
+[UART] UART0 is here (stdin/stdout).
+R: Checker mask set to 0xf
+R: Initialisation is completed!
+Software interrupt test complete!
+[Boom-C0]: Test is now started: 
+[MEEK_PERF_CFG] big=0 checker=1 interval=5000 checker_limit=2000
+GAPBS BFS: source=0 reached_nodes=1024 traversed_edges=16384 parent_checksum=351572336 verified=1
+CPU execution took 2127149 cycles
+Boom-Perf: CSR execution-inst = 1499780 
+hart0 traffic: store_out=184987 store_cache=184938 store_uncache=49
+hart0 traffic: load_out=175129 load_cache=171752 load_uncache=297 load_forward=3080
+hart0 traffic: lr_out=0 sc_success=0 sc_fail=0
+hart0 traffic: amo_out=0 amo_cache=0 amo_uncache=0
+hart0 dcache traffic: l1_l2_c_total=2383 l1_l2_wb_dirty=2326 l1_l2_wb_dirty_verify_required=1868
+hart1 traffic: store_out=49539 store_cache=49523 store_uncache=16
+hart1 traffic: load_out=44129 load_cache=44030 load_uncache=99 load_forward=0
+hart1 traffic: lr_out=0 sc_success=0 sc_fail=0
+hart1 traffic: amo_out=0 amo_cache=0 amo_uncache=0
+hart2 traffic: store_out=48702 store_cache=48686 store_uncache=16
+hart2 traffic: load_out=44861 load_cache=44765 load_uncache=96 load_forward=0
+hart2 traffic: lr_out=0 sc_success=0 sc_fail=0
+hart2 traffic: amo_out=0 amo_cache=0 amo_uncache=0
+hart3 traffic: store_out=48685 store_cache=48669 store_uncache=16
+hart3 traffic: load_out=44391 load_cache=44295 load_uncache=96 load_forward=0
+hart3 traffic: lr_out=0 sc_success=0 sc_fail=0
+hart3 traffic: amo_out=0 amo_cache=0 amo_uncache=0
+hart4 traffic: store_out=38091 store_cache=38090 store_uncache=1
+hart4 traffic: load_out=42128 load_cache=42122 load_uncache=6 load_forward=0
+hart4 traffic: lr_out=0 sc_success=0 sc_fail=0
+hart4 traffic: amo_out=0 amo_cache=0 amo_uncache=0
+shared dcache traffic: l2_dram_wb_total=856 l2_dram_wb_dirty=856
+hart0 store_uncache timestamp_cycle_sum=17694486 frequency_hz=200000000 time_sum_ns=88472430
+hart1 store_uncache timestamp_cycle_sum=2862957 frequency_hz=100000000 time_sum_ns=28629570
+hart2 store_uncache timestamp_cycle_sum=2971416 frequency_hz=100000000 time_sum_ns=29714160
+hart3 store_uncache timestamp_cycle_sum=2916621 frequency_hz=100000000 time_sum_ns=29166210
+hart4 store_uncache timestamp_cycle_sum=98915 frequency_hz=100000000 time_sum_ns=989150
+store_uncache latency inputs: boom_count=49 checker_count=49 boom_time_sum_ns=88472430 checker_time_sum_ns=88499090
+store_uncache approx_average_detection_latency_ns=544.081
+dirty writeback verification: verified=1173 unverified_seen=695 pending=0 resolved=695 other=0
+package verification: allocated=536 completed=536 passed=536 failed=0 cancelled=0 safe_watermark=536 result_dropped=0 arithmetic_overflow=0 stats_valid=1
+unverified dirty writeback latency inputs: safe_cycle_sum=635752941 writeback_cycle_sum=629540302 boom_frequency_hz=200000000
+unverified_dirty_writeback_average_latency_cycles=8939.048 average_latency_ns=44695.244
+[Boom-C0]: Test is now completed. 
+
 

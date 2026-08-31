@@ -236,62 +236,66 @@ void gapbs_bfs_run(gapbs_bfs_result_t *result)
 #endif
 
 /*
- * 内置图版本：每个节点有 16 条有向边，图在启动时建立双向 CSR 邻接表，
- * 节点 i 指向 (i+1) 到 (i+16) 的模 N 节点。四档规模共用这套图生成与 BFS
- * 逻辑，避免裸机环境依赖文件系统或把大数组压入栈。
+ * 中图版本：512 节点、每节点 16 条有向边，共 8192 条边。图在启动时建立
+ * 双向 CSR 邻接表，节点 i 指向 (i+1) 到 (i+16) 的模 512 节点。该规则无
+ * 重边、无自环且全图连通，既保留 GAPBS direction-optimizing BFS 的两种
+ * 遍历方向，也避免裸机环境依赖文件系统或把大数组压入栈。
  */
+#define GAPBS_NODE_COUNT 512U
 #define GAPBS_DEGREE 16U
+#define GAPBS_EDGE_COUNT (GAPBS_NODE_COUNT * GAPBS_DEGREE)
 #define GAPBS_SOURCE 0U
 #define GAPBS_ALPHA 15U
 #define GAPBS_BETA 18U
 
-static uint32_t out_offset[GAPBS_BFS_MAX_NODE_COUNT + 1U];
-static uint32_t in_offset[GAPBS_BFS_MAX_NODE_COUNT + 1U];
-static uint16_t out_edge[GAPBS_BFS_MAX_NODE_COUNT * GAPBS_DEGREE];
-static uint16_t in_edge[GAPBS_BFS_MAX_NODE_COUNT * GAPBS_DEGREE];
-static int32_t parent[GAPBS_BFS_MAX_NODE_COUNT];
-static uint32_t frontier[GAPBS_BFS_MAX_NODE_COUNT];
-static uint32_t next_frontier[GAPBS_BFS_MAX_NODE_COUNT];
-static uint8_t front_bits[GAPBS_BFS_MAX_NODE_COUNT];
-static uint8_t next_bits[GAPBS_BFS_MAX_NODE_COUNT];
+static uint32_t out_offset[GAPBS_NODE_COUNT + 1];
+static uint32_t in_offset[GAPBS_NODE_COUNT + 1];
+static uint16_t out_edge[GAPBS_EDGE_COUNT];
+static uint16_t in_edge[GAPBS_EDGE_COUNT];
+static int32_t parent[GAPBS_NODE_COUNT];
+static uint32_t frontier[GAPBS_NODE_COUNT];
+static uint32_t next_frontier[GAPBS_NODE_COUNT];
+static uint8_t front_bits[GAPBS_NODE_COUNT];
+static uint8_t next_bits[GAPBS_NODE_COUNT];
 
-static void build_graph(uint32_t node_count)
+static void build_medium_graph(void)
 {
-    for (uint32_t node = 0; node <= node_count; node++) {
+    for (uint32_t node = 0; node <= GAPBS_NODE_COUNT; node++) {
         out_offset[node] = node * GAPBS_DEGREE;
         in_offset[node] = node * GAPBS_DEGREE;
     }
 
-    for (uint32_t node = 0; node < node_count; node++) {
+    for (uint32_t node = 0; node < GAPBS_NODE_COUNT; node++) {
         for (uint32_t degree = 0; degree < GAPBS_DEGREE; degree++) {
             out_edge[out_offset[node] + degree] =
-                (uint16_t)((node + degree + 1U) % node_count);
+                (uint16_t)((node + degree + 1U) % GAPBS_NODE_COUNT);
             in_edge[in_offset[node] + degree] =
-                (uint16_t)((node + node_count - degree - 1U) % node_count);
+                (uint16_t)((node + GAPBS_NODE_COUNT - degree - 1U) %
+                           GAPBS_NODE_COUNT);
         }
     }
 }
 
-static void clear_bits(uint8_t *bits, uint32_t node_count)
+static void clear_bits(uint8_t *bits)
 {
-    for (uint32_t node = 0; node < node_count; node++) {
+    for (uint32_t node = 0; node < GAPBS_NODE_COUNT; node++) {
         bits[node] = 0;
     }
 }
 
-static void copy_bits(uint8_t *dst, const uint8_t *src, uint32_t node_count)
+static void copy_bits(uint8_t *dst, const uint8_t *src)
 {
-    for (uint32_t node = 0; node < node_count; node++) {
+    for (uint32_t node = 0; node < GAPBS_NODE_COUNT; node++) {
         dst[node] = src[node];
     }
 }
 
 static uint32_t bottom_up_step(const uint8_t *current_bits,
-                               uint32_t node_count, uint32_t *next_count)
+                               uint32_t *next_count)
 {
     *next_count = 0;
-    clear_bits(next_bits, node_count);
-    for (uint32_t node = 0; node < node_count; node++) {
+    clear_bits(next_bits);
+    for (uint32_t node = 0; node < GAPBS_NODE_COUNT; node++) {
         if (parent[node] >= 0) {
             continue;
         }
@@ -309,12 +313,11 @@ static uint32_t bottom_up_step(const uint8_t *current_bits,
     return *next_count;
 }
 
-static uint32_t top_down_step(uint32_t frontier_count, uint32_t node_count,
-                              int64_t *scout_count)
+static uint32_t top_down_step(uint32_t frontier_count, int64_t *scout_count)
 {
     uint32_t next_count = 0;
     *scout_count = 0;
-    clear_bits(next_bits, node_count);
+    clear_bits(next_bits);
     for (uint32_t index = 0; index < frontier_count; index++) {
         uint32_t node = frontier[index];
         for (uint32_t edge = out_offset[node]; edge < out_offset[node + 1];
@@ -331,17 +334,18 @@ static uint32_t top_down_step(uint32_t frontier_count, uint32_t node_count,
     return next_count;
 }
 
-static uint32_t verify_result(uint32_t node_count)
+static uint32_t verify_result(void)
 {
     if (parent[GAPBS_SOURCE] != (int32_t)GAPBS_SOURCE) {
         return 0;
     }
-    for (uint32_t node = 1; node < node_count; node++) {
-        if (parent[node] < 0 || (uint32_t)parent[node] >= node_count) {
+    for (uint32_t node = 1; node < GAPBS_NODE_COUNT; node++) {
+        if (parent[node] < 0 || (uint32_t)parent[node] >= GAPBS_NODE_COUNT) {
             return 0;
         }
         uint32_t parent_node = (uint32_t)parent[node];
-        uint32_t delta = (node + node_count - parent_node) % node_count;
+        uint32_t delta = (node + GAPBS_NODE_COUNT - parent_node) %
+            GAPBS_NODE_COUNT;
         if (delta == 0U || delta > GAPBS_DEGREE) {
             return 0;
         }
@@ -349,33 +353,32 @@ static uint32_t verify_result(uint32_t node_count)
     return 1;
 }
 
-static void gapbs_bfs_run_size(gapbs_bfs_result_t *result,
-                               uint32_t node_count)
+void gapbs_bfs_run(gapbs_bfs_result_t *result)
 {
     uint32_t frontier_count = 1;
-    int64_t edges_to_check = (int64_t)node_count * GAPBS_DEGREE;
+    int64_t edges_to_check = GAPBS_EDGE_COUNT;
     int64_t scout_count = GAPBS_DEGREE;
 
-    build_graph(node_count);
-    for (uint32_t node = 0; node < node_count; node++) {
+    build_medium_graph();
+    for (uint32_t node = 0; node < GAPBS_NODE_COUNT; node++) {
         parent[node] = -1;
     }
     parent[GAPBS_SOURCE] = GAPBS_SOURCE;
     frontier[0] = GAPBS_SOURCE;
-    clear_bits(front_bits, node_count);
+    clear_bits(front_bits);
     front_bits[GAPBS_SOURCE] = 1;
 
     while (frontier_count != 0U) {
         if (scout_count > edges_to_check / GAPBS_ALPHA) {
             uint32_t old_count = frontier_count;
             do {
-                bottom_up_step(front_bits, node_count, &frontier_count);
-                copy_bits(front_bits, next_bits, node_count);
+                bottom_up_step(front_bits, &frontier_count);
+                copy_bits(front_bits, next_bits);
                 for (uint32_t index = 0; index < frontier_count; index++) {
                     frontier[index] = next_frontier[index];
                 }
                 if (frontier_count < old_count &&
-                    frontier_count <= node_count / GAPBS_BETA) {
+                    frontier_count <= GAPBS_NODE_COUNT / GAPBS_BETA) {
                     break;
                 }
                 old_count = frontier_count;
@@ -383,12 +386,11 @@ static void gapbs_bfs_run_size(gapbs_bfs_result_t *result,
             scout_count = 1;
         } else {
             edges_to_check -= scout_count;
-            frontier_count =
-                top_down_step(frontier_count, node_count, &scout_count);
+            frontier_count = top_down_step(frontier_count, &scout_count);
             for (uint32_t index = 0; index < frontier_count; index++) {
                 frontier[index] = next_frontier[index];
             }
-            copy_bits(front_bits, next_bits, node_count);
+            copy_bits(front_bits, next_bits);
         }
     }
 
@@ -396,7 +398,7 @@ static void gapbs_bfs_run_size(gapbs_bfs_result_t *result,
     result->reached_nodes = 0;
     result->traversed_edges = 0;
     result->parent_checksum = 0;
-    for (uint32_t node = 0; node < node_count; node++) {
+    for (uint32_t node = 0; node < GAPBS_NODE_COUNT; node++) {
         if (parent[node] >= 0) {
             result->reached_nodes++;
             result->traversed_edges += GAPBS_DEGREE;
@@ -404,35 +406,5 @@ static void gapbs_bfs_run_size(gapbs_bfs_result_t *result,
                 (uint64_t)(node + 1U) * (uint64_t)(parent[node] + 1);
         }
     }
-    result->verified = verify_result(node_count);
-}
-
-void gapbs_bfs_run(gapbs_bfs_result_t *result)
-{
-    gapbs_bfs_run_512(result);
-}
-
-void gapbs_bfs_run_max(gapbs_bfs_result_t *result)
-{
-    gapbs_bfs_run_4096(result);
-}
-
-void gapbs_bfs_run_512(gapbs_bfs_result_t *result)
-{
-    gapbs_bfs_run_size(result, GAPBS_BFS_512_NODE_COUNT);
-}
-
-void gapbs_bfs_run_1024(gapbs_bfs_result_t *result)
-{
-    gapbs_bfs_run_size(result, GAPBS_BFS_1024_NODE_COUNT);
-}
-
-void gapbs_bfs_run_2048(gapbs_bfs_result_t *result)
-{
-    gapbs_bfs_run_size(result, GAPBS_BFS_2048_NODE_COUNT);
-}
-
-void gapbs_bfs_run_4096(gapbs_bfs_result_t *result)
-{
-    gapbs_bfs_run_size(result, GAPBS_BFS_4096_NODE_COUNT);
+    result->verified = verify_result();
 }

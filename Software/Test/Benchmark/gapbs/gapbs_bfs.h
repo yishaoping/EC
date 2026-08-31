@@ -12,7 +12,30 @@ typedef struct {
     uint32_t verified;
 } gapbs_bfs_result_t;
 
-/* 在固定 512 节点、8192 边中图上执行一次方向优化 BFS。 */
+/* 裸机可用的内置 GAPBS 图规模；每个节点固定 16 条有向边。 */
+#define GAPBS_BFS_512_NODE_COUNT 512U
+#define GAPBS_BFS_1024_NODE_COUNT 1024U
+#define GAPBS_BFS_2048_NODE_COUNT 2048U
+#define GAPBS_BFS_4096_NODE_COUNT 4096U
+
+/* 保留原有命名，避免已有调用方失效。 */
+#define GAPBS_BFS_MEDIUM_NODE_COUNT GAPBS_BFS_512_NODE_COUNT
+#define GAPBS_BFS_MAX_NODE_COUNT GAPBS_BFS_4096_NODE_COUNT
+
+/* 执行 512 节点的方向优化 BFS。 */
+void gapbs_bfs_run_512(gapbs_bfs_result_t *result);
+
+/* 执行 1024 节点的方向优化 BFS。 */
+void gapbs_bfs_run_1024(gapbs_bfs_result_t *result);
+
+/* 执行 2048 节点的方向优化 BFS。 */
+void gapbs_bfs_run_2048(gapbs_bfs_result_t *result);
+
+/* 执行 4096 节点的方向优化 BFS。 */
+void gapbs_bfs_run_4096(gapbs_bfs_result_t *result);
+
+/* 兼容旧接口：分别对应 512 和 4096 节点。 */
 void gapbs_bfs_run(gapbs_bfs_result_t *result);
+void gapbs_bfs_run_max(gapbs_bfs_result_t *result);
 
 #endif
