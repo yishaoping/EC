@@ -54,7 +54,7 @@ static void gapbs_bfs(uint64_t hart_id, uint64_t *start_cpu,
 
     *start_cpu = read_cycles();
     (void)hart_id;
-    gapbs_bfs_run_1024(result);
+    gapbs_bfs_run_4096(result);
 
     ROCC_INSTRUCTION_S(1, 0X02, 0x70);
     for (int nop_count = 0; nop_count < 26; nop_count++) {
