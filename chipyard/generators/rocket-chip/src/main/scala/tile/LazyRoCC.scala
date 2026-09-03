@@ -85,7 +85,6 @@ class RoCCCoreIO(implicit p: Parameters) extends CoreBundle()(p) {
   val fi_latency = Input(UInt(64.W))
 
   /* R Features */
-  val t_value_out = Output(UInt(15.W))
   val icctrl_out = Output(UInt(4.W))
   val arf_copy_out = Output(UInt(1.W))
   val rsu_status_in = Input(UInt(2.W))
@@ -183,7 +182,6 @@ trait HasLazyRoCCModule extends CanHavePTWModule
 
       /* R Features */
       cmdRouter.io.icctrl_in := rocc.module.io.icctrl_out
-      cmdRouter.io.t_value_in := rocc.module.io.t_value_out
       cmdRouter.io.s_or_r_in := rocc.module.io.s_or_r_out
       cmdRouter.io.arf_copy_in := rocc.module.io.arf_copy_out
       cmdRouter.io.core_trace_in := rocc.module.io.core_trace_out
@@ -563,8 +561,6 @@ class RoccCommandRouter(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
     /* R Features */
     val icctrl_out = Output(UInt(4.W))
     val icctrl_in = Input(UInt(4.W))
-    val t_value_out = Output(UInt(15.W))
-    val t_value_in = Input(UInt(15.W))
     val arf_copy_out = Output(UInt(1.W))
     val arf_copy_in = Input(UInt(1.W))
     val core_trace_out = Output(UInt(2.W))
@@ -636,7 +632,6 @@ class RoccCommandRouter(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
 
   /* R Features */
   io.icctrl_out := io.icctrl_in
-  io.t_value_out := io.t_value_in
   io.arf_copy_out := io.arf_copy_in
   io.core_trace_out := io.core_trace_in
   io.debug_perf_ctrl_out := io.debug_perf_ctrl_in
@@ -721,8 +716,6 @@ class RoccCommandRouterBoom(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
     /* R Features */
     val icctrl_out = Output(UInt(4.W))
     val icctrl_in = Input(UInt(4.W))
-    val t_value_out = Output(UInt(15.W))
-    val t_value_in = Input(UInt(15.W))
     val arf_copy_out = Output(UInt(1.W))
     val arf_copy_in = Input(UInt(1.W))
     val core_trace_out = Output(UInt(2.W))
@@ -783,7 +776,6 @@ class RoccCommandRouterBoom(opcodes: Seq[OpcodeSet])(implicit p: Parameters)
   io.icctrl_out := io.icctrl_in
   io.gtimer_reset_out := io.gtimer_reset_in
   io.fi_sel_out := io.fi_sel_in
-  io.t_value_out := io.t_value_in
   io.s_or_r_out := io.s_or_r_in
   io.arf_copy_out := io.arf_copy_in
   io.core_trace_out := io.core_trace_in

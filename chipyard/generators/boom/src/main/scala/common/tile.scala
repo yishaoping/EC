@@ -180,7 +180,6 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
   
   /* R Features */
   val icctrl_bridge = Module(new GH_Bridge(GH_BridgeParams(4)))
-  val t_value_bridge = Module(new GH_Bridge(GH_BridgeParams(15)))
   val s_or_r = Reg(UInt(1.W))
   val core_trace = Wire(UInt(2.W))
   val fi_sel = Wire(UInt(8.W))
@@ -304,7 +303,6 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
       gh_buf.io.commit_cacheable(w) :=
         outer.dcache.node.edges.out(0).manager.supportsAcquireBFast(
           commit_addr, log2Ceil(outer.boomParams.dcache.get.blockBytes).U)
-      // gh_buf.io.gh_csr_addr_in(w)                := core.io.csr_addr(w)
       gh_buf.io.gh_prfs_rd(w)                    := RegNext(core.io.prf_rd(w))
       gh_buf.io.jalr_target(w)                   := RegNext(core.io.jalr_target(w))
     }
@@ -333,7 +331,6 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
 
     /* R Features */
     core.io.icctrl                               := icctrl_bridge.io.out
-    core.io.t_value                              := t_value_bridge.io.out
 
     core.io.if_correct_process                   := if_correct_process_bridge.io.out
                                                         /* (152, 145)8.W                   (144, 137)8.W                         (136, 0)(137.W(128+9))     */
@@ -362,7 +359,6 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
     // Not be used, added to pass the compile
     core.io.gh_stall                             := 0.U
     core.io.icctrl                               := 0.U
-    core.io.t_value                              := 0.U
     /* Runtime Configurable Mapping */
     core.io.big_core_id                          := 0.U
     core.io.checker_enable_mask                  := 0.U
@@ -478,7 +474,6 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
 
         /* R Features */
         cmdRouter.io.icctrl_in                       := rocc.module.io.icctrl_out
-        cmdRouter.io.t_value_in                      := rocc.module.io.t_value_out
         cmdRouter.io.s_or_r_in                       := rocc.module.io.s_or_r_out
         cmdRouter.io.arf_copy_in                     := rocc.module.io.arf_copy_out
         rocc.module.io.rsu_status_in                 := cmdRouter.io.rsu_status_in
@@ -585,7 +580,6 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
 
     /* R Features */
     icctrl_bridge.io.in                          := cmdRouter.io.icctrl_out
-    t_value_bridge.io.in                         := cmdRouter.io.t_value_out
     cmdRouter.io.rsu_status_in                   := 0.U
     s_or_r                                       := cmdRouter.io.s_or_r_out(1)
     fi_sel                                       := cmdRouter.io.fi_sel_out

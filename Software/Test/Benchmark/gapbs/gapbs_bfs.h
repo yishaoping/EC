@@ -12,6 +12,9 @@ typedef struct {
     uint32_t verified;
 } gapbs_bfs_result_t;
 
+/* 执行 GAPBS 的最小 14 节点、53 边回归图。 */
+void gapbs_bfs_run_min(gapbs_bfs_result_t *result);
+
 /* 裸机可用的内置 GAPBS 图规模；每个节点固定 16 条有向边。 */
 #define GAPBS_BFS_512_NODE_COUNT 512U
 #define GAPBS_BFS_1024_NODE_COUNT 1024U

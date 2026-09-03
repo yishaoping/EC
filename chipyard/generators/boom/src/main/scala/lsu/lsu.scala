@@ -54,12 +54,13 @@ import freechips.rocketchip.util.Str
 import boom.common._
 import boom.exu.{BrUpdateInfo, Exception, FuncUnitResp, CommitSignals, ExeUnitResp}
 import boom.util.{BoolToChar, AgePriorityEncoder, IsKilledByBranch, GetNewBrMask, WrapInc, IsOlder, UpdateBrMask}
-//===== GuardianCouncil Function: Start ====//
+//===== EC: Start =====//
 import freechips.rocketchip.r._
 import freechips.rocketchip.guardiancouncil._
-//===== GuardianCouncil Function: End   ====//
+//===== EC: End   =====//
 class LSUExeIO(implicit p: Parameters) extends BoomBundle()(p)
 {
+    // exu 给 lsu 的地址、数据、uop
   // The "resp" of the maddrcalc is really a "req" to the LSU
   val req       = Flipped(new ValidIO(new FuncUnitResp(xLen)))
 
@@ -138,6 +139,7 @@ class LSUDMemIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
 
 class LSUCoreIO(implicit p: Parameters) extends BoomBundle()(p)
 {
+    // exu 给 lsu
   val exe = Vec(memWidth, new LSUExeIO)
   val stq_debug = Vec(coreWidth, Output(Valid(new STQEntry)))
 
@@ -189,12 +191,12 @@ class LSUCoreIO(implicit p: Parameters) extends BoomBundle()(p)
 
 class LSUIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
 {
-  //===== GuardianCouncil Function: Start ====//
+  //===== EC: Start =====//
   val ldq_head                                    = Output(Vec(coreWidth, UInt((2*xLen).W)))
   val stq_head                                    = Output(Vec(coreWidth, UInt((2*xLen).W)))
   
   val core_trace                                  = Input(UInt(1.W))
-  //===== GuardianCouncil Function: End ====//
+  //===== EC: End   =====//
   val ptw   = new rocket.TLBPTWIO
   val core  = new LSUCoreIO
   val dmem  = new LSUDMemIO

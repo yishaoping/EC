@@ -4,19 +4,21 @@
 # 用法（在服务器上运行，普通用户即可）:
 #   bash /data1/gzh/EC/codex_switch.sh relay     # 走本地转发通道 (127.0.0.1:2731 反向隧道)
 #   bash /data1/gzh/EC/codex_switch.sh direct    # 直连 beeapi.ai（不走代理）
+#   bash /data1/gzh/EC/codex_switch.sh privoxy   # 走本机 Privoxy (127.0.0.1:8118 → Clash 节点)
 #   bash /data1/gzh/EC/codex_switch.sh status    # 查看当前通道
 #
 # 说明:
-#   - relay  需要本地机器上的反向隧道已建立（服务器 127.0.0.1:2731 → 本地网络）。
-#   - direct 服务器直连 beeapi.ai，不依赖任何隧道。
+#   - relay   需要本地机器上的反向隧道已建立（服务器 127.0.0.1:2731 → 本地网络）。
+#   - direct  服务器直连 beeapi.ai，不依赖任何隧道。
+#   - privoxy 走本机 Privoxy HTTP 代理 (127.0.0.1:8118)，其上游为 Clash SOCKS5 127.0.0.1:7890。
 #   - 修改的是 ~/.zshrc ~/.zprofile ~/.bashrc ~/.profile 以及
 #     ~/.vscode-server/data/User/settings.json 中的 http.proxy。
 set -euo pipefail
 
 MODE="${1:-status}"
 case "$MODE" in
-  relay|direct|status) ;;
-  *) echo "用法: bash $0 {relay|direct|status}" >&2; exit 2 ;;
+  relay|direct|privoxy|status) ;;
+  *) echo "用法: bash $0 {relay|direct|privoxy|status}" >&2; exit 2 ;;
 esac
 
 export CODEX_SWITCH_MODE="$MODE"
@@ -25,7 +27,9 @@ import os, re, json
 
 mode = os.environ['CODEX_SWITCH_MODE']
 port = os.environ.get('CODEX_PROXY_PORT', '2731')
-proxy = f"http://127.0.0.1:{port}"
+privoxy_port = os.environ.get('CODEX_PRIVOXY_PORT', '8118')
+relay_proxy = f"http://127.0.0.1:{port}"
+privoxy_proxy = f"http://127.0.0.1:{privoxy_port}"
 no_proxy = "localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,.local"
 home = os.path.expanduser('~')
 
@@ -36,7 +40,14 @@ def block_for(mode):
     if mode == 'relay':
         return '\n'.join([
             '# >>> codex_proxy (autogen) >>>',
-            f'export https_proxy={proxy} http_proxy={proxy} HTTPS_PROXY={proxy} HTTP_PROXY={proxy}',
+            f'export https_proxy={relay_proxy} http_proxy={relay_proxy} HTTPS_PROXY={relay_proxy} HTTP_PROXY={relay_proxy}',
+            f'export NO_PROXY={no_proxy} no_proxy={no_proxy}',
+            '# <<< codex_proxy <<<',
+        ])
+    if mode == 'privoxy':
+        return '\n'.join([
+            '# >>> codex_proxy (autogen) >>>',
+            f'export https_proxy={privoxy_proxy} http_proxy={privoxy_proxy} HTTPS_PROXY={privoxy_proxy} HTTP_PROXY={privoxy_proxy}',
             f'export NO_PROXY={no_proxy} no_proxy={no_proxy}',
             '# <<< codex_proxy <<<',
         ])
@@ -85,7 +96,7 @@ if mode != 'status':
 
     spath = os.path.join(home, '.vscode-server', 'data', 'User', 'settings.json')
     os.makedirs(os.path.dirname(spath), exist_ok=True)
-    new_proxy = proxy if mode == 'relay' else ''
+    new_proxy = relay_proxy if mode == 'relay' else (privoxy_proxy if mode == 'privoxy' else '')
     if os.path.exists(spath):
         with open(spath) as f:
             raw = f.read()
@@ -119,17 +130,30 @@ spath = os.path.join(home, '.vscode-server', 'data', 'User', 'settings.json')
 if os.path.exists(spath):
     try:
         with open(spath) as f:
-            cur = 'relay' if '127.0.0.1' in json.load(f).get('http.proxy', '') else 'direct'
+            hp = json.load(f).get('http.proxy', '')
+        if hp == relay_proxy:
+            cur = 'relay'
+        elif hp == privoxy_proxy:
+            cur = 'privoxy'
+        else:
+            cur = 'direct'
     except Exception:
         pass
 if cur == 'unknown':
     zsh = os.path.join(home, '.zshrc')
     if os.path.exists(zsh):
         with open(zsh) as f:
-            cur = 'direct' if 'unset https_proxy' in f.read() else 'relay'
+            text = f.read()
+        if privoxy_proxy in text:
+            cur = 'privoxy'
+        elif 'unset https_proxy' in text:
+            cur = 'direct'
+        else:
+            cur = 'relay'
 
 label = {
     'relay': f'本地转发 (127.0.0.1:{port} → 本地网络 → beeapi.ai)',
+    'privoxy': f'Privoxy (http://127.0.0.1:{privoxy_port} → Clash 节点 → beeapi.ai)',
     'direct': '直连 (服务器直接访问 beeapi.ai)',
     'unknown': '未知',
 }[cur]

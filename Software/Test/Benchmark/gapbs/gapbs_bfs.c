@@ -1,10 +1,25 @@
 #include "gapbs_bfs.h"
 
-#if 0
+#define out_offset gapbs_small_out_offset
+#define in_offset gapbs_small_in_offset
+#define out_edge gapbs_small_out_edge
+#define in_edge gapbs_small_in_edge
+#define parent gapbs_small_parent
+#define frontier gapbs_small_frontier
+#define next_frontier gapbs_small_next_frontier
+#define front_bits gapbs_small_front_bits
+#define next_bits gapbs_small_next_bits
+#define clear_bits gapbs_small_clear_bits
+#define copy_bits gapbs_small_copy_bits
+#define count_out_edges gapbs_small_count_out_edges
+#define bottom_up_step gapbs_small_bottom_up_step
+#define top_down_step gapbs_small_top_down_step
+#define verify_result gapbs_small_verify_result
+#define gapbs_bfs_run gapbs_bfs_run_min
+
 /*
- * 保留的小图版本：该 CSR 数据由 GAPBS test/graphs/4.el 预生成。
- * 当前中图测试不编译这段代码；需要快速功能回归时，将本 #if 0 改为
- * #if 1，并注释掉其后的中图实现即可恢复 14 节点、53 边测试。
+ * GAPBS 最小小图版本：该 CSR 数据由 GAPBS test/graphs/4.el 预生成，
+ * 提供给裸机 benchmark 做快速功能验证。
  */
 #define GAPBS_NODE_COUNT 14
 #define GAPBS_EDGE_COUNT 53
@@ -233,7 +248,27 @@ void gapbs_bfs_run(gapbs_bfs_result_t *result)
     }
     result->verified = verify_result(parent);
 }
-#endif
+#undef gapbs_bfs_run
+#undef verify_result
+#undef top_down_step
+#undef bottom_up_step
+#undef count_out_edges
+#undef copy_bits
+#undef clear_bits
+#undef GAPBS_BETA
+#undef GAPBS_ALPHA
+#undef GAPBS_SOURCE
+#undef GAPBS_EDGE_COUNT
+#undef GAPBS_NODE_COUNT
+#undef next_bits
+#undef front_bits
+#undef next_frontier
+#undef frontier
+#undef parent
+#undef in_edge
+#undef out_edge
+#undef in_offset
+#undef out_offset
 
 /*
  * 内置图版本：每个节点有 16 条有向边，图在启动时建立双向 CSR 邻接表，

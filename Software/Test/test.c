@@ -45,7 +45,7 @@ static uint64_t test_setup(void)
     return hart_id;
 }
 
-/* 执行 1024 节点规模的 GAPBS 协同 benchmark。 */
+/* 执行 GAPBS 最小 14 节点规模的协同 benchmark。 */
 static void gapbs_bfs(uint64_t hart_id, uint64_t *start_cpu,
                       uint64_t *end_cpu, gapbs_bfs_result_t *result)
 {
@@ -54,7 +54,7 @@ static void gapbs_bfs(uint64_t hart_id, uint64_t *start_cpu,
 
     *start_cpu = read_cycles();
     (void)hart_id;
-    gapbs_bfs_run_4096(result);
+    gapbs_bfs_run_min(result);
 
     ROCC_INSTRUCTION_S(1, 0X02, 0x70);
     for (int nop_count = 0; nop_count < 26; nop_count++) {

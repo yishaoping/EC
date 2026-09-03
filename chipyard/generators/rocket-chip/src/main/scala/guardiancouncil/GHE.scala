@@ -87,7 +87,6 @@ class GHEImp(outer: GHE)(implicit p: Parameters) extends LazyRoCCModuleImp(outer
     val doDebug_Reset_bp        = (cmd.fire && (funct === 0x2d.U))
     /* R Features */
     val doICCTRL                = (cmd.fire && (funct === 0x70.U))
-    val doSetTValue             = (cmd.fire && (funct === 0x71.U))
     val doStoreFromChecker      = (cmd.fire && (funct === 0x72.U))
     val doStoreFromMain         = (cmd.fire && (funct === 0x73.U))
     val doRecord                = (cmd.fire && (funct === 0x75.U))
@@ -251,13 +250,7 @@ class GHEImp(outer: GHE)(implicit p: Parameters) extends LazyRoCCModuleImp(outer
 
 
     /* R Features */
-    val t_Value                = RegInit(200.U(15.W))
-    when (doSetTValue){
-      t_Value                 := rs1_val(14,0)     
-    }
-
     io.elu_sel_out            := elu_sel
-    io.t_value_out            := t_Value
     io.icctrl_out             := Mux(doICCTRL, rs1_val(3,0), 0.U)
     io.arf_copy_out           := doCopy
     io.s_or_r_out             := s_or_r

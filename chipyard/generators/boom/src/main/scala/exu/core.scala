@@ -47,7 +47,6 @@ import boom.util._
 //===== EC: Start =====//
 import freechips.rocketchip.r._
 import freechips.rocketchip.guardiancouncil._
-// import java.awt.peer.PopupMenuPeer
 import boom.lsu.STQEntry
 //===== EC: End   =====//
 /**
@@ -58,85 +57,89 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
 {
   val io = new freechips.rocketchip.tile.CoreBundle
   {
-    val hartid = Input(UInt(hartIdLen.W))
-    val interrupts = Input(new freechips.rocketchip.tile.CoreInterrupts())
-    val ifu = new boom.ifu.BoomFrontendIO
-    val ptw = Flipped(new freechips.rocketchip.rocket.DatapathPTWIO())
-    val rocc = Flipped(new freechips.rocketchip.tile.RoCCCoreIO())
-    val lsu = Flipped(new boom.lsu.LSUCoreIO)
-    val ptw_tlb = new freechips.rocketchip.rocket.TLBPTWIO()
-    val trace = Output(Vec(coreParams.retireWidth, new TracedInstruction))
-    val fcsr_rm = UInt(freechips.rocketchip.tile.FPConstants.RM_SZ.W)
+    // ----------------------------------------------------------------------
+    // Rocket/BOOM 标准接口：硬件线程、外部中断与前端/地址翻译通道。
+    // Bundle 内部每个叶子的方向由对应 Bundle 定义决定；这里的注释按
+    // BoomCore 视角描述连接对象，不改变 CoreBundle 的既有接口。
+    // ----------------------------------------------------------------------
+    val hartid = Input(UInt(hartIdLen.W)) // Tile 分配的硬件线程 ID，送入 CSRFile。
+    val interrupts = Input(new freechips.rocketchip.tile.CoreInterrupts()) // Tile 汇总的中断源。
+
+    // IFU：取指、分支恢复、FTQ 查询及 ICache/TLB 维护。
+    val ifu = new boom.ifu.BoomFrontendIO // 与 BoomFrontend 的双向流水接口。
+
+    // PTW/TLB：页表遍历数据通路，以及预留的 TLB 发起请求端口。
+    val ptw = Flipped(new freechips.rocketchip.rocket.DatapathPTWIO()) // CSR 配置与 PTW 性能事件。
+    val ptw_tlb = new freechips.rocketchip.rocket.TLBPTWIO() // 加入 Tile PTW 仲裁的预留请求端口。
+
+    // LSU/DCache：执行单元访存请求、队列管理、响应和异常回传。
+    val lsu = Flipped(new boom.lsu.LSUCoreIO) // Core 后端与独立 LSU 模块的双向接口。
+
+    // RoCC：BOOM 执行单元与 Tile 中加速器命令/响应路由器的接口。
+    val rocc = Flipped(new freechips.rocketchip.tile.RoCCCoreIO()) // RoCC 命令、响应、忙和中断。
+
+    // 调试与浮点：提交 trace 输出，以及 CSR 提供的 FPU/RoCC-FPU 舍入模式。
+    val trace = Output(Vec(coreParams.retireWidth, new TracedInstruction)) // 每个退休槽的提交跟踪信息。
+    val fcsr_rm = UInt(freechips.rocketchip.tile.FPConstants.RM_SZ.W) // 浮点动态舍入模式。
+
     //===== EC: Start =====//
-    val commit_valids = Output(Vec(coreWidth, UInt(1.W)))
-    val commit_uops   = Output(Vec(coreWidth, new MicroOp))
-    val commit_rs1    = Output(Vec(coreWidth, UInt(xLen.W)))
+    // DCache 统计与校验包元数据：由 CSR/R_IC 产生，送入 Tile DCache。
+    val csr_cycle          = Output(UInt(xLen.W)) // 当前 CSR cycle/time 值，作为统计时间戳。
+    val active_packet_seq  = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)) // 当前活动校验包序号。
+    val packet_alloc_valid = Output(Bool()) // 本周期是否分配了新的校验包。
+    val packet_alloc_seq   = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)) // 新分配包的序号。
 
-    val jalr_target   = Output(Vec(coreWidth, UInt(xLen.W)))
+    // GH_BUF：ROB 退休指令、物理寄存器结果和 JALR 目标组成校验包；
+    // gh_stall 是 GH_BUF 满时返回的流水线反压。
+    val commit_valids  = Output(Vec(coreWidth, UInt(1.W))) // 每个退休槽的架构有效位。
+    val commit_uops    = Output(Vec(coreWidth, new MicroOp)) // 每个退休槽的微操作及指令属性。
+    val prf_rd         = Output(Vec(coreWidth, UInt(xLen.W))) // 按退休 uop.pdst 读取的整数 PRF 结果。
+    val jalr_target    = Output(Vec(coreWidth, UInt(xLen.W))) // ROB 保存的有效地址/JALR 目标。
+    val ic_crnt_target = Output(UInt(6.W)) // R_IC 当前选择的 Rocket checker 编号。
+    val gh_stall       = Input(Bool()) // GH_BUF 接近满时阻止 ROB 继续退休。
 
-    val prf_rd = Output(Vec(coreWidth, UInt(xLen.W)))
-    val alu_out = Output(Vec(coreWidth, UInt(xLen.W)))
+    // GHM/CDC：跨大核汇总 checker 状态、owner、segment 和指令计数。
+    val ic_status          = Output(UInt(GH_GlobalParams.GH_NUM_CORES.W)) // 本地观察到的 checker 忙状态位图。
+    val checker_big_owner  = Output(Vec(GH_GlobalParams.GH_NUM_CORES, UInt(4.W))) // checker 所属大核 ID。
+    val ic_counter         = Output(Vec(GH_GlobalParams.GH_NUM_CORES, UInt(16.W))) // 各 checker 窗口指令计数。
+    val checker_segment_id = Output(Vec(GH_GlobalParams.GH_NUM_CORES, UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))) // checker 当前 segment/包序号。
 
-    val csr_addr = Output(Vec(coreWidth, UInt(CSR_ADDR_SZ.W)))
-    val big_hang = Input(Bool())//cdc not ready
-    val ght_prv  = Output(UInt(2.W))
+    // R_RSU：ARF/FARF 快照合并结果及恢复目标，经过 CDC 送往 GHM。
+    val r_arfs        = Output(Vec(1, UInt((xLen * 2 + 8 + 1).W))) // {9 位索引, 2*XLEN 位 ARF/FARF 数据}。
+    val r_arfs_pidx   = Output(Vec(1, UInt(8.W))) // 合并片段的包内位置索引。
+    val arfs_ecp_dest = Output(UInt(8.W)) // R_RSU 快照恢复/ECP 目的标识。
+    val big_hang      = Input(Bool()) // GHM CDC 无空间时暂停 R_RSU 和 ROB。
 
-    val gh_stall = Input(Bool())
-    val bigComp  = Input(UInt(3.W))
+    // R_IC：checker 调度控制、计数、状态和当前 checker 目标。
+    val icctrl                 = Input(UInt(4.W)) // run/exit/syscall/syscall-back 控制位。
+    val num_of_checker         = Input(UInt(8.W)) // 当前可调度的 Rocket checker 数量。
+    val if_correct_process     = Input(UInt(1.W)) // 当前是否处于纠错处理流程。
+    val clear_ic_status_tomain = Input(UInt(GH_GlobalParams.GH_NUM_CORES.W)) // checker 完成后的释放位图。
+    val icsl_na                = Input(UInt(GH_GlobalParams.GH_NUM_CORES.W)) // checker CDC/FIFO 无可用空间位图。
+    val debug_maincore_status  = Output(UInt(4.W)) // R_IC 主状态机状态编码。
+    val debug_perf_ctrl        = Input(UInt(GH_GlobalParams.GH_PERF_CTRL_BITS.W)) // 性能计数选择及控制。
+    val debug_perf_val         = Output(UInt(64.W)) // R_IC 选中的性能计数值。
 
-    val csr_counter = Output(Vec(84, UInt(32.W)))
-    // Live mcycle/cycle value from this BOOM core's CSRFile.
-    val csr_cycle = Output(UInt(xLen.W))
-    
-    /* R Features */
-    val num_of_checker = Input(UInt(8.W))
-    val icctrl = Input(UInt(4.W))
-    val t_value = Input(UInt(4.W))
-    // val ght_filters_ready = Input(UInt(1.W))
-    val r_arfs = Output (Vec(1, (UInt((xLen*2+8+1).W))))
-    val r_arfs_pidx = Output(Vec(1, UInt(8.W)))
-    val rsu_merging = Output(UInt(1.W))
-    val ic_crnt_target = Output(UInt(6.W))
-    val if_correct_process = Input(UInt(1.W))
-    val ic_counter = Output(Vec(GH_GlobalParams.GH_NUM_CORES, (UInt(16.W))))
-    val clear_ic_status_tomain = Input(UInt(GH_GlobalParams.GH_NUM_CORES.W))
-    val icsl_na = Input(UInt(GH_GlobalParams.GH_NUM_CORES.W))
-    val core_trace = Input(UInt(1.W))
-    val debug_maincore_status = Output(UInt(4.W))
-    val ic_trace = Input(UInt(1.W))
-    val debug_perf_ctrl = Input(UInt(GH_GlobalParams.GH_PERF_CTRL_BITS.W))
-    val debug_perf_val = Output(UInt(64.W))
-    val shared_CP_CFG = Output(UInt(13.W))
-    val arfs_ecp_dest = Output(UInt(8.W))
+    // RoCC 命令路由器可见的核心状态和统计信息。
+    val ght_prv     = Output(UInt(2.W)) // 延迟一拍的当前特权级。
+    val csr_counter = Output(Vec(84, UInt(32.W))) // 总退休数及各类 CSR 写计数。
+    val bigComp     = Input(UInt(3.W)) // GHM 广播的大核比较/诊断编码。
 
-    /* Runtime Configurable Mapping */
-    val big_core_id         = Input(UInt(4.W))   // which big core this is (1-indexed: 1=hartId0)
-    val checker_enable_mask = Input(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))
-    val checker_enable_we   = Input(UInt(1.W))
-    val checker_enable_rd   = Output(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W))
-    val checker_big_owner   = Output(Vec(GH_GlobalParams.GH_NUM_CORES, UInt(4.W)))
-    val checker_segment_id  = Output(Vec(GH_GlobalParams.GH_NUM_CORES, UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))
-    val active_packet_seq   = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
-    val packet_alloc_valid  = Output(Bool())
-    val packet_alloc_seq    = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
-    val checker_state_sel   = Input(UInt(4.W))
-    val checker_state_data  = Output(UInt(64.W))
+    // checker 查询/调试协议：选择器由外部写入，状态和掩码由 Core 返回。
+    val checker_state_sel  = Input(UInt(4.W)) // 0 读取使能掩码，非 0 选择 checker 状态。
+    val checker_state_data = Output(UInt(64.W)) // 掩码或所选 checker 的全局/本地状态打包值。
+    val checker_enable_rd   = Output(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W)) // checker 使能掩码读回。
+    // 纠错/调试开关：来自命令路由器或跨时钟域控制器。
+    val core_trace = Input(UInt(1.W)) // 打开 Core/CSR/R_RSU 运行跟踪。
+    val ic_trace   = Input(UInt(1.W)) // 打开 R_IC 指令计数跟踪。
 
-    // Global ic_status: per-big-core ic_status sent to GHM for OR-merge
-    val ic_status           = Output(UInt(GH_GlobalParams.GH_NUM_CORES.W))
-    // Global ic_status from GHM (OR of all big cores), used by R_IC scheduler
-    val global_ic_status    = Input(UInt(GH_GlobalParams.GH_NUM_CORES.W))
-
-    // Global checker_big_owner: packed (NUM_CORES * 4) bits, OR-merged by GHM, broadcast back
-    val global_checker_big_owner = Input(UInt((GH_GlobalParams.GH_NUM_CORES * 4).W))
-
-    // val if_big_complete_req = Input(UInt((GH_GlobalParams.GH_NUM_CORES-1).W))
-    // val if_big_complete_ack                        = Output(Vec(GH_GlobalParams.GH_NUM_CORES-1, Bool()))
-
-    val rsu_merging_valid = Output(Bool())
-    // val icsl_na_ack                                = Output(Vec(GH_GlobalParams.GH_NUM_CORES, Bool()))
-    // val big_checker_switch                         = Output(Vec(GH_GlobalParams.GH_NUM_CORES, Bool()))//大核事件导致切换
-    //===== GuardianCouncil Function: End ====//
+    // 运行时 checker 映射：本地大核 ID、使能掩码，以及 GHM 广播的全局状态。
+    val big_core_id              = Input(UInt(4.W)) // 当前 BOOM 大核编号，采用从 1 开始的编码。
+    val checker_enable_mask      = Input(UInt(GH_GlobalParams.GH_CHECKER_MASK_WIDTH.W)) // 可用 checker 位图。
+    val checker_enable_we        = Input(UInt(1.W)) // checker_enable_mask 写脉冲。
+    val global_ic_status         = Input(UInt(GH_GlobalParams.GH_NUM_CORES.W)) // GHM 汇总后的全局忙状态。
+    val global_checker_big_owner = Input(UInt((GH_GlobalParams.GH_NUM_CORES * 4).W)) // GHM 汇总的 owner 打包值。
+    //===== EC: End =====//
   }
   //**********************************
   // construct all of the modules
@@ -1924,9 +1927,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     io.ifu.debug_ftq_idx := DontCare
   }
 
-//===== GuardianCouncil Function: Start ====//
-  // val ght_prfs_forward_prf_reg                    = Reg(Vec(coreWidth, Bool()))
-  // val ght_prfs_forward_prf_reg_test               = Reg(Vec(coreWidth, Bool()))
+//===== EC: Start =====//
   val if_mret_or_sret                             = Wire(Vec(coreWidth, Bool()))
   val if_ecall                                    = Wire(Vec(coreWidth, Bool()))
   val exception_mode_test                         = RegInit(false.B)
@@ -1942,32 +1943,13 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   val priv_lower                                  = (crnt_priv < old_priv)
   val mode_switch_forverilator                    = RegNext(csr.io.r_exception_nocall) || RegNext(if_ecall.reduce(_ || _))//打一拍够不够//ecall先于commit生效，此时rob next pc未生效，在commit时才进行switch保证next pc是真正的下一条
 
-  // val csrshadow_seq                               = (CSRshadows.allshadows.map(_.asUInt)).toSeq ++ Seq(CSRs.fflags.U, CSRs.fcsr.U, CSRs.frm.U)
-  // val csrshadow_seq                               = Seq(CSRs.fflags.U, CSRs.fcsr.U, CSRs.frm.U)
   for (w <- 0 until coreWidth) {
-    // ght_prfs_forward_prf_reg_test(w)             := (io.ght_prfs_forward_prf(w) && !RegNext(RegNext(rob.io.commit.uops(w).csr_addr)).isOneOf(csrshadow_seq))
-    // ght_prfs_forward_prf_reg(w)                  := io.ght_prfs_forward_prf(w)
-    // ght_prfs_forward_prf_reg(w)                  := io.ght_prfs_forward_prf(w) && !RegNext(RegNext(rob.io.commit.uops(w).csr_addr)).isOneOf(csrshadow_seq)
-
-    // io.pc(w)                                     := rob.io.commit.uops(w).debug_pc(31,0)
-    // io.inst(w)                                   := rob.io.commit.uops(w).debug_inst(31,0)
-    // io.new_commit(w)                             := Mux(r_syscall, 0.U, rob.io.commit.arch_valids(w))
     io.prf_rd(w)                                    := iregfile.io.read_ports(numIrfReadPorts + w).data
 
-    io.csr_addr(w)                               := rob.io.commit.uops(w).csr_addr
-    
-    // io.uses_ldq(w)                               := rob.io.commit.uops(w).uses_ldq
-    // io.uses_stq(w)                               := rob.io.commit.uops(w).uses_stq
-    // io.is_jal_or_jalr(w)                         := rob.io.commit.uops(w).is_jal|rob.io.commit.uops(w).is_jalr
-    // io.ft_idx(w)                                 := rob.io.commit.uops(w).ftq_idx
-    // io.is_rvc(w)                                 := rob.io.commit.uops(w).is_rvc
-    io.alu_out(w)                                := rob.io.commit.gh_effective_alu_out(w);
     if_mret_or_sret(w)                           := rob.io.commit.arch_valids(w) && ((rob.io.commit.uops(w).debug_inst(31,0) === 0x30200073.U) || (rob.io.commit.uops(w).debug_inst(31,0) === 0x10200073.U))
     if_ecall(w)                                  := rob.io.commit.arch_valids(w) && (rob.io.commit.uops(w).debug_inst(31,0) === 0x00000073.U)
   }
-  // dontTouch(ght_prfs_forward_prf_reg)
-  // dontTouch(io.ght_prfs_forward_prf)
-  // dontTouch(ght_prfs_forward_prf_reg_test)
+
   io.ght_prv                                     := RegNext(csr.io.status.prv)
 
   val zero_2bits                                  = WireInit(0.U(2.W))
@@ -2061,7 +2043,6 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   assert(!release_wait3(checkerHangWatchdogBit), "little core 3 release protocol timeout")
   assert(!release_wait4(checkerHangWatchdogBit), "little core 4 release protocol timeout")
 
-
   val r_exception_record_2                         = RegInit(0.U(1.W))
   r_exception_record_2                            := Mux(csr.io.r_exception.asBool, 1.U, Mux(ic_incr =/= 0.U && r_exception_record_2.asBool, 0.U, r_exception_record_2))
   r_exception_record                              := Mux(csr.io.r_exception.asBool, 1.U, Mux(ic_incr =/= 0.U && r_exception_record.asBool && !r_exception_record_2.asBool, 0.U, r_exception_record))
@@ -2151,12 +2132,9 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     io.r_arfs(w)                                  := Cat(rsu_master.io.arfs_index(w), rsu_master.io.arfs_merge(w))
     io.r_arfs_pidx(w)                             := rsu_master.io.arfs_pidx(w)
   }
-  io.rsu_merging                                  := rsu_master.io.rsu_merging
-  io.rsu_merging_valid                            := rsu_master.io.rsu_merging_valid
   io.debug_perf_val                               := ic_master.io.debug_perf_val
   ic_master.io.debug_perf_sel                     := io.debug_perf_ctrl(3,1)
   ic_master.io.debug_perf_reset                   := io.debug_perf_ctrl(0)
-  io.shared_CP_CFG                                := ic_master.io.shared_CP_CFG
 
   /* Runtime Configurable Mapping */
   ic_master.io.big_core_id                        := io.big_core_id
@@ -2194,8 +2172,6 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
 
   io.commit_valids                                := rob.io.commit.arch_valids  
   io.commit_uops                                  := rob.io.commit.uops
-  io.commit_rs1                                   := rob.io.commit.debug_rs1
   io.jalr_target                                  := rob.io.commit.gh_effective_alu_out
-  // io.if_big_complete_ack                           := ic_master.io.if_big_complete_ack
-  //===== GuardianCouncil Function: End ====//
+  //===== EC: End =====//
 }
