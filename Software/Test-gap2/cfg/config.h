@@ -43,6 +43,11 @@
 #define MEEK_ENABLE_CHECKER_SEGMENT_PERF 1
 #endif
 
+/* Human-readable report by default; set to 1 for raw per-hart diagnostics. */
+#ifndef TEST_REPORT_VERBOSE
+#define TEST_REPORT_VERBOSE 0
+#endif
+
 #if MEEK_ENABLE_BIG_CORE_PERF != 0
 #error "The retained test.riscv configuration requires MEEK_ENABLE_BIG_CORE_PERF=0"
 #endif

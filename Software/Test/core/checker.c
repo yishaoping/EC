@@ -15,9 +15,11 @@ int checker(int hart_id)
     ghe_go();
     ghe_initailised(1);
 
+#if MEEK_ENABLE_CHECKER_SEGMENT_PERF
     ghe_fpga_perf_set_interval(FPGA_PERF_INTERVAL_CYCLES);
     ghe_fpga_perf_reset();
     ghe_fpga_perf_start();
+#endif
 
     ROCC_INSTRUCTION(1, 0x75);
     ROCC_INSTRUCTION(1, 0x73);
@@ -26,7 +28,8 @@ int checker(int hart_id)
         ROCC_INSTRUCTION_S(1, sel_elu, 0x65);
 
         while (elu_checkstatus() != 0) {
-            printf("C%x: Error detected for ELU %x.\r\n", hart_id, sel_elu);
+            printf("[ERROR] checker=%x elu=%x status=error\n", hart_id,
+                   sel_elu);
             ROCC_INSTRUCTION_S(1, sel_elu, 0x63);
         }
     }
@@ -38,7 +41,9 @@ int checker(int hart_id)
         }
     }
 
+#if MEEK_ENABLE_CHECKER_SEGMENT_PERF
     ghe_fpga_perf_stop();
+#endif
 
     ROCC_INSTRUCTION(1, 0x72);
     ROCC_INSTRUCTION(1, 0x60);

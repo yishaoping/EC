@@ -20,7 +20,7 @@ static uint64_t test_setup(void)
     msip_cfg();
 
     lock_acquire(&uart_lock);
-    printf("Software interrupt test complete!\n");
+    printf("[INIT] software_interrupt=pass\n");
     lock_release(&uart_lock);
 
     while (ght_get_initialisation() == 0) {
@@ -29,10 +29,11 @@ static uint64_t test_setup(void)
     uint64_t hart_id = 0;
     asm volatile("csrr %0, mhartid" : "=r"(hart_id));
     lock_acquire(&uart_lock);
-    printf("[Boom-C%lx]: Test is now started: \r\n", hart_id);
-    printf("[MEEK_PERF_CFG] big=%d checker=%d interval=%" PRIu64
-           " checker_limit=2000\r\n",
-           MEEK_ENABLE_BIG_CORE_PERF, MEEK_ENABLE_CHECKER_SEGMENT_PERF,
+    printf("[RUN] hart=%lx status=started\n", hart_id);
+    printf("[CONFIG] big_core_perf=%s checker_perf=%s interval_cycles=%" PRIu64
+           " sample_readback=not_collected\n",
+           MEEK_ENABLE_BIG_CORE_PERF ? "on" : "off",
+           MEEK_ENABLE_CHECKER_SEGMENT_PERF ? "on" : "off",
            (uint64_t)FPGA_PERF_INTERVAL_CYCLES);
     lock_release(&uart_lock);
 
@@ -74,9 +75,9 @@ static void test_report(uint64_t hart_id, uint64_t start_cpu,
                         uint64_t end_cpu, const gapbs_bfs_result_t *result)
 {
     lock_acquire(&uart_lock);
-    printf("GAPBS BFS: source=%" PRIu32 " reached_nodes=%" PRIu32
-           " traversed_edges=%" PRIu32 " parent_checksum=%" PRIu64
-           " verified=%" PRIu32 "\r\n",
+    printf("[RUN] benchmark=gapbs_bfs source=%" PRIu32
+           " reached=%" PRIu32 " edges=%" PRIu32
+           " verified=%" PRIu32 " parent_checksum=%" PRIu64 "\n",
            result->source, result->reached_nodes, result->traversed_edges,
            result->parent_checksum, result->verified);
     lock_release(&uart_lock);

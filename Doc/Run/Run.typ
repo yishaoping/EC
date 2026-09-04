@@ -2,6 +2,15 @@
 
 make -j64 CONFIG=v1Config VERILATOR_FST_MODE=1 VERILATOR_THREADS=8 NUMACTL=1 VERBOSE_FLAGS= EXTRA_SIM_FLAGS=+uart_tx=0 run-binary-debug-hex BINARY=../../../Software/Test/test.riscv
 
+
+make -j64 CONFIG=v1Config \
+  VERILATOR_THREADS=8 \
+  NUMACTL=1 \
+  timeout_cycles=500000000 \
+  EXTRA_SIM_FLAGS="+uart_tx=0 +cycle-count" \
+  run-binary-fast-hex \
+  BINARY=../../../Software/Test/test.riscv
+
 = 
 
 = EC

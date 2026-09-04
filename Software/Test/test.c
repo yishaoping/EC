@@ -20,7 +20,7 @@ static uint64_t test_setup(void)
     msip_cfg();
 
     lock_acquire(&uart_lock);
-    printf("Software interrupt test complete!\n");
+    printf("[INIT] software_interrupt=pass\n");
     lock_release(&uart_lock);
 
     while (ght_get_initialisation() == 0) {
@@ -29,10 +29,11 @@ static uint64_t test_setup(void)
     uint64_t hart_id = 0;
     asm volatile("csrr %0, mhartid" : "=r"(hart_id));
     lock_acquire(&uart_lock);
-    printf("[Boom-C%lx]: Test is now started: \r\n", hart_id);
-    printf("[MEEK_PERF_CFG] big=%d checker=%d interval=%" PRIu64
-           " checker_limit=2000\r\n",
-           MEEK_ENABLE_BIG_CORE_PERF, MEEK_ENABLE_CHECKER_SEGMENT_PERF,
+    printf("[RUN] hart=%lx status=started\n", hart_id);
+    printf("[CONFIG] big_core_perf=%s checker_perf=%s interval_cycles=%" PRIu64
+           " sample_readback=not_collected\n",
+           MEEK_ENABLE_BIG_CORE_PERF ? "on" : "off",
+           MEEK_ENABLE_CHECKER_SEGMENT_PERF ? "on" : "off",
            (uint64_t)FPGA_PERF_INTERVAL_CYCLES);
     lock_release(&uart_lock);
 
@@ -45,7 +46,7 @@ static uint64_t test_setup(void)
     return hart_id;
 }
 
-/* 执行 GAPBS 最小 14 节点规模的协同 benchmark。 */
+/* 执行下方 [BENCHMARK SIZE] 选择的 GAPBS 节点规模。 */
 static void gapbs_bfs(uint64_t hart_id, uint64_t *start_cpu,
                       uint64_t *end_cpu, gapbs_bfs_result_t *result)
 {
@@ -54,7 +55,11 @@ static void gapbs_bfs(uint64_t hart_id, uint64_t *start_cpu,
 
     *start_cpu = read_cycles();
     (void)hart_id;
-    gapbs_bfs_run_min(result);
+    /*
+     * [BENCHMARK SIZE]
+     * 修改这一行即可切换规模：gapbs_bfs_run_14、_512、_1024、_2048、_4096。
+     */
+    gapbs_bfs_run_4096(result);
 
     ROCC_INSTRUCTION_S(1, 0X02, 0x70);
     for (int nop_count = 0; nop_count < 26; nop_count++) {
@@ -74,11 +79,11 @@ static void test_report(uint64_t hart_id, uint64_t start_cpu,
                         uint64_t end_cpu, const gapbs_bfs_result_t *result)
 {
     lock_acquire(&uart_lock);
-    printf("GAPBS BFS: source=%" PRIu32 " reached_nodes=%" PRIu32
-           " traversed_edges=%" PRIu32 " parent_checksum=%" PRIu64
-           " verified=%" PRIu32 "\r\n",
-           result->source, result->reached_nodes, result->traversed_edges,
-           result->parent_checksum, result->verified);
+    printf("[RUN] benchmark=gapbs_bfs nodes=%" PRIu32 " source=%" PRIu32
+           " reached=%" PRIu32 " edges=%" PRIu32
+           " verified=%" PRIu32 " parent_checksum=%" PRIu64 "\n",
+           result->node_count, result->source, result->reached_nodes,
+           result->traversed_edges, result->verified, result->parent_checksum);
     lock_release(&uart_lock);
     report_end(start_cpu, end_cpu, hart_id);
     ght_unset_satp_priv();

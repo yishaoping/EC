@@ -15,14 +15,13 @@
 #define bottom_up_step gapbs_small_bottom_up_step
 #define top_down_step gapbs_small_top_down_step
 #define verify_result gapbs_small_verify_result
-#define gapbs_bfs_run gapbs_bfs_run_min
 
 /*
  * GAPBS 最小小图版本：该 CSR 数据由 GAPBS test/graphs/4.el 预生成，
  * 提供给裸机 benchmark 做快速功能验证。
  */
-#define GAPBS_NODE_COUNT 14
-#define GAPBS_EDGE_COUNT 53
+#define GAPBS_NODE_COUNT GAPBS_BFS_14_NODE_COUNT
+#define GAPBS_EDGE_COUNT 53U
 #define GAPBS_SOURCE 0
 #define GAPBS_ALPHA 15
 #define GAPBS_BETA 18
@@ -184,7 +183,7 @@ static uint32_t verify_result(const int32_t *parent)
     return 1;
 }
 
-void gapbs_bfs_run(gapbs_bfs_result_t *result)
+void gapbs_bfs_run_14(gapbs_bfs_result_t *result)
 {
     int32_t parent[GAPBS_NODE_COUNT];
     uint32_t frontier[GAPBS_NODE_COUNT];
@@ -234,6 +233,7 @@ void gapbs_bfs_run(gapbs_bfs_result_t *result)
         }
     }
 
+    result->node_count = GAPBS_BFS_14_NODE_COUNT;
     result->source = GAPBS_SOURCE;
     result->reached_nodes = 0;
     result->traversed_edges = 0;
@@ -248,7 +248,6 @@ void gapbs_bfs_run(gapbs_bfs_result_t *result)
     }
     result->verified = verify_result(parent);
 }
-#undef gapbs_bfs_run
 #undef verify_result
 #undef top_down_step
 #undef bottom_up_step
@@ -280,15 +279,15 @@ void gapbs_bfs_run(gapbs_bfs_result_t *result)
 #define GAPBS_ALPHA 15U
 #define GAPBS_BETA 18U
 
-static uint32_t out_offset[GAPBS_BFS_MAX_NODE_COUNT + 1U];
-static uint32_t in_offset[GAPBS_BFS_MAX_NODE_COUNT + 1U];
-static uint16_t out_edge[GAPBS_BFS_MAX_NODE_COUNT * GAPBS_DEGREE];
-static uint16_t in_edge[GAPBS_BFS_MAX_NODE_COUNT * GAPBS_DEGREE];
-static int32_t parent[GAPBS_BFS_MAX_NODE_COUNT];
-static uint32_t frontier[GAPBS_BFS_MAX_NODE_COUNT];
-static uint32_t next_frontier[GAPBS_BFS_MAX_NODE_COUNT];
-static uint8_t front_bits[GAPBS_BFS_MAX_NODE_COUNT];
-static uint8_t next_bits[GAPBS_BFS_MAX_NODE_COUNT];
+static uint32_t out_offset[GAPBS_BFS_4096_NODE_COUNT + 1U];
+static uint32_t in_offset[GAPBS_BFS_4096_NODE_COUNT + 1U];
+static uint16_t out_edge[GAPBS_BFS_4096_NODE_COUNT * GAPBS_DEGREE];
+static uint16_t in_edge[GAPBS_BFS_4096_NODE_COUNT * GAPBS_DEGREE];
+static int32_t parent[GAPBS_BFS_4096_NODE_COUNT];
+static uint32_t frontier[GAPBS_BFS_4096_NODE_COUNT];
+static uint32_t next_frontier[GAPBS_BFS_4096_NODE_COUNT];
+static uint8_t front_bits[GAPBS_BFS_4096_NODE_COUNT];
+static uint8_t next_bits[GAPBS_BFS_4096_NODE_COUNT];
 
 static void build_graph(uint32_t node_count)
 {
@@ -427,6 +426,7 @@ static void gapbs_bfs_run_size(gapbs_bfs_result_t *result,
         }
     }
 
+    result->node_count = node_count;
     result->source = GAPBS_SOURCE;
     result->reached_nodes = 0;
     result->traversed_edges = 0;
@@ -440,16 +440,6 @@ static void gapbs_bfs_run_size(gapbs_bfs_result_t *result,
         }
     }
     result->verified = verify_result(node_count);
-}
-
-void gapbs_bfs_run(gapbs_bfs_result_t *result)
-{
-    gapbs_bfs_run_512(result);
-}
-
-void gapbs_bfs_run_max(gapbs_bfs_result_t *result)
-{
-    gapbs_bfs_run_4096(result);
 }
 
 void gapbs_bfs_run_512(gapbs_bfs_result_t *result)

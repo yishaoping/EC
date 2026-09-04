@@ -87,6 +87,28 @@ static uint128_t cycle_sum_to_ns(uint64_t cycle_sum, uint64_t frequency_hz)
     return (uint128_t)cycle_sum * UINT64_C(1000000000) / frequency_hz;
 }
 
+static void print_uint128_fixed(uint128_t integer, uint64_t fraction_thousandths)
+{
+    print_uint128(integer);
+    printf(".%03" PRIu64, fraction_thousandths);
+}
+
+static const char *traffic_hart_name(int hart)
+{
+    static const char *const names[NUM_HARTS] = {
+        "boom", "c1", "c2", "c3", "c4"};
+    return hart >= 0 && hart < NUM_HARTS ? names[hart] : "hart?";
+}
+
+static uint64_t checker_traffic_sum(int counter)
+{
+    uint64_t total = 0;
+    for (int hart = 1; hart < NUM_HARTS; hart++) {
+        total += hart_traffic[hart][counter];
+    }
+    return total;
+}
+
 /* 输出不可缓存 store 的 BOOM 到 checker 近似检测延迟。 */
 static void print_store_uncache_latency(void)
 {
@@ -102,11 +124,14 @@ static void print_store_uncache_latency(void)
             hart_traffic[hart][GHE_TRAFFIC_STORE_UNCACHE_CYCLE_SUM];
 
         hart_time_ns[hart] = cycle_sum_to_ns(cycle_sum, frequency_hz);
-        printf("hart%d store_uncache timestamp_cycle_sum=%" PRIu64
-               " frequency_hz=%" PRIu64 " time_sum_ns=",
-               hart, cycle_sum, frequency_hz);
+#if TEST_REPORT_VERBOSE
+        printf("[LATENCY_VERBOSE] hart=%s events=%" PRIu64
+               " cycle_sum=%" PRIu64 " time_sum_ns=",
+               traffic_hart_name(hart),
+               hart_traffic[hart][GHE_TRAFFIC_STORE_UNCACHE], cycle_sum);
         print_uint128(hart_time_ns[hart]);
-        printf("\r\n");
+        printf(" frequency_hz=%" PRIu64 "\n", frequency_hz);
+#endif
 
         if (hart != 0) {
             checker_time_ns += hart_time_ns[hart];
@@ -115,23 +140,22 @@ static void print_store_uncache_latency(void)
         }
     }
 
-    printf("store_uncache latency inputs: boom_count=%" PRIu64
-           " checker_count=", boom_count);
-    print_uint128(checker_count);
-    printf(" boom_time_sum_ns=");
-    print_uint128(hart_time_ns[0]);
-    printf(" checker_time_sum_ns=");
-    print_uint128(checker_time_ns);
-    printf("\r\n");
-
     if (checker_count != (uint128_t)boom_count) {
-        printf("store_uncache average detection latency unavailable: "
-               "event counts do not match\r\n");
+        printf("[LATENCY] store_uncache events=boom=%" PRIu64
+               " checker=", boom_count);
+        print_uint128(checker_count);
+        printf(" average=n/a reason=count_mismatch\n");
+#if TEST_REPORT_VERBOSE
+        printf("[LATENCY_VERBOSE] boom_time_sum_ns=");
+        print_uint128(hart_time_ns[0]);
+        printf(" checker_time_sum_ns=");
+        print_uint128(checker_time_ns);
+        printf("\n");
+#endif
         return;
     }
     if (boom_count == 0) {
-        printf("store_uncache average detection latency unavailable: "
-               "no events\r\n");
+        printf("[LATENCY] store_uncache events=0 average=n/a reason=no_events\n");
         return;
     }
 
@@ -139,15 +163,38 @@ static void print_store_uncache_latency(void)
     uint128_t difference_ns = negative ? hart_time_ns[0] - checker_time_ns
                                        : checker_time_ns - hart_time_ns[0];
     uint128_t average_ns = difference_ns / boom_count;
-    uint64_t average_fraction =
+    uint64_t average_ns_fraction =
         (uint64_t)(((difference_ns % boom_count) * 1000) / boom_count);
 
-    printf("store_uncache approx_average_detection_latency_ns=");
+    /* 将纳秒差换算为 BOOM 等效周期，便于与其它 BOOM 延迟指标比较。 */
+    uint128_t average_cycle_numerator =
+        difference_ns * (uint128_t)BOOM_CORE_FREQUENCY_HZ;
+    uint128_t average_cycle_denominator =
+        (uint128_t)boom_count * UINT64_C(1000000000);
+    uint128_t average_cycles =
+        average_cycle_numerator / average_cycle_denominator;
+    uint64_t average_cycle_fraction = (uint64_t)(
+        ((average_cycle_numerator % average_cycle_denominator) * 1000) /
+        average_cycle_denominator);
+
+    printf("[LATENCY] store_uncache events=boom=%" PRIu64
+           " checker=", boom_count);
+    print_uint128(checker_count);
+    printf(" average=");
     if (negative) {
         printf("-");
     }
-    print_uint128(average_ns);
-    printf(".%03" PRIu64 "\r\n", average_fraction);
+    print_uint128_fixed(average_cycles, average_cycle_fraction);
+    printf("cycles/");
+    print_uint128_fixed(average_ns, average_ns_fraction);
+    printf("ns\n");
+#if TEST_REPORT_VERBOSE
+    printf("[LATENCY_VERBOSE] boom_time_sum_ns=");
+    print_uint128(hart_time_ns[0]);
+    printf(" checker_time_sum_ns=");
+    print_uint128(checker_time_ns);
+    printf("\n");
+#endif
 }
 
 /* 输出并校验 BOOM L1 到 L2 的未校验脏写回延迟统计。 */
@@ -183,44 +230,61 @@ static void print_unverified_dirty_writeback_latency(void)
     uint64_t classified_unverified = pending + resolved + other;
     uint64_t classified_dirty = verify_required + nonverify;
 
-    printf("dirty writeback verification: verified=%" PRIu64
-           " unverified_seen=%" PRIu64
-           " pending=%" PRIu64 " resolved=%" PRIu64
-           " other=%" PRIu64 "\r\n",
-           verified_at_writeback, unverified_at_writeback, pending, resolved,
-           other);
-    printf("package verification: allocated=%" PRIu64
-           " completed=%" PRIu64 " passed=%" PRIu64
-           " failed=%" PRIu64 " cancelled=%" PRIu64
-           " safe_watermark=%" PRIu64 " result_dropped=%" PRIu64
-           " arithmetic_overflow=%" PRIu64 " stats_valid=%" PRIu64 "\r\n",
-           allocated, completed, passed, failed, cancelled,
-           traffic[GHE_TRAFFIC_SAFE_PACKET_WATERMARK], result_dropped,
-           arithmetic_overflow, stats_valid);
-    printf("unverified dirty writeback latency inputs: safe_cycle_sum=%" PRIu64
-           " writeback_cycle_sum=%" PRIu64 " boom_frequency_hz=%" PRIu64
-           "\r\n",
-           safe_cycle_sum, writeback_cycle_sum,
-           (uint64_t)BOOM_CORE_FREQUENCY_HZ);
+    uint64_t safe_watermark = traffic[GHE_TRAFFIC_SAFE_PACKET_WATERMARK];
+    int package_ok = stats_valid == 1 && result_dropped == 0 &&
+                     arithmetic_overflow == 0 && failed == 0 &&
+                     cancelled == 0 && completed == allocated &&
+                     passed == completed;
+    int dirty_ok = stats_valid == 1 && pending == 0 && other == 0 &&
+                   result_dropped == 0 && arithmetic_overflow == 0 &&
+                   failed == 0 && cancelled == 0 && completed == allocated &&
+                   passed == completed && classified_required == verify_required &&
+                   classified_unverified == unverified_at_writeback &&
+                   classified_dirty == traffic[GHE_TRAFFIC_L1_L2_WB_DIRTY];
 
-    if (stats_valid != 1 || pending != 0 || other != 0 ||
-        result_dropped != 0 || arithmetic_overflow != 0 || failed != 0 ||
-        cancelled != 0 || completed != allocated || passed != completed ||
-        classified_required != verify_required ||
-        classified_unverified != unverified_at_writeback ||
-        classified_dirty != traffic[GHE_TRAFFIC_L1_L2_WB_DIRTY]) {
-        printf("unverified dirty writeback average latency unavailable: "
-               "statistics are incomplete or invalid\r\n");
-        return;
+    printf("[VERIFY] packages allocated=%" PRIu64 " completed=%" PRIu64
+           " passed=%" PRIu64 " failed=%" PRIu64 " cancelled=%" PRIu64
+           " status=%s\n",
+           allocated, completed, passed, failed, cancelled,
+           package_ok ? "PASS" : "FAIL");
+    printf("[VERIFY] dirty_wb total=%" PRIu64 " verified=%" PRIu64
+           " unverified=%" PRIu64 " resolved=%" PRIu64
+           " pending=%" PRIu64 " other=%" PRIu64 " status=%s\n",
+           verify_required, verified_at_writeback, unverified_at_writeback,
+           resolved, pending, other, dirty_ok ? "PASS" : "FAIL");
+
+#if TEST_REPORT_VERBOSE
+    printf("[VERIFY_VERBOSE] safe_watermark=%" PRIu64
+           " result_dropped=%" PRIu64 " arithmetic_overflow=%" PRIu64
+           " stats_valid=%" PRIu64 "\n",
+           safe_watermark, result_dropped, arithmetic_overflow, stats_valid);
+#else
+    if (!package_ok || !dirty_ok || safe_watermark != completed) {
+        printf("[VERIFY_DIAG] safe_watermark=%" PRIu64
+               " result_dropped=%" PRIu64 " arithmetic_overflow=%" PRIu64
+               " stats_valid=%" PRIu64 "\n",
+               safe_watermark, result_dropped, arithmetic_overflow,
+               stats_valid);
     }
-    if (resolved == 0) {
-        printf("unverified dirty writeback average latency unavailable: "
-               "no resolved events\r\n");
-        return;
+#endif
+
+    const char *latency_reason = NULL;
+    if (!dirty_ok) {
+        latency_reason = "statistics_invalid";
+    } else if (resolved == 0) {
+        latency_reason = "no_events";
+    } else if (safe_cycle_sum < writeback_cycle_sum) {
+        latency_reason = "cycle_sum_underflow";
     }
-    if (safe_cycle_sum < writeback_cycle_sum) {
-        printf("unverified dirty writeback average latency unavailable: "
-               "cycle sum underflow\r\n");
+    if (latency_reason != NULL) {
+        printf("[LATENCY] dirty_wb average=n/a reason=%s\n", latency_reason);
+#if TEST_REPORT_VERBOSE
+        printf("[LATENCY_VERBOSE] safe_cycle_sum=%" PRIu64
+               " writeback_cycle_sum=%" PRIu64 " frequency_hz=%" PRIu64
+               "\n",
+               safe_cycle_sum, writeback_cycle_sum,
+               (uint64_t)BOOM_CORE_FREQUENCY_HZ);
+#endif
         return;
     }
 
@@ -237,11 +301,68 @@ static void print_unverified_dirty_writeback_latency(void)
         ((latency_ns_numerator % latency_ns_denominator) * 1000) /
         latency_ns_denominator);
 
-    printf("unverified_dirty_writeback_average_latency_cycles=%" PRIu64
-           ".%03" PRIu64 " average_latency_ns=",
-           average_cycles, average_cycle_fraction);
-    print_uint128(average_ns);
-    printf(".%03" PRIu64 "\r\n", average_ns_fraction);
+    printf("[LATENCY] dirty_wb events=%" PRIu64 " average=", resolved);
+    print_uint128_fixed(average_cycles, average_cycle_fraction);
+    printf("cycles/");
+    print_uint128_fixed(average_ns, average_ns_fraction);
+    printf("ns\n");
+#if TEST_REPORT_VERBOSE
+    printf("[LATENCY_VERBOSE] safe_cycle_sum=%" PRIu64
+           " writeback_cycle_sum=%" PRIu64 " frequency_hz=%" PRIu64
+           "\n",
+           safe_cycle_sum, writeback_cycle_sum,
+           (uint64_t)BOOM_CORE_FREQUENCY_HZ);
+#endif
+}
+
+static void print_traffic_report(void)
+{
+    printf("[TRAFFIC] hart  store[total/cache/unc]       "
+           "load[total/cache/unc/fwd]\n");
+    for (int hart = 0; hart < NUM_HARTS; hart++) {
+        printf("[TRAFFIC] %-5s %" PRIu64 "/%" PRIu64 "/%" PRIu64
+               "                 %" PRIu64 "/%" PRIu64 "/%" PRIu64 "/%" PRIu64
+               "\n",
+               traffic_hart_name(hart),
+               hart_traffic[hart][GHE_TRAFFIC_STORE_TOTAL],
+               hart_traffic[hart][GHE_TRAFFIC_STORE_CACHE],
+               hart_traffic[hart][GHE_TRAFFIC_STORE_UNCACHE],
+               hart_traffic[hart][GHE_TRAFFIC_LOAD_TOTAL],
+               hart_traffic[hart][GHE_TRAFFIC_LOAD_CACHE],
+               hart_traffic[hart][GHE_TRAFFIC_LOAD_UNCACHE],
+               hart_traffic[hart][GHE_TRAFFIC_LOAD_FORWARD]);
+    }
+    printf("[TRAFFIC] checker_sum store=%" PRIu64 " load=%" PRIu64 "\n",
+           checker_traffic_sum(GHE_TRAFFIC_STORE_TOTAL),
+           checker_traffic_sum(GHE_TRAFFIC_LOAD_TOTAL));
+
+    int any_atomic = 0;
+    for (int hart = 0; hart < NUM_HARTS; hart++) {
+        uint64_t lr = hart_traffic[hart][GHE_TRAFFIC_LR];
+        uint64_t sc_success = hart_traffic[hart][GHE_TRAFFIC_SC_SUCCESS];
+        uint64_t sc_fail = hart_traffic[hart][GHE_TRAFFIC_SC_FAIL];
+        uint64_t amo = hart_traffic[hart][GHE_TRAFFIC_AMO_TOTAL];
+        if (lr != 0 || sc_success != 0 || sc_fail != 0 || amo != 0) {
+            any_atomic = 1;
+            printf("[TRAFFIC] atomics hart=%s lr=%" PRIu64
+                   " sc_success=%" PRIu64 " sc_fail=%" PRIu64
+                   " amo=%" PRIu64 "\n",
+                   traffic_hart_name(hart), lr, sc_success, sc_fail, amo);
+        }
+    }
+    if (!any_atomic) {
+        printf("[TRAFFIC] atomics=all_zero\n");
+    }
+
+    printf("[TRAFFIC] dcache l1_l2_c=%" PRIu64 " wb_dirty=%" PRIu64
+           " verify_required=%" PRIu64 "\n",
+           hart_traffic[0][GHE_TRAFFIC_L1_L2_C_TOTAL],
+           hart_traffic[0][GHE_TRAFFIC_L1_L2_WB_DIRTY],
+           hart_traffic[0][GHE_TRAFFIC_L1_L2_WB_DIRTY_VERIFY_REQUIRED]);
+    printf("[TRAFFIC] dram l2_wb_total=%" PRIu64 " l2_wb_dirty=%" PRIu64
+           "\n",
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_TOTAL],
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_DIRTY]);
 }
 
 void report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)
@@ -263,17 +384,18 @@ void report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)
     }
 
     lock_acquire(&uart_lock);
-    printf("CPU execution took %" PRIu64 " cycles\n", end_cpu - start_cpu);
+    printf("[PERF] boom_cycles=%" PRIu64 " boom_inst=%" PRIu64 "\n",
+           end_cpu - start_cpu, csr_read_e[0] - csr_read_s[0]);
     if (package_drain_status != PACKAGE_DRAIN_COMPLETE) {
         const char *reason = package_drain_status == PACKAGE_DRAIN_HARD_ERROR
                                  ? "hard_error"
                                  : "timeout";
-        printf("package statistics drain incomplete: reason=%s"
+        printf("[VERIFY_DIAG] package_drain=FAIL reason=%s"
                " allocated=%" PRIu64 " completed=%" PRIu64
                " pending=%" PRIu64 " result_dropped=%" PRIu64
                " writeback_dropped=%" PRIu64
                " arithmetic_overflow=%" PRIu64
-               " elapsed_cycles=%" PRIu64 "\r\n",
+               " elapsed_cycles=%" PRIu64 "\n",
                reason, package_drain_state.allocated,
                package_drain_state.completed, package_drain_state.pending,
                package_drain_state.result_dropped,
@@ -281,50 +403,13 @@ void report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)
                package_drain_state.arithmetic_overflow,
                package_drain_state.elapsed_cycles);
     }
-    lock_release(&uart_lock);
-
-    lock_acquire(&uart_lock);
-    printf("Boom-Perf: CSR execution-inst = %" PRIu64 " \r\n",
-           csr_read_e[0] - csr_read_s[0]);
-    for (int hart = 0; hart < NUM_HARTS; hart++) {
-        printf("hart%d traffic: store_out=%" PRIu64
-               " store_cache=%" PRIu64 " store_uncache=%" PRIu64 "\r\n",
-               hart, hart_traffic[hart][GHE_TRAFFIC_STORE_TOTAL],
-               hart_traffic[hart][GHE_TRAFFIC_STORE_CACHE],
-               hart_traffic[hart][GHE_TRAFFIC_STORE_UNCACHE]);
-        printf("hart%d traffic: load_out=%" PRIu64
-               " load_cache=%" PRIu64 " load_uncache=%" PRIu64
-               " load_forward=%" PRIu64 "\r\n",
-               hart, hart_traffic[hart][GHE_TRAFFIC_LOAD_TOTAL],
-               hart_traffic[hart][GHE_TRAFFIC_LOAD_CACHE],
-               hart_traffic[hart][GHE_TRAFFIC_LOAD_UNCACHE],
-               hart_traffic[hart][GHE_TRAFFIC_LOAD_FORWARD]);
-        printf("hart%d traffic: lr_out=%" PRIu64
-               " sc_success=%" PRIu64 " sc_fail=%" PRIu64 "\r\n",
-               hart, hart_traffic[hart][GHE_TRAFFIC_LR],
-               hart_traffic[hart][GHE_TRAFFIC_SC_SUCCESS],
-               hart_traffic[hart][GHE_TRAFFIC_SC_FAIL]);
-        printf("hart%d traffic: amo_out=%" PRIu64
-               " amo_cache=%" PRIu64 " amo_uncache=%" PRIu64 "\r\n",
-               hart, hart_traffic[hart][GHE_TRAFFIC_AMO_TOTAL],
-               hart_traffic[hart][GHE_TRAFFIC_AMO_CACHE],
-               hart_traffic[hart][GHE_TRAFFIC_AMO_UNCACHE]);
-        if (hart == 0) {
-            printf("hart0 dcache traffic: l1_l2_c_total=%" PRIu64
-                   " l1_l2_wb_dirty=%" PRIu64
-                   " l1_l2_wb_dirty_verify_required=%" PRIu64 "\r\n",
-                   hart_traffic[hart][GHE_TRAFFIC_L1_L2_C_TOTAL],
-                   hart_traffic[hart][GHE_TRAFFIC_L1_L2_WB_DIRTY],
-                   hart_traffic[hart]
-                       [GHE_TRAFFIC_L1_L2_WB_DIRTY_VERIFY_REQUIRED]);
-        }
-    }
-    printf("shared dcache traffic: l2_dram_wb_total=%" PRIu64
-           " l2_dram_wb_dirty=%" PRIu64 "\r\n",
-           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_TOTAL],
-           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_DIRTY]);
+    print_traffic_report();
+    printf("[LATENCY] clock=boom:%" PRIu64 "Hz checker:%" PRIu64 "Hz\n",
+           (uint64_t)BOOM_CORE_FREQUENCY_HZ,
+           (uint64_t)CHECKER_CORE_FREQUENCY_HZ);
     print_store_uncache_latency();
     print_unverified_dirty_writeback_latency();
-    printf("[Boom-C%lx]: Test is now completed. \r\n", hart_id);
+    printf("[END] hart=%lx status=%s\n", hart_id,
+           package_drain_status == PACKAGE_DRAIN_COMPLETE ? "PASS" : "FAIL");
     lock_release(&uart_lock);
 }

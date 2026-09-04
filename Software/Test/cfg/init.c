@@ -1,5 +1,6 @@
 #include "init.h"
 
+#include <inttypes.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -82,10 +83,6 @@ void r_ini(int num_checkers)
     uint64_t rd_mask = ghe_get_checker_mask();
 
     lock_acquire(&uart_lock);
-    printf("R: Checker mask set to 0x%lx\r\n", rd_mask);
-    lock_release(&uart_lock);
-
-    lock_acquire(&uart_lock);
-    printf("R: Initialisation is completed!\r\n");
+    printf("[INIT] checker_mask=0x%" PRIx64 " status=ready\n", rd_mask);
     lock_release(&uart_lock);
 }
