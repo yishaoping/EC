@@ -403,6 +403,7 @@ class BoomIOMSHR(id: Int)(implicit edge: TLEdgeOut, p: Parameters) extends BoomM
     val mem_access = Decoupled(new TLBundleA(edge.bundle))
     val mem_ack    = Flipped(Valid(new TLBundleD(edge.bundle)))
     val traffic_store_complete = Output(Bool())
+    val traffic_strict_store_complete = Output(Bool())
 
     // We don't need brupdate in here because uncacheable operations are guaranteed non-speculative
   })
@@ -462,10 +463,13 @@ class BoomIOMSHR(id: Int)(implicit edge: TLEdgeOut, p: Parameters) extends BoomM
   io.resp.bits.traffic_seen  := req.traffic_seen
   io.resp.bits.traffic_cacheable := req.traffic_cacheable
 
-  // An uncached store is externally visible once its TileLink A request is
-  // accepted. Loads are counted later, when their successful response returns.
+  // 不可缓存 store 的 TileLink A 请求被接受后即对外可见；load 则在成功
+  // 响应返回时统计。原始与严格路径分别使用请求阶段和架构提交阶段资格。
   io.traffic_store_complete := io.mem_access.fire && req.traffic_check &&
     !req.traffic_seen && !req.traffic_cacheable && req.uop.uses_stq &&
+    req.uop.mem_cmd === M_XWR
+  io.traffic_strict_store_complete := io.mem_access.fire &&
+    req.traffic_arch_check && !req.traffic_cacheable && req.uop.uses_stq &&
     req.uop.mem_cmd === M_XWR
 
   when (io.req.fire) {
@@ -551,6 +555,7 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
     val fence_rdy = Output(Bool())
     val probe_rdy = Output(Bool())
     val traffic_store_complete = Output(Bool())
+    val traffic_strict_store_complete = Output(Bool())
   })
 
   val req_idx = OHToUInt(io.req.map(_.valid))
@@ -748,6 +753,8 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
   }
 
   io.traffic_store_complete := mmios.map(_.io.traffic_store_complete).reduce(_||_)
+  io.traffic_strict_store_complete :=
+    mmios.map(_.io.traffic_strict_store_complete).reduce(_||_)
 
   mmio_alloc_arb.io.out.ready := req.valid && !cacheable
 

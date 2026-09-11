@@ -109,6 +109,152 @@ static uint64_t checker_traffic_sum(int counter)
     return total;
 }
 
+/* STOP 后等待 BOOM 的架构/严格计数收敛，避免读取到尾部未结算快照。 */
+static int wait_for_boom_strict_pending(void)
+{
+    uint64_t start_cycle = read_cycles();
+    while (1) {
+        uint64_t pending =
+            ghe_traffic_counter_read(GHE_TRAFFIC_STRICT_PENDING);
+        if (pending == 0) {
+            return 1;
+        }
+        if (read_cycles() - start_cycle >= PACKAGE_DRAIN_TIMEOUT_CYCLES) {
+            printf("[TRAFFIC_DIAG] strict_pending=%" PRIu64
+                   " status=TIMEOUT\n", pending);
+            return 0;
+        }
+    }
+}
+
+/* 仅在不一致时输出有符号差值，便于直接定位多记或漏记。 */
+static void print_counter_difference(const char *name,
+                                     uint64_t left, uint64_t right)
+{
+    if (left == right) {
+        return;
+    }
+    printf("[ASSERT_DIAG] %s=%c%" PRIu64 "\n", name,
+           left >= right ? '+' : '-',
+           left >= right ? left - right : right - left);
+}
+
+/* 输出 BOOM 架构、BOOM 严格路径和 checker 三套访存口径，并执行一致性断言。 */
+static int print_boom_traffic_consistency(void)
+{
+    const volatile uint64_t *boom = hart_traffic[0];
+    uint64_t arch_store = boom[GHE_TRAFFIC_ARCH_STORE_TOTAL];
+    uint64_t arch_store_cache = boom[GHE_TRAFFIC_ARCH_STORE_CACHE];
+    uint64_t arch_store_uncache = boom[GHE_TRAFFIC_ARCH_STORE_UNCACHE];
+    uint64_t arch_load = boom[GHE_TRAFFIC_ARCH_LOAD_TOTAL];
+    uint64_t arch_load_cache = boom[GHE_TRAFFIC_ARCH_LOAD_CACHE];
+    uint64_t arch_load_uncache = boom[GHE_TRAFFIC_ARCH_LOAD_UNCACHE];
+
+    uint64_t strict_store = boom[GHE_TRAFFIC_STRICT_STORE_TOTAL];
+    uint64_t strict_store_cache = boom[GHE_TRAFFIC_STRICT_STORE_CACHE];
+    uint64_t strict_store_uncache = boom[GHE_TRAFFIC_STRICT_STORE_UNCACHE];
+    uint64_t strict_load = boom[GHE_TRAFFIC_STRICT_LOAD_TOTAL];
+    uint64_t strict_load_cache = boom[GHE_TRAFFIC_STRICT_LOAD_CACHE];
+    uint64_t strict_load_uncache = boom[GHE_TRAFFIC_STRICT_LOAD_UNCACHE];
+    uint64_t strict_load_response =
+        boom[GHE_TRAFFIC_STRICT_LOAD_CACHE_RESPONSE];
+    uint64_t strict_load_forward = boom[GHE_TRAFFIC_STRICT_LOAD_FORWARD];
+
+    uint64_t checker_store = checker_traffic_sum(GHE_TRAFFIC_STORE_TOTAL);
+    uint64_t checker_store_cache = checker_traffic_sum(GHE_TRAFFIC_STORE_CACHE);
+    uint64_t checker_store_uncache =
+        checker_traffic_sum(GHE_TRAFFIC_STORE_UNCACHE);
+    uint64_t checker_load = checker_traffic_sum(GHE_TRAFFIC_LOAD_TOTAL);
+    uint64_t checker_load_cache = checker_traffic_sum(GHE_TRAFFIC_LOAD_CACHE);
+    uint64_t checker_load_uncache = checker_traffic_sum(GHE_TRAFFIC_LOAD_UNCACHE);
+    uint64_t checker_load_forward = checker_traffic_sum(GHE_TRAFFIC_LOAD_FORWARD);
+
+    printf("[TRAFFIC_ARCH] boom store=%" PRIu64 " load=%" PRIu64 "\n",
+           arch_store, arch_load);
+    printf("[TRAFFIC_ARCH] store_cache=%" PRIu64
+           " store_uncache=%" PRIu64 " load_cache=%" PRIu64
+           " load_uncache=%" PRIu64 "\n",
+           arch_store_cache, arch_store_uncache,
+           arch_load_cache, arch_load_uncache);
+
+    printf("[TRAFFIC_STRICT] boom store=%" PRIu64 " load=%" PRIu64 "\n",
+           strict_store, strict_load);
+    printf("[TRAFFIC_STRICT] store_cache=%" PRIu64
+           " store_uncache=%" PRIu64 " load_cache=%" PRIu64
+           " load_uncache=%" PRIu64 " load_cache_response=%" PRIu64
+           " load_forward=%" PRIu64 " pending=%" PRIu64 "\n",
+           strict_store_cache, strict_store_uncache,
+           strict_load_cache, strict_load_uncache,
+           strict_load_response, strict_load_forward,
+           boom[GHE_TRAFFIC_STRICT_PENDING]);
+
+    printf("[TRAFFIC_CHECKER] sum store=%" PRIu64 " load=%" PRIu64 "\n",
+           checker_store, checker_load);
+    printf("[TRAFFIC_CHECKER] store_cache=%" PRIu64
+           " store_uncache=%" PRIu64 " load_cache=%" PRIu64
+           " load_uncache=%" PRIu64 " load_forward=%" PRIu64 "\n",
+           checker_store_cache, checker_store_uncache,
+           checker_load_cache, checker_load_uncache, checker_load_forward);
+
+    int store_ok = arch_store == strict_store && arch_store == checker_store;
+    int load_ok = arch_load == strict_load && arch_load == checker_load;
+    int store_class_ok = arch_store_cache == strict_store_cache &&
+                         arch_store_uncache == strict_store_uncache &&
+                         arch_store_cache == checker_store_cache &&
+                         arch_store_uncache == checker_store_uncache;
+    int load_class_ok = arch_load_cache == strict_load_cache &&
+                        arch_load_uncache == strict_load_uncache &&
+                        arch_load_cache == checker_load_cache &&
+                        arch_load_uncache == checker_load_uncache;
+    int path_ok = strict_load_cache ==
+                      strict_load_response + strict_load_forward &&
+                  strict_load == strict_load_cache + strict_load_uncache;
+    int checker_path_ok = checker_load ==
+                          checker_load_cache + checker_load_uncache +
+                              checker_load_forward;
+    int counter_ok = boom[GHE_TRAFFIC_COUNTER_ASSERT_FAIL] == 0 &&
+                     boom[GHE_TRAFFIC_STRICT_PENDING] == 0;
+
+    printf("[ASSERT] store arch=%" PRIu64 " strict=%" PRIu64
+           " checker=%" PRIu64 " result=%s\n",
+           arch_store, strict_store, checker_store,
+           store_ok && store_class_ok ? "PASS" : "FAIL");
+    printf("[ASSERT] load arch=%" PRIu64 " strict=%" PRIu64
+           " checker=%" PRIu64 " result=%s\n",
+           arch_load, strict_load, checker_load,
+           load_ok && load_class_ok && path_ok && checker_path_ok
+               ? "PASS" : "FAIL");
+    printf("[ASSERT] traffic_counter_fail=%" PRIu64
+           " pending=%" PRIu64 " result=%s\n",
+           boom[GHE_TRAFFIC_COUNTER_ASSERT_FAIL],
+           boom[GHE_TRAFFIC_STRICT_PENDING], counter_ok ? "PASS" : "FAIL");
+    if (!store_ok || !store_class_ok) {
+        print_counter_difference("store_arch_minus_strict",
+                                 arch_store, strict_store);
+        print_counter_difference("store_arch_minus_checker",
+                                 arch_store, checker_store);
+        print_counter_difference("store_cache_arch_minus_strict",
+                                 arch_store_cache, strict_store_cache);
+        print_counter_difference("store_uncache_arch_minus_strict",
+                                 arch_store_uncache, strict_store_uncache);
+    }
+    if (!load_ok || !load_class_ok || !path_ok || !checker_path_ok) {
+        print_counter_difference("load_arch_minus_strict",
+                                 arch_load, strict_load);
+        print_counter_difference("load_arch_minus_checker",
+                                 arch_load, checker_load);
+        print_counter_difference("load_cache_arch_minus_strict",
+                                 arch_load_cache, strict_load_cache);
+        print_counter_difference("load_uncache_arch_minus_strict",
+                                 arch_load_uncache, strict_load_uncache);
+        print_counter_difference("load_cache_minus_response_forward",
+                                 strict_load_cache,
+                                 strict_load_response + strict_load_forward);
+    }
+    return store_ok && load_ok && store_class_ok && load_class_ok && path_ok &&
+           checker_path_ok && counter_ok;
+}
+
 /* 输出不可缓存 store 的 BOOM 到 checker 近似检测延迟。 */
 static void print_store_uncache_latency(void)
 {
@@ -336,23 +482,31 @@ static void print_traffic_report(void)
            checker_traffic_sum(GHE_TRAFFIC_STORE_TOTAL),
            checker_traffic_sum(GHE_TRAFFIC_LOAD_TOTAL));
 
-    int any_atomic = 0;
+    uint64_t total_lr = 0;
+    uint64_t total_sc_success = 0;
+    uint64_t total_sc_fail = 0;
+    uint64_t total_amo = 0;
     for (int hart = 0; hart < NUM_HARTS; hart++) {
         uint64_t lr = hart_traffic[hart][GHE_TRAFFIC_LR];
         uint64_t sc_success = hart_traffic[hart][GHE_TRAFFIC_SC_SUCCESS];
         uint64_t sc_fail = hart_traffic[hart][GHE_TRAFFIC_SC_FAIL];
         uint64_t amo = hart_traffic[hart][GHE_TRAFFIC_AMO_TOTAL];
+        total_lr += lr;
+        total_sc_success += sc_success;
+        total_sc_fail += sc_fail;
+        total_amo += amo;
         if (lr != 0 || sc_success != 0 || sc_fail != 0 || amo != 0) {
-            any_atomic = 1;
             printf("[TRAFFIC] atomics hart=%s lr=%" PRIu64
                    " sc_success=%" PRIu64 " sc_fail=%" PRIu64
                    " amo=%" PRIu64 "\n",
                    traffic_hart_name(hart), lr, sc_success, sc_fail, amo);
         }
     }
-    if (!any_atomic) {
-        printf("[TRAFFIC] atomics=all_zero\n");
-    }
+    /* 始终输出零值，避免因省略行而误认为计数器缺失。 */
+    printf("[TRAFFIC] atomics total lr=%" PRIu64
+           " sc_success=%" PRIu64 " sc_fail=%" PRIu64
+           " amo=%" PRIu64 "\n",
+           total_lr, total_sc_success, total_sc_fail, total_amo);
 
     printf("[TRAFFIC] dcache l1_l2_c=%" PRIu64 " wb_dirty=%" PRIu64
            " verify_required=%" PRIu64 "\n",
@@ -379,6 +533,7 @@ void report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)
 
     /* 先冻结硬件统计，再读取 RoCC 计数器，避免读回过程污染统计窗口。 */
     ghe_fpga_perf_stop();
+    int pending_ok = wait_for_boom_strict_pending();
     for (int counter = 0; counter < GHE_TRAFFIC_COUNTERS; counter++) {
         hart_traffic[0][counter] = ghe_traffic_counter_read(counter);
     }
@@ -404,12 +559,14 @@ void report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)
                package_drain_state.elapsed_cycles);
     }
     print_traffic_report();
+    int traffic_ok = print_boom_traffic_consistency() && pending_ok;
     printf("[LATENCY] clock=boom:%" PRIu64 "Hz checker:%" PRIu64 "Hz\n",
            (uint64_t)BOOM_CORE_FREQUENCY_HZ,
            (uint64_t)CHECKER_CORE_FREQUENCY_HZ);
     print_store_uncache_latency();
     print_unverified_dirty_writeback_latency();
     printf("[END] hart=%lx status=%s\n", hart_id,
-           package_drain_status == PACKAGE_DRAIN_COMPLETE ? "PASS" : "FAIL");
+           package_drain_status == PACKAGE_DRAIN_COMPLETE && traffic_ok
+               ? "PASS" : "FAIL");
     lock_release(&uart_lock);
 }

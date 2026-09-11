@@ -39,10 +39,9 @@ object GH_GlobalParams {
   val GH_PERF_CTRL_START_BIT = 5
   val GH_PERF_CTRL_STOP_BIT = 6
 
-  // Stable software-visible traffic counter vector. Existing indices 0..34
-  // are retained; index 35 appends the number of dirty writebacks whose line
-  // attribution requires package verification.
-  val GH_TRAFFIC_COUNTERS = 36
+  // 软件可见的流量计数向量保持稳定；原有 0..35 号含义不变，36..51 号
+  // 追加 BOOM 架构与严格路径计数，从而保留旧版 RoCC ABI。
+  val GH_TRAFFIC_COUNTERS = 52
   // Index 13 counts the first accepted beat of every L1->L2 C-channel
   // transaction (including clean releases and probe responses).
   val GH_TRAFFIC_L1_L2_C_TOTAL = 13
@@ -75,6 +74,23 @@ object GH_GlobalParams {
   val GH_TRAFFIC_CANCELLED_PACKAGES = 33
   val GH_TRAFFIC_STATS_ARITHMETIC_OVERFLOW = 34
   val GH_TRAFFIC_L1_L2_WB_DIRTY_VERIFY_REQUIRED = 35
+  val GH_TRAFFIC_ARCH_STORE_TOTAL = 36
+  val GH_TRAFFIC_ARCH_STORE_CACHE = 37
+  val GH_TRAFFIC_ARCH_STORE_UNCACHE = 38
+  val GH_TRAFFIC_ARCH_LOAD_TOTAL = 39
+  val GH_TRAFFIC_ARCH_LOAD_CACHE = 40
+  val GH_TRAFFIC_ARCH_LOAD_UNCACHE = 41
+  val GH_TRAFFIC_STRICT_STORE_TOTAL = 42
+  val GH_TRAFFIC_STRICT_STORE_CACHE = 43
+  val GH_TRAFFIC_STRICT_STORE_UNCACHE = 44
+  val GH_TRAFFIC_STRICT_LOAD_TOTAL = 45
+  val GH_TRAFFIC_STRICT_LOAD_CACHE = 46
+  val GH_TRAFFIC_STRICT_LOAD_UNCACHE = 47
+  val GH_TRAFFIC_STRICT_LOAD_CACHE_RESPONSE = 48
+  val GH_TRAFFIC_STRICT_LOAD_FORWARD = 49
+  val GH_TRAFFIC_STRICT_PENDING = 50
+  val GH_TRAFFIC_COUNTER_ASSERT_FAIL = 51
+  require(GH_TRAFFIC_COUNTER_ASSERT_FAIL == GH_TRAFFIC_COUNTERS - 1)
   val GH_L2_WB_CLEAN_GRAY_BORE = "gh_l2_dram_wb_clean_gray"
   val GH_L2_WB_DIRTY_GRAY_BORE = "gh_l2_dram_wb_dirty_gray"
   val IF_THERE_IS_CDC = true;

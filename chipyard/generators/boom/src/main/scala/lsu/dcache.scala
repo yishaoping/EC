@@ -543,6 +543,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   replay_req(0).is_hella   := mshrs.io.replay.bits.is_hella
   replay_req(0).traffic_seen := mshrs.io.replay.bits.traffic_seen
   replay_req(0).traffic_check := mshrs.io.replay.bits.traffic_check
+  replay_req(0).traffic_arch_check := mshrs.io.replay.bits.traffic_arch_check
   replay_req(0).traffic_cacheable := mshrs.io.replay.bits.traffic_cacheable
   replay_req(0).packet_seq := mshrs.io.replay.bits.packet_seq
   mshrs.io.replay.ready    := metaReadArb.io.in(0).ready && dataReadArb.io.in(0).ready
@@ -632,11 +633,10 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
             Mux(prefetch_fire            , prefetch_req,
             Mux(mshrs.io.meta_read.fire, mshr_read_req
                                              , replay_req)))))
-  // The request is classified at DCache ingress. This bit then follows the
-  // request through MSHR refill/replay, so a late completion remains in scope.
+  // LSU 已按 LDQ/STQ 项锁存统计资格；DCache 只补充地址管理器给出的
+  // 可缓存属性，并让两者随 MSHR/refill/replay 一直传播到完成点。
   when (io.lsu.req.fire) {
     for (w <- 0 until memWidth) {
-      s0_req(w).traffic_check := io.traffic_check_state
       s0_req(w).traffic_cacheable := edge.manager.supportsAcquireBFast(
         io.lsu.req.bits(w).bits.addr, lgCacheBlockBytes.U)
     }
@@ -828,6 +828,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     mshrs.io.req(w).bits.is_hella    := s2_req(w).is_hella
     mshrs.io.req(w).bits.traffic_seen := s2_req(w).traffic_seen
     mshrs.io.req(w).bits.traffic_check := s2_req(w).traffic_check
+    mshrs.io.req(w).bits.traffic_arch_check := s2_req(w).traffic_arch_check
     mshrs.io.req(w).bits.traffic_cacheable := s2_req(w).traffic_cacheable
     mshrs.io.req(w).bits.packet_seq := s2_req(w).packet_seq
     mshrs.io.req_is_probe(w)         := s2_type === t_probe && s2_valid(w)
@@ -1266,6 +1267,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     lr_traffic_check_valid := false.B
   }
   io.lsu.traffic_check_state := io.traffic_check_state
+  io.lsu.traffic_counting := trafficCounting
+  io.lsu.traffic_reset := io.traffic_reset
 
   // Store/amo hits
   val s3_req   = RegNext(s2_req(0))
@@ -1348,6 +1351,12 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     s3_req.traffic_cacheable &&
     s3_req.uop.uses_stq && s3_req.uop.mem_cmd === M_XWR
   val completed_store_uncache = mshrs.io.traffic_store_complete
+  // 严格 store 路径只接受由 ROB 架构提交锁存的资格；原始 traffic_check
+  // 计数继续保留，用于观察请求时刻口径与架构口径之间的边界差异。
+  val completed_strict_store_cache = dataWriteArb.io.in(0).fire &&
+    s3_req.traffic_arch_check && s3_req.traffic_cacheable &&
+    s3_req.uop.uses_stq && s3_req.uop.mem_cmd === M_XWR
+  val completed_strict_store_uncache = mshrs.io.traffic_strict_store_complete
   val completed_load_cache   = io.lsu.traffic_load_cache_complete
   val completed_load_uncache = io.lsu.traffic_load_uncache_complete
   val completed_load_forward = io.lsu.traffic_load_forward_complete
@@ -1356,6 +1365,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val completed_sc_fail      = io.lsu.traffic_sc_fail_complete
   val completed_amo_cache    = io.lsu.traffic_amo_cache_complete
   val completed_amo_uncache  = io.lsu.traffic_amo_uncache_complete
+  io.lsu.traffic_store_cache_complete := completed_strict_store_cache
+  io.lsu.traffic_store_uncache_complete := completed_strict_store_uncache
   val store_cache_count   = RegInit(0.U(64.W))
   val store_uncache_count = RegInit(0.U(64.W))
   val store_uncache_cycle_sum = RegInit(0.U(64.W))
@@ -1379,39 +1390,42 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     sc_fail_count := 0.U
     amo_cache_count := 0.U
     amo_uncache_count := 0.U
-  }.elsewhen (trafficCounting && completed_store_cache) {
+  }.elsewhen (completed_store_cache) {
     store_cache_count := store_cache_count + 1.U
   }
-  when (trafficCounting && completed_store_uncache) {
+  // 完成事件自身已携带请求建立时锁存的 traffic_check；因此 STOP 后的
+  // 尾部响应仍应计入同一窗口，不能再次用全局 trafficCounting 截断。
+  when (completed_store_uncache) {
     store_uncache_count := store_uncache_count + 1.U
-    // The event and CSR timestamp are sampled on the same BOOM clock edge.
+    // 完成事件和 CSR 周期值在同一个 BOOM 时钟沿采样。
     store_uncache_cycle_sum := store_uncache_cycle_sum + io.csr_cycle
   }
-  when (trafficCounting && completed_load_cache.reduce(_|_)) {
+  when (completed_load_cache.reduce(_|_)) {
     load_cache_count := load_cache_count + PopCount(completed_load_cache)
   }
-  when (trafficCounting && completed_load_uncache.reduce(_|_)) {
+  when (completed_load_uncache.reduce(_|_)) {
     load_uncache_count := load_uncache_count + PopCount(completed_load_uncache)
   }
-  when (trafficCounting && completed_load_forward.reduce(_|_)) {
+  when (completed_load_forward.reduce(_|_)) {
     load_forward_count := load_forward_count + PopCount(completed_load_forward)
   }
-  when (trafficCounting && completed_lr.reduce(_|_)) {
+  when (completed_lr.reduce(_|_)) {
     lr_count := lr_count + PopCount(completed_lr)
   }
-  when (trafficCounting && completed_sc_success.reduce(_|_)) {
+  when (completed_sc_success.reduce(_|_)) {
     sc_success_count := sc_success_count + PopCount(completed_sc_success)
   }
-  when (trafficCounting && completed_sc_fail.reduce(_|_)) {
+  when (completed_sc_fail.reduce(_|_)) {
     sc_fail_count := sc_fail_count + PopCount(completed_sc_fail)
   }
-  when (trafficCounting && completed_amo_cache.reduce(_|_)) {
+  when (completed_amo_cache.reduce(_|_)) {
     amo_cache_count := amo_cache_count + PopCount(completed_amo_cache)
   }
-  when (trafficCounting && completed_amo_uncache.reduce(_|_)) {
+  when (completed_amo_uncache.reduce(_|_)) {
     amo_uncache_count := amo_uncache_count + PopCount(completed_amo_uncache)
   }
-  // load_total includes all three mutually-exclusive BOOM completion paths.
+  // load_total 包含三个互斥的 BOOM 完成路径；新增 36..51 项追加在旧向量
+  // 末尾，确保软件 ABI 不发生位移。
   val trafficCounterLive = VecInit(Seq(
     store_cache_count + store_uncache_count,
     store_cache_count,
@@ -1448,7 +1462,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     passedPackages,
     cancelledPackages,
     statsArithmeticOverflow,
-    verifyRequiredDirtyWbCount))
+    verifyRequiredDirtyWbCount) ++ io.lsu.traffic_arch_counter)
   val trafficCounterSnapshot = RegInit(VecInit(
     Seq.fill(GH_GlobalParams.GH_TRAFFIC_COUNTERS)(0.U(64.W))))
   val trafficCounterSnapshotValid = RegInit(false.B)
@@ -1461,7 +1475,10 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     // inclusive STOP edge is visible in one coherent snapshot.
     trafficCounterSnapshotValid := false.B
     trafficStopCapturePending := true.B
-  }.elsewhen (trafficStopCapturePending) {
+  }.elsewhen (trafficStopCapturePending &&
+              io.lsu.traffic_arch_counter(14) === 0.U) {
+    // 等 LSU 的架构/严格计数完全收敛后再冻结快照，避免 STOP 后尾部响应
+    // 尚未结算时软件读到过早的计数值。
     trafficCounterSnapshot := trafficCounterLive
     trafficCounterSnapshotValid := true.B
     trafficStopCapturePending := false.B

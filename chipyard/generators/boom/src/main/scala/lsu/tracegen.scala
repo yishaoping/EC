@@ -91,6 +91,7 @@ class BoomLSUShim(implicit p: Parameters) extends BoomModule()(p)
 
 
   io.lsu.commit.valids(0) := (!rob_bsy(rob_head) && rob_head =/= rob_tail && rob_respd(rob_head))
+  io.lsu.commit.arch_valids(0) := io.lsu.commit.valids(0)
   io.lsu.commit.uops(0)   := rob_uop(rob_head)
   io.lsu.commit.rbk_valids(0) := false.B
   io.lsu.commit.rollback := false.B
