@@ -114,7 +114,8 @@ static inline uint64_t ghe_csr_perf_read(int csr_index)
  * GH_GlobalParams.GH_TRAFFIC_* 完全一致，不能按软件需要重新排序。
  * 0--17 为基础访存、写回和不可缓存 store 的周期和统计；
  * 18--34 为 L1->L2 校验分类、包生命周期、完成水位及诊断信息；
- * 35 为需要校验的脏写回总数。
+ * 35 为需要校验的脏写回总数；36--51 为 BOOM 架构/严格访存统计；
+ * 52--60 为 L2->DRAM 脏写回校验分类及延迟统计。
  */
 enum ghe_traffic_counter {
     /* 基础访存分类计数。 */
@@ -138,7 +139,7 @@ enum ghe_traffic_counter {
     GHE_TRAFFIC_L1_L2_WB_TOTAL = GHE_TRAFFIC_L1_L2_C_TOTAL,
     GHE_TRAFFIC_L1_L2_WB_DIRTY,
 
-    /* 当前保留的 L2 到 DRAM 基础计数；本轮未增加延迟分类。 */
+    /* L2 到 DRAM 的基础写回计数；详细校验分类位于 52--60。 */
     GHE_TRAFFIC_L2_DRAM_WB_TOTAL,
     GHE_TRAFFIC_L2_DRAM_WB_DIRTY,
 
@@ -178,8 +179,36 @@ enum ghe_traffic_counter {
     GHE_TRAFFIC_STATS_ARITHMETIC_OVERFLOW,
     /* 需要校验的脏写回总数，等于 verified + unverified_seen。 */
     GHE_TRAFFIC_L1_L2_WB_DIRTY_VERIFY_REQUIRED,
+    GHE_TRAFFIC_ARCH_STORE_TOTAL,
+    GHE_TRAFFIC_ARCH_STORE_CACHE,
+    GHE_TRAFFIC_ARCH_STORE_UNCACHE,
+    GHE_TRAFFIC_ARCH_LOAD_TOTAL,
+    GHE_TRAFFIC_ARCH_LOAD_CACHE,
+    GHE_TRAFFIC_ARCH_LOAD_UNCACHE,
+    GHE_TRAFFIC_STRICT_STORE_TOTAL,
+    GHE_TRAFFIC_STRICT_STORE_CACHE,
+    GHE_TRAFFIC_STRICT_STORE_UNCACHE,
+    GHE_TRAFFIC_STRICT_LOAD_TOTAL,
+    GHE_TRAFFIC_STRICT_LOAD_CACHE,
+    GHE_TRAFFIC_STRICT_LOAD_UNCACHE,
+    GHE_TRAFFIC_STRICT_LOAD_CACHE_RESPONSE,
+    GHE_TRAFFIC_STRICT_LOAD_FORWARD,
+    GHE_TRAFFIC_STRICT_PENDING,
+    GHE_TRAFFIC_COUNTER_ASSERT_FAIL,
+    GHE_TRAFFIC_L2_DRAM_WB_VERIFY_REQUIRED,
+    GHE_TRAFFIC_L2_DRAM_WB_VERIFIED,
+    GHE_TRAFFIC_L2_DRAM_WB_UNVERIFIED,
+    GHE_TRAFFIC_L2_DRAM_WB_UNVERIFIED_RESOLVED,
+    GHE_TRAFFIC_L2_DRAM_WB_UNVERIFIED_PENDING,
+    GHE_TRAFFIC_L2_DRAM_WB_OTHER,
+    GHE_TRAFFIC_L2_DRAM_WB_WRITEBACK_CYCLE_SUM,
+    GHE_TRAFFIC_L2_DRAM_WB_VERIFY_CYCLE_SUM,
+    GHE_TRAFFIC_L2_DRAM_WB_STATS_VALID,
     GHE_TRAFFIC_COUNTERS
 };
+
+_Static_assert(GHE_TRAFFIC_COUNTERS == 61,
+               "traffic counter software/hardware ABI length must match");
 
 /*
  * 通过 funct=0x7B 读取当前 hart 所在 tile 的一个统计项。

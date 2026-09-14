@@ -20,6 +20,8 @@ package sifive.blocks.inclusivecache
 import Chisel._
 import freechips.rocketchip.tilelink._
 import freechips.rocketchip.util._
+import chisel3.util.experimental.BoringUtils
+import freechips.rocketchip.guardiancouncil.GH_GlobalParams
 
 class SinkCResponse(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
 {
@@ -29,6 +31,10 @@ class SinkCResponse(params: InclusiveCacheParameters) extends InclusiveCacheBund
   val source = UInt(width = params.inner.bundle.sourceBits)
   val param  = UInt(width = 3)
   val data   = Bool()
+  // Provenance of a ProbeAckData dirty writeback.  This is sideband metadata
+  // sampled from the BOOM DCache CAM; it does not alter TLBundleC itself.
+  val packetSeq = UInt(width = GH_GlobalParams.GH_PACKET_SEQ_BITS)
+  val packetTracked = Bool()
 }
 
 class PutBufferCEntry(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
@@ -54,6 +60,22 @@ class SinkC(params: InclusiveCacheParameters) extends Module
     val rel_beat = new PutBufferCEntry(params)
   }
 
+  // BOOM publishes a small address-indexed provenance CAM.  Sampling it here
+  // avoids changing the standard TLBundleC carried through the interconnect.
+  val sidebandEntries = 16
+  val sidebandValid = Seq.fill(sidebandEntries)(chisel3.WireDefault(false.B))
+  val sidebandAddress = Seq.fill(sidebandEntries)(
+    chisel3.WireDefault(0.U(64.W)))
+  val sidebandSeq = Seq.fill(sidebandEntries)(
+    chisel3.WireDefault(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))
+  val sidebandTracked = Seq.fill(sidebandEntries)(chisel3.WireDefault(false.B))
+  for (i <- 0 until sidebandEntries) {
+    BoringUtils.addSink(sidebandValid(i), s"${GH_GlobalParams.GH_L1_L2_PACKET_ADDR_BORE}_valid_$i")
+    BoringUtils.addSink(sidebandAddress(i), s"${GH_GlobalParams.GH_L1_L2_PACKET_ADDR_BORE}_$i")
+    BoringUtils.addSink(sidebandSeq(i), s"${GH_GlobalParams.GH_L1_L2_PACKET_SEQ_BORE}_$i")
+    BoringUtils.addSink(sidebandTracked(i), s"${GH_GlobalParams.GH_L1_L2_PACKET_TRACKED_BORE}_$i")
+  }
+
   if (params.firstLevel) {
     // Tie off unused ports
     io.req.valid := Bool(false)
@@ -71,6 +93,13 @@ class SinkC(params: InclusiveCacheParameters) extends Module
     val hasData = params.inner.hasData(c.bits)
     val raw_resp = c.bits.opcode === TLMessages.ProbeAck || c.bits.opcode === TLMessages.ProbeAckData
     val resp = Mux(c.valid, raw_resp, RegEnable(raw_resp, c.valid))
+    val sidebandMatch = Wire(Vec(sidebandEntries, Bool()))
+    val sidebandBlockBits = log2Ceil(params.cache.blockBytes)
+    for (i <- 0 until sidebandEntries) {
+      sidebandMatch(i) := sidebandValid(i) &&
+        c.bits.opcode.isOneOf(TLMessages.ReleaseData, TLMessages.ProbeAckData) &&
+        (sidebandAddress(i) >> sidebandBlockBits) === (c.bits.address >> sidebandBlockBits)
+    }
 
     // Handling of C is broken into two cases:
     //   ProbeAck
@@ -105,6 +134,8 @@ class SinkC(params: InclusiveCacheParameters) extends Module
     io.resp.bits.source := c.bits.source
     io.resp.bits.param  := c.bits.param
     io.resp.bits.data   := hasData
+    io.resp.bits.packetSeq := Mux1H(sidebandMatch, sidebandSeq)
+    io.resp.bits.packetTracked := Mux1H(sidebandMatch, sidebandTracked)
 
     val putbuffer = Module(new ListBuffer(ListBufferParameters(new PutBufferCEntry(params), params.relLists, params.relBeats, false)))
     val lists = RegInit(UInt(0, width = params.relLists))
@@ -132,7 +163,6 @@ class SinkC(params: InclusiveCacheParameters) extends Module
     when (!resp && c.valid && first && hasData && !req_block && !buf_block) { lists_set := freeOH }
 
     val put = Mux(first, freeIdx, RegEnable(freeIdx, first))
-
     io.req.bits.prio   := Vec(UInt(4, width=3).asBools)
     io.req.bits.control:= Bool(false)
     io.req.bits.opcode := c.bits.opcode
@@ -143,6 +173,15 @@ class SinkC(params: InclusiveCacheParameters) extends Module
     io.req.bits.set    := set
     io.req.bits.tag    := tag
     io.req.bits.put    := put
+    val sidebandSelected = Wire(Vec(sidebandEntries, Bool()))
+    for (i <- 0 until sidebandEntries) {
+      val newer = (0 until sidebandEntries).map { j =>
+        sidebandMatch(j) && sidebandSeq(j) > sidebandSeq(i)
+      }.reduce(_ || _)
+      sidebandSelected(i) := sidebandMatch(i) && !newer
+    }
+    io.req.bits.packetSeq := Mux1H(sidebandSelected, sidebandSeq)
+    io.req.bits.packetTracked := Mux1H(sidebandSelected, sidebandTracked)
 
     putbuffer.io.push.bits.index := put
     putbuffer.io.push.bits.data.data    := c.bits.data

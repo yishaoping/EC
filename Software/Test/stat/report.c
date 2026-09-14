@@ -27,6 +27,7 @@ typedef struct {
     uint64_t allocated;
     uint64_t completed;
     uint64_t pending;
+    uint64_t l2_pending;
     uint64_t result_dropped;
     uint64_t writeback_dropped;
     uint64_t arithmetic_overflow;
@@ -46,6 +47,8 @@ static package_drain_status_t wait_for_package_statistics_to_drain(
             ghe_traffic_counter_read(GHE_TRAFFIC_COMPLETED_PACKAGES);
         state->pending = ghe_traffic_counter_read(
             GHE_TRAFFIC_UNVERIFIED_DIRTY_WB_PENDING);
+        state->l2_pending = ghe_traffic_counter_read(
+            GHE_TRAFFIC_L2_DRAM_WB_UNVERIFIED_PENDING);
         state->result_dropped =
             ghe_traffic_counter_read(GHE_TRAFFIC_PACKAGE_RESULT_DROPPED);
         state->writeback_dropped = ghe_traffic_counter_read(
@@ -58,7 +61,8 @@ static package_drain_status_t wait_for_package_statistics_to_drain(
             state->arithmetic_overflow != 0) {
             return PACKAGE_DRAIN_HARD_ERROR;
         }
-        if (state->completed == state->allocated && state->pending == 0) {
+        if (state->completed == state->allocated && state->pending == 0 &&
+            state->l2_pending == 0) {
             return PACKAGE_DRAIN_COMPLETE;
         }
         if (state->elapsed_cycles >= PACKAGE_DRAIN_TIMEOUT_CYCLES) {
@@ -343,8 +347,8 @@ static void print_store_uncache_latency(void)
 #endif
 }
 
-/* 输出并校验 BOOM L1 到 L2 的未校验脏写回延迟统计。 */
-static void print_unverified_dirty_writeback_latency(void)
+/* 输出并校验 BOOM L1 到 L2 的未校验脏写回分类统计。 */
+static void print_unverified_dirty_writeback_summary(void)
 {
     const volatile uint64_t *traffic = hart_traffic[0];
     uint64_t unverified_at_writeback =
@@ -398,6 +402,11 @@ static void print_unverified_dirty_writeback_latency(void)
            " pending=%" PRIu64 " other=%" PRIu64 " status=%s\n",
            verify_required, verified_at_writeback, unverified_at_writeback,
            resolved, pending, other, dirty_ok ? "PASS" : "FAIL");
+    /* test.c uses these two sums to calculate the average verification
+       latency after report_end has frozen the BOOM snapshot. */
+    printf("[VERIFY] dirty_wb_cycle_sum writeback_cycle_sum=%" PRIu64
+           " verification_cycle_sum=%" PRIu64 "\n",
+           writeback_cycle_sum, safe_cycle_sum);
 
 #if TEST_REPORT_VERBOSE
     printf("[VERIFY_VERBOSE] safe_watermark=%" PRIu64
@@ -412,52 +421,6 @@ static void print_unverified_dirty_writeback_latency(void)
                safe_watermark, result_dropped, arithmetic_overflow,
                stats_valid);
     }
-#endif
-
-    const char *latency_reason = NULL;
-    if (!dirty_ok) {
-        latency_reason = "statistics_invalid";
-    } else if (resolved == 0) {
-        latency_reason = "no_events";
-    } else if (safe_cycle_sum < writeback_cycle_sum) {
-        latency_reason = "cycle_sum_underflow";
-    }
-    if (latency_reason != NULL) {
-        printf("[LATENCY] dirty_wb average=n/a reason=%s\n", latency_reason);
-#if TEST_REPORT_VERBOSE
-        printf("[LATENCY_VERBOSE] safe_cycle_sum=%" PRIu64
-               " writeback_cycle_sum=%" PRIu64 " frequency_hz=%" PRIu64
-               "\n",
-               safe_cycle_sum, writeback_cycle_sum,
-               (uint64_t)BOOM_CORE_FREQUENCY_HZ);
-#endif
-        return;
-    }
-
-    uint64_t latency_cycle_sum = safe_cycle_sum - writeback_cycle_sum;
-    uint64_t average_cycles = latency_cycle_sum / resolved;
-    uint64_t average_cycle_fraction = (uint64_t)(
-        ((uint128_t)(latency_cycle_sum % resolved) * 1000) / resolved);
-    uint128_t latency_ns_numerator =
-        (uint128_t)latency_cycle_sum * UINT64_C(1000000000);
-    uint128_t latency_ns_denominator =
-        (uint128_t)BOOM_CORE_FREQUENCY_HZ * resolved;
-    uint128_t average_ns = latency_ns_numerator / latency_ns_denominator;
-    uint64_t average_ns_fraction = (uint64_t)(
-        ((latency_ns_numerator % latency_ns_denominator) * 1000) /
-        latency_ns_denominator);
-
-    printf("[LATENCY] dirty_wb events=%" PRIu64 " average=", resolved);
-    print_uint128_fixed(average_cycles, average_cycle_fraction);
-    printf("cycles/");
-    print_uint128_fixed(average_ns, average_ns_fraction);
-    printf("ns\n");
-#if TEST_REPORT_VERBOSE
-    printf("[LATENCY_VERBOSE] safe_cycle_sum=%" PRIu64
-           " writeback_cycle_sum=%" PRIu64 " frequency_hz=%" PRIu64
-           "\n",
-           safe_cycle_sum, writeback_cycle_sum,
-           (uint64_t)BOOM_CORE_FREQUENCY_HZ);
 #endif
 }
 
@@ -517,10 +480,27 @@ static void print_traffic_report(void)
            "\n",
            hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_TOTAL],
            hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_DIRTY]);
+    printf("[TRAFFIC] dram_verify required=%" PRIu64
+           " verified=%" PRIu64 " unverified=%" PRIu64
+           " resolved=%" PRIu64 " pending=%" PRIu64 " other=%" PRIu64
+           " status=%s\n",
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_VERIFY_REQUIRED],
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_VERIFIED],
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_UNVERIFIED],
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_UNVERIFIED_RESOLVED],
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_UNVERIFIED_PENDING],
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_OTHER],
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_STATS_VALID] == 1
+               ? "PASS" : "FAIL");
+    printf("[TRAFFIC] dram_verify_cycle_sum writeback=%" PRIu64
+           " verification=%" PRIu64 "\n",
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_WRITEBACK_CYCLE_SUM],
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_VERIFY_CYCLE_SUM]);
 }
 
-void report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)
+int report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)
 {
+    (void)hart_id;
     /* 等待所有 checker 写入本地统计快照。 */
     while (hart_traffic_ready[1] == 0 || hart_traffic_ready[2] == 0 ||
            hart_traffic_ready[3] == 0 || hart_traffic_ready[4] == 0) {
@@ -548,11 +528,13 @@ void report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)
         printf("[VERIFY_DIAG] package_drain=FAIL reason=%s"
                " allocated=%" PRIu64 " completed=%" PRIu64
                " pending=%" PRIu64 " result_dropped=%" PRIu64
+               " l2_pending=%" PRIu64
                " writeback_dropped=%" PRIu64
                " arithmetic_overflow=%" PRIu64
                " elapsed_cycles=%" PRIu64 "\n",
                reason, package_drain_state.allocated,
                package_drain_state.completed, package_drain_state.pending,
+               package_drain_state.l2_pending,
                package_drain_state.result_dropped,
                package_drain_state.writeback_dropped,
                package_drain_state.arithmetic_overflow,
@@ -564,9 +546,7 @@ void report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)
            (uint64_t)BOOM_CORE_FREQUENCY_HZ,
            (uint64_t)CHECKER_CORE_FREQUENCY_HZ);
     print_store_uncache_latency();
-    print_unverified_dirty_writeback_latency();
-    printf("[END] hart=%lx status=%s\n", hart_id,
-           package_drain_status == PACKAGE_DRAIN_COMPLETE && traffic_ok
-               ? "PASS" : "FAIL");
+    print_unverified_dirty_writeback_summary();
     lock_release(&uart_lock);
+    return package_drain_status == PACKAGE_DRAIN_COMPLETE && traffic_ok;
 }

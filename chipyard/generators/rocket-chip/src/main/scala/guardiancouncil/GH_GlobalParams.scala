@@ -39,9 +39,9 @@ object GH_GlobalParams {
   val GH_PERF_CTRL_START_BIT = 5
   val GH_PERF_CTRL_STOP_BIT = 6
 
-  // 软件可见的流量计数向量保持稳定；原有 0..35 号含义不变，36..51 号
-  // 追加 BOOM 架构与严格路径计数，从而保留旧版 RoCC ABI。
-  val GH_TRAFFIC_COUNTERS = 52
+  // 软件可见的流量计数向量保持稳定；原有 0..51 号含义不变，L2->DRAM
+  // 校验分类与延迟统计追加在尾部，避免改变旧版 RoCC ABI。
+  val GH_TRAFFIC_COUNTERS = 61
   // Index 13 counts the first accepted beat of every L1->L2 C-channel
   // transaction (including clean releases and probe responses).
   val GH_TRAFFIC_L1_L2_C_TOTAL = 13
@@ -90,9 +90,24 @@ object GH_GlobalParams {
   val GH_TRAFFIC_STRICT_LOAD_FORWARD = 49
   val GH_TRAFFIC_STRICT_PENDING = 50
   val GH_TRAFFIC_COUNTER_ASSERT_FAIL = 51
-  require(GH_TRAFFIC_COUNTER_ASSERT_FAIL == GH_TRAFFIC_COUNTERS - 1)
+  val GH_TRAFFIC_L2_DRAM_WB_VERIFY_REQUIRED = 52
+  val GH_TRAFFIC_L2_DRAM_WB_VERIFIED = 53
+  val GH_TRAFFIC_L2_DRAM_WB_UNVERIFIED = 54
+  val GH_TRAFFIC_L2_DRAM_WB_UNVERIFIED_RESOLVED = 55
+  val GH_TRAFFIC_L2_DRAM_WB_UNVERIFIED_PENDING = 56
+  val GH_TRAFFIC_L2_DRAM_WB_OTHER = 57
+  val GH_TRAFFIC_L2_DRAM_WB_WRITEBACK_CYCLE_SUM = 58
+  val GH_TRAFFIC_L2_DRAM_WB_VERIFY_CYCLE_SUM = 59
+  val GH_TRAFFIC_L2_DRAM_WB_STATS_VALID = 60
   val GH_L2_WB_CLEAN_GRAY_BORE = "gh_l2_dram_wb_clean_gray"
   val GH_L2_WB_DIRTY_GRAY_BORE = "gh_l2_dram_wb_dirty_gray"
+  val GH_L1_L2_PACKET_SEQ_BORE = "gh_l1_l2_packet_seq"
+  val GH_L1_L2_PACKET_TRACKED_BORE = "gh_l1_l2_packet_tracked"
+  val GH_L1_L2_PACKET_ADDR_BORE = "gh_l1_l2_packet_addr"
+  val GH_L1_L2_SAFE_WATERMARK_GRAY_BORE = "gh_l1_l2_safe_watermark_gray"
+  val GH_L2_DRAM_STATS_BORE = "gh_l2_dram_dirty_stats"
+  val GH_L2_STATS_RESET_BORE = "gh_l2_dram_stats_reset"
+  val GH_L2_STATS_ENABLE_BORE = "gh_l2_dram_stats_enable"
   val IF_THERE_IS_CDC = true;
   //===== Runtime Configurable Mapping =====//
   val GH_MAX_BIG_CORES = 2;   // 支持的大核数量

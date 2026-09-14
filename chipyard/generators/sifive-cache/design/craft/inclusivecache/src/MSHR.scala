@@ -20,6 +20,7 @@ package sifive.blocks.inclusivecache
 import Chisel._
 import chisel3.internal.sourceinfo.SourceInfo
 import freechips.rocketchip.tilelink._
+import freechips.rocketchip.guardiancouncil.GH_GlobalParams
 import TLPermissions._
 import TLMessages._
 import MetaData._
@@ -57,6 +58,9 @@ class NestedWriteback(params: InclusiveCacheParameters) extends InclusiveCacheBu
   val b_clr_dirty = Bool() // nested Probes clear dirty
   val c_set_dirty = Bool() // nested Releases MAY set dirty
   val c_set_dcache = Bool() // nested DCache releases mark data provenance
+  val c_set_packet = Bool() // nested dirty writeback carries packet provenance
+  val packetSeq = UInt(width = GH_GlobalParams.GH_PACKET_SEQ_BITS)
+  val packetTracked = Bool()
 }
 
 sealed trait CacheState
@@ -157,6 +161,12 @@ class MSHR(params: InclusiveCacheParameters) extends Module
     when (io.nestedwb.b_clr_dirty) { meta.dirty := Bool(false) }
     when (io.nestedwb.c_set_dirty) { meta.dirty := Bool(true) }
     when (io.nestedwb.c_set_dcache) { meta.dcache := Bool(true) }
+    when (io.nestedwb.c_set_packet && io.nestedwb.packetSeq =/= 0.U) {
+      when (!meta.packetTracked || io.nestedwb.packetSeq > meta.packetSeq) {
+        meta.packetSeq := io.nestedwb.packetSeq
+        meta.packetTracked := io.nestedwb.packetTracked
+      }
+    }
     when (io.nestedwb.b_toB) { meta.state := BRANCH }
     when (io.nestedwb.b_toN) { meta.hit := Bool(false) }
   }
@@ -231,6 +241,8 @@ class MSHR(params: InclusiveCacheParameters) extends Module
     when (meta.hit) {
       final_meta_writeback.dirty   := Bool(false)
       final_meta_writeback.dcache  := Bool(false)
+      final_meta_writeback.packetSeq := UInt(0)
+      final_meta_writeback.packetTracked := Bool(false)
       final_meta_writeback.state   := INVALID
       final_meta_writeback.clients := meta.clients & ~probes_toN
     }
@@ -250,6 +262,10 @@ class MSHR(params: InclusiveCacheParameters) extends Module
                                     Mux(req_acquire, req_clientBit, UInt(0))
     final_meta_writeback.tag := request.tag
     final_meta_writeback.hit := Bool(true)
+    when (!meta.hit) {
+      final_meta_writeback.packetSeq := UInt(0)
+      final_meta_writeback.packetTracked := Bool(false)
+    }
   }
 
   when (bad_grant) {
@@ -259,6 +275,8 @@ class MSHR(params: InclusiveCacheParameters) extends Module
       final_meta_writeback.hit     := Bool(true)
       final_meta_writeback.dirty   := Bool(false)
       final_meta_writeback.dcache  := meta.dcache
+      final_meta_writeback.packetSeq := meta.packetSeq
+      final_meta_writeback.packetTracked := meta.packetTracked
       final_meta_writeback.state   := BRANCH
       final_meta_writeback.clients := meta.clients & ~probes_toN
     } .otherwise {
@@ -266,9 +284,19 @@ class MSHR(params: InclusiveCacheParameters) extends Module
       final_meta_writeback.hit     := Bool(false)
       final_meta_writeback.dirty   := Bool(false)
       final_meta_writeback.dcache  := Bool(false)
+      final_meta_writeback.packetSeq := UInt(0)
+      final_meta_writeback.packetTracked := Bool(false)
       final_meta_writeback.state   := INVALID
       final_meta_writeback.clients := UInt(0)
     }
+  }
+
+  // A nested inner Release carries the line's BOOM packet provenance.  Keep
+  // it with the resident directory line so a later L2 eviction can classify
+  // the corresponding writeback.
+  when (request.prio(2) && request.packetSeq =/= 0.U) {
+    final_meta_writeback.packetSeq := request.packetSeq
+    final_meta_writeback.packetTracked := request.packetTracked
   }
 
   val invalid = Wire(new DirectoryEntry(params))
@@ -277,6 +305,8 @@ class MSHR(params: InclusiveCacheParameters) extends Module
   invalid.state   := INVALID
   invalid.clients := UInt(0)
   invalid.tag     := UInt(0)
+  invalid.packetSeq := UInt(0)
+  invalid.packetTracked := Bool(false)
 
   // Just because a client says BtoT, by the time we process the request he may be N.
   // Therefore, we must consult our own meta-data state to confirm he owns the line still.
@@ -302,6 +332,8 @@ class MSHR(params: InclusiveCacheParameters) extends Module
   io.schedule.bits.c.bits.way     := meta.way
   io.schedule.bits.c.bits.dirty   := meta.dirty
   io.schedule.bits.c.bits.dcache  := meta.dcache
+  io.schedule.bits.c.bits.packetSeq := meta.packetSeq
+  io.schedule.bits.c.bits.packetTracked := meta.packetTracked
   io.schedule.bits.d.bits         := request
   io.schedule.bits.d.bits.param   := Mux(!req_acquire, request.param,
                                        MuxLookup(request.param, Wire(request.param), Seq(
@@ -485,7 +517,14 @@ class MSHR(params: InclusiveCacheParameters) extends Module
     params.ccover(!set_pprobeack && w_rprobeackfirst, "MSHR_PROBE_SERIAL", "Sequential routing of probe response data")
     params.ccover( set_pprobeack && w_rprobeackfirst, "MSHR_PROBE_WORMHOLE", "Wormhole routing of probe response data")
     // However, meta-data updates need to be done more cautiously
-    when (meta.state =/= INVALID && io.sinkc.bits.tag === meta.tag && io.sinkc.bits.data) { meta.dirty := Bool(true) } // !!!
+    when (meta.state =/= INVALID && io.sinkc.bits.tag === meta.tag && io.sinkc.bits.data) {
+      meta.dirty := Bool(true)
+      when (io.sinkc.bits.packetTracked && io.sinkc.bits.packetSeq =/= 0.U &&
+            (!meta.packetTracked || io.sinkc.bits.packetSeq > meta.packetSeq)) {
+        meta.packetSeq := io.sinkc.bits.packetSeq
+        meta.packetTracked := io.sinkc.bits.packetTracked
+      }
+    }
   }
   when (io.sinkd.valid) {
     when (io.sinkd.bits.opcode === Grant || io.sinkd.bits.opcode === GrantData) {

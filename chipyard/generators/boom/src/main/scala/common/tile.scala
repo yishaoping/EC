@@ -427,6 +427,24 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
         trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_WB_TOTAL) :=
           l2DramWbClean + l2DramWbDirty
         trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_WB_DIRTY) := l2DramWbDirty
+        // L2 dirty-writeback verification classes and cycle sums.  Each bank
+        // exports a Gray-coded local counter; synchronizedL2Count performs
+        // CDC and aggregation in the BOOM clock domain.
+        val l2DirtyStats = (0 until 9).map { index =>
+          synchronizedL2Count(s"${GH_GlobalParams.GH_L2_DRAM_STATS_BORE}_$index")
+        }
+        trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_WB_VERIFY_REQUIRED) := l2DirtyStats(0)
+        trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_WB_VERIFIED) := l2DirtyStats(1)
+        trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_WB_UNVERIFIED) := l2DirtyStats(2)
+        trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_WB_UNVERIFIED_RESOLVED) := l2DirtyStats(3)
+        trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_WB_UNVERIFIED_PENDING) := l2DirtyStats(4)
+        trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_WB_OTHER) := l2DirtyStats(5)
+        trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_WB_WRITEBACK_CYCLE_SUM) := l2DirtyStats(6)
+        trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_WB_VERIFY_CYCLE_SUM) := l2DirtyStats(7)
+        // Each bank exports a one-bit validity flag, so aggregate with an
+        // all-banks check instead of exposing the bank count to software.
+        trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_WB_STATS_VALID) :=
+          (l2DirtyStats(8) === outer.p(BankedL2Key).nBanks.U).asUInt
       }
       cmdRouter.io.traffic_counter_in := trafficCounter
       outer.roccs.zipWithIndex.foreach { case (rocc, i) =>

@@ -19,6 +19,7 @@ package sifive.blocks.inclusivecache
 
 import Chisel._
 import freechips.rocketchip.tilelink._
+import freechips.rocketchip.guardiancouncil.GH_GlobalParams
 
 class SourceCRequest(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
 {
@@ -30,6 +31,21 @@ class SourceCRequest(params: InclusiveCacheParameters) extends InclusiveCacheBun
   val way    = UInt(width = params.wayBits)
   val dirty  = Bool()
   val dcache = Bool()
+  val packetSeq = UInt(width = GH_GlobalParams.GH_PACKET_SEQ_BITS)
+  val packetTracked = Bool()
+}
+
+/* Metadata travels with every queued C beat so L2 statistics can be sampled
+ * at the actual outer-channel handshake rather than when SourceC accepts the
+ * request.  The TileLink bundle itself remains unchanged. */
+class SourceCQueueEntry(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
+{
+  val c = new TLBundleC(params.outer.bundle)
+  val dirty = Bool()
+  val dcache = Bool()
+  val packetSeq = UInt(width = GH_GlobalParams.GH_PACKET_SEQ_BITS)
+  val packetTracked = Bool()
+  val first = Bool()
 }
 
 class SourceC(params: InclusiveCacheParameters) extends Module
@@ -37,6 +53,11 @@ class SourceC(params: InclusiveCacheParameters) extends Module
   val io = new Bundle {
     val req = Decoupled(new SourceCRequest(params)).flip
     val c = Decoupled(new TLBundleC(params.outer.bundle))
+    val c_dirty = Bool()
+    val c_dcache = Bool()
+    val c_packetSeq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
+    val c_packetTracked = Bool()
+    val c_first = Bool()
     // BankedStore port
     val bs_adr = Decoupled(new BankedStoreOuterAddress(params))
     val bs_dat = new BankedStoreOuterDecoded(params).flip
@@ -51,7 +72,8 @@ class SourceC(params: InclusiveCacheParameters) extends Module
   val beatBytes = params.outer.manager.beatBytes
   val beats = params.cache.blockBytes / beatBytes
   val flow = params.micro.outerBuf.c.flow
-  val queue = Module(new Queue(io.c.bits, beats + 3 + (if (flow) 0 else 1), flow = flow))
+  val queue = Module(new Queue(new SourceCQueueEntry(params),
+    beats + 3 + (if (flow) 0 else 1), flow = flow))
 
   // queue.io.count is far too slow
   val fillBits = log2Up(beats + 4)
@@ -116,6 +138,21 @@ class SourceC(params: InclusiveCacheParameters) extends Module
   assert(!c.valid || c.ready)
   params.ccover(!c.ready, "SOURCEC_QUEUE_FULL", "Eviction queue fully utilized")
 
-  queue.io.enq <> c
-  io.c <> queue.io.deq
+  queue.io.enq.valid := c.valid
+  queue.io.enq.bits.c := c.bits
+  queue.io.enq.bits.dirty := s3_req.dirty
+  queue.io.enq.bits.dcache := s3_req.dcache
+  queue.io.enq.bits.packetSeq := s3_req.packetSeq
+  queue.io.enq.bits.packetTracked := s3_req.packetTracked
+  queue.io.enq.bits.first := s3_beat === 0.U
+  c.ready := queue.io.enq.ready
+
+  io.c.valid := queue.io.deq.valid
+  io.c.bits := queue.io.deq.bits.c
+  queue.io.deq.ready := io.c.ready
+  io.c_dirty := queue.io.deq.bits.dirty
+  io.c_dcache := queue.io.deq.bits.dcache
+  io.c_packetSeq := queue.io.deq.bits.packetSeq
+  io.c_packetTracked := queue.io.deq.bits.packetTracked
+  io.c_first := queue.io.deq.bits.first
 }

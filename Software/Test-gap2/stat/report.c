@@ -252,6 +252,11 @@ static void print_unverified_dirty_writeback_latency(void)
            " pending=%" PRIu64 " other=%" PRIu64 " status=%s\n",
            verify_required, verified_at_writeback, unverified_at_writeback,
            resolved, pending, other, dirty_ok ? "PASS" : "FAIL");
+    /* Always expose both timestamp sums; software latency is their
+       difference divided by the number of resolved unverified writebacks. */
+    printf("[VERIFY] dirty_wb_cycle_sum writeback_cycle_sum=%" PRIu64
+           " verification_cycle_sum=%" PRIu64 "\n",
+           writeback_cycle_sum, safe_cycle_sum);
 
 #if TEST_REPORT_VERBOSE
     printf("[VERIFY_VERBOSE] safe_watermark=%" PRIu64
@@ -363,6 +368,22 @@ static void print_traffic_report(void)
            "\n",
            hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_TOTAL],
            hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_DIRTY]);
+    printf("[TRAFFIC] dram_verify required=%" PRIu64
+           " verified=%" PRIu64 " unverified=%" PRIu64
+           " resolved=%" PRIu64 " pending=%" PRIu64 " other=%" PRIu64
+           " status=%s\n",
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_VERIFY_REQUIRED],
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_VERIFIED],
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_UNVERIFIED],
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_UNVERIFIED_RESOLVED],
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_UNVERIFIED_PENDING],
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_OTHER],
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_STATS_VALID] == 1
+               ? "PASS" : "FAIL");
+    printf("[TRAFFIC] dram_verify_cycle_sum writeback=%" PRIu64
+           " verification=%" PRIu64 "\n",
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_WRITEBACK_CYCLE_SUM],
+           hart_traffic[0][GHE_TRAFFIC_L2_DRAM_WB_VERIFY_CYCLE_SUM]);
 }
 
 void report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)

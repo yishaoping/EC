@@ -21,6 +21,7 @@ import Chisel._
 import freechips.rocketchip.diplomacy.AddressSet
 import freechips.rocketchip.tilelink._
 import freechips.rocketchip.util._
+import freechips.rocketchip.guardiancouncil.GH_GlobalParams
 
 class Scheduler(params: InclusiveCacheParameters) extends Module
 {
@@ -36,6 +37,8 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
     // One-cycle, line-level pulses for DCache-originated L2 evictions.
     val dcacheWriteback = Bool()
     val dcacheWritebackDirty = Bool()
+    val dcacheWritebackPacketSeq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
+    val dcacheWritebackPacketTracked = Bool()
   }
 
   val sourceA = Module(new SourceA(params))
@@ -141,8 +144,13 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
   sourceX.io.req := schedule.x
   directory.io.write := schedule.dir
 
-  io.dcacheWriteback := sourceC.io.req.fire() && sourceC.io.req.bits.dcache
-  io.dcacheWritebackDirty := io.dcacheWriteback && sourceC.io.req.bits.dirty
+  // Count a writeback at the first beat accepted by the outer C channel. This
+  // matches the L1->L2 accounting point and includes any SourceC queue delay.
+  io.dcacheWriteback := sourceC.io.c.fire() && sourceC.io.c_first &&
+    sourceC.io.c_dcache
+  io.dcacheWritebackDirty := io.dcacheWriteback && sourceC.io.c_dirty
+  io.dcacheWritebackPacketSeq := sourceC.io.c_packetSeq
+  io.dcacheWritebackPacketTracked := sourceC.io.c_packetTracked
 
   // Forward meta-data changes from nested transaction completion
   val select_c  = mshr_selectOH(params.mshrs-1)
@@ -154,6 +162,10 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
   nestedwb.b_clr_dirty := select_bc && bc_mshr.io.schedule.bits.dir.valid
   nestedwb.c_set_dirty := select_c  &&  c_mshr.io.schedule.bits.dir.valid && c_mshr.io.schedule.bits.dir.bits.data.dirty
   nestedwb.c_set_dcache := select_c && c_mshr.io.schedule.bits.dir.valid && c_mshr.io.schedule.bits.dir.bits.data.dcache
+  nestedwb.c_set_packet := select_c && c_mshr.io.schedule.bits.dir.valid &&
+    c_mshr.io.schedule.bits.dir.bits.data.packetTracked
+  nestedwb.packetSeq := c_mshr.io.schedule.bits.dir.bits.data.packetSeq
+  nestedwb.packetTracked := c_mshr.io.schedule.bits.dir.bits.data.packetTracked
 
   // Pick highest priority request
   val request = Wire(Decoupled(new FullRequest(params)))

@@ -8,6 +8,7 @@ package boom.lsu
 
 import chisel3._
 import chisel3.util._
+import chisel3.util.experimental.BoringUtils
 
 import org.chipsalliance.cde.config.Parameters
 import freechips.rocketchip.diplomacy._
@@ -453,6 +454,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // Include events accepted on the STOP edge. trafficEnabled is cleared by
   // that edge, so subsequent cycles are outside the measurement window.
   val trafficCounting = (trafficEnabled || io.traffic_start) && !io.traffic_reset
+  BoringUtils.addSource(io.traffic_reset, GH_GlobalParams.GH_L2_STATS_RESET_BORE)
+  BoringUtils.addSource(trafficCounting, GH_GlobalParams.GH_L2_STATS_ENABLE_BORE)
   val trafficStopPrev = RegNext(io.traffic_stop, false.B)
   val trafficStopPulse = io.traffic_stop && !trafficStopPrev
 
@@ -898,15 +901,64 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val l1_l2_c_count = RegInit(0.U(64.W))
   val l1_l2_dirty_wb_count = RegInit(0.U(64.W))
 
+  // Sideband provenance for the shared L2.  Standard TileLink bundles are
+  // intentionally unchanged; a small address-indexed CAM carries the packet
+  // identity alongside C-channel traffic across any intervening buffers.
+  val l1L2SidebandEntries = 16
+  val l1L2SidebandIndexBits = log2Ceil(l1L2SidebandEntries)
+  val l1L2SidebandPtr = RegInit(0.U(l1L2SidebandIndexBits.W))
+  val l1L2SidebandValid = RegInit(VecInit(Seq.fill(l1L2SidebandEntries)(false.B)))
+  val l1L2SidebandAddress = RegInit(VecInit(Seq.fill(l1L2SidebandEntries)(0.U(64.W))))
+  val l1L2SidebandSeq = RegInit(VecInit(Seq.fill(l1L2SidebandEntries)(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))))
+  val l1L2SidebandTracked = RegInit(VecInit(Seq.fill(l1L2SidebandEntries)(false.B)))
+  // Keep one entry per cache line. Reusing an existing line entry avoids
+  // stale duplicate matches when a line is written back more than once.
+  val l1L2SidebandBlockBits = log2Ceil(cfg.blockBytes)
+  val l1L2SidebandLine = tl_out.c.bits.address >> l1L2SidebandBlockBits
+  val l1L2SidebandExisting = Wire(Vec(l1L2SidebandEntries, Bool()))
+  for (i <- 0 until l1L2SidebandEntries) {
+    l1L2SidebandExisting(i) := l1L2SidebandValid(i) &&
+      (l1L2SidebandAddress(i) >> l1L2SidebandBlockBits) === l1L2SidebandLine
+  }
+  val l1L2SidebandWriteIdx = Mux(l1L2SidebandExisting.asUInt.orR,
+    PriorityEncoder(l1L2SidebandExisting.asUInt), l1L2SidebandPtr)
+  when (l1_l2_dirty_wb_event) {
+    l1L2SidebandValid(l1L2SidebandWriteIdx) := true.B
+    l1L2SidebandAddress(l1L2SidebandWriteIdx) := tl_out.c.bits.address
+    l1L2SidebandSeq(l1L2SidebandWriteIdx) := wb.io.active_packet_seq
+    l1L2SidebandTracked(l1L2SidebandWriteIdx) := wb.io.active_packet_tracked
+    when (!l1L2SidebandExisting.asUInt.orR) {
+      l1L2SidebandPtr := l1L2SidebandPtr + 1.U
+    }
+  }
+  for (i <- 0 until l1L2SidebandEntries) {
+    BoringUtils.addSource(l1L2SidebandValid(i), s"${GH_GlobalParams.GH_L1_L2_PACKET_ADDR_BORE}_valid_$i")
+    BoringUtils.addSource(l1L2SidebandAddress(i), s"${GH_GlobalParams.GH_L1_L2_PACKET_ADDR_BORE}_$i")
+    BoringUtils.addSource(l1L2SidebandSeq(i), s"${GH_GlobalParams.GH_L1_L2_PACKET_SEQ_BORE}_$i")
+    BoringUtils.addSource(l1L2SidebandTracked(i), s"${GH_GlobalParams.GH_L1_L2_PACKET_TRACKED_BORE}_$i")
+  }
+  when (io.traffic_reset) {
+    l1L2SidebandPtr := 0.U
+    for (i <- 0 until l1L2SidebandEntries) {
+      l1L2SidebandValid(i) := false.B
+      l1L2SidebandAddress(i) := 0.U
+      l1L2SidebandSeq(i) := 0.U
+      l1L2SidebandTracked(i) := false.B
+    }
+  }
+
   // Completion bitmap and per-package writeback buckets share the BOOM clock.
   // Thus io.csr_cycle is sampled at both the C-channel writeback and the exact
   // cycle at which an out-of-order completion advances the safe watermark.
   val statsWindow = 256
   val statsIndexBits = log2Ceil(statsWindow)
-  val bitmapAllocated = RegInit(VecInit(Seq.fill(statsWindow)(false.B)))
-  val bitmapCompleted = RegInit(VecInit(Seq.fill(statsWindow)(false.B)))
-  val bitmapPassed = RegInit(VecInit(Seq.fill(statsWindow)(false.B)))
-  val bitmapSeq = RegInit(VecInit(Seq.fill(statsWindow)(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))))
+  // Keep the verification bitmap in its own Bundle so it can be reused by
+  // other L1->L2 verification users without coupling their state to DCache.
+  val bitmapState = RegInit(0.U.asTypeOf(new DirtyWritebackBitmap(statsWindow)))
+  val bitmapAllocated = bitmapState.allocated
+  val bitmapCompleted = bitmapState.completed
+  val bitmapPassed = bitmapState.passed
+  val bitmapSeq = bitmapState.seq
   val safePacketWatermark = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
   val measurementSeqFloor = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
 
@@ -997,6 +1049,10 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   }
   val newSafePacketWatermark = safePacketWatermark + safeAdvance
 
+  val safeWatermarkGray = newSafePacketWatermark ^ (newSafePacketWatermark >> 1)
+  BoringUtils.addSource(safeWatermarkGray,
+    GH_GlobalParams.GH_L1_L2_SAFE_WATERMARK_GRAY_BORE)
+
   val bitmapAllocatedFinal = WireInit(allocatedNext)
   val bitmapCompletedFinal = WireInit(completedNext)
   val bitmapPassedFinal = WireInit(passedNext)
@@ -1013,10 +1069,13 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   bitmapSeq := seqNext
   safePacketWatermark := newSafePacketWatermark
 
-  val bucketValid = RegInit(VecInit(Seq.fill(statsWindow)(false.B)))
-  val bucketSeq = RegInit(VecInit(Seq.fill(statsWindow)(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))))
-  val bucketCount = RegInit(VecInit(Seq.fill(statsWindow)(0.U(64.W))))
-  val bucketWritebackCycleSum = RegInit(VecInit(Seq.fill(statsWindow)(0.U(64.W))))
+  // Buckets intentionally use separate storage from the verification bitmap:
+  // one package may generate multiple dirty writebacks.
+  val bucketState = RegInit(0.U.asTypeOf(new DirtyWritebackBucket(statsWindow)))
+  val bucketValid = bucketState.valid
+  val bucketSeq = bucketState.seq
+  val bucketCount = bucketState.count
+  val bucketWritebackCycleSum = bucketState.writebackCycleSum
   val bucketResolve = Wire(Vec(statsWindow, Bool()))
   for (i <- 0 until statsWindow) {
     bucketResolve(i) := bucketValid(i) && bucketSeq(i) <= newSafePacketWatermark
@@ -1424,8 +1483,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   when (completed_amo_uncache.reduce(_|_)) {
     amo_uncache_count := amo_uncache_count + PopCount(completed_amo_uncache)
   }
-  // load_total 包含三个互斥的 BOOM 完成路径；新增 36..51 项追加在旧向量
-  // 末尾，确保软件 ABI 不发生位移。
+  // load_total 包含三个互斥的 BOOM 完成路径；L2->DRAM 分类由共享 L2
+  // 在 BOOM tile 中覆盖 52..60，这里先保留固定宽度的零槽位。
   val trafficCounterLive = VecInit(Seq(
     store_cache_count + store_uncache_count,
     store_cache_count,
@@ -1462,7 +1521,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     passedPackages,
     cancelledPackages,
     statsArithmeticOverflow,
-    verifyRequiredDirtyWbCount) ++ io.lsu.traffic_arch_counter)
+    verifyRequiredDirtyWbCount) ++ io.lsu.traffic_arch_counter ++
+    Seq.fill(9)(0.U(64.W)))
   val trafficCounterSnapshot = RegInit(VecInit(
     Seq.fill(GH_GlobalParams.GH_TRAFFIC_COUNTERS)(0.U(64.W))))
   val trafficCounterSnapshotValid = RegInit(false.B)

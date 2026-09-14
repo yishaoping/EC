@@ -23,6 +23,7 @@ import freechips.rocketchip.diplomacy._
 import freechips.rocketchip.tilelink._
 import MetaData._
 import freechips.rocketchip.util.DescribedSRAM
+import freechips.rocketchip.guardiancouncil.GH_GlobalParams
 
 class DirectoryEntry(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
 {
@@ -34,6 +35,8 @@ class DirectoryEntry(params: InclusiveCacheParameters) extends InclusiveCacheBun
   val state   = UInt(width = params.stateBits)
   val clients = UInt(width = params.clientBits)
   val tag     = UInt(width = params.tagBits)
+  val packetSeq = UInt(width = GH_GlobalParams.GH_PACKET_SEQ_BITS)
+  val packetTracked = Bool()
 }
 
 class DirectoryWrite(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)

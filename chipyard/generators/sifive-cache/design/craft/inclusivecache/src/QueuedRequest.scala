@@ -18,6 +18,7 @@
 package sifive.blocks.inclusivecache
 
 import Chisel._
+import freechips.rocketchip.guardiancouncil.GH_GlobalParams
 
 class QueuedRequest(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
 {
@@ -30,6 +31,10 @@ class QueuedRequest(params: InclusiveCacheParameters) extends InclusiveCacheBund
   val tag    = UInt(width = params.tagBits)
   val offset = UInt(width = params.offsetBits)
   val put    = UInt(width = params.putBits)
+  // Provenance sampled from the inner C channel.  These fields stay inside
+  // InclusiveCache and never alter the standard TileLink bundles.
+  val packetSeq = UInt(width = GH_GlobalParams.GH_PACKET_SEQ_BITS)
+  val packetTracked = Bool()
 }
 
 class FullRequest(params: InclusiveCacheParameters) extends QueuedRequest(params)
