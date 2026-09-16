@@ -16,6 +16,14 @@ sim_dir=$(abspath .)
 #########################################################################################
 include $(base_dir)/variables.mk
 
+# Large benchmarks can exceed the shared short-test timeout. Keep the longer
+# default local to Verilator while preserving an explicit timeout_cycles=...
+# command-line override for focused runs.
+VERILATOR_TIMEOUT_CYCLES ?= 500000000
+ifeq ($(origin timeout_cycles),file)
+timeout_cycles = $(VERILATOR_TIMEOUT_CYCLES)
+endif
+
 #########################################################################################
 # name of simulator (used to generate *.f arguments file)
 #########################################################################################
@@ -100,6 +108,8 @@ HELP_COMPILATION_VARIABLES += \
 "                            'threads' if runtime thread profiling only" \
 "   VERILATOR_THREADS      = how many threads the simulator will use (default 1)" \
 "   VERILATOR_FST_MODE     = enable FST waveform instead of VCD. use with debug build"
+HELP_SIMULATION_VARIABLES += \
+"   VERILATOR_TIMEOUT_CYCLES = default Verilator timeout in clock cycles (default 500000000)"
 
 #########################################################################################
 # verilator/cxx binary and flags

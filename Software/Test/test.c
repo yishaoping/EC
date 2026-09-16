@@ -238,7 +238,7 @@ static void gapbs_bfs(uint64_t hart_id, uint64_t *start_cpu,
      * [BENCHMARK SIZE]
      * 修改这一行即可切换规模：gapbs_bfs_run_14、_512、_1024、_2048、_4096。
      */
-    gapbs_bfs_run_512(result);
+    gapbs_bfs_run_4096(result);
 
     ROCC_INSTRUCTION_S(1, 0X02, 0x70);
     for (int nop_count = 0; nop_count < 26; nop_count++) {
