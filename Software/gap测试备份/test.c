@@ -46,7 +46,7 @@ static uint64_t test_setup(void)
     return hart_id;
 }
 
-/* 执行唯一的协同 benchmark。 */
+/* 执行下方 [BENCHMARK SIZE] 选择的 GAPBS 节点规模。 */
 static void gapbs_bfs(uint64_t hart_id, uint64_t *start_cpu,
                       uint64_t *end_cpu, gapbs_bfs_result_t *result)
 {
@@ -55,7 +55,11 @@ static void gapbs_bfs(uint64_t hart_id, uint64_t *start_cpu,
 
     *start_cpu = read_cycles();
     (void)hart_id;
-    gapbs_bfs_run(result);
+    /*
+     * [BENCHMARK SIZE]
+     * 修改这一行即可切换规模：gapbs_bfs_run_14、_512、_1024、_2048、_4096。
+     */
+    gapbs_bfs_run_512(result);
 
     ROCC_INSTRUCTION_S(1, 0X02, 0x70);
     for (int nop_count = 0; nop_count < 26; nop_count++) {
@@ -75,13 +79,17 @@ static void test_report(uint64_t hart_id, uint64_t start_cpu,
                         uint64_t end_cpu, const gapbs_bfs_result_t *result)
 {
     lock_acquire(&uart_lock);
-    printf("[RUN] benchmark=gapbs_bfs source=%" PRIu32
+    printf("[RUN] benchmark=gapbs_bfs nodes=%" PRIu32 " source=%" PRIu32
            " reached=%" PRIu32 " edges=%" PRIu32
            " verified=%" PRIu32 " parent_checksum=%" PRIu64 "\n",
-           result->source, result->reached_nodes, result->traversed_edges,
-           result->parent_checksum, result->verified);
+           result->node_count, result->source, result->reached_nodes,
+           result->traversed_edges, result->verified, result->parent_checksum);
     lock_release(&uart_lock);
-    report_end(start_cpu, end_cpu, hart_id);
+    int report_ok = report_end(start_cpu, end_cpu, hart_id);
+    lock_acquire(&uart_lock);
+    printf("[END] hart=%lx status=%s\n", hart_id,
+           report_ok ? "PASS" : "FAIL");
+    lock_release(&uart_lock);
     ght_unset_satp_priv();
     ROCC_INSTRUCTION(1, 0x30);
 }

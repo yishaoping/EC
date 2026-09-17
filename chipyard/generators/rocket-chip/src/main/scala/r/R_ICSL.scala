@@ -543,27 +543,33 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
     debug_perf_num_amo_cache + (io.amo_cache_deq & trafficCounting.asUInt))
   debug_perf_num_amo_uncache                    := Mux(io.debug_perf_reset.asBool, 0.U,
     debug_perf_num_amo_uncache + (io.amo_uncache_deq & trafficCounting.asUInt))
-  // Software protocol: [store_total, store_cache, store_uncache,
+  // Shared software protocol (slots 0..17):
+  //                    [store_total, store_cache, store_uncache,
   //                     load_total, load_cache, load_uncache, load_forward,
   //                     lr, sc_success, sc_fail, amo_total,
   //                     amo_cache, amo_uncache, l1_l2_c_total,
   //                     l1_l2_wb_dirty, l2_dram_wb_total,
-  //                     l2_dram_wb_dirty, store_uncache_cycle_sum,
-  //                     BOOM-only unverified dirty writeback diagnostics].
-  //                     Indices 13--16 are BOOM/shared-L2 metrics and remain
-  //                     zero on checker harts. Index 17 is local to each hart.
+  //                     l2_dram_wb_dirty, store_uncache_cycle_sum].
+  // Indices 13--16 are BOOM/shared-L2 metrics and remain zero on checker
+  // harts. Index 17 is local to each hart; all later BOOM-only slots are zero.
   // Rocket re-executes loads through LSL and therefore never uses BOOM's
   // STQ-to-load forwarding path.
-  io.traffic_counter                            := VecInit(Seq(debug_perf_num_st, debug_perf_num_st_cache,
-                                                               debug_perf_num_st_uncache, debug_perf_num_ld,
-                                                               debug_perf_num_ld_cache, debug_perf_num_ld_uncache,
-                                                               0.U(64.W), debug_perf_num_lr,
-                                                               debug_perf_num_sc_success, debug_perf_num_sc_fail,
-                                                               debug_perf_num_amo, debug_perf_num_amo_cache,
-                                                               debug_perf_num_amo_uncache, 0.U(64.W), 0.U(64.W),
-                                                               0.U(64.W), 0.U(64.W),
-                                                               debug_perf_st_uncache_cycle_sum) ++
-                                                     Seq.fill(GH_GlobalParams.GH_TRAFFIC_COUNTERS - 18)(0.U(64.W)))
+  io.traffic_counter                            := VecInit(
+    Seq.fill(GH_GlobalParams.GH_TRAFFIC_COUNTERS)(0.U(64.W)))
+  io.traffic_counter(GH_GlobalParams.GH_TRAFFIC_STORE_TOTAL) := debug_perf_num_st
+  io.traffic_counter(GH_GlobalParams.GH_TRAFFIC_STORE_CACHE) := debug_perf_num_st_cache
+  io.traffic_counter(GH_GlobalParams.GH_TRAFFIC_STORE_UNCACHE) := debug_perf_num_st_uncache
+  io.traffic_counter(GH_GlobalParams.GH_TRAFFIC_LOAD_TOTAL) := debug_perf_num_ld
+  io.traffic_counter(GH_GlobalParams.GH_TRAFFIC_LOAD_CACHE) := debug_perf_num_ld_cache
+  io.traffic_counter(GH_GlobalParams.GH_TRAFFIC_LOAD_UNCACHE) := debug_perf_num_ld_uncache
+  io.traffic_counter(GH_GlobalParams.GH_TRAFFIC_LR) := debug_perf_num_lr
+  io.traffic_counter(GH_GlobalParams.GH_TRAFFIC_SC_SUCCESS) := debug_perf_num_sc_success
+  io.traffic_counter(GH_GlobalParams.GH_TRAFFIC_SC_FAIL) := debug_perf_num_sc_fail
+  io.traffic_counter(GH_GlobalParams.GH_TRAFFIC_AMO_TOTAL) := debug_perf_num_amo
+  io.traffic_counter(GH_GlobalParams.GH_TRAFFIC_AMO_CACHE) := debug_perf_num_amo_cache
+  io.traffic_counter(GH_GlobalParams.GH_TRAFFIC_AMO_UNCACHE) := debug_perf_num_amo_uncache
+  io.traffic_counter(GH_GlobalParams.GH_TRAFFIC_STORE_UNCACHE_CYCLE_SUM) :=
+    debug_perf_st_uncache_cycle_sum
 
   val u_channel                                  = Module(new GH_MemFIFO(FIFOParams (32, 50)))
   val debug_L_timer                              = RegInit(0.U(64.W))

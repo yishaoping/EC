@@ -402,7 +402,6 @@ class BoomIOMSHR(id: Int)(implicit edge: TLEdgeOut, p: Parameters) extends BoomM
     val resp = Decoupled(new BoomDCacheResp)
     val mem_access = Decoupled(new TLBundleA(edge.bundle))
     val mem_ack    = Flipped(Valid(new TLBundleD(edge.bundle)))
-    val traffic_store_complete = Output(Bool())
     val traffic_strict_store_complete = Output(Bool())
 
     // We don't need brupdate in here because uncacheable operations are guaranteed non-speculative
@@ -463,11 +462,8 @@ class BoomIOMSHR(id: Int)(implicit edge: TLEdgeOut, p: Parameters) extends BoomM
   io.resp.bits.traffic_seen  := req.traffic_seen
   io.resp.bits.traffic_cacheable := req.traffic_cacheable
 
-  // 不可缓存 store 的 TileLink A 请求被接受后即对外可见；load 则在成功
-  // 响应返回时统计。原始与严格路径分别使用请求阶段和架构提交阶段资格。
-  io.traffic_store_complete := io.mem_access.fire && req.traffic_check &&
-    !req.traffic_seen && !req.traffic_cacheable && req.uop.uses_stq &&
-    req.uop.mem_cmd === M_XWR
+  // 不可缓存 store 在 TileLink A 请求被接受后完成；只保留由架构提交
+  // 资格驱动的严格路径，避免请求阶段口径形成另一套不一致的 BOOM 计数。
   io.traffic_strict_store_complete := io.mem_access.fire &&
     req.traffic_arch_check && !req.traffic_cacheable && req.uop.uses_stq &&
     req.uop.mem_cmd === M_XWR
@@ -554,7 +550,6 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
 
     val fence_rdy = Output(Bool())
     val probe_rdy = Output(Bool())
-    val traffic_store_complete = Output(Bool())
     val traffic_strict_store_complete = Output(Bool())
   })
 
@@ -752,7 +747,6 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
     mshr
   }
 
-  io.traffic_store_complete := mmios.map(_.io.traffic_store_complete).reduce(_||_)
   io.traffic_strict_store_complete :=
     mmios.map(_.io.traffic_strict_store_complete).reduce(_||_)
 

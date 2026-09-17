@@ -163,10 +163,11 @@
 [LATENCY] l2_dram_dirty_wb events=35 average=12932.000cycles/64660.000ns
 [END] hart=0 status=PASS
 
+
+= 
+
+
 = 写回总结
-
-
-
 L1→L2,dcache wb_dirty,条,1080,2311,4382,9420
 L1→L2,verify_required（=dirty_wb total）,条,605,1856,4002,9219
 L1→L2,写回时未校验 unverified,条,342,681,1383,2878

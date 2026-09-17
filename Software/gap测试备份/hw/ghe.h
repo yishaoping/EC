@@ -112,10 +112,12 @@ static inline uint64_t ghe_csr_perf_read(int csr_index)
  *
  * 这些编号是软硬件协议的一部分，必须与
  * GH_GlobalParams.GH_TRAFFIC_* 完全一致，不能按软件需要重新排序。
- * 0--17 为基础访存、写回和不可缓存 store 的周期和统计；
+ * 0--6 为 BOOM/checker 共用的基础访存分类，7--17 为原子操作、写回和
+ * 不可缓存 store 的周期和统计；
  * 18--34 为 L1->L2 校验分类、包生命周期、完成水位及诊断信息；
- * 35 为需要校验的脏写回总数；36--51 为 BOOM 架构/严格访存统计；
- * 52--60 为 L2->DRAM 脏写回校验分类及延迟统计。
+ * 35 为需要校验的脏写回总数；36--45 为 BOOM 严格访存统计；
+ * 46--55 为 L2->DRAM 脏写回校验分类及延迟统计；其中 nonverify 是
+ * 正常的免校验类别，other 仅表示桶冲突等统计丢失诊断。
  */
 enum ghe_traffic_counter {
     /* 基础访存分类计数。 */
@@ -139,7 +141,7 @@ enum ghe_traffic_counter {
     GHE_TRAFFIC_L1_L2_WB_TOTAL = GHE_TRAFFIC_L1_L2_C_TOTAL,
     GHE_TRAFFIC_L1_L2_WB_DIRTY,
 
-    /* L2 到 DRAM 的基础写回计数；详细校验分类位于 52--60。 */
+    /* L2 到 DRAM 的基础写回计数；详细校验分类位于 46--55。 */
     GHE_TRAFFIC_L2_DRAM_WB_TOTAL,
     GHE_TRAFFIC_L2_DRAM_WB_DIRTY,
 
@@ -164,7 +166,7 @@ enum ghe_traffic_counter {
     GHE_TRAFFIC_SAFE_PACKET_WATERMARK,
     GHE_TRAFFIC_PACKAGE_RESULT_DROPPED,
 
-    /* 写回时已校验计数，以及独立的非校验脏写回诊断。 */
+    /* 写回时已校验计数，以及正常的免校验脏写回类别。 */
     GHE_TRAFFIC_VERIFIED_DIRTY_WB,
     GHE_TRAFFIC_NONVERIFY_DIRTY_WB,
     GHE_TRAFFIC_UNTRACKED_DIRTY_WB = GHE_TRAFFIC_NONVERIFY_DIRTY_WB,
@@ -179,12 +181,8 @@ enum ghe_traffic_counter {
     GHE_TRAFFIC_STATS_ARITHMETIC_OVERFLOW,
     /* 需要校验的脏写回总数，等于 verified + unverified_seen。 */
     GHE_TRAFFIC_L1_L2_WB_DIRTY_VERIFY_REQUIRED,
-    GHE_TRAFFIC_ARCH_STORE_TOTAL,
-    GHE_TRAFFIC_ARCH_STORE_CACHE,
-    GHE_TRAFFIC_ARCH_STORE_UNCACHE,
-    GHE_TRAFFIC_ARCH_LOAD_TOTAL,
-    GHE_TRAFFIC_ARCH_LOAD_CACHE,
-    GHE_TRAFFIC_ARCH_LOAD_UNCACHE,
+
+    /* BOOM 严格完成口径；checker hart 对这些项目返回 0。 */
     GHE_TRAFFIC_STRICT_STORE_TOTAL,
     GHE_TRAFFIC_STRICT_STORE_CACHE,
     GHE_TRAFFIC_STRICT_STORE_UNCACHE,
@@ -200,6 +198,7 @@ enum ghe_traffic_counter {
     GHE_TRAFFIC_L2_DRAM_WB_UNVERIFIED,
     GHE_TRAFFIC_L2_DRAM_WB_UNVERIFIED_RESOLVED,
     GHE_TRAFFIC_L2_DRAM_WB_UNVERIFIED_PENDING,
+    GHE_TRAFFIC_L2_DRAM_WB_NONVERIFY,
     GHE_TRAFFIC_L2_DRAM_WB_OTHER,
     GHE_TRAFFIC_L2_DRAM_WB_WRITEBACK_CYCLE_SUM,
     GHE_TRAFFIC_L2_DRAM_WB_VERIFY_CYCLE_SUM,
@@ -207,15 +206,28 @@ enum ghe_traffic_counter {
     GHE_TRAFFIC_COUNTERS
 };
 
-_Static_assert(GHE_TRAFFIC_COUNTERS == 61,
+_Static_assert(GHE_TRAFFIC_COUNTERS == 56,
                "traffic counter software/hardware ABI length must match");
+_Static_assert(GHE_TRAFFIC_STORE_TOTAL == 0 &&
+                   GHE_TRAFFIC_LOAD_FORWARD == 6 &&
+                   GHE_TRAFFIC_AMO_UNCACHE == 12 &&
+                   GHE_TRAFFIC_L1_L2_C_TOTAL == 13 &&
+                   GHE_TRAFFIC_L1_L2_WB_DIRTY_VERIFY_REQUIRED == 35 &&
+                   GHE_TRAFFIC_STRICT_STORE_TOTAL == 36 &&
+                   GHE_TRAFFIC_COUNTER_ASSERT_FAIL == 45 &&
+                   GHE_TRAFFIC_L2_DRAM_WB_VERIFY_REQUIRED == 46 &&
+                   GHE_TRAFFIC_L2_DRAM_WB_NONVERIFY == 51 &&
+                   GHE_TRAFFIC_L2_DRAM_WB_OTHER == 52 &&
+                   GHE_TRAFFIC_L2_DRAM_WB_STATS_VALID == 55,
+               "traffic counter software/hardware ABI indices must match");
 
 /*
  * 通过 funct=0x7B 读取当前 hart 所在 tile 的一个统计项。
  *
- * BOOM hart 0 返回自己的 DCache/L1->L2 统计以及共享 L2 的基础统计；
- * checker hart 对这些项目返回 0，但会返回自己的 store/load/LR/SC/AMO
- * 计数和 store_uncache 完成周期和。返回值为 64 位无符号计数。
+ * BOOM hart 0 和 checker hart 共用 0--12 号普通访存/原子操作槽位；
+ * BOOM 还在 36--45 返回严格完成口径。L1->L2、共享 L2 和校验统计
+ * 只在 BOOM hart 0 有意义，17 号 store_uncache 完成周期和则由每个
+ * hart 分别返回。
  * counter_index 越界时硬件返回 0，因此调用者仍应使用合法枚举值。
  */
 static inline uint64_t ghe_traffic_counter_read(int counter_index)

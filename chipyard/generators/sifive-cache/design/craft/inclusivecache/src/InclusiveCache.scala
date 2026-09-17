@@ -213,12 +213,17 @@ class InclusiveCache(
       // Count only L2 victims whose directory provenance says that the line
       // was used by a DCache. ICache-only clean evictions are intentionally
       // excluded. SourceC accepts each line exactly once and never cancels it.
+      val l2StatsReset = chisel3.WireDefault(false.B)
+      BoringUtils.addSink(l2StatsReset, GH_GlobalParams.GH_L2_STATS_RESET_BORE)
+      val l2StatsEnable = chisel3.WireDefault(false.B)
+      BoringUtils.addSink(l2StatsEnable, GH_GlobalParams.GH_L2_STATS_ENABLE_BORE)
+      val l2Counting = l2StatsEnable && !l2StatsReset
       val writeback = scheduler.io.dcacheWriteback
       val dirty = scheduler.io.dcacheWritebackDirty
       val cleanCount = RegInit(UInt(0, width = 64))
       val dirtyCount = RegInit(UInt(0, width = 64))
-      when (writeback && !dirty) { cleanCount := cleanCount + UInt(1) }
-      when (writeback && dirty)  { dirtyCount := dirtyCount + UInt(1) }
+      when (l2Counting && writeback && !dirty) { cleanCount := cleanCount + UInt(1) }
+      when (l2Counting && writeback && dirty)  { dirtyCount := dirtyCount + UInt(1) }
 
       // L2->DRAM dirty writeback classification.  The packet bitmap itself is
       // owned by BOOM; L2 only keeps independent per-package buckets because a
@@ -244,19 +249,15 @@ class InclusiveCache(
         }).asUInt
       }
       val l2SafeWatermark = l2GrayToBinary(safeWatermarkGraySync)
-      val l2StatsReset = chisel3.WireDefault(false.B)
-      BoringUtils.addSink(l2StatsReset, GH_GlobalParams.GH_L2_STATS_RESET_BORE)
-      val l2StatsEnable = chisel3.WireDefault(false.B)
-      BoringUtils.addSink(l2StatsEnable, GH_GlobalParams.GH_L2_STATS_ENABLE_BORE)
-      val l2Counting = l2StatsEnable && !l2StatsReset
-
       val l2Required = l2Counting && writeback && dirty &&
         scheduler.io.dcacheWritebackPacketTracked &&
         scheduler.io.dcacheWritebackPacketSeq =/= 0.U
       val l2Verified = l2Required &&
         scheduler.io.dcacheWritebackPacketSeq <= l2SafeWatermark
       val l2Unverified = l2Required && !l2Verified
-      val l2Other = l2Counting && writeback && dirty && !l2Required
+      // A dirty L2 writeback without packet attribution is a valid
+      // non-verification class, matching the L1->L2 accounting semantics.
+      val l2Nonverify = l2Counting && writeback && dirty && !l2Required
       val l2BucketIdx = scheduler.io.dcacheWritebackPacketSeq(l2StatsIndexBits - 1, 0)
       val l2BucketAvailable = !l2Bucket.valid(l2BucketIdx) ||
         l2BucketResolve(l2BucketIdx) ||
@@ -273,6 +274,8 @@ class InclusiveCache(
       val l2UnverifiedCount = RegInit(UInt(0, width = 64))
       val l2ResolvedCount = RegInit(UInt(0, width = 64))
       val l2PendingCount = RegInit(UInt(0, width = 64))
+      val l2NonverifyCount = RegInit(UInt(0, width = 64))
+      // `other` is reserved for statistics failures such as bucket collisions.
       val l2OtherCount = RegInit(UInt(0, width = 64))
       val l2WritebackCycleSum = RegInit(UInt(0, width = 64))
       val l2VerifyCycleSum = RegInit(UInt(0, width = 64))
@@ -329,7 +332,12 @@ class InclusiveCache(
       when (l2Counting && l2Required) { l2RequiredCount := l2RequiredCount + 1.U }
       when (l2Counting && l2Verified) { l2VerifiedCount := l2VerifiedCount + 1.U }
       when (l2Counting && l2Unverified) { l2UnverifiedCount := l2UnverifiedCount + 1.U }
-      when (l2Counting && l2Other) { l2OtherCount := l2OtherCount + 1.U }
+      when (l2Counting && l2Nonverify) {
+        l2NonverifyCount := l2NonverifyCount + 1.U
+      }
+      when (l2Counting && l2BucketDropped) {
+        l2OtherCount := l2OtherCount + 1.U
+      }
       when (l2Counting && l2BucketDropped) { l2StatsValid := false.B }
       when (l2ResolvedThisCycle =/= 0.U) {
         l2ResolvedCount := l2ResolvedCount + l2ResolvedThisCycle
@@ -353,6 +361,7 @@ class InclusiveCache(
         l2UnverifiedCount := 0.U
         l2ResolvedCount := 0.U
         l2PendingCount := 0.U
+        l2NonverifyCount := 0.U
         l2OtherCount := 0.U
         l2WritebackCycleSum := 0.U
         l2VerifyCycleSum := 0.U
@@ -372,7 +381,7 @@ class InclusiveCache(
       BoringUtils.addSource(cleanGray, s"${GH_GlobalParams.GH_L2_WB_CLEAN_GRAY_BORE}_$bank")
       BoringUtils.addSource(dirtyGray, s"${GH_GlobalParams.GH_L2_WB_DIRTY_GRAY_BORE}_$bank")
       val l2Stats = Seq(l2RequiredCount, l2VerifiedCount, l2UnverifiedCount,
-        l2ResolvedCount, l2PendingCount, l2OtherCount,
+        l2ResolvedCount, l2PendingCount, l2NonverifyCount, l2OtherCount,
         l2WritebackCycleSum, l2VerifyCycleSum,
         Cat(0.U(63.W), l2StatsValid))
       l2Stats.zipWithIndex.foreach { case (value, index) =>

@@ -39,9 +39,24 @@ object GH_GlobalParams {
   val GH_PERF_CTRL_START_BIT = 5
   val GH_PERF_CTRL_STOP_BIT = 6
 
-  // 软件可见的流量计数向量保持稳定；原有 0..51 号含义不变，L2->DRAM
-  // 校验分类与延迟统计追加在尾部，避免改变旧版 RoCC ABI。
-  val GH_TRAFFIC_COUNTERS = 61
+  // 软件可见的流量计数向量：0..6 是 BOOM/checker 共用的普通访存槽位，
+  // 7..35 是原子操作、缓存和包校验统计，36..45 是 BOOM 严格口径，
+  // 46..55 是共享 L2->DRAM 校验分类与延迟统计；其中 nonverify 是
+  // 正常免校验类别，other 仅表示桶冲突等统计丢失诊断。
+  val GH_TRAFFIC_COUNTERS = 56
+  val GH_TRAFFIC_STORE_TOTAL = 0
+  val GH_TRAFFIC_STORE_CACHE = 1
+  val GH_TRAFFIC_STORE_UNCACHE = 2
+  val GH_TRAFFIC_LOAD_TOTAL = 3
+  val GH_TRAFFIC_LOAD_CACHE = 4
+  val GH_TRAFFIC_LOAD_UNCACHE = 5
+  val GH_TRAFFIC_LOAD_FORWARD = 6
+  val GH_TRAFFIC_LR = 7
+  val GH_TRAFFIC_SC_SUCCESS = 8
+  val GH_TRAFFIC_SC_FAIL = 9
+  val GH_TRAFFIC_AMO_TOTAL = 10
+  val GH_TRAFFIC_AMO_CACHE = 11
+  val GH_TRAFFIC_AMO_UNCACHE = 12
   // Index 13 counts the first accepted beat of every L1->L2 C-channel
   // transaction (including clean releases and probe responses).
   val GH_TRAFFIC_L1_L2_C_TOTAL = 13
@@ -63,9 +78,9 @@ object GH_GlobalParams {
   val GH_TRAFFIC_SAFE_PACKET_WATERMARK = 26
   val GH_TRAFFIC_PACKAGE_RESULT_DROPPED = 27
   val GH_TRAFFIC_VERIFIED_DIRTY_WB = 28
-  // Dirty writebacks without a valid verify_required attribution. This is a
-  // non-verification diagnostic and is not part of the five verification
-  // categories printed by software.
+  // Dirty writebacks without a valid verify_required attribution. This is the
+  // normal non-verification class and is printed separately from verification
+  // categories; the L2 `other` slot is reserved for statistics loss.
   val GH_TRAFFIC_NONVERIFY_DIRTY_WB = 29
   val GH_TRAFFIC_UNTRACKED_DIRTY_WB = GH_TRAFFIC_NONVERIFY_DIRTY_WB
   val GH_TRAFFIC_ALLOCATED_PACKAGES = 30
@@ -74,31 +89,26 @@ object GH_GlobalParams {
   val GH_TRAFFIC_CANCELLED_PACKAGES = 33
   val GH_TRAFFIC_STATS_ARITHMETIC_OVERFLOW = 34
   val GH_TRAFFIC_L1_L2_WB_DIRTY_VERIFY_REQUIRED = 35
-  val GH_TRAFFIC_ARCH_STORE_TOTAL = 36
-  val GH_TRAFFIC_ARCH_STORE_CACHE = 37
-  val GH_TRAFFIC_ARCH_STORE_UNCACHE = 38
-  val GH_TRAFFIC_ARCH_LOAD_TOTAL = 39
-  val GH_TRAFFIC_ARCH_LOAD_CACHE = 40
-  val GH_TRAFFIC_ARCH_LOAD_UNCACHE = 41
-  val GH_TRAFFIC_STRICT_STORE_TOTAL = 42
-  val GH_TRAFFIC_STRICT_STORE_CACHE = 43
-  val GH_TRAFFIC_STRICT_STORE_UNCACHE = 44
-  val GH_TRAFFIC_STRICT_LOAD_TOTAL = 45
-  val GH_TRAFFIC_STRICT_LOAD_CACHE = 46
-  val GH_TRAFFIC_STRICT_LOAD_UNCACHE = 47
-  val GH_TRAFFIC_STRICT_LOAD_CACHE_RESPONSE = 48
-  val GH_TRAFFIC_STRICT_LOAD_FORWARD = 49
-  val GH_TRAFFIC_STRICT_PENDING = 50
-  val GH_TRAFFIC_COUNTER_ASSERT_FAIL = 51
-  val GH_TRAFFIC_L2_DRAM_WB_VERIFY_REQUIRED = 52
-  val GH_TRAFFIC_L2_DRAM_WB_VERIFIED = 53
-  val GH_TRAFFIC_L2_DRAM_WB_UNVERIFIED = 54
-  val GH_TRAFFIC_L2_DRAM_WB_UNVERIFIED_RESOLVED = 55
-  val GH_TRAFFIC_L2_DRAM_WB_UNVERIFIED_PENDING = 56
-  val GH_TRAFFIC_L2_DRAM_WB_OTHER = 57
-  val GH_TRAFFIC_L2_DRAM_WB_WRITEBACK_CYCLE_SUM = 58
-  val GH_TRAFFIC_L2_DRAM_WB_VERIFY_CYCLE_SUM = 59
-  val GH_TRAFFIC_L2_DRAM_WB_STATS_VALID = 60
+  val GH_TRAFFIC_STRICT_STORE_TOTAL = 36
+  val GH_TRAFFIC_STRICT_STORE_CACHE = 37
+  val GH_TRAFFIC_STRICT_STORE_UNCACHE = 38
+  val GH_TRAFFIC_STRICT_LOAD_TOTAL = 39
+  val GH_TRAFFIC_STRICT_LOAD_CACHE = 40
+  val GH_TRAFFIC_STRICT_LOAD_UNCACHE = 41
+  val GH_TRAFFIC_STRICT_LOAD_CACHE_RESPONSE = 42
+  val GH_TRAFFIC_STRICT_LOAD_FORWARD = 43
+  val GH_TRAFFIC_STRICT_PENDING = 44
+  val GH_TRAFFIC_COUNTER_ASSERT_FAIL = 45
+  val GH_TRAFFIC_L2_DRAM_WB_VERIFY_REQUIRED = 46
+  val GH_TRAFFIC_L2_DRAM_WB_VERIFIED = 47
+  val GH_TRAFFIC_L2_DRAM_WB_UNVERIFIED = 48
+  val GH_TRAFFIC_L2_DRAM_WB_UNVERIFIED_RESOLVED = 49
+  val GH_TRAFFIC_L2_DRAM_WB_UNVERIFIED_PENDING = 50
+  val GH_TRAFFIC_L2_DRAM_WB_NONVERIFY = 51
+  val GH_TRAFFIC_L2_DRAM_WB_OTHER = 52
+  val GH_TRAFFIC_L2_DRAM_WB_WRITEBACK_CYCLE_SUM = 53
+  val GH_TRAFFIC_L2_DRAM_WB_VERIFY_CYCLE_SUM = 54
+  val GH_TRAFFIC_L2_DRAM_WB_STATS_VALID = 55
   val GH_L2_WB_CLEAN_GRAY_BORE = "gh_l2_dram_wb_clean_gray"
   val GH_L2_WB_DIRTY_GRAY_BORE = "gh_l2_dram_wb_dirty_gray"
   val GH_L1_L2_PACKET_SEQ_BORE = "gh_l1_l2_packet_seq"

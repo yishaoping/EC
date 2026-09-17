@@ -1401,24 +1401,12 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     }
   }
 
-  // BOOM 完成路径：cacheable store 只在 data-array 写入握手点统计；
-  // uncacheable store 在 TileLink A 通道接受时统计；load 只在成功响应
-  // LSU 时统计。nack/replay 本身不计数，traffic_seen 排除成功后的重复响应，
-  // 精确命令匹配排除 LR/SC/AMO 及其他使用 LDQ/STQ 的操作。
-  val completed_store_cache = dataWriteArb.io.in(0).fire &&
-    s3_req.traffic_check && !s3_req.traffic_seen &&
-    s3_req.traffic_cacheable &&
-    s3_req.uop.uses_stq && s3_req.uop.mem_cmd === M_XWR
-  val completed_store_uncache = mshrs.io.traffic_store_complete
-  // 严格 store 路径只接受由 ROB 架构提交锁存的资格；原始 traffic_check
-  // 计数继续保留，用于观察请求时刻口径与架构口径之间的边界差异。
+  // 普通 store/load 只保留架构与严格两套一致口径。严格 store 路径接受
+  // 由 ROB 架构提交锁存的资格，并在真实的 DCache 完成点结算。
   val completed_strict_store_cache = dataWriteArb.io.in(0).fire &&
     s3_req.traffic_arch_check && s3_req.traffic_cacheable &&
     s3_req.uop.uses_stq && s3_req.uop.mem_cmd === M_XWR
   val completed_strict_store_uncache = mshrs.io.traffic_strict_store_complete
-  val completed_load_cache   = io.lsu.traffic_load_cache_complete
-  val completed_load_uncache = io.lsu.traffic_load_uncache_complete
-  val completed_load_forward = io.lsu.traffic_load_forward_complete
   val completed_lr           = io.lsu.traffic_lr_complete
   val completed_sc_success   = io.lsu.traffic_sc_success_complete
   val completed_sc_fail      = io.lsu.traffic_sc_fail_complete
@@ -1426,47 +1414,23 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val completed_amo_uncache  = io.lsu.traffic_amo_uncache_complete
   io.lsu.traffic_store_cache_complete := completed_strict_store_cache
   io.lsu.traffic_store_uncache_complete := completed_strict_store_uncache
-  val store_cache_count   = RegInit(0.U(64.W))
-  val store_uncache_count = RegInit(0.U(64.W))
   val store_uncache_cycle_sum = RegInit(0.U(64.W))
-  val load_cache_count    = RegInit(0.U(64.W))
-  val load_uncache_count  = RegInit(0.U(64.W))
-  val load_forward_count  = RegInit(0.U(64.W))
   val lr_count            = RegInit(0.U(64.W))
   val sc_success_count    = RegInit(0.U(64.W))
   val sc_fail_count       = RegInit(0.U(64.W))
   val amo_cache_count     = RegInit(0.U(64.W))
   val amo_uncache_count   = RegInit(0.U(64.W))
   when (io.traffic_reset) {
-    store_cache_count := 0.U
-    store_uncache_count := 0.U
     store_uncache_cycle_sum := 0.U
-    load_cache_count := 0.U
-    load_uncache_count := 0.U
-    load_forward_count := 0.U
     lr_count := 0.U
     sc_success_count := 0.U
     sc_fail_count := 0.U
     amo_cache_count := 0.U
     amo_uncache_count := 0.U
-  }.elsewhen (completed_store_cache) {
-    store_cache_count := store_cache_count + 1.U
   }
-  // 完成事件自身已携带请求建立时锁存的 traffic_check；因此 STOP 后的
-  // 尾部响应仍应计入同一窗口，不能再次用全局 trafficCounting 截断。
-  when (completed_store_uncache) {
-    store_uncache_count := store_uncache_count + 1.U
-    // 完成事件和 CSR 周期值在同一个 BOOM 时钟沿采样。
+  when (completed_strict_store_uncache) {
+    // 严格完成事件和 CSR 周期值在同一个 BOOM 时钟沿采样。
     store_uncache_cycle_sum := store_uncache_cycle_sum + io.csr_cycle
-  }
-  when (completed_load_cache.reduce(_|_)) {
-    load_cache_count := load_cache_count + PopCount(completed_load_cache)
-  }
-  when (completed_load_uncache.reduce(_|_)) {
-    load_uncache_count := load_uncache_count + PopCount(completed_load_uncache)
-  }
-  when (completed_load_forward.reduce(_|_)) {
-    load_forward_count := load_forward_count + PopCount(completed_load_forward)
   }
   when (completed_lr.reduce(_|_)) {
     lr_count := lr_count + PopCount(completed_lr)
@@ -1483,46 +1447,79 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   when (completed_amo_uncache.reduce(_|_)) {
     amo_uncache_count := amo_uncache_count + PopCount(completed_amo_uncache)
   }
-  // load_total 包含三个互斥的 BOOM 完成路径；L2->DRAM 分类由共享 L2
-  // 在 BOOM tile 中覆盖 52..60，这里先保留固定宽度的零槽位。
-  val trafficCounterLive = VecInit(Seq(
-    store_cache_count + store_uncache_count,
-    store_cache_count,
-    store_uncache_count,
-    load_cache_count + load_uncache_count + load_forward_count,
-    load_cache_count,
-    load_uncache_count,
-    load_forward_count,
-    lr_count,
-    sc_success_count,
-    sc_fail_count,
-    amo_cache_count + amo_uncache_count,
-    amo_cache_count,
-    amo_uncache_count,
-    l1_l2_c_count,
-    l1_l2_dirty_wb_count,
-    0.U(64.W),
-    0.U(64.W),
-    store_uncache_cycle_sum,
-    unverifiedDirtyWbSeen,
-    unverifiedDirtyWbResolved,
-    unverifiedDirtyWbPending,
-    unverifiedDirtyWbDropped,
-    failedPackages,
-    safeCycleSum,
-    writebackCycleSum,
-    statsValid.asUInt,
-    safePacketWatermark,
-    packageResultDropped,
-    verifiedDirtyWbCount,
-    nonverifyDirtyWbCount,
-    allocatedPackages,
-    completedPackages,
-    passedPackages,
-    cancelledPackages,
-    statsArithmeticOverflow,
-    verifyRequiredDirtyWbCount) ++ io.lsu.traffic_arch_counter ++
-    Seq.fill(9)(0.U(64.W)))
+  // BOOM 和 Rocket checker 共用 0..6 的软件 ABI。BOOM 的 0..5 来自
+  // LSU 架构计数，6 是架构 load_cache 中由 STQ 转发完成的严格子集。
+  // 严格计数位于 36..45；共享 L2 在 BOOM tile 中覆盖 46..55。
+  val trafficCounterLive = Wire(Vec(GH_GlobalParams.GH_TRAFFIC_COUNTERS, UInt(64.W)))
+  trafficCounterLive := VecInit(Seq.fill(GH_GlobalParams.GH_TRAFFIC_COUNTERS)(0.U(64.W)))
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_STORE_TOTAL) := io.lsu.traffic_arch_counter(0)
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_STORE_CACHE) := io.lsu.traffic_arch_counter(1)
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_STORE_UNCACHE) := io.lsu.traffic_arch_counter(2)
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_LOAD_TOTAL) := io.lsu.traffic_arch_counter(3)
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_LOAD_CACHE) := io.lsu.traffic_arch_counter(4)
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_LOAD_UNCACHE) := io.lsu.traffic_arch_counter(5)
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_LOAD_FORWARD) := io.lsu.traffic_arch_counter(13)
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_LR) := lr_count
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_SC_SUCCESS) := sc_success_count
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_SC_FAIL) := sc_fail_count
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_AMO_TOTAL) := amo_cache_count + amo_uncache_count
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_AMO_CACHE) := amo_cache_count
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_AMO_UNCACHE) := amo_uncache_count
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_C_TOTAL) := l1_l2_c_count
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_WB_DIRTY) := l1_l2_dirty_wb_count
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_STORE_UNCACHE_CYCLE_SUM) :=
+    store_uncache_cycle_sum
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_UNVERIFIED_DIRTY_WB_SEEN) :=
+    unverifiedDirtyWbSeen
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_UNVERIFIED_DIRTY_WB_RESOLVED) :=
+    unverifiedDirtyWbResolved
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_UNVERIFIED_DIRTY_WB_PENDING) :=
+    unverifiedDirtyWbPending
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_UNVERIFIED_DIRTY_WB_OTHER) :=
+    unverifiedDirtyWbDropped
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_FAILED_PACKAGES) := failedPackages
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_UNVERIFIED_DIRTY_WB_SAFE_CYCLE_SUM) :=
+    safeCycleSum
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_UNVERIFIED_DIRTY_WB_CYCLE_SUM) :=
+    writebackCycleSum
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_UNVERIFIED_DIRTY_WB_STATS_VALID) :=
+    statsValid.asUInt
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_SAFE_PACKET_WATERMARK) :=
+    safePacketWatermark
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_PACKAGE_RESULT_DROPPED) :=
+    packageResultDropped
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_VERIFIED_DIRTY_WB) :=
+    verifiedDirtyWbCount
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_NONVERIFY_DIRTY_WB) :=
+    nonverifyDirtyWbCount
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_ALLOCATED_PACKAGES) := allocatedPackages
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_COMPLETED_PACKAGES) := completedPackages
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_PASSED_PACKAGES) := passedPackages
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_CANCELLED_PACKAGES) := cancelledPackages
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_STATS_ARITHMETIC_OVERFLOW) :=
+    statsArithmeticOverflow
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_WB_DIRTY_VERIFY_REQUIRED) :=
+    verifyRequiredDirtyWbCount
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_STRICT_STORE_TOTAL) :=
+    io.lsu.traffic_arch_counter(6)
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_STRICT_STORE_CACHE) :=
+    io.lsu.traffic_arch_counter(7)
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_STRICT_STORE_UNCACHE) :=
+    io.lsu.traffic_arch_counter(8)
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_STRICT_LOAD_TOTAL) :=
+    io.lsu.traffic_arch_counter(9)
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_STRICT_LOAD_CACHE) :=
+    io.lsu.traffic_arch_counter(10)
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_STRICT_LOAD_UNCACHE) :=
+    io.lsu.traffic_arch_counter(11)
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_STRICT_LOAD_CACHE_RESPONSE) :=
+    io.lsu.traffic_arch_counter(12)
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_STRICT_LOAD_FORWARD) :=
+    io.lsu.traffic_arch_counter(13)
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_STRICT_PENDING) :=
+    io.lsu.traffic_arch_counter(14)
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_COUNTER_ASSERT_FAIL) :=
+    io.lsu.traffic_arch_counter(15)
   val trafficCounterSnapshot = RegInit(VecInit(
     Seq.fill(GH_GlobalParams.GH_TRAFFIC_COUNTERS)(0.U(64.W))))
   val trafficCounterSnapshotValid = RegInit(false.B)

@@ -27,6 +27,7 @@
 #define CHECKER_CORE_FREQUENCY_HZ UINT64_C(100000000)
 #endif
 
+/* InclusiveCache/L2 cycle domain.  Override when L2 uses a separate clock. */
 #ifndef L2_CORE_FREQUENCY_HZ
 #define L2_CORE_FREQUENCY_HZ BOOM_CORE_FREQUENCY_HZ
 #endif

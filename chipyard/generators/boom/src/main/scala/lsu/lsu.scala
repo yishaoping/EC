@@ -124,12 +124,9 @@ class LSUDMemIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
     val release = Bool()
   })
 
-  // Traffic accounting is kept in the DCache, while the LSU supplies the
-  // mutually-exclusive completion events needed to de-duplicate LDQ entries.
+  // LR/SC/AMO diagnostics remain in the DCache. Normal load/store traffic is
+  // exported exclusively through the architectural/strict counter vector.
   val traffic_check_state          = Input(Bool())
-  val traffic_load_cache_complete  = Output(Vec(memWidth, Bool()))
-  val traffic_load_uncache_complete = Output(Vec(memWidth, Bool()))
-  val traffic_load_forward_complete = Output(Vec(memWidth, Bool()))
   val traffic_lr_complete           = Output(Vec(memWidth, Bool()))
   val traffic_sc_success_complete   = Output(Vec(memWidth, Bool()))
   val traffic_sc_fail_complete      = Output(Vec(memWidth, Bool()))
@@ -1531,9 +1528,6 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   }
 
   val dmem_resp_fired = WireInit(widthMap(w => false.B))
-  io.dmem.traffic_load_cache_complete   := VecInit.fill(memWidth)(false.B)
-  io.dmem.traffic_load_uncache_complete := VecInit.fill(memWidth)(false.B)
-  io.dmem.traffic_load_forward_complete := VecInit.fill(memWidth)(false.B)
   io.dmem.traffic_lr_complete           := VecInit.fill(memWidth)(false.B)
   io.dmem.traffic_sc_success_complete   := VecInit.fill(memWidth)(false.B)
   io.dmem.traffic_sc_fail_complete      := VecInit.fill(memWidth)(false.B)
@@ -1589,20 +1583,13 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
 
         ldq(ldq_idx).bits.succeeded      := io.core.exe(w).iresp.valid || io.core.exe(w).fresp.valid
         ldq(ldq_idx).bits.debug_wb_data  := io.dmem.resp(w).bits.data
-        // 旧完成路径计数继续使用随请求传播的标记；严格计数只记录到 LDQ，
-        // 等对应普通 load 架构提交后再结算。
-        val count_load = io.dmem.resp(w).bits.traffic_check &&
-          !ldq(ldq_idx).bits.traffic_seen &&
-          io.dmem.resp(w).bits.uop.mem_cmd === rocket.M_XRD
+        // 普通 load 只记录唯一完成路径，等架构提交后再结算。traffic_seen
+        // 仅保留给 LR/SC/AMO 的完成事件去重。
         val count_lr = io.dmem.resp(w).bits.traffic_check &&
           !ldq(ldq_idx).bits.traffic_seen &&
           io.dmem.resp(w).bits.uop.mem_cmd === rocket.M_XLR
-        io.dmem.traffic_load_cache_complete(w) :=
-          count_load && io.dmem.resp(w).bits.traffic_cacheable
-        io.dmem.traffic_load_uncache_complete(w) :=
-          count_load && !io.dmem.resp(w).bits.traffic_cacheable
         io.dmem.traffic_lr_complete(w) := count_lr
-        when (count_load || count_lr) {
+        when (count_lr) {
           ldq(ldq_idx).bits.traffic_seen := true.B
         }
         val record_load_path = ldq(ldq_idx).valid &&
@@ -1679,15 +1666,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
 
         ldq(f_idx).bits.debug_wb_data   := loadgen.data
 
-        // forwarding 与发起该 load 的 LDQ 项绑定，不能按全局状态延迟采样。
-        val forward_in_scope = ldq(f_idx).valid &&
-          ldq(f_idx).bits.traffic_scope_valid && ldq(f_idx).bits.traffic_check &&
-          forward_uop.mem_cmd === rocket.M_XRD
-        val count_forward = forward_in_scope && !ldq(f_idx).bits.traffic_seen
-        io.dmem.traffic_load_forward_complete(w) := count_forward
-        when (count_forward) {
-          ldq(f_idx).bits.traffic_seen := true.B
-        }
+        // forwarding 与发起该 load 的 LDQ 项绑定，提交时计入严格路径。
         val record_forward_path = ldq(f_idx).valid &&
           forward_uop.mem_cmd === rocket.M_XRD &&
           !ldq(f_idx).bits.traffic_path_valid
@@ -1805,7 +1784,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     val arch_load = io.core.commit.arch_valids(w) &&
       io.core.commit.uops(w).uses_ldq && io.core.commit.uops(w).mem_cmd === rocket.M_XRD
     // 与波形中的架构参考口径完全一致：只认实际架构提交当拍的检查状态。
-    // 地址阶段锁存的 traffic_check 仅保留给原始微结构流量诊断使用。
+    // 地址阶段锁存的 traffic_check/traffic_seen 仅保留给 LR/SC/AMO
+    // 完成事件的窗口资格和去重，不参与普通 load/store 架构计数。
     val arch_store_in_scope = arch_store && stq(idx).valid &&
       io.dmem.traffic_counting && io.dmem.traffic_check_state
     val arch_load_in_scope = arch_load && ldq(idx).valid &&
