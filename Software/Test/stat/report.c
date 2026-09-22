@@ -165,6 +165,31 @@ static int wait_for_boom_strict_pending(void)
     }
 }
 
+/* 地址事件由多入单出队列按提交顺序处理；STOP 后必须等它追上安全水位。 */
+static int wait_for_package_address_statistics(void)
+{
+    uint64_t start_cycle = read_cycles();
+    while (1) {
+        uint64_t pending =
+            ghe_traffic_counter_read(GHE_TRAFFIC_ADDRESS_STATS_PENDING);
+        uint64_t valid =
+            ghe_traffic_counter_read(GHE_TRAFFIC_ADDRESS_STATS_VALID);
+        uint64_t error =
+            ghe_traffic_counter_read(GHE_TRAFFIC_ADDRESS_STATS_ERROR);
+        if (valid != 1 || error != 0) {
+            return 0;
+        }
+        if (pending == 0) {
+            return 1;
+        }
+        if (read_cycles() - start_cycle >= PACKAGE_DRAIN_TIMEOUT_CYCLES) {
+            printf("[ADDRESS_STATS_DIAG] status=TIMEOUT pending=%" PRIu64
+                   "\n", pending);
+            return 0;
+        }
+    }
+}
+
 /* 仅在不一致时输出有符号差值，便于直接定位多记或漏记。 */
 static void print_counter_difference(const char *name,
                                      uint64_t left, uint64_t right)
@@ -738,6 +763,67 @@ static int print_auxiliary_traffic_report(void)
     return print_cache_hierarchy_traffic_report();
 }
 
+static int print_package_address_statistics(void)
+{
+    static const char *const granule_name[4] = {
+        "byte", "word4", "word8", "line"};
+    const volatile uint64_t *traffic = hart_traffic[0];
+    uint64_t valid = traffic[GHE_TRAFFIC_ADDRESS_STATS_VALID];
+    uint64_t error = traffic[GHE_TRAFFIC_ADDRESS_STATS_ERROR];
+    uint64_t pending = traffic[GHE_TRAFFIC_ADDRESS_STATS_PENDING];
+    int ok = valid == 1 && error == 0 && pending == 0;
+
+    if (!ok) {
+        printf("[ADDRESS_STATS] status=FAIL valid=%" PRIu64
+               " error=0x%" PRIx64 " pending=%" PRIu64 "\n",
+               valid, error, pending);
+        return 0;
+    }
+
+    printf("[ADDRESS_STATS] %-6s %12s %12s %12s %12s %12s"
+           " %12s %12s %12s %12s %12s %12s %12s\n",
+           "unit", "store_total", "store_peak", "lf_lower", "lf_upper",
+           "lf_peak", "sf_lower", "sf_upper", "sf_peak", "swr_total",
+           "swr_peak", "first_store_total", "first_store_peak");
+    int bounds_ok = 1;
+    for (int granule = 0; granule < 4; granule++) {
+        int base = GHE_TRAFFIC_ADDRESS_STATS_BASE +
+                   granule * GHE_TRAFFIC_ADDRESS_STATS_GRANULE_STRIDE;
+        uint64_t store_total = traffic[base + 0];
+        uint64_t store_peak = traffic[base + 1];
+        uint64_t lf_lower = traffic[base + 2];
+        uint64_t lf_upper = traffic[base + 3];
+        uint64_t lf_peak = traffic[base + 4];
+        uint64_t sf_lower = traffic[base + 5];
+        uint64_t sf_upper = traffic[base + 6];
+        uint64_t sf_peak = traffic[base + 7];
+        uint64_t swr_total = traffic[base + 8];
+        uint64_t swr_peak = traffic[base + 9];
+        int first_store_base = GHE_TRAFFIC_FIRST_STORE_BASE +
+                               granule * GHE_TRAFFIC_FIRST_STORE_GRANULE_STRIDE;
+        uint64_t first_store_total = traffic[first_store_base + 0];
+        uint64_t first_store_peak = traffic[first_store_base + 1];
+        int row_ok = store_peak <= store_total && lf_lower <= lf_upper &&
+                     lf_peak <= lf_lower && sf_lower <= sf_upper &&
+                     sf_peak <= sf_lower && swr_peak <= swr_total &&
+                     swr_total <= sf_upper && first_store_total <= store_total &&
+                     first_store_peak <= first_store_total;
+        printf("[ADDRESS_STATS] %-6s %12" PRIu64 " %12" PRIu64
+               " %12" PRIu64 " %12" PRIu64 " %12" PRIu64
+               " %12" PRIu64 " %12" PRIu64 " %12" PRIu64
+               " %12" PRIu64 " %12" PRIu64 "\n",
+               granule_name[granule], store_total, store_peak, lf_lower,
+               lf_upper, lf_peak, sf_lower, sf_upper, sf_peak, swr_total,
+               swr_peak, first_store_total, first_store_peak);
+        if (!row_ok) {
+            printf("[ADDRESS_STATS_DIAG] unit=%s status=INVARIANT_FAIL\n",
+                   granule_name[granule]);
+            bounds_ok = 0;
+        }
+    }
+    return bounds_ok;
+}
+
 int report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)
 {
     (void)hart_id;
@@ -754,6 +840,7 @@ int report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)
     /* 先冻结硬件统计，再读取 RoCC 计数器，避免读回过程污染统计窗口。 */
     ghe_fpga_perf_stop();
     int pending_ok = wait_for_boom_strict_pending();
+    int address_pending_ok = wait_for_package_address_statistics();
     for (int counter = 0; counter < GHE_TRAFFIC_COUNTERS; counter++) {
         hart_traffic[0][counter] = ghe_traffic_counter_read(counter);
     }
@@ -783,11 +870,12 @@ int report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)
     print_package_verification_summary();
     int traffic_ok = print_boom_traffic_consistency() && pending_ok;
     int cache_traffic_ok = print_auxiliary_traffic_report();
+    int address_stats_ok = print_package_address_statistics();
     print_latency_header();
     print_store_uncache_latency();
     print_dirty_writeback_latency();
     print_l2_dram_dirty_writeback_latency();
     lock_release(&uart_lock);
     return package_drain_status == PACKAGE_DRAIN_COMPLETE && traffic_ok &&
-           cache_traffic_ok;
+           cache_traffic_ok && address_pending_ok && address_stats_ok;
 }

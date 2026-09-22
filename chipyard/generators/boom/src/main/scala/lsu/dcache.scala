@@ -1049,6 +1049,21 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   }
   val newSafePacketWatermark = safePacketWatermark + safeAdvance
 
+  // Commit-ordered physical-address statistics use the same package bitmap
+  // watermark but retain their own tagged table.  The input watermark is the
+  // pre-edge value, so a store and a PASS result on the same edge are classified
+  // using the safety state that existed when the store committed.
+  val addressStatsFatal = WireDefault(false.B)
+  val addressStats = Module(new PackageAddressStats(
+    coreWidth, coreMaxAddrBits, cfg.blockBytes, statsWindow))
+  addressStats.io.resetStats := io.traffic_reset
+  addressStats.io.start := io.traffic_start
+  addressStats.io.stop := io.traffic_stop
+  addressStats.io.events := io.lsu.address_stats_event
+  addressStats.io.safeWatermark := safePacketWatermark
+  addressStats.io.sequenceBaseline := io.packet_seq_baseline
+  addressStats.io.fatalProtocolError := addressStatsFatal
+
   val safeWatermarkGray = newSafePacketWatermark ^ (newSafePacketWatermark >> 1)
   BoringUtils.addSource(safeWatermarkGray,
     GH_GlobalParams.GH_L1_L2_SAFE_WATERMARK_GRAY_BORE)
@@ -1177,6 +1192,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val passedResultsThisCycle = PopCount(VecInit(io.checker_results.indices.map { i =>
     resultAccepted(i) && !resultFailed(i) && !resultCancelled(i)
   }))
+  addressStatsFatal := allocationCollision || invalidResultsThisCycle =/= 0.U ||
+    resultFailed.asUInt.orR || resultCancelled.asUInt.orR
   when (measuredPacketAlloc) { allocatedPackages := allocatedPackages + 1.U }
   when (acceptedResultsThisCycle =/= 0.U) {
     completedPackages := completedPackages + acceptedResultsThisCycle
@@ -1520,6 +1537,22 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     io.lsu.traffic_arch_counter(14)
   trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_COUNTER_ASSERT_FAIL) :=
     io.lsu.traffic_arch_counter(15)
+  for (i <- 0 until GH_GlobalParams.GH_ADDRESS_STATS_GRANULES *
+      GH_GlobalParams.GH_ADDRESS_STATS_PER_GRANULE) {
+    trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_ADDRESS_STATS_BASE + i) :=
+      addressStats.io.counters(i)
+  }
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_ADDRESS_STATS_VALID) :=
+    addressStats.io.statsValid.asUInt
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_ADDRESS_STATS_ERROR) :=
+    addressStats.io.error
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_ADDRESS_STATS_PENDING) :=
+    addressStats.io.pending
+  for (i <- 0 until GH_GlobalParams.GH_ADDRESS_STATS_GRANULES *
+      GH_GlobalParams.GH_ADDRESS_FIRST_STORE_STRIDE) {
+    trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_FIRST_STORE_BASE + i) :=
+      addressStats.io.firstStoreCounters(i)
+  }
   val trafficCounterSnapshot = RegInit(VecInit(
     Seq.fill(GH_GlobalParams.GH_TRAFFIC_COUNTERS)(0.U(64.W))))
   val trafficCounterSnapshotValid = RegInit(false.B)
@@ -1533,7 +1566,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     trafficCounterSnapshotValid := false.B
     trafficStopCapturePending := true.B
   }.elsewhen (trafficStopCapturePending &&
-              io.lsu.traffic_arch_counter(14) === 0.U) {
+              io.lsu.traffic_arch_counter(14) === 0.U &&
+              addressStats.io.idle) {
     // 等 LSU 的架构/严格计数完全收敛后再冻结快照，避免 STOP 后尾部响应
     // 尚未结算时软件读到过早的计数值。
     trafficCounterSnapshot := trafficCounterLive

@@ -164,30 +164,125 @@
 [END] hart=0 status=PASS
 
 
-= 
+= GAP 新版
+[UART] UART0 is here (stdin/stdout).
+[INIT] checker_mask=0xf status=ready
+[INIT] software_interrupt=pass
+[RUN] hart=0 status=started
+[CONFIG] big_core_perf=off checker_perf=on interval_cycles=5000 sample_readback=not_collected
+[RUN] benchmark=gapbs_bfs nodes=512 source=0 reached=512 edges=8192 verified=1 parent_checksum=43439728
+[PERF] boom_cycles=1012854 boom_inst=649956
+[VERIFY] packages allocated=280 completed=280 passed=280 status=PASS
+[TRAFFIC] source        st_total   st_cache st_uncache   ld_total   ld_cache ld_uncache ld_response ld_forward
+[TRAFFIC] boom_arch        60570      60521         49      95062      94765        297          -          -
+[TRAFFIC] boom_strict      60570      60521         49      95062      94765        297      93181       1584
+[TRAFFIC] checker_sum      60570      60521         49      95062      94765        297          -          0
+[TRAFFIC] c1               17572      17556         16      23387      23291         96          -          0
+[TRAFFIC] c2               15729      15713         16      24747      24648         99          -          0
+[TRAFFIC] c3               15982      15965         17      25202      25100        102          -          0
+[TRAFFIC] c4               11287      11287          0      21726      21726          0          -          0
+[TRAFFIC] path          total      dirty verify_required   verified unverified   resolved  nonverify status
+[TRAFFIC] L1-L2          1128       1073             600        233        367        367        473 PASS  
+[TRAFFIC] L2-DRAM          41         41               7          3          4          4         34 PASS  
+[ADDRESS_STATS] unit    store_total   store_peak     lf_lower     lf_upper      lf_peak     sf_lower     sf_upper      sf_peak    swr_total     swr_peak
+[ADDRESS_STATS] byte          92811         4304        22616        68016          911        25056        71919          663        54760          663
+[ADDRESS_STATS] word4         23355         1076         5701        17089          229         6308        18096          167         4766           62
+[ADDRESS_STATS] word8         11875          541         2950         8731          117         3181         9142           85         1647           31
+[ADDRESS_STATS] line           1884           73          538         1417           21          518         1365           14           23            4
+[LATENCY] metric                     events clock    frequency_hz     avg_cycles         avg_ns
+[LATENCY] store_uncache                  49 boom_eq     200000000        137.326        686.632
+[LATENCY] dirty_wb                      367 boom        200000000       7087.937      35439.686
+[LATENCY] l2_dram_dirty_wb                4 l2          200000000      11367.250      56836.250
+[END] hart=0 status=PASS
 
+[UART] UART0 is here (stdin/stdout).
+[INIT] checker_mask=0xf status=ready
+[INIT] software_interrupt=pass
+[RUN] hart=0 status=started
+[CONFIG] big_core_perf=off checker_perf=on interval_cycles=5000 sample_readback=not_collected
+[RUN] benchmark=gapbs_bfs nodes=1024 source=0 reached=1024 edges=16384 verified=1 parent_checksum=351572336
+[PERF] boom_cycles=2129711 boom_inst=1499780
+[VERIFY] packages allocated=539 completed=539 passed=539 status=PASS
+[TRAFFIC] source        st_total   st_cache st_uncache   ld_total   ld_cache ld_uncache ld_response ld_forward
+[TRAFFIC] boom_arch       185018     184969         49     175510     175213        297          -          -
+[TRAFFIC] boom_strict     185018     184969         49     175510     175213        297     172098       3115
+[TRAFFIC] checker_sum     185018     184969         49     175510     175213        297          -          0
+[TRAFFIC] c1               48444      48428         16      45036      44940         96          -          0
+[TRAFFIC] c2               48901      48885         16      44397      44301         96          -          0
+[TRAFFIC] c3               49378      49363         15      44178      44085         93          -          0
+[TRAFFIC] c4               38295      38293          2      41899      41887         12          -          0
+[TRAFFIC] path          total      dirty verify_required   verified unverified   resolved  nonverify status
+[TRAFFIC] L1-L2          2392       2336            1883       1156        727        727        453 PASS  
+[TRAFFIC] L2-DRAM          78         78              12          5          7          7         66 PASS  
+[ADDRESS_STATS] unit    store_total   store_peak     lf_lower     lf_upper      lf_peak     sf_lower     sf_upper      sf_peak    swr_total     swr_peak
+[ADDRESS_STATS] byte         238525         8192        75019       145350         1108        65066       196780          943       131607          943
+[ADDRESS_STATS] word4         59981         2048        18867        36504          277        16395        49500          237         6369           62
+[ADDRESS_STATS] word8         30391         1027         9649        18542          141         8314        24995          119         1715           31
+[ADDRESS_STATS] line           4560          136         1616         2895           25         1302         3600           19           43            3
+[LATENCY] metric                     events clock    frequency_hz     avg_cycles         avg_ns
+[LATENCY] store_uncache                  49 boom_eq     200000000        144.551        722.755
+[LATENCY] dirty_wb                      727 boom        200000000       8548.235      42741.176
+[LATENCY] l2_dram_dirty_wb                7 l2          200000000       5853.142      29265.714
+[END] hart=0 status=PASS
+
+[UART] UART0 is here (stdin/stdout).
+[INIT] checker_mask=0xf status=ready
+[INIT] software_interrupt=pass
+[RUN] hart=0 status=started
+[CONFIG] big_core_perf=off checker_perf=on interval_cycles=5000 sample_readback=not_collected
+[RUN] benchmark=gapbs_bfs nodes=2048 source=0 reached=2048 edges=32768 verified=1 parent_checksum=2835089264
+[PERF] boom_cycles=5010949 boom_inst=4182469
+[VERIFY] packages allocated=1383 completed=1383 passed=1383 status=PASS
+[TRAFFIC] source        st_total   st_cache st_uncache   ld_total   ld_cache ld_uncache ld_response ld_forward
+[TRAFFIC] boom_arch       630522     630473         49     434710     434413        297          -          -
+[TRAFFIC] boom_strict     630522     630473         49     434710     434413        297     428227       6186
+[TRAFFIC] checker_sum     630522     630473         49     434710     434413        297          -          0
+[TRAFFIC] c1              125940     125924         16     138236     138140         96          -          0
+[TRAFFIC] c2              193963     193948         15      84897      84804         93          -          0
+[TRAFFIC] c3              140580     140563         17     128606     128504        102          -          0
+[TRAFFIC] c4              170039     170038          1      82971      82965          6          -          0
+[TRAFFIC] path          total      dirty verify_required   verified unverified   resolved  nonverify status
+[TRAFFIC] L1-L2          4471       4413            4012       2605       1407       1407        401 PASS  
+[TRAFFIC] L2-DRAM         107        106              20         13          7          7         86 PASS  
+[ADDRESS_STATS] unit    store_total   store_peak     lf_lower     lf_upper      lf_peak     sf_lower     sf_upper      sf_peak    swr_total     swr_peak
+[ADDRESS_STATS] byte         726660         8528       145191       416207          658        44757       647856          615       383090          599
+[ADDRESS_STATS] word4        182716         2132        36537       104493          165        11461       162936          155         9680           62
+[ADDRESS_STATS] word8         92366         1070        18731        52910           84         5930        82137           78         1933           31
+[ADDRESS_STATS] line          13372          141         3180         7764           14         1193        11494           12           83            4
+[LATENCY] metric                     events clock    frequency_hz     avg_cycles         avg_ns
+[LATENCY] store_uncache                  49 boom_eq     200000000        145.428        727.142
+[LATENCY] dirty_wb                     1407 boom        200000000      10090.667      50453.336
+[LATENCY] l2_dram_dirty_wb                7 l2          200000000      16429.571      82147.857
+[END] hart=0 status=PASS
+
+[UART] UART0 is here (stdin/stdout).
+[INIT] checker_mask=0xf status=ready
+[INIT] software_interrupt=pass
+[RUN] hart=0 status=started
+[CONFIG] big_core_perf=off checker_perf=on interval_cycles=5000 sample_readback=not_collected
+[RUN] benchmark=gapbs_bfs nodes=4096 source=0 reached=4096 edges=65536 verified=1 parent_checksum=22787322736
+[PERF] boom_cycles=13089740 boom_inst=13480004
+[VERIFY] packages allocated=4411 completed=4411 passed=4411 status=PASS
+[TRAFFIC] source        st_total   st_cache st_uncache   ld_total   ld_cache ld_uncache ld_response ld_forward
+[TRAFFIC] boom_arch      2307962    2307913         49    1346326    1346029        297          -          -
+[TRAFFIC] boom_strict    2307962    2307913         49    1346326    1346029        297    1333693      12336
+[TRAFFIC] checker_sum    2307962    2307913         49    1346326    1346029        297          -          0
+[TRAFFIC] c1              591126     591110         16     336431     336335         96          -          0
+[TRAFFIC] c2              587633     587617         16     338073     337977         96          -          0
+[TRAFFIC] c3              587130     587120         10     337001     336938         63          -          0
+[TRAFFIC] c4              542073     542066          7     334821     334779         42          -          0
+[TRAFFIC] path          total      dirty verify_required   verified unverified   resolved  nonverify status
+[TRAFFIC] L1-L2          9426       9368            9150       6315       2835       2835        218 PASS  
+[TRAFFIC] L2-DRAM         210        210             129        105         24         24         81 PASS  
+[ADDRESS_STATS] unit    store_total   store_peak     lf_lower     lf_upper      lf_peak     sf_lower     sf_upper      sf_peak    swr_total     swr_peak
+[ADDRESS_STATS] byte        2489188        12648        34336      1413813          136        29364      2345700          248      1273232          248
+[ADDRESS_STATS] word4        625597         3162         8584       355314           34         7471       589574           62        16232           62
+[ADDRESS_STATS] word8        315546         1584         4790       179516           20         3945       296977           31         2250           31
+[ADDRESS_STATS] line          44408          206         1477        26064            7          922        41084            6          190            4
+[LATENCY] metric                     events clock    frequency_hz     avg_cycles         avg_ns
+[LATENCY] store_uncache                  49 boom_eq     200000000        133.346        666.734
+[LATENCY] dirty_wb                     2835 boom        200000000      10034.402      50172.010
+[LATENCY] l2_dram_dirty_wb               24 l2          200000000      13326.750      66633.750
+[END] hart=0 status=PASS
 
 = 写回总结
-L1→L2,dcache wb_dirty,条,1080,2311,4382,9420
-L1→L2,verify_required（=dirty_wb total）,条,605,1856,4002,9219
-L1→L2,写回时未校验 unverified,条,342,681,1383,2878
-L1→L2,未校验占比,%,56.529,36.692,34.558,31.218
-延迟-L1→L2,延迟事件数 events,次,342,681,1383,2878
-延迟-L1→L2,平均多久发生一次（间隔）,cycle,2957.506,3123.819,3602.485,4552.658
-延迟-L1→L2,平均多久发生一次（间隔）,ns,14787.529,15619.097,18012.426,22763.292
-延迟-L1→L2,每次延迟平均耗时,cycle,8048.853,9161.026,10648.469,10039.747
-延迟-L1→L2,每次延迟平均耗时,ns,40244.269,45805.132,53242.346,50198.738
-延迟-L1→L2,平均耗时/发生间隔,x,2.722,2.933,2.956,2.205
-
-
-L2→DRAM,l2_wb_total,条,43,64,104,215
-L2→DRAM,l2_wb_dirty,条,43,64,103,214
-L2→DRAM,需校验 required,条,9,8,37,140
-L2→DRAM,写回时未校验 unverified,条,2,4,8,35
-L2→DRAM,未校验占比,%,22.222,50,21.622,25
-延迟-L2→DRAM,延迟事件数 events,次,2,4,8,35
-延迟-L2→DRAM,平均多久发生一次（间隔）,cycle,505733.5,531830.25,622779.625,374358.6
-延迟-L2→DRAM,平均多久发生一次（间隔）,ns,2528667.5,2659151.25,3113898.125,1871793
-延迟-L2→DRAM,每次延迟平均耗时,cycle,3672.5,13452,10217.875,12932
-延迟-L2→DRAM,每次延迟平均耗时,ns,18362.5,67260,51089.375,64660
-延迟-L2→DRAM,平均耗时/发生间隔,x,0.007262,0.025,0.016,0.035

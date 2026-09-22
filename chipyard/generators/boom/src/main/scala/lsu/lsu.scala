@@ -142,6 +142,10 @@ class LSUDMemIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
   // 0..5 为架构 store/load，6..8 为严格 store，9..13 为严格 load，
   // 14 为尚未结算的项目数，15 为断言失败数。
   val traffic_arch_counter           = Output(Vec(16, UInt(64.W)))
+  // ROB 架构提交点的普通 cacheable load/store 物理地址事件。事件顺序与
+  // commit lane 顺序一致；DCache 侧统计模块负责缓冲，不能反压提交。
+  val address_stats_event            = Output(Vec(coreWidth,
+    Valid(new AddressAccessEvent(coreMaxAddrBits))))
 
 }
 
@@ -348,6 +352,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   val strictLoadCacheResponseEvents = WireInit(VecInit(Seq.fill(coreWidth)(false.B)))
   val strictLoadForwardEvents = WireInit(VecInit(Seq.fill(coreWidth)(false.B)))
   val trafficCounterFailureEvents = WireInit(VecInit(Seq.fill(coreWidth)(false.B)))
+  io.dmem.address_stats_event := VecInit(Seq.fill(coreWidth)(
+    0.U.asTypeOf(Valid(new AddressAccessEvent(coreMaxAddrBits)))))
 
   // load 必须在提交前获得数据，可在提交当拍同时结算架构与严格路径。
   // store 在提交后才进入 DCache，因此用独立的在途计数等待 data-array
@@ -1801,11 +1807,25 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       archStoreEvents(w) := true.B
       archStoreCacheEvents(w) := stq(idx).bits.traffic_cacheable
       archStoreUncacheEvents(w) := !stq(idx).bits.traffic_cacheable
+      when (stq(idx).bits.traffic_cacheable) {
+        io.dmem.address_stats_event(w).valid := true.B
+        io.dmem.address_stats_event(w).bits.addr := stq(idx).bits.addr.bits
+        io.dmem.address_stats_event(w).bits.size := stq(idx).bits.uop.mem_size
+        io.dmem.address_stats_event(w).bits.isStore := true.B
+        io.dmem.address_stats_event(w).bits.packetSeq := io.core.active_packet_seq
+      }
     }
     when (arch_load_in_scope) {
       archLoadEvents(w) := true.B
       archLoadCacheEvents(w) := ldq(idx).bits.traffic_cacheable
       archLoadUncacheEvents(w) := !ldq(idx).bits.traffic_cacheable
+      when (ldq(idx).bits.traffic_cacheable) {
+        io.dmem.address_stats_event(w).valid := true.B
+        io.dmem.address_stats_event(w).bits.addr := ldq(idx).bits.addr.bits
+        io.dmem.address_stats_event(w).bits.size := ldq(idx).bits.uop.mem_size
+        io.dmem.address_stats_event(w).bits.isStore := false.B
+        io.dmem.address_stats_event(w).bits.packetSeq := io.core.active_packet_seq
+      }
       strictLoadEvents(w) := load_path_is_valid
       strictLoadCacheEvents(w) := load_path_is_cache
       strictLoadUncacheEvents(w) := load_path_is_uncache
