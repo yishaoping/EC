@@ -811,6 +811,7 @@ static int print_package_address_statistics(void)
         printf("[ADDRESS_STATS] %-6s %12" PRIu64 " %12" PRIu64
                " %12" PRIu64 " %12" PRIu64 " %12" PRIu64
                " %12" PRIu64 " %12" PRIu64 " %12" PRIu64
+               " %12" PRIu64 " %12" PRIu64
                " %12" PRIu64 " %12" PRIu64 "\n",
                granule_name[granule], store_total, store_peak, lf_lower,
                lf_upper, lf_peak, sf_lower, sf_upper, sf_peak, swr_total,
