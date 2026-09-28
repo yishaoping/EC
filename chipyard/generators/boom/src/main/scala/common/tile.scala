@@ -446,6 +446,31 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
         // all-banks check instead of exposing the bank count to software.
         trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_WB_STATS_VALID) :=
           (l2DirtyStats(9) === outer.p(BankedL2Key).nBanks.U).asUInt
+
+        // The barrier-cost monitor samples the earlier SourceC line request,
+        // so it has a separate CDC/ABI block from the physical writeback
+        // counters above. Counts and cycle sums add across banks; validity is
+        // true only when every bank remains valid.
+        val l2BarrierStats = (0 until 7).map { index =>
+          synchronizedL2Count(
+            s"${GH_GlobalParams.GH_L2_DRAM_BARRIER_STATS_BORE}_$index")
+        }
+        trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_BARRIER_SEEN) :=
+          l2BarrierStats(0)
+        trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_BARRIER_RESOLVED) :=
+          l2BarrierStats(1)
+        trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_BARRIER_PENDING) :=
+          l2BarrierStats(2)
+        trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_BARRIER_DROPPED) :=
+          l2BarrierStats(3)
+        trafficCounter(
+          GH_GlobalParams.GH_TRAFFIC_L2_DRAM_BARRIER_REQUEST_CYCLE_SUM) :=
+          l2BarrierStats(4)
+        trafficCounter(
+          GH_GlobalParams.GH_TRAFFIC_L2_DRAM_BARRIER_SAFE_CYCLE_SUM) :=
+          l2BarrierStats(5)
+        trafficCounter(GH_GlobalParams.GH_TRAFFIC_L2_DRAM_BARRIER_STATS_VALID) :=
+          (l2BarrierStats(6) === outer.p(BankedL2Key).nBanks.U).asUInt
       }
       cmdRouter.io.traffic_counter_in := trafficCounter
       outer.roccs.zipWithIndex.foreach { case (rocc, i) =>

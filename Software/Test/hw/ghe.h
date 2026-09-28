@@ -118,7 +118,7 @@ static inline uint64_t ghe_csr_perf_read(int csr_index)
  * 35 为需要校验的脏写回总数；36--45 为 BOOM 严格访存统计；
  * 46--55 为 L2->DRAM 脏写回校验分类及延迟统计；56--95 为 byte、4B、
  * 8B 和 cache-line 四种粒度的前八类包地址统计，96--98 为诊断，99--106
- * 为第九、十类首次 store 统计。
+ * 为第九、十类首次 store 统计；107--127 为三组新增屏障代价统计。
  */
 enum ghe_traffic_counter {
     /* 基础访存分类计数。 */
@@ -264,6 +264,33 @@ enum ghe_traffic_counter {
     GHE_TRAFFIC_ADDR_WORD8_FIRST_STORE_PEAK,
     GHE_TRAFFIC_ADDR_LINE_FIRST_STORE_TOTAL,
     GHE_TRAFFIC_ADDR_LINE_FIRST_STORE_PEAK,
+
+    /* 新包覆盖 L1 中旧未安全版本的理论等待。 */
+    GHE_TRAFFIC_CROSS_PACKAGE_SEEN,
+    GHE_TRAFFIC_CROSS_PACKAGE_RESOLVED,
+    GHE_TRAFFIC_CROSS_PACKAGE_PENDING,
+    GHE_TRAFFIC_CROSS_PACKAGE_DROPPED,
+    GHE_TRAFFIC_CROSS_PACKAGE_REQUEST_CYCLE_SUM,
+    GHE_TRAFFIC_CROSS_PACKAGE_SAFE_CYCLE_SUM,
+    GHE_TRAFFIC_CROSS_PACKAGE_STATS_VALID,
+
+    /* L1 dirty replacement 在 L1--L2 屏障下的理论等待。 */
+    GHE_TRAFFIC_L1_L2_BARRIER_SEEN,
+    GHE_TRAFFIC_L1_L2_BARRIER_RESOLVED,
+    GHE_TRAFFIC_L1_L2_BARRIER_PENDING,
+    GHE_TRAFFIC_L1_L2_BARRIER_DROPPED,
+    GHE_TRAFFIC_L1_L2_BARRIER_REQUEST_CYCLE_SUM,
+    GHE_TRAFFIC_L1_L2_BARRIER_SAFE_CYCLE_SUM,
+    GHE_TRAFFIC_L1_L2_BARRIER_STATS_VALID,
+
+    /* L2 dirty replacement 在最终 L2--DRAM 屏障下的理论等待。 */
+    GHE_TRAFFIC_L2_DRAM_BARRIER_SEEN,
+    GHE_TRAFFIC_L2_DRAM_BARRIER_RESOLVED,
+    GHE_TRAFFIC_L2_DRAM_BARRIER_PENDING,
+    GHE_TRAFFIC_L2_DRAM_BARRIER_DROPPED,
+    GHE_TRAFFIC_L2_DRAM_BARRIER_REQUEST_CYCLE_SUM,
+    GHE_TRAFFIC_L2_DRAM_BARRIER_SAFE_CYCLE_SUM,
+    GHE_TRAFFIC_L2_DRAM_BARRIER_STATS_VALID,
     GHE_TRAFFIC_COUNTERS
 };
 
@@ -274,7 +301,7 @@ enum {
     GHE_TRAFFIC_FIRST_STORE_GRANULE_STRIDE = 2,
 };
 
-_Static_assert(GHE_TRAFFIC_COUNTERS == 107,
+_Static_assert(GHE_TRAFFIC_COUNTERS == 128,
                "traffic counter software/hardware ABI length must match");
 _Static_assert(GHE_TRAFFIC_STORE_TOTAL == 0 &&
                    GHE_TRAFFIC_LOAD_FORWARD == 6 &&
@@ -292,7 +319,13 @@ _Static_assert(GHE_TRAFFIC_STORE_TOTAL == 0 &&
                    GHE_TRAFFIC_ADDRESS_STATS_VALID == 96 &&
                    GHE_TRAFFIC_ADDRESS_STATS_PENDING == 98 &&
                    GHE_TRAFFIC_ADDR_BYTE_FIRST_STORE_TOTAL == 99 &&
-                   GHE_TRAFFIC_ADDR_LINE_FIRST_STORE_PEAK == 106,
+                   GHE_TRAFFIC_ADDR_LINE_FIRST_STORE_PEAK == 106 &&
+                   GHE_TRAFFIC_CROSS_PACKAGE_SEEN == 107 &&
+                   GHE_TRAFFIC_CROSS_PACKAGE_STATS_VALID == 113 &&
+                   GHE_TRAFFIC_L1_L2_BARRIER_SEEN == 114 &&
+                   GHE_TRAFFIC_L1_L2_BARRIER_STATS_VALID == 120 &&
+                   GHE_TRAFFIC_L2_DRAM_BARRIER_SEEN == 121 &&
+                   GHE_TRAFFIC_L2_DRAM_BARRIER_STATS_VALID == 127,
                "traffic counter software/hardware ABI indices must match");
 
 /*

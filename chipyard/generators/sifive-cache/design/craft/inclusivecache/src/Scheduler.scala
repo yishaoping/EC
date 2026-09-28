@@ -39,6 +39,12 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
     val dcacheWritebackDirty = Bool()
     val dcacheWritebackPacketSeq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
     val dcacheWritebackPacketTracked = Bool()
+    // Earlier line-level acceptance point used by the hypothetical L2-DRAM
+    // barrier monitor. This remains independent of the outer C handshake.
+    val dcacheWritebackRequest = Bool()
+    val dcacheWritebackRequestDirty = Bool()
+    val dcacheWritebackRequestPacketSeq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
+    val dcacheWritebackRequestPacketTracked = Bool()
   }
 
   val sourceA = Module(new SourceA(params))
@@ -151,6 +157,12 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
   io.dcacheWritebackDirty := io.dcacheWriteback && sourceC.io.c_dirty
   io.dcacheWritebackPacketSeq := sourceC.io.c_packetSeq
   io.dcacheWritebackPacketTracked := sourceC.io.c_packetTracked
+  io.dcacheWritebackRequest := sourceC.io.req.fire() &&
+    sourceC.io.req.bits.dcache
+  io.dcacheWritebackRequestDirty := io.dcacheWritebackRequest &&
+    sourceC.io.req.bits.dirty
+  io.dcacheWritebackRequestPacketSeq := sourceC.io.req.bits.packetSeq
+  io.dcacheWritebackRequestPacketTracked := sourceC.io.req.bits.packetTracked
 
   // Forward meta-data changes from nested transaction completion
   val select_c  = mshr_selectOH(params.mshrs-1)

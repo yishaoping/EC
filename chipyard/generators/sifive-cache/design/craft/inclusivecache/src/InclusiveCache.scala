@@ -26,7 +26,7 @@ import freechips.rocketchip.diplomacy._
 
 import freechips.rocketchip.regmapper._
 import freechips.rocketchip.tilelink._
-import freechips.rocketchip.guardiancouncil.GH_GlobalParams
+import freechips.rocketchip.guardiancouncil.{GH_GlobalParams, GHBarrierLatencyStats}
 import freechips.rocketchip.subsystem.BankedL2Key
 import freechips.rocketchip.util._
 
@@ -249,6 +249,21 @@ class InclusiveCache(
         }).asUInt
       }
       val l2SafeWatermark = l2GrayToBinary(safeWatermarkGraySync)
+      val l2DramBarrierStats = Module(new GHBarrierLatencyStats(l2StatsWindow))
+      l2DramBarrierStats.io.resetStats := l2StatsReset
+      l2DramBarrierStats.io.event.valid := l2Counting &&
+        scheduler.io.dcacheWritebackRequest &&
+        scheduler.io.dcacheWritebackRequestDirty &&
+        scheduler.io.dcacheWritebackRequestPacketTracked &&
+        scheduler.io.dcacheWritebackRequestPacketSeq =/= 0.U &&
+        scheduler.io.dcacheWritebackRequestPacketSeq > l2SafeWatermark
+      l2DramBarrierStats.io.event.bits :=
+        scheduler.io.dcacheWritebackRequestPacketSeq
+      l2DramBarrierStats.io.safeWatermark := l2SafeWatermark
+      l2DramBarrierStats.io.currentCycle := l2Cycle
+      // Package FAIL/CANCEL is checked in the BOOM-domain report. The L2
+      // monitor only owns local slot/counter validity.
+      l2DramBarrierStats.io.fatalProtocolError := false.B
       val l2Required = l2Counting && writeback && dirty &&
         scheduler.io.dcacheWritebackPacketTracked &&
         scheduler.io.dcacheWritebackPacketSeq =/= 0.U
@@ -388,6 +403,19 @@ class InclusiveCache(
         val gray = value ^ (value >> 1)
         BoringUtils.addSource(gray,
           s"${GH_GlobalParams.GH_L2_DRAM_STATS_BORE}_${index}_$bank")
+      }
+      val l2BarrierStats = Seq(
+        l2DramBarrierStats.io.seen,
+        l2DramBarrierStats.io.resolved,
+        l2DramBarrierStats.io.pending,
+        l2DramBarrierStats.io.dropped,
+        l2DramBarrierStats.io.requestCycleSum,
+        l2DramBarrierStats.io.safeCycleSum,
+        l2DramBarrierStats.io.statsValid)
+      l2BarrierStats.zipWithIndex.foreach { case (value, index) =>
+        val gray = value ^ (value >> 1)
+        BoringUtils.addSource(gray,
+          s"${GH_GlobalParams.GH_L2_DRAM_BARRIER_STATS_BORE}_${index}_$bank")
       }
 
       scheduler

@@ -28,6 +28,15 @@ typedef struct {
     uint64_t completed;
     uint64_t pending;
     uint64_t l2_pending;
+    uint64_t cross_package_pending;
+    uint64_t l1_l2_barrier_pending;
+    uint64_t l2_dram_barrier_pending;
+    uint64_t cross_package_dropped;
+    uint64_t l1_l2_barrier_dropped;
+    uint64_t l2_dram_barrier_dropped;
+    uint64_t cross_package_valid;
+    uint64_t l1_l2_barrier_valid;
+    uint64_t l2_dram_barrier_valid;
     uint64_t result_dropped;
     uint64_t writeback_dropped;
     uint64_t arithmetic_overflow;
@@ -49,6 +58,24 @@ static package_drain_status_t wait_for_package_statistics_to_drain(
             GHE_TRAFFIC_UNVERIFIED_DIRTY_WB_PENDING);
         state->l2_pending = ghe_traffic_counter_read(
             GHE_TRAFFIC_L2_DRAM_WB_UNVERIFIED_PENDING);
+        state->cross_package_pending = ghe_traffic_counter_read(
+            GHE_TRAFFIC_CROSS_PACKAGE_PENDING);
+        state->l1_l2_barrier_pending = ghe_traffic_counter_read(
+            GHE_TRAFFIC_L1_L2_BARRIER_PENDING);
+        state->l2_dram_barrier_pending = ghe_traffic_counter_read(
+            GHE_TRAFFIC_L2_DRAM_BARRIER_PENDING);
+        state->cross_package_dropped = ghe_traffic_counter_read(
+            GHE_TRAFFIC_CROSS_PACKAGE_DROPPED);
+        state->l1_l2_barrier_dropped = ghe_traffic_counter_read(
+            GHE_TRAFFIC_L1_L2_BARRIER_DROPPED);
+        state->l2_dram_barrier_dropped = ghe_traffic_counter_read(
+            GHE_TRAFFIC_L2_DRAM_BARRIER_DROPPED);
+        state->cross_package_valid = ghe_traffic_counter_read(
+            GHE_TRAFFIC_CROSS_PACKAGE_STATS_VALID);
+        state->l1_l2_barrier_valid = ghe_traffic_counter_read(
+            GHE_TRAFFIC_L1_L2_BARRIER_STATS_VALID);
+        state->l2_dram_barrier_valid = ghe_traffic_counter_read(
+            GHE_TRAFFIC_L2_DRAM_BARRIER_STATS_VALID);
         state->result_dropped =
             ghe_traffic_counter_read(GHE_TRAFFIC_PACKAGE_RESULT_DROPPED);
         state->writeback_dropped = ghe_traffic_counter_read(
@@ -58,11 +85,20 @@ static package_drain_status_t wait_for_package_statistics_to_drain(
         state->elapsed_cycles = read_cycles() - start_cycle;
 
         if (state->result_dropped != 0 || state->writeback_dropped != 0 ||
-            state->arithmetic_overflow != 0) {
+            state->arithmetic_overflow != 0 ||
+            state->cross_package_dropped != 0 ||
+            state->l1_l2_barrier_dropped != 0 ||
+            state->l2_dram_barrier_dropped != 0 ||
+            state->cross_package_valid != 1 ||
+            state->l1_l2_barrier_valid != 1 ||
+            state->l2_dram_barrier_valid != 1) {
             return PACKAGE_DRAIN_HARD_ERROR;
         }
         if (state->completed == state->allocated && state->pending == 0 &&
-            state->l2_pending == 0) {
+            state->l2_pending == 0 &&
+            state->cross_package_pending == 0 &&
+            state->l1_l2_barrier_pending == 0 &&
+            state->l2_dram_barrier_pending == 0) {
             return PACKAGE_DRAIN_COMPLETE;
         }
         if (state->elapsed_cycles >= PACKAGE_DRAIN_TIMEOUT_CYCLES) {
@@ -160,6 +196,48 @@ static int wait_for_boom_strict_pending(void)
         if (read_cycles() - start_cycle >= PACKAGE_DRAIN_TIMEOUT_CYCLES) {
             printf("[TRAFFIC_DIAG] strict_pending=%" PRIu64
                    " status=TIMEOUT\n", pending);
+            return 0;
+        }
+    }
+}
+
+/* STOP 之后再观察一次新增桶，覆盖 STOP 边沿到达 L2 的 CDC 尾部事件。 */
+static int wait_for_barrier_statistics_after_stop(void)
+{
+    uint64_t start_cycle = read_cycles();
+    while (1) {
+        uint64_t cross_pending = ghe_traffic_counter_read(
+            GHE_TRAFFIC_CROSS_PACKAGE_PENDING);
+        uint64_t l1_l2_pending = ghe_traffic_counter_read(
+            GHE_TRAFFIC_L1_L2_BARRIER_PENDING);
+        uint64_t l2_dram_pending = ghe_traffic_counter_read(
+            GHE_TRAFFIC_L2_DRAM_BARRIER_PENDING);
+        uint64_t cross_valid = ghe_traffic_counter_read(
+            GHE_TRAFFIC_CROSS_PACKAGE_STATS_VALID);
+        uint64_t l1_l2_valid = ghe_traffic_counter_read(
+            GHE_TRAFFIC_L1_L2_BARRIER_STATS_VALID);
+        uint64_t l2_dram_valid = ghe_traffic_counter_read(
+            GHE_TRAFFIC_L2_DRAM_BARRIER_STATS_VALID);
+        uint64_t cross_dropped = ghe_traffic_counter_read(
+            GHE_TRAFFIC_CROSS_PACKAGE_DROPPED);
+        uint64_t l1_l2_dropped = ghe_traffic_counter_read(
+            GHE_TRAFFIC_L1_L2_BARRIER_DROPPED);
+        uint64_t l2_dram_dropped = ghe_traffic_counter_read(
+            GHE_TRAFFIC_L2_DRAM_BARRIER_DROPPED);
+
+        if (cross_valid != 1 || l1_l2_valid != 1 || l2_dram_valid != 1 ||
+            cross_dropped != 0 || l1_l2_dropped != 0 ||
+            l2_dram_dropped != 0) {
+            return 0;
+        }
+        if (cross_pending == 0 && l1_l2_pending == 0 &&
+            l2_dram_pending == 0) {
+            return 1;
+        }
+        if (read_cycles() - start_cycle >= PACKAGE_DRAIN_TIMEOUT_CYCLES) {
+            printf("[BARRIER_DIAG] stop_drain=TIMEOUT cross_pending=%" PRIu64
+                   " l1_l2_pending=%" PRIu64 " l2_dram_pending=%" PRIu64
+                   "\n", cross_pending, l1_l2_pending, l2_dram_pending);
             return 0;
         }
     }
@@ -614,6 +692,103 @@ static void print_l2_dram_dirty_writeback_latency(void)
                       average_fraction, average_ns, ns_fraction);
 }
 
+static int print_one_barrier_latency(
+    const char *metric, const char *clock, uint64_t frequency_hz,
+    int seen_index, int resolved_index, int pending_index,
+    int dropped_index, int request_cycle_sum_index,
+    int safe_cycle_sum_index, int valid_index)
+{
+    const volatile uint64_t *traffic = hart_traffic[0];
+    uint64_t seen = traffic[seen_index];
+    uint64_t resolved = traffic[resolved_index];
+    uint64_t pending = traffic[pending_index];
+    uint64_t dropped = traffic[dropped_index];
+    uint64_t request_sum = traffic[request_cycle_sum_index];
+    uint64_t safe_sum = traffic[safe_cycle_sum_index];
+    uint64_t valid = traffic[valid_index];
+    uint64_t failed = traffic[GHE_TRAFFIC_FAILED_PACKAGES];
+    uint64_t cancelled = traffic[GHE_TRAFFIC_CANCELLED_PACKAGES];
+    uint64_t result_dropped =
+        traffic[GHE_TRAFFIC_PACKAGE_RESULT_DROPPED];
+    uint64_t arithmetic_overflow =
+        traffic[GHE_TRAFFIC_STATS_ARITHMETIC_OVERFLOW];
+    uint64_t allocated = traffic[GHE_TRAFFIC_ALLOCATED_PACKAGES];
+    uint64_t completed = traffic[GHE_TRAFFIC_COMPLETED_PACKAGES];
+    uint64_t passed = traffic[GHE_TRAFFIC_PASSED_PACKAGES];
+    int ok = valid == 1 && pending == 0 && dropped == 0 &&
+             seen == resolved && safe_sum >= request_sum &&
+             failed == 0 && cancelled == 0 && result_dropped == 0 &&
+             arithmetic_overflow == 0 && completed == allocated &&
+             passed == completed;
+    uint64_t wait_cycle_sum =
+        safe_sum >= request_sum ? safe_sum - request_sum : 0;
+
+    printf("[BARRIER] %-22s seen=%" PRIu64 " resolved=%" PRIu64
+           " pending=%" PRIu64 " dropped=%" PRIu64
+           " wait_cycle_sum=%" PRIu64 " valid=%" PRIu64
+           " status=%s\n",
+           metric, seen, resolved, pending, dropped, wait_cycle_sum,
+           valid, ok ? "PASS" : "FAIL");
+
+    if (!ok) {
+        print_latency_unavailable(metric, resolved, clock, frequency_hz,
+                                  "statistics_invalid");
+        return 0;
+    }
+    if (resolved == 0) {
+        print_latency_unavailable(metric, 0, clock, frequency_hz,
+                                  "no_events");
+        return 1;
+    }
+
+    uint64_t average_cycles = wait_cycle_sum / resolved;
+    uint64_t average_cycle_fraction = (uint64_t)(
+        ((uint128_t)(wait_cycle_sum % resolved) * 1000) / resolved);
+    uint128_t ns_numerator =
+        (uint128_t)wait_cycle_sum * UINT64_C(1000000000);
+    uint128_t ns_denominator = (uint128_t)frequency_hz * resolved;
+    uint128_t average_ns = ns_numerator / ns_denominator;
+    uint64_t average_ns_fraction = (uint64_t)(
+        ((ns_numerator % ns_denominator) * 1000) / ns_denominator);
+
+    print_latency_row(metric, resolved, clock, frequency_hz, 0,
+                      average_cycles, average_cycle_fraction,
+                      average_ns, average_ns_fraction);
+    return 1;
+}
+
+static int print_barrier_latency_statistics(void)
+{
+    int cross_ok = print_one_barrier_latency(
+        "cross_package_store", "boom", BOOM_CORE_FREQUENCY_HZ,
+        GHE_TRAFFIC_CROSS_PACKAGE_SEEN,
+        GHE_TRAFFIC_CROSS_PACKAGE_RESOLVED,
+        GHE_TRAFFIC_CROSS_PACKAGE_PENDING,
+        GHE_TRAFFIC_CROSS_PACKAGE_DROPPED,
+        GHE_TRAFFIC_CROSS_PACKAGE_REQUEST_CYCLE_SUM,
+        GHE_TRAFFIC_CROSS_PACKAGE_SAFE_CYCLE_SUM,
+        GHE_TRAFFIC_CROSS_PACKAGE_STATS_VALID);
+    int l1_l2_ok = print_one_barrier_latency(
+        "l1_l2_replacement", "boom", BOOM_CORE_FREQUENCY_HZ,
+        GHE_TRAFFIC_L1_L2_BARRIER_SEEN,
+        GHE_TRAFFIC_L1_L2_BARRIER_RESOLVED,
+        GHE_TRAFFIC_L1_L2_BARRIER_PENDING,
+        GHE_TRAFFIC_L1_L2_BARRIER_DROPPED,
+        GHE_TRAFFIC_L1_L2_BARRIER_REQUEST_CYCLE_SUM,
+        GHE_TRAFFIC_L1_L2_BARRIER_SAFE_CYCLE_SUM,
+        GHE_TRAFFIC_L1_L2_BARRIER_STATS_VALID);
+    int l2_dram_ok = print_one_barrier_latency(
+        "l2_dram_replacement", "l2", L2_CORE_FREQUENCY_HZ,
+        GHE_TRAFFIC_L2_DRAM_BARRIER_SEEN,
+        GHE_TRAFFIC_L2_DRAM_BARRIER_RESOLVED,
+        GHE_TRAFFIC_L2_DRAM_BARRIER_PENDING,
+        GHE_TRAFFIC_L2_DRAM_BARRIER_DROPPED,
+        GHE_TRAFFIC_L2_DRAM_BARRIER_REQUEST_CYCLE_SUM,
+        GHE_TRAFFIC_L2_DRAM_BARRIER_SAFE_CYCLE_SUM,
+        GHE_TRAFFIC_L2_DRAM_BARRIER_STATS_VALID);
+    return cross_ok && l1_l2_ok && l2_dram_ok;
+}
+
 static void print_cache_traffic_row(const char *path,
                                     uint64_t total, uint64_t dirty,
                                     uint64_t verify_required,
@@ -842,6 +1017,7 @@ int report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)
     ghe_fpga_perf_stop();
     int pending_ok = wait_for_boom_strict_pending();
     int address_pending_ok = wait_for_package_address_statistics();
+    int barrier_pending_ok = wait_for_barrier_statistics_after_stop();
     for (int counter = 0; counter < GHE_TRAFFIC_COUNTERS; counter++) {
         hart_traffic[0][counter] = ghe_traffic_counter_read(counter);
     }
@@ -856,6 +1032,12 @@ int report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)
         printf("[VERIFY_DIAG] package_drain=FAIL reason=%s"
                " allocated=%" PRIu64 " completed=%" PRIu64
                " pending=%" PRIu64 " l2_pending=%" PRIu64
+               " cross_pending=%" PRIu64
+               " l1_l2_barrier_pending=%" PRIu64
+               " l2_dram_barrier_pending=%" PRIu64
+               " cross_dropped=%" PRIu64
+               " l1_l2_barrier_dropped=%" PRIu64
+               " l2_dram_barrier_dropped=%" PRIu64
                " result_dropped=%" PRIu64
                " writeback_dropped=%" PRIu64
                " arithmetic_overflow=%" PRIu64
@@ -863,6 +1045,12 @@ int report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)
                reason, package_drain_state.allocated,
                package_drain_state.completed, package_drain_state.pending,
                package_drain_state.l2_pending,
+               package_drain_state.cross_package_pending,
+               package_drain_state.l1_l2_barrier_pending,
+               package_drain_state.l2_dram_barrier_pending,
+               package_drain_state.cross_package_dropped,
+               package_drain_state.l1_l2_barrier_dropped,
+               package_drain_state.l2_dram_barrier_dropped,
                package_drain_state.result_dropped,
                package_drain_state.writeback_dropped,
                package_drain_state.arithmetic_overflow,
@@ -876,7 +1064,9 @@ int report_end(uint64_t start_cpu, uint64_t end_cpu, uint64_t hart_id)
     print_store_uncache_latency();
     print_dirty_writeback_latency();
     print_l2_dram_dirty_writeback_latency();
+    int barrier_stats_ok = print_barrier_latency_statistics();
     lock_release(&uart_lock);
     return package_drain_status == PACKAGE_DRAIN_COMPLETE && traffic_ok &&
-           cache_traffic_ok && address_pending_ok && address_stats_ok;
+           cache_traffic_ok && address_pending_ok && barrier_pending_ok &&
+           address_stats_ok && barrier_stats_ok;
 }

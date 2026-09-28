@@ -16,7 +16,7 @@ import freechips.rocketchip.tilelink._
 import freechips.rocketchip.tile._
 import freechips.rocketchip.util._
 import freechips.rocketchip.rocket._
-import freechips.rocketchip.guardiancouncil.GH_GlobalParams
+import freechips.rocketchip.guardiancouncil.{GH_GlobalParams, GHBarrierLatencyStats}
 
 import boom.common._
 import boom.exu.BrUpdateInfo
@@ -877,6 +877,12 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   wb.io.req            <> wbArb.io.out
   val wbReqSet = wbArb.io.out.bits.idx
   val wbReqWay = OHToUInt(wbArb.io.out.bits.way_en)
+  // Capture the line-level replacement acceptance point separately from the
+  // later C-channel transfer. Port 1 is the MSHR dirty-victim path; probe
+  // writebacks on port 0 are outside the current single-core barrier scope.
+  val l1ReplacementWbEvent = wbArb.io.in(1).fire
+  val l1ReplacementPacketSeq = dirtyPacketSeq(wbReqSet)(wbReqWay)
+  val l1ReplacementPacketTracked = dirtyPacketTracked(wbReqSet)(wbReqWay)
   wb.io.packet_seq := dirtyPacketSeq(wbReqSet)(wbReqWay)
   wb.io.packet_tracked := dirtyPacketTracked(wbReqSet)(wbReqWay)
   wb.io.data_resp       := s2_data_muxed(0)
@@ -1393,6 +1399,19 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   dataWriteArb.io.in(0).bits.data   := Fill(rowWords, s3_req.data)
   dataWriteArb.io.in(0).bits.way_en := s3_way
 
+  // Read provenance before this write updates it. Successful SC and AMO
+  // operations naturally reach this same physical array-write point, whereas
+  // a failed SC never asserts s3_valid and therefore cannot create an event.
+  val modifyingSet = s3_req.addr(idxMSB, idxLSB)
+  val modifyingWay = OHToUInt(s3_way)
+  val overwrittenPacketSeq = dirtyPacketSeq(modifyingSet)(modifyingWay)
+  val overwrittenPacketTracked = dirtyPacketTracked(modifyingSet)(modifyingWay)
+  val crossPackageBarrierEvent = trafficCounting &&
+    dataWriteArb.io.in(0).fire && s3_req.packet_seq =/= 0.U &&
+    overwrittenPacketTracked && overwrittenPacketSeq =/= 0.U &&
+    overwrittenPacketSeq =/= s3_req.packet_seq &&
+    overwrittenPacketSeq > safePacketWatermark
+
   // A refill installs a new tag in this set/way and must discard attribution
   // left by the evicted line before any replayed store dirties the new line.
   when (dataWriteArb.io.in(1).fire) {
@@ -1417,6 +1436,29 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       dirtyPacketTracked(set)(way) := true.B
     }
   }
+
+  // New barrier-cost measurements use independent storage and do not alter
+  // the existing physical dirty-writeback counters. They never feed ready or
+  // valid back into the cache pipeline; a bucket collision only invalidates
+  // the corresponding measurement.
+  val crossPackageBarrierStats = Module(new GHBarrierLatencyStats(statsWindow))
+  crossPackageBarrierStats.io.resetStats := io.traffic_reset
+  crossPackageBarrierStats.io.event.valid := crossPackageBarrierEvent
+  crossPackageBarrierStats.io.event.bits := overwrittenPacketSeq
+  crossPackageBarrierStats.io.safeWatermark := newSafePacketWatermark
+  crossPackageBarrierStats.io.currentCycle := io.csr_cycle
+  crossPackageBarrierStats.io.fatalProtocolError := addressStatsFatal
+
+  val l1L2BarrierStats = Module(new GHBarrierLatencyStats(statsWindow))
+  l1L2BarrierStats.io.resetStats := io.traffic_reset
+  l1L2BarrierStats.io.event.valid := trafficCounting &&
+    l1ReplacementWbEvent && l1ReplacementPacketTracked &&
+    l1ReplacementPacketSeq =/= 0.U &&
+    l1ReplacementPacketSeq > safePacketWatermark
+  l1L2BarrierStats.io.event.bits := l1ReplacementPacketSeq
+  l1L2BarrierStats.io.safeWatermark := newSafePacketWatermark
+  l1L2BarrierStats.io.currentCycle := io.csr_cycle
+  l1L2BarrierStats.io.fatalProtocolError := addressStatsFatal
 
   // 普通 store/load 只保留架构与严格两套一致口径。严格 store 路径接受
   // 由 ROB 架构提交锁存的资格，并在真实的 DCache 完成点结算。
@@ -1553,6 +1595,34 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_FIRST_STORE_BASE + i) :=
       addressStats.io.firstStoreCounters(i)
   }
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_CROSS_PACKAGE_SEEN) :=
+    crossPackageBarrierStats.io.seen
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_CROSS_PACKAGE_RESOLVED) :=
+    crossPackageBarrierStats.io.resolved
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_CROSS_PACKAGE_PENDING) :=
+    crossPackageBarrierStats.io.pending
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_CROSS_PACKAGE_DROPPED) :=
+    crossPackageBarrierStats.io.dropped
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_CROSS_PACKAGE_REQUEST_CYCLE_SUM) :=
+    crossPackageBarrierStats.io.requestCycleSum
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_CROSS_PACKAGE_SAFE_CYCLE_SUM) :=
+    crossPackageBarrierStats.io.safeCycleSum
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_CROSS_PACKAGE_STATS_VALID) :=
+    crossPackageBarrierStats.io.statsValid
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_BARRIER_SEEN) :=
+    l1L2BarrierStats.io.seen
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_BARRIER_RESOLVED) :=
+    l1L2BarrierStats.io.resolved
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_BARRIER_PENDING) :=
+    l1L2BarrierStats.io.pending
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_BARRIER_DROPPED) :=
+    l1L2BarrierStats.io.dropped
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_BARRIER_REQUEST_CYCLE_SUM) :=
+    l1L2BarrierStats.io.requestCycleSum
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_BARRIER_SAFE_CYCLE_SUM) :=
+    l1L2BarrierStats.io.safeCycleSum
+  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_BARRIER_STATS_VALID) :=
+    l1L2BarrierStats.io.statsValid
   val trafficCounterSnapshot = RegInit(VecInit(
     Seq.fill(GH_GlobalParams.GH_TRAFFIC_COUNTERS)(0.U(64.W))))
   val trafficCounterSnapshotValid = RegInit(false.B)
@@ -1567,7 +1637,9 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     trafficStopCapturePending := true.B
   }.elsewhen (trafficStopCapturePending &&
               io.lsu.traffic_arch_counter(14) === 0.U &&
-              addressStats.io.idle) {
+              addressStats.io.idle &&
+              crossPackageBarrierStats.io.pending === 0.U &&
+              l1L2BarrierStats.io.pending === 0.U) {
     // 等 LSU 的架构/严格计数完全收敛后再冻结快照，避免 STOP 后尾部响应
     // 尚未结算时软件读到过早的计数值。
     trafficCounterSnapshot := trafficCounterLive
