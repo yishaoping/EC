@@ -1,7 +1,12 @@
 package freechips.rocketchip.guardiancouncil
 
+import org.chipsalliance.cde.config.Field
+
 //修改GH_WIDITH_PACKETS会牵一发动全身
 object GH_GlobalParams {
+  // Functional barrier enforcement is deliberately opt-in. Monitoring and
+  // latency accounting remain enabled independently of this switch.
+  case object GH_REAL_BARRIER_ENABLED extends Field[Boolean](true)
   val GH_NUM_CORES = 5;   // 1 BOOM core + 4 Rocket checker cores
   val GH_NUM_BIG_CORES = 1;
   val GH_DEBUG = 0;
@@ -159,6 +164,13 @@ object GH_GlobalParams {
   val GH_L2_DRAM_BARRIER_STATS_BORE = "gh_l2_dram_barrier_stats"
   val GH_L2_STATS_RESET_BORE = "gh_l2_dram_stats_reset"
   val GH_L2_STATS_ENABLE_BORE = "gh_l2_dram_stats_enable"
+  val GH_L2_BARRIER_REQUEST_BORE = "gh_l2_dram_barrier_request"
+  val GH_L2_BARRIER_REQUEST_SEQ_BORE = "gh_l2_dram_barrier_request_seq"
+  val GH_L2_BARRIER_CLOSE_ACK_BORE = "gh_l2_dram_barrier_close_ack"
+  val GH_L2_BARRIER_CLOSE_ACK_SEQ_BORE = "gh_l2_dram_barrier_close_ack_seq"
+  val GH_L2_BARRIER_ERROR_BORE = "gh_l2_dram_barrier_error"
+  val GH_L2_BARRIER_FAILURE_BORE = "gh_l2_dram_barrier_failure"
+  val GH_L2_BARRIER_FAILURE_SEQ_BORE = "gh_l2_dram_barrier_failure_seq"
   val IF_THERE_IS_CDC = true;
   //===== Runtime Configurable Mapping =====//
   val GH_MAX_BIG_CORES = 2;   // 支持的大核数量

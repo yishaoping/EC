@@ -45,6 +45,11 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
     val dcacheWritebackRequestDirty = Bool()
     val dcacheWritebackRequestPacketSeq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
     val dcacheWritebackRequestPacketTracked = Bool()
+    val dcacheWritebackRequestCandidate = Bool()
+    val dcacheWritebackRequestCandidateDirty = Bool()
+    val dcacheWritebackRequestCandidatePacketSeq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
+    val dcacheWritebackRequestCandidatePacketTracked = Bool()
+    val barrier_allow = Input(Bool())
   }
 
   val sourceA = Module(new SourceA(params))
@@ -53,6 +58,7 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
   val sourceD = Module(new SourceD(params))
   val sourceE = Module(new SourceE(params))
   val sourceX = Module(new SourceX(params))
+
 
   io.out.a <> sourceA.io.a
   io.out.c <> sourceC.io.c
@@ -113,7 +119,7 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
     params.ccover(mshr_stall_bc && bc_mshr.io.status.valid, "SCHEDULER_BC_INTERLOCK", "BC MSHR interlocked due to pre-emption")
 
   // Consider scheduling an MSHR only if all the resources it requires are available
-  val mshr_request = Cat((mshrs zip mshr_stall).map { case (m, s) =>
+  val mshr_request_unbarred = Cat((mshrs zip mshr_stall).map { case (m, s) =>
     m.io.schedule.valid && !s &&
       (sourceA.io.req.ready || !m.io.schedule.bits.a.valid) &&
       (sourceB.io.req.ready || !m.io.schedule.bits.b.valid) &&
@@ -123,12 +129,27 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
       (sourceX.io.req.ready || !m.io.schedule.bits.x.valid) &&
       (directory.io.write.ready || !m.io.schedule.bits.dir.valid)
   }.reverse)
+  val mshr_request = Cat((mshrs zip mshr_stall).map { case (m, s) =>
+    m.io.schedule.valid && !s &&
+      (sourceA.io.req.ready || !m.io.schedule.bits.a.valid) &&
+      (sourceB.io.req.ready || !m.io.schedule.bits.b.valid) &&
+      (sourceC.io.req.ready && io.barrier_allow || !m.io.schedule.bits.c.valid) &&
+      (sourceD.io.req.ready || !m.io.schedule.bits.d.valid) &&
+      (sourceE.io.req.ready || !m.io.schedule.bits.e.valid) &&
+      (sourceX.io.req.ready || !m.io.schedule.bits.x.valid) &&
+      (directory.io.write.ready || !m.io.schedule.bits.dir.valid)
+  }.reverse)
 
   // Round-robin arbitration of MSHRs
   val robin_filter = RegInit(UInt(0, width = params.mshrs))
-  val robin_request = Cat(mshr_request, mshr_request & robin_filter)
-  val mshr_selectOH2 = ~(leftOR(robin_request) << 1) & robin_request
-  val mshr_selectOH = mshr_selectOH2(2*params.mshrs-1, params.mshrs) | mshr_selectOH2(params.mshrs-1, 0)
+  def selectMshr(req: UInt): UInt = {
+    val robinRequest = Cat(req, req & robin_filter)
+    val selectOH2 = ~(leftOR(robinRequest) << 1) & robinRequest
+    selectOH2(2 * params.mshrs - 1, params.mshrs) |
+      selectOH2(params.mshrs - 1, 0)
+  }
+  val mshr_selectOH = selectMshr(mshr_request)
+  val mshr_selectOH_unbarred = selectMshr(mshr_request_unbarred)
   val mshr_select = OHToUInt(mshr_selectOH)
   val schedule = Mux1H(mshr_selectOH, mshrs.map(_.io.schedule.bits))
   val scheduleTag = Mux1H(mshr_selectOH, mshrs.map(_.io.status.bits.tag))
@@ -145,6 +166,18 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
   sourceA.io.req := schedule.a
   sourceB.io.req := schedule.b
   sourceC.io.req := schedule.c
+  val candidateVec = mshrs.map { m =>
+    m.io.schedule.valid && m.io.schedule.bits.c.valid &&
+      m.io.schedule.bits.c.bits.dcache
+  }
+  val candidateSeqs = mshrs.map(_.io.schedule.bits.c.bits.packetSeq)
+  val candidateTracked = mshrs.map(_.io.schedule.bits.c.bits.packetTracked)
+  val candidateDirty = mshrs.map(_.io.schedule.bits.c.bits.dirty)
+  val selectedCandidate = mshr_selectOH_unbarred & Vec(candidateVec).asUInt
+  io.dcacheWritebackRequestCandidate := selectedCandidate.orR
+  io.dcacheWritebackRequestCandidateDirty := Mux1H(selectedCandidate, candidateDirty)
+  io.dcacheWritebackRequestCandidatePacketSeq := Mux1H(selectedCandidate, candidateSeqs)
+  io.dcacheWritebackRequestCandidatePacketTracked := Mux1H(selectedCandidate, candidateTracked)
   sourceD.io.req := schedule.d
   sourceE.io.req := schedule.e
   sourceX.io.req := schedule.x

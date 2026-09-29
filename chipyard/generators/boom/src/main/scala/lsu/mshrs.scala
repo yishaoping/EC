@@ -403,6 +403,8 @@ class BoomIOMSHR(id: Int)(implicit edge: TLEdgeOut, p: Parameters) extends BoomM
     val mem_access = Decoupled(new TLBundleA(edge.bundle))
     val mem_ack    = Flipped(Valid(new TLBundleD(edge.bundle)))
     val traffic_strict_store_complete = Output(Bool())
+    val traffic_strict_store_complete_stq_idx = Output(UInt(stqAddrSz.W))
+    val traffic_strict_store_complete_token = Output(UInt(64.W))
 
     // We don't need brupdate in here because uncacheable operations are guaranteed non-speculative
   })
@@ -465,8 +467,10 @@ class BoomIOMSHR(id: Int)(implicit edge: TLEdgeOut, p: Parameters) extends BoomM
   // 不可缓存 store 在 TileLink A 请求被接受后完成；只保留由架构提交
   // 资格驱动的严格路径，避免请求阶段口径形成另一套不一致的 BOOM 计数。
   io.traffic_strict_store_complete := io.mem_access.fire &&
-    req.traffic_arch_check && !req.traffic_cacheable && req.uop.uses_stq &&
+    req.strict_store_token_valid && !req.traffic_cacheable && req.uop.uses_stq &&
     req.uop.mem_cmd === M_XWR
+  io.traffic_strict_store_complete_stq_idx := req.uop.stq_idx
+  io.traffic_strict_store_complete_token := req.strict_store_token
 
   when (io.req.fire) {
     req   := io.req.bits
@@ -551,6 +555,8 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
     val fence_rdy = Output(Bool())
     val probe_rdy = Output(Bool())
     val traffic_strict_store_complete = Output(Bool())
+    val traffic_strict_store_complete_stq_idx = Output(UInt(stqAddrSz.W))
+    val traffic_strict_store_complete_token = Output(UInt(64.W))
   })
 
   val req_idx = OHToUInt(io.req.map(_.valid))
@@ -747,8 +753,12 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
     mshr
   }
 
-  io.traffic_strict_store_complete :=
-    mmios.map(_.io.traffic_strict_store_complete).reduce(_||_)
+  val strictStoreComplete = mmios.map(_.io.traffic_strict_store_complete)
+  io.traffic_strict_store_complete := strictStoreComplete.reduce(_||_)
+  io.traffic_strict_store_complete_stq_idx :=
+    Mux1H(strictStoreComplete, mmios.map(_.io.traffic_strict_store_complete_stq_idx))
+  io.traffic_strict_store_complete_token :=
+    Mux1H(strictStoreComplete, mmios.map(_.io.traffic_strict_store_complete_token))
 
   mmio_alloc_arb.io.out.ready := req.valid && !cacheable
 

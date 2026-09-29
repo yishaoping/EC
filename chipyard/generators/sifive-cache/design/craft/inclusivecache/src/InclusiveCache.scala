@@ -188,6 +188,8 @@ class InclusiveCache(
 
       val params = InclusiveCacheParameters(cache, micro, control.isDefined, edgeIn, edgeOut)
       val scheduler = Module(new Scheduler(params))
+      val barrierAllow = chisel3.WireDefault(true.B)
+      scheduler.io.barrier_allow := barrierAllow
 
       scheduler.io.in <> in
       out <> scheduler.io.out
@@ -249,21 +251,100 @@ class InclusiveCache(
         }).asUInt
       }
       val l2SafeWatermark = l2GrayToBinary(safeWatermarkGraySync)
+      val realBarrierEnabled = p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED)
+      val barrierRequest = chisel3.WireDefault(false.B)
+      val barrierRequestSeq = chisel3.WireDefault(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+      val barrierCloseAck = chisel3.WireDefault(false.B)
+      val barrierCloseAckSeq = chisel3.WireDefault(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+      BoringUtils.addSink(barrierCloseAck,
+        s"${GH_GlobalParams.GH_L2_BARRIER_CLOSE_ACK_BORE}_$bank")
+      BoringUtils.addSink(barrierCloseAckSeq,
+        s"${GH_GlobalParams.GH_L2_BARRIER_CLOSE_ACK_SEQ_BORE}_$bank")
+      val barrierCloseAckSync = AsyncResetSynchronizerShiftReg(
+        barrierCloseAck, sync = 3, name = Some(s"l2_barrier_close_ack_${bank}_sync"))
+      val barrierCloseAckSeqSync = AsyncResetSynchronizerShiftReg(
+        barrierCloseAckSeq, sync = 3, name = Some(s"l2_barrier_close_ack_seq_${bank}_sync"))
+      val barrierFailure = chisel3.WireDefault(false.B)
+      val barrierFailureSeq = chisel3.WireDefault(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+      BoringUtils.addSink(barrierFailure,
+        GH_GlobalParams.GH_L2_BARRIER_FAILURE_BORE)
+      BoringUtils.addSink(barrierFailureSeq,
+        GH_GlobalParams.GH_L2_BARRIER_FAILURE_SEQ_BORE)
+      val barrierFailureSync = AsyncResetSynchronizerShiftReg(
+        barrierFailure, sync = 3, name = Some(s"l2_barrier_failure_${bank}_sync"))
+      val barrierFailureSeqSync = AsyncResetSynchronizerShiftReg(
+        barrierFailureSeq, sync = 3, name = Some(s"l2_barrier_failure_seq_${bank}_sync"))
+      val barrierActive = RegInit(false.B)
+      val barrierSeq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+      val barrierTimeout = RegInit(0.U(16.W))
+      val barrierCandidateUnsafe = scheduler.io.dcacheWritebackRequestCandidate &&
+        scheduler.io.dcacheWritebackRequestCandidateDirty &&
+        scheduler.io.dcacheWritebackRequestCandidatePacketTracked &&
+        scheduler.io.dcacheWritebackRequestCandidatePacketSeq =/= 0.U &&
+        scheduler.io.dcacheWritebackRequestCandidatePacketSeq > l2SafeWatermark
+      val barrierCloseAccepted = barrierCloseAckSync &&
+        barrierCloseAckSeqSync === barrierSeq
+      val barrierTimedOut = barrierActive && barrierTimeout === 0xffff.U
+      val barrierFailed = barrierActive && barrierFailureSync &&
+        barrierFailureSeqSync =/= 0.U && barrierFailureSeqSync <= barrierSeq
+      val barrierErrorDetected = barrierTimedOut || barrierFailed
+      val barrierReleased = barrierActive &&
+        barrierCloseAccepted && barrierSeq <= l2SafeWatermark
+      if (realBarrierEnabled) {
+        barrierAllow := (!barrierActive && !barrierCandidateUnsafe) || barrierReleased
+        barrierRequest := barrierActive && !barrierReleased
+      } else {
+        barrierAllow := true.B
+        barrierRequest := false.B
+      }
+      barrierRequestSeq := barrierSeq
+      BoringUtils.addSource(barrierRequest,
+        s"${GH_GlobalParams.GH_L2_BARRIER_REQUEST_BORE}_$bank")
+      BoringUtils.addSource(barrierRequestSeq,
+        s"${GH_GlobalParams.GH_L2_BARRIER_REQUEST_SEQ_BORE}_$bank")
+      val barrierError = chisel3.WireDefault(false.B)
+      if (realBarrierEnabled) {
+        barrierError := barrierErrorDetected
+      }
+      BoringUtils.addSource(barrierError,
+        s"${GH_GlobalParams.GH_L2_BARRIER_ERROR_BORE}_$bank")
+      if (realBarrierEnabled) {
+        when (!barrierActive && barrierCandidateUnsafe) {
+          barrierActive := true.B
+          barrierSeq := scheduler.io.dcacheWritebackRequestCandidatePacketSeq
+          barrierTimeout := 0.U
+        }.elsewhen (barrierActive) {
+          when (barrierTimeout =/= 0xffff.U) {
+            barrierTimeout := barrierTimeout + 1.U
+          }
+          when (barrierReleased) {
+            barrierActive := false.B
+            barrierTimeout := 0.U
+          }
+        }
+      }
       val l2DramBarrierStats = Module(new GHBarrierLatencyStats(l2StatsWindow))
+      val l2BarrierMonitorEvent = chisel3.WireDefault(false.B)
+      if (realBarrierEnabled) {
+        l2BarrierMonitorEvent := !barrierActive && barrierCandidateUnsafe
+      } else {
+        l2BarrierMonitorEvent := scheduler.io.dcacheWritebackRequest &&
+          scheduler.io.dcacheWritebackRequestDirty &&
+          scheduler.io.dcacheWritebackRequestPacketTracked &&
+          scheduler.io.dcacheWritebackRequestPacketSeq =/= 0.U &&
+          scheduler.io.dcacheWritebackRequestPacketSeq > l2SafeWatermark
+      }
       l2DramBarrierStats.io.resetStats := l2StatsReset
-      l2DramBarrierStats.io.event.valid := l2Counting &&
-        scheduler.io.dcacheWritebackRequest &&
-        scheduler.io.dcacheWritebackRequestDirty &&
-        scheduler.io.dcacheWritebackRequestPacketTracked &&
-        scheduler.io.dcacheWritebackRequestPacketSeq =/= 0.U &&
-        scheduler.io.dcacheWritebackRequestPacketSeq > l2SafeWatermark
+      l2DramBarrierStats.io.event.valid := l2Counting && l2BarrierMonitorEvent
       l2DramBarrierStats.io.event.bits :=
-        scheduler.io.dcacheWritebackRequestPacketSeq
+        Mux(realBarrierEnabled.B,
+          scheduler.io.dcacheWritebackRequestCandidatePacketSeq,
+          scheduler.io.dcacheWritebackRequestPacketSeq)
       l2DramBarrierStats.io.safeWatermark := l2SafeWatermark
       l2DramBarrierStats.io.currentCycle := l2Cycle
       // Package FAIL/CANCEL is checked in the BOOM-domain report. The L2
       // monitor only owns local slot/counter validity.
-      l2DramBarrierStats.io.fatalProtocolError := false.B
+      l2DramBarrierStats.io.fatalProtocolError := barrierErrorDetected
       val l2Required = l2Counting && writeback && dirty &&
         scheduler.io.dcacheWritebackPacketTracked &&
         scheduler.io.dcacheWritebackPacketSeq =/= 0.U

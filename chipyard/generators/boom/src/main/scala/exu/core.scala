@@ -32,13 +32,15 @@ import java.nio.file.{Paths}
 
 import chisel3._
 import chisel3.util._
+import chisel3.util.experimental.BoringUtils
 
 import org.chipsalliance.cde.config.Parameters
 import freechips.rocketchip.rocket.Instructions._
 import freechips.rocketchip.rocket.{Causes, PRV, TracedInstruction}
-import freechips.rocketchip.util.{Str, UIntIsOneOf, CoreMonitorBundle}
+import freechips.rocketchip.util.{Str, UIntIsOneOf, CoreMonitorBundle, AsyncResetSynchronizerShiftReg}
 import freechips.rocketchip.devices.tilelink.{PLICConsts, CLINTConsts}
 import freechips.rocketchip.rocket._
+import freechips.rocketchip.subsystem.BankedL2Key
 
 import boom.common._
 import boom.ifu.{GlobalHistory, HasBoomFrontendParameters}
@@ -1112,7 +1114,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   val rsu_stall = WireInit(0.U(1.W))
   val ic_stall = WireInit(0.U(1.W))
   val r_exception_record = RegInit(0.U(1.W))
-  rob.io.gh_stall  := (io.gh_stall|rsu_stall|ic_stall|io.big_hang)
+  // Assigned after the optional L2 barrier wiring below.
   // rob.io.gh_stall  := (io.gh_stall|rsu_stall|ic_stall|io.big_hang) & (~r_exception_record) & (io.if_correct_process) & (~csr.io.r_exception) & (~csr.io.trace(0).exception.asUInt)
   //  rob.io.gh_stall  := (io.gh_stall|rsu_stall|ic_stall) & (~r_exception_record) & (io.if_correct_process) & (~csr.io.r_exception) & (~csr.io.trace(0).exception.asUInt)
   //===== GuardianCouncil Function: End   ====//
@@ -2004,6 +2006,74 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   /* R Features */
   val rsu_master = Module(new R_RSU(R_RSUParams(xLen, numARFS, 1)))
   val ic_master = Module(new R_IC(R_ICParams(GH_GlobalParams.GH_NUM_CORES, 16)))
+  // L2 requests a package close before the functional barrier can stall the
+  // cache path. The request is a level and is consumed by the existing R_IC
+  // close/finish machinery; no request is generated when the feature is off.
+  val l2BarrierReq = Wire(Vec(p(BankedL2Key).nBanks, Bool()))
+  val l2BarrierReqRaw = Wire(Vec(p(BankedL2Key).nBanks, Bool()))
+  val l2BarrierReqSeqRaw = Wire(Vec(p(BankedL2Key).nBanks,
+    UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))
+  val l2BarrierReqSeq = Wire(Vec(p(BankedL2Key).nBanks,
+    UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))
+  for (bank <- 0 until p(BankedL2Key).nBanks) {
+    l2BarrierReqRaw(bank) := false.B
+    l2BarrierReqSeqRaw(bank) := 0.U
+    BoringUtils.addSink(l2BarrierReqRaw(bank),
+      s"${GH_GlobalParams.GH_L2_BARRIER_REQUEST_BORE}_$bank")
+    BoringUtils.addSink(l2BarrierReqSeqRaw(bank),
+      s"${GH_GlobalParams.GH_L2_BARRIER_REQUEST_SEQ_BORE}_$bank")
+    l2BarrierReq(bank) := AsyncResetSynchronizerShiftReg(
+      l2BarrierReqRaw(bank), sync = 3,
+      name = Some(s"boom_l2_barrier_request_${bank}_sync"))
+    l2BarrierReqSeq(bank) := AsyncResetSynchronizerShiftReg(
+      l2BarrierReqSeqRaw(bank), sync = 3,
+      name = Some(s"boom_l2_barrier_request_seq_${bank}_sync"))
+  }
+  val l2BarrierErrorRaw = Wire(Vec(p(BankedL2Key).nBanks, Bool()))
+  for (bank <- 0 until p(BankedL2Key).nBanks) {
+    l2BarrierErrorRaw(bank) := false.B
+    BoringUtils.addSink(l2BarrierErrorRaw(bank),
+      s"${GH_GlobalParams.GH_L2_BARRIER_ERROR_BORE}_$bank")
+  }
+  val l2BarrierError = VecInit(l2BarrierErrorRaw.map(error =>
+    AsyncResetSynchronizerShiftReg(error, sync = 3,
+      name = Some("boom_l2_barrier_error_sync"))))
+  val l2BarrierErrorAny = l2BarrierError.asUInt.orR
+  val barrierReqAny = l2BarrierReq.asUInt.orR
+  val barrierRoundRobin = RegInit(0.U(log2Ceil(p(BankedL2Key).nBanks max 2).W))
+  val barrierRequestBankByStart = (0 until p(BankedL2Key).nBanks).map { start =>
+    val order = (0 until p(BankedL2Key).nBanks).map(offset =>
+      (start + offset) % p(BankedL2Key).nBanks)
+    val requestInOrder = VecInit(order.map(l2BarrierReq(_)))
+    val selectedOffset = PriorityEncoderOH(requestInOrder.asUInt)
+    Mux1H(selectedOffset, VecInit(order.map(_.U(barrierRoundRobin.getWidth.W))))
+  }
+  val barrierRequestBank = Mux1H(
+    VecInit((0 until p(BankedL2Key).nBanks).map(bank =>
+      barrierRoundRobin === bank.U)), VecInit(barrierRequestBankByStart))
+  val barrierRequestOH = VecInit((0 until p(BankedL2Key).nBanks).map(bank =>
+    barrierRequestBank === bank.U))
+  val barrierRequestSeqSelected = Mux1H(barrierRequestOH, l2BarrierReqSeq)
+  val barrierServiceActive = RegInit(false.B)
+  val barrierServiceBank = RegInit(0.U(log2Ceil(p(BankedL2Key).nBanks max 2).W))
+  val barrierServiceSeq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  when (!barrierServiceActive && barrierReqAny) {
+    barrierServiceActive := true.B
+    barrierServiceBank := OHToUInt(barrierRequestOH)
+    barrierServiceSeq := barrierRequestSeqSelected
+  }.elsewhen (barrierServiceActive &&
+      !l2BarrierReq(barrierServiceBank)) {
+    barrierServiceActive := false.B
+    barrierRoundRobin := Mux(barrierServiceBank === (p(BankedL2Key).nBanks - 1).U,
+      0.U, barrierServiceBank + 1.U)
+    barrierServiceSeq := 0.U
+  }
+  val functionalBarrierStall = p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B &&
+    barrierServiceActive && l2BarrierReq(barrierServiceBank) &&
+    ic_master.io.barrier_close_ack &&
+    ic_master.io.barrier_close_ack_seq === barrierServiceSeq
+  rob.io.gh_stall := io.gh_stall || rsu_stall.asBool || ic_stall.asBool || io.big_hang ||
+    functionalBarrierStall
   // Separate protocol-timeout counters keep the original pipeline watchdog
   // semantics while detecting a release request that remains asserted but
   // never clears ownership.  Width and threshold are intentionally unchanged.
@@ -2011,6 +2081,21 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   val release_wait2 = freechips.rocketchip.util.WideCounter(32)
   val release_wait3 = freechips.rocketchip.util.WideCounter(32)
   val release_wait4 = freechips.rocketchip.util.WideCounter(32)
+
+  ic_master.io.barrier_force_close :=
+    p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B && barrierServiceActive &&
+      l2BarrierReq(barrierServiceBank)
+  ic_master.io.barrier_force_close_seq := barrierServiceSeq
+  for (bank <- 0 until p(BankedL2Key).nBanks) {
+    val bankAck = p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B &&
+      barrierServiceActive && barrierServiceBank === bank.U &&
+      ic_master.io.barrier_close_ack &&
+      ic_master.io.barrier_close_ack_seq === barrierServiceSeq
+    BoringUtils.addSource(bankAck,
+      s"${GH_GlobalParams.GH_L2_BARRIER_CLOSE_ACK_BORE}_$bank")
+    BoringUtils.addSource(Mux(bankAck, ic_master.io.barrier_close_ack_seq, 0.U),
+      s"${GH_GlobalParams.GH_L2_BARRIER_CLOSE_ACK_SEQ_BORE}_$bank")
+  }
 
   // A release request is now a held level, not a one-cycle pulse.  While the
   // request is asserted the checker is in the protocol's RELEASE_WAIT phase;

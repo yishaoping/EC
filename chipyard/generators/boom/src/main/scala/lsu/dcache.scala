@@ -481,7 +481,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // tags
   def onReset = L1Metadata(0.U, ClientMetadata.onReset)
   val meta = Seq.fill(memWidth) { Module(new L1MetadataArray(onReset _)) }
-  val metaWriteArb = Module(new Arbiter(new L1MetaWriteReq, 2))
+  val metaWriteArb = Module(new Arbiter(new L1MetaWriteReq, 3))
   val dirtyPacketSeq = RegInit(VecInit(Seq.fill(nSets)(VecInit(
     Seq.fill(nWays)(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))))))
   val dirtyPacketTracked = RegInit(VecInit(Seq.fill(nSets)(VecInit(
@@ -549,6 +549,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   replay_req(0).traffic_arch_check := mshrs.io.replay.bits.traffic_arch_check
   replay_req(0).traffic_cacheable := mshrs.io.replay.bits.traffic_cacheable
   replay_req(0).packet_seq := mshrs.io.replay.bits.packet_seq
+  replay_req(0).strict_store_token_valid := mshrs.io.replay.bits.strict_store_token_valid
+  replay_req(0).strict_store_token := mshrs.io.replay.bits.strict_store_token
   mshrs.io.replay.ready    := metaReadArb.io.in(0).ready && dataReadArb.io.in(0).ready
   // Tag read for MSHR replays
   // We don't actually need to read the metadata, for replays we already know our way
@@ -792,7 +794,12 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // Can't allocate MSHR for same set currently being written back
   val s2_nack_wb     = widthMap(w => s2_valid(w) && !s2_hit(w) && s2_wb_idx_matches(w))
 
-  s2_nack           := widthMap(w => (s2_nack_miss(w) || s2_nack_hit(w) || s2_nack_victim(w) || s2_nack_data(w) || s2_nack_wb(w)) && s2_type =/= t_replay)
+  val l1CrossPackageBlocked = WireDefault(false.B)
+  s2_nack           := widthMap(w =>
+    ((s2_nack_miss(w) || s2_nack_hit(w) || s2_nack_victim(w) ||
+      s2_nack_data(w) || s2_nack_wb(w)) && s2_type =/= t_replay) ||
+      ((w == 0).B && l1CrossPackageBlocked && s2_type === t_lsu &&
+        isWrite(s2_req(0).uop.mem_cmd)))
   val s2_send_resp = widthMap(w => (RegNext(s1_send_resp_or_nack(w)) && !s2_nack(w) &&
                       (s2_hit(w) || (mshrs.io.req(w).fire && isWrite(s2_req(w).uop.mem_cmd) && !isRead(s2_req(w).uop.mem_cmd)))))
   val s2_send_nack = widthMap(w => (RegNext(s1_send_resp_or_nack(w)) && s2_nack(w)))
@@ -834,6 +841,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     mshrs.io.req(w).bits.traffic_arch_check := s2_req(w).traffic_arch_check
     mshrs.io.req(w).bits.traffic_cacheable := s2_req(w).traffic_cacheable
     mshrs.io.req(w).bits.packet_seq := s2_req(w).packet_seq
+    mshrs.io.req(w).bits.strict_store_token_valid := s2_req(w).strict_store_token_valid
+    mshrs.io.req(w).bits.strict_store_token := s2_req(w).strict_store_token
     mshrs.io.req_is_probe(w)         := s2_type === t_probe && s2_valid(w)
   }
 
@@ -870,21 +879,30 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   tl_out.e <> mshrs.io.mem_finish
 
   // writebacks
-  val wbArb = Module(new Arbiter(new WritebackReq(edge.bundle), 2))
-  // 0 goes to prober, 1 goes to MSHR evictions
+  val wbArb = Module(new Arbiter(new WritebackReq(edge.bundle), 3))
+  // 0 goes to prober, 1 to MSHR evictions, 2 to the cross-package shadow
+  // writeback. The latter is a local request and does not alter the TL bundle.
   wbArb.io.in(0)       <> prober.io.wb_req
   wbArb.io.in(1)       <> mshrs.io.wb_req
+  val crossPackageWbReq = Wire(Decoupled(new WritebackReq(edge.bundle)))
+  wbArb.io.in(2)       <> crossPackageWbReq
   wb.io.req            <> wbArb.io.out
   val wbReqSet = wbArb.io.out.bits.idx
   val wbReqWay = OHToUInt(wbArb.io.out.bits.way_en)
+  // This wire is constructed before the writeback unit wiring below.  The
+  // actual pending sequence is driven with the barrier state later in this
+  // module; avoiding a Scala forward reference is required during elaboration.
+  val crossPackageWbPacketSeq = WireDefault(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
   // Capture the line-level replacement acceptance point separately from the
   // later C-channel transfer. Port 1 is the MSHR dirty-victim path; probe
   // writebacks on port 0 are outside the current single-core barrier scope.
   val l1ReplacementWbEvent = wbArb.io.in(1).fire
   val l1ReplacementPacketSeq = dirtyPacketSeq(wbReqSet)(wbReqWay)
   val l1ReplacementPacketTracked = dirtyPacketTracked(wbReqSet)(wbReqWay)
-  wb.io.packet_seq := dirtyPacketSeq(wbReqSet)(wbReqWay)
-  wb.io.packet_tracked := dirtyPacketTracked(wbReqSet)(wbReqWay)
+  wb.io.packet_seq := Mux(wbArb.io.chosen === 2.U,
+    crossPackageWbPacketSeq, dirtyPacketSeq(wbReqSet)(wbReqWay))
+  wb.io.packet_tracked := Mux(wbArb.io.chosen === 2.U,
+    true.B, dirtyPacketTracked(wbReqSet)(wbReqWay))
   wb.io.data_resp       := s2_data_muxed(0)
   mshrs.io.wb_resp      := wb.io.resp
   wb.io.mem_grant       := tl_out.d.fire && tl_out.d.bits.source === cfg.nMSHRs.U
@@ -967,6 +985,86 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val bitmapSeq = bitmapState.seq
   val safePacketWatermark = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
   val measurementSeqFloor = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val crossPackagePending = RegInit(false.B)
+  val crossPackageIssued = RegInit(false.B)
+  val crossPackageMetaClearPending = RegInit(false.B)
+  val crossPackagePendingSet = RegInit(0.U(idxBits.W))
+  val crossPackagePendingWay = RegInit(0.U(log2Ceil(nWays max 2).W))
+  val crossPackagePendingTag = RegInit(0.U(tagBits.W))
+  val crossPackagePendingSeq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  crossPackageWbPacketSeq := crossPackagePendingSeq
+  val s2_store_set = s2_req(0).addr(idxMSB, idxLSB)
+  // The legacy tag-match Mux chain leaves the one-hot width unknown until
+  // FIRRTL. Give it an explicit width before OHToUInt is elaborated.
+  val s2_store_way_oh = Wire(UInt(nWays.W))
+  s2_store_way_oh := s2_tag_match_way(0)
+  val s2_store_way = OHToUInt(s2_store_way_oh)
+  val s2_overwrittenPacketSeq = dirtyPacketSeq(s2_store_set)(s2_store_way)
+  val s2_overwrittenPacketTracked = dirtyPacketTracked(s2_store_set)(s2_store_way)
+  val crossPackageBlockCondition = p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B &&
+    s2_valid(0) && s2_type === t_lsu && s2_hit(0) &&
+    isWrite(s2_req(0).uop.mem_cmd) && s2_req(0).packet_seq =/= 0.U &&
+    s2_overwrittenPacketTracked && s2_overwrittenPacketSeq =/= 0.U &&
+    s2_overwrittenPacketSeq =/= s2_req(0).packet_seq &&
+    s2_overwrittenPacketSeq > safePacketWatermark
+  val crossPackagePendingLine = crossPackagePending &&
+    s2_type === t_lsu && isWrite(s2_req(0).uop.mem_cmd) &&
+    s2_req(0).packet_seq =/= 0.U &&
+    s2_req(0).addr(idxMSB, idxLSB) === crossPackagePendingSet &&
+    (s2_req(0).addr >> untagBits) === crossPackagePendingTag &&
+    s2_req(0).packet_seq =/= crossPackagePendingSeq
+  l1CrossPackageBlocked := crossPackageBlockCondition || crossPackagePendingLine
+
+  crossPackageWbReq.valid := crossPackagePending &&
+    !crossPackageIssued &&
+    crossPackagePendingSeq <= safePacketWatermark
+  crossPackageWbReq.bits := DontCare
+  crossPackageWbReq.bits.source := cfg.nMSHRs.U
+  crossPackageWbReq.bits.idx := crossPackagePendingSet
+  crossPackageWbReq.bits.tag := crossPackagePendingTag
+  crossPackageWbReq.bits.param := 0.U
+  crossPackageWbReq.bits.way_en := UIntToOH(crossPackagePendingWay)
+  crossPackageWbReq.bits.voluntary := true.B
+  when (crossPackageBlockCondition && !crossPackagePending) {
+    crossPackagePending := true.B
+    crossPackageIssued := false.B
+    crossPackagePendingSet := s2_store_set
+    crossPackagePendingWay := s2_store_way
+    crossPackagePendingTag := (s2_req(0).addr >> untagBits)
+    crossPackagePendingSeq := s2_overwrittenPacketSeq
+  }
+  when (crossPackageWbReq.fire) {
+    crossPackageIssued := true.B
+  }
+  val crossPackageWbActive = RegNext(crossPackageIssued, init = false.B)
+  val crossPackageWbDone = crossPackageWbActive && !wb.io.idx.valid
+  when (crossPackageWbDone) {
+    crossPackageMetaClearPending := true.B
+    crossPackageIssued := false.B
+  }
+  val crossPackageMetaClear = Wire(Decoupled(new L1MetaWriteReq))
+  metaWriteArb.io.in(2) <> crossPackageMetaClear
+  crossPackageMetaClear.valid := crossPackageMetaClearPending
+  crossPackageMetaClear.bits := DontCare
+  crossPackageMetaClear.bits.idx := crossPackagePendingSet
+  crossPackageMetaClear.bits.tag := crossPackagePendingTag
+  crossPackageMetaClear.bits.way_en := UIntToOH(crossPackagePendingWay)
+  crossPackageMetaClear.bits.data.tag := crossPackagePendingTag
+  crossPackageMetaClear.bits.data.coh := ClientMetadata.onReset
+  when (crossPackageMetaClear.fire) {
+    crossPackageMetaClearPending := false.B
+    crossPackagePending := false.B
+    crossPackagePendingSeq := 0.U
+  }
+  when (io.traffic_reset) {
+    crossPackagePending := false.B
+    crossPackageIssued := false.B
+    crossPackageMetaClearPending := false.B
+    crossPackagePendingSet := 0.U
+    crossPackagePendingWay := 0.U
+    crossPackagePendingTag := 0.U
+    crossPackagePendingSeq := 0.U
+  }
 
   val allocatedNext = WireInit(bitmapAllocated)
   val completedNext = WireInit(bitmapCompleted)
@@ -1042,6 +1140,24 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       resultStale(i) := true.B
     }
   }
+
+  val barrierFailureAny = resultFailed.asUInt.orR || resultCancelled.asUInt.orR
+  val barrierFailureCandidates = VecInit(io.checker_results.map(result =>
+    result(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0)))
+  val barrierFailureOH = PriorityEncoderOH(
+    VecInit(io.checker_results.indices.map(i =>
+      resultFailed(i) || resultCancelled(i))).asUInt)
+  val barrierFailureSeq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  when (io.traffic_reset) {
+    barrierFailureSeq := 0.U
+  }.elsewhen (barrierFailureSeq === 0.U && barrierFailureAny) {
+    barrierFailureSeq := Mux1H(barrierFailureOH, barrierFailureCandidates)
+  }
+  val barrierFailureSticky = barrierFailureSeq =/= 0.U
+  BoringUtils.addSource(barrierFailureSticky,
+    GH_GlobalParams.GH_L2_BARRIER_FAILURE_BORE)
+  BoringUtils.addSource(barrierFailureSeq,
+    GH_GlobalParams.GH_L2_BARRIER_FAILURE_SEQ_BORE)
 
   var contiguous = true.B
   var safeAdvance = 0.U((statsIndexBits + 1).W)
@@ -1406,11 +1522,19 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val modifyingWay = OHToUInt(s3_way)
   val overwrittenPacketSeq = dirtyPacketSeq(modifyingSet)(modifyingWay)
   val overwrittenPacketTracked = dirtyPacketTracked(modifyingSet)(modifyingWay)
-  val crossPackageBarrierEvent = trafficCounting &&
+  val crossPackageWaitActive = RegInit(false.B)
+  val crossPackageWaitStarted = l1CrossPackageBlocked && !crossPackageWaitActive
+  when (!l1CrossPackageBlocked) {
+    crossPackageWaitActive := false.B
+  }.otherwise {
+    crossPackageWaitActive := true.B
+  }
+  val crossPackageBarrierEvent = trafficCounting && Mux(
+    p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B, crossPackageWaitStarted,
     dataWriteArb.io.in(0).fire && s3_req.packet_seq =/= 0.U &&
-    overwrittenPacketTracked && overwrittenPacketSeq =/= 0.U &&
-    overwrittenPacketSeq =/= s3_req.packet_seq &&
-    overwrittenPacketSeq > safePacketWatermark
+      overwrittenPacketTracked && overwrittenPacketSeq =/= 0.U &&
+      overwrittenPacketSeq =/= s3_req.packet_seq &&
+      overwrittenPacketSeq > safePacketWatermark)
 
   // A refill installs a new tag in this set/way and must discard attribution
   // left by the evicted line before any replayed store dirties the new line.
@@ -1444,7 +1568,9 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val crossPackageBarrierStats = Module(new GHBarrierLatencyStats(statsWindow))
   crossPackageBarrierStats.io.resetStats := io.traffic_reset
   crossPackageBarrierStats.io.event.valid := crossPackageBarrierEvent
-  crossPackageBarrierStats.io.event.bits := overwrittenPacketSeq
+  crossPackageBarrierStats.io.event.bits := Mux(
+    p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B,
+    s2_overwrittenPacketSeq, overwrittenPacketSeq)
   crossPackageBarrierStats.io.safeWatermark := newSafePacketWatermark
   crossPackageBarrierStats.io.currentCycle := io.csr_cycle
   crossPackageBarrierStats.io.fatalProtocolError := addressStatsFatal
@@ -1463,7 +1589,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // 普通 store/load 只保留架构与严格两套一致口径。严格 store 路径接受
   // 由 ROB 架构提交锁存的资格，并在真实的 DCache 完成点结算。
   val completed_strict_store_cache = dataWriteArb.io.in(0).fire &&
-    s3_req.traffic_arch_check && s3_req.traffic_cacheable &&
+    s3_req.strict_store_token_valid && s3_req.traffic_cacheable &&
     s3_req.uop.uses_stq && s3_req.uop.mem_cmd === M_XWR
   val completed_strict_store_uncache = mshrs.io.traffic_strict_store_complete
   val completed_lr           = io.lsu.traffic_lr_complete
@@ -1473,6 +1599,12 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val completed_amo_uncache  = io.lsu.traffic_amo_uncache_complete
   io.lsu.traffic_store_cache_complete := completed_strict_store_cache
   io.lsu.traffic_store_uncache_complete := completed_strict_store_uncache
+  io.lsu.traffic_store_cache_complete_stq_idx := s3_req.uop.stq_idx
+  io.lsu.traffic_store_cache_complete_token := s3_req.strict_store_token
+  io.lsu.traffic_store_uncache_complete_stq_idx :=
+    mshrs.io.traffic_strict_store_complete_stq_idx
+  io.lsu.traffic_store_uncache_complete_token :=
+    mshrs.io.traffic_strict_store_complete_token
   val store_uncache_cycle_sum = RegInit(0.U(64.W))
   val lr_count            = RegInit(0.U(64.W))
   val sc_success_count    = RegInit(0.U(64.W))

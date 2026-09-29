@@ -72,6 +72,8 @@ class NLPrefetcher(implicit edge: TLEdgeOut, p: Parameters) extends DataPrefetch
   io.prefetch.bits.traffic_arch_check := false.B
   io.prefetch.bits.traffic_cacheable := false.B
   io.prefetch.bits.packet_seq := 0.U
+  io.prefetch.bits.strict_store_token_valid := false.B
+  io.prefetch.bits.strict_store_token := 0.U
 
 
 }

@@ -85,6 +85,10 @@ class BoomDCacheReq(implicit p: Parameters) extends BoomBundle()(p)
   // 可缓存属性在 DCache 入口确定，并随请求一直传播到最终完成点。
   val traffic_cacheable = Bool()
   val packet_seq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
+  // Stable identity assigned only at architectural store commit.  The token
+  // follows MSHR/RPQ replay so a stale STQ index cannot qualify a new store.
+  val strict_store_token_valid = Bool()
+  val strict_store_token = UInt(64.W)
 }
 
 class BoomDCacheResp(implicit p: Parameters) extends BoomBundle()(p)
@@ -135,6 +139,10 @@ class LSUDMemIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
   // DCache 的严格 store 完成事件反馈到 LSU，由 LSU 与架构提交计数统一比较。
   val traffic_store_cache_complete  = Input(Bool())
   val traffic_store_uncache_complete = Input(Bool())
+  val traffic_store_cache_complete_stq_idx = Input(UInt(stqAddrSz.W))
+  val traffic_store_uncache_complete_stq_idx = Input(UInt(stqAddrSz.W))
+  val traffic_store_cache_complete_token = Input(UInt(64.W))
+  val traffic_store_uncache_complete_token = Input(UInt(64.W))
   // DCache 统一产生包含 STOP 边沿的统计窗口，LSU 在提交时使用该窗口。
   val traffic_counting               = Input(Bool())
   val traffic_reset                  = Input(Bool())
@@ -268,6 +276,8 @@ class STQEntry(implicit p: Parameters) extends BoomBundle()(p)
   val traffic_arch_check  = Bool()
   val traffic_cacheable   = Bool()
   val packet_seq          = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
+  val strict_store_token_valid = Bool()
+  val strict_store_token = UInt(64.W)
 
   val debug_wb_data       = UInt(xLen.W)
 }
@@ -336,6 +346,9 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   val strictLoadCacheResponse = RegInit(0.U(64.W))
   val strictLoadForward = RegInit(0.U(64.W))
   val strictStorePending = RegInit(0.U(64.W))
+  // Monotonic across traffic windows so an old replay cannot alias a new
+  // store after traffic_reset.  The token is allocated at ROB commit.
+  val strictStoreTokenCounter = RegInit(1.U(64.W))
   val trafficCounterAssertFail = RegInit(0.U(64.W))
   val trafficSessionSeen = RegInit(false.B)
   val trafficFinalChecked = RegInit(false.B)
@@ -492,6 +505,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       stq(st_enq_idx).bits.traffic_arch_check := false.B
       stq(st_enq_idx).bits.traffic_cacheable := false.B
       stq(st_enq_idx).bits.packet_seq := 0.U
+      stq(st_enq_idx).bits.strict_store_token_valid := false.B
+      stq(st_enq_idx).bits.strict_store_token := 0.U
 
       assert (st_enq_idx === io.core.dis_uops(w).bits.stq_idx, "[lsu] mismatch enq store tag.")
       assert (!stq(st_enq_idx).valid, "[lsu] Enqueuing uop is overwriting stq entries")
@@ -934,6 +949,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     dmem_req(w).bits.traffic_arch_check := false.B
     dmem_req(w).bits.traffic_cacheable := false.B
     dmem_req(w).bits.packet_seq := 0.U
+    dmem_req(w).bits.strict_store_token_valid := false.B
+    dmem_req(w).bits.strict_store_token := 0.U
 
     io.dmem.s1_kill(w) := false.B
 
@@ -1002,6 +1019,9 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       dmem_req(w).bits.traffic_arch_check := stq_commit_e.bits.traffic_arch_check
       dmem_req(w).bits.traffic_cacheable := stq_commit_e.bits.traffic_cacheable
       dmem_req(w).bits.packet_seq := stq_commit_e.bits.packet_seq
+      dmem_req(w).bits.strict_store_token_valid :=
+        stq_commit_e.bits.strict_store_token_valid
+      dmem_req(w).bits.strict_store_token := stq_commit_e.bits.strict_store_token
 
       stq_execute_head                     := Mux(dmem_req_fire(w),
                                                 WrapInc(stq_execute_head, numStqEntries),
@@ -1106,8 +1126,6 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         when (!stq(stq_idx).bits.traffic_scope_valid) {
           stq(stq_idx).bits.traffic_scope_valid := true.B
           stq(stq_idx).bits.traffic_check :=
-            io.dmem.traffic_counting && io.dmem.traffic_check_state
-          stq(stq_idx).bits.traffic_arch_check :=
             io.dmem.traffic_counting && io.dmem.traffic_check_state
         }
       }
@@ -1734,6 +1752,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         stq(i).bits.traffic_arch_check := false.B
         stq(i).bits.traffic_cacheable := false.B
         stq(i).bits.packet_seq := 0.U
+        stq(i).bits.strict_store_token_valid := false.B
+        stq(i).bits.strict_store_token := 0.U
         st_brkilled_mask(i)    := true.B
       }
     }
@@ -1778,6 +1798,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
 
   var temp_stq_commit_head = stq_commit_head
   var temp_ldq_head        = ldq_head
+  var temp_strict_store_token = strictStoreTokenCounter
   for (w <- 0 until coreWidth)
   {
     // 队列回收必须保留 BOOM 原有的 valids 语义；新增架构统计单独使用
@@ -1846,6 +1867,13 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       stq(idx).bits.packet_seq := io.core.active_packet_seq
       // 只有架构有效的普通 store 才允许在后续 DCache 完成点进入严格计数。
       stq(idx).bits.traffic_arch_check := arch_store_in_scope
+      when (arch_store_in_scope) {
+        stq(idx).bits.strict_store_token_valid := true.B
+        stq(idx).bits.strict_store_token := temp_strict_store_token
+      } .otherwise {
+        stq(idx).bits.strict_store_token_valid := false.B
+        stq(idx).bits.strict_store_token := 0.U
+      }
     } .elsewhen (retire_load) {
       assert (ldq(idx).valid, "[lsu] trying to commit an un-allocated load entry.")
       assert ((ldq(idx).bits.executed || ldq(idx).bits.forward_std_val) && ldq(idx).bits.succeeded ,
@@ -1882,19 +1910,38 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
                                WrapInc(temp_stq_commit_head, numStqEntries),
                                temp_stq_commit_head)
 
+    temp_strict_store_token = Mux(arch_store_in_scope,
+      temp_strict_store_token + 1.U, temp_strict_store_token)
+
     temp_ldq_head        = Mux(retire_load,
                                WrapInc(temp_ldq_head, numLdqEntries),
                                temp_ldq_head)
   }
   stq_commit_head := temp_stq_commit_head
   ldq_head        := temp_ldq_head
+  strictStoreTokenCounter := temp_strict_store_token
 
   // 架构计数在提交点结算，严格 store 在实际完成点结算。严格 load 的
   // 路径已在响应或 forwarding 阶段锁存，并在同一架构提交事件中结算。
   val committedStrictStores = PopCount(archStoreEvents)
+  val cacheCompletionIdx = io.dmem.traffic_store_cache_complete_stq_idx
+  val uncacheCompletionIdx = io.dmem.traffic_store_uncache_complete_stq_idx
+  val cacheCompletionAccepted =
+    !io.dmem.traffic_reset && io.dmem.traffic_store_cache_complete &&
+      stq(cacheCompletionIdx).valid &&
+      stq(cacheCompletionIdx).bits.committed &&
+      stq(cacheCompletionIdx).bits.strict_store_token_valid &&
+      stq(cacheCompletionIdx).bits.strict_store_token ===
+        io.dmem.traffic_store_cache_complete_token
+  val uncacheCompletionAccepted =
+    !io.dmem.traffic_reset && io.dmem.traffic_store_uncache_complete &&
+      stq(uncacheCompletionIdx).valid &&
+      stq(uncacheCompletionIdx).bits.committed &&
+      stq(uncacheCompletionIdx).bits.strict_store_token_valid &&
+      stq(uncacheCompletionIdx).bits.strict_store_token ===
+        io.dmem.traffic_store_uncache_complete_token
   val completedStrictStores =
-    io.dmem.traffic_store_cache_complete.asUInt +
-      io.dmem.traffic_store_uncache_complete.asUInt
+    cacheCompletionAccepted.asUInt + uncacheCompletionAccepted.asUInt
   val strictStorePendingBase = strictStorePending + committedStrictStores
   val strictStorePendingUnderflow =
     completedStrictStores > strictStorePendingBase
@@ -1917,6 +1964,10 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     strictLoadCacheResponse := 0.U
     strictLoadForward := 0.U
     strictStorePending := 0.U
+    for (i <- 0 until numStqEntries) {
+      stq(i).bits.strict_store_token_valid := false.B
+      stq(i).bits.strict_store_token := 0.U
+    }
     trafficCounterAssertFail := 0.U
     trafficSessionSeen := false.B
     trafficFinalChecked := false.B
@@ -1942,17 +1993,21 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       archLoadCache := archLoadCache + PopCount(archLoadCacheEvents)
       archLoadUncache := archLoadUncache + PopCount(archLoadUncacheEvents)
     }
-    when (io.dmem.traffic_store_cache_complete ||
-          io.dmem.traffic_store_uncache_complete) {
+    when (cacheCompletionAccepted || uncacheCompletionAccepted) {
       strictStoreTotal := strictStoreTotal +
-        io.dmem.traffic_store_cache_complete.asUInt +
-        io.dmem.traffic_store_uncache_complete.asUInt
+        cacheCompletionAccepted.asUInt + uncacheCompletionAccepted.asUInt
     }
-    when (io.dmem.traffic_store_cache_complete) {
+    when (cacheCompletionAccepted) {
       strictStoreCache := strictStoreCache + 1.U
+      stq(cacheCompletionIdx).bits.succeeded := true.B
+      stq(cacheCompletionIdx).bits.strict_store_token_valid := false.B
+      stq(cacheCompletionIdx).bits.strict_store_token := 0.U
     }
-    when (io.dmem.traffic_store_uncache_complete) {
+    when (uncacheCompletionAccepted) {
       strictStoreUncache := strictStoreUncache + 1.U
+      stq(uncacheCompletionIdx).bits.succeeded := true.B
+      stq(uncacheCompletionIdx).bits.strict_store_token_valid := false.B
+      stq(uncacheCompletionIdx).bits.strict_store_token := 0.U
     }
     when (strictLoadEvents.reduce(_|_)) {
       strictLoadTotal := strictLoadTotal + PopCount(strictLoadEvents)
@@ -1977,8 +2032,12 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       io.dmem.force_order := true.B
       store_needs_order   := true.B
     }
+    // A strict store can receive the cache's early "MSHR accepted" response
+    // before a miss replay performs the physical data-array write. Keep its
+    // STQ entry alive until the token is consumed at that write point.
     clear_store := Mux(stq(stq_head).bits.uop.is_fence, io.dmem.ordered,
-                                                        stq(stq_head).bits.succeeded)
+      stq(stq_head).bits.succeeded &&
+        !stq(stq_head).bits.strict_store_token_valid)
   }
 
   when (clear_store)
@@ -1995,6 +2054,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     stq(stq_head).bits.traffic_arch_check := false.B
     stq(stq_head).bits.traffic_cacheable := false.B
     stq(stq_head).bits.packet_seq := 0.U
+    stq(stq_head).bits.strict_store_token_valid := false.B
+    stq(stq_head).bits.strict_store_token := 0.U
 
     stq_head := WrapInc(stq_head, numStqEntries)
     when (stq(stq_head).bits.uop.is_fence)
@@ -2106,6 +2167,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         stq(i).bits.traffic_arch_check := false.B
         stq(i).bits.traffic_cacheable := false.B
         stq(i).bits.packet_seq := 0.U
+        stq(i).bits.strict_store_token_valid := false.B
+        stq(i).bits.strict_store_token := 0.U
       }
     }
       .otherwise // exception
@@ -2126,6 +2189,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
           stq(i).bits.traffic_arch_check := false.B
           stq(i).bits.traffic_cacheable := false.B
           stq(i).bits.packet_seq := 0.U
+          stq(i).bits.strict_store_token_valid := false.B
+          stq(i).bits.strict_store_token := 0.U
           st_exc_killed_mask(i)  := true.B
         }
       }

@@ -63,6 +63,10 @@ class R_ICIO(params: R_ICParams) extends Bundle {
   val active_packet_seq                          = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
   val packet_alloc_valid                         = Output(Bool())
   val packet_alloc_seq                           = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val barrier_force_close                        = Input(Bool())
+  val barrier_force_close_seq                    = Input(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val barrier_close_ack                          = Output(Bool())
+  val barrier_close_ack_seq                      = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
 
   // Global ic_status: OR of all big cores' local ic_status, broadcast from GHM
   // Used by scheduler to avoid dispatching to a checker already busy under another big core
@@ -113,6 +117,10 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   val checker_segment_id_reg                     = RegInit(VecInit(Seq.fill(params.totalnumber_of_cores)(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))))
   val packet_seq_counter                         = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
   val active_packet_seq                          = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val barrierCloseAckReg                         = RegInit(false.B)
+  val barrierCloseAckSeqReg                      = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val barrierCloseIssued                         = RegInit(false.B)
+  val barrierCloseRequestSeq                     = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
 
   // Track owner: capture on first idle→busy transition, clear when idle & excluded from mask
   for (i <- 0 until num_checkers) {
@@ -166,6 +174,29 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   if_dosnap                                    := Mux((fsm_state === fsm_snap) && (io.if_ready_snap_shot.asBool), Mux(((ctrl === 2.U) && !(io.mode_switch || io.mode_ret ||io.excp_mode)) || (ctrl === 0.U), io.if_correct_process, Mux(((ctrl === 1.U)) || (ctrl === 3.U), 1.U, 0.U)), 0.U)
   if_dosnap_priv                               := Mux((fsm_state === fsm_snap) && (io.if_ready_snap_shot.asBool), Mux(((ctrl === 2.U) && (io.mode_switch || io.mode_ret ||io.excp_mode)) || (ctrl === 4.U), io.if_correct_process, Mux((ctrl === 5.U), 1.U, 0.U)), 0.U)
   val snapshot_accepted = (if_dosnap | if_dosnap_priv).asBool
+  val barrierCloseRequest = io.barrier_force_close &&
+    io.barrier_force_close_seq =/= 0.U &&
+    active_packet_seq =/= 0.U &&
+    active_packet_seq === io.barrier_force_close_seq
+  when (!io.barrier_force_close) {
+    barrierCloseIssued := false.B
+    barrierCloseAckReg := false.B
+    barrierCloseRequestSeq := 0.U
+  }.otherwise {
+    when (!barrierCloseIssued) {
+      barrierCloseRequestSeq := io.barrier_force_close_seq
+      when (fsm_state === fsm_check) {
+        barrierCloseIssued := true.B
+      }
+    }
+    // The postcheck state is the existing R_IC ownership handoff point: the
+    // close command has been accepted by the checker transport. Keep this
+    // acknowledgement level until L2 drops its request.
+    when (barrierCloseIssued && fsm_state === fsm_postcheck && !io.rsu_busy) {
+      barrierCloseAckReg := true.B
+      barrierCloseAckSeqReg := barrierCloseRequestSeq
+    }
+  }
   val package_allocated = snapshot_accepted && !ctrl(0).asBool
   val allocated_packet_seq = packet_seq_counter + 1.U
   for (i <- 0 until params.totalnumber_of_cores) {
@@ -182,6 +213,8 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   io.active_packet_seq := active_packet_seq
   io.packet_alloc_valid := package_allocated
   io.packet_alloc_seq := allocated_packet_seq
+  io.barrier_close_ack := barrierCloseAckReg
+  io.barrier_close_ack_seq := barrierCloseAckSeqReg
   // val if_t_and_na                               = Mux(((io.ic_exit_isax.asBool || io.ic_syscall.asBool || (ic_counter(crnt_target) >= io.ic_threshold) || io.icsl_na(crnt_target).asBool) && (ic_status(sch_result).asBool)), 1.U, 0.U)
   // val if_t_and_a                                = Mux(((io.ic_exit_isax.asBool || io.ic_syscall.asBool || (ic_counter(crnt_target) >= io.ic_threshold) || io.icsl_na(crnt_target).asBool) && (!ic_status(sch_result).asBool)), 1.U, 0.U)
   val if_t_and_na                               = Mux(((io.ic_exit_isax.asBool || io.mode_switch || io.mode_ret || (ic_counter(crnt_target_ic) >= io.ic_threshold) || io.icsl_na(crnt_target_ic).asBool) && (ic_status(sch_result_ic).asBool)), 1.U, 0.U)
@@ -295,7 +328,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
     is (fsm_check){ // 110
       end                                       := end
       // ctrl                                      := Mux(io.ic_exit_isax.asBool, 3.U, Mux(io.ic_syscall.asBool || if_t_and_na.asBool, 1.U, Mux(if_t_and_a.asBool, 0.U, ctrl)))
-      ctrl                                      := Mux(io.ic_exit_isax.asBool, 3.U, Mux(if_t_and_na.asBool && !(io.mode_switch || io.mode_ret || io.excp_mode), 1.U, Mux(if_t_and_na.asBool && (io.mode_switch || io.mode_ret || io.excp_mode), 5.U, Mux((io.mode_switch || io.mode_ret || io.excp_mode) && if_t_and_a.asBool, 4.U, Mux(if_t_and_a.asBool, 0.U, ctrl)))))
+      ctrl                                      := Mux(io.ic_exit_isax.asBool || barrierCloseRequest, 3.U, Mux(if_t_and_na.asBool && !(io.mode_switch || io.mode_ret || io.excp_mode), 1.U, Mux(if_t_and_na.asBool && (io.mode_switch || io.mode_ret || io.excp_mode), 5.U, Mux((io.mode_switch || io.mode_ret || io.excp_mode) && if_t_and_a.asBool, 4.U, Mux(if_t_and_a.asBool, 0.U, ctrl)))))
       crnt_target                               := crnt_target
       crnt_mask                                 := crnt_mask
       nxt_target                                := nxt_target 
@@ -305,7 +338,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
         ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U,  ic_status(i))
         ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U,  Mux((crnt_target_ic === i.U) && (io.if_correct_process.asBool), (ic_counter(i) + io.ic_incr), ic_counter(i)))
       }
-      fsm_state                                 := Mux(io.ic_exit_isax.asBool || (io.mode_switch || io.mode_ret) || (ic_counter(crnt_target_ic) >= io.ic_threshold) || io.icsl_na(crnt_target_ic).asBool, fsm_postcheck, fsm_check)
+      fsm_state                                 := Mux(io.ic_exit_isax.asBool || barrierCloseRequest || (io.mode_switch || io.mode_ret) || (ic_counter(crnt_target_ic) >= io.ic_threshold) || io.icsl_na(crnt_target_ic).asBool, fsm_postcheck, fsm_check)
     }
 
     is (fsm_postcheck){ // 111
