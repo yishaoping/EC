@@ -18,6 +18,9 @@ object GH_GlobalParams {
   // Package sequence numbers are global within one BOOM/checker group. Zero is
   // reserved for operations that are not associated with a checked package.
   val GH_PACKET_SEQ_BITS = 32
+  // Per-slot producer seal; checker counter carries an explicit seq/valid.
+  val GH_PRODUCER_SEALS_BITS = GH_NUM_CORES * (GH_PACKET_SEQ_BITS + 1)
+  val GH_CHECKER_COUNT_BITS = GH_PACKET_SEQ_BITS + 1 + 20
   val GH_CHECKER_STATUS_BITS = 2
   val GH_CHECKER_STATUS_PASS = 0
   val GH_CHECKER_STATUS_FAIL = 1

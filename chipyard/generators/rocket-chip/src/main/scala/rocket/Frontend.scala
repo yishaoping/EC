@@ -39,6 +39,8 @@ class FrontendResp(implicit p: Parameters) extends CoreBundle()(p) {
   val mask = Bits(fetchWidth.W)
   val xcpt = new FrontendExceptions
   val replay = Bool()
+  val prefixLength = UInt(math.max(1, log2Ceil(fetchWidth + 1)).W)
+  val bjlEndMask = UInt(fetchWidth.W)
 }
 
 class FrontendPerfEvents extends Bundle {
@@ -66,6 +68,9 @@ class FrontendIO(implicit p: Parameters) extends CoreBundle()(p) {
   val bjl_cdc_ready = Input(Bool())
   val bjl_highwatermark = Input(Bool())
   val bjl_commit = Output(Bool()) 
+  val checker_seq = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val checker_clear = Output(Bool())
+  val checker_clear_done = Input(Bool())
 
   val if_check_completed = Output(Bool())
   val if_overtaking = Output(Bool())
@@ -100,7 +105,8 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
 
   val fq = withReset(reset.asBool || io.cpu.req.valid) { Module(new ShiftQueue(new FrontendResp, 5, flow = true)) }
 
-  val BJL = withReset(reset.asBool || io.cpu.if_check_already_done) { Module(new R_BJLR(R_BJLParams(
+  val bjl_clear = WireDefault(false.B)
+  val BJL = withReset(reset.asBool || bjl_clear) { Module(new R_BJLR(R_BJLParams(
     nEntries = 256,
     xLen = xLen,
     pcLen = vaddrBitsExtended
@@ -116,8 +122,6 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   io.cpu.bjl_highwatermark := BJL.io.bjl_highwatermark  // BJL高水位信号上报CPU
   dontTouch(BJL.io)
   
-  val hasSpecialJalr = Wire(Bool())
-
   val clock_en_reg = Reg(Bool())
   val clock_en = clock_en_reg || io.cpu.might_request
   io.cpu.clock_enabled := clock_en
@@ -132,15 +136,58 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
 
   val tlb = Module(new TLB(true, log2Ceil(fetchBytes), TLBConfig(nTLBSets, nTLBWays, outer.icacheParams.nTLBBasePageSectors, outer.icacheParams.nTLBSuperpages)))
 
+  val checker_empty :: checker_fetching :: checker_classify :: checker_wait_bjl :: checker_ready :: Nil = Enum(5)
+  val checker_state = RegInit(checker_empty)
+  val checker_resp = Reg(new FrontendResp)
+  val checker_fetch_pc = Reg(UInt(vaddrBitsExtended.W))
+  val checker_fetch_seq = Reg(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val checker_next_pc = Reg(UInt(vaddrBitsExtended.W))
+  val checker_gpa = Reg(UInt(vaddrBitsExtended.W))
+  val checker_cfi_pc = Reg(UInt(vaddrBitsExtended.W))
+  val checker_cfi_end = Reg(UInt(math.max(1, log2Ceil(fetchWidth)).W))
+  val checker_cfi_rvc = Reg(Bool())
+  val checker_partial_valid = RegInit(false.B)
+  val checker_partial_bits = Reg(UInt(coreInstBits.W))
+  val checker_partial_pc = Reg(UInt(vaddrBitsExtended.W))
+  val checker_partial_seq = Reg(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val checker_path_live = RegInit(false.B)
+  val checker_clear_ack = RegInit(true.B)
+  val checker_seen_seq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val checker_s1_owner = RegInit(false.B)
+  val checker_s2_owner = RegInit(false.B)
+  // Hold a redirect until I$ accepts it, after delayed checker mode changes.
+  val redirect_pending = RegInit(false.B)
+  val redirect_pc = Reg(UInt(vaddrBitsExtended.W))
+  val redirect_speculative = Reg(Bool())
+  val redirect_settle = RegNext(io.cpu.req.valid, false.B)
+  val checker_request = checkerMode && !io.cpu.if_check_completed &&
+    io.cpu.checker_seq =/= 0.U && !io.cpu.checker_clear
+  val checker_busy = checker_state =/= checker_empty || checker_s1_owner || checker_s2_owner
+  val checker_flow = checker_request || checker_busy
+  val checker_emit = checker_state === checker_ready && !io.cpu.checker_clear
+  val legacy_resp = Wire(new FrontendResp)
+  val legacy_emit = Wire(Bool())
+  val legacy_fire = legacy_emit && fq.io.enq.ready
+
   val s1_valid = Reg(Bool())
   val s2_valid = RegInit(false.B)
   val s0_fq_has_space =
     !fq.io.mask(fq.io.mask.getWidth-3) ||
     (!fq.io.mask(fq.io.mask.getWidth-2) && (!s1_valid || !s2_valid)) ||
     (!fq.io.mask(fq.io.mask.getWidth-1) && (!s1_valid && !s2_valid))
-  val s0_valid = io.cpu.req.valid || s0_fq_has_space || !io.cpu.if_overtaking
+  val redirect_accept = redirect_pending && !redirect_settle && icache.io.req.fire
+  // Redirect first changes the PC/mode; accept the target request only after
+  // the registered settle cycle, and keep it pending until req.fire.
+  val s0_valid = !io.cpu.req.valid && !redirect_settle && Mux(checker_flow,
+    checker_state === checker_empty && !io.cpu.checker_clear,
+    s0_fq_has_space || !io.cpu.if_overtaking)
   dontTouch(s0_fq_has_space)
-  s1_valid := s0_valid
+  // During the redirect handoff, S1 validity is an acceptance fact.  The
+  // legacy path keeps its original attempt/replay behavior once ownership
+  // has moved past this boundary.
+  s1_valid := Mux(io.cpu.req.valid || redirect_pending || redirect_settle,
+    icache.io.req.fire,
+    Mux(checker_flow, icache.io.req.fire, s0_valid))
   val s1_pc = Reg(UInt(vaddrBitsExtended.W))
   val s1_speculative = Reg(Bool())
   val s2_pc = RegInit(t = UInt(vaddrBitsExtended.W), alignPC(io_reset_vector))
@@ -157,69 +204,44 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   dontTouch(s2_btb_resp_bits)
 
   val s1_base_pc = ~(~s1_pc | (fetchBytes - 1).U)
-  val bjl_base_npc = ~(~BJL.io.bj_resp_npc | (fetchBytes - 1).U)
-  val bjl_base_cpc = ~(~BJL.io.bj_resp_cpc | (fetchBytes - 1).U)
   val ntpc = s1_base_pc + fetchBytes.U
   val predicted_npc = WireDefault(ntpc)
   val predicted_taken = WireDefault(false.B)
   dontTouch(s1_base_pc)
-  dontTouch(bjl_base_npc)
-  dontTouch(bjl_base_cpc)
   dontTouch(ntpc)
-  val s2_hascfi = Wire(Bool())
-  val bjl_use_target = Wire(Bool())
-  val bjl_taken_idx = WireInit(0.U(fetchWidth.W))
-  // 步骤1：对齐 PC（确保与 BJL 存储的分支 PC 地址格式一致，避免低位错位）
-  val aligned_cpu_cpc = alignPC(s1_pc)  // 即将发起取指的 PC（ICache 请求地址）
-  val aligned_bjl_cpc = alignPC(BJL.io.bj_resp_cpc)  // BJL 头部的分支 PC
-  val s2_bjl_cpc = RegEnable(alignPC(BJL.io.bj_resp_cpc), BJL.io.bj_req_valid && !BJL.io.bj_rollback)
-  // 步骤2：PC 匹配条件（当前要取指的 PC == BJL 存储的分支 PC）
-  // val pc_match = s1_valid && ((aligned_cpu_cpc - aligned_bjl_cpc) <= 2.U) && (Mux(BJL.io.bj_resp_is_rvc, true.B, aligned_bjl_cpc === bjl_base_cpc))
-  val pc_match= s1_valid && (Mux(aligned_cpu_cpc === aligned_bjl_cpc, 
-                                Mux(aligned_bjl_cpc === bjl_base_cpc, true.B, 
-                                    Mux(BJL.io.bj_resp_is_rvc, true.B, false.B)), 
-                                Mux((aligned_cpu_cpc - aligned_bjl_cpc) <= 2.U, true.B, 
-                                    Mux(((aligned_bjl_cpc - aligned_cpu_cpc) <= 2.U) && BJL.io.bj_resp_is_rvc && (aligned_bjl_cpc =/= bjl_base_cpc), true.B, false.B))))
-  val s2_pc_match = ((alignPC(s2_pc) - s2_bjl_cpc) <= 2.U) && s2_valid
-  // 步骤3：BJL 有可用数据（FIFO 头部非空）
-  val bjl_has_valid_data = BJL.io.bj_req_ready
-  val bjl_just_have_data_at_s2 = !BJL.io.bj_data_ready_but_flow && s2_pc_match
-  val bjl_need_replay = (!RegNext(bjl_has_valid_data) || bjl_just_have_data_at_s2) && checkerMode && !RegNext(bjl_use_target) && s2_hascfi && !(io.cpu.if_check_already_done) && !hasSpecialJalr //bjl空了导致的replay
-  val bjl_redirect_replay = s2_redirect && !io.cpu.req.valid && RegNext(bjl_use_target) && !bjl_has_valid_data && checkerMode && s2_valid //pc包含两条rvc br/jal指令,同时bjl空造成的redirect replay
-  val s2_bjl_taken = Reg(Bool())
-  val s2_bjl_is_rvc = Reg(Bool())
-  val s2_bjl_npc   = RegEnable(alignPC(BJL.io.bj_resp_npc), BJL.io.bj_req_valid && !BJL.io.bj_rollback)
-  s2_bjl_taken := Mux(BJL.io.bj_req_valid && !BJL.io.bj_rollback, BJL.io.bj_resp_taken, false.B)
-  s2_bjl_is_rvc := Mux(BJL.io.bj_req_valid && !BJL.io.bj_rollback, BJL.io.bj_resp_is_rvc, false.B)
-
   val s2_replay = Wire(Bool())
-  s2_replay := (s2_valid && !fq.io.enq.fire) || RegNext(s2_replay && !s0_valid, true.B) || bjl_need_replay || bjl_redirect_replay
-  val bjl_redirect_replay_continue = RegNext(bjl_redirect_replay)
-  val npc = Mux(bjl_redirect_replay || bjl_redirect_replay_continue, s2_bjl_npc, Mux(s2_replay, s2_pc, predicted_npc))
+  val s2_replay_reg = RegInit(true.B)
+  s2_replay := !checker_s2_owner && ((s2_valid && !legacy_fire) || s2_replay_reg)
+  val npc = Mux(s2_replay, s2_pc, predicted_npc)
 
-  val replay_pc_cfi = RegInit(0.U(vaddrBitsExtended.W))
-  replay_pc_cfi := Mux(bjl_need_replay && io.cpu.req.valid && (io.cpu.req.bits.pc === s2_pc), s2_pc, Mux(bjl_use_target || io.cpu.if_check_completed, 0.U, replay_pc_cfi))
-  dontTouch(replay_pc_cfi)
-
-  dontTouch(bjl_need_replay)
-  dontTouch(pc_match)
-  dontTouch(aligned_cpu_cpc)
-  dontTouch(aligned_bjl_cpc)
-  dontTouch(bjl_redirect_replay)
-  dontTouch(s2_bjl_npc)
-
-  s1_pc := io.cpu.npc
+  // Do not overwrite S1 with the live NPC during the redirect bubble.  The
+  // target PC/speculative bit become S1 state only on the real request fire.
+  when (redirect_accept) {
+    s1_pc := io.cpu.npc
+  }.elsewhen (!io.cpu.req.valid && !redirect_pending && !redirect_settle) {
+    s1_pc := io.cpu.npc
+  }
   // consider RVC fetches across blocks to be non-speculative if the first
   // part was non-speculative
   val s0_speculative =
     if (usingCompressed) s1_speculative || s2_valid && !s2_speculative || predicted_taken
     else true.B
-  s1_speculative := Mux(io.cpu.checker_mode, false.B, Mux(io.cpu.req.valid, io.cpu.req.bits.speculative, Mux(s2_replay, s2_speculative, s0_speculative)))
+  when (redirect_accept) {
+    s1_speculative := Mux(checker_request, false.B, redirect_speculative)
+  }.elsewhen (!redirect_pending && !redirect_settle && !io.cpu.req.valid) {
+    s1_speculative := Mux(checker_request, false.B,
+      Mux(s2_replay, s2_speculative, s0_speculative))
+  }
   dontTouch(s0_speculative)
 
   
   s2_valid := false.B
-  when (!s2_replay) {
+  // No old S2 transaction is allowed to survive the redirect handoff.  The
+  // accepted target reaches S2 on the following cycle through the normal
+  // S1/S2 pipeline, so this guard also prevents a ghost S2 response.
+  when (io.cpu.req.valid || redirect_pending || redirect_settle) {
+    s2_valid := false.B
+  }.elsewhen (!s2_replay || checker_s1_owner) {
     s2_valid := !s2_redirect
     s2_pc := s1_pc
     s2_speculative := s1_speculative
@@ -235,7 +257,7 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   val s2_kill_speculative_tlb_refill = s2_speculative && !recent_progress
 
   io.ptw <> tlb.io.ptw
-  tlb.io.req.valid := s1_valid && !s2_replay
+  tlb.io.req.valid := checker_s1_owner || s1_valid && !s2_replay
   tlb.io.req.bits.cmd := M_XRD // Frontend only reads
   tlb.io.req.bits.vaddr := s1_pc
   tlb.io.req.bits.passthrough := false.B
@@ -243,34 +265,44 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   tlb.io.req.bits.prv := io.ptw.status.prv
   tlb.io.req.bits.v := io.ptw.status.v
   tlb.io.sfence := io.cpu.sfence
-  tlb.io.kill := !s2_valid || s2_kill_speculative_tlb_refill
+  // Serialized checker retries have S2 bubbles while the same walk is pending.
+  tlb.io.kill := Mux(checker_flow,
+    io.cpu.req.valid || io.cpu.checker_clear,
+    !s2_valid || s2_kill_speculative_tlb_refill)
 
   icache.io.req.valid := s0_valid
   icache.io.req.bits.addr := io.cpu.npc
   icache.io.invalidate := io.cpu.flush_icache
   icache.io.s1_paddr := tlb.io.resp.paddr
   icache.io.s2_vaddr := s2_pc
-  icache.io.s1_kill := s2_redirect || tlb.io.resp.miss || s2_replay
+  icache.io.s1_kill := Mux(checker_s1_owner,
+    io.cpu.req.valid || io.cpu.checker_clear || tlb.io.resp.miss,
+    s2_redirect || tlb.io.resp.miss || s2_replay)
   val s2_can_speculatively_refill = s2_tlb_resp.cacheable && !io.ptw.customCSRs.asInstanceOf[RocketCustomCSRs].disableSpeculativeICacheRefill
   icache.io.s2_kill := s2_speculative && !s2_can_speculatively_refill || s2_xcpt
   icache.io.s2_cacheable := s2_tlb_resp.cacheable
   icache.io.s2_prefetch := s2_tlb_resp.prefetchable && !io.ptw.customCSRs.asInstanceOf[RocketCustomCSRs].disableICachePrefetch
 
-  fq.io.enq.valid := RegNext(s1_valid) && s2_valid && !bjl_need_replay && (icache.io.resp.valid || (s2_kill_speculative_tlb_refill && s2_tlb_resp.miss) || (!s2_tlb_resp.miss && icache.io.s2_kill))
-  fq.io.enq.bits.pc := s2_pc
-  val s1_pc_need_replay = s1_valid && (s1_pc === replay_pc_cfi) && !bjl_use_target && !io.cpu.if_check_completed
-  dontTouch(s1_pc_need_replay)
-  io.cpu.npc := alignPC(Mux(s1_pc_need_replay, s1_pc, Mux(io.cpu.req.valid, io.cpu.req.bits.pc, npc)))
+  legacy_emit := RegNext(s1_valid) && s2_valid && !checker_s2_owner &&
+    checker_state === checker_empty &&
+    (icache.io.resp.valid || (s2_kill_speculative_tlb_refill && s2_tlb_resp.miss) || (!s2_tlb_resp.miss && icache.io.s2_kill))
+  legacy_resp.pc := s2_pc
+  val checker_pc = Mux(checker_state === checker_empty, s1_pc,
+    Mux(checker_emit && fq.io.enq.ready, checker_next_pc, checker_fetch_pc))
+  io.cpu.npc := alignPC(Mux(io.cpu.req.valid, io.cpu.req.bits.pc,
+    Mux(redirect_pending, redirect_pc, Mux(checker_flow, checker_pc, npc))))
 
-  fq.io.enq.bits.data := icache.io.resp.bits.data
-  fq.io.enq.bits.mask := ((1 << fetchWidth)-1).U << s2_pc.extract(log2Ceil(fetchWidth)+log2Ceil(coreInstBytes)-1, log2Ceil(coreInstBytes))
-  fq.io.enq.bits.replay := (icache.io.resp.bits.replay || icache.io.s2_kill && !icache.io.resp.valid && !s2_xcpt) || (s2_kill_speculative_tlb_refill && s2_tlb_resp.miss)
-  fq.io.enq.bits.btb := s2_btb_resp_bits
-  fq.io.enq.bits.btb.bridx := Mux(checkerMode, bjl_taken_idx, s2_btb_resp_bits.bridx)
-  fq.io.enq.bits.btb.taken := Mux(checkerMode, s2_bjl_taken, s2_btb_taken)
-  fq.io.enq.bits.xcpt := s2_tlb_resp
+  legacy_resp.data := icache.io.resp.bits.data
+  val s2_start = s2_pc.extract(log2Ceil(fetchWidth)+log2Ceil(coreInstBytes)-1, log2Ceil(coreInstBytes))
+  legacy_resp.mask := ((BigInt(1) << fetchWidth)-1).U << s2_start
+  legacy_resp.replay := (icache.io.resp.bits.replay || icache.io.s2_kill && !icache.io.resp.valid && !s2_xcpt) || (s2_kill_speculative_tlb_refill && s2_tlb_resp.miss)
+  legacy_resp.btb := s2_btb_resp_bits
+  legacy_resp.btb.taken := s2_btb_taken
+  legacy_resp.prefixLength := Mux(legacy_resp.btb.taken, legacy_resp.btb.bridx +& 1.U, fetchWidth.U) - s2_start
+  legacy_resp.bjlEndMask := 0.U
+  legacy_resp.xcpt := s2_tlb_resp
   assert(!(s2_speculative && io.ptw.customCSRs.asInstanceOf[RocketCustomCSRs].disableSpeculativeICacheRefill && !icache.io.s2_kill))
-  when (icache.io.resp.valid && icache.io.resp.bits.ae) { fq.io.enq.bits.xcpt.ae.inst := true.B }
+  when (icache.io.resp.valid && icache.io.resp.bits.ae) { legacy_resp.xcpt.ae.inst := true.B }
 
   if (usingBTB) {
     val btb = Module(new BTB)
@@ -283,12 +315,12 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
     btb.io.ras_update.bits := DontCare
     btb.io.bht_advance.valid := false.B
     btb.io.bht_advance.bits := DontCare
-    when (!s2_replay && !checkerMode) {
+    when (!s2_replay && !checkerMode && !redirect_pending && !redirect_settle) {
       btb.io.req.valid := !s2_redirect
       s2_btb_resp_valid := btb.io.resp.valid
       s2_btb_resp_bits := btb.io.resp.bits
     }
-    when (!checkerMode && btb.io.resp.valid && btb.io.resp.bits.taken) {
+    when (!checkerMode && !redirect_pending && !redirect_settle && btb.io.resp.valid && btb.io.resp.bits.taken) {
       predicted_npc := btb.io.resp.bits.target.sextTo(vaddrBitsExtended)
       predicted_taken := true.B
     }
@@ -317,22 +349,12 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
     dontTouch(after_idx)  
 
    
-    // val s2_bjl_npc   = RegEnable(alignPC(BJL.io.bj_resp_npc), BJL.io.bj_req_valid && !BJL.io.bj_rollback)
-
-    val s2_bjl_replay = s2_replay && RegNext(BJL.io.bj_req_valid) && s2_valid && !s2_redirect // 到达s2的match的pc由于icache miss replay，排除由于pc包含两条br/jal指令造成的redirect replay
-
-    bjl_taken_idx := Mux(s2_pc_match, Mux(s2_bjl_cpc === s2_base_pc, Mux(s2_bjl_is_rvc && s2_bjl_taken, 0.U, 1.U), Mux(s2_bjl_cpc > s2_base_pc, 1.U, 0.U)), 1.U)
-    dontTouch(s2_pc_match)
-    // val s2_bjl_npc   = RegEnable(alignPC(BJL.io.bj_resp_npc), BJL.io.bj_req_valid)
-    dontTouch(bjl_taken_idx)
-    
-    // val bjl_taken = Mux(rvc, s2_bjl_npc =/= s2_bjl_cpc + 2.U, s2_bjl_npc =/= s2_bjl_cpc + 4.U)
     dontTouch(s2_btb_resp_bits)
     def scanInsns(idx: Int, prevValid: Bool, prevBits: UInt, prevTaken: Bool, prevHasCF: Bool): (Bool, Bool) = {
       def insnIsRVC(bits: UInt) = bits(1,0) =/= 3.U
       val prevRVI = prevValid && !insnIsRVC(prevBits)
-      val valid = fq.io.enq.bits.mask(idx) && !prevRVI
-      val bits = fq.io.enq.bits.data(coreInstBits*(idx+1)-1, coreInstBits*idx)
+      val valid = legacy_resp.mask(idx) && !prevRVI
+      val bits = legacy_resp.data(coreInstBits*(idx+1)-1, coreInstBits*idx)
       val rvc = insnIsRVC(bits)
       val rviBits = Cat(bits, prevBits)
       val rviBranch = rviBits(6,0) === Instructions.BEQ.value.U.extract(6,0)
@@ -372,13 +394,11 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
         (valid && (rvcJump || rvcJALR || rvcJR || rvcBranch)))  // 16位分支/跳转
       val currHasCF = prevHasCF || hasCF_this_idx
 
-      // bjl_taken_idx := Mux((s2_bjl_cpc === s2_base_pc), Mux(rvc && s2_bjl_taken && !prevRVI, 0.U, 1.U), 0.U)
-
       when (s2_valid && s2_btb_resp_valid && s2_btb_resp_bits.bridx === idx.U && valid && !rvc && !checkerMode) {
         // The BTB has predicted that the middle of an RVI instruction is
         // a branch! Flush the BTB and the pipeline.
         btb.io.flush := true.B
-        fq.io.enq.bits.replay := true.B
+        legacy_resp.replay := true.B
         wrong_path := true.B
         ccover(wrong_path, "BTB_NON_CFI_ON_WRONG_PATH", "BTB predicted a non-branch was taken while on the wrong path")
       }
@@ -386,14 +406,14 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
       when (!prevTaken) {
         taken_idx := idx.U
         after_idx := (idx + 1).U
-        btb.io.ras_update.valid := fq.io.enq.fire && !wrong_path && (prevRVI && (rviCall || rviReturn) || valid && (rvcCall || rvcReturn))
+        btb.io.ras_update.valid := legacy_fire && !wrong_path && (prevRVI && (rviCall || rviReturn) || valid && (rvcCall || rvcReturn))
         btb.io.ras_update.bits.cfiType := Mux(Mux(prevRVI, rviReturn, rvcReturn), CFIType.ret,
                                           Mux(Mux(prevRVI, rviCall, rvcCall), CFIType.call,
                                           Mux(Mux(prevRVI, rviBranch, rvcBranch) && !force_taken, CFIType.branch,
                                           CFIType.jump)))
 
         when (!s2_btb_taken && !checkerMode) {
-          when (fq.io.enq.fire && taken && !predictBranch && !predictJump && !predictReturn) {
+          when (legacy_fire && taken && !predictBranch && !predictJump && !predictReturn) {
             wrong_path := true.B
           }
           when (s2_valid && predictReturn) {
@@ -408,7 +428,7 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
           }
         }
         when (prevRVI && rviBranch || valid && rvcBranch) {
-          btb.io.bht_advance.valid := fq.io.enq.fire && !wrong_path
+          btb.io.bht_advance.valid := legacy_fire && !wrong_path
           btb.io.bht_advance.bits := s2_btb_resp_bits
         }
         when (!s2_btb_resp_valid && (predictBranch && s2_btb_resp_bits.bht.strongly_taken || predictJump || predictReturn)) {
@@ -417,7 +437,7 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
       }
 
       if (idx == fetchWidth-1) {
-        when (fq.io.enq.fire) {
+        when (legacy_fire) {
           s2_partial_insn_valid := false.B
           when (valid && !prevTaken && !rvc) {
             s2_partial_insn_valid := true.B
@@ -432,7 +452,7 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
 
     when (!io.cpu.btb_update.valid) {
       val fetch_bubble_likely = !fq.io.mask(1)
-      btb.io.btb_update.valid := fq.io.enq.fire && !wrong_path && fetch_bubble_likely && updateBTB && !checkerMode
+      btb.io.btb_update.valid := legacy_fire && !wrong_path && fetch_bubble_likely && updateBTB && !checkerMode
       btb.io.btb_update.bits.prediction.entry := tileParams.btb.get.nEntries.U
       btb.io.btb_update.bits.isValid := true.B
       btb.io.btb_update.bits.cfiType := btb.io.ras_update.bits.cfiType
@@ -443,59 +463,210 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
     btb.io.ras_update.bits.returnAddr := s2_base_pc + (after_idx << log2Ceil(coreInstBytes))
 
     val (taken, hasControlFlow) = scanInsns(0, s2_partial_insn_valid, s2_partial_insn, false.B, false.B)
-    s2_hascfi := hasControlFlow 
     dontTouch(hasControlFlow)
-    hasSpecialJalr := specialJalrVec.reduce(_||_)
     when (useRAS) {
       predicted_npc := btb.io.ras_head.bits
     }
-    when (fq.io.enq.fire && (Mux(checkerMode, s2_bjl_taken, s2_btb_taken) || taken)) {
+    when (legacy_fire && (s2_btb_taken || taken)) {
       s2_partial_insn_valid := false.B
     }
-    when (!Mux(checkerMode, s2_bjl_taken, s2_btb_taken)) {
+    when (!s2_btb_taken && !checker_s2_owner) {
       when (taken) {
-        fq.io.enq.bits.btb.bridx := taken_idx
-        fq.io.enq.bits.btb.taken := true.B
-        fq.io.enq.bits.btb.entry := tileParams.btb.get.nEntries.U
-        when (fq.io.enq.fire) { s2_redirect := true.B }
+        legacy_resp.btb.bridx := taken_idx
+        legacy_resp.btb.taken := true.B
+        legacy_resp.btb.entry := tileParams.btb.get.nEntries.U
+        when (legacy_fire) { s2_redirect := true.B }
       }
     }
 
-    assert(!s2_partial_insn_valid || fq.io.enq.bits.mask(0))
+    assert(!s2_partial_insn_valid || legacy_resp.mask(0))
     when (s2_redirect) { s2_partial_insn_valid := false.B }
+    when (io.cpu.req.valid || redirect_pending || redirect_settle || checker_s1_owner) {
+      s2_btb_resp_valid := false.B
+    }
     when (io.cpu.req.valid) { wrong_path := false.B }
     dontTouch(specialJalrVec)
-    dontTouch(hasSpecialJalr)
-
-    // 在 checker 模式下：如果是“特殊 JALR”（bit12=1 的 JALR），则不从 BJL 取目标地址
-    bjl_use_target := checkerMode && pc_match && bjl_has_valid_data && !s2_replay
-    BJL.io.bj_req_valid := bjl_use_target
-    BJL.io.bj_rollback := (io.cpu.req.valid) && checkerMode && !io.cpu.if_check_completed
-    BJL.io.bj_s2_replay := s2_bjl_replay && checkerMode
-    BJL.io.bj_commit_valid := io.cpu.bjl_commit && checkerMode
-    val bjl_notaken_npc = Mux(BJL.io.bj_resp_npc =/= bjl_base_npc, 
-                              Mux(BJL.io.bj_resp_is_rvc || ((BJL.io.bj_resp_cpc =/= bjl_base_cpc)), bjl_base_npc + fetchBytes.U, BJL.io.bj_resp_npc), 
-                              Mux(BJL.io.bj_resp_npc === aligned_cpu_cpc, bjl_base_npc + fetchBytes.U, BJL.io.bj_resp_npc))
-    when (bjl_use_target && bjl_has_valid_data) {
-      predicted_npc := Mux(BJL.io.bj_resp_taken, BJL.io.bj_resp_npc, bjl_notaken_npc)
-      // predicted_taken := true.B
-    }
-    // when (bjl_use_target && !BJL.io.bj_req_ready) {
-    //   s2_replay := true.B
-    // }
   }
+  // One checker response owns its data and reservation until FQ accepts it.
+  val checker_start = checker_resp.pc.extract(log2Ceil(fetchBytes)-1, log2Ceil(coreInstBytes))
+  val checker_base = checker_resp.pc & ~(fetchBytes-1).U(vaddrBitsExtended.W)
+  val cfi_valid = Wire(Vec(fetchWidth, Bool()))
+  val cfi_pc = Wire(Vec(fetchWidth, UInt(vaddrBitsExtended.W)))
+  val cfi_start = Wire(Vec(fetchWidth, UInt(math.max(1, log2Ceil(fetchWidth+1)).W)))
+  val cfi_rvc = Wire(Vec(fetchWidth, Bool()))
+  val cfi_special = Wire(Vec(fetchWidth, Bool()))
+  var lowValid: Bool = checker_partial_valid && checker_partial_seq === checker_fetch_seq &&
+    checker_resp.pc === checker_partial_pc + coreInstBytes.U
+  var lowBits: UInt = checker_partial_bits
+  var lowPC: UInt = checker_partial_pc
+  for (i <- 0 until fetchWidth) {
+    val bits = checker_resp.data((i+1)*coreInstBits-1, i*coreInstBits)
+    val active = i.U >= checker_start
+    val high = if (usingCompressed) active && lowValid else false.B
+    val first = active && !high
+    val rvc = if (usingCompressed) bits(1,0) =/= 3.U else false.B
+    val raw = if (usingCompressed) Cat(bits, lowBits) else bits
+    val complete = high || first && (if (usingCompressed) rvc else true.B)
+    val rviCFI = raw(6,0) === 0x6f.U ||
+      raw(6,0) === 0x67.U && raw(14,13) === 0.U ||
+      raw(6,0) === 0x63.U && raw(14,12).isOneOf(0.U, 1.U, 4.U, 5.U, 6.U, 7.U)
+    val rvcCFI = if (usingCompressed) {
+      bits === Instructions.C_BEQZ || bits === Instructions.C_BNEZ ||
+      bits === Instructions.C_J || (xLen == 32).B && bits === Instructions32.C_JAL ||
+      (bits === Instructions.C_MV || bits === Instructions.C_ADD) &&
+        bits(6,2) === 0.U && bits(11,7) =/= 0.U
+    } else false.B
+    cfi_valid(i) := complete && Mux(first && rvc, rvcCFI, rviCFI)
+    cfi_pc(i) := Mux(high, lowPC, checker_base + (i*coreInstBytes).U)
+    cfi_start(i) := (if (i == 0) 0.U else Mux(high, (i-1).U, i.U))
+    cfi_rvc(i) := first && rvc
+    cfi_special(i) := !cfi_rvc(i) && raw(6,0) === 0x67.U && raw(12)
+    lowValid = first && !rvc && usingCompressed.B
+    lowBits = bits
+    lowPC = checker_base + (i*coreInstBytes).U
+  }
+  val first_cfi = if (fetchWidth == 1) 0.U(1.W) else PriorityEncoder(cfi_valid.asUInt)
+  val has_cfi = cfi_valid.asUInt.orR
+  val checker_fault = checker_resp.replay || checker_resp.xcpt.asUInt.orR
+  val checker_head_match = BJL.io.bj_resp_cpc === checker_cfi_pc &&
+    BJL.io.bj_resp_is_rvc === checker_cfi_rvc
+  BJL.io.bj_req_valid := checker_state === checker_wait_bjl && checker_head_match &&
+    !io.cpu.req.valid && !io.cpu.checker_clear
+  BJL.io.bj_rollback := io.cpu.req.valid
+  BJL.io.bj_s2_replay := false.B
+  BJL.io.bj_commit_valid := io.cpu.bjl_commit
+  fq.io.enq.valid := checker_emit || legacy_emit
+  fq.io.enq.bits := Mux(checker_emit, checker_resp, legacy_resp)
+  when (checker_emit) {
+    fq.io.enq.bits.mask := ((UIntToOH(checker_resp.prefixLength, fetchWidth+1) - 1.U) << checker_start)(fetchWidth-1, 0)
+  }
+  val checker_cache_valid = if (outer.icacheParams.latency == 1)
+    RegNext(checker_s1_owner && icache.io.resp.valid, false.B) else icache.io.resp.valid
+  val checker_cache_bits = if (outer.icacheParams.latency == 1)
+    RegEnable(icache.io.resp.bits, checker_s1_owner) else icache.io.resp.bits
+
+  checker_s1_owner := icache.io.req.fire && checker_request && !io.cpu.req.valid
+  checker_s2_owner := checker_s1_owner && !io.cpu.req.valid && !io.cpu.checker_clear
+  when (icache.io.req.fire && checker_request) {
+    checker_state := checker_fetching
+    checker_fetch_pc := io.cpu.npc
+    checker_fetch_seq := io.cpu.checker_seq
+    checker_path_live := true.B
+  }
+  when (checker_s2_owner && checker_state === checker_fetching) {
+    when (!s2_tlb_resp.miss && (checker_cache_valid || icache.io.s2_kill)) {
+      checker_resp := legacy_resp
+      checker_resp.data := checker_cache_bits.data
+      checker_resp.replay := checker_cache_valid && checker_cache_bits.replay ||
+        icache.io.s2_kill && !checker_cache_valid && !s2_xcpt
+      when (checker_cache_valid && checker_cache_bits.ae) { checker_resp.xcpt.ae.inst := true.B }
+      checker_resp.btb.taken := false.B
+      checker_resp.prefixLength := fetchWidth.U - s2_start
+      checker_gpa := s2_tlb_resp.gpa
+      checker_state := checker_classify
+    }.otherwise {
+      // I$ and TLB misses do not promise a later response to this request.
+      checker_state := checker_empty
+    }
+  }
+  when (checker_state === checker_classify) {
+    checker_next_pc := checker_base + fetchBytes.U
+    checker_resp.bjlEndMask := 0.U
+    when (!has_cfi || checker_fault) {
+      checker_state := checker_ready
+    }.elsewhen (cfi_start(first_cfi) > checker_start) {
+      checker_resp.prefixLength := cfi_start(first_cfi) - checker_start
+      checker_next_pc := cfi_pc(first_cfi)
+      checker_state := checker_ready
+    }.elsewhen (cfi_special(first_cfi)) {
+      checker_resp.prefixLength := (first_cfi +& 1.U) - checker_start
+      checker_next_pc := cfi_pc(first_cfi) + 4.U
+      checker_state := checker_ready
+    }.otherwise {
+      checker_cfi_pc := cfi_pc(first_cfi)
+      checker_cfi_end := first_cfi
+      checker_cfi_rvc := cfi_rvc(first_cfi)
+      checker_state := checker_wait_bjl
+    }
+  }
+  when (BJL.io.bj_req_valid && BJL.io.bj_req_ready) {
+    checker_resp.prefixLength := (checker_cfi_end +& 1.U) - checker_start
+    checker_resp.bjlEndMask := UIntToOH(checker_cfi_end, fetchWidth)
+    checker_resp.btb.taken := BJL.io.bj_resp_taken
+    checker_resp.btb.bridx := checker_cfi_end
+    checker_next_pc := BJL.io.bj_resp_npc
+    checker_state := checker_ready
+  }
+  when (checker_emit && fq.io.enq.fire) {
+    checker_state := checker_empty
+    checker_partial_valid := lowValid &&
+      checker_resp.prefixLength === fetchWidth.U - checker_start && !checker_fault &&
+      !checker_resp.bjlEndMask.orR
+    checker_partial_bits := lowBits
+    checker_partial_pc := lowPC
+    checker_partial_seq := checker_fetch_seq
+  }
+  when (checker_state === checker_ready) {
+    // Prefix metadata is authoritative in IBuf, including on the first READY cycle.
+    assert(checker_resp.prefixLength > 0.U && checker_resp.prefixLength <= fetchWidth.U - checker_start)
+    assert(PopCount(checker_resp.bjlEndMask) <= 1.U)
+  }
+  val checker_held = RegNext(checker_emit && !fq.io.enq.ready && !io.cpu.req.valid, false.B)
+  val checker_held_resp = RegEnable(checker_resp.asUInt, checker_emit && !fq.io.enq.ready)
+  when (checker_held && !io.cpu.req.valid && !io.cpu.checker_clear) {
+    assert(checker_emit && checker_resp.asUInt === checker_held_resp,
+      "checker fetch changed under FQ backpressure")
+  }
+  when (checker_busy && !io.cpu.checker_clear) {
+    assert(checker_fetch_seq === io.cpu.checker_seq, "stale checker fetch owner")
+  }
+
+  when (io.cpu.req.valid || io.cpu.checker_clear) {
+    checker_state := checker_empty
+    checker_s1_owner := false.B
+    checker_s2_owner := false.B
+    checker_partial_valid := false.B
+  }
+  when (io.cpu.checker_clear && checker_s1_owner) { s2_valid := false.B }
+  when (io.cpu.req.valid) { checker_path_live := false.B }
+  when (io.cpu.checker_seq =/= checker_seen_seq) {
+    checker_seen_seq := io.cpu.checker_seq
+    checker_clear_ack := false.B
+  }
+  // Reset only after redirect has killed the old FQ/IBuf/pipeline path.
+  bjl_clear := io.cpu.checker_clear && !checker_path_live &&
+    !checker_s1_owner && !checker_s2_owner && !io.cpu.bjl_commit
+  when (io.cpu.checker_clear) { checker_clear_ack := bjl_clear }
+  io.cpu.checker_clear_done := checker_clear_ack
   dontTouch(icache.io)
   dontTouch(predicted_taken)
   dontTouch(io)
   dontTouch(npc)
   io.cpu.resp <> fq.io.deq
 
+  // Redirect capture has priority over completion of an older pending target;
+  // otherwise a back-to-back redirect could release the newer target early.
+  when (io.cpu.req.valid) {
+    redirect_pending := true.B
+    redirect_pc := alignPC(io.cpu.req.bits.pc)
+    redirect_speculative := io.cpu.req.bits.speculative
+  }.elsewhen (redirect_accept) {
+    redirect_pending := false.B
+  }
+  // A redirect invalidates the old replay attempt.  Keep the reset value and
+  // ordinary retry recurrence unchanged outside the redirect handoff.
+  when (io.cpu.req.valid || redirect_pending || redirect_settle) {
+    s2_replay_reg := false.B
+  }.otherwise {
+    s2_replay_reg := s2_replay && !s0_valid
+  }
+
   // supply guest physical address to commit stage
   val gpa_valid = Reg(Bool())
   val gpa = Reg(UInt(vaddrBitsExtended.W))
-  when (fq.io.enq.fire && s2_tlb_resp.gf.inst) {
+  when (fq.io.enq.fire && fq.io.enq.bits.xcpt.gf.inst) {
     when (!gpa_valid) {
-      gpa := s2_tlb_resp.gpa
+      gpa := Mux(checker_emit, checker_gpa, s2_tlb_resp.gpa)
     }
     gpa_valid := true.B
   }
@@ -514,6 +685,7 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   clock_en_reg := !rocketParams.clockGate.B ||
     io.cpu.might_request || // chicken bit
     icache.io.keep_clock_enabled || // I$ miss or ITIM access
+    checker_busy || io.cpu.checker_clear || redirect_pending || redirect_settle ||
     s1_valid || s2_valid || // some fetch in flight
     !tlb.io.req.ready || // handling TLB miss
     !fq.io.mask(fq.io.mask.getWidth-1) // queue not full

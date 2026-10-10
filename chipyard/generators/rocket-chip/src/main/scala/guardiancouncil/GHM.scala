@@ -28,6 +28,7 @@ class GHMIO(params: GHMParams) extends Bundle {
   val checker_segment_id_bigcore                 = Input(Vec(GH_GlobalParams.GH_NUM_BIG_CORES, UInt((GH_GlobalParams.GH_NUM_CORES * GH_GlobalParams.GH_PACKET_SEQ_BITS).W)))
   val ghm_packet_dest                            = Input(UInt((params.number_of_little_cores*2).W))
   val ghm_status_in                              = Input(Vec(GH_GlobalParams.GH_NUM_BIG_CORES, UInt(32.W)))
+  val producer_seal_bigcore                     = Input(Vec(GH_GlobalParams.GH_NUM_BIG_CORES, UInt(GH_GlobalParams.GH_PRODUCER_SEALS_BITS.W)))
   val ghm_packet_outs                            = Output(Vec(params.number_of_little_cores, UInt((params.width_GH_packet*GH_GlobalParams.GH_TOTAL_PACKETS+GH_GlobalParams.GH_PACKET_SEQ_BITS+1).W)))
   val ghm_status_outs                            = Output(Vec(params.number_of_little_cores, UInt(32.W)))
   val ghe_event_in                               = Input(Vec(params.number_of_little_cores, UInt(6.W)))
@@ -39,9 +40,10 @@ class GHMIO(params: GHMParams) extends Bundle {
   val debug_bp                                   = Output(UInt(2.W))
   val ic_counter                                 = Input(Vec(GH_GlobalParams.GH_NUM_BIG_CORES, UInt((16*GH_GlobalParams.GH_NUM_CORES).W)))
   val debug_maincore_status                      = Input(UInt(4.W))
-  val icsl_counter                               = Output(Vec(params.number_of_little_cores, UInt(20.W)))
+  val icsl_counter                               = Output(Vec(params.number_of_little_cores, UInt(GH_GlobalParams.GH_CHECKER_COUNT_BITS.W)))
   val ghe_revent_in                              = Input(Vec(params.number_of_little_cores, UInt(1.W)))
   val ghm_cdc_empty_out                          = Output(Vec(params.number_of_little_cores, Bool()))
+  val producer_sealed_out                        = Output(Vec(params.number_of_little_cores, UInt((GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W)))
   val icsl_na                                    = Output(UInt((GH_GlobalParams.GH_NUM_CORES).W))
 
   // Global ic_status: OR-merge of all big cores' ic_status, broadcast back to all big cores
@@ -83,6 +85,7 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
     val arfs_cdc_busy                              = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
     val cdc_empty                                  = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
     val packet_ingress_empty                       = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
+    val producer_seal_by_checker                   = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U((GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W))))
     // 每个 checker 的完成位属于其 Rocket 时钟域，并直接送往同域 GHE。
     val checkerSessionDone                         = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
 
@@ -125,7 +128,14 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
 //==========================================================
 
 
-    val packetCdcBits = params.width_GH_packet*GH_GlobalParams.GH_TOTAL_PACKETS + GH_GlobalParams.GH_PACKET_SEQ_BITS
+    val dataPayloadBits = params.width_GH_packet * GH_GlobalParams.GH_TOTAL_PACKETS
+    val packetBodyBits = dataPayloadBits + GH_GlobalParams.GH_PACKET_SEQ_BITS
+    // END is internal to this queue; RocketTile still sees the original data
+    // payload. Its low 15 bits carry the final architectural instruction count.
+    val packetCdcBits = packetBodyBits + 1
+    val countCtrlBits = 22 + GH_GlobalParams.GH_PACKET_SEQ_BITS
+    val checkerCount = Wire(Vec(params.number_of_little_cores,
+      UInt(GH_GlobalParams.GH_CHECKER_COUNT_BITS.W)))
     val u_data_cdc                                      = Seq.fill(params.number_of_little_cores) {Module(new AsyncQueue(UInt(packetCdcBits.W), AsyncQueueParams(256,2)))}
     // core_r_arfs_in contains an additional 8-bit ECP destination above the
     // checker-visible ARF payload.  That field is consumed by GHM for routing
@@ -140,7 +150,7 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
       "GHM checker ARF output width must contain valid, sequence, and payload")
     val u_arfs_cdc                                      = Seq.fill(params.number_of_little_cores) {Module(new AsyncQueue(UInt((arfPayloadBits+GH_GlobalParams.GH_PACKET_SEQ_BITS).W), AsyncQueueParams(8,2)))}//留8个余量防止写入太快
     val u_l2b_ctrl_cdc                                  = Seq.fill(params.number_of_little_cores) {Module(new AsyncQueue(UInt(9.W), AsyncQueueParams(64,2)))}
-    val u_b2l_ctrl_cdc                                  = Seq.fill(params.number_of_little_cores) {Module(new AsyncQueue(UInt((22).W), AsyncQueueParams(64,2)))}//早晚会满
+    val u_b2l_ctrl_cdc                                  = Seq.fill(params.number_of_little_cores) {Module(new AsyncQueue(UInt(countCtrlBits.W), AsyncQueueParams(64,2)))}//早晚会满
     val u_session_ctrl_cdc                              = Seq.fill(params.number_of_little_cores) {
       Module(new AsyncQueue(UInt(GH_GlobalParams.GH_SESSION_CTRL_BITS.W), AsyncQueueParams(4, 2)))
     }
@@ -151,8 +161,8 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
     val b_rctrl = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U(8.W))))
 
     //如果添加控制信号，必须去加位宽!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    val l_rctrl = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U((22).W))))
-    val b_wctrl = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U((22).W))))
+    val l_rctrl = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U(countCtrlBits.W))))
+    val b_wctrl = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U(countCtrlBits.W))))
     // Per-checker routing: check ALL big cores' packets for destination match
     for (i <- 0 to params.number_of_little_cores - 1) {
       // Which big core targets checker i?
@@ -200,6 +210,29 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
           full_idx * GH_GlobalParams.GH_PACKET_SEQ_BITS)
         (segment_seq =/= 0.U) -> io.ghm_status_in(b)(31)
       })
+      val selected_producer_seal = Mux1H((0 until GH_GlobalParams.GH_NUM_BIG_CORES).map { b =>
+        val idx = i + GH_GlobalParams.GH_NUM_BIG_CORES
+        val seq = io.checker_segment_id_bigcore(b)((idx + 1) * GH_GlobalParams.GH_PACKET_SEQ_BITS - 1,
+          idx * GH_GlobalParams.GH_PACKET_SEQ_BITS)
+        val sealBits = GH_GlobalParams.GH_PACKET_SEQ_BITS + 1
+        (seq =/= 0.U) -> io.producer_seal_bigcore(b)((idx + 1) * sealBits - 1, idx * sealBits)
+      })
+      val selected_count = ic_counter_merged((i + 1 + GH_GlobalParams.GH_NUM_BIG_CORES) * 16 - 1,
+        (i + GH_GlobalParams.GH_NUM_BIG_CORES) * 16)
+      val sealed_at_source = selected_producer_seal(GH_GlobalParams.GH_PACKET_SEQ_BITS) &&
+        selected_producer_seal(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0) === selected_segment_seq
+      val end_seq_sent = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+      val end_pending = RegInit(false.B)
+      val end_seq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+      val end_count = RegInit(0.U(15.W))
+      // A cancelled checker can release its source slot before END is accepted.
+      // Retain this transaction independently of the live allocation fields.
+      when (!end_pending && sealed_at_source && selected_count(15) &&
+        selected_segment_seq =/= 0.U && end_seq_sent =/= selected_segment_seq) {
+        end_pending := true.B
+        end_seq := selected_segment_seq
+        end_count := selected_count(14, 0)
+      }
       // A segment id is allocated before the last committing instruction is
       // necessarily visible at GH_BUF.  Therefore a low `if_data_en` in the
       // allocation cycle means only "no data is visible yet".  Do not turn
@@ -238,16 +271,28 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
         io.ghm_clock(0).asClock, io.ghm_reset(0).asAsyncReset) {
         val seq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
         when (u_data_cdc(i).io.enq.fire) {
-          seq := Mux(if_data_en, selected_packet_seq, selected_segment_seq)
+          seq := Mux(end_pending, end_seq,
+            Mux(if_data_en, selected_packet_seq, selected_segment_seq))
         }
         seq
       }
-      val empty_anchor_en = selected_segment_valid &&
-        selected_segment_seq =/= anchor_seq_sent && !if_data_en && emptyAnchorReady
-      u_data_cdc(i).io.enq.valid := if_data_en || empty_anchor_en
-      u_data_cdc(i).io.enq.bits  := Cat(
-        Mux(if_data_en, selected_packet_seq, selected_segment_seq),
-        Mux(if_data_en, Mux1H(sel_data, io.ghm_packet_in), 0.U))
+      val anchor_target_seq = Mux(end_pending, end_seq, selected_segment_seq)
+      val empty_anchor_en = (end_pending || selected_segment_valid) &&
+        anchor_target_seq =/= anchor_seq_sent && !if_data_en &&
+        (end_pending || emptyAnchorReady)
+      // Real data and the startup anchor precede END. A sticky per-slot seal
+      // proves no further old data can enter after this marker.
+      val send_end = end_pending && anchor_seq_sent === end_seq &&
+        !if_data_en && !empty_anchor_en
+      u_data_cdc(i).io.enq.valid := if_data_en || empty_anchor_en || send_end
+      u_data_cdc(i).io.enq.bits := Cat(send_end,
+        Mux(if_data_en, selected_packet_seq, anchor_target_seq),
+        Mux(if_data_en, Mux1H(sel_data, io.ghm_packet_in),
+          Mux(send_end, end_count.pad(dataPayloadBits), 0.U(dataPayloadBits.W))))
+      when (u_data_cdc(i).io.enq.fire && send_end) {
+        end_pending := false.B
+        end_seq_sent := end_seq
+      }
       // Bit 4 is the dedicated checker-side packet dequeue permission.  Bit 0
       // is a legacy event/near-full indication and is not a reliable level:
       // it may be sampled from an older GHE event while the checker is already
@@ -261,8 +306,9 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
       // still-pending fragment from package N. Keeping the newer item in its
       // AsyncQueue preserves both payloads instead of resolving a mismatch by
       // dropping one after it has reached the Rocket tile.
-      val dataHeadSeq = u_data_cdc(i).io.deq.bits(packetCdcBits - 1,
+      val dataHeadSeq = u_data_cdc(i).io.deq.bits(packetBodyBits - 1,
         params.width_GH_packet * GH_GlobalParams.GH_TOTAL_PACKETS)
+      val dataHeadEnd = u_data_cdc(i).io.deq.bits(packetBodyBits)
       val arfHeadSeq = u_arfs_cdc(i).io.deq.bits(
         arfPayloadBits + GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, arfPayloadBits)
       // An older ARF fragment can remain at the head after the data side has
@@ -280,9 +326,9 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
       // its sequence and every lane type, then returns one atomic beat-ready
       // level on bit4. This is a standard valid/ready contract: using fire as
       // valid would hide the payload needed to compute type-correct ready.
-      u_data_cdc(i).io.deq.ready := data_cdc_ready(i) && dataHeadInOrder
-      packet_out_wires(i)        := Mux(u_data_cdc(i).io.deq.valid && dataHeadInOrder,
-        Cat(true.B, u_data_cdc(i).io.deq.bits), 0.U)
+      u_data_cdc(i).io.deq.ready := (dataHeadEnd || data_cdc_ready(i)) && dataHeadInOrder
+      packet_out_wires(i)        := Mux(u_data_cdc(i).io.deq.valid && !dataHeadEnd && dataHeadInOrder,
+        Cat(true.B, u_data_cdc(i).io.deq.bits(packetBodyBits - 1, 0)), 0.U)
       // The data vector is the package anchor, but it is dequeued only once
       // while the ARF/CPS stream has one entry per merge index.  Remember the
       // last data sequence consumed in the checker clock domain so remaining
@@ -296,7 +342,43 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
         }
         seq
       }
-      cdc_busy(i)                := (!u_data_cdc(i).io.enq.ready)
+      val receivedCount = withClockAndReset(
+        io.ghm_clock(i + GH_GlobalParams.GH_NUM_BIG_CORES).asClock,
+        io.ghm_reset(i + GH_GlobalParams.GH_NUM_BIG_CORES).asAsyncReset) {
+        val seq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+        val count = RegInit(0.U(15.W))
+        val done = RegInit(false.B)
+        val liveSeq = u_b2l_ctrl_cdc(i).io.deq.bits(countCtrlBits - 1, 22)
+        val liveCount = u_b2l_ctrl_cdc(i).io.deq.bits(20, 6)
+        when (u_data_cdc(i).io.deq.fire && dataHeadEnd) {
+          // Cancellation can leave an old END ahead of the next data anchor
+          // while the independent count queue already reports the new seq.
+          when (dataHeadSeq >= seq) {
+            assert(dataHeadSeq =/= seq || u_data_cdc(i).io.deq.bits(14, 0) >= count,
+              "final package count is below published retirement progress")
+            seq := dataHeadSeq
+            count := u_data_cdc(i).io.deq.bits(14, 0)
+            done := true.B
+          }
+        }.elsewhen (u_b2l_ctrl_cdc(i).io.deq.fire && liveSeq =/= 0.U) {
+          when (liveSeq > seq) {
+            seq := liveSeq
+            count := liveCount
+            done := false.B
+          }.elsewhen (liveSeq === seq && !done) {
+            assert(liveCount >= count, "package retirement count moved backwards")
+            count := liveCount
+          }
+        }
+        Cat(seq =/= 0.U, seq, 0.U(4.W), done, count)
+      }
+      checkerCount(i) := receivedCount
+      val receivedSeq = receivedCount(20 + GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 20)
+      val receivedEnd = receivedCount(15)
+      producer_seal_by_checker(i) := Cat(receivedEnd, receivedSeq)
+      // Serialize the marker before a reused slot can send newer data/ARF.
+      // This depends only on a register, not on the producer's valid signal.
+      cdc_busy(i)                := !u_data_cdc(i).io.enq.ready || end_pending
       cdc_empty(i)               := !u_data_cdc(i).io.deq.valid && !u_arfs_cdc(i).io.deq.valid
       // A locally empty pair of CDC queues is not yet a package tail while
       // GH_BUF still owns packets that have not entered either queue.  Sample
@@ -308,7 +390,8 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
         AsyncResetSynchronizerShiftReg(selected_producer_empty, sync = 3,
           name = Some(s"ghm_filter_empty_checker_${i}_sync"))
       }
-      packet_ingress_empty(i) := cdc_empty(i) && filterEmptySynced
+      packet_ingress_empty(i) := cdc_empty(i) &&
+        ((receivedEnd && receivedSeq === dataConsumedSeq) || filterEmptySynced)
 
 
       //arfs 
@@ -364,14 +447,22 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
           (b + 1).U -> io.ghm_status_in(b)(4, 0)
         })
       // if_filters_empty (bit 31): take from big0 (single-source for now)
-      b_wctrl(i)                     := Cat(ic_counter_merged((i+1+GH_GlobalParams.GH_NUM_BIG_CORES)*16-1,(i+GH_GlobalParams.GH_NUM_BIG_CORES)*16),io.ghm_status_in(0)(31),routed_status)
+      b_wctrl(i)                     := Cat(selected_segment_seq, selected_count, io.ghm_status_in(0)(31), routed_status)
       u_b2l_ctrl_cdc(i).io.deq_clock := io.ghm_clock(i+GH_GlobalParams.GH_NUM_BIG_CORES).asClock
       u_b2l_ctrl_cdc(i).io.deq_reset := io.ghm_reset(i+GH_GlobalParams.GH_NUM_BIG_CORES)
       u_b2l_ctrl_cdc(i).io.enq_clock := io.ghm_clock(0).asClock
       u_b2l_ctrl_cdc(i).io.enq_reset := io.ghm_reset(0)
-      u_b2l_ctrl_cdc(i).io.enq.valid := filterEmptyRise || routed_status =/= 0.U ||
-        ic_counter_merged((i+1+GH_GlobalParams.GH_NUM_BIG_CORES)*16-1) =/= 0.U
-      u_b2l_ctrl_cdc(i).io.enq.bits  := b_wctrl(i)
+      // Count progress must continue through drain even when session status
+      // is zero. Hold an offered sample under backpressure; intermediate
+      // unsent progress may coalesce, but the final source count is sticky.
+      val countPending = RegInit(false.B)
+      val countPayload = RegInit(0.U(countCtrlBits.W))
+      when (!countPending || u_b2l_ctrl_cdc(i).io.enq.fire) {
+        countPending := selected_segment_valid
+        countPayload := b_wctrl(i)
+      }
+      u_b2l_ctrl_cdc(i).io.enq.valid := countPending
+      u_b2l_ctrl_cdc(i).io.enq.bits := countPayload
       u_b2l_ctrl_cdc(i).io.deq.ready := true.B
       l_rctrl(i)                     := Mux(u_b2l_ctrl_cdc(i).io.deq.fire,u_b2l_ctrl_cdc(i).io.deq.bits,0.U)
       dontTouch(u_b2l_ctrl_cdc(i).io.enq.ready)
@@ -577,9 +668,10 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
     io.debug_bp                                  := Cat(cdc_busy.reduce(_|_), debug_backpressure_checkers) // [1]: CDC; [0]: Checker
 
     for (i <- 0 to params.number_of_little_cores - 1) {
-      io.icsl_counter(i)                         := cdc_icsl_cnt(i)
+      io.icsl_counter(i)                         := checkerCount(i)
       // io.ghm_icsl_ack_out(i)                     := cdc_icsl_ack(i)
       io.ghm_cdc_empty_out(i)                    := packet_ingress_empty(i)
+      io.producer_sealed_out(i)                  := producer_seal_by_checker(i)
       // io.ghm_big_switch_out(i)                   := cdc_big_switch_req(i)
     }
     io.icsl_na := Cat(Cat(cdc_ghe_revent.reverse), 0.U(GH_GlobalParams.GH_NUM_BIG_CORES.W))// bit[N-1:0]=0(big), bit[2+N-1:2]=chk1..chkN
@@ -617,11 +709,14 @@ object GHMCore {
 
     var ic_counter_SKNodes                         = Seq[BundleBridgeSink[UInt]]()
     var checker_segment_id_SKNodes                 = Seq[BundleBridgeSink[UInt]]()
+    var producer_seal_bigcore_SKNodes              = Seq[BundleBridgeSink[UInt]]()
     for (b <- 0 until GH_GlobalParams.GH_NUM_BIG_CORES) {
       val ic_counter_SKNode                       = BundleBridgeSink[UInt](Some(() => UInt((16*GH_GlobalParams.GH_NUM_CORES).W)))
       ic_counter_SKNodes                          = ic_counter_SKNodes :+ ic_counter_SKNode
       val segmentNode = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES * GH_GlobalParams.GH_PACKET_SEQ_BITS).W)))
       checker_segment_id_SKNodes = checker_segment_id_SKNodes :+ segmentNode
+      val producerSealNode = BundleBridgeSink[UInt](Some(() => UInt(GH_GlobalParams.GH_PRODUCER_SEALS_BITS.W)))
+      producer_seal_bigcore_SKNodes = producer_seal_bigcore_SKNodes :+ producerSealNode
     }
     // val icsl_ack_SKNode                            = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES-1).W)))
     // val big_complete_ack_SKNode                            = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES-1).W)))
@@ -649,6 +744,7 @@ object GHMCore {
     // var ghm_if_big_complete_SKNodes                = Seq[BundleBridgeSink[Bool]]()
     // var ghm_big_complete_SRNodes                = Seq[BundleBridgeSource[Bool]]()
     var ghm_cdc_empty_out_SKNodes                  = Seq[BundleBridgeSource[Bool]]()
+    var ghm_producer_sealed_out_SKNodes            = Seq[BundleBridgeSource[UInt]]()
     // var ghm_icsl_ack_out_SKNodes                   = Seq[BundleBridgeSource[Bool]]()
     // var ghm_big_switch_out_SKNodes                 = Seq[BundleBridgeSink[Bool]]()
     var ghm_ghe_revent_in_SKNodes                  = Seq[BundleBridgeSink[UInt]]()
@@ -685,6 +781,7 @@ object GHMCore {
       core_r_arfs_in_SKNodes(b)                   := subsystem.tile_core_r_arfs_EPNodes(b)
       ic_counter_SKNodes(b)                       := subsystem.tile_ic_counter_out_EPNodes(b)
       checker_segment_id_SKNodes(b)               := subsystem.tile_checker_segment_id_out_EPNodes(b)
+      producer_seal_bigcore_SKNodes(b)            := subsystem.tile_producer_seal_out_EPNodes(b)
       ic_status_SKNodes(b)                        := subsystem.tile_ic_status_out_EPNodes(b)
       checker_big_owner_SKNodes(b)               := subsystem.tile_checker_big_owner_out_EPNodes(b)
     }
@@ -742,6 +839,9 @@ object GHMCore {
       val ghm_cdc_empty_out_SKNode                    = BundleBridgeSource[Bool]()
       ghm_cdc_empty_out_SKNodes                       = ghm_cdc_empty_out_SKNodes :+ ghm_cdc_empty_out_SKNode
       subsystem.cdc_empty_tocheckerEPNodes(i)        := ghm_cdc_empty_out_SKNodes(i)
+      val ghm_producer_sealed_out_SKNode              = BundleBridgeSource[UInt]()
+      ghm_producer_sealed_out_SKNodes                 = ghm_producer_sealed_out_SKNodes :+ ghm_producer_sealed_out_SKNode
+      subsystem.producer_sealed_tocheckerEPNodes(i)  := ghm_producer_sealed_out_SKNode
 
       val ghm_ghe_revent_in_SkNode                 = BundleBridgeSink[UInt]()
       ghm_ghe_revent_in_SKNodes                    = ghm_ghe_revent_in_SKNodes :+ ghm_ghe_revent_in_SkNode
@@ -807,6 +907,7 @@ object GHMCore {
       ghm.module.io.core_r_arfs_in                := core_r_arfs_in_SKNodes.map(_.bundle)
       ghm.module.io.ghm_packet_dest               := ghm_ght_packet_dest_SKNode.bundle
       ghm.module.io.ghm_status_in                 := VecInit(ghm_ght_status_in_SKNodes.map(_.bundle))
+      ghm.module.io.producer_seal_bigcore         := producer_seal_bigcore_SKNodes.map(_.bundle)
       ghm.module.io.if_agg_free                   := if_agg_free_SKNode.bundle 
       ghm.module.io.ic_counter                    := ic_counter_SKNodes.map(_.bundle)
       ghm.module.io.checker_segment_id_bigcore    := checker_segment_id_SKNodes.map(_.bundle)
@@ -834,6 +935,7 @@ object GHMCore {
           clear_ic_status_tomainSRNodes(i).bundle := 0.U
           icsl_naSRNodes(i).bundle                := 0.U
           ghm_cdc_empty_out_SKNodes(i).bundle     := ghm.module.io.ghm_cdc_empty_out(ci)
+          ghm_producer_sealed_out_SKNodes(i).bundle := ghm.module.io.producer_sealed_out(ci)
           icsl_out_SRNodes(i).bundle              := ghm.module.io.icsl_counter(ci)
 
           ghm.module.io.ghe_event_in(ci)         := ghm_ghe_event_in_SKNodes(i).bundle

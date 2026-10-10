@@ -522,17 +522,34 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // ------------
   // New requests
 
-  io.lsu.req.ready := metaReadArb.io.in(4).ready && dataReadArb.io.in(2).ready
-  metaReadArb.io.in(4).valid := io.lsu.req.valid
-  dataReadArb.io.in(2).valid := io.lsu.req.valid
+  // If an older S2 store fails while a younger store is already resident in
+  // S1, the normal pipeline kill below would otherwise lose that request.
+  // Keep one complete request and replay it through the normal LSU path.
+  val killed_store_replay_valid = RegInit(false.B)
+  val killed_store_replay_req = Reg(new BoomDCacheReq)
+  val killed_store_replay_reqs = Wire(Vec(memWidth, new BoomDCacheReq))
+  killed_store_replay_reqs := DontCare
+  killed_store_replay_reqs(0) := killed_store_replay_req
+  val lsu_pipeline_ready = metaReadArb.io.in(4).ready && dataReadArb.io.in(2).ready
+  val killed_store_replay_fire = killed_store_replay_valid && lsu_pipeline_ready
+
+  io.lsu.req.ready := !killed_store_replay_valid && lsu_pipeline_ready
+  metaReadArb.io.in(4).valid := io.lsu.req.valid || killed_store_replay_valid
+  dataReadArb.io.in(2).valid := io.lsu.req.valid || killed_store_replay_valid
   for (w <- 0 until memWidth) {
     // Tag read for new requests
-    metaReadArb.io.in(4).bits.req(w).idx    := io.lsu.req.bits(w).bits.addr >> blockOffBits
+    metaReadArb.io.in(4).bits.req(w).idx := Mux(
+      killed_store_replay_valid,
+      killed_store_replay_req.addr >> blockOffBits,
+      io.lsu.req.bits(w).bits.addr >> blockOffBits)
     metaReadArb.io.in(4).bits.req(w).way_en := DontCare
     metaReadArb.io.in(4).bits.req(w).tag    := DontCare
     // Data read for new requests
-    dataReadArb.io.in(2).bits.valid(w)      := io.lsu.req.bits(w).valid
-    dataReadArb.io.in(2).bits.req(w).addr   := io.lsu.req.bits(w).bits.addr
+    dataReadArb.io.in(2).bits.valid(w) := Mux(
+      killed_store_replay_valid, (w == 0).B, io.lsu.req.bits(w).valid)
+    dataReadArb.io.in(2).bits.req(w).addr := Mux(
+      killed_store_replay_valid, killed_store_replay_req.addr,
+      io.lsu.req.bits(w).bits.addr)
     dataReadArb.io.in(2).bits.req(w).way_en := ~0.U(nWays.W)
   }
 
@@ -629,15 +646,17 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // Prefetch does not need to read data array
 
   val s0_valid = Mux(io.lsu.req.fire, VecInit(io.lsu.req.bits.map(_.valid)),
+                 Mux(killed_store_replay_fire, VecInit(1.U(memWidth.W).asBools),
                  Mux(mshrs.io.replay.fire || wb_fire || prober_fire || prefetch_fire || mshrs.io.meta_read.fire,
-                                        VecInit(1.U(memWidth.W).asBools), VecInit(0.U(memWidth.W).asBools)))
+                                        VecInit(1.U(memWidth.W).asBools), VecInit(0.U(memWidth.W).asBools))))
   val s0_req   = Wire(Vec(memWidth, new BoomDCacheReq))
   s0_req := Mux(io.lsu.req.fire        , VecInit(io.lsu.req.bits.map(_.bits)),
+            Mux(killed_store_replay_fire, killed_store_replay_reqs,
             Mux(wb_fire                  , wb_req,
             Mux(prober_fire              , prober_req,
             Mux(prefetch_fire            , prefetch_req,
             Mux(mshrs.io.meta_read.fire, mshr_read_req
-                                             , replay_req)))))
+                                             , replay_req))))))
   // LSU 已按 LDQ/STQ 项锁存统计资格；DCache 只补充地址管理器给出的
   // 可缓存属性，并让两者随 MSHR/refill/replay 一直传播到完成点。
   when (io.lsu.req.fire) {
@@ -647,26 +666,28 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     }
   }
   val s0_type  = Mux(io.lsu.req.fire        , t_lsu,
+                 Mux(killed_store_replay_fire, t_lsu,
                  Mux(wb_fire                  , t_wb,
                  Mux(prober_fire              , t_probe,
                  Mux(prefetch_fire            , t_prefetch,
                  Mux(mshrs.io.meta_read.fire, t_mshr_meta_read
-                                              , t_replay)))))
+                                              , t_replay))))))
 
   // Does this request need to send a response or nack
   val s0_send_resp_or_nack = Mux(io.lsu.req.fire, s0_valid,
-    VecInit(Mux(mshrs.io.replay.fire && isRead(mshrs.io.replay.bits.uop.mem_cmd), 1.U(memWidth.W), 0.U(memWidth.W)).asBools))
+    Mux(killed_store_replay_fire, VecInit(1.U(memWidth.W).asBools),
+      VecInit(Mux(mshrs.io.replay.fire && isRead(mshrs.io.replay.bits.uop.mem_cmd),
+        1.U(memWidth.W), 0.U(memWidth.W)).asBools)))
 
 
   val s1_req          = RegNext(s0_req)
+  val s2_store_failed = Wire(Bool())
   for (w <- 0 until memWidth)
     s1_req(w).uop.br_mask := GetNewBrMask(io.lsu.brupdate, s0_req(w).uop)
-  val s2_store_failed = Wire(Bool())
   val s1_valid = widthMap(w =>
                  RegNext(s0_valid(w)                                     &&
                          !IsKilledByBranch(io.lsu.brupdate, s0_req(w).uop) &&
-                         !(io.lsu.exception && s0_req(w).uop.uses_ldq)   &&
-                         !(s2_store_failed && io.lsu.req.fire && s0_req(w).uop.uses_stq),
+                         !(io.lsu.exception && s0_req(w).uop.uses_ldq),
                          init=false.B))
   for (w <- 0 until memWidth)
     assert(!(io.lsu.s1_kill(w) && !RegNext(io.lsu.req.fire) && !RegNext(io.lsu.req.bits(w).valid)))
@@ -697,7 +718,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
                          !io.lsu.s1_kill(w) &&
                          !IsKilledByBranch(io.lsu.brupdate, s1_req(w).uop) &&
                          !(io.lsu.exception && s1_req(w).uop.uses_ldq) &&
-                         !(s2_store_failed && (s1_type === t_lsu) && s1_req(w).uop.uses_stq)))
+                         !(s2_store_failed && s1_type === t_lsu &&
+                           s1_req(w).uop.uses_stq)))
   for (w <- 0 until memWidth)
     s2_req(w).uop.br_mask := GetNewBrMask(io.lsu.brupdate, s1_req(w).uop)
 
@@ -806,10 +828,27 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   for (w <- 0 until memWidth)
     assert(!(s2_send_resp(w) && s2_send_nack(w)))
 
-  // hits always send a response
-  // If MSHR is not available, LSU has to replay this request later
-  // If MSHR is available and this is only a store(not a amo), we don't need to wait for resp later
+  // A store that cannot proceed in S2 is reported through io.lsu.nack.  The
+  // LSU then rewinds stq_execute_head and reissues the same STQ entry.  The
+  // S2-wide kill below can discard a younger store already resident in S1;
+  // that exact S1 request is retained for one compensation replay.
   s2_store_failed := s2_valid(0) && s2_nack(0) && s2_send_nack(0) && s2_req(0).uop.uses_stq
+  when (killed_store_replay_fire) {
+    killed_store_replay_valid := false.B
+  }
+  // The request lost by the S2-wide kill is the request already resident in
+  // S1, not the new request entering S0.  Capture that S1 request with the
+  // same predicate used above so the compensation replay preserves the
+  // original STQ identity and payload.
+  val killed_store_replay_candidate = s2_store_failed && s1_valid(0) &&
+    !io.lsu.s1_kill(0) &&
+    !IsKilledByBranch(io.lsu.brupdate, s1_req(0).uop) &&
+    !(io.lsu.exception && s1_req(0).uop.uses_ldq) &&
+    s1_type === t_lsu && s1_req(0).uop.uses_stq
+  when (killed_store_replay_candidate) {
+    killed_store_replay_req := s1_req(0)
+    killed_store_replay_valid := true.B
+  }
 
   // Miss handling
   for (w <- 0 until memWidth) {
@@ -1017,12 +1056,15 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
 
   crossPackageWbReq.valid := crossPackagePending &&
     !crossPackageIssued &&
+    !crossPackageMetaClearPending &&
     crossPackagePendingSeq <= safePacketWatermark
   crossPackageWbReq.bits := DontCare
   crossPackageWbReq.bits.source := cfg.nMSHRs.U
   crossPackageWbReq.bits.idx := crossPackagePendingSet
   crossPackageWbReq.bits.tag := crossPackagePendingTag
-  crossPackageWbReq.bits.param := 0.U
+  // A shadow writeback invalidates the local copy.  Report T->N to L2 so its
+  // coherence state agrees with the metadata clear performed below.
+  crossPackageWbReq.bits.param := TLPermissions.TtoN
   crossPackageWbReq.bits.way_en := UIntToOH(crossPackagePendingWay)
   crossPackageWbReq.bits.voluntary := true.B
   when (crossPackageBlockCondition && !crossPackagePending) {
@@ -1780,6 +1822,250 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   }
   io.traffic_counter := Mux(trafficCounterSnapshotValid,
     trafficCounterSnapshot, trafficCounterLive)
+
+  //===== EC watchdog diagnostics: observation only ====//
+  // Preserve the complete S2 -> MSHR/replay -> S3/data-array completion
+  // chain and barrier state in the waveform.  None of these probes drives
+  // cache control, handshake, completion, or statistics logic.
+  val debug_s2_valid = s2_valid
+  val debug_s2_type = s2_type
+  val debug_s2_stq_idx = VecInit(s2_req.map(_.uop.stq_idx))
+  val debug_s2_packet_seq = VecInit(s2_req.map(_.packet_seq))
+  val debug_s2_token_valid = VecInit(s2_req.map(_.strict_store_token_valid))
+  val debug_s2_token = VecInit(s2_req.map(_.strict_store_token))
+  val debug_s2_nack = s2_nack
+  val debug_s2_nack_miss = s2_nack_miss
+  val debug_s2_nack_victim = s2_nack_victim
+  val debug_s2_nack_wb = s2_nack_wb
+  val debug_s2_nack_data = s2_nack_data
+  val debug_mshr_req_valid = VecInit(mshrs.io.req.map(_.valid))
+  val debug_mshr_req_ready = VecInit(mshrs.io.req.map(_.ready))
+  val debug_mshr_req_fire = VecInit(mshrs.io.req.map(_.fire))
+  val debug_replay_valid = mshrs.io.replay.valid
+  val debug_replay_fire = mshrs.io.replay.fire
+  val debug_replay_stq_idx = mshrs.io.replay.bits.uop.stq_idx
+  val debug_replay_packet_seq = mshrs.io.replay.bits.packet_seq
+  val debug_replay_token_valid = mshrs.io.replay.bits.strict_store_token_valid
+  val debug_replay_token = mshrs.io.replay.bits.strict_store_token
+  val debug_killed_store_replay_valid = killed_store_replay_valid
+  val debug_killed_store_replay_fire = killed_store_replay_fire
+  val debug_killed_store_replay_stq_idx = killed_store_replay_req.uop.stq_idx
+  val debug_killed_store_replay_token_valid = killed_store_replay_req.strict_store_token_valid
+  val debug_killed_store_replay_token = killed_store_replay_req.strict_store_token
+  val debug_s3_valid = s3_valid
+  val debug_s3_stq_idx = s3_req.uop.stq_idx
+  val debug_s3_packet_seq = s3_req.packet_seq
+  val debug_s3_token_valid = s3_req.strict_store_token_valid
+  val debug_s3_token = s3_req.strict_store_token
+  val debug_data_write_pipeline_fire = dataWriteArb.io.in(0).fire
+  val debug_cache_completion = completed_strict_store_cache
+  val debug_uncache_completion = completed_strict_store_uncache
+  val debug_uncache_completion_stq_idx = mshrs.io.traffic_strict_store_complete_stq_idx
+  val debug_uncache_completion_token = mshrs.io.traffic_strict_store_complete_token
+  val debug_l1_cross_package_blocked = l1CrossPackageBlocked
+  val debug_cross_package_block_condition = crossPackageBlockCondition
+  val debug_cross_package_pending = crossPackagePending
+  val debug_cross_package_issued = crossPackageIssued
+  val debug_cross_package_meta_clear_pending = crossPackageMetaClearPending
+  val debug_cross_package_pending_seq = crossPackagePendingSeq
+  val debug_safe_packet_watermark = safePacketWatermark
+  // Keep the complete parent[] load/store provenance visible. These aliases
+  // are observation-only and deliberately do not participate in cache
+  // control, arbitration, or statistics.
+  val debug_traffic_counting = trafficCounting
+  val debug_traffic_start = io.traffic_start
+  val debug_traffic_stop = io.traffic_stop
+  val debug_traffic_reset = io.traffic_reset
+  val debug_s0_valid = s0_valid
+  val debug_s0_type = s0_type
+  val debug_s0_addr = VecInit(s0_req.map(_.addr))
+  val debug_s0_data = VecInit(s0_req.map(_.data))
+  val debug_s0_packet_seq = VecInit(s0_req.map(_.packet_seq))
+  val debug_s1_valid = s1_valid
+  val debug_s1_type = s1_type
+  val debug_s1_addr = VecInit(s1_req.map(_.addr))
+  val debug_s1_data = VecInit(s1_req.map(_.data))
+  val debug_s1_packet_seq = VecInit(s1_req.map(_.packet_seq))
+  val debug_s2_addr = VecInit(s2_req.map(_.addr))
+  val debug_s2_data = VecInit(s2_req.map(_.data))
+  val debug_s2_data_word = s2_data_word
+  val debug_s2_send_resp = s2_send_resp
+  val debug_s2_send_nack = s2_send_nack
+  val debug_s2_hit = s2_hit
+  val debug_s2_tag_match = VecInit(s2_tag_match)
+  val debug_s2_hit_state = VecInit(s2_hit_state.map(_.state))
+  val debug_cache_resp_valid = VecInit(cache_resp.map(_.valid))
+  val debug_cache_resp_data = VecInit(cache_resp.map(_.bits.data))
+  val debug_uncache_resp_valid = uncache_resp.valid
+  val debug_uncache_resp_data = uncache_resp.bits.data
+  val debug_lsu_resp_valid = VecInit(io.lsu.resp.map(_.valid))
+  val debug_lsu_resp_data = VecInit(io.lsu.resp.map(_.bits.data))
+  val debug_data_write_valid = dataWriteArb.io.in(0).valid
+  val debug_data_write_fire = dataWriteArb.io.in(0).fire
+  val debug_data_write_addr = dataWriteArb.io.in(0).bits.addr
+  val debug_data_write_data = dataWriteArb.io.in(0).bits.data
+  val debug_data_write_wmask = dataWriteArb.io.in(0).bits.wmask
+  val debug_data_write_way_en = dataWriteArb.io.in(0).bits.way_en
+  // Materialize dynamic-array index/provenance probes as real named wires.
+  // Directly dontTouch-ing the indexing expressions makes older FIRRTL
+  // versions serialize the signal as an Index component and then attempt to
+  // parse the name (for example, "debug_modifying_set") as an integer.
+  val debug_modifying_set = Wire(UInt(idxBits.W))
+  val debug_modifying_way = Wire(UInt(log2Ceil(nWays max 2).W))
+  val debug_overwritten_packet_seq = Wire(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val debug_overwritten_packet_tracked = Wire(Bool())
+  debug_modifying_set := modifyingSet
+  debug_modifying_way := modifyingWay
+  debug_overwritten_packet_seq := overwrittenPacketSeq
+  debug_overwritten_packet_tracked := overwrittenPacketTracked
+  val debug_cross_package_wb_valid = crossPackageWbReq.valid
+  val debug_cross_package_wb_ready = crossPackageWbReq.ready
+  val debug_cross_package_wb_fire = crossPackageWbReq.fire
+  val debug_cross_package_wb_param = crossPackageWbReq.bits.param
+  val debug_cross_package_wb_done = crossPackageWbDone
+  val debug_cross_package_meta_clear_valid = crossPackageMetaClear.valid
+  val debug_cross_package_meta_clear_fire = crossPackageMetaClear.fire
+  val debug_meta_write_valid = metaWriteArb.io.out.valid
+  val debug_meta_write_fire = metaWriteArb.io.out.fire
+  val debug_meta_write_idx = metaWriteArb.io.out.bits.idx
+  val debug_meta_write_tag = metaWriteArb.io.out.bits.tag
+  val debug_meta_write_coh_state = metaWriteArb.io.out.bits.data.coh.state
+  val debug_tl_a_fire = tl_out.a.fire
+  val debug_tl_a_opcode = tl_out.a.bits.opcode
+  val debug_tl_a_address = tl_out.a.bits.address
+  val debug_tl_a_data = tl_out.a.bits.data
+  val debug_tl_a_source = tl_out.a.bits.source
+  val debug_tl_c_fire = tl_out.c.fire
+  val debug_tl_c_opcode = tl_out.c.bits.opcode
+  val debug_tl_c_param = tl_out.c.bits.param
+  val debug_tl_c_address = tl_out.c.bits.address
+  val debug_tl_c_data = tl_out.c.bits.data
+  val debug_tl_d_fire = tl_out.d.fire
+  val debug_tl_d_opcode = tl_out.d.bits.opcode
+  val debug_tl_d_param = tl_out.d.bits.param
+  val debug_tl_d_source = tl_out.d.bits.source
+  val debug_tl_d_data = tl_out.d.bits.data
+  val debug_address_stats_event_valid = VecInit(io.lsu.address_stats_event.map(_.valid))
+  val debug_address_stats_event_addr = VecInit(io.lsu.address_stats_event.map(_.bits.addr))
+  val debug_address_stats_event_is_store = VecInit(io.lsu.address_stats_event.map(_.bits.isStore))
+  val debug_address_stats_event_seq = VecInit(io.lsu.address_stats_event.map(_.bits.packetSeq))
+  val debug_address_stats_valid = addressStats.io.statsValid
+  val debug_address_stats_error = addressStats.io.error
+  val debug_address_stats_pending = addressStats.io.pending
+  dontTouch(debug_s2_valid)
+  dontTouch(debug_s2_type)
+  dontTouch(debug_s2_stq_idx)
+  dontTouch(debug_s2_packet_seq)
+  dontTouch(debug_s2_token_valid)
+  dontTouch(debug_s2_token)
+  dontTouch(debug_s2_nack)
+  dontTouch(debug_s2_nack_miss)
+  dontTouch(debug_s2_nack_victim)
+  dontTouch(debug_s2_nack_wb)
+  dontTouch(debug_s2_nack_data)
+  dontTouch(debug_mshr_req_valid)
+  dontTouch(debug_mshr_req_ready)
+  dontTouch(debug_mshr_req_fire)
+  dontTouch(debug_replay_valid)
+  dontTouch(debug_replay_fire)
+  dontTouch(debug_replay_stq_idx)
+  dontTouch(debug_replay_packet_seq)
+  dontTouch(debug_replay_token_valid)
+  dontTouch(debug_replay_token)
+  dontTouch(debug_killed_store_replay_valid)
+  dontTouch(debug_killed_store_replay_fire)
+  dontTouch(debug_killed_store_replay_stq_idx)
+  dontTouch(debug_killed_store_replay_token_valid)
+  dontTouch(debug_killed_store_replay_token)
+  dontTouch(debug_s3_valid)
+  dontTouch(debug_s3_stq_idx)
+  dontTouch(debug_s3_packet_seq)
+  dontTouch(debug_s3_token_valid)
+  dontTouch(debug_s3_token)
+  dontTouch(debug_data_write_pipeline_fire)
+  dontTouch(debug_cache_completion)
+  dontTouch(debug_uncache_completion)
+  dontTouch(debug_uncache_completion_stq_idx)
+  dontTouch(debug_uncache_completion_token)
+  dontTouch(debug_l1_cross_package_blocked)
+  dontTouch(debug_cross_package_block_condition)
+  dontTouch(debug_cross_package_pending)
+  dontTouch(debug_cross_package_issued)
+  dontTouch(debug_cross_package_meta_clear_pending)
+  dontTouch(debug_cross_package_pending_seq)
+  dontTouch(debug_safe_packet_watermark)
+  dontTouch(debug_traffic_counting)
+  dontTouch(debug_traffic_start)
+  dontTouch(debug_traffic_stop)
+  dontTouch(debug_traffic_reset)
+  dontTouch(debug_s0_valid)
+  dontTouch(debug_s0_type)
+  dontTouch(debug_s0_addr)
+  dontTouch(debug_s0_data)
+  dontTouch(debug_s0_packet_seq)
+  dontTouch(debug_s1_valid)
+  dontTouch(debug_s1_type)
+  dontTouch(debug_s1_addr)
+  dontTouch(debug_s1_data)
+  dontTouch(debug_s1_packet_seq)
+  dontTouch(debug_s2_addr)
+  dontTouch(debug_s2_data)
+  dontTouch(debug_s2_data_word)
+  dontTouch(debug_s2_send_resp)
+  dontTouch(debug_s2_send_nack)
+  dontTouch(debug_s2_hit)
+  dontTouch(debug_s2_tag_match)
+  dontTouch(debug_s2_hit_state)
+  dontTouch(debug_cache_resp_valid)
+  dontTouch(debug_cache_resp_data)
+  dontTouch(debug_uncache_resp_valid)
+  dontTouch(debug_uncache_resp_data)
+  dontTouch(debug_lsu_resp_valid)
+  dontTouch(debug_lsu_resp_data)
+  dontTouch(debug_data_write_valid)
+  dontTouch(debug_data_write_fire)
+  dontTouch(debug_data_write_addr)
+  dontTouch(debug_data_write_data)
+  dontTouch(debug_data_write_wmask)
+  dontTouch(debug_data_write_way_en)
+  dontTouch(debug_modifying_set)
+  dontTouch(debug_modifying_way)
+  dontTouch(debug_overwritten_packet_seq)
+  dontTouch(debug_overwritten_packet_tracked)
+  dontTouch(debug_cross_package_wb_valid)
+  dontTouch(debug_cross_package_wb_ready)
+  dontTouch(debug_cross_package_wb_fire)
+  dontTouch(debug_cross_package_wb_param)
+  dontTouch(debug_cross_package_wb_done)
+  dontTouch(debug_cross_package_meta_clear_valid)
+  dontTouch(debug_cross_package_meta_clear_fire)
+  dontTouch(debug_meta_write_valid)
+  dontTouch(debug_meta_write_fire)
+  dontTouch(debug_meta_write_idx)
+  dontTouch(debug_meta_write_tag)
+  dontTouch(debug_meta_write_coh_state)
+  dontTouch(debug_tl_a_fire)
+  dontTouch(debug_tl_a_opcode)
+  dontTouch(debug_tl_a_address)
+  dontTouch(debug_tl_a_data)
+  dontTouch(debug_tl_a_source)
+  dontTouch(debug_tl_c_fire)
+  dontTouch(debug_tl_c_opcode)
+  dontTouch(debug_tl_c_param)
+  dontTouch(debug_tl_c_address)
+  dontTouch(debug_tl_c_data)
+  dontTouch(debug_tl_d_fire)
+  dontTouch(debug_tl_d_opcode)
+  dontTouch(debug_tl_d_param)
+  dontTouch(debug_tl_d_source)
+  dontTouch(debug_tl_d_data)
+  dontTouch(debug_address_stats_event_valid)
+  dontTouch(debug_address_stats_event_addr)
+  dontTouch(debug_address_stats_event_is_store)
+  dontTouch(debug_address_stats_event_seq)
+  dontTouch(debug_address_stats_valid)
+  dontTouch(debug_address_stats_error)
+  dontTouch(debug_address_stats_pending)
 
   io.lsu.ordered := mshrs.io.fence_rdy && !s1_valid.reduce(_||_) && !s2_valid.reduce(_||_)
 }

@@ -243,8 +243,12 @@ class PackageAddressStats(
   val processSizeBytes = 1.U(5.W) << processEvent.size
   val processLineOffset = processEvent.addr(blockOffBits - 1, 0)
   val processCrossesLine = processLineOffset +& processSizeBytes > lineBytes.U
+  // The checker watermark only proves that the package result is safe; it
+  // does not prove that BOOM has already retired every LSQ entry carrying
+  // that package tag. Equality is therefore a valid same-package tail event.
+  // Events strictly older than the watermark remain malformed.
   val processMalformed = processEvent.packetSeq === 0.U ||
-    processEvent.packetSeq <= processEvent.safeWatermark || processCrossesLine
+    processEvent.packetSeq < processEvent.safeWatermark || processCrossesLine
 
   val packageMatch = Wire(Vec(packageWays, Bool()))
   val packageFree = Wire(Vec(packageWays, Bool()))

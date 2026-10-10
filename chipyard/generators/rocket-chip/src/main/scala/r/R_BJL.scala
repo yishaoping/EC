@@ -193,7 +193,7 @@ class R_BJLR(val params: R_BJLParams) extends Module with HasR_RBJLRIO {
 
   // Peek current spec bank
   val peek_bits_vec  = VecInit(u_channel_bj.map(_.io.peek_bits))
-  val peek_valid_vec = VecInit(u_channel_bj.map(chan => chan.io.peek_valid || chan.io.enq_valid))
+  val peek_valid_vec = VecInit(u_channel_bj.map(_.io.peek_valid))
   val peek_data_valid_vec = VecInit(u_channel_bj.map(chan => chan.io.peek_valid))
   val can_commit_vec = VecInit(u_channel_bj.map(_.io.can_commit))
 
@@ -211,14 +211,17 @@ class R_BJLR(val params: R_BJLParams) extends Module with HasR_RBJLRIO {
   io.need_replay  := !commit_peek_valid
 
   // Reserve fires when frontend asks and current spec head is valid
-  val reserve_fire = io.bj_req_valid && io.bj_req_ready
+  val reserve_fire = io.bj_req_valid && io.bj_req_ready && !io.bj_rollback
 
   // Commit fires when backend asks and current commit bank actually has reserved entries
   val commit_fire = io.bj_commit_valid && can_commit_vec(commit_bank_ptr)
+  val commit_bank_after = Mux(commit_fire, incBank(commit_bank_ptr), commit_bank_ptr)
+  assert(!io.bj_commit_valid || can_commit_vec(commit_bank_ptr),
+    "BJL commit has no matching reservation")
 
   // Rollback: reset speculative state to committed state
   when (io.bj_rollback) {
-    spec_bank_ptr := commit_bank_ptr
+    spec_bank_ptr := commit_bank_after
   }.elsewhen(io.bj_s2_replay){
     spec_bank_ptr := decBank(spec_bank_ptr)
   }

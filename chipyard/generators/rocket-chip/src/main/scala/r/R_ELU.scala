@@ -23,6 +23,7 @@ class R_ELUIO(params: R_ELUParams) extends Bundle {
   val lsl_resp_valid = Input(UInt(1.W))
   val lsl_resp_addr = Input(UInt(params.wAddr.W))
   val lsl_resp_data = Input(UInt(params.xLen.W))
+  val lsl_resp_mismatch = Input(UInt(1.W))
   val wb_pc = Input(UInt(params.wAddr.W))
   val wb_inst = Input(UInt(32.W))
 
@@ -89,8 +90,8 @@ class R_ELU (val params: R_ELUParams) extends Module with HasR_ELUIO {
 
   val err_ld                  = WireInit(false.B)
   val err_st                  = WireInit(false.B)
-  err_ld                     := Mux(ld_valid && (req_addr_reg =/= io.lsl_resp_addr), true.B, false.B)
-  err_st                     := Mux(st_valid && ((req_addr_reg =/= io.lsl_resp_addr) || (req_data_wire =/= resp_data_wire)), true.B, false.B)
+  err_ld                     := Mux(ld_valid && (io.lsl_resp_mismatch.asBool || (req_addr_reg =/= io.lsl_resp_addr)), true.B, false.B)
+  err_st                     := Mux(st_valid && (io.lsl_resp_mismatch.asBool || (req_addr_reg =/= io.lsl_resp_addr) || (req_data_wire =/= resp_data_wire)), true.B, false.B)
 
   val err_log_ld              = WireInit(0.U((2*params.xLen + 3*params.wAddr).W))
   val err_log_st              = WireInit(0.U((2*params.xLen + 3*params.wAddr).W))
@@ -118,6 +119,7 @@ class R_ELU (val params: R_ELUParams) extends Module with HasR_ELUIO {
   u_channel.io.enq_valid     := channel_enq_valid
   u_channel.io.enq_bits      := channel_enq_data
   u_channel.io.deq_ready     := channel_deq_ready
+  u_channel.io.deq_read      := channel_deq_ready
   channel_deq_data           := u_channel.io.deq_bits
   channel_empty              := u_channel.io.empty
   channel_full               := u_channel.io.full

@@ -218,6 +218,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
 
   val ex_reg_xcpt_interrupt  = Reg(Bool())
   val ex_reg_valid           = Reg(Bool())
+  val ex_reg_bjl_owned       = RegInit(false.B)
   val ex_reg_rvc             = Reg(Bool())
   val ex_reg_btb_resp        = Reg(new BTBResp)
   val ex_reg_xcpt            = Reg(Bool())
@@ -236,6 +237,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
 
   val mem_reg_xcpt_interrupt  = Reg(Bool())
   val mem_reg_valid           = Reg(Bool())
+  val mem_reg_bjl_owned       = RegInit(false.B)
   val mem_reg_rvc             = Reg(Bool())
   val mem_reg_btb_resp        = Reg(new BTBResp)
   val mem_reg_xcpt            = Reg(Bool())
@@ -260,6 +262,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val mem_reg_wphit          = Reg(Vec(nBreakpoints, Bool()))
 
   val wb_reg_valid           = Reg(Bool())
+  val wb_reg_bjl_owned       = RegInit(false.B)
   val wb_reg_xcpt            = Reg(Bool())
   val wb_reg_replay          = Reg(Bool())
   val wb_reg_flush_pipe      = Reg(Bool())
@@ -350,6 +353,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val lsl_resp_size     = Wire(UInt(2.W))
   val lsl_resp_addr     = Wire(UInt(40.W))
   val lsl_resp_cacheable = Wire(Bool())
+  val lsl_resp_mismatch = Wire(Bool())
   val lsl_resp_data     = Wire(UInt(xLen.W))
   val lsl_resp_has_data = Wire(Bool())
   val lsl_resp_replay   = Wire(Bool())
@@ -588,6 +592,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   }
 
   ex_reg_valid := !ctrl_killd
+  ex_reg_bjl_owned := !ctrl_killd && ibuf.io.inst(0).bits.bjlOwned
   ex_reg_replay := !take_pc && ibuf.io.inst(0).valid && ibuf.io.inst(0).bits.replay
   ex_reg_xcpt := !ctrl_killd && id_xcpt
   ex_reg_xcpt_interrupt := !take_pc && ibuf.io.inst(0).valid && csr.io.interrupt
@@ -700,6 +705,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   dontTouch(mem_ctrl)
 
   mem_reg_valid := !ctrl_killx
+  mem_reg_bjl_owned := !ctrl_killx && ex_reg_bjl_owned
   mem_reg_replay := !take_pc_mem_wb && replay_ex
   mem_reg_xcpt := !ctrl_killx && ex_xcpt
   mem_reg_xcpt_interrupt := !take_pc_mem_wb && ex_reg_xcpt_interrupt
@@ -786,6 +792,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
 
   // writeback stage
   wb_reg_valid := !ctrl_killm
+  wb_reg_bjl_owned := !ctrl_killm && mem_reg_bjl_owned
   wb_reg_replay := replay_mem && !take_pc_wb
   wb_reg_xcpt := mem_xcpt && !take_pc_wb
   wb_reg_flush_pipe := !ctrl_killm && mem_reg_flush_pipe
@@ -1247,6 +1254,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   lsl_resp_size := lsl.io.resp_size
   lsl_resp_addr := lsl.io.resp_addr
   lsl_resp_cacheable := lsl.io.resp_cacheable
+  lsl_resp_mismatch := lsl.io.resp_mismatch
   lsl_resp_data := lsl.io.resp_data
   lsl_resp_has_data := lsl.io.resp_has_data
   lsl_resp_replay := lsl.io.resp_replay
@@ -1269,6 +1277,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   elu.io.lsl_resp_valid := lsl_resp_valid
   elu.io.lsl_resp_addr := lsl_resp_addr
   elu.io.lsl_resp_data := lsl_resp_data
+  elu.io.lsl_resp_mismatch := lsl_resp_mismatch
   elu.io.wb_pc := Mux(wb_reg_valid, wb_reg_pc, 0.U)
   elu.io.wb_inst := Mux(wb_reg_valid, wb_reg_inst, 0.U)
 
@@ -1316,6 +1325,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   // prevents a new sequence from entering while R_ICSL is still executing or
   // returning from the package that produced the previous result.
   val package_cleanup_pending = RegInit(false.B)
+  val checker_clear_pending = RegInit(false.B)
   // COPY is a pulse from the GHE command path. Hold it across the one-cycle
   // R_ICSL reset/nonchecking transition so cancellation cleanup cannot lose a
   // valid start request.
@@ -1332,8 +1342,9 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   // separately backpressured below, so this predicate only describes the
   // local checker resources owned by the previous package.
   val checker_local_cleanup_done = icsl.io.context_idle &&
-    (rsu_slave.io.rsu_status === 0.U) && lsl.io.if_empty &&
-    rsu_slave.io.compare_idle && rsu_slave.io.ecp_idle
+    (rsu_slave.io.rsu_status === 0.U) && lsl.io.quiescent &&
+    rsu_slave.io.compare_idle && rsu_slave.io.ecp_idle &&
+    io.imem.checker_clear_done && !checker_clear_pending
   val checker_cleanup_done = checker_local_cleanup_done
   val no_result_pending = !package_result_outstanding &&
     !package_result_waiting && !package_cleanup_pending
@@ -1352,6 +1363,10 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val new_package_seq = Mux(pending_new_package &&
     (!incoming_package_seq || pending_package_seq >= io.packet_seq),
     pending_package_seq, io.packet_seq)
+  val count_seq = io.ic_counter(20 + GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 20)
+  icsl.io.ic_counter_valid := io.ic_counter(GH_GlobalParams.GH_CHECKER_COUNT_BITS - 1) &&
+    count_seq === Mux(new_package, new_package_seq, package_seq_reg) && count_seq =/= 0.U
+  icsl.io.ic_counter_reset := new_package
   val package_owned = package_check_active || package_start_pending
   val packet_transport_error_owned = io.packet_protocol_error &&
     ((new_package && io.packet_seq === new_package_seq) ||
@@ -1410,23 +1425,36 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     !csr.io.trace(0).exception
   val arch_snapshot_quiet_prev = RegNext(arch_snapshot_quiet, false.B)
   val arch_snapshot_stable = arch_snapshot_quiet && arch_snapshot_quiet_prev
+  // A transient empty CDC/LSL observation is not a package tail.  Completion
+  // requires the BOOM producer's sticky, sequence-qualified seal as well.
+  val producer_sealed_for_package = io.producer_sealed_valid &&
+    io.producer_sealed_seq === package_seq_reg
+  // This is the only condition that allows R_ICSL to leave instruction
+  // checking. It joins the producer's sequence-qualified seal with stable CDC
+  // ingress drain and the complete local LSL transaction lifetime.
+  val package_tail_drained = package_check_active &&
+    producer_sealed_for_package && packet_ingress_drained && lsl.io.quiescent
+  icsl.io.package_tail_drained := package_tail_drained
   val arf_compare_ready = package_check_active &&
     !(arf_check_done_seen && arf_check_epoch_reg === rsu_slave.io.ecp_epoch) &&
     !rsu_slave.io.ecp_frame_start &&
     rsu_slave.io.ecp_complete && rsu_slave.io.ecp_seq === package_seq_reg &&
-    packet_ingress_drained && lsl.io.if_empty && arch_snapshot_stable &&
+    producer_sealed_for_package &&
+    packet_ingress_drained && lsl.io.quiescent && arch_snapshot_stable &&
     rsu_slave.io.compare_idle && !package_transport_error &&
     !package_transport_error_now
-  val package_data_complete = package_check_active && packet_ingress_drained &&
-    lsl.io.if_empty && arf_check_complete &&
+  val package_data_complete = package_check_active && producer_sealed_for_package &&
+    packet_ingress_drained &&
+    lsl.io.quiescent && arf_check_complete &&
     (!csr_check_required || csr_check_complete)
   // The package tail and the instruction stream are separate completion
   // domains.  A result is normal only after both have reached a safe boundary.
   // This prevents the result queue from being filled while R_ICSL is still in
   // fsm_checking, which was the first half of the release deadlock.
   val full_check_complete = package_data_complete && icsl.io.package_exec_done
-  val arf_waiting_after_data_drain = package_check_active && packet_ingress_drained &&
-    lsl.io.if_empty && !arf_check_complete
+  val arf_waiting_after_data_drain = package_check_active && producer_sealed_for_package &&
+    packet_ingress_drained &&
+    lsl.io.quiescent && !arf_check_complete
   val arf_wait_timeout = arf_waiting_after_data_drain &&
     (arf_wait_timeout_counter === 4095.U)
   // A complete data/ARF package can still wait forever if the instruction
@@ -1449,9 +1477,15 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val package_replay_progress = lsl.io.st_deq || lsl.io.ld_deq ||
     (lsl_req_valid_csr && lsl_req_ready_csr) ||
     (lsl_req_valid_rocc && lsl_req_ready_rocc)
+  // Returning from a timer/management trap is not progress on this package.
+  // Keep trap_depth/resume-state handling in R_ICSL unchanged; only an actual
+  // owned retirement/fragment/stage advance earns a fresh no-progress budget.
+  val producer_sealed_prev = RegNext(producer_sealed_for_package, false.B)
   val package_progress_event = package_start_accepted || package_fragment_progress ||
-    package_replay_progress || checker_instruction_progress || csr.io.eret ||
-    arf_done_owned || csr.io.if_priv_checkcomp ||
+    (producer_sealed_for_package && !producer_sealed_prev) ||
+    package_replay_progress || checker_instruction_progress ||
+    (arf_done_owned && !arf_check_done_seen) ||
+    (csr.io.if_priv_checkcomp && !csr_check_done_seen) ||
     (icsl.io.package_exec_done && !package_exec_done_prev)
   val package_progress_timeout_counter = RegInit(0.U(16.W))
   val package_progress_timeout_limit = 65535.U(16.W)
@@ -1502,6 +1536,11 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   // cleanup breaks the result-fire -> package-clear -> frame-start feedback;
   // result handoff remains blocked by checker_cleanup_done until RSUSL is idle.
   rsu_package_clear := RegNext(package_result_fire, false.B)
+  when (rsu_package_clear) {
+    checker_clear_pending := true.B
+  }.elsewhen (checker_clear_pending && io.imem.checker_clear_done) {
+    checker_clear_pending := false.B
+  }
   // Result delivery is a sequenced CDC transaction. BOOM may reuse a checker
   // only after the local checker context has returned to idle, so keep the
   // result in this queue until cleanup is complete. This preserves ordering
@@ -1848,7 +1887,11 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
                                                    Mux(debug_perf_sel === 10.U, debug_perf_blocking_ST, 0.U)))))))))))
   returned_to_special_address_valid := (wb_valid || io.rocc.resp.valid) && (wb_reg_pc === pc_special)
   
-  io.imem.bjl_commit := wb_valid && (wb_ctrl.jal || wb_ctrl.jalr || wb_ctrl.branch)
+  io.imem.bjl_commit := wb_valid && wb_reg_bjl_owned
+  assert(!io.imem.bjl_commit || (wb_ctrl.jal || wb_ctrl.jalr || wb_ctrl.branch),
+    "BJL ownership reached a non-CFI retirement")
+  io.imem.checker_seq := package_seq_reg
+  io.imem.checker_clear := checker_clear_pending
   io.imem.if_check_completed := (icsl.io.debug_state === 6.U) || (icsl.io.debug_state === 7.U)
   io.imem.if_overtaking := icsl.io.icsl_stalld && (icsl.io.debug_state === 2.U) || (icsl.io.debug_state === 3.U)
   io.imem.if_check_already_done := icsl.io.already_done

@@ -32,6 +32,14 @@ trait HasFIFOIO extends BaseModule {
   val io = IO(new FIFOIO(params))
 }
 
+// SyncReadMem needs a read-enable independent from the dequeue handshake:
+// reading the head is a one-cycle prefetch, while dequeueing advances the
+// committed read pointer and occupancy.
+class GH_MemFIFOIO(params: FIFOParams) extends FIFOIO(params) {
+  val deq_read = Input(Bool())
+  val deq_read_valid = Output(Bool())
+}
+
 class GH_FIFO(val params: FIFOParams) extends Module with HasFIFOIO {
 
   def counter(depth: Int, incr: Bool): (UInt, UInt) = {
@@ -129,7 +137,8 @@ class GH_FIFO(val params: FIFOParams) extends Module with HasFIFOIO {
 }
 
 
-class GH_MemFIFO(val params: FIFOParams) extends Module with HasFIFOIO {
+class GH_MemFIFO(val params: FIFOParams) extends Module {
+  val io = IO(new GH_MemFIFOIO(params))
   def counter(depth: Int, incr: Bool): (UInt, UInt) = {
     val cntReg                  = RegInit(0.U(log2Ceil(depth).W))
     val nextVal                 = Mux(cntReg === (depth-1).U, 0.U, cntReg + 1.U)
@@ -152,7 +161,11 @@ class GH_MemFIFO(val params: FIFOParams) extends Module with HasFIFOIO {
   val debug_fcounter            = RegInit(0.U(64.W))
   val debug_fdcounter           = RegInit(0.U(64.W))
 
-  when ((io.enq_valid && !fullReg) && (io.deq_ready && !emptyReg)) {
+  val enq_fire                  = io.enq_valid && !fullReg
+  val deq_fire                  = io.deq_ready && !emptyReg
+  val deq_read_fire             = io.deq_read && !emptyReg
+
+  when (enq_fire && deq_fire) {
     mem.write                     (writePtr, io.enq_bits)
     emptyReg                   := false.B
     fullReg                    := false.B
@@ -163,7 +176,7 @@ class GH_MemFIFO(val params: FIFOParams) extends Module with HasFIFOIO {
     debug_fdcounter            := debug_fdcounter + 1.U
   }
 
-  when ((io.enq_valid && !fullReg) && !(io.deq_ready && !emptyReg)){
+  when (enq_fire && !deq_fire){
     mem.write                     (writePtr, io.enq_bits)
     emptyReg                   := false.B
     fullReg                    := nextWrite === readPtr
@@ -172,7 +185,7 @@ class GH_MemFIFO(val params: FIFOParams) extends Module with HasFIFOIO {
     debug_fcounter             := debug_fcounter + 1.U
   }
     
-  when (!(io.enq_valid && !fullReg) && (io.deq_ready && !emptyReg)) {
+  when (!enq_fire && deq_fire) {
     emptyReg                   := nextRead === writePtr
     fullReg                    := false.B
     incrRead                   := true.B
@@ -192,7 +205,11 @@ class GH_MemFIFO(val params: FIFOParams) extends Module with HasFIFOIO {
                                       1.U, 
                                       0.U)
   
-  io.deq_bits                  := mem.read(readPtr, io.deq_ready)
+  io.deq_bits                  := mem.read(readPtr, io.deq_read)
+  // SyncReadMem returns the requested word one cycle after deq_read.  Expose
+  // that response-valid phase separately from the committed dequeue pulse.
+  val deq_read_valid_reg       = RegNext(deq_read_fire, false.B)
+  io.deq_read_valid            := deq_read_valid_reg
   io.full                      := fullReg
   io.enq_ready                 := !fullReg
   io.empty                     := emptyReg

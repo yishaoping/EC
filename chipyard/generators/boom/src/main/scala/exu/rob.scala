@@ -124,6 +124,11 @@ class RobIo(
   val gh_effective_rob_idx                      = Input(UInt(7.W))    // Revisit: make it is generic
   val gh_effective_valid                        = Input(UInt(1.W))    // Revisit: make it is generic
   val r_next_pc                                 = Output(UInt(40.W))    // Revisit: make it is generic
+  val r_next_pc_valid                           = Output(Bool())
+  // Architectural redirects (exceptions and resolved control-flow flushes)
+  // are supplied by BoomCore, where the final redirect target is known.
+  val arch_redirect_valid                       = Input(Bool())
+  val arch_redirect_pc                          = Input(UInt(40.W))
   //===== GuardianCouncil Function: End  ====//
 }
 
@@ -277,7 +282,13 @@ class Rob(
   val rob_head_fflags     = Wire(Vec(coreWidth, UInt(freechips.rocketchip.tile.FPConstants.FLAGS_SZ.W)))
 //===== GuardianCouncil Function: Start ====//
   val rob_head_pcs        = Wire(Vec(coreWidth, UInt(40.W)))
-  io.r_next_pc           := rob_head_pcs(rob_head_lsb)
+  // The ROB head is not an architectural PC when the ROB is empty.  Keep an
+  // explicit committed next-PC value instead of exposing the stale contents
+  // of the newly selected (invalid) head slot.
+  val arch_next_pc        = RegInit(0.U(40.W))
+  val arch_next_pc_valid  = RegInit(false.B)
+  io.r_next_pc            := arch_next_pc
+  io.r_next_pc_valid      := arch_next_pc_valid
   io.can_commit_withoutGC:= can_commit_noGC.reduce(_|_)
 //===== GuardianCouncil Function: End ====//
   val exception_thrown = Wire(Bool())
@@ -533,7 +544,7 @@ class Rob(
     rob_head_uses_stq(w) := rob_uop(rob_head).uses_stq
     rob_head_uses_ldq(w) := rob_uop(rob_head).uses_ldq
     //===== GuardianCouncil Function: Start  ====//
-    rob_head_pcs(w)      := rob_uop(rob_head).debug_pc
+    rob_head_pcs(w)      := Mux(rob_head_vals(w), rob_uop(rob_head).debug_pc, 0.U)
     //===== GuardianCouncil Function: End  ====//
     //------------------------------------------------
     // Invalid entries are safe; thrown exceptions are unsafe.
@@ -589,6 +600,39 @@ class Rob(
     }
     
   } //for (w <- 0 until coreWidth)
+
+  // Track the architectural continuation at retirement time.  This state is
+  // independent of the speculative/invalid ROB head and remains valid while
+  // the ROB drains for a checker snapshot.
+  val committed_next_pcs = Wire(Vec(coreWidth, UInt(40.W)))
+  for (w <- 0 until coreWidth) {
+    val uop = io.commit.uops(w)
+    val seq_pc = (uop.debug_pc + Mux(uop.is_rvc, 2.U, 4.U))(39, 0)
+    val imm_pc = (uop.debug_pc.asSInt + ImmGen(uop.imm_packed, uop.ctrl.imm_sel).asSInt).asUInt
+    val branch_pc = imm_pc(39, 0)
+    committed_next_pcs(w) := Mux(!io.commit.arch_valids(w), seq_pc,
+      Mux(uop.is_jalr,
+        io.commit.gh_effective_alu_out(w)(39, 0),
+        Mux(uop.is_jal || (uop.is_br && uop.taken), branch_pc, seq_pc)))
+  }
+  var committed_next_pc = 0.U(40.W)
+  var committed_next_pc_valid = false.B
+  for (w <- 0 until coreWidth) {
+    // Commit slots are ordered from oldest to youngest; the final valid slot
+    // therefore supplies the continuation for the complete commit bundle.
+    committed_next_pc = Mux(io.commit.valids(w), committed_next_pcs(w), committed_next_pc)
+    committed_next_pc_valid = committed_next_pc_valid || io.commit.valids(w)
+  }
+  when (io.arch_redirect_valid) {
+    arch_next_pc       := io.arch_redirect_pc
+    arch_next_pc_valid := true.B
+  }.elsewhen (committed_next_pc_valid) {
+    arch_next_pc       := committed_next_pc
+    arch_next_pc_valid := true.B
+  }
+  dontTouch(committed_next_pcs)
+  dontTouch(committed_next_pc)
+  dontTouch(committed_next_pc_valid)
 
   // **************************************************************************
   // --------------------------------------------------------------------------

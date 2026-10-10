@@ -426,6 +426,7 @@ class R_RSUSL(val params: R_RSUSLParams) extends Module with HasR_RSUSLIO {
   u_channel.io.enq_valid                         := channel_enq_valid
   u_channel.io.enq_bits                          := channel_enq_data
   u_channel.io.deq_ready                         := channel_deq_ready
+  u_channel.io.deq_read                          := channel_deq_ready
   channel_deq_data                               := u_channel.io.deq_bits
   channel_empty                                  := u_channel.io.empty
   channel_full                                   := u_channel.io.full

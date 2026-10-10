@@ -234,6 +234,13 @@ class R_RSU(val params: R_RSUParams) extends Module with HasR_RSUIO {
 
   dontTouch(merging)
   dontTouch(merging_priv)
+  // Snapshot capture is delayed by doSnapshot.  Keep the request, delayed
+  // capture pulse, and the saved x12 value visible for boundary validation.
+  dontTouch(doSnapshot)
+  dontTouch(doSnapshot_priv)
+  dontTouch(io.snapshot)
+  dontTouch(io.snapshot_priv)
+  dontTouch(arfs_ss(12))
   dontTouch(io)
   /*
   for (w <- 0 until params.scalarWidth) {

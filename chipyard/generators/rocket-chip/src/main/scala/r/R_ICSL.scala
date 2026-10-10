@@ -11,11 +11,16 @@ case class R_ICSLParams(
 
 class R_ICSLIO(params: R_ICSLParams) extends Bundle {
   val ic_counter                                 = Input(UInt((params.width_of_ic).W))
+  val ic_counter_valid                           = Input(Bool())
+  val ic_counter_reset                           = Input(Bool())
   val icsl_run                                   = Input(UInt(1.W))
   // val icsl_ack                                   = Input(Bool())
   val big_switch                                 = Input(Bool())
   val cdc_empty                                  = Input(Bool())
   val lsl_empty                                  = Input(Bool())
+  // The package tail is a sequence-qualified producer/CDC/LSL quiescence
+  // indication.  Instruction execution must not complete before this level.
+  val package_tail_drained                       = Input(Bool())
   val new_commit                                 = Input(UInt(1.W))
   val if_correct_process                         = Input(UInt(1.W))
   val returned_to_special_address_valid          = Input(UInt(1.W))
@@ -134,11 +139,32 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   val cancellation_return_pending                 = RegInit(false.B)
   val if_completion                              = Mux((io.if_correct_process.asBool && (fsm_state === fsm_checking) && ((sl_counter>= (ic_counter_shadow+1.U)) || (io.new_commit.asBool && ((sl_counter + 1.U) >= (ic_counter_shadow + 1.U)))) && ic_counter_done.asBool), true.B, false.B)
   val if_completion_priv                         = Mux((io.if_correct_process.asBool && (fsm_state === fsm_checking_priv) && ((sl_counter>= (ic_counter_shadow)) || (io.new_commit.asBool && ((sl_counter + 1.U) >= (ic_counter_shadow)))) && ic_counter_done.asBool), true.B, false.B)
+  val package_start                              = io.icsl_run.asBool || io.if_check_privrun
+  val instruction_boundary_now                   = if_completion || if_completion_priv
+  val instruction_boundary_seen                  = RegInit(false.B)
+  val instruction_tail_waiting                  = RegInit(false.B)
+  val instruction_boundary_ready                 = instruction_boundary_seen || instruction_boundary_now
+  val instruction_checking_state                 = fsm_state === fsm_checking ||
+                                                    fsm_state === fsm_checking_priv
+  val package_exec_completion                    = instruction_checking_state &&
+                                                    instruction_boundary_ready &&
+                                                    io.package_tail_drained &&
+                                                    !io.something_inflight &&
+                                                    (io.num_valid_insts_in_pipeline === 0.U)
   // val if_slow_completion                         = Mux((io.if_correct_process.asBool && (sl_counter >= ic_counter_shadow) && ic_counter_done.asBool), true.B, false.B)
   val if_just_overtaking                         = Mux((io.if_correct_process.asBool && io.new_commit.asBool && ((sl_counter + 1.U) >= ic_counter_shadow + 1.U) && (fsm_state === fsm_checking)), 1.U, 0.U)
   val if_just_overtaking_priv                    = Mux((io.if_correct_process.asBool && io.new_commit.asBool && ((sl_counter + 1.U) >= ic_counter_shadow) && (fsm_state === fsm_checking_priv)), 1.U, 0.U)
-  val instruction_completion                     = (if_completion || if_completion_priv) &&
-                                                    !io.something_inflight
+  val instruction_completion                     = package_exec_completion
+  // Once the instruction boundary is reached, stop admitting new checker
+  // instructions but allow the already-valid tail in EX/MEM/WB to drain.
+  // Suppressing overtake replay during this wait avoids replaying that owned
+  // tail merely because the producer seal/LSL drain is still crossing CDC.
+  // This must be registered.  The combinational completion predicate reads
+  // pipeline/LSL state that is itself affected by checker mode and stall;
+  // feeding its inverse directly back into those outputs creates a FIRRTL
+  // combinational loop through IBuf and ctrl_killd.
+  val waiting_for_instruction_tail               = instruction_checking_state &&
+                                                    instruction_tail_waiting
 
   
 
@@ -146,7 +172,16 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   // val icsl_exec_done                             = sl_counter===(ic_counter_shadow+1.U)&&(fsm_state===fsm_speed_check)
   // val exec_last_one                              = RegInit(false.B)
   
-  ic_counter_done                               := io.ic_counter(params.width_of_ic-1)
+  when (io.ic_counter_reset) {
+    ic_counter_shadow := 0.U
+    ic_counter_done := 0.U
+  }
+  // Zero is a valid count. GHM holds the sequence-qualified sample and freezes
+  // its final count after ordered END, including when END precedes CPS/start.
+  when (io.ic_counter_valid) {
+    ic_counter_shadow := io.ic_counter(params.width_of_ic - 2, 0)
+    ic_counter_done := io.ic_counter(params.width_of_ic - 1)
+  }
   dontTouch(if_completion)
   dontTouch(if_completion_priv)
   switch (fsm_state) {
@@ -173,14 +208,14 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
     is (fsm_checking){
       sl_counter                                := Mux(io.if_correct_process.asBool && io.new_commit.asBool, sl_counter + 1.U, sl_counter)
       clear_ic_status                           := 0.U
-      icsl_checkermode                          := Mux(io.if_correct_process.asBool, 1.U, 0.U)
+      icsl_checkermode                          := Mux(io.if_correct_process.asBool || waiting_for_instruction_tail, 1.U, 0.U)
       icsl_checkerpriv_mode                     := 0.U
       if_rh_cp_pc                               := 0.U
       when (io.self_xcpt) {
         trap_depth                              := 1.U
         resume_state                            := fsm_checking
         fsm_state                               := fsm_self_xcpt
-      }.elsewhen (if_completion && !io.something_inflight) {
+      }.elsewhen (instruction_completion) {
         fsm_state                               := fsm_postchecking
       }
     }
@@ -189,13 +224,13 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
       sl_counter                                := Mux(io.if_correct_process.asBool && io.new_commit.asBool, sl_counter + 1.U, sl_counter)
       clear_ic_status                           := 0.U
       icsl_checkermode                          := 0.U
-      icsl_checkerpriv_mode                     := Mux(io.if_correct_process.asBool, 1.U, 0.U)
+      icsl_checkerpriv_mode                     := Mux(io.if_correct_process.asBool || waiting_for_instruction_tail, 1.U, 0.U)
       if_rh_cp_pc                               := 0.U
       when (io.self_xcpt) {
         trap_depth                              := 1.U
         resume_state                            := fsm_checking_priv
         fsm_state                               := fsm_self_xcpt_priv
-      }.elsewhen (if_completion_priv && !io.something_inflight) {
+      }.elsewhen (instruction_completion) {
         fsm_state                               := fsm_postchecking_priv
       }
     }
@@ -293,7 +328,6 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   // CDC, but an executing checker must still return to its management PC.
   // If a trap is live, resume into postchecking after the matching xRET and
   // only then request the special-PC redirect.
-  val package_start = io.icsl_run.asBool || io.if_check_privrun
   val cancel_privileged = fsm_state === fsm_checking_priv ||
     fsm_state === fsm_self_xcpt_priv || fsm_state === fsm_postchecking_priv ||
     resume_state === fsm_checking_priv || resume_state === fsm_postchecking_priv
@@ -322,6 +356,17 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   }.elsewhen (io.returned_to_special_address_valid.asBool ||
     fsm_state === fsm_reset) {
     cancellation_return_pending              := false.B
+  }
+  when (fsm_state === fsm_reset ||
+    (fsm_state === fsm_nonchecking && package_start) ||
+    io.if_check_cancelled) {
+    instruction_boundary_seen                  := false.B
+    instruction_tail_waiting                  := false.B
+  }.elsewhen (package_exec_completion) {
+    instruction_tail_waiting                  := false.B
+  }.elsewhen (instruction_boundary_now) {
+    instruction_boundary_seen                  := true.B
+    instruction_tail_waiting                  := true.B
   }
   when (io.if_check_cancelled &&
     fsm_state =/= fsm_reset && fsm_state =/= fsm_nonchecking) {
@@ -366,7 +411,7 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   val check_done = RegInit(false.B)
   when(io.if_check_completed.asBool || io.if_check_cancelled){
     check_done := false.B
-  }.elsewhen(((if_completion && icsl_checkermode.asBool) || (icsl_checkerpriv_mode.asBool && if_completion_priv)) && !io.something_inflight && !(io.returned_to_special_address_valid.asBool)){
+  }.elsewhen(instruction_completion && !(io.returned_to_special_address_valid.asBool)){
     check_done := true.B
   }
 
@@ -407,12 +452,16 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   // dontTouch(io.if_big_complete)
   // dontTouch(io.big_complete)
   // val if_overtaking                             = RegInit(0.U(1.W))
-  if_overtaking                                 := Mux(if_just_overtaking.asBool || (sl_counter >= (ic_counter_shadow + 1.U)), 1.U, 0.U)
-  if_overtaking_priv                            := Mux(if_just_overtaking_priv.asBool || (sl_counter >= (ic_counter_shadow)), 1.U, 0.U)
+  if_overtaking                                 := Mux(waiting_for_instruction_tail, 0.U,
+                                                    Mux(if_just_overtaking.asBool || (sl_counter >= (ic_counter_shadow + 1.U)), 1.U, 0.U))
+  if_overtaking_priv                            := Mux(waiting_for_instruction_tail, 0.U,
+                                                    Mux(if_just_overtaking_priv.asBool || (sl_counter >= (ic_counter_shadow)), 1.U, 0.U))
   val if_overtaking_next_cycle                   = WireInit(0.U(1.W))
   val if_overtaking_priv_next_cycle              = WireInit(0.U(1.W))
-  if_overtaking_next_cycle                      := Mux(if_just_overtaking.asBool || (sl_counter >= (ic_counter_shadow + 1.U)), 1.U, 0.U)
-  if_overtaking_priv_next_cycle                 := Mux(if_just_overtaking_priv.asBool || (sl_counter >= (ic_counter_shadow)), 1.U, 0.U)
+  if_overtaking_next_cycle                      := Mux(waiting_for_instruction_tail, 0.U,
+                                                    Mux(if_just_overtaking.asBool || (sl_counter >= (ic_counter_shadow + 1.U)), 1.U, 0.U))
+  if_overtaking_priv_next_cycle                 := Mux(waiting_for_instruction_tail, 0.U,
+                                                    Mux(if_just_overtaking_priv.asBool || (sl_counter >= (ic_counter_shadow)), 1.U, 0.U))
   
   val stall_checking                            = RegInit(false.B)
   val stall_checking_priv                       = RegInit(false.B)
@@ -421,7 +470,6 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
 
 
   dontTouch(stall_checking)
-  ic_counter_shadow                             := Mux(io.ic_counter=/=0.U,io.ic_counter,ic_counter_shadow)
   io.clear_ic_status                            := clear_ic_status
   io.icsl_checkermode                           := icsl_checkermode
   io.icsl_checkerpriv_mode                      := icsl_checkerpriv_mode
@@ -433,8 +481,8 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   io.if_rh_cp_pc                                := if_rh_cp_pc
   io.icsl_status                                := Mux(fsm_state === fsm_nonchecking, 1.U, 0.U)
   io.debug_sl_counter                           := sl_counter
-  io.already_done                               := io.ic_counter(params.width_of_ic - 1).asBool && Mux(fsm_state === fsm_checking, sl_counter >= ic_counter_shadow, 
-                                                                                                      Mux(fsm_state === fsm_checking_priv, sl_counter >= ic_counter_shadow - 1.U, false.B))
+  io.already_done                               := ic_counter_done.asBool && Mux(fsm_state === fsm_checking, sl_counter >= ic_counter_shadow,
+                                                                                                      Mux(fsm_state === fsm_checking_priv, ic_counter_shadow === 0.U || sl_counter >= ic_counter_shadow - 1.U, false.B))
 
   dontTouch(ic_counter_shadow)
   // dontTouch(icsl_exec_done)
@@ -446,6 +494,7 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
     (fsm_state === fsm_postchecking || fsm_state === fsm_postchecking_priv) &&
       !package_completion_ready
   io.icsl_stalld                                := waiting_for_package_tail ||
+                                                   waiting_for_instruction_tail ||
                                                    Mux(icsl_checkermode.asBool,
                                                      fsm_state === fsm_checking && stall_checking,
                                                      icsl_checkerpriv_mode.asBool &&
@@ -505,8 +554,19 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   }.elsewhen (io.debug_perf_stop) {
     trafficEnabled                              := false.B
   }
-  val trafficCounting                           = (trafficEnabled || io.debug_perf_start) &&
-    !io.debug_perf_stop && !io.debug_perf_reset.asBool
+  // Checker traffic is comparable with BOOM traffic only while this checker
+  // owns a checking package.  The software performance command arrives before
+  // the first package and remains armed while the checker returns to
+  // nonchecking, so using trafficEnabled alone also counts setup/idle
+  // instructions that have no BOOM package counterpart.  Keep postchecking
+  // active to include the tail completions of the package being drained.
+  val checkerTrafficState =
+    fsm_state === fsm_checking ||
+      fsm_state === fsm_checking_priv ||
+      fsm_state === fsm_postchecking ||
+      fsm_state === fsm_postchecking_priv
+  val trafficCounting = (trafficEnabled || io.debug_perf_start) &&
+    checkerTrafficState && !io.debug_perf_stop && !io.debug_perf_reset.asBool
 
   debug_perf_num_st_cache                       := Mux(io.debug_perf_reset.asBool, 0.U,
     debug_perf_num_st_cache + (io.st_cache_deq & trafficCounting.asUInt))
@@ -579,6 +639,7 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
   val debug_perf_sel_delay                       = RegInit(0.U(4.W))
   debug_perf_sel_delay                          := io.debug_perf_sel
   u_channel.io.deq_ready                        := (io.debug_perf_sel === 14.U) && (debug_perf_sel_delay === 15.U)
+  u_channel.io.deq_read                         := u_channel.io.deq_ready
 
   debug_L_timer_worest                          := Mux(io.debug_perf_reset.asBool, 0.U, Mux(debug_L_timer > debug_L_timer_worest, debug_L_timer, debug_L_timer_worest))
 
@@ -599,7 +660,36 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
                                                    Mux(io.debug_perf_sel === 14.U, u_channel.io.deq_bits, 
                                                    Mux(io.debug_perf_sel === 15.U, u_channel.io.deq_bits, 0.U
                                                    )))))))))))))))
-  
+
+  // FSM and traffic-window probes retained for post-run diagnosis. These are
+  // observation-only aliases and do not alter package admission or counting.
+  dontTouch(fsm_state)
+  dontTouch(fsm_state_delay)
+  dontTouch(trafficEnabled)
+  dontTouch(trafficCounting)
+  dontTouch(package_completion_seen)
+  dontTouch(package_completion_ready)
+  dontTouch(package_exec_done_seen)
+  dontTouch(instruction_completion)
+  dontTouch(waiting_for_package_tail)
+  dontTouch(if_completion)
+  dontTouch(if_completion_priv)
+  dontTouch(stall_checking)
+  dontTouch(stall_checking_priv)
+  dontTouch(sl_counter)
+  dontTouch(ic_counter_shadow)
+  dontTouch(ic_counter_done)
+  dontTouch(io.new_commit)
+  dontTouch(debug_perf_num_st_cache)
+  dontTouch(debug_perf_num_st_uncache)
+  dontTouch(debug_perf_num_ld_cache)
+  dontTouch(debug_perf_num_ld_uncache)
+  dontTouch(debug_perf_num_lr)
+  dontTouch(debug_perf_num_sc_success)
+  dontTouch(debug_perf_num_sc_fail)
+  dontTouch(debug_perf_num_amo_cache)
+  dontTouch(debug_perf_num_amo_uncache)
+
   io.checker_core_status                        := Mux(!io.if_correct_process.asBool, 3.U, 
                                                    Mux(fsm_state === fsm_checking, 1.U, 0.U))
  

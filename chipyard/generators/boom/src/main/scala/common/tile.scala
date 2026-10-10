@@ -211,6 +211,23 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
    
 
     val gh_buf = Module(new GH_BUF(GH_BUF_Params(p(XLen),GH_GlobalParams.GH_WIDITH_PACKETS,gc_core_width, true)))
+    // A seal belongs to a checker slot until its sequenced result releases
+    // that slot. A newer package on another checker cannot overwrite it.
+    val producerSeals = RegInit(VecInit(Seq.fill(GH_GlobalParams.GH_NUM_CORES)(
+      0.U((GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W))))
+    for (i <- 0 until GH_GlobalParams.GH_NUM_CORES) {
+      when (core.io.clear_ic_status_tomain(i) && !core.io.ic_status(i).asBool) {
+        producerSeals(i) := 0.U
+      }.elsewhen (core.io.producer_seal_candidate && gh_buf.io.ght_filters_empty.asBool &&
+        core.io.checker_segment_id(i) === core.io.producer_seal_seq) {
+        producerSeals(i) := Cat(true.B, core.io.producer_seal_seq)
+      }
+    }
+    core.io.producer_seal_ready := producerSeals.map { seal =>
+      seal(GH_GlobalParams.GH_PACKET_SEQ_BITS) &&
+        seal(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0) === core.io.producer_seal_seq
+    }.reduce(_ || _)
+    outer.producer_seal_SRNode.bundle := producerSeals.asUInt
     val fiu = Module(new R_FIU(R_FIUParams(64, GH_GlobalParams.GH_NUM_CORES-1)))
     fiu.io.gtimer                                := debug_gtimer
 
@@ -306,7 +323,7 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
       gh_buf.io.gh_prfs_rd(w)                    := RegNext(core.io.prf_rd(w))
       gh_buf.io.jalr_target(w)                   := RegNext(core.io.jalr_target(w))
     }
-    gh_buf.io.gh_can_fwd                         := (ght_bridge.io.out | (!if_correct_process_bridge.io.out))
+    gh_buf.io.gh_can_fwd                         := RegNext(ght_bridge.io.out | (!if_correct_process_bridge.io.out), 1.U)
     // Per-checker hang filtered by checker_enable_mask: only stall on my own checkers
     val num_chk = GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES
     val hang_bits = outer.bigcore_hang_in_SKNode.bundle(num_chk-1, 0)
@@ -358,6 +375,8 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
   } else {
     // Not be used, added to pass the compile
     core.io.gh_stall                             := 0.U
+    outer.producer_seal_SRNode.bundle            := 0.U
+    core.io.producer_seal_ready                  := false.B
     core.io.icctrl                               := 0.U
     /* Runtime Configurable Mapping */
     core.io.big_core_id                          := 0.U
@@ -644,7 +663,9 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
   hellaCacheArb.io.requestor <> hellaCachePorts.toSeq
   lsu.io.hellacache <> hellaCacheArb.io.mem
   outer.dcache.module.io.lsu <> lsu.io.dmem
-  // R_IC 状态编码 2 表示 fsm_check；只有该状态下的 BOOM 访存进入统计。
+  // R_IC 状态编码 2 表示 fsm_check。该状态仍用于 checker/特殊访存的
+  // traffic_check 标记；普通架构 load/store 的统计窗口由 traffic_counting
+  // 独立决定，屏障关闭包时不能因暂时离开 fsm_check 而漏计。
   outer.dcache.module.io.traffic_check_state := core.io.debug_maincore_status === 2.U
   outer.dcache.module.io.traffic_reset := debug_perf_sel(GH_GlobalParams.GH_PERF_CTRL_RESET_BIT)
   outer.dcache.module.io.traffic_start := debug_perf_sel(GH_GlobalParams.GH_PERF_CTRL_START_BIT)

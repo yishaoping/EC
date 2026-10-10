@@ -170,7 +170,7 @@ trait HasCoreIO extends HasTileParameters {
     //===== GuardianCouncil Function: Start ====//
     val arfs_if_CPS = UInt(1.W).asInput
     val record_pc = UInt(1.W).asInput
-    val ic_counter = UInt(20.W).asInput
+    val ic_counter = UInt(GH_GlobalParams.GH_CHECKER_COUNT_BITS.W).asInput
     val clear_ic_status = UInt(1.W).asOutput
     val pc = UInt(vaddrBitsExtended.W).asOutput
     val inst = UInt(32.W).asOutput
@@ -199,6 +199,11 @@ trait HasCoreIO extends HasTileParameters {
     val packet_active_seq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W).asOutput
     val packet_current_seq_active = Bool().asOutput
     val packet_accept_new_seq = Bool().asOutput
+    // BOOM-side producer seal.  A checker may close a package only after the
+    // producer has sealed the matching sequence; this is distinct from the
+    // transient CDC-empty level.
+    val producer_sealed_valid = Bool().asInput
+    val producer_sealed_seq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W).asInput
     val packet_lsl_mem_ready = Bool().asOutput
     val packet_lsl_csr_ready = Bool().asOutput
     val packet_lsl_rocc_ready = Bool().asOutput

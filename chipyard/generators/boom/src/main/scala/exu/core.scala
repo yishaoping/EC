@@ -90,6 +90,11 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     val active_packet_seq  = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)) // 当前活动校验包序号。
     val packet_alloc_valid = Output(Bool()) // 本周期是否分配了新的校验包。
     val packet_alloc_seq   = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)) // 新分配包的序号。
+    // Candidate seal from the BOOM architectural boundary. BoomTile adds the
+    // GH_BUF drain condition before exporting the sticky sideband.
+    val producer_seal_candidate = Output(Bool())
+    val producer_seal_seq       = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+    val producer_seal_ready     = Input(Bool())
 
     // GH_BUF：ROB 退休指令、物理寄存器结果和 JALR 目标组成校验包；
     // gh_stall 是 GH_BUF 满时返回的流水线反压。
@@ -258,6 +263,10 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   val dis_uops   = Wire(Vec(coreWidth, new MicroOp))
   val dis_fire   = Wire(Vec(coreWidth, Bool()))
   val dis_ready  = Wire(Bool())
+  // Assigned once the GuardianCouncil modules are instantiated below.  This
+  // wire lets the ROB retire existing entries while preventing new entries
+  // from entering during the atomic snapshot window.
+  val snapshot_dispatch_block = WireInit(false.B)
 
   // Issue Stage/Register Read
   val iss_valids = Wire(Vec(exe_units.numIrfReaders, Bool()))
@@ -783,7 +792,11 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   //       ERETs are reported to the CSR two cycles before we send the flush
   //       Exceptions are reported to the CSR on the cycle we send the flush
   // This discrepency should be resolved elsewhere.
-  when (RegNext(rob.io.flush.valid)) {
+  // Only a ROB flush/exception is an architectural redirect.  A branch
+  // mispredict redirect is still speculative until that branch retires and is
+  // therefore handled by the committed-uop PC tracker in the ROB.
+  val arch_redirect_valid = RegNext(rob.io.flush.valid, false.B)
+  when (arch_redirect_valid) {
     io.ifu.redirect_val   := true.B
     io.ifu.redirect_flush := true.B
     val flush_typ = RegNext(rob.io.flush.bits.flush_typ)
@@ -806,7 +819,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
 
     }
     io.ifu.redirect_ftq_idx := RegNext(rob.io.flush.bits.ftq_idx)
-  } .elsewhen (brupdate.b2.mispredict && !RegNext(rob.io.flush.valid)) {
+  } .elsewhen (brupdate.b2.mispredict && !arch_redirect_valid) {
     val block_pc = AlignPCToBoundary(io.ifu.get_pc(1).pc, icBlockBytes)
     val uop_maybe_pc = block_pc | brupdate.b2.uop.pc_lob
     val npc = uop_maybe_pc + Mux(brupdate.b2.uop.is_rvc || brupdate.b2.uop.edge_inst, 2.U, 4.U)
@@ -845,6 +858,12 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   } .elsewhen (rob.io.flush_frontend || brupdate.b1.mispredict_mask =/= 0.U) {
     io.ifu.redirect_flush   := true.B
   }
+
+  // Feed only the architectural (flush/exception) redirect back to the ROB's
+  // committed next-PC tracker.  The tracker handles branch targets when the
+  // corresponding uop retires.
+  rob.io.arch_redirect_valid := arch_redirect_valid
+  rob.io.arch_redirect_pc    := io.ifu.redirect_pc(39, 0)
 
   // Tell the FTQ it can deallocate entries by passing youngest ftq_idx.
   val youngest_com_idx = (coreWidth-1).U - PriorityEncoder(rob.io.commit.valids.reverse)
@@ -1093,11 +1112,13 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
                       || io.ifu.redirect_flush))
 
 
-  io.lsu.fence_dmem := (dis_valids zip wait_for_empty_pipeline).map {case (v,w) => v && w} .reduce(_||_)
+  io.lsu.fence_dmem := (dis_valids zip wait_for_empty_pipeline).map {
+    case (v,w) => v && w && !snapshot_dispatch_block
+  }.reduce(_||_)
 
   val dis_stalls = dis_hazards.scanLeft(false.B) ((s,h) => s || h).takeRight(coreWidth)
-  dis_fire := dis_valids zip dis_stalls map {case (v,s) => v && !s}
-  dis_ready := !dis_stalls.last
+  dis_fire := dis_valids zip dis_stalls map {case (v,s) => v && !s && !snapshot_dispatch_block}
+  dis_ready := !dis_stalls.last && !snapshot_dispatch_block
 
   //-------------------------------------------------------------
   // LDQ/STQ Allocation Logic
@@ -1120,7 +1141,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   //===== GuardianCouncil Function: End   ====//
   rob.io.enq_valids := dis_fire
   rob.io.enq_uops   := dis_uops
-  rob.io.enq_partial_stall := dis_stalls.last // TODO come up with better ROB compacting scheme.
+  rob.io.enq_partial_stall := dis_stalls.last || snapshot_dispatch_block // TODO come up with better ROB compacting scheme.
   rob.io.debug_tsc := debug_tsc_reg
   rob.io.csr_stall := csr.io.csr_stall
   rob.io.debug_st  := io.lsu.stq_debug
@@ -1757,7 +1778,9 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
         reset.asBool) {
     idle_cycles := 0.U
   }
-  assert (!(idle_cycles.value(20)), "Pipeline has hung.")
+  // Use the common 2^18 watchdog threshold for all EC protocol watchdogs.
+  val ecWatchdogBit = 18
+  assert (!(idle_cycles.value(ecWatchdogBit)), "Pipeline has hung.")
 
   val little_status1 = freechips.rocketchip.util.WideCounter(32)
   val little_status2 = freechips.rocketchip.util.WideCounter(32)
@@ -2068,23 +2091,26 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
       0.U, barrierServiceBank + 1.U)
     barrierServiceSeq := 0.U
   }
-  val functionalBarrierStall = p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B &&
-    barrierServiceActive && l2BarrierReq(barrierServiceBank) &&
-    ic_master.io.barrier_close_ack &&
-    ic_master.io.barrier_close_ack_seq === barrierServiceSeq
-  rob.io.gh_stall := io.gh_stall || rsu_stall.asBool || ic_stall.asBool || io.big_hang ||
-    functionalBarrierStall
-  // Separate protocol-timeout counters keep the original pipeline watchdog
-  // semantics while detecting a release request that remains asserted but
-  // never clears ownership.  Width and threshold are intentionally unchanged.
+  val barrierForceClose = p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B &&
+    barrierServiceActive && l2BarrierReq(barrierServiceBank)
+  val barrierCloseForActivePackage = barrierForceClose &&
+    barrierServiceSeq =/= 0.U &&
+    ic_master.io.active_packet_seq === barrierServiceSeq
+
+  // R_IC holds the old identity through its protected capture/merge phase.
+  val producerSealTargetValid = ic_master.io.closing_valid
+  val producerSealTargetSeq = ic_master.io.closing_seq
+  ic_master.io.close_tail_ready := io.producer_seal_ready
+  rob.io.gh_stall := io.gh_stall || rsu_stall.asBool || ic_stall.asBool || io.big_hang
+  // Separate protocol-timeout counters detect a release request that remains
+  // asserted but never clears ownership.  Keep their threshold aligned with
+  // the pipeline watchdog so all EC hang diagnostics use the same bound.
   val release_wait1 = freechips.rocketchip.util.WideCounter(32)
   val release_wait2 = freechips.rocketchip.util.WideCounter(32)
   val release_wait3 = freechips.rocketchip.util.WideCounter(32)
   val release_wait4 = freechips.rocketchip.util.WideCounter(32)
 
-  ic_master.io.barrier_force_close :=
-    p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B && barrierServiceActive &&
-      l2BarrierReq(barrierServiceBank)
+  ic_master.io.barrier_force_close := barrierForceClose
   ic_master.io.barrier_force_close_seq := barrierServiceSeq
   for (bank <- 0 until p(BankedL2Key).nBanks) {
     val bankAck = p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B &&
@@ -2118,7 +2144,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   when(!io.clear_ic_status_tomain(3).asBool || !ic_master.io.ic_status(3).asBool){ release_wait3 := 0.U }
   when(!io.clear_ic_status_tomain(4).asBool || !ic_master.io.ic_status(4).asBool){ release_wait4 := 0.U }
   // Allow the 100 MHz checkers enough progress at the 300/100 MHz clock ratio.
-  val checkerHangWatchdogBit = 20
+  val checkerHangWatchdogBit = ecWatchdogBit
   assert(!little_status1(checkerHangWatchdogBit), "little core 1 has hung")
   assert(!little_status2(checkerHangWatchdogBit), "little core 2 has hung")
   assert(!little_status3(checkerHangWatchdogBit), "little core 3 has hung")
@@ -2137,9 +2163,43 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   ic_master.io.ic_exit_isax                       := io.icctrl(1)
   ic_master.io.ic_syscall                         := io.icctrl(2) | RegNext(r_syscall)
   ic_master.io.ic_syscall_back                    := (io.icctrl(3) | if_mret_or_sret.reduce(_||_)) && (csr.io.r_exception === 0.U)
-  ic_master.io.if_ready_snap_shot                 := rob.io.can_commit_withoutGC.asUInt
+  // Do not accept a checker snapshot until the ROB is empty and the previous
+  // cycle is quiet.  The guards are registered because the live commit/RSU
+  // outputs feed gh_stall/core_hang_up and must not be read back into the
+  // same combinational path that drives if_dosnap.
+  val snapshot_commit_prev = RegNext(rob.io.commit.valids.asUInt.orR, true.B)
+  val snapshot_rsu_prev    = RegNext(rsu_master.io.rsu_busy.asBool, true.B)
+  val snapshot_csr_prev    = RegNext(csr.io.csr_stall, true.B)
+  val snapshot_excp_prev   = RegNext(csr.io.trace(0).exception, true.B)
+  // Use the registered architectural redirect indication here.  Reading the
+  // live ROB flush output would feed commit/flush combinational logic back
+  // through snapshot admission and R_RSU's hang-up stall.
+  val snapshot_no_redirect = !arch_redirect_valid &&
+                             !io.ifu.redirect_val &&
+                             (csr.io.r_exception === 0.U)
+  val snapshot_quiet =
+    rob.io.empty &&
+    rob.io.r_next_pc_valid &&
+    snapshot_no_redirect &&
+    !snapshot_commit_prev &&
+    !snapshot_csr_prev &&
+    !snapshot_excp_prev &&
+    !snapshot_rsu_prev
+  // Snapshot readiness is sampled by R_IC on a clock edge.  The live ROB
+  // empty/quiet predicate can rise in the same edge that the ROB drains, so
+  // exposing it directly creates a half-cycle pulse: R_IC visibly asserts
+  // packet_alloc_valid, but its sequential packet sequence register misses
+  // the pulse.  Arm readiness for a full cycle before allowing acceptance.
+  val snapshot_quiet_armed = RegNext(snapshot_quiet, false.B)
+  ic_master.io.if_ready_snap_shot                 := (snapshot_quiet_armed && snapshot_no_redirect).asUInt
+  ic_master.io.rob_empty                           := rob.io.empty
   ic_master.io.rsu_busy                           := rsu_master.io.rsu_busy
-  ic_master.io.ic_threshold                       := GH_GlobalParams.GH_TOTAL_INSTS.U
+  // Reserve all still-dispatched ROB entries plus the threshold observation
+  // cycle. Drain commits remain part of the old package's instruction limit.
+  private val packageDrainReserve = numRobEntries + coreWidth
+  require(GH_GlobalParams.GH_TOTAL_INSTS > packageDrainReserve)
+  require(GH_GlobalParams.GH_TOTAL_INSTS < (1 << 15) - 1)
+  ic_master.io.ic_threshold := (GH_GlobalParams.GH_TOTAL_INSTS - packageDrainReserve).U
   // ic_master.io.ic_incr                            := Mux(r_syscall, 0.U, ic_incr)
   ic_master.io.ic_incr                            := ic_incr
   ic_master.io.priv_higher                        := priv_higher
@@ -2148,6 +2208,73 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   ic_master.io.mode_ret                           := RegNext(if_mret_or_sret.reduce(_ || _))
   ic_master.io.excp_mode                          := exception_mode_test
   ic_stall                                        := ic_master.io.if_pipeline_stall
+
+  // Keep new uops out of the ROB while it drains and through R_RSU's delayed
+  // snapshot capture.  Existing ROB entries still retire until snapshot_quiet
+  // becomes true; after acceptance, ic_stall/rsu_stall freeze the state.
+  // If no committed PC exists yet (for example an early run request during
+  // reset startup), allow the first instructions to retire so the boundary
+  // can become valid.  Once a committed PC is established, the drain hold is
+  // strict and prevents new speculative entries from crossing the snapshot.
+  snapshot_dispatch_block :=
+    ((ic_master.io.snapshot_drain.asBool || barrierCloseForActivePackage) &&
+      io.if_correct_process.asBool && rob.io.r_next_pc_valid) ||
+    rsu_master.io.core_hang_up.asBool
+
+  // BOOM has reached the architectural package boundary only after the ROB,
+  // delayed commit observation, and RSU merge path are all quiet.  BoomTile
+  // adds the GH_BUF drain condition before exporting this as a sticky seal.
+  val producerSealCoreReady = producerSealTargetValid &&
+    producerSealTargetSeq =/= 0.U &&
+    rob.io.empty &&
+    !rob.io.commit.valids.asUInt.orR &&
+    !snapshot_commit_prev &&
+    !rsu_master.io.rsu_busy.asBool &&
+    !rsu_master.io.core_hang_up.asBool &&
+    !io.big_hang
+  io.producer_seal_candidate := producerSealCoreReady
+  io.producer_seal_seq := producerSealTargetSeq
+
+  // A snapshot is an architectural boundary, so accepting it with a live
+  // ROB or a simultaneous architectural retirement is a protocol violation.
+  when (ic_master.io.snapshot_capture) {
+    assert(rob.io.empty, "checker snapshot accepted while BOOM ROB is not empty")
+    assert(rob.io.r_next_pc_valid,
+      "checker snapshot accepted without a committed architectural next PC")
+    assert(!rob.io.commit.valids.asUInt.orR,
+      "checker snapshot accepted with a BOOM retirement")
+  }
+
+  // Keep the snapshot/commit/package boundary visible in generated waves.
+  // These are observation-only probes and do not change the protocol.
+  dontTouch(snapshot_commit_prev)
+  dontTouch(snapshot_rsu_prev)
+  dontTouch(snapshot_csr_prev)
+  dontTouch(snapshot_excp_prev)
+  dontTouch(snapshot_no_redirect)
+  dontTouch(snapshot_quiet)
+  dontTouch(snapshot_quiet_armed)
+  dontTouch(snapshot_dispatch_block)
+  dontTouch(producerSealTargetValid)
+  dontTouch(producerSealTargetSeq)
+  dontTouch(barrierCloseForActivePackage)
+  dontTouch(producerSealCoreReady)
+  dontTouch(rob.io.empty)
+  dontTouch(rob.io.r_next_pc_valid)
+  dontTouch(rob.io.commit.arch_valids)
+  dontTouch(rob.io.can_commit_withoutGC)
+  dontTouch(ic_master.io.if_ready_snap_shot)
+  dontTouch(ic_master.io.if_dosnap)
+  dontTouch(ic_master.io.if_dosnap_priv)
+  dontTouch(ic_master.io.snapshot_drain)
+  dontTouch(ic_master.io.snapshot_capture)
+  dontTouch(ic_master.io.packet_alloc_valid)
+  dontTouch(ic_master.io.packet_alloc_seq)
+  dontTouch(ic_master.io.active_packet_seq)
+  dontTouch(ic_incr)
+  dontTouch(arfs(12))
+  dontTouch(rsu_master.io.core_hang_up)
+  dontTouch(rsu_master.io.rsu_busy)
 
   // io.big_checker_switch                           := ic_master.io.big_checker_switch
   // io.icsl_na_ack                                  := ic_master.io.icsl_na_ack

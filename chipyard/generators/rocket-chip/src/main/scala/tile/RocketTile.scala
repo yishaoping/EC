@@ -168,6 +168,8 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
   // dontTouch(icsl_ack)//for debug
   // core.io.icsl_ack := icsl_ack
   core.io.cdc_empty    := outer.cdc_empty_tocheckerSKNode.bundle
+  core.io.producer_sealed_valid := outer.producer_seal_SKNode.bundle(GH_GlobalParams.GH_PACKET_SEQ_BITS)
+  core.io.producer_sealed_seq := outer.producer_seal_SKNode.bundle(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0)
   // core.io.big_switch   := outer.big_switch_tocheckerSKNode.bundle
   val packet_in         = Wire(0.U((GH_GlobalParams.GH_TOTAL_PACKETS * GH_GlobalParams.GH_WIDITH_PACKETS +
     GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W))
@@ -281,6 +283,10 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
   //===== GuardianCouncil Function: Start ====//
   outer.clock_SRNode.bundle  := clock
   outer.reset_SRNode.bundle  := reset
+  // Rocket checker tiles do not produce BOOM/GH_BUF packets.  Keep the
+  // producer-seal source explicitly inactive for bridge completeness; the
+  // actual seal is driven only by BoomTile big-core instances.
+  outer.producer_seal_SRNode.bundle := 0.U
   // outer.if_big_complete_SRNode.bundle := core.io.if_big_complete
   // core.io.big_complete:=outer.big_complete_SKNode.bundle
 

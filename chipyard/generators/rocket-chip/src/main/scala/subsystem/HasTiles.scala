@@ -228,6 +228,7 @@ trait HasGHnodes extends InstantiatesTiles { this: BaseSubsystem =>
   val tile_ic_counter_out_EPNodes                = Seq.fill(GH_GlobalParams.GH_NUM_BIG_CORES)(BundleBridgeEphemeralNode[UInt]())
   val tile_ght_packet_dest_EPNode                = BundleBridgeEphemeralNode[UInt]()
   val tile_ght_status_out_EPNodes                = Seq.fill(GH_GlobalParams.GH_NUM_BIG_CORES)(BundleBridgeEphemeralNode[UInt]())
+  val tile_producer_seal_out_EPNodes             = Seq.fill(GH_GlobalParams.GH_NUM_BIG_CORES)(BundleBridgeEphemeralNode[UInt]())
 
   val tile_ghm_agg_core_id_EPNode                = BundleBridgeEphemeralNode[UInt]()
   val debug_maincore_status_out_EPNode           = BundleBridgeEphemeralNode[UInt]()
@@ -250,6 +251,7 @@ trait HasGHnodes extends InstantiatesTiles { this: BaseSubsystem =>
 
   // var big_switch_tocheckerEPNodes                  = Seq[BundleBridgeEphemeralNode[Bool]]()
   var cdc_empty_tocheckerEPNodes                 = Seq[BundleBridgeEphemeralNode[Bool]]()
+  var producer_sealed_tocheckerEPNodes           = Seq[BundleBridgeEphemeralNode[UInt]]()
   var icsl_naEPNodes                             = Seq[BundleBridgeEphemeralNode[UInt]]()
 
   val tile_bigcore_hang_EPNode: BundleBridgeNexusNode[UInt] = BundleBroadcast[UInt](inputRequiresOutput = false)
@@ -471,6 +473,7 @@ trait CanAttachTile {
       }
       // Per-big-core: ght_status (each big core sends its own status to GHM)
       context.tile_ght_status_out_EPNodes(b) := domain.tile.ght_status_out_SRNode
+      context.tile_producer_seal_out_EPNodes(b) := domain.tile.producer_seal_SRNode
       domain.tile.bigcore_hang_in_SKNode  := context.tile_bigcore_hang_EPNode
       domain.tile.bigcore_comp_in_SKNode  := context.tile_bigcore_comp_EPNodes(b)
       domain.tile.debug_bp_in_SKNode      := context.tile_debug_bp_EPNode
@@ -500,6 +503,7 @@ trait CanAttachTile {
       val useless_agg_core_id_SKNode       = BundleBridgeSink[UInt](Some(() => UInt(16.W)))
       val useless_packet_dest_SKNode       = BundleBridgeSink[UInt](Some(() => UInt(32.W)))
       val useless_status_SKNode            = BundleBridgeSink[UInt](Some(() => UInt(32.W)))
+      val useless_producer_seal_SKNode     = BundleBridgeSink[UInt](Some(() => UInt(GH_GlobalParams.GH_PRODUCER_SEALS_BITS.W)))
       val useless_sch_na_inSKNode          = BundleBridgeSource[UInt](Some(() => UInt(16.W)))
       val useless_debug_gcounter_SKNode    = BundleBridgeSource[UInt](Some(() => UInt(64.W)))
       val useless_ic_status_SKNode         = BundleBridgeSink[UInt](Some(() => UInt(GH_GlobalParams.GH_NUM_CORES.W)))
@@ -517,6 +521,7 @@ trait CanAttachTile {
       useless_agg_core_id_SKNode          := domain.tile.ghm_agg_core_id_out_SRNode
       useless_packet_dest_SKNode          := domain.tile.ght_packet_dest_SRNode
       useless_status_SKNode               := domain.tile.ght_status_out_SRNode
+      useless_producer_seal_SKNode        := domain.tile.producer_seal_SRNode
       domain.tile.bigcore_hang_in_SKNode  := useless_bigcore_hang_SRNode
       domain.tile.bigcore_comp_in_SKNode  := useless_bigcore_comp_SRNode
       domain.tile.debug_bp_in_SKNode      := useless_debug_bp_SRNode
@@ -536,6 +541,10 @@ trait CanAttachTile {
     val tile_ghe_packet_in_EPNode = BundleBridgeEphemeralNode[UInt]()
     context.tile_ghe_packet_in_EPNodes = context.tile_ghe_packet_in_EPNodes :+ tile_ghe_packet_in_EPNode
     domain.tile.ghe_packet_in_SKNode := tile_ghe_packet_in_EPNode
+
+    val producer_sealed_EPNode = BundleBridgeEphemeralNode[UInt]()
+    context.producer_sealed_tocheckerEPNodes = context.producer_sealed_tocheckerEPNodes :+ producer_sealed_EPNode
+    domain.tile.producer_seal_SKNode := producer_sealed_EPNode
 
     val core_r_arfs_c_EPNode = BundleBridgeEphemeralNode[UInt]()
     context.core_r_arfs_c_EPNodes = context.core_r_arfs_c_EPNodes :+ core_r_arfs_c_EPNode

@@ -12,6 +12,7 @@ class Instruction(implicit val p: Parameters) extends ParameterizedBundle with H
   val xcpt0 = new FrontendExceptions // exceptions on first half of instruction
   val xcpt1 = new FrontendExceptions // exceptions on second half of instruction
   val replay = Bool()
+  val bjlOwned = Bool()
   val rvc = Bool()
   val inst = new ExpandedInstruction
   val raw = UInt(32.W)
@@ -42,7 +43,7 @@ class IBuf(implicit p: Parameters) extends CoreModule {
   val pcWordBits = io.imem.bits.pc.extract(log2Ceil(fetchWidth*coreInstBytes)-1, log2Ceil(coreInstBytes))
   dontTouch(pcWordBits)
   val nReady = WireDefault(0.U(log2Ceil(fetchWidth+1).W))
-  val nIC = Mux(io.imem.bits.btb.taken, io.imem.bits.btb.bridx +& 1.U, fetchWidth.U) - pcWordBits
+  val nIC = io.imem.bits.prefixLength
   val nICReady = nReady - nBufValid
   val nValid = Mux(io.imem.valid, nIC, 0.U) + nBufValid
   io.imem.ready := io.inst(0).ready && nReady >= nBufValid && (nICReady >= nIC || n.U >= nIC - nICReady)
@@ -53,6 +54,7 @@ class IBuf(implicit p: Parameters) extends CoreModule {
       if (n > 1) when (nReady > 0.U && nReady < nBufValid) {
         val shiftedBuf = shiftInsnRight(buf.data(n*coreInstBits-1, coreInstBits), (nReady-1.U)(log2Ceil(n-1)-1,0))
         buf.data := Cat(buf.data(n*coreInstBits-1, (n-1)*coreInstBits), shiftedBuf((n-1)*coreInstBits-1, 0))
+        buf.bjlEndMask := buf.bjlEndMask >> nReady
         buf.pc := buf.pc & ~pcWordMask | (buf.pc + (nReady << log2Ceil(coreInstBytes))) & pcWordMask
       }
       when (io.imem.valid && nReady >= nBufValid && nICReady < nIC && n.U >= nIC - nICReady) {
@@ -60,6 +62,7 @@ class IBuf(implicit p: Parameters) extends CoreModule {
         nBufValid := nIC - nICReady
         buf := io.imem.bits
         buf.data := shiftInsnRight(io.imem.bits.data, shamt)(n*coreInstBits-1,0)
+        buf.bjlEndMask := io.imem.bits.bjlEndMask >> shamt
         buf.pc := io.imem.bits.pc & ~pcWordMask | (io.imem.bits.pc + (nICReady << log2Ceil(coreInstBytes))) & pcWordMask
         ibufBTBResp := io.imem.bits.btb
       }
@@ -85,10 +88,14 @@ class IBuf(implicit p: Parameters) extends CoreModule {
 //===== GuardianCouncil Function: End ====//
   val valid = (UIntToOH(nValid) - 1.U)(fetchWidth-1, 0)
   val bufMask = UIntToOH(nBufValid) - 1.U
+  val icEndMask = (io.imem.bits.bjlEndMask >> pcWordBits) << nBufValid
+  val bjlEndMask = (icEndMask & ~bufMask) | (buf.bjlEndMask & bufMask)
   val xcpt = (0 until bufMask.getWidth).map(i => Mux(bufMask(i), buf.xcpt, io.imem.bits.xcpt))
   val buf_replay = Mux(buf.replay, bufMask, 0.U)
   val ic_replay = buf_replay | Mux(io.imem.bits.replay, valid & ~bufMask, 0.U)
   assert(!io.imem.valid || !io.imem.bits.btb.taken || io.imem.bits.btb.bridx >= pcWordBits)
+  assert(!io.imem.valid || (nIC > 0.U && nIC <= fetchWidth.U - pcWordBits),
+    "invalid frontend delivery prefix")
 
   io.btb_resp := io.imem.bits.btb
   io.pc := Mux(nBufValid > 0.U, buf.pc, io.imem.bits.pc)
@@ -108,6 +115,8 @@ class IBuf(implicit p: Parameters) extends CoreModule {
       io.inst(i).bits.xcpt1 := Mux(exp.io.rvc, 0.U, xcpt(j+1.U).asUInt).asTypeOf(new FrontendExceptions)
       io.inst(i).bits.replay := replay
       io.inst(i).bits.rvc := exp.io.rvc
+      io.inst(i).bits.bjlOwned := valid(j) && full_insn && !replay &&
+        Mux(exp.io.rvc, bjlEndMask(j), bjlEndMask(j+1.U))
 
       when ((bufMask(j) && exp.io.rvc) || bufMask(j+1.U)) { io.btb_resp := ibufBTBResp }
 
@@ -121,6 +130,7 @@ class IBuf(implicit p: Parameters) extends CoreModule {
       io.inst(i).bits.xcpt1 := 0.U.asTypeOf(new FrontendExceptions)
       io.inst(i).bits.replay := ic_replay(i)
       io.inst(i).bits.rvc := false.B
+      io.inst(i).bits.bjlOwned := valid(i) && !ic_replay(i) && bjlEndMask(i)
 
       expand(i+1, null, curInst >> 32)
     }
