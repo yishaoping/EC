@@ -1,0 +1,772 @@
+make: Entering directory '/data1/gzh/EC/chipyard/sims/verilator'
+/data1/gzh/EC/chipyard/sims/common-sim-flags.mk:11: libriscv not found
+Running with RISCV=/data1/gzh/EC/chipyard/.conda-env/riscv-tools
+mkdir -p /data1/gzh/EC/Debug/1769000_build/generated
+(set -o pipefail && 	cd /data1/gzh/EC/chipyard && /data1/gzh/EC/chipyard/.conda-env/bin/sbt -java-home /data1/gzh/EC/chipyard/.conda-env/lib/jvm  ";project chipyard; runMain chipyard.Generator  --target-dir /data1/gzh/EC/Debug/1769000_build/generated --name chipyard.TestHarness.v1Config --top-module chipyard.TestHarness --legacy-configs chipyard:v1Config " | tee /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.chisel.log)
+Picked up JAVA_TOOL_OPTIONS: -Xmx16G -Xss8M -XX:ActiveProcessorCount=8 -Dsbt.supershell=false
+Picked up JAVA_TOOL_OPTIONS: -Xmx16G -Xss8M -XX:ActiveProcessorCount=8 -Dsbt.supershell=false
+[0m[[0m[0minfo[0m] [0m[0mwelcome to sbt 1.8.2 (N/A Java 17.0.3-internal)[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project chipyard-build from plugins.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading project definition from /data1/gzh/EC/chipyard/project[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project chipyardRoot from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project hardfloat from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project rocketConfig from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project testchipip from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project constellation from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project icenet from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project hwacha from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project boom from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project cva6 from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project ibex from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project sodor from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project gemmini from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project tapeout from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project sim-build from plugins.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading project definition from /data1/gzh/EC/chipyard/sims/firesim/sim/project[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project firesim from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project targetutils from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project midas from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mresolving key references (37427 settings) ...[0m
+[0m[[0m[0minfo[0m] [0m[0mset current project to chipyardRoot (in build file:/data1/gzh/EC/chipyard/)[0m
+[0m[[0m[0minfo[0m] [0m[0mset current project to chipyard (in build file:/data1/gzh/EC/chipyard/)[0m
+[0m[[0m[0minfo[0m] [0m[0mcompiling 1 Scala source to /data1/gzh/EC/chipyard/generators/rocket-chip/src/target/scala-2.13/classes ...[0m
+[0m[[0m[33mwarn[0m] [0m[0m/data1/gzh/EC/chipyard/generators/rocket-chip/src/main/scala/rocket/Frontend.scala:659:15: private val deviceOpt in trait HasICacheFrontend is never used[0m
+[0m[[0m[33mwarn[0m] [0m[0m  private val deviceOpt = if (tileParams.icache.get.itimAddr.isDefined) Some(frontend.icache.device) else None[0m
+[0m[[0m[33mwarn[0m] [0m[0m              ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m62 feature warnings; re-run with -feature for details[0m
+[0m[[0m[33mwarn[0m] [0m[0mtwo warnings found[0m
+[0m[[0m[0minfo[0m] [0m[0mdone compiling[0m
+[0m[[0m[0minfo[0m] [0m[0mrunning chipyard.Generator --target-dir /data1/gzh/EC/Debug/1769000_build/generated --name chipyard.TestHarness.v1Config --top-module chipyard.TestHarness --legacy-configs chipyard:v1Config[0m
+(#### Jessica #### Generating GHT **Nodes** on the tile, HartID:,0,...!!)
+(#### Jessica #### Generating GHE **Nodes** on the tile, HartID:,0,...!!)
+(#### Jessica #### Generating GHT **Nodes** on the tile, HartID:,1,...!!)
+(#### Jessica #### Generating GHE **Nodes** on the tile, HartID:,1,...!!)
+(#### Jessica #### Generating GHT **Nodes** on the tile, HartID:,2,...!!)
+(#### Jessica #### Generating GHE **Nodes** on the tile, HartID:,2,...!!)
+(#### Jessica #### Generating GHT **Nodes** on the tile, HartID:,3,...!!)
+(#### Jessica #### Generating GHE **Nodes** on the tile, HartID:,3,...!!)
+(#### Jessica #### Generating GHT **Nodes** on the tile, HartID:,4,...!!)
+(#### Jessica #### Generating GHE **Nodes** on the tile, HartID:,4,...!!)
+(#### Jessica #### Connecting GHT **Nodes** on the sub-system, HartID:,0,...!!)
+(#### Jessica #### Connecting GHE **Nodes** on the sub-system, HartID:,0,...!!)
+(#### Jessica #### Tieing off GHT **Nodes** on the sub-system, HartID:,1,...!!)
+(#### Jessica #### Connecting GHE **Nodes** on the sub-system, HartID:,1,...!!)
+(#### Jessica #### Tieing off GHT **Nodes** on the sub-system, HartID:,2,...!!)
+(#### Jessica #### Connecting GHE **Nodes** on the sub-system, HartID:,2,...!!)
+(#### Jessica #### Tieing off GHT **Nodes** on the sub-system, HartID:,3,...!!)
+(#### Jessica #### Connecting GHE **Nodes** on the sub-system, HartID:,3,...!!)
+(#### Jessica #### Tieing off GHT **Nodes** on the sub-system, HartID:,4,...!!)
+(#### Jessica #### Connecting GHE **Nodes** on the sub-system, HartID:,4,...!!)
+(#### Jessica #### Tieing off GHM **Nodes**, core number:,5,...!!)
+L2 InclusiveCache Client Map:
+	0 <= serial-tl
+	1 <= Core 0 DCache
+	2 <= Core 0 ICache
+	3 <= Core 1 DCache
+	4 <= Core 1 ICache
+	5 <= Core 2 DCache
+	6 <= Core 2 ICache
+	7 <= Core 3 DCache
+	8 <= Core 3 ICache
+	9 <= Core 4 DCache
+	10 <= Core 4 ICache
+
+(#### Jessica #### Generating GH BUF for big core, HartID: ,0,...!!!)
+[C0] ======BOOM Tile 0 Params======
+
+[C0] ====Overall Frontend Params====
+
+[C0] ==L1-ICache==
+[C0] Fetch bytes   : 16
+[C0] Block bytes   : 64
+[C0] Row bytes     : 16
+[C0] Word bits     : 128
+[C0] Sets          : 64
+[C0] Ways          : 8
+[C0] Refill cycles : 4
+[C0] RAMs          : (64 x 256) using 2 banks
+[C0] Dual-banked
+[C0] I-TLB ways    : 32
+
+[C0] ==Branch Predictor Memory Sizes==
+
+[C0] bank0 tage_l2: 128 x 44 = 704
+[C0] bank0 tage_l4: 128 x 44 = 704
+[C0] bank0 tage_l8: 256 x 48 = 1536
+[C0] bank0 tage_l16: 256 x 48 = 1536
+[C0] bank0 tage_l32: 128 x 52 = 832
+[C0] bank0 tage_l64: 128 x 52 = 832
+[C0] bank0 btb_meta_way0: 128 x 120 = 1920
+[C0] bank0 btb_data_way0: 128 x 56 = 896
+[C0] bank0 btb_meta_way1: 128 x 120 = 1920
+[C0] bank0 btb_data_way1: 128 x 56 = 896
+[C0] bank0 ebtb: 128 x 40 = 640
+[C0] bank0 bim: 2048 x 8 = 2048
+[C0] bank1 tage_l2: 128 x 44 = 704
+[C0] bank1 tage_l4: 128 x 44 = 704
+[C0] bank1 tage_l8: 256 x 48 = 1536
+[C0] bank1 tage_l16: 256 x 48 = 1536
+[C0] bank1 tage_l32: 128 x 52 = 832
+[C0] bank1 tage_l64: 128 x 52 = 832
+[C0] bank1 btb_meta_way0: 128 x 120 = 1920
+[C0] bank1 btb_data_way0: 128 x 56 = 896
+[C0] bank1 btb_meta_way1: 128 x 120 = 1920
+[C0] bank1 btb_data_way1: 128 x 56 = 896
+[C0] bank1 ebtb: 128 x 40 = 640
+[C0] bank1 bim: 2048 x 8 = 2048
+[C0] Total bpd size: 28 KB
+
+[C0] ====Overall Core Params====
+
+[C0] ===ExecutionUnits===
+
+[C0] ==3-wide Machine==
+[C0] ==5 Issue==
+
+[C0] ==ExeUnit==
+[C0]  - Mem
+[C0] ==ExeUnit==
+[C0]  - ALU
+[C0]  - Div
+[C0] ==ExeUnit==
+[C0]  - ALU
+[C0]  - IFPU
+[C0]  - RoCC
+[C0] ==ExeUnit==
+[C0]  - ALU
+[C0]  - Mul
+
+[C0] ===FP Pipeline===
+
+[C0] ==Floating Point Regfile==
+[C0] Num RF Read Ports     : 3
+[C0] Num RF Write Ports    : 2
+[C0] RF Cost (R+W)*(R+2W)  : 35
+[C0] Bypassable Units      : List(false, false)
+[C0] Num Wakeup Ports      : 2
+[C0] Num Bypass Ports      : 0
+
+[C0] ==ROB==
+[C0] Machine Width      : 3
+[C0] Rob Entries        : 42
+[C0] Rob Rows           : 14
+[C0] Rob Row size       : 4
+[C0] log2Ceil(coreWidth): 2
+[C0] FPU FFlag Ports    : 2
+
+[C0] ===Other Core Params===
+[C0] Fetch Width           : 8
+[C0] Decode Width          : 3
+[C0] Issue Width           : 5
+[C0] ROB Size              : 42
+[C0] Issue Window Size     : List(16, 32, 24) (Age-based Priority)
+[C0] Load/Store Unit Size  : 16/16
+[C0] Num Int Phys Registers: 128
+[C0] Num FP  Phys Registers: 128
+[C0] Max Branch Count      : 16
+[C0] ==Integer Regfile==
+[C0] Num RF Read Ports     : 11
+[C0] Num RF Write Ports    : 4
+[C0] RF Cost (R+W)*(R+2W)  : 285
+[C0] Bypassable Units      : List(true, true, true, true)
+
+[C0] Num Slow Wakeup Ports : 4
+[C0] Num Fast Wakeup Ports : 3
+[C0] Num Bypass Ports      : 5
+
+[C0] DCache Ways           : 2
+[C0] DCache Sets           : 256
+[C0] DCache nMSHRs         : 6
+[C0] ICache Ways           : 8
+[C0] ICache Sets           : 64
+[C0] D-TLB Ways            : 16
+[C0] I-TLB Ways            : 32
+[C0] Paddr Bits            : 32
+[C0] Vaddr Bits            : 39
+
+[C0] Using FPU Unit?       : true
+[C0] Using FDivSqrt?       : true
+[C0] Using VM?             : true
+
+
+Interrupt map (10 harts 1 interrupts):
+  [1, 1] => uart_0
+
+<stdin>:244.28-249.5: Warning (simple_bus_reg): /soc/subsystem_gbus_clock: missing or empty reg/ranges property
+<stdin>:250.26-255.5: Warning (simple_bus_reg): /soc/subsystem_l2_clock: missing or empty reg/ranges property
+<stdin>:256.28-261.5: Warning (simple_bus_reg): /soc/subsystem_mbus_clock: missing or empty reg/ranges property
+<stdin>:262.28-267.5: Warning (simple_bus_reg): /soc/subsystem_pbus_clock: missing or empty reg/ranges property
+<stdin>:268.28-273.5: Warning (simple_bus_reg): /soc/subsystem_sbus_clock: missing or empty reg/ranges property
+<stdin>:39.29-43.6: Warning (interrupt_provider): /cpus/cpu@0/interrupt-controller: Missing #address-cells in interrupt provider
+<stdin>:69.29-73.6: Warning (interrupt_provider): /cpus/cpu@1/interrupt-controller: Missing #address-cells in interrupt provider
+<stdin>:99.30-103.6: Warning (interrupt_provider): /cpus/cpu@2/interrupt-controller: Missing #address-cells in interrupt provider
+<stdin>:129.30-133.6: Warning (interrupt_provider): /cpus/cpu@3/interrupt-controller: Missing #address-cells in interrupt provider
+<stdin>:159.30-163.6: Warning (interrupt_provider): /cpus/cpu@4/interrupt-controller: Missing #address-cells in interrupt provider
+<stdin>:215.37-224.5: Warning (interrupt_provider): /soc/interrupt-controller@c000000: Missing #address-cells in interrupt provider
+Clock subsystem_sbus_0: using diplomatically specified frequency of 200.0.
+Clock subsystem_sbus_1: using diplomatically specified frequency of 200.0.
+Clock tileClockGroup_tile_1: using specified frequency of 100.0.
+Clock tileClockGroup_tile_2: using specified frequency of 100.0.
+Clock tileClockGroup_tile_3: using specified frequency of 100.0.
+Clock tileClockGroup_tile_4: using specified frequency of 100.0.
+Clock subsystem_pbus_0: using diplomatically specified frequency of 200.0.
+Clock subsystem_fbus_0: using specified frequency of 200.0.
+Clock subsystem_mbus_0: using diplomatically specified frequency of 200.0.
+Clock subsystem_cbus_0: using specified frequency of 200.0.
+Clock subsystem_gbus_0: using diplomatically specified frequency of 100.0.
+Clock implicit_clock: using specified frequency of 200.0.
+100008: Tile allClocks_tileClockGroup_tile_1 clock gate
+10000c: Tile allClocks_tileClockGroup_tile_2 clock gate
+100010: Tile allClocks_tileClockGroup_tile_3 clock gate
+100014: Tile allClocks_tileClockGroup_tile_4 clock gate
+110004: Tile allClocks_tileClockGroup_tile_1 reset control
+110008: Tile allClocks_tileClockGroup_tile_2 reset control
+11000c: Tile allClocks_tileClockGroup_tile_3 reset control
+110010: Tile allClocks_tileClockGroup_tile_4 reset control
+/dts-v1/;
+
+/ {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	compatible = "ucb-bar,chipyard-dev";
+	model = "ucb-bar,chipyard";
+	L39: aliases {
+		serial0 = &L33;
+	};
+	L38: cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		timebase-frequency = <1000000>;
+		L8: cpu@0 {
+			clock-frequency = <0>;
+			compatible = "ucb-bar,boom0", "riscv";
+			d-cache-block-size = <64>;
+			d-cache-sets = <256>;
+			d-cache-size = <32768>;
+			d-tlb-sets = <1>;
+			d-tlb-size = <16>;
+			device_type = "cpu";
+			hardware-exec-breakpoint-count = <0>;
+			i-cache-block-size = <64>;
+			i-cache-sets = <64>;
+			i-cache-size = <32768>;
+			i-tlb-sets = <1>;
+			i-tlb-size = <32>;
+			mmu-type = "riscv,sv39";
+			next-level-cache = <&L6>;
+			reg = <0x0>;
+			riscv,isa = "rv64imafdcZicsr_Zifencei_Zihpm";
+			riscv,pmpgranularity = <4>;
+			riscv,pmpregions = <8>;
+			status = "okay";
+			timebase-frequency = <1000000>;
+			tlb-split;
+			L7: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+		L11: cpu@1 {
+			clock-frequency = <0>;
+			compatible = "sifive,rocket0", "riscv";
+			d-cache-block-size = <64>;
+			d-cache-sets = <32>;
+			d-cache-size = <4096>;
+			d-tlb-sets = <1>;
+			d-tlb-size = <4>;
+			device_type = "cpu";
+			hardware-exec-breakpoint-count = <1>;
+			i-cache-block-size = <64>;
+			i-cache-sets = <32>;
+			i-cache-size = <2048>;
+			i-tlb-sets = <1>;
+			i-tlb-size = <32>;
+			mmu-type = "riscv,sv39";
+			next-level-cache = <&L6>;
+			reg = <0x1>;
+			riscv,isa = "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket";
+			riscv,pmpgranularity = <4>;
+			riscv,pmpregions = <8>;
+			status = "okay";
+			timebase-frequency = <1000000>;
+			tlb-split;
+			L9: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+		L14: cpu@2 {
+			clock-frequency = <0>;
+			compatible = "sifive,rocket0", "riscv";
+			d-cache-block-size = <64>;
+			d-cache-sets = <32>;
+			d-cache-size = <4096>;
+			d-tlb-sets = <1>;
+			d-tlb-size = <4>;
+			device_type = "cpu";
+			hardware-exec-breakpoint-count = <1>;
+			i-cache-block-size = <64>;
+			i-cache-sets = <32>;
+			i-cache-size = <2048>;
+			i-tlb-sets = <1>;
+			i-tlb-size = <32>;
+			mmu-type = "riscv,sv39";
+			next-level-cache = <&L6>;
+			reg = <0x2>;
+			riscv,isa = "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket";
+			riscv,pmpgranularity = <4>;
+			riscv,pmpregions = <8>;
+			status = "okay";
+			timebase-frequency = <1000000>;
+			tlb-split;
+			L12: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+		L17: cpu@3 {
+			clock-frequency = <0>;
+			compatible = "sifive,rocket0", "riscv";
+			d-cache-block-size = <64>;
+			d-cache-sets = <32>;
+			d-cache-size = <4096>;
+			d-tlb-sets = <1>;
+			d-tlb-size = <4>;
+			device_type = "cpu";
+			hardware-exec-breakpoint-count = <1>;
+			i-cache-block-size = <64>;
+			i-cache-sets = <32>;
+			i-cache-size = <2048>;
+			i-tlb-sets = <1>;
+			i-tlb-size = <32>;
+			mmu-type = "riscv,sv39";
+			next-level-cache = <&L6>;
+			reg = <0x3>;
+			riscv,isa = "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket";
+			riscv,pmpgranularity = <4>;
+			riscv,pmpregions = <8>;
+			status = "okay";
+			timebase-frequency = <1000000>;
+			tlb-split;
+			L15: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+		L20: cpu@4 {
+			clock-frequency = <0>;
+			compatible = "sifive,rocket0", "riscv";
+			d-cache-block-size = <64>;
+			d-cache-sets = <32>;
+			d-cache-size = <4096>;
+			d-tlb-sets = <1>;
+			d-tlb-size = <4>;
+			device_type = "cpu";
+			hardware-exec-breakpoint-count = <1>;
+			i-cache-block-size = <64>;
+			i-cache-sets = <32>;
+			i-cache-size = <2048>;
+			i-tlb-sets = <1>;
+			i-tlb-size = <32>;
+			mmu-type = "riscv,sv39";
+			next-level-cache = <&L6>;
+			reg = <0x4>;
+			riscv,isa = "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket";
+			riscv,pmpgranularity = <4>;
+			riscv,pmpregions = <8>;
+			status = "okay";
+			timebase-frequency = <1000000>;
+			tlb-split;
+			L18: interrupt-controller {
+				#interrupt-cells = <1>;
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+			};
+		};
+	};
+	L40: htif {
+		compatible = "ucb,htif0";
+	};
+	L27: memory@80000000 {
+		device_type = "memory";
+		reg = <0x80000000 0x10000000>;
+	};
+	L37: soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "ucb-bar,chipyard-soc", "simple-bus";
+		ranges;
+		L30: boot-address-reg@4000 {
+			reg = <0x4000 0x1000>;
+			reg-names = "control";
+		};
+		L6: cache-controller@2010000 {
+			cache-block-size = <64>;
+			cache-level = <2>;
+			cache-sets = <1024>;
+			cache-size = <1048576>;
+			cache-unified;
+			compatible = "sifive,inclusivecache0", "cache";
+			next-level-cache = <&L27 &L31 &L32>;
+			reg = <0x2010000 0x1000>;
+			reg-names = "control";
+			sifive,mshr-count = <4>;
+		};
+		L22: clint@2000000 {
+			compatible = "riscv,clint0";
+			interrupts-extended = <&L7 3 &L7 7 &L9 3 &L9 7 &L12 3 &L12 7 &L15 3 &L15 7 &L18 3 &L18 7>;
+			reg = <0x2000000 0x10000>;
+			reg-names = "control";
+		};
+		L34: clock-gater@100000 {
+			reg = <0x100000 0x1000>;
+			reg-names = "control";
+		};
+		L23: debug-controller@0 {
+			compatible = "sifive,debug-013", "riscv,debug-013";
+			debug-attach = "jtag";
+			interrupts-extended = <&L7 65535 &L9 65535 &L12 65535 &L15 65535 &L18 65535>;
+			reg = <0x0 0x1000>;
+			reg-names = "control";
+		};
+		L2: error-device@3000 {
+			compatible = "sifive,error0";
+			reg = <0x3000 0x1000>;
+		};
+		L21: interrupt-controller@c000000 {
+			#interrupt-cells = <1>;
+			compatible = "riscv,plic0";
+			interrupt-controller;
+			interrupts-extended = <&L7 11 &L7 9 &L9 11 &L9 9 &L12 11 &L12 9 &L15 11 &L15 9 &L18 11 &L18 9>;
+			reg = <0xc000000 0x4000000>;
+			reg-names = "control";
+			riscv,max-priority = <1>;
+			riscv,ndev = <1>;
+		};
+		L31: lbwif-ram@10000000 {
+			reg = <0x10000000 0x1000>;
+		};
+		L32: lbwif-rom@20000 {
+			reg = <0x20000 0x10000>;
+		};
+		L29: rom@10000 {
+			compatible = "sifive,rom0";
+			reg = <0x10000 0x10000>;
+			reg-names = "mem";
+		};
+		L33: serial@54000000 {
+			clocks = <&L1>;
+			compatible = "sifive,uart0";
+			interrupt-parent = <&L21>;
+			interrupts = <1>;
+			reg = <0x54000000 0x1000>;
+			reg-names = "control";
+		};
+		L3: subsystem_gbus_clock {
+			#clock-cells = <0>;
+			clock-frequency = <100000000>;
+			clock-output-names = "subsystem_gbus_clock";
+			compatible = "fixed-clock";
+		};
+		L5: subsystem_l2_clock {
+			#clock-cells = <0>;
+			clock-frequency = <200000000>;
+			clock-output-names = "subsystem_l2_clock";
+			compatible = "fixed-clock";
+		};
+		L4: subsystem_mbus_clock {
+			#clock-cells = <0>;
+			clock-frequency = <200000000>;
+			clock-output-names = "subsystem_mbus_clock";
+			compatible = "fixed-clock";
+		};
+		L1: subsystem_pbus_clock {
+			#clock-cells = <0>;
+			clock-frequency = <200000000>;
+			clock-output-names = "subsystem_pbus_clock";
+			compatible = "fixed-clock";
+		};
+		L0: subsystem_sbus_clock {
+			#clock-cells = <0>;
+			clock-frequency = <200000000>;
+			clock-output-names = "subsystem_sbus_clock";
+			compatible = "fixed-clock";
+		};
+		L35: tile-reset-setter@110000 {
+			reg = <0x110000 0x1000>;
+			reg-names = "control";
+		};
+	};
+};
+
+Generated Address Map
+	       0 -     1000 ARWX  debug-controller@0
+	    3000 -     4000 ARWX  error-device@3000
+	    4000 -     5000 ARW   boot-address-reg@4000
+	   10000 -    20000  R X  rom@10000
+	   20000 -    30000  R XC lbwif-rom@20000
+	  100000 -   101000 ARW   clock-gater@100000
+	  110000 -   111000 ARW   tile-reset-setter@110000
+	 2000000 -  2010000 ARW   clint@2000000
+	 2010000 -  2011000 ARW   cache-controller@2010000
+	 c000000 - 10000000 ARW   interrupt-controller@c000000
+	10000000 - 10001000 ARWXC lbwif-ram@10000000
+	54000000 - 54001000 ARW   serial@54000000
+	80000000 - 90000000 ARWXC memory@80000000
+
+(#### Jessica #### Connecting GHM **Clock** on the sub-system, HartID:,0,...!!)
+(#### Jessica #### Connecting GHM **Clock** on the sub-system, HartID:,1,...!!)
+(#### Jessica #### Connecting GHM **Clock** on the sub-system, HartID:,2,...!!)
+(#### Jessica #### Connecting GHM **Clock** on the sub-system, HartID:,3,...!!)
+(#### Jessica #### Connecting GHM **Clock** on the sub-system, HartID:,4,...!!)
+
+buildTopClockGenerator Frequency Summary
+  Input Reference Frequency: 200.0 MHz
+  Output clock subsystem_sbus_0, requested: 200.0 MHz, actual: 200.0 MHz (division of 1)
+  Output clock subsystem_sbus_1, requested: 200.0 MHz, actual: 200.0 MHz (division of 1)
+  Output clock tileClockGroup_tile_1, requested: 100.0 MHz, actual: 100.0 MHz (division of 2)
+  Output clock tileClockGroup_tile_2, requested: 100.0 MHz, actual: 100.0 MHz (division of 2)
+  Output clock tileClockGroup_tile_3, requested: 100.0 MHz, actual: 100.0 MHz (division of 2)
+  Output clock tileClockGroup_tile_4, requested: 100.0 MHz, actual: 100.0 MHz (division of 2)
+  Output clock subsystem_pbus_0, requested: 200.0 MHz, actual: 200.0 MHz (division of 1)
+  Output clock subsystem_fbus_0, requested: 200.0 MHz, actual: 200.0 MHz (division of 1)
+  Output clock subsystem_mbus_0, requested: 200.0 MHz, actual: 200.0 MHz (division of 1)
+  Output clock subsystem_cbus_0, requested: 200.0 MHz, actual: 200.0 MHz (division of 1)
+  Output clock subsystem_gbus_0, requested: 100.0 MHz, actual: 100.0 MHz (division of 2)
+  Output clock implicit_clock, requested: 200.0 MHz, actual: 200.0 MHz (division of 1)
+IOCells generated by IOBinders:
+  IOBinder for interface testchipip.CanHavePeripheryTLSerial generated:
+    34 X GenericDigitalInIOCell
+    35 X GenericDigitalOutIOCell
+  IOBinder for interface testchipip.CanHavePeripheryCustomBootPin generated:
+    1 X GenericDigitalInIOCell
+  IOBinder for interface chipyard.clocking.HasChipyardPRCI generated:
+    2 X GenericDigitalInIOCell
+  IOBinder for interface sifive.blocks.devices.uart.HasPeripheryUARTModuleImp generated:
+    1 X GenericDigitalInIOCell
+    1 X GenericDigitalOutIOCell
+  IOBinder for interface freechips.rocketchip.devices.debug.HasPeripheryDebug generated:
+    3 X GenericDigitalInIOCell
+    1 X GenericDigitalOutIOCell
+
+  Total generated 78 IOCells:
+    41 X GenericDigitalInIOCell
+    37 X GenericDigitalOutIOCell
+
+harnessDividerOnlyClockGenerator Frequency Summary
+  Input Reference Frequency: 200.0 MHz
+  Output clock buildtop_reference_clock, requested: 200.0 MHz, actual: 200.0 MHz (division of 1)
+[0m[[0m[32msuccess[0m] [0m[0mTotal time: 65 s (01:05), completed Oct 9, 2026, 6:22:18 PM[0m
+[0Jecho "$mfc_extra_anno_contents" > /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.extrafirtool.anno.json
+echo "$sfc_extra_low_transforms_anno_contents" > /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.extrasfc.anno.json
+jq -s '[.[][]]' /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.anno.json /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.extrafirtool.anno.json > /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.extra.anno.json
+if [ "low" = low ]; then jq -s '[.[][]]' /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.extra.anno.json /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.extrasfc.anno.json > /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.appended.anno.json; fi
+if [ "low" = none ]; then cat /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.extra.anno.json > /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.appended.anno.json; fi
+rm -rf /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral
+cd /data1/gzh/EC/chipyard && /data1/gzh/EC/chipyard/.conda-env/bin/sbt -java-home /data1/gzh/EC/chipyard/.conda-env/lib/jvm  ";project tapeout; runMain barstools.tapeout.transforms.GenerateModelStageMain  --no-dedup --output-file /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc --out-anno-file /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc.anno.json --target-dir /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral --input-file /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.fir --annotation-file /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.appended.anno.json --log-level error --allow-unrecognized-annotations -X low "
+Picked up JAVA_TOOL_OPTIONS: -Xmx16G -Xss8M -XX:ActiveProcessorCount=8 -Dsbt.supershell=false
+Picked up JAVA_TOOL_OPTIONS: -Xmx16G -Xss8M -XX:ActiveProcessorCount=8 -Dsbt.supershell=false
+[0m[[0m[0minfo[0m] [0m[0mwelcome to sbt 1.8.2 (N/A Java 17.0.3-internal)[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project chipyard-build from plugins.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading project definition from /data1/gzh/EC/chipyard/project[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project chipyardRoot from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project hardfloat from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project rocketConfig from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project testchipip from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project constellation from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project icenet from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project hwacha from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project boom from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project cva6 from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project ibex from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project sodor from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project gemmini from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project tapeout from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project sim-build from plugins.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading project definition from /data1/gzh/EC/chipyard/sims/firesim/sim/project[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project firesim from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project targetutils from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project midas from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mresolving key references (37427 settings) ...[0m
+[0m[[0m[0minfo[0m] [0m[0mset current project to chipyardRoot (in build file:/data1/gzh/EC/chipyard/)[0m
+[0m[[0m[0minfo[0m] [0m[0mset current project to tapeout (in build file:/data1/gzh/EC/chipyard/)[0m
+[0m[[0m[0minfo[0m] [0m[0mrunning (fork) barstools.tapeout.transforms.GenerateModelStageMain --no-dedup --output-file /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc --out-anno-file /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc.anno.json --target-dir /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral --input-file /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.fir --annotation-file /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.appended.anno.json --log-level error --allow-unrecognized-annotations -X low[0m
+[0m[[0m[31merror[0m] [0m[0mPicked up JAVA_TOOL_OPTIONS: -Xmx16G -Xss8M -XX:ActiveProcessorCount=8 -Dsbt.supershell=false[0m
+[0m[[0m[32msuccess[0m] [0m[0mTotal time: 513 s (08:33), completed Oct 9, 2026, 6:31:03 PM[0m
+[0Jfirtool \
+	--format=fir \
+	--dedup \
+	--export-module-hierarchy \
+	--emit-metadata \
+	--verify-each=true \
+	--warn-on-unprocessed-annotations \
+	--disable-annotation-classless \
+	--disable-annotation-unknown \
+	--mlir-timing \
+	--lowering-options=emittedLineLength=2048,noAlwaysComb,disallowLocalVariables,verifLabels,locationInfoStyle=wrapInAtSquareBracket \
+	--repl-seq-mem \
+	--repl-seq-mem-file=/data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.mems.conf \
+	--repl-seq-mem-circuit=TestHarness \
+	--annotation-file=/data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc.anno.json \
+	--split-verilog \
+	-o /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral \
+	/data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc.fir
+/data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc.fir:2:1: warning: unprocessed annotation:'firrtl.EmitCircuitAnnotation' still remaining after LowerToHW
+circuit TestHarness :
+^
+/data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc.fir:2:1: warning: unprocessed annotation:'firrtl.stage.AllowUnrecognizedAnnotations$' still remaining after LowerToHW
+circuit TestHarness :
+^
+/data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc.fir:2:1: warning: unprocessed annotation:'logger.LogLevelAnnotation' still remaining after LowerToHW
+circuit TestHarness :
+^
+/data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc.fir:2:1: warning: unprocessed annotation:'firrtl.options.TargetDirAnnotation' still remaining after LowerToHW
+circuit TestHarness :
+^
+/data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc.fir:2:1: warning: unprocessed annotation:'firrtl.stage.OutputFileAnnotation' still remaining after LowerToHW
+circuit TestHarness :
+^
+/data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc.fir:2:1: warning: unprocessed annotation:'firrtl.transforms.NoCircuitDedupAnnotation$' still remaining after LowerToHW
+circuit TestHarness :
+^
+/data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc.fir:2:1: warning: unprocessed annotation:'firrtl.stage.InfoModeAnnotation' still remaining after LowerToHW
+circuit TestHarness :
+^
+/data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc.fir:109642:10: warning: unprocessed annotation:'freechips.rocketchip.util.RegFieldDescMappingAnnotation' still remaining after LowerToHW
+  module PeripheryBus :
+         ^
+/data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc.fir:401471:10: warning: unprocessed annotation:'firrtl.transforms.DontTouchAnnotation' still remaining after LowerToHW
+  module BoomMSHRFile :
+         ^
+/data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc.fir:2067558:10: warning: unprocessed annotation:'freechips.rocketchip.util.RetimeModuleAnnotation' still remaining after LowerToHW
+  module IntToFP :
+         ^
+/data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc.fir:2606431:10: warning: unprocessed annotation:'freechips.rocketchip.util.ParamsAnnotation' still remaining after LowerToHW
+  module BoomTile :
+         ^
+/data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.sfc.fir:3263144:10: warning: unprocessed annotation:'freechips.rocketchip.util.AddressMapAnnotation' still remaining after LowerToHW
+  module DigitalTop :
+         ^
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 271.0279 seconds
+
+  ----User Time----  ----Wall Time----  ----Name----
+   13.6818 (  2.3%)   13.6818 (  5.0%)  FIR Parser
+    0.1386 (  0.0%)    0.1386 (  0.1%)    Parse annotations
+    0.0000 (  0.0%)    0.0000 (  0.0%)    Parse OMIR
+    8.0360 (  1.4%)    8.0360 (  3.0%)    Parse modules
+    4.7901 (  0.8%)    4.7901 (  1.8%)    Verify circuit
+  298.2023 ( 50.4%)  129.3894 ( 47.7%)  'firrtl.circuit' Pipeline
+    9.5693 (  1.6%)    9.5693 (  3.5%)    LowerFIRRTLAnnotations
+    2.0635 (  0.3%)    2.0635 (  0.8%)      (A) circt::firrtl::InstanceGraph
+    1.5839 (  0.3%)    1.5839 (  0.6%)    LowerIntrinsics
+    1.5827 (  0.3%)    1.5827 (  0.6%)      (A) circt::firrtl::InstanceGraph
+   83.3830 ( 14.1%)   10.9988 (  4.1%)    'firrtl.module' Pipeline
+   69.5755 ( 11.8%)    6.3877 (  2.4%)      DropName
+   12.1790 (  2.1%)    4.6042 (  1.7%)      CSE
+    0.4666 (  0.1%)    0.0119 (  0.0%)        (A) DominanceInfo
+    0.0002 (  0.0%)    0.0002 (  0.0%)    InjectDUTHierarchy
+   12.8784 (  2.2%)    0.6935 (  0.3%)    'firrtl.module' Pipeline
+    5.8240 (  1.0%)    0.6933 (  0.3%)      LowerCHIRRTLPass
+    2.9192 (  0.5%)    2.9192 (  1.1%)    InferWidths
+    4.6793 (  0.8%)    4.6793 (  1.7%)    MemToRegOfVec
+    8.1810 (  1.4%)    8.1810 (  3.0%)    InferResets
+    1.4417 (  0.2%)    1.4417 (  0.5%)      (A) circt::firrtl::InstanceGraph
+   10.4802 (  1.8%)   10.4802 (  3.9%)    Dedup
+    0.0023 (  0.0%)    0.0023 (  0.0%)      (A) circt::firrtl::NLATable
+    1.0646 (  0.2%)    1.0646 (  0.4%)    WireDFT
+    9.9176 (  1.7%)    3.7052 (  1.4%)    'firrtl.module' Pipeline
+    8.5821 (  1.5%)    3.7052 (  1.4%)      FlattenMemory
+    4.9824 (  0.8%)    4.9824 (  1.8%)    LowerFIRRTLTypes
+    9.6411 (  1.6%)    3.1177 (  1.2%)    'firrtl.module' Pipeline
+    7.4676 (  1.3%)    2.7586 (  1.0%)      ExpandWhens
+    0.9483 (  0.2%)    0.3590 (  0.1%)      SFCCompat
+    7.3656 (  1.2%)    7.3656 (  2.7%)    Inliner
+    9.5838 (  1.6%)    3.1583 (  1.2%)    'firrtl.module' Pipeline
+    8.7734 (  1.5%)    3.1583 (  1.2%)      RandomizeRegisterInit
+    4.8384 (  0.8%)    4.8384 (  1.8%)    CheckCombLoops
+    1.3834 (  0.2%)    1.3834 (  0.5%)      (A) circt::firrtl::InstanceGraph
+   37.4476 (  6.3%)    9.5213 (  3.5%)    'firrtl.module' Pipeline
+   34.7860 (  5.9%)    8.7771 (  3.2%)      Canonicalizer
+    2.1195 (  0.4%)    0.7441 (  0.3%)      InferReadWrite
+   18.4851 (  3.1%)   18.4851 (  6.8%)    LowerMemory
+    0.5509 (  0.1%)    0.5509 (  0.2%)      (A) circt::firrtl::InstanceGraph
+    0.0006 (  0.0%)    0.0006 (  0.0%)      (A) SymbolTable
+    1.0264 (  0.2%)    1.0264 (  0.4%)    PrefixModules
+    0.4773 (  0.1%)    0.4773 (  0.2%)      (A) circt::firrtl::InstanceGraph
+    0.0008 (  0.0%)    0.0008 (  0.0%)      (A) circt::firrtl::NLATable
+    3.8804 (  0.7%)    3.8804 (  1.4%)    IMConstProp
+    0.4608 (  0.1%)    0.4608 (  0.2%)    AddSeqMemPorts
+    0.4603 (  0.1%)    0.4603 (  0.2%)      (A) circt::firrtl::InstanceGraph
+    1.3941 (  0.2%)    1.3941 (  0.5%)    CreateSiFiveMetadata
+    0.3196 (  0.1%)    0.3196 (  0.1%)    ExtractInstances
+    0.0005 (  0.0%)    0.0005 (  0.0%)      (A) circt::firrtl::NLATable
+    0.0002 (  0.0%)    0.0002 (  0.0%)    GrandCentral
+    1.4083 (  0.2%)    1.4083 (  0.5%)    BlackBoxReader
+    5.9613 (  1.0%)    1.3987 (  0.5%)    'firrtl.module' Pipeline
+    4.5957 (  0.8%)    1.3987 (  0.5%)      DropName
+    2.6217 (  0.4%)    2.6217 (  1.0%)    SymbolDCE
+    2.2642 (  0.4%)    2.2642 (  0.8%)  InnerSymbolDCE
+   18.1333 (  3.1%)    9.1993 (  3.4%)  'firrtl.circuit' Pipeline
+    8.9340 (  1.5%)    2.4338 (  0.9%)    'firrtl.module' Pipeline
+    7.7129 (  1.3%)    2.4338 (  0.9%)      Canonicalizer
+    3.7111 (  0.6%)    3.7111 (  1.4%)    IMDeadCodeElim
+    0.5363 (  0.1%)    0.5363 (  0.2%)      (A) circt::firrtl::InstanceGraph
+    0.0000 (  0.0%)    0.0000 (  0.0%)    EmitOMIR
+    0.3115 (  0.1%)    0.3115 (  0.1%)    ResolveTraces
+    0.0001 (  0.0%)    0.0001 (  0.0%)      (A) circt::firrtl::NLATable
+    2.0162 (  0.3%)    2.0162 (  0.7%)    LowerXMR
+    0.6028 (  0.1%)    0.6028 (  0.2%)      (A) circt::firrtl::InstanceGraph
+    5.5615 (  0.9%)    5.5615 (  2.1%)  LowerFIRRTLToHW
+    0.0002 (  0.0%)    0.0002 (  0.0%)    (A) circt::firrtl::NLATable
+    0.5472 (  0.1%)    0.5472 (  0.2%)    (A) circt::firrtl::InstanceGraph
+   32.4039 (  5.5%)   14.0316 (  5.2%)  'hw.module' Pipeline
+    9.3570 (  1.6%)    4.7409 (  1.7%)    CSE
+    0.9338 (  0.2%)    0.0214 (  0.0%)      (A) DominanceInfo
+   11.3691 (  1.9%)    6.3072 (  2.3%)    Canonicalizer
+    3.5895 (  0.6%)    2.1324 (  0.8%)    CSE
+    0.3223 (  0.1%)    0.0055 (  0.0%)      (A) DominanceInfo
+    5.2360 (  0.9%)    3.1573 (  1.2%)    LowerSeqFIRRTLToSV
+    3.2730 (  0.6%)    3.2730 (  1.2%)  HWMemSimImpl
+   38.5128 (  6.5%)   20.0137 (  7.4%)  'hw.module' Pipeline
+    8.5581 (  1.4%)    3.0443 (  1.1%)    CSE
+    0.8262 (  0.1%)    0.0181 (  0.0%)      (A) DominanceInfo
+   18.1777 (  3.1%)   13.7731 (  5.1%)    Canonicalizer
+    3.5703 (  0.6%)    1.1247 (  0.4%)    CSE
+    0.5700 (  0.1%)    0.0110 (  0.0%)      (A) DominanceInfo
+    4.6606 (  0.8%)    2.8989 (  1.1%)    HWCleanup
+   20.2321 (  3.4%)   13.6966 (  5.1%)  'hw.module' Pipeline
+    1.2269 (  0.2%)    0.0967 (  0.0%)    HWLegalizeModules
+   16.4215 (  2.8%)   13.5908 (  5.0%)    PrettifyVerilog
+    4.8651 (  0.8%)    4.8651 (  1.8%)  StripDebugInfoWithPred
+   52.9338 (  9.0%)   52.9338 ( 19.5%)  ExportSplitVerilog
+   95.0097 ( 16.1%)   43.6368 ( 16.1%)  'builtin.module' Pipeline
+   51.3729 (  8.7%)   42.8957 ( 15.8%)    'hw.module' Pipeline
+   50.1927 (  8.5%)   42.8944 ( 15.8%)      PrepareForEmission
+    0.5590 (  0.1%)    0.5590 (  0.2%)  HWExportModuleHierarchy
+  -43.5623 ( -7.4%)  -43.5623 (-16.1%)  Rest
+  591.2964 (100.0%)  271.0279 (100.0%)  Total
+sed -i 's/.*/& /' /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.mems.conf # need trailing space for SFC macrocompiler
+/data1/gzh/EC/chipyard/scripts/split-module-files.py \
+	--model-hier-json /data1/gzh/EC/Debug/1769000_build/generated/model_module_hierarchy.json \
+	--dut ChipTop \
+	--out-dut-filelist /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.top.f \
+	--out-model-filelist /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.model.f \
+	--in-all-filelist /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/filelist.f \
+	--target-dir /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral
+# firtool may emit absolute black-box paths; prefix only relative entries.
+sed -e 's;^\./;;' \
+	-e 's;^.*/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/;/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/;' \
+	-e '\|^/|! s;^;/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/;' \
+	/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/firrtl_black_box_resource_files.f > /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.bb.f
+sed -i 's/\.\///' /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.top.f
+sed -i 's/\.\///' /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.model.f
+sed -i 's/\.\///' /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.bb.f
+sort -u /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.top.f /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.model.f /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.bb.f > /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.all.f
+make: Leaving directory '/data1/gzh/EC/chipyard/sims/verilator'

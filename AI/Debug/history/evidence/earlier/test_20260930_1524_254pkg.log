@@ -1,0 +1,37 @@
+[UART] UART0 is here (stdin/stdout).
+[INIT] checker_mask=0xf status=ready
+[INIT] software_interrupt=pass
+[RUN] hart=0 status=started
+[CONFIG] big_core_perf=off checker_perf=on interval_cycles=5000 sample_readback=not_collected
+[RUN] benchmark=gapbs_bfs nodes=512 source=0 reached=512 edges=8192 verified=0 parent_checksum=40304848
+[PERF] boom_cycles=1420997 boom_inst=588307
+[VERIFY] packages allocated=254 completed=254 passed=254 status=PASS
+[TRAFFIC] source        st_total   st_cache st_uncache   ld_total   ld_cache ld_uncache ld_response ld_forward
+[TRAFFIC] boom_arch        61383      61334         49      78334      78037        297          -          -
+[TRAFFIC] boom_strict      61383      61334         49      78334      78037        297      76071       1966
+[TRAFFIC] checker_sum      60679      60630         49      76607      76310        297          -          0
+[TRAFFIC] c1               20245      20229         16      22902      22806         96          -          0
+[TRAFFIC] c2               18036      18020         16      22782      22683         99          -          0
+[TRAFFIC] c3               18423      18408         15      19836      19746         90          -          0
+[TRAFFIC] c4                3975       3973          2      11087      11075         12          -          0
+[ASSERT] store arch=61383 strict=61383 checker=60679 result=FAIL
+[ASSERT_DIAG] store_arch_minus_checker=+704
+[ASSERT_DIAG] store_cache_arch_minus_checker=+704
+[ASSERT] load arch=78334 strict=78334 checker=76607 result=FAIL
+[ASSERT_DIAG] load_arch_minus_checker=+1727
+[ASSERT_DIAG] load_cache_arch_minus_checker=+1727
+[TRAFFIC] path          total      dirty verify_required   verified unverified   resolved  nonverify status
+[TRAFFIC] L1-L2          1251       1198             731        396        335        335        467 PASS  
+[TRAFFIC] L2-DRAM          56         56              15         15          0          0         41 PASS  
+[ADDRESS_STATS] status=FAIL valid=0 error=0x10 pending=0
+[LATENCY] metric                     events clock    frequency_hz     avg_cycles         avg_ns
+[LATENCY] store_uncache                  49 boom_eq     200000000        108.081        540.408
+[LATENCY] dirty_wb                      335 boom        200000000       8218.310      41091.552
+[LATENCY] l2_dram_dirty_wb                0 l2          200000000            n/a            n/a reason=no_events
+[BARRIER] cross_package_store    seen=54440 resolved=54440 pending=0 dropped=0 wait_cycle_sum=159059421 valid=1 status=PASS
+[LATENCY] cross_package_store         54440 boom        200000000       2921.738      14608.690
+[BARRIER] l1_l2_replacement      seen=300 resolved=300 pending=0 dropped=0 wait_cycle_sum=2739100 valid=1 status=PASS
+[LATENCY] l1_l2_replacement             300 boom        200000000       9130.333      45651.666
+[BARRIER] l2_dram_replacement    seen=11 resolved=11 pending=0 dropped=0 wait_cycle_sum=3130 valid=1 status=PASS
+[LATENCY] l2_dram_replacement            11 l2          200000000        284.545       1422.727
+[END] hart=0 status=FAIL

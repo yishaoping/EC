@@ -1,0 +1,81 @@
+[info] welcome to sbt 1.8.2 (N/A Java 17.0.3-internal)
+[info] loading settings for project chipyard-build from plugins.sbt ...
+[info] loading project definition from /data1/gzh/EC/chipyard/project
+/data1/gzh/EC/chipyard/build.sbt:29: warning: method sonatypeRepo in class ResolverFunctions is deprecated (since 1.7.0): Use sonatypeOssRepos instead e.g. `resolvers ++= Resolver.sonatypeOssRepos("snapshots")`
+    Resolver.sonatypeRepo("snapshots"),
+             ^
+/data1/gzh/EC/chipyard/build.sbt:30: warning: method sonatypeRepo in class ResolverFunctions is deprecated (since 1.7.0): Use sonatypeOssRepos instead e.g. `resolvers ++= Resolver.sonatypeOssRepos("snapshots")`
+    Resolver.sonatypeRepo("releases"),
+             ^
+[info] loading settings for project chipyardRoot from build.sbt ...
+/data1/gzh/EC/chipyard/generators/rocket-chip/hardfloat/build.sbt:10: warning: method sonatypeRepo in class ResolverFunctions is deprecated (since 1.7.0): Use sonatypeOssRepos instead e.g. `resolvers ++= Resolver.sonatypeOssRepos("snapshots")`
+  Resolver.sonatypeRepo("snapshots"),
+           ^
+/data1/gzh/EC/chipyard/generators/rocket-chip/hardfloat/build.sbt:11: warning: method sonatypeRepo in class ResolverFunctions is deprecated (since 1.7.0): Use sonatypeOssRepos instead e.g. `resolvers ++= Resolver.sonatypeOssRepos("snapshots")`
+  Resolver.sonatypeRepo("releases")
+           ^
+/data1/gzh/EC/chipyard/generators/rocket-chip/hardfloat/build.sbt:21: warning: method in in trait ScopingSetting is deprecated (since 1.5.0): `in` is deprecated; migrate to slash syntax - https://www.scala-sbt.org/1.x/docs/Migrating-from-sbt-013x.html#slash
+publishArtifact in Test := false
+                ^
+[info] loading settings for project hardfloat from build.sbt ...
+/data1/gzh/EC/chipyard/generators/rocket-chip/api-config-chipsalliance/build-rules/sbt/build.sbt:3: warning: method in in trait ScopingSetting is deprecated (since 1.5.0): `in` is deprecated; migrate to slash syntax - https://www.scala-sbt.org/1.x/docs/Migrating-from-sbt-013x.html#slash
+scalaSource in Compile := baseDirectory.value / "../../design/craft/src"
+            ^
+[info] loading settings for project rocketConfig from build.sbt ...
+/data1/gzh/EC/chipyard/generators/testchipip/build.sbt:42: warning: method sonatypeRepo in class ResolverFunctions is deprecated (since 1.7.0): Use sonatypeOssRepos instead e.g. `resolvers ++= Resolver.sonatypeOssRepos("snapshots")`
+  Resolver.sonatypeRepo("snapshots"),
+           ^
+/data1/gzh/EC/chipyard/generators/testchipip/build.sbt:43: warning: method sonatypeRepo in class ResolverFunctions is deprecated (since 1.7.0): Use sonatypeOssRepos instead e.g. `resolvers ++= Resolver.sonatypeOssRepos("snapshots")`
+  Resolver.sonatypeRepo("releases"),
+           ^
+[info] loading settings for project testchipip from build.sbt ...
+[info] loading settings for project constellation from build.sbt ...
+[info] loading settings for project icenet from build.sbt ...
+[info] loading settings for project hwacha from build.sbt ...
+[info] loading settings for project boom from build.sbt ...
+[info] loading settings for project cva6 from build.sbt ...
+[info] loading settings for project ibex from build.sbt ...
+[info] loading settings for project sodor from build.sbt ...
+[info] loading settings for project gemmini from build.sbt ...
+/data1/gzh/EC/chipyard/tools/barstools/build.sbt:27: warning: method sonatypeRepo in class ResolverFunctions is deprecated (since 1.7.0): Use sonatypeOssRepos instead e.g. `resolvers ++= Resolver.sonatypeOssRepos("snapshots")`
+  Resolver.sonatypeRepo("snapshots"),
+           ^
+/data1/gzh/EC/chipyard/tools/barstools/build.sbt:28: warning: method sonatypeRepo in class ResolverFunctions is deprecated (since 1.7.0): Use sonatypeOssRepos instead e.g. `resolvers ++= Resolver.sonatypeOssRepos("snapshots")`
+  Resolver.sonatypeRepo("releases"),
+           ^
+[info] loading settings for project tapeout from build.sbt ...
+[info] loading settings for project sim-build from plugins.sbt ...
+[info] loading project definition from /data1/gzh/EC/chipyard/sims/firesim/sim/project
+/data1/gzh/EC/chipyard/sims/firesim/sim/build.sbt:26: warning: method sonatypeRepo in class ResolverFunctions is deprecated (since 1.7.0): Use sonatypeOssRepos instead e.g. `resolvers ++= Resolver.sonatypeOssRepos("snapshots")`
+    Resolver.sonatypeRepo("snapshots"),
+             ^
+/data1/gzh/EC/chipyard/sims/firesim/sim/build.sbt:27: warning: method sonatypeRepo in class ResolverFunctions is deprecated (since 1.7.0): Use sonatypeOssRepos instead e.g. `resolvers ++= Resolver.sonatypeOssRepos("snapshots")`
+    Resolver.sonatypeRepo("releases"),
+             ^
+[info] loading settings for project firesim from build.sbt ...
+[info] loading settings for project targetutils from build.sbt ...
+[info] loading settings for project midas from build.sbt ...
+[info] resolving key references (37427 settings) ...
+[info] set current project to chipyardRoot (in build file:/data1/gzh/EC/chipyard/)
+[info] Executing in batch mode. For better performance use sbt's shell
+[info] set current project to rocketchip (in build file:/data1/gzh/EC/chipyard/)
+[info] compiling 4 Scala sources to /data1/gzh/EC/chipyard/generators/rocket-chip/src/target/scala-2.13/classes ...
+[warn] /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/scala/rocket/Frontend.scala:643:15: private val deviceOpt in trait HasICacheFrontend is never used
+[warn]   private val deviceOpt = if (tileParams.icache.get.itimAddr.isDefined) Some(frontend.icache.device) else None
+[warn]               ^
+[warn] /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala:934:32: method fire in class AddMethodsToReadyValid is deprecated (since Chisel 3.5): Calling this function with an empty argument list is invalid in Scala 3. Use the form without parentheses instead
+[warn]   val ll_wen = WireInit(div.io.resp.fire())
+[warn]                                ^
+[warn] /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala:938:19: method fire in class AddMethodsToReadyValid is deprecated (since Chisel 3.5): Calling this function with an empty argument list is invalid in Scala 3. Use the form without parentheses instead
+[warn]     when (io.rocc.resp.fire()) {
+[warn]                   ^
+[warn] /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala:1020:33: method fire in class AddMethodsToReadyValid is deprecated (since Chisel 3.5): Calling this function with an empty argument list is invalid in Scala 3. Use the form without parentheses instead
+[warn]   lsl_req_valid_rocc := io.rocc.resp.fire() && (checker_mode.asBool || checker_priv_mode.asBool) && wb_ctrl.rocc && wb_ctrl.wxd         
+[warn]                                 ^
+[warn] /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala:1999:32: method apply in object SynthesizePrintf is deprecated (since FireSim 1.14): This method will be removed. Annotate the printf statement directly
+[warn]       printf(midas.targetutils.SynthesizePrintf("C%d: %d-%x, addr-%x, data-%x, ",
+[warn]                                ^
+[warn] 502 feature warnings; re-run with -feature for details
+[warn] 6 warnings found
+[info] done compiling
+[success] Total time: 20 s, completed Oct 9, 2026, 6:06:40 PM

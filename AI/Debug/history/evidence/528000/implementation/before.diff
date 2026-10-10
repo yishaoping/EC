@@ -1,0 +1,2275 @@
+diff --git a/Doc/Run/Run.typ b/Doc/Run/Run.typ
+index ac0b59fc9..4aa96ced3 100644
+--- a/Doc/Run/Run.typ
++++ b/Doc/Run/Run.typ
+@@ -54,16 +54,23 @@ make -j64 CONFIG=v1Config BREAK_SIM_PREREQ=1 run-binary-debug-hex BINARY=../../.
+ 参考/data1/gzh/EC/Debug内容，结合软硬件代码和/data1/gzh/EC/chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.vcd波形进行分析。
+ 在这个过程中可以供后续debug复用的文件放到/data1/gzh/EC/Debug下，方便重复利用。
+ 
++/data1/gzh/EC/chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.log 中
+ 报错原因为：
+-`[198000] %Error: LSU.sv:7633: Assertion failed in TOP.TestHarness.chiptop.system.tile_prci_domain.tile_reset_domain_boom_tile.lsu.assert__assert_74: 'assert' failed.
+-%Error: /data1/gzh/EC/chipyard/sims/verilator/generated-src/chipyard.TestHarness.v1Config/gen-collateral/LSU.sv:7633: Verilog $stop
++`[1680000] %Error: BoomCore.sv:6869: Assertion failed in TOP.TestHarness.chiptop.system.tile_prci_domain.tile_reset_domain_boom_tile.core.assert__assert_21: 'assert' failed.
++%Error: /data1/gzh/EC/chipyard/sims/verilator/generated-src/chipyard.TestHarness.v1Config/gen-collateral/BoomCore.sv:6869: Verilog $stop
+ Aborting...`
+ 
+-这次报错是由于未提交的硬件改动造成的，这个可以帮助发现问题原因和后续修复。请你先分析出完整的信号逻辑链，发现造成问题的根本原因。
++这次报错是由于对话上次的硬件改动造成的，这个可以帮助发现问题原因和后续修复。请你先分析出完整的信号逻辑链，发现造成问题的根本原因，暂时不做修改。
+ 
+-我知道是硬件断言错误，肯定是某些信号不对导致了计数超时之类的。请你注意原来的报错时间是1359000，时间发生倒退，说明上次修改造成了某些问题提前暴露。先分析出完整的信号逻辑链，同时尽量避免头痛医头，脚痛医脚，进行综合性地诊断。
++我感觉这个问题出现过，你在debug文件夹里找一找，修改代码不能治标不治本，要综合考虑。
++== 整体失败的问题
++你是计算机架构领域的专家，我正在进行基于chipyard的开发，设计小核rocket校验大核boom的协同工作框架，目前遇到了一些bug需要你帮我解决，要保障原有功能，不要做仿真和硬件生成。
++参考/data1/gzh/EC/Debug内容，结合软硬件代码和/data1/gzh/EC/chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.vcd波形进行分析。
++在这个过程中可以供后续debug复用的文件放到/data1/gzh/EC/Debug下，方便重复利用。
+ 
++/data1/gzh/EC/chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.log 中虽然程序完成了，但是最后的fail说明校验失败。并且包数只有259，这个包数比不开屏障的279要少，肯定存在问题。
+ 
++请你先分析出完整的信号逻辑链，发现造成问题的根本原因。目的是针对问题进行修复，使得程序最终能够校验成功。
+ 
+ = AI
+ == Codex
+diff --git "a/Experiment/\346\265\201\351\207\217\345\210\206\346\236\220.typ" "b/Experiment/\346\265\201\351\207\217\345\210\206\346\236\220.typ"
+index 45deb4107..0c320e066 100644
+--- "a/Experiment/\346\265\201\351\207\217\345\210\206\346\236\220.typ"
++++ "b/Experiment/\346\265\201\351\207\217\345\210\206\346\236\220.typ"
+@@ -1,35 +1,76 @@
++- 512 开屏障
++[UART] UART0 is here (stdin/stdout).
++[INIT] checker_mask=0xf status=ready
++[INIT] software_interrupt=pass
++[RUN] hart=0 status=started
++[CONFIG] big_core_perf=off checker_perf=on interval_cycles=5000 sample_readback=not_collected
++[RUN] benchmark=gapbs_bfs nodes=512 source=0 reached=512 edges=8192 verified=0 parent_checksum=43363075
++[PERF] boom_cycles=1475683 boom_inst=621112
++[VERIFY] packages allocated=259 completed=259 passed=259 status=PASS
++[TRAFFIC] source        st_total   st_cache st_uncache   ld_total   ld_cache ld_uncache ld_response ld_forward
++[TRAFFIC] boom_arch        61556      61507         49      84966      84669        297          -          -
++[TRAFFIC] boom_strict      61556      61507         49      84966      84669        297      82965       1704
++[TRAFFIC] checker_sum      61674      61625         49      85132      84835        297          -          0
++[TRAFFIC] c1               19196      19182         14      26470      26383         87          -          0
++[TRAFFIC] c2               18386      18368         18      24620      24512        108          -          0
++[TRAFFIC] c3               18662      18647         15      22893      22803         90          -          0
++[TRAFFIC] c4                5430       5428          2      11149      11137         12          -          0
++[ASSERT] store arch=61556 strict=61556 checker=61674 result=FAIL
++[ASSERT_DIAG] store_arch_minus_checker=-118
++[ASSERT_DIAG] store_cache_arch_minus_checker=-118
++[ASSERT] load arch=84966 strict=84966 checker=85132 result=FAIL
++[ASSERT_DIAG] load_arch_minus_checker=-166
++[ASSERT_DIAG] load_cache_arch_minus_checker=-166
++[TRAFFIC] path          total      dirty verify_required   verified unverified   resolved  nonverify status
++[TRAFFIC] L1-L2          1255       1200             728        394        334        334        472 PASS  
++[TRAFFIC] L2-DRAM          37         37               3          3          0          0         34 PASS  
++[ADDRESS_STATS] status=FAIL valid=0 error=0x10 pending=0
++[LATENCY] metric                     events clock    frequency_hz     avg_cycles         avg_ns
++[LATENCY] store_uncache                  49 boom_eq     200000000        114.306        571.530
++[LATENCY] dirty_wb                      334 boom        200000000       7650.011      38250.059
++[LATENCY] l2_dram_dirty_wb                0 l2          200000000            n/a            n/a reason=no_events
++[BARRIER] cross_package_store    seen=58782 resolved=58782 pending=0 dropped=0 wait_cycle_sum=185307341 valid=1 status=PASS
++[LATENCY] cross_package_store         58782 boom        200000000       3152.450      15762.252
++[BARRIER] l1_l2_replacement      seen=325 resolved=325 pending=0 dropped=0 wait_cycle_sum=2555182 valid=1 status=PASS
++[LATENCY] l1_l2_replacement             325 boom        200000000       7862.098      39310.492
++[BARRIER] l2_dram_replacement    seen=2 resolved=2 pending=0 dropped=0 wait_cycle_sum=398 valid=1 status=PASS
++[LATENCY] l2_dram_replacement             2 l2          200000000        199.000        995.000
++[END] hart=0 status=FAIL
++
++- 512 未开屏障
+ [UART] UART0 is here (stdin/stdout).
+ [INIT] checker_mask=0xf status=ready
+ [INIT] software_interrupt=pass
+ [RUN] hart=0 status=started
+ [CONFIG] big_core_perf=off checker_perf=on interval_cycles=5000 sample_readback=not_collected
+ [RUN] benchmark=gapbs_bfs nodes=512 source=0 reached=512 edges=8192 verified=1 parent_checksum=43439728
+-[PERF] boom_cycles=905862 boom_inst=649956
+-[VERIFY] packages allocated=32 completed=32 passed=32 status=PASS
++[PERF] boom_cycles=1012405 boom_inst=649956
++[VERIFY] packages allocated=279 completed=279 passed=279 status=PASS
+ [TRAFFIC] source        st_total   st_cache st_uncache   ld_total   ld_cache ld_uncache ld_response ld_forward
+-[TRAFFIC] boom_arch         3713       3698         15        723        633         90          -          -
+-[TRAFFIC] boom_strict       3713       3698         15        723        633         90        618         15
+-[TRAFFIC] checker_sum       3713       3698         15        723        633         90          -          0
+-[TRAFFIC] c1                1910       1905          5        243        213         30          -          0
+-[TRAFFIC] c2                 874        869          5        237        207         30          -          0
+-[TRAFFIC] c3                 929        924          5        243        213         30          -          0
+-[TRAFFIC] c4                   0          0          0          0          0          0          -          0
++[TRAFFIC] boom_arch        60570      60521         49      95062      94765        297          -          -
++[TRAFFIC] boom_strict      60570      60521         49      95062      94765        297      93178       1587
++[TRAFFIC] checker_sum      60570      60521         49      95062      94765        297          -          0
++[TRAFFIC] c1               17487      17471         16      23719      23623         96          -          0
++[TRAFFIC] c2               15956      15940         16      24680      24581         99          -          0
++[TRAFFIC] c3               17762      17745         17      23187      23085        102          -          0
++[TRAFFIC] c4                9365       9365          0      23476      23476          0          -          0
+ [TRAFFIC] path          total      dirty verify_required   verified unverified   resolved  nonverify status
+-[TRAFFIC] L1-L2          1097       1045             203        157         46         46        842 PASS  
+-[TRAFFIC] L2-DRAM          33         33               1          1          0          0         32 PASS  
++[TRAFFIC] L1-L2          1162       1107             632        228        404        404        475 PASS  
++[TRAFFIC] L2-DRAM          48         47               6          1          5          5         41 PASS  
+ [ADDRESS_STATS] unit    store_total   store_peak     lf_lower     lf_upper      lf_peak     sf_lower     sf_upper      sf_peak    swr_total     swr_peak first_store_total first_store_peak
+-[ADDRESS_STATS] byte          12352         3564           60           60            4         3720         4272          248         4272          248        12292         3564
+-[ADDRESS_STATS] word4          3108          891           15           15            1          930         1068           62         1068           62         3093          891
+-[ADDRESS_STATS] word8          1575          446           15           15            1          465          535           31          465           31         1560          446
+-[ADDRESS_STATS] line            260           60           15           15            1           75           86            5            0            0          245           60
++[ADDRESS_STATS] byte          92797         4296        22584        67756          925        25200        71758          660        54524          644        88301         4296
++[ADDRESS_STATS] word4         23341         1074         5695        17022          233         6333        18043          167         4764           62        22206         1074
++[ADDRESS_STATS] word8         11850          538         2948         8692          119         3191         9103           84         1644           31        11204          538
++[ADDRESS_STATS] line           1857           73          540         1412           21          511         1345           14           26            4         1652           73
+ [LATENCY] metric                     events clock    frequency_hz     avg_cycles         avg_ns
+-[LATENCY] store_uncache                  15 boom_eq     200000000        109.733        548.666
+-[LATENCY] dirty_wb                       46 boom        200000000       3922.347      19611.739
+-[LATENCY] l2_dram_dirty_wb                0 l2          200000000            n/a            n/a reason=no_events
+-[BARRIER] cross_package_store    seen=1183 resolved=1183 pending=0 dropped=0 wait_cycle_sum=2076227 valid=1 status=PASS
+-[LATENCY] cross_package_store          1183 boom        200000000       1755.052       8775.262
+-[BARRIER] l1_l2_replacement      seen=45 resolved=45 pending=0 dropped=0 wait_cycle_sum=180576 valid=1 status=PASS
+-[LATENCY] l1_l2_replacement              45 boom        200000000       4012.800      20064.000
+-[BARRIER] l2_dram_replacement    seen=1 resolved=1 pending=0 dropped=0 wait_cycle_sum=216 valid=1 status=PASS
+-[LATENCY] l2_dram_replacement             1 l2          200000000        216.000       1080.000
++[LATENCY] store_uncache                  49 boom_eq     200000000        107.673        538.367
++[LATENCY] dirty_wb                      404 boom        200000000       7007.940      35039.702
++[LATENCY] l2_dram_dirty_wb                5 l2          200000000      11956.000      59780.000
++[BARRIER] cross_package_store    seen=536 resolved=536 pending=0 dropped=0 wait_cycle_sum=1760848 valid=1 status=PASS
++[LATENCY] cross_package_store           536 boom        200000000       3285.164      16425.820
++[BARRIER] l1_l2_replacement      seen=370 resolved=370 pending=0 dropped=0 wait_cycle_sum=2758228 valid=1 status=PASS
++[LATENCY] l1_l2_replacement             370 boom        200000000       7454.670      37273.351
++[BARRIER] l2_dram_replacement    seen=5 resolved=5 pending=0 dropped=0 wait_cycle_sum=59800 valid=1 status=PASS
++[LATENCY] l2_dram_replacement             5 l2          200000000      11960.000      59800.000
+ [END] hart=0 status=PASS
++
+diff --git a/chipyard/generators/boom/src/main/scala/common/tile.scala b/chipyard/generators/boom/src/main/scala/common/tile.scala
+index ef050720c..c0c304a63 100644
+--- a/chipyard/generators/boom/src/main/scala/common/tile.scala
++++ b/chipyard/generators/boom/src/main/scala/common/tile.scala
+@@ -211,6 +211,16 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
+    
+ 
+     val gh_buf = Module(new GH_BUF(GH_BUF_Params(p(XLen),GH_GlobalParams.GH_WIDITH_PACKETS,gc_core_width, true)))
++    // Hold the producer seal until the matching sequence has crossed GHM.
++    // The core-side candidate already proves ROB/RSU quiescence; GH_BUF must
++    // also be empty so delayed commit inputs cannot create a late packet.
++    val producerSealValid = RegInit(false.B)
++    val producerSealSeq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
++    when (core.io.producer_seal_candidate && gh_buf.io.ght_filters_empty.asBool) {
++      producerSealValid := true.B
++      producerSealSeq := core.io.producer_seal_seq
++    }
++    outer.producer_seal_SRNode.bundle := Cat(producerSealValid, producerSealSeq)
+     val fiu = Module(new R_FIU(R_FIUParams(64, GH_GlobalParams.GH_NUM_CORES-1)))
+     fiu.io.gtimer                                := debug_gtimer
+ 
+@@ -358,6 +368,7 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
+   } else {
+     // Not be used, added to pass the compile
+     core.io.gh_stall                             := 0.U
++    outer.producer_seal_SRNode.bundle            := 0.U
+     core.io.icctrl                               := 0.U
+     /* Runtime Configurable Mapping */
+     core.io.big_core_id                          := 0.U
+@@ -644,7 +655,9 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
+   hellaCacheArb.io.requestor <> hellaCachePorts.toSeq
+   lsu.io.hellacache <> hellaCacheArb.io.mem
+   outer.dcache.module.io.lsu <> lsu.io.dmem
+-  // R_IC 状态编码 2 表示 fsm_check；只有该状态下的 BOOM 访存进入统计。
++  // R_IC 状态编码 2 表示 fsm_check。该状态仍用于 checker/特殊访存的
++  // traffic_check 标记；普通架构 load/store 的统计窗口由 traffic_counting
++  // 独立决定，屏障关闭包时不能因暂时离开 fsm_check 而漏计。
+   outer.dcache.module.io.traffic_check_state := core.io.debug_maincore_status === 2.U
+   outer.dcache.module.io.traffic_reset := debug_perf_sel(GH_GlobalParams.GH_PERF_CTRL_RESET_BIT)
+   outer.dcache.module.io.traffic_start := debug_perf_sel(GH_GlobalParams.GH_PERF_CTRL_START_BIT)
+diff --git a/chipyard/generators/boom/src/main/scala/exu/core.scala b/chipyard/generators/boom/src/main/scala/exu/core.scala
+index e36d07e5e..d8600e98f 100644
+--- a/chipyard/generators/boom/src/main/scala/exu/core.scala
++++ b/chipyard/generators/boom/src/main/scala/exu/core.scala
+@@ -90,6 +90,10 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
+     val active_packet_seq  = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)) // 当前活动校验包序号。
+     val packet_alloc_valid = Output(Bool()) // 本周期是否分配了新的校验包。
+     val packet_alloc_seq   = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)) // 新分配包的序号。
++    // Candidate seal from the BOOM architectural boundary. BoomTile adds the
++    // GH_BUF drain condition before exporting the sticky sideband.
++    val producer_seal_candidate = Output(Bool())
++    val producer_seal_seq       = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+ 
+     // GH_BUF：ROB 退休指令、物理寄存器结果和 JALR 目标组成校验包；
+     // gh_stall 是 GH_BUF 满时返回的流水线反压。
+@@ -258,6 +262,10 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
+   val dis_uops   = Wire(Vec(coreWidth, new MicroOp))
+   val dis_fire   = Wire(Vec(coreWidth, Bool()))
+   val dis_ready  = Wire(Bool())
++  // Assigned once the GuardianCouncil modules are instantiated below.  This
++  // wire lets the ROB retire existing entries while preventing new entries
++  // from entering during the atomic snapshot window.
++  val snapshot_dispatch_block = WireInit(false.B)
+ 
+   // Issue Stage/Register Read
+   val iss_valids = Wire(Vec(exe_units.numIrfReaders, Bool()))
+@@ -783,7 +791,11 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
+   //       ERETs are reported to the CSR two cycles before we send the flush
+   //       Exceptions are reported to the CSR on the cycle we send the flush
+   // This discrepency should be resolved elsewhere.
+-  when (RegNext(rob.io.flush.valid)) {
++  // Only a ROB flush/exception is an architectural redirect.  A branch
++  // mispredict redirect is still speculative until that branch retires and is
++  // therefore handled by the committed-uop PC tracker in the ROB.
++  val arch_redirect_valid = RegNext(rob.io.flush.valid, false.B)
++  when (arch_redirect_valid) {
+     io.ifu.redirect_val   := true.B
+     io.ifu.redirect_flush := true.B
+     val flush_typ = RegNext(rob.io.flush.bits.flush_typ)
+@@ -806,7 +818,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
+ 
+     }
+     io.ifu.redirect_ftq_idx := RegNext(rob.io.flush.bits.ftq_idx)
+-  } .elsewhen (brupdate.b2.mispredict && !RegNext(rob.io.flush.valid)) {
++  } .elsewhen (brupdate.b2.mispredict && !arch_redirect_valid) {
+     val block_pc = AlignPCToBoundary(io.ifu.get_pc(1).pc, icBlockBytes)
+     val uop_maybe_pc = block_pc | brupdate.b2.uop.pc_lob
+     val npc = uop_maybe_pc + Mux(brupdate.b2.uop.is_rvc || brupdate.b2.uop.edge_inst, 2.U, 4.U)
+@@ -846,6 +858,12 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
+     io.ifu.redirect_flush   := true.B
+   }
+ 
++  // Feed only the architectural (flush/exception) redirect back to the ROB's
++  // committed next-PC tracker.  The tracker handles branch targets when the
++  // corresponding uop retires.
++  rob.io.arch_redirect_valid := arch_redirect_valid
++  rob.io.arch_redirect_pc    := io.ifu.redirect_pc(39, 0)
++
+   // Tell the FTQ it can deallocate entries by passing youngest ftq_idx.
+   val youngest_com_idx = (coreWidth-1).U - PriorityEncoder(rob.io.commit.valids.reverse)
+   io.ifu.commit.valid := rob.io.commit.valids.reduce(_|_) || rob.io.com_xcpt.valid
+@@ -1093,11 +1111,13 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
+                       || io.ifu.redirect_flush))
+ 
+ 
+-  io.lsu.fence_dmem := (dis_valids zip wait_for_empty_pipeline).map {case (v,w) => v && w} .reduce(_||_)
++  io.lsu.fence_dmem := (dis_valids zip wait_for_empty_pipeline).map {
++    case (v,w) => v && w && !snapshot_dispatch_block
++  }.reduce(_||_)
+ 
+   val dis_stalls = dis_hazards.scanLeft(false.B) ((s,h) => s || h).takeRight(coreWidth)
+-  dis_fire := dis_valids zip dis_stalls map {case (v,s) => v && !s}
+-  dis_ready := !dis_stalls.last
++  dis_fire := dis_valids zip dis_stalls map {case (v,s) => v && !s && !snapshot_dispatch_block}
++  dis_ready := !dis_stalls.last && !snapshot_dispatch_block
+ 
+   //-------------------------------------------------------------
+   // LDQ/STQ Allocation Logic
+@@ -1120,7 +1140,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
+   //===== GuardianCouncil Function: End   ====//
+   rob.io.enq_valids := dis_fire
+   rob.io.enq_uops   := dis_uops
+-  rob.io.enq_partial_stall := dis_stalls.last // TODO come up with better ROB compacting scheme.
++  rob.io.enq_partial_stall := dis_stalls.last || snapshot_dispatch_block // TODO come up with better ROB compacting scheme.
+   rob.io.debug_tsc := debug_tsc_reg
+   rob.io.csr_stall := csr.io.csr_stall
+   rob.io.debug_st  := io.lsu.stq_debug
+@@ -1757,7 +1777,9 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
+         reset.asBool) {
+     idle_cycles := 0.U
+   }
+-  assert (!(idle_cycles.value(20)), "Pipeline has hung.")
++  // Use the common 2^18 watchdog threshold for all EC protocol watchdogs.
++  val ecWatchdogBit = 18
++  assert (!(idle_cycles.value(ecWatchdogBit)), "Pipeline has hung.")
+ 
+   val little_status1 = freechips.rocketchip.util.WideCounter(32)
+   val little_status2 = freechips.rocketchip.util.WideCounter(32)
+@@ -2068,23 +2090,33 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
+       0.U, barrierServiceBank + 1.U)
+     barrierServiceSeq := 0.U
+   }
+-  val functionalBarrierStall = p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B &&
+-    barrierServiceActive && l2BarrierReq(barrierServiceBank) &&
+-    ic_master.io.barrier_close_ack &&
+-    ic_master.io.barrier_close_ack_seq === barrierServiceSeq
+-  rob.io.gh_stall := io.gh_stall || rsu_stall.asBool || ic_stall.asBool || io.big_hang ||
+-    functionalBarrierStall
+-  // Separate protocol-timeout counters keep the original pipeline watchdog
+-  // semantics while detecting a release request that remains asserted but
+-  // never clears ownership.  Width and threshold are intentionally unchanged.
++  val barrierForceClose = p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B &&
++    barrierServiceActive && l2BarrierReq(barrierServiceBank)
++  val barrierCloseForActivePackage = barrierForceClose &&
++    barrierServiceSeq =/= 0.U &&
++    ic_master.io.active_packet_seq === barrierServiceSeq
++
++  // Latch the sequence at the package-close boundary.  The latch is
++  // sequence-qualified so a later package cannot make an earlier seal look
++  // current while the sideband is still crossing to GHM/Rocket.
++  val producerSealTargetValid = RegInit(false.B)
++  val producerSealTargetSeq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
++  val producerSealTrigger = ic_master.io.snapshot_drain.asBool || barrierCloseForActivePackage
++  when (producerSealTrigger && ic_master.io.active_packet_seq =/= 0.U &&
++      (!producerSealTargetValid || producerSealTargetSeq =/= ic_master.io.active_packet_seq)) {
++    producerSealTargetValid := true.B
++    producerSealTargetSeq := ic_master.io.active_packet_seq
++  }
++  rob.io.gh_stall := io.gh_stall || rsu_stall.asBool || ic_stall.asBool || io.big_hang
++  // Separate protocol-timeout counters detect a release request that remains
++  // asserted but never clears ownership.  Keep their threshold aligned with
++  // the pipeline watchdog so all EC hang diagnostics use the same bound.
+   val release_wait1 = freechips.rocketchip.util.WideCounter(32)
+   val release_wait2 = freechips.rocketchip.util.WideCounter(32)
+   val release_wait3 = freechips.rocketchip.util.WideCounter(32)
+   val release_wait4 = freechips.rocketchip.util.WideCounter(32)
+ 
+-  ic_master.io.barrier_force_close :=
+-    p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B && barrierServiceActive &&
+-      l2BarrierReq(barrierServiceBank)
++  ic_master.io.barrier_force_close := barrierForceClose
+   ic_master.io.barrier_force_close_seq := barrierServiceSeq
+   for (bank <- 0 until p(BankedL2Key).nBanks) {
+     val bankAck = p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B &&
+@@ -2118,7 +2150,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
+   when(!io.clear_ic_status_tomain(3).asBool || !ic_master.io.ic_status(3).asBool){ release_wait3 := 0.U }
+   when(!io.clear_ic_status_tomain(4).asBool || !ic_master.io.ic_status(4).asBool){ release_wait4 := 0.U }
+   // Allow the 100 MHz checkers enough progress at the 300/100 MHz clock ratio.
+-  val checkerHangWatchdogBit = 20
++  val checkerHangWatchdogBit = ecWatchdogBit
+   assert(!little_status1(checkerHangWatchdogBit), "little core 1 has hung")
+   assert(!little_status2(checkerHangWatchdogBit), "little core 2 has hung")
+   assert(!little_status3(checkerHangWatchdogBit), "little core 3 has hung")
+@@ -2137,7 +2169,36 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
+   ic_master.io.ic_exit_isax                       := io.icctrl(1)
+   ic_master.io.ic_syscall                         := io.icctrl(2) | RegNext(r_syscall)
+   ic_master.io.ic_syscall_back                    := (io.icctrl(3) | if_mret_or_sret.reduce(_||_)) && (csr.io.r_exception === 0.U)
+-  ic_master.io.if_ready_snap_shot                 := rob.io.can_commit_withoutGC.asUInt
++  // Do not accept a checker snapshot until the ROB is empty and the previous
++  // cycle is quiet.  The guards are registered because the live commit/RSU
++  // outputs feed gh_stall/core_hang_up and must not be read back into the
++  // same combinational path that drives if_dosnap.
++  val snapshot_commit_prev = RegNext(rob.io.commit.valids.asUInt.orR, true.B)
++  val snapshot_rsu_prev    = RegNext(rsu_master.io.rsu_busy.asBool, true.B)
++  val snapshot_csr_prev    = RegNext(csr.io.csr_stall, true.B)
++  val snapshot_excp_prev   = RegNext(csr.io.trace(0).exception, true.B)
++  // Use the registered architectural redirect indication here.  Reading the
++  // live ROB flush output would feed commit/flush combinational logic back
++  // through snapshot admission and R_RSU's hang-up stall.
++  val snapshot_no_redirect = !arch_redirect_valid &&
++                             !io.ifu.redirect_val &&
++                             (csr.io.r_exception === 0.U)
++  val snapshot_quiet =
++    rob.io.empty &&
++    rob.io.r_next_pc_valid &&
++    snapshot_no_redirect &&
++    !snapshot_commit_prev &&
++    !snapshot_csr_prev &&
++    !snapshot_excp_prev &&
++    !snapshot_rsu_prev
++  // Snapshot readiness is sampled by R_IC on a clock edge.  The live ROB
++  // empty/quiet predicate can rise in the same edge that the ROB drains, so
++  // exposing it directly creates a half-cycle pulse: R_IC visibly asserts
++  // packet_alloc_valid, but its sequential packet sequence register misses
++  // the pulse.  Arm readiness for a full cycle before allowing acceptance.
++  val snapshot_quiet_armed = RegNext(snapshot_quiet, false.B)
++  ic_master.io.if_ready_snap_shot                 := (snapshot_quiet_armed && snapshot_no_redirect).asUInt
++  ic_master.io.rob_empty                           := rob.io.empty
+   ic_master.io.rsu_busy                           := rsu_master.io.rsu_busy
+   ic_master.io.ic_threshold                       := GH_GlobalParams.GH_TOTAL_INSTS.U
+   // ic_master.io.ic_incr                            := Mux(r_syscall, 0.U, ic_incr)
+@@ -2149,6 +2210,73 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
+   ic_master.io.excp_mode                          := exception_mode_test
+   ic_stall                                        := ic_master.io.if_pipeline_stall
+ 
++  // Keep new uops out of the ROB while it drains and through R_RSU's delayed
++  // snapshot capture.  Existing ROB entries still retire until snapshot_quiet
++  // becomes true; after acceptance, ic_stall/rsu_stall freeze the state.
++  // If no committed PC exists yet (for example an early run request during
++  // reset startup), allow the first instructions to retire so the boundary
++  // can become valid.  Once a committed PC is established, the drain hold is
++  // strict and prevents new speculative entries from crossing the snapshot.
++  snapshot_dispatch_block :=
++    ((ic_master.io.snapshot_drain.asBool || barrierCloseForActivePackage) && rob.io.r_next_pc_valid) ||
++    rsu_master.io.core_hang_up.asBool
++
++  // BOOM has reached the architectural package boundary only after the ROB,
++  // delayed commit observation, and RSU merge path are all quiet.  BoomTile
++  // adds the GH_BUF drain condition before exporting this as a sticky seal.
++  val producerSealCoreReady = producerSealTargetValid &&
++    producerSealTargetSeq =/= 0.U &&
++    rob.io.empty &&
++    !rob.io.commit.valids.asUInt.orR &&
++    !snapshot_commit_prev &&
++    !rsu_master.io.rsu_busy.asBool &&
++    !rsu_master.io.core_hang_up.asBool &&
++    !io.big_hang
++  io.producer_seal_candidate := producerSealCoreReady
++  io.producer_seal_seq := producerSealTargetSeq
++
++  // A snapshot is an architectural boundary, so accepting it with a live
++  // ROB or a simultaneous architectural retirement is a protocol violation.
++  when (ic_master.io.snapshot_capture) {
++    assert(rob.io.empty, "checker snapshot accepted while BOOM ROB is not empty")
++    assert(rob.io.r_next_pc_valid,
++      "checker snapshot accepted without a committed architectural next PC")
++    assert(!rob.io.commit.valids.asUInt.orR,
++      "checker snapshot accepted with a BOOM retirement")
++  }
++
++  // Keep the snapshot/commit/package boundary visible in generated waves.
++  // These are observation-only probes and do not change the protocol.
++  dontTouch(snapshot_commit_prev)
++  dontTouch(snapshot_rsu_prev)
++  dontTouch(snapshot_csr_prev)
++  dontTouch(snapshot_excp_prev)
++  dontTouch(snapshot_no_redirect)
++  dontTouch(snapshot_quiet)
++  dontTouch(snapshot_quiet_armed)
++  dontTouch(snapshot_dispatch_block)
++  dontTouch(producerSealTargetValid)
++  dontTouch(producerSealTargetSeq)
++  dontTouch(producerSealTrigger)
++  dontTouch(barrierCloseForActivePackage)
++  dontTouch(producerSealCoreReady)
++  dontTouch(rob.io.empty)
++  dontTouch(rob.io.r_next_pc_valid)
++  dontTouch(rob.io.commit.arch_valids)
++  dontTouch(rob.io.can_commit_withoutGC)
++  dontTouch(ic_master.io.if_ready_snap_shot)
++  dontTouch(ic_master.io.if_dosnap)
++  dontTouch(ic_master.io.if_dosnap_priv)
++  dontTouch(ic_master.io.snapshot_drain)
++  dontTouch(ic_master.io.snapshot_capture)
++  dontTouch(ic_master.io.packet_alloc_valid)
++  dontTouch(ic_master.io.packet_alloc_seq)
++  dontTouch(ic_master.io.active_packet_seq)
++  dontTouch(ic_incr)
++  dontTouch(arfs(12))
++  dontTouch(rsu_master.io.core_hang_up)
++  dontTouch(rsu_master.io.rsu_busy)
++
+   // io.big_checker_switch                           := ic_master.io.big_checker_switch
+   // io.icsl_na_ack                                  := ic_master.io.icsl_na_ack
+   val num_activated_cores                          = RegInit(0.U(8.W))
+diff --git a/chipyard/generators/boom/src/main/scala/exu/rob.scala b/chipyard/generators/boom/src/main/scala/exu/rob.scala
+index 1c3f01929..1e5640468 100644
+--- a/chipyard/generators/boom/src/main/scala/exu/rob.scala
++++ b/chipyard/generators/boom/src/main/scala/exu/rob.scala
+@@ -124,6 +124,11 @@ class RobIo(
+   val gh_effective_rob_idx                      = Input(UInt(7.W))    // Revisit: make it is generic
+   val gh_effective_valid                        = Input(UInt(1.W))    // Revisit: make it is generic
+   val r_next_pc                                 = Output(UInt(40.W))    // Revisit: make it is generic
++  val r_next_pc_valid                           = Output(Bool())
++  // Architectural redirects (exceptions and resolved control-flow flushes)
++  // are supplied by BoomCore, where the final redirect target is known.
++  val arch_redirect_valid                       = Input(Bool())
++  val arch_redirect_pc                          = Input(UInt(40.W))
+   //===== GuardianCouncil Function: End  ====//
+ }
+ 
+@@ -277,7 +282,13 @@ class Rob(
+   val rob_head_fflags     = Wire(Vec(coreWidth, UInt(freechips.rocketchip.tile.FPConstants.FLAGS_SZ.W)))
+ //===== GuardianCouncil Function: Start ====//
+   val rob_head_pcs        = Wire(Vec(coreWidth, UInt(40.W)))
+-  io.r_next_pc           := rob_head_pcs(rob_head_lsb)
++  // The ROB head is not an architectural PC when the ROB is empty.  Keep an
++  // explicit committed next-PC value instead of exposing the stale contents
++  // of the newly selected (invalid) head slot.
++  val arch_next_pc        = RegInit(0.U(40.W))
++  val arch_next_pc_valid  = RegInit(false.B)
++  io.r_next_pc            := arch_next_pc
++  io.r_next_pc_valid      := arch_next_pc_valid
+   io.can_commit_withoutGC:= can_commit_noGC.reduce(_|_)
+ //===== GuardianCouncil Function: End ====//
+   val exception_thrown = Wire(Bool())
+@@ -533,7 +544,7 @@ class Rob(
+     rob_head_uses_stq(w) := rob_uop(rob_head).uses_stq
+     rob_head_uses_ldq(w) := rob_uop(rob_head).uses_ldq
+     //===== GuardianCouncil Function: Start  ====//
+-    rob_head_pcs(w)      := rob_uop(rob_head).debug_pc
++    rob_head_pcs(w)      := Mux(rob_head_vals(w), rob_uop(rob_head).debug_pc, 0.U)
+     //===== GuardianCouncil Function: End  ====//
+     //------------------------------------------------
+     // Invalid entries are safe; thrown exceptions are unsafe.
+@@ -590,6 +601,39 @@ class Rob(
+     
+   } //for (w <- 0 until coreWidth)
+ 
++  // Track the architectural continuation at retirement time.  This state is
++  // independent of the speculative/invalid ROB head and remains valid while
++  // the ROB drains for a checker snapshot.
++  val committed_next_pcs = Wire(Vec(coreWidth, UInt(40.W)))
++  for (w <- 0 until coreWidth) {
++    val uop = io.commit.uops(w)
++    val seq_pc = (uop.debug_pc + Mux(uop.is_rvc, 2.U, 4.U))(39, 0)
++    val imm_pc = (uop.debug_pc.asSInt + ImmGen(uop.imm_packed, uop.ctrl.imm_sel).asSInt).asUInt
++    val branch_pc = imm_pc(39, 0)
++    committed_next_pcs(w) := Mux(!io.commit.arch_valids(w), seq_pc,
++      Mux(uop.is_jalr,
++        io.commit.gh_effective_alu_out(w)(39, 0),
++        Mux(uop.is_jal || (uop.is_br && uop.taken), branch_pc, seq_pc)))
++  }
++  var committed_next_pc = 0.U(40.W)
++  var committed_next_pc_valid = false.B
++  for (w <- 0 until coreWidth) {
++    // Commit slots are ordered from oldest to youngest; the final valid slot
++    // therefore supplies the continuation for the complete commit bundle.
++    committed_next_pc = Mux(io.commit.valids(w), committed_next_pcs(w), committed_next_pc)
++    committed_next_pc_valid = committed_next_pc_valid || io.commit.valids(w)
++  }
++  when (io.arch_redirect_valid) {
++    arch_next_pc       := io.arch_redirect_pc
++    arch_next_pc_valid := true.B
++  }.elsewhen (committed_next_pc_valid) {
++    arch_next_pc       := committed_next_pc
++    arch_next_pc_valid := true.B
++  }
++  dontTouch(committed_next_pcs)
++  dontTouch(committed_next_pc)
++  dontTouch(committed_next_pc_valid)
++
+   // **************************************************************************
+   // --------------------------------------------------------------------------
+   // **************************************************************************
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala b/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
+index b80ad2542..2290bcb39 100644
+--- a/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
+@@ -243,8 +243,12 @@ class PackageAddressStats(
+   val processSizeBytes = 1.U(5.W) << processEvent.size
+   val processLineOffset = processEvent.addr(blockOffBits - 1, 0)
+   val processCrossesLine = processLineOffset +& processSizeBytes > lineBytes.U
++  // The checker watermark only proves that the package result is safe; it
++  // does not prove that BOOM has already retired every LSQ entry carrying
++  // that package tag. Equality is therefore a valid same-package tail event.
++  // Events strictly older than the watermark remain malformed.
+   val processMalformed = processEvent.packetSeq === 0.U ||
+-    processEvent.packetSeq <= processEvent.safeWatermark || processCrossesLine
++    processEvent.packetSeq < processEvent.safeWatermark || processCrossesLine
+ 
+   val packageMatch = Wire(Vec(packageWays, Bool()))
+   val packageFree = Wire(Vec(packageWays, Bool()))
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/dcache.scala b/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
+index 63b458e8d..c95d5d356 100644
+--- a/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
+@@ -522,17 +522,34 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+   // ------------
+   // New requests
+ 
+-  io.lsu.req.ready := metaReadArb.io.in(4).ready && dataReadArb.io.in(2).ready
+-  metaReadArb.io.in(4).valid := io.lsu.req.valid
+-  dataReadArb.io.in(2).valid := io.lsu.req.valid
++  // If an older S2 store fails while a younger store is already resident in
++  // S1, the normal pipeline kill below would otherwise lose that request.
++  // Keep one complete request and replay it through the normal LSU path.
++  val killed_store_replay_valid = RegInit(false.B)
++  val killed_store_replay_req = Reg(new BoomDCacheReq)
++  val killed_store_replay_reqs = Wire(Vec(memWidth, new BoomDCacheReq))
++  killed_store_replay_reqs := DontCare
++  killed_store_replay_reqs(0) := killed_store_replay_req
++  val lsu_pipeline_ready = metaReadArb.io.in(4).ready && dataReadArb.io.in(2).ready
++  val killed_store_replay_fire = killed_store_replay_valid && lsu_pipeline_ready
++
++  io.lsu.req.ready := !killed_store_replay_valid && lsu_pipeline_ready
++  metaReadArb.io.in(4).valid := io.lsu.req.valid || killed_store_replay_valid
++  dataReadArb.io.in(2).valid := io.lsu.req.valid || killed_store_replay_valid
+   for (w <- 0 until memWidth) {
+     // Tag read for new requests
+-    metaReadArb.io.in(4).bits.req(w).idx    := io.lsu.req.bits(w).bits.addr >> blockOffBits
++    metaReadArb.io.in(4).bits.req(w).idx := Mux(
++      killed_store_replay_valid,
++      killed_store_replay_req.addr >> blockOffBits,
++      io.lsu.req.bits(w).bits.addr >> blockOffBits)
+     metaReadArb.io.in(4).bits.req(w).way_en := DontCare
+     metaReadArb.io.in(4).bits.req(w).tag    := DontCare
+     // Data read for new requests
+-    dataReadArb.io.in(2).bits.valid(w)      := io.lsu.req.bits(w).valid
+-    dataReadArb.io.in(2).bits.req(w).addr   := io.lsu.req.bits(w).bits.addr
++    dataReadArb.io.in(2).bits.valid(w) := Mux(
++      killed_store_replay_valid, (w == 0).B, io.lsu.req.bits(w).valid)
++    dataReadArb.io.in(2).bits.req(w).addr := Mux(
++      killed_store_replay_valid, killed_store_replay_req.addr,
++      io.lsu.req.bits(w).bits.addr)
+     dataReadArb.io.in(2).bits.req(w).way_en := ~0.U(nWays.W)
+   }
+ 
+@@ -629,15 +646,17 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+   // Prefetch does not need to read data array
+ 
+   val s0_valid = Mux(io.lsu.req.fire, VecInit(io.lsu.req.bits.map(_.valid)),
++                 Mux(killed_store_replay_fire, VecInit(1.U(memWidth.W).asBools),
+                  Mux(mshrs.io.replay.fire || wb_fire || prober_fire || prefetch_fire || mshrs.io.meta_read.fire,
+-                                        VecInit(1.U(memWidth.W).asBools), VecInit(0.U(memWidth.W).asBools)))
++                                        VecInit(1.U(memWidth.W).asBools), VecInit(0.U(memWidth.W).asBools))))
+   val s0_req   = Wire(Vec(memWidth, new BoomDCacheReq))
+   s0_req := Mux(io.lsu.req.fire        , VecInit(io.lsu.req.bits.map(_.bits)),
++            Mux(killed_store_replay_fire, killed_store_replay_reqs,
+             Mux(wb_fire                  , wb_req,
+             Mux(prober_fire              , prober_req,
+             Mux(prefetch_fire            , prefetch_req,
+             Mux(mshrs.io.meta_read.fire, mshr_read_req
+-                                             , replay_req)))))
++                                             , replay_req))))))
+   // LSU 已按 LDQ/STQ 项锁存统计资格；DCache 只补充地址管理器给出的
+   // 可缓存属性，并让两者随 MSHR/refill/replay 一直传播到完成点。
+   when (io.lsu.req.fire) {
+@@ -647,26 +666,28 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+     }
+   }
+   val s0_type  = Mux(io.lsu.req.fire        , t_lsu,
++                 Mux(killed_store_replay_fire, t_lsu,
+                  Mux(wb_fire                  , t_wb,
+                  Mux(prober_fire              , t_probe,
+                  Mux(prefetch_fire            , t_prefetch,
+                  Mux(mshrs.io.meta_read.fire, t_mshr_meta_read
+-                                              , t_replay)))))
++                                              , t_replay))))))
+ 
+   // Does this request need to send a response or nack
+   val s0_send_resp_or_nack = Mux(io.lsu.req.fire, s0_valid,
+-    VecInit(Mux(mshrs.io.replay.fire && isRead(mshrs.io.replay.bits.uop.mem_cmd), 1.U(memWidth.W), 0.U(memWidth.W)).asBools))
++    Mux(killed_store_replay_fire, VecInit(1.U(memWidth.W).asBools),
++      VecInit(Mux(mshrs.io.replay.fire && isRead(mshrs.io.replay.bits.uop.mem_cmd),
++        1.U(memWidth.W), 0.U(memWidth.W)).asBools)))
+ 
+ 
+   val s1_req          = RegNext(s0_req)
++  val s2_store_failed = Wire(Bool())
+   for (w <- 0 until memWidth)
+     s1_req(w).uop.br_mask := GetNewBrMask(io.lsu.brupdate, s0_req(w).uop)
+-  val s2_store_failed = Wire(Bool())
+   val s1_valid = widthMap(w =>
+                  RegNext(s0_valid(w)                                     &&
+                          !IsKilledByBranch(io.lsu.brupdate, s0_req(w).uop) &&
+-                         !(io.lsu.exception && s0_req(w).uop.uses_ldq)   &&
+-                         !(s2_store_failed && io.lsu.req.fire && s0_req(w).uop.uses_stq),
++                         !(io.lsu.exception && s0_req(w).uop.uses_ldq),
+                          init=false.B))
+   for (w <- 0 until memWidth)
+     assert(!(io.lsu.s1_kill(w) && !RegNext(io.lsu.req.fire) && !RegNext(io.lsu.req.bits(w).valid)))
+@@ -697,7 +718,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+                          !io.lsu.s1_kill(w) &&
+                          !IsKilledByBranch(io.lsu.brupdate, s1_req(w).uop) &&
+                          !(io.lsu.exception && s1_req(w).uop.uses_ldq) &&
+-                         !(s2_store_failed && (s1_type === t_lsu) && s1_req(w).uop.uses_stq)))
++                         !(s2_store_failed && s1_type === t_lsu &&
++                           s1_req(w).uop.uses_stq)))
+   for (w <- 0 until memWidth)
+     s2_req(w).uop.br_mask := GetNewBrMask(io.lsu.brupdate, s1_req(w).uop)
+ 
+@@ -806,10 +828,27 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+   for (w <- 0 until memWidth)
+     assert(!(s2_send_resp(w) && s2_send_nack(w)))
+ 
+-  // hits always send a response
+-  // If MSHR is not available, LSU has to replay this request later
+-  // If MSHR is available and this is only a store(not a amo), we don't need to wait for resp later
++  // A store that cannot proceed in S2 is reported through io.lsu.nack.  The
++  // LSU then rewinds stq_execute_head and reissues the same STQ entry.  The
++  // S2-wide kill below can discard a younger store already resident in S1;
++  // that exact S1 request is retained for one compensation replay.
+   s2_store_failed := s2_valid(0) && s2_nack(0) && s2_send_nack(0) && s2_req(0).uop.uses_stq
++  when (killed_store_replay_fire) {
++    killed_store_replay_valid := false.B
++  }
++  // The request lost by the S2-wide kill is the request already resident in
++  // S1, not the new request entering S0.  Capture that S1 request with the
++  // same predicate used above so the compensation replay preserves the
++  // original STQ identity and payload.
++  val killed_store_replay_candidate = s2_store_failed && s1_valid(0) &&
++    !io.lsu.s1_kill(0) &&
++    !IsKilledByBranch(io.lsu.brupdate, s1_req(0).uop) &&
++    !(io.lsu.exception && s1_req(0).uop.uses_ldq) &&
++    s1_type === t_lsu && s1_req(0).uop.uses_stq
++  when (killed_store_replay_candidate) {
++    killed_store_replay_req := s1_req(0)
++    killed_store_replay_valid := true.B
++  }
+ 
+   // Miss handling
+   for (w <- 0 until memWidth) {
+@@ -1017,12 +1056,15 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+ 
+   crossPackageWbReq.valid := crossPackagePending &&
+     !crossPackageIssued &&
++    !crossPackageMetaClearPending &&
+     crossPackagePendingSeq <= safePacketWatermark
+   crossPackageWbReq.bits := DontCare
+   crossPackageWbReq.bits.source := cfg.nMSHRs.U
+   crossPackageWbReq.bits.idx := crossPackagePendingSet
+   crossPackageWbReq.bits.tag := crossPackagePendingTag
+-  crossPackageWbReq.bits.param := 0.U
++  // A shadow writeback invalidates the local copy.  Report T->N to L2 so its
++  // coherence state agrees with the metadata clear performed below.
++  crossPackageWbReq.bits.param := TLPermissions.TtoN
+   crossPackageWbReq.bits.way_en := UIntToOH(crossPackagePendingWay)
+   crossPackageWbReq.bits.voluntary := true.B
+   when (crossPackageBlockCondition && !crossPackagePending) {
+@@ -1781,5 +1823,249 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+   io.traffic_counter := Mux(trafficCounterSnapshotValid,
+     trafficCounterSnapshot, trafficCounterLive)
+ 
++  //===== EC watchdog diagnostics: observation only ====//
++  // Preserve the complete S2 -> MSHR/replay -> S3/data-array completion
++  // chain and barrier state in the waveform.  None of these probes drives
++  // cache control, handshake, completion, or statistics logic.
++  val debug_s2_valid = s2_valid
++  val debug_s2_type = s2_type
++  val debug_s2_stq_idx = VecInit(s2_req.map(_.uop.stq_idx))
++  val debug_s2_packet_seq = VecInit(s2_req.map(_.packet_seq))
++  val debug_s2_token_valid = VecInit(s2_req.map(_.strict_store_token_valid))
++  val debug_s2_token = VecInit(s2_req.map(_.strict_store_token))
++  val debug_s2_nack = s2_nack
++  val debug_s2_nack_miss = s2_nack_miss
++  val debug_s2_nack_victim = s2_nack_victim
++  val debug_s2_nack_wb = s2_nack_wb
++  val debug_s2_nack_data = s2_nack_data
++  val debug_mshr_req_valid = VecInit(mshrs.io.req.map(_.valid))
++  val debug_mshr_req_ready = VecInit(mshrs.io.req.map(_.ready))
++  val debug_mshr_req_fire = VecInit(mshrs.io.req.map(_.fire))
++  val debug_replay_valid = mshrs.io.replay.valid
++  val debug_replay_fire = mshrs.io.replay.fire
++  val debug_replay_stq_idx = mshrs.io.replay.bits.uop.stq_idx
++  val debug_replay_packet_seq = mshrs.io.replay.bits.packet_seq
++  val debug_replay_token_valid = mshrs.io.replay.bits.strict_store_token_valid
++  val debug_replay_token = mshrs.io.replay.bits.strict_store_token
++  val debug_killed_store_replay_valid = killed_store_replay_valid
++  val debug_killed_store_replay_fire = killed_store_replay_fire
++  val debug_killed_store_replay_stq_idx = killed_store_replay_req.uop.stq_idx
++  val debug_killed_store_replay_token_valid = killed_store_replay_req.strict_store_token_valid
++  val debug_killed_store_replay_token = killed_store_replay_req.strict_store_token
++  val debug_s3_valid = s3_valid
++  val debug_s3_stq_idx = s3_req.uop.stq_idx
++  val debug_s3_packet_seq = s3_req.packet_seq
++  val debug_s3_token_valid = s3_req.strict_store_token_valid
++  val debug_s3_token = s3_req.strict_store_token
++  val debug_data_write_pipeline_fire = dataWriteArb.io.in(0).fire
++  val debug_cache_completion = completed_strict_store_cache
++  val debug_uncache_completion = completed_strict_store_uncache
++  val debug_uncache_completion_stq_idx = mshrs.io.traffic_strict_store_complete_stq_idx
++  val debug_uncache_completion_token = mshrs.io.traffic_strict_store_complete_token
++  val debug_l1_cross_package_blocked = l1CrossPackageBlocked
++  val debug_cross_package_block_condition = crossPackageBlockCondition
++  val debug_cross_package_pending = crossPackagePending
++  val debug_cross_package_issued = crossPackageIssued
++  val debug_cross_package_meta_clear_pending = crossPackageMetaClearPending
++  val debug_cross_package_pending_seq = crossPackagePendingSeq
++  val debug_safe_packet_watermark = safePacketWatermark
++  // Keep the complete parent[] load/store provenance visible. These aliases
++  // are observation-only and deliberately do not participate in cache
++  // control, arbitration, or statistics.
++  val debug_traffic_counting = trafficCounting
++  val debug_traffic_start = io.traffic_start
++  val debug_traffic_stop = io.traffic_stop
++  val debug_traffic_reset = io.traffic_reset
++  val debug_s0_valid = s0_valid
++  val debug_s0_type = s0_type
++  val debug_s0_addr = VecInit(s0_req.map(_.addr))
++  val debug_s0_data = VecInit(s0_req.map(_.data))
++  val debug_s0_packet_seq = VecInit(s0_req.map(_.packet_seq))
++  val debug_s1_valid = s1_valid
++  val debug_s1_type = s1_type
++  val debug_s1_addr = VecInit(s1_req.map(_.addr))
++  val debug_s1_data = VecInit(s1_req.map(_.data))
++  val debug_s1_packet_seq = VecInit(s1_req.map(_.packet_seq))
++  val debug_s2_addr = VecInit(s2_req.map(_.addr))
++  val debug_s2_data = VecInit(s2_req.map(_.data))
++  val debug_s2_data_word = s2_data_word
++  val debug_s2_send_resp = s2_send_resp
++  val debug_s2_send_nack = s2_send_nack
++  val debug_s2_hit = s2_hit
++  val debug_s2_tag_match = VecInit(s2_tag_match)
++  val debug_s2_hit_state = VecInit(s2_hit_state.map(_.state))
++  val debug_cache_resp_valid = VecInit(cache_resp.map(_.valid))
++  val debug_cache_resp_data = VecInit(cache_resp.map(_.bits.data))
++  val debug_uncache_resp_valid = uncache_resp.valid
++  val debug_uncache_resp_data = uncache_resp.bits.data
++  val debug_lsu_resp_valid = VecInit(io.lsu.resp.map(_.valid))
++  val debug_lsu_resp_data = VecInit(io.lsu.resp.map(_.bits.data))
++  val debug_data_write_valid = dataWriteArb.io.in(0).valid
++  val debug_data_write_fire = dataWriteArb.io.in(0).fire
++  val debug_data_write_addr = dataWriteArb.io.in(0).bits.addr
++  val debug_data_write_data = dataWriteArb.io.in(0).bits.data
++  val debug_data_write_wmask = dataWriteArb.io.in(0).bits.wmask
++  val debug_data_write_way_en = dataWriteArb.io.in(0).bits.way_en
++  // Materialize dynamic-array index/provenance probes as real named wires.
++  // Directly dontTouch-ing the indexing expressions makes older FIRRTL
++  // versions serialize the signal as an Index component and then attempt to
++  // parse the name (for example, "debug_modifying_set") as an integer.
++  val debug_modifying_set = Wire(UInt(idxBits.W))
++  val debug_modifying_way = Wire(UInt(log2Ceil(nWays max 2).W))
++  val debug_overwritten_packet_seq = Wire(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
++  val debug_overwritten_packet_tracked = Wire(Bool())
++  debug_modifying_set := modifyingSet
++  debug_modifying_way := modifyingWay
++  debug_overwritten_packet_seq := overwrittenPacketSeq
++  debug_overwritten_packet_tracked := overwrittenPacketTracked
++  val debug_cross_package_wb_valid = crossPackageWbReq.valid
++  val debug_cross_package_wb_ready = crossPackageWbReq.ready
++  val debug_cross_package_wb_fire = crossPackageWbReq.fire
++  val debug_cross_package_wb_param = crossPackageWbReq.bits.param
++  val debug_cross_package_wb_done = crossPackageWbDone
++  val debug_cross_package_meta_clear_valid = crossPackageMetaClear.valid
++  val debug_cross_package_meta_clear_fire = crossPackageMetaClear.fire
++  val debug_meta_write_valid = metaWriteArb.io.out.valid
++  val debug_meta_write_fire = metaWriteArb.io.out.fire
++  val debug_meta_write_idx = metaWriteArb.io.out.bits.idx
++  val debug_meta_write_tag = metaWriteArb.io.out.bits.tag
++  val debug_meta_write_coh_state = metaWriteArb.io.out.bits.data.coh.state
++  val debug_tl_a_fire = tl_out.a.fire
++  val debug_tl_a_opcode = tl_out.a.bits.opcode
++  val debug_tl_a_address = tl_out.a.bits.address
++  val debug_tl_a_data = tl_out.a.bits.data
++  val debug_tl_a_source = tl_out.a.bits.source
++  val debug_tl_c_fire = tl_out.c.fire
++  val debug_tl_c_opcode = tl_out.c.bits.opcode
++  val debug_tl_c_param = tl_out.c.bits.param
++  val debug_tl_c_address = tl_out.c.bits.address
++  val debug_tl_c_data = tl_out.c.bits.data
++  val debug_tl_d_fire = tl_out.d.fire
++  val debug_tl_d_opcode = tl_out.d.bits.opcode
++  val debug_tl_d_param = tl_out.d.bits.param
++  val debug_tl_d_source = tl_out.d.bits.source
++  val debug_tl_d_data = tl_out.d.bits.data
++  val debug_address_stats_event_valid = VecInit(io.lsu.address_stats_event.map(_.valid))
++  val debug_address_stats_event_addr = VecInit(io.lsu.address_stats_event.map(_.bits.addr))
++  val debug_address_stats_event_is_store = VecInit(io.lsu.address_stats_event.map(_.bits.isStore))
++  val debug_address_stats_event_seq = VecInit(io.lsu.address_stats_event.map(_.bits.packetSeq))
++  val debug_address_stats_valid = addressStats.io.statsValid
++  val debug_address_stats_error = addressStats.io.error
++  val debug_address_stats_pending = addressStats.io.pending
++  dontTouch(debug_s2_valid)
++  dontTouch(debug_s2_type)
++  dontTouch(debug_s2_stq_idx)
++  dontTouch(debug_s2_packet_seq)
++  dontTouch(debug_s2_token_valid)
++  dontTouch(debug_s2_token)
++  dontTouch(debug_s2_nack)
++  dontTouch(debug_s2_nack_miss)
++  dontTouch(debug_s2_nack_victim)
++  dontTouch(debug_s2_nack_wb)
++  dontTouch(debug_s2_nack_data)
++  dontTouch(debug_mshr_req_valid)
++  dontTouch(debug_mshr_req_ready)
++  dontTouch(debug_mshr_req_fire)
++  dontTouch(debug_replay_valid)
++  dontTouch(debug_replay_fire)
++  dontTouch(debug_replay_stq_idx)
++  dontTouch(debug_replay_packet_seq)
++  dontTouch(debug_replay_token_valid)
++  dontTouch(debug_replay_token)
++  dontTouch(debug_killed_store_replay_valid)
++  dontTouch(debug_killed_store_replay_fire)
++  dontTouch(debug_killed_store_replay_stq_idx)
++  dontTouch(debug_killed_store_replay_token_valid)
++  dontTouch(debug_killed_store_replay_token)
++  dontTouch(debug_s3_valid)
++  dontTouch(debug_s3_stq_idx)
++  dontTouch(debug_s3_packet_seq)
++  dontTouch(debug_s3_token_valid)
++  dontTouch(debug_s3_token)
++  dontTouch(debug_data_write_pipeline_fire)
++  dontTouch(debug_cache_completion)
++  dontTouch(debug_uncache_completion)
++  dontTouch(debug_uncache_completion_stq_idx)
++  dontTouch(debug_uncache_completion_token)
++  dontTouch(debug_l1_cross_package_blocked)
++  dontTouch(debug_cross_package_block_condition)
++  dontTouch(debug_cross_package_pending)
++  dontTouch(debug_cross_package_issued)
++  dontTouch(debug_cross_package_meta_clear_pending)
++  dontTouch(debug_cross_package_pending_seq)
++  dontTouch(debug_safe_packet_watermark)
++  dontTouch(debug_traffic_counting)
++  dontTouch(debug_traffic_start)
++  dontTouch(debug_traffic_stop)
++  dontTouch(debug_traffic_reset)
++  dontTouch(debug_s0_valid)
++  dontTouch(debug_s0_type)
++  dontTouch(debug_s0_addr)
++  dontTouch(debug_s0_data)
++  dontTouch(debug_s0_packet_seq)
++  dontTouch(debug_s1_valid)
++  dontTouch(debug_s1_type)
++  dontTouch(debug_s1_addr)
++  dontTouch(debug_s1_data)
++  dontTouch(debug_s1_packet_seq)
++  dontTouch(debug_s2_addr)
++  dontTouch(debug_s2_data)
++  dontTouch(debug_s2_data_word)
++  dontTouch(debug_s2_send_resp)
++  dontTouch(debug_s2_send_nack)
++  dontTouch(debug_s2_hit)
++  dontTouch(debug_s2_tag_match)
++  dontTouch(debug_s2_hit_state)
++  dontTouch(debug_cache_resp_valid)
++  dontTouch(debug_cache_resp_data)
++  dontTouch(debug_uncache_resp_valid)
++  dontTouch(debug_uncache_resp_data)
++  dontTouch(debug_lsu_resp_valid)
++  dontTouch(debug_lsu_resp_data)
++  dontTouch(debug_data_write_valid)
++  dontTouch(debug_data_write_fire)
++  dontTouch(debug_data_write_addr)
++  dontTouch(debug_data_write_data)
++  dontTouch(debug_data_write_wmask)
++  dontTouch(debug_data_write_way_en)
++  dontTouch(debug_modifying_set)
++  dontTouch(debug_modifying_way)
++  dontTouch(debug_overwritten_packet_seq)
++  dontTouch(debug_overwritten_packet_tracked)
++  dontTouch(debug_cross_package_wb_valid)
++  dontTouch(debug_cross_package_wb_ready)
++  dontTouch(debug_cross_package_wb_fire)
++  dontTouch(debug_cross_package_wb_param)
++  dontTouch(debug_cross_package_wb_done)
++  dontTouch(debug_cross_package_meta_clear_valid)
++  dontTouch(debug_cross_package_meta_clear_fire)
++  dontTouch(debug_meta_write_valid)
++  dontTouch(debug_meta_write_fire)
++  dontTouch(debug_meta_write_idx)
++  dontTouch(debug_meta_write_tag)
++  dontTouch(debug_meta_write_coh_state)
++  dontTouch(debug_tl_a_fire)
++  dontTouch(debug_tl_a_opcode)
++  dontTouch(debug_tl_a_address)
++  dontTouch(debug_tl_a_data)
++  dontTouch(debug_tl_a_source)
++  dontTouch(debug_tl_c_fire)
++  dontTouch(debug_tl_c_opcode)
++  dontTouch(debug_tl_c_param)
++  dontTouch(debug_tl_c_address)
++  dontTouch(debug_tl_c_data)
++  dontTouch(debug_tl_d_fire)
++  dontTouch(debug_tl_d_opcode)
++  dontTouch(debug_tl_d_param)
++  dontTouch(debug_tl_d_source)
++  dontTouch(debug_tl_d_data)
++  dontTouch(debug_address_stats_event_valid)
++  dontTouch(debug_address_stats_event_addr)
++  dontTouch(debug_address_stats_event_is_store)
++  dontTouch(debug_address_stats_event_seq)
++  dontTouch(debug_address_stats_valid)
++  dontTouch(debug_address_stats_error)
++  dontTouch(debug_address_stats_pending)
++
+   io.lsu.ordered := mshrs.io.fence_rdy && !s1_valid.reduce(_||_) && !s2_valid.reduce(_||_)
+ }
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/lsu.scala b/chipyard/generators/boom/src/main/scala/lsu/lsu.scala
+index abf76d969..2085e7d17 100644
+--- a/chipyard/generators/boom/src/main/scala/lsu/lsu.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/lsu.scala
+@@ -143,7 +143,8 @@ class LSUDMemIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
+   val traffic_store_uncache_complete_stq_idx = Input(UInt(stqAddrSz.W))
+   val traffic_store_cache_complete_token = Input(UInt(64.W))
+   val traffic_store_uncache_complete_token = Input(UInt(64.W))
+-  // DCache 统一产生包含 STOP 边沿的统计窗口，LSU 在提交时使用该窗口。
++  // DCache 统一产生包含 STOP 边沿的窗口；LSQ 项自身保存归属，LSU
++  // 提交时据此结算尾部访问。
+   val traffic_counting               = Input(Bool())
+   val traffic_reset                  = Input(Bool())
+   // LSU 产生架构和严格路径计数，DCache 负责通过 RoCC 导出。
+@@ -243,6 +244,7 @@ class LDQEntry(implicit p: Parameters) extends BoomBundle()(p)
+   val traffic_scope_valid = Bool()
+   val traffic_check       = Bool()
+   val traffic_cacheable   = Bool()
++  val packet_seq          = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
+   // 每个 LDQ 项锁存唯一完成路径：1=cache response，2=uncache response，
+   // 3=store-to-load forwarding；提交时才进行严格计数。
+   val traffic_path_valid  = Bool()
+@@ -329,8 +331,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+   val hella_traffic_seen    = RegInit(false.B)
+ 
+   // 架构计数由 ROB 的架构提交信号驱动；普通 load 在 LDQ 中保留唯一完成
+-  // 路径，普通 store 则等待 DCache 的真实完成事件。统计资格在架构
+-  // 提交当拍根据 fsm_check 确定，不再用请求发起时刻代替提交口径。
++  // 路径，普通 store 则等待 DCache 的真实完成事件。统计归属在 LSQ 地址
++  // 阶段锁存，提交时只使用该归属，避免 STOP 后的尾部访问丢计。
+   val archStoreTotal = RegInit(0.U(64.W))
+   val archStoreCache = RegInit(0.U(64.W))
+   val archStoreUncache = RegInit(0.U(64.W))
+@@ -484,6 +486,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+       ldq(ld_enq_idx).bits.traffic_scope_valid := false.B
+       ldq(ld_enq_idx).bits.traffic_check := false.B
+       ldq(ld_enq_idx).bits.traffic_cacheable := false.B
++      ldq(ld_enq_idx).bits.packet_seq := 0.U
+       ldq(ld_enq_idx).bits.traffic_path_valid := false.B
+       ldq(ld_enq_idx).bits.traffic_path := 0.U
+ 
+@@ -1103,6 +1106,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+           ldq(ldq_idx).bits.traffic_scope_valid := true.B
+           ldq(ldq_idx).bits.traffic_check :=
+             io.dmem.traffic_counting && io.dmem.traffic_check_state
++          ldq(ldq_idx).bits.packet_seq := io.core.active_packet_seq
+         }
+       }
+ 
+@@ -1127,6 +1131,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+           stq(stq_idx).bits.traffic_scope_valid := true.B
+           stq(stq_idx).bits.traffic_check :=
+             io.dmem.traffic_counting && io.dmem.traffic_check_state
++          stq(stq_idx).bits.packet_seq := io.core.active_packet_seq
+         }
+       }
+ 
+@@ -1558,6 +1563,21 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+   io.dmem.traffic_amo_cache_complete    := VecInit.fill(memWidth)(false.B)
+   io.dmem.traffic_amo_uncache_complete  := VecInit.fill(memWidth)(false.B)
+ 
++  // A nack can arrive after a DCache request has already completed (for
++  // example, when an older pipeline copy and a killed-store replay overlap).
++  // Such a late response must not rewind the execute pointer into a completed
++  // or recycled STQ slot.  For strict stores, the token also prevents a nack
++  // for an older incarnation of a ring slot from matching a newer store.
++  val storeNackMatchesLiveStq = VecInit((0 until memWidth).map { w =>
++    val nack = io.dmem.nack(w).bits
++    val entry = stq(nack.uop.stq_idx)
++    io.dmem.nack(w).valid && nack.uop.uses_stq && entry.valid &&
++      !entry.bits.succeeded &&
++      (!nack.strict_store_token_valid ||
++        (entry.bits.strict_store_token_valid &&
++          entry.bits.strict_store_token === nack.strict_store_token))
++  })
++
+   for (w <- 0 until memWidth) {
+     // Handle nacks
+     when (io.dmem.nack(w).valid)
+@@ -1576,7 +1596,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+         .otherwise
+       {
+         assert(io.dmem.nack(w).bits.uop.uses_stq)
+-        when (IsOlder(io.dmem.nack(w).bits.uop.stq_idx, stq_execute_head, stq_head)) {
++        when (storeNackMatchesLiveStq(w) &&
++              IsOlder(io.dmem.nack(w).bits.uop.stq_idx, stq_execute_head, stq_head)) {
+           stq_execute_head := io.dmem.nack(w).bits.uop.stq_idx
+         }
+       }
+@@ -1777,6 +1798,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+         ldq(i).bits.traffic_scope_valid := false.B
+         ldq(i).bits.traffic_check := false.B
+         ldq(i).bits.traffic_cacheable := false.B
++        ldq(i).bits.packet_seq := 0.U
+         ldq(i).bits.traffic_path_valid := false.B
+         ldq(i).bits.traffic_path := 0.U
+       }
+@@ -1810,13 +1832,16 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+       io.core.commit.uops(w).uses_stq && io.core.commit.uops(w).mem_cmd === rocket.M_XWR
+     val arch_load = io.core.commit.arch_valids(w) &&
+       io.core.commit.uops(w).uses_ldq && io.core.commit.uops(w).mem_cmd === rocket.M_XRD
+-    // 与波形中的架构参考口径完全一致：只认实际架构提交当拍的检查状态。
+-    // 地址阶段锁存的 traffic_check/traffic_seen 仅保留给 LR/SC/AMO
+-    // 完成事件的窗口资格和去重，不参与普通 load/store 架构计数。
++    // Package ownership is captured with each LSQ entry at address generation.
++    // Retire may happen after R_IC has moved to another package, so use the
++    // entry tag rather than the live global sequence or current checker state.
++    // Scope is captured when the LSQ address is translated. A valid tagged
++    // entry must still count if it retires after traffic_stop; sampling the
++    // live global window here drops precisely those delayed tail accesses.
+     val arch_store_in_scope = arch_store && stq(idx).valid &&
+-      io.dmem.traffic_counting && io.dmem.traffic_check_state
++      stq(idx).bits.traffic_scope_valid && stq(idx).bits.packet_seq =/= 0.U
+     val arch_load_in_scope = arch_load && ldq(idx).valid &&
+-      io.dmem.traffic_counting && io.dmem.traffic_check_state
++      ldq(idx).bits.traffic_scope_valid && ldq(idx).bits.packet_seq =/= 0.U
+     val load_path_is_cache_response = ldq(idx).bits.traffic_path === 1.U
+     val load_path_is_uncache = ldq(idx).bits.traffic_path === 2.U
+     val load_path_is_forward = ldq(idx).bits.traffic_path === 3.U
+@@ -1833,7 +1858,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+         io.dmem.address_stats_event(w).bits.addr := stq(idx).bits.addr.bits
+         io.dmem.address_stats_event(w).bits.size := stq(idx).bits.uop.mem_size
+         io.dmem.address_stats_event(w).bits.isStore := true.B
+-        io.dmem.address_stats_event(w).bits.packetSeq := io.core.active_packet_seq
++        io.dmem.address_stats_event(w).bits.packetSeq := stq(idx).bits.packet_seq
+       }
+     }
+     when (arch_load_in_scope) {
+@@ -1845,7 +1870,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+         io.dmem.address_stats_event(w).bits.addr := ldq(idx).bits.addr.bits
+         io.dmem.address_stats_event(w).bits.size := ldq(idx).bits.uop.mem_size
+         io.dmem.address_stats_event(w).bits.isStore := false.B
+-        io.dmem.address_stats_event(w).bits.packetSeq := io.core.active_packet_seq
++        io.dmem.address_stats_event(w).bits.packetSeq := ldq(idx).bits.packet_seq
+       }
+       strictLoadEvents(w) := load_path_is_valid
+       strictLoadCacheEvents(w) := load_path_is_cache
+@@ -1864,7 +1889,6 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+     {
+       assert(stq(idx).valid, "[lsu] trying to commit an un-allocated store entry.")
+       stq(idx).bits.committed := true.B
+-      stq(idx).bits.packet_seq := io.core.active_packet_seq
+       // 只有架构有效的普通 store 才允许在后续 DCache 完成点进入严格计数。
+       stq(idx).bits.traffic_arch_check := arch_store_in_scope
+       when (arch_store_in_scope) {
+@@ -1890,6 +1914,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+       ldq(idx).bits.traffic_scope_valid := false.B
+       ldq(idx).bits.traffic_check := false.B
+       ldq(idx).bits.traffic_cacheable := false.B
++      ldq(idx).bits.packet_seq := 0.U
+       ldq(idx).bits.traffic_path_valid := false.B
+       ldq(idx).bits.traffic_path := 0.U
+ 
+@@ -1942,6 +1967,30 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+         io.dmem.traffic_store_uncache_complete_token
+   val completedStrictStores =
+     cacheCompletionAccepted.asUInt + uncacheCompletionAccepted.asUInt
++  val cacheCompletionAtExecuteHead = cacheCompletionAccepted &&
++    cacheCompletionIdx === stq_execute_head
++  val uncacheCompletionAtExecuteHead = uncacheCompletionAccepted &&
++    uncacheCompletionIdx === stq_execute_head
++  val strictStoreCompletionAtExecuteHead =
++    cacheCompletionAtExecuteHead || uncacheCompletionAtExecuteHead
++  // A completion may arrive from an older DCache replay while LSU is still
++  // retrying the same STQ entry. Advance the execute pointer when that physical
++  // write consumes the entry's token, unless this cycle already advanced it by
++  // accepting the same store request or must roll back for an older nack.
++  val storeRequestFired = (0 until memWidth).map { w =>
++    dmem_req_fire(w) && dmem_req(w).bits.uop.uses_stq
++  }.reduce(_ || _)
++  val executeStoreRequestFiredForCompletion = (0 until memWidth).map { w =>
++    dmem_req_fire(w) && dmem_req(w).bits.uop.uses_stq &&
++      ((cacheCompletionAccepted &&
++        dmem_req(w).bits.uop.stq_idx === cacheCompletionIdx) ||
++       (uncacheCompletionAccepted &&
++        dmem_req(w).bits.uop.stq_idx === uncacheCompletionIdx))
++  }.reduce(_ || _)
++  val olderStoreNackForcesReplay = (0 until memWidth).map { w =>
++    storeNackMatchesLiveStq(w) && !io.dmem.nack(w).bits.is_hella &&
++      IsOlder(io.dmem.nack(w).bits.uop.stq_idx, stq_execute_head, stq_head)
++  }.reduce(_ || _)
+   val strictStorePendingBase = strictStorePending + committedStrictStores
+   val strictStorePendingUnderflow =
+     completedStrictStores > strictStorePendingBase
+@@ -1972,7 +2021,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+     trafficSessionSeen := false.B
+     trafficFinalChecked := false.B
+   }.otherwise {
+-    when (io.dmem.traffic_counting && io.dmem.traffic_check_state) {
++    when (io.dmem.traffic_counting) {
+       trafficSessionSeen := true.B
+     }
+     when (trafficFinalCheck) {
+@@ -2009,6 +2058,13 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+       stq(uncacheCompletionIdx).bits.strict_store_token_valid := false.B
+       stq(uncacheCompletionIdx).bits.strict_store_token := 0.U
+     }
++    when (strictStoreCompletionAtExecuteHead &&
++      !olderStoreNackForcesReplay) {
++      val completionAdvance = WrapInc(stq_execute_head, numStqEntries)
++      stq_execute_head := Mux(storeRequestFired &&
++        !executeStoreRequestFiredForCompletion,
++        WrapInc(completionAdvance, numStqEntries), completionAdvance)
++    }
+     when (strictLoadEvents.reduce(_|_)) {
+       strictLoadTotal := strictLoadTotal + PopCount(strictLoadEvents)
+       strictLoadCache := strictLoadCache + PopCount(strictLoadCacheEvents)
+@@ -2206,6 +2262,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+       ldq(i).bits.traffic_scope_valid := false.B
+       ldq(i).bits.traffic_check := false.B
+       ldq(i).bits.traffic_cacheable := false.B
++      ldq(i).bits.packet_seq := 0.U
+       ldq(i).bits.traffic_path_valid := false.B
+       ldq(i).bits.traffic_path := 0.U
+     }
+@@ -2221,7 +2278,112 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+                     ~(st_brkilled_mask.asUInt) &
+                     ~(st_exc_killed_mask.asUInt)
+ 
+-//===== GuardianCouncil Function: Start ====//
++  //===== GuardianCouncil Function: Start ====//
++  //===== EC watchdog diagnostics: observation only ====//
++  // Keep the queue identity, strict-store token, request and completion
++  // edges visible in generated RTL.  These signals intentionally do not feed
++  // any control or accounting path.
++  val debug_stq_full = WrapInc(stq_tail, numStqEntries) === stq_head
++  // Copy the dynamically selected entry into named wires before applying
++  // dontTouch. FIRRTL target annotations require static component names;
++  // annotating stq(stq_head) directly makes it parse "stq_head" as an index.
++  val debug_stq_entry_valid = Wire(Bool())
++  val debug_stq_entry_committed = Wire(Bool())
++  val debug_stq_entry_succeeded = Wire(Bool())
++  val debug_stq_entry_token_valid = Wire(Bool())
++  val debug_stq_entry_token = Wire(UInt(64.W))
++  val debug_stq_entry_packet_seq = Wire(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
++  val debug_stq_entry_addr = Wire(UInt(coreMaxAddrBits.W))
++  debug_stq_entry_valid := stq(stq_head).valid
++  debug_stq_entry_committed := stq(stq_head).bits.committed
++  debug_stq_entry_succeeded := stq(stq_head).bits.succeeded
++  debug_stq_entry_token_valid := stq(stq_head).bits.strict_store_token_valid
++  debug_stq_entry_token := stq(stq_head).bits.strict_store_token
++  debug_stq_entry_packet_seq := stq(stq_head).bits.packet_seq
++  debug_stq_entry_addr := stq(stq_head).bits.addr.bits
++  val debug_dmem_req_valid = VecInit(dmem_req.map(_.valid))
++  val debug_dmem_req_fire = dmem_req_fire
++  val debug_dmem_req_stq_idx = VecInit(dmem_req.map(_.bits.uop.stq_idx))
++  val debug_dmem_req_token_valid = VecInit(dmem_req.map(_.bits.strict_store_token_valid))
++  val debug_dmem_req_token = VecInit(dmem_req.map(_.bits.strict_store_token))
++  val debug_dmem_nack_valid = VecInit(io.dmem.nack.map(_.valid))
++  val debug_dmem_nack_stq_idx = VecInit(io.dmem.nack.map(_.bits.uop.stq_idx))
++  val debug_dmem_cache_completion = io.dmem.traffic_store_cache_complete
++  val debug_dmem_cache_completion_idx = cacheCompletionIdx
++  val debug_dmem_cache_completion_token = io.dmem.traffic_store_cache_complete_token
++  val debug_dmem_uncache_completion = io.dmem.traffic_store_uncache_complete
++  val debug_dmem_uncache_completion_idx = uncacheCompletionIdx
++  val debug_dmem_uncache_completion_token = io.dmem.traffic_store_uncache_complete_token
++  val debug_arch_store_events = archStoreEvents
++  val debug_arch_store_cache_events = archStoreCacheEvents
++  val debug_arch_store_uncache_events = archStoreUncacheEvents
++  val debug_arch_load_events = archLoadEvents
++  val debug_arch_load_cache_events = archLoadCacheEvents
++  val debug_arch_load_uncache_events = archLoadUncacheEvents
++  val debug_strict_load_events = strictLoadEvents
++  val debug_strict_load_cache_events = strictLoadCacheEvents
++  val debug_strict_load_uncache_events = strictLoadUncacheEvents
++  val debug_strict_load_cache_response_events = strictLoadCacheResponseEvents
++  val debug_strict_load_forward_events = strictLoadForwardEvents
++  val debug_address_stats_event_valid = VecInit(io.dmem.address_stats_event.map(_.valid))
++  val debug_address_stats_event_addr = VecInit(io.dmem.address_stats_event.map(_.bits.addr))
++  val debug_address_stats_event_is_store = VecInit(io.dmem.address_stats_event.map(_.bits.isStore))
++  val debug_address_stats_event_seq = VecInit(io.dmem.address_stats_event.map(_.bits.packetSeq))
++  val debug_traffic_counting = io.dmem.traffic_counting
++  val debug_traffic_reset = io.dmem.traffic_reset
++  val debug_traffic_arch_counter = io.dmem.traffic_arch_counter
++  dontTouch(debug_stq_full)
++  dontTouch(stq_head)
++  dontTouch(stq_tail)
++  dontTouch(stq_commit_head)
++  dontTouch(stq_execute_head)
++  dontTouch(debug_stq_entry_valid)
++  dontTouch(debug_stq_entry_committed)
++  dontTouch(debug_stq_entry_succeeded)
++  dontTouch(debug_stq_entry_token_valid)
++  dontTouch(debug_stq_entry_token)
++  dontTouch(debug_stq_entry_packet_seq)
++  dontTouch(debug_stq_entry_addr)
++  dontTouch(debug_dmem_req_valid)
++  dontTouch(debug_dmem_req_fire)
++  dontTouch(debug_dmem_req_stq_idx)
++  dontTouch(debug_dmem_req_token_valid)
++  dontTouch(debug_dmem_req_token)
++  dontTouch(debug_dmem_nack_valid)
++  dontTouch(debug_dmem_nack_stq_idx)
++  dontTouch(debug_dmem_cache_completion)
++  dontTouch(debug_dmem_cache_completion_idx)
++  dontTouch(debug_dmem_cache_completion_token)
++  dontTouch(debug_dmem_uncache_completion)
++  dontTouch(debug_dmem_uncache_completion_idx)
++  dontTouch(debug_dmem_uncache_completion_token)
++  dontTouch(debug_arch_store_events)
++  dontTouch(debug_arch_store_cache_events)
++  dontTouch(debug_arch_store_uncache_events)
++  dontTouch(debug_arch_load_events)
++  dontTouch(debug_arch_load_cache_events)
++  dontTouch(debug_arch_load_uncache_events)
++  dontTouch(debug_strict_load_events)
++  dontTouch(debug_strict_load_cache_events)
++  dontTouch(debug_strict_load_uncache_events)
++  dontTouch(debug_strict_load_cache_response_events)
++  dontTouch(debug_strict_load_forward_events)
++  dontTouch(debug_address_stats_event_valid)
++  dontTouch(debug_address_stats_event_addr)
++  dontTouch(debug_address_stats_event_is_store)
++  dontTouch(debug_address_stats_event_seq)
++  dontTouch(debug_traffic_counting)
++  dontTouch(debug_traffic_reset)
++  dontTouch(debug_traffic_arch_counter)
++  dontTouch(cacheCompletionAccepted)
++  dontTouch(uncacheCompletionAccepted)
++  dontTouch(committedStrictStores)
++  dontTouch(completedStrictStores)
++  dontTouch(strictStorePending)
++  dontTouch(strictStorePendingUnderflow)
++  dontTouch(olderStoreNackForcesReplay)
++  dontTouch(clear_store)
++
+   val ldq_head_delay                               = Reg(Vec(coreWidth, UInt((2*xLen).W)))
+   val stq_head_delay                               = Reg(Vec(coreWidth, UInt((2*xLen).W)))
+   val zeros_24bits                                 = WireInit(0.U(24.W))
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GHM.scala b/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GHM.scala
+index 27e438984..31aea714c 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GHM.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GHM.scala
+@@ -28,6 +28,7 @@ class GHMIO(params: GHMParams) extends Bundle {
+   val checker_segment_id_bigcore                 = Input(Vec(GH_GlobalParams.GH_NUM_BIG_CORES, UInt((GH_GlobalParams.GH_NUM_CORES * GH_GlobalParams.GH_PACKET_SEQ_BITS).W)))
+   val ghm_packet_dest                            = Input(UInt((params.number_of_little_cores*2).W))
+   val ghm_status_in                              = Input(Vec(GH_GlobalParams.GH_NUM_BIG_CORES, UInt(32.W)))
++  val producer_seal_bigcore                     = Input(Vec(GH_GlobalParams.GH_NUM_BIG_CORES, UInt((GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W)))
+   val ghm_packet_outs                            = Output(Vec(params.number_of_little_cores, UInt((params.width_GH_packet*GH_GlobalParams.GH_TOTAL_PACKETS+GH_GlobalParams.GH_PACKET_SEQ_BITS+1).W)))
+   val ghm_status_outs                            = Output(Vec(params.number_of_little_cores, UInt(32.W)))
+   val ghe_event_in                               = Input(Vec(params.number_of_little_cores, UInt(6.W)))
+@@ -42,6 +43,7 @@ class GHMIO(params: GHMParams) extends Bundle {
+   val icsl_counter                               = Output(Vec(params.number_of_little_cores, UInt(20.W)))
+   val ghe_revent_in                              = Input(Vec(params.number_of_little_cores, UInt(1.W)))
+   val ghm_cdc_empty_out                          = Output(Vec(params.number_of_little_cores, Bool()))
++  val producer_sealed_out                        = Output(Vec(params.number_of_little_cores, UInt((GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W)))
+   val icsl_na                                    = Output(UInt((GH_GlobalParams.GH_NUM_CORES).W))
+ 
+   // Global ic_status: OR-merge of all big cores' ic_status, broadcast back to all big cores
+@@ -83,6 +85,7 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
+     val arfs_cdc_busy                              = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
+     val cdc_empty                                  = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
+     val packet_ingress_empty                       = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
++    val producer_seal_by_checker                   = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U((GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W))))
+     // 每个 checker 的完成位属于其 Rocket 时钟域，并直接送往同域 GHE。
+     val checkerSessionDone                         = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
+ 
+@@ -200,6 +203,24 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
+           full_idx * GH_GlobalParams.GH_PACKET_SEQ_BITS)
+         (segment_seq =/= 0.U) -> io.ghm_status_in(b)(31)
+       })
++      val selected_producer_seal = Mux1H((0 until GH_GlobalParams.GH_NUM_BIG_CORES).map { b =>
++        val full_idx = i + GH_GlobalParams.GH_NUM_BIG_CORES
++        val segment_seq = io.checker_segment_id_bigcore(b)((full_idx + 1) * GH_GlobalParams.GH_PACKET_SEQ_BITS - 1,
++          full_idx * GH_GlobalParams.GH_PACKET_SEQ_BITS)
++        (segment_seq =/= 0.U) -> io.producer_seal_bigcore(b)
++      })
++      val producerSealSync = withClockAndReset(
++        io.ghm_clock(i + GH_GlobalParams.GH_NUM_BIG_CORES).asClock,
++        io.ghm_reset(i + GH_GlobalParams.GH_NUM_BIG_CORES).asAsyncReset) {
++        AsyncResetSynchronizerShiftReg(
++          selected_producer_seal, sync = 3,
++          name = Some(s"ghm_producer_seal_checker_${i}"))
++      }
++      val producerSealValidSync = producerSealSync(GH_GlobalParams.GH_PACKET_SEQ_BITS)
++      val producerSealSeqSync = producerSealSync(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0)
++      val producerSealMatches = producerSealValidSync &&
++        producerSealSeqSync === selected_segment_seq
++      producer_seal_by_checker(i) := Cat(producerSealMatches, producerSealSeqSync)
+       // A segment id is allocated before the last committing instruction is
+       // necessarily visible at GH_BUF.  Therefore a low `if_data_en` in the
+       // allocation cycle means only "no data is visible yet".  Do not turn
+@@ -580,6 +601,7 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
+       io.icsl_counter(i)                         := cdc_icsl_cnt(i)
+       // io.ghm_icsl_ack_out(i)                     := cdc_icsl_ack(i)
+       io.ghm_cdc_empty_out(i)                    := packet_ingress_empty(i)
++      io.producer_sealed_out(i)                  := producer_seal_by_checker(i)
+       // io.ghm_big_switch_out(i)                   := cdc_big_switch_req(i)
+     }
+     io.icsl_na := Cat(Cat(cdc_ghe_revent.reverse), 0.U(GH_GlobalParams.GH_NUM_BIG_CORES.W))// bit[N-1:0]=0(big), bit[2+N-1:2]=chk1..chkN
+@@ -617,11 +639,14 @@ object GHMCore {
+ 
+     var ic_counter_SKNodes                         = Seq[BundleBridgeSink[UInt]]()
+     var checker_segment_id_SKNodes                 = Seq[BundleBridgeSink[UInt]]()
++    var producer_seal_bigcore_SKNodes              = Seq[BundleBridgeSink[UInt]]()
+     for (b <- 0 until GH_GlobalParams.GH_NUM_BIG_CORES) {
+       val ic_counter_SKNode                       = BundleBridgeSink[UInt](Some(() => UInt((16*GH_GlobalParams.GH_NUM_CORES).W)))
+       ic_counter_SKNodes                          = ic_counter_SKNodes :+ ic_counter_SKNode
+       val segmentNode = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES * GH_GlobalParams.GH_PACKET_SEQ_BITS).W)))
+       checker_segment_id_SKNodes = checker_segment_id_SKNodes :+ segmentNode
++      val producerSealNode = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W)))
++      producer_seal_bigcore_SKNodes = producer_seal_bigcore_SKNodes :+ producerSealNode
+     }
+     // val icsl_ack_SKNode                            = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES-1).W)))
+     // val big_complete_ack_SKNode                            = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES-1).W)))
+@@ -649,6 +674,7 @@ object GHMCore {
+     // var ghm_if_big_complete_SKNodes                = Seq[BundleBridgeSink[Bool]]()
+     // var ghm_big_complete_SRNodes                = Seq[BundleBridgeSource[Bool]]()
+     var ghm_cdc_empty_out_SKNodes                  = Seq[BundleBridgeSource[Bool]]()
++    var ghm_producer_sealed_out_SKNodes            = Seq[BundleBridgeSource[UInt]]()
+     // var ghm_icsl_ack_out_SKNodes                   = Seq[BundleBridgeSource[Bool]]()
+     // var ghm_big_switch_out_SKNodes                 = Seq[BundleBridgeSink[Bool]]()
+     var ghm_ghe_revent_in_SKNodes                  = Seq[BundleBridgeSink[UInt]]()
+@@ -685,6 +711,7 @@ object GHMCore {
+       core_r_arfs_in_SKNodes(b)                   := subsystem.tile_core_r_arfs_EPNodes(b)
+       ic_counter_SKNodes(b)                       := subsystem.tile_ic_counter_out_EPNodes(b)
+       checker_segment_id_SKNodes(b)               := subsystem.tile_checker_segment_id_out_EPNodes(b)
++      producer_seal_bigcore_SKNodes(b)            := subsystem.tile_producer_seal_out_EPNodes(b)
+       ic_status_SKNodes(b)                        := subsystem.tile_ic_status_out_EPNodes(b)
+       checker_big_owner_SKNodes(b)               := subsystem.tile_checker_big_owner_out_EPNodes(b)
+     }
+@@ -742,6 +769,9 @@ object GHMCore {
+       val ghm_cdc_empty_out_SKNode                    = BundleBridgeSource[Bool]()
+       ghm_cdc_empty_out_SKNodes                       = ghm_cdc_empty_out_SKNodes :+ ghm_cdc_empty_out_SKNode
+       subsystem.cdc_empty_tocheckerEPNodes(i)        := ghm_cdc_empty_out_SKNodes(i)
++      val ghm_producer_sealed_out_SKNode              = BundleBridgeSource[UInt]()
++      ghm_producer_sealed_out_SKNodes                 = ghm_producer_sealed_out_SKNodes :+ ghm_producer_sealed_out_SKNode
++      subsystem.producer_sealed_tocheckerEPNodes(i)  := ghm_producer_sealed_out_SKNode
+ 
+       val ghm_ghe_revent_in_SkNode                 = BundleBridgeSink[UInt]()
+       ghm_ghe_revent_in_SKNodes                    = ghm_ghe_revent_in_SKNodes :+ ghm_ghe_revent_in_SkNode
+@@ -807,6 +837,7 @@ object GHMCore {
+       ghm.module.io.core_r_arfs_in                := core_r_arfs_in_SKNodes.map(_.bundle)
+       ghm.module.io.ghm_packet_dest               := ghm_ght_packet_dest_SKNode.bundle
+       ghm.module.io.ghm_status_in                 := VecInit(ghm_ght_status_in_SKNodes.map(_.bundle))
++      ghm.module.io.producer_seal_bigcore         := producer_seal_bigcore_SKNodes.map(_.bundle)
+       ghm.module.io.if_agg_free                   := if_agg_free_SKNode.bundle 
+       ghm.module.io.ic_counter                    := ic_counter_SKNodes.map(_.bundle)
+       ghm.module.io.checker_segment_id_bigcore    := checker_segment_id_SKNodes.map(_.bundle)
+@@ -834,6 +865,7 @@ object GHMCore {
+           clear_ic_status_tomainSRNodes(i).bundle := 0.U
+           icsl_naSRNodes(i).bundle                := 0.U
+           ghm_cdc_empty_out_SKNodes(i).bundle     := ghm.module.io.ghm_cdc_empty_out(ci)
++          ghm_producer_sealed_out_SKNodes(i).bundle := ghm.module.io.producer_sealed_out(ci)
+           icsl_out_SRNodes(i).bundle              := ghm.module.io.icsl_counter(ci)
+ 
+           ghm.module.io.ghe_event_in(ci)         := ghm_ghe_event_in_SKNodes(i).bundle
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_FIFO.scala b/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_FIFO.scala
+index 122e45097..74ffe83d7 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_FIFO.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_FIFO.scala
+@@ -32,6 +32,14 @@ trait HasFIFOIO extends BaseModule {
+   val io = IO(new FIFOIO(params))
+ }
+ 
++// SyncReadMem needs a read-enable independent from the dequeue handshake:
++// reading the head is a one-cycle prefetch, while dequeueing advances the
++// committed read pointer and occupancy.
++class GH_MemFIFOIO(params: FIFOParams) extends FIFOIO(params) {
++  val deq_read = Input(Bool())
++  val deq_read_valid = Output(Bool())
++}
++
+ class GH_FIFO(val params: FIFOParams) extends Module with HasFIFOIO {
+ 
+   def counter(depth: Int, incr: Bool): (UInt, UInt) = {
+@@ -129,7 +137,8 @@ class GH_FIFO(val params: FIFOParams) extends Module with HasFIFOIO {
+ }
+ 
+ 
+-class GH_MemFIFO(val params: FIFOParams) extends Module with HasFIFOIO {
++class GH_MemFIFO(val params: FIFOParams) extends Module {
++  val io = IO(new GH_MemFIFOIO(params))
+   def counter(depth: Int, incr: Bool): (UInt, UInt) = {
+     val cntReg                  = RegInit(0.U(log2Ceil(depth).W))
+     val nextVal                 = Mux(cntReg === (depth-1).U, 0.U, cntReg + 1.U)
+@@ -152,7 +161,11 @@ class GH_MemFIFO(val params: FIFOParams) extends Module with HasFIFOIO {
+   val debug_fcounter            = RegInit(0.U(64.W))
+   val debug_fdcounter           = RegInit(0.U(64.W))
+ 
+-  when ((io.enq_valid && !fullReg) && (io.deq_ready && !emptyReg)) {
++  val enq_fire                  = io.enq_valid && !fullReg
++  val deq_fire                  = io.deq_ready && !emptyReg
++  val deq_read_fire             = io.deq_read && !emptyReg
++
++  when (enq_fire && deq_fire) {
+     mem.write                     (writePtr, io.enq_bits)
+     emptyReg                   := false.B
+     fullReg                    := false.B
+@@ -163,7 +176,7 @@ class GH_MemFIFO(val params: FIFOParams) extends Module with HasFIFOIO {
+     debug_fdcounter            := debug_fdcounter + 1.U
+   }
+ 
+-  when ((io.enq_valid && !fullReg) && !(io.deq_ready && !emptyReg)){
++  when (enq_fire && !deq_fire){
+     mem.write                     (writePtr, io.enq_bits)
+     emptyReg                   := false.B
+     fullReg                    := nextWrite === readPtr
+@@ -172,7 +185,7 @@ class GH_MemFIFO(val params: FIFOParams) extends Module with HasFIFOIO {
+     debug_fcounter             := debug_fcounter + 1.U
+   }
+     
+-  when (!(io.enq_valid && !fullReg) && (io.deq_ready && !emptyReg)) {
++  when (!enq_fire && deq_fire) {
+     emptyReg                   := nextRead === writePtr
+     fullReg                    := false.B
+     incrRead                   := true.B
+@@ -192,7 +205,11 @@ class GH_MemFIFO(val params: FIFOParams) extends Module with HasFIFOIO {
+                                       1.U, 
+                                       0.U)
+   
+-  io.deq_bits                  := mem.read(readPtr, io.deq_ready)
++  io.deq_bits                  := mem.read(readPtr, io.deq_read)
++  // SyncReadMem returns the requested word one cycle after deq_read.  Expose
++  // that response-valid phase separately from the committed dequeue pulse.
++  val deq_read_valid_reg       = RegNext(deq_read_fire, false.B)
++  io.deq_read_valid            := deq_read_valid_reg
+   io.full                      := fullReg
+   io.enq_ready                 := !fullReg
+   io.empty                     := emptyReg
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/r/R_ELU.scala b/chipyard/generators/rocket-chip/src/main/scala/r/R_ELU.scala
+index 7a6d62c84..5dde28f7c 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/r/R_ELU.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/r/R_ELU.scala
+@@ -23,6 +23,7 @@ class R_ELUIO(params: R_ELUParams) extends Bundle {
+   val lsl_resp_valid = Input(UInt(1.W))
+   val lsl_resp_addr = Input(UInt(params.wAddr.W))
+   val lsl_resp_data = Input(UInt(params.xLen.W))
++  val lsl_resp_mismatch = Input(UInt(1.W))
+   val wb_pc = Input(UInt(params.wAddr.W))
+   val wb_inst = Input(UInt(32.W))
+ 
+@@ -89,8 +90,8 @@ class R_ELU (val params: R_ELUParams) extends Module with HasR_ELUIO {
+ 
+   val err_ld                  = WireInit(false.B)
+   val err_st                  = WireInit(false.B)
+-  err_ld                     := Mux(ld_valid && (req_addr_reg =/= io.lsl_resp_addr), true.B, false.B)
+-  err_st                     := Mux(st_valid && ((req_addr_reg =/= io.lsl_resp_addr) || (req_data_wire =/= resp_data_wire)), true.B, false.B)
++  err_ld                     := Mux(ld_valid && (io.lsl_resp_mismatch.asBool || (req_addr_reg =/= io.lsl_resp_addr)), true.B, false.B)
++  err_st                     := Mux(st_valid && (io.lsl_resp_mismatch.asBool || (req_addr_reg =/= io.lsl_resp_addr) || (req_data_wire =/= resp_data_wire)), true.B, false.B)
+ 
+   val err_log_ld              = WireInit(0.U((2*params.xLen + 3*params.wAddr).W))
+   val err_log_st              = WireInit(0.U((2*params.xLen + 3*params.wAddr).W))
+@@ -118,6 +119,7 @@ class R_ELU (val params: R_ELUParams) extends Module with HasR_ELUIO {
+   u_channel.io.enq_valid     := channel_enq_valid
+   u_channel.io.enq_bits      := channel_enq_data
+   u_channel.io.deq_ready     := channel_deq_ready
++  u_channel.io.deq_read      := channel_deq_ready
+   channel_deq_data           := u_channel.io.deq_bits
+   channel_empty              := u_channel.io.empty
+   channel_full               := u_channel.io.full
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/r/R_IC.scala b/chipyard/generators/rocket-chip/src/main/scala/r/R_IC.scala
+index c0d41d5ee..c3f91d04c 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/r/R_IC.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/r/R_IC.scala
+@@ -28,6 +28,10 @@ class R_ICIO(params: R_ICParams) extends Bundle {
+   val icsl_na                                    = Input(Vec(params.totalnumber_of_cores, UInt(1.W))) // FIFO快满了
+   val ic_incr                                    = Input(UInt((3.W)))
+   val if_ready_snap_shot                         = Input(UInt((1.W)))
++  // The BOOM-side architectural boundary.  This is intentionally separate
++  // from the older "can commit" hint, which only describes the current ROB
++  // head and does not mean that the ROB is empty.
++  val rob_empty                                   = Input(Bool())
+ 
+   val crnt_target                                = Output(UInt(6.W))
+   val old_crnt_target                            = Output(UInt(5.W))//used for ERCP
+@@ -35,6 +39,10 @@ class R_ICIO(params: R_ICParams) extends Bundle {
+   val if_pipeline_stall                          = Output(UInt(1.W))
+   val if_dosnap                                  = Output(UInt(1.W))
+   val if_dosnap_priv                             = Output(UInt(1.W))
++  // Freeze new dispatch while the ROB drains and while the snapshot request
++  // is accepted.  Retirement is controlled separately by if_pipeline_stall.
++  val snapshot_drain                             = Output(Bool())
++  val snapshot_capture                           = Output(Bool())
+ 
+   val icsl_na_ack                                = Output(Vec(params.totalnumber_of_cores, Bool()))
+   val big_checker_switch                         = Output(Vec(params.totalnumber_of_cores, Bool()))//大核事件导致切换
+@@ -120,6 +128,13 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
+   val barrierCloseAckReg                         = RegInit(false.B)
+   val barrierCloseAckSeqReg                      = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+   val barrierCloseIssued                         = RegInit(false.B)
++  // Snapshot readiness is intentionally two-phase.  The core-side quiet
++  // predicate may rise immediately after the edge that drains the ROB; keep
++  // an armed bit so acceptance is evaluated on a later full cycle rather
++  // than as a half-cycle combinational pulse.
++  val snapshot_armed                            = RegInit(false.B)
++  val packet_alloc_valid_reg                    = RegInit(false.B)
++  val packet_alloc_seq_reg                      = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+   val barrierCloseRequestSeq                     = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+ 
+   // Track owner: capture on first idle→busy transition, clear when idle & excluded from mask
+@@ -170,10 +185,23 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
+   cooling_counter                              := Mux((fsm_state =/= fsm_cooling), 0.U, Mux(cooling_counter < cooling_threshold, cooling_counter + 1.U, cooling_counter))
+   val if_cooled                                 = Mux((cooling_counter >= cooling_threshold) && !io.rsu_busy.asBool, true.B, false.B)
+   sch_reset                                    := Mux((fsm_state === fsm_reset) || (io.changing_num_of_checker.asBool), 1.U, 0.U)
++  // Keep the architectural boundary checked in both domains.  The core-side
++  // guard prevents a combinational feedback path; this local check prevents a
++  // stale/incorrect ready pulse from accepting a snapshot with a live ROB.
++  val snapshot_ready                            = io.if_ready_snap_shot.asBool && io.rob_empty
++  snapshot_armed                                := Mux(fsm_state =/= fsm_snap, false.B,
++                                                       Mux(snapshot_ready, true.B, snapshot_armed))
++  val snapshot_accept_candidate                  = (fsm_state === fsm_snap) &&
++                                                   snapshot_armed &&
++                                                   snapshot_ready
+   // if_dosnap                                    := Mux((fsm_state === fsm_snap) && (io.if_ready_snap_shot.asBool), Mux((ctrl === 2.U) || (ctrl === 0.U), io.if_correct_process, 1.U), 0.U)
+-  if_dosnap                                    := Mux((fsm_state === fsm_snap) && (io.if_ready_snap_shot.asBool), Mux(((ctrl === 2.U) && !(io.mode_switch || io.mode_ret ||io.excp_mode)) || (ctrl === 0.U), io.if_correct_process, Mux(((ctrl === 1.U)) || (ctrl === 3.U), 1.U, 0.U)), 0.U)
+-  if_dosnap_priv                               := Mux((fsm_state === fsm_snap) && (io.if_ready_snap_shot.asBool), Mux(((ctrl === 2.U) && (io.mode_switch || io.mode_ret ||io.excp_mode)) || (ctrl === 4.U), io.if_correct_process, Mux((ctrl === 5.U), 1.U, 0.U)), 0.U)
++  if_dosnap                                    := Mux(snapshot_accept_candidate, Mux(((ctrl === 2.U) && !(io.mode_switch || io.mode_ret ||io.excp_mode)) || (ctrl === 0.U), io.if_correct_process, Mux(((ctrl === 1.U)) || (ctrl === 3.U), 1.U, 0.U)), 0.U)
++  if_dosnap_priv                               := Mux(snapshot_accept_candidate, Mux(((ctrl === 2.U) && (io.mode_switch || io.mode_ret ||io.excp_mode)) || (ctrl === 4.U), io.if_correct_process, Mux((ctrl === 5.U), 1.U, 0.U)), 0.U)
+   val snapshot_accepted = (if_dosnap | if_dosnap_priv).asBool
++  // Keep dispatch stopped during the cooling/snapshot window.  The ROB is
++  // allowed to retire in fsm_snap until the core reports rob_empty.
++  val snapshot_drain_active = (fsm_state === fsm_cooling) ||
++                              (fsm_state === fsm_snap)
+   val barrierCloseRequest = io.barrier_force_close &&
+     io.barrier_force_close_seq =/= 0.U &&
+     active_packet_seq =/= 0.U &&
+@@ -199,6 +227,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
+   }
+   val package_allocated = snapshot_accepted && !ctrl(0).asBool
+   val allocated_packet_seq = packet_seq_counter + 1.U
++  packet_alloc_valid_reg := false.B
+   for (i <- 0 until params.totalnumber_of_cores) {
+     when (io.clear_ic_status(i).asBool) {
+       package_owned(i)                         := false.B
+@@ -207,12 +236,18 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
+   when (package_allocated) {
+     packet_seq_counter := allocated_packet_seq
+     active_packet_seq := allocated_packet_seq
++    packet_alloc_valid_reg := true.B
++    packet_alloc_seq_reg := allocated_packet_seq
+     checker_segment_id_reg(crnt_target_ic) := allocated_packet_seq
+     package_owned(crnt_target_ic)            := true.B
+   }
+   io.active_packet_seq := active_packet_seq
+-  io.packet_alloc_valid := package_allocated
+-  io.packet_alloc_seq := allocated_packet_seq
++  // Registered allocation outputs form a complete-cycle fire event and keep
++  // the allocated sequence stable while LSU/DCache sample it.  This prevents
++  // the old combinational pulse from being visible externally without the
++  // corresponding active_packet_seq update.
++  io.packet_alloc_valid := packet_alloc_valid_reg
++  io.packet_alloc_seq := packet_alloc_seq_reg
+   io.barrier_close_ack := barrierCloseAckReg
+   io.barrier_close_ack_seq := barrierCloseAckSeqReg
+   // val if_t_and_na                               = Mux(((io.ic_exit_isax.asBool || io.ic_syscall.asBool || (ic_counter(crnt_target) >= io.ic_threshold) || io.icsl_na(crnt_target).asBool) && (ic_status(sch_result).asBool)), 1.U, 0.U)
+@@ -281,7 +316,11 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
+       crnt_mask                                 := crnt_mask
+       nxt_target                                := nxt_target
+       if_filtering                              := 0.U
+-      if_pipeline_stall                         := io.if_correct_process.asBool
++      // New dispatch is blocked by snapshot_drain, but existing ROB entries
++      // must still retire so rob_empty can become true.  Stalling here would
++      // deadlock the rob_empty-gated snapshot handshake whenever cooling
++      // begins with in-flight BOOM instructions.
++      if_pipeline_stall                         := 0.U
+       for (i <- 0 to params.totalnumber_of_cores - 1) {
+         ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U, ic_status(i))
+         ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U, ic_counter(i))
+@@ -295,16 +334,21 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
+       ctrl                                      := Mux((io.mode_switch || io.excp_mode) && if_t_and_a.asBool && (ctrl === 0.U), 4.U, ctrl)
+       crnt_target                               := crnt_target
+       // crnt_mask                                 := Mux((ctrl === 2.U) || (ctrl === 0.U), Mux(io.if_ready_snap_shot.asBool && io.if_correct_process.asBool, Cat(ctrl, crnt_target), crnt_mask), Mux(io.if_ready_snap_shot.asBool, Cat(ctrl, crnt_target), crnt_mask))      
+-      crnt_mask                                 := Mux((ctrl === 2.U) || (ctrl === 0.U) || (ctrl === 4.U), Mux(io.if_ready_snap_shot.asBool && io.if_correct_process.asBool, Cat(ctrl, crnt_target), crnt_mask), Mux(io.if_ready_snap_shot.asBool, Cat(ctrl, crnt_target), crnt_mask))
++      crnt_mask                                 := Mux((ctrl === 2.U) || (ctrl === 0.U) || (ctrl === 4.U), Mux(snapshot_accepted && io.if_correct_process.asBool, Cat(ctrl, crnt_target), crnt_mask), Mux(snapshot_accepted, Cat(ctrl, crnt_target), crnt_mask))
+       nxt_target                                := nxt_target
+       if_filtering                              := 0.U
+-      if_pipeline_stall                         := io.if_correct_process.asBool
++      // Do not block retirement while waiting for the ROB to drain.  Once the
++      // atomic snapshot pulse is accepted, the BOOM-side RSU hold freezes the
++      // architectural state through R_RSU's delayed capture.
++      if_pipeline_stall                         := Mux(snapshot_accepted,
++                                                       io.if_correct_process.asBool,
++                                                       false.B)
+       for (i <- 0 to params.totalnumber_of_cores - 1) {
+         ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U, Mux((crnt_target_ic === i.U) && (ctrl(0) === 0.U), 1.U, ic_status(i)))
+         ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U, ic_counter(i))
+       }
+       //  fsm_state                                 := Mux((ctrl === 2.U) || (ctrl === 0.U), Mux(io.if_ready_snap_shot.asBool && io.if_correct_process.asBool, fsm_trans, fsm_snap), Mux(io.if_ready_snap_shot.asBool, fsm_trans, fsm_snap))
+-      fsm_state                                 := Mux((ctrl === 2.U) || (ctrl === 0.U) || (ctrl === 4.U), Mux(io.if_ready_snap_shot.asBool && io.if_correct_process.asBool, fsm_trans, fsm_snap), Mux(io.if_ready_snap_shot.asBool, fsm_trans, fsm_snap))
++      fsm_state                                 := Mux(snapshot_accepted, fsm_trans, fsm_snap)
+     }
+ 
+     is (fsm_trans){ // 101 Do we really need a signal to transmit the snapshot? 
+@@ -328,7 +372,14 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
+     is (fsm_check){ // 110
+       end                                       := end
+       // ctrl                                      := Mux(io.ic_exit_isax.asBool, 3.U, Mux(io.ic_syscall.asBool || if_t_and_na.asBool, 1.U, Mux(if_t_and_a.asBool, 0.U, ctrl)))
+-      ctrl                                      := Mux(io.ic_exit_isax.asBool || barrierCloseRequest, 3.U, Mux(if_t_and_na.asBool && !(io.mode_switch || io.mode_ret || io.excp_mode), 1.U, Mux(if_t_and_na.asBool && (io.mode_switch || io.mode_ret || io.excp_mode), 5.U, Mux((io.mode_switch || io.mode_ret || io.excp_mode) && if_t_and_a.asBool, 4.U, Mux(if_t_and_a.asBool, 0.U, ctrl)))))
++      // A barrier closes the current package, then continues normal checker
++      // scheduling so the next snapshot allocates a fresh packet sequence.
++      // ctrl=3 means "exit the whole checking session"; using it here sends
++      // fsm_trans to fsm_reset and suppresses package_allocated because
++      // package_allocated requires !ctrl(0). Keep the barrier path on the
++      // ordinary package boundary (ctrl=0) while retaining the postcheck
++      // transition below.
++      ctrl                                      := Mux(io.ic_exit_isax.asBool, 3.U, Mux(barrierCloseRequest, 0.U, Mux(if_t_and_na.asBool && !(io.mode_switch || io.mode_ret || io.excp_mode), 1.U, Mux(if_t_and_na.asBool && (io.mode_switch || io.mode_ret || io.excp_mode), 5.U, Mux((io.mode_switch || io.mode_ret || io.excp_mode) && if_t_and_a.asBool, 4.U, Mux(if_t_and_a.asBool, 0.U, ctrl))))))
+       crnt_target                               := crnt_target
+       crnt_mask                                 := crnt_mask
+       nxt_target                                := nxt_target 
+@@ -391,7 +442,21 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
+   io.if_pipeline_stall                          := if_pipeline_stall & io.if_correct_process
+   io.if_dosnap                                  := if_dosnap
+   io.if_dosnap_priv                             := if_dosnap_priv
++  io.snapshot_drain                             := snapshot_drain_active
++  io.snapshot_capture                           := snapshot_accepted
+   io.old_crnt_target                            := old_crnt_target
++  // Preserve the boundary state in generated collateral for focused traces.
++  dontTouch(fsm_state)
++  dontTouch(snapshot_ready)
++  dontTouch(snapshot_armed)
++  dontTouch(snapshot_accept_candidate)
++  dontTouch(snapshot_drain_active)
++  dontTouch(snapshot_accepted)
++  dontTouch(packet_alloc_valid_reg)
++  dontTouch(packet_alloc_seq_reg)
++  dontTouch(io.rob_empty)
++  dontTouch(io.snapshot_drain)
++  dontTouch(io.snapshot_capture)
+   for (i <- 0 to params.totalnumber_of_cores - 1){
+     io.icsl_na_ack(i)         := RegNext(io.icsl_na(i)&(fsm_state===fsm_check))
+     io.big_checker_switch(i)  := (io.ic_exit_isax.asBool || io.ic_syscall.asBool || (ic_counter(i) >= io.ic_threshold))&&(crnt_target_ic===i.U)&&(fsm_state===fsm_check)
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/r/R_ICSL.scala b/chipyard/generators/rocket-chip/src/main/scala/r/R_ICSL.scala
+index 54e91b9ad..4de59eff2 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/r/R_ICSL.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/r/R_ICSL.scala
+@@ -16,6 +16,9 @@ class R_ICSLIO(params: R_ICSLParams) extends Bundle {
+   val big_switch                                 = Input(Bool())
+   val cdc_empty                                  = Input(Bool())
+   val lsl_empty                                  = Input(Bool())
++  // The package tail is a sequence-qualified producer/CDC/LSL quiescence
++  // indication.  Instruction execution must not complete before this level.
++  val package_tail_drained                       = Input(Bool())
+   val new_commit                                 = Input(UInt(1.W))
+   val if_correct_process                         = Input(UInt(1.W))
+   val returned_to_special_address_valid          = Input(UInt(1.W))
+@@ -134,11 +137,32 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
+   val cancellation_return_pending                 = RegInit(false.B)
+   val if_completion                              = Mux((io.if_correct_process.asBool && (fsm_state === fsm_checking) && ((sl_counter>= (ic_counter_shadow+1.U)) || (io.new_commit.asBool && ((sl_counter + 1.U) >= (ic_counter_shadow + 1.U)))) && ic_counter_done.asBool), true.B, false.B)
+   val if_completion_priv                         = Mux((io.if_correct_process.asBool && (fsm_state === fsm_checking_priv) && ((sl_counter>= (ic_counter_shadow)) || (io.new_commit.asBool && ((sl_counter + 1.U) >= (ic_counter_shadow)))) && ic_counter_done.asBool), true.B, false.B)
++  val package_start                              = io.icsl_run.asBool || io.if_check_privrun
++  val instruction_boundary_now                   = if_completion || if_completion_priv
++  val instruction_boundary_seen                  = RegInit(false.B)
++  val instruction_tail_waiting                  = RegInit(false.B)
++  val instruction_boundary_ready                 = instruction_boundary_seen || instruction_boundary_now
++  val instruction_checking_state                 = fsm_state === fsm_checking ||
++                                                    fsm_state === fsm_checking_priv
++  val package_exec_completion                    = instruction_checking_state &&
++                                                    instruction_boundary_ready &&
++                                                    io.package_tail_drained &&
++                                                    !io.something_inflight &&
++                                                    (io.num_valid_insts_in_pipeline === 0.U)
+   // val if_slow_completion                         = Mux((io.if_correct_process.asBool && (sl_counter >= ic_counter_shadow) && ic_counter_done.asBool), true.B, false.B)
+   val if_just_overtaking                         = Mux((io.if_correct_process.asBool && io.new_commit.asBool && ((sl_counter + 1.U) >= ic_counter_shadow + 1.U) && (fsm_state === fsm_checking)), 1.U, 0.U)
+   val if_just_overtaking_priv                    = Mux((io.if_correct_process.asBool && io.new_commit.asBool && ((sl_counter + 1.U) >= ic_counter_shadow) && (fsm_state === fsm_checking_priv)), 1.U, 0.U)
+-  val instruction_completion                     = (if_completion || if_completion_priv) &&
+-                                                    !io.something_inflight
++  val instruction_completion                     = package_exec_completion
++  // Once the instruction boundary is reached, stop admitting new checker
++  // instructions but allow the already-valid tail in EX/MEM/WB to drain.
++  // Suppressing overtake replay during this wait avoids replaying that owned
++  // tail merely because the producer seal/LSL drain is still crossing CDC.
++  // This must be registered.  The combinational completion predicate reads
++  // pipeline/LSL state that is itself affected by checker mode and stall;
++  // feeding its inverse directly back into those outputs creates a FIRRTL
++  // combinational loop through IBuf and ctrl_killd.
++  val waiting_for_instruction_tail               = instruction_checking_state &&
++                                                    instruction_tail_waiting
+ 
+   
+ 
+@@ -173,14 +197,14 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
+     is (fsm_checking){
+       sl_counter                                := Mux(io.if_correct_process.asBool && io.new_commit.asBool, sl_counter + 1.U, sl_counter)
+       clear_ic_status                           := 0.U
+-      icsl_checkermode                          := Mux(io.if_correct_process.asBool, 1.U, 0.U)
++      icsl_checkermode                          := Mux(io.if_correct_process.asBool || waiting_for_instruction_tail, 1.U, 0.U)
+       icsl_checkerpriv_mode                     := 0.U
+       if_rh_cp_pc                               := 0.U
+       when (io.self_xcpt) {
+         trap_depth                              := 1.U
+         resume_state                            := fsm_checking
+         fsm_state                               := fsm_self_xcpt
+-      }.elsewhen (if_completion && !io.something_inflight) {
++      }.elsewhen (instruction_completion) {
+         fsm_state                               := fsm_postchecking
+       }
+     }
+@@ -189,13 +213,13 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
+       sl_counter                                := Mux(io.if_correct_process.asBool && io.new_commit.asBool, sl_counter + 1.U, sl_counter)
+       clear_ic_status                           := 0.U
+       icsl_checkermode                          := 0.U
+-      icsl_checkerpriv_mode                     := Mux(io.if_correct_process.asBool, 1.U, 0.U)
++      icsl_checkerpriv_mode                     := Mux(io.if_correct_process.asBool || waiting_for_instruction_tail, 1.U, 0.U)
+       if_rh_cp_pc                               := 0.U
+       when (io.self_xcpt) {
+         trap_depth                              := 1.U
+         resume_state                            := fsm_checking_priv
+         fsm_state                               := fsm_self_xcpt_priv
+-      }.elsewhen (if_completion_priv && !io.something_inflight) {
++      }.elsewhen (instruction_completion) {
+         fsm_state                               := fsm_postchecking_priv
+       }
+     }
+@@ -293,7 +317,6 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
+   // CDC, but an executing checker must still return to its management PC.
+   // If a trap is live, resume into postchecking after the matching xRET and
+   // only then request the special-PC redirect.
+-  val package_start = io.icsl_run.asBool || io.if_check_privrun
+   val cancel_privileged = fsm_state === fsm_checking_priv ||
+     fsm_state === fsm_self_xcpt_priv || fsm_state === fsm_postchecking_priv ||
+     resume_state === fsm_checking_priv || resume_state === fsm_postchecking_priv
+@@ -323,6 +346,17 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
+     fsm_state === fsm_reset) {
+     cancellation_return_pending              := false.B
+   }
++  when (fsm_state === fsm_reset ||
++    (fsm_state === fsm_nonchecking && package_start) ||
++    io.if_check_cancelled) {
++    instruction_boundary_seen                  := false.B
++    instruction_tail_waiting                  := false.B
++  }.elsewhen (package_exec_completion) {
++    instruction_tail_waiting                  := false.B
++  }.elsewhen (instruction_boundary_now) {
++    instruction_boundary_seen                  := true.B
++    instruction_tail_waiting                  := true.B
++  }
+   when (io.if_check_cancelled &&
+     fsm_state =/= fsm_reset && fsm_state =/= fsm_nonchecking) {
+     package_completion_seen                   := true.B
+@@ -366,7 +400,7 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
+   val check_done = RegInit(false.B)
+   when(io.if_check_completed.asBool || io.if_check_cancelled){
+     check_done := false.B
+-  }.elsewhen(((if_completion && icsl_checkermode.asBool) || (icsl_checkerpriv_mode.asBool && if_completion_priv)) && !io.something_inflight && !(io.returned_to_special_address_valid.asBool)){
++  }.elsewhen(instruction_completion && !(io.returned_to_special_address_valid.asBool)){
+     check_done := true.B
+   }
+ 
+@@ -407,12 +441,16 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
+   // dontTouch(io.if_big_complete)
+   // dontTouch(io.big_complete)
+   // val if_overtaking                             = RegInit(0.U(1.W))
+-  if_overtaking                                 := Mux(if_just_overtaking.asBool || (sl_counter >= (ic_counter_shadow + 1.U)), 1.U, 0.U)
+-  if_overtaking_priv                            := Mux(if_just_overtaking_priv.asBool || (sl_counter >= (ic_counter_shadow)), 1.U, 0.U)
++  if_overtaking                                 := Mux(waiting_for_instruction_tail, 0.U,
++                                                    Mux(if_just_overtaking.asBool || (sl_counter >= (ic_counter_shadow + 1.U)), 1.U, 0.U))
++  if_overtaking_priv                            := Mux(waiting_for_instruction_tail, 0.U,
++                                                    Mux(if_just_overtaking_priv.asBool || (sl_counter >= (ic_counter_shadow)), 1.U, 0.U))
+   val if_overtaking_next_cycle                   = WireInit(0.U(1.W))
+   val if_overtaking_priv_next_cycle              = WireInit(0.U(1.W))
+-  if_overtaking_next_cycle                      := Mux(if_just_overtaking.asBool || (sl_counter >= (ic_counter_shadow + 1.U)), 1.U, 0.U)
+-  if_overtaking_priv_next_cycle                 := Mux(if_just_overtaking_priv.asBool || (sl_counter >= (ic_counter_shadow)), 1.U, 0.U)
++  if_overtaking_next_cycle                      := Mux(waiting_for_instruction_tail, 0.U,
++                                                    Mux(if_just_overtaking.asBool || (sl_counter >= (ic_counter_shadow + 1.U)), 1.U, 0.U))
++  if_overtaking_priv_next_cycle                 := Mux(waiting_for_instruction_tail, 0.U,
++                                                    Mux(if_just_overtaking_priv.asBool || (sl_counter >= (ic_counter_shadow)), 1.U, 0.U))
+   
+   val stall_checking                            = RegInit(false.B)
+   val stall_checking_priv                       = RegInit(false.B)
+@@ -446,6 +484,7 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
+     (fsm_state === fsm_postchecking || fsm_state === fsm_postchecking_priv) &&
+       !package_completion_ready
+   io.icsl_stalld                                := waiting_for_package_tail ||
++                                                   waiting_for_instruction_tail ||
+                                                    Mux(icsl_checkermode.asBool,
+                                                      fsm_state === fsm_checking && stall_checking,
+                                                      icsl_checkerpriv_mode.asBool &&
+@@ -505,8 +544,19 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
+   }.elsewhen (io.debug_perf_stop) {
+     trafficEnabled                              := false.B
+   }
+-  val trafficCounting                           = (trafficEnabled || io.debug_perf_start) &&
+-    !io.debug_perf_stop && !io.debug_perf_reset.asBool
++  // Checker traffic is comparable with BOOM traffic only while this checker
++  // owns a checking package.  The software performance command arrives before
++  // the first package and remains armed while the checker returns to
++  // nonchecking, so using trafficEnabled alone also counts setup/idle
++  // instructions that have no BOOM package counterpart.  Keep postchecking
++  // active to include the tail completions of the package being drained.
++  val checkerTrafficState =
++    fsm_state === fsm_checking ||
++      fsm_state === fsm_checking_priv ||
++      fsm_state === fsm_postchecking ||
++      fsm_state === fsm_postchecking_priv
++  val trafficCounting = (trafficEnabled || io.debug_perf_start) &&
++    checkerTrafficState && !io.debug_perf_stop && !io.debug_perf_reset.asBool
+ 
+   debug_perf_num_st_cache                       := Mux(io.debug_perf_reset.asBool, 0.U,
+     debug_perf_num_st_cache + (io.st_cache_deq & trafficCounting.asUInt))
+@@ -579,6 +629,7 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
+   val debug_perf_sel_delay                       = RegInit(0.U(4.W))
+   debug_perf_sel_delay                          := io.debug_perf_sel
+   u_channel.io.deq_ready                        := (io.debug_perf_sel === 14.U) && (debug_perf_sel_delay === 15.U)
++  u_channel.io.deq_read                         := u_channel.io.deq_ready
+ 
+   debug_L_timer_worest                          := Mux(io.debug_perf_reset.asBool, 0.U, Mux(debug_L_timer > debug_L_timer_worest, debug_L_timer, debug_L_timer_worest))
+ 
+@@ -599,7 +650,36 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
+                                                    Mux(io.debug_perf_sel === 14.U, u_channel.io.deq_bits, 
+                                                    Mux(io.debug_perf_sel === 15.U, u_channel.io.deq_bits, 0.U
+                                                    )))))))))))))))
+-  
++
++  // FSM and traffic-window probes retained for post-run diagnosis. These are
++  // observation-only aliases and do not alter package admission or counting.
++  dontTouch(fsm_state)
++  dontTouch(fsm_state_delay)
++  dontTouch(trafficEnabled)
++  dontTouch(trafficCounting)
++  dontTouch(package_completion_seen)
++  dontTouch(package_completion_ready)
++  dontTouch(package_exec_done_seen)
++  dontTouch(instruction_completion)
++  dontTouch(waiting_for_package_tail)
++  dontTouch(if_completion)
++  dontTouch(if_completion_priv)
++  dontTouch(stall_checking)
++  dontTouch(stall_checking_priv)
++  dontTouch(sl_counter)
++  dontTouch(ic_counter_shadow)
++  dontTouch(ic_counter_done)
++  dontTouch(io.new_commit)
++  dontTouch(debug_perf_num_st_cache)
++  dontTouch(debug_perf_num_st_uncache)
++  dontTouch(debug_perf_num_ld_cache)
++  dontTouch(debug_perf_num_ld_uncache)
++  dontTouch(debug_perf_num_lr)
++  dontTouch(debug_perf_num_sc_success)
++  dontTouch(debug_perf_num_sc_fail)
++  dontTouch(debug_perf_num_amo_cache)
++  dontTouch(debug_perf_num_amo_uncache)
++
+   io.checker_core_status                        := Mux(!io.if_correct_process.asBool, 3.U, 
+                                                    Mux(fsm_state === fsm_checking, 1.U, 0.U))
+  
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/r/R_LSL.scala b/chipyard/generators/rocket-chip/src/main/scala/r/R_LSL.scala
+index 471ba19d3..8488dc2bb 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/r/R_LSL.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/r/R_LSL.scala
+@@ -47,7 +47,9 @@ class R_LSLIO(params: R_LSLParams) extends Bundle {
+   val resp_has_data = Output(Bool())
+   val resp_addr = Output(UInt(40.W))
+   val resp_cacheable = Output(Bool())
++  val resp_mismatch = Output(Bool())
+   val resp_replay = Output(Bool())
++  val quiescent = Output(Bool())
+   val near_full = Output(Bool())
+   val resp_data_csr = Output(UInt(params.xLen.W))
+   val resp_data_rocc = Output(UInt(params.xLen.W))
+@@ -109,27 +111,97 @@ DEQ logic
+   val deq_data                = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U(fifowidth.W)))
+   val deq_valid               = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
+   val lsl_empty               = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(true.B))
++  val lsl_head_payload        = RegInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U(fifowidth.W)))
++  val lsl_head_valid          = RegInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
++  val lsl_prefetch_pending    = RegInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
++  val lsl_prefetch            = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
++  val lsl_prefetch_response   = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
+   val req_valid_reg           = RegInit(false.B)
+   val resp_valid_reg          = RegInit(false.B)
+   val resp_kill_reg           = RegInit(false.B)
++  val resp_mismatch_reg       = RegInit(false.B)
+   val resp_tag                = RegInit(0.U(8.W))
+   val cmd                     = RegInit(0.U(2.W))
+   val req_size_reg            = RegInit(0.U(2.W))
+ 
+-  val out_packet              = WireInit(Mux1H(RegNext(deq_valid), deq_data))
++  val resp_packet_reg         = RegInit(0.U(fifowidth.W))
++  val out_packet              = WireInit(resp_packet_reg)
+   val lsl_nearly_full         = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
+   val lsl_highwatermark       = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(false.B))
+   val lsl_nonempty            = VecInit(lsl_empty.map(e => !e))
+   val lsl_deq_bank            = Mux(!lsl_empty(lsl_deq_ptr), lsl_deq_ptr,
+                                     PriorityEncoder(lsl_nonempty.asUInt))
++  // Dequeue only when the request matches the selected FIFO head.  A
++  // non-empty bank alone is insufficient: it may contain a store while the
++  // checker is presenting a load request.
++  val selected_head          = WireInit(0.U(fifowidth.W))
++  val selected_head_is_store = WireInit(false.B)
++  val selected_head_is_load  = WireInit(false.B)
++  val selected_head_addr     = WireInit(0.U(40.W))
++  selected_head              := Mux1H((0 until GH_GlobalParams.GH_TOTAL_PACKETS).map(i => lsl_deq_bank === i.U), lsl_head_payload)
++  selected_head_is_store     := selected_head(fifowidth - 1)
++  selected_head_is_load      := selected_head(fifowidth - 2)
++  selected_head_addr         := selected_head(39, 0)
++  val lsl_head_available     = lsl_nonempty.reduce(_|_)
++  val lsl_req_type_match     = MuxLookup(io.req_cmd, false.B, Seq(
++    0x01.U -> selected_head_is_load,
++    0x02.U -> selected_head_is_store,
++    // AMO has both read and write semantics and the stream carries one
++    // memory item for the operation.  ELU still checks the response.
++    0x03.U -> (selected_head_is_load || selected_head_is_store)
++  ))
++  val lsl_req_addr_match     = selected_head_addr === io.req_addr
++  // Materialize the dynamic Vec read as a named wire.  Passing the raw
++  // indexed expression to dontTouch creates a FIRRTL temporary target whose
++  // underscore name is misparsed by the repository's older FIRRTL version.
++  val selected_head_valid    = WireInit(false.B)
++  selected_head_valid        := lsl_head_valid(lsl_deq_bank)
++  // A request with a valid head receives one response even when its type or
++  // address differs.  Only a matching response is allowed to consume the
++  // FIFO head; mismatch is reported to the checker error path.
++  val lsl_response_ready     = lsl_head_available &&
++                                selected_head_valid &&
++                                !io.req_kill
++  val lsl_req_match          = lsl_response_ready &&
++                                lsl_req_type_match &&
++                                lsl_req_addr_match
++  val lsl_response_fire      = io.req_valid && lsl_response_ready
++  val lsl_deq_fire           = lsl_response_fire && lsl_req_match
++  for (i <- 0 to GH_GlobalParams.GH_TOTAL_PACKETS - 1) {
++    // Launch one synchronous read, then hold off until its response has been
++    // latched.  The pending bit prevents repeatedly re-reading the same head
++    // while SyncReadMem's output is being captured.
++    lsl_prefetch(i) := !lsl_empty(i) && !lsl_head_valid(i) &&
++                       !lsl_prefetch_pending(i)
++  }
+   dontTouch(deq_data)
+   dontTouch(deq_valid)
+   dontTouch(out_packet)
++  dontTouch(lsl_head_payload)
++  dontTouch(lsl_prefetch)
++  dontTouch(lsl_head_valid)
++  dontTouch(lsl_prefetch_pending)
++  dontTouch(lsl_prefetch_response)
++  dontTouch(selected_head)
++  dontTouch(selected_head_is_store)
++  dontTouch(selected_head_is_load)
++  dontTouch(selected_head_addr)
++  dontTouch(lsl_req_type_match)
++  dontTouch(lsl_req_addr_match)
++  dontTouch(lsl_req_match)
++  dontTouch(lsl_deq_fire)
++  dontTouch(lsl_response_ready)
++  dontTouch(lsl_response_fire)
++  dontTouch(selected_head_valid)
++  dontTouch(resp_packet_reg)
++  dontTouch(resp_mismatch_reg)
+   // dontTouch(deq_OH)
+   for (i <- 0 to GH_GlobalParams.GH_TOTAL_PACKETS - 1) {
+-    deq_valid(i)                               := lsl_deq_bank === i.U && io.req_valid && !u_channel(i).io.empty && !io.req_kill
++    deq_valid(i)                               := lsl_deq_bank === i.U && lsl_deq_fire
+     u_channel(i).io.deq_ready                  := deq_valid(i)
++    u_channel(i).io.deq_read                   := lsl_prefetch(i)
+     deq_data(i)                                := u_channel(i).io.deq_bits
++    lsl_prefetch_response(i)                   := u_channel(i).io.deq_read_valid
+     lsl_empty(i)                               := u_channel(i).io.empty
+     lsl_nearly_full(i)                         := u_channel(i).io.status_twoslots
+     lsl_highwatermark(i)                       := u_channel(i).io.high_watermark
+@@ -139,15 +211,33 @@ DEQ logic
+     lsl_deq_ptr := Mux(lsl_deq_bank + 1.U>=GH_GlobalParams.GH_TOTAL_PACKETS.U,lsl_deq_bank+1.U-GH_GlobalParams.GH_TOTAL_PACKETS.U,lsl_deq_bank + 1.U)
+   }
+ 
++  for (i <- 0 to GH_GlobalParams.GH_TOTAL_PACKETS - 1) {
++    when (deq_valid(i)) {
++      lsl_head_valid(i) := false.B
++      lsl_prefetch_pending(i) := false.B
++    }.elsewhen (lsl_prefetch_pending(i) && lsl_prefetch_response(i)) {
++      // The read enable was asserted in the preceding cycle; deq_data is
++      // valid now and must be copied before the RAM output is invalidated.
++      lsl_head_payload(i) := deq_data(i)
++      lsl_head_valid(i) := true.B
++      lsl_prefetch_pending(i) := false.B
++    }.elsewhen (lsl_prefetch(i)) {
++      lsl_prefetch_pending(i) := true.B
++    }
++  }
++
+   resp_kill_reg              := io.req_kill // already in the replay procedure.... 
+-  val if_lsl_empty            = !lsl_nonempty.reduce(_|_)
+   req_valid_reg              := io.req_valid
+-  resp_valid_reg             := io.req_valid && !if_lsl_empty && !io.req_kill
++  resp_valid_reg             := lsl_response_fire
++  resp_mismatch_reg          := lsl_response_fire && !lsl_req_match
++  when (lsl_response_fire) {
++    resp_packet_reg          := selected_head
++  }
+   resp_tag                   := io.req_tag
+   cmd                        := io.req_cmd
+   req_size_reg               := io.req_size
+ 
+-  io.req_ready               := !if_lsl_empty
++  io.req_ready               := lsl_response_ready
+   io.resp_valid              := resp_valid_reg
+   io.resp_tag                := resp_tag
+   // Revisit
+@@ -157,8 +247,19 @@ DEQ logic
+   // participate in checker address comparison.
+   io.resp_addr               := Mux((resp_valid_reg), out_packet(39, 0), 0.U)
+   io.resp_cacheable          := Mux(resp_valid_reg, out_packet(63), false.B)
++  io.resp_mismatch           := resp_mismatch_reg
+   io.resp_has_data           := Mux((resp_valid_reg) && (cmd(0) === 1.U), 1.U, 0.U)
+   io.resp_replay             := req_valid_reg && !resp_valid_reg && !resp_kill_reg
++  // A package tail is quiescent only after all three LSL domains have drained
++  // and no synchronous memory read or response is still in flight.  The
++  // request-valid terms cover CSR/RoCC dequeue activity, which is not visible
++  // in the memory response registers.
++  io.quiescent               := io.if_empty &&
++                                !lsl_head_valid.reduce(_|_) &&
++                                !lsl_prefetch_pending.reduce(_|_) &&
++                                !req_valid_reg && !resp_valid_reg &&
++                                !io.req_valid && !io.req_valid_csr &&
++                                !io.req_valid_rocc
+ 
+   io.ld_deq                  := Mux(deq_valid.reduce(_|_), Mux(io.req_cmd === 0x01.U, 1.U, 0.U), 0.U)
+   io.st_deq                  := Mux(deq_valid.reduce(_|_), Mux(io.req_cmd === 0x02.U, 1.U, 0.U), 0.U)
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/r/R_RSU.scala b/chipyard/generators/rocket-chip/src/main/scala/r/R_RSU.scala
+index fe0894b5e..d6eb3b4db 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/r/R_RSU.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/r/R_RSU.scala
+@@ -234,6 +234,13 @@ class R_RSU(val params: R_RSUParams) extends Module with HasR_RSUIO {
+ 
+   dontTouch(merging)
+   dontTouch(merging_priv)
++  // Snapshot capture is delayed by doSnapshot.  Keep the request, delayed
++  // capture pulse, and the saved x12 value visible for boundary validation.
++  dontTouch(doSnapshot)
++  dontTouch(doSnapshot_priv)
++  dontTouch(io.snapshot)
++  dontTouch(io.snapshot_priv)
++  dontTouch(arfs_ss(12))
+   dontTouch(io)
+   /*
+   for (w <- 0 until params.scalarWidth) {
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/r/R_RSUSL.scala b/chipyard/generators/rocket-chip/src/main/scala/r/R_RSUSL.scala
+index e55a03958..3330caf1e 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/r/R_RSUSL.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/r/R_RSUSL.scala
+@@ -426,6 +426,7 @@ class R_RSUSL(val params: R_RSUSLParams) extends Module with HasR_RSUSLIO {
+   u_channel.io.enq_valid                         := channel_enq_valid
+   u_channel.io.enq_bits                          := channel_enq_data
+   u_channel.io.deq_ready                         := channel_deq_ready
++  u_channel.io.deq_read                          := channel_deq_ready
+   channel_deq_data                               := u_channel.io.deq_bits
+   channel_empty                                  := u_channel.io.empty
+   channel_full                                   := u_channel.io.full
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala b/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala
+index f27a12b40..50bd86756 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala
+@@ -350,6 +350,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
+   val lsl_resp_size     = Wire(UInt(2.W))
+   val lsl_resp_addr     = Wire(UInt(40.W))
+   val lsl_resp_cacheable = Wire(Bool())
++  val lsl_resp_mismatch = Wire(Bool())
+   val lsl_resp_data     = Wire(UInt(xLen.W))
+   val lsl_resp_has_data = Wire(Bool())
+   val lsl_resp_replay   = Wire(Bool())
+@@ -1247,6 +1248,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
+   lsl_resp_size := lsl.io.resp_size
+   lsl_resp_addr := lsl.io.resp_addr
+   lsl_resp_cacheable := lsl.io.resp_cacheable
++  lsl_resp_mismatch := lsl.io.resp_mismatch
+   lsl_resp_data := lsl.io.resp_data
+   lsl_resp_has_data := lsl.io.resp_has_data
+   lsl_resp_replay := lsl.io.resp_replay
+@@ -1269,6 +1271,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
+   elu.io.lsl_resp_valid := lsl_resp_valid
+   elu.io.lsl_resp_addr := lsl_resp_addr
+   elu.io.lsl_resp_data := lsl_resp_data
++  elu.io.lsl_resp_mismatch := lsl_resp_mismatch
+   elu.io.wb_pc := Mux(wb_reg_valid, wb_reg_pc, 0.U)
+   elu.io.wb_inst := Mux(wb_reg_valid, wb_reg_inst, 0.U)
+ 
+@@ -1332,7 +1335,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
+   // separately backpressured below, so this predicate only describes the
+   // local checker resources owned by the previous package.
+   val checker_local_cleanup_done = icsl.io.context_idle &&
+-    (rsu_slave.io.rsu_status === 0.U) && lsl.io.if_empty &&
++    (rsu_slave.io.rsu_status === 0.U) && lsl.io.quiescent &&
+     rsu_slave.io.compare_idle && rsu_slave.io.ecp_idle
+   val checker_cleanup_done = checker_local_cleanup_done
+   val no_result_pending = !package_result_outstanding &&
+@@ -1410,23 +1413,36 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
+     !csr.io.trace(0).exception
+   val arch_snapshot_quiet_prev = RegNext(arch_snapshot_quiet, false.B)
+   val arch_snapshot_stable = arch_snapshot_quiet && arch_snapshot_quiet_prev
++  // A transient empty CDC/LSL observation is not a package tail.  Completion
++  // requires the BOOM producer's sticky, sequence-qualified seal as well.
++  val producer_sealed_for_package = io.producer_sealed_valid &&
++    io.producer_sealed_seq === package_seq_reg
++  // This is the only condition that allows R_ICSL to leave instruction
++  // checking. It joins the producer's sequence-qualified seal with stable CDC
++  // ingress drain and the complete local LSL transaction lifetime.
++  val package_tail_drained = package_check_active &&
++    producer_sealed_for_package && packet_ingress_drained && lsl.io.quiescent
++  icsl.io.package_tail_drained := package_tail_drained
+   val arf_compare_ready = package_check_active &&
+     !(arf_check_done_seen && arf_check_epoch_reg === rsu_slave.io.ecp_epoch) &&
+     !rsu_slave.io.ecp_frame_start &&
+     rsu_slave.io.ecp_complete && rsu_slave.io.ecp_seq === package_seq_reg &&
+-    packet_ingress_drained && lsl.io.if_empty && arch_snapshot_stable &&
++    producer_sealed_for_package &&
++    packet_ingress_drained && lsl.io.quiescent && arch_snapshot_stable &&
+     rsu_slave.io.compare_idle && !package_transport_error &&
+     !package_transport_error_now
+-  val package_data_complete = package_check_active && packet_ingress_drained &&
+-    lsl.io.if_empty && arf_check_complete &&
++  val package_data_complete = package_check_active && producer_sealed_for_package &&
++    packet_ingress_drained &&
++    lsl.io.quiescent && arf_check_complete &&
+     (!csr_check_required || csr_check_complete)
+   // The package tail and the instruction stream are separate completion
+   // domains.  A result is normal only after both have reached a safe boundary.
+   // This prevents the result queue from being filled while R_ICSL is still in
+   // fsm_checking, which was the first half of the release deadlock.
+   val full_check_complete = package_data_complete && icsl.io.package_exec_done
+-  val arf_waiting_after_data_drain = package_check_active && packet_ingress_drained &&
+-    lsl.io.if_empty && !arf_check_complete
++  val arf_waiting_after_data_drain = package_check_active && producer_sealed_for_package &&
++    packet_ingress_drained &&
++    lsl.io.quiescent && !arf_check_complete
+   val arf_wait_timeout = arf_waiting_after_data_drain &&
+     (arf_wait_timeout_counter === 4095.U)
+   // A complete data/ARF package can still wait forever if the instruction
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/subsystem/HasTiles.scala b/chipyard/generators/rocket-chip/src/main/scala/subsystem/HasTiles.scala
+index 39f4ef9e0..48537df40 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/subsystem/HasTiles.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/subsystem/HasTiles.scala
+@@ -228,6 +228,7 @@ trait HasGHnodes extends InstantiatesTiles { this: BaseSubsystem =>
+   val tile_ic_counter_out_EPNodes                = Seq.fill(GH_GlobalParams.GH_NUM_BIG_CORES)(BundleBridgeEphemeralNode[UInt]())
+   val tile_ght_packet_dest_EPNode                = BundleBridgeEphemeralNode[UInt]()
+   val tile_ght_status_out_EPNodes                = Seq.fill(GH_GlobalParams.GH_NUM_BIG_CORES)(BundleBridgeEphemeralNode[UInt]())
++  val tile_producer_seal_out_EPNodes             = Seq.fill(GH_GlobalParams.GH_NUM_BIG_CORES)(BundleBridgeEphemeralNode[UInt]())
+ 
+   val tile_ghm_agg_core_id_EPNode                = BundleBridgeEphemeralNode[UInt]()
+   val debug_maincore_status_out_EPNode           = BundleBridgeEphemeralNode[UInt]()
+@@ -250,6 +251,7 @@ trait HasGHnodes extends InstantiatesTiles { this: BaseSubsystem =>
+ 
+   // var big_switch_tocheckerEPNodes                  = Seq[BundleBridgeEphemeralNode[Bool]]()
+   var cdc_empty_tocheckerEPNodes                 = Seq[BundleBridgeEphemeralNode[Bool]]()
++  var producer_sealed_tocheckerEPNodes           = Seq[BundleBridgeEphemeralNode[UInt]]()
+   var icsl_naEPNodes                             = Seq[BundleBridgeEphemeralNode[UInt]]()
+ 
+   val tile_bigcore_hang_EPNode: BundleBridgeNexusNode[UInt] = BundleBroadcast[UInt](inputRequiresOutput = false)
+@@ -471,6 +473,7 @@ trait CanAttachTile {
+       }
+       // Per-big-core: ght_status (each big core sends its own status to GHM)
+       context.tile_ght_status_out_EPNodes(b) := domain.tile.ght_status_out_SRNode
++      context.tile_producer_seal_out_EPNodes(b) := domain.tile.producer_seal_SRNode
+       domain.tile.bigcore_hang_in_SKNode  := context.tile_bigcore_hang_EPNode
+       domain.tile.bigcore_comp_in_SKNode  := context.tile_bigcore_comp_EPNodes(b)
+       domain.tile.debug_bp_in_SKNode      := context.tile_debug_bp_EPNode
+@@ -500,6 +503,7 @@ trait CanAttachTile {
+       val useless_agg_core_id_SKNode       = BundleBridgeSink[UInt](Some(() => UInt(16.W)))
+       val useless_packet_dest_SKNode       = BundleBridgeSink[UInt](Some(() => UInt(32.W)))
+       val useless_status_SKNode            = BundleBridgeSink[UInt](Some(() => UInt(32.W)))
++      val useless_producer_seal_SKNode     = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W)))
+       val useless_sch_na_inSKNode          = BundleBridgeSource[UInt](Some(() => UInt(16.W)))
+       val useless_debug_gcounter_SKNode    = BundleBridgeSource[UInt](Some(() => UInt(64.W)))
+       val useless_ic_status_SKNode         = BundleBridgeSink[UInt](Some(() => UInt(GH_GlobalParams.GH_NUM_CORES.W)))
+@@ -517,6 +521,7 @@ trait CanAttachTile {
+       useless_agg_core_id_SKNode          := domain.tile.ghm_agg_core_id_out_SRNode
+       useless_packet_dest_SKNode          := domain.tile.ght_packet_dest_SRNode
+       useless_status_SKNode               := domain.tile.ght_status_out_SRNode
++      useless_producer_seal_SKNode        := domain.tile.producer_seal_SRNode
+       domain.tile.bigcore_hang_in_SKNode  := useless_bigcore_hang_SRNode
+       domain.tile.bigcore_comp_in_SKNode  := useless_bigcore_comp_SRNode
+       domain.tile.debug_bp_in_SKNode      := useless_debug_bp_SRNode
+@@ -537,6 +542,10 @@ trait CanAttachTile {
+     context.tile_ghe_packet_in_EPNodes = context.tile_ghe_packet_in_EPNodes :+ tile_ghe_packet_in_EPNode
+     domain.tile.ghe_packet_in_SKNode := tile_ghe_packet_in_EPNode
+ 
++    val producer_sealed_EPNode = BundleBridgeEphemeralNode[UInt]()
++    context.producer_sealed_tocheckerEPNodes = context.producer_sealed_tocheckerEPNodes :+ producer_sealed_EPNode
++    domain.tile.producer_seal_SKNode := producer_sealed_EPNode
++
+     val core_r_arfs_c_EPNode = BundleBridgeEphemeralNode[UInt]()
+     context.core_r_arfs_c_EPNodes = context.core_r_arfs_c_EPNodes :+ core_r_arfs_c_EPNode
+     domain.tile.core_r_arfs_c_SKNode := core_r_arfs_c_EPNode
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/tile/BaseTile.scala b/chipyard/generators/rocket-chip/src/main/scala/tile/BaseTile.scala
+index 168262782..a71b88bae 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/tile/BaseTile.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/tile/BaseTile.scala
+@@ -263,10 +263,12 @@ abstract class BaseTile private (val crossing: ClockCrossingType, q: Parameters)
+   val core_r_arfs_SRNode          = BundleBridgeSource[UInt](Some(() => UInt((GH_GlobalParams.GH_WIDITH_PACKETS+1+8+8).W)))
+   val ght_packet_dest_SRNode      = BundleBridgeSource[UInt](Some(() => UInt(32.W)))
+   val ght_status_out_SRNode       = BundleBridgeSource[UInt](Some(() => UInt(32.W)))
++  val producer_seal_SRNode        = BundleBridgeSource[UInt](Some(() => UInt((GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W)))
+   println("#### Jessica #### Generating GHT **Nodes** on the tile, HartID:", tileParams.hartId, "...!!")
+   val ghe_packet_in_SKNode        = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_TOTAL_PACKETS*GH_GlobalParams.GH_WIDITH_PACKETS+GH_GlobalParams.GH_PACKET_SEQ_BITS+1).W)))
+   val core_r_arfs_c_SKNode        = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_WIDITH_PACKETS+1+8+GH_GlobalParams.GH_PACKET_SEQ_BITS+1).W)))
+   val ghe_status_in_SKNode        = BundleBridgeSink[UInt](Some(() => UInt(32.W)))
++  val producer_seal_SKNode        = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W)))
+   val ghe_event_out_SRNode        = BundleBridgeSource[UInt](Some(() => UInt(6.W)))
+ 
+   val clock_SRNode                = BundleBridgeSource[Clock](Some(() => Clock()))
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/tile/Core.scala b/chipyard/generators/rocket-chip/src/main/scala/tile/Core.scala
+index cc98e0ef9..456b22f14 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/tile/Core.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/tile/Core.scala
+@@ -199,6 +199,11 @@ trait HasCoreIO extends HasTileParameters {
+     val packet_active_seq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W).asOutput
+     val packet_current_seq_active = Bool().asOutput
+     val packet_accept_new_seq = Bool().asOutput
++    // BOOM-side producer seal.  A checker may close a package only after the
++    // producer has sealed the matching sequence; this is distinct from the
++    // transient CDC-empty level.
++    val producer_sealed_valid = Bool().asInput
++    val producer_sealed_seq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W).asInput
+     val packet_lsl_mem_ready = Bool().asOutput
+     val packet_lsl_csr_ready = Bool().asOutput
+     val packet_lsl_rocc_ready = Bool().asOutput
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/tile/RocketTile.scala b/chipyard/generators/rocket-chip/src/main/scala/tile/RocketTile.scala
+index e9245ef99..aa2eb65fd 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/tile/RocketTile.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/tile/RocketTile.scala
+@@ -168,6 +168,8 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
+   // dontTouch(icsl_ack)//for debug
+   // core.io.icsl_ack := icsl_ack
+   core.io.cdc_empty    := outer.cdc_empty_tocheckerSKNode.bundle
++  core.io.producer_sealed_valid := outer.producer_seal_SKNode.bundle(GH_GlobalParams.GH_PACKET_SEQ_BITS)
++  core.io.producer_sealed_seq := outer.producer_seal_SKNode.bundle(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0)
+   // core.io.big_switch   := outer.big_switch_tocheckerSKNode.bundle
+   val packet_in         = Wire(0.U((GH_GlobalParams.GH_TOTAL_PACKETS * GH_GlobalParams.GH_WIDITH_PACKETS +
+     GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W))
+@@ -281,6 +283,10 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
+   //===== GuardianCouncil Function: Start ====//
+   outer.clock_SRNode.bundle  := clock
+   outer.reset_SRNode.bundle  := reset
++  // Rocket checker tiles do not produce BOOM/GH_BUF packets.  Keep the
++  // producer-seal source explicitly inactive for bridge completeness; the
++  // actual seal is driven only by BoomTile big-core instances.
++  outer.producer_seal_SRNode.bundle := 0.U
+   // outer.if_big_complete_SRNode.bundle := core.io.if_big_complete
+   // core.io.big_complete:=outer.big_complete_SKNode.bundle
+ 

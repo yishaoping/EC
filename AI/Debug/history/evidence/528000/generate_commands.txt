@@ -1,0 +1,90 @@
+/data1/gzh/EC/chipyard/sims/common-sim-flags.mk:11: libriscv not found
+Running with RISCV=/data1/gzh/EC/chipyard/.conda-env/riscv-tools
+mkdir -p /data1/gzh/EC/Debug/fix_528000_20261008/generated
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/bootrom/bootrom.rv64.img /data1/gzh/EC/Debug/fix_528000_20261008/generated/bootrom.rv64.img
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/bootrom/bootrom.rv32.img /data1/gzh/EC/Debug/fix_528000_20261008/generated/bootrom.rv32.img
+mkdir -p /data1/gzh/EC/Debug/fix_528000_20261008/generated
+(set -o pipefail && 	cd /data1/gzh/EC/chipyard && /data1/gzh/EC/chipyard/.conda-env/bin/sbt  ";project chipyard; runMain chipyard.Generator  --target-dir /data1/gzh/EC/Debug/fix_528000_20261008/generated --name chipyard.TestHarness.v1Config --top-module chipyard.TestHarness --legacy-configs chipyard:v1Config " | tee /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.chisel.log)
+echo "$mfc_extra_anno_contents" > /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.extrafirtool.anno.json
+echo "$sfc_extra_low_transforms_anno_contents" > /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.extrasfc.anno.json
+jq -s '[.[][]]' /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.anno.json /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.extrafirtool.anno.json > /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.extra.anno.json
+if [ "none" = low ]; then jq -s '[.[][]]' /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.extra.anno.json /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.extrasfc.anno.json > /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.appended.anno.json; fi
+if [ "none" = none ]; then cat /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.extra.anno.json > /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.appended.anno.json; fi
+rm -rf /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral
+cd /data1/gzh/EC/chipyard && /data1/gzh/EC/chipyard/.conda-env/bin/sbt  ";project tapeout; runMain barstools.tapeout.transforms.GenerateModelStageMain  --no-dedup --output-file /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.sfc --out-anno-file /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.sfc.anno.json --target-dir /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral --input-file /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.fir --annotation-file /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.appended.anno.json --log-level error --allow-unrecognized-annotations -X none "
+if [ "none" = low ] && [ -f "/data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.sfc.lo.fir" ]; then mv "/data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.sfc.lo.fir" "/data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.sfc.fir"; fi
+if [ "none" = low ]; then cat /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.sfc.anno.json | jq 'del(.[] | select(.target | test("io.cpu"))?)' > /tmp/cy-FMAjKhyY/unnec-anno-deleted.sfc.anno.json; fi
+if [ "none" = low ]; then cat /tmp/cy-FMAjKhyY/unnec-anno-deleted.sfc.anno.json | jq 'del(.[] | select(.class | test("SRAMAnnotation"))?)' > /tmp/cy-FMAjKhyY/unnec-anno-deleted2.sfc.anno.json; fi
+if [ "none" = low ]; then cat /tmp/cy-FMAjKhyY/unnec-anno-deleted2.sfc.anno.json > /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.sfc.anno.json && rm /tmp/cy-FMAjKhyY/unnec-anno-deleted.sfc.anno.json && rm /tmp/cy-FMAjKhyY/unnec-anno-deleted2.sfc.anno.json; fi
+firtool \
+	--format=fir \
+	--dedup \
+	--export-module-hierarchy \
+	--emit-metadata \
+	--verify-each=true \
+	--warn-on-unprocessed-annotations \
+	--disable-annotation-classless \
+	--disable-annotation-unknown \
+	--mlir-timing \
+	--lowering-options=emittedLineLength=2048,noAlwaysComb,disallowLocalVariables,verifLabels,locationInfoStyle=wrapInAtSquareBracket \
+	--repl-seq-mem \
+	--repl-seq-mem-file=/data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.mems.conf \
+	--repl-seq-mem-circuit=TestHarness \
+	--annotation-file=/data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.sfc.anno.json \
+	--split-verilog \
+	-o /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral \
+	/data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.sfc.fir
+if [ -f "/data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.sfc.mems.conf" ]; then \
+	mv "/data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.sfc.mems.conf" "/data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.mems.conf"; \
+fi
+sed -i 's/.*/& /' /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.mems.conf # need trailing space for SFC macrocompiler
+/data1/gzh/EC/chipyard/scripts/split-module-files.py \
+	--model-hier-json /data1/gzh/EC/Debug/fix_528000_20261008/generated/model_module_hierarchy.json \
+	--dut ChipTop \
+	--out-dut-filelist /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.top.f \
+	--out-model-filelist /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.model.f \
+	--in-all-filelist /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/filelist.f \
+	--target-dir /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral
+# firtool may emit absolute black-box paths; prefix only relative entries.
+sed -e 's;^\./;;' \
+	-e 's;^.*/data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/;/data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/;' \
+	-e '\|^/|! s;^;/data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/;' \
+	/data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/firrtl_black_box_resource_files.f > /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.bb.f
+sed -i 's/\.\///' /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.top.f
+sed -i 's/\.\///' /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.model.f
+sed -i 's/\.\///' /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.bb.f
+sort -u /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.top.f /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.model.f /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.bb.f > /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.all.f
+cp -f /data1/gzh/EC/chipyard/generators/chipyard/src/main/resources/csrc/emulator.cc /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/emulator.cc
+cp -f /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/resources/csrc/verilator.h /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/verilator.h
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/SimSerial.cc /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/SimSerial.cc
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/testchip_tsi.cc /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/testchip_tsi.cc
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/testchip_tsi.h /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/testchip_tsi.h
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/SimDRAM.cc /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/SimDRAM.cc
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/mm.h /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/mm.h
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/mm.cc /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/mm.cc
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/mm_dramsim2.h /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/mm_dramsim2.h
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/mm_dramsim2.cc /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/mm_dramsim2.cc
+cp -f /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/resources/csrc/SimDTM.cc /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/SimDTM.cc
+cp -f /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/resources/csrc/SimJTAG.cc /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/SimJTAG.cc
+cp -f /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/resources/csrc/remote_bitbang.h /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/remote_bitbang.h
+cp -f /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/resources/csrc/remote_bitbang.cc /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/remote_bitbang.cc
+rm -f /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.f
+echo "/data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/emulator.cc" >> /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.f;   echo "-FI /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/verilator.h" >> /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.f;   echo "/data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/SimSerial.cc" >> /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.f;   echo "/data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/testchip_tsi.cc" >> /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.f;   echo "-FI /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/testchip_tsi.h" >> /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.f;   echo "/data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/SimDRAM.cc" >> /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.f;   echo "-FI /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/mm.h" >> /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.f;   echo "/data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/mm.cc" >> /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.f;   echo "-FI /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/mm_dramsim2.h" >> /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.f;   echo "/data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/mm_dramsim2.cc" >> /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.f;   echo "/data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/SimDTM.cc" >> /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.f;   echo "/data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/SimJTAG.cc" >> /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.f;   echo "-FI /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/remote_bitbang.h" >> /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.f;   echo "/data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/remote_bitbang.cc" >> /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.f;
+/data1/gzh/EC/chipyard/scripts/split-mems-conf.py \
+	--in-smems-conf /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.mems.conf \
+	--in-model-hrchy-json /data1/gzh/EC/Debug/fix_528000_20261008/generated/model_module_hierarchy.json \
+	--dut-module-name ChipTop \
+	--model-module-name TestHarness \
+	--out-dut-smems-conf /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.top.mems.conf \
+	--out-model-smems-conf /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.model.mems.conf
+cd /data1/gzh/EC/chipyard && /data1/gzh/EC/chipyard/.conda-env/bin/sbt  ";project tapeout; runMain barstools.macros.MacroCompiler -n /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.top.mems.conf -v /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/chipyard.TestHarness.v1Config.top.mems.v -f /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.top.mems.fir --mode synflops"
+cd /data1/gzh/EC/chipyard && /data1/gzh/EC/chipyard/.conda-env/bin/sbt  ";project tapeout; runMain barstools.macros.MacroCompiler  -n /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.model.mems.conf -v /data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/chipyard.TestHarness.v1Config.model.mems.v -f /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.model.mems.fir --mode synflops"
+/data1/gzh/EC/chipyard/scripts/split-bb-files.py \
+	--in-bb-f /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.bb.f \
+	--in-top-hrchy-json /data1/gzh/EC/Debug/fix_528000_20261008/generated/top_module_hierarchy.json \
+	--in-anno-json /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.appended.anno.json \
+	--out-top-bb-f /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.top.bb.f \
+	--out-model-bb-f /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.model.bb.f
+sort -u /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.f /data1/gzh/EC/Debug/fix_528000_20261008/generated/chipyard.TestHarness.v1Config.all.f | grep -v '.*\.\(svh\|h\)$' > /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.common.f
+echo "/data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/chipyard.TestHarness.v1Config.top.mems.v" >> /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.common.f
+echo "/data1/gzh/EC/Debug/fix_528000_20261008/generated/gen-collateral/chipyard.TestHarness.v1Config.model.mems.v" >> /data1/gzh/EC/Debug/fix_528000_20261008/generated/sim_files.common.f

@@ -1,0 +1,104 @@
+make: Entering directory '/data1/gzh/EC/chipyard/sims/verilator'
+/data1/gzh/EC/chipyard/sims/common-sim-flags.mk:11: libriscv not found
+Running with RISCV=/data1/gzh/EC/chipyard/.conda-env/riscv-tools
+cp -f /data1/gzh/EC/chipyard/generators/chipyard/src/main/resources/csrc/emulator.cc /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/emulator.cc
+cp -f /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/resources/csrc/verilator.h /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/verilator.h
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/SimSerial.cc /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/SimSerial.cc
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/testchip_tsi.cc /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/testchip_tsi.cc
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/testchip_tsi.h /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/testchip_tsi.h
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/SimDRAM.cc /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/SimDRAM.cc
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/mm.h /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/mm.h
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/mm.cc /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/mm.cc
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/mm_dramsim2.h /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/mm_dramsim2.h
+cp -f /data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/mm_dramsim2.cc /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/mm_dramsim2.cc
+cp -f /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/resources/csrc/SimDTM.cc /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/SimDTM.cc
+cp -f /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/resources/csrc/SimJTAG.cc /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/SimJTAG.cc
+cp -f /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/resources/csrc/remote_bitbang.h /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/remote_bitbang.h
+cp -f /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/resources/csrc/remote_bitbang.cc /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/remote_bitbang.cc
+/data1/gzh/EC/chipyard/scripts/split-mems-conf.py \
+	--in-smems-conf /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.mems.conf \
+	--in-model-hrchy-json /data1/gzh/EC/Debug/1769000_build/generated/model_module_hierarchy.json \
+	--dut-module-name ChipTop \
+	--model-module-name TestHarness \
+	--out-dut-smems-conf /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.top.mems.conf \
+	--out-model-smems-conf /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.model.mems.conf
+/data1/gzh/EC/chipyard/scripts/split-bb-files.py \
+	--in-bb-f /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.bb.f \
+	--in-top-hrchy-json /data1/gzh/EC/Debug/1769000_build/generated/top_module_hierarchy.json \
+	--in-anno-json /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.appended.anno.json \
+	--out-top-bb-f /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.top.bb.f \
+	--out-model-bb-f /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.model.bb.f
+rm -f /data1/gzh/EC/Debug/1769000_build/generated/sim_files.f
+echo "/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/emulator.cc" >> /data1/gzh/EC/Debug/1769000_build/generated/sim_files.f;   echo "-FI /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/verilator.h" >> /data1/gzh/EC/Debug/1769000_build/generated/sim_files.f;   echo "/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/SimSerial.cc" >> /data1/gzh/EC/Debug/1769000_build/generated/sim_files.f;   echo "/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/testchip_tsi.cc" >> /data1/gzh/EC/Debug/1769000_build/generated/sim_files.f;   echo "-FI /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/testchip_tsi.h" >> /data1/gzh/EC/Debug/1769000_build/generated/sim_files.f;   echo "/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/SimDRAM.cc" >> /data1/gzh/EC/Debug/1769000_build/generated/sim_files.f;   echo "-FI /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/mm.h" >> /data1/gzh/EC/Debug/1769000_build/generated/sim_files.f;   echo "/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/mm.cc" >> /data1/gzh/EC/Debug/1769000_build/generated/sim_files.f;   echo "-FI /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/mm_dramsim2.h" >> /data1/gzh/EC/Debug/1769000_build/generated/sim_files.f;   echo "/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/mm_dramsim2.cc" >> /data1/gzh/EC/Debug/1769000_build/generated/sim_files.f;   echo "/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/SimDTM.cc" >> /data1/gzh/EC/Debug/1769000_build/generated/sim_files.f;   echo "/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/SimJTAG.cc" >> /data1/gzh/EC/Debug/1769000_build/generated/sim_files.f;   echo "-FI /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/remote_bitbang.h" >> /data1/gzh/EC/Debug/1769000_build/generated/sim_files.f;   echo "/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/remote_bitbang.cc" >> /data1/gzh/EC/Debug/1769000_build/generated/sim_files.f;
+cd /data1/gzh/EC/chipyard && /data1/gzh/EC/chipyard/.conda-env/bin/sbt -java-home /data1/gzh/EC/chipyard/.conda-env/lib/jvm  ";project tapeout; runMain barstools.macros.MacroCompiler -n /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.top.mems.conf -v /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/chipyard.TestHarness.v1Config.top.mems.v -f /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.top.mems.fir --mode synflops"
+Picked up JAVA_TOOL_OPTIONS: -Xmx16G -Xss8M -XX:ActiveProcessorCount=8 -Dsbt.supershell=false
+Picked up JAVA_TOOL_OPTIONS: -Xmx16G -Xss8M -XX:ActiveProcessorCount=8 -Dsbt.supershell=false
+[0m[[0m[0minfo[0m] [0m[0mwelcome to sbt 1.8.2 (N/A Java 17.0.3-internal)[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project chipyard-build from plugins.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading project definition from /data1/gzh/EC/chipyard/project[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project chipyardRoot from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project hardfloat from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project rocketConfig from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project testchipip from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project constellation from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project icenet from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project hwacha from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project boom from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project cva6 from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project ibex from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project sodor from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project gemmini from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project tapeout from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project sim-build from plugins.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading project definition from /data1/gzh/EC/chipyard/sims/firesim/sim/project[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project firesim from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project targetutils from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project midas from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mresolving key references (37427 settings) ...[0m
+[0m[[0m[0minfo[0m] [0m[0mset current project to chipyardRoot (in build file:/data1/gzh/EC/chipyard/)[0m
+[0m[[0m[0minfo[0m] [0m[0mset current project to tapeout (in build file:/data1/gzh/EC/chipyard/)[0m
+[0m[[0m[0minfo[0m] [0m[0mrunning (fork) barstools.macros.MacroCompiler -n /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.top.mems.conf -v /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/chipyard.TestHarness.v1Config.top.mems.v -f /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.top.mems.fir --mode synflops[0m
+[0m[[0m[31merror[0m] [0m[0mPicked up JAVA_TOOL_OPTIONS: -Xmx16G -Xss8M -XX:ActiveProcessorCount=8 -Dsbt.supershell=false[0m
+[0m[[0m[32msuccess[0m] [0m[0mTotal time: 3 s, completed Oct 9, 2026, 6:37:11 PM[0m
+[0Jcd /data1/gzh/EC/chipyard && /data1/gzh/EC/chipyard/.conda-env/bin/sbt -java-home /data1/gzh/EC/chipyard/.conda-env/lib/jvm  ";project tapeout; runMain barstools.macros.MacroCompiler  -n /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.model.mems.conf -v /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/chipyard.TestHarness.v1Config.model.mems.v -f /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.model.mems.fir --mode synflops"
+Picked up JAVA_TOOL_OPTIONS: -Xmx16G -Xss8M -XX:ActiveProcessorCount=8 -Dsbt.supershell=false
+Picked up JAVA_TOOL_OPTIONS: -Xmx16G -Xss8M -XX:ActiveProcessorCount=8 -Dsbt.supershell=false
+[0m[[0m[0minfo[0m] [0m[0mwelcome to sbt 1.8.2 (N/A Java 17.0.3-internal)[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project chipyard-build from plugins.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading project definition from /data1/gzh/EC/chipyard/project[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project chipyardRoot from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project hardfloat from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project rocketConfig from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project testchipip from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project constellation from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project icenet from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project hwacha from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project boom from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project cva6 from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project ibex from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project sodor from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project gemmini from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project tapeout from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project sim-build from plugins.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading project definition from /data1/gzh/EC/chipyard/sims/firesim/sim/project[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project firesim from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project targetutils from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mloading settings for project midas from build.sbt ...[0m
+[0m[[0m[0minfo[0m] [0m[0mresolving key references (37427 settings) ...[0m
+[0m[[0m[0minfo[0m] [0m[0mset current project to chipyardRoot (in build file:/data1/gzh/EC/chipyard/)[0m
+[0m[[0m[0minfo[0m] [0m[0mset current project to tapeout (in build file:/data1/gzh/EC/chipyard/)[0m
+[0m[[0m[0minfo[0m] [0m[0mrunning (fork) barstools.macros.MacroCompiler -n /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.model.mems.conf -v /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/chipyard.TestHarness.v1Config.model.mems.v -f /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.model.mems.fir --mode synflops[0m
+[0m[[0m[31merror[0m] [0m[0mPicked up JAVA_TOOL_OPTIONS: -Xmx16G -Xss8M -XX:ActiveProcessorCount=8 -Dsbt.supershell=false[0m
+[0m[[0m[32msuccess[0m] [0m[0mTotal time: 3 s, completed Oct 9, 2026, 6:37:24 PM[0m
+[0Jsort -u /data1/gzh/EC/Debug/1769000_build/generated/sim_files.f /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.all.f | grep -v '.*\.\(svh\|h\)$' > /data1/gzh/EC/Debug/1769000_build/generated/sim_files.common.f
+echo "/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/chipyard.TestHarness.v1Config.top.mems.v" >> /data1/gzh/EC/Debug/1769000_build/generated/sim_files.common.f
+echo "/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/chipyard.TestHarness.v1Config.model.mems.v" >> /data1/gzh/EC/Debug/1769000_build/generated/sim_files.common.f
+rm -rf /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.debug
+mkdir -p /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.debug
+verilator --cc --exe -CFLAGS " -O3 -std=c++17 -I/data1/gzh/EC/chipyard/.conda-env/riscv-tools/include -I/data1/gzh/EC/chipyard/tools/DRAMSim2 -I/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral  -I/data1/gzh/EC/chipyard/.conda-env/include  -DCY_FST_TRACE -D__STDC_FORMAT_MACROS -Wno-macro-redefined -DTEST_HARNESS=VTestHarness -DVERILATOR -include /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.plusArgs -include /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/verilator.h" -LDFLAGS " -L/data1/gzh/EC/chipyard/.conda-env/riscv-tools/lib -Wl,-rpath,/data1/gzh/EC/chipyard/.conda-env/riscv-tools/lib -L/data1/gzh/EC/chipyard/sims/verilator -L/data1/gzh/EC/chipyard/tools/DRAMSim2  -lfesvr -ldramsim  -L/data1/gzh/EC/chipyard/.conda-env/lib -Wl,-rpath,/data1/gzh/EC/chipyard/.conda-env/lib"   --threads 8 --threads-dpi all -O3 --x-assign fast --x-initial fast --output-split 10000 --output-split-cfuncs 100 --assert -Wno-fatal --timescale 1ns/1ps --max-num-width 1048576 --no-timing +define+PRINTF_COND=\$c\(\"verbose\",\"\&\&\"\,\"done_reset\"\) +define+STOP_COND=\$c\(\"done_reset\"\) --top-module TestHarness --vpi -f /data1/gzh/EC/Debug/1769000_build/generated/sim_files.common.f  -o /data1/gzh/EC/Debug/1769000_build/simulator-debug --trace-fst --trace-threads 1 -Mdir /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.debug -CFLAGS "-include /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.debug/VTestHarness.h"
+%Warning-DEPRECATED: Option '--trace-threads' is deprecated and has no effect.
+                     ... For warning description see https://verilator.org/warn/DEPRECATED?v=5.048
+                     ... Use "/* verilator lint_off DEPRECATED */" and lint_on around source to disable this message.
+%Error: Verilator threw signal 2. Suggest trying --debug --gdbbt
+%Error: Command Failed ulimit -s unlimited 2>/dev/null; exec /nix/store/bj3wbpawbk71c082cvrnqkfyix7ipx0g-verilator-5.048/bin/verilator_bin --cc --exe -CFLAGS \ -O3\ -std=c++17\ -I/data1/gzh/EC/chipyard/.conda-env/riscv-tools/include\ -I/data1/gzh/EC/chipyard/tools/DRAMSim2\ -I/data1/gzh/EC/Debug/1769000_build/generated/gen-collateral\ \ -I/data1/gzh/EC/chipyard/.conda-env/include\ \ -DCY_FST_TRACE\ -D__STDC_FORMAT_MACROS\ -Wno-macro-redefined\ -DTEST_HARNESS=VTestHarness\ -DVERILATOR\ -include\ /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.plusArgs\ -include\ /data1/gzh/EC/Debug/1769000_build/generated/gen-collateral/verilator.h -LDFLAGS \ -L/data1/gzh/EC/chipyard/.conda-env/riscv-tools/lib\ -Wl\,-rpath\,/data1/gzh/EC/chipyard/.conda-env/riscv-tools/lib\ -L/data1/gzh/EC/chipyard/sims/verilator\ -L/data1/gzh/EC/chipyard/tools/DRAMSim2\ \ -lfesvr\ -ldramsim\ \ -L/data1/gzh/EC/chipyard/.conda-env/lib\ -Wl\,-rpath\,/data1/gzh/EC/chipyard/.conda-env/lib --threads 8 --threads-dpi all -O3 --x-assign fast --x-initial fast --output-split 10000 --output-split-cfuncs 100 --assert -Wno-fatal --timescale 1ns/1ps --max-num-width 1048576 --no-timing +define+PRINTF_COND=\$c\(\"verbose\"\,\"\&\&\"\,\"done_reset\"\) +define+STOP_COND=\$c\(\"done_reset\"\) --top-module TestHarness --vpi -f /data1/gzh/EC/Debug/1769000_build/generated/sim_files.common.f -o /data1/gzh/EC/Debug/1769000_build/simulator-debug --trace-fst --trace-threads 1 -Mdir /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.debug -CFLAGS -include\ /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.debug/VTestHarness.h
+make: *** [Makefile:268: /data1/gzh/EC/Debug/1769000_build/generated/chipyard.TestHarness.v1Config.debug/VTestHarness.mk] Error 130

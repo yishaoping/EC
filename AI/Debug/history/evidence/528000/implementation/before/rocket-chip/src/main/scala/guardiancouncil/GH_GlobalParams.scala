@@ -1,0 +1,178 @@
+package freechips.rocketchip.guardiancouncil
+
+import org.chipsalliance.cde.config.Field
+
+//修改GH_WIDITH_PACKETS会牵一发动全身
+object GH_GlobalParams {
+  // Functional barrier enforcement is deliberately opt-in. Monitoring and
+  // latency accounting remain enabled independently of this switch.
+  case object GH_REAL_BARRIER_ENABLED extends Field[Boolean](true)
+  val GH_NUM_CORES = 5;   // 1 BOOM core + 4 Rocket checker cores
+  val GH_NUM_BIG_CORES = 1;
+  val GH_DEBUG = 0;
+  val GH_WIDITH_PERF = 64;
+  val GH_TOTAL_PACKETS = 2;
+  val GH_TOTAL_INSTS = 5000; // 论文 Table I：单个 log segment 最长 5000 条指令
+  //一次128bit数据+8bit状态
+  val GH_WIDITH_PACKETS = 2*GH_WIDITH_PERF+8;//136
+  // Package sequence numbers are global within one BOOM/checker group. Zero is
+  // reserved for operations that are not associated with a checked package.
+  val GH_PACKET_SEQ_BITS = 32
+  val GH_CHECKER_STATUS_BITS = 2
+  val GH_CHECKER_STATUS_PASS = 0
+  val GH_CHECKER_STATUS_FAIL = 1
+  val GH_CHECKER_STATUS_CANCELLED = 2
+  val GH_CHECKER_RESULT_BITS = GH_PACKET_SEQ_BITS + GH_CHECKER_STATUS_BITS + 1
+
+  // BOOM 到 Rocket checker 的会话控制协议。AsyncQueue 的 valid/ready
+  // 是消息交付确认；消息自身带版本、类型和 epoch，接收端只接受当前
+  // epoch 的 FINISH，防止旧会话的尾部控制消息被误用于下一次 workload。
+  val GH_SESSION_PROTOCOL_VERSION = 1
+  val GH_SESSION_VERSION_BITS = 2
+  val GH_SESSION_TYPE_BITS = 2
+  val GH_SESSION_EPOCH_BITS = 16
+  val GH_SESSION_STATUS_BITS = 5
+  val GH_SESSION_START = 1
+  val GH_SESSION_FINISH = 2
+  val GH_SESSION_CTRL_BITS = GH_SESSION_VERSION_BITS + GH_SESSION_TYPE_BITS +
+    GH_SESSION_EPOCH_BITS + GH_SESSION_STATUS_BITS
+
+  // Performance control keeps the legacy selector in bits 4:1 and adds
+  // explicit measurement-window pulses above it.
+  val GH_PERF_CTRL_BITS = 7
+  val GH_PERF_CTRL_RESET_BIT = 0
+  val GH_PERF_CTRL_START_BIT = 5
+  val GH_PERF_CTRL_STOP_BIT = 6
+
+  // 软件可见的流量计数向量：0..55 保持原 ABI；56..95 是四种物理地址
+  // 粒度各十项的前八类包地址统计；96..98 是诊断；99..106 是第九、十类；
+  // 107..127 是三组互不覆盖旧结果的非阻塞屏障代价统计。
+  val GH_ADDRESS_STATS_GRANULES = 4
+  val GH_ADDRESS_STATS_PER_GRANULE = 10
+  val GH_TRAFFIC_COUNTERS = 128
+  val GH_TRAFFIC_STORE_TOTAL = 0
+  val GH_TRAFFIC_STORE_CACHE = 1
+  val GH_TRAFFIC_STORE_UNCACHE = 2
+  val GH_TRAFFIC_LOAD_TOTAL = 3
+  val GH_TRAFFIC_LOAD_CACHE = 4
+  val GH_TRAFFIC_LOAD_UNCACHE = 5
+  val GH_TRAFFIC_LOAD_FORWARD = 6
+  val GH_TRAFFIC_LR = 7
+  val GH_TRAFFIC_SC_SUCCESS = 8
+  val GH_TRAFFIC_SC_FAIL = 9
+  val GH_TRAFFIC_AMO_TOTAL = 10
+  val GH_TRAFFIC_AMO_CACHE = 11
+  val GH_TRAFFIC_AMO_UNCACHE = 12
+  // Index 13 counts the first accepted beat of every L1->L2 C-channel
+  // transaction (including clean releases and probe responses).
+  val GH_TRAFFIC_L1_L2_C_TOTAL = 13
+  // Source compatibility for code that still uses the old, narrower name.
+  val GH_TRAFFIC_L1_L2_WB_TOTAL = GH_TRAFFIC_L1_L2_C_TOTAL
+  val GH_TRAFFIC_L1_L2_WB_DIRTY = 14
+  val GH_TRAFFIC_L2_DRAM_WB_TOTAL = 15
+  val GH_TRAFFIC_L2_DRAM_WB_DIRTY = 16
+  val GH_TRAFFIC_STORE_UNCACHE_CYCLE_SUM = 17
+  val GH_TRAFFIC_UNVERIFIED_DIRTY_WB_SEEN = 18
+  val GH_TRAFFIC_UNVERIFIED_DIRTY_WB_RESOLVED = 19
+  val GH_TRAFFIC_UNVERIFIED_DIRTY_WB_PENDING = 20
+  val GH_TRAFFIC_UNVERIFIED_DIRTY_WB_OTHER = 21
+  val GH_TRAFFIC_UNVERIFIED_DIRTY_WB_DROPPED = GH_TRAFFIC_UNVERIFIED_DIRTY_WB_OTHER
+  val GH_TRAFFIC_FAILED_PACKAGES = 22
+  val GH_TRAFFIC_UNVERIFIED_DIRTY_WB_SAFE_CYCLE_SUM = 23
+  val GH_TRAFFIC_UNVERIFIED_DIRTY_WB_CYCLE_SUM = 24
+  val GH_TRAFFIC_UNVERIFIED_DIRTY_WB_STATS_VALID = 25
+  val GH_TRAFFIC_SAFE_PACKET_WATERMARK = 26
+  val GH_TRAFFIC_PACKAGE_RESULT_DROPPED = 27
+  val GH_TRAFFIC_VERIFIED_DIRTY_WB = 28
+  // Dirty writebacks without a valid verify_required attribution. This is the
+  // normal non-verification class and is printed separately from verification
+  // categories; the L2 `other` slot is reserved for statistics loss.
+  val GH_TRAFFIC_NONVERIFY_DIRTY_WB = 29
+  val GH_TRAFFIC_UNTRACKED_DIRTY_WB = GH_TRAFFIC_NONVERIFY_DIRTY_WB
+  val GH_TRAFFIC_ALLOCATED_PACKAGES = 30
+  val GH_TRAFFIC_COMPLETED_PACKAGES = 31
+  val GH_TRAFFIC_PASSED_PACKAGES = 32
+  val GH_TRAFFIC_CANCELLED_PACKAGES = 33
+  val GH_TRAFFIC_STATS_ARITHMETIC_OVERFLOW = 34
+  val GH_TRAFFIC_L1_L2_WB_DIRTY_VERIFY_REQUIRED = 35
+  val GH_TRAFFIC_STRICT_STORE_TOTAL = 36
+  val GH_TRAFFIC_STRICT_STORE_CACHE = 37
+  val GH_TRAFFIC_STRICT_STORE_UNCACHE = 38
+  val GH_TRAFFIC_STRICT_LOAD_TOTAL = 39
+  val GH_TRAFFIC_STRICT_LOAD_CACHE = 40
+  val GH_TRAFFIC_STRICT_LOAD_UNCACHE = 41
+  val GH_TRAFFIC_STRICT_LOAD_CACHE_RESPONSE = 42
+  val GH_TRAFFIC_STRICT_LOAD_FORWARD = 43
+  val GH_TRAFFIC_STRICT_PENDING = 44
+  val GH_TRAFFIC_COUNTER_ASSERT_FAIL = 45
+  val GH_TRAFFIC_L2_DRAM_WB_VERIFY_REQUIRED = 46
+  val GH_TRAFFIC_L2_DRAM_WB_VERIFIED = 47
+  val GH_TRAFFIC_L2_DRAM_WB_UNVERIFIED = 48
+  val GH_TRAFFIC_L2_DRAM_WB_UNVERIFIED_RESOLVED = 49
+  val GH_TRAFFIC_L2_DRAM_WB_UNVERIFIED_PENDING = 50
+  val GH_TRAFFIC_L2_DRAM_WB_NONVERIFY = 51
+  val GH_TRAFFIC_L2_DRAM_WB_OTHER = 52
+  val GH_TRAFFIC_L2_DRAM_WB_WRITEBACK_CYCLE_SUM = 53
+  val GH_TRAFFIC_L2_DRAM_WB_VERIFY_CYCLE_SUM = 54
+  val GH_TRAFFIC_L2_DRAM_WB_STATS_VALID = 55
+  val GH_TRAFFIC_ADDRESS_STATS_BASE = 56
+  val GH_ADDRESS_STAT_STORE_TOTAL = 0
+  val GH_ADDRESS_STAT_STORE_PEAK = 1
+  val GH_ADDRESS_STAT_LOAD_FIRST_LOWER = 2
+  val GH_ADDRESS_STAT_LOAD_FIRST_UPPER = 3
+  val GH_ADDRESS_STAT_LOAD_FIRST_PEAK = 4
+  val GH_ADDRESS_STAT_STORE_FIRST_LOWER = 5
+  val GH_ADDRESS_STAT_STORE_FIRST_UPPER = 6
+  val GH_ADDRESS_STAT_STORE_FIRST_PEAK = 7
+  val GH_ADDRESS_STAT_STRICT_WRITE_READ_TOTAL = 8
+  val GH_ADDRESS_STAT_STRICT_WRITE_READ_PEAK = 9
+  val GH_TRAFFIC_ADDRESS_STATS_VALID = 96
+  val GH_TRAFFIC_ADDRESS_STATS_ERROR = 97
+  val GH_TRAFFIC_ADDRESS_STATS_PENDING = 98
+  val GH_TRAFFIC_FIRST_STORE_BASE = 99
+  val GH_ADDRESS_FIRST_STORE_STRIDE = 2
+  val GH_ADDRESS_FIRST_STORE_TOTAL = 0
+  val GH_ADDRESS_FIRST_STORE_PEAK = 1
+  val GH_TRAFFIC_CROSS_PACKAGE_SEEN = 107
+  val GH_TRAFFIC_CROSS_PACKAGE_RESOLVED = 108
+  val GH_TRAFFIC_CROSS_PACKAGE_PENDING = 109
+  val GH_TRAFFIC_CROSS_PACKAGE_DROPPED = 110
+  val GH_TRAFFIC_CROSS_PACKAGE_REQUEST_CYCLE_SUM = 111
+  val GH_TRAFFIC_CROSS_PACKAGE_SAFE_CYCLE_SUM = 112
+  val GH_TRAFFIC_CROSS_PACKAGE_STATS_VALID = 113
+  val GH_TRAFFIC_L1_L2_BARRIER_SEEN = 114
+  val GH_TRAFFIC_L1_L2_BARRIER_RESOLVED = 115
+  val GH_TRAFFIC_L1_L2_BARRIER_PENDING = 116
+  val GH_TRAFFIC_L1_L2_BARRIER_DROPPED = 117
+  val GH_TRAFFIC_L1_L2_BARRIER_REQUEST_CYCLE_SUM = 118
+  val GH_TRAFFIC_L1_L2_BARRIER_SAFE_CYCLE_SUM = 119
+  val GH_TRAFFIC_L1_L2_BARRIER_STATS_VALID = 120
+  val GH_TRAFFIC_L2_DRAM_BARRIER_SEEN = 121
+  val GH_TRAFFIC_L2_DRAM_BARRIER_RESOLVED = 122
+  val GH_TRAFFIC_L2_DRAM_BARRIER_PENDING = 123
+  val GH_TRAFFIC_L2_DRAM_BARRIER_DROPPED = 124
+  val GH_TRAFFIC_L2_DRAM_BARRIER_REQUEST_CYCLE_SUM = 125
+  val GH_TRAFFIC_L2_DRAM_BARRIER_SAFE_CYCLE_SUM = 126
+  val GH_TRAFFIC_L2_DRAM_BARRIER_STATS_VALID = 127
+  val GH_L2_WB_CLEAN_GRAY_BORE = "gh_l2_dram_wb_clean_gray"
+  val GH_L2_WB_DIRTY_GRAY_BORE = "gh_l2_dram_wb_dirty_gray"
+  val GH_L1_L2_PACKET_SEQ_BORE = "gh_l1_l2_packet_seq"
+  val GH_L1_L2_PACKET_TRACKED_BORE = "gh_l1_l2_packet_tracked"
+  val GH_L1_L2_PACKET_ADDR_BORE = "gh_l1_l2_packet_addr"
+  val GH_L1_L2_SAFE_WATERMARK_GRAY_BORE = "gh_l1_l2_safe_watermark_gray"
+  val GH_L2_DRAM_STATS_BORE = "gh_l2_dram_dirty_stats"
+  val GH_L2_DRAM_BARRIER_STATS_BORE = "gh_l2_dram_barrier_stats"
+  val GH_L2_STATS_RESET_BORE = "gh_l2_dram_stats_reset"
+  val GH_L2_STATS_ENABLE_BORE = "gh_l2_dram_stats_enable"
+  val GH_L2_BARRIER_REQUEST_BORE = "gh_l2_dram_barrier_request"
+  val GH_L2_BARRIER_REQUEST_SEQ_BORE = "gh_l2_dram_barrier_request_seq"
+  val GH_L2_BARRIER_CLOSE_ACK_BORE = "gh_l2_dram_barrier_close_ack"
+  val GH_L2_BARRIER_CLOSE_ACK_SEQ_BORE = "gh_l2_dram_barrier_close_ack_seq"
+  val GH_L2_BARRIER_ERROR_BORE = "gh_l2_dram_barrier_error"
+  val GH_L2_BARRIER_FAILURE_BORE = "gh_l2_dram_barrier_failure"
+  val GH_L2_BARRIER_FAILURE_SEQ_BORE = "gh_l2_dram_barrier_failure_seq"
+  val IF_THERE_IS_CDC = true;
+  //===== Runtime Configurable Mapping =====//
+  val GH_MAX_BIG_CORES = 2;   // 支持的大核数量
+  val GH_CHECKER_MASK_WIDTH = 16; // checker_mask最大位宽
+}

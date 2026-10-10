@@ -1,0 +1,41 @@
+[UART] UART0 is here (stdin/stdout).
+[INIT] checker_mask=0xf status=ready
+[INIT] software_interrupt=pass
+[RUN] hart=0 status=started
+[CONFIG] big_core_perf=off checker_perf=on interval_cycles=5000 sample_readback=not_collected
+[RUN] benchmark=gapbs_bfs nodes=512 source=0 reached=512 edges=8192 verified=0 parent_checksum=947892178
+[PERF] boom_cycles=4213682 boom_inst=612726
+[VERIFY] packages allocated=291 completed=291 passed=291 status=PASS
+[TRAFFIC] source        st_total   st_cache st_uncache   ld_total   ld_cache ld_uncache ld_response ld_forward
+[TRAFFIC] boom_arch        60491      60442         49      84480      84183        297          -          -
+[TRAFFIC] boom_strict      60491      60442         49      84480      84183        297      82517       1666
+[TRAFFIC] checker_sum      60655      60606         49      84738      84441        297          -          0
+[TRAFFIC] c1               21253      21250          3      27406      27388         18          -          0
+[TRAFFIC] c2               19914      19892         22      20220      20085        135          -          0
+[TRAFFIC] c3               14480      14479          1      23509      23503          6          -          0
+[TRAFFIC] c4                5008       4985         23      13603      13465        138          -          0
+[ASSERT] store arch=60491 strict=60491 checker=60655 result=FAIL
+[ASSERT_DIAG] store_arch_minus_checker=-164
+[ASSERT_DIAG] store_cache_arch_minus_checker=-164
+[ASSERT] load arch=84480 strict=84480 checker=84738 result=FAIL
+[ASSERT_DIAG] load_arch_minus_checker=-258
+[ASSERT_DIAG] load_cache_arch_minus_checker=-258
+[TRAFFIC] path          total      dirty verify_required   verified unverified   resolved  nonverify status
+[TRAFFIC] L1-L2          1392       1342             858        428        430        430        484 PASS  
+[TRAFFIC] L2-DRAM          45         45               8          8          0          0         37 PASS  
+[ADDRESS_STATS] unit    store_total   store_peak     lf_lower     lf_upper      lf_peak     sf_lower     sf_upper      sf_peak    swr_total     swr_peak first_store_total first_store_peak
+[ADDRESS_STATS] byte          92758         2354         5338        55072          224        13049        71962          248        55948          248        88820         2350
+[ADDRESS_STATS] word4         23356          589         1383        13848           58         3280        18120           62         4788           62        22352          588
+[ADDRESS_STATS] word8         11897          296          785         7116           30         1667         9176           31         1678           31        11313          295
+[ADDRESS_STATS] line           1949           44          280         1252            6          328         1419            5           33            4         1727           43
+[LATENCY] metric                     events clock    frequency_hz     avg_cycles         avg_ns
+[LATENCY] store_uncache                  49 boom_eq     200000000        583.367       2916.836
+[LATENCY] dirty_wb                      430 boom        200000000      25218.458     126092.290
+[LATENCY] l2_dram_dirty_wb                0 l2          200000000            n/a            n/a reason=no_events
+[BARRIER] cross_package_store    seen=394798 resolved=394798 pending=0 dropped=0 wait_cycle_sum=5736181739 valid=1 status=PASS
+[LATENCY] cross_package_store        394798 boom        200000000      14529.409      72647.046
+[BARRIER] l1_l2_replacement      seen=394 resolved=394 pending=0 dropped=0 wait_cycle_sum=10657578 valid=1 status=PASS
+[LATENCY] l1_l2_replacement             394 boom        200000000      27049.690     135248.451
+[BARRIER] l2_dram_replacement    seen=5 resolved=5 pending=0 dropped=0 wait_cycle_sum=62198 valid=1 status=PASS
+[LATENCY] l2_dram_replacement             5 l2          200000000      12439.600      62198.000
+[END] hart=0 status=FAIL

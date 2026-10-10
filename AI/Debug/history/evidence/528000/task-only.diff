@@ -1,0 +1,940 @@
+--- before/boom/src/main/scala/common/tile.scala
++++ after/boom/src/main/scala/common/tile.scala
+@@ -211,16 +211,23 @@
+    
+ 
+     val gh_buf = Module(new GH_BUF(GH_BUF_Params(p(XLen),GH_GlobalParams.GH_WIDITH_PACKETS,gc_core_width, true)))
+-    // Hold the producer seal until the matching sequence has crossed GHM.
+-    // The core-side candidate already proves ROB/RSU quiescence; GH_BUF must
+-    // also be empty so delayed commit inputs cannot create a late packet.
+-    val producerSealValid = RegInit(false.B)
+-    val producerSealSeq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+-    when (core.io.producer_seal_candidate && gh_buf.io.ght_filters_empty.asBool) {
+-      producerSealValid := true.B
+-      producerSealSeq := core.io.producer_seal_seq
+-    }
+-    outer.producer_seal_SRNode.bundle := Cat(producerSealValid, producerSealSeq)
++    // A seal belongs to a checker slot until its sequenced result releases
++    // that slot. A newer package on another checker cannot overwrite it.
++    val producerSeals = RegInit(VecInit(Seq.fill(GH_GlobalParams.GH_NUM_CORES)(
++      0.U((GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W))))
++    for (i <- 0 until GH_GlobalParams.GH_NUM_CORES) {
++      when (core.io.clear_ic_status_tomain(i) && !core.io.ic_status(i).asBool) {
++        producerSeals(i) := 0.U
++      }.elsewhen (core.io.producer_seal_candidate && gh_buf.io.ght_filters_empty.asBool &&
++        core.io.checker_segment_id(i) === core.io.producer_seal_seq) {
++        producerSeals(i) := Cat(true.B, core.io.producer_seal_seq)
++      }
++    }
++    core.io.producer_seal_ready := producerSeals.map { seal =>
++      seal(GH_GlobalParams.GH_PACKET_SEQ_BITS) &&
++        seal(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0) === core.io.producer_seal_seq
++    }.reduce(_ || _)
++    outer.producer_seal_SRNode.bundle := producerSeals.asUInt
+     val fiu = Module(new R_FIU(R_FIUParams(64, GH_GlobalParams.GH_NUM_CORES-1)))
+     fiu.io.gtimer                                := debug_gtimer
+ 
+@@ -316,7 +323,7 @@
+       gh_buf.io.gh_prfs_rd(w)                    := RegNext(core.io.prf_rd(w))
+       gh_buf.io.jalr_target(w)                   := RegNext(core.io.jalr_target(w))
+     }
+-    gh_buf.io.gh_can_fwd                         := (ght_bridge.io.out | (!if_correct_process_bridge.io.out))
++    gh_buf.io.gh_can_fwd                         := RegNext(ght_bridge.io.out | (!if_correct_process_bridge.io.out), 1.U)
+     // Per-checker hang filtered by checker_enable_mask: only stall on my own checkers
+     val num_chk = GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES
+     val hang_bits = outer.bigcore_hang_in_SKNode.bundle(num_chk-1, 0)
+@@ -369,6 +376,7 @@
+     // Not be used, added to pass the compile
+     core.io.gh_stall                             := 0.U
+     outer.producer_seal_SRNode.bundle            := 0.U
++    core.io.producer_seal_ready                  := false.B
+     core.io.icctrl                               := 0.U
+     /* Runtime Configurable Mapping */
+     core.io.big_core_id                          := 0.U
+--- before/boom/src/main/scala/exu/core.scala
++++ after/boom/src/main/scala/exu/core.scala
+@@ -94,6 +94,7 @@
+     // GH_BUF drain condition before exporting the sticky sideband.
+     val producer_seal_candidate = Output(Bool())
+     val producer_seal_seq       = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
++    val producer_seal_ready     = Input(Bool())
+ 
+     // GH_BUF：ROB 退休指令、物理寄存器结果和 JALR 目标组成校验包；
+     // gh_stall 是 GH_BUF 满时返回的流水线反压。
+@@ -2096,17 +2097,10 @@
+     barrierServiceSeq =/= 0.U &&
+     ic_master.io.active_packet_seq === barrierServiceSeq
+ 
+-  // Latch the sequence at the package-close boundary.  The latch is
+-  // sequence-qualified so a later package cannot make an earlier seal look
+-  // current while the sideband is still crossing to GHM/Rocket.
+-  val producerSealTargetValid = RegInit(false.B)
+-  val producerSealTargetSeq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+-  val producerSealTrigger = ic_master.io.snapshot_drain.asBool || barrierCloseForActivePackage
+-  when (producerSealTrigger && ic_master.io.active_packet_seq =/= 0.U &&
+-      (!producerSealTargetValid || producerSealTargetSeq =/= ic_master.io.active_packet_seq)) {
+-    producerSealTargetValid := true.B
+-    producerSealTargetSeq := ic_master.io.active_packet_seq
+-  }
++  // R_IC holds the old identity through its protected capture/merge phase.
++  val producerSealTargetValid = ic_master.io.closing_valid
++  val producerSealTargetSeq = ic_master.io.closing_seq
++  ic_master.io.close_tail_ready := io.producer_seal_ready
+   rob.io.gh_stall := io.gh_stall || rsu_stall.asBool || ic_stall.asBool || io.big_hang
+   // Separate protocol-timeout counters detect a release request that remains
+   // asserted but never clears ownership.  Keep their threshold aligned with
+@@ -2200,7 +2194,12 @@
+   ic_master.io.if_ready_snap_shot                 := (snapshot_quiet_armed && snapshot_no_redirect).asUInt
+   ic_master.io.rob_empty                           := rob.io.empty
+   ic_master.io.rsu_busy                           := rsu_master.io.rsu_busy
+-  ic_master.io.ic_threshold                       := GH_GlobalParams.GH_TOTAL_INSTS.U
++  // Reserve all still-dispatched ROB entries plus the threshold observation
++  // cycle. Drain commits remain part of the old package's instruction limit.
++  private val packageDrainReserve = numRobEntries + coreWidth
++  require(GH_GlobalParams.GH_TOTAL_INSTS > packageDrainReserve)
++  require(GH_GlobalParams.GH_TOTAL_INSTS < (1 << 15) - 1)
++  ic_master.io.ic_threshold := (GH_GlobalParams.GH_TOTAL_INSTS - packageDrainReserve).U
+   // ic_master.io.ic_incr                            := Mux(r_syscall, 0.U, ic_incr)
+   ic_master.io.ic_incr                            := ic_incr
+   ic_master.io.priv_higher                        := priv_higher
+@@ -2218,7 +2217,8 @@
+   // can become valid.  Once a committed PC is established, the drain hold is
+   // strict and prevents new speculative entries from crossing the snapshot.
+   snapshot_dispatch_block :=
+-    ((ic_master.io.snapshot_drain.asBool || barrierCloseForActivePackage) && rob.io.r_next_pc_valid) ||
++    ((ic_master.io.snapshot_drain.asBool || barrierCloseForActivePackage) &&
++      io.if_correct_process.asBool && rob.io.r_next_pc_valid) ||
+     rsu_master.io.core_hang_up.asBool
+ 
+   // BOOM has reached the architectural package boundary only after the ROB,
+@@ -2257,7 +2257,6 @@
+   dontTouch(snapshot_dispatch_block)
+   dontTouch(producerSealTargetValid)
+   dontTouch(producerSealTargetSeq)
+-  dontTouch(producerSealTrigger)
+   dontTouch(barrierCloseForActivePackage)
+   dontTouch(producerSealCoreReady)
+   dontTouch(rob.io.empty)
+--- before/rocket-chip/src/main/scala/guardiancouncil/GHM.scala
++++ after/rocket-chip/src/main/scala/guardiancouncil/GHM.scala
+@@ -28,7 +28,7 @@
+   val checker_segment_id_bigcore                 = Input(Vec(GH_GlobalParams.GH_NUM_BIG_CORES, UInt((GH_GlobalParams.GH_NUM_CORES * GH_GlobalParams.GH_PACKET_SEQ_BITS).W)))
+   val ghm_packet_dest                            = Input(UInt((params.number_of_little_cores*2).W))
+   val ghm_status_in                              = Input(Vec(GH_GlobalParams.GH_NUM_BIG_CORES, UInt(32.W)))
+-  val producer_seal_bigcore                     = Input(Vec(GH_GlobalParams.GH_NUM_BIG_CORES, UInt((GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W)))
++  val producer_seal_bigcore                     = Input(Vec(GH_GlobalParams.GH_NUM_BIG_CORES, UInt(GH_GlobalParams.GH_PRODUCER_SEALS_BITS.W)))
+   val ghm_packet_outs                            = Output(Vec(params.number_of_little_cores, UInt((params.width_GH_packet*GH_GlobalParams.GH_TOTAL_PACKETS+GH_GlobalParams.GH_PACKET_SEQ_BITS+1).W)))
+   val ghm_status_outs                            = Output(Vec(params.number_of_little_cores, UInt(32.W)))
+   val ghe_event_in                               = Input(Vec(params.number_of_little_cores, UInt(6.W)))
+@@ -40,7 +40,7 @@
+   val debug_bp                                   = Output(UInt(2.W))
+   val ic_counter                                 = Input(Vec(GH_GlobalParams.GH_NUM_BIG_CORES, UInt((16*GH_GlobalParams.GH_NUM_CORES).W)))
+   val debug_maincore_status                      = Input(UInt(4.W))
+-  val icsl_counter                               = Output(Vec(params.number_of_little_cores, UInt(20.W)))
++  val icsl_counter                               = Output(Vec(params.number_of_little_cores, UInt(GH_GlobalParams.GH_CHECKER_COUNT_BITS.W)))
+   val ghe_revent_in                              = Input(Vec(params.number_of_little_cores, UInt(1.W)))
+   val ghm_cdc_empty_out                          = Output(Vec(params.number_of_little_cores, Bool()))
+   val producer_sealed_out                        = Output(Vec(params.number_of_little_cores, UInt((GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W)))
+@@ -128,7 +128,14 @@
+ //==========================================================
+ 
+ 
+-    val packetCdcBits = params.width_GH_packet*GH_GlobalParams.GH_TOTAL_PACKETS + GH_GlobalParams.GH_PACKET_SEQ_BITS
++    val dataPayloadBits = params.width_GH_packet * GH_GlobalParams.GH_TOTAL_PACKETS
++    val packetBodyBits = dataPayloadBits + GH_GlobalParams.GH_PACKET_SEQ_BITS
++    // END is internal to this queue; RocketTile still sees the original data
++    // payload. Its low 15 bits carry the final architectural instruction count.
++    val packetCdcBits = packetBodyBits + 1
++    val countCtrlBits = 22 + GH_GlobalParams.GH_PACKET_SEQ_BITS
++    val checkerCount = Wire(Vec(params.number_of_little_cores,
++      UInt(GH_GlobalParams.GH_CHECKER_COUNT_BITS.W)))
+     val u_data_cdc                                      = Seq.fill(params.number_of_little_cores) {Module(new AsyncQueue(UInt(packetCdcBits.W), AsyncQueueParams(256,2)))}
+     // core_r_arfs_in contains an additional 8-bit ECP destination above the
+     // checker-visible ARF payload.  That field is consumed by GHM for routing
+@@ -143,7 +150,7 @@
+       "GHM checker ARF output width must contain valid, sequence, and payload")
+     val u_arfs_cdc                                      = Seq.fill(params.number_of_little_cores) {Module(new AsyncQueue(UInt((arfPayloadBits+GH_GlobalParams.GH_PACKET_SEQ_BITS).W), AsyncQueueParams(8,2)))}//留8个余量防止写入太快
+     val u_l2b_ctrl_cdc                                  = Seq.fill(params.number_of_little_cores) {Module(new AsyncQueue(UInt(9.W), AsyncQueueParams(64,2)))}
+-    val u_b2l_ctrl_cdc                                  = Seq.fill(params.number_of_little_cores) {Module(new AsyncQueue(UInt((22).W), AsyncQueueParams(64,2)))}//早晚会满
++    val u_b2l_ctrl_cdc                                  = Seq.fill(params.number_of_little_cores) {Module(new AsyncQueue(UInt(countCtrlBits.W), AsyncQueueParams(64,2)))}//早晚会满
+     val u_session_ctrl_cdc                              = Seq.fill(params.number_of_little_cores) {
+       Module(new AsyncQueue(UInt(GH_GlobalParams.GH_SESSION_CTRL_BITS.W), AsyncQueueParams(4, 2)))
+     }
+@@ -154,8 +161,8 @@
+     val b_rctrl = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U(8.W))))
+ 
+     //如果添加控制信号，必须去加位宽!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+-    val l_rctrl = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U((22).W))))
+-    val b_wctrl = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U((22).W))))
++    val l_rctrl = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U(countCtrlBits.W))))
++    val b_wctrl = WireInit(VecInit(Seq.fill(params.number_of_little_cores)(0.U(countCtrlBits.W))))
+     // Per-checker routing: check ALL big cores' packets for destination match
+     for (i <- 0 to params.number_of_little_cores - 1) {
+       // Which big core targets checker i?
+@@ -204,23 +211,28 @@
+         (segment_seq =/= 0.U) -> io.ghm_status_in(b)(31)
+       })
+       val selected_producer_seal = Mux1H((0 until GH_GlobalParams.GH_NUM_BIG_CORES).map { b =>
+-        val full_idx = i + GH_GlobalParams.GH_NUM_BIG_CORES
+-        val segment_seq = io.checker_segment_id_bigcore(b)((full_idx + 1) * GH_GlobalParams.GH_PACKET_SEQ_BITS - 1,
+-          full_idx * GH_GlobalParams.GH_PACKET_SEQ_BITS)
+-        (segment_seq =/= 0.U) -> io.producer_seal_bigcore(b)
++        val idx = i + GH_GlobalParams.GH_NUM_BIG_CORES
++        val seq = io.checker_segment_id_bigcore(b)((idx + 1) * GH_GlobalParams.GH_PACKET_SEQ_BITS - 1,
++          idx * GH_GlobalParams.GH_PACKET_SEQ_BITS)
++        val sealBits = GH_GlobalParams.GH_PACKET_SEQ_BITS + 1
++        (seq =/= 0.U) -> io.producer_seal_bigcore(b)((idx + 1) * sealBits - 1, idx * sealBits)
+       })
+-      val producerSealSync = withClockAndReset(
+-        io.ghm_clock(i + GH_GlobalParams.GH_NUM_BIG_CORES).asClock,
+-        io.ghm_reset(i + GH_GlobalParams.GH_NUM_BIG_CORES).asAsyncReset) {
+-        AsyncResetSynchronizerShiftReg(
+-          selected_producer_seal, sync = 3,
+-          name = Some(s"ghm_producer_seal_checker_${i}"))
+-      }
+-      val producerSealValidSync = producerSealSync(GH_GlobalParams.GH_PACKET_SEQ_BITS)
+-      val producerSealSeqSync = producerSealSync(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0)
+-      val producerSealMatches = producerSealValidSync &&
+-        producerSealSeqSync === selected_segment_seq
+-      producer_seal_by_checker(i) := Cat(producerSealMatches, producerSealSeqSync)
++      val selected_count = ic_counter_merged((i + 1 + GH_GlobalParams.GH_NUM_BIG_CORES) * 16 - 1,
++        (i + GH_GlobalParams.GH_NUM_BIG_CORES) * 16)
++      val sealed_at_source = selected_producer_seal(GH_GlobalParams.GH_PACKET_SEQ_BITS) &&
++        selected_producer_seal(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0) === selected_segment_seq
++      val end_seq_sent = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
++      val end_pending = RegInit(false.B)
++      val end_seq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
++      val end_count = RegInit(0.U(15.W))
++      // A cancelled checker can release its source slot before END is accepted.
++      // Retain this transaction independently of the live allocation fields.
++      when (!end_pending && sealed_at_source && selected_count(15) &&
++        selected_segment_seq =/= 0.U && end_seq_sent =/= selected_segment_seq) {
++        end_pending := true.B
++        end_seq := selected_segment_seq
++        end_count := selected_count(14, 0)
++      }
+       // A segment id is allocated before the last committing instruction is
+       // necessarily visible at GH_BUF.  Therefore a low `if_data_en` in the
+       // allocation cycle means only "no data is visible yet".  Do not turn
+@@ -259,16 +271,28 @@
+         io.ghm_clock(0).asClock, io.ghm_reset(0).asAsyncReset) {
+         val seq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+         when (u_data_cdc(i).io.enq.fire) {
+-          seq := Mux(if_data_en, selected_packet_seq, selected_segment_seq)
++          seq := Mux(end_pending, end_seq,
++            Mux(if_data_en, selected_packet_seq, selected_segment_seq))
+         }
+         seq
+       }
+-      val empty_anchor_en = selected_segment_valid &&
+-        selected_segment_seq =/= anchor_seq_sent && !if_data_en && emptyAnchorReady
+-      u_data_cdc(i).io.enq.valid := if_data_en || empty_anchor_en
+-      u_data_cdc(i).io.enq.bits  := Cat(
+-        Mux(if_data_en, selected_packet_seq, selected_segment_seq),
+-        Mux(if_data_en, Mux1H(sel_data, io.ghm_packet_in), 0.U))
++      val anchor_target_seq = Mux(end_pending, end_seq, selected_segment_seq)
++      val empty_anchor_en = (end_pending || selected_segment_valid) &&
++        anchor_target_seq =/= anchor_seq_sent && !if_data_en &&
++        (end_pending || emptyAnchorReady)
++      // Real data and the startup anchor precede END. A sticky per-slot seal
++      // proves no further old data can enter after this marker.
++      val send_end = end_pending && anchor_seq_sent === end_seq &&
++        !if_data_en && !empty_anchor_en
++      u_data_cdc(i).io.enq.valid := if_data_en || empty_anchor_en || send_end
++      u_data_cdc(i).io.enq.bits := Cat(send_end,
++        Mux(if_data_en, selected_packet_seq, anchor_target_seq),
++        Mux(if_data_en, Mux1H(sel_data, io.ghm_packet_in),
++          Mux(send_end, end_count.pad(dataPayloadBits), 0.U(dataPayloadBits.W))))
++      when (u_data_cdc(i).io.enq.fire && send_end) {
++        end_pending := false.B
++        end_seq_sent := end_seq
++      }
+       // Bit 4 is the dedicated checker-side packet dequeue permission.  Bit 0
+       // is a legacy event/near-full indication and is not a reliable level:
+       // it may be sampled from an older GHE event while the checker is already
+@@ -282,8 +306,9 @@
+       // still-pending fragment from package N. Keeping the newer item in its
+       // AsyncQueue preserves both payloads instead of resolving a mismatch by
+       // dropping one after it has reached the Rocket tile.
+-      val dataHeadSeq = u_data_cdc(i).io.deq.bits(packetCdcBits - 1,
++      val dataHeadSeq = u_data_cdc(i).io.deq.bits(packetBodyBits - 1,
+         params.width_GH_packet * GH_GlobalParams.GH_TOTAL_PACKETS)
++      val dataHeadEnd = u_data_cdc(i).io.deq.bits(packetBodyBits)
+       val arfHeadSeq = u_arfs_cdc(i).io.deq.bits(
+         arfPayloadBits + GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, arfPayloadBits)
+       // An older ARF fragment can remain at the head after the data side has
+@@ -301,9 +326,9 @@
+       // its sequence and every lane type, then returns one atomic beat-ready
+       // level on bit4. This is a standard valid/ready contract: using fire as
+       // valid would hide the payload needed to compute type-correct ready.
+-      u_data_cdc(i).io.deq.ready := data_cdc_ready(i) && dataHeadInOrder
+-      packet_out_wires(i)        := Mux(u_data_cdc(i).io.deq.valid && dataHeadInOrder,
+-        Cat(true.B, u_data_cdc(i).io.deq.bits), 0.U)
++      u_data_cdc(i).io.deq.ready := (dataHeadEnd || data_cdc_ready(i)) && dataHeadInOrder
++      packet_out_wires(i)        := Mux(u_data_cdc(i).io.deq.valid && !dataHeadEnd && dataHeadInOrder,
++        Cat(true.B, u_data_cdc(i).io.deq.bits(packetBodyBits - 1, 0)), 0.U)
+       // The data vector is the package anchor, but it is dequeued only once
+       // while the ARF/CPS stream has one entry per merge index.  Remember the
+       // last data sequence consumed in the checker clock domain so remaining
+@@ -317,7 +342,43 @@
+         }
+         seq
+       }
+-      cdc_busy(i)                := (!u_data_cdc(i).io.enq.ready)
++      val receivedCount = withClockAndReset(
++        io.ghm_clock(i + GH_GlobalParams.GH_NUM_BIG_CORES).asClock,
++        io.ghm_reset(i + GH_GlobalParams.GH_NUM_BIG_CORES).asAsyncReset) {
++        val seq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
++        val count = RegInit(0.U(15.W))
++        val done = RegInit(false.B)
++        val liveSeq = u_b2l_ctrl_cdc(i).io.deq.bits(countCtrlBits - 1, 22)
++        val liveCount = u_b2l_ctrl_cdc(i).io.deq.bits(20, 6)
++        when (u_data_cdc(i).io.deq.fire && dataHeadEnd) {
++          // Cancellation can leave an old END ahead of the next data anchor
++          // while the independent count queue already reports the new seq.
++          when (dataHeadSeq >= seq) {
++            assert(dataHeadSeq =/= seq || u_data_cdc(i).io.deq.bits(14, 0) >= count,
++              "final package count is below published retirement progress")
++            seq := dataHeadSeq
++            count := u_data_cdc(i).io.deq.bits(14, 0)
++            done := true.B
++          }
++        }.elsewhen (u_b2l_ctrl_cdc(i).io.deq.fire && liveSeq =/= 0.U) {
++          when (liveSeq > seq) {
++            seq := liveSeq
++            count := liveCount
++            done := false.B
++          }.elsewhen (liveSeq === seq && !done) {
++            assert(liveCount >= count, "package retirement count moved backwards")
++            count := liveCount
++          }
++        }
++        Cat(seq =/= 0.U, seq, 0.U(4.W), done, count)
++      }
++      checkerCount(i) := receivedCount
++      val receivedSeq = receivedCount(20 + GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 20)
++      val receivedEnd = receivedCount(15)
++      producer_seal_by_checker(i) := Cat(receivedEnd, receivedSeq)
++      // Serialize the marker before a reused slot can send newer data/ARF.
++      // This depends only on a register, not on the producer's valid signal.
++      cdc_busy(i)                := !u_data_cdc(i).io.enq.ready || end_pending
+       cdc_empty(i)               := !u_data_cdc(i).io.deq.valid && !u_arfs_cdc(i).io.deq.valid
+       // A locally empty pair of CDC queues is not yet a package tail while
+       // GH_BUF still owns packets that have not entered either queue.  Sample
+@@ -329,7 +390,8 @@
+         AsyncResetSynchronizerShiftReg(selected_producer_empty, sync = 3,
+           name = Some(s"ghm_filter_empty_checker_${i}_sync"))
+       }
+-      packet_ingress_empty(i) := cdc_empty(i) && filterEmptySynced
++      packet_ingress_empty(i) := cdc_empty(i) &&
++        ((receivedEnd && receivedSeq === dataConsumedSeq) || filterEmptySynced)
+ 
+ 
+       //arfs 
+@@ -385,14 +447,22 @@
+           (b + 1).U -> io.ghm_status_in(b)(4, 0)
+         })
+       // if_filters_empty (bit 31): take from big0 (single-source for now)
+-      b_wctrl(i)                     := Cat(ic_counter_merged((i+1+GH_GlobalParams.GH_NUM_BIG_CORES)*16-1,(i+GH_GlobalParams.GH_NUM_BIG_CORES)*16),io.ghm_status_in(0)(31),routed_status)
++      b_wctrl(i)                     := Cat(selected_segment_seq, selected_count, io.ghm_status_in(0)(31), routed_status)
+       u_b2l_ctrl_cdc(i).io.deq_clock := io.ghm_clock(i+GH_GlobalParams.GH_NUM_BIG_CORES).asClock
+       u_b2l_ctrl_cdc(i).io.deq_reset := io.ghm_reset(i+GH_GlobalParams.GH_NUM_BIG_CORES)
+       u_b2l_ctrl_cdc(i).io.enq_clock := io.ghm_clock(0).asClock
+       u_b2l_ctrl_cdc(i).io.enq_reset := io.ghm_reset(0)
+-      u_b2l_ctrl_cdc(i).io.enq.valid := filterEmptyRise || routed_status =/= 0.U ||
+-        ic_counter_merged((i+1+GH_GlobalParams.GH_NUM_BIG_CORES)*16-1) =/= 0.U
+-      u_b2l_ctrl_cdc(i).io.enq.bits  := b_wctrl(i)
++      // Count progress must continue through drain even when session status
++      // is zero. Hold an offered sample under backpressure; intermediate
++      // unsent progress may coalesce, but the final source count is sticky.
++      val countPending = RegInit(false.B)
++      val countPayload = RegInit(0.U(countCtrlBits.W))
++      when (!countPending || u_b2l_ctrl_cdc(i).io.enq.fire) {
++        countPending := selected_segment_valid
++        countPayload := b_wctrl(i)
++      }
++      u_b2l_ctrl_cdc(i).io.enq.valid := countPending
++      u_b2l_ctrl_cdc(i).io.enq.bits := countPayload
+       u_b2l_ctrl_cdc(i).io.deq.ready := true.B
+       l_rctrl(i)                     := Mux(u_b2l_ctrl_cdc(i).io.deq.fire,u_b2l_ctrl_cdc(i).io.deq.bits,0.U)
+       dontTouch(u_b2l_ctrl_cdc(i).io.enq.ready)
+@@ -598,7 +668,7 @@
+     io.debug_bp                                  := Cat(cdc_busy.reduce(_|_), debug_backpressure_checkers) // [1]: CDC; [0]: Checker
+ 
+     for (i <- 0 to params.number_of_little_cores - 1) {
+-      io.icsl_counter(i)                         := cdc_icsl_cnt(i)
++      io.icsl_counter(i)                         := checkerCount(i)
+       // io.ghm_icsl_ack_out(i)                     := cdc_icsl_ack(i)
+       io.ghm_cdc_empty_out(i)                    := packet_ingress_empty(i)
+       io.producer_sealed_out(i)                  := producer_seal_by_checker(i)
+@@ -645,7 +715,7 @@
+       ic_counter_SKNodes                          = ic_counter_SKNodes :+ ic_counter_SKNode
+       val segmentNode = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES * GH_GlobalParams.GH_PACKET_SEQ_BITS).W)))
+       checker_segment_id_SKNodes = checker_segment_id_SKNodes :+ segmentNode
+-      val producerSealNode = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W)))
++      val producerSealNode = BundleBridgeSink[UInt](Some(() => UInt(GH_GlobalParams.GH_PRODUCER_SEALS_BITS.W)))
+       producer_seal_bigcore_SKNodes = producer_seal_bigcore_SKNodes :+ producerSealNode
+     }
+     // val icsl_ack_SKNode                            = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES-1).W)))
+--- before/rocket-chip/src/main/scala/guardiancouncil/GH_GlobalParams.scala
++++ after/rocket-chip/src/main/scala/guardiancouncil/GH_GlobalParams.scala
+@@ -18,6 +18,9 @@
+   // Package sequence numbers are global within one BOOM/checker group. Zero is
+   // reserved for operations that are not associated with a checked package.
+   val GH_PACKET_SEQ_BITS = 32
++  // Per-slot producer seal; checker counter carries an explicit seq/valid.
++  val GH_PRODUCER_SEALS_BITS = GH_NUM_CORES * (GH_PACKET_SEQ_BITS + 1)
++  val GH_CHECKER_COUNT_BITS = GH_PACKET_SEQ_BITS + 1 + 20
+   val GH_CHECKER_STATUS_BITS = 2
+   val GH_CHECKER_STATUS_PASS = 0
+   val GH_CHECKER_STATUS_FAIL = 1
+--- before/rocket-chip/src/main/scala/r/R_IC.scala
++++ after/rocket-chip/src/main/scala/r/R_IC.scala
+@@ -43,6 +43,9 @@
+   // is accepted.  Retirement is controlled separately by if_pipeline_stall.
+   val snapshot_drain                             = Output(Bool())
+   val snapshot_capture                           = Output(Bool())
++  val closing_valid                              = Output(Bool())
++  val closing_seq                                = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
++  val close_tail_ready                           = Input(Bool())
+ 
+   val icsl_na_ack                                = Output(Vec(params.totalnumber_of_cores, Bool()))
+   val big_checker_switch                         = Output(Vec(params.totalnumber_of_cores, Bool()))//大核事件导致切换
+@@ -127,7 +130,12 @@
+   val active_packet_seq                          = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+   val barrierCloseAckReg                         = RegInit(false.B)
+   val barrierCloseAckSeqReg                      = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+-  val barrierCloseIssued                         = RegInit(false.B)
++  // Retirement ownership is independent of the scheduler's next target.
++  val producer_open                              = RegInit(false.B)
++  val producer_target                            = RegInit(0.U(3.W))
++  val boundary_has_old                           = RegInit(false.B)
++  val boundary_seq                               = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
++  val boundary_priv                              = RegInit(false.B)
+   // Snapshot readiness is intentionally two-phase.  The core-side quiet
+   // predicate may rise immediately after the edge that drains the ROB; keep
+   // an armed bit so acceptance is evaluated on a later full cycle rather
+@@ -135,7 +143,7 @@
+   val snapshot_armed                            = RegInit(false.B)
+   val packet_alloc_valid_reg                    = RegInit(false.B)
+   val packet_alloc_seq_reg                      = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+-  val barrierCloseRequestSeq                     = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
++
+ 
+   // Track owner: capture on first idle→busy transition, clear when idle & excluded from mask
+   for (i <- 0 until num_checkers) {
+@@ -185,6 +193,27 @@
+   cooling_counter                              := Mux((fsm_state =/= fsm_cooling), 0.U, Mux(cooling_counter < cooling_threshold, cooling_counter + 1.U, cooling_counter))
+   val if_cooled                                 = Mux((cooling_counter >= cooling_threshold) && !io.rsu_busy.asBool, true.B, false.B)
+   sch_reset                                    := Mux((fsm_state === fsm_reset) || (io.changing_num_of_checker.asBool), 1.U, 0.U)
++  val producer_target_ic = producer_target + chk_adj
++  val scheduler_available = sch_result >= 1.U && sch_result <= num_checkers.U &&
++    !io.global_ic_status(sch_result_ic).asBool && !package_owned(sch_result_ic) &&
++    !io.clear_ic_status(sch_result_ic).asBool && checker_enable_reg(sch_result - 1.U)
++  val selected_available = crnt_target >= 1.U && crnt_target <= num_checkers.U &&
++    !io.global_ic_status(crnt_target_ic).asBool && !package_owned(crnt_target_ic) &&
++    !io.clear_ic_status(crnt_target_ic).asBool && checker_enable_reg(crnt_target - 1.U)
++  val ic_exit_isax_buffer = RegInit(false.B)
++  // PASS cannot release an open producer. An early CANCEL/FAIL must first
++  // close its source; keep the owner/sequence until the old tail is sealed.
++  val producer_release = producer_open && io.clear_ic_status(producer_target_ic).asBool
++  when (fsm_state === fsm_reset) {
++    ic_exit_isax_buffer := false.B
++  }.elsewhen (io.ic_exit_isax.asBool || producer_release) {
++    ic_exit_isax_buffer := true.B
++  }
++  val exit_requested = ic_exit_isax_buffer || io.ic_exit_isax.asBool || producer_release
++  val capture_priv = boundary_priv || io.mode_switch || io.mode_ret || io.excp_mode
++  val capture_ctrl = Mux(exit_requested, 3.U,
++    Mux(!ctrl(0) && ctrl =/= 2.U && !selected_available,
++      Mux(capture_priv, 5.U, 1.U), ctrl))
+   // Keep the architectural boundary checked in both domains.  The core-side
+   // guard prevents a combinational feedback path; this local check prevents a
+   // stale/incorrect ready pulse from accepting a snapshot with a live ROB.
+@@ -194,46 +223,50 @@
+   val snapshot_accept_candidate                  = (fsm_state === fsm_snap) &&
+                                                    snapshot_armed &&
+                                                    snapshot_ready
+-  // if_dosnap                                    := Mux((fsm_state === fsm_snap) && (io.if_ready_snap_shot.asBool), Mux((ctrl === 2.U) || (ctrl === 0.U), io.if_correct_process, 1.U), 0.U)
+-  if_dosnap                                    := Mux(snapshot_accept_candidate, Mux(((ctrl === 2.U) && !(io.mode_switch || io.mode_ret ||io.excp_mode)) || (ctrl === 0.U), io.if_correct_process, Mux(((ctrl === 1.U)) || (ctrl === 3.U), 1.U, 0.U)), 0.U)
+-  if_dosnap_priv                               := Mux(snapshot_accept_candidate, Mux(((ctrl === 2.U) && (io.mode_switch || io.mode_ret ||io.excp_mode)) || (ctrl === 4.U), io.if_correct_process, Mux((ctrl === 5.U), 1.U, 0.U)), 0.U)
++  val snapshot_allowed = snapshot_accept_candidate &&
++    (producer_open || (!exit_requested && selected_available)) &&
++    (capture_ctrl(0) || io.if_correct_process.asBool)
++  if_dosnap := (snapshot_allowed && !capture_priv).asUInt
++  if_dosnap_priv := (snapshot_allowed && capture_priv).asUInt
+   val snapshot_accepted = (if_dosnap | if_dosnap_priv).asBool
+-  // Keep dispatch stopped during the cooling/snapshot window.  The ROB is
+-  // allowed to retire in fsm_snap until the core reports rob_empty.
+-  val snapshot_drain_active = (fsm_state === fsm_cooling) ||
+-                              (fsm_state === fsm_snap)
+-  val barrierCloseRequest = io.barrier_force_close &&
++  val close_capture = snapshot_accepted && producer_open
++  // This edge is R_RSU's delayed architectural capture, not postcheck entry.
++  val final_pending = RegNext(close_capture, false.B)
++  val final_target = RegEnable(producer_target_ic, close_capture)
++  val snapshot_drain_active = (fsm_state === fsm_postcheck) ||
++    (fsm_state === fsm_cooling) || (fsm_state === fsm_snap) ||
++    (fsm_state === fsm_trans) || (fsm_state === fsm_sch)
++  val barrierCloseRequest = io.barrier_force_close && producer_open &&
+     io.barrier_force_close_seq =/= 0.U &&
+     active_packet_seq =/= 0.U &&
+     active_packet_seq === io.barrier_force_close_seq
++  // ACK is command acceptance, independent of instruction finalization/PASS.
++  // A delayed/repeated request for an already closed sequence is idempotent.
++  val barrierAlreadyClosed = io.barrier_force_close_seq =/= 0.U &&
++    io.barrier_force_close_seq <= packet_seq_counter &&
++    (!producer_open || io.barrier_force_close_seq < active_packet_seq)
+   when (!io.barrier_force_close) {
+-    barrierCloseIssued := false.B
+     barrierCloseAckReg := false.B
+-    barrierCloseRequestSeq := 0.U
+-  }.otherwise {
+-    when (!barrierCloseIssued) {
+-      barrierCloseRequestSeq := io.barrier_force_close_seq
+-      when (fsm_state === fsm_check) {
+-        barrierCloseIssued := true.B
+-      }
+-    }
+-    // The postcheck state is the existing R_IC ownership handoff point: the
+-    // close command has been accepted by the checker transport. Keep this
+-    // acknowledgement level until L2 drops its request.
+-    when (barrierCloseIssued && fsm_state === fsm_postcheck && !io.rsu_busy) {
+-      barrierCloseAckReg := true.B
+-      barrierCloseAckSeqReg := barrierCloseRequestSeq
+-    }
+-  }
+-  val package_allocated = snapshot_accepted && !ctrl(0).asBool
++  }.elsewhen (barrierAlreadyClosed ||
++    (barrierCloseRequest && (fsm_state === fsm_check || fsm_state === fsm_postcheck ||
++      fsm_state === fsm_cooling || fsm_state === fsm_snap))) {
++    barrierCloseAckReg := true.B
++    barrierCloseAckSeqReg := io.barrier_force_close_seq
++  }
++  val package_allocated = snapshot_accepted && !capture_ctrl(0)
+   val allocated_packet_seq = packet_seq_counter + 1.U
+   packet_alloc_valid_reg := false.B
+   for (i <- 0 until params.totalnumber_of_cores) {
+-    when (io.clear_ic_status(i).asBool) {
++    when (clear_ic_status(i).asBool) {
+       package_owned(i)                         := false.B
++      checker_segment_id_reg(i)                 := 0.U
+     }
+   }
+   when (package_allocated) {
++    assert(!package_owned(crnt_target_ic) && !io.clear_ic_status(crnt_target_ic).asBool,
++      "allocation before sequenced checker release")
++    assert(allocated_packet_seq =/= 0.U, "packet sequence wrapped into reserved zero")
++    producer_target := crnt_target
+     packet_seq_counter := allocated_packet_seq
+     active_packet_seq := allocated_packet_seq
+     packet_alloc_valid_reg := true.B
+@@ -241,6 +274,15 @@
+     checker_segment_id_reg(crnt_target_ic) := allocated_packet_seq
+     package_owned(crnt_target_ic)            := true.B
+   }
++  when (snapshot_accepted) {
++    assert(io.ic_incr === 0.U, "snapshot accepted with counted retirement")
++    boundary_has_old := producer_open
++    boundary_seq := Mux(producer_open, active_packet_seq, 0.U)
++    old_crnt_target := Mux(producer_open, producer_target, 0.U)
++    producer_open := package_allocated
++  }
++  io.closing_valid := boundary_has_old && fsm_state === fsm_trans
++  io.closing_seq := boundary_seq
+   io.active_packet_seq := active_packet_seq
+   // Registered allocation outputs form a complete-cycle fire event and keep
+   // the allocated sequence stable while LSU/DCache sample it.  This prevents
+@@ -255,15 +297,35 @@
+   val if_t_and_na                               = Mux(((io.ic_exit_isax.asBool || io.mode_switch || io.mode_ret || (ic_counter(crnt_target_ic) >= io.ic_threshold) || io.icsl_na(crnt_target_ic).asBool) && (ic_status(sch_result_ic).asBool)), 1.U, 0.U)
+   val if_t_and_a                                = Mux(((io.ic_exit_isax.asBool || io.mode_switch || io.mode_ret || (ic_counter(crnt_target_ic) >= io.ic_threshold) || io.icsl_na(crnt_target_ic).asBool) && (!ic_status(sch_result_ic).asBool)), 1.U, 0.U)
+   fsm_ini                                      := Mux(fsm_state === fsm_reset, 1.U, Mux(fsm_state === fsm_presch, fsm_ini, 0.U))
+-  val ic_exit_isax_buffer                       = RegInit(0.U(1.W))
+-  val end                                       = RegInit(0.U(1.W))
+-  ic_exit_isax_buffer                          := Mux(fsm_state === fsm_reset, 0.U, Mux(io.ic_exit_isax.asBool && fsm_state =/= fsm_check, 1.U, ic_exit_isax_buffer))
+-
+   dontTouch(if_t_and_a)
+   dontTouch(if_t_and_na)
++  // Count every owned architectural retirement, including cooling/snap and
++  // the closing edge. A future scheduling target must never receive this tail.
++  for (i <- 0 until params.totalnumber_of_cores) {
++    val count_owned = producer_open && producer_target_ic === i.U && io.if_correct_process.asBool
++    val count_next = ic_counter(i)(params.width_of_ic - 2, 0) +& Mux(count_owned, io.ic_incr, 0.U)
++    when (clear_ic_status(i).asBool) {
++      ic_counter(i) := 0.U
++    }.elsewhen (final_pending && final_target === i.U) {
++      assert(ic_counter(i)(params.width_of_ic - 2, 0) <= GH_GlobalParams.GH_TOTAL_INSTS.U,
++        "drained package exceeds configured instruction limit")
++      ic_counter(i) := Cat(1.U(1.W), ic_counter(i)(params.width_of_ic - 2, 0))
++    }.elsewhen (count_owned) {
++      assert(!count_next(params.width_of_ic - 1), "package instruction count overflow")
++      assert(!ic_counter(i)(params.width_of_ic - 1), "retirement after final package count")
++      ic_counter(i) := count_next
++    }
++    when (package_allocated && crnt_target_ic === i.U) {
++      ic_counter(i) := 0.U
++    }
++  }
++  when (fsm_state === fsm_postcheck || fsm_state === fsm_cooling || fsm_state === fsm_snap) {
++    boundary_priv := capture_priv
++  }
++
+   switch (fsm_state) {
+     is (fsm_reset){ // 000
+-      end                                       := 0.U
++      boundary_priv                             := false.B
+       ctrl                                      := 2.U
+       crnt_target                               := 0.U
+       crnt_mask                                 := 0.U
+@@ -272,13 +334,12 @@
+       if_pipeline_stall                         := 0.U
+       for (i <- 0 to params.totalnumber_of_cores - 1) {
+         ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U, ic_status(i))
+-        ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U, ic_counter(i))
+       }
+       fsm_state                                 := fsm_presch
+     }
+ 
+     is (fsm_presch){ // 001
+-      end                                       := end
++      boundary_priv                             := false.B
+       ctrl                                      := 2.U
+       crnt_target                               := crnt_target
+       crnt_mask                                 := crnt_mask
+@@ -287,30 +348,26 @@
+       if_pipeline_stall                         := Mux(fsm_ini.asBool, 0.U, io.if_correct_process.asBool)
+       for (i <- 0 to params.totalnumber_of_cores - 1) {
+         ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U, ic_status(i))
+-        ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U, ic_counter(i))
+-      }
+-      fsm_state                                 := Mux(fsm_ini.asBool, Mux(io.ic_run_isax.asBool, fsm_sch, fsm_presch), fsm_sch)
++      }
++      fsm_state                                 := Mux(exit_requested, fsm_reset, Mux(fsm_ini.asBool, Mux(io.ic_run_isax.asBool, fsm_sch, fsm_presch), fsm_sch))
+     }
+ 
+     is (fsm_sch){ // 010
+-      end                                       := end
+       // ctrl                                      := Mux(ctrl === 0.U, Mux(io.ic_syscall.asBool, 1.U, ctrl), ctrl)
+       ctrl                                      := Mux((io.mode_switch || io.excp_mode) && if_t_and_a.asBool && (ctrl === 0.U), 4.U, ctrl)
+       crnt_target                               := crnt_target
+       crnt_mask                                 := crnt_mask
+-      nxt_target                                := Mux(!ic_status(sch_result_ic).asBool && io.if_correct_process.asBool, sch_result, nxt_target)
++      nxt_target                                := Mux(scheduler_available && io.if_correct_process.asBool, sch_result, nxt_target)
+       if_filtering                              := 0.U
+       if_pipeline_stall                         := io.if_correct_process.asBool
+       for (i <- 0 to params.totalnumber_of_cores - 1) {
+         ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U, ic_status(i))
+-        ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U, ic_counter(i))
+       }
+       // fsm_state                                 := Mux(!ic_status(sch_result).asBool && io.if_correct_process.asBool, fsm_cooling, Mux(io.ic_syscall.asBool, fsm_cooling, fsm_sch))
+-      fsm_state                                 := Mux(!ic_status(sch_result_ic).asBool && io.if_correct_process.asBool, fsm_cooling, fsm_sch)
++      fsm_state                                 := Mux(exit_requested, fsm_reset, Mux(scheduler_available && io.if_correct_process.asBool, fsm_cooling, fsm_sch))
+     }
+ 
+     is (fsm_cooling){ // 011
+-      end                                       := end
+       ctrl                                      := Mux((io.mode_switch || io.excp_mode) && if_t_and_a.asBool && (ctrl === 0.U), 4.U, ctrl)
+       crnt_target                               := Mux(if_cooled, nxt_target, crnt_target)
+       crnt_mask                                 := crnt_mask
+@@ -323,18 +380,16 @@
+       if_pipeline_stall                         := 0.U
+       for (i <- 0 to params.totalnumber_of_cores - 1) {
+         ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U, ic_status(i))
+-        ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U, ic_counter(i))
+       }
+       fsm_state                                 := Mux(if_cooled, fsm_snap, fsm_cooling)
+     }
+ 
+     is (fsm_snap){ // 100
+-      end                                       := end
+       // ctrl                                      := Mux(ctrl === 0.U, Mux(io.ic_syscall.asBool, 1.U, ctrl), ctrl)
+       ctrl                                      := Mux((io.mode_switch || io.excp_mode) && if_t_and_a.asBool && (ctrl === 0.U), 4.U, ctrl)
+       crnt_target                               := crnt_target
+       // crnt_mask                                 := Mux((ctrl === 2.U) || (ctrl === 0.U), Mux(io.if_ready_snap_shot.asBool && io.if_correct_process.asBool, Cat(ctrl, crnt_target), crnt_mask), Mux(io.if_ready_snap_shot.asBool, Cat(ctrl, crnt_target), crnt_mask))      
+-      crnt_mask                                 := Mux((ctrl === 2.U) || (ctrl === 0.U) || (ctrl === 4.U), Mux(snapshot_accepted && io.if_correct_process.asBool, Cat(ctrl, crnt_target), crnt_mask), Mux(snapshot_accepted, Cat(ctrl, crnt_target), crnt_mask))
++      crnt_mask := Mux(snapshot_accepted, Cat(capture_ctrl, Mux(package_allocated, crnt_target, 0.U(3.W))), crnt_mask)
+       nxt_target                                := nxt_target
+       if_filtering                              := 0.U
+       // Do not block retirement while waiting for the ROB to drain.  Once the
+@@ -344,33 +399,42 @@
+                                                        io.if_correct_process.asBool,
+                                                        false.B)
+       for (i <- 0 to params.totalnumber_of_cores - 1) {
+-        ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U, Mux((crnt_target_ic === i.U) && (ctrl(0) === 0.U), 1.U, ic_status(i)))
+-        ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U, ic_counter(i))
++        ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U, Mux((crnt_target_ic === i.U) && package_allocated, 1.U, ic_status(i)))
+       }
+       //  fsm_state                                 := Mux((ctrl === 2.U) || (ctrl === 0.U), Mux(io.if_ready_snap_shot.asBool && io.if_correct_process.asBool, fsm_trans, fsm_snap), Mux(io.if_ready_snap_shot.asBool, fsm_trans, fsm_snap))
+-      fsm_state                                 := Mux(snapshot_accepted, fsm_trans, fsm_snap)
+-    }
+-
+-    is (fsm_trans){ // 101 Do we really need a signal to transmit the snapshot? 
+-      end                                       := Mux(!end.asBool && (ic_exit_isax_buffer.asBool || io.ic_exit_isax.asBool), Mux(!io.rsu_busy.asBool, 1.U, end), end)
+-      ctrl                                      := Mux(!end.asBool && (ic_exit_isax_buffer.asBool || io.ic_exit_isax.asBool), Mux(!io.rsu_busy.asBool, 3.U, ctrl), ctrl)
+-      crnt_target                               := crnt_target
+-      crnt_mask                                 := crnt_mask
+-      nxt_target                                := nxt_target
+-      if_filtering                              := 0.U
+-      if_pipeline_stall                         := io.if_correct_process.asBool
+-      for (i <- 0 to params.totalnumber_of_cores - 1) {
+-        ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U, ic_status(i))
+-        ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U, ic_counter(i))
+-      }
+-      fsm_state                                 := Mux(end.asBool, Mux(!io.rsu_busy.asBool, fsm_reset, fsm_trans),
+-                                                   Mux(ic_exit_isax_buffer.asBool || io.ic_exit_isax.asBool, Mux(!io.rsu_busy.asBool, fsm_postcheck, fsm_trans),
+-                                                   Mux(ctrl === 3.U, Mux(!io.rsu_busy.asBool, fsm_reset, fsm_trans), 
+-                                                   Mux(ctrl === 1.U || ctrl === 5.U, fsm_presch, fsm_check))))
++      when (snapshot_accepted) {
++        ctrl := capture_ctrl
++        fsm_state := fsm_trans
++      }.elsewhen (!producer_open && (exit_requested || !selected_available)) {
++        fsm_state := Mux(exit_requested, fsm_reset, fsm_sch)
++      }
++    }
++
++    is (fsm_trans) {
++      if_pipeline_stall := io.if_correct_process
++      for (i <- 0 until params.totalnumber_of_cores) {
++        ic_status(i) := Mux(clear_ic_status(i).asBool, 0.U, ic_status(i))
++      }
++      // Hold frame routing through delayed capture, merge and source seal.
++      when (!io.rsu_busy.asBool && (!boundary_has_old || io.close_tail_ready)) {
++        when (exit_requested && producer_open) {
++          ctrl := 3.U
++          nxt_target := producer_target
++          boundary_priv := io.excp_mode || io.mode_switch || io.mode_ret
++          fsm_state := fsm_postcheck
++        }.elsewhen (exit_requested || ctrl === 3.U) {
++          fsm_state := fsm_reset
++        }.elsewhen (ctrl === 1.U || ctrl === 5.U) {
++          fsm_state := fsm_presch
++        }.otherwise {
++          boundary_priv := false.B
++          fsm_state := fsm_check
++        }
++      }
+     }
+ 
+     is (fsm_check){ // 110
+-      end                                       := end
++      boundary_priv := io.mode_switch || io.mode_ret || io.excp_mode
+       // ctrl                                      := Mux(io.ic_exit_isax.asBool, 3.U, Mux(io.ic_syscall.asBool || if_t_and_na.asBool, 1.U, Mux(if_t_and_a.asBool, 0.U, ctrl)))
+       // A barrier closes the current package, then continues normal checker
+       // scheduling so the next snapshot allocates a fresh packet sequence.
+@@ -387,40 +451,23 @@
+       if_pipeline_stall                         := Mux(io.ic_exit_isax.asBool || (io.mode_switch || io.mode_ret) || (ic_counter(crnt_target_ic) >= io.ic_threshold) || io.icsl_na(crnt_target_ic).asBool, 1.U, 0.U)
+       for (i <- 0 to params.totalnumber_of_cores - 1) {
+         ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U,  ic_status(i))
+-        ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U,  Mux((crnt_target_ic === i.U) && (io.if_correct_process.asBool), (ic_counter(i) + io.ic_incr), ic_counter(i)))
+-      }
+-      fsm_state                                 := Mux(io.ic_exit_isax.asBool || barrierCloseRequest || (io.mode_switch || io.mode_ret) || (ic_counter(crnt_target_ic) >= io.ic_threshold) || io.icsl_na(crnt_target_ic).asBool, fsm_postcheck, fsm_check)
+-    }
+-
+-    is (fsm_postcheck){ // 111
+-      end                                       := end
+-      ctrl                                      := ctrl
+-      crnt_target                               := crnt_target
+-      crnt_mask                                 := crnt_mask
+-      nxt_target                                := nxt_target 
+-      if_filtering                              := 0.U
+-      if_pipeline_stall                         := io.if_correct_process.asBool
+-      for (i <- 0 to params.totalnumber_of_cores - 1) {
+-        ic_status(i)                            := Mux(clear_ic_status(i).asBool, 0.U,  ic_status(i))
+-        ic_counter(i)                           := Mux(clear_ic_status(i).asBool, 0.U,  Mux((crnt_target_ic === i.U), (ic_counter(i) | 0x8000.U), ic_counter(i)))
+-      }
+-      fsm_state                                 := Mux((ctrl === 0.U) || (ctrl === 4.U), fsm_sch, fsm_cooling)
+-    }
+-  }
+-
+-
+-   //给出回应
+-  io.ic_counter(0):=0.U
+-  //4周期一传输，然后自动上寄存器
+-  val cdc_cnt = RegInit(0.U(2.W))
+-  ///////////////////////////////
+-  cdc_cnt := cdc_cnt+1.U
+-  for (i <- 0 until params.totalnumber_of_cores - 1) {
+-    // ic_check_speed(i)         :=Mux(io.if_big_complete_req(i).asBool, true.B,Mux((ic_counter(i+1) &0x8000.U)=/=0.U,false.B,ic_check_speed(i)))
+-    // io.if_big_complete_ack(i) := ic_check_speed(i)&&((ic_counter(i+1) &0x8000.U)=/=0.U)
+-    io.ic_counter(i+1)        := Mux(cdc_cnt===3.U,ic_counter(i+1),0.U)
+-  }
+-  
++      }
++      fsm_state                                 := Mux(exit_requested || barrierCloseRequest || (io.mode_switch || io.mode_ret) || (ic_counter(crnt_target_ic) >= io.ic_threshold) || io.icsl_na(crnt_target_ic).asBool, fsm_postcheck, fsm_check)
++    }
++
++    is (fsm_postcheck) {
++      val priv = capture_priv
++      ctrl := Mux(exit_requested, 3.U,
++        Mux(scheduler_available, Mux(priv, 4.U, 0.U), Mux(priv, 5.U, 1.U)))
++      nxt_target := Mux(scheduler_available && !exit_requested, sch_result, producer_target)
++      if_pipeline_stall := 0.U
++      for (i <- 0 until params.totalnumber_of_cores) {
++        ic_status(i) := Mux(clear_ic_status(i).asBool, 0.U, ic_status(i))
++      }
++      fsm_state := fsm_cooling
++    }
++  }
++
+ 
+   if (GH_GlobalParams.GH_DEBUG == 1) {
+     when ((io.ic_incr =/= 0.U) && (fsm_state === fsm_check) && (io.core_trace.asBool)) {
+@@ -436,7 +483,6 @@
+ 
+ 
+ 
+-  old_crnt_target                               := Mux(if_cooled&&(fsm_state===fsm_cooling),crnt_target,old_crnt_target)
+   io.crnt_target                                := crnt_mask
+   io.if_filtering                               := if_filtering & io.if_correct_process // Not used yet
+   io.if_pipeline_stall                          := if_pipeline_stall & io.if_correct_process
+@@ -451,6 +497,10 @@
+   dontTouch(snapshot_armed)
+   dontTouch(snapshot_accept_candidate)
+   dontTouch(snapshot_drain_active)
++  dontTouch(producer_open)
++  dontTouch(producer_target)
++  dontTouch(final_pending)
++  dontTouch(boundary_seq)
+   dontTouch(snapshot_accepted)
+   dontTouch(packet_alloc_valid_reg)
+   dontTouch(packet_alloc_seq_reg)
+@@ -465,7 +515,10 @@
+   io.ic_counter                                 := ic_counter
+   io.ic_status                                  := ic_status
+   for (i <- 0 to params.totalnumber_of_cores - 1){
+-    clear_ic_status(i)                          := io.clear_ic_status(i)
++    val source_live = (producer_open && producer_target_ic === i.U) ||
++      (boundary_has_old && fsm_state === fsm_trans && old_crnt_target + chk_adj === i.U) ||
++      (final_pending && final_target === i.U)
++    clear_ic_status(i) := (io.clear_ic_status(i).asBool && !source_live).asUInt
+   }
+   var nocore_available                           = WireInit(1.U(1.W))
+   for (i <- GH_GlobalParams.GH_NUM_BIG_CORES to params.totalnumber_of_cores - 1){
+@@ -518,5 +571,5 @@
+   cp_bitmap                                     := Cat(sch_result, seven_threebits)
+   
+ 
+-  io.shared_CP_CFG                              := Mux(((fsm_state === fsm_sch) && !ic_status(sch_result_ic).asBool && io.if_correct_process.asBool && (ctrl === 0.U)), Cat(one, cp_bitmap, core_bitmap), 0.U)
++  io.shared_CP_CFG                              := Mux(((fsm_state === fsm_postcheck) && scheduler_available && io.if_correct_process.asBool && !exit_requested), Cat(one, cp_bitmap, core_bitmap), 0.U)
+ }
+--- before/rocket-chip/src/main/scala/r/R_ICSL.scala
++++ after/rocket-chip/src/main/scala/r/R_ICSL.scala
+@@ -11,6 +11,8 @@
+ 
+ class R_ICSLIO(params: R_ICSLParams) extends Bundle {
+   val ic_counter                                 = Input(UInt((params.width_of_ic).W))
++  val ic_counter_valid                           = Input(Bool())
++  val ic_counter_reset                           = Input(Bool())
+   val icsl_run                                   = Input(UInt(1.W))
+   // val icsl_ack                                   = Input(Bool())
+   val big_switch                                 = Input(Bool())
+@@ -170,7 +172,16 @@
+   // val icsl_exec_done                             = sl_counter===(ic_counter_shadow+1.U)&&(fsm_state===fsm_speed_check)
+   // val exec_last_one                              = RegInit(false.B)
+   
+-  ic_counter_done                               := io.ic_counter(params.width_of_ic-1)
++  when (io.ic_counter_reset) {
++    ic_counter_shadow := 0.U
++    ic_counter_done := 0.U
++  }
++  // Zero is a valid count. GHM holds the sequence-qualified sample and freezes
++  // its final count after ordered END, including when END precedes CPS/start.
++  when (io.ic_counter_valid) {
++    ic_counter_shadow := io.ic_counter(params.width_of_ic - 2, 0)
++    ic_counter_done := io.ic_counter(params.width_of_ic - 1)
++  }
+   dontTouch(if_completion)
+   dontTouch(if_completion_priv)
+   switch (fsm_state) {
+@@ -459,7 +470,6 @@
+ 
+ 
+   dontTouch(stall_checking)
+-  ic_counter_shadow                             := Mux(io.ic_counter=/=0.U,io.ic_counter,ic_counter_shadow)
+   io.clear_ic_status                            := clear_ic_status
+   io.icsl_checkermode                           := icsl_checkermode
+   io.icsl_checkerpriv_mode                      := icsl_checkerpriv_mode
+@@ -471,8 +481,8 @@
+   io.if_rh_cp_pc                                := if_rh_cp_pc
+   io.icsl_status                                := Mux(fsm_state === fsm_nonchecking, 1.U, 0.U)
+   io.debug_sl_counter                           := sl_counter
+-  io.already_done                               := io.ic_counter(params.width_of_ic - 1).asBool && Mux(fsm_state === fsm_checking, sl_counter >= ic_counter_shadow, 
+-                                                                                                      Mux(fsm_state === fsm_checking_priv, sl_counter >= ic_counter_shadow - 1.U, false.B))
++  io.already_done                               := ic_counter_done.asBool && Mux(fsm_state === fsm_checking, sl_counter >= ic_counter_shadow,
++                                                                                                      Mux(fsm_state === fsm_checking_priv, ic_counter_shadow === 0.U || sl_counter >= ic_counter_shadow - 1.U, false.B))
+ 
+   dontTouch(ic_counter_shadow)
+   // dontTouch(icsl_exec_done)
+--- before/rocket-chip/src/main/scala/rocket/RocketCore.scala
++++ after/rocket-chip/src/main/scala/rocket/RocketCore.scala
+@@ -1355,6 +1355,10 @@
+   val new_package_seq = Mux(pending_new_package &&
+     (!incoming_package_seq || pending_package_seq >= io.packet_seq),
+     pending_package_seq, io.packet_seq)
++  val count_seq = io.ic_counter(20 + GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 20)
++  icsl.io.ic_counter_valid := io.ic_counter(GH_GlobalParams.GH_CHECKER_COUNT_BITS - 1) &&
++    count_seq === Mux(new_package, new_package_seq, package_seq_reg) && count_seq =/= 0.U
++  icsl.io.ic_counter_reset := new_package
+   val package_owned = package_check_active || package_start_pending
+   val packet_transport_error_owned = io.packet_protocol_error &&
+     ((new_package && io.packet_seq === new_package_seq) ||
+@@ -1465,9 +1469,15 @@
+   val package_replay_progress = lsl.io.st_deq || lsl.io.ld_deq ||
+     (lsl_req_valid_csr && lsl_req_ready_csr) ||
+     (lsl_req_valid_rocc && lsl_req_ready_rocc)
++  // Returning from a timer/management trap is not progress on this package.
++  // Keep trap_depth/resume-state handling in R_ICSL unchanged; only an actual
++  // owned retirement/fragment/stage advance earns a fresh no-progress budget.
++  val producer_sealed_prev = RegNext(producer_sealed_for_package, false.B)
+   val package_progress_event = package_start_accepted || package_fragment_progress ||
+-    package_replay_progress || checker_instruction_progress || csr.io.eret ||
+-    arf_done_owned || csr.io.if_priv_checkcomp ||
++    (producer_sealed_for_package && !producer_sealed_prev) ||
++    package_replay_progress || checker_instruction_progress ||
++    (arf_done_owned && !arf_check_done_seen) ||
++    (csr.io.if_priv_checkcomp && !csr_check_done_seen) ||
+     (icsl.io.package_exec_done && !package_exec_done_prev)
+   val package_progress_timeout_counter = RegInit(0.U(16.W))
+   val package_progress_timeout_limit = 65535.U(16.W)
+--- before/rocket-chip/src/main/scala/subsystem/HasTiles.scala
++++ after/rocket-chip/src/main/scala/subsystem/HasTiles.scala
+@@ -503,7 +503,7 @@
+       val useless_agg_core_id_SKNode       = BundleBridgeSink[UInt](Some(() => UInt(16.W)))
+       val useless_packet_dest_SKNode       = BundleBridgeSink[UInt](Some(() => UInt(32.W)))
+       val useless_status_SKNode            = BundleBridgeSink[UInt](Some(() => UInt(32.W)))
+-      val useless_producer_seal_SKNode     = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W)))
++      val useless_producer_seal_SKNode     = BundleBridgeSink[UInt](Some(() => UInt(GH_GlobalParams.GH_PRODUCER_SEALS_BITS.W)))
+       val useless_sch_na_inSKNode          = BundleBridgeSource[UInt](Some(() => UInt(16.W)))
+       val useless_debug_gcounter_SKNode    = BundleBridgeSource[UInt](Some(() => UInt(64.W)))
+       val useless_ic_status_SKNode         = BundleBridgeSink[UInt](Some(() => UInt(GH_GlobalParams.GH_NUM_CORES.W)))
+--- before/rocket-chip/src/main/scala/tile/BaseTile.scala
++++ after/rocket-chip/src/main/scala/tile/BaseTile.scala
+@@ -249,7 +249,7 @@
+   val debug_maincore_status_SRNode= BundleBridgeSource[UInt](Some(() => UInt(4.W)))
+   // val big_complete_ack_SRNode    = BundleBridgeSource[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES-1).W)))
+ 
+-  val ic_counter_SKNode           = BundleBridgeSink[UInt](Some(() => UInt(20.W)))
++  val ic_counter_SKNode           = BundleBridgeSink[UInt](Some(() => UInt(GH_GlobalParams.GH_CHECKER_COUNT_BITS.W)))
+   val clear_ic_status_SRNode      = BundleBridgeSource[UInt](Some(() => UInt(1.W)))
+   val clear_ic_status_tomainSKNode= BundleBridgeSink[UInt](Some(() => UInt(GH_GlobalParams.GH_NUM_CORES.W)))
+   val icsl_naSKNode               = BundleBridgeSink[UInt](Some(() => UInt(GH_GlobalParams.GH_NUM_CORES.W)))
+@@ -263,7 +263,7 @@
+   val core_r_arfs_SRNode          = BundleBridgeSource[UInt](Some(() => UInt((GH_GlobalParams.GH_WIDITH_PACKETS+1+8+8).W)))
+   val ght_packet_dest_SRNode      = BundleBridgeSource[UInt](Some(() => UInt(32.W)))
+   val ght_status_out_SRNode       = BundleBridgeSource[UInt](Some(() => UInt(32.W)))
+-  val producer_seal_SRNode        = BundleBridgeSource[UInt](Some(() => UInt((GH_GlobalParams.GH_PACKET_SEQ_BITS + 1).W)))
++  val producer_seal_SRNode        = BundleBridgeSource[UInt](Some(() => UInt(GH_GlobalParams.GH_PRODUCER_SEALS_BITS.W)))
+   println("#### Jessica #### Generating GHT **Nodes** on the tile, HartID:", tileParams.hartId, "...!!")
+   val ghe_packet_in_SKNode        = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_TOTAL_PACKETS*GH_GlobalParams.GH_WIDITH_PACKETS+GH_GlobalParams.GH_PACKET_SEQ_BITS+1).W)))
+   val core_r_arfs_c_SKNode        = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_WIDITH_PACKETS+1+8+GH_GlobalParams.GH_PACKET_SEQ_BITS+1).W)))
+--- before/rocket-chip/src/main/scala/tile/Core.scala
++++ after/rocket-chip/src/main/scala/tile/Core.scala
+@@ -170,7 +170,7 @@
+     //===== GuardianCouncil Function: Start ====//
+     val arfs_if_CPS = UInt(1.W).asInput
+     val record_pc = UInt(1.W).asInput
+-    val ic_counter = UInt(20.W).asInput
++    val ic_counter = UInt(GH_GlobalParams.GH_CHECKER_COUNT_BITS.W).asInput
+     val clear_ic_status = UInt(1.W).asOutput
+     val pc = UInt(vaddrBitsExtended.W).asOutput
+     val inst = UInt(32.W).asOutput

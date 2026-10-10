@@ -1,0 +1,30 @@
+# Reproduce the decisive narrow FST extracts from /data1/gzh/EC.
+# These commands read existing evidence; they do not simulate or regenerate RTL.
+# Patterns must end with ( |$): buses have a width suffix, scalar names do not.
+# Redirect each command to a scratch file if the complete binary-valued output is wanted.
+# FST time is native units, 2 units per BOOM clock and 4 per checker1 clock here.
+
+# Full run architectural retirement / FSM / snapshot audit input.
+AI/Debug/fst_signal_trace chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.vcd 0 1055402 'boom_tile.core.(clock|ic_incr)( |$)' 'boom_tile.core.rob.(io_commit_arch_valids_[0-2]|io_commit_uops_[0-2]_(debug_pc|inst)|io_empty|io_r_next_pc_valid|io_r_next_pc)( |$)' 'boom_tile.core.ic_master.(fsm_state|ctrl|crnt_mask|ic_counter_[1-4]|active_packet_seq|snapshot_accepted|io_if_correct_process|ic_status_1|package_owned_1)( |$)' 'boom_tile.core.rsu_master.(pcarf_ss|doSnapshot)( |$)'
+
+# Checker1 instruction retirement and precise stop boundary.
+AI/Debug/fst_signal_trace chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.vcd 530900 555000 'tile_prci_domain_1.tile_reset_domain_tile.core.(clock|package_seq_reg|wb_reg_pc|wb_reg_inst|wb_valid|wb_reg_valid|rf_wen|checker_mode|excpt_mode|producer_sealed_for_package|package_progress_event|package_progress_timeout_counter)( |$)' 'tile_prci_domain_1.tile_reset_domain_tile.core.icsl.(fsm_state|sl_counter|ic_counter_shadow|ic_counter_done|instruction_tail_waiting|instruction_boundary_now|instruction_boundary_seen|package_exec_completion|io_package_tail_drained|io_if_correct_process|io_new_commit|io_self_xcpt|io_num_valid_insts_in_pipeline|io_something_inflight|io_icsl_stalld|if_overtaking|stall_checking)( |$)' 'tile_prci_domain_1.tile_reset_domain_tile.core.lsl.(lsl_deq_fire|lsl_head_payload_[01]|lsl_head_valid_[01]|lsl_deq_bank|io_quiescent|io_req_valid|io_req_ready|io_req_addr|io_req_cmd|io_req_kill|resp_mismatch_reg|io_resp_valid|io_resp_addr|io_if_empty)( |$)' 'tile_prci_domain_1.tile_reset_domain_tile.core.lsl.u_channel_[01].(num_contentReg|debug_fcounter|debug_fdcounter)( |$)'
+
+# L2 trigger and final barrier state.
+FST_TRACE_FINAL=1 AI/Debug/fst_signal_trace chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.vcd 536400 536440 'subsystem_l2_wrapper.l2.mods_0.io_dcacheWritebackRequestCandidate[^.]*$' 'subsystem_l2_wrapper.l2.mods_0.io_barrier_allow( |$)' 'subsystem_l2_wrapper.l2.(barrierCandidateUnsafe|l2SafeWatermark)( |$)'
+FST_TRACE_FINAL=1 AI/Debug/fst_signal_trace chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.vcd 536390 536450 'subsystem_l2_wrapper.l2.(barrierReleased|barrierActive|barrierSeq|barrierRequest|barrierError|l2SafeWatermark|barrierCloseAckSync_l2_barrier_close_ack_0_sync.io_q|barrierCloseAckSeqSync_l2_barrier_close_ack_seq_0_sync.io_q)( |$)'
+
+# Five remaining FIFO entries, seal and ECP, plus final snapshot.
+FST_TRACE_FINAL=1 AI/Debug/fst_signal_trace chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.vcd 536400 540000 'tile_prci_domain_1.tile_reset_domain_tile.core.lsl.u_channel_[01].(num_contentReg|debug_fcounter|debug_fdcounter|enq_fire|deq_fire|io_enq_bits)( |$)' 'tile_prci_domain_1.tile_reset_domain_tile.core.(producer_sealed_for_package|packet_ingress_drained|arf_check_complete|full_check_complete|package_data_complete)( |$)' 'tile_prci_domain_1.tile_reset_domain_tile.core.rsu_slave.(io_ecp_seq|io_ecp_complete|io_compare_idle)( |$)' 'boom_tile.dcache.(crossPackagePending|crossPackagePendingSeq|crossPackageWritebackIssued|debug_safe_packet_watermark)( |$)'
+
+# Full-run LSL payload stability and matching dequeue audit input.
+AI/Debug/fst_signal_trace chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.vcd 0 1055402 'tile_reset_domain_tile.core.lsl.(clock|lsl_head_valid_[01]|lsl_head_payload_[01]|lsl_prefetch_pending_[01]|lsl_prefetch_response_[01]|selected_head|selected_head_valid|lsl_deq_bank|lsl_deq_fire|lsl_response_fire|lsl_req_type_match|lsl_req_addr_match|resp_mismatch_reg)( |$)'
+
+# BOOM ownership watchdog edge.
+FST_TRACE_FINAL=1 AI/Debug/fst_signal_trace chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.vcd 1055350 1055402 'boom_tile.core.(clock|debug_tsc_reg|large_1|small_1|io_clear_ic_status_tomain)( |$)' 'boom_tile.core.ic_master.(ic_status_1|package_owned_1)( |$)'
+
+# Progress watchdog resets and xRET (every reset is one checker edge after xRET once ingress has drained).
+AI/Debug/fst_signal_trace chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.vcd 536400 1055402 'tile_prci_domain_1.tile_reset_domain_tile.core.(package_progress_timeout_counter|csr.io_eret|icsl.fsm_state|icsl.sl_counter|icsl.instruction_tail_waiting|package_result_event|package_cancelled|arf_wait_timeout_counter|package_exec_timeout_counter)( |$)'
+
+# All package result handoffs and BOOM clear indications.
+AI/Debug/fst_signal_trace chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.vcd 0 1055402 'tile_reset_domain_tile.core.io_package_result_(seq|status|valid|ready)( |$)' 'boom_tile.core.io_clear_ic_status_tomain( |$)'
