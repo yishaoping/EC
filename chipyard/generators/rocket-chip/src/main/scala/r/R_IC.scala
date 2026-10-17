@@ -72,6 +72,7 @@ class R_ICIO(params: R_ICParams) extends Bundle {
   val checker_big_owner                          = Output(Vec(params.totalnumber_of_cores, UInt(4.W)))  // which big core owns this checker
   val checker_segment_id                         = Output(Vec(params.totalnumber_of_cores, UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))
   val active_packet_seq                          = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val traffic_package_open                       = Output(Bool())
   val packet_alloc_valid                         = Output(Bool())
   val packet_alloc_seq                           = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
   val barrier_force_close                        = Input(Bool())
@@ -284,6 +285,12 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   io.closing_valid := boundary_has_old && fsm_state === fsm_trans
   io.closing_seq := boundary_seq
   io.active_packet_seq := active_packet_seq
+  // Statistics use the same ownership domain as count_owned, including
+  // cooling/snapshot drain. A retained nonzero sequence alone is not ownership.
+  io.traffic_package_open := producer_open && io.if_correct_process.asBool
+  when (io.traffic_package_open) {
+    assert(active_packet_seq =/= 0.U, "owned traffic requires an allocated package")
+  }
   // Registered allocation outputs form a complete-cycle fire event and keep
   // the allocated sequence stable while LSU/DCache sample it.  This prevents
   // the old combinational pulse from being visible externally without the
@@ -302,7 +309,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   // Count every owned architectural retirement, including cooling/snap and
   // the closing edge. A future scheduling target must never receive this tail.
   for (i <- 0 until params.totalnumber_of_cores) {
-    val count_owned = producer_open && producer_target_ic === i.U && io.if_correct_process.asBool
+    val count_owned = io.traffic_package_open && producer_target_ic === i.U
     val count_next = ic_counter(i)(params.width_of_ic - 2, 0) +& Mux(count_owned, io.ic_incr, 0.U)
     when (clear_ic_status(i).asBool) {
       ic_counter(i) := 0.U

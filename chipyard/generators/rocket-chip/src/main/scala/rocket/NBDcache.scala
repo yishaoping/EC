@@ -25,6 +25,10 @@ class L1DataReadReq(implicit p: Parameters) extends L1HellaCacheBundle()(p) {
 class L1DataWriteReq(implicit p: Parameters) extends L1DataReadReq()(p) {
   val wmask  = Bits(rowWords.W)
   val data   = Bits(encRowBits.W)
+  // BOOM uses these local fields to reject a refill that belongs to a
+  // recycled L1 slot.  Rocket's own cache leaves them at zero.
+  val slot_epoch = UInt(16.W)
+  val line_generation = UInt(32.W)
 }
 
 class L1RefillReq(implicit p: Parameters) extends L1DataReadReq()(p)
@@ -893,6 +897,8 @@ class NonBlockingDCacheModule(outer: NonBlockingDCache) extends HellaCacheModule
   writeArb.io.in(0).bits.data := Fill(rowWords, s3_req.data)
   writeArb.io.in(0).valid := s3_valid
   writeArb.io.in(0).bits.way_en :=  s3_way
+  writeArb.io.in(0).bits.slot_epoch := 0.U
+  writeArb.io.in(0).bits.line_generation := 0.U
 
   // replacement policy
   val replacer = cacheParams.replacement
@@ -943,6 +949,8 @@ class NonBlockingDCacheModule(outer: NonBlockingDCache) extends HellaCacheModule
   writeArb.io.in(1).bits.way_en := mshrs.io.refill.way_en
   writeArb.io.in(1).bits.wmask := ~0.U(rowWords.W)
   writeArb.io.in(1).bits.data := tl_out.d.bits.data(encRowBits-1,0)
+  writeArb.io.in(1).bits.slot_epoch := 0.U
+  writeArb.io.in(1).bits.line_generation := 0.U
   data.io.read <> readArb.io.out
   readArb.io.out.ready := !tl_out.d.valid || tl_out.d.ready // insert bubble if refill gets blocked
   tl_out.e <> mshrs.io.mem_finish

@@ -3,6 +3,9 @@
 set -euo pipefail
 
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+output_dir=${TEST_OUTPUT_DIR:-$script_dir}
+mkdir -p "$output_dir"
+output_dir=$(cd -- "$output_dir" && pwd)
 repo_dir=$(cd -- "$script_dir/../.." && pwd)
 chipyard_dir="$repo_dir/chipyard"
 cd "$script_dir"
@@ -108,8 +111,8 @@ sources=(
     cd "$build_dir"
     "$objdump_path" -d -S test.riscv > test.dump
 )
-mv -- "$build_dir/test.riscv" test.riscv
-mv -- "$build_dir/test.dump" test.dump
+mv -- "$build_dir/test.riscv" "$output_dir/test.riscv"
+mv -- "$build_dir/test.dump" "$output_dir/test.dump"
 
-echo "generated: $script_dir/test.riscv"
-echo "generated: $script_dir/test.dump"
+echo "generated: $output_dir/test.riscv"
+echo "generated: $output_dir/test.dump"

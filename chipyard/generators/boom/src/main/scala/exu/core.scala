@@ -88,6 +88,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     // DCache 统计与校验包元数据：由 CSR/R_IC 产生，送入 Tile DCache。
     val csr_cycle          = Output(UInt(xLen.W)) // 当前 CSR cycle/time 值，作为统计时间戳。
     val active_packet_seq  = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)) // 当前活动校验包序号。
+    val traffic_package_open = Output(Bool()) // Includes owned package drain.
     val packet_alloc_valid = Output(Bool()) // 本周期是否分配了新的校验包。
     val packet_alloc_seq   = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)) // 新分配包的序号。
     // Candidate seal from the BOOM architectural boundary. BoomTile adds the
@@ -2358,12 +2359,12 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     io.checker_segment_id(i)                      := ic_master.io.checker_segment_id(i)
   }
   io.active_packet_seq                           := ic_master.io.active_packet_seq
+  io.traffic_package_open                        := ic_master.io.traffic_package_open
   io.packet_alloc_valid                         := ic_master.io.packet_alloc_valid
   io.packet_alloc_seq                           := ic_master.io.packet_alloc_seq
   io.lsu.active_packet_seq                      := Mux(ic_master.io.packet_alloc_valid,
     ic_master.io.packet_alloc_seq,
-    Mux(ic_master.io.debug_maincore_status === 2.U,
-      ic_master.io.active_packet_seq, 0.U))
+    ic_master.io.active_packet_seq)
   // checker_state_data mux: sel=0 → mask, sel!=0 → {global_owner(36:33), local_owner(30:27), global_ic_status(26), 0}
   // sel is 1-indexed checker#; add chk_adj (GH_NUM_BIG_CORES-1) for full core index
   val chk_idx = io.checker_state_sel + (GH_GlobalParams.GH_NUM_BIG_CORES - 1).U

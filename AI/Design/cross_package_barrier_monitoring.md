@@ -1,5 +1,7 @@
 # 跨包覆盖与 L2–DRAM 屏障：对话结论和实现规格
 
+> 历史规格说明（2026-10-11）：本文保留早期 monitor-only 评估方案。下文的“无 stall / overflow 旁路”及“当前源码状态”描述属于该阶段，不能用于判断当前真实 barrier 或作为功能恢复的例外。本轮用户要求的 package recovery 目标以先保存 predecessor、再允许 speculative overwrite/下移为准；当前 RTL 与波形的差距见 [cache_recovery_gap_analysis_20261011.md](cache_recovery_gap_analysis_20261011.md)。尚未按此目标修改正式代码。
+
 ## 1. 文档用途
 
 本文固定当前讨论已经确认的设计口径，供 BOOM DCache、共享 InclusiveCache、

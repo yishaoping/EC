@@ -29,7 +29,6 @@ class BoomDCacheReqInternal(implicit p: Parameters) extends BoomDCacheReq()(p)
   val way_en    = UInt(nWays.W)
 
   // Used in the MSHRs
-  val sdq_id    = UInt(log2Ceil(cfg.nSDQ).W)
 }
 
 
@@ -65,7 +64,7 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
 
     val prober_state = Input(Valid(UInt(coreMaxAddrBits.W)))
 
-    val refill      = Decoupled(new L1DataWriteReq)
+    val refill      = Decoupled(new BoomCacheRefill)
 
     val meta_write  = Decoupled(new L1MetaWriteReq)
     val meta_read   = Decoupled(new L1MetaReadReq)
@@ -84,6 +83,19 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
 
     // Replays go through the cache pipeline again
     val replay      = Decoupled(new BoomDCacheReqInternal)
+    // Legacy observation ports; tagged replay_result is the lifecycle authority.
+    val replay_effect_done = Input(Bool())
+    val replay_cancel = Input(Bool())
+    val replay_result = Flipped(Decoupled(new BoomCacheCompletion))
+    val replay_grant = Input(Valid(new BoomDCacheReq))
+    val retired = Output(Valid(new BoomDCacheReqInternal))
+    val install = Decoupled(new BoomCacheInstall)
+    val install_fault = Input(Bool())
+    val refill_fault = Input(Bool())
+    val owner = Output(new BoomDCacheReqInternal)
+    val next_transaction_token = Output(UInt(32.W))
+    val write_domain_valid = Output(Bool())
+    val write_domain_seq = Output(UInt(freechips.rocketchip.guardiancouncil.GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
     // Resp go straight out to the core
     val resp        = Decoupled(new BoomDCacheResp)
 
@@ -107,6 +119,24 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
   val state = RegInit(s_invalid)
 
   val req     = Reg(new BoomDCacheReqInternal)
+  val transactionSerial = RegInit(0.U(32.W))
+  val writeDomainValid = RegInit(false.B)
+  val writeDomainSeq = Reg(UInt(freechips.rocketchip.guardiancouncil.GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val installStarted = RegInit(false.B)
+  val protocolFault = RegInit(false.B)
+  // Holds one row only after the install owner has accepted the row read.
+  // Ordinary RPQ loads use the same LineBuffer port but must not update it.
+  val rowValid = RegInit(false.B)
+  val rowData = Reg(UInt(encRowBits.W))
+  io.owner := req
+  io.next_transaction_token := transactionSerial + 1.U
+  io.write_domain_valid := writeDomainValid
+  io.write_domain_seq := writeDomainSeq
+  io.install.valid := false.B
+  io.install.bits.req := req
+  io.install.bits.new_owner := !req.tag_match
+  io.retired.valid := false.B
+  io.retired.bits := req
   val req_idx = req.addr(untagBits-1, blockOffBits)
   val req_tag = req.addr >> untagBits
   val req_block_addr = (req.addr >> blockOffBits) << blockOffBits
@@ -122,10 +152,18 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
     new_coh.onSecondaryAccess(req.uop.mem_cmd, io.req.uop.mem_cmd)
 
   val (_, _, refill_done, refill_address_inc) = edge.addr_inc(io.mem_grant)
+  val cross_package_secondary_write = isWrite(io.req.uop.mem_cmd) && io.req.write_domain_valid &&
+    writeDomainValid && io.req.write_domain_seq =/= writeDomainSeq
+  // Both drain phases must finish a finite set of already-owned requests.
+  // New secondaries retry instead of extending the active drain.
+  val drainAdmissionClosed = state.isOneOf(s_drain_rpq, s_drain_rpq_loads)
   val sec_rdy = (!cmd_requires_second_acquire && !io.req_is_probe &&
-                 !state.isOneOf(s_invalid, s_meta_write_req, s_mem_finish_1, s_mem_finish_2))// Always accept secondary misses
+                 !cross_package_secondary_write && !protocolFault &&
+                 !drainAdmissionClosed &&
+                 !state.isOneOf(s_invalid, s_meta_write_req, s_mem_finish_1, s_mem_finish_2))
 
-  val rpq = Module(new BranchKillableQueue(new BoomDCacheReqInternal, cfg.nRPQ, u => u.uses_ldq, false))
+  val rpq = Module(new BranchKillableQueue(new BoomDCacheReqInternal, cfg.nRPQ,
+    u => u.uses_ldq, false, holdable = true))
   rpq.io.brupdate := io.brupdate
   rpq.io.flush  := io.exception
   assert(!(state === s_invalid && !rpq.io.empty))
@@ -133,9 +171,57 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
   rpq.io.enq.valid := ((io.req_pri_val && io.req_pri_rdy) || (io.req_sec_val && io.req_sec_rdy)) && !isPrefetch(io.req.uop.mem_cmd)
   rpq.io.enq.bits  := io.req
   rpq.io.deq.ready := false.B
+  when (drainAdmissionClosed) {
+    assert(!(io.req_sec_val && io.req_sec_rdy), "secondary accepted during RPQ drain")
+    // RPQ has only primary/secondary producers; replay RETRY holds its head.
+    assert(!rpq.io.enq.fire, "RPQ enqueue during closed drain")
+  }
+  val replay_inflight = RegInit(false.B)
+  val inflight = Reg(new BoomDCacheReqInternal)
+  val inflightGrantValid = RegInit(false.B)
+  when (io.replay_grant.valid) {
+    assert(replay_inflight && io.replay_grant.bits.request_token === inflight.request_token &&
+      io.replay_grant.bits.transaction_token === inflight.transaction_token,
+      "write grant does not match issued RPQ owner")
+    inflight.line_generation := io.replay_grant.bits.line_generation
+    inflight.image_valid := io.replay_grant.bits.image_valid
+    inflightGrantValid := true.B
+  }
+  val resultMatches = replay_inflight &&
+    io.replay_result.bits.req.replay_mshr_id === io.id &&
+    io.replay_result.bits.req.transaction_token === inflight.transaction_token &&
+    io.replay_result.bits.req.request_token_valid === inflight.request_token_valid &&
+    io.replay_result.bits.req.request_token === inflight.request_token &&
+    io.replay_result.bits.req.slot_epoch === inflight.slot_epoch &&
+    io.replay_result.bits.req.sdq_id === inflight.sdq_id &&
+    io.replay_result.bits.req.owner_way === inflight.owner_way &&
+    io.replay_result.bits.req.effect_token_valid === inflight.effect_token_valid &&
+    io.replay_result.bits.req.effect_token === inflight.effect_token &&
+    (!inflightGrantValid ||
+      (io.replay_result.bits.req.line_generation === inflight.line_generation &&
+       io.replay_result.bits.req.image_valid === inflight.image_valid))
+  io.replay_result.ready := resultMatches
+  when (io.replay_result.valid) {
+    assert(resultMatches, "stale replay completion / MSHR allocation reuse")
+  }
+  val replayTerminal = io.replay_result.fire &&
+    io.replay_result.bits.status =/= CacheTerminal.retry
+  rpq.io.hold_head.get := replay_inflight && !replayTerminal
+  when (io.replay_result.fire) { replay_inflight := false.B }
+  when (replayTerminal) {
+    io.retired.valid := true.B
+    io.retired.bits := inflight
+  }
+  when (rpq.io.discarded.get.valid && !replay_inflight) {
+    io.retired.valid := true.B // legitimate pre-issue CANCEL
+    io.retired.bits := rpq.io.discarded.get.bits
+  }
+  when (io.install_fault || io.refill_fault) { protocolFault := true.B }
+  assert(!io.install_fault, "refill destination owner mismatch")
+  assert(!io.refill_fault, "active refill owner mismatch")
 
 
-  val grantack = Reg(Valid(new TLBundleE(edge.bundle)))
+  val grantack = RegInit(0.U.asTypeOf(Valid(new TLBundleE(edge.bundle))))
   val refill_ctr  = Reg(UInt(log2Ceil(cacheDataBeats).W))
   val commit_line = Reg(Bool())
   val grant_had_data = Reg(Bool())
@@ -145,7 +231,11 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
   val meta_hazard = RegInit(0.U(2.W))
   when (meta_hazard =/= 0.U) { meta_hazard := meta_hazard + 1.U }
   when (io.meta_write.fire) { meta_hazard := 1.U }
-  io.probe_rdy   := (meta_hazard === 0.U && (state.isOneOf(s_invalid, s_refill_req, s_refill_resp, s_drain_rpq_loads) || (state === s_meta_read && grantack.valid)))
+  // Before E, the old resident can still answer probes. After full Grant
+  // capture, this MSHR retains the new permission/image until final publish.
+  // A probe is parked in BoomProbeUnit while the bounded local drain runs.
+  io.probe_rdy := meta_hazard === 0.U &&
+    state.isOneOf(s_invalid, s_refill_req, s_refill_resp)
   io.idx.valid := state =/= s_invalid
   io.tag.valid := state =/= s_invalid
   io.way.valid := !state.isOneOf(s_invalid, s_prefetch)
@@ -154,28 +244,51 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
   io.way.bits := req.way_en
 
   io.meta_write.valid    := false.B
+  io.meta_write.bits     := 0.U.asTypeOf(new L1MetaWriteReq)
   io.req_pri_rdy         := false.B
   io.req_sec_rdy         := sec_rdy && rpq.io.enq.ready
   io.mem_acquire.valid   := false.B
+  io.mem_acquire.bits    := 0.U.asTypeOf(new TLBundleA(edge.bundle))
+  io.mem_grant.ready     := false.B
   io.refill.valid        := false.B
+  io.refill.bits         := 0.U.asTypeOf(new BoomCacheRefill)
   io.replay.valid        := false.B
+  io.replay.bits         := 0.U.asTypeOf(new BoomDCacheReqInternal)
   io.wb_req.valid        := false.B
+  io.wb_req.bits         := 0.U.asTypeOf(new WritebackReq(edge.bundle))
   io.resp.valid          := false.B
+  io.resp.bits := 0.U.asTypeOf(new BoomDCacheResp)
   io.commit_val          := false.B
   io.commit_addr         := req.addr
   io.commit_coh          := coh_on_grant
   io.meta_read.valid     := false.B
-  io.mem_finish.valid    := false.B
+  io.meta_read.bits      := 0.U.asTypeOf(new L1MetaReadReq)
+  // Full Grant capture owns the E responsibility independently of replay.
+  io.mem_finish.valid    := grantack.valid
+  io.mem_finish.bits     := grantack.bits
+  when (io.mem_finish.fire) { grantack.valid := false.B }
   io.lb_write.valid      := false.B
+  io.lb_write.bits       := 0.U.asTypeOf(new LineBufferWriteReq)
   io.lb_read.valid       := false.B
+  io.lb_read.bits        := 0.U.asTypeOf(new LineBufferReadReq)
+
+  // Keep the RPQ head and its SDQ payload live from issue through the actual
+  // data-array effect.  A retry leaves the head in place and only clears the
+  // in-flight marker.
+  // The legacy bool ports are deliberately not lifecycle authorities.
+  // Only a matching, acknowledged result can end an issued attempt.
 
   when (io.req_sec_val && io.req_sec_rdy) {
+    assert(io.req.owner_context_valid && io.req.transaction_token === req.transaction_token &&
+      io.req.slot_epoch === req.slot_epoch && io.req.owner_way === req.owner_way,
+      "secondary did not inherit its MSHR owner")
     req.uop.mem_cmd := dirtier_cmd
     when (is_hit_again) {
       new_coh := dirtier_coh
     }
-    when (io.req.packet_seq > req.packet_seq) {
-      req.packet_seq := io.req.packet_seq
+    when (isWrite(io.req.uop.mem_cmd) && io.req.write_domain_valid && !writeDomainValid) {
+      writeDomainValid := true.B
+      writeDomainSeq := io.req.write_domain_seq
     }
   }
 
@@ -185,6 +298,17 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
     refill_ctr := 0.U
     assert(rpq.io.enq.ready)
     req := io.req
+    assert(io.req.owner_context_valid && io.req.way_en.orR &&
+      io.req.owner_way === io.req.way_en, "primary lacks destination owner context")
+    assert(io.req.write_domain_valid === isWrite(io.req.uop.mem_cmd),
+      "primary write domain must describe its own request")
+    transactionSerial := io.req.transaction_token
+    assert(io.req.transaction_token =/= 0.U, "MSHR transaction token exhausted")
+    installStarted := false.B
+    rowValid := false.B
+    protocolFault := false.B
+    writeDomainValid := io.req.write_domain_valid
+    writeDomainSeq := io.req.write_domain_seq
     val old_coh   = io.req.old_meta.coh
     req_needs_wb := old_coh.onCacheControl(M_FLUSH)._1 // does the line we are evicting need to be written back
     when (io.req.tag_match) {
@@ -239,8 +363,10 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
     when (refill_done) {
       grantack.valid := edge.isRequest(io.mem_grant.bits)
       grantack.bits := edge.GrantAck(io.mem_grant.bits)
-      state := Mux(grant_had_data, s_drain_rpq_loads, s_drain_rpq)
-      assert(!(!grant_had_data && req_needs_wb))
+      state := Mux(edge.hasData(io.mem_grant.bits), s_drain_rpq_loads, s_commit_line)
+      assert(edge.hasData(io.mem_grant.bits) || req.tag_match,
+        "new-line allocation requires complete GrantData")
+      assert(edge.hasData(io.mem_grant.bits) || !req_needs_wb)
       commit_line := false.B
       new_coh := coh_on_grant
 
@@ -271,14 +397,20 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
     io.resp.bits.traffic_check := rpq.io.deq.bits.traffic_check
     io.resp.bits.traffic_seen  := rpq.io.deq.bits.traffic_seen
     io.resp.bits.traffic_cacheable := rpq.io.deq.bits.traffic_cacheable
+    io.resp.bits.request_token_valid := rpq.io.deq.bits.request_token_valid
+    io.resp.bits.request_token := rpq.io.deq.bits.request_token
     when (rpq.io.deq.fire) {
+      io.retired.valid := true.B
+      io.retired.bits := rpq.io.deq.bits
       commit_line   := true.B
     }
       .elsewhen (rpq.io.empty && !commit_line)
     {
       when (!rpq.io.enq.fire) {
-        state := s_mem_finish_1
-        finish_to_prefetch := enablePrefetching.B
+        // Even a killed primary must retire its destination reservation.
+        // Install the captured line before releasing this transaction.
+        state := s_meta_read
+        finish_to_prefetch := false.B
       }
     } .elsewhen (rpq.io.empty || (rpq.io.deq.valid && !drain_load)) {
       // io.commit_val is for the prefetcher. it tells the prefetcher that this line was correctly acquired
@@ -303,6 +435,7 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
   } .elsewhen (state === s_meta_clear) {
     io.meta_write.valid         := true.B
     io.meta_write.bits.idx      := req_idx
+    io.meta_write.bits.tag      := req_tag
     io.meta_write.bits.data.coh := coh_on_clear
     io.meta_write.bits.data.tag := req_tag
     io.meta_write.bits.way_en   := req.way_en
@@ -327,37 +460,72 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
       state := s_commit_line
     }
   } .elsewhen (state === s_commit_line) {
-    io.lb_read.valid       := true.B
-    io.lb_read.bits.id     := io.id
+    io.install.valid := !installStarted && !protocolFault
+    when (io.install.fire) {
+      installStarted := true.B
+      // Permission upgrades have no line-buffer payload. Their owner
+      // reservation is still acknowledged, then replay/publish follows;
+      // only a complete GrantData may enter the row-install loop below.
+      when (!grant_had_data) { state := s_drain_rpq }
+    }
+    when (!grant_had_data) {
+      io.lb_read.valid := false.B
+      io.refill.valid := false.B
+    }
+    // Do not request the shared LineBuffer until the destination is active.
+    // A held row avoids repeatedly winning its read arbiter under write stalls.
+    io.lb_read.valid := grant_had_data && installStarted && !protocolFault && !rowValid
+    io.lb_read.bits.id := io.id
     io.lb_read.bits.offset := refill_ctr
-
-    io.refill.valid       := io.lb_read.fire
-    io.refill.bits.addr   := req_block_addr | (refill_ctr << rowOffBits)
+    val install_row_read_fire = io.lb_read.fire &&
+      state === s_commit_line && installStarted && grant_had_data && !protocolFault
+    when (install_row_read_fire) {
+      rowData := io.lb_resp
+      rowValid := true.B
+    }
+    io.refill.valid := grant_had_data && rowValid && !protocolFault
+    io.refill.bits.addr := req_block_addr | (refill_ctr << rowOffBits)
+    // The held primary descriptor supplies one physical line for every row.
+    io.refill.bits.line_addr := req_block_addr
     io.refill.bits.way_en := req.way_en
-    io.refill.bits.wmask  := ~(0.U(rowWords.W))
-    io.refill.bits.data   := io.lb_resp
+    io.refill.bits.wmask := ~(0.U(rowWords.W))
+    io.refill.bits.data := rowData
+    io.refill.bits.slot_epoch := req.slot_epoch
+    io.refill.bits.line_generation := req.line_generation
+    io.refill.bits.transaction_token := req.transaction_token
+    io.refill.bits.mshr_id := io.id
+    io.refill.bits.owner_context_valid := req.owner_context_valid
     when (io.refill.fire) {
+      rowValid := false.B
       refill_ctr := refill_ctr + 1.U
-      when (refill_ctr === (cacheDataBeats - 1).U) {
-        state := s_drain_rpq
-      }
+      when (refill_ctr === (cacheDataBeats - 1).U) { state := s_drain_rpq }
     }
   } .elsewhen (state === s_drain_rpq) {
-    io.replay <> rpq.io.deq
+    io.replay.valid := rpq.io.deq.valid && !replay_inflight
+    io.replay.bits  := rpq.io.deq.bits
     io.replay.bits.way_en    := req.way_en
     io.replay.bits.addr := Cat(req_tag, req_idx, rpq.io.deq.bits.addr(blockOffBits-1,0))
-    when (io.replay.fire && isWrite(rpq.io.deq.bits.uop.mem_cmd)) {
+    io.replay.bits.replay_mshr_id := io.id
+    when (io.replay.fire) {
+      replay_inflight := true.B
+      inflight := io.replay.bits
+      inflightGrantValid := false.B
+    }
+    rpq.io.deq.ready := replayTerminal
+    when (replayTerminal && io.replay_result.bits.status === CacheTerminal.applied &&
+        isWrite(inflight.uop.mem_cmd)) {
       // Set dirty bit
       val (is_hit, _, coh_on_hit) = new_coh.onAccess(rpq.io.deq.bits.uop.mem_cmd)
       assert(is_hit, "We still don't have permissions for this store")
       new_coh := coh_on_hit
     }
-    when (rpq.io.empty && !rpq.io.enq.valid) {
+    when (rpq.io.empty && !rpq.io.enq.valid && !replay_inflight) {
       state := s_meta_write_req
     }
   } .elsewhen (state === s_meta_write_req) {
     io.meta_write.valid         := true.B
     io.meta_write.bits.idx      := req_idx
+    io.meta_write.bits.tag      := req_tag
     io.meta_write.bits.data.coh := new_coh
     io.meta_write.bits.data.tag := req_tag
     io.meta_write.bits.way_en   := req.way_en
@@ -366,9 +534,7 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
       finish_to_prefetch := false.B
     }
   } .elsewhen (state === s_mem_finish_1) {
-    io.mem_finish.valid := grantack.valid
-    io.mem_finish.bits  := grantack.bits
-    when (io.mem_finish.fire || !grantack.valid) {
+    when (!grantack.valid) {
       grantack.valid := false.B
       state := s_mem_finish_2
     }
@@ -401,6 +567,7 @@ class BoomIOMSHR(id: Int)(implicit edge: TLEdgeOut, p: Parameters) extends BoomM
     val req  = Flipped(Decoupled(new BoomDCacheReq))
     val resp = Decoupled(new BoomDCacheResp)
     val mem_access = Decoupled(new TLBundleA(edge.bundle))
+    val completion = Decoupled(new BoomCacheCompletion)
     val mem_ack    = Flipped(Valid(new TLBundleD(edge.bundle)))
     val traffic_strict_store_complete = Output(Bool())
     val traffic_strict_store_complete_stq_idx = Output(UInt(stqAddrSz.W))
@@ -454,19 +621,29 @@ class BoomIOMSHR(id: Int)(implicit edge: TLEdgeOut, p: Parameters) extends BoomM
   io.mem_access.valid := state === s_mem_access
   io.mem_access.bits  := Mux(isAMO(req.uop.mem_cmd), atomics, Mux(isRead(req.uop.mem_cmd), get, put))
 
-  val send_resp = isRead(req.uop.mem_cmd)
+  val send_resp = isRead(req.uop.mem_cmd) && !isWrite(req.uop.mem_cmd)
+  val responseDone = RegInit(false.B)
+  val completionDone = RegInit(false.B)
 
-  io.resp.valid     := (state === s_resp) && send_resp
+  io.resp.valid     := (state === s_resp) && send_resp && !responseDone
   io.resp.bits.uop  := req.uop
   io.resp.bits.data := loadgen.data
   io.resp.bits.is_hella := req.is_hella
   io.resp.bits.traffic_check := req.traffic_check
   io.resp.bits.traffic_seen  := req.traffic_seen
   io.resp.bits.traffic_cacheable := req.traffic_cacheable
+  io.resp.bits.request_token_valid := req.request_token_valid
+  io.resp.bits.request_token := req.request_token
+  io.completion.valid := state === s_resp && isWrite(req.uop.mem_cmd) &&
+    !completionDone && (!send_resp || responseDone)
+  io.completion.bits.req := req
+  io.completion.bits.status := CacheTerminal.applied
+  io.completion.bits.data := loadgen.data
+  when (io.resp.fire) { responseDone := true.B }
+  when (io.completion.fire) { completionDone := true.B }
 
-  // 不可缓存 store 在 TileLink A 请求被接受后完成；只保留由架构提交
-  // 资格驱动的严格路径，避免请求阶段口径形成另一套不一致的 BOOM 计数。
-  io.traffic_strict_store_complete := io.mem_access.fire &&
+  // D response and the held terminal handshake complete an uncached write.
+  io.traffic_strict_store_complete := io.completion.fire &&
     req.strict_store_token_valid && !req.traffic_cacheable && req.uop.uses_stq &&
     req.uop.mem_cmd === M_XWR
   io.traffic_strict_store_complete_stq_idx := req.uop.stq_idx
@@ -474,6 +651,9 @@ class BoomIOMSHR(id: Int)(implicit edge: TLEdgeOut, p: Parameters) extends BoomM
 
   when (io.req.fire) {
     req   := io.req.bits
+    responseDone := false.B
+    completionDone := false.B
+    assert(!io.req.bits.owner_context_valid, "MMIO cannot own a cache slot")
     state := s_mem_access
   }
   when (io.mem_access.fire) {
@@ -486,7 +666,8 @@ class BoomIOMSHR(id: Int)(implicit edge: TLEdgeOut, p: Parameters) extends BoomM
     }
   }
   when (state === s_resp) {
-    when (!send_resp || io.resp.fire) {
+    when ((!send_resp || responseDone || io.resp.fire) &&
+        (!isWrite(req.uop.mem_cmd) || completionDone || io.completion.fire)) {
       state := s_idle
     }
   }
@@ -524,10 +705,21 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
 {
   val io = IO(new Bundle {
     val req  = Flipped(Vec(memWidth, Decoupled(new BoomDCacheReqInternal))) // Req from s2 of DCache pipe
+    val lookup = Input(Vec(memWidth, new BoomDCacheReqInternal))
+    val admission = Output(Vec(memWidth, new BoomCacheAdmission))
+    val install = Decoupled(new BoomCacheInstall)
+    val install_fault = Input(Vec(cfg.nMSHRs, Bool()))
+    val refill_fault = Input(Vec(cfg.nMSHRs, Bool()))
+    val replay_result = Flipped(Vec(cfg.nMSHRs, Decoupled(new BoomCacheCompletion)))
+    val replay_grant = Input(Vec(cfg.nMSHRs, Valid(new BoomDCacheReq)))
+    val mmio_completion = Decoupled(new BoomCacheCompletion)
     val req_is_probe = Input(Vec(memWidth, Bool()))
     val resp = Decoupled(new BoomDCacheResp)
     val secondary_miss = Output(Vec(memWidth, Bool()))
     val block_hit = Output(Vec(memWidth, Bool()))
+    val owner_line_valid = Output(Vec(cfg.nMSHRs, Bool()))
+    val owner_line_addr = Output(Vec(cfg.nMSHRs, UInt(coreMaxAddrBits.W)))
+    val owner_line_way = Output(Vec(cfg.nMSHRs, UInt(nWays.W)))
 
     val brupdate       = Input(new BrUpdateInfo)
     val exception    = Input(Bool())
@@ -538,11 +730,20 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
     val mem_grant    = Flipped(Decoupled(new TLBundleD(edge.bundle)))
     val mem_finish   = Decoupled(new TLBundleE(edge.bundle))
 
-    val refill     = Decoupled(new L1DataWriteReq)
+    val refill     = Decoupled(new BoomCacheRefill)
     val meta_write = Decoupled(new L1MetaWriteReq)
     val meta_read  = Decoupled(new L1MetaReadReq)
     val meta_resp  = Input(Valid(new L1Metadata))
     val replay     = Decoupled(new BoomDCacheReqInternal)
+    val replay_effect_done = Input(Bool())
+    val replay_done_id = Input(UInt(log2Ceil(cfg.nMSHRs max 2).W))
+    val replay_cancel = Input(Bool())
+    val replay_cancel_id = Input(UInt(log2Ceil(cfg.nMSHRs max 2).W))
+    val replay_effect_done_vec = Input(Vec(cfg.nMSHRs, Bool()))
+    val replay_cancel_vec = Input(Vec(cfg.nMSHRs, Bool()))
+    val replay_done_sdq_id = Output(UInt(log2Ceil(cfg.nSDQ).W))
+    val replay_done_is_write = Output(Bool())
+    val replay_done_sdq_mask = Output(UInt(cfg.nSDQ.W))
     val prefetch   = Decoupled(new BoomDCacheReq)
     val wb_req     = Decoupled(new WritebackReq(edge.bundle))
 
@@ -553,13 +754,17 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
     val wb_resp   = Input(Bool())
 
     val fence_rdy = Output(Bool())
+    // Observation only: parked s_prefetch owners are ready for a new primary
+    // request and have no active transaction. Include busy uncached MSHRs.
+    val active_transactions = Output(UInt(log2Ceil(cfg.nMSHRs + cfg.nMMIOs + 1).W))
     val probe_rdy = Output(Bool())
     val traffic_strict_store_complete = Output(Bool())
     val traffic_strict_store_complete_stq_idx = Output(UInt(stqAddrSz.W))
     val traffic_strict_store_complete_token = Output(UInt(64.W))
   })
 
-  val req_idx = OHToUInt(io.req.map(_.valid))
+  val req_idx = PriorityEncoder(VecInit(io.req.map(_.valid)).asUInt)
+  val raw = io.lookup(req_idx)
   val req     = io.req(req_idx)
   val req_is_probe = io.req_is_probe(0)
 
@@ -572,7 +777,7 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
   io.prefetch <> prefetcher.io.prefetch
 
 
-  val cacheable = edge.manager.supportsAcquireBFast(req.bits.addr, lgCacheBlockBytes.U)
+  val cacheable = edge.manager.supportsAcquireBFast(raw.addr, lgCacheBlockBytes.U)
 
   // --------------------
   // The MSHR SDQ
@@ -581,9 +786,11 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
   val sdq_rdy      = !sdq_val.andR
   val sdq_enq      = req.fire && cacheable && isWrite(req.bits.uop.mem_cmd)
   val sdq          = Mem(cfg.nSDQ, UInt(coreDataBits.W))
+  val sdqOwner = Reg(Vec(cfg.nSDQ, new BoomDCacheReqInternal))
 
   when (sdq_enq) {
     sdq(sdq_alloc_id) := req.bits.data
+    sdqOwner(sdq_alloc_id) := req.bits
   }
 
   // --------------------
@@ -625,7 +832,11 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
   val wb_req_arb     = Module(new Arbiter(new WritebackReq(edge.bundle), cfg.nMSHRs))
   val replay_arb     = Module(new Arbiter(new BoomDCacheReqInternal    , cfg.nMSHRs))
   val resp_arb       = Module(new Arbiter(new BoomDCacheResp           , cfg.nMSHRs + nIOMSHRs))
-  val refill_arb     = Module(new Arbiter(new L1DataWriteReq           , cfg.nMSHRs))
+  val refill_arb     = Module(new Arbiter(new BoomCacheRefill          , cfg.nMSHRs))
+  val installArb = Module(new Arbiter(new BoomCacheInstall, cfg.nMSHRs))
+  val mmioCompletionArb = Module(new Arbiter(new BoomCacheCompletion, nIOMSHRs))
+  io.install <> installArb.io.out
+  io.mmio_completion <> mmioCompletionArb.io.out
 
   val commit_vals    = Wire(Vec(cfg.nMSHRs, Bool()))
   val commit_addrs   = Wire(Vec(cfg.nMSHRs, UInt(coreMaxAddrBits.W)))
@@ -636,6 +847,28 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
   io.fence_rdy := true.B
   io.probe_rdy := true.B
   io.mem_grant.ready := false.B
+  io.replay_done_sdq_id := 0.U
+  io.replay_done_is_write := false.B
+  io.replay_done_sdq_mask := 0.U
+  for (i <- 0 until cfg.nMSHRs) {
+    io.owner_line_valid(i) := false.B
+    io.owner_line_addr(i) := 0.U
+    io.owner_line_way(i) := 0.U
+  }
+  for (w <- 0 until memWidth) {
+    io.admission(w) := 0.U.asTypeOf(new BoomCacheAdmission)
+    io.admission(w).kind := CacheAdmission.conflict
+    io.admission(w).way := io.lookup(w).way_en
+    io.admission(w).sdq_id := sdq_alloc_id
+    io.admission(w).slot_epoch := io.lookup(w).slot_epoch
+    io.admission(w).line_generation := io.lookup(w).line_generation
+    io.admission(w).image_valid := io.lookup(w).image_valid
+    io.admission(w).write_domain_valid := io.lookup(w).write_domain_valid
+    io.admission(w).write_domain_seq := io.lookup(w).write_domain_seq
+    when (!edge.manager.supportsAcquireBFast(io.lookup(w).addr, lgCacheBlockBytes.U)) {
+      io.admission(w).kind := CacheAdmission.mmio
+    }
+  }
 
   val mshr_alloc_idx = Wire(UInt())
   val pri_rdy = WireInit(false.B)
@@ -645,11 +878,14 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
     mshr.io.id := i.U(log2Ceil(cfg.nMSHRs).W)
 
     for (w <- 0 until memWidth) {
-      idx_matches(w)(i) := mshr.io.idx.valid && mshr.io.idx.bits === io.req(w).bits.addr(untagBits-1,blockOffBits)
-      tag_matches(w)(i) := mshr.io.tag.valid && mshr.io.tag.bits === io.req(w).bits.addr >> untagBits
-      way_matches(w)(i) := mshr.io.way.valid && mshr.io.way.bits === io.req(w).bits.way_en
+      idx_matches(w)(i) := mshr.io.idx.valid && mshr.io.idx.bits === io.lookup(w).addr(untagBits-1,blockOffBits)
+      tag_matches(w)(i) := mshr.io.tag.valid && mshr.io.tag.bits === io.lookup(w).addr >> untagBits
+      way_matches(w)(i) := mshr.io.way.valid && mshr.io.way.bits === io.lookup(w).way_en
     }
     wb_tag_list(i) := mshr.io.wb_req.bits.tag
+    io.owner_line_valid(i) := mshr.io.idx.valid
+    io.owner_line_addr(i) := Cat(mshr.io.tag.bits, mshr.io.idx.bits) << blockOffBits
+    io.owner_line_way(i) := mshr.io.way.bits
 
 
 
@@ -660,8 +896,31 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
 
     mshr.io.req_sec_val  := req.valid && sdq_rdy && tag_match(req_idx) && idx_matches(req_idx)(i) && cacheable
     mshr.io.req          := req.bits
+    installArb.io.in(i) <> mshr.io.install
+    mshr.io.install_fault := io.install_fault(i)
+    mshr.io.refill_fault := io.refill_fault(i)
+    mshr.io.replay_result <> io.replay_result(i)
+    mshr.io.replay_grant := io.replay_grant(i)
+    when (!idx_match(req_idx) && i.U === mshr_alloc_idx && cacheable) {
+      io.admission(req_idx).kind := Mux(raw.tag_match, CacheAdmission.upgrade, CacheAdmission.primary)
+      io.admission(req_idx).mshr_id := i.U
+      io.admission(req_idx).transaction_token := mshr.io.next_transaction_token
+    }
+    when (idx_matches(req_idx)(i) && tag_match(req_idx) && cacheable) {
+      io.admission(req_idx).kind := CacheAdmission.secondary
+      io.admission(req_idx).mshr_id := i.U
+      io.admission(req_idx).transaction_token := mshr.io.owner.transaction_token
+      io.admission(req_idx).way := mshr.io.owner.way_en
+      io.admission(req_idx).slot_epoch := mshr.io.owner.slot_epoch
+      io.admission(req_idx).line_generation := mshr.io.owner.line_generation
+      io.admission(req_idx).image_valid := mshr.io.owner.image_valid
+      io.admission(req_idx).write_domain_valid := mshr.io.write_domain_valid || raw.write_domain_valid
+      io.admission(req_idx).write_domain_seq := Mux(mshr.io.write_domain_valid,
+        mshr.io.write_domain_seq, raw.write_domain_seq)
+    }
+    mshr.io.replay_effect_done := io.replay_effect_done_vec(i)
+    mshr.io.replay_cancel := io.replay_cancel_vec(i)
     mshr.io.req_is_probe := req_is_probe
-    mshr.io.req.sdq_id   := sdq_alloc_id
 
     // Clear because of a FENCE, a request to the same idx as a prefetched line,
     // a probe to that prefetched line, all mshrs are in use
@@ -713,6 +972,25 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
     mshr
   }
 
+  // Free by the immutable issued descriptor, never by a mutable RPQ head.
+  val retiredStores = mshrs.map(m => m.io.retired.valid && isWrite(m.io.retired.bits.uop.mem_cmd))
+  val free_sdq_mask = (0 until cfg.nMSHRs).map { i =>
+    val r = mshrs(i).io.retired.bits
+    val owner = sdqOwner(r.sdq_id)
+    val matches = sdq_val(r.sdq_id) && owner.request_token === r.request_token &&
+      owner.request_token_valid && r.request_token_valid &&
+      owner.transaction_token === r.transaction_token && owner.slot_epoch === r.slot_epoch &&
+      owner.owner_way === r.owner_way && owner.replay_mshr_id === r.replay_mshr_id &&
+      owner.effect_token_valid && r.effect_token_valid && owner.effect_token === r.effect_token
+    when (retiredStores(i)) { assert(matches, "SDQ terminal owner mismatch") }
+    UIntToOH(r.sdq_id, cfg.nSDQ) & Fill(cfg.nSDQ, retiredStores(i) && matches)
+  }.reduce(_ | _)
+  io.replay_done_sdq_mask := free_sdq_mask
+  io.replay_done_is_write := retiredStores.reduce(_ || _)
+  io.replay_done_sdq_id := Mux1H(PriorityEncoderOH(VecInit(retiredStores).asUInt).asBools,
+    mshrs.map(_.io.retired.bits.sdq_id))
+  val replay_terminal_vec = VecInit(mshrs.map(_.io.retired.valid))
+
   // Try to round-robin the MSHRs
   val mshr_head      = RegInit(0.U(log2Ceil(cfg.nMSHRs).W))
   mshr_alloc_idx    := RegNext(AgePriorityEncoder(mshrs.map(m=>m.io.req_pri_rdy), mshr_head))
@@ -736,7 +1014,10 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
     mmio_alloc_arb.io.in(i).valid := mshr.io.req.ready
     mmio_alloc_arb.io.in(i).bits  := DontCare
     mshr.io.req.valid := mmio_alloc_arb.io.in(i).ready
-    mshr.io.req.bits  := req.bits
+    BoomDCacheReq.copyBase(mshr.io.req.bits, req.bits)
+    mshr.io.req.bits.owner_context_valid := false.B
+    mshr.io.req.bits.owner_way := 0.U
+    mmioCompletionArb.io.in(i) <> mshr.io.completion
 
     mmio_rdy = mmio_rdy || mshr.io.req.ready
 
@@ -752,6 +1033,9 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
     }
     mshr
   }
+
+  io.active_transactions := PopCount(VecInit(
+    mshrs.map(m => !m.io.req_pri_rdy) ++ mmios.map(m => !m.io.req.ready)))
 
   val strictStoreComplete = mmios.map(_.io.traffic_strict_store_complete)
   io.traffic_strict_store_complete := strictStoreComplete.reduce(_||_)
@@ -779,13 +1063,21 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
   }
   io.refill         <> refill_arb.io.out
 
-  val free_sdq = io.replay.fire && isWrite(io.replay.bits.uop.mem_cmd)
+  val replay_terminal = replay_terminal_vec.reduce(_ || _)
 
   io.replay <> replay_arb.io.out
   io.replay.bits.data := sdq(replay_arb.io.out.bits.sdq_id)
+  when (io.replay.valid && isWrite(io.replay.bits.uop.mem_cmd)) {
+    val r = io.replay.bits
+    val owner = sdqOwner(r.sdq_id)
+    assert(sdq_val(r.sdq_id) && owner.request_token_valid && r.request_token_valid &&
+      owner.request_token === r.request_token && owner.transaction_token === r.transaction_token &&
+      owner.slot_epoch === r.slot_epoch && owner.replay_mshr_id === r.replay_mshr_id &&
+      owner.effect_token === r.effect_token, "replay read from stale SDQ owner")
+  }
 
-  when (io.replay.valid || sdq_enq) {
-    sdq_val := sdq_val & ~(UIntToOH(replay_arb.io.out.bits.sdq_id) & Fill(cfg.nSDQ, free_sdq)) |
+  when (io.replay.valid || replay_terminal || sdq_enq) {
+    sdq_val := sdq_val & ~free_sdq_mask |
       PriorityEncoderOH(~sdq_val(cfg.nSDQ-1,0)) & Fill(cfg.nSDQ, sdq_enq)
   }
 

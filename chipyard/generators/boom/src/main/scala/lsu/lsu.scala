@@ -45,6 +45,7 @@ package boom.lsu
 
 import chisel3._
 import chisel3.util._
+import chisel3.util.experimental.BoringUtils
 
 import org.chipsalliance.cde.config.Parameters
 import freechips.rocketchip.rocket
@@ -70,6 +71,13 @@ class LSUExeIO(implicit p: Parameters) extends BoomBundle()(p)
   val fresp    = new DecoupledIO(new boom.exu.ExeUnitResp(xLen+1)) // TODO: Should this be fLen?
 }
 
+object BoomDCacheReq {
+  // Copy the shared request contract without depending on subclass fields.
+  def copyBase(dst: BoomDCacheReq, src: BoomDCacheReq)(implicit p: Parameters): Unit = {
+    for (name <- (new BoomDCacheReq).elements.keys) { dst.elements(name) := src.elements(name) }
+  }
+}
+
 class BoomDCacheReq(implicit p: Parameters) extends BoomBundle()(p)
   with HasBoomUOP
 {
@@ -85,6 +93,26 @@ class BoomDCacheReq(implicit p: Parameters) extends BoomBundle()(p)
   // 可缓存属性在 DCache 入口确定，并随请求一直传播到最终完成点。
   val traffic_cacheable = Bool()
   val packet_seq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
+  // Local L1 ownership identity.  These fields are assigned by DCache when
+  // a request first enters the cache and then travel through an MSHR/replay.
+  val slot_epoch = UInt(16.W)
+  val line_generation = UInt(32.W)
+  val image_valid = Bool() // false for imported images without Phase-2 provenance
+  val owner_context_valid = Bool()
+  val owner_way = UInt(dcacheParams.nWays.W)
+  val admission = UInt(3.W)
+  val transaction_token = UInt(32.W)
+  val request_token_valid = Bool()
+  val request_token = UInt(64.W)
+  val write_domain_valid = Bool()
+  val write_domain_seq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
+  val effect_token_valid = Bool()
+  val effect_token = UInt(64.W)
+  val replay_retry = Bool()
+  // These are local routing indices.  Eight bits covers the configured BOOM
+  // MSHR/SDQ sizes and keeps the base request usable by DCache S1/S2 wires.
+  val sdq_id = UInt(8.W)
+  val replay_mshr_id = UInt(8.W)
   // Stable identity assigned only at architectural store commit.  The token
   // follows MSHR/RPQ replay so a stale STQ index cannot qualify a new store.
   val strict_store_token_valid = Bool()
@@ -99,6 +127,8 @@ class BoomDCacheResp(implicit p: Parameters) extends BoomBundle()(p)
   val traffic_check = Bool()
   val traffic_seen = Bool()
   val traffic_cacheable = Bool()
+  val request_token_valid = Bool()
+  val request_token = UInt(64.W)
 }
 
 class LSUDMemIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
@@ -111,6 +141,7 @@ class LSUDMemIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
   val resp        = Flipped(Vec(memWidth, new ValidIO(new BoomDCacheResp)))
   // In our response stage, if we get a nack, we need to reexecute
   val nack        = Flipped(Vec(memWidth, new ValidIO(new BoomDCacheReq)))
+  val store_done  = Flipped(Decoupled(new BoomCacheCompletion))
 
   val brupdate       = Output(new BrUpdateInfo)
   val exception    = Output(Bool())
@@ -131,6 +162,7 @@ class LSUDMemIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
   // LR/SC/AMO diagnostics remain in the DCache. Normal load/store traffic is
   // exported exclusively through the architectural/strict counter vector.
   val traffic_check_state          = Input(Bool())
+  val csr_cycle                    = Input(UInt(64.W)) // Observation timestamp.
   val traffic_lr_complete           = Output(Vec(memWidth, Bool()))
   val traffic_sc_success_complete   = Output(Vec(memWidth, Bool()))
   val traffic_sc_fail_complete      = Output(Vec(memWidth, Bool()))
@@ -235,6 +267,7 @@ class LDQEntry(implicit p: Parameters) extends BoomBundle()(p)
 
   val executed            = Bool() // load sent to memory, reset by NACKs
   val succeeded           = Bool()
+  val functional_token = UInt(64.W)
   val order_fail          = Bool()
   val observed            = Bool()
   // 第一次被 DCache 接收后置位，队列项回收后随新项清零。
@@ -269,6 +302,9 @@ class STQEntry(implicit p: Parameters) extends BoomBundle()(p)
 
   val committed           = Bool() // committed by ROB
   val succeeded           = Bool() // D$ has ack'd this, we don't need to maintain this anymore
+  val functional_token    = UInt(64.W)
+  val functional_inflight = Bool()
+  val functional_done     = Bool()
   // 第一次被 DCache 接收后置位，队列项回收后随新项清零。
   val traffic_seen        = Bool()
   // 首次地址译码完成时锁存统计资格，并随请求携带，避免延迟完成被之后的
@@ -301,6 +337,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   val stq_tail         = Reg(UInt(stqAddrSz.W))
   val stq_commit_head  = Reg(UInt(stqAddrSz.W)) // point to next store to commit
   val stq_execute_head = Reg(UInt(stqAddrSz.W)) // point to next store to execute
+  val trafficCountingPrev = RegNext(io.dmem.traffic_counting, false.B)
+  val trafficStopObservation = trafficCountingPrev && !io.dmem.traffic_counting
 
 
   // If we got a mispredict, the tail will be misaligned for 1 extra cycle
@@ -450,6 +488,9 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   // Decode stage
   var ld_enq_idx = ldq_tail
   var st_enq_idx = stq_tail
+  val functionalTokenCounter = RegInit(1.U(64.W))
+  val hellaFunctionalToken = Reg(UInt(64.W))
+  var nextFunctionalToken = functionalTokenCounter
 
   val stq_nonempty = (0 until numStqEntries).map{ i => stq(i).valid }.reduce(_||_) =/= 0.U
 
@@ -479,6 +520,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       ldq(ld_enq_idx).bits.vaddr.valid     := false.B
       ldq(ld_enq_idx).bits.executed        := false.B
       ldq(ld_enq_idx).bits.succeeded       := false.B
+      ldq(ld_enq_idx).bits.functional_token := nextFunctionalToken
       ldq(ld_enq_idx).bits.order_fail      := false.B
       ldq(ld_enq_idx).bits.observed        := false.B
       ldq(ld_enq_idx).bits.forward_std_val := false.B
@@ -502,6 +544,9 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       stq(st_enq_idx).bits.data.valid := false.B
       stq(st_enq_idx).bits.committed  := false.B
       stq(st_enq_idx).bits.succeeded  := false.B
+      stq(st_enq_idx).bits.functional_token := nextFunctionalToken
+      stq(st_enq_idx).bits.functional_inflight := false.B
+      stq(st_enq_idx).bits.functional_done := false.B
       stq(st_enq_idx).bits.traffic_seen := false.B
       stq(st_enq_idx).bits.traffic_scope_valid := false.B
       stq(st_enq_idx).bits.traffic_check := false.B
@@ -524,7 +569,12 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
                                  st_enq_idx)
 
     assert(!(dis_ld_val && dis_st_val), "A UOP is trying to go into both the LDQ and the STQ")
+    nextFunctionalToken = nextFunctionalToken + (dis_ld_val || dis_st_val).asUInt
   }
+
+  functionalTokenCounter := nextFunctionalToken + io.hellacache.req.fire.asUInt
+  assert(!functionalTokenCounter(63), "functional request token exhausted")
+  when (io.hellacache.req.fire) { hellaFunctionalToken := nextFunctionalToken }
 
   ldq_tail := ld_enq_idx
   stq_tail := st_enq_idx
@@ -672,6 +722,11 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   // Can we commit a store
   val can_fire_store_commit  = widthMap(w =>
                                ( stq_commit_e.valid                           &&
+                                !stq_commit_e.bits.functional_inflight        &&
+                                !stq_commit_e.bits.functional_done            &&
+                                !(0 until numStqEntries).map(i => stq(i).valid &&
+                                  stq(i).bits.functional_inflight &&
+                                  IsOlder(i.U, stq_execute_head, stq_head)).reduce(_ || _) &&
                                 !stq_commit_e.bits.uop.is_fence               &&
                                 !mem_xcpt_valid                               &&
                                 !stq_commit_e.bits.uop.exception              &&
@@ -943,6 +998,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
 
   for (w <- 0 until memWidth) {
     dmem_req(w).valid := false.B
+    dmem_req(w).bits := 0.U.asTypeOf(new BoomDCacheReq)
     dmem_req(w).bits.uop   := NullMicroOp
     dmem_req(w).bits.addr  := 0.U
     dmem_req(w).bits.data  := 0.U
@@ -952,6 +1008,13 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     dmem_req(w).bits.traffic_arch_check := false.B
     dmem_req(w).bits.traffic_cacheable := false.B
     dmem_req(w).bits.packet_seq := 0.U
+    dmem_req(w).bits.slot_epoch := 0.U
+    dmem_req(w).bits.line_generation := 0.U
+    dmem_req(w).bits.effect_token_valid := false.B
+    dmem_req(w).bits.effect_token := 0.U
+    dmem_req(w).bits.replay_retry := false.B
+    dmem_req(w).bits.sdq_id := 0.U
+    dmem_req(w).bits.replay_mshr_id := 0.U
     dmem_req(w).bits.strict_store_token_valid := false.B
     dmem_req(w).bits.strict_store_token := 0.U
 
@@ -1025,12 +1088,17 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       dmem_req(w).bits.strict_store_token_valid :=
         stq_commit_e.bits.strict_store_token_valid
       dmem_req(w).bits.strict_store_token := stq_commit_e.bits.strict_store_token
+      dmem_req(w).bits.effect_token_valid := true.B
+      dmem_req(w).bits.effect_token := stq_commit_e.bits.functional_token
 
       stq_execute_head                     := Mux(dmem_req_fire(w),
                                                 WrapInc(stq_execute_head, numStqEntries),
                                                 stq_execute_head)
 
       stq(stq_execute_head).bits.succeeded := false.B
+      when (dmem_req_fire(w)) {
+        stq(stq_execute_head).bits.functional_inflight := true.B
+      }
     } .elsewhen (will_fire_load_wakeup(w)) {
       dmem_req(w).valid      := true.B
       dmem_req(w).bits.addr  := ldq_wakeup_e.bits.addr.bits
@@ -1159,6 +1227,35 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     }
   }
   val will_fire_stdf_incoming = io.core.fp_stdata.fire
+  // Bind every producer, including retries and the Hella adapter, to its
+  // functional allocation rather than the measurement session.
+  for (w <- 0 until memWidth) {
+    val r = dmem_req(w).bits
+    r.request_token_valid := dmem_req(w).valid
+    r.request_token := Mux(r.is_hella, hellaFunctionalToken,
+      Mux(r.uop.uses_stq, stq(r.uop.stq_idx).bits.functional_token,
+        ldq(r.uop.ldq_idx).bits.functional_token))
+    when (r.is_hella && rocket.isWrite(r.uop.mem_cmd)) {
+      r.effect_token_valid := true.B
+      r.effect_token := hellaFunctionalToken
+    }
+    r.write_domain_valid := rocket.isWrite(r.uop.mem_cmd)
+    r.write_domain_seq := r.packet_seq
+    when (r.uop.uses_ldq) {
+      r.packet_seq := Mux(ldq(r.uop.ldq_idx).bits.traffic_scope_valid,
+        ldq(r.uop.ldq_idx).bits.packet_seq, io.core.active_packet_seq)
+    }
+    when (dmem_req_fire(w)) {
+      printf("STAGE1_TX ISSUE source=LSU cmd=%x stq=%x ldq=%x req=%x effect=%x seq=%x addr=%x cycle=%x\n",
+        r.uop.mem_cmd, r.uop.stq_idx, r.uop.ldq_idx, r.request_token,
+        r.effect_token, r.packet_seq, r.addr, io.dmem.csr_cycle)
+      when (r.uop.mem_cmd === rocket.M_XRD) {
+        printf("STAGE1_TX LOAD_REQ source=BOOM token=%x addr=%x pc=%x ldq=%x cacheable=%x cycle=%x\n",
+          r.request_token, r.addr, r.uop.debug_pc, r.uop.ldq_idx,
+          r.traffic_cacheable, io.dmem.csr_cycle)
+      }
+    }
+  }
   require (xLen >= fLen) // for correct SDQ size
 
   //-------------------------------------------------------------
@@ -1572,10 +1669,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     val nack = io.dmem.nack(w).bits
     val entry = stq(nack.uop.stq_idx)
     io.dmem.nack(w).valid && nack.uop.uses_stq && entry.valid &&
-      !entry.bits.succeeded &&
-      (!nack.strict_store_token_valid ||
-        (entry.bits.strict_store_token_valid &&
-          entry.bits.strict_store_token === nack.strict_store_token))
+      !entry.bits.functional_done && nack.request_token_valid &&
+      entry.bits.functional_token === nack.request_token
   })
 
   for (w <- 0 until memWidth) {
@@ -1589,9 +1684,13 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       }
         .elsewhen (io.dmem.nack(w).bits.uop.uses_ldq)
       {
-        assert(ldq(io.dmem.nack(w).bits.uop.ldq_idx).bits.executed)
-        ldq(io.dmem.nack(w).bits.uop.ldq_idx).bits.executed  := false.B
-        nacking_loads(io.dmem.nack(w).bits.uop.ldq_idx) := true.B
+        val idx = io.dmem.nack(w).bits.uop.ldq_idx
+        when (ldq(idx).valid && io.dmem.nack(w).bits.request_token_valid &&
+          ldq(idx).bits.functional_token === io.dmem.nack(w).bits.request_token) {
+          assert(ldq(idx).bits.executed)
+          ldq(idx).bits.executed := false.B
+          nacking_loads(idx) := true.B
+        }
       }
         .otherwise
       {
@@ -1600,17 +1699,33 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
               IsOlder(io.dmem.nack(w).bits.uop.stq_idx, stq_execute_head, stq_head)) {
           stq_execute_head := io.dmem.nack(w).bits.uop.stq_idx
         }
+        when (storeNackMatchesLiveStq(w)) {
+          stq(io.dmem.nack(w).bits.uop.stq_idx).bits.succeeded := false.B
+          stq(io.dmem.nack(w).bits.uop.stq_idx).bits.functional_inflight := false.B
+        }
       }
     }
     // Handle the response
     when (io.dmem.resp(w).valid)
     {
-      when (io.dmem.resp(w).bits.uop.uses_ldq)
+      when (!io.dmem.resp(w).bits.is_hella && io.dmem.resp(w).bits.uop.uses_ldq &&
+          ldq(io.dmem.resp(w).bits.uop.ldq_idx).valid &&
+          io.dmem.resp(w).bits.request_token_valid &&
+          io.dmem.resp(w).bits.request_token ===
+            ldq(io.dmem.resp(w).bits.uop.ldq_idx).bits.functional_token)
       {
         assert(!io.dmem.resp(w).bits.is_hella)
         val ldq_idx = io.dmem.resp(w).bits.uop.ldq_idx
         val send_iresp = ldq(ldq_idx).bits.uop.dst_rtype === RT_FIX
         val send_fresp = ldq(ldq_idx).bits.uop.dst_rtype === RT_FLT
+
+        when (io.dmem.resp(w).bits.uop.mem_cmd === rocket.M_XRD) {
+          printf("STAGE1_TX LOAD_RESP source=BOOM token=%x addr=%x pc=%x ldq=%x cacheable=%x data=%x cycle=%x\n",
+            io.dmem.resp(w).bits.request_token,
+            ldq(ldq_idx).bits.addr.bits, ldq(ldq_idx).bits.uop.debug_pc,
+            ldq_idx, io.dmem.resp(w).bits.traffic_cacheable,
+            io.dmem.resp(w).bits.data, io.dmem.csr_cycle)
+        }
 
         io.core.exe(w).iresp.bits.uop      := ldq(ldq_idx).bits.uop
         io.core.exe(w).fresp.bits.uop      := ldq(ldq_idx).bits.uop
@@ -1646,7 +1761,11 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
             io.dmem.resp(w).bits.traffic_cacheable, 1.U, 2.U)
         }
       }
-        .elsewhen (io.dmem.resp(w).bits.uop.uses_stq)
+        .elsewhen (!io.dmem.resp(w).bits.is_hella && io.dmem.resp(w).bits.uop.uses_stq &&
+          stq(io.dmem.resp(w).bits.uop.stq_idx).valid &&
+          io.dmem.resp(w).bits.request_token_valid &&
+          io.dmem.resp(w).bits.request_token ===
+            stq(io.dmem.resp(w).bits.uop.stq_idx).bits.functional_token)
       {
         assert(!io.dmem.resp(w).bits.is_hella)
         val stq_idx = io.dmem.resp(w).bits.uop.stq_idx
@@ -1664,7 +1783,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
           count_amo && io.dmem.resp(w).bits.traffic_cacheable
         io.dmem.traffic_amo_uncache_complete(w) :=
           count_amo && !io.dmem.resp(w).bits.traffic_cacheable
-        stq(stq_idx).bits.succeeded := true.B
+        // A cache response can be an acceptance or an AMO result.  Actual
+        // completion is the independent, identity-checked store_done channel.
         stq(stq_idx).bits.traffic_seen := true.B
         when (io.dmem.resp(w).bits.uop.is_amo) {
           dmem_resp_fired(w) := true.B
@@ -1839,9 +1959,11 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     // entry must still count if it retires after traffic_stop; sampling the
     // live global window here drops precisely those delayed tail accesses.
     val arch_store_in_scope = arch_store && stq(idx).valid &&
-      stq(idx).bits.traffic_scope_valid && stq(idx).bits.packet_seq =/= 0.U
+      stq(idx).bits.traffic_scope_valid && stq(idx).bits.traffic_check &&
+      stq(idx).bits.packet_seq =/= 0.U
     val arch_load_in_scope = arch_load && ldq(idx).valid &&
-      ldq(idx).bits.traffic_scope_valid && ldq(idx).bits.packet_seq =/= 0.U
+      ldq(idx).bits.traffic_scope_valid && ldq(idx).bits.traffic_check &&
+      ldq(idx).bits.packet_seq =/= 0.U
     val load_path_is_cache_response = ldq(idx).bits.traffic_path === 1.U
     val load_path_is_uncache = ldq(idx).bits.traffic_path === 2.U
     val load_path_is_forward = ldq(idx).bits.traffic_path === 3.U
@@ -1849,10 +1971,31 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     val load_path_is_valid = ldq(idx).bits.traffic_path_valid &&
       (load_path_is_cache || load_path_is_uncache)
 
+    // Functional commits are independent of the statistics qualification.
+    when (io.core.commit.arch_valids(w) && io.core.commit.uops(w).uses_stq) {
+      printf("STAGE1_TX ARCH_STORE token=%x stq=%x pc=%x addr=%x cmd=%x size=%x fence=%x seq=%x check=%x cycle=%x\n",
+        stq(idx).bits.functional_token, idx, stq(idx).bits.uop.debug_pc,
+        stq(idx).bits.addr.bits, stq(idx).bits.uop.mem_cmd,
+        stq(idx).bits.uop.mem_size, stq(idx).bits.uop.is_fence,
+        stq(idx).bits.packet_seq, stq(idx).bits.traffic_check, io.dmem.csr_cycle)
+    }
+
+    when (arch_load && ldq(idx).valid) {
+      printf("STAGE1_TX LOAD_TERMINAL source=BOOM token=%x addr=%x pc=%x ldq=%x scope=%x cacheable=%x path=%x seq=%x check=%x cycle=%x\n",
+        ldq(idx).bits.functional_token, ldq(idx).bits.addr.bits,
+        ldq(idx).bits.uop.debug_pc, idx, ldq(idx).bits.traffic_scope_valid,
+        ldq(idx).bits.traffic_cacheable, ldq(idx).bits.traffic_path,
+        ldq(idx).bits.packet_seq, ldq(idx).bits.traffic_check, io.dmem.csr_cycle)
+    }
+
     when (arch_store_in_scope) {
       archStoreEvents(w) := true.B
       archStoreCacheEvents(w) := stq(idx).bits.traffic_cacheable
       archStoreUncacheEvents(w) := !stq(idx).bits.traffic_cacheable
+      printf("STAGE1_TX BOOM_STAT kind=STORE class=ARCH source=BOOM token=%x strict_token=%x addr=%x pc=%x cacheable=%x seq=%x cycle=%x\n",
+        stq(idx).bits.functional_token, temp_strict_store_token,
+        stq(idx).bits.addr.bits, stq(idx).bits.uop.debug_pc,
+        stq(idx).bits.traffic_cacheable, stq(idx).bits.packet_seq, io.dmem.csr_cycle)
       when (stq(idx).bits.traffic_cacheable) {
         io.dmem.address_stats_event(w).valid := true.B
         io.dmem.address_stats_event(w).bits.addr := stq(idx).bits.addr.bits
@@ -1865,6 +2008,10 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       archLoadEvents(w) := true.B
       archLoadCacheEvents(w) := ldq(idx).bits.traffic_cacheable
       archLoadUncacheEvents(w) := !ldq(idx).bits.traffic_cacheable
+      printf("STAGE1_TX BOOM_STAT kind=LOAD class=ARCH source=BOOM token=%x addr=%x pc=%x cacheable=%x path=%x seq=%x cycle=%x\n",
+        ldq(idx).bits.functional_token, ldq(idx).bits.addr.bits,
+        ldq(idx).bits.uop.debug_pc, ldq(idx).bits.traffic_cacheable,
+        ldq(idx).bits.traffic_path, ldq(idx).bits.packet_seq, io.dmem.csr_cycle)
       when (ldq(idx).bits.traffic_cacheable) {
         io.dmem.address_stats_event(w).valid := true.B
         io.dmem.address_stats_event(w).bits.addr := ldq(idx).bits.addr.bits
@@ -1883,6 +2030,12 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         "[traffic] architected load missing unique completion path")
       assert(ldq(idx).bits.traffic_cacheable === load_path_is_cache,
         "[traffic] architected load cacheable classification inconsistent with completion path")
+      when (load_path_is_valid) {
+        printf("STAGE1_TX BOOM_STAT kind=LOAD class=STRICT source=BOOM token=%x addr=%x pc=%x cacheable=%x path=%x\n",
+          ldq(idx).bits.functional_token, ldq(idx).bits.addr.bits,
+          ldq(idx).bits.uop.debug_pc, ldq(idx).bits.traffic_cacheable,
+          ldq(idx).bits.traffic_path)
+      }
     }
 
     when (retire_store)
@@ -1967,26 +2120,20 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         io.dmem.traffic_store_uncache_complete_token
   val completedStrictStores =
     cacheCompletionAccepted.asUInt + uncacheCompletionAccepted.asUInt
-  val cacheCompletionAtExecuteHead = cacheCompletionAccepted &&
-    cacheCompletionIdx === stq_execute_head
-  val uncacheCompletionAtExecuteHead = uncacheCompletionAccepted &&
-    uncacheCompletionIdx === stq_execute_head
-  val strictStoreCompletionAtExecuteHead =
-    cacheCompletionAtExecuteHead || uncacheCompletionAtExecuteHead
-  // A completion may arrive from an older DCache replay while LSU is still
-  // retrying the same STQ entry. Advance the execute pointer when that physical
-  // write consumes the entry's token, unless this cycle already advanced it by
-  // accepting the same store request or must roll back for an older nack.
-  val storeRequestFired = (0 until memWidth).map { w =>
-    dmem_req_fire(w) && dmem_req(w).bits.uop.uses_stq
-  }.reduce(_ || _)
-  val executeStoreRequestFiredForCompletion = (0 until memWidth).map { w =>
-    dmem_req_fire(w) && dmem_req(w).bits.uop.uses_stq &&
-      ((cacheCompletionAccepted &&
-        dmem_req(w).bits.uop.stq_idx === cacheCompletionIdx) ||
-       (uncacheCompletionAccepted &&
-        dmem_req(w).bits.uop.stq_idx === uncacheCompletionIdx))
-  }.reduce(_ || _)
+  when (cacheCompletionAccepted) {
+    printf("STAGE1_TX BOOM_STAT kind=STORE class=STRICT_COMPLETE source=BOOM token=%x strict_token=%x addr=%x pc=%x cacheable=1\n",
+      stq(cacheCompletionIdx).bits.functional_token,
+      io.dmem.traffic_store_cache_complete_token,
+      stq(cacheCompletionIdx).bits.addr.bits,
+      stq(cacheCompletionIdx).bits.uop.debug_pc)
+  }
+  when (uncacheCompletionAccepted) {
+    printf("STAGE1_TX BOOM_STAT kind=STORE class=STRICT_COMPLETE source=BOOM token=%x strict_token=%x addr=%x pc=%x cacheable=0\n",
+      stq(uncacheCompletionIdx).bits.functional_token,
+      io.dmem.traffic_store_uncache_complete_token,
+      stq(uncacheCompletionIdx).bits.addr.bits,
+      stq(uncacheCompletionIdx).bits.uop.debug_pc)
+  }
   val olderStoreNackForcesReplay = (0 until memWidth).map { w =>
     storeNackMatchesLiveStq(w) && !io.dmem.nack(w).bits.is_hella &&
       IsOlder(io.dmem.nack(w).bits.uop.stq_idx, stq_execute_head, stq_head)
@@ -2048,22 +2195,13 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     }
     when (cacheCompletionAccepted) {
       strictStoreCache := strictStoreCache + 1.U
-      stq(cacheCompletionIdx).bits.succeeded := true.B
       stq(cacheCompletionIdx).bits.strict_store_token_valid := false.B
       stq(cacheCompletionIdx).bits.strict_store_token := 0.U
     }
     when (uncacheCompletionAccepted) {
       strictStoreUncache := strictStoreUncache + 1.U
-      stq(uncacheCompletionIdx).bits.succeeded := true.B
       stq(uncacheCompletionIdx).bits.strict_store_token_valid := false.B
       stq(uncacheCompletionIdx).bits.strict_store_token := 0.U
-    }
-    when (strictStoreCompletionAtExecuteHead &&
-      !olderStoreNackForcesReplay) {
-      val completionAdvance = WrapInc(stq_execute_head, numStqEntries)
-      stq_execute_head := Mux(storeRequestFired &&
-        !executeStoreRequestFiredForCompletion,
-        WrapInc(completionAdvance, numStqEntries), completionAdvance)
     }
     when (strictLoadEvents.reduce(_|_)) {
       strictLoadTotal := strictLoadTotal + PopCount(strictLoadEvents)
@@ -2081,29 +2219,102 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     }
   }
 
+  // Live post-eval exit probes. No observer feeds the LSU control path.
+  require(numStqEntries <= 64, "Stage 1 exit probe capacity")
+  val stage1LsuState = Seq(
+    PopCount(stq.map(_.valid)),
+    PopCount(stq.map(e => e.valid && e.bits.committed)),
+    PopCount(stq.map(e => e.valid && e.bits.functional_inflight)),
+    PopCount(stq.map(e => e.valid && e.bits.functional_done)),
+    PopCount(ldq.map(_.valid)),
+    PopCount(ldq.map(e => e.valid && !e.bits.succeeded)),
+    (hella_state =/= h_ready).asUInt, io.dmem.req.valid.asUInt,
+    io.dmem.force_order.asUInt)
+  for ((value, i) <- stage1LsuState.zipWithIndex) {
+    val probe = Wire(UInt(64.W))
+    probe := value
+    BoringUtils.addSource(probe, s"stage1_lsu_${tileParams.hartId}_$i")
+  }
+  for (i <- 0 until 64) {
+    val probe = WireInit(0.U(256.W))
+    if (i < numStqEntries) {
+      val e = stq(i)
+      val flags = Cat(e.bits.data.valid, e.bits.addr_is_virtual, e.bits.addr.valid,
+        e.bits.uop.is_fence, e.bits.functional_done, e.bits.functional_inflight,
+        e.bits.committed, e.valid).pad(64)
+      probe := Cat(flags, e.bits.addr.bits.pad(64), e.bits.uop.debug_pc.pad(64),
+        e.bits.functional_token)
+    }
+    BoringUtils.addSource(probe, s"stage1_stq_${tileParams.hartId}_$i")
+  }
+
+  when (trafficStopObservation) {
+    printf("STAGE1_TX EXIT_STATE snapshot=traffic_stop stq_valid=%x stq_committed=%x stq_inflight=%x stq_done=%x stq_head=%x stq_execute_head=%x stq_commit_head=%x\n",
+      PopCount(stq.map(_.valid)),
+      PopCount(stq.map(e => e.valid && e.bits.committed)),
+      PopCount(stq.map(e => e.valid && e.bits.functional_inflight)),
+      PopCount(stq.map(e => e.valid && e.bits.functional_done)),
+      stq_head, stq_execute_head, stq_commit_head)
+  }
+
   // store has been committed AND successfully sent data to memory
+  io.dmem.store_done.ready := true.B
+  val functionalDoneReq = io.dmem.store_done.bits.req
+  val functionalDoneIdx = functionalDoneReq.uop.stq_idx
+  val functionalDoneMatches = stq(functionalDoneIdx).valid &&
+    functionalDoneReq.request_token_valid &&
+    functionalDoneReq.effect_token_valid &&
+    stq(functionalDoneIdx).bits.functional_token === functionalDoneReq.request_token &&
+    stq(functionalDoneIdx).bits.functional_token === functionalDoneReq.effect_token
+  when (io.dmem.store_done.fire && functionalDoneReq.uop.uses_stq && !functionalDoneReq.is_hella) {
+    printf("STAGE1_TX STORE_DONE cmd=%x size=%x stq=%x req=%x effect=%x status=%x data=%x cycle=%x\n",
+      functionalDoneReq.uop.mem_cmd, functionalDoneReq.uop.mem_size, functionalDoneReq.uop.stq_idx,
+      functionalDoneReq.request_token, functionalDoneReq.effect_token,
+      io.dmem.store_done.bits.status, io.dmem.store_done.bits.data, io.dmem.csr_cycle)
+    assert(functionalDoneMatches, "store completion does not match live functional STQ owner")
+    assert(io.dmem.store_done.bits.status =/= CacheTerminal.retry,
+      "RETRY is not a store terminal completion")
+    when (functionalDoneMatches) {
+      assert(!stq(functionalDoneIdx).bits.functional_done, "duplicate functional completion")
+      stq(functionalDoneIdx).bits.functional_done := true.B
+      stq(functionalDoneIdx).bits.functional_inflight := false.B
+      stq(functionalDoneIdx).bits.succeeded := true.B
+      // A delayed continuation may finish after a nack rewound this pointer.
+      // Completion advances it using functional identity, independently of
+      // whether the request was counted in a strict measurement window.
+      when (functionalDoneIdx === stq_execute_head && !olderStoreNackForcesReplay) {
+        stq_execute_head := WrapInc(stq_execute_head, numStqEntries)
+      }
+    }
+  }
   when (stq(stq_head).valid && stq(stq_head).bits.committed)
   {
     when (stq(stq_head).bits.uop.is_fence && !io.dmem.ordered) {
       io.dmem.force_order := true.B
       store_needs_order   := true.B
     }
-    // A strict store can receive the cache's early "MSHR accepted" response
-    // before a miss replay performs the physical data-array write. Keep its
-    // STQ entry alive until the token is consumed at that write point.
+    // Acceptance keeps the functional entry live; only terminal completion
+    // permits reuse, independently of the measurement token.
     clear_store := Mux(stq(stq_head).bits.uop.is_fence, io.dmem.ordered,
-      stq(stq_head).bits.succeeded &&
-        !stq(stq_head).bits.strict_store_token_valid)
+      stq(stq_head).bits.functional_done &&
+        !stq(stq_head).bits.functional_inflight)
   }
 
   when (clear_store)
   {
+    printf("STAGE1_TX RELEASE stq=%x req=%x committed=%x done=%x inflight=%x fence=%x cycle=%x\n",
+      stq_head, stq(stq_head).bits.functional_token,
+      stq(stq_head).bits.committed, stq(stq_head).bits.functional_done,
+      stq(stq_head).bits.functional_inflight,
+      stq(stq_head).bits.uop.is_fence, io.dmem.csr_cycle)
     stq(stq_head).valid           := false.B
     stq(stq_head).bits.addr.valid := false.B
     stq(stq_head).bits.vaddr.valid:= false.B
     stq(stq_head).bits.data.valid := false.B
     stq(stq_head).bits.succeeded  := false.B
     stq(stq_head).bits.committed  := false.B
+    stq(stq_head).bits.functional_done := false.B
+    stq(stq_head).bits.functional_inflight := false.B
     stq(stq_head).bits.traffic_seen := false.B
     stq(stq_head).bits.traffic_scope_valid := false.B
     stq(stq_head).bits.traffic_check := false.B

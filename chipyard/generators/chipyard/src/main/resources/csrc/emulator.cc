@@ -20,6 +20,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <getopt.h>
+#ifdef STAGE1_EXIT_PORTS
+#include "stage1_exit.h"
+#endif
 
 // For option parsing, which is split across this file, Verilog, and
 // FESVR's HTIF, a few external files must be pulled in. The list of
@@ -328,6 +331,25 @@ done_processing:
   tile->reset = 0;
   done_reset = true;
 
+  bool host_success_seen = false;
+  bool serial_success_seen = false;
+  auto simulation_complete = [&]() {
+    const bool failed = (dtm && dtm->exit_code()) ||
+      (tsi && tsi->exit_code()) || (jtag && jtag->exit_code());
+    const bool success = tile->io_success || (dtm && dtm->done()) ||
+      (tsi && tsi->done()) || (jtag && jtag->done());
+    serial_success_seen |= tile->io_success;
+    if (success && !failed && !host_success_seen) {
+      fprintf(stderr, "STAGE1_HOST_SUCCESS cycles=%ld\n", trace_count);
+      host_success_seen = true;
+    }
+#ifdef STAGE1_EXIT_PORTS
+    return failed || (host_success_seen && stage1_l1_drained(*tile));
+#else
+    return failed || success;
+#endif
+  };
+
   do {
     tile->clock = 0;
     tile->eval();
@@ -348,10 +370,7 @@ done_processing:
   // for verilator multithreading. need to do 1 loop before checking if
   // tsi exists, since tsi is created by verilated thread on the first
   // serial_tick.
-  while ((!dtm || !dtm->done()) &&
-         (!jtag || !jtag->done()) &&
-         (!tsi || !tsi->done()) &&
-         !tile->io_success && trace_count < max_cycles);
+  while (!simulation_complete() && trace_count < max_cycles);
 
 #if VM_TRACE
   if (tfp)
@@ -360,30 +379,161 @@ done_processing:
     fclose(vcdfile);
 #endif
 
+#ifdef STAGE1_EXIT_PORTS
+  fflush(stdout);
+  // Read live RTL outputs after the final normal eval at the drain boundary.
+  // The snapshot is the actual exit state, including timeout/failure exits.
+  fprintf(stderr, "STAGE1_TX EXIT_DRAIN snapshot=sim_exit source=DCACHE schema=%x cycle=%llx s1_valid=%llx s2_valid=%llx mshr_outstanding=%llx fence_ready=%llx replay_valid=%llx replay_busy=%llx replay_result_q=%llx completion_q=%llx s3_valid=%llx store_done_valid=%llx wb_valid=%llx probe_valid=%llx refill_valid=%llx install_active=%llx completion_pending=%llx killed_store=%llx slot_reserved=%llx cross_package_pending=%llx pending_response=%llx response_valid=%llx mem_finish=%llx mem_grant=%llx mem_acquire=%llx s3_req=%llx completion_req=%llx replay_req=%llx mshr_owners=%llx\n",
+          tile->io_stage1_schema,
+          (unsigned long long)tile->io_stage1_cache_0,
+          (unsigned long long)tile->io_stage1_cache_1,
+          (unsigned long long)tile->io_stage1_cache_2,
+          (unsigned long long)tile->io_stage1_cache_3,
+          (unsigned long long)tile->io_stage1_cache_4,
+          (unsigned long long)tile->io_stage1_cache_5,
+          (unsigned long long)tile->io_stage1_cache_6,
+          (unsigned long long)tile->io_stage1_cache_7,
+          (unsigned long long)tile->io_stage1_cache_8,
+          (unsigned long long)tile->io_stage1_cache_9,
+          (unsigned long long)tile->io_stage1_cache_10,
+          (unsigned long long)tile->io_stage1_cache_11,
+          (unsigned long long)tile->io_stage1_cache_12,
+          (unsigned long long)tile->io_stage1_cache_13,
+          (unsigned long long)tile->io_stage1_cache_14,
+          (unsigned long long)tile->io_stage1_cache_15,
+          (unsigned long long)tile->io_stage1_cache_16,
+          (unsigned long long)tile->io_stage1_cache_17,
+          (unsigned long long)tile->io_stage1_cache_18,
+          (unsigned long long)tile->io_stage1_cache_19,
+          (unsigned long long)tile->io_stage1_cache_20,
+          (unsigned long long)tile->io_stage1_cache_21,
+          (unsigned long long)tile->io_stage1_cache_22,
+          (unsigned long long)tile->io_stage1_cache_23,
+          (unsigned long long)tile->io_stage1_cache_24,
+          (unsigned long long)tile->io_stage1_cache_25,
+          (unsigned long long)tile->io_stage1_cache_26,
+          (unsigned long long)tile->io_stage1_cache_27);
+  fprintf(stderr, "STAGE1_TX EXIT_DRAIN snapshot=sim_exit source=LSU schema=%x stq_valid=%llx stq_committed=%llx stq_inflight=%llx stq_done=%llx ldq_valid=%llx ldq_pending=%llx hella_pending=%llx request_valid=%llx force_order=%llx\n",
+          tile->io_stage1_schema,
+          (unsigned long long)tile->io_stage1_lsu_0,
+          (unsigned long long)tile->io_stage1_lsu_1,
+          (unsigned long long)tile->io_stage1_lsu_2,
+          (unsigned long long)tile->io_stage1_lsu_3,
+          (unsigned long long)tile->io_stage1_lsu_4,
+          (unsigned long long)tile->io_stage1_lsu_5,
+          (unsigned long long)tile->io_stage1_lsu_6,
+          (unsigned long long)tile->io_stage1_lsu_7,
+          (unsigned long long)tile->io_stage1_lsu_8);
+#define STAGE1_STQ(N) \
+  if (tile->io_stage1_stq_##N##_3 & 1) \
+    fprintf(stderr, "STAGE1_TX EXIT_STQ snapshot=sim_exit stq=%x token=%llx pc=%llx addr=%llx flags=%llx\n", \
+      N, (unsigned long long)tile->io_stage1_stq_##N##_0, \
+      (unsigned long long)tile->io_stage1_stq_##N##_1, \
+      (unsigned long long)tile->io_stage1_stq_##N##_2, \
+      (unsigned long long)tile->io_stage1_stq_##N##_3);
+  STAGE1_STQ(0)
+  STAGE1_STQ(1)
+  STAGE1_STQ(2)
+  STAGE1_STQ(3)
+  STAGE1_STQ(4)
+  STAGE1_STQ(5)
+  STAGE1_STQ(6)
+  STAGE1_STQ(7)
+  STAGE1_STQ(8)
+  STAGE1_STQ(9)
+  STAGE1_STQ(10)
+  STAGE1_STQ(11)
+  STAGE1_STQ(12)
+  STAGE1_STQ(13)
+  STAGE1_STQ(14)
+  STAGE1_STQ(15)
+  STAGE1_STQ(16)
+  STAGE1_STQ(17)
+  STAGE1_STQ(18)
+  STAGE1_STQ(19)
+  STAGE1_STQ(20)
+  STAGE1_STQ(21)
+  STAGE1_STQ(22)
+  STAGE1_STQ(23)
+  STAGE1_STQ(24)
+  STAGE1_STQ(25)
+  STAGE1_STQ(26)
+  STAGE1_STQ(27)
+  STAGE1_STQ(28)
+  STAGE1_STQ(29)
+  STAGE1_STQ(30)
+  STAGE1_STQ(31)
+  STAGE1_STQ(32)
+  STAGE1_STQ(33)
+  STAGE1_STQ(34)
+  STAGE1_STQ(35)
+  STAGE1_STQ(36)
+  STAGE1_STQ(37)
+  STAGE1_STQ(38)
+  STAGE1_STQ(39)
+  STAGE1_STQ(40)
+  STAGE1_STQ(41)
+  STAGE1_STQ(42)
+  STAGE1_STQ(43)
+  STAGE1_STQ(44)
+  STAGE1_STQ(45)
+  STAGE1_STQ(46)
+  STAGE1_STQ(47)
+  STAGE1_STQ(48)
+  STAGE1_STQ(49)
+  STAGE1_STQ(50)
+  STAGE1_STQ(51)
+  STAGE1_STQ(52)
+  STAGE1_STQ(53)
+  STAGE1_STQ(54)
+  STAGE1_STQ(55)
+  STAGE1_STQ(56)
+  STAGE1_STQ(57)
+  STAGE1_STQ(58)
+  STAGE1_STQ(59)
+  STAGE1_STQ(60)
+  STAGE1_STQ(61)
+  STAGE1_STQ(62)
+  STAGE1_STQ(63)
+#undef STAGE1_STQ
+#endif
+
+  const char *exit_reason = "unknown";
   if (dtm && dtm->exit_code())
   {
+    exit_reason = "dtm_fail";
     fprintf(stderr, "*** FAILED *** via dtm (code = %d, seed %d) after %ld cycles\n", dtm->exit_code(), random_seed, trace_count);
     ret = dtm->exit_code();
   }
   else if (tsi && tsi->exit_code())
   {
+    exit_reason = "tsi_fail";
     fprintf(stderr, "*** FAILED *** (code = %d, seed %d) after %ld cycles\n", tsi->exit_code(), random_seed, trace_count);
     ret = tsi->exit_code();
   }
   else if (jtag && jtag->exit_code())
   {
+    exit_reason = "jtag_fail";
     fprintf(stderr, "*** FAILED *** via jtag (code = %d, seed %d) after %ld cycles\n", jtag->exit_code(), random_seed, trace_count);
     ret = jtag->exit_code();
   }
   else if (trace_count == max_cycles)
   {
+    exit_reason = "timeout";
     fprintf(stderr, "*** FAILED *** via trace_count (timeout, seed %d) after %ld cycles\n", random_seed, trace_count);
     ret = 2;
   }
-  else if (verbose || print_cycles)
+  else
   {
-    fprintf(stderr, "*** PASSED *** Completed after %ld cycles\n", trace_count);
+    exit_reason = serial_success_seen ? "serial_success" : "external_success";
+    if (verbose || print_cycles)
+      fprintf(stderr, "*** PASSED *** Completed after %ld cycles\n", trace_count);
   }
+
+  fprintf(stderr, "STAGE1_SIM_EXIT reason=%s io_success=%d dtm_exit=%d tsi_exit=%d jtag_exit=%d cycles=%ld\n",
+          exit_reason, tile ? tile->io_success : 0,
+          dtm ? dtm->exit_code() : 0, tsi ? tsi->exit_code() : 0,
+          jtag ? jtag->exit_code() : 0, trace_count);
 
   if (dtm) delete dtm;
   if (tsi) delete tsi;

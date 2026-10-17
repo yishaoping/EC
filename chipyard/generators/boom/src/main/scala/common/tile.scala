@@ -663,10 +663,9 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
   hellaCacheArb.io.requestor <> hellaCachePorts.toSeq
   lsu.io.hellacache <> hellaCacheArb.io.mem
   outer.dcache.module.io.lsu <> lsu.io.dmem
-  // R_IC 状态编码 2 表示 fsm_check。该状态仍用于 checker/特殊访存的
-  // traffic_check 标记；普通架构 load/store 的统计窗口由 traffic_counting
-  // 独立决定，屏障关闭包时不能因暂时离开 fsm_check 而漏计。
-  outer.dcache.module.io.traffic_check_state := core.io.debug_maincore_status === 2.U
+  // Match R_IC count_owned through cooling/snapshot drain. LSQ captures this
+  // with packet_seq at translation; setup/post-window entries remain excluded.
+  outer.dcache.module.io.traffic_check_state := core.io.traffic_package_open
   outer.dcache.module.io.traffic_reset := debug_perf_sel(GH_GlobalParams.GH_PERF_CTRL_RESET_BIT)
   outer.dcache.module.io.traffic_start := debug_perf_sel(GH_GlobalParams.GH_PERF_CTRL_START_BIT)
   outer.dcache.module.io.traffic_stop := debug_perf_sel(GH_GlobalParams.GH_PERF_CTRL_STOP_BIT)

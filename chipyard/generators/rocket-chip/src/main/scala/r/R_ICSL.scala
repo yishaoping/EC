@@ -93,6 +93,10 @@ class R_ICSLIO(params: R_ICSLParams) extends Bundle {
   val sc_fail_deq                                = Input(UInt(1.W))
   val amo_cache_deq                              = Input(UInt(1.W))
   val amo_uncache_deq                            = Input(UInt(1.W))
+  // Observation-only provenance for the checker traffic increments below.
+  val debug_stat_token                            = Input(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val debug_stat_addr                             = Input(UInt(40.W))
+  val debug_stat_pc                               = Input(UInt(64.W))
 }
 
 trait HasR_ICSLIO extends BaseModule {
@@ -567,6 +571,39 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
       fsm_state === fsm_postchecking_priv
   val trafficCounting = (trafficEnabled || io.debug_perf_start) &&
     checkerTrafficState && !io.debug_perf_stop && !io.debug_perf_reset.asBool
+
+  // Unique per-checker event identity; repeated PC/address accesses in a loop
+  // are legitimate occurrences, while a duplicated trace record is detectable.
+  val stage1StatOrdinal = RegInit(0.U(64.W))
+  val stage1StatEvents = PopCount(VecInit(Seq(io.st_cache_deq.asBool,
+    io.st_uncache_deq.asBool, io.ld_cache_deq.asBool, io.ld_uncache_deq.asBool)))
+  when (trafficCounting && stage1StatEvents =/= 0.U) {
+    assert(stage1StatEvents === 1.U, "multiple checker traffic events per instruction")
+    stage1StatOrdinal := stage1StatOrdinal + 1.U
+  }
+
+  // These printf conditions are exactly the enables used by the existing
+  // checker Store/Load counter updates. They do not feed any control path.
+  when (io.st_cache_deq.asBool && trafficCounting) {
+    printf("STAGE1_TX CHECKER_STAT kind=STORE source=CHECKER token=%x token_kind=packet_seq addr=%x pc=%x cacheable=1 hart=%x ordinal=%x cycle=%x\n",
+      io.debug_stat_token, io.debug_stat_addr, io.debug_stat_pc,
+      io.core_id, stage1StatOrdinal, io.csr_cycle)
+  }
+  when (io.st_uncache_deq.asBool && trafficCounting) {
+    printf("STAGE1_TX CHECKER_STAT kind=STORE source=CHECKER token=%x token_kind=packet_seq addr=%x pc=%x cacheable=0 hart=%x ordinal=%x cycle=%x\n",
+      io.debug_stat_token, io.debug_stat_addr, io.debug_stat_pc,
+      io.core_id, stage1StatOrdinal, io.csr_cycle)
+  }
+  when (io.ld_cache_deq.asBool && trafficCounting) {
+    printf("STAGE1_TX CHECKER_STAT kind=LOAD source=CHECKER token=%x token_kind=packet_seq addr=%x pc=%x cacheable=1 hart=%x ordinal=%x cycle=%x\n",
+      io.debug_stat_token, io.debug_stat_addr, io.debug_stat_pc,
+      io.core_id, stage1StatOrdinal, io.csr_cycle)
+  }
+  when (io.ld_uncache_deq.asBool && trafficCounting) {
+    printf("STAGE1_TX CHECKER_STAT kind=LOAD source=CHECKER token=%x token_kind=packet_seq addr=%x pc=%x cacheable=0 hart=%x ordinal=%x cycle=%x\n",
+      io.debug_stat_token, io.debug_stat_addr, io.debug_stat_pc,
+      io.core_id, stage1StatOrdinal, io.csr_cycle)
+  }
 
   debug_perf_num_st_cache                       := Mux(io.debug_perf_reset.asBool, 0.U,
     debug_perf_num_st_cache + (io.st_cache_deq & trafficCounting.asUInt))

@@ -1222,6 +1222,10 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   icsl.io.sc_fail_deq := checker_sc_fail_complete
   icsl.io.amo_cache_deq := checker_amo_cache_complete
   icsl.io.amo_uncache_deq := checker_amo_uncache_complete
+  // The input packet sequence can advance while a delayed WB response is
+  // being counted. Use the checker-owned sequence latched at package start.
+  icsl.io.debug_stat_addr := lsl_resp_addr
+  icsl.io.debug_stat_pc := wb_reg_pc
   io.traffic_counter := icsl.io.traffic_counter
   // kill_each_pipe := icsl.io.kill_pipe
   val lsl_index = WireInit(VecInit.fill(GH_GlobalParams.GH_TOTAL_PACKETS)(0.U(8.W)))
@@ -1294,6 +1298,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   // The checker result is packet-scoped. ARF/FARF and CSR shadow checks run
   // independently, so neither completion pulse alone is the package tail.
   val package_seq_reg = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  icsl.io.debug_stat_token := package_seq_reg
   val package_check_active = RegInit(false.B)
   val package_error = RegInit(false.B)
   val package_transport_error = RegInit(false.B)

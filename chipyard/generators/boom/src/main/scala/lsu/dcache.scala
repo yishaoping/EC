@@ -32,6 +32,9 @@ class BoomWritebackUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1Hella
     val data_req = Decoupled(new L1DataReadReq)
     val data_resp = Input(UInt(encRowBits.W))
     val mem_grant = Input(Bool())
+    val owner_epoch = Input(UInt(16.W))
+    val image_generation = Input(UInt(32.W))
+    val image_valid = Input(Bool())
     val packet_seq = Input(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
     val packet_tracked = Input(Bool())
     val active_packet_seq = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
@@ -41,6 +44,10 @@ class BoomWritebackUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1Hella
   })
 
   val req = Reg(new WritebackReq(edge.bundle))
+  val snapshotEpoch = Reg(UInt(16.W))
+  val snapshotGeneration = Reg(UInt(32.W))
+  val snapshotImageValid = Reg(Bool())
+  dontTouch(snapshotEpoch); dontTouch(snapshotGeneration); dontTouch(snapshotImageValid)
   val s_invalid :: s_fill_buffer :: s_lsu_release :: s_active :: s_grant :: Nil = Enum(5)
   val state = RegInit(s_invalid)
   val r1_data_req_fired = RegInit(false.B)
@@ -93,6 +100,9 @@ class BoomWritebackUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1Hella
       state := s_fill_buffer
       data_req_cnt := 0.U
       req := io.req.bits
+      snapshotEpoch := io.owner_epoch
+      snapshotGeneration := io.image_generation
+      snapshotImageValid := io.image_valid
       packet_seq := io.packet_seq
       packet_tracked := io.packet_tracked
       acked := false.B
@@ -472,6 +482,20 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val wb = Module(new BoomWritebackUnit)
   val prober = Module(new BoomProbeUnit)
   val mshrs = Module(new BoomMSHRFile)
+  // Completion feedback for an RPQ entry is generated at the physical L1
+  // effect point below.  The request remains owned by its MSHR until then.
+  val replayEffectDone = WireDefault(false.B)
+  val replayEffectDoneId = WireDefault(0.U(log2Ceil(cfg.nMSHRs max 2).W))
+  val replayCancel = WireDefault(false.B)
+  val replayCancelId = WireDefault(0.U(log2Ceil(cfg.nMSHRs max 2).W))
+  val replayEffectDoneVec = WireDefault(VecInit(Seq.fill(cfg.nMSHRs)(false.B)))
+  val replayCancelVec = WireDefault(VecInit(Seq.fill(cfg.nMSHRs)(false.B)))
+  mshrs.io.replay_effect_done := replayEffectDone
+  mshrs.io.replay_done_id := replayEffectDoneId
+  mshrs.io.replay_cancel := replayCancel
+  mshrs.io.replay_cancel_id := replayCancelId
+  mshrs.io.replay_effect_done_vec := replayEffectDoneVec
+  mshrs.io.replay_cancel_vec := replayCancelVec
   mshrs.io.clear_all    := io.lsu.force_order
   mshrs.io.brupdate       := io.lsu.brupdate
   mshrs.io.exception    := io.lsu.exception
@@ -486,6 +510,62 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     Seq.fill(nWays)(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))))))
   val dirtyPacketTracked = RegInit(VecInit(Seq.fill(nSets)(VecInit(
     Seq.fill(nWays)(false.B)))))
+  // Functional ownership is independent of the measurement shadow above.
+  // An epoch changes whenever a resident slot is invalidated/reallocated;
+  // generation changes only at an actual local semantic data effect.
+  val slotEpoch = RegInit(VecInit(Seq.fill(nSets)(VecInit(
+    Seq.fill(nWays)(0.U(16.W))))))
+  // Mirrors atomic metadata writes for freeze/drain rechecks. Invalidating a
+  // victim keeps its identity here until the incoming install commits.
+  val residentTag = Reg(Vec(nSets, Vec(nWays, UInt(tagBits.W))))
+  val residentValid = RegInit(VecInit(Seq.fill(nSets)(VecInit(Seq.fill(nWays)(false.B)))))
+  val lineGeneration = RegInit(VecInit(Seq.fill(nSets)(VecInit(
+    Seq.fill(nWays)(0.U(32.W))))))
+  val appliedEffectValid = RegInit(VecInit(Seq.fill(nSets)(VecInit(
+    Seq.fill(nWays)(false.B)))))
+  val appliedEffectToken = RegInit(VecInit(Seq.fill(nSets)(VecInit(
+    Seq.fill(nWays)(0.U(64.W))))))
+  val appliedEffectResult = Reg(Vec(nSets, Vec(nWays, UInt(xLen.W))))
+  val imageSerial = RegInit(1.U(32.W))
+  val imageValid = RegInit(VecInit(Seq.fill(nSets)(VecInit(Seq.fill(nWays)(false.B)))))
+  val slotReserved = RegInit(VecInit(Seq.fill(nSets)(VecInit(Seq.fill(nWays)(false.B)))))
+  val reservedEpoch = Reg(Vec(nSets, Vec(nWays, UInt(16.W))))
+  val reservedTransaction = Reg(Vec(nSets, Vec(nWays, UInt(32.W))))
+  val reservedMshr = Reg(Vec(nSets, Vec(nWays, UInt(8.W))))
+  val reservedNewOwner = Reg(Vec(nSets, Vec(nWays, Bool())))
+  val reservedTag = Reg(Vec(nSets, Vec(nWays, UInt(tagBits.W))))
+  val installActive = RegInit(VecInit(Seq.fill(nSets)(VecInit(Seq.fill(nWays)(false.B)))))
+  val completionPending = RegInit(VecInit(Seq.fill(nSets)(VecInit(Seq.fill(nWays)(false.B)))))
+  val s3_req = Reg(new BoomDCacheReq)
+  val s3_way = Reg(UInt(nWays.W))
+  val s3_valid = RegInit(false.B)
+  val s3_applied = RegInit(false.B)
+  val s3_replay = Reg(Bool())
+  val s3_result = Reg(UInt(xLen.W))
+  // Observation-only AMO operands retained with the held S3 grant.  The
+  // architectural return is s3_result; the physical old/new words let the
+  // next run check lane selection and mask independently.
+  val s3_old_value = RegInit(0.U(xLen.W))
+  val s3_operand = RegInit(0.U(xLen.W))
+  val s3_cancelled = RegInit(false.B)
+  val s3_effect_fire = WireDefault(false.B)
+  val clearFreezeValid = WireDefault(false.B)
+  val clearFreezeSet = Wire(UInt(idxBits.W))
+  val clearFreezeTag = Wire(UInt(tagBits.W))
+  val clearFreezeWay = Wire(UInt(nWays.W))
+  val victimDrainReady = WireDefault(true.B)
+  val probeDrainReady = WireDefault(true.B)
+  val replayPipelineBusy = WireDefault(false.B)
+  val completionArb = Module(new Arbiter(new BoomCacheCompletion, 3))
+  val completionQ = Module(new Queue(new BoomCacheCompletion, cfg.nMSHRs + nIOMSHRs + 2))
+  completionQ.io.enq <> completionArb.io.out
+  completionArb.io.in(2) <> mshrs.io.mmio_completion
+  val replayResultQ = Seq.fill(cfg.nMSHRs)(Module(new Queue(new BoomCacheCompletion, 2)))
+  for (i <- 0 until cfg.nMSHRs) {
+    mshrs.io.replay_result(i) <> replayResultQ(i).io.deq
+    replayResultQ(i).io.enq.valid := false.B
+    replayResultQ(i).io.enq.bits := 0.U.asTypeOf(new BoomCacheCompletion)
+  }
   // 0 goes to MSHR refills, 1 goes to prober
   val metaReadArb = Module(new Arbiter(new BoomL1MetaReadReq, 6))
   // 0 goes to MSHR replays, 1 goes to prober, 2 goes to wb, 3 goes to MSHR meta read,
@@ -500,6 +580,15 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   }
   metaReadArb.io.out.ready  := meta.map(_.io.read.ready).reduce(_||_)
   metaWriteArb.io.out.ready := meta.map(_.io.write.ready).reduce(_||_)
+  when (metaWriteArb.io.out.fire) {
+    val r = metaWriteArb.io.out.bits
+    for (way <- 0 until nWays) {
+      when (r.way_en(way)) {
+        residentValid(r.idx)(way) := r.data.coh.isValid()
+        when (r.data.coh.isValid()) { residentTag(r.idx)(way) := r.data.tag }
+      }
+    }
+  }
 
   // data
   val data = Module(if (boomParams.numDCacheBanks == 1) new BoomDuplicatedDataArray else new BoomBankedDataArray)
@@ -528,7 +617,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val killed_store_replay_valid = RegInit(false.B)
   val killed_store_replay_req = Reg(new BoomDCacheReq)
   val killed_store_replay_reqs = Wire(Vec(memWidth, new BoomDCacheReq))
-  killed_store_replay_reqs := DontCare
+  killed_store_replay_reqs := 0.U.asTypeOf(Vec(memWidth, new BoomDCacheReq))
   killed_store_replay_reqs(0) := killed_store_replay_req
   val lsu_pipeline_ready = metaReadArb.io.in(4).ready && dataReadArb.io.in(2).ready
   val killed_store_replay_fire = killed_store_replay_valid && lsu_pipeline_ready
@@ -556,27 +645,18 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // ------------
   // MSHR Replays
   val replay_req = Wire(Vec(memWidth, new BoomDCacheReq))
-  replay_req               := DontCare
-  replay_req(0).uop        := mshrs.io.replay.bits.uop
-  replay_req(0).addr       := mshrs.io.replay.bits.addr
-  replay_req(0).data       := mshrs.io.replay.bits.data
-  replay_req(0).is_hella   := mshrs.io.replay.bits.is_hella
-  replay_req(0).traffic_seen := mshrs.io.replay.bits.traffic_seen
-  replay_req(0).traffic_check := mshrs.io.replay.bits.traffic_check
-  replay_req(0).traffic_arch_check := mshrs.io.replay.bits.traffic_arch_check
-  replay_req(0).traffic_cacheable := mshrs.io.replay.bits.traffic_cacheable
-  replay_req(0).packet_seq := mshrs.io.replay.bits.packet_seq
-  replay_req(0).strict_store_token_valid := mshrs.io.replay.bits.strict_store_token_valid
-  replay_req(0).strict_store_token := mshrs.io.replay.bits.strict_store_token
-  mshrs.io.replay.ready    := metaReadArb.io.in(0).ready && dataReadArb.io.in(0).ready
+  replay_req := 0.U.asTypeOf(Vec(memWidth, new BoomDCacheReq))
+  BoomDCacheReq.copyBase(replay_req(0), mshrs.io.replay.bits)
+  mshrs.io.replay.ready    := metaReadArb.io.in(0).ready && dataReadArb.io.in(0).ready &&
+    !replayPipelineBusy && !s3_valid && completionQ.io.count === 0.U
   // Tag read for MSHR replays
   // We don't actually need to read the metadata, for replays we already know our way
-  metaReadArb.io.in(0).valid              := mshrs.io.replay.valid
+  metaReadArb.io.in(0).valid              := mshrs.io.replay.valid && !replayPipelineBusy && !s3_valid && completionQ.io.count === 0.U
   metaReadArb.io.in(0).bits.req(0).idx    := mshrs.io.replay.bits.addr >> blockOffBits
   metaReadArb.io.in(0).bits.req(0).way_en := DontCare
   metaReadArb.io.in(0).bits.req(0).tag    := DontCare
   // Data read for MSHR replays
-  dataReadArb.io.in(0).valid              := mshrs.io.replay.valid
+  dataReadArb.io.in(0).valid              := mshrs.io.replay.valid && !replayPipelineBusy && !s3_valid && completionQ.io.count === 0.U
   dataReadArb.io.in(0).bits.req(0).addr   := mshrs.io.replay.bits.addr
   dataReadArb.io.in(0).bits.req(0).way_en := mshrs.io.replay.bits.way_en
   dataReadArb.io.in(0).bits.valid         := widthMap(w => (w == 0).B)
@@ -584,7 +664,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // -----------
   // MSHR Meta read
   val mshr_read_req = Wire(Vec(memWidth, new BoomDCacheReq))
-  mshr_read_req             := DontCare
+  mshr_read_req             := 0.U.asTypeOf(Vec(memWidth, new BoomDCacheReq))
   mshr_read_req(0).uop      := NullMicroOp
   mshr_read_req(0).addr     := Cat(mshrs.io.meta_read.bits.tag, mshrs.io.meta_read.bits.idx) << blockOffBits
   mshr_read_req(0).data     := DontCare
@@ -599,7 +679,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // Write-backs
   val wb_fire = wb.io.meta_read.fire && wb.io.data_req.fire
   val wb_req = Wire(Vec(memWidth, new BoomDCacheReq))
-  wb_req             := DontCare
+  wb_req             := 0.U.asTypeOf(Vec(memWidth, new BoomDCacheReq))
   wb_req(0).uop      := NullMicroOp
   wb_req(0).addr     := Cat(wb.io.meta_read.bits.tag, wb.io.data_req.bits.addr)
   wb_req(0).data     := DontCare
@@ -620,7 +700,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // Prober
   val prober_fire  = prober.io.meta_read.fire
   val prober_req   = Wire(Vec(memWidth, new BoomDCacheReq))
-  prober_req             := DontCare
+  prober_req             := 0.U.asTypeOf(Vec(memWidth, new BoomDCacheReq))
   prober_req(0).uop      := NullMicroOp
   prober_req(0).addr     := Cat(prober.io.meta_read.bits.tag, prober.io.meta_read.bits.idx) << blockOffBits
   prober_req(0).data     := DontCare
@@ -635,7 +715,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // Prefetcher
   val prefetch_fire = mshrs.io.prefetch.fire
   val prefetch_req  = Wire(Vec(memWidth, new BoomDCacheReq))
-  prefetch_req    := DontCare
+  prefetch_req    := 0.U.asTypeOf(Vec(memWidth, new BoomDCacheReq))
   prefetch_req(0) := mshrs.io.prefetch.bits
   // Tag read for prefetch
   metaReadArb.io.in(5).valid              := mshrs.io.prefetch.valid
@@ -649,14 +729,15 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
                  Mux(killed_store_replay_fire, VecInit(1.U(memWidth.W).asBools),
                  Mux(mshrs.io.replay.fire || wb_fire || prober_fire || prefetch_fire || mshrs.io.meta_read.fire,
                                         VecInit(1.U(memWidth.W).asBools), VecInit(0.U(memWidth.W).asBools))))
-  val s0_req   = Wire(Vec(memWidth, new BoomDCacheReq))
-  s0_req := Mux(io.lsu.req.fire        , VecInit(io.lsu.req.bits.map(_.bits)),
+  val s0_selected_req = Mux(io.lsu.req.fire, VecInit(io.lsu.req.bits.map(_.bits)),
             Mux(killed_store_replay_fire, killed_store_replay_reqs,
             Mux(wb_fire                  , wb_req,
             Mux(prober_fire              , prober_req,
             Mux(prefetch_fire            , prefetch_req,
             Mux(mshrs.io.meta_read.fire, mshr_read_req
                                              , replay_req))))))
+  val s0_req = Wire(Vec(memWidth, new BoomDCacheReq))
+  s0_req := s0_selected_req
   // LSU 已按 LDQ/STQ 项锁存统计资格；DCache 只补充地址管理器给出的
   // 可缓存属性，并让两者随 MSHR/refill/replay 一直传播到完成点。
   when (io.lsu.req.fire) {
@@ -673,6 +754,21 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
                  Mux(mshrs.io.meta_read.fire, t_mshr_meta_read
                                               , t_replay))))))
 
+  for (w <- 0 until memWidth) {
+    when (s0_valid(w) && s0_type.isOneOf(t_lsu, t_replay) && isWrite(s0_selected_req(w).uop.mem_cmd)) {
+      assert(s0_selected_req(w).request_token_valid && s0_selected_req(w).effect_token_valid,
+        "write request lacks stable functional identity")
+    }
+  }
+  // Capture owner epochs with the tag-array read, not from a later S2 lookup.
+  val s1_lookup_epoch = RegNext(widthMap(w => slotEpoch(s0_req(w).addr(idxMSB, idxLSB))))
+  val s1_before_freeze = RegNext(widthMap(w => {
+    val r = s0_req(w)
+    val set = r.addr(idxMSB, idxLSB)
+    !slotReserved(set).asUInt.orR &&
+      !(clearFreezeValid && set === clearFreezeSet && (r.addr >> untagBits) === clearFreezeTag) &&
+      !(prober.io.state.valid && set === prober.io.state.bits(idxMSB, idxLSB))
+  }))
   // Does this request need to send a response or nack
   val s0_send_resp_or_nack = Mux(io.lsu.req.fire, s0_valid,
     Mux(killed_store_replay_fire, VecInit(1.U(memWidth.W).asBools),
@@ -695,6 +791,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val s1_nack         = s1_addr.map(a => a(idxMSB,idxLSB) === prober.io.meta_write.bits.idx && !prober.io.req.ready)
   val s1_send_resp_or_nack = RegNext(s0_send_resp_or_nack)
   val s1_type         = RegNext(s0_type)
+  val s1_replay_issued = RegNext(mshrs.io.replay.fire, false.B)
+  val s1_replay_killed = s1_replay_issued && s1_type === t_replay && !s1_valid(0)
 
   val s1_mshr_meta_read_way_en = RegNext(mshrs.io.meta_read.bits.way_en)
   val s1_replay_way_en         = RegNext(mshrs.io.replay.bits.way_en) // For replays, the metadata isn't written yet
@@ -711,8 +809,31 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
 
   val s1_wb_idx_matches = widthMap(i => (s1_addr(i)(untagBits-1,blockOffBits) === wb.io.idx.bits) && wb.io.idx.valid)
 
-  val s2_req   = RegNext(s1_req)
+  // Stage-1 identity is observation-only. A miss may not have a resident way
+  // yet, so retain the tag lookup result together with request ownership.
+  for (w <- 0 until memWidth) {
+    // The legacy tag-match Mux chain is width-inferred only after FIRRTL;
+    // give the trace-only consumer an explicit one-hot width for elaboration.
+    val s1_trace_way = Wire(UInt(nWays.W))
+    s1_trace_way := s1_tag_match_way(w)
+    when (s1_valid(w)) {
+      printf("STAGE1_TX S1 source=DCACHE cycle=%x line=%x set=%x way=%x epoch=%x gen=%x mshr=%x txn=%x req=%x effect=%x pc=%x cmd=%x\n",
+        io.csr_cycle, (s1_req(w).addr >> blockOffBits) << blockOffBits,
+        s1_req(w).addr(idxMSB, idxLSB), OHToUInt(s1_trace_way),
+        Mux1H(s1_trace_way, s1_lookup_epoch(w)), s1_req(w).line_generation,
+        s1_req(w).replay_mshr_id, s1_req(w).transaction_token,
+        s1_req(w).request_token, s1_req(w).effect_token,
+        s1_req(w).uop.debug_pc, s1_req(w).uop.mem_cmd)
+    }
+  }
+
+  val s2_raw_req = RegNext(s1_req)
+  val s2_req = Wire(Vec(memWidth, new BoomDCacheReq))
+  s2_req := s2_raw_req
+  val s2_lookup_epoch = RegNext(widthMap(w => Mux1H(s1_tag_match_way(w), s1_lookup_epoch(w))))
   val s2_type  = RegNext(s1_type)
+  val s2_before_freeze = RegNext(s1_before_freeze)
+  val s2_replay_issued = RegNext(s1_replay_issued, false.B)
   val s2_valid = widthMap(w =>
                   RegNext(s1_valid(w) &&
                          !io.lsu.s1_kill(w) &&
@@ -720,8 +841,11 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
                          !(io.lsu.exception && s1_req(w).uop.uses_ldq) &&
                          !(s2_store_failed && s1_type === t_lsu &&
                            s1_req(w).uop.uses_stq)))
+  val s2_replay_killed = s2_replay_issued && s2_type === t_replay &&
+    !s2_valid(0) && !RegNext(s1_replay_killed, false.B)
+  replayPipelineBusy := s1_replay_issued || s2_replay_issued
   for (w <- 0 until memWidth)
-    s2_req(w).uop.br_mask := GetNewBrMask(io.lsu.brupdate, s1_req(w).uop)
+    s2_raw_req(w).uop.br_mask := GetNewBrMask(io.lsu.brupdate, s1_req(w).uop)
 
   val s2_tag_match_way = RegNext(s1_tag_match_way)
   val s2_tag_match     = s2_tag_match_way.map(_.orR)
@@ -804,6 +928,97 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val s1_replaced_way_en = UIntToOH(replacer.way)
   val s2_replaced_way_en = UIntToOH(RegNext(replacer.way))
   val s2_repl_meta = widthMap(i => Mux1H(s2_replaced_way_en, wayMap((w: Int) => RegNext(meta(i).io.resp(w))).toSeq))
+  val s2_selected_way = Wire(UInt(nWays.W))
+  s2_selected_way := Mux(s2_tag_match(0), s2_tag_match_way(0), s2_replaced_way_en)
+  val s2_selected_set = s2_req(0).addr(idxMSB, idxLSB)
+  val s2_effective_req = Wire(Vec(memWidth, new BoomDCacheReqInternal))
+  val s2_lookup = Wire(Vec(memWidth, new BoomDCacheReqInternal))
+  for (w <- 0 until memWidth) {
+    // OHToUInt needs a known width before FIRRTL infers the tag-match Mux.
+    val candidateWay = Wire(UInt(nWays.W))
+    candidateWay := Mux(s2_tag_match(w), s2_tag_match_way(w), s2_replaced_way_en)
+    val set = s2_raw_req(w).addr(idxMSB, idxLSB)
+    val way = OHToUInt(candidateWay)
+    s2_lookup(w) := 0.U.asTypeOf(new BoomDCacheReqInternal)
+    BoomDCacheReq.copyBase(s2_lookup(w), s2_raw_req(w))
+    s2_lookup(w).tag_match := s2_tag_match(w)
+    s2_lookup(w).old_meta := Mux(s2_tag_match(w),
+      L1Metadata(s2_raw_req(w).addr >> untagBits, s2_hit_state(w)), s2_repl_meta(w))
+    s2_lookup(w).way_en := candidateWay
+    s2_lookup(w).slot_epoch := slotEpoch(set)(way) + (!s2_tag_match(w)).asUInt
+    s2_lookup(w).line_generation := lineGeneration(set)(way)
+    s2_lookup(w).image_valid := s2_tag_match(w) && imageValid(set)(way)
+    mshrs.io.lookup(w) := s2_lookup(w)
+    val a = mshrs.io.admission(w)
+    s2_effective_req(w) := s2_lookup(w)
+    s2_effective_req(w).admission := a.kind
+    s2_effective_req(w).way_en := a.way
+    s2_effective_req(w).owner_way := a.way
+    s2_effective_req(w).slot_epoch := a.slot_epoch
+    s2_effective_req(w).line_generation := a.line_generation
+    s2_effective_req(w).image_valid := a.image_valid
+    s2_effective_req(w).transaction_token := a.transaction_token
+    s2_effective_req(w).replay_mshr_id := a.mshr_id
+    s2_effective_req(w).sdq_id := a.sdq_id
+    s2_effective_req(w).owner_context_valid := a.kind.isOneOf(
+      CacheAdmission.primary, CacheAdmission.upgrade, CacheAdmission.secondary)
+    when (!s2_type.isOneOf(t_lsu, t_replay, t_prefetch)) {
+      s2_effective_req(w).owner_context_valid := false.B
+      s2_effective_req(w).admission := CacheAdmission.other
+    }
+    when (s2_hit(w) && s2_type === t_lsu) {
+      s2_effective_req(w).admission := CacheAdmission.hit
+      s2_effective_req(w).owner_context_valid := true.B
+      s2_effective_req(w).slot_epoch := s2_lookup_epoch(w)
+      s2_effective_req(w).line_generation := lineGeneration(set)(way)
+      s2_effective_req(w).image_valid := imageValid(set)(way)
+      s2_effective_req(w).transaction_token := 0.U
+    }
+    when (s2_type === t_replay) {
+      BoomDCacheReq.copyBase(s2_effective_req(w), s2_raw_req(w))
+      s2_effective_req(w).way_en := candidateWay
+      s2_effective_req(w).tag_match := true.B
+      s2_effective_req(w).admission := CacheAdmission.replay
+      // RPQ preserves the request and slot owner; each serialized write grant
+      // depends on the current provisional image, not the primary's old image.
+      s2_effective_req(w).line_generation := lineGeneration(set)(way)
+      s2_effective_req(w).image_valid := imageValid(set)(way)
+    }
+    BoomDCacheReq.copyBase(s2_req(w), s2_effective_req(w))
+  }
+  for (w <- 0 until memWidth) {
+    when (s2_valid(w)) {
+      printf("STAGE1_TX S2 source=DCACHE cycle=%x line=%x set=%x way=%x epoch=%x gen=%x mshr=%x txn=%x req=%x effect=%x pc=%x cmd=%x admission=%x\n",
+        io.csr_cycle, (s2_req(w).addr >> blockOffBits) << blockOffBits,
+        s2_req(w).addr(idxMSB, idxLSB), OHToUInt(s2_effective_req(w).way_en),
+        s2_effective_req(w).slot_epoch, s2_effective_req(w).line_generation,
+        s2_effective_req(w).replay_mshr_id, s2_effective_req(w).transaction_token,
+        s2_effective_req(w).request_token, s2_effective_req(w).effect_token,
+        s2_effective_req(w).uop.debug_pc, s2_effective_req(w).uop.mem_cmd,
+        s2_effective_req(w).admission)
+    }
+  }
+  val s2_owner_block = widthMap(w => {
+    val set = s2_raw_req(w).addr(idxMSB, idxLSB)
+    val way = OHToUInt(s2_lookup(w).way_en)
+    val stale = s2_tag_match(w) && s2_lookup_epoch(w) =/= slotEpoch(set)(way)
+    val clearing = clearFreezeValid && set === clearFreezeSet &&
+      (s2_raw_req(w).addr >> untagBits) === clearFreezeTag
+    val frozen = slotReserved(set)(way) || completionPending(set)(way)
+    // A stale permission miss must relookup just like a stale hit. A legal
+    // secondary instead inherits the captured MSHR owner and may join its RPQ.
+    s2_type === t_lsu && edge.manager.supportsAcquireBFast(s2_raw_req(w).addr, lgCacheBlockBytes.U) && (clearing ||
+      (stale && !mshrs.io.block_hit(w)) || (s2_hit(w) && frozen) ||
+      (!s2_hit(w) && slotReserved(set)(way) && !mshrs.io.block_hit(w)))
+  })
+  val s2_write_busy = s3_valid || completionQ.io.count =/= 0.U
+  val s2_replay_owner_match = s2_raw_req(0).owner_context_valid &&
+    s2_raw_req(0).owner_way === s2_tag_match_way(0) &&
+    s2_raw_req(0).slot_epoch === slotEpoch(s2_raw_req(0).addr(idxMSB, idxLSB))(
+      OHToUInt(s2_raw_req(0).owner_way))
+  when (s2_valid(0) && s2_type === t_replay) {
+    assert(s2_replay_owner_match, "replay reached a revoked slot owner")
+  }
 
   // nack because of incoming probe
   val s2_nack_hit    = RegNext(VecInit(s1_nack))
@@ -815,15 +1030,27 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val s2_nack_data   = widthMap(w => data.io.nacks(w))
   // Can't allocate MSHR for same set currently being written back
   val s2_nack_wb     = widthMap(w => s2_valid(w) && !s2_hit(w) && s2_wb_idx_matches(w))
+  val s2_clear_slot_conflict = widthMap(w => clearFreezeValid &&
+    edge.manager.supportsAcquireBFast(s2_raw_req(w).addr, lgCacheBlockBytes.U) &&
+    s2_raw_req(w).addr(idxMSB, idxLSB) === clearFreezeSet &&
+    s2_lookup(w).way_en === clearFreezeWay &&
+    !s2_tag_match(w))
+  // Filled below once the S3 effect identity is available.  This keeps a
+  // replacement miss from reallocating a way in the same cycle as an older
+  // store effect to that way.
+  val s2_realloc_owner_conflict = WireDefault(false.B)
 
   val l1CrossPackageBlocked = WireDefault(false.B)
   s2_nack           := widthMap(w =>
     ((s2_nack_miss(w) || s2_nack_hit(w) || s2_nack_victim(w) ||
-      s2_nack_data(w) || s2_nack_wb(w)) && s2_type =/= t_replay) ||
+      s2_nack_data(w) || s2_nack_wb(w) || s2_owner_block(w) || s2_clear_slot_conflict(w) ||
+      (isWrite(s2_raw_req(w).uop.mem_cmd) && s2_write_busy)) && s2_type =/= t_replay) ||
+      ((w == 0).B && s2_realloc_owner_conflict && s2_type === t_lsu) ||
       ((w == 0).B && l1CrossPackageBlocked && s2_type === t_lsu &&
         isWrite(s2_req(0).uop.mem_cmd)))
-  val s2_send_resp = widthMap(w => (RegNext(s1_send_resp_or_nack(w)) && !s2_nack(w) &&
-                      (s2_hit(w) || (mshrs.io.req(w).fire && isWrite(s2_req(w).uop.mem_cmd) && !isRead(s2_req(w).uop.mem_cmd)))))
+  val s2_send_resp = widthMap(w => RegNext(s1_send_resp_or_nack(w)) &&
+    !s2_nack(w) && s2_hit(w) && !isWrite(s2_req(w).uop.mem_cmd) &&
+    (s2_type =/= t_replay || s2_replay_owner_match))
   val s2_send_nack = widthMap(w => (RegNext(s1_send_resp_or_nack(w)) && s2_nack(w)))
   for (w <- 0 until memWidth)
     assert(!(s2_send_resp(w) && s2_send_nack(w)))
@@ -858,6 +1085,11 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
                             !s2_nack_victim(w)    &&
                             !s2_nack_data(w)      &&
                             !s2_nack_wb(w)        &&
+                            !s2_owner_block(w)    &&
+                            !s2_clear_slot_conflict(w) &&
+                            !(isWrite(s2_raw_req(w).uop.mem_cmd) && s2_write_busy) &&
+                            !((w == 0).B && isWrite(s2_raw_req(w).uop.mem_cmd) && l1CrossPackageBlocked) &&
+                            ((w != 0).B || !s2_realloc_owner_conflict) &&
                              s2_type.isOneOf(t_lsu, t_prefetch)             &&
                             !IsKilledByBranch(io.lsu.brupdate, s2_req(w).uop) &&
                             !(io.lsu.exception && s2_req(w).uop.uses_ldq)   &&
@@ -865,24 +1097,27 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
                               isRead(s2_req(w).uop.mem_cmd)     ||
                               isWrite(s2_req(w).uop.mem_cmd))
     assert(!(mshrs.io.req(w).valid && s2_type === t_replay), "Replays should not need to go back into MSHRs")
-    mshrs.io.req(w).bits             := DontCare
-    mshrs.io.req(w).bits.uop         := s2_req(w).uop
+    mshrs.io.req(w).bits := s2_effective_req(w)
     mshrs.io.req(w).bits.uop.br_mask := GetNewBrMask(io.lsu.brupdate, s2_req(w).uop)
-    mshrs.io.req(w).bits.addr        := s2_req(w).addr
-    mshrs.io.req(w).bits.tag_match   := s2_tag_match(w)
-    mshrs.io.req(w).bits.old_meta    := Mux(s2_tag_match(w), L1Metadata(s2_repl_meta(w).tag, s2_hit_state(w)), s2_repl_meta(w))
-    mshrs.io.req(w).bits.way_en      := Mux(s2_tag_match(w), s2_tag_match_way(w), s2_replaced_way_en)
-
-    mshrs.io.req(w).bits.data        := s2_req(w).data
-    mshrs.io.req(w).bits.is_hella    := s2_req(w).is_hella
-    mshrs.io.req(w).bits.traffic_seen := s2_req(w).traffic_seen
-    mshrs.io.req(w).bits.traffic_check := s2_req(w).traffic_check
-    mshrs.io.req(w).bits.traffic_arch_check := s2_req(w).traffic_arch_check
-    mshrs.io.req(w).bits.traffic_cacheable := s2_req(w).traffic_cacheable
-    mshrs.io.req(w).bits.packet_seq := s2_req(w).packet_seq
-    mshrs.io.req(w).bits.strict_store_token_valid := s2_req(w).strict_store_token_valid
-    mshrs.io.req(w).bits.strict_store_token := s2_req(w).strict_store_token
     mshrs.io.req_is_probe(w)         := s2_type === t_probe && s2_valid(w)
+  }
+  for (w <- 0 until memWidth) {
+    val r = s2_effective_req(w)
+    val set = r.addr(idxMSB, idxLSB)
+    val way = OHToUInt(r.way_en)
+    when (mshrs.io.req(w).fire && r.admission.isOneOf(CacheAdmission.primary, CacheAdmission.upgrade)) {
+      assert(!slotReserved(set)(way), "duplicate destination reservation")
+      when (r.admission === CacheAdmission.primary) {
+        assert(r.slot_epoch =/= 0.U, "slot epoch exhausted")
+      }
+      slotReserved(set)(way) := true.B
+      installActive(set)(way) := false.B
+      reservedEpoch(set)(way) := r.slot_epoch
+      reservedTransaction(set)(way) := r.transaction_token
+      reservedMshr(set)(way) := r.replay_mshr_id
+      reservedNewOwner(set)(way) := r.admission === CacheAdmission.primary
+      reservedTag(set)(way) := r.addr >> untagBits
+    }
   }
 
   mshrs.io.meta_resp.valid      := !s2_nack_hit(0) || prober.io.mshr_wb_rdy
@@ -896,10 +1131,22 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   prober.io.req.bits    := tl_out.b.bits
   prober.io.way_en      := s2_tag_match_way(0)
   prober.io.block_state := s2_hit_state(0)
-  metaWriteArb.io.in(1) <> prober.io.meta_write
-  prober.io.mshr_rdy    := mshrs.io.probe_rdy
+  metaWriteArb.io.in(1).valid := prober.io.meta_write.valid && probeDrainReady
+  metaWriteArb.io.in(1).bits := prober.io.meta_write.bits
+  prober.io.meta_write.ready := metaWriteArb.io.in(1).ready && probeDrainReady
+  prober.io.mshr_rdy    := mshrs.io.probe_rdy && probeDrainReady
   prober.io.wb_rdy      := (prober.io.meta_write.bits.idx =/= wb.io.idx.bits) || !wb.io.idx.valid
   mshrs.io.prober_state := prober.io.state
+  when (prober.io.meta_write.fire && !prober.io.meta_write.bits.data.coh.isValid()) {
+    val pset = prober.io.meta_write.bits.idx
+    val pway = OHToUInt(prober.io.meta_write.bits.way_en)
+    when (!slotReserved(pset)(pway)) {
+      assert(slotEpoch(pset)(pway) =/= ~0.U(16.W), "slot epoch exhausted")
+      slotEpoch(pset)(pway) := slotEpoch(pset)(pway) + 1.U
+    }
+    appliedEffectValid(pset)(pway) := false.B
+    when (!slotReserved(pset)(pway)) { imageValid(pset)(pway) := false.B }
+  }
 
   // refills
   when (tl_out.d.bits.source === cfg.nMSHRs.U) {
@@ -912,8 +1159,104 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     mshrs.io.mem_grant <> tl_out.d
   }
 
-  dataWriteArb.io.in(1) <> mshrs.io.refill
-  metaWriteArb.io.in(0) <> mshrs.io.meta_write
+  val installReq = mshrs.io.install.bits.req
+  val installSet = installReq.addr(idxMSB, idxLSB)
+  val installWay = OHToUInt(installReq.way_en)
+  val installReservationMatch = slotReserved(installSet)(installWay) &&
+    reservedEpoch(installSet)(installWay) === installReq.slot_epoch &&
+    reservedTransaction(installSet)(installWay) === installReq.transaction_token &&
+    reservedMshr(installSet)(installWay) === installReq.replay_mshr_id &&
+    reservedTag(installSet)(installWay) === (installReq.addr >> untagBits)
+  val installExistingMatch = installReservationMatch && installReq.owner_context_valid &&
+    slotEpoch(installSet)(installWay) === installReq.slot_epoch
+  val installOwnerMatch = Mux(mshrs.io.install.bits.new_owner,
+    installReservationMatch && slotEpoch(installSet)(installWay) + 1.U === installReq.slot_epoch,
+    installExistingMatch)
+  val installDrain = !(s3_valid && s3_req.addr(idxMSB, idxLSB) === installSet &&
+    s3_way === installReq.way_en) && !completionPending(installSet)(installWay) &&
+    (!wb.io.idx.valid || wb.io.idx.bits =/= installSet) &&
+    !(0 until memWidth).map(w =>
+      (s1_valid(w) && s1_type === t_lsu && s1_before_freeze(w) &&
+        s1_req(w).addr(idxMSB, idxLSB) === installSet) ||
+      (s2_valid(w) && s2_type === t_lsu && s2_before_freeze(w) &&
+        s2_raw_req(w).addr(idxMSB, idxLSB) === installSet)).reduce(_ || _)
+  mshrs.io.install.ready := installOwnerMatch && installDrain
+  for (i <- 0 until cfg.nMSHRs) {
+    mshrs.io.install_fault(i) := mshrs.io.install.valid &&
+      installReq.replay_mshr_id === i.U && !installOwnerMatch
+  }
+  when (mshrs.io.install.fire) {
+    printf("STAGE1_TX INSTALL source=DCACHE cycle=%x line=%x set=%x way=%x epoch=%x gen=%x mshr=%x txn=%x req=%x effect=%x new_owner=%x\n",
+      io.csr_cycle, (installReq.addr >> blockOffBits) << blockOffBits, installSet,
+      installWay, installReq.slot_epoch, installReq.line_generation,
+      installReq.replay_mshr_id, installReq.transaction_token,
+      installReq.request_token, installReq.effect_token,
+      mshrs.io.install.bits.new_owner)
+    installActive(installSet)(installWay) := true.B
+    when (mshrs.io.install.bits.new_owner) {
+      assert(slotEpoch(installSet)(installWay) + 1.U === installReq.slot_epoch,
+        "resident epoch changed under incoming reservation")
+      // The resident retains its old identity during the frozen row writes.
+      // The final data fire commits the incoming owner below.
+    }
+  }
+  val refillReqSet = mshrs.io.refill.bits.addr(idxMSB, idxLSB)
+  val refillReqWay = OHToUInt(mshrs.io.refill.bits.way_en)
+  val selectedRefillReservedEpoch = Wire(UInt(16.W))
+  val selectedRefillSlotEpoch = Wire(UInt(16.W))
+  val selectedRefillSlotReserved = Wire(Bool())
+  selectedRefillReservedEpoch := reservedEpoch(refillReqSet)(refillReqWay)
+  selectedRefillSlotEpoch := slotEpoch(refillReqSet)(refillReqWay)
+  selectedRefillSlotReserved := slotReserved(refillReqSet)(refillReqWay)
+  val refillReqOwnerMatch = mshrs.io.refill.bits.owner_context_valid &&
+    mshrs.io.refill.bits.line_addr(blockOffBits-1, 0) === 0.U &&
+    mshrs.io.refill.bits.line_addr(idxMSB, idxLSB) === refillReqSet &&
+    installActive(refillReqSet)(refillReqWay) && selectedRefillSlotReserved &&
+    mshrs.io.refill.bits.slot_epoch === selectedRefillReservedEpoch &&
+    mshrs.io.refill.bits.transaction_token === reservedTransaction(refillReqSet)(refillReqWay) &&
+    mshrs.io.refill.bits.mshr_id === reservedMshr(refillReqSet)(refillReqWay) &&
+    (mshrs.io.refill.bits.line_addr >> untagBits) === reservedTag(refillReqSet)(refillReqWay) &&
+    Mux(reservedNewOwner(refillReqSet)(refillReqWay),
+      selectedRefillSlotEpoch + 1.U === selectedRefillReservedEpoch,
+      selectedRefillSlotEpoch === selectedRefillReservedEpoch)
+  dataWriteArb.io.in(1).valid := mshrs.io.refill.valid && refillReqOwnerMatch
+  for (name <- (new L1DataWriteReq).elements.keys) {
+    dataWriteArb.io.in(1).bits.elements(name) := mshrs.io.refill.bits.elements(name)
+  }
+  mshrs.io.refill.ready := dataWriteArb.io.in(1).ready && refillReqOwnerMatch
+  for (i <- 0 until cfg.nMSHRs) {
+    mshrs.io.refill_fault(i) := mshrs.io.refill.valid &&
+      mshrs.io.refill.bits.mshr_id === i.U && !refillReqOwnerMatch
+  }
+  when (mshrs.io.refill.valid) { assert(refillReqOwnerMatch, "active refill owner changed") }
+  when (mshrs.io.refill.fire) {
+    printf("STAGE1_TX REFILL source=DCACHE cycle=%x line=%x set=%x way=%x beat=%x mshr=%x txn=%x token=%x epoch=%x gen=%x addr=%x\n",
+      io.csr_cycle, mshrs.io.refill.bits.line_addr, refillReqSet, refillReqWay,
+      mshrs.io.refill.bits.addr(blockOffBits-1, rowOffBits),
+      mshrs.io.refill.bits.mshr_id, mshrs.io.refill.bits.transaction_token,
+      mshrs.io.refill.bits.transaction_token,
+      mshrs.io.refill.bits.slot_epoch, mshrs.io.refill.bits.line_generation,
+      mshrs.io.refill.bits.addr)
+  }
+  val mshrMetaSet = mshrs.io.meta_write.bits.idx
+  val mshrMetaWay = mshrs.io.meta_write.bits.way_en
+  val mshrMetaDrain = !(s3_valid && s3_req.addr(idxMSB, idxLSB) === mshrMetaSet &&
+    s3_way === mshrMetaWay) && !completionPending(mshrMetaSet)(OHToUInt(mshrMetaWay)) &&
+    !(0 until memWidth).map(w =>
+      (s1_valid(w) && s1_type === t_lsu && s1_before_freeze(w) &&
+        s1_req(w).addr(idxMSB, idxLSB) === mshrMetaSet) ||
+      (s2_valid(w) && s2_type === t_lsu && s2_before_freeze(w) &&
+        s2_req(w).addr(idxMSB, idxLSB) === mshrMetaSet)).reduce(_ || _)
+  metaWriteArb.io.in(0).valid := mshrs.io.meta_write.valid && mshrMetaDrain
+  metaWriteArb.io.in(0).bits := mshrs.io.meta_write.bits
+  mshrs.io.meta_write.ready := metaWriteArb.io.in(0).ready && mshrMetaDrain
+  when (mshrs.io.meta_write.fire && mshrs.io.meta_write.bits.data.coh.isValid()) {
+    val set = mshrs.io.meta_write.bits.idx
+    val way = OHToUInt(mshrs.io.meta_write.bits.way_en)
+    assert(!completionPending(set)(way), "publish before functional completion")
+    slotReserved(set)(way) := false.B
+    installActive(set)(way) := false.B
+  }
 
   tl_out.e <> mshrs.io.mem_finish
 
@@ -921,8 +1264,12 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val wbArb = Module(new Arbiter(new WritebackReq(edge.bundle), 3))
   // 0 goes to prober, 1 to MSHR evictions, 2 to the cross-package shadow
   // writeback. The latter is a local request and does not alter the TL bundle.
-  wbArb.io.in(0)       <> prober.io.wb_req
-  wbArb.io.in(1)       <> mshrs.io.wb_req
+  wbArb.io.in(0).valid := prober.io.wb_req.valid && probeDrainReady
+  wbArb.io.in(0).bits := prober.io.wb_req.bits
+  prober.io.wb_req.ready := wbArb.io.in(0).ready && probeDrainReady
+  wbArb.io.in(1).valid := mshrs.io.wb_req.valid && victimDrainReady
+  wbArb.io.in(1).bits := mshrs.io.wb_req.bits
+  mshrs.io.wb_req.ready := wbArb.io.in(1).ready && victimDrainReady
   val crossPackageWbReq = Wire(Decoupled(new WritebackReq(edge.bundle)))
   wbArb.io.in(2)       <> crossPackageWbReq
   wb.io.req            <> wbArb.io.out
@@ -938,6 +1285,9 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val l1ReplacementWbEvent = wbArb.io.in(1).fire
   val l1ReplacementPacketSeq = dirtyPacketSeq(wbReqSet)(wbReqWay)
   val l1ReplacementPacketTracked = dirtyPacketTracked(wbReqSet)(wbReqWay)
+  wb.io.owner_epoch := slotEpoch(wbReqSet)(wbReqWay)
+  wb.io.image_generation := lineGeneration(wbReqSet)(wbReqWay)
+  wb.io.image_valid := imageValid(wbReqSet)(wbReqWay)
   wb.io.packet_seq := Mux(wbArb.io.chosen === 2.U,
     crossPackageWbPacketSeq, dirtyPacketSeq(wbReqSet)(wbReqWay))
   wb.io.packet_tracked := Mux(wbArb.io.chosen === 2.U,
@@ -1000,16 +1350,6 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     BoringUtils.addSource(l1L2SidebandSeq(i), s"${GH_GlobalParams.GH_L1_L2_PACKET_SEQ_BORE}_$i")
     BoringUtils.addSource(l1L2SidebandTracked(i), s"${GH_GlobalParams.GH_L1_L2_PACKET_TRACKED_BORE}_$i")
   }
-  when (io.traffic_reset) {
-    l1L2SidebandPtr := 0.U
-    for (i <- 0 until l1L2SidebandEntries) {
-      l1L2SidebandValid(i) := false.B
-      l1L2SidebandAddress(i) := 0.U
-      l1L2SidebandSeq(i) := 0.U
-      l1L2SidebandTracked(i) := false.B
-    }
-  }
-
   // Completion bitmap and per-package writeback buckets share the BOOM clock.
   // Thus io.csr_cycle is sampled at both the C-channel writeback and the exact
   // cycle at which an out-of-order completion advances the safe watermark.
@@ -1031,6 +1371,18 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val crossPackagePendingWay = RegInit(0.U(log2Ceil(nWays max 2).W))
   val crossPackagePendingTag = RegInit(0.U(tagBits.W))
   val crossPackagePendingSeq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val crossPackagePendingEpoch = Reg(UInt(16.W))
+  val crossPackageResidentMatch = residentValid(crossPackagePendingSet)(crossPackagePendingWay) &&
+    residentTag(crossPackagePendingSet)(crossPackagePendingWay) === crossPackagePendingTag &&
+    slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) === crossPackagePendingEpoch
+  clearFreezeValid := crossPackagePending
+  clearFreezeSet := crossPackagePendingSet
+  clearFreezeTag := crossPackagePendingTag
+  clearFreezeWay := UIntToOH(crossPackagePendingWay)
+  // The metadata clear is a commit point.  A store already in S3 must retire
+  // before that point, otherwise its old ownership check would still pass in
+  // the same cycle as the clear.
+  val crossPackageMetaClearBlock = WireDefault(false.B)
   crossPackageWbPacketSeq := crossPackagePendingSeq
   val s2_store_set = s2_req(0).addr(idxMSB, idxLSB)
   // The legacy tag-match Mux chain leaves the one-hot width unknown until
@@ -1040,23 +1392,44 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val s2_store_way = OHToUInt(s2_store_way_oh)
   val s2_overwrittenPacketSeq = dirtyPacketSeq(s2_store_set)(s2_store_way)
   val s2_overwrittenPacketTracked = dirtyPacketTracked(s2_store_set)(s2_store_way)
-  val crossPackageBlockCondition = p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B &&
-    s2_valid(0) && s2_type === t_lsu && s2_hit(0) &&
+  val crossPackageDomainWait = p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B &&
+    s2_valid(0) && s2_type === t_lsu && s2_tag_match(0) &&
     isWrite(s2_req(0).uop.mem_cmd) && s2_req(0).packet_seq =/= 0.U &&
     s2_overwrittenPacketTracked && s2_overwrittenPacketSeq =/= 0.U &&
     s2_overwrittenPacketSeq =/= s2_req(0).packet_seq &&
     s2_overwrittenPacketSeq > safePacketWatermark
+  // A permission miss must wait before MSHR acceptance as well. It cannot
+  // replay a later package over a still-unsafe resident predecessor. The
+  // existing dirty-hit shadow snapshot path remains separate from upgrades.
+  val crossPackageBlockCondition = crossPackageDomainWait && s2_hit(0)
   val crossPackagePendingLine = crossPackagePending &&
     s2_type === t_lsu && isWrite(s2_req(0).uop.mem_cmd) &&
     s2_req(0).packet_seq =/= 0.U &&
     s2_req(0).addr(idxMSB, idxLSB) === crossPackagePendingSet &&
     (s2_req(0).addr >> untagBits) === crossPackagePendingTag &&
     s2_req(0).packet_seq =/= crossPackagePendingSeq
-  l1CrossPackageBlocked := crossPackageBlockCondition || crossPackagePendingLine
+  // A clear cannot revoke a slot while an MSHR still owns the same line.  The
+  // owner must either finish its refill/replay or be explicitly killed by the
+  // existing fence/probe machinery before the shadow handoff proceeds.
+  val crossPackagePendingAddr = Wire(UInt(coreMaxAddrBits.W))
+  crossPackagePendingAddr := (Cat(crossPackagePendingTag, crossPackagePendingSet) << blockOffBits).pad(coreMaxAddrBits)
+  val crossPackageMshrConflict = crossPackagePending &&
+    (0 until cfg.nMSHRs).map(i => mshrs.io.owner_line_valid(i) &&
+      mshrs.io.owner_line_addr(i)(coreMaxAddrBits-1, blockOffBits) ===
+        crossPackagePendingAddr(coreMaxAddrBits-1, blockOffBits)).reduce(_ || _)
+  val crossPackageSlotConflict = crossPackagePending &&
+    (0 until cfg.nMSHRs).map(i => mshrs.io.owner_line_valid(i) &&
+      mshrs.io.owner_line_addr(i)(idxMSB, blockOffBits) ===
+        crossPackagePendingAddr(idxMSB, blockOffBits) &&
+      mshrs.io.owner_line_way(i) === UIntToOH(crossPackagePendingWay)).reduce(_ || _)
+  l1CrossPackageBlocked := crossPackageDomainWait || crossPackagePendingLine
 
   crossPackageWbReq.valid := crossPackagePending &&
+    crossPackageResidentMatch &&
     !crossPackageIssued &&
     !crossPackageMetaClearPending &&
+    !crossPackageSlotConflict && !crossPackageMetaClearBlock &&
+    !completionPending(crossPackagePendingSet)(crossPackagePendingWay) &&
     crossPackagePendingSeq <= safePacketWatermark
   crossPackageWbReq.bits := DontCare
   crossPackageWbReq.bits.source := cfg.nMSHRs.U
@@ -1074,6 +1447,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     crossPackagePendingWay := s2_store_way
     crossPackagePendingTag := (s2_req(0).addr >> untagBits)
     crossPackagePendingSeq := s2_overwrittenPacketSeq
+    crossPackagePendingEpoch := slotEpoch(s2_store_set)(s2_store_way)
   }
   when (crossPackageWbReq.fire) {
     crossPackageIssued := true.B
@@ -1086,7 +1460,9 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   }
   val crossPackageMetaClear = Wire(Decoupled(new L1MetaWriteReq))
   metaWriteArb.io.in(2) <> crossPackageMetaClear
-  crossPackageMetaClear.valid := crossPackageMetaClearPending
+  crossPackageMetaClear.valid := crossPackageMetaClearPending &&
+    crossPackageResidentMatch &&
+    !crossPackageMetaClearBlock && !crossPackageSlotConflict
   crossPackageMetaClear.bits := DontCare
   crossPackageMetaClear.bits.idx := crossPackagePendingSet
   crossPackageMetaClear.bits.tag := crossPackagePendingTag
@@ -1094,27 +1470,43 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   crossPackageMetaClear.bits.data.tag := crossPackagePendingTag
   crossPackageMetaClear.bits.data.coh := ClientMetadata.onReset
   when (crossPackageMetaClear.fire) {
+    printf("STAGE1_TX CLEAR source=DCACHE cycle=%x line=%x set=%x way=%x epoch=%x gen=%x mshr=%x txn=%x token=%x token_valid=%x seq=%x\n",
+      io.csr_cycle, (Cat(crossPackagePendingTag, crossPackagePendingSet) << blockOffBits).pad(coreMaxAddrBits),
+      crossPackagePendingSet, crossPackagePendingWay,
+      crossPackagePendingEpoch,
+      lineGeneration(crossPackagePendingSet)(crossPackagePendingWay),
+      reservedMshr(crossPackagePendingSet)(crossPackagePendingWay),
+      reservedTransaction(crossPackagePendingSet)(crossPackagePendingWay),
+      appliedEffectToken(crossPackagePendingSet)(crossPackagePendingWay),
+      appliedEffectValid(crossPackagePendingSet)(crossPackagePendingWay),
+      crossPackagePendingSeq)
+    assert(slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) === crossPackagePendingEpoch,
+      "clear descriptor lost resident owner")
+    assert(slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) =/= ~0.U(16.W), "slot epoch exhausted")
     crossPackageMetaClearPending := false.B
     crossPackagePending := false.B
     crossPackagePendingSeq := 0.U
+    slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) :=
+      slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) + 1.U
+    appliedEffectValid(crossPackagePendingSet)(crossPackagePendingWay) := false.B
+    imageValid(crossPackagePendingSet)(crossPackagePendingWay) := false.B
   }
-  when (io.traffic_reset) {
+  // A legitimate probe may retire the old resident while WaitSafe is parked.
+  // Retire that pending clear only after any already-issued WB has finished.
+  when (crossPackagePending &&
+      !crossPackageResidentMatch &&
+      !crossPackageIssued && !wb.io.idx.valid && !crossPackageSlotConflict) {
     crossPackagePending := false.B
-    crossPackageIssued := false.B
     crossPackageMetaClearPending := false.B
-    crossPackagePendingSet := 0.U
-    crossPackagePendingWay := 0.U
-    crossPackagePendingTag := 0.U
-    crossPackagePendingSeq := 0.U
   }
-
   val allocatedNext = WireInit(bitmapAllocated)
   val completedNext = WireInit(bitmapCompleted)
   val passedNext = WireInit(bitmapPassed)
   val seqNext = WireInit(bitmapSeq)
   val allocationCollision = WireDefault(false.B)
   val measuredPacketAlloc = io.packet_alloc_valid && trafficCounting
-  when (measuredPacketAlloc) {
+  val functionalPacketAlloc = io.packet_alloc_valid
+  when (functionalPacketAlloc) {
     val idx = io.packet_alloc_seq(statsIndexBits - 1, 0)
     when (io.packet_alloc_seq === 0.U || bitmapAllocated(idx)) {
       allocationCollision := true.B
@@ -1142,14 +1534,12 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       GH_GlobalParams.GH_CHECKER_STATUS_BITS - 1, GH_GlobalParams.GH_PACKET_SEQ_BITS)
     val seq = result(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0)
     val idx = seq(statsIndexBits - 1, 0)
-    val allocatedThisCycle = measuredPacketAlloc && io.packet_alloc_seq === seq
-    val resultRelevant = trafficCounting ||
-      (bitmapAllocated(idx) && bitmapSeq(idx) === seq) || allocatedThisCycle
+    val allocatedThisCycle = functionalPacketAlloc && io.packet_alloc_seq === seq
     val statusKnown = status =/= 3.U
     val duplicateThisCycle = if (i == 0) false.B else
       (0 until i).map(j => resultAccepted(j) &&
         io.checker_results(j)(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0) === seq).reduce(_ || _)
-    resultStale(i) := valid && seq =/= 0.U && seq <= measurementSeqFloor
+    resultStale(i) := valid && seq =/= 0.U && seq <= safePacketWatermark
     resultAccepted(i) := valid && !resultStale(i) && statusKnown && seq =/= 0.U &&
       ((bitmapAllocated(idx) && bitmapSeq(idx) === seq) || allocatedThisCycle) &&
       !bitmapCompleted(idx) && !duplicateThisCycle
@@ -1158,10 +1548,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     // checker channel is benign; any changed payload remains an error.
     resultHeldDuplicate(i) := valid && !resultAccepted(i) &&
       resultLevelConsumed(i) && (result === resultLevelPayload(i))
-    when (io.traffic_reset) {
-      resultLevelConsumed(i) := false.B
-      resultLevelPayload(i) := 0.U
-    }.elsewhen (!valid) {
+    when (!valid) {
       resultLevelConsumed(i) := false.B
     }.elsewhen (resultAccepted(i)) {
       resultLevelConsumed(i) := true.B
@@ -1176,11 +1563,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       completedNext(idx) := true.B
       passedNext(idx) := pass
     }
-    // Results from packages allocated after STOP are outside the frozen
-    // measurement window and must not invalidate the completed snapshot.
-    when (valid && !resultRelevant) {
-      resultStale(i) := true.B
-    }
+    // Functional PASS/FAIL tracking remains live outside measurement windows.
   }
 
   val barrierFailureAny = resultFailed.asUInt.orR || resultCancelled.asUInt.orR
@@ -1190,9 +1573,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     VecInit(io.checker_results.indices.map(i =>
       resultFailed(i) || resultCancelled(i))).asUInt)
   val barrierFailureSeq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
-  when (io.traffic_reset) {
-    barrierFailureSeq := 0.U
-  }.elsewhen (barrierFailureSeq === 0.U && barrierFailureAny) {
+  when (barrierFailureSeq === 0.U && barrierFailureAny) {
     barrierFailureSeq := Mux1H(barrierFailureOH, barrierFailureCandidates)
   }
   val barrierFailureSticky = barrierFailureSeq =/= 0.U
@@ -1412,16 +1793,11 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
 
   when (io.traffic_reset) {
     for (i <- 0 until statsWindow) {
-      bitmapAllocated(i) := false.B
-      bitmapCompleted(i) := false.B
-      bitmapPassed(i) := false.B
-      bitmapSeq(i) := 0.U
       bucketValid(i) := false.B
       bucketSeq(i) := 0.U
       bucketCount(i) := 0.U
       bucketWritebackCycleSum(i) := 0.U
     }
-    safePacketWatermark := io.packet_seq_baseline
     measurementSeqFloor := io.packet_seq_baseline
     l1_l2_c_count := 0.U
     l1_l2_dirty_wb_count := 0.U
@@ -1447,6 +1823,13 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   io.lsu.perf.release := edge.done(tl_out.c)
   io.lsu.perf.acquire := edge.done(tl_out.a)
 
+  // A stale S3 store is reported as a retry in the cycle in which ownership
+  // mismatch is detected.  The request is kept in a side wire so the nack
+  // path does not accidentally use the younger S2 request.
+  val staleS3StoreNack = WireDefault(false.B)
+  val staleS3StoreReq = Wire(new BoomDCacheReq)
+  staleS3StoreReq := 0.U.asTypeOf(new BoomDCacheReq)
+
   // load data gen
   val s2_data_word_prebypass = widthMap(w => s2_data_muxed(w) >> Cat(s2_word_idx(w), 0.U(log2Ceil(coreDataBits).W)))
   val s2_data_word = Wire(Vec(memWidth, UInt()))
@@ -1465,12 +1848,29 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     cache_resp(w).bits.traffic_check := s2_req(w).traffic_check
     cache_resp(w).bits.traffic_seen  := s2_req(w).traffic_seen
     cache_resp(w).bits.traffic_cacheable := s2_req(w).traffic_cacheable
+    cache_resp(w).bits.request_token_valid := s2_req(w).request_token_valid
+    cache_resp(w).bits.request_token := s2_req(w).request_token
   }
 
   val uncache_resp = Wire(Valid(new BoomDCacheResp))
-  uncache_resp.bits     := mshrs.io.resp.bits
-  uncache_resp.valid    := mshrs.io.resp.valid
-  mshrs.io.resp.ready := !(cache_resp.map(_.valid).reduce(_&&_)) // We can backpressure the MSHRs, but not cache hits
+  val responseSlotAvailable = !cache_resp.map(_.valid).reduce(_ && _)
+  val terminalResponse = Wire(new BoomDCacheResp)
+  terminalResponse := 0.U.asTypeOf(new BoomDCacheResp)
+  terminalResponse.uop := completionQ.io.deq.bits.req.uop
+  terminalResponse.data := completionQ.io.deq.bits.data
+  terminalResponse.is_hella := completionQ.io.deq.bits.req.is_hella
+  terminalResponse.traffic_check := completionQ.io.deq.bits.req.traffic_check
+  terminalResponse.traffic_seen := completionQ.io.deq.bits.req.traffic_seen
+  terminalResponse.traffic_cacheable := completionQ.io.deq.bits.req.traffic_cacheable
+  terminalResponse.request_token_valid := completionQ.io.deq.bits.req.request_token_valid
+  terminalResponse.request_token := completionQ.io.deq.bits.req.request_token
+  val completionCancelled = completionQ.io.deq.bits.status === CacheTerminal.cancel
+  io.lsu.store_done.valid := completionQ.io.deq.valid && responseSlotAvailable && !completionCancelled
+  io.lsu.store_done.bits := completionQ.io.deq.bits
+  completionQ.io.deq.ready := responseSlotAvailable && (completionCancelled || io.lsu.store_done.ready)
+  uncache_resp.bits := Mux(completionQ.io.deq.valid, terminalResponse, mshrs.io.resp.bits)
+  uncache_resp.valid := Mux(completionQ.io.deq.valid, io.lsu.store_done.fire, mshrs.io.resp.valid)
+  mshrs.io.resp.ready := responseSlotAvailable && !completionQ.io.deq.valid // We can backpressure the MSHRs, but not cache hits
 
   val resp = WireInit(cache_resp)
   var uncache_responding = false.B
@@ -1483,6 +1883,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   }
 
   for (w <- 0 until memWidth) {
+    val staleStoreNack = (w == 0).B && staleS3StoreNack
     io.lsu.resp(w).valid := resp(w).valid &&
                             !(io.lsu.exception && resp(w).bits.uop.uses_ldq) &&
                             !IsKilledByBranch(io.lsu.brupdate, resp(w).bits.uop)
@@ -1494,11 +1895,12 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
         resp(w).bits.traffic_check)
     }
 
-    io.lsu.nack(w).valid := s2_valid(w) && s2_send_nack(w) &&
+    io.lsu.nack(w).valid := staleStoreNack || (s2_valid(w) && s2_send_nack(w) &&
                             !(io.lsu.exception && s2_req(w).uop.uses_ldq) &&
-                            !IsKilledByBranch(io.lsu.brupdate, s2_req(w).uop)
-    io.lsu.nack(w).bits  := UpdateBrMask(io.lsu.brupdate, s2_req(w))
-    assert(!(io.lsu.nack(w).valid && s2_type =/= t_lsu))
+                            !IsKilledByBranch(io.lsu.brupdate, s2_req(w).uop))
+    io.lsu.nack(w).bits  := UpdateBrMask(io.lsu.brupdate,
+      Mux(staleStoreNack, staleS3StoreReq, s2_req(w)))
+    assert(!(io.lsu.nack(w).valid && s2_type =/= t_lsu && !staleStoreNack))
   }
   when (io.lsu.resp(0).valid && io.lsu.resp(0).bits.uop.mem_cmd === M_XLR) {
     lr_traffic_check := io.lsu.resp(0).bits.traffic_check
@@ -1507,13 +1909,46 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     lr_traffic_check_valid := false.B
   }
   io.lsu.traffic_check_state := io.traffic_check_state
+  io.lsu.csr_cycle := io.csr_cycle
   io.lsu.traffic_counting := trafficCounting
   io.lsu.traffic_reset := io.traffic_reset
 
   // Store/amo hits
-  val s3_req   = RegNext(s2_req(0))
-  val s3_valid = RegNext(s2_valid(0) && s2_hit(0) && isWrite(s2_req(0).uop.mem_cmd) &&
-                         !s2_sc_fail && !(s2_send_nack(0) && s2_nack(0)))
+  val s2_write_grant = s2_valid(0) && s2_hit(0) && isWrite(s2_req(0).uop.mem_cmd) &&
+    !s2_nack(0) && !s3_valid && (s2_type =/= t_replay || s2_replay_owner_match)
+  // RISC-V AMO.W returns its loaded 32-bit value sign-extended to XLEN,
+  // independently of the arithmetic/logical operation. The ALU physical
+  // write value remains unchanged below.
+  // LoadGen.wordData selects addr[2] for AMO.W before sign extension.  Taking
+  // bits 31:0 directly is wrong for the upper word of an aligned RV64 word.
+  val amoWordOldValue = new LoadGen(
+    s2_req(0).uop.mem_size, true.B, s2_req(0).addr,
+    s2_data_word(0), false.B, xLen / 8).wordData
+  val amoArchitecturalOldValue = Mux(
+    s2_req(0).uop.mem_size === 2.U, amoWordOldValue, s2_data_word(0))
+
+  when (s2_write_grant) {
+    val set = s2_req(0).addr(idxMSB, idxLSB)
+    val way = OHToUInt(s2_effective_req(0).way_en)
+    val duplicate = s2_req(0).effect_token_valid && appliedEffectValid(set)(way) &&
+      appliedEffectToken(set)(way) === s2_req(0).effect_token
+    s3_req := s2_req(0)
+    s3_way := s2_effective_req(0).way_en
+    s3_valid := true.B
+    s3_applied := s2_sc_fail
+    s3_cancelled := false.B
+    s3_replay := s2_type === t_replay
+    s3_old_value := s2_data_word(0)
+    s3_operand := s2_req(0).data
+    s3_result := Mux(duplicate, appliedEffectResult(set)(way),
+      Mux(s2_sc, s2_sc_fail.asUInt,
+        Mux(isAMO(s2_req(0).uop.mem_cmd), amoArchitecturalOldValue, s2_data_word(0))))
+    printf("STAGE1_TX ISSUE source=DCACHE cmd=%x size=%x stq=%x req=%x effect=%x txn=%x epoch=%x gen=%x is_hella=%x cycle=%x\n",
+      s2_req(0).uop.mem_cmd, s2_req(0).uop.mem_size, s2_req(0).uop.stq_idx,
+      s2_req(0).request_token, s2_req(0).effect_token,
+      s2_req(0).transaction_token, s2_req(0).slot_epoch,
+      s2_req(0).line_generation, s2_req(0).is_hella, io.csr_cycle)
+  }
   for (w <- 1 until memWidth) {
     assert(!(s2_valid(w) && s2_hit(w) && isWrite(s2_req(w).uop.mem_cmd) &&
                          !s2_sc_fail && !(s2_send_nack(w) && s2_nack(w))),
@@ -1522,11 +1957,13 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
 
   // For bypassing
   val s4_req   = RegNext(s3_req)
-  val s4_valid = RegNext(s3_valid)
+  val s4_valid = RegNext(s3_effect_fire, false.B)
   val s5_req   = RegNext(s4_req)
   val s5_valid = RegNext(s4_valid)
 
-  val s3_bypass = widthMap(w => s3_valid && ((s2_req(w).addr >> wordOffBits) === (s3_req.addr >> wordOffBits)))
+  val s3_bypass = widthMap(w => s3_valid && !s3_cancelled &&
+    !(s3_req.uop.mem_cmd === M_XSC && s3_result === 1.U) &&
+    ((s2_req(w).addr >> wordOffBits) === (s3_req.addr >> wordOffBits)))
   val s4_bypass = widthMap(w => s4_valid && ((s2_req(w).addr >> wordOffBits) === (s4_req.addr >> wordOffBits)))
   val s5_bypass = widthMap(w => s5_valid && ((s2_req(w).addr >> wordOffBits) === (s5_req.addr >> wordOffBits)))
 
@@ -1543,23 +1980,210 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   amoalu.io.lhs  := s2_data_word(0)
   amoalu.io.rhs  := s2_req(0).data
 
+  when (s2_write_grant) { s3_req.data := amoalu.io.out }
 
-  s3_req.data := amoalu.io.out
-  // Give the one-hot way register an explicit width. s2_tag_match_way is
-  // formed through a Mux chain containing legacy widthless registers, so
-  // RegNext alone leaves its width unknown when OHToUInt queries it below.
-  val s3_way   = Reg(UInt(nWays.W))
-  s3_way      := s2_tag_match_way(0)
+  val s3_set = s3_req.addr(idxMSB, idxLSB)
+  val s3_way_idx = OHToUInt(s3_way)
+  val s3_owner_match = s3_req.slot_epoch === slotEpoch(s3_set)(s3_way_idx) &&
+    s3_req.owner_context_valid && s3_req.owner_way === s3_way &&
+    Mux(s3_replay,
+      slotReserved(s3_set)(s3_way_idx) &&
+        reservedTransaction(s3_set)(s3_way_idx) === s3_req.transaction_token &&
+        reservedMshr(s3_set)(s3_way_idx) === s3_req.replay_mshr_id &&
+        reservedTag(s3_set)(s3_way_idx) === (s3_req.addr >> untagBits),
+      residentValid(s3_set)(s3_way_idx) && residentTag(s3_set)(s3_way_idx) === (s3_req.addr >> untagBits))
+  val s3_same_clear_line = crossPackageMetaClear.fire &&
+    s3_set === crossPackagePendingSet && s3_way_idx === crossPackagePendingWay
+  val s3_same_probe_invalidate = prober.io.meta_write.fire &&
+    !prober.io.meta_write.bits.data.coh.isValid() &&
+    s3_set === prober.io.meta_write.bits.idx &&
+    s3_way === prober.io.meta_write.bits.way_en
+  val s3_owner_revoked = s3_same_clear_line || s3_same_probe_invalidate
+  s2_realloc_owner_conflict := s2_valid(0) && s2_type === t_lsu &&
+    edge.manager.supportsAcquireBFast(s2_raw_req(0).addr, lgCacheBlockBytes.U) &&
+    !s2_tag_match(0) && s3_valid &&
+    s2_selected_set === s3_set && s2_selected_way === s3_way
+  // Drain prevents owner revocation of a held grant. A real mismatch is a
+  // protocol fault; ordinary retry cannot hide it or release its request.
+  val s3_stale_or_revoked = s3_valid && (!s3_owner_match || s3_owner_revoked)
+  staleS3StoreNack := false.B
+  when (s3_valid) { assert(!s3_stale_or_revoked, "held write grant owner revoked") }
+  crossPackageMetaClearBlock := (s3_valid &&
+    s3_set === crossPackagePendingSet && s3_way_idx === crossPackagePendingWay) ||
+    completionPending(crossPackagePendingSet)(crossPackagePendingWay) ||
+    (0 until memWidth).map(w =>
+      (s1_valid(w) && s1_type === t_lsu && s1_before_freeze(w) &&
+        s1_req(w).addr(idxMSB, idxLSB) === crossPackagePendingSet) ||
+      (s2_valid(w) && s2_type === t_lsu && s2_before_freeze(w) &&
+        s2_req(w).addr(idxMSB, idxLSB) === crossPackagePendingSet)).reduce(_ || _)
+  val stage1ClearS1 = (0 until memWidth).map(w => s1_valid(w) && s1_type === t_lsu &&
+    s1_req(w).addr(idxMSB, idxLSB) === crossPackagePendingSet)
+  val stage1ClearS2 = (0 until memWidth).map(w => s2_valid(w) && s2_type === t_lsu &&
+    s2_req(w).addr(idxMSB, idxLSB) === crossPackagePendingSet)
+  val stage1ClearS1Old = (0 until memWidth).map(w => stage1ClearS1(w) && s1_before_freeze(w)).reduce(_ || _)
+  val stage1ClearS2Old = (0 until memWidth).map(w => stage1ClearS2(w) && s2_before_freeze(w)).reduce(_ || _)
+  val stage1ClearPendingPrev = RegNext(crossPackageMetaClearPending, false.B)
+  when (crossPackageMetaClear.fire || (crossPackageMetaClearPending && !stage1ClearPendingPrev)) {
+    printf("STAGE1_TX CLEAR_CHECK cycle=%x set=%x way=%x fire=%x s1_any=%x s2_any=%x s1_old=%x s2_old=%x s3=%x completion=%x mshr_conflict=%x slot_conflict=%x\n",
+      io.csr_cycle, crossPackagePendingSet, crossPackagePendingWay, crossPackageMetaClear.fire,
+      VecInit(stage1ClearS1).asUInt.orR, VecInit(stage1ClearS2).asUInt.orR,
+      stage1ClearS1Old, stage1ClearS2Old,
+      s3_valid && s3_set === crossPackagePendingSet && s3_way_idx === crossPackagePendingWay,
+      completionPending(crossPackagePendingSet)(crossPackagePendingWay),
+      crossPackageMshrConflict, crossPackageSlotConflict)
+  }
+  staleS3StoreReq := s3_req
+  staleS3StoreReq.replay_retry := s3_replay
+  val s3_pre_effect_kill = s3_valid && !s3_applied &&
+    (IsKilledByBranch(io.lsu.brupdate, s3_req.uop) ||
+      (io.lsu.exception && s3_req.uop.uses_ldq))
+  when (s3_pre_effect_kill) { s3_cancelled := true.B }
+  when (s3_pre_effect_kill) {
+    printf("STAGE1_TX KILL cycle=%x phase=S3 req=%x\n", io.csr_cycle, s3_req.request_token)
+  }
+  when (io.lsu.s1_kill.asUInt.orR && replayPipelineBusy ||
+    s1_replay_killed || s2_replay_killed) {
+    printf("STAGE1_TX RACE_OBSERVE cycle=%x kill_replay=%x s1_replay_killed=%x s2_replay_killed=%x\n",
+      io.csr_cycle, io.lsu.s1_kill.asUInt.orR && replayPipelineBusy,
+      s1_replay_killed, s2_replay_killed)
+  }
+  when (s3_valid) { s3_req.uop.br_mask := GetNewBrMask(io.lsu.brupdate, s3_req.uop) }
+  val probeSet = prober.io.state.bits(idxMSB, idxLSB)
+  probeDrainReady := !(s3_valid && s3_set === probeSet) &&
+    !completionPending(probeSet).asUInt.orR &&
+    !(0 until memWidth).map(w =>
+      (s1_valid(w) && s1_type === t_lsu && s1_before_freeze(w) &&
+        s1_req(w).addr(idxMSB, idxLSB) === probeSet) ||
+      (s2_valid(w) && s2_type === t_lsu && s2_before_freeze(w) &&
+        s2_req(w).addr(idxMSB, idxLSB) === probeSet)).reduce(_ || _)
+  val victimSet = mshrs.io.wb_req.bits.idx
+  victimDrainReady := !(s3_valid && s3_set === victimSet) &&
+    !completionPending(victimSet).asUInt.orR
+  val s3_duplicate_effect = s3_req.effect_token_valid &&
+    appliedEffectValid(s3_set)(s3_way_idx) &&
+    appliedEffectToken(s3_set)(s3_way_idx) === s3_req.effect_token
+  val s3_image_match = s3_req.image_valid === imageValid(s3_set)(s3_way_idx) &&
+    (!s3_req.image_valid || s3_req.line_generation === lineGeneration(s3_set)(s3_way_idx))
+  val s3_effect_eligible = s3_valid && !s3_applied && s3_owner_match &&
+    s3_image_match && !s3_duplicate_effect && !s3_owner_revoked && !s3_pre_effect_kill && !s3_cancelled
+  when (s3_valid && !s3_applied && !s3_duplicate_effect && !s3_cancelled && !s3_pre_effect_kill) {
+    assert(s3_image_match, "write grant has stale image dependency")
+  }
+  s3_effect_fire := dataWriteArb.io.in(0).fire
+  when (s3_effect_fire) {
+    printf("STAGE1_TX EFFECT cycle=%x cmd=%x size=%x stq=%x req=%x effect=%x txn=%x epoch=%x gen=%x addr=%x data=%x old=%x operand=%x new=%x returned=%x mask=%x set=%x way=%x owner_match=%x\n",
+      io.csr_cycle, s3_req.uop.mem_cmd, s3_req.uop.mem_size, s3_req.uop.stq_idx, s3_req.request_token,
+      s3_req.effect_token, s3_req.transaction_token, s3_req.slot_epoch,
+      s3_req.line_generation, s3_req.addr, s3_req.data, s3_old_value, s3_operand,
+      s3_req.data, s3_result,
+      new StoreGen(s3_req.uop.mem_size, s3_req.addr, 0.U, xLen / 8).mask,
+      s3_set, s3_way_idx, s3_owner_match)
+  }
+  when (s3_effect_fire || (s3_valid && s3_duplicate_effect)) { s3_applied := true.B }
+  when (s3_valid && s3_duplicate_effect) {
+    s3_result := appliedEffectResult(s3_set)(s3_way_idx)
+  }
+  completionArb.io.in(0).valid := s3_valid && s3_owner_match && (s3_applied || s3_cancelled)
+  completionArb.io.in(0).bits.req := s3_req
+  completionArb.io.in(0).bits.status := Mux(s3_cancelled, CacheTerminal.cancel,
+    Mux(s3_req.uop.mem_cmd === M_XSC && s3_result === 1.U,
+      CacheTerminal.noWriteSC, CacheTerminal.applied))
+  completionArb.io.in(0).bits.data := s3_result
+  when (completionArb.io.in(0).fire) { s3_valid := false.B; s3_applied := false.B; s3_cancelled := false.B }
+  completionArb.io.in(1).valid := false.B
+  completionArb.io.in(1).bits := 0.U.asTypeOf(new BoomCacheCompletion)
+  when (completionArb.io.out.fire && completionArb.io.out.bits.req.owner_context_valid) {
+    val r = completionArb.io.out.bits.req
+    assert(!completionPending(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)),
+      "two terminal responsibilities for one cache slot")
+    completionPending(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) := true.B
+  }
+  when (completionQ.io.deq.fire && completionQ.io.deq.bits.req.owner_context_valid) {
+    val r = completionQ.io.deq.bits.req
+    assert(completionPending(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) &&
+      slotEpoch(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) === r.slot_epoch,
+      "completion lost its live slot responsibility")
+    completionPending(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) := false.B
+  }
+  when (completionQ.io.deq.fire) {
+    printf("STAGE1_TX TERMINAL cycle=%x status=%x cmd=%x size=%x stq=%x req=%x effect=%x txn=%x data=%x admission=%x is_hella=%x\n",
+      io.csr_cycle, completionQ.io.deq.bits.status, completionQ.io.deq.bits.req.uop.mem_cmd,
+      completionQ.io.deq.bits.req.uop.mem_size,
+      completionQ.io.deq.bits.req.uop.stq_idx,
+      completionQ.io.deq.bits.req.request_token,
+      completionQ.io.deq.bits.req.effect_token,
+      completionQ.io.deq.bits.req.transaction_token,
+      completionQ.io.deq.bits.data,
+      completionQ.io.deq.bits.req.admission,
+      completionQ.io.deq.bits.req.is_hella)
+  }
 
-  dataWriteArb.io.in(0).valid       := s3_valid
+  dataWriteArb.io.in(0).valid       := s3_effect_eligible
   dataWriteArb.io.in(0).bits.addr   := s3_req.addr
   dataWriteArb.io.in(0).bits.wmask  := UIntToOH(s3_req.addr.extract(rowOffBits-1,offsetlsb))
   dataWriteArb.io.in(0).bits.data   := Fill(rowWords, s3_req.data)
   dataWriteArb.io.in(0).bits.way_en := s3_way
+  dataWriteArb.io.in(0).bits.slot_epoch := s3_req.slot_epoch
+  dataWriteArb.io.in(0).bits.line_generation := imageSerial
+
+  replayEffectDone := false.B
+  replayEffectDoneId := 0.U
+  replayCancel := false.B
+  replayCancelId := 0.U
+  for (i <- 0 until cfg.nMSHRs) {
+    replayEffectDoneVec(i) := mshrs.io.replay_result(i).fire &&
+      mshrs.io.replay_result(i).bits.status.isOneOf(
+        CacheTerminal.applied, CacheTerminal.load, CacheTerminal.noWriteSC)
+    replayCancelVec(i) := mshrs.io.replay_result(i).fire &&
+      mshrs.io.replay_result(i).bits.status === CacheTerminal.cancel
+    val writeTerminal = completionQ.io.deq.fire &&
+      completionQ.io.deq.bits.req.admission === CacheAdmission.replay &&
+      completionQ.io.deq.bits.req.replay_mshr_id === i.U
+    val loadTerminal = s2_valid(0) && s2_type === t_replay &&
+      !isWrite(s2_req(0).uop.mem_cmd) && s2_send_resp(0) &&
+      s2_req(0).replay_mshr_id === i.U
+    mshrs.io.replay_grant(i).valid := s2_valid(0) && s2_type === t_replay &&
+      s2_req(0).replay_mshr_id === i.U
+    mshrs.io.replay_grant(i).bits := s2_req(0)
+    when (mshrs.io.replay_grant(i).valid) {
+      printf("STAGE1_TX REPLAY_GRANT cycle=%x mshr=%x cmd=%x size=%x stq=%x req=%x effect=%x txn=%x\n",
+        io.csr_cycle, i.U, s2_req(0).uop.mem_cmd, s2_req(0).uop.mem_size, s2_req(0).uop.stq_idx,
+        s2_req(0).request_token, s2_req(0).effect_token,
+        s2_req(0).transaction_token)
+    }
+    when (mshrs.io.replay_result(i).fire) {
+      printf("STAGE1_TX REPLAY_RESULT cycle=%x mshr=%x status=%x stq=%x req=%x effect=%x txn=%x data=%x\n",
+        io.csr_cycle, i.U, mshrs.io.replay_result(i).bits.status,
+        mshrs.io.replay_result(i).bits.req.uop.stq_idx,
+        mshrs.io.replay_result(i).bits.req.request_token,
+        mshrs.io.replay_result(i).bits.req.effect_token,
+        mshrs.io.replay_result(i).bits.req.transaction_token,
+        mshrs.io.replay_result(i).bits.data)
+    }
+    val killS1 = s1_replay_killed && s1_req(0).replay_mshr_id === i.U
+    val killS2 = s2_replay_killed && s2_req(0).replay_mshr_id === i.U
+    val cancelReq = Mux(killS1, s1_req(0), s2_req(0))
+    when (writeTerminal || loadTerminal || killS1 || killS2) {
+      replayResultQ(i).io.enq.valid := true.B
+      replayResultQ(i).io.enq.bits := completionQ.io.deq.bits
+      when (!writeTerminal) {
+        replayResultQ(i).io.enq.bits.req := Mux(killS1 || killS2, cancelReq, s2_req(0))
+        replayResultQ(i).io.enq.bits.status := Mux(killS1 || killS2,
+          CacheTerminal.cancel, CacheTerminal.load)
+        replayResultQ(i).io.enq.bits.data := loadgen(0).data
+      }
+      assert(replayResultQ(i).io.enq.ready, "replay result reservation exhausted")
+    }
+  }
+  // Legacy waveform aliases report acknowledged results, never issue pulses.
+  replayEffectDone := replayEffectDoneVec.asUInt.orR
+  replayEffectDoneId := PriorityEncoder(replayEffectDoneVec.asUInt)
+  replayCancel := replayCancelVec.asUInt.orR
+  replayCancelId := PriorityEncoder(replayCancelVec.asUInt)
 
   // Read provenance before this write updates it. Successful SC and AMO
   // operations naturally reach this same physical array-write point, whereas
-  // a failed SC never asserts s3_valid and therefore cannot create an event.
+  // a failed SC holds only a no-write result and cannot create an event.
   val modifyingSet = s3_req.addr(idxMSB, idxLSB)
   val modifyingWay = OHToUInt(s3_way)
   val overwrittenPacketSeq = dirtyPacketSeq(modifyingSet)(modifyingWay)
@@ -1580,11 +2204,23 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
 
   // A refill installs a new tag in this set/way and must discard attribution
   // left by the evicted line before any replayed store dirties the new line.
-  when (dataWriteArb.io.in(1).fire) {
-    val set = dataWriteArb.io.in(1).bits.addr(idxMSB, idxLSB)
-    val way = OHToUInt(dataWriteArb.io.in(1).bits.way_en)
-    dirtyPacketSeq(set)(way) := 0.U
-    dirtyPacketTracked(set)(way) := false.B
+  val refillLastBeat = dataWriteArb.io.in(1).bits.addr(blockOffBits-1, rowOffBits) ===
+    (cacheDataBeats - 1).U
+  val refillOwnerMatch = dataWriteArb.io.in(1).bits.slot_epoch ===
+    selectedRefillReservedEpoch
+  when (dataWriteArb.io.in(1).fire && refillLastBeat && refillOwnerMatch) {
+    val set = refillReqSet
+    val way = refillReqWay
+    when (selectedRefillSlotReserved) {
+      when (selectedRefillSlotEpoch =/= selectedRefillReservedEpoch) {
+        slotEpoch(set)(way) := reservedEpoch(set)(way)
+        dirtyPacketSeq(set)(way) := 0.U
+        dirtyPacketTracked(set)(way) := false.B
+        lineGeneration(set)(way) := 0.U
+        imageValid(set)(way) := false.B
+        appliedEffectValid(set)(way) := false.B
+      }
+    }
   }
 
   // Keep conservative line-level verification attribution. Once any checked
@@ -1593,13 +2229,22 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // the greatest package sequence seen for the line. Refill is the only event
   // above that clears the attribution because it installs a different line.
   when (dataWriteArb.io.in(0).fire) {
+    assert(imageSerial =/= ~0.U(32.W), "local image serial exhausted")
     val set = s3_req.addr(idxMSB, idxLSB)
     val way = OHToUInt(s3_way)
+    lineGeneration(set)(way) := imageSerial
+    imageValid(set)(way) := true.B
+    imageSerial := imageSerial + 1.U
     when (s3_req.packet_seq =/= 0.U) {
-      dirtyPacketSeq(set)(way) := Mux(dirtyPacketTracked(set)(way) &&
-        dirtyPacketSeq(set)(way) > s3_req.packet_seq,
-        dirtyPacketSeq(set)(way), s3_req.packet_seq)
+      assert(!dirtyPacketTracked(set)(way) || dirtyPacketSeq(set)(way) <= s3_req.packet_seq,
+        "older package store attempted to overwrite newer local image")
+      dirtyPacketSeq(set)(way) := s3_req.packet_seq
       dirtyPacketTracked(set)(way) := true.B
+    }
+    when (s3_req.effect_token_valid) {
+      appliedEffectValid(set)(way) := true.B
+      appliedEffectToken(set)(way) := s3_req.effect_token
+      appliedEffectResult(set)(way) := s3_result
     }
   }
 
@@ -1630,7 +2275,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
 
   // 普通 store/load 只保留架构与严格两套一致口径。严格 store 路径接受
   // 由 ROB 架构提交锁存的资格，并在真实的 DCache 完成点结算。
-  val completed_strict_store_cache = dataWriteArb.io.in(0).fire &&
+  val completed_strict_store_cache = dataWriteArb.io.in(0).fire && s3_owner_match &&
     s3_req.strict_store_token_valid && s3_req.traffic_cacheable &&
     s3_req.uop.uses_stq && s3_req.uop.mem_cmd === M_XWR
   val completed_strict_store_uncache = mshrs.io.traffic_strict_store_complete
@@ -1801,6 +2446,32 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     Seq.fill(GH_GlobalParams.GH_TRAFFIC_COUNTERS)(0.U(64.W))))
   val trafficCounterSnapshotValid = RegInit(false.B)
   val trafficStopCapturePending = RegInit(false.B)
+  val outstandingMshrCount = PopCount(mshrs.io.owner_line_valid)
+  val outstandingReplayResultCount = replayResultQ.map(_.io.count).reduce(_ +& _)
+  // Continuously exported read-only state, sampled by emulator after final eval.
+  val stage1CacheState = Seq(
+    io.csr_cycle, s1_valid.asUInt, s2_valid.asUInt, mshrs.io.active_transactions,
+    mshrs.io.fence_rdy.asUInt, mshrs.io.replay.valid.asUInt, replayPipelineBusy.asUInt,
+    outstandingReplayResultCount, completionQ.io.count, s3_valid.asUInt,
+    io.lsu.store_done.valid.asUInt, wb.io.idx.valid.asUInt, prober.io.state.valid.asUInt,
+    mshrs.io.refill.valid.asUInt, PopCount(installActive.map(_.asUInt.orR)),
+    PopCount(completionPending.map(_.asUInt.orR)), killed_store_replay_valid.asUInt,
+    PopCount(slotReserved.map(_.asUInt.orR)), crossPackagePending.asUInt,
+    uncache_resp.valid.asUInt, VecInit(io.lsu.resp.map(_.valid)).asUInt,
+    tl_out.e.valid.asUInt, tl_out.d.valid.asUInt, tl_out.a.valid.asUInt,
+    s3_req.request_token, completionQ.io.deq.bits.req.request_token,
+    mshrs.io.replay.bits.request_token, outstandingMshrCount)
+  for ((value, i) <- stage1CacheState.zipWithIndex) {
+    val probe = Wire(UInt(64.W))
+    probe := value
+    BoringUtils.addSource(probe, s"stage1_cache_${tileParams.hartId}_$i")
+  }
+  when (trafficStopPulse) {
+    printf("STAGE1_TX EXIT_STATE snapshot=traffic_stop mshr_outstanding=%x replay_valid=%x replay_busy=%x replay_result_q=%x completion_q=%x s3_valid=%x store_done_valid=%x\n",
+      outstandingMshrCount, mshrs.io.replay.valid, replayPipelineBusy,
+      outstandingReplayResultCount, completionQ.io.count, s3_valid,
+      io.lsu.store_done.valid)
+  }
   when (io.traffic_reset || io.traffic_start) {
     trafficCounterSnapshotValid := false.B
     trafficStopCapturePending := false.B
@@ -1828,9 +2499,39 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // chain and barrier state in the waveform.  None of these probes drives
   // cache control, handshake, completion, or statistics logic.
   val debug_s2_valid = s2_valid
+  val debug_s2_admission = VecInit(s2_effective_req.map(_.admission))
+  val debug_owner_reservation_fire = VecInit((0 until memWidth).map(w =>
+    mshrs.io.req(w).fire && s2_effective_req(w).admission.isOneOf(
+      CacheAdmission.primary, CacheAdmission.upgrade)))
+  val debug_s2_transaction_token = VecInit(s2_effective_req.map(_.transaction_token))
+  val debug_s2_request_token = VecInit(s2_effective_req.map(_.request_token))
+  val debug_s2_owner_way = VecInit(s2_effective_req.map(_.owner_way))
+  val debug_install_fire = mshrs.io.install.fire
+  val debug_install_fault = mshrs.io.install_fault
+  val debug_refill_fault = mshrs.io.refill_fault
+  val debug_store_terminal_fire = io.lsu.store_done.fire
+  val debug_store_terminal_token = io.lsu.store_done.bits.req.request_token
+  val debug_store_terminal_status = io.lsu.store_done.bits.status
+  val debug_new_image_generation = imageSerial
+  Seq(debug_s2_admission, debug_owner_reservation_fire, debug_s2_transaction_token,
+    debug_s2_request_token, debug_s2_owner_way, debug_install_fire, debug_install_fault,
+    debug_refill_fault, debug_store_terminal_fire, debug_store_terminal_token,
+    debug_store_terminal_status, debug_new_image_generation).foreach(dontTouch(_))
+  val debug_slot_epoch = VecInit((0 until nSets).flatMap(s =>
+    (0 until nWays).map(w => slotEpoch(s)(w))))
+  val debug_line_generation = VecInit((0 until nSets).flatMap(s =>
+    (0 until nWays).map(w => lineGeneration(s)(w))))
+  val debug_applied_effect_valid = VecInit((0 until nSets).flatMap(s =>
+    (0 until nWays).map(w => appliedEffectValid(s)(w))))
+  val debug_applied_effect_token = VecInit((0 until nSets).flatMap(s =>
+    (0 until nWays).map(w => appliedEffectToken(s)(w))))
   val debug_s2_type = s2_type
   val debug_s2_stq_idx = VecInit(s2_req.map(_.uop.stq_idx))
   val debug_s2_packet_seq = VecInit(s2_req.map(_.packet_seq))
+  val debug_s2_slot_epoch = VecInit(s2_req.map(_.slot_epoch))
+  val debug_s2_line_generation = VecInit(s2_req.map(_.line_generation))
+  val debug_s2_effect_token_valid = VecInit(s2_req.map(_.effect_token_valid))
+  val debug_s2_effect_token = VecInit(s2_req.map(_.effect_token))
   val debug_s2_token_valid = VecInit(s2_req.map(_.strict_store_token_valid))
   val debug_s2_token = VecInit(s2_req.map(_.strict_store_token))
   val debug_s2_nack = s2_nack
@@ -1847,6 +2548,11 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val debug_replay_packet_seq = mshrs.io.replay.bits.packet_seq
   val debug_replay_token_valid = mshrs.io.replay.bits.strict_store_token_valid
   val debug_replay_token = mshrs.io.replay.bits.strict_store_token
+  val debug_replay_slot_epoch = mshrs.io.replay.bits.slot_epoch
+  val debug_replay_line_generation = mshrs.io.replay.bits.line_generation
+  val debug_replay_effect_token = mshrs.io.replay.bits.effect_token
+  val debug_replay_effect_done = replayEffectDone
+  val debug_replay_cancel = replayCancel
   val debug_killed_store_replay_valid = killed_store_replay_valid
   val debug_killed_store_replay_fire = killed_store_replay_fire
   val debug_killed_store_replay_stq_idx = killed_store_replay_req.uop.stq_idx
@@ -1857,7 +2563,20 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val debug_s3_packet_seq = s3_req.packet_seq
   val debug_s3_token_valid = s3_req.strict_store_token_valid
   val debug_s3_token = s3_req.strict_store_token
+  val debug_s3_slot_epoch = s3_req.slot_epoch
+  val debug_s3_line_generation = s3_req.line_generation
+  val debug_s3_effect_token = s3_req.effect_token
+  val debug_s3_owner_match = s3_owner_match
+  val debug_s3_effect_eligible = s3_effect_eligible
+  val debug_s3_replay = s3_replay
   val debug_data_write_pipeline_fire = dataWriteArb.io.in(0).fire
+  val debug_refill_valid = dataWriteArb.io.in(1).valid
+  val debug_refill_fire = dataWriteArb.io.in(1).fire
+  val debug_refill_owner_match = refillReqOwnerMatch
+  val debug_cross_package_mshr_conflict = crossPackageMshrConflict
+  val debug_cross_package_slot_conflict = crossPackageSlotConflict
+  val debug_cross_package_meta_clear_block = crossPackageMetaClearBlock
+  val debug_s2_realloc_owner_conflict = s2_realloc_owner_conflict
   val debug_cache_completion = completed_strict_store_cache
   val debug_uncache_completion = completed_strict_store_uncache
   val debug_uncache_completion_stq_idx = mshrs.io.traffic_strict_store_complete_stq_idx
@@ -1953,9 +2672,17 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val debug_address_stats_error = addressStats.io.error
   val debug_address_stats_pending = addressStats.io.pending
   dontTouch(debug_s2_valid)
+  dontTouch(debug_slot_epoch)
+  dontTouch(debug_line_generation)
+  dontTouch(debug_applied_effect_valid)
+  dontTouch(debug_applied_effect_token)
   dontTouch(debug_s2_type)
   dontTouch(debug_s2_stq_idx)
   dontTouch(debug_s2_packet_seq)
+  dontTouch(debug_s2_slot_epoch)
+  dontTouch(debug_s2_line_generation)
+  dontTouch(debug_s2_effect_token_valid)
+  dontTouch(debug_s2_effect_token)
   dontTouch(debug_s2_token_valid)
   dontTouch(debug_s2_token)
   dontTouch(debug_s2_nack)
@@ -1972,6 +2699,11 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   dontTouch(debug_replay_packet_seq)
   dontTouch(debug_replay_token_valid)
   dontTouch(debug_replay_token)
+  dontTouch(debug_replay_slot_epoch)
+  dontTouch(debug_replay_line_generation)
+  dontTouch(debug_replay_effect_token)
+  dontTouch(debug_replay_effect_done)
+  dontTouch(debug_replay_cancel)
   dontTouch(debug_killed_store_replay_valid)
   dontTouch(debug_killed_store_replay_fire)
   dontTouch(debug_killed_store_replay_stq_idx)
@@ -1982,7 +2714,20 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   dontTouch(debug_s3_packet_seq)
   dontTouch(debug_s3_token_valid)
   dontTouch(debug_s3_token)
+  dontTouch(debug_s3_slot_epoch)
+  dontTouch(debug_s3_line_generation)
+  dontTouch(debug_s3_effect_token)
+  dontTouch(debug_s3_owner_match)
+  dontTouch(debug_s3_effect_eligible)
+  dontTouch(debug_s3_replay)
   dontTouch(debug_data_write_pipeline_fire)
+  dontTouch(debug_refill_valid)
+  dontTouch(debug_refill_fire)
+  dontTouch(debug_refill_owner_match)
+  dontTouch(debug_cross_package_mshr_conflict)
+  dontTouch(debug_cross_package_slot_conflict)
+  dontTouch(debug_cross_package_meta_clear_block)
+  dontTouch(debug_s2_realloc_owner_conflict)
   dontTouch(debug_cache_completion)
   dontTouch(debug_uncache_completion)
   dontTouch(debug_uncache_completion_stq_idx)
@@ -2067,5 +2812,6 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   dontTouch(debug_address_stats_error)
   dontTouch(debug_address_stats_pending)
 
-  io.lsu.ordered := mshrs.io.fence_rdy && !s1_valid.reduce(_||_) && !s2_valid.reduce(_||_)
+  io.lsu.ordered := mshrs.io.fence_rdy && !s1_valid.reduce(_||_) && !s2_valid.reduce(_||_) &&
+    !s3_valid && completionQ.io.count === 0.U && replayResultQ.map(_.io.count === 0.U).reduce(_ && _)
 }

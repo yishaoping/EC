@@ -11,6 +11,20 @@
 #include "hw/spin_lock.h"
 #include "stat/report.h"
 #include "Benchmark/gapbs/gapbs_bfs.h"
+#include "bench/stage1_amo.h"
+
+/* A finite HTIF exit lets L1 drain. libgloss's repeated tohost/fromhost
+ * stores create new work after the host has already observed success. */
+extern volatile uint64_t tohost;
+extern volatile uint64_t fromhost;
+void __attribute__((noreturn, noinline)) _exit(int code)
+{
+    __asm__ volatile("csrci mstatus, 8" ::: "memory");
+    fromhost = 0;
+    tohost = (((uint64_t)(unsigned int)code << 1) | 1) & ((1ULL << 48) - 1);
+    __asm__ volatile("fence rw,rw\n1: j 1b" ::: "memory");
+    __builtin_unreachable();
+}
 
 /* 启动前配置：初始化 GHT、软件中断、权限和性能统计窗口。 */
 static uint64_t test_setup(void)
@@ -54,12 +68,14 @@ static void gapbs_bfs(uint64_t hart_id, uint64_t *start_cpu,
     ROCC_INSTRUCTION_S(1, 0X01, 0x70);
 
     *start_cpu = read_cycles();
+    int amo_ok = stage1_amo_w_test();
     (void)hart_id;
     /*
      * [BENCHMARK SIZE]
      * 修改这一行即可切换规模：gapbs_bfs_run_14、_512、_1024、_2048、_4096。
      */
     gapbs_bfs_run_512(result);
+    result->verified = result->verified && amo_ok;
 
     ROCC_INSTRUCTION_S(1, 0X02, 0x70);
     for (int nop_count = 0; nop_count < 26; nop_count++) {

@@ -445,7 +445,7 @@ class Compactor[T <: chisel3.Data](n: Int, k: Int, gen: T) extends Module
  * Create a queue that can be killed with a branch kill signal.
  * Assumption: enq.valid only high if not killed by branch (so don't check IsKilled on io.enq).
  */
-class BranchKillableQueue[T <: boom.common.HasBoomUOP](gen: T, entries: Int, flush_fn: boom.common.MicroOp => Bool = u => true.B, flow: Boolean = true)
+class BranchKillableQueue[T <: boom.common.HasBoomUOP](gen: T, entries: Int, flush_fn: boom.common.MicroOp => Bool = u => true.B, flow: Boolean = true, holdable: Boolean = false)
   (implicit p: org.chipsalliance.cde.config.Parameters)
   extends boom.common.BoomModule()(p)
   with boom.common.HasBoomCoreParameters
@@ -456,6 +456,12 @@ class BranchKillableQueue[T <: boom.common.HasBoomUOP](gen: T, entries: Int, flu
 
     val brupdate  = Input(new BrUpdateInfo())
     val flush   = Input(Bool())
+    // Only the MSHR RPQ enables this port. Kills may invalidate the head,
+    // but cannot recycle its RAM/identity while an issued replay owns it.
+    val hold_head = if (holdable) Some(Input(Bool())) else None
+    // A killed, not-yet-issued head still owns companion resources. Expose
+    // its immutable payload at cancellation instead of silently skipping it.
+    val discarded = if (holdable) Some(Output(Valid(gen))) else None
 
     val empty   = Output(Bool())
     val count   = Output(UInt(log2Ceil(entries).W))
@@ -474,6 +480,7 @@ class BranchKillableQueue[T <: boom.common.HasBoomUOP](gen: T, entries: Int, flu
   val full = ptr_match && maybe_full
   val do_enq = WireInit(io.enq.fire)
   val do_deq = WireInit((io.deq.ready || !valids(deq_ptr.value)) && !io.empty)
+  if (holdable) { do_deq := (io.deq.ready || !valids(deq_ptr.value)) && !io.empty && !io.hold_head.get }
 
   for (i <- 0 until entries) {
     val mask = uops(i).br_mask
@@ -509,6 +516,10 @@ class BranchKillableQueue[T <: boom.common.HasBoomUOP](gen: T, entries: Int, flu
   io.deq.valid            := !io.empty && valids(deq_ptr.value) && !IsKilledByBranch(io.brupdate, out.uop) && !(io.flush && flush_fn(out.uop))
   io.deq.bits             := out
   io.deq.bits.uop.br_mask := GetNewBrMask(io.brupdate, out.uop)
+  if (holdable) {
+    io.discarded.get.valid := do_deq && !io.deq.fire
+    io.discarded.get.bits := out
+  }
 
   // For flow queue behavior.
   if (flow) {

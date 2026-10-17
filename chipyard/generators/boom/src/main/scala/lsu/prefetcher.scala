@@ -39,7 +39,7 @@ abstract class DataPrefetcher(implicit edge: TLEdgeOut, p: Parameters) extends B
 class NullPrefetcher(implicit edge: TLEdgeOut, p: Parameters) extends DataPrefetcher
 {
   io.prefetch.valid := false.B
-  io.prefetch.bits  := DontCare
+  io.prefetch.bits  := 0.U.asTypeOf(new BoomDCacheReq)
 }
 
 /**
@@ -63,6 +63,7 @@ class NLPrefetcher(implicit edge: TLEdgeOut, p: Parameters) extends DataPrefetch
   }
 
   io.prefetch.valid            := req_valid && io.mshr_avail
+  io.prefetch.bits             := 0.U.asTypeOf(new BoomDCacheReq)
   io.prefetch.bits.addr        := req_addr
   io.prefetch.bits.uop         := NullMicroOp
   io.prefetch.bits.uop.mem_cmd := req_cmd
