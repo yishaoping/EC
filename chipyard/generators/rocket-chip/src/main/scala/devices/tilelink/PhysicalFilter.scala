@@ -249,6 +249,7 @@ class PhysicalFilter(params: PhysicalFilterParams)(implicit p: Parameters) exten
         deny.denied  := true.B
         deny.data    := 0.U
         deny.corrupt := d_opcode(0)
+        deny.echo :<= in.a.bits.echo
       }
       when (denyValid && in.d.ready && d_last) {
         denyValid := false.B

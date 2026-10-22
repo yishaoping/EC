@@ -108,6 +108,7 @@ class TLRAM(
     val d_param     = Reg(UInt(3.W))
     val d_size      = Reg(UInt(edge.bundle.sizeBits.W))
     val d_source    = Reg(UInt(edge.bundle.sourceBits.W))
+    val d_echo      = Reg(BundleMap(edge.bundle.echoFields))
     val d_read      = Reg(Bool())
     val d_atomic    = Reg(Bool())
     val d_sublane   = Reg(Bool())
@@ -123,6 +124,7 @@ class TLRAM(
     val r_param     = Reg(UInt(3.W))
     val r_size      = Reg(UInt(edge.bundle.sizeBits.W))
     val r_source    = Reg(UInt(edge.bundle.sourceBits.W))
+    val r_echo      = Reg(BundleMap(edge.bundle.echoFields))
     val r_read      = Reg(Bool())
     val r_atomic    = Reg(Bool())
     val r_sublane   = Reg(Bool())
@@ -197,6 +199,9 @@ class TLRAM(
     in.d.bits.param   := 0.U
     in.d.bits.size    := Mux(d_mux, d_size,   r_size)
     in.d.bits.source  := Mux(d_mux, d_source, r_source)
+    // Echo belongs to the same accepted request as source/size, including
+    // ECC replay, D-stage responses and downstream backpressure.
+    in.d.bits.echo :<= Mux(d_mux, d_echo, r_echo)
     in.d.bits.sink    := 0.U
     in.d.bits.denied  := false.B
     in.d.bits.data    := Mux(d_mux, d_corrected, r_uncorrected)
@@ -246,6 +251,7 @@ class TLRAM(
       d_param    := r_param
       d_size     := r_size
       d_source   := r_source
+      d_echo     := r_echo
       d_read     := r_read
       d_atomic   := r_atomic
       d_sublane  := r_sublane
@@ -265,6 +271,7 @@ class TLRAM(
       r_param    := in.a.bits.param
       r_size     := in.a.bits.size
       r_source   := in.a.bits.source
+      r_echo     := in.a.bits.echo
       r_read     := a_read
       r_atomic   := a_atomic
       r_sublane  := a_sublane

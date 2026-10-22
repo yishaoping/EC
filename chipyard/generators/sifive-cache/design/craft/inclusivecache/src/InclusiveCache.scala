@@ -78,8 +78,8 @@ class InclusiveCache(
   val node: TLAdapterNode = TLAdapterNode(
     clientFn  = { _ => TLClientPortParameters(Seq(TLClientParameters(
       name          = s"L${cache.level} InclusiveCache",
-      sourceId      = IdRange(0, InclusiveCacheParameters.out_mshrs(cache, micro)),
-      supportsProbe = xfer)))
+      sourceId      = IdRange(0, InclusiveCacheParameters.out_mshrs(cache, micro) + 1),
+      supportsProbe = xfer)), echoFields = Seq(CachePreserveTxnField()))
     },
     managerFn = { m => TLManagerPortParameters(
       managers = m.managers.map { m => m.copy(
@@ -98,7 +98,9 @@ class InclusiveCache(
       },
       beatBytes  = cache.beatBytes,
       endSinkId  = InclusiveCacheParameters.all_mshrs(cache, micro),
-      minLatency = 2)
+      minLatency = 2,
+      requestKeys = Seq(CacheImage),
+      responseFields = Seq(CacheImageField()))
     })
 
   val ctlnode = control.map { c => TLRegisterNode(
@@ -188,6 +190,8 @@ class InclusiveCache(
 
       val params = InclusiveCacheParameters(cache, micro, control.isDefined, edgeIn, edgeOut)
       val scheduler = Module(new Scheduler(params))
+      require(bank < 256, "Stage3 bank provenance width exceeded")
+      scheduler.io.bank := UInt(bank, width = 8)
       val barrierAllow = chisel3.WireDefault(true.B)
       scheduler.io.barrier_allow := barrierAllow
 
@@ -251,6 +255,7 @@ class InclusiveCache(
         }).asUInt
       }
       val l2SafeWatermark = l2GrayToBinary(safeWatermarkGraySync)
+      scheduler.io.safeWatermark := l2SafeWatermark
       val realBarrierEnabled = p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED)
       val barrierRequest = chisel3.WireDefault(false.B)
       val barrierRequestSeq = chisel3.WireDefault(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
@@ -277,11 +282,18 @@ class InclusiveCache(
       val barrierActive = RegInit(false.B)
       val barrierSeq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
       val barrierTimeout = RegInit(0.U(16.W))
-      val barrierCandidateUnsafe = scheduler.io.dcacheWritebackRequestCandidate &&
+      val outerCandidateUnsafe = scheduler.io.validationBlock || (scheduler.io.dcacheWritebackRequestCandidate &&
         scheduler.io.dcacheWritebackRequestCandidateDirty &&
         scheduler.io.dcacheWritebackRequestCandidatePacketTracked &&
         scheduler.io.dcacheWritebackRequestCandidatePacketSeq =/= 0.U &&
-        scheduler.io.dcacheWritebackRequestCandidatePacketSeq > l2SafeWatermark
+        scheduler.io.dcacheWritebackRequestCandidatePacketSeq > l2SafeWatermark)
+      // Peer waits use the existing sequenced package-close command, but do
+      // not freeze SourceC. The parked requester owns no cache resource.
+      val barrierCandidateUnsafe = outerCandidateUnsafe || scheduler.io.clientValidationBlock
+      val outerBarrierSeq = Mux(scheduler.io.validationBlock, scheduler.io.validationSeq,
+        scheduler.io.dcacheWritebackRequestCandidatePacketSeq)
+      val stage3BarrierSeq = Mux(outerCandidateUnsafe, outerBarrierSeq, scheduler.io.clientValidationSeq)
+      val barrierBlocksOuter = RegInit(false.B)
       val barrierCloseAccepted = barrierCloseAckSync &&
         barrierCloseAckSeqSync === barrierSeq
       val barrierTimedOut = barrierActive && barrierTimeout === 0xffff.U
@@ -291,7 +303,8 @@ class InclusiveCache(
       val barrierReleased = barrierActive &&
         barrierCloseAccepted && barrierSeq <= l2SafeWatermark
       if (realBarrierEnabled) {
-        barrierAllow := (!barrierActive && !barrierCandidateUnsafe) || barrierReleased
+        barrierAllow := (!barrierActive && !outerCandidateUnsafe) || barrierReleased ||
+          (barrierActive && !barrierBlocksOuter && !outerCandidateUnsafe)
         barrierRequest := barrierActive && !barrierReleased
       } else {
         barrierAllow := true.B
@@ -311,8 +324,13 @@ class InclusiveCache(
       if (realBarrierEnabled) {
         when (!barrierActive && barrierCandidateUnsafe) {
           barrierActive := true.B
-          barrierSeq := scheduler.io.dcacheWritebackRequestCandidatePacketSeq
+          barrierBlocksOuter := outerCandidateUnsafe
+          barrierSeq := stage3BarrierSeq
           barrierTimeout := 0.U
+          when (!outerCandidateUnsafe) {
+            printf("STAGE3_TX L2_CLIENT_CLOSE bank=%x cycle=%x seq=%x watermark=%x waiting=%x\n",
+              bank.U, l2Cycle, stage3BarrierSeq, l2SafeWatermark, scheduler.io.clientWaiting)
+          }
         }.elsewhen (barrierActive) {
           when (barrierTimeout =/= 0xffff.U) {
             barrierTimeout := barrierTimeout + 1.U
@@ -320,6 +338,10 @@ class InclusiveCache(
           when (barrierReleased) {
             barrierActive := false.B
             barrierTimeout := 0.U
+            when (!barrierBlocksOuter) {
+              printf("STAGE3_TX L2_CLIENT_VALIDATED bank=%x cycle=%x seq=%x watermark=%x\n",
+                bank.U, l2Cycle, barrierSeq, l2SafeWatermark)
+            }
           }
         }
       }
@@ -338,7 +360,7 @@ class InclusiveCache(
       l2DramBarrierStats.io.event.valid := l2Counting && l2BarrierMonitorEvent
       l2DramBarrierStats.io.event.bits :=
         Mux(realBarrierEnabled.B,
-          scheduler.io.dcacheWritebackRequestCandidatePacketSeq,
+          stage3BarrierSeq,
           scheduler.io.dcacheWritebackRequestPacketSeq)
       l2DramBarrierStats.io.safeWatermark := l2SafeWatermark
       l2DramBarrierStats.io.currentCycle := l2Cycle

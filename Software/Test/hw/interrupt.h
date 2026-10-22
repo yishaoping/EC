@@ -7,7 +7,22 @@
 
 #include "../cfg/config.h"
 
-extern volatile int timer_flags[TIMER_HARTS];
+/* v1Config uses 64-byte coherence blocks. A checker timer interrupt must not
+ * share a block with BOOM's package-tagged timer counter: its xRET can be a
+ * prerequisite for publishing that package's validation result. Keep both
+ * the first and last byte of every hart's control slot on private blocks.
+ */
+#define TIMER_CONTROL_BLOCK_BYTES 64
+typedef struct __attribute__((aligned(TIMER_CONTROL_BLOCK_BYTES))) {
+    int value;
+    unsigned char padding[TIMER_CONTROL_BLOCK_BYTES - sizeof(int)];
+} timer_flag_t;
+_Static_assert(sizeof(timer_flag_t) == TIMER_CONTROL_BLOCK_BYTES,
+               "timer control slots must occupy exactly one coherence block");
+_Static_assert(_Alignof(timer_flag_t) == TIMER_CONTROL_BLOCK_BYTES,
+               "timer control slots must start on a coherence block");
+
+extern volatile timer_flag_t timer_flags[TIMER_HARTS];
 
 /* 读取 CLINT 的 mtime 计数器。 */
 uint64_t get_mtime(void);

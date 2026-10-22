@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.util._
 import freechips.rocketchip.diplomacy._
 import freechips.rocketchip.config._
-import freechips.rocketchip.util.HellaPeekingArbiter
+import freechips.rocketchip.util._
 import freechips.rocketchip.tilelink._
 
 class SerialIO(val w: Int) extends Bundle {
@@ -230,6 +230,10 @@ class TLMergedBundle(params: TLBundleParameters, hasCorruptDenied: Boolean = tru
   // either mask or sink+denied (or sink+error if !hasCorruptDenied)
   val union = UInt(Seq(params.dataBits/8, params.sinkBits + 1).max.W)
   val last = Bool()
+  // A/C request identity must survive the serial link and return unchanged on D.
+  // TLSerdesser uses the union of both ports; BundleMap supplies defaults only
+  // for fields absent on the originating port, never for a carried transaction.
+  val echo = BundleMap(params.echoFields)
 
   def isA(dummy: Int = 0) = (chanId === TLMergedBundle.TL_CHAN_ID_A)
   def isB(dummy: Int = 0) = (chanId === TLMergedBundle.TL_CHAN_ID_B)
@@ -261,6 +265,7 @@ object TLMergedBundle {
       merged.corrupt.get := a.corrupt
     merged.union   := a.mask
     merged.last    := true.B
+    merged.echo :<= a.echo
     merged
   }
 
@@ -279,6 +284,8 @@ object TLMergedBundle {
       merged.corrupt.get := b.corrupt
     merged.union   := b.mask
     merged.last    := true.B
+    // B has no echo fields; define its unused merged payload deterministically.
+    merged.echo := 0.U.asTypeOf(merged.echo)
     merged
   }
 
@@ -300,6 +307,7 @@ object TLMergedBundle {
       merged.union   := 0.U //error
     }
     merged.last    := true.B
+    merged.echo :<= c.echo
     merged
   }
 
@@ -321,6 +329,7 @@ object TLMergedBundle {
       merged.union   := Cat(d.sink, 0.U) //error
     }
     merged.last    := true.B
+    merged.echo :<= d.echo
     merged
   }
 
@@ -342,6 +351,8 @@ object TLMergedBundle {
       merged.union   := Cat(e.sink)
     }
     merged.last    := true.B
+    // E has no echo fields.
+    merged.echo := 0.U.asTypeOf(merged.echo)
     merged
   }
 
@@ -380,6 +391,7 @@ object TLMergedBundle {
     else
       a.corrupt := false.B
     a.mask    := chan.union
+    a.echo :<= chan.echo
     a
   }
 
@@ -437,6 +449,7 @@ object TLMergedBundle {
       c.corrupt := chan.corrupt.get
     else
       c.corrupt := false.B
+    c.echo :<= chan.echo
     c
   }
 
@@ -469,6 +482,7 @@ object TLMergedBundle {
       d.sink    := chan.union >> 1.U // error
       d.denied  := false.B
     }
+    d.echo :<= chan.echo
     d
   }
 

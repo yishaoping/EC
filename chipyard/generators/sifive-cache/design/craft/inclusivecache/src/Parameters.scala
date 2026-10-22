@@ -182,11 +182,22 @@ case class InclusiveCacheParameters(
   // terminates at a dcache node. Keep their remapped source ranges so L2 can
   // distinguish data-cache lines from ICache-only lines.
   private val dcacheSourceRanges = inner.client.clients
-    .filter(c => c.supports.probe && c.nodePath.last.name == "dcache.node")
+    .filter(c => c.supports.probe && c.nodePath.lastOption.exists(_.name == "dcache.node"))
     .map(_.sourceId)
 
   def isDCacheSource(source: UInt): Bool =
     dcacheSourceRanges.map(_.contains(source)).foldLeft(Bool(false))(_ || _)
+
+  // The origin node declares the contract, not the Xbar's union of fields.
+  // IdRanges here have already been remapped by diplomacy. Unknown endpoints
+  // (ordinary Rocket, DMA, etc.) default to lineage-unaware.
+  private def imageClient(c: TLMasterParameters): Boolean =
+    c.supports.probe && c.nodePath.lastOption.exists(_.isInstanceOf[CacheImageClient])
+  private val imageSourceRanges = inner.client.clients.filter(imageClient).map(_.sourceId)
+  val unawareSourceIds = inner.client.clients.filterNot(imageClient)
+    .flatMap(c => c.sourceId.start until c.sourceId.end)
+  def isImageAware(source: UInt): Bool =
+    imageSourceRanges.map(_.contains(source)).foldLeft(Bool(false))(_ || _)
 
   val wayBits    = log2Ceil(cache.ways)
   val setBits    = log2Ceil(cache.sets)

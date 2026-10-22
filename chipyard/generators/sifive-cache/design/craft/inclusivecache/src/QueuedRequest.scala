@@ -31,10 +31,10 @@ class QueuedRequest(params: InclusiveCacheParameters) extends InclusiveCacheBund
   val tag    = UInt(width = params.tagBits)
   val offset = UInt(width = params.offsetBits)
   val put    = UInt(width = params.putBits)
-  // Provenance sampled from the inner C channel.  These fields stay inside
-  // InclusiveCache and never alter the standard TileLink bundles.
+  // Exact image sampled from the negotiated inner C control field.
   val packetSeq = UInt(width = GH_GlobalParams.GH_PACKET_SEQ_BITS)
   val packetTracked = Bool()
+  val image = new freechips.rocketchip.tilelink.CacheImageKey
 }
 
 class FullRequest(params: InclusiveCacheParameters) extends QueuedRequest(params)

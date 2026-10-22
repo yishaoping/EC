@@ -87,6 +87,7 @@ class TLCacheCork(params: TLCacheCorkParams = TLCacheCorkParams())(implicit p: P
           toSource = in.a.bits.source,
           lgSize   = in.a.bits.size,
           capPermissions = TLPermissions.toT)
+        a_d.bits.echo :<= in.a.bits.echo
 
         // Take ReleaseData from C to A; Release from C to D
         val c_a = Wire(out.a)
@@ -98,11 +99,13 @@ class TLCacheCork(params: TLCacheCorkParams = TLCacheCorkParams())(implicit p: P
           data       = in.c.bits.data,
           corrupt    = in.c.bits.corrupt)._2
         c_a.bits.user :<= in.c.bits.user
+        c_a.bits.echo :<= in.c.bits.echo
 
         // Releases without Data succeed instantly
         val c_d = Wire(in.d)
         c_d.valid := in.c.valid && in.c.bits.opcode === Release
         c_d.bits := edgeIn.ReleaseAck(in.c.bits)
+        c_d.bits.echo :<= in.c.bits.echo
 
         assert (!in.c.valid || in.c.bits.opcode === Release || in.c.bits.opcode === ReleaseData)
         in.c.ready := Mux(in.c.bits.opcode === Release, c_d.ready, c_a.ready)

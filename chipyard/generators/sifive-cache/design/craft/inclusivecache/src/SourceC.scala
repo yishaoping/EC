@@ -33,6 +33,9 @@ class SourceCRequest(params: InclusiveCacheParameters) extends InclusiveCacheBun
   val dcache = Bool()
   val packetSeq = UInt(width = GH_GlobalParams.GH_PACKET_SEQ_BITS)
   val packetTracked = Bool()
+  val image = new CacheImageKey
+  val txn = UInt(width = 64)
+  val reason = UInt(width = 2)
 }
 
 /* Metadata travels with every queued C beat so L2 statistics can be sampled
@@ -46,6 +49,8 @@ class SourceCQueueEntry(params: InclusiveCacheParameters) extends InclusiveCache
   val packetSeq = UInt(width = GH_GlobalParams.GH_PACKET_SEQ_BITS)
   val packetTracked = Bool()
   val first = Bool()
+  val last = Bool()
+  val image = new CacheImageKey
 }
 
 class SourceC(params: InclusiveCacheParameters) extends Module
@@ -58,6 +63,10 @@ class SourceC(params: InclusiveCacheParameters) extends Module
     val c_packetSeq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
     val c_packetTracked = Bool()
     val c_first = Bool()
+    val c_last = Bool()
+    val idle = Bool()
+    val drainBusy = UInt(width = 4) // observation only: queue, s3, s2, busy
+    val watermark = UInt(width = 32).flip
     // BankedStore port
     val bs_adr = Decoupled(new BankedStoreOuterAddress(params))
     val bs_dat = new BankedStoreOuterDecoded(params).flip
@@ -120,11 +129,14 @@ class SourceC(params: InclusiveCacheParameters) extends Module
 
   val s3_latch = s2_valid
   val s3_valid = RegNext(s3_latch)
+  io.idle := !busy && !s2_valid && !s3_valid && !queue.io.deq.valid
+  io.drainBusy := Cat(queue.io.deq.valid, s3_valid, s2_valid, busy)
   val s3_req = RegEnable(s2_req, s3_latch)
   val s3_beat = RegEnable(s2_beat, s3_latch)
   val s3_last = RegEnable(s2_last, s3_latch)
 
   val c = Wire(io.c)
+  c.bits := 0.U.asTypeOf(new TLBundleC(params.outer.bundle))
   c.valid        := s3_valid
   c.bits.opcode  := s3_req.opcode
   c.bits.param   := s3_req.param
@@ -133,6 +145,7 @@ class SourceC(params: InclusiveCacheParameters) extends Module
   c.bits.address := params.expandAddress(s3_req.tag, s3_req.set, UInt(0))
   c.bits.data    := io.bs_dat.data
   c.bits.corrupt := Bool(false)
+  c.bits.echo.lift(CachePreserveTxn).foreach(_ := s3_req.txn)
 
   // We never accept at the front-end unless we're sure things will fit
   assert(!c.valid || c.ready)
@@ -145,6 +158,8 @@ class SourceC(params: InclusiveCacheParameters) extends Module
   queue.io.enq.bits.packetSeq := s3_req.packetSeq
   queue.io.enq.bits.packetTracked := s3_req.packetTracked
   queue.io.enq.bits.first := s3_beat === 0.U
+  queue.io.enq.bits.last := !s3_req.dirty || s3_last
+  queue.io.enq.bits.image := s3_req.image
   c.ready := queue.io.enq.ready
 
   io.c.valid := queue.io.deq.valid
@@ -155,4 +170,14 @@ class SourceC(params: InclusiveCacheParameters) extends Module
   io.c_packetSeq := queue.io.deq.bits.packetSeq
   io.c_packetTracked := queue.io.deq.bits.packetTracked
   io.c_first := queue.io.deq.bits.first
+  io.c_last := queue.io.deq.bits.last
+  when (io.req.fire() && io.req.bits.dirty) {
+    assert(CacheImage.safe(io.req.bits.image, io.watermark), "L2_SPEC_OUTER_WRITE_ERROR sourceC request")
+  }
+  when (io.req.fire()) {
+    assert(io.req.bits.dirty === io.req.bits.opcode(0), "L2 outer data/provenance mismatch")
+  }
+  when (io.c.fire() && queue.io.deq.bits.dirty) {
+    assert(CacheImage.safe(queue.io.deq.bits.image, io.watermark), "L2_SPEC_OUTER_WRITE_ERROR sourceC beat")
+  }
 }

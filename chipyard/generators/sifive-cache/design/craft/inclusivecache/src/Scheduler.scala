@@ -23,7 +23,38 @@ import freechips.rocketchip.tilelink._
 import freechips.rocketchip.util._
 import freechips.rocketchip.guardiancouncil.GH_GlobalParams
 
-class Scheduler(params: InclusiveCacheParameters) extends Module
+// Diagnostic outputs only. Host-idle and checkpoint capture are different
+// drains: neither these observations nor host ledgers feed the protocol.
+class Stage3DrainStatus(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
+{
+  val state = UInt(width = 3)
+  val candidate = Bool()
+  val safe = Bool()
+  val selected = UInt(width = params.mshrs + 1) // bit0 Probe, bit(i+1) MSHR i
+  val quiescent = Bool()
+  val drained = Bool()
+  val requested = Bool()
+  val sourceDIdle = Bool()
+  val sourceDBusy = UInt(width = 4)
+  val sourceCIdle = Bool()
+  val sourceCBusy = UInt(width = 4)
+  val sinkCBusy = Bool() // admitted bank-address queue, not blocked first C beat
+  val mshrPending = UInt(width = params.mshrs)
+  val mshrQuiescent = UInt(width = params.mshrs)
+  val sourceDValid = Bool()
+  val sourceDReady = Bool()
+  val sourceCValid = Bool()
+  val sourceCReady = Bool()
+  val probeValid = Bool()
+  val probeAllow = Bool()
+  val requestValid = Bool()
+  val requestReady = Bool()
+  val issued = Bool()
+  val ackSeen = Bool()
+  val address = UInt(width = params.inner.bundle.addressBits)
+}
+
+class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extends Module
 {
   val io = new Bundle {
     val in = TLBundle(params.inner.bundle).flip
@@ -50,6 +81,22 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
     val dcacheWritebackRequestCandidatePacketSeq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
     val dcacheWritebackRequestCandidatePacketTracked = Bool()
     val barrier_allow = Input(Bool())
+    val safeWatermark = Input(UInt(32.W))
+    val bank = Input(UInt(8.W))
+    val clientValidationBlock = Bool()
+    val clientValidationSeq = UInt(width = 32)
+    val clientWaiting = UInt(width = params.inner.bundle.sourceBits + 1)
+    val validationBlock = Bool()
+    val validationSeq = UInt(width = 32)
+    val preservationLock = Valid(new L2PreservationCandidate(params))
+    val preservationTxn = UInt(width = 64)
+    val preservationAck = Bool()
+    val preservationCounters = Vec(6, UInt(width = 64))
+    val active = Bool()
+    val bankWrite = Bool()
+    val metaWrite = Bool()
+    val drain = new Stage3DrainStatus(params)
+    val flushStatus = new MSHRFlushStatus(params)
   }
 
   val sourceA = Module(new SourceA(params))
@@ -58,9 +105,15 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
   val sourceD = Module(new SourceD(params))
   val sourceE = Module(new SourceE(params))
   val sourceX = Module(new SourceX(params))
+  val preservation = Module(new L2Preservation(params))
+  preservation.io.watermark := io.safeWatermark
+  preservation.io.bank := io.bank
+  sourceC.io.watermark := io.safeWatermark
 
 
-  io.out.a <> sourceA.io.a
+  // The dedicated source cannot alias an MSHR. TL arbitration holds a Put's
+  // entire multibeat transfer, including gaps for bank reads/backpressure.
+  TLArbiter.lowest(params.outer, io.out.a, preservation.io.a, sourceA.io.a)
   io.out.c <> sourceC.io.c
   io.out.e <> sourceE.io.e
   io.in.b <> sourceB.io.b
@@ -76,7 +129,13 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
   sinkA.io.a <> io.in.a
   sinkC.io.c <> io.in.c
   sinkE.io.e <> io.in.e
-  sinkD.io.d <> io.out.d
+  val checkpointResponse = io.out.d.bits.source ===
+    UInt(InclusiveCacheParameters.out_mshrs(params.cache, params.micro))
+  preservation.io.d.valid := io.out.d.valid && checkpointResponse
+  preservation.io.d.bits := io.out.d.bits
+  sinkD.io.d.valid := io.out.d.valid && !checkpointResponse
+  sinkD.io.d.bits := io.out.d.bits
+  io.out.d.ready := Mux(checkpointResponse, preservation.io.d.ready, sinkD.io.d.ready)
   sinkX.io.x <> io.req
 
   io.out.b.ready := Bool(true) // disconnected
@@ -84,21 +143,224 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
   val directory = Module(new Directory(params))
   val bankedStore = Module(new BankedStore(params))
   val requests = Module(new ListBuffer(ListBufferParameters(new QueuedRequest(params), 3*params.mshrs, params.secondary, false)))
-  val mshrs = Seq.fill(params.mshrs) { Module(new MSHR(params)) }
+  val mshrs = Seq.tabulate(params.mshrs) { i => Module(new MSHR(params, trace, i)) }
   val abc_mshrs = mshrs.init.init
   val bc_mshr = mshrs.init.last
   val c_mshr = mshrs.last
+  // Select one active control transaction for diagnostics; no protocol consumer.
+  val flushStatusOH = PriorityEncoderOH(Vec(mshrs.map(_.io.flushStatus.active)).asUInt)
+  io.flushStatus := Mux1H(flushStatusOH, mshrs.map(_.io.flushStatus))
+  // One independent slot per real unaware source. A TL source cannot have
+  // two live A requests. Slots hold no MSHR, set lock, bank or D pipeline.
+  // The dummy slot makes the all-aware configuration legal without empty Vecs.
+  val waitSources = if (params.unawareSourceIds.nonEmpty) params.unawareSourceIds else Seq(-1)
+  val clientWaitValid = waitSources.map(_ => RegInit(Bool(false)))
+  val clientWait = waitSources.map(_ => Reg(new ClientWaitRequest(params)))
+  val clientWaitRunnable = Vec(clientWaitValid.zip(clientWait).map { case (v, q) =>
+    v && q.seq <= io.safeWatermark && !mshrs.map(m =>
+      m.io.status.valid && m.io.status.bits.set === q.request.set).reduce(_||_)
+  }).asUInt
+  val clientReplayOH = PriorityEncoderOH(clientWaitRunnable)
+  val clientReplay = Wire(Decoupled(new FullRequest(params)))
+  clientReplay.valid := clientWaitRunnable.orR
+  clientReplay.bits := Mux1H(clientReplayOH, clientWait.map(_.request))
+  when (clientReplay.fire()) {
+    clientWaitValid.zipWithIndex.foreach { case (v, i) => when (clientReplayOH(i)) { v := Bool(false) } }
+    printf("STAGE3_TX L2_CLIENT_RETRY bank=%x source=%x set=%x tag=%x watermark=%x\n",
+      io.bank, clientReplay.bits.source, clientReplay.bits.set, clientReplay.bits.tag, io.safeWatermark)
+  }
+  val waitingUnsafe = clientWaitValid.zip(clientWait).map { case (v, q) => v && q.seq > io.safeWatermark }
+  io.clientValidationBlock := waitingUnsafe.reduce(_||_)
+  io.clientValidationSeq := Mux1H(PriorityEncoderOH(Vec(waitingUnsafe).asUInt), clientWait.map(_.seq))
+  io.clientWaiting := PopCount(Vec(clientWaitValid))
   val nestedwb = Wire(new NestedWriteback(params))
+  io.preservationLock := preservation.io.lock
+  io.preservationTxn := preservation.io.txn
+  io.preservationAck := preservation.io.completed.valid
+  io.preservationCounters := preservation.io.counters
+  io.active := mshrs.map(_.io.status.valid).reduce(_||_) || !sourceD.io.idle ||
+    !sourceC.io.idle || sinkC.io.bankBusy || clientWaitValid.reduce(_||_)
+  io.bankWrite := sourceD.io.bs_wadr.fire() || (sinkC.io.bs_adr.fire() && !sinkC.io.bs_adr.bits.noop)
+  io.metaWrite := directory.io.write.fire()
+
+  mshrs.foreach { m => m.io.preserved := preservation.io.completed; m.io.bank := io.bank; m.io.watermark := io.safeWatermark }
+  // Candidate selection observes production MSHR metadata and the actual
+  // ProbeAck input, before any bank write. Identical keys are immutable copies.
+  val candidates = mshrs.map { m =>
+    val x = Wire(Valid(new L2PreservationCandidate(params)))
+    val r = m.io.resident.bits
+    val d = m.io.schedule.bits.d
+    // Same-package writes inherit the safe predecessor obligation from Stage 2.
+    val releaseSameUnsafePackage = CacheImage.samePackageSupersede(d.bits.image, r.image, io.safeWatermark)
+    val releaseChange = d.bits.prio(2) && d.bits.opcode === TLMessages.ReleaseData &&
+      !releaseSameUnsafePackage &&
+      (!d.bits.image.valid || d.bits.image.asUInt =/= r.image.asUInt)
+    val trustedChange = d.bits.prio(0) && !d.bits.opcode(2) && !d.bits.bad
+    val destructive = m.io.resident.valid && r.hit && d.valid && (releaseChange || trustedChange)
+    x.valid := destructive && L2Preservation.blocked(r.image, r.dirty, r.outerPreserved, io.safeWatermark)
+    x.bits.set := m.io.status.bits.set; x.bits.way := r.way; x.bits.tag := r.tag
+    x.bits.image := r.image; x.bits.dirty := r.dirty; x.bits.outerPreserved := r.outerPreserved
+    x.bits.reason := Mux(trustedChange, UInt(3), UInt(1))
+    x
+  }
+  val probeBC = bc_mshr.io.resident.valid && bc_mshr.io.status.bits.set === sinkC.io.probe.bits.set
+  val probeABC = abc_mshrs.map(m => m.io.resident.valid && m.io.status.bits.set === sinkC.io.probe.bits.set)
+  val probeResident = Mux(probeBC, bc_mshr.io.resident.bits, Mux1H(probeABC, abc_mshrs.map(_.io.resident.bits)))
+  val probeFound = (probeBC || probeABC.reduce(_||_)) && probeResident.state =/= MetaData.INVALID &&
+    probeResident.tag === sinkC.io.probe.bits.tag
+  // Apply the same rule to first-beat ProbeAckData before SinkC admission.
+  val probeSameUnsafePackage = CacheImage.samePackageSupersede(sinkC.io.probe.bits.image,
+    probeResident.image, io.safeWatermark)
+  val probeChange = sinkC.io.probe.valid && probeFound &&
+    !probeSameUnsafePackage &&
+    (!sinkC.io.probe.bits.image.valid || probeResident.image.asUInt =/= sinkC.io.probe.bits.image.asUInt)
+  val probeNeedsGate = probeChange && L2Preservation.blocked(probeResident.image,
+    probeResident.dirty, probeResident.outerPreserved, io.safeWatermark)
+  // System builds need the incoming identity as well as the resident key:
+  // validation-only logs cannot distinguish a true cross-package waiter from
+  // a coherent peer that dropped its imported lineage. Log entry/change only.
+  val probeGateIdentity = Cat(sinkC.io.probe.bits.source, sinkC.io.probe.bits.tag,
+    sinkC.io.probe.bits.set, sinkC.io.probe.bits.image.asUInt, probeResident.image.asUInt)
+  val priorProbeGate = RegNext(probeNeedsGate, Bool(false))
+  val priorProbeIdentity = RegNext(probeGateIdentity)
+  when (probeNeedsGate && (!priorProbeGate || priorProbeIdentity =/= probeGateIdentity)) {
+    printf("STAGE3_TX L2_PROBE_BLOCK bank=%x source=%x set=%x way=%x tag=%x dirty=%x outer=%x old_valid=%x old_writer=%x old_gen=%x old_seq=%x new_valid=%x new_writer=%x new_gen=%x new_seq=%x watermark=%x same_package=%x newer=%x\n",
+      io.bank, sinkC.io.probe.bits.source, sinkC.io.probe.bits.set, probeResident.way,
+      probeResident.tag, probeResident.dirty, probeResident.outerPreserved,
+      probeResident.image.valid, probeResident.image.writer, probeResident.image.generation,
+      probeResident.image.contentSeq, sinkC.io.probe.bits.image.valid,
+      sinkC.io.probe.bits.image.writer, sinkC.io.probe.bits.image.generation,
+      sinkC.io.probe.bits.image.contentSeq, io.safeWatermark,
+      CacheImage.sameSpeculativePackage(sinkC.io.probe.bits.image, probeResident.image),
+      sinkC.io.probe.bits.image.generation > probeResident.image.generation)
+  }
+  val probeCandidate = Wire(Valid(new L2PreservationCandidate(params)))
+  probeCandidate.valid := probeNeedsGate
+  probeCandidate.bits.set := sinkC.io.probe.bits.set
+  probeCandidate.bits.way := probeResident.way; probeCandidate.bits.tag := probeResident.tag
+  probeCandidate.bits.image := probeResident.image; probeCandidate.bits.dirty := probeResident.dirty
+  probeCandidate.bits.outerPreserved := probeResident.outerPreserved; probeCandidate.bits.reason := UInt(2)
+  val selectableCandidates = mshrs.zip(candidates).zipWithIndex.map { case ((m, x), i) =>
+    val preemptors = mshrs.zipWithIndex.filter { case (_, j) => j > i && j >= params.mshrs - 2 }
+    val preempted = preemptors.map { case (n, _) =>
+      n.io.status.valid && n.io.status.bits.set === m.io.status.bits.set
+    }.foldLeft(Bool(false))(_||_)
+    val eligible = Wire(init = x)
+    eligible.valid := x.valid && !preempted
+    eligible
+  }
+  val allCandidates = probeCandidate +: selectableCandidates
+  val candidateQuiescent = Seq(Bool(true)) ++ mshrs.map(_.io.quiescent)
+  val runnable = Vec(allCandidates.zip(candidateQuiescent).map { case (x, q) =>
+    x.valid && q && CacheImage.safe(x.bits.image, io.safeWatermark)
+  }).asUInt
+  // Unsafe waiters do not monopolize the shared checkpoint engine. Stop new
+  // bank pipeline work while draining, so capture cannot starve behind a
+  // continuous stream of otherwise independent SourceD/SourceC operations.
+  val candidateOH = Mux(runnable.orR, PriorityEncoderOH(runnable),
+    PriorityEncoderOH(Vec(allCandidates.map(_.valid)).asUInt))
+  val drainForCheckpoint = runnable.orR && !preservation.io.lock.valid
+  preservation.io.candidate.valid := allCandidates.map(_.valid).reduce(_||_)
+  preservation.io.candidate.bits := Mux1H(candidateOH, allCandidates.map(_.bits))
+  preservation.io.drained := sourceD.io.idle && sourceC.io.idle && !sinkC.io.bankBusy &&
+    Mux1H(candidateOH, candidateQuiescent)
+  io.drain.state := preservation.io.debugState
+  io.drain.candidate := preservation.io.candidate.valid
+  io.drain.safe := CacheImage.safe(preservation.io.candidate.bits.image, io.safeWatermark)
+  io.drain.selected := candidateOH
+  io.drain.quiescent := Mux1H(candidateOH, candidateQuiescent)
+  io.drain.drained := preservation.io.drained
+  io.drain.requested := drainForCheckpoint
+  io.drain.sourceDIdle := sourceD.io.idle
+  io.drain.sourceDBusy := sourceD.io.drainBusy
+  io.drain.sourceCIdle := sourceC.io.idle
+  io.drain.sourceCBusy := sourceC.io.drainBusy
+  io.drain.sinkCBusy := sinkC.io.bankBusy
+  io.drain.mshrPending := Cat(mshrs.map(_.io.status.valid).reverse)
+  io.drain.mshrQuiescent := Cat(mshrs.map(_.io.quiescent).reverse)
+  io.drain.sourceDValid := sourceD.io.req.valid
+  io.drain.sourceDReady := sourceD.io.req.ready
+  io.drain.sourceCValid := sourceC.io.req.valid
+  io.drain.sourceCReady := sourceC.io.req.ready
+  io.drain.probeValid := sinkC.io.probe.valid
+  io.drain.probeAllow := sinkC.io.probeAllow
+  io.drain.issued := preservation.io.debugIssued
+  io.drain.ackSeen := preservation.io.debugAckSeen
+  val drainImage = Mux(preservation.io.lock.valid, preservation.io.lock.bits, preservation.io.candidate.bits)
+  io.drain.address := params.restoreAddress(params.expandAddress(drainImage.tag, drainImage.set, UInt(0)))
+  if (trace) {
+    val cycle = RegInit(UInt(0, width = 64))
+    cycle := cycle + UInt(1)
+    val waiting = preservation.io.candidate.valid || preservation.io.lock.valid
+    val age = RegInit(UInt(0, width = 8))
+    age := Mux(waiting, age + UInt(1), UInt(0))
+    val prior = RegNext(io.drain.asUInt)
+    when (waiting && (prior =/= io.drain.asUInt || age === UInt(0))) {
+      printf("STAGE3_DRAIN cycle=%d bank=%x state=%x candidate=%x safe=%x selected=%x drained=%x requested=%x quiescent=%x sourceD_idle=%x sourceD_busy=%x sourceC_idle=%x sourceC_busy=%x sinkC_bank_pending=%x mshr_pending=%x mshr_quiescent=%x sourceD_valid=%x sourceD_ready=%x sourceC_valid=%x sourceC_ready=%x probe_valid=%x probe_allow=%x req_valid=%x req_ready=%x issued=%x ack_seen=%x matching_ack=%x pending=%x set=%x way=%x addr=%x txn=%x watermark=%x\n",
+        cycle, io.bank, io.drain.state, io.drain.candidate, io.drain.safe, candidateOH,
+        io.drain.drained, drainForCheckpoint, io.drain.quiescent, sourceD.io.idle, sourceD.io.drainBusy,
+        sourceC.io.idle, sourceC.io.drainBusy, sinkC.io.bankBusy, io.drain.mshrPending,
+        io.drain.mshrQuiescent, sourceD.io.req.valid, sourceD.io.req.ready, sourceC.io.req.valid,
+        sourceC.io.req.ready, sinkC.io.probe.valid, sinkC.io.probeAllow,
+        io.drain.requestValid, io.drain.requestReady, preservation.io.debugIssued, preservation.io.debugAckSeen,
+        preservation.io.completed.valid, preservation.io.lock.valid, drainImage.set, drainImage.way,
+        io.drain.address, preservation.io.txn, io.safeWatermark)
+    }
+  }
+  def locked(set: UInt): Bool = preservation.io.lock.valid && preservation.io.lock.bits.set === set
+  sinkC.io.probeAllow := !probeNeedsGate && !locked(sinkC.io.probe.bits.set)
+  when (sinkC.io.probe.valid) {
+    assert(probeFound, "Stage3 ProbeAckData has no resident owner")
+  }
+  val peerResponseBlocked = mshrs.map { m =>
+    val d = m.io.schedule.bits.d
+    m.io.schedule.valid && d.valid && d.bits.prio(0) && !d.bits.control && !d.bits.bad &&
+      CacheImage.exposesResident(d.bits.opcode) &&
+      !params.isImageAware(d.bits.source) &&
+      (!CacheImage.safe(d.bits.image, io.safeWatermark) ||
+       (m.io.resident.bits.hit && !CacheImage.safe(m.io.resident.bits.image, io.safeWatermark) &&
+        (d.bits.opcode === TLMessages.ArithmeticData || d.bits.opcode === TLMessages.LogicalData)))
+  }
+  val parkReady = mshrs.map { m =>
+    val p = m.io.schedule.bits.park
+    !p.valid || ((!m.io.schedule.bits.dir.valid || !sinkC.io.bankBusy) && waitSources.zipWithIndex.map { case (source, i) =>
+      Bool(source >= 0) && p.bits.request.source === UInt(source max 0) && !clientWaitValid(i)
+    }.reduce(_||_))
+  }
+  val stage3Allowed = mshrs.zip(candidates).map { case (m, x) =>
+    val outerSafe = !m.io.schedule.bits.c.valid || CacheImage.safe(m.io.resident.bits.image, io.safeWatermark)
+    !x.valid && !locked(m.io.status.bits.set) && outerSafe &&
+      (!m.io.schedule.bits.c.valid || (!preservation.io.lock.valid && !drainForCheckpoint)) &&
+      (!m.io.schedule.bits.d.valid || !drainForCheckpoint)
+  }
+  val unsafeVictims = mshrs.map(m => m.io.schedule.valid && m.io.schedule.bits.c.valid &&
+    !CacheImage.safe(m.io.resident.bits.image, io.safeWatermark))
+  val unsafeSameLine = allCandidates.map(x => x.valid && !CacheImage.safe(x.bits.image, io.safeWatermark))
+  val unsafeOH = PriorityEncoderOH(Vec(unsafeVictims ++ unsafeSameLine).asUInt)
+  io.validationBlock := (unsafeVictims ++ unsafeSameLine).reduce(_||_)
+  io.validationSeq := Mux1H(unsafeOH, mshrs.map(_.io.resident.bits.image.contentSeq) ++
+    allCandidates.map(_.bits.image.contentSeq))
+  val victimBlocked = RegNext(Vec(unsafeVictims).asUInt, UInt(0, width = params.mshrs))
+  mshrs.zipWithIndex.foreach { case (m, i) =>
+    when (unsafeVictims(i) && !victimBlocked(i)) {
+      printf("STAGE3_TX L2_VALIDATION_BLOCK bank=%x set=%x way=%x tag=%x gen=%x seq=%x writer=%x reason=4\n",
+        io.bank, m.io.status.bits.set, m.io.resident.bits.way, m.io.resident.bits.tag,
+        m.io.resident.bits.image.generation, m.io.resident.bits.image.contentSeq, m.io.resident.bits.image.writer)
+    }
+  }
 
   // Deliver messages from Sinks to MSHRs
   mshrs.zipWithIndex.foreach { case (m, i) =>
-    m.io.sinkc.valid := sinkC.io.resp.valid && sinkC.io.resp.bits.set === m.io.status.bits.set
+    m.io.sinkc.valid := m.io.status.valid && sinkC.io.resp.valid && sinkC.io.resp.bits.set === m.io.status.bits.set
     m.io.sinkd.valid := sinkD.io.resp.valid && sinkD.io.resp.bits.source === UInt(i)
     m.io.sinke.valid := sinkE.io.resp.valid && sinkE.io.resp.bits.sink   === UInt(i)
     m.io.sinkc.bits := sinkC.io.resp.bits
     m.io.sinkd.bits := sinkD.io.resp.bits
     m.io.sinke.bits := sinkE.io.resp.bits
     m.io.nestedwb := nestedwb
+    m.io.releaseSent.valid := sourceC.io.c.fire() && sourceC.io.c_last &&
+      sourceC.io.c.bits.opcode(1) && sourceC.io.c.bits.source === UInt(i)
+    m.io.releaseSent.bits := sourceC.io.c.bits.echo.lift(CachePreserveTxn).getOrElse(UInt(0, width = 64))
   }
 
   // If the pre-emption BC or C MSHR have a matching set, the normal MSHR must be blocked
@@ -119,8 +381,8 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
     params.ccover(mshr_stall_bc && bc_mshr.io.status.valid, "SCHEDULER_BC_INTERLOCK", "BC MSHR interlocked due to pre-emption")
 
   // Consider scheduling an MSHR only if all the resources it requires are available
-  val mshr_request_unbarred = Cat((mshrs zip mshr_stall).map { case (m, s) =>
-    m.io.schedule.valid && !s &&
+  val mshr_request_unbarred = Cat(mshrs.zip(mshr_stall).zip(stage3Allowed).zipWithIndex.map { case (((m, s), allowed), i) =>
+    m.io.schedule.valid && !s && allowed && parkReady(i) && !peerResponseBlocked(i) &&
       (sourceA.io.req.ready || !m.io.schedule.bits.a.valid) &&
       (sourceB.io.req.ready || !m.io.schedule.bits.b.valid) &&
       (sourceC.io.req.ready || !m.io.schedule.bits.c.valid) &&
@@ -129,8 +391,8 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
       (sourceX.io.req.ready || !m.io.schedule.bits.x.valid) &&
       (directory.io.write.ready || !m.io.schedule.bits.dir.valid)
   }.reverse)
-  val mshr_request = Cat((mshrs zip mshr_stall).map { case (m, s) =>
-    m.io.schedule.valid && !s &&
+  val mshr_request = Cat(mshrs.zip(mshr_stall).zip(stage3Allowed).zipWithIndex.map { case (((m, s), allowed), i) =>
+    m.io.schedule.valid && !s && allowed && parkReady(i) && !peerResponseBlocked(i) &&
       (sourceA.io.req.ready || !m.io.schedule.bits.a.valid) &&
       (sourceB.io.req.ready || !m.io.schedule.bits.b.valid) &&
       (sourceC.io.req.ready && io.barrier_allow || !m.io.schedule.bits.c.valid) &&
@@ -178,7 +440,42 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
   io.dcacheWritebackRequestCandidateDirty := Mux1H(selectedCandidate, candidateDirty)
   io.dcacheWritebackRequestCandidatePacketSeq := Mux1H(selectedCandidate, candidateSeqs)
   io.dcacheWritebackRequestCandidatePacketTracked := Mux1H(selectedCandidate, candidateTracked)
+  when (schedule.park.valid) {
+    val p = schedule.park.bits
+    val matches = Vec(waitSources.map(source => Bool(source >= 0) && p.request.source === UInt(source max 0)))
+    assert(PopCount(matches) === UInt(1), "client wait source not classified")
+    clientWait.zip(clientWaitValid).zipWithIndex.foreach { case ((q, v), i) =>
+      when (matches(i)) {
+        assert(!v, "client source reused while parked")
+        q := p
+        v := Bool(true)
+      }
+    }
+    printf("STAGE3_TX L2_CLIENT_WAIT bank=%x mshr=%x source=%x opcode=%x set=%x tag=%x seq=%x watermark=%x commit=%x\n",
+      io.bank, mshr_select, p.request.source, p.request.opcode, p.request.set, p.request.tag,
+      p.seq, io.safeWatermark, schedule.dir.valid)
+  }
   sourceD.io.req := schedule.d
+  when (sourceD.io.req.fire() && sourceD.io.req.bits.prio(0) &&
+        !sourceD.io.req.bits.control && !sourceD.io.req.bits.bad &&
+        CacheImage.exposesResident(sourceD.io.req.bits.opcode)) {
+    assert(params.isImageAware(sourceD.io.req.bits.source) ||
+      (CacheImage.safe(sourceD.io.req.bits.image, io.safeWatermark) &&
+       (!(sourceD.io.req.bits.opcode === TLMessages.ArithmeticData ||
+          sourceD.io.req.bits.opcode === TLMessages.LogicalData) ||
+        !Mux1H(mshr_selectOH, mshrs.map(_.io.resident.bits.hit)) ||
+        CacheImage.safe(Mux1H(mshr_selectOH, mshrs.map(_.io.resident.bits.image)), io.safeWatermark))),
+      "L2_UNSAFE_CLIENT_TRANSFER")
+  }
+  when (sourceD.io.req.fire()) {
+    val old = Mux1H(mshr_selectOH, mshrs.map(_.io.resident.bits))
+    printf("STAGE3_TX L2_EXECUTE set=%x way=%x tag=%x old_valid=%x old_writer=%x old_gen=%x old_seq=%x dirty=%x outer=%x new_valid=%x new_writer=%x new_gen=%x new_seq=%x opcode=%x prio=%x\n",
+      scheduleSet, sourceD.io.req.bits.way, scheduleTag, old.image.valid, old.image.writer,
+      old.image.generation, old.image.contentSeq, old.dirty, old.outerPreserved,
+      sourceD.io.req.bits.image.valid, sourceD.io.req.bits.image.writer,
+      sourceD.io.req.bits.image.generation, sourceD.io.req.bits.image.contentSeq,
+      sourceD.io.req.bits.opcode, sourceD.io.req.bits.prio.asUInt)
+  }
   sourceE.io.req := schedule.e
   sourceX.io.req := schedule.x
   directory.io.write := schedule.dir
@@ -208,18 +505,31 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
   nestedwb.c_set_dirty := select_c  &&  c_mshr.io.schedule.bits.dir.valid && c_mshr.io.schedule.bits.dir.bits.data.dirty
   nestedwb.c_set_dcache := select_c && c_mshr.io.schedule.bits.dir.valid && c_mshr.io.schedule.bits.dir.bits.data.dcache
   nestedwb.c_set_packet := select_c && c_mshr.io.schedule.bits.dir.valid &&
-    c_mshr.io.schedule.bits.dir.bits.data.packetTracked
+    c_mshr.io.schedule.bits.dir.bits.data.dirty
   nestedwb.packetSeq := c_mshr.io.schedule.bits.dir.bits.data.packetSeq
   nestedwb.packetTracked := c_mshr.io.schedule.bits.dir.bits.data.packetTracked
+  nestedwb.image := c_mshr.io.schedule.bits.dir.bits.data.image
+  nestedwb.outerPreserved := c_mshr.io.schedule.bits.dir.bits.data.outerPreserved
 
   // Pick highest priority request
+  val preferClientReplay = RegInit(Bool(false))
+  val useClientReplay = clientReplay.valid && (!sinkA.io.req.valid || preferClientReplay)
+  val clientA = Wire(Decoupled(new FullRequest(params)))
+  clientA.valid := sinkA.io.req.valid || clientReplay.valid
+  clientA.bits := Mux(useClientReplay, clientReplay.bits, sinkA.io.req.bits)
+  sinkA.io.req.ready := clientA.ready && !useClientReplay
+  clientReplay.ready := clientA.ready && useClientReplay
+  when (clientA.fire()) { preferClientReplay := !useClientReplay }
   val request = Wire(Decoupled(new FullRequest(params)))
-  request.valid := directory.io.ready && (sinkA.io.req.valid || sinkX.io.req.valid || sinkC.io.req.valid)
+  request.valid := directory.io.ready && !locked(request.bits.set) &&
+    (clientA.valid || sinkX.io.req.valid || sinkC.io.req.valid)
   request.bits := Mux(sinkC.io.req.valid, sinkC.io.req.bits,
-                  Mux(sinkX.io.req.valid, sinkX.io.req.bits, sinkA.io.req.bits))
-  sinkC.io.req.ready := directory.io.ready && request.ready
-  sinkX.io.req.ready := directory.io.ready && request.ready && !sinkC.io.req.valid
-  sinkA.io.req.ready := directory.io.ready && request.ready && !sinkC.io.req.valid && !sinkX.io.req.valid
+                  Mux(sinkX.io.req.valid, sinkX.io.req.bits, clientA.bits))
+  io.drain.requestValid := request.valid
+  io.drain.requestReady := request.ready
+  sinkC.io.req.ready := directory.io.ready && request.ready && !locked(request.bits.set)
+  sinkX.io.req.ready := directory.io.ready && request.ready && !locked(request.bits.set) && !sinkC.io.req.valid
+  clientA.ready := directory.io.ready && request.ready && !locked(request.bits.set) && !sinkC.io.req.valid && !sinkX.io.req.valid
 
   // If no MSHR has been assigned to this set, we need to allocate one
   val setMatches = Cat(mshrs.map { m => m.io.status.valid && m.io.status.bits.set === request.bits.set }.reverse)
@@ -383,11 +693,15 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
   bankedStore.io.sinkC_dat := sinkC.io.bs_dat
   bankedStore.io.sinkD_adr <> sinkD.io.bs_adr
   bankedStore.io.sinkD_dat := sinkD.io.bs_dat
-  bankedStore.io.sourceC_adr <> sourceC.io.bs_adr
+  bankedStore.io.sourceC_adr.valid := Mux(preservation.io.lock.valid, preservation.io.bs_adr.valid, sourceC.io.bs_adr.valid)
+  bankedStore.io.sourceC_adr.bits := Mux(preservation.io.lock.valid, preservation.io.bs_adr.bits, sourceC.io.bs_adr.bits)
+  preservation.io.bs_adr.ready := preservation.io.lock.valid && bankedStore.io.sourceC_adr.ready
+  sourceC.io.bs_adr.ready := !preservation.io.lock.valid && bankedStore.io.sourceC_adr.ready
   bankedStore.io.sourceD_radr <> sourceD.io.bs_radr
   bankedStore.io.sourceD_wadr <> sourceD.io.bs_wadr
   bankedStore.io.sourceD_wdat := sourceD.io.bs_wdat
   sourceC.io.bs_dat := bankedStore.io.sourceC_dat
+  preservation.io.bs_dat := bankedStore.io.sourceC_dat
   sourceD.io.bs_rdat := bankedStore.io.sourceD_rdat
 
   // SourceD data hazard interlock
@@ -395,6 +709,33 @@ class Scheduler(params: InclusiveCacheParameters) extends Module
   sourceD.io.grant_req := sinkD  .io.grant_req
   sourceC.io.evict_safe := sourceD.io.evict_safe
   sinkD  .io.grant_safe := sourceD.io.grant_safe
+
+  // The reservation covers physical effects, not just candidate selection.
+  when (preservation.io.lock.valid) {
+    assert(!(directory.io.write.fire() && locked(directory.io.write.bits.set)), "L2_PREMATURE_OVERWRITE_ERROR directory")
+    assert(!(sourceD.io.bs_wadr.fire() && locked(sourceD.io.bs_wadr.bits.set)), "L2_PREMATURE_OVERWRITE_ERROR SourceD")
+    assert(!(sinkC.io.bs_adr.fire() && !sinkC.io.bs_adr.bits.noop && locked(sinkC.io.bs_adr.bits.set)), "L2_PREMATURE_OVERWRITE_ERROR SinkC")
+    assert(!(sinkD.io.bs_adr.fire() && !sinkD.io.bs_adr.bits.noop && locked(sinkD.io.bs_adr.bits.set)), "L2_PREMATURE_OVERWRITE_ERROR refill")
+  }
+  when (sourceC.io.req.fire()) {
+    assert(sourceC.io.req.bits.source < UInt(InclusiveCacheParameters.out_mshrs(params.cache, params.micro)),
+      "L2 MSHR release aliases checkpoint source")
+    assert(CacheImage.safe(sourceC.io.req.bits.image, io.safeWatermark), "L2_SPEC_OUTER_WRITE_ERROR victim")
+    printf("STAGE3_TX L2_VICTIM_REQ bank=%x txn=%x source=%x set=%x way=%x tag=%x valid=%x writer=%x gen=%x seq=%x dirty=%x reason=%x\n",
+      io.bank, sourceC.io.req.bits.txn, sourceC.io.req.bits.source, sourceC.io.req.bits.set,
+      sourceC.io.req.bits.way, sourceC.io.req.bits.tag, sourceC.io.req.bits.image.valid,
+      sourceC.io.req.bits.image.writer, sourceC.io.req.bits.image.generation, sourceC.io.req.bits.image.contentSeq,
+      sourceC.io.req.bits.dirty, sourceC.io.req.bits.reason)
+  }
+  when (sourceA.io.req.fire()) {
+    assert(sourceA.io.req.bits.source < UInt(InclusiveCacheParameters.out_mshrs(params.cache, params.micro)),
+      "L2 MSHR acquire aliases checkpoint source")
+  }
+  when (io.out.a.fire() && (io.out.a.bits.opcode === TLMessages.PutFullData ||
+        io.out.a.bits.opcode === TLMessages.PutPartialData)) {
+    assert(preservation.io.a.fire() && CacheImage.safe(preservation.io.lock.bits.image, io.safeWatermark),
+      "L2_SPEC_OUTER_WRITE_ERROR A source")
+  }
 
   private def afmt(x: AddressSet) = s"""{"base":${x.base},"mask":${x.mask}}"""
   private def addresses = params.inner.manager.managers.flatMap(_.address).map(afmt _).mkString(",")

@@ -34,7 +34,28 @@ def verify(path):
             raise ValueError(key + ' changed')
     if record.get('amo_lanes') != [0, 4]:
         raise ValueError('directed AMO.W lanes missing')
+    domain = record.get('timer_control_domain', {})
+    if (domain.get('block_bytes'), domain.get('stride'), domain.get('harts'),
+            domain.get('size')) != (64, 64, 4, 256) or \
+            not isinstance(domain.get('base'), int) or domain['base'] % 64 or \
+            domain['base'] < 0x80000000:
+        raise ValueError('linked timer control domain evidence missing/invalid')
     return record
+
+
+def parse_symbols(output):
+    """Read GNU objdump -t: address flags section size [visibility] name."""
+    names, sizes = {}, {}
+    for line in output.splitlines():
+        parts = line.split()
+        if len(parts) < 4 or not re.fullmatch('[0-9a-fA-F]+', parts[0]):
+            continue
+        name = parts[-1]
+        size = parts[-3] if parts[-2] in ('.hidden', '.protected', '.internal') else parts[-2]
+        if not re.fullmatch('[0-9a-fA-F]+', size):
+            raise ValueError('invalid objdump symbol size for ' + name + ': ' + line)
+        names[name], sizes[name] = int(parts[0], 16), int(size, 16)
+    return names, sizes
 
 
 def main():
@@ -57,18 +78,18 @@ def main():
     elf, dump = directory / 'test.riscv', directory / 'test.dump'
     tool = REPO / 'chipyard/.conda-env/riscv-tools/bin/riscv64-unknown-elf-objdump'
     symbols = subprocess.check_output([str(tool), '-t', str(elf)], text=True)
-    names = {}
-    exit_range = None
-    for line in symbols.splitlines():
-        parts = line.split()
-        if len(parts) >= 6 and re.fullmatch('[0-9a-fA-F]+', parts[0]):
-            name = parts[-1]
-            names[name] = int(parts[0], 16)
-            if name == '_exit':
-                exit_range = [int(parts[0], 16), int(parts[0], 16) + int(parts[-2], 16)]
+    names, sizes = parse_symbols(symbols)
+    exit_range = [names['_exit'], names['_exit'] + sizes['_exit']]
     addr = names['stage1_amo_words']
     if addr % 64 or addr < 0x80000000:
         raise ValueError('AMO array not aligned/in ordinary DRAM')
+    # The timer handler is part of the validation control domain. Check the
+    # actual linked layout, not just the C alignment annotation, before any
+    # simulator can consume this workload. Current v1Config: 4 timer harts,
+    # 64-byte coherence blocks, one private block per timer counter.
+    timer_base = names['timer_flags']
+    if timer_base % 64 or sizes['timer_flags'] != 4 * 64:
+        raise ValueError('timer control counters share coherence blocks')
     disasm = dump.read_text()
     match = re.search(r'<stage1_amo_w_test>:\n(.*?)(?=\n[0-9a-f]+ <)', disasm, re.S)
     if not match:
@@ -89,6 +110,8 @@ def main():
     with loadmem.open('w') as out:
         subprocess.run(['elf2hex', '64', str(depth), str(elf), str(0x80000000)], stdout=out, check=True)
     record = dict(schema=1, sources=sources(), amo_lanes=[0, 4], amo_addresses=[addr, addr+4],
+                  timer_control_domain=dict(base=timer_base, block_bytes=64,
+                                            stride=64, harts=4, size=sizes['timer_flags']),
                   exit_pc_range=exit_range, exit_addresses=[names['tohost'], names['fromhost']],
                   loadmem_base=0x80000000, loadmem_width=64, loadmem_depth=depth)
     for key, path in (('benchmark', elf), ('dump', dump), ('loadmem', loadmem)):

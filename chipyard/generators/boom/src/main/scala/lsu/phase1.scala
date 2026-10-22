@@ -47,6 +47,8 @@ class BoomCacheCompletion(implicit p: Parameters) extends BoomBundle {
 class BoomCacheInstall(implicit p: Parameters) extends BoomBundle {
   val req = new BoomDCacheReqInternal
   val new_owner = Bool()
+  val image = new freechips.rocketchip.tilelink.CacheImageKey
+  val has_data = Bool()
 }
 
 /** Refill routing belongs to a transaction, as well as to a physical slot. */
@@ -57,4 +59,24 @@ class BoomCacheRefill(implicit p: Parameters)
   val transaction_token = UInt(32.W)
   val mshr_id = UInt(8.W)
   val owner_context_valid = Bool()
+  val image = new freechips.rocketchip.tilelink.CacheImageKey
+}
+
+/** The same predicate protects admission, replay grants and physical writes.
+  * A received image already exists below; a local semantic write clears that
+  * receipt. Validation changes safety only, never identity or preservation.
+  */
+object L1Preservation {
+  def safe(key: freechips.rocketchip.tilelink.CacheImageKey, watermark: UInt): Bool =
+    !key.valid || key.contentSeq === 0.U || key.contentSeq <= watermark
+
+  def allow(present: Bool, key: freechips.rocketchip.tilelink.CacheImageKey,
+    lowerPreserved: Bool, incomingSeq: UInt, watermark: UInt, incomingWriter: UInt): Bool = {
+    val samePackage = freechips.rocketchip.tilelink.CacheImage.samePackageIdentity(key, incomingWriter, incomingSeq)
+    !present || samePackage || (safe(key, watermark) && (incomingSeq === 0.U || lowerPreserved))
+  }
+
+  def copyAllowed(present: Bool, oldKey: freechips.rocketchip.tilelink.CacheImageKey,
+    lowerPreserved: Bool, incoming: freechips.rocketchip.tilelink.CacheImageKey, watermark: UInt): Bool =
+    !present || oldKey.asUInt === incoming.asUInt || (safe(oldKey, watermark) && lowerPreserved)
 }

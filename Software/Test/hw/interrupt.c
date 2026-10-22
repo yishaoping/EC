@@ -2,7 +2,7 @@
 
 #include <riscv-pk/encoding.h>
 
-volatile int timer_flags[TIMER_HARTS] = {0};
+volatile timer_flag_t timer_flags[TIMER_HARTS] = {0};
 
 /* 以高低字顺序一致地读取 CLINT mtime。 */
 uint64_t get_mtime(void)
@@ -55,56 +55,56 @@ void handle_trap(void)
         } else if ((read_csr(mip) & 0x80) != 0) {
             unsigned long long current_time = get_mtime();
             if (hart_id == 0) {
-                timer_flags[0] += 1;
-                if (timer_flags[0] < TIMER_LIMIT) {
+                timer_flags[0].value += 1;
+                if (timer_flags[0].value < TIMER_LIMIT) {
                     volatile uint32_t *mtimecmp =
                         (uint32_t *)(CLINT_BASE +
                                      CLINT_MTIMECMP_OFFSET(hart_id));
                     uint64_t new_cmp = get_mtime() + TIMER_COMPARE_DELTA;
                     *(uint64_t *)mtimecmp = new_cmp;
-                } else if (timer_flags[0] >= TIMER_LIMIT) {
+                } else if (timer_flags[0].value >= TIMER_LIMIT) {
                     unsigned int mie_val = read_csr(mie);
                     write_csr(mie, mie_val & ~0x80);
                     unsigned int mstatus_val = read_csr(mstatus);
                     write_csr(mstatus, mstatus_val & ~0x8);
                 }
             } else if (hart_id == 1) {
-                timer_flags[1] += 1;
-                if (timer_flags[1] < TIMER_LIMIT) {
+                timer_flags[1].value += 1;
+                if (timer_flags[1].value < TIMER_LIMIT) {
                     volatile uint32_t *mtimecmp =
                         (uint32_t *)(CLINT_BASE +
                                      CLINT_MTIMECMP_OFFSET(hart_id));
                     uint64_t new_cmp = get_mtime() + TIMER_COMPARE_DELTA;
                     *(uint64_t *)mtimecmp = new_cmp;
-                } else if (timer_flags[1] >= TIMER_LIMIT) {
+                } else if (timer_flags[1].value >= TIMER_LIMIT) {
                     unsigned int mie_val = read_csr(mie);
                     write_csr(mie, mie_val & ~0x80);
                     unsigned int mstatus_val = read_csr(mstatus);
                     write_csr(mstatus, mstatus_val & ~0x8);
                 }
             } else if (hart_id == 2) {
-                timer_flags[2] += 1;
-                if (timer_flags[2] < TIMER_LIMIT) {
+                timer_flags[2].value += 1;
+                if (timer_flags[2].value < TIMER_LIMIT) {
                     volatile uint32_t *mtimecmp =
                         (uint32_t *)(CLINT_BASE +
                                      CLINT_MTIMECMP_OFFSET(hart_id));
                     uint64_t new_cmp = get_mtime() + TIMER_COMPARE_DELTA;
                     *(uint64_t *)mtimecmp = new_cmp;
-                } else if (timer_flags[2] >= TIMER_LIMIT) {
+                } else if (timer_flags[2].value >= TIMER_LIMIT) {
                     unsigned int mie_val = read_csr(mie);
                     write_csr(mie, mie_val & ~0x80);
                     unsigned int mstatus_val = read_csr(mstatus);
                     write_csr(mstatus, mstatus_val & ~0x8);
                 }
             } else if (hart_id == 3) {
-                timer_flags[3] += 1;
-                if (timer_flags[3] < TIMER_LIMIT) {
+                timer_flags[3].value += 1;
+                if (timer_flags[3].value < TIMER_LIMIT) {
                     volatile uint32_t *mtimecmp =
                         (uint32_t *)(CLINT_BASE +
                                      CLINT_MTIMECMP_OFFSET(hart_id));
                     uint64_t new_cmp = get_mtime() + TIMER_COMPARE_DELTA;
                     *(uint64_t *)mtimecmp = new_cmp;
-                } else if (timer_flags[3] >= TIMER_LIMIT) {
+                } else if (timer_flags[3].value >= TIMER_LIMIT) {
                     unsigned int mie_val = read_csr(mie);
                     write_csr(mie, mie_val & ~0x80);
                     unsigned int mstatus_val = read_csr(mstatus);

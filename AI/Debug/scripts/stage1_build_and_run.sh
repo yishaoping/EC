@@ -36,5 +36,9 @@ make -C "$sim_root" -f "$chipyard/sims/verilator/Makefile" \
   CONFIG=v1Config VERILATOR_FST_MODE=1 EXTRA_SIM_CXXFLAGS=-DSTAGE1_EXIT_PORTS debug \
   2>&1 | tee "$sim_root/build.log"
 python3 "$repo/AI/Debug/scripts/stage1_provenance.py" --root "$chipyard" --sim "$sim" --generated "$generated" --manifest "$manifest" --source-snapshot "$sim_root/source.before.json" --write
+if [[ "${STAGE1_BUILD_ONLY:-0}" == 1 ]]; then
+  printf 'STAGE1_BUILD=PASS\nSTAGE1_SIMULATION=NOT_RUN_BUILD_ONLY\n'
+  exit 0
+fi
 STAGE1_SIM="$sim" STAGE1_GENERATED="$generated" STAGE1_PROVENANCE="$manifest" \
 STAGE1_WORKLOAD="$workload" exec "$repo/AI/Debug/scripts/stage1_run_trace.sh" "$@"

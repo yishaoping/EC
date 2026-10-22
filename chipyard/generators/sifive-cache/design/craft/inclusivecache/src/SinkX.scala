@@ -53,4 +53,5 @@ class SinkX(params: InclusiveCacheParameters) extends Module
   io.req.bits.put    := UInt(0)
   io.req.bits.packetSeq := UInt(0)
   io.req.bits.packetTracked := Bool(false)
+  io.req.bits.image := 0.U.asTypeOf(new freechips.rocketchip.tilelink.CacheImageKey)
 }

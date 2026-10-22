@@ -8,6 +8,7 @@ import org.chipsalliance.cde.config.{Field, Parameters}
 import freechips.rocketchip.subsystem.{BaseSubsystem, HierarchicalLocation, HasTiles, TLBusWrapperLocation}
 import freechips.rocketchip.diplomacy._
 import freechips.rocketchip.tilelink._
+import freechips.rocketchip.util._
 import freechips.rocketchip.prci.{ClockSinkDomain}
 
 import java.nio.ByteBuffer
@@ -50,7 +51,9 @@ class TLROM(val base: BigInt, val size: Int, contentsDelayed: => Seq[Byte], exec
 
     val index = in.a.bits.address(log2Ceil(wrapSize)-1,log2Ceil(beatBytes))
     val high = if (wrapSize == size) 0.U else in.a.bits.address(log2Ceil(size)-1, log2Ceil(wrapSize))
-    in.d.bits := edge.AccessAck(in.a.bits, Mux(high.orR, 0.U, rom(index)))
+    val response = edge.AccessAck(in.a.bits, Mux(high.orR, 0.U, rom(index)))
+    response.echo :<= in.a.bits.echo
+    in.d.bits := response
 
     // Tie off unused channels
     in.b.valid := false.B

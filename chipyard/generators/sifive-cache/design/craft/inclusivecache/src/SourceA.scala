@@ -46,6 +46,7 @@ class SourceA(params: InclusiveCacheParameters) extends Module
   a.valid := io.req.valid
   params.ccover(a.valid && !a.ready, "SOURCEA_STALL", "Backpressured when issuing an Acquire")
 
+  a.bits := 0.U.asTypeOf(new TLBundleA(params.outer.bundle))
   a.bits.opcode  := Mux(io.req.bits.block, TLMessages.AcquireBlock, TLMessages.AcquirePerm)
   a.bits.param   := io.req.bits.param
   a.bits.size    := UInt(params.offsetBits)

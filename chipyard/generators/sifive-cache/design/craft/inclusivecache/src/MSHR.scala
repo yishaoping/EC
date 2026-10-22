@@ -26,6 +26,14 @@ import TLMessages._
 import MetaData._
 import chisel3.PrintableHelper
 
+// Park only the original request and its validation obligation. No directory
+// snapshot/way or ownership is retained across replay.
+class ClientWaitRequest(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
+{
+  val request = new FullRequest(params)
+  val seq = UInt(width = 32)
+}
+
 class ScheduleRequest(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
 {
   val a = Valid(new SourceARequest(params))
@@ -35,6 +43,7 @@ class ScheduleRequest(params: InclusiveCacheParameters) extends InclusiveCacheBu
   val e = Valid(new SourceERequest(params))
   val x = Valid(new SourceXRequest(params))
   val dir = Valid(new DirectoryWrite(params))
+  val park = Valid(new ClientWaitRequest(params))
   val reload = Bool() // get next request via allocate (if any)
 }
 
@@ -49,6 +58,33 @@ class MSHRStatus(params: InclusiveCacheParameters) extends InclusiveCacheBundle(
   val nestC  = Bool()
 }
 
+// Observation only: distinguish a missing inner response from validation or
+// outer completion when a control flush cannot finish. Never feeds scheduling.
+class MSHRFlushStatus(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
+{
+  val active = Bool()
+  val mshr = UInt(width = 32)
+  val metaValid = Bool()
+  val hit = Bool()
+  val state = UInt(width = 4) // stable diagnostic code, independent of Scala object initialization
+  val address = UInt(width = params.inner.bundle.addressBits)
+  val set = UInt(width = params.setBits)
+  val way = UInt(width = params.wayBits)
+  val image = new CacheImageKey
+  val dirty = Bool()
+  val clients = UInt(width = params.clientBits)
+  val outerPreserved = Bool()
+  val probeScheduled = Bool()
+  val probeAckFirst = Bool()
+  val probeAckLast = Bool()
+  val releaseIssued = Bool()
+  val releaseSent = Bool()
+  val releaseAck = Bool()
+  val noWait = Bool()
+  val commitValid = Bool()
+  val commitReady = Bool() // actual final directory schedule handshake
+}
+
 class NestedWriteback(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
 {
   val set = UInt(width = params.setBits)
@@ -61,6 +97,8 @@ class NestedWriteback(params: InclusiveCacheParameters) extends InclusiveCacheBu
   val c_set_packet = Bool() // nested dirty writeback carries packet provenance
   val packetSeq = UInt(width = GH_GlobalParams.GH_PACKET_SEQ_BITS)
   val packetTracked = Bool()
+  val image = new CacheImageKey
+  val outerPreserved = Bool()
 }
 
 sealed trait CacheState
@@ -84,7 +122,7 @@ case object S_TIP_D    extends CacheState
 case object S_TRUNK_C  extends CacheState
 case object S_TRUNK_CD extends CacheState
 
-class MSHR(params: InclusiveCacheParameters) extends Module
+class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0) extends Module
 {
   val io = new Bundle {
     val allocate  = Valid(new AllocateRequest(params)).flip // refills MSHR for next cycle
@@ -95,12 +133,26 @@ class MSHR(params: InclusiveCacheParameters) extends Module
     val sinkd     = Valid(new SinkDResponse(params)).flip
     val sinke     = Valid(new SinkEResponse(params)).flip
     val nestedwb  = new NestedWriteback(params).flip
+    val resident = Valid(new DirectoryResult(params))
+    val preserved = Valid(new L2PreservationCandidate(params)).flip
+    val releaseSent = Valid(UInt(width = 64)).flip
+    val quiescent = Bool()
+    val watermark = UInt(width = 32).flip
+    val bank = UInt(width = 8).flip
+    val flushStatus = new MSHRFlushStatus(params)
   }
 
   val request_valid = RegInit(Bool(false))
   val request = Reg(new FullRequest(params))
   val meta_valid = RegInit(Bool(false))
   val meta = Reg(new DirectoryResult(params))
+  val planStarted = RegInit(Bool(false))
+  io.resident.valid := request_valid && meta_valid
+  io.resident.bits := meta
+  val releaseGeneration = RegInit(UInt(0, width = 64))
+  val releaseSent = RegInit(Bool(false))
+  val releaseIssued = RegInit(Bool(false))
+  val releaseSnapshot = Reg(new DirectoryResult(params))
 
   // Define which states are valid
   when (meta_valid) {
@@ -161,11 +213,11 @@ class MSHR(params: InclusiveCacheParameters) extends Module
     when (io.nestedwb.b_clr_dirty) { meta.dirty := Bool(false) }
     when (io.nestedwb.c_set_dirty) { meta.dirty := Bool(true) }
     when (io.nestedwb.c_set_dcache) { meta.dcache := Bool(true) }
-    when (io.nestedwb.c_set_packet && io.nestedwb.packetSeq =/= 0.U) {
-      when (!meta.packetTracked || io.nestedwb.packetSeq > meta.packetSeq) {
-        meta.packetSeq := io.nestedwb.packetSeq
-        meta.packetTracked := io.nestedwb.packetTracked
-      }
+    when (io.nestedwb.c_set_packet) {
+      meta.packetSeq := io.nestedwb.packetSeq
+      meta.packetTracked := io.nestedwb.packetTracked
+      meta.image := io.nestedwb.image
+      meta.outerPreserved := io.nestedwb.outerPreserved
     }
     when (io.nestedwb.b_toB) { meta.state := BRANCH }
     when (io.nestedwb.b_toN) { meta.hit := Bool(false) }
@@ -180,8 +232,9 @@ class MSHR(params: InclusiveCacheParameters) extends Module
   io.status.bits.nestB  := meta_valid && w_releaseack && w_rprobeacklast && w_pprobeacklast && !w_grantfirst
   // The above rules ensure we will block and not nest an outer probe while still doing our
   // own inner probes. Thus every probe wakes exactly one MSHR.
-  io.status.bits.blockC := !meta_valid
-  io.status.bits.nestC  := meta_valid && (!w_rprobeackfirst || !w_pprobeackfirst || !w_grantfirst)
+  io.status.bits.blockC := !meta_valid || (s_release && !w_releaseack)
+  io.status.bits.nestC  := meta_valid && !(s_release && !w_releaseack) &&
+    (!w_rprobeackfirst || !w_pprobeackfirst || !w_grantfirst)
   // The w_grantfirst in nestC is necessary to deal with:
   //   acquire waiting for grant, inner release gets queued, outer probe -> inner probe -> deadlock
   // ... this is possible because the release+probe can be for same set, but different tag
@@ -192,34 +245,86 @@ class MSHR(params: InclusiveCacheParameters) extends Module
 
   // Scheduler requests
   val no_wait = w_rprobeacklast && w_releaseack && w_grantlast && w_pprobeacklast && w_grantack
-  io.schedule.bits.a.valid := !s_acquire && s_release && s_pprobe
+  io.quiescent := w_rprobeacklast && w_pprobeacklast && w_grantlast
+  io.schedule.bits.a.valid := !s_acquire && s_release && w_releaseack && s_pprobe
   io.schedule.bits.b.valid := !s_rprobe || !s_pprobe
-  io.schedule.bits.c.valid := (!s_release && w_rprobeackfirst) || (!s_probeack && w_pprobeackfirst)
-  io.schedule.bits.d.valid := !s_execute && w_pprobeack && w_grant
+  io.schedule.bits.c.valid := (!s_release && w_rprobeacklast) || (!s_probeack && w_pprobeacklast)
+  io.schedule.bits.d.valid := !s_execute && w_pprobeacklast && w_grant
   io.schedule.bits.e.valid := !s_grantack && w_grantfirst
   io.schedule.bits.x.valid := !s_flush && w_releaseack
-  io.schedule.bits.dir.valid := (!s_release && w_rprobeackfirst) || (!s_writeback && no_wait)
+  // Keep old tag/ownership recoverable until outer completion. In particular
+  // neither an invalid tag nor an acquire/refill may overtake ReleaseAck.
+  io.schedule.bits.dir.valid := !s_writeback && no_wait
   io.schedule.bits.reload := no_wait
   io.schedule.valid := io.schedule.bits.a.valid || io.schedule.bits.b.valid || io.schedule.bits.c.valid ||
                        io.schedule.bits.d.valid || io.schedule.bits.e.valid || io.schedule.bits.x.valid ||
                        io.schedule.bits.dir.valid
 
+  val peerExposure = request.prio(0) && !request.control && !params.isImageAware(request.source) &&
+    CacheImage.exposesResident(request.opcode)
+  val peerUnsafe = request_valid && meta_valid && meta.hit && peerExposure &&
+    !CacheImage.safe(meta.image, io.watermark)
+  // Before any Probe/Acquire, park immediately. If the key first becomes unsafe
+  // in ProbeAckData, finish those handshakes and outer GrantAck before parking.
+  // Neither case has executed SourceD or granted the peer ownership.
+  val parkEarly = peerUnsafe && !planStarted
+  val parkLate = peerUnsafe && !s_execute && w_pprobeacklast && w_rprobeacklast &&
+    w_grantlast && s_grantack && s_acquire && s_pprobe && s_rprobe && w_releaseack
+  val parkPeer = parkEarly || parkLate
+  val parkCommit = parkPeer && planStarted
+  io.schedule.bits.park.valid := parkPeer
+  io.schedule.bits.park.bits.request := request
+  io.schedule.bits.park.bits.seq := meta.image.contentSeq
+  // Suppress only the unsafe execution while outstanding probes/refill/outer E
+  // drain. In particular E must not be coupled to a blocked D admission.
+  when (peerUnsafe) {
+    io.schedule.bits.d.valid := Bool(false)
+    io.schedule.bits.dir.valid := Bool(false)
+    io.schedule.bits.reload := Bool(false)
+  }
+  when (parkPeer) {
+    io.schedule.bits.a.valid := Bool(false)
+    io.schedule.bits.b.valid := Bool(false)
+    io.schedule.bits.c.valid := Bool(false)
+    io.schedule.bits.d.valid := Bool(false)
+    io.schedule.bits.e.valid := Bool(false)
+    io.schedule.bits.x.valid := Bool(false)
+    io.schedule.bits.dir.valid := parkCommit
+    io.schedule.bits.reload := Bool(true)
+  }
+  io.schedule.valid := io.schedule.bits.a.valid || io.schedule.bits.b.valid || io.schedule.bits.c.valid ||
+    io.schedule.bits.d.valid || io.schedule.bits.e.valid || io.schedule.bits.x.valid ||
+    io.schedule.bits.dir.valid || io.schedule.bits.park.valid
+
   // Schedule completions
   when (io.schedule.ready) {
+    planStarted := Bool(true)
                                     s_rprobe     := Bool(true)
-    when (w_rprobeackfirst)       { s_release    := Bool(true) }
+    when (w_rprobeacklast)        { s_release    := Bool(true) }
                                     s_pprobe     := Bool(true)
-    when (s_release && s_pprobe)  { s_acquire    := Bool(true) }
+    when (s_release && w_releaseack && s_pprobe) { s_acquire := Bool(true) }
     when (w_releaseack)           { s_flush      := Bool(true) }
-    when (w_pprobeackfirst)       { s_probeack   := Bool(true) }
+    when (w_pprobeacklast)        { s_probeack   := Bool(true) }
     when (w_grantfirst)           { s_grantack   := Bool(true) }
-    when (w_pprobeack && w_grant) { s_execute    := Bool(true) }
-    when (no_wait)                { s_writeback  := Bool(true) }
+    when (io.schedule.bits.d.valid) { s_execute := Bool(true) }
+    when (io.schedule.bits.dir.valid) { s_writeback := Bool(true) }
     // Await the next operation
-    when (no_wait) {
+    when ((no_wait && !peerUnsafe) || parkPeer) {
       request_valid := Bool(false)
       meta_valid := Bool(false)
     }
+  }
+
+  // A parked request has no remaining plan in this MSHR. Allocation/lookup
+  // below has higher priority and initializes a queued successor normally.
+  when (io.schedule.fire() && parkPeer) {
+    s_rprobe := Bool(true); w_rprobeackfirst := Bool(true); w_rprobeacklast := Bool(true)
+    s_release := Bool(true); w_releaseack := Bool(true)
+    s_pprobe := Bool(true); w_pprobeackfirst := Bool(true); w_pprobeacklast := Bool(true)
+    w_pprobeack := Bool(true)
+    s_acquire := Bool(true); w_grantfirst := Bool(true); w_grantlast := Bool(true); w_grant := Bool(true)
+    s_grantack := Bool(true); s_probeack := Bool(true); s_flush := Bool(true)
+    s_execute := Bool(true); w_grantack := Bool(true); s_writeback := Bool(true)
   }
 
   // Resulting meta-data
@@ -243,6 +348,8 @@ class MSHR(params: InclusiveCacheParameters) extends Module
       final_meta_writeback.dcache  := Bool(false)
       final_meta_writeback.packetSeq := UInt(0)
       final_meta_writeback.packetTracked := Bool(false)
+      final_meta_writeback.image := 0.U.asTypeOf(new CacheImageKey)
+      final_meta_writeback.outerPreserved := Bool(false)
       final_meta_writeback.state   := INVALID
       final_meta_writeback.clients := meta.clients & ~probes_toN
     }
@@ -265,6 +372,10 @@ class MSHR(params: InclusiveCacheParameters) extends Module
     when (!meta.hit) {
       final_meta_writeback.packetSeq := UInt(0)
       final_meta_writeback.packetTracked := Bool(false)
+      final_meta_writeback.image := 0.U.asTypeOf(new CacheImageKey)
+      // New refill came from the coherent outer image. It is clean; no
+      // authored inner version is inferred from permission-only transitions.
+      final_meta_writeback.outerPreserved := Bool(true)
     }
   }
 
@@ -277,6 +388,7 @@ class MSHR(params: InclusiveCacheParameters) extends Module
       final_meta_writeback.dcache  := meta.dcache
       final_meta_writeback.packetSeq := meta.packetSeq
       final_meta_writeback.packetTracked := meta.packetTracked
+      final_meta_writeback.image := meta.image
       final_meta_writeback.state   := BRANCH
       final_meta_writeback.clients := meta.clients & ~probes_toN
     } .otherwise {
@@ -286,6 +398,8 @@ class MSHR(params: InclusiveCacheParameters) extends Module
       final_meta_writeback.dcache  := Bool(false)
       final_meta_writeback.packetSeq := UInt(0)
       final_meta_writeback.packetTracked := Bool(false)
+      final_meta_writeback.image := 0.U.asTypeOf(new CacheImageKey)
+      final_meta_writeback.outerPreserved := Bool(false)
       final_meta_writeback.state   := INVALID
       final_meta_writeback.clients := UInt(0)
     }
@@ -294,19 +408,41 @@ class MSHR(params: InclusiveCacheParameters) extends Module
   // A nested inner Release carries the line's BOOM packet provenance.  Keep
   // it with the resident directory line so a later L2 eviction can classify
   // the corresponding writeback.
-  when (request.prio(2) && request.packetSeq =/= 0.U) {
+  when (request.prio(2) && request.opcode === ReleaseData) {
     final_meta_writeback.packetSeq := request.packetSeq
     final_meta_writeback.packetTracked := request.packetTracked
+    final_meta_writeback.image := request.image
+    final_meta_writeback.outerPreserved := meta.outerPreserved &&
+      request.image.valid && meta.image.asUInt === request.image.asUInt
   }
 
-  val invalid = Wire(new DirectoryEntry(params))
-  invalid.dirty   := Bool(false)
-  invalid.dcache  := Bool(false)
-  invalid.state   := INVALID
-  invalid.clients := UInt(0)
-  invalid.tag     := UInt(0)
-  invalid.packetSeq := UInt(0)
-  invalid.packetTracked := Bool(false)
+  // Denial retains the previous bytes/key (or the invalid BASE on a miss).
+  // A failed trusted operation must not relabel an old speculative image.
+  when (request.prio(0) && !request.opcode(2) && !bad_grant) {
+    final_meta_writeback.image := 0.U.asTypeOf(new CacheImageKey)
+    final_meta_writeback.packetSeq := 0.U
+    final_meta_writeback.packetTracked := Bool(false)
+    final_meta_writeback.outerPreserved := Bool(false)
+  }
+
+  when (parkPeer) {
+    // Publish only effects of already completed probes; the waiting requester
+    // has received no D beat and MUST NOT be added to the sharer/owner mask.
+    final_meta_writeback := meta
+    when (planStarted) {
+      final_meta_writeback.clients := meta.clients & ~probes_toN
+      when (meta.state === TRUNK && probes_noT) { final_meta_writeback.state := TIP }
+    }
+  }
+  when (io.schedule.fire() && parkPeer) {
+    assert(!s_execute && !releaseIssued, "peer park after response/victim release")
+    assert(!io.schedule.bits.d.valid && !io.schedule.bits.a.valid && !io.schedule.bits.b.valid &&
+      !io.schedule.bits.c.valid && !io.schedule.bits.e.valid, "peer park emitted protocol work")
+    assert(final_meta_writeback.image.asUInt === meta.image.asUInt &&
+      final_meta_writeback.outerPreserved === meta.outerPreserved &&
+      final_meta_writeback.dirty === meta.dirty, "peer park changed protected bytes/receipt")
+    assert((final_meta_writeback.clients & ~meta.clients) === UInt(0), "peer park granted ownership")
+  }
 
   // Just because a client says BtoT, by the time we process the request he may be N.
   // Therefore, we must consult our own meta-data state to confirm he owns the line still.
@@ -324,16 +460,19 @@ class MSHR(params: InclusiveCacheParameters) extends Module
   io.schedule.bits.b.bits.tag     := Mux(!s_rprobe, meta.tag, request.tag)
   io.schedule.bits.b.bits.set     := request.set
   io.schedule.bits.b.bits.clients := meta.clients & ~excluded_client
-  io.schedule.bits.c.bits.opcode  := Mux(meta.dirty, ReleaseData, Release)
+  io.schedule.bits.c.bits.opcode  := Mux(meta.dirty && !meta.outerPreserved, ReleaseData, Release)
   io.schedule.bits.c.bits.param   := Mux(meta.state === BRANCH, BtoN, TtoN)
   io.schedule.bits.c.bits.source  := UInt(0)
   io.schedule.bits.c.bits.tag     := meta.tag
   io.schedule.bits.c.bits.set     := request.set
   io.schedule.bits.c.bits.way     := meta.way
-  io.schedule.bits.c.bits.dirty   := meta.dirty
+  io.schedule.bits.c.bits.dirty   := meta.dirty && !meta.outerPreserved
   io.schedule.bits.c.bits.dcache  := meta.dcache
   io.schedule.bits.c.bits.packetSeq := meta.packetSeq
   io.schedule.bits.c.bits.packetTracked := meta.packetTracked
+  io.schedule.bits.c.bits.image := meta.image
+  io.schedule.bits.c.bits.txn := releaseGeneration
+  io.schedule.bits.c.bits.reason := Mux(request.control, UInt(2), UInt(1))
   io.schedule.bits.d.bits         := request
   io.schedule.bits.d.bits.param   := Mux(!req_acquire, request.param,
                                        MuxLookup(request.param, Wire(request.param), Seq(
@@ -343,11 +482,13 @@ class MSHR(params: InclusiveCacheParameters) extends Module
   io.schedule.bits.d.bits.sink    := UInt(0)
   io.schedule.bits.d.bits.way     := meta.way
   io.schedule.bits.d.bits.bad     := bad_grant
+  // C replies echo the protected snapshot; A grants name the resident bytes.
+  io.schedule.bits.d.bits.image := Mux(request.prio(2), request.image, final_meta_writeback.image)
   io.schedule.bits.e.bits.sink    := sink
   io.schedule.bits.x.bits.fail    := Bool(false)
   io.schedule.bits.dir.bits.set   := request.set
   io.schedule.bits.dir.bits.way   := meta.way
-  io.schedule.bits.dir.bits.data  := Mux(!s_release, invalid, Wire(new DirectoryEntry(params), init = final_meta_writeback))
+  io.schedule.bits.dir.bits.data := Wire(new DirectoryEntry(params), init = final_meta_writeback)
 
   // Coverage of state transitions
   def cacheState(entry: DirectoryEntry, hit: Bool) = {
@@ -379,6 +520,88 @@ class MSHR(params: InclusiveCacheParameters) extends Module
   val before = cacheState(meta, meta.hit)
   val after  = cacheState(final_meta_writeback, Bool(true))
 
+  io.flushStatus.active := request_valid && request.control
+  io.flushStatus.mshr := UInt(id)
+  io.flushStatus.metaValid := meta_valid
+  io.flushStatus.hit := meta.hit
+  io.flushStatus.state := MuxLookup(before, UInt(15), Seq(
+    S_INVALID.code -> UInt(0), S_BRANCH.code -> UInt(1), S_BRANCH_C.code -> UInt(2),
+    S_TIP.code -> UInt(3), S_TIP_C.code -> UInt(4), S_TIP_CD.code -> UInt(5),
+    S_TIP_D.code -> UInt(6), S_TRUNK_C.code -> UInt(7), S_TRUNK_CD.code -> UInt(8)))
+  io.flushStatus.address := params.restoreAddress(params.expandAddress(request.tag, request.set, request.offset))
+  io.flushStatus.set := request.set
+  io.flushStatus.way := meta.way
+  io.flushStatus.image := meta.image
+  io.flushStatus.dirty := meta.dirty
+  io.flushStatus.clients := meta.clients
+  io.flushStatus.outerPreserved := meta.outerPreserved
+  io.flushStatus.probeScheduled := s_rprobe
+  io.flushStatus.probeAckFirst := w_rprobeackfirst
+  io.flushStatus.probeAckLast := w_rprobeacklast
+  io.flushStatus.releaseIssued := releaseIssued
+  io.flushStatus.releaseSent := releaseSent
+  io.flushStatus.releaseAck := w_releaseack
+  io.flushStatus.noWait := no_wait
+  io.flushStatus.commitValid := io.schedule.bits.dir.valid
+  io.flushStatus.commitReady := io.schedule.bits.dir.valid && io.schedule.fire()
+
+  // Event-only diagnostics for the directed fixture. Production callers keep
+  // trace=false; no protocol input, state transition or scheduling gate changes.
+  if (trace) {
+    val cycle = RegInit(UInt(0, width = 64))
+    cycle := cycle + UInt(1)
+    if (id == 0) when (cycle === UInt(0)) {
+      printf("STAGE3_MSHR event=STATE_CODES INVALID=%x BRANCH=%x BRANCH_C=%x TIP=%x TIP_C=%x TIP_CD=%x TIP_D=%x TRUNK_C=%x TRUNK_CD=%x\n",
+        S_INVALID.code, S_BRANCH.code, S_BRANCH_C.code, S_TIP.code, S_TIP_C.code,
+        S_TIP_CD.code, S_TIP_D.code, S_TRUNK_C.code, S_TRUNK_CD.code)
+    }
+    def log(event: String) {
+      printf(s"STAGE3_MSHR event=$event cycle=%d bank=%x mshr=%d txn=%x before=%x after=%x control=%x opcode=%x source=%x addr=%x set=%x tag=%x way=%x hit=%x state=%x dirty=%x clients=%x victim_tag=%x image=%x gen=%x seq=%x outer=%x final_state=%x final_dirty=%x final_clients=%x release_issued=%x release_sent=%x release_ack=%x grant_last=%x no_wait=%x reload=%x\n",
+        cycle, io.bank, UInt(id), releaseGeneration, before, after, request.control, request.opcode,
+        request.source, params.restoreAddress(params.expandAddress(request.tag, request.set, request.offset)),
+        request.set, request.tag, meta.way, meta.hit, meta.state, meta.dirty, meta.clients, meta.tag,
+        meta.image.valid, meta.image.generation, meta.image.contentSeq, meta.outerPreserved,
+        final_meta_writeback.state, final_meta_writeback.dirty, final_meta_writeback.clients,
+        releaseIssued, releaseSent, w_releaseack, w_grantlast, no_wait, io.allocate.valid)
+    }
+    when (io.allocate.valid) {
+      printf("STAGE3_MSHR event=ALLOC cycle=%d mshr=%d next_txn=%x repeat=%x control=%x opcode=%x source=%x set=%x tag=%x old_active=%x\n",
+        cycle, UInt(id), releaseGeneration + UInt(1), io.allocate.bits.repeat,
+        io.allocate.bits.control, io.allocate.bits.opcode, io.allocate.bits.source,
+        io.allocate.bits.set, io.allocate.bits.tag, request_valid)
+    }
+    when (io.directory.valid) {
+      printf("STAGE3_MSHR event=LOOKUP cycle=%d mshr=%d next_txn=%x hit=%x state=%x dirty=%x clients=%x victim_tag=%x way=%x\n",
+        cycle, UInt(id), releaseGeneration + UInt(1), io.directory.bits.hit, io.directory.bits.state,
+        io.directory.bits.dirty, io.directory.bits.clients, io.directory.bits.tag, io.directory.bits.way)
+    }
+    when (io.schedule.fire()) {
+      when (io.schedule.bits.park.valid) { log("CLIENT_PARK") }
+      when (io.schedule.bits.b.valid) { log("PROBE_SENT") }
+      when (io.schedule.bits.dir.valid) { log("COMMIT") }
+      when (io.schedule.bits.c.valid) { log("RELEASE") }
+      when (io.schedule.bits.a.valid) { log("ACQUIRE") }
+      when (no_wait) { log("FREE_OR_RELOAD") }
+    }
+    when (io.sinkd.valid && io.sinkd.bits.opcode === ReleaseAck) { log("RELEASE_ACK_INPUT") }
+    when (io.releaseSent.valid) { log("RELEASE_SENT") }
+    when (io.sinkc.valid) {
+      log("PROBE_ACK_INPUT")
+      printf("STAGE3_MSHR event=PROBE_ACK_DETAIL cycle=%d mshr=%d source=%x param=%x data=%x last=%x\n",
+        cycle, UInt(id), io.sinkc.bits.source, io.sinkc.bits.param, io.sinkc.bits.data, io.sinkc.bits.last)
+    }
+    when (io.sinkd.valid && (io.sinkd.bits.opcode === Grant || io.sinkd.bits.opcode === GrantData)) {
+      when (!w_grantfirst || io.sinkd.bits.last) {
+        log("REFILL")
+        printf("STAGE3_MSHR event=REFILL_INPUT cycle=%d mshr=%d txn=%x param=%x denied=%x last=%x\n",
+          cycle, UInt(id), releaseGeneration, io.sinkd.bits.param, io.sinkd.bits.denied, io.sinkd.bits.last)
+      }
+    }
+    when (io.preserved.valid && meta_valid && request.set === io.preserved.bits.set &&
+          meta.way === io.preserved.bits.way && meta.tag === io.preserved.bits.tag &&
+          meta.image.asUInt === io.preserved.bits.image.asUInt) { log("PRESERVED") }
+  }
+
   def eviction(from: CacheState, cover: Boolean)(implicit sourceInfo: SourceInfo) {
     if (cover) {
       params.ccover(evict === from.code, s"MSHR_${from}_EVICT", s"State transition from ${from} to evicted ${cfg}")
@@ -400,6 +623,15 @@ class MSHR(params: InclusiveCacheParameters) extends Module
     }
   }
 
+  def flushCommit(from: CacheState, cover: Boolean)(implicit sourceInfo: SourceInfo) {
+    if (cover && f) {
+      params.ccover(before === from.code && after === S_INVALID.code,
+        s"MSHR_${from}_FLUSH_COMMIT", s"Completed flush from ${from} ${cfg}")
+    } else {
+      assert(!(before === from.code), cf"Flush commit from ${from} should be impossible ${cfg}")
+    }
+  }
+
   when ((!s_release && w_rprobeackfirst) && io.schedule.ready) {
     eviction(S_BRANCH,    b)      // MMIO read to read-only device
     eviction(S_BRANCH_C,  b && c) // you need children to become C
@@ -411,7 +643,37 @@ class MSHR(params: InclusiveCacheParameters) extends Module
     eviction(S_TRUNK_CD,  c)      // dirty release then reacquire
   }
 
-  when ((!s_writeback && no_wait) && io.schedule.ready) {
+  // Flush used to invalidate at the eviction schedule, outside the ordinary
+  // transition table. Stage3 defers that write until ReleaseAck. Classify the
+  // delayed commit as the same control operation, with its own terminal proof.
+  // Ordinary A/C transitions below retain every original capability condition.
+  when ((!s_writeback && no_wait) && io.schedule.ready && request.control) {
+    assert(Bool(f) && request.prio(0), "MSHR flush commit without control capability")
+    assert(request_valid && meta_valid && meta.hit && meta.state =/= INVALID,
+      "MSHR flush commit without a resident hit")
+    assert(releaseIssued && releaseSent && w_releaseack,
+      "MSHR flush commit before matching ReleaseAck")
+    assert(!io.schedule.bits.a.valid && !io.schedule.bits.d.valid,
+      "MSHR flush commit attempted Acquire or inner data response")
+    assert(!final_meta_writeback.hit && final_meta_writeback.state === INVALID &&
+      !final_meta_writeback.clients.orR && !final_meta_writeback.dirty && !final_meta_writeback.dcache,
+      "MSHR flush commit retained permissions or dirty data")
+    assert(final_meta_writeback.image.asUInt === UInt(0) && !final_meta_writeback.outerPreserved &&
+      final_meta_writeback.packetSeq === UInt(0) && !final_meta_writeback.packetTracked,
+      "MSHR flush commit retained old provenance")
+    // Retain the eviction/flush capability assertions at the final commit too.
+    flushCommit(S_INVALID, false)
+    flushCommit(S_BRANCH, b)
+    flushCommit(S_BRANCH_C, b && c)
+    flushCommit(S_TIP, true)
+    flushCommit(S_TIP_C, c)
+    flushCommit(S_TIP_CD, c)
+    flushCommit(S_TIP_D, true)
+    flushCommit(S_TRUNK_C, c)
+    flushCommit(S_TRUNK_CD, c)
+  }
+
+  when (io.schedule.bits.dir.valid && io.schedule.ready && !request.control) {
     transition(S_INVALID,  S_BRANCH,   b && m) // only MMIO can bring us to BRANCH state
     transition(S_INVALID,  S_BRANCH_C, b && c) // C state is only possible if there are inner caches
     transition(S_INVALID,  S_TIP,      m)      // MMIO read
@@ -517,13 +779,13 @@ class MSHR(params: InclusiveCacheParameters) extends Module
     params.ccover(!set_pprobeack && w_rprobeackfirst, "MSHR_PROBE_SERIAL", "Sequential routing of probe response data")
     params.ccover( set_pprobeack && w_rprobeackfirst, "MSHR_PROBE_WORMHOLE", "Wormhole routing of probe response data")
     // However, meta-data updates need to be done more cautiously
-    when (meta.state =/= INVALID && io.sinkc.bits.tag === meta.tag && io.sinkc.bits.data) {
+    when (meta.state =/= INVALID && io.sinkc.bits.tag === meta.tag && io.sinkc.bits.data && io.sinkc.bits.last) {
       meta.dirty := Bool(true)
-      when (io.sinkc.bits.packetTracked && io.sinkc.bits.packetSeq =/= 0.U &&
-            (!meta.packetTracked || io.sinkc.bits.packetSeq > meta.packetSeq)) {
-        meta.packetSeq := io.sinkc.bits.packetSeq
-        meta.packetTracked := io.sinkc.bits.packetTracked
-      }
+      meta.packetSeq := io.sinkc.bits.packetSeq
+      meta.packetTracked := io.sinkc.bits.packetTracked
+      meta.image := io.sinkc.bits.image
+      meta.outerPreserved := meta.outerPreserved && io.sinkc.bits.image.valid &&
+        meta.image.asUInt === io.sinkc.bits.image.asUInt
     }
   }
   when (io.sinkd.valid) {
@@ -540,8 +802,49 @@ class MSHR(params: InclusiveCacheParameters) extends Module
       gotT := io.sinkd.bits.param === toT
     }
     .elsewhen (io.sinkd.bits.opcode === ReleaseAck) {
-      w_releaseack := Bool(true)
+      val matching = request_valid && releaseIssued && !w_releaseack && s_release &&
+        (releaseSent || (io.releaseSent.valid && io.releaseSent.bits === releaseGeneration)) &&
+        io.sinkd.bits.txn === releaseGeneration
+      when (matching) {
+        assert(!io.sinkd.bits.denied, "L2 victim preservation outer failure")
+        when (!io.sinkd.bits.denied) {
+          w_releaseack := Bool(true)
+          printf("STAGE3_TX L2_VICTIM_ACK bank=%x txn=%x source=%x set=%x way=%x tag=%x valid=%x writer=%x gen=%x seq=%x reason=%x\n",
+            io.bank, releaseGeneration, io.sinkd.bits.source, request.set, meta.way, meta.tag, meta.image.valid,
+            meta.image.writer, meta.image.generation, meta.image.contentSeq, Mux(request.control, UInt(2), UInt(1)))
+        }
+      }.otherwise {
+        printf("STAGE3_TX L2_STALE_ACK_ERROR bank=%x txn=%x current=%x ignored=1 victim=1\n",
+          io.bank, io.sinkd.bits.txn, releaseGeneration)
+      }
     }
+  }
+  when (io.releaseSent.valid) {
+    assert(releaseIssued && io.releaseSent.bits === releaseGeneration && !releaseSent,
+      "L2_DUP_PRESERVE_ERROR victim")
+    releaseSent := Bool(true)
+  }
+  when (io.schedule.fire()) {
+    assert(!io.schedule.bits.a.valid || w_releaseack, "L2_PREMATURE_OVERWRITE_ERROR acquire")
+    assert(!io.schedule.bits.dir.valid || w_releaseack, "L2_PREMATURE_OVERWRITE_ERROR victim tag")
+    when (io.schedule.bits.c.valid) {
+      assert(!releaseIssued, "L2_DUP_PRESERVE_ERROR victim request")
+      releaseIssued := Bool(true)
+      releaseSnapshot := meta
+    }
+  }
+  when (releaseIssued && !w_releaseack) {
+    assert(meta.asUInt === releaseSnapshot.asUInt, "L2 pending victim identity changed")
+  }
+  when (io.preserved.valid && meta_valid && request.set === io.preserved.bits.set &&
+        meta.way === io.preserved.bits.way && meta.tag === io.preserved.bits.tag &&
+        meta.image.asUInt === io.preserved.bits.image.asUInt) {
+    // Scheduler freezes every mutating entry in this set on the ACK cycle.
+    assert(!io.directory.valid && !(io.allocate.valid && io.allocate.bits.repeat) &&
+      !(io.sinkc.valid && io.sinkc.bits.data) &&
+      !(io.nestedwb.c_set_packet && io.nestedwb.set === request.set && io.nestedwb.tag === meta.tag),
+      "L2 receipt raced a resident mutation")
+    meta.outerPreserved := Bool(true)
   }
   when (io.sinke.valid) {
     w_grantack := Bool(true)
@@ -577,14 +880,19 @@ class MSHR(params: InclusiveCacheParameters) extends Module
   }
 
   when (io.allocate.valid) {
-    assert (!request_valid || (no_wait && io.schedule.fire()))
+    assert (!request_valid || (((no_wait && !peerUnsafe) || parkPeer) && io.schedule.fire()))
     request_valid := Bool(true)
     request := io.allocate.bits
   }
 
   // Create execution plan
   when (io.directory.valid || (io.allocate.valid && io.allocate.bits.repeat)) {
+    assert(!releaseGeneration.andR, "L2 release serial exhausted")
+    releaseGeneration := releaseGeneration + UInt(1)
+    releaseSent := Bool(false)
+    releaseIssued := Bool(false)
     meta_valid := Bool(true)
+    planStarted := Bool(false)
     meta := new_meta
     probes_done := UInt(0)
     probes_toN := UInt(0)
@@ -617,8 +925,9 @@ class MSHR(params: InclusiveCacheParameters) extends Module
     // For C channel requests (ie: Release[Data])
     when (new_request.prio(2) && Bool(!params.firstLevel)) {
       s_execute := Bool(false)
-      // Do we need to go dirty?
-      when (new_request.opcode(0) && !new_meta.dirty) {
+      // Every data release publishes its exact image, even if dirty/client
+      // state is unchanged (for example a nested release after a probe).
+      when (new_request.opcode(0)) {
         s_writeback := Bool(false)
       }
       // Does our state change?
@@ -636,6 +945,7 @@ class MSHR(params: InclusiveCacheParameters) extends Module
       s_flush := Bool(false)
       // Do we need to actually do something?
       when (new_meta.hit) {
+        s_writeback := Bool(false)
         s_release := Bool(false)
         w_releaseack := Bool(false)
         // Do we need to shoot-down inner caches?
@@ -684,8 +994,10 @@ class MSHR(params: InclusiveCacheParameters) extends Module
         w_grantack := Bool(false)
         s_writeback := Bool(false)
       }
-      // Becomes dirty?
-      when (!new_request.opcode(2) && new_meta.hit && !new_meta.dirty) {
+      // Every trusted byte update revokes the old exact-image receipt and
+      // publishes BASE, even when the resident was already dirty. Dirty-state
+      // equality alone does not imply that the content identity is unchanged.
+      when (!new_request.opcode(2)) {
         s_writeback := Bool(false)
       }
     }

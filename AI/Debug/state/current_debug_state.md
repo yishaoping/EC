@@ -1,6 +1,439 @@
 # Current Debug State
 
-## 当前：Stage 1 已正式关闭（2026-10-17）
+## Stage 3 closure evidence reviewed (2026-10-21)
+
+The sealed run `AI/TMP/stage3_runs/run_qx63gyhc/` passed the final evidence
+review. HEAD, 11,480 source hashes, four Stage 3 script hashes, 40 workload
+source hashes, 3,077 generated model files, simulator identity, phase seals and
+upstream tokens all match. BUILD/DIRECTED/SYSTEM are PASS; all 19 directed CASE
+markers are unique and PASS, with one `[END] status=PASS` and zero preservation
+correctness errors. System Stage 1, Stage 2 and Stage 3 scoreboards, progress,
+software report and exit drain are all PASS. The metadata-clear witness now has
+`PRESERVE_DONE -> CLEAR_CHECK fire=1` with all S1/S2 and conflict fields zero,
+followed by EFFECT, TERMINAL and RELEASE; the prior watchdog path is absent.
+
+```ini
+STAGE3_DYNAMIC_VALIDATION=PASS
+STAGE1_REGRESSION=NONE
+STAGE2_REGRESSION=NONE
+STAGE3_INVARIANTS=PASS
+ALL_DIRECTED_CASES=PASS
+OUTSTANDING_TRANSACTIONS=NONE
+STAGE3_STATUS=CLOSED
+STAGE3_CLOSURE=YES
+NEXT_ACTION=MAINTAIN_STAGE3_CLOSED_STATUS
+```
+
+The original run summary remains an immutable pre-review record with
+`STAGE3_CLOSURE=NO`. Full checklist, fields and independent provenance audit:
+[Stage 3 closure evidence review](../history/reports/stage3_closure_evidence_20261021.md)
+and `AI/TMP/stage3_closure_review_20261021_bjm5zr2m/`.
+
+## 最新终端错误：workload符号表解析已修复，等待重跑（2026-10-20）
+
+用户run_jp4_qkjb停在software manifest preparation，未进入hardware build/directed/system。
+根因是上轮新增size读取把GNU objdump符号的可选`.hidden`当作十六进制size；实际新ELF
+stage1_workload_2Raas2GM已编译，timer_flags为aligned64/size256，控制域布局没有失败。
+stage1_workload.py统一解析size与visibility，_exit范围也复用解析结果；新增3项offline
+parser回归覆盖default/hidden/protected/internal、flag变体与坏size拒绝。实际ELF261符号
+（含5个hidden）、源码snapshot、AMO/HTIF/_exit/LOAD头只读检查PASS；Python/shell/diff PASS。
+本轮未准备/转换软件、build、生成、仿真或执行runner；未改C/Scala/harness和任何协议。
+旧失败run与manifest保留；仍使用同一Stage3单入口自动准备变更软件并重新验证。
+STATIC_REVIEW=PASS；READY_FOR_DYNAMIC_VALIDATION=YES；STAGE3_CLOSURE=NO。
+详见 [符号visibility解析RCA与验证](../history/reports/stage3_workload_symbol_parser_20261020.md)。
+
+## 当前：Stage 3 timer/trap validation 环已定位并以控制数据隔离切断（2026-10-20）
+
+原布局的条件环已确认 REACHABLE：旧 run_zr8umvan 的 hart2 完成 seq2 PASS 后，
+result queue 仍 valid1/ready0；timer trap(mcause=0x8000000000000007)阻止 context_idle。
+handler PC800006bc 读取 timer_flags[2]=80007e48，与 BOOM timer_flags[0] 的
+unsafe writer0/genb920/seq2 共用 line80007e40，watermark1。当前新 gate 若应用到
+该状态，会使 handler 等 seq2 validation，而 retained PASS 的 handoff 又等 handler xRET。
+不是“checker尚未算出PASS”，也不能以 close ACK 或释放MSHR代替validation。
+
+最小修复仅2个生产C/header文件：timer counter 改为每hart独占、对齐64B的完整block，
+保持原计数/中断/CSR行为。handler其他物理访问为private管理栈和CLINT MMIO；RSUSL/
+RocketCore原有异常SP/GP恢复保证local trap使用管理栈，replay内存访问仍由LSL服务。
+BOOT BSS初始化在seq0；BOOM后续只写slot0，因此Rocket的slot1..3不带BOOM unsafe key。
+未修改任何Scala/hardware、CacheImage、Rocket、L2 gate、validation或preservation逻辑。
+
+2个必要provenance脚本增量：stage1_workload检查实际ELF timer_flags对齐64/大小256并
+记录domain；Stage3原单入口在用户下次执行时自动准备已变更软件，保留旧manifest，
+之后再capture/验证输入。旧ELF/旧system结果不能替代新软件证据；本轮没有执行准备。
+
+STATIC_REVIEW=PASS；KNOWN_DEADLOCK_CYCLES=NONE（本轮已知timer unsafe-transfer环）；
+READY_FOR_DYNAMIC_VALIDATION=YES；STAGE3_STATUS=PATCHED_PENDING_REBUILD；STAGE3_CLOSURE=NO。
+RISC-V C syntax-only、Python AST、shell syntax、mock-only provenance与git diff检查PASS；
+1463个Scala源码hash逐项未变，directed fixture未变。未build、typecheck、生成、Verilator、
+simulation或runner。该静态排除针对当前v1Config/Test timer路径，不冒充任意软件/全局fairness证明。
+详见 [具体wait graph、地址域、修复与边界](../history/reports/stage3_timer_control_domain_20261020.md)。
+证据/本轮preimages：`AI/TMP/stage3_timer_wait_ecs_zsrg/`；全部旧run保留。
+
+## 历史：Stage 3 收缩为 lineage-unaware Rocket；L2 gate 已实现，系统 progress 当时未闭合（2026-10-20）
+
+架构固定为 BLOCK_SPECULATIVE_TRANSFER_TO_LINEAGE_UNAWARE_ROCKET。精确撤回 Rocket
+DCache/HellaCache 上轮 CacheImage 功能扩展，两文件与扩展前副本一致；BOOM 恢复本地
+imageSerial，保留 CacheImage/同包与 preservation 语义，只新增 coherent endpoint marker。
+L2 使用 marker+真实 remapped source range 分类，默认未知 client unaware。在 MSHR/
+Scheduler->SourceD 阻止 unsafe Get/Acquire/old-value AMO response，停放原 request/seq，
+释放 MSHR/set/D 资源；晚发现 ProbeAckData unsafe 时先完成 C/E/bank tail、仅提交 probe
+ownership 变化。validation 后空闲 set 重新 allocation/lookup，禁止复用旧 directory snapshot。
+独立 client wait 使用已有 package-close 请求，但 peer-only wait 不冻结 SourceC。
+
+替换旧 coherent_peer_lineage_roundtrip 为 lineage_unaware_peer_waits_validation；严格
+19/19，原18项保留，覆盖早/晚park、同set BOOM、other-set preservation/ACK、验证后
+fresh retry、普通BASE Release/ProbeAckData。fixture主动注入watermark，不证明system进展。
+
+静态语法/scope/table检查 PASS（原9状态/72行及assertion helper未改，18 allowed/54 forbidden、
+6 flush edges），未运行任何 hardware build、Scala typecheck、RTL生成、Verilator、runner或simulation。
+完整 STATIC_REVIEW=FAIL：尚不能排除 runtime timer handler 等 safe Grant -> validation 等
+checker -> checker context_idle 等 trap xRET -> handler 的条件等待环。源码证明这些依赖存在，
+旧run证明shared timer行曾被unsafe交给普通Rocket；新排序下是否阻塞负责该seq/更早seq的checker
+尚未证明。释放L2资源/package close ACK不能替代PASS或抹掉这个缺口。
+
+READY_FOR_DYNAMIC_VALIDATION=NO；STAGE3_STATUS=STATIC_PROGRESS_REVIEW_UNRESOLVED；
+STAGE3_CLOSURE=NO。生产8文件（其中2个仅撤回），无新增Rocket store/AMO/generation功能。
+详见 [收缩架构、完整静态审计及剩余progress阻塞](../history/reports/stage3_lineage_unaware_boundary_20261020.md)。
+证据 `AI/TMP/stage3_unaware_boundary_5be1nixk/`；旧run/报告/preimages均保留。
+
+## 历史（已被下述收缩架构取代）：Stage 3 provenance-aware Rocket 提案（2026-10-20）
+
+用户最新 `run_zr8umvan` 的 BUILD/DIRECTED 已 PASS，SYSTEM 因 little core2
+watchdog FAIL；不是已观测错误 data。error_samples 为空、重复/过早 release 错误为0，
+Stage2 checker PASS，checkpoint105/105、victim807/807闭合；15个缺 effect token
+仍属于 abort 时 outstanding，不能宣称永久丢失。未单独修改 MAIN_CHECKER/EXIT 项。
+
+三方同 workload event/FST 比较：旧 d223 的 reference first bad=b90dc；当前更早
+cec7/PC80000844/addr80056184未完成。直接 causal line=80007e40（timer_flags），
+FST1460779 对应 DCache cycle=b24af，较旧 reference 早27693周期。
+`PREVIOUS_FIX_EFFECTIVE=PARTIAL`，旧失败点未跨过、system进度未推进。当前生成
+Scheduler已含上一轮双C路径same-package bypass，并有6次真实newer-generation
+supersede，但 ordinary Rocket返回BASE key，使resident writer0/seq2/genb920在
+watermark1下被probeNeedsGate阻塞。源source28/hart1的dirty ProbeAckData等待validation；
+source24/hart2的Acquire不能完成，共享C进而卡住BOOM writeback、set86 installDrain，
+MSHR3已收到Grant但cec7无法install/effect/terminal/release。baseline同PC/addr成功，
+旧run cec7也成功，当前不是d223复发。
+
+本轮实现blocking coherent Rocket的C/D CacheImage协商、slot key安装/实际buffered
+store更新/双C路径返回，普通修改继承imported lineage及validation debt并取更大gen；
+BOOM同lineage重新取得ownership后跳过peer已使用gen。CacheImage helper统一
+writer+seq package定义；L1入场补writer比较，L2两条C路径共用supersede helper。
+精确current receipt仍在key改变时撤销，不能继承成outer权限。新增有限peer/probe日志。
+MSHR/Directory/L2Preservation/SourceA/C/D/SinkC/D/CacheCork/InclusiveCache本轮功能不变。
+
+新增协议CASE `coherent_peer_lineage_roundtrip`，覆盖unsafe Grant->普通peer连续
+变更->ReleaseData/ProbeAckData->validation前无outer写->验证后durable flush；原18项
+保留，runner/checker清单改为严格19/19。它验证生产helper和L2管线，不实例化整个Rocket
+DCache，slot/refill/store wiring仍待system。源/fixture identity变化使旧BUILD与下游失效。
+
+STATIC_REVIEW=PASS；9状态/原断言表及19 CASE映射、Python/shell语法、Scala parser-only、
+C++声明桩syntax、assignment/handshake/receipt review及git diff --check通过。
+未执行Scala类型编译、elaboration、RTL生成、Verilator、模型编译链接、runner或simulation。
+`STAGE3_STATUS=PATCHED_PENDING_REBUILD`，`STAGE3_CLOSURE=NO`；Stage2/3 invariant静态保留，
+所有Stage3 blocker清单已审查，未发现其他有证据的等待环，不等于动态closure证明。
+证据 `AI/TMP/stage3_system_closure_audit_bo5r1ef7/`，旧run与预存改动保留。
+详见 [system closure审计与coherent peer根因](../history/reports/stage3_system_lineage_closure_audit_20261020.md)。
+
+## 当前：Stage 3 CASE 10 cleanup 缺失 inner ownership release，静态修复待重建（2026-10-20）
+
+用户 run `AI/TMP/stage3_runs/run_igda2knt/` 的 CASE 10 主体已经完成并打印 PASS：
+同包 gen=4/seq=2 ReleaseData 在不新增 preservation Put 的前提下完成 bank commit，
+随后 Get 返回新 key/data。失败发生在 cleanup flush：flush 已接受，MSHR lookup 命中
+dirty TRUNK、clients=1 的 resident，向唯一 coherent client 发 Probe；host 没有应答，
+pendingProbes=1、MSHR 仍 active。flush 尚未发 outer Release/ReleaseAck，也没有目录
+invalidate。根因是 readback Acquire 重新取得 client ownership 后，fixture 直接
+flush，没有 ProbeAck responder 或先行 Release。不是 preservation/validation FSM 卡死。
+
+fixture 现在在读回校验后用真实 clean `Release(TtoN)` 归还 client ownership，再
+执行现有 cleanup validation 与 flush；确认 durable outer bytes 等于 Q3 后才打印
+CASE PASS。未增加 outer Put、未提前 validation，也未更改 Stage3 safety gate。
+增加 MSHR flush-only observation bundle 与最小 probe/release/commit event log，
+timeout 输出 `FLUSH_BLOCKER`、MSHR/key/validation/preservation/Probe/Release/commit 状态；
+这些输出不连接协议控制。MSHR/Scheduler 删除新增 diagnostic 后逐字还原本轮之前
+源码；ordinary transition table/assertions未动。
+
+run HEAD、相关八份生产源码、fixture/生成器副本及保存 RTL hash 与失败 run provenance
+一致。静态 transition table 18 allowed/54 forbidden/9 implicit self，独立 flush 域
+6 条，18 CASE 清单通过。Python AST、shell syntax、保存端口宽度声明桩下 C++ syntax、
+diagnostic assignment、protocol-source-with-observations-removed、`git diff --check`
+均 PASS。未运行 Scala compile/elaboration、RTL generation、Verilator、模型构建、runner
+或 simulation；新 Chisel diagnostic bundle 尚未验证编译/生成。
+
+`STAGE3_STATUS=PATCHED_PENDING_REBUILD`、`STAGE3_CLOSURE=NO`。directed 失败 run 与
+原有 Stage1/2 closure、用户改动全部保留。详见
+[`CASE 10 flush RCA 与 ownership cleanup`](../history/reports/stage3_case10_flush_ownership_20261020.md)。
+
+## 当前：Stage 3 host drain 孤儿 Probe 已修，硬件 liveness 静态审计完成（2026-10-19）
+
+最新用户现场 `AI/TMP/stage3_runs/run_ybxmr7og/`：SOURCE_PROVENANCE/BUILD PASS，
+DIRECTED FAIL（same_line_safe_dirty_wait_ack，timeout: drain），SYSTEM NOT_RUN。
+17行 trace 显示首个合法 Acquire 的 Grant/目录 commit/MSHR free均已完成；P 的
+ReleaseData、Q到达、preservation pending均尚未发生。本轮不把这次 host idle
+timeout误判为已经进入 checkpoint drain，也不重新调查已修的 capability/flush表。
+
+确定首个坏事件是 reset 的 cycle0，host错误记录 B(addr80000000)；上轮新增
+pendingProbes账本漏了reset门控，硬件同步reset后取消状态，host却永久等不存在的
+ProbeAck。现统一禁止 reset期所有host握手/计数/queue/stall-history记账，reset
+仍正常打时钟、host valid/ready拉低；不清活跃账本、不删除drain、不改timeout。
+reset后检查零事务状态，任何until超时先打印完整 DRAIN_BLOCKER snapshot。
+
+逐项审查硬件capture predicate：SourceD idle、SourceC idle、已准入SinkC bank
+queue空、selected MSHR probe/refill quiescence。九类用户指定路径以及ProbeAckData、
+trusted A写均已静态审计，未发现其他有源码证据的内部等待环，未改硬件功能gate。
+仅增L2Preservation/SourceD/C观察输出、Scheduler诊断bundle/有限事件日志及fixture
+透出；MSHR/SinkC/Directory不变。原全局pipeline收尾与局部selected quiescence保留。
+
+`STATIC_REVIEW=PASS`、`DRAIN_LIVENESS_AUDIT=PASS`、`STAGE3_STATUS=PATCHED_PENDING_REBUILD`、
+`STAGE3_CLOSURE=NO`。仅源码/日志/旧生成物/纯静态Python、shell syntax、diff及assignment
+检查；未编译/生成/elaborate/FIRRTL/Verilator/仿真/测试，未执行runner。活性结论
+仍要求合法peer最终完成握手/validation，不声称任意永久背压可自动解除。
+源码与fixture identity改变使旧BUILD及下游失效，用户仍使用原无参单入口。
+
+详见 [drain RCA、双重predicate和全部入口等待图](../history/reports/stage3_drain_liveness_audit_20261019.md)。
+本轮证据 `AI/TMP/stage3_drain_audit_99ciq6nn/`；旧run与Stage1/2 closure证据保留。
+
+## 历史：Stage 3 第二次动态 flush 断言域修复，配置及 18 CASE 静态审计完成（2026-10-19）
+
+最新用户现场 `AI/TMP/stage3_runs/run_e23qwk6h/`：SOURCE_PROVENANCE/BUILD PASS，
+DIRECTED FAIL、SYSTEM NOT_RUN。生成模型明确 m=true，Get(b) 已完成、第一 CASE
+与 duplicate ACK CASE 已通过；上一轮 fixture capability 修复生效，不再调查 m=false。
+当前首错在 `full_provenance_collision` 开始的 cleanup：真实 flush(b) 命中 clean
+TIP（clients=0、dirty=0、BASE），clean Release txn8 与匹配 ACK 完成，目录最终
+提交 INVALID 时触发原普通表 `TIP->INVALID, p=false`；fatal generated RTL:12988。
+
+根因分类 C：Stage3 把目录 invalidate 延迟到 ACK 后，但普通 transition table
+仍假定 flush 走 eviction 域。本轮为 control 最终提交建立严格 FLUSH_COMMIT 域，
+要求有效 hit、issued/sent/matching ACK、清空全部 ownership/dirty/provenance；
+普通 72 条表项及其 assertion helper、eviction 检查原样保留，未改协议数据流/gate。
+同因覆盖六种 reachable resident 到 INVALID（当前 TIP 加五种潜在状态）。
+静态枚举九状态、18 ordinary allowed/54 forbidden/9 implicit self；18 CASE 全部
+人工生命周期审计并核查路径族，未发现其他已证实的普通非法 transition 根因。
+补齐 fixture inner B.address 的生产 restoreAddress 边界；增加 C/Probe 生命周期、
+严格 drain、MSHR/flush/cleanup/validation/preservation 有限事件诊断。
+
+只完成源码修复与静态 Python/表展开、shell syntax、assignment/use、差异及证据
+检查；未编译/生成/elaboration/FIRRTL/Verilator/仿真/测试，未执行 runner。
+`STAGE3_STATUS=PATCHED_PENDING_REBUILD`、`STAGE3_CLOSURE=NO`。Stage1/2 旧 closure
+保留为原树证据；fresh directed/system 与新增断言/日志的编译效果仍待验证。
+原无参 runner 因 MSHR/Scheduler/fixture identity 改变自动使旧 BUILD/下游失效。
+
+详见 [第二次失败 RCA、全配置与 18 CASE 审计](../history/reports/stage3_tip_invalid_config_audit_20261019.md)、
+[完整 transition 矩阵](../history/reports/stage3_transition_matrix_20261019.md)。
+证据目录 `AI/TMP/stage3_config_audit_quv22_u8/`；旧 run 未改写或删除。
+
+## 历史：Stage 3 首次动态 assertion 已定位并修复 fixture，待重建（2026-10-19）
+
+最新用户现场 `AI/TMP/stage3_runs/run_1_d9fdyq/`：`SOURCE_PROVENANCE=PASS`、
+`BUILD=PASS`、`DIRECTED=FAIL`、`SYSTEM=NOT_RUN`。旧编译/SerialTL echo 阻塞已越过。
+首错为普通 `abc_mshrs_0` 在目录最终调度时触发 `S_INVALID -> S_TIP` assertion，
+generated `Stage3Harness.v:12527`，Verilator 时间 `[254]`。
+
+根因分类 C：fixture 将 source 1 声明为 Probe client，却用它发 uncached Get/Put，
+导致静态 cfg `(p,c,m,r,f)=(false,true,false,false,true)` 中 m 错为 false。
+第一 CASE `same_line_safe_dirty_wait_ack` 收尾的 Get(b) miss，经真实 victim ACK 和
+正常 refill 得到 clean TIP；`before=INVALID` 来自 tag miss，不是 MSHR reset 状态。
+Q 的 seq=1 此时已 validation；没有 ReleaseAck/completion 直接恢复 TIP 的赋值。
+保存 trace 无波形/逐事件周期戳，中间握手顺序由同源 RTL 和确定刺激推出。
+
+已仅修 Stage3 两份 fixture：coherent source 0，non-probe sources `[1,3)`；
+两个并发 Get 改用 1/2，消除旧 host 未等 D 就排入相同 source 第二请求的复用风险。
+增加 inner A→D source 生命周期检查、带周期并立即 flush 的 CASE_BEGIN/A/D 日志。
+18 CASE 与 checker 不变，生产 MSHR、transition table、全部 assertion 和
+preservation/validation/Acquire/目录 gate 本轮未改。25 份相关生产文件与保存
+inputs.json 同源，且本轮 hash 不变；两份 fixture 修复前也与 run 副本逐字相同。
+
+静态 assignment/use、72 个不同状态 pair、18 CASE 清单及 diff/语法检查通过；
+未执行 build、编译、生成/elaboration/FIRRTL/Verilator、simulation、runner 或测试。
+当前 `STAGE3_STATUS=PATCHED_PENDING_REBUILD`，`STAGE3_CLOSURE=NO`；动态修复效果与
+当前 Stage1/Stage2 SYSTEM 回归均待验证。原 closure/用户改动/失败现场全部保留。
+证据 `AI/TMP/stage3_invalid_tip_fix_3slovmd6/`；详见
+[首次动态 assertion RCA 与状态机审查](../history/reports/stage3_invalid_tip_fixture_fix_20261019.md)。
+
+用户继续使用现有无参单入口 `AI/Debug/scripts/stage3/stage3_run.sh`。fixture identity
+变化自动使旧 BUILD 及下游失效；runner 在新目录 BUILD→DIRECTED→SYSTEM，失败即停。
+本轮未执行入口，不允许复用旧生成物验证新 fixture。
+
+## 历史：Stage 3 SerialTL echo 缺口已修，待重建（2026-10-19）
+
+`STAGE3_STATUS=PATCHED_PENDING_REBUILD`，`STAGE3_CLOSURE=NO`。
+最新用户现场 `AI/TMP/stage3_runs/run_vsb0kdix/` 已越过旧 SinkC Scala 编译错误，
+Stage3Harness 生成、lint、模型编译均 exit0；BUILD 随后的整机 FIRRTL 检查失败。
+原日志有3处 RefNotInitialized：TLSerdesser 的 D、TLSerdesser_1 的 A/C 均缺
+`echo.cache_preserve_txn`。make Error 1 / runner exit2 为后续汇总；11条日志诊断
+不代表11个独立根因。annotation 的130 pin 数量正常，不是本次阻塞。
+
+已修复 Serdes.scala 的 merged packet echo 编码/解码，A/C/D 透传原身份、B/E 的
+无效 echo payload 确定置零。静态继续追踪原 FIRRTL 发现实际 harness TLRAM/TLROM_1
+也缺返回 echo；因原串行格式未读取它而未在此次错误清单出现，现一并补齐。
+TLRAM echo 与 source/size 按相同 A→R→D enable 寄存并按相同响应级选择，
+ROM 在原组合响应上透传。未修改 preservation FSM、ACK 匹配或写入 gate。
+shared first_error 摘要现在优先显示 PassExceptions 后的具体错误，批量报告仍保留。
+
+修复前三份源码均与该 run 的 inputs.json hash 一致；现场和旧产物保持原样。
+仅做 Python AST、shell syntax、git diff --check 和日志/源码/旧 FIRRTL 静态审查。
+本轮没有执行 build、Scala compile、elaboration、RTL generation、FIRRTL、Verilator、
+simulation、regression、runner 或单元测试；新序列化格式及端到端功能仍待验证。
+证据目录 `AI/TMP/stage3_serdes_echo_fix_v5355woc/`；
+详见 [SerialTL echo 修复](../history/reports/stage3_serdes_echo_fix_20261019.md)。
+
+用户仍只执行无参 `AI/Debug/scripts/stage3/stage3_run.sh`；source/helper identity 改变
+会自动使 BUILD 和下游失效，在新目录重建。DIRECTED/SYSTEM 本次用户运行均 NOT_RUN，
+没有有效的整阶段 BUILD seal；不得复用其局部 module PASS 或旧模型。
+
+## 历史：Stage 3 编译 API 错误已修，批量诊断就绪，待重建（2026-10-18）
+
+`STAGE3_STATUS=PATCHED_PENDING_REBUILD`，`STAGE3_CLOSURE=NO`。
+用户实际运行 `AI/TMP/stage3_runs/run_5hyf3lau/` 在 BUILD 的 Scala compile 失败，
+完整 module.emit.log 只有一个真实编译错误：SinkC.scala:74 找不到 chiselTypeOf。
+该文件的修复前 hash 与该 run 的 inputs.json 一致；症状不是 preservation 动态失败。
+已将该处改为明确的 `chisel3.chiselTypeOf`，没有修改协议状态机或 gate。
+命令失败/超时及退出0但 module 生成不完整时，runner 现在打印并保存全部不同日志
+诊断到 `<log>.errors.out/json`；failure.json 和固定 summary 保留原始码、诊断数和路径。
+计数是日志诊断数，不是独立根因数；仍任一阶段失败即停止，下游 NOT_RUN。
+见 [编译修复与诊断交接](../history/reports/stage3_compile_diagnostics_20261018.md)。
+
+唯一入口为 `AI/Debug/scripts/stage3/stage3_run.sh`，无需参数或 STAGE3_ROOT。
+自动 BUILD → DIRECTED → SYSTEM，失败立即停止；每次新建 immutable run，
+完整验证来源、模型/证据哈希、checker 和上游依赖后才复用已完成阶段。
+旧人工 mode 与 stage3_build_and_run.sh 已移除；runner 不修改/删除自身或旧证据。
+
+本轮仅修复一个 Scala API 名称引用并修改运行器诊断、状态和文档，未改 Stage3 preservation protocol。
+未执行编译、生成/elaboration、Verilator、simulation、regression 或 runner 测试。
+只做 Python AST、shell syntax、git diff --check 与静态 review；静态 PASS 不等于硬件 PASS。
+
+协议的 checkpoint/receipt、victim ACK gate、ProbeAckData gate、18 CASE 保持原样。
+当前 source/runner identity 已改变，旧失败 BUILD 不可复用；原单一命令自动新建目录、
+重建后再定向/整机验证。本轮未执行该命令，编译与全部动态 gate 仍 unresolved。
+见 [单入口交接](../history/reports/stage3_runner_20261018.md)、
+[协议静态交接](../history/reports/stage3_static_20261018.md) 与
+[设计及唯一命令](../../Design/stage3_l2_preservation_20261018.md)。
+Stage1/Stage2 旧 closure 保留为原树证据，当前硬件仍待 fresh validation。
+本轮不运行验证入口、不清理旧 run、不 reset、同步或提交工作区。
+
+## 当前：Stage 2 L1 preservation 已关闭（2026-10-18）
+
+`STAGE2_STATUS=CLOSED`，`NEXT_SIM_REQUIRED=NO`，`KNOWN_STATIC_CORRECTNESS_BLOCKERS=0`，
+`CODE_CHANGES=NONE`。最新真实 run 是 `AI/TMP/stage2_validation_agciqdp_/`：
+build/directed/system 三份 status 均 PASS/exit0；33 pin wiring、lint、完整构建和
+三次 provenance 验证通过；10 个定向 CASE 各一次，独立 effect/denied Put/AMO 对照完整。
+旧 d5wr10l1 的 epoch 阻塞已在该次运行消失，不再作为当前待重建故障。
+
+本轮重新比对 run 记录的 11479 个 source、16 个 scripts 和完整清单，全部匹配当前
+文件；HEAD/workload manifest/fixture 副本也匹配。审计证据
+`AI/TMP/stage2_evidence_audit_bbmws5qc/{identity.audit.json,inventory.audit.json}`。
+未重新 hash 整个 generated/binary/2.7GB trace，采用运行时原 provenance/artifact gate；
+不混同本轮 source 检查和完整产物重验。
+
+整机 Stage2 checker：errors=[]、missing_coverage=[]，PRESERVE/receipt/done 各1216；
+MODIFY144225、NORMAL135486、REPLAY8739、AMO90、SAME_PACKAGE95072、IMPORT9415。
+实际 trace 保存了 safe/lower0 阻塞→L2 commit→准确 ACK→done→refill→新包 replay effect
+因果链。复用本次原 Stage1 checker 的全 PASS 与真实 exit drain 全零；Stage1 保持已关闭。
+
+没有发现新 RTL correctness bug，不制造功能/checker/trace 修改。receipt+probe revoke
+和 receipt+refill 的精确同拍场景由 RTL next-state、owner/drain、epoch/full-key 和
+写口仲裁静态严格保护，归类为 `NON_BLOCKING_COVERAGE_GAP`；长期公平性属于
+`OUT_OF_SCOPE_FOR_STAGE2`，不是 L1 preservation safety blocker。
+现有 checker 的边界包括：LOWER_COMMIT/ACK 按完整 key 关联而非独立地址/source、safe
+由 RTL trace 提供而独立时序检查来自定向 stimulus、refill row 依赖生产断言和原 owner
+checker。matching done+probe revoke / refill+done 精确同拍无独立 CASE，但由静态 next-state
+和 owner/drain 互锁严格推出；任意压力公平性属于 Stage 2 范围外。这些边界不伪报覆盖，
+也不据此推断已经存在功能缺陷。
+
+完整 closure checklist、race 分类、producer matrix 和实际动态 evidence 见
+[完整11节审计报告](../history/reports/stage2_evidence_audit_20261018.md)。没有源码变化就
+无需为文档更新重跑已通过硬件。若后续 Stage 2 源码变化，仍使用原绝对路径
+`stage2_build_and_run.sh all` 重新建立同源 run；不要覆盖已有 run。
+
+本轮未执行任何编译、生成/elaboration/FIRRTL/Verilator、仿真、regression 或单元测试；
+仅源码/日志/清单/hash/差异检查和文档更新。未 reset/清理/同步/提交或修改 sources/，
+全部 Stage1/Stage2/用户改动及历史失败现场保留。
+
+## 历史：Stage 2 directed preservation gate 修复，待重新构建验证（2026-10-18）
+
+用户最新定向现场为 `AI/TMP/stage2_validation_d5wr10l1/`。该次 build 通过，
+但 directed 在 `prematureAck` 报 `premature ACK needs stalled first C beat`。
+原始 trace 在同一行反复输出 `STAGE2_TX BLOCK`（旧 image `epoch=1`、
+`lower=0`、`safe=1`），始终没有 `STAGE2_TX PRESERVE`；因此本次观察到的
+是 preservation 请求未启动，尚不能把它解释成提前 ACK。该 run 的 generated
+RTL 是修复前产物，不能与当前源码混用。
+
+已确认并修复 `chipyard/generators/boom/src/main/scala/lsu/dcache.scala`
+中的 epoch 误索引：`s2_lookup_epoch(0)` 已是选中 way 的完整 epoch，旧代码
+再次按 way 取 bit，way 1/epoch 1 会错误抑制 cross-package block/preservation
+建立；当前比较完整 epoch 与对应 `slotEpoch(set)(way)`。同时增强
+`AI/Debug/scripts/stage2/stage2_test.cpp` 的 precondition 诊断，记录 C
+valid/fire；`stage2_validation.py` 在 directed 失败时汇总所有结构化 case、
+缺失 case、独立 effect 事件和 L2 denied/成功事件缺口。
+
+本轮已检查：57 项 `test_stage2_validation`、Python 编译、三个 shell 语法、
+`git diff --check`；静态证据和当前源文件 hash 记录在
+`AI/TMP/stage2_directed_epoch_fix_4_eyionz/static.correction.json`。这些检查不启动硬件工具。未检查：当前源码的 Scala 类型
+编译、RTL 生成、FIRRTL/elaboration、Verilator、directed/system 仿真和真实
+动态覆盖。旧 Stage 1/Stage 2/用户改动均保留，未 reset、同步、清理、提交或
+修改 `sources/`。当前状态：`STAGE2_STATUS=PATCHED_PENDING_REBUILD`；下一步
+需用新 root 执行绝对路径 `stage2_build_and_run.sh all`，只有 fresh build
+通过后才能判断该 gate 和后续 CASE。
+
+## 前一轮：Stage 2 整机残留 CAM 的 64 条连线问题已修，待重新构建（2026-10-18）
+
+用户最新 run `AI/TMP/stage2_validation_r8baqbfq/` 已完成独立 fixture 的 Scala compile、完整生成、97 pin wiring 审计、Verilator lint 与模型 C++ 编译，越过前轮构造问题；整机在 WiringTransform 报 `NoSuchElementException: gh_l1_l2_packet_tracked_15`。核对该次真正输入的 appended annotation，确认共有 64 个旧 CAM source 没有 sink：Stage 2 SinkC 已迁移到 TL CacheImage，但 L1 仍发布旧 CAM。其余 130 个 pin 数量正常；详见 [整机连线修复](../history/reports/stage2_system_wiring_fix_20261018.md)。
+
+已一次移除无消费者的 64 个旧发布端及其 CAM 状态，fixture 同步移除对应 sink、保留 33 个真实接收端，原 preservation/TL/统计门禁不变。运行器清除错误摘要的 ANSI 和 JVM options 普通提示，首错显示实际 cause；整机构建失败自动从该次最终 annotation 列出所有异常到 system.wiring.out/json，保留原始退出码和完整原日志，不增加硬件运行。all 仍跳过 offline，严格 build→directed→system。
+
+本轮证据 `AI/TMP/stage2_system_wiring_fix_oo_upv1_/`：56 项纯运行器测试通过，最外层禁止外部进程；源码/精确差异、原日志只读重判、Python AST/shell syntax/diff 检查已做。当前源码没有重新编译、生成、elaboration、执行 FIRRTL/Verilator 或仿真。用户原 run 的 directed/system 未运行；当前 33 pin fixture、整机完整构建和动态覆盖全部 pending。无已知构建前阻塞，用户执行原绝对路径 all。`STAGE2_STATUS=PATCHED_PENDING_REBUILD`。保留全部 Stage 1/Stage 2/用户改动与失败现场，未同步/reset/清理/提交或修改 sources/。
+
+## 历史：Stage 2 审计 transform 无参构造已修，待重新构建（2026-10-17）
+
+用户最新 run `AI/TMP/stage2_validation_mzljfuss/` Scala compile 完成后，FIRRTL 在构造 Stage2WiringAudit 时失败；module.emit.log:335 的 NoSuchMethodException 明确缺少 `<init>()`。这是上一轮新增带 reportPath 构造参数的审计类引入的问题：本地 Compiler→Dependency.fromTransform 把普通对象转为类依赖，再反射调用无参构造。原日志、旧 class 的 javap 与 FIRRTL jar 字节码已相互核对，详见 [无参构造修复](../history/reports/stage2_audit_ctor_fix_20261017.md)。
+
+正式 fixture 已改为公开顶层无参类，报告路径由每次 CircuitState 的 TargetDirAnnotation 提供，缺失明确失败；EmitModule 在 elaboration 前用真实 Dependency.getObject 提前检查相同构造链路。97 个只读 sink、批量审计/错误报告、成功产物门禁和原 all 三阶段/跳过自动 offline 均保留，未改生产 RTL。
+
+本轮证据 `AI/TMP/stage2_audit_ctor_fix_qxwo_iry/`：只做源码/精确差异、现有 class/jar 的静态 javap、Python AST/shell syntax/diff 检查，未重跑完整 offline suite，未构建、生成、elaboration、执行 FIRRTL transform、Verilator 或仿真。用户本次失败发生在 wiring 审计前，不能宣布此前 97 个 sink 已动态验证；新增无参构造、报告目录及后续完整生成/硬件行为仍待实测。无已知构建前阻塞，可由用户执行原绝对路径 all。`STAGE2_STATUS=PATCHED_PENDING_REBUILD`。保留所有 Stage 1/Stage 2/用户改动和旧现场，未同步/reset/清理/提交或修改 sources/。
+
+## 历史：Stage 2 WiringTransform 缺 sink 已补齐，错误报告改为批量，待重新构建（2026-10-17）
+
+最新用户 run `AI/TMP/stage2_validation_5iv7ungc/` Scala compile 成功，已越过上一处 1G OOM，首次失败为 module.emit.log:60 的 FIRRTL `Wrong number of sources or sinks!`，栈在 WiringTransform。fixture 未实例化 InclusiveCache/TestHarness 消费者，实际 L1 的 97 个 BoringUtils source 均无 sink；本地 FIRRTL jar 字节码确认这正是有 source/零 sink 分支。已按实际 source 名称/宽度一次补齐只读 sink，无协议回馈或生产 RTL 修改。源码展开核对缺失 97→0，宽度不匹配 0；生产 dcache hash 与原失败清单一致，详见 [wiring 修复](../history/reports/stage2_wiring_build_fix_20261017.md)。
+
+新增 WiringTransform 前置审计，一次列出所有坏 pin/目标并保存 generated/stage2.wiring.out；成功报告必须参与生成完成及产物来源门禁。运行器在失败时显示同次日志里全部不同的错误/失败诊断，保留 `<log>.errors.out/json`、上下文/原码/hash 与摘要路径；定向 Verilator error-limit=0，不改错误严重度。all 仍为 build→directed→system，前阶段失败后续 NOT_RUN，已通过的 offline 不再自动运行。
+
+本轮证据 `AI/TMP/stage2_wiring_fix_3nol05y4/`：最终 48 项受影响运行器测试、Python AST/shell syntax/diff 检查通过，所有硬件动作替换；源码 inventory 与 jar API 为静态检查。未启动构建/Scala compile、生成、elaboration、FIRRTL、Verilator 或任何仿真。没有已知需要构建前继续修复的阻塞，下一步用户执行原绝对路径 all；新增接收端、Scala 审计及完整硬件正确性仍待实测。`STAGE2_STATUS=PATCHED_PENDING_REBUILD`。原失败 root、Stage 1/Stage 2/用户改动全部保留，未同步/reset/清理/提交或修改 sources/。
+
+## 历史：Stage 2 生成 OOM 已修，all 移除重复离线检查，待重新构建（2026-10-17）
+
+用户最新 run `AI/TMP/stage2_validation_qodffn_8/` 显示 fixture Scala compile 已成功，随后 Chisel/FIRRTL 转换在 Java 1G heap OOM；sbt 后台线程异常仍 exit 0，旧入口最终只报无 RTL。module 直接调用 sbt 未获得 Stage 1 Makefile 的 8G 默认，是本次根因。已显式传入 8G/Xss8M 和 ExitOnOutOfMemoryError，参数写入来源清单；exit 0 后仍检查异常日志、顶层产物和正常完成标记，失败指向 module.emit.log 并保留 raw code。详见 [OOM 修复](../history/reports/stage2_emit_oom_fix_20261017.md)。
+
+按用户要求，原一条命令 `stage2_build_and_run.sh all` 现为 build→directed→system，不再自动重跑已通过的 offline tests；仍强制保存/核对源码、fixture、参数、环境、工具、workload、模型/binary 和覆盖状态。offline 只保留为显式选项，未运行不会标 PASS。唯一 root、严格串行、失败即停及中文日志/摘要继续保留。
+
+实际本轮脚本检查证据 `AI/TMP/stage2_emit_oom_fix_v_0k0s2e/`：最终 42 项受影响运行器测试（硬件动作均替换）、Python AST、shell syntax、diff 检查通过；只读重判原失败日志准确识别 OOM。未执行完整 offline suite、build、Scala compile、elaboration、FIRRTL、Verilator 或任何仿真；硬件正确性仍未验证。无已知构建前阻塞，建议用户重新执行原绝对路径 all 命令；8G 是否足够仍待构建实测。`STAGE2_STATUS=PATCHED_PENDING_REBUILD`。未 reset、清理、同步、提交或修改 sources/；旧失败现场完整保留。
+
+## 历史：Stage 2 fixture Probe API 编译错误已修，待重新构建（2026-10-17）
+
+用户 run `AI/TMP/stage2_validation_llhv_oen/` 的 module.emit 在 Scala compile 阶段失败，唯一错误是 `Stage2Generate.scala:142` 引用不存在的 `TLMessages.ProbeBlock`。已按本地 Bundles.scala/TLEdgeIn.Probe 改为 `TLMessages.Probe`，仅一行 fixture 变更；原失败副本、日志和所有既有改动保留。详见 [Probe API 修复](../history/reports/stage2_probe_api_build_fix_20261017.md)。
+
+实际最新离线证据 `AI/TMP/stage2_validation_8h7j2vpe/`：75 项离线测试与现有语法/diff 检查通过，额外当前 TLMessages/TLPermissions/TLAtomics 成员名核对无缺项；已证明相对失败副本只有这一行修改。本轮未重跑 Scala compile、硬件生成、elaboration、Verilator 或仿真，不能宣布构建通过。下一步用户重新执行原绝对路径 `stage2_build_and_run.sh all`，自动新建 root。`STAGE2_STATUS=PATCHED_PENDING_REBUILD`。
+
+## 历史：Stage 2 单命令 all 与 denied 回归就绪（2026-10-17）
+
+继续 `PREFLIGHT_READY_PENDING_BUILD`，无已知构建前阻塞。用户在原 Stage 1 环境任意目录只需执行 `/data1/gzh/EC/AI/Debug/scripts/stage2_build_and_run.sh all`。现有入口自动定位项目、创建唯一 root，严格 offline→build→directed→system，保留全部 provenance/匹配/覆盖门禁；中文显示阶段与总结果、失败原因/首个错误和日志绝对路径，保存 runner.log/summary.out。工具失败保留原始码，覆盖不足与工具退出3分开记录。
+
+新增生产 L2 MSHR→SourceD 的 denied Put/ADD 与成功对照，合并原定向进程，10 CASE；检查完整旧 key/provenance、真实 schedule/directory/D/bank 事件、denied 零写及成功数据。补覆盖时修复 fixture CACHED outer edge 违反 lastLevel 参数要求，以及 SourceD denied full Put 缺 old-data read 却可能写 bank/bypass：denied 不再进入 bank retirement/bypass。真实目录存储/互连与整机主动 denied 仍有覆盖边界，见 [单命令交付](../history/reports/stage2_all_entry_20261017.md)。
+
+最新实际证据 `AI/TMP/stage2_validation_53whknp_/`：从 `/tmp` 绝对路径运行 offline，75 项纯离线测试、Python AST、shell syntax、diff、C++ declaration-stub syntax-only 通过。单元测试的硬件动作全部替换，不是硬件 PASS。本轮没有执行 all、build、elaboration、FIRRTL、Verilator 或任何仿真；新增动态回归全部待用户运行。未同步、reset、清理、提交或修改 sources/，所有已有改动保留。
+
+## 历史：Stage 2 构建准入复核完成（2026-10-17）
+
+`STAGE2_STATUS=PREFLIGHT_READY_PENDING_BUILD`。以本地 `1ed07c280` 和全部 Stage 1/Stage 2 未提交改动为准，继续保留现场；未同步、reset、清理、提交或修改 `sources/`。
+
+本轮修复 SourceD 内部 Atomics 的新 TL 字段未初始化、probe 借 WB ready 误判完成、C 全部发送前 matching-key ACK 锁存、fixture 128-bit 高半观察缺失、denied A 操作重标旧 image。新增 freeze admission/实际写口断言、独立 effect guard、完整 CASE 名单和 key/epoch/receipt analyzer。字段/目录、bank ACK、buffer/credit/probe、freeze 与 ACK 生命周期六项源码复核见 [preflight 报告](../history/reports/stage2_preflight_20261017.md)。
+
+手动入口拆成 `stage2_build_and_run.sh offline → build → directed → system`，同一新 `STAGE2_ROOT`、相同环境；前阶段失败/缺覆盖或 source/model/参数/环境不匹配时，后阶段拒绝运行。Stage 1 仅增加显式 build-only 出口，默认行为保留。
+
+实际最新离线证据：`AI/TMP/stage2_validation_u_xd___4/`，`OFFLINE=PASS`；64 项纯离线 tests、Python AST、3 个 shell syntax、declaration-stub C++ syntax-only、diff 检查通过，附 15 Scala 文件 lexical balance（不等于类型检查）。此前 root 保留，后续源码改变会被输入 gate 拒绝。本轮没有运行 sbt/make、Scala 编译、硬件生成、elaboration、FIRRTL、Verilator 或任何仿真，build/directed/system 都未执行。
+
+无已知需要在 build 前先修的阻塞；建议用户从新 offline root 开始四阶段验证。实际 Scala API/初始化/组合环、generated ports、动态背压/并发和全系统进度仍待验证。Stage 1 旧 PASS 不证明本轮 RTL。Stage 3 lower predecessor FSM、rollback/escape/pressure-close 不在本轮。
+
+
+## Stage 1 已正式关闭（2026-10-17）
 
 最新 final validation run `AI/TMP/stage1_closure_run_g3Y7Oi9x` 已完成，未再启动仿真。`PROVENANCE=PASS`（11478 source、3003 generated files），simulator `serial_success`/exit code 0，`verified=1`，334/334/334 packages PASS，软件 END PASS；scoreboard `STAGE1_TRACE=PASS`、`errors={}`，全部 closure gates PASS。
 

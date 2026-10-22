@@ -65,6 +65,8 @@ class SourceD(params: InclusiveCacheParameters) extends Module
     val evict_safe = Bool()
     val grant_req  = new SourceDHazard(params).flip
     val grant_safe = Bool()
+    val idle = Bool()
+    val drainBusy = UInt(width = 4) // observation only: s4, s3, s2, s1 busy
   }
 
   val beatBytes = params.inner.manager.beatBytes
@@ -95,7 +97,10 @@ class SourceD(params: InclusiveCacheParameters) extends Module
   val s1_valid_r = (busy || io.req.valid) && s1_need_r && !s1_block_r
   val s1_need_pb = Mux(s1_req.prio(0), !s1_req.opcode(2), s1_req.opcode(0)) // hasData
   val s1_single = Mux(s1_req.prio(0), s1_req.opcode === Hint || s1_grant, s1_req.opcode === Release)
-  val s1_retires = !s1_single // retire all operations with data in s3 for bypass (saves energy)
+  // A denied operation publishes no new bytes. In particular a full Put has
+  // skipped the old-data read, so changing its ALU opcode to Get cannot restore
+  // the resident image. Exclude denial from both bank retirement and bypass.
+  val s1_retires = !s1_single && !s1_req.bad
   // Alternatively: val s1_retires = s1_need_pb // retire only updates for bypass (less backpressure from WB)
   val s1_beats1 = Mux(s1_single, UInt(0), UIntToOH1(s1_req.size, log2Up(params.cache.blockBytes)) >> log2Ceil(beatBytes))
   val s1_beat = (s1_req.offset >> log2Ceil(beatBytes)) | s1_counter
@@ -152,7 +157,7 @@ class SourceD(params: InclusiveCacheParameters) extends Module
   val s2_need_r = RegEnable(s1_need_r, s2_latch)
   val s2_need_pb = RegEnable(s1_need_pb, s2_latch)
   val s2_retires = RegEnable(s1_retires, s2_latch)
-  val s2_need_d = RegEnable(!s1_need_pb || s1_first, s2_latch)
+  val s2_need_d = RegEnable(s1_req.prio(0) && (!s1_need_pb || s1_first), s2_latch)
   val s2_pdata_raw = Wire(new PutBufferACEntry(params))
   val s2_pdata = s2_pdata_raw holdUnless s2_valid_pb
 
@@ -217,35 +222,53 @@ class SourceD(params: InclusiveCacheParameters) extends Module
   val d = Wire(io.d)
   io.d <> params.micro.innerBuf.d(d)
 
-  d.valid := s3_valid_d
-  d.bits.opcode  := Mux(s3_req.prio(0), resp_opcode(s3_req.opcode), ReleaseAck)
-  d.bits.param   := Mux(s3_req.prio(0) && s3_acq, Mux(s3_req.param =/= NtoB, toT, toB), UInt(0))
-  d.bits.size    := s3_req.size
-  d.bits.source  := s3_req.source
-  d.bits.sink    := s3_req.sink
-  d.bits.denied  := s3_req.bad
-  d.bits.data    := s3_rdata
-  d.bits.corrupt := s3_req.bad && d.bits.opcode(0)
+  // A ReleaseAck is a preservation receipt, emitted only after the final
+  // real bank write. Keep it separate from s3 so waiting for that write never
+  // stops the remaining C data beats from reaching s4.
+  val releaseAck = Module(new Queue(new TLBundleD(params.inner.bundle), 2))
+  val earlyD = Wire(Decoupled(new TLBundleD(params.inner.bundle)))
+  earlyD.bits := 0.U.asTypeOf(new TLBundleD(params.inner.bundle))
+  TLArbiter.lowest(params.inner, d, releaseAck.io.deq, earlyD)
+  // Do not start a multibeat D while an older C retirement is waiting for
+  // ACK queue credit. Otherwise D can lock the arbiter, block the queued ACKs,
+  // and prevent its own remaining beats from getting past that older s4.
+  earlyD.valid := s3_valid_d && s4_ready
+  earlyD.bits.opcode  := Mux(s3_req.prio(0), resp_opcode(s3_req.opcode), ReleaseAck)
+  earlyD.bits.param   := Mux(s3_req.prio(0) && s3_acq, Mux(s3_req.param =/= NtoB, toT, toB), UInt(0))
+  earlyD.bits.size    := s3_req.size
+  earlyD.bits.source  := s3_req.source
+  earlyD.bits.sink    := s3_req.sink
+  earlyD.bits.denied  := s3_req.bad
+  earlyD.bits.data    := s3_rdata
+  earlyD.bits.corrupt := s3_req.bad && earlyD.bits.opcode(0)
+
+  earlyD.bits.user.lift(CacheImage).foreach(_ := s3_req.image)
 
   queue.io.deq.ready := s3_valid && s4_ready && s3_need_r
   assert (!s3_full || !s3_need_r || queue.io.deq.valid)
 
-  when (d.ready) { s3_valid_d := Bool(false) }
+  when (earlyD.fire()) { s3_valid_d := Bool(false) }
   when (s3_valid && s4_ready) { s3_full := Bool(false) }
   when (s3_latch) { s3_valid_d := s2_need_d }
   when (s3_latch) { s3_full := Bool(true) }
 
   params.ccover(s3_valid && !s4_ready, "SOURCED_3_STALL", "Stage 3 pipeline blocked")
 
-  s3_valid := s3_full && (!s3_valid_d || d.ready)
-  s3_ready := !s3_full || (s4_ready && (!s3_valid_d || d.ready))
+  s3_valid := s3_full && (!s3_valid_d || earlyD.fire())
+  s3_ready := !s3_full || (s4_ready && (!s3_valid_d || earlyD.fire()))
 
   ////////////////////////////////////// STAGE 4 //////////////////////////////////////
   // Writeback updated data
 
-  val s4_latch = s3_valid && s3_retires && s4_ready
+  // Clean releases visit s4 for their receipt but never enter data bypass.
+  val s3_pipe4 = s3_retires || !s3_req.prio(0)
+  val s4_latch = s3_valid && s3_pipe4 && s4_ready
   val s4_full = RegInit(Bool(false))
+  io.idle := !busy && !s2_full && !s3_full && !s4_full
+  io.drainBusy := Cat(s4_full, s3_full, s2_full, busy)
   val s4_beat = RegEnable(s3_beat, s4_latch)
+  val s4_last = RegEnable(s3_last, s4_latch)
+  val s4_retires = RegEnable(s3_retires, s4_latch)
   val s4_need_r = RegEnable(s3_need_r, s4_latch)
   val s4_need_bs = RegEnable(s3_need_bs, s4_latch)
   val s4_need_pb = RegEnable(s3_need_pb, s4_latch)
@@ -256,6 +279,9 @@ class SourceD(params: InclusiveCacheParameters) extends Module
 
   val atomics = Module(new Atomics(params.inner.bundle))
   atomics.io.write     := s4_req.prio(2)
+  // This internal ALU also receives the negotiated A user/echo fields.
+  // They are not operands, but must still be driven after adding CacheImage.
+  atomics.io.a := 0.U.asTypeOf(new TLBundleA(params.inner.bundle))
   atomics.io.a.opcode  := s4_adjusted_opcode
   atomics.io.a.param   := s4_req.param
   atomics.io.a.size    := UInt(0)
@@ -265,7 +291,9 @@ class SourceD(params: InclusiveCacheParameters) extends Module
   atomics.io.a.data    := s4_pdata.data
   atomics.io.data_in   := s4_rdata
 
-  io.bs_wadr.valid := s4_full && s4_need_bs
+  val s4_releaseLast = !s4_req.prio(0) && s4_last
+  val s4_ackReady = !s4_releaseLast || releaseAck.io.enq.ready
+  io.bs_wadr.valid := s4_full && s4_need_bs && s4_ackReady
   io.bs_wadr.bits.noop := Bool(false)
   io.bs_wadr.bits.way  := s4_req.way
   io.bs_wadr.bits.set  := s4_req.set
@@ -285,17 +313,34 @@ class SourceD(params: InclusiveCacheParameters) extends Module
   params.ccover(s4_req.prio(0) && s4_req.opcode === LogicalData    && s4_req.param === AND,  "SOURCED_4_ATOMIC_AND",  "Evaluated a bitwise AND atomic")
   params.ccover(s4_req.prio(0) && s4_req.opcode === LogicalData    && s4_req.param === SWAP, "SOURCED_4_ATOMIC_SWAP", "Evaluated a bitwise SWAP atomic")
 
-  when (io.bs_wadr.ready || !s4_need_bs) { s4_full := Bool(false) }
+  val s4_retireReady = (io.bs_wadr.ready || !s4_need_bs) && s4_ackReady
+  when (s4_retireReady) { s4_full := Bool(false) }
   when (s4_latch) { s4_full := Bool(true) }
 
-  s4_ready := !s3_retires || !s4_full || io.bs_wadr.ready || !s4_need_bs
+  s4_ready := !s3_pipe4 || !s4_full || s4_retireReady
+
+  releaseAck.io.enq.valid := s4_full && s4_releaseLast &&
+    (!s4_need_bs || io.bs_wadr.ready)
+  releaseAck.io.enq.bits := 0.U.asTypeOf(new TLBundleD(params.inner.bundle))
+  releaseAck.io.enq.bits.opcode := ReleaseAck
+  releaseAck.io.enq.bits.size := s4_req.size
+  releaseAck.io.enq.bits.source := s4_req.source
+  releaseAck.io.enq.bits.sink := s4_req.sink
+  releaseAck.io.enq.bits.denied := s4_req.bad
+  releaseAck.io.enq.bits.user.lift(CacheImage).foreach(_ := s4_req.image)
+  when (releaseAck.io.enq.fire()) {
+    assert(!s4_need_bs || io.bs_wadr.fire(), "ReleaseAck before final bank commit")
+    printf("STAGE2_TX LOWER_COMMIT source=%x set=%x way=%x gen=%x seq=%x writer=%x valid=%x data=%x\n",
+      s4_req.source, s4_req.set, s4_req.way, s4_req.image.generation,
+      s4_req.image.contentSeq, s4_req.image.writer, s4_req.image.valid, s4_need_bs)
+  }
 
   ////////////////////////////////////// RETIRED //////////////////////////////////////
 
   // Record for bypass the last three retired writebacks
   // We need 3 slots to collect what was in s2, s3, s4 when the request was in s1
   // ... you can't rely on s4 being full if bubbles got introduced between s1 and s2
-  val retire = s4_full && (io.bs_wadr.ready || !s4_need_bs)
+  val retire = s4_full && s4_retireReady && s4_retires
 
   val s5_req  = RegEnable(s4_req,  retire)
   val s5_beat = RegEnable(s4_beat, retire)
@@ -321,7 +366,7 @@ class SourceD(params: InclusiveCacheParameters) extends Module
   val pre_s5_dat  = Mux(retire,   atomics.io.data_out, s5_dat)
   val pre_s6_dat  = Mux(retire,   s5_dat,  s6_dat)
   val pre_s7_dat  = Mux(retire,   s6_dat,  s7_dat)
-  val pre_s4_full = s4_latch || (!(io.bs_wadr.ready || !s4_need_bs) && s4_full)
+  val pre_s4_full = (s4_latch && s3_retires) || (!s4_retireReady && s4_full && s4_retires)
 
   val pre_s3_4_match  = pre_s4_req.set === pre_s3_req.set && pre_s4_req.way === pre_s3_req.way && pre_s4_beat === pre_s3_beat && pre_s4_full
   val pre_s3_5_match  = pre_s5_req.set === pre_s3_req.set && pre_s5_req.way === pre_s3_req.way && pre_s5_beat === pre_s3_beat
@@ -341,7 +386,7 @@ class SourceD(params: InclusiveCacheParameters) extends Module
   // Note: we also bypass from reads ahead in the pipeline to save power
   val s1_2_match  = s2_req.set === s1_req.set && s2_req.way === s1_req.way && s2_beat === s1_beat && s2_full && s2_retires
   val s1_3_match  = s3_req.set === s1_req.set && s3_req.way === s1_req.way && s3_beat === s1_beat && s3_full && s3_retires
-  val s1_4_match  = s4_req.set === s1_req.set && s4_req.way === s1_req.way && s4_beat === s1_beat && s4_full
+  val s1_4_match  = s4_req.set === s1_req.set && s4_req.way === s1_req.way && s4_beat === s1_beat && s4_full && s4_retires
 
   for (i <- 0 until 8) {
     val cover = UInt(i)

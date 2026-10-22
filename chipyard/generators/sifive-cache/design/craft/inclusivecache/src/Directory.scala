@@ -37,6 +37,9 @@ class DirectoryEntry(params: InclusiveCacheParameters) extends InclusiveCacheBun
   val tag     = UInt(width = params.tagBits)
   val packetSeq = UInt(width = GH_GlobalParams.GH_PACKET_SEQ_BITS)
   val packetTracked = Bool()
+  val image = new freechips.rocketchip.tilelink.CacheImageKey
+  // Receipt for this exact key. Semantic changes revoke it; validation does not.
+  val outerPreserved = Bool()
 }
 
 class DirectoryWrite(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)

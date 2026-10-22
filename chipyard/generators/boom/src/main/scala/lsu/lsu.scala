@@ -97,7 +97,7 @@ class BoomDCacheReq(implicit p: Parameters) extends BoomBundle()(p)
   // a request first enters the cache and then travel through an MSHR/replay.
   val slot_epoch = UInt(16.W)
   val line_generation = UInt(32.W)
-  val image_valid = Bool() // false for imported images without Phase-2 provenance
+  val image_valid = Bool() // true only after a complete image is resident/provisional
   val owner_context_valid = Bool()
   val owner_way = UInt(dcacheParams.nWays.W)
   val admission = UInt(3.W)

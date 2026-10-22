@@ -122,6 +122,8 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
   val transactionSerial = RegInit(0.U(32.W))
   val writeDomainValid = RegInit(false.B)
   val writeDomainSeq = Reg(UInt(freechips.rocketchip.guardiancouncil.GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val refillImage = Reg(new CacheImageKey)
+  val grantFirst = RegInit(true.B)
   val installStarted = RegInit(false.B)
   val protocolFault = RegInit(false.B)
   // Holds one row only after the install owner has accepted the row read.
@@ -135,6 +137,7 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
   io.install.valid := false.B
   io.install.bits.req := req
   io.install.bits.new_owner := !req.tag_match
+  io.install.bits.image := refillImage
   io.retired.valid := false.B
   io.retired.bits := req
   val req_idx = req.addr(untagBits-1, blockOffBits)
@@ -225,6 +228,7 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
   val refill_ctr  = Reg(UInt(log2Ceil(cacheDataBeats).W))
   val commit_line = Reg(Bool())
   val grant_had_data = Reg(Bool())
+  io.install.bits.has_data := grant_had_data
   val finish_to_prefetch = Reg(Bool())
 
   // Block probes if a tag write we started is still in the pipeline
@@ -307,6 +311,7 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
     installStarted := false.B
     rowValid := false.B
     protocolFault := false.B
+    grantFirst := true.B
     writeDomainValid := io.req.write_domain_valid
     writeDomainSeq := io.req.write_domain_seq
     val old_coh   = io.req.old_meta.coh
@@ -338,11 +343,11 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
   } .elsewhen (state === s_refill_req) {
     io.mem_acquire.valid := true.B
     // TODO: Use AcquirePerm if just doing permissions acquire
-    io.mem_acquire.bits  := edge.AcquireBlock(
+    io.mem_acquire.bits  := CacheImage.base(edge.AcquireBlock(
       fromSource      = io.id,
       toAddress       = Cat(req_tag, req_idx) << blockOffBits,
       lgSize          = lgCacheBlockBytes.U,
-      growPermissions = grow_param)._2
+      growPermissions = grow_param)._2)
     when (io.mem_acquire.fire) {
       state := s_refill_resp
     }
@@ -358,7 +363,14 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
     }
 
     when (io.mem_grant.fire) {
+      val incomingImage = io.mem_grant.bits.user.lift(CacheImage).getOrElse(0.U.asTypeOf(new CacheImageKey))
+      assert(incomingImage.valid || incomingImage.asUInt === 0.U, "malformed BASE image")
+      assert(!incomingImage.valid || incomingImage.generation =/= 0.U, "authored image has no generation")
+      when (grantFirst) { refillImage := incomingImage }
+      .otherwise { assert(incomingImage.asUInt === refillImage.asUInt, "GrantData image changed between beats") }
+      grantFirst := false.B
       grant_had_data := edge.hasData(io.mem_grant.bits)
+      assert(!io.mem_grant.bits.denied && !io.mem_grant.bits.corrupt, "cannot certify a denied/corrupt refill")
     }
     when (refill_done) {
       grantack.valid := edge.isRequest(io.mem_grant.bits)
@@ -495,6 +507,7 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
     io.refill.bits.transaction_token := req.transaction_token
     io.refill.bits.mshr_id := io.id
     io.refill.bits.owner_context_valid := req.owner_context_valid
+    io.refill.bits.image := refillImage
     when (io.refill.fire) {
       rowValid := false.B
       refill_ctr := refill_ctr + 1.U
@@ -551,6 +564,7 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
         state := s_meta_read
       } .otherwise { // Reacquire this line
         new_coh := ClientMetadata.onReset
+        grantFirst := true.B
         state := s_refill_req
       }
     } .elsewhen (io.req_pri_val && io.req_pri_rdy) {
@@ -598,19 +612,19 @@ class BoomIOMSHR(id: Int)(implicit edge: TLEdgeOut, p: Parameters) extends BoomM
   val a_size    = req.uop.mem_size
   val a_data    = Fill(beatWords, req.data)
 
-  val get      = edge.Get(a_source, a_address, a_size)._2
-  val put      = edge.Put(a_source, a_address, a_size, a_data)._2
+  val get      = CacheImage.base(edge.Get(a_source, a_address, a_size)._2)
+  val put      = CacheImage.base(edge.Put(a_source, a_address, a_size, a_data)._2)
   val atomics  = if (edge.manager.anySupportLogical) {
     MuxLookup(req.uop.mem_cmd, (0.U).asTypeOf(new TLBundleA(edge.bundle)), Array(
-      M_XA_SWAP -> edge.Logical(a_source, a_address, a_size, a_data, TLAtomics.SWAP)._2,
-      M_XA_XOR  -> edge.Logical(a_source, a_address, a_size, a_data, TLAtomics.XOR) ._2,
-      M_XA_OR   -> edge.Logical(a_source, a_address, a_size, a_data, TLAtomics.OR)  ._2,
-      M_XA_AND  -> edge.Logical(a_source, a_address, a_size, a_data, TLAtomics.AND) ._2,
-      M_XA_ADD  -> edge.Arithmetic(a_source, a_address, a_size, a_data, TLAtomics.ADD)._2,
-      M_XA_MIN  -> edge.Arithmetic(a_source, a_address, a_size, a_data, TLAtomics.MIN)._2,
-      M_XA_MAX  -> edge.Arithmetic(a_source, a_address, a_size, a_data, TLAtomics.MAX)._2,
-      M_XA_MINU -> edge.Arithmetic(a_source, a_address, a_size, a_data, TLAtomics.MINU)._2,
-      M_XA_MAXU -> edge.Arithmetic(a_source, a_address, a_size, a_data, TLAtomics.MAXU)._2))
+      M_XA_SWAP -> CacheImage.base(edge.Logical(a_source, a_address, a_size, a_data, TLAtomics.SWAP)._2),
+      M_XA_XOR  -> CacheImage.base(edge.Logical(a_source, a_address, a_size, a_data, TLAtomics.XOR) ._2),
+      M_XA_OR   -> CacheImage.base(edge.Logical(a_source, a_address, a_size, a_data, TLAtomics.OR)  ._2),
+      M_XA_AND  -> CacheImage.base(edge.Logical(a_source, a_address, a_size, a_data, TLAtomics.AND) ._2),
+      M_XA_ADD  -> CacheImage.base(edge.Arithmetic(a_source, a_address, a_size, a_data, TLAtomics.ADD)._2),
+      M_XA_MIN  -> CacheImage.base(edge.Arithmetic(a_source, a_address, a_size, a_data, TLAtomics.MIN)._2),
+      M_XA_MAX  -> CacheImage.base(edge.Arithmetic(a_source, a_address, a_size, a_data, TLAtomics.MAX)._2),
+      M_XA_MINU -> CacheImage.base(edge.Arithmetic(a_source, a_address, a_size, a_data, TLAtomics.MINU)._2),
+      M_XA_MAXU -> CacheImage.base(edge.Arithmetic(a_source, a_address, a_size, a_data, TLAtomics.MAXU)._2)))
   } else {
     // If no managers support atomics, assert fail if processor asks for them
     assert(state === s_idle || !isAMO(req.uop.mem_cmd))

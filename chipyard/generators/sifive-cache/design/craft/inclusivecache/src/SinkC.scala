@@ -20,7 +20,6 @@ package sifive.blocks.inclusivecache
 import Chisel._
 import freechips.rocketchip.tilelink._
 import freechips.rocketchip.util._
-import chisel3.util.experimental.BoringUtils
 import freechips.rocketchip.guardiancouncil.GH_GlobalParams
 
 class SinkCResponse(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
@@ -31,10 +30,10 @@ class SinkCResponse(params: InclusiveCacheParameters) extends InclusiveCacheBund
   val source = UInt(width = params.inner.bundle.sourceBits)
   val param  = UInt(width = 3)
   val data   = Bool()
-  // Provenance of a ProbeAckData dirty writeback.  This is sideband metadata
-  // sampled from the BOOM DCache CAM; it does not alter TLBundleC itself.
+  // Exact provenance carried with the ProbeAckData transaction.
   val packetSeq = UInt(width = GH_GlobalParams.GH_PACKET_SEQ_BITS)
   val packetTracked = Bool()
+  val image = new CacheImageKey
 }
 
 class PutBufferCEntry(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
@@ -58,22 +57,10 @@ class SinkC(params: InclusiveCacheParameters) extends Module
     // SourceD sideband
     val rel_pop  = Decoupled(new PutBufferPop(params)).flip
     val rel_beat = new PutBufferCEntry(params)
-  }
-
-  // BOOM publishes a small address-indexed provenance CAM.  Sampling it here
-  // avoids changing the standard TLBundleC carried through the interconnect.
-  val sidebandEntries = 16
-  val sidebandValid = Seq.fill(sidebandEntries)(chisel3.WireDefault(false.B))
-  val sidebandAddress = Seq.fill(sidebandEntries)(
-    chisel3.WireDefault(0.U(64.W)))
-  val sidebandSeq = Seq.fill(sidebandEntries)(
-    chisel3.WireDefault(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))
-  val sidebandTracked = Seq.fill(sidebandEntries)(chisel3.WireDefault(false.B))
-  for (i <- 0 until sidebandEntries) {
-    BoringUtils.addSink(sidebandValid(i), s"${GH_GlobalParams.GH_L1_L2_PACKET_ADDR_BORE}_valid_$i")
-    BoringUtils.addSink(sidebandAddress(i), s"${GH_GlobalParams.GH_L1_L2_PACKET_ADDR_BORE}_$i")
-    BoringUtils.addSink(sidebandSeq(i), s"${GH_GlobalParams.GH_L1_L2_PACKET_SEQ_BORE}_$i")
-    BoringUtils.addSink(sidebandTracked(i), s"${GH_GlobalParams.GH_L1_L2_PACKET_TRACKED_BORE}_$i")
+    // Observe the first ProbeAckData before either its metadata or bank write.
+    val probe = Valid(new SinkCResponse(params))
+    val probeAllow = Bool().flip
+    val bankBusy = Bool()
   }
 
   if (params.firstLevel) {
@@ -84,6 +71,8 @@ class SinkC(params: InclusiveCacheParameters) extends Module
     io.set := UInt(0)
     io.bs_adr.valid := Bool(false)
     io.rel_pop.ready := Bool(true)
+    io.probe := 0.U.asTypeOf(chisel3.chiselTypeOf(io.probe))
+    io.bankBusy := Bool(false)
   } else {
     // No restrictions on the type of buffer
     val c = params.micro.innerBuf.c(io.c)
@@ -93,12 +82,19 @@ class SinkC(params: InclusiveCacheParameters) extends Module
     val hasData = params.inner.hasData(c.bits)
     val raw_resp = c.bits.opcode === TLMessages.ProbeAck || c.bits.opcode === TLMessages.ProbeAckData
     val resp = Mux(c.valid, raw_resp, RegEnable(raw_resp, c.valid))
-    val sidebandMatch = Wire(Vec(sidebandEntries, Bool()))
-    val sidebandBlockBits = log2Ceil(params.cache.blockBytes)
-    for (i <- 0 until sidebandEntries) {
-      sidebandMatch(i) := sidebandValid(i) &&
-        c.bits.opcode.isOneOf(TLMessages.ReleaseData, TLMessages.ProbeAckData) &&
-        (sidebandAddress(i) >> sidebandBlockBits) === (c.bits.address >> sidebandBlockBits)
+    // The negotiated control field travels with every C beat through buffers;
+    // identity comes from this transaction, without an address CAM lookup.
+    val image = c.bits.user.lift(CacheImage).getOrElse(0.U.asTypeOf(new CacheImageKey))
+    val probeBlock = raw_resp && hasData && first && !io.probeAllow
+    io.probe.valid := c.valid && raw_resp && hasData && first
+    io.probe.bits := io.resp.bits
+    when (c.fire()) {
+      assert(image.valid || image.asUInt === 0.U, "malformed C BASE image")
+      assert(!image.valid || image.generation =/= 0.U, "C authored image has no generation")
+    }
+    val firstImage = RegEnable(image, c.fire() && first)
+    when (c.fire() && !first) {
+      assert(image.asUInt === firstImage.asUInt, "C image changed within transaction")
     }
 
     // Handling of C is broken into two cases:
@@ -119,7 +115,7 @@ class SinkC(params: InclusiveCacheParameters) extends Module
     val bs_adr = Wire(io.bs_adr)
     io.bs_adr <> Queue(bs_adr, 1, pipe=true)
     io.bs_dat.data   := RegEnable(c.bits.data,    bs_adr.fire())
-    bs_adr.valid     := resp && (!first || (c.valid && hasData))
+    bs_adr.valid     := resp && (!first || (c.valid && hasData)) && !probeBlock
     bs_adr.bits.noop := !c.valid
     bs_adr.bits.way  := io.way
     bs_adr.bits.set  := io.set
@@ -127,15 +123,17 @@ class SinkC(params: InclusiveCacheParameters) extends Module
     bs_adr.bits.mask := ~UInt(0, width = params.innerMaskBits)
     params.ccover(bs_adr.valid && !bs_adr.ready, "SINKC_SRAM_STALL", "Data SRAM busy")
 
-    io.resp.valid := resp && c.valid && (first || last) && (!hasData || bs_adr.ready)
+    io.bankBusy := io.bs_adr.valid
+    io.resp.valid := resp && c.valid && (first || last) && (!hasData || bs_adr.ready) && !probeBlock
     io.resp.bits.last   := last
     io.resp.bits.set    := set
     io.resp.bits.tag    := tag
     io.resp.bits.source := c.bits.source
     io.resp.bits.param  := c.bits.param
     io.resp.bits.data   := hasData
-    io.resp.bits.packetSeq := Mux1H(sidebandMatch, sidebandSeq)
-    io.resp.bits.packetTracked := Mux1H(sidebandMatch, sidebandTracked)
+    io.resp.bits.image := image
+    io.resp.bits.packetSeq := image.contentSeq
+    io.resp.bits.packetTracked := image.valid && image.contentSeq =/= 0.U
 
     val putbuffer = Module(new ListBuffer(ListBufferParameters(new PutBufferCEntry(params), params.relLists, params.relBeats, false)))
     val lists = RegInit(UInt(0, width = params.relLists))
@@ -156,7 +154,7 @@ class SinkC(params: InclusiveCacheParameters) extends Module
     params.ccover(c.valid && !raw_resp && buf_block, "SINKC_BUF_STALL", "No space in putbuffer for beat")
     params.ccover(c.valid && !raw_resp && set_block, "SINKC_SET_STALL", "No space in putbuffer for request")
 
-    c.ready := Mux(raw_resp, !hasData || bs_adr.ready, !req_block && !buf_block && !set_block)
+    c.ready := Mux(raw_resp, (!hasData || bs_adr.ready) && !probeBlock, !req_block && !buf_block && !set_block)
 
     io.req.valid := !resp && c.valid && first && !buf_block && !set_block
     putbuffer.io.push.valid := !resp && c.valid && hasData && !req_block && !set_block
@@ -173,15 +171,9 @@ class SinkC(params: InclusiveCacheParameters) extends Module
     io.req.bits.set    := set
     io.req.bits.tag    := tag
     io.req.bits.put    := put
-    val sidebandSelected = Wire(Vec(sidebandEntries, Bool()))
-    for (i <- 0 until sidebandEntries) {
-      val newer = (0 until sidebandEntries).map { j =>
-        sidebandMatch(j) && sidebandSeq(j) > sidebandSeq(i)
-      }.reduce(_ || _)
-      sidebandSelected(i) := sidebandMatch(i) && !newer
-    }
-    io.req.bits.packetSeq := Mux1H(sidebandSelected, sidebandSeq)
-    io.req.bits.packetTracked := Mux1H(sidebandSelected, sidebandTracked)
+    io.req.bits.image := image
+    io.req.bits.packetSeq := image.contentSeq
+    io.req.bits.packetTracked := image.valid && image.contentSeq =/= 0.U
 
     putbuffer.io.push.bits.index := put
     putbuffer.io.push.bits.data.data    := c.bits.data
