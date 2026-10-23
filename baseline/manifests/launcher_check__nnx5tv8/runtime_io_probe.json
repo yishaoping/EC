@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "checks": {
+    "mount_isolation": {
+      "status": "PASS",
+      "detail": {
+        "TMPDIR": "/data1/gzh/EC/baseline/manifests/launcher_check__nnx5tv8/private_tmp",
+        "private_mounts": [
+          "/tmp",
+          "/var/tmp"
+        ],
+        "current_and_canonical_source": "READ_ONLY"
+      }
+    },
+    "libc_tmpfile_and_mmap": {
+      "status": "PASS",
+      "detail": {
+        "simultaneous_libc_tmpfiles": 4,
+        "read_write_mmap": "PASS"
+      }
+    },
+    "waveform_directory_io": {
+      "status": "PASS",
+      "detail": "output, adjacent hierarchy and TMPDIR I/O passed; no FST decoding performed"
+    }
+  },
+  "scope": "FILESYSTEM_AND_LIBC_ONLY_NO_SIMULATION"
+}

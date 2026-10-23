@@ -1,0 +1,60 @@
+COMMIT=b3d7adddd1e2d2cf428dd933529de878226420cd
+CONFIG=chipyard.v1Config
+SOURCE=/data1/gzh/EC/baseline/source
+DISK_FREE_BYTES=527831625728
+SOURCE_RESOURCE_CHECK=PASS; literals/config resources=75; reviewed dynamic=7
+ISOLATION=bwrap, host read-only, baseline writable, network disabled
+RUN_PROVENANCE=UNRESOLVED; Software/R-Kernel historical gitlink remains unavailable
+PREFLIGHT_MANIFEST=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/manifest.json
+EXECUTE=["/usr/bin/python3", "-I", "-B", "-c", "import os,pathlib,socket; assert os.statvfs(\"/data1/gzh/EC/chipyard\").f_flag & os.ST_RDONLY; assert os.statvfs(\"/data1/gzh/EC/baseline/source\").f_flag & os.ST_RDONLY; assert not os.statvfs(\".\").f_flag & os.ST_RDONLY; pathlib.Path(\"baseline_writable_probe\").write_text(\"baseline only\\n\"); p=pathlib.Path(os.environ[\"TMPDIR\"])/\".sbt\"/\"sbt-socket-18446744073709551615\"/\"sbt-load.sock\"; p.parent.mkdir(parents=True); assert len(os.fsencode(p)) < 100; s=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM); s.bind(str(p)); s.close(); p.unlink(); print(\"SBT_SOCKET_BIND=PASS; SOCKET_PATH_BYTES=\"+str(len(os.fsencode(p)))); print(\"CURRENT_READ_ONLY=PASS; SOURCE_READ_ONLY=PASS; BASELINE_WRITABLE=PASS\")"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/isolation.txt
+EXECUTE=["/data1/gzh/EC/chipyard/.conda-env/bin/make", "--version"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/version.make.txt
+EXECUTE=["/nix/store/bj3wbpawbk71c082cvrnqkfyix7ipx0g-verilator-5.048/bin/verilator", "--version"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/version.verilator.txt
+EXECUTE=["/data1/gzh/EC/chipyard/.conda-env/bin/firtool", "--version"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/version.firtool.txt
+EXECUTE=["/data1/gzh/EC/chipyard/.conda-env/bin/gcc", "--version"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/version.gcc.txt
+EXECUTE=["/data1/gzh/EC/chipyard/.conda-env/bin/g++", "--version"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/version.gpp.txt
+EXECUTE=["/data1/gzh/EC/chipyard/.conda-env/riscv-tools/bin/riscv64-unknown-elf-gcc", "--version"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/version.riscv64-unknown-elf-gcc.txt
+EXECUTE=["/data1/gzh/EC/chipyard/.conda-env/bin/java", "-version"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/version.java.txt
+EXECUTE=["/nix/store/zxw41nfy4gjlzd31ly7q6mkv4vkybx15-clang-wrapper-16.0.6/bin/clang", "--version"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/version.actual_CC.txt
+EXECUTE=["/nix/store/zxw41nfy4gjlzd31ly7q6mkv4vkybx15-clang-wrapper-16.0.6/bin/clang++", "--version"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/version.actual_CXX.txt
+EXECUTE=["/nix/store/zxw41nfy4gjlzd31ly7q6mkv4vkybx15-clang-wrapper-16.0.6/bin/clang++", "-std=c++17", "-E", "-x", "c++", "-I/data1/gzh/EC/chipyard/.conda-env/riscv-tools/include", "/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/native_headers.cc", "-o", "/dev/null"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/native.configured_CXX.txt
+EXECUTE=["/data1/gzh/EC/chipyard/.conda-env/bin/g++", "-std=c++17", "-E", "-x", "c++", "-I/data1/gzh/EC/chipyard/.conda-env/riscv-tools/include", "/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/native_headers.cc", "-o", "/dev/null"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/native.DRAMSim_hardcoded_gpp.txt
+EXECUTE=["/nix/store/zxw41nfy4gjlzd31ly7q6mkv4vkybx15-clang-wrapper-16.0.6/bin/clang++", "-std=c++17", "-E", "-x", "c++", "-I/data1/gzh/EC/chipyard/.conda-env/riscv-tools/include", "/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/native_headers.cc", "-o", "/dev/null"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/native.Verilator_Makefile_clangpp.txt
+EXECUTE=["/data1/gzh/EC/chipyard/.conda-env/bin/firtool", "--help"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/native.firtool_help.txt
+EXECUTE=["/nix/store/bj3wbpawbk71c082cvrnqkfyix7ipx0g-verilator-5.048/bin/verilator", "--help"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/native.verilator_help.txt
+EXECUTE=["/usr/bin/ar", "t", "/data1/gzh/EC/chipyard/.conda-env/riscv-tools/lib/libfesvr.a"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/native.fesvr_archive.txt
+EXECUTE=["/nix/store/bj3wbpawbk71c082cvrnqkfyix7ipx0g-verilator-5.048/bin/verilator", "--trace-fst", "--trace-threads", "1", "--threads", "1", "--threads-dpi", "all", "-O3", "--assert", "--x-assign", "fast", "--x-initial", "fast", "--output-split", "10000", "--output-split-cfuncs", "100", "--timescale", "1ns/1ps", "--max-num-width", "1048576", "--vpi", "-Wno-fatal", "--version"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/native.verilator_historical_options.txt
+EXECUTE=["/usr/bin/python3", "-I", "-B", "-c", "import ctypes; z=ctypes.CDLL(\"/data1/gzh/EC/baseline/cache/native-zlib/lib/libz.so.1\"); z.zlibVersion.restype=ctypes.c_char_p; v=z.zlibVersion(); print(\"ZLIB_RUNTIME_VERSION=\"+v.decode()); assert v==b\"1.2.13\""]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/native.zlib_runtime_identity.txt
+PHASE=DEPENDENCY_PREFLIGHT; metadata and libraries only; no hardware compilation
+EXECUTE=["/data1/gzh/EC/chipyard/.conda-env/bin/java", "-jar", "/data1/gzh/EC/chipyard/.conda-env/share/sbt/bin/sbt-launch.jar", "show csrCacheDirectory", "projects", "all hardfloat/update rocketMacros/update rocketConfig/update rocketchip/update testchipip/update chipyard/update mempress/update constellation/update fft_generator/update tracegen/update icenet/update hwacha/update boom/update cva6/update ibex/update sodor/update sha3/update gemmini/update nvdla/update iocell/update tapeout/update dsptools/update api-config-chipsalliance/update rocket-dsp-utils/update sifive_blocks/update sifive_cache/update {file:/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/sbt_metadata/sims/firesim/sim/}targetutils/update", "all hardfloat/Compile/copyResources rocketMacros/Compile/copyResources rocketConfig/Compile/copyResources rocketchip/Compile/copyResources testchipip/Compile/copyResources chipyard/Compile/copyResources mempress/Compile/copyResources constellation/Compile/copyResources fft_generator/Compile/copyResources tracegen/Compile/copyResources icenet/Compile/copyResources hwacha/Compile/copyResources boom/Compile/copyResources cva6/Compile/copyResources ibex/Compile/copyResources sodor/Compile/copyResources sha3/Compile/copyResources gemmini/Compile/copyResources nvdla/Compile/copyResources iocell/Compile/copyResources tapeout/Compile/copyResources dsptools/Compile/copyResources api-config-chipsalliance/Compile/copyResources rocket-dsp-utils/Compile/copyResources sifive_blocks/Compile/copyResources sifive_cache/Compile/copyResources {file:/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/sbt_metadata/sims/firesim/sim/}targetutils/Compile/copyResources", "exit"]
+LOG=/data1/gzh/EC/baseline/manifests/preflight_a4l1906l/sbt_dependencies.log
+CHECK=configured_CXX; STATUS=PASS
+CHECK=DRAMSim_hardcoded_gpp; STATUS=PASS
+CHECK=Verilator_Makefile_clangpp; STATUS=PASS
+CHECK=firtool_help; STATUS=PASS
+CHECK=verilator_help; STATUS=PASS
+CHECK=fesvr_archive; STATUS=PASS
+CHECK=verilator_historical_options; STATUS=PASS
+CHECK=zlib_runtime_identity; STATUS=PASS
+CHECK=firtool_historical_options; STATUS=PASS
+CHECK=source_copy_executable_modes; STATUS=PASS
+CHECK=source_resources; STATUS=PASS
+CHECK=sbt_dependencies; STATUS=PASS
+PREFLIGHT=PASS; project compilation, RTL generation and simulation remain untested

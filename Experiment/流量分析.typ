@@ -4,38 +4,40 @@
 [INIT] software_interrupt=pass
 [RUN] hart=0 status=started
 [CONFIG] big_core_perf=off checker_perf=on interval_cycles=5000 sample_readback=not_collected
-[RUN] benchmark=gapbs_bfs nodes=512 source=0 reached=512 edges=8192 verified=0 parent_checksum=43363075
-[PERF] boom_cycles=1475683 boom_inst=621112
-[VERIFY] packages allocated=259 completed=259 passed=259 status=PASS
+[RUN] benchmark=gapbs_bfs nodes=512 source=0 reached=512 edges=8192 verified=1 parent_checksum=43439728
+[PERF] boom_cycles=4512796 boom_inst=649992
+[VERIFY] packages allocated=334 completed=334 passed=334 status=PASS
 [TRAFFIC] source        st_total   st_cache st_uncache   ld_total   ld_cache ld_uncache ld_response ld_forward
-[TRAFFIC] boom_arch        61556      61507         49      84966      84669        297          -          -
-[TRAFFIC] boom_strict      61556      61507         49      84966      84669        297      82965       1704
-[TRAFFIC] checker_sum      61674      61625         49      85132      84835        297          -          0
-[TRAFFIC] c1               19196      19182         14      26470      26383         87          -          0
-[TRAFFIC] c2               18386      18368         18      24620      24512        108          -          0
-[TRAFFIC] c3               18662      18647         15      22893      22803         90          -          0
-[TRAFFIC] c4                5430       5428          2      11149      11137         12          -          0
-[ASSERT] store arch=61556 strict=61556 checker=61674 result=FAIL
-[ASSERT_DIAG] store_arch_minus_checker=-118
-[ASSERT_DIAG] store_cache_arch_minus_checker=-118
-[ASSERT] load arch=84966 strict=84966 checker=85132 result=FAIL
-[ASSERT_DIAG] load_arch_minus_checker=-166
-[ASSERT_DIAG] load_cache_arch_minus_checker=-166
+[TRAFFIC] boom_arch        60568      60519         49      95038      94741        297          -          -
+[TRAFFIC] boom_strict      60568      60519         49      95038      94741        297      93022       1719
+[TRAFFIC] checker_sum      60568      60519         49      95038      94741        297          -          0
+[TRAFFIC] c1               20353      20346          7      26643      26601         42          -          0
+[TRAFFIC] c2               19443      19425         18      26683      26575        108          -          0
+[TRAFFIC] c3               16471      16468          3      24876      24858         18          -          0
+[TRAFFIC] c4                4301       4280         21      16836      16707        129          -          0
+[TRAFFIC] atomics hart=boom lr=0 sc_success=0 sc_fail=0 amo=4
+[TRAFFIC] atomics hart=c1 lr=0 sc_success=0 sc_fail=0 amo=4
+[TRAFFIC] atomics total lr=0 sc_success=0 sc_fail=0 amo=8
 [TRAFFIC] path          total      dirty verify_required   verified unverified   resolved  nonverify status
-[TRAFFIC] L1-L2          1255       1200             728        394        334        334        472 PASS  
-[TRAFFIC] L2-DRAM          37         37               3          3          0          0         34 PASS  
-[ADDRESS_STATS] status=FAIL valid=0 error=0x10 pending=0
+[TRAFFIC] L1-L2          2431       2422            1931       1465        466        466        491 PASS  
+[TRAFFIC] L2-DRAM          44         42              10         10          0          0         32 PASS  
+[ADDRESS_STATS] unit    store_total   store_peak     lf_lower     lf_upper      lf_peak     sf_lower     sf_upper      sf_peak    swr_total     swr_peak first_store_total first_store_peak
+[ADDRESS_STATS] byte          92901         2144         3865        69722          353        13121        73153          248        55860          248        89642         2140
+[ADDRESS_STATS] word4         23401          536          976        17540           90         3287        18431           62         4786           62        22580          535
+[ADDRESS_STATS] word8         11907          271          561         8966           46         1655         9328           31         1663           31        11423          270
+[ADDRESS_STATS] line           1939           40          198         1506            7          297         1437            5           31            4         1755           39
 [LATENCY] metric                     events clock    frequency_hz     avg_cycles         avg_ns
-[LATENCY] store_uncache                  49 boom_eq     200000000        114.306        571.530
-[LATENCY] dirty_wb                      334 boom        200000000       7650.011      38250.059
+[LATENCY] store_uncache                  49 boom_eq     200000000        358.387       1791.938
+[LATENCY] dirty_wb                      466 boom        200000000      22693.899     113469.495
 [LATENCY] l2_dram_dirty_wb                0 l2          200000000            n/a            n/a reason=no_events
-[BARRIER] cross_package_store    seen=58782 resolved=58782 pending=0 dropped=0 wait_cycle_sum=185307341 valid=1 status=PASS
-[LATENCY] cross_package_store         58782 boom        200000000       3152.450      15762.252
-[BARRIER] l1_l2_replacement      seen=325 resolved=325 pending=0 dropped=0 wait_cycle_sum=2555182 valid=1 status=PASS
-[LATENCY] l1_l2_replacement             325 boom        200000000       7862.098      39310.492
-[BARRIER] l2_dram_replacement    seen=2 resolved=2 pending=0 dropped=0 wait_cycle_sum=398 valid=1 status=PASS
-[LATENCY] l2_dram_replacement             2 l2          200000000        199.000        995.000
-[END] hart=0 status=FAIL
+[BARRIER] cross_package_store    seen=2430 resolved=2430 pending=0 dropped=0 wait_cycle_sum=4732579 valid=1 status=PASS
+[LATENCY] cross_package_store          2430 boom        200000000       1947.563       9737.816
+[BARRIER] l1_l2_replacement      seen=459 resolved=459 pending=0 dropped=0 wait_cycle_sum=10516523 valid=1 status=PASS
+[LATENCY] l1_l2_replacement             459 boom        200000000      22911.814     114559.074
+[BARRIER] l2_dram_replacement    seen=7 resolved=7 pending=0 dropped=0 wait_cycle_sum=62223 valid=1 status=PASS
+[LATENCY] l2_dram_replacement             7 l2          200000000       8889.000      44445.000
+[END] hart=0 status=PASS
+
 
 - 512 未开屏障
 [UART] UART0 is here (stdin/stdout).

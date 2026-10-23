@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/bin/bwrap",
+    "--die-with-parent",
+    "--new-session",
+    "--unshare-all",
+    "--ro-bind",
+    "/",
+    "/",
+    "--bind",
+    "/data1/gzh/EC/baseline",
+    "/data1/gzh/EC/baseline",
+    "--ro-bind",
+    "/data1/gzh/EC/baseline/source",
+    "/data1/gzh/EC/baseline/source",
+    "--dev",
+    "/dev",
+    "--chdir",
+    "/data1/gzh/EC/baseline/manifests/fst_runtime_fix_20261023_jmehdfaw",
+    "--setenv",
+    "TMPDIR",
+    "/data1/gzh/EC/baseline/manifests/fst_runtime_fix_20261023_jmehdfaw/old_policy_tmp",
+    "--",
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "-c",
+    "import ctypes,errno,json,os\nlibc=ctypes.CDLL(None,use_errno=True)\nlibc.tmpfile.restype=ctypes.c_void_p\nlibc.fclose.argtypes=[ctypes.c_void_p]\np=libc.tmpfile(); error=ctypes.get_errno()\nif p: libc.fclose(p)\nprint(json.dumps({\"tmpfile_opened\":bool(p),\"errno\":error,\"error\":os.strerror(error),\"TMPDIR\":os.environ[\"TMPDIR\"],\"tmp_read_only\":bool(os.statvfs(\"/tmp\").f_flag & os.ST_RDONLY)}))\nassert not p and error==errno.EROFS\n"
+  ],
+  "return_code": 0,
+  "stdout": "{\"tmpfile_opened\": false, \"errno\": 30, \"error\": \"Read-only file system\", \"TMPDIR\": \"/data1/gzh/EC/baseline/manifests/fst_runtime_fix_20261023_jmehdfaw/old_policy_tmp\", \"tmp_read_only\": true}\n",
+  "stderr": ""
+}

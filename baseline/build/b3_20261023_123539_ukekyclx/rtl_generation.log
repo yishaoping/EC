@@ -1,0 +1,47 @@
+make: Entering directory '/data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx'
+/data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx/source/chipyard/sims/common-sim-flags.mk:11: libriscv not found
+Running with RISCV=/data1/gzh/EC/chipyard/.conda-env/riscv-tools
+mkdir -p /data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx/generated-src/chipyard.TestHarness.v1Config
+cp -f /data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx/source/chipyard/generators/testchipip/src/main/resources/testchipip/bootrom/bootrom.rv64.img /data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx/generated-src/chipyard.TestHarness.v1Config/bootrom.rv64.img
+cp -f /data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx/source/chipyard/generators/testchipip/src/main/resources/testchipip/bootrom/bootrom.rv32.img /data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx/generated-src/chipyard.TestHarness.v1Config/bootrom.rv32.img
+mkdir -p /data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx/generated-src/chipyard.TestHarness.v1Config
+(set -o pipefail && 	cd /data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx/source/chipyard && /data1/gzh/EC/chipyard/.conda-env/lib/jvm/bin/java -jar /data1/gzh/EC/chipyard/.conda-env/share/sbt/bin/sbt-launch.jar  ";project chipyard; runMain chipyard.Generator  --target-dir /data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx/generated-src/chipyard.TestHarness.v1Config --name chipyard.TestHarness.v1Config --top-module chipyard.TestHarness --legacy-configs chipyard:v1Config " | tee /data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx/generated-src/chipyard.TestHarness.v1Config/chipyard.TestHarness.v1Config.chisel.log)
+Picked up JAVA_TOOL_OPTIONS: -Xmx8G -Xss8M -Dsbt.supershell=false -Djava.io.tmpdir=/data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx/tmp -Duser.home=/data1/gzh/EC/baseline/cache/java-home -Dsbt.ivy.home=/data1/gzh/EC/baseline/cache/ivy2 -Dsbt.global.base=/data1/gzh/EC/baseline/cache/sbt -Dsbt.boot.directory=/data1/gzh/EC/baseline/cache/sbt/boot -Dsbt.coursier.home=/data1/gzh/EC/baseline/cache/coursier/v1 -Dsbt.offline=true -Dsbt.server.autostart=false
+sbt thinks that server is already booting because of this exception:
+sbt.internal.ServerAlreadyBootingException: java.io.IOException: org.scalasbt.ipcsocket.NativeErrorException: Cannot fit name [/data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx/tmp/.sbt/sbt-socket-1815875447306759302/sbt-load.sock] in maximum unix domain socket length
+	at sbt.internal.BootServerSocket.newSocket(BootServerSocket.java:356)
+	at sbt.internal.BootServerSocket.<init>(BootServerSocket.java:295)
+	at sbt.xMain$.getSocketOrExit(Main.scala:150)
+	at sbt.xMain$.bootServerSocket$lzycompute$1(Main.scala:77)
+	at sbt.xMain$.bootServerSocket$1(Main.scala:77)
+	at sbt.xMain$.withStreams$1(Main.scala:85)
+	at sbt.xMain$.run(Main.scala:121)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at sbt.internal.XMainConfiguration.run(XMainConfiguration.java:57)
+	at sbt.xMain.run(Main.scala:46)
+	at xsbt.boot.Launch$.$anonfun$run$1(Launch.scala:149)
+	at xsbt.boot.Launch$.withContextLoader(Launch.scala:176)
+	at xsbt.boot.Launch$.run(Launch.scala:149)
+	at xsbt.boot.Launch$.$anonfun$apply$1(Launch.scala:44)
+	at xsbt.boot.Launch$.launch(Launch.scala:159)
+	at xsbt.boot.Launch$.apply(Launch.scala:44)
+	at xsbt.boot.Launch$.apply(Launch.scala:21)
+	at xsbt.boot.Boot$.runImpl(Boot.scala:78)
+	at xsbt.boot.Boot$.run(Boot.scala:73)
+	at xsbt.boot.Boot$.main(Boot.scala:21)
+	at xsbt.boot.Boot.main(Boot.scala)
+Caused by: java.io.IOException: org.scalasbt.ipcsocket.NativeErrorException: Cannot fit name [/data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx/tmp/.sbt/sbt-socket-1815875447306759302/sbt-load.sock] in maximum unix domain socket length
+	at org.scalasbt.ipcsocket.UnixDomainServerSocket.bind(UnixDomainServerSocket.java:140)
+	at org.scalasbt.ipcsocket.UnixDomainServerSocket.<init>(UnixDomainServerSocket.java:114)
+	at org.scalasbt.ipcsocket.UnixDomainServerSocket.<init>(UnixDomainServerSocket.java:93)
+	at sbt.internal.BootServerSocket.newSocket(BootServerSocket.java:350)
+	... 23 more
+Caused by: org.scalasbt.ipcsocket.NativeErrorException: Cannot fit name [/data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx/tmp/.sbt/sbt-socket-1815875447306759302/sbt-load.sock] in maximum unix domain socket length
+	at org.scalasbt.ipcsocket.JNAUnixDomainSocketLibraryProvider.bind(UnixDomainSocketLibrary.java:180)
+	at org.scalasbt.ipcsocket.UnixDomainServerSocket.bind(UnixDomainServerSocket.java:136)
+	... 26 more
+make: *** [/data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx/source/chipyard/common.mk:110: /data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx/generated-src/chipyard.TestHarness.v1Config/chipyard.TestHarness.v1Config.fir] Error 2
+make: Leaving directory '/data1/gzh/EC/baseline/build/b3_20261023_123539_ukekyclx'
