@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "status": "STATIC_PREPARATION_ACCEPTED",
+  "recorded_at": "2026-10-23T12:06:19.524205+00:00",
+  "checks": {
+    "bash_syntax": "PASS",
+    "python_ast": "PASS",
+    "git_diff_check": "PASS",
+    "trace_only_review": "PASS",
+    "source_and_software_hash_preflight": "PASS",
+    "offline_synthetic_predicates": "PASS",
+    "offline_synthetic_parser": "PASS",
+    "entry_executable": true,
+    "DOC/Prompt.typ": "UNCHANGED",
+    "git_index": "UNCHANGED"
+  },
+  "evidence": {
+    "preflight": "static_preflight_bfc2b02b1a.json",
+    "source_review": "trace_static_review.json",
+    "offline_predicates": "offline_predicate_checks.json",
+    "offline_parser": "offline_parser_checks.json",
+    "preparation": "preparation.json"
+  },
+  "current_change": {
+    "files": 6,
+    "observation_aliases": 181,
+    "added_lines": 381,
+    "removed_lines": 0
+  },
+  "not_executed": [
+    "one-command experiment entry",
+    "SBT load",
+    "Chisel elaboration",
+    "RTL generation",
+    "software/hardware/native compilation",
+    "simulation",
+    "workload"
+  ],
+  "limitations": [
+    "Static acceptance does not prove tool execution or Scala elaboration success.",
+    "Future run checks waveform hierarchy; transitions and causal attribution require offline review.",
+    "Old Current and Baseline RUN_PROVENANCE/drain limitations are unchanged."
+  ],
+  "git_commit": "NOT_REQUESTED_OR_PERFORMED"
+}

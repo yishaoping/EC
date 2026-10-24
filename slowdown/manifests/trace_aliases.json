@@ -1,0 +1,1269 @@
+[
+  {
+    "alias": "slowdown_lsu_valid",
+    "expression": "io.lsu.req.valid",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2953
+  },
+  {
+    "alias": "slowdown_lsu_ready",
+    "expression": "io.lsu.req.ready",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2955
+  },
+  {
+    "alias": "slowdown_lsu_lane_valid",
+    "expression": "VecInit(io.lsu.req.bits.map(_.valid))",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2957
+  },
+  {
+    "alias": "slowdown_lsu_addr",
+    "expression": "VecInit(io.lsu.req.bits.map(_.bits.addr))",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2959
+  },
+  {
+    "alias": "slowdown_lsu_cmd",
+    "expression": "VecInit(io.lsu.req.bits.map(_.bits.uop.mem_cmd))",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2961
+  },
+  {
+    "alias": "slowdown_lsu_rob_idx",
+    "expression": "VecInit(io.lsu.req.bits.map(_.bits.uop.rob_idx))",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2963
+  },
+  {
+    "alias": "slowdown_lsu_ldq_idx",
+    "expression": "VecInit(io.lsu.req.bits.map(_.bits.uop.ldq_idx))",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2965
+  },
+  {
+    "alias": "slowdown_lsu_stq_idx",
+    "expression": "VecInit(io.lsu.req.bits.map(_.bits.uop.stq_idx))",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2967
+  },
+  {
+    "alias": "slowdown_lsu_pc",
+    "expression": "VecInit(io.lsu.req.bits.map(_.bits.uop.debug_pc))",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2969
+  },
+  {
+    "alias": "slowdown_lsu_packet_seq",
+    "expression": "VecInit(io.lsu.req.bits.map(_.bits.packet_seq))",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2971
+  },
+  {
+    "alias": "slowdown_lsu_token_valid",
+    "expression": "VecInit(io.lsu.req.bits.map(_.bits.request_token_valid))",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2973
+  },
+  {
+    "alias": "slowdown_lsu_token",
+    "expression": "VecInit(io.lsu.req.bits.map(_.bits.request_token))",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2975
+  },
+  {
+    "alias": "slowdown_lsu_is_hella",
+    "expression": "VecInit(io.lsu.req.bits.map(_.bits.is_hella))",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2977
+  },
+  {
+    "alias": "slowdown_lsu_set",
+    "expression": "VecInit(io.lsu.req.bits.map(r => r.bits.addr(idxMSB, idxLSB)))",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2979
+  },
+  {
+    "alias": "slowdown_lsu_tag",
+    "expression": "VecInit(io.lsu.req.bits.map(r => r.bits.addr >> untagBits))",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2981
+  },
+  {
+    "alias": "slowdown_csr_cycle",
+    "expression": "io.csr_cycle",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2983
+  },
+  {
+    "alias": "slowdown_pending",
+    "expression": "crossPackagePending",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2985
+  },
+  {
+    "alias": "slowdown_pending_set",
+    "expression": "crossPackagePendingSet",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2987
+  },
+  {
+    "alias": "slowdown_pending_tag",
+    "expression": "crossPackagePendingTag",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2989
+  },
+  {
+    "alias": "slowdown_pending_way",
+    "expression": "crossPackagePendingWay",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2991
+  },
+  {
+    "alias": "slowdown_pending_seq",
+    "expression": "crossPackagePendingSeq",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2993
+  },
+  {
+    "alias": "slowdown_pending_epoch",
+    "expression": "crossPackagePendingEpoch",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2995
+  },
+  {
+    "alias": "slowdown_pending_writer",
+    "expression": "crossPackagePendingKey.writer",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2997
+  },
+  {
+    "alias": "slowdown_pending_generation",
+    "expression": "crossPackagePendingKey.generation",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 2999
+  },
+  {
+    "alias": "slowdown_pending_content_seq",
+    "expression": "crossPackagePendingKey.contentSeq",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3001
+  },
+  {
+    "alias": "slowdown_freeze",
+    "expression": "clearFreezeValid",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3003
+  },
+  {
+    "alias": "slowdown_freeze_set",
+    "expression": "clearFreezeSet",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3005
+  },
+  {
+    "alias": "slowdown_freeze_conflict",
+    "expression": "lsu_clear_freeze_set_conflict",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3007
+  },
+  {
+    "alias": "slowdown_pipeline_ready",
+    "expression": "lsu_pipeline_ready",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3009
+  },
+  {
+    "alias": "slowdown_killed_replay",
+    "expression": "killed_store_replay_valid",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3011
+  },
+  {
+    "alias": "slowdown_domain_wait",
+    "expression": "crossPackageDomainWait",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3013
+  },
+  {
+    "alias": "slowdown_block_condition",
+    "expression": "crossPackageBlockCondition",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3015
+  },
+  {
+    "alias": "slowdown_pending_line",
+    "expression": "crossPackagePendingLine",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3017
+  },
+  {
+    "alias": "slowdown_pending_resident_match",
+    "expression": "crossPackageResidentMatch",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3019
+  },
+  {
+    "alias": "slowdown_pending_mshr_conflict",
+    "expression": "crossPackageMshrConflict",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3021
+  },
+  {
+    "alias": "slowdown_pending_slot_conflict",
+    "expression": "crossPackageSlotConflict",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3023
+  },
+  {
+    "alias": "slowdown_pending_issued",
+    "expression": "crossPackageIssued",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3025
+  },
+  {
+    "alias": "slowdown_pending_wb_done",
+    "expression": "crossPackageWbDone",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3027
+  },
+  {
+    "alias": "slowdown_meta_clear_valid",
+    "expression": "crossPackageMetaClear.valid",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3029
+  },
+  {
+    "alias": "slowdown_meta_clear_ready",
+    "expression": "crossPackageMetaClear.ready",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3031
+  },
+  {
+    "alias": "slowdown_mshr_active",
+    "expression": "mshrs.io.active_transactions",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3033
+  },
+  {
+    "alias": "slowdown_tl_a_valid",
+    "expression": "tl_out.a.valid",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3035
+  },
+  {
+    "alias": "slowdown_tl_a_ready",
+    "expression": "tl_out.a.ready",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3037
+  },
+  {
+    "alias": "slowdown_tl_a_opcode",
+    "expression": "tl_out.a.bits.opcode",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3039
+  },
+  {
+    "alias": "slowdown_tl_a_source",
+    "expression": "tl_out.a.bits.source",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3041
+  },
+  {
+    "alias": "slowdown_tl_a_size",
+    "expression": "tl_out.a.bits.size",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3043
+  },
+  {
+    "alias": "slowdown_tl_a_address",
+    "expression": "tl_out.a.bits.address",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3045
+  },
+  {
+    "alias": "slowdown_tl_c_valid",
+    "expression": "tl_out.c.valid",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3047
+  },
+  {
+    "alias": "slowdown_tl_c_ready",
+    "expression": "tl_out.c.ready",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3049
+  },
+  {
+    "alias": "slowdown_tl_c_opcode",
+    "expression": "tl_out.c.bits.opcode",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3051
+  },
+  {
+    "alias": "slowdown_tl_c_source",
+    "expression": "tl_out.c.bits.source",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3053
+  },
+  {
+    "alias": "slowdown_tl_c_size",
+    "expression": "tl_out.c.bits.size",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3055
+  },
+  {
+    "alias": "slowdown_tl_c_address",
+    "expression": "tl_out.c.bits.address",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3057
+  },
+  {
+    "alias": "slowdown_tl_d_valid",
+    "expression": "tl_out.d.valid",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3059
+  },
+  {
+    "alias": "slowdown_tl_d_ready",
+    "expression": "tl_out.d.ready",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3061
+  },
+  {
+    "alias": "slowdown_tl_d_opcode",
+    "expression": "tl_out.d.bits.opcode",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3063
+  },
+  {
+    "alias": "slowdown_tl_d_source",
+    "expression": "tl_out.d.bits.source",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3065
+  },
+  {
+    "alias": "slowdown_tl_d_size",
+    "expression": "tl_out.d.bits.size",
+    "group": "LSU/pending/freeze/L1-TL",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "line": 3067
+  },
+  {
+    "alias": "slowdown_rob_head_idx",
+    "expression": "rob_head_idx",
+    "group": "ROB/commit",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "line": 295
+  },
+  {
+    "alias": "slowdown_rob_state",
+    "expression": "rob_state",
+    "group": "ROB/commit",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "line": 297
+  },
+  {
+    "alias": "slowdown_rob_head_valid",
+    "expression": "rob_head_vals",
+    "group": "ROB/commit",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "line": 299
+  },
+  {
+    "alias": "slowdown_rob_head_pc",
+    "expression": "rob_head_pcs",
+    "group": "ROB/commit",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "line": 301
+  },
+  {
+    "alias": "slowdown_rob_head_ldq",
+    "expression": "rob_head_uses_ldq",
+    "group": "ROB/commit",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "line": 303
+  },
+  {
+    "alias": "slowdown_rob_head_stq",
+    "expression": "rob_head_uses_stq",
+    "group": "ROB/commit",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "line": 305
+  },
+  {
+    "alias": "slowdown_can_commit_noGC",
+    "expression": "can_commit_noGC",
+    "group": "ROB/commit",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "line": 307
+  },
+  {
+    "alias": "slowdown_can_commit",
+    "expression": "can_commit",
+    "group": "ROB/commit",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "line": 309
+  },
+  {
+    "alias": "slowdown_will_commit",
+    "expression": "will_commit",
+    "group": "ROB/commit",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "line": 311
+  },
+  {
+    "alias": "slowdown_will_commit_noGC",
+    "expression": "will_commit_noGC",
+    "group": "ROB/commit",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "line": 313
+  },
+  {
+    "alias": "slowdown_rob_gate",
+    "expression": "io.gh_stall",
+    "group": "ROB/commit",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "line": 315
+  },
+  {
+    "alias": "slowdown_csr_stall",
+    "expression": "io.csr_stall",
+    "group": "ROB/commit",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "line": 317
+  },
+  {
+    "alias": "slowdown_can_throw_exception",
+    "expression": "can_throw_exception",
+    "group": "ROB/commit",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "line": 319
+  },
+  {
+    "alias": "slowdown_head_busy_<bank>",
+    "expression": "rob_bsy(rob_head)",
+    "group": "ROB/commit",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "line": 576
+  },
+  {
+    "alias": "slowdown_gate_gh",
+    "expression": "io.gh_stall",
+    "group": "core gate/barrier",
+    "file": "chipyard/generators/boom/src/main/scala/exu/core.scala",
+    "line": 2107
+  },
+  {
+    "alias": "slowdown_gate_rsu",
+    "expression": "rsu_stall",
+    "group": "core gate/barrier",
+    "file": "chipyard/generators/boom/src/main/scala/exu/core.scala",
+    "line": 2109
+  },
+  {
+    "alias": "slowdown_gate_ic",
+    "expression": "ic_stall",
+    "group": "core gate/barrier",
+    "file": "chipyard/generators/boom/src/main/scala/exu/core.scala",
+    "line": 2111
+  },
+  {
+    "alias": "slowdown_gate_big_hang",
+    "expression": "io.big_hang",
+    "group": "core gate/barrier",
+    "file": "chipyard/generators/boom/src/main/scala/exu/core.scala",
+    "line": 2113
+  },
+  {
+    "alias": "slowdown_rob_gate",
+    "expression": "rob.io.gh_stall",
+    "group": "core gate/barrier",
+    "file": "chipyard/generators/boom/src/main/scala/exu/core.scala",
+    "line": 2115
+  },
+  {
+    "alias": "slowdown_barrier_active",
+    "expression": "barrierServiceActive",
+    "group": "core gate/barrier",
+    "file": "chipyard/generators/boom/src/main/scala/exu/core.scala",
+    "line": 2117
+  },
+  {
+    "alias": "slowdown_barrier_seq",
+    "expression": "barrierServiceSeq",
+    "group": "core gate/barrier",
+    "file": "chipyard/generators/boom/src/main/scala/exu/core.scala",
+    "line": 2119
+  },
+  {
+    "alias": "slowdown_barrier_bank",
+    "expression": "barrierServiceBank",
+    "group": "core gate/barrier",
+    "file": "chipyard/generators/boom/src/main/scala/exu/core.scala",
+    "line": 2121
+  },
+  {
+    "alias": "slowdown_barrier_force_close",
+    "expression": "barrierForceClose",
+    "group": "core gate/barrier",
+    "file": "chipyard/generators/boom/src/main/scala/exu/core.scala",
+    "line": 2123
+  },
+  {
+    "alias": "slowdown_barrier_close_active",
+    "expression": "barrierCloseForActivePackage",
+    "group": "core gate/barrier",
+    "file": "chipyard/generators/boom/src/main/scala/exu/core.scala",
+    "line": 2125
+  },
+  {
+    "alias": "slowdown_mshr_state",
+    "expression": "state",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 161
+  },
+  {
+    "alias": "slowdown_mshr_id",
+    "expression": "io.id",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 163
+  },
+  {
+    "alias": "slowdown_mshr_addr",
+    "expression": "req.addr",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 165
+  },
+  {
+    "alias": "slowdown_mshr_set",
+    "expression": "req_idx",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 167
+  },
+  {
+    "alias": "slowdown_mshr_tag",
+    "expression": "req_tag",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 169
+  },
+  {
+    "alias": "slowdown_mshr_rob_idx",
+    "expression": "req.uop.rob_idx",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 171
+  },
+  {
+    "alias": "slowdown_mshr_token",
+    "expression": "req.request_token",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 173
+  },
+  {
+    "alias": "slowdown_mshr_transaction",
+    "expression": "req.transaction_token",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 175
+  },
+  {
+    "alias": "slowdown_mshr_packet_seq",
+    "expression": "req.packet_seq",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 177
+  },
+  {
+    "alias": "slowdown_mshr_pri_valid",
+    "expression": "io.req_pri_val",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 179
+  },
+  {
+    "alias": "slowdown_mshr_pri_ready",
+    "expression": "io.req_pri_rdy",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 181
+  },
+  {
+    "alias": "slowdown_mshr_sec_valid",
+    "expression": "io.req_sec_val",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 183
+  },
+  {
+    "alias": "slowdown_mshr_sec_ready",
+    "expression": "io.req_sec_rdy",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 185
+  },
+  {
+    "alias": "slowdown_mshr_cross_package_secondary",
+    "expression": "cross_package_secondary_write",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 187
+  },
+  {
+    "alias": "slowdown_mshr_replay_valid",
+    "expression": "io.replay.valid",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 189
+  },
+  {
+    "alias": "slowdown_mshr_replay_ready",
+    "expression": "io.replay.ready",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 191
+  },
+  {
+    "alias": "slowdown_mshr_retired",
+    "expression": "io.retired.valid",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 193
+  },
+  {
+    "alias": "slowdown_mshr_grant_valid",
+    "expression": "io.mem_grant.valid",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 195
+  },
+  {
+    "alias": "slowdown_mshr_grant_ready",
+    "expression": "io.mem_grant.ready",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 197
+  },
+  {
+    "alias": "slowdown_mshr_wb_valid",
+    "expression": "io.wb_req.valid",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 199
+  },
+  {
+    "alias": "slowdown_mshr_wb_ready",
+    "expression": "io.wb_req.ready",
+    "group": "L1 MSHR",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "line": 201
+  },
+  {
+    "alias": "slowdown_scheduler_request_valid",
+    "expression": "request.valid",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 741
+  },
+  {
+    "alias": "slowdown_scheduler_request_ready",
+    "expression": "request.ready",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 743
+  },
+  {
+    "alias": "slowdown_scheduler_request_set",
+    "expression": "request.bits.set",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 745
+  },
+  {
+    "alias": "slowdown_scheduler_request_tag",
+    "expression": "request.bits.tag",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 747
+  },
+  {
+    "alias": "slowdown_scheduler_request_source",
+    "expression": "request.bits.source",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 749
+  },
+  {
+    "alias": "slowdown_scheduler_candidates",
+    "expression": "mshr_request",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 751
+  },
+  {
+    "alias": "slowdown_scheduler_unbarred",
+    "expression": "mshr_request_unbarred",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 753
+  },
+  {
+    "alias": "slowdown_scheduler_selected",
+    "expression": "mshr_selectOH",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 755
+  },
+  {
+    "alias": "slowdown_scheduler_set",
+    "expression": "scheduleSet",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 757
+  },
+  {
+    "alias": "slowdown_scheduler_tag",
+    "expression": "scheduleTag",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 759
+  },
+  {
+    "alias": "slowdown_scheduler_set_matches",
+    "expression": "setMatches",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 761
+  },
+  {
+    "alias": "slowdown_scheduler_allocate",
+    "expression": "alloc",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 763
+  },
+  {
+    "alias": "slowdown_scheduler_block_b",
+    "expression": "blockB",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 765
+  },
+  {
+    "alias": "slowdown_scheduler_block_c",
+    "expression": "blockC",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 767
+  },
+  {
+    "alias": "slowdown_validation_block",
+    "expression": "io.validationBlock",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 769
+  },
+  {
+    "alias": "slowdown_client_validation_block",
+    "expression": "io.clientValidationBlock",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 771
+  },
+  {
+    "alias": "slowdown_barrier_allow",
+    "expression": "io.barrier_allow",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 773
+  },
+  {
+    "alias": "slowdown_preservation_lock",
+    "expression": "io.preservationLock.valid",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 775
+  },
+  {
+    "alias": "slowdown_preservation_txn",
+    "expression": "io.preservationTxn",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 777
+  },
+  {
+    "alias": "slowdown_preservation_ack",
+    "expression": "io.preservationAck",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 779
+  },
+  {
+    "alias": "slowdown_outer_a_valid",
+    "expression": "io.out.a.valid",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 781
+  },
+  {
+    "alias": "slowdown_outer_a_ready",
+    "expression": "io.out.a.ready",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 783
+  },
+  {
+    "alias": "slowdown_outer_a_opcode",
+    "expression": "io.out.a.bits.opcode",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 785
+  },
+  {
+    "alias": "slowdown_outer_a_source",
+    "expression": "io.out.a.bits.source",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 787
+  },
+  {
+    "alias": "slowdown_outer_a_size",
+    "expression": "io.out.a.bits.size",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 789
+  },
+  {
+    "alias": "slowdown_outer_a_address",
+    "expression": "io.out.a.bits.address",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 791
+  },
+  {
+    "alias": "slowdown_outer_c_valid",
+    "expression": "io.out.c.valid",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 793
+  },
+  {
+    "alias": "slowdown_outer_c_ready",
+    "expression": "io.out.c.ready",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 795
+  },
+  {
+    "alias": "slowdown_outer_c_opcode",
+    "expression": "io.out.c.bits.opcode",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 797
+  },
+  {
+    "alias": "slowdown_outer_c_source",
+    "expression": "io.out.c.bits.source",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 799
+  },
+  {
+    "alias": "slowdown_outer_c_size",
+    "expression": "io.out.c.bits.size",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 801
+  },
+  {
+    "alias": "slowdown_outer_c_address",
+    "expression": "io.out.c.bits.address",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 803
+  },
+  {
+    "alias": "slowdown_outer_d_valid",
+    "expression": "io.out.d.valid",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 805
+  },
+  {
+    "alias": "slowdown_outer_d_ready",
+    "expression": "io.out.d.ready",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 807
+  },
+  {
+    "alias": "slowdown_outer_d_opcode",
+    "expression": "io.out.d.bits.opcode",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 809
+  },
+  {
+    "alias": "slowdown_outer_d_source",
+    "expression": "io.out.d.bits.source",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 811
+  },
+  {
+    "alias": "slowdown_outer_d_size",
+    "expression": "io.out.d.bits.size",
+    "group": "L2 Scheduler/TL/preservation",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "line": 813
+  },
+  {
+    "alias": "slowdown_l2_mshr_valid",
+    "expression": "request_valid",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1006
+  },
+  {
+    "alias": "slowdown_l2_mshr_set",
+    "expression": "request.set",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1008
+  },
+  {
+    "alias": "slowdown_l2_mshr_tag",
+    "expression": "request.tag",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1010
+  },
+  {
+    "alias": "slowdown_l2_mshr_source",
+    "expression": "request.source",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1012
+  },
+  {
+    "alias": "slowdown_l2_allocate",
+    "expression": "io.allocate.valid",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1014
+  },
+  {
+    "alias": "slowdown_l2_schedule_valid",
+    "expression": "io.schedule.valid",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1016
+  },
+  {
+    "alias": "slowdown_l2_schedule_ready",
+    "expression": "io.schedule.ready",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1018
+  },
+  {
+    "alias": "slowdown_l2_meta_valid",
+    "expression": "meta_valid",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1020
+  },
+  {
+    "alias": "slowdown_l2_victim_dirty",
+    "expression": "meta.dirty",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1022
+  },
+  {
+    "alias": "slowdown_l2_release_generation",
+    "expression": "releaseGeneration",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1024
+  },
+  {
+    "alias": "slowdown_l2_release_sent",
+    "expression": "releaseSent",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1026
+  },
+  {
+    "alias": "slowdown_l2_release_issued",
+    "expression": "releaseIssued",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1028
+  },
+  {
+    "alias": "slowdown_l2_s_release",
+    "expression": "s_release",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1030
+  },
+  {
+    "alias": "slowdown_l2_w_releaseack",
+    "expression": "w_releaseack",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1032
+  },
+  {
+    "alias": "slowdown_l2_s_acquire",
+    "expression": "s_acquire",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1034
+  },
+  {
+    "alias": "slowdown_l2_w_grant",
+    "expression": "w_grant",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1036
+  },
+  {
+    "alias": "slowdown_l2_s_execute",
+    "expression": "s_execute",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1038
+  },
+  {
+    "alias": "slowdown_l2_s_writeback",
+    "expression": "s_writeback",
+    "group": "L2 MSHR",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala",
+    "line": 1040
+  },
+  {
+    "alias": "slowdown_core_clock",
+    "expression": "clock.asBool",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "group": "request response/commit identity",
+    "line": 3069
+  },
+  {
+    "alias": "slowdown_lsu_resp_valid",
+    "expression": "VecInit(io.lsu.resp.map(_.valid))",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "group": "request response/commit identity",
+    "line": 3071
+  },
+  {
+    "alias": "slowdown_lsu_resp_rob_idx",
+    "expression": "VecInit(io.lsu.resp.map(_.bits.uop.rob_idx))",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "group": "request response/commit identity",
+    "line": 3073
+  },
+  {
+    "alias": "slowdown_lsu_resp_token",
+    "expression": "VecInit(io.lsu.resp.map(_.bits.request_token))",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "group": "request response/commit identity",
+    "line": 3075
+  },
+  {
+    "alias": "slowdown_lsu_resp_token_valid",
+    "expression": "VecInit(io.lsu.resp.map(_.bits.request_token_valid))",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "group": "request response/commit identity",
+    "line": 3077
+  },
+  {
+    "alias": "slowdown_commit_rob_idx",
+    "expression": "VecInit(io.commit.uops.map(_.rob_idx))",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "group": "request response/commit identity",
+    "line": 321
+  },
+  {
+    "alias": "slowdown_commit_pc",
+    "expression": "VecInit(io.commit.uops.map(_.debug_pc))",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "group": "request response/commit identity",
+    "line": 323
+  },
+  {
+    "alias": "slowdown_commit_arch_valid",
+    "expression": "io.commit.arch_valids",
+    "file": "chipyard/generators/boom/src/main/scala/exu/rob.scala",
+    "group": "request response/commit identity",
+    "line": 325
+  },
+  {
+    "alias": "slowdown_scheduler_interlock",
+    "expression": "chisel3.VecInit(mshr_stall)",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "group": "Scheduler independent blocking conditions",
+    "line": 815
+  },
+  {
+    "alias": "slowdown_scheduler_stage3_allowed",
+    "expression": "chisel3.VecInit(stage3Allowed)",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "group": "Scheduler independent blocking conditions",
+    "line": 817
+  },
+  {
+    "alias": "slowdown_scheduler_park_ready",
+    "expression": "chisel3.VecInit(parkReady)",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "group": "Scheduler independent blocking conditions",
+    "line": 819
+  },
+  {
+    "alias": "slowdown_scheduler_peer_block",
+    "expression": "chisel3.VecInit(peerResponseBlocked)",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "group": "Scheduler independent blocking conditions",
+    "line": 821
+  },
+  {
+    "alias": "slowdown_scheduler_source_a_ready",
+    "expression": "sourceA.io.req.ready",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "group": "Scheduler independent blocking conditions",
+    "line": 823
+  },
+  {
+    "alias": "slowdown_scheduler_source_b_ready",
+    "expression": "sourceB.io.req.ready",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "group": "Scheduler independent blocking conditions",
+    "line": 825
+  },
+  {
+    "alias": "slowdown_scheduler_source_c_ready",
+    "expression": "sourceC.io.req.ready",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "group": "Scheduler independent blocking conditions",
+    "line": 827
+  },
+  {
+    "alias": "slowdown_scheduler_source_d_ready",
+    "expression": "sourceD.io.req.ready",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "group": "Scheduler independent blocking conditions",
+    "line": 829
+  },
+  {
+    "alias": "slowdown_scheduler_source_e_ready",
+    "expression": "sourceE.io.req.ready",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "group": "Scheduler independent blocking conditions",
+    "line": 831
+  },
+  {
+    "alias": "slowdown_scheduler_source_x_ready",
+    "expression": "sourceX.io.req.ready",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "group": "Scheduler independent blocking conditions",
+    "line": 833
+  },
+  {
+    "alias": "slowdown_scheduler_directory_ready",
+    "expression": "directory.io.write.ready",
+    "file": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",
+    "group": "Scheduler independent blocking conditions",
+    "line": 835
+  },
+  {
+    "alias": "slowdown_mshr_file_req_valid",
+    "expression": "VecInit(io.req.map(_.valid))",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "group": "MSHR file admission",
+    "line": 1147
+  },
+  {
+    "alias": "slowdown_mshr_file_req_ready",
+    "expression": "VecInit(io.req.map(_.ready))",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "group": "MSHR file admission",
+    "line": 1149
+  },
+  {
+    "alias": "slowdown_mshr_sdq_ready",
+    "expression": "sdq_rdy",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "group": "MSHR file admission",
+    "line": 1151
+  },
+  {
+    "alias": "slowdown_mshr_file_active",
+    "expression": "io.active_transactions",
+    "file": "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala",
+    "group": "MSHR file admission",
+    "line": 1153
+  }
+]

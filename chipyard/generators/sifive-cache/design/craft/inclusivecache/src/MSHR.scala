@@ -1002,4 +1002,43 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
       }
     }
   }
+  // SLOWDOWN_TRACE_BEGIN: observation-only; no functional consumers.
+  val slowdown_l2_mshr_valid = chisel3.WireInit(request_valid)
+  chisel3.dontTouch(slowdown_l2_mshr_valid)
+  val slowdown_l2_mshr_set = chisel3.WireInit(request.set)
+  chisel3.dontTouch(slowdown_l2_mshr_set)
+  val slowdown_l2_mshr_tag = chisel3.WireInit(request.tag)
+  chisel3.dontTouch(slowdown_l2_mshr_tag)
+  val slowdown_l2_mshr_source = chisel3.WireInit(request.source)
+  chisel3.dontTouch(slowdown_l2_mshr_source)
+  val slowdown_l2_allocate = chisel3.WireInit(io.allocate.valid)
+  chisel3.dontTouch(slowdown_l2_allocate)
+  val slowdown_l2_schedule_valid = chisel3.WireInit(io.schedule.valid)
+  chisel3.dontTouch(slowdown_l2_schedule_valid)
+  val slowdown_l2_schedule_ready = chisel3.WireInit(io.schedule.ready)
+  chisel3.dontTouch(slowdown_l2_schedule_ready)
+  val slowdown_l2_meta_valid = chisel3.WireInit(meta_valid)
+  chisel3.dontTouch(slowdown_l2_meta_valid)
+  val slowdown_l2_victim_dirty = chisel3.WireInit(meta.dirty)
+  chisel3.dontTouch(slowdown_l2_victim_dirty)
+  val slowdown_l2_release_generation = chisel3.WireInit(releaseGeneration)
+  chisel3.dontTouch(slowdown_l2_release_generation)
+  val slowdown_l2_release_sent = chisel3.WireInit(releaseSent)
+  chisel3.dontTouch(slowdown_l2_release_sent)
+  val slowdown_l2_release_issued = chisel3.WireInit(releaseIssued)
+  chisel3.dontTouch(slowdown_l2_release_issued)
+  val slowdown_l2_s_release = chisel3.WireInit(s_release)
+  chisel3.dontTouch(slowdown_l2_s_release)
+  val slowdown_l2_w_releaseack = chisel3.WireInit(w_releaseack)
+  chisel3.dontTouch(slowdown_l2_w_releaseack)
+  val slowdown_l2_s_acquire = chisel3.WireInit(s_acquire)
+  chisel3.dontTouch(slowdown_l2_s_acquire)
+  val slowdown_l2_w_grant = chisel3.WireInit(w_grant)
+  chisel3.dontTouch(slowdown_l2_w_grant)
+  val slowdown_l2_s_execute = chisel3.WireInit(s_execute)
+  chisel3.dontTouch(slowdown_l2_s_execute)
+  val slowdown_l2_s_writeback = chisel3.WireInit(s_writeback)
+  chisel3.dontTouch(slowdown_l2_s_writeback)
+  // SLOWDOWN_TRACE_END
+
 }

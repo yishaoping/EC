@@ -291,6 +291,40 @@ class Rob(
   io.r_next_pc_valid      := arch_next_pc_valid
   io.can_commit_withoutGC:= can_commit_noGC.reduce(_|_)
 //===== GuardianCouncil Function: End ====//
+  // SLOWDOWN_TRACE_BEGIN: observation-only; no functional consumers.
+  val slowdown_rob_head_idx = chisel3.WireInit(rob_head_idx)
+  chisel3.dontTouch(slowdown_rob_head_idx)
+  val slowdown_rob_state = chisel3.WireInit(rob_state)
+  chisel3.dontTouch(slowdown_rob_state)
+  val slowdown_rob_head_valid = chisel3.WireInit(rob_head_vals)
+  chisel3.dontTouch(slowdown_rob_head_valid)
+  val slowdown_rob_head_pc = chisel3.WireInit(rob_head_pcs)
+  chisel3.dontTouch(slowdown_rob_head_pc)
+  val slowdown_rob_head_ldq = chisel3.WireInit(rob_head_uses_ldq)
+  chisel3.dontTouch(slowdown_rob_head_ldq)
+  val slowdown_rob_head_stq = chisel3.WireInit(rob_head_uses_stq)
+  chisel3.dontTouch(slowdown_rob_head_stq)
+  val slowdown_can_commit_noGC = chisel3.WireInit(can_commit_noGC)
+  chisel3.dontTouch(slowdown_can_commit_noGC)
+  val slowdown_can_commit = chisel3.WireInit(can_commit)
+  chisel3.dontTouch(slowdown_can_commit)
+  val slowdown_will_commit = chisel3.WireInit(will_commit)
+  chisel3.dontTouch(slowdown_will_commit)
+  val slowdown_will_commit_noGC = chisel3.WireInit(will_commit_noGC)
+  chisel3.dontTouch(slowdown_will_commit_noGC)
+  val slowdown_rob_gate = chisel3.WireInit(io.gh_stall)
+  chisel3.dontTouch(slowdown_rob_gate)
+  val slowdown_csr_stall = chisel3.WireInit(io.csr_stall)
+  chisel3.dontTouch(slowdown_csr_stall)
+  val slowdown_can_throw_exception = chisel3.WireInit(can_throw_exception)
+  chisel3.dontTouch(slowdown_can_throw_exception)
+  val slowdown_commit_rob_idx = chisel3.WireInit(VecInit(io.commit.uops.map(_.rob_idx)))
+  chisel3.dontTouch(slowdown_commit_rob_idx)
+  val slowdown_commit_pc = chisel3.WireInit(VecInit(io.commit.uops.map(_.debug_pc)))
+  chisel3.dontTouch(slowdown_commit_pc)
+  val slowdown_commit_arch_valid = chisel3.WireInit(io.commit.arch_valids)
+  chisel3.dontTouch(slowdown_commit_arch_valid)
+  // SLOWDOWN_TRACE_END
   val exception_thrown = Wire(Bool())
 
   dontTouch(io.commit)
@@ -538,6 +572,11 @@ class Rob(
 
     // -----------------------------------------------
     // Outputs
+  // SLOWDOWN_TRACE_BEGIN: observation-only; no functional consumers.
+    val slowdown_head_busy = chisel3.WireInit(rob_bsy(rob_head))
+    slowdown_head_busy.suggestName(s"slowdown_head_busy_$w")
+    chisel3.dontTouch(slowdown_head_busy)
+  // SLOWDOWN_TRACE_END
     rob_head_vals(w)     := rob_val(rob_head)
     rob_tail_vals(w)     := rob_val(rob_tail)
     rob_head_fflags(w)   := rob_fflags(rob_head)

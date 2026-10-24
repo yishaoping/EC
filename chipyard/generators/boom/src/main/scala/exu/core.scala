@@ -2103,6 +2103,28 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   val producerSealTargetSeq = ic_master.io.closing_seq
   ic_master.io.close_tail_ready := io.producer_seal_ready
   rob.io.gh_stall := io.gh_stall || rsu_stall.asBool || ic_stall.asBool || io.big_hang
+  // SLOWDOWN_TRACE_BEGIN: observation-only; no functional consumers.
+  val slowdown_gate_gh = chisel3.WireInit(io.gh_stall)
+  chisel3.dontTouch(slowdown_gate_gh)
+  val slowdown_gate_rsu = chisel3.WireInit(rsu_stall)
+  chisel3.dontTouch(slowdown_gate_rsu)
+  val slowdown_gate_ic = chisel3.WireInit(ic_stall)
+  chisel3.dontTouch(slowdown_gate_ic)
+  val slowdown_gate_big_hang = chisel3.WireInit(io.big_hang)
+  chisel3.dontTouch(slowdown_gate_big_hang)
+  val slowdown_rob_gate = chisel3.WireInit(rob.io.gh_stall)
+  chisel3.dontTouch(slowdown_rob_gate)
+  val slowdown_barrier_active = chisel3.WireInit(barrierServiceActive)
+  chisel3.dontTouch(slowdown_barrier_active)
+  val slowdown_barrier_seq = chisel3.WireInit(barrierServiceSeq)
+  chisel3.dontTouch(slowdown_barrier_seq)
+  val slowdown_barrier_bank = chisel3.WireInit(barrierServiceBank)
+  chisel3.dontTouch(slowdown_barrier_bank)
+  val slowdown_barrier_force_close = chisel3.WireInit(barrierForceClose)
+  chisel3.dontTouch(slowdown_barrier_force_close)
+  val slowdown_barrier_close_active = chisel3.WireInit(barrierCloseForActivePackage)
+  chisel3.dontTouch(slowdown_barrier_close_active)
+  // SLOWDOWN_TRACE_END
   // Separate protocol-timeout counters detect a release request that remains
   // asserted but never clears ownership.  Keep their threshold aligned with
   // the pipeline watchdog so all EC hang diagnostics use the same bound.
