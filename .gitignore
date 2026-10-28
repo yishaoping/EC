@@ -6,3 +6,18 @@
 /baseline/runs/*/*.vcd
 /baseline/runs/*/stderr.log
 /baseline/runs/*/test.log
+
+# Local figure workspace and superseded experiment sources are not release inputs.
+# Preserve these files on disk; Opt3 has its own versioned runner and references.
+/DOC/Figure/
+/docs/paper_design_reference.typ
+/slowdown/analysis_opt2/
+/slowdown/optimization_1/
+/slowdown/optimization_2/
+/slowdown/optimization_2b/
+/slowdown/safe_chain/
+/slowdown/run_optimization_1.sh
+/slowdown/run_optimization_2.sh
+/slowdown/run_optimization_2b.sh
+/slowdown/run_safe_chain_trace.sh
+/slowdown/optimization_3_checker/analysis/checker_counters.py
