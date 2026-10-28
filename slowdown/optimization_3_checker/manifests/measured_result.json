@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "run_id": "optimization_3_checker_20261028_090640_a56794e2",
+  "result": "SUCCEEDED",
+  "exit_status": 0,
+  "source_digest": "dece4a35a99eb0c2ed30fb917a9f8946e9d8d53a48d7f99c36e51f15a15e1fae",
+  "software": {
+    "elf": "/data1/gzh/EC/baseline/software_common_builds/gapbs512_20261023_03/test.riscv",
+    "elf_sha256": "da8897e790f0c5e91eff3e9560d2b0e7b4e1de6dff208788fb4d9e2ae462c81c",
+    "loadmem": "/data1/gzh/EC/baseline/software_common_builds/gapbs512_20261023_03/test.loadmem_hex",
+    "loadmem_sha256": "f1c0335e8a7ffc6f57232e9bcb8c80a49f45eacaa1e4f533f4cb3af91ad308ad"
+  },
+  "opt3_roi": 2928347,
+  "opt2b_roi": 3760243,
+  "incremental_gain_cycles": 831896,
+  "incremental_gain_percent": 22.123463829332305,
+  "accepted_results": 315,
+  "observer_count": 71,
+  "events": {
+    "path": "/data1/gzh/EC/slowdown/optimization_3_checker/runs/optimization_3_checker_20261028_090640_a56794e2/safe_chain_events.tsv",
+    "size": 39029794,
+    "sha256": "ad03afbab15175b3097f8a7fbfca32e9cf958e4fe873ba6e1d8cc9066b349e84"
+  },
+  "capture": {
+    "sizes": {
+      "safe_chain_events.tsv": 39029794,
+      "stdout.log": 496,
+      "stderr.log": 857
+    },
+    "counts": {
+      "discarded_diagnostic_lines": 7,
+      "discarded_diagnostic_bytes": 540,
+      "safe_chain_events.tsv_lines": 127537,
+      "stdout.log_lines": 10,
+      "stderr.log_lines": 5
+    },
+    "event_limit_bytes": 50331648,
+    "diagnostic_limit_bytes": 2097152,
+    "event_storage": "single compact TSV; no duplicate combined/raw event log"
+  },
+  "kind16_totals": {
+    "classified": 630932,
+    "no_cfi_or_fault": 462764,
+    "prefix": 38476,
+    "special": 266,
+    "wait_bjl": 129426,
+    "bjl_reserve": 129060,
+    "bjl_empty": 648246,
+    "bjl_head_mismatch": 6872,
+    "ready_held": 90034
+  },
+  "correctness": {
+    "status": "OBSERVED_CHECKS_PASS",
+    "errors": [],
+    "coverage": "COMPLETE",
+    "observers": 71,
+    "package_association": "PASS",
+    "counters": {
+      "accepted": 315,
+      "stale_level_observations": 0,
+      "held_duplicate_observations": 0,
+      "failed": 0,
+      "cancelled": 0,
+      "allocation_collisions": 0
+    },
+    "workload_comparison": "SAME_SOFTWARE_ROI_COMPARABLE",
+    "RUN_PROVENANCE": "UNRESOLVED",
+    "full_package_cache_dram_drain": "UNRESOLVED",
+    "recovery_fail_probe_dynamic": "NOT_EXERCISED_BY_PASS_WORKLOAD"
+  },
+  "original_summary_preserved": true,
+  "schema_note": "Original run summary has historical opt2b_roi/current and Opt2 comparison labels; corrected metrics here compare Opt3 to Opt2b."
+}

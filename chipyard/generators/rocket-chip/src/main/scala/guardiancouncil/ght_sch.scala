@@ -135,39 +135,40 @@ class GHT_SCH_FP (val params: GHT_SCH_Params) extends Module with HasGHT_SCH_IO
 
 class GHT_SCH_ANYAVILIABLE (val params: GHT_SCH_Params) extends Module with HasGHT_SCH_IO
 {
-  var nocore_available                           = WireInit(1.U(1.W))
-  val out_of_range                               = WireInit(false.B)
-  val change_dest                                = WireInit(false.B)
-  val nxt_dest                                   = WireInit(0.U(4.W))
+  // `core_na` is a busy/disabled bitmap.  The old any-available policy
+  // restarted its priority search at checker 1 whenever the current checker
+  // became busy, so short packages could repeatedly favor the same checker.
+  // `inst_c` is driven by R_IC only on a successful package allocation and is
+  // used here as a round-robin advance event.  If no allocation occurs, keep
+  // the current target unless it is unavailable, in which case fall back to
+  // the first available checker exactly as before.
+  val all_unavailable                            = io.core_na.map(_.asBool).reduce(_ && _)
   val current_dest                               = RegInit(0.U(4.W))
+  val current_in_range                           = current_dest >= io.core_s && current_dest <= io.core_e
+  val current_index                              = Mux(current_in_range, current_dest - io.core_s, 0.U)
+  val current_unavailable                        = !current_in_range || io.core_na(current_index).asBool
 
+  val first_available = MuxCase(io.core_s,
+    (0 until params.totalnumber_of_checkers).map(i =>
+      !io.core_na(i) -> (i + 1).U(4.W)))
 
-  for (i <- 0 to params.totalnumber_of_checkers - 1){
-    nocore_available                             = nocore_available & io.core_na(i)
+  val rr_candidates = (0 until params.totalnumber_of_checkers).map { offset =>
+    val raw = Mux(current_in_range, current_dest, io.core_s) + (offset + 1).U
+    val span = io.core_e - io.core_s + 1.U
+    Mux(raw > io.core_e, raw - span, raw)
   }
+  val rr_available = MuxCase(current_dest,
+    rr_candidates.map(dest =>
+      !io.core_na(dest - io.core_s) -> dest))
+  val next_dest = Mux(io.inst_c.asBool,
+    Mux(all_unavailable, current_dest, rr_available),
+    Mux(current_unavailable, Mux(all_unavailable, current_dest, first_available), current_dest))
 
-  val core_na_conditions = (0 until params.totalnumber_of_checkers).map { i => 
-    !io.core_na(i) -> (i + 1).U  // 注意这里索引从0开始，结果从1开始
-  }
-  out_of_range                                  := (current_dest < io.core_s) || (current_dest > io.core_e)
-  change_dest                                   := (((io.core_na(current_dest-1.U) === 1.U) && !nocore_available.asBool) || out_of_range)
-  nxt_dest                                      := MuxCase(0.U, 
-                                                          Array(out_of_range -> io.core_s,
-                                                                nocore_available.asBool -> current_dest) ++ core_na_conditions
-                                                          )
-                                                        //   ,
-                                                        //   !io.core_na(0).asBool -> 1.U,
-                                                        //   !io.core_na(1).asBool -> 2.U,
-                                                        //   !io.core_na(2).asBool -> 3.U,
-                                                        //   !io.core_na(3).asBool -> 4.U
-                                                        //  ))
-
-  current_dest                                 := Mux((io.rst_sch === 1.U), io.core_s, Mux(change_dest, nxt_dest, current_dest))
-  io.sch_dest                                  := Mux((io.rst_sch === 1.U), io.core_s, Mux(change_dest, nxt_dest, current_dest))
+  current_dest                                 := Mux(io.rst_sch === 1.U, io.core_s, next_dest)
+  io.sch_dest                                  := Mux(io.rst_sch === 1.U, io.core_s, next_dest)
   io.core_d                                    := 0.U
   io.sch_hang                                  := 0.U
-  dontTouch(nxt_dest)
-  // dontTouch(core_na_conditions)
+  dontTouch(rr_available)
 }
 
 

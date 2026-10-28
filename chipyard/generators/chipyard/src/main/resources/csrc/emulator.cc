@@ -535,6 +535,12 @@ done_processing:
           dtm ? dtm->exit_code() : 0, tsi ? tsi->exit_code() : 0,
           jtag ? jtag->exit_code() : 0, trace_count);
 
+  // SAFE_CHAIN_OBSERVATION_BEGIN: finalize input-only event sinks so each
+  // observer supplies an integrity footer. No additional eval/clock edge.
+#ifdef SAFE_CHAIN_EVENTS
+  if (tile) tile->final();
+#endif
+  // SAFE_CHAIN_OBSERVATION_END
   if (dtm) delete dtm;
   if (tsi) delete tsi;
   if (jtag) delete jtag;

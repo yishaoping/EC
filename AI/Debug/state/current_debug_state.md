@@ -1,5 +1,366 @@
 # Current Debug State
 
+## Opt3 design and Git delivery prepared (2026-10-28)
+
+Detailed frontend mechanism, ownership guards, clock domain, measured results,
+cumulative source dependencies and user-run reproduction commands are recorded
+in [Opt3 design](../../Design/opt3_checker_frontend_optimization_20261028.md).
+The release preserves the exact hardware bytes of the successful Opt3 run:
+source digest `dece4a35a99eb0c2ed30fb917a9f8946e9d8d53a48d7f99c36e51f15a15e1fae`.
+The commit includes required Opt1/Opt2/Opt2b prerequisites and both observer
+resources; it does not include local build/run/cache/tmp artifacts or unrelated
+paper edits. Existing run directories, manifests and attempt guards are retained.
+
+Release-only tooling changes correct Opt3-vs-Opt2b performance labels, validate
+kind16 partitions/monotonicity, recreate missing empty output directories, and
+allow `--repeat-from RUN_ID` only for the latest successful complete attempt with
+the same hardware/workload identity. The default still refuses another attempt;
+failed/incomplete runs cannot be bypassed. Sixteen offline regression tests,
+source contracts and the static entry check passed. Offline replay of the saved
+Opt3 compact trace reproduces ROI 2,928,347, 22.123464% gain vs Opt2b, COMPLETE
+coverage, OBSERVED_CHECKS_PASS and 630,932 fused classifications.
+The analyzer uses a versioned small summary snapshot with the original file hash
+instead of requiring an untracked historical safe-chain run directory.
+
+No new hardware generation, SBT/Scala/native/software compilation, simulation,
+or benchmark is part of this release. Full drain, RUN_PROVENANCE, failure/probe
+recovery and timing closure remain unresolved as described below. User command:
+`bash slowdown/run_optimization_3_checker.sh --repeat-from optimization_3_checker_20261028_090640_a56794e2`.
+
+## Opt3 measured: successful, 22.12% ROI reduction vs Opt2b (2026-10-28)
+
+User run `optimization_3_checker_20261028_090640_a56794e2` finished with exit0/SUCCEEDED,
+ROI 2,928,347 main cycles. Reduction vs Opt2b: 831,896 (22.123464%);
+vs original Current: 1,806,534 (38.153736%). Baseline ratio 2.923450x.
+GAPBS512 verified/checksum43439728, 315 accepted checker results,
+FAIL/CANCEL/stale/held-duplicate/collision0; Stage1 L1/LSU exit drain PASS.
+71-observer coverage COMPLETE; 127,466 events + 71 footers, 39,029,794 bytes,
+no overflow/truncation. Independent read, hashes, kind16 conservation and
+run/preparation/current-source identity match.
+
+630,932 fused classifications; separate CLASSIFY counter zero (Opt2b 630,955).
+Instruction wait 1,980,533 -> 1,346,930 local cycles; aggregate mean package
+latency 23,083.33 -> 17,792.74 main cycles. Strict unsafe WaitSafe
+2,296,540 -> 1,547,483; after-seal-before-done pending 2,098,732 -> 1,407,280.
+312 vs 324 complete ROI package windows: aggregate, not matched causal savings.
+Remaining instruction wait is 48.53% overall and 67.64% post-seal.
+Full package/cache/DRAM durable drain and RUN_PROVENANCE remain unresolved;
+PASS workload does not exercise failure/probe recovery.
+
+Raw opt3_summary keeps old performance field names/comparison against Opt2.
+Explicit corrected Opt3-vs-Opt2b numbers and evidence boundary:
+[Opt3 results](../../TMP/opt3_results_20261028_122909_092f25bb/README.md).
+Current status: **OPT3_MEASURED_MEANINGFUL_GAIN**. No new hardware run or
+source change in this results analysis. Earlier runtime-pending notes below
+are historical and superseded.
+
+## Opt2b attributed; Opt3 checker patch ready for user-run validation (2026-10-28)
+
+The first Opt3 launcher attempt stopped before build with a private SBT socket
+path of 110 bytes. This was a launcher path-length guard, not an RTL/SBT
+failure. `launch_optimization_3_checker.py` now allocates a one-character
+private temporary leaf under `optimization_3_checker/tmp`; the socket path is
+102 bytes and remains inside the sandbox. Static check and offline contracts
+pass after the fix.
+
+Opt2b GAPBS512 completed successfully with checksum `43439728` and ROI
+`3,760,243` main cycles. This is `947,030` cycles (`20.118442%`) below Opt2
+and `974,638` (`20.584213%`) below the original current run. Compact evidence
+was complete: 67 Opt2b observers, 325 accepted results, no FAIL/CANCEL/stale/
+duplicate/collision, and no event overflow or truncation. Full package/cache/
+DRAM drain and `RUN_PROVENANCE` remain unresolved; the PASS workload does not
+exercise failure recovery/probe behavior.
+
+Checker attribution is now closed enough for one functional choice. Owned
+checker execution consumed 3,739,176 local cycles; `WAIT_INSTRUCTION` was
+1,980,533 (52.9671%), and sealed-to-done instruction wait was 1,285,131 of
+1,708,940 (75.2005%). The four checker mean/p95 main-cycle latencies are
+23032.22/48140, 22786.33/47632, 22406.12/45036, and 24126.88/48750.
+Strict same-line cross-package Store preservation exposure is 2,296,726 main
+cycles across 186 timed episodes/92 lines, but SVB depth and occupancy are not
+observable in the serialized trace. SVB recovery remains open for P1 PASS/P2
+FAIL, so no SVB RTL was added.
+
+The selected and implemented next change is `CHECKER_FRONTEND_BOUND`:
+accepted S2 response capture and CFI classification are fused in
+`rocket/Frontend.scala`, removing the mandatory classifier state. The patch
+retains one response owner, FQ hold semantics, BJL reservation only in
+`WAIT_BJL`, redirect/clear handling, and held partial-RVC tail state. Kind16
+four-hart cumulative classification observers and assertions were added.
+Static source identity, resource closure, Python syntax, and offline contracts
+pass. No Scala/SBT compile, hardware generation, Verilator build, simulation,
+or benchmark was run. User entry:
+`bash /data1/gzh/EC/slowdown/run_optimization_3_checker.sh`.
+
+Status: **READY_TO_RUN_CHECKER_OPT3** (static delivery only; dynamic gain and
+correctness remain pending).
+
+## Opt2 measured; Opt2b checker handoff prepared, user run pending (2026-10-27)
+
+This supersedes the older Opt2-runtime-pending status below. Successful user
+run `optimization_2_20261027_144838_fdf571b7` exited 0, GAPBS512 verified,
+checksum 43439728, ROI 4,707,273 main cycles. Opt1 was 4,706,513: +760,
+essentially unchanged; Baseline 1,001,675. Opt2 allocation 82/85/82/82 is
+balanced, but package count balance did not shorten checker service time.
+331 results accepted; FAIL/CANCEL/collision/stale/duplicate 0. Its 53-observer
+compact evidence is COMPLETE. Stage1 L1/LSU exit drain passed; full
+package/cache/DRAM drain and RUN_PROVENANCE remain unresolved.
+
+Observed same-line preservation pending is 3,241,793 main cycles; strict
+unsafe 3,162,560. Unformed-result wait is 3,019,697 (93.149% of pending),
+including 2,897,079 after producer seal but before exec_done. Per-package
+done-to-formed is 68 main cycles; result CDC about 4. These are blocking
+stages, not additive avoidable ROI loss. Opt2 ROB-critical overlap is not
+observed. Old Opt1 counters/ROB overlap are kept separately, not transplanted.
+
+Packages stream before seal: all 331 assignments precede seal. Mean
+assign-to-admit is 14.93 main cycles; admit-to-done 28,893.46, p95 74,940.
+Old first-active is a sampled proxy, not accepted start/issue. 650,116 checked
+instructions, 49..4,999/package, weighted main CPI 14.7108 (about 7.3554 local;
+one checker cycle is two main cycles). Instruction/latency correlation .9186;
+top10 latency packages associate with only 7.301% of strict unsafe wait.
+Broad execution cost is supported; internal dominant stall remains unknown.
+
+SVB is NOT implemented. Capacity/depth coverage for 2/3/4 total versions and
+2/4/8/16 global entries is null: serial traces hide never-issued younger
+Stores. The loose opportunity upper bound is 3,162,560 waiting cycles,
+not ROI gain or a capacity prediction. Concrete correctness no-go:
+L2=P0 safe / SVB=P1 / L1=P2; P1 PASS then P2 FAIL must restore P1, but
+current recovery lacks an SVB newest-safe selector. Existing WB reads live
+L1 and uses voluntary T-to-N plus metadata clear; publishing P1 while
+retaining P2 needs additional ownership/directory/ACK semantics. Sticky
+failure/fail-closed is not rollback data restoration. Pre-allocation WaitSafe
+fallback cannot solve failure/probe after snapshot.
+
+The ONE functional Opt2b is Frontend same-cycle accepted FQ response to
+resolved successor Icache request handoff, avoiding the fixed EMPTY issue
+bubble. It saves at most one local issue cycle per eligible chunk; it does
+not prove ROI gain or explain all 2.897M wait. Held response, fault/replay,
+redirect, BJL resolution and sole-owner conditions remain guarded. Opt1,
+Opt2 round robin and other existing dirty changes/deletions are preserved.
+RocketCore and DCache additions are observation-only: per-owned-package
+local priority stall counters/timestamps, sparse Frontend cumulative counts,
+semantic cache writes/first blocks without cacheline bytes. 67 expected
+observer instances. No new functional cache, result, watermark or CDC path.
+
+Status: **READY_TO_RUN_OPT2B_CHECKER** means static delivery ready only.
+19 offline synthetic/contract tests and the launcher's pure static identity,
+path/resource checks passed (27 source files, 26 dependency projects).
+Source digest: ea894cdb25f72aa1c9b818f68d33e085089919b27c2a8d3bb7a8127a2d732618.
+Scala compilation, elaboration, RTL generation, native/software compilation,
+Verilator, simulation and benchmark are NOT_EXECUTED in this task.
+
+User-only entry (one fresh full GAPBS512, seed1; no FST/VCD/automatic retry):
+
+```bash
+bash /data1/gzh/EC/slowdown/run_optimization_2b.sh
+```
+
+Reports (13), incremental three-file patch, existing evidence statistics,
+validation/provenance and retained synthetic fixtures:
+[Opt2b delivery](../../TMP/opt2b_checker_and_multiversion_20261027_184537_3891819a/README.md).
+The next run measures the functional handoff and internal checker categories
+together; observed local post-seal counters are not an exact causal weighted
+partition of the old 2.897M main-cycle wait. Dynamic correctness/performance,
+full drain/provenance and SVB recovery remain unresolved.
+
+## Safe-chain result-production bottleneck; Opt2 ready for user-run validation (2026-10-27)
+
+This supersedes the older repaired-runtime-pending notes below. Successful
+safe_chain_20261026_141031_5b330641 exited 0 with GAPBS512 verified/checksum
+43439728 and ROI 4,706,513 main cycles. Its compact TSV is 12,633,982 bytes,
+41,337 SC1 rows plus 53 observer footers, coverage COMPLETE, below all caps.
+The router discarded seven nonmatching diagnostic lines (540 bytes); required
+ROI/workload/host-success/L1-LSU drain markers are retained. Stage1 L1/LSU
+exit drain PASS does not close full cache/package/DRAM drain or RUN_PROVENANCE.
+
+Offline replay reproduces the saved summary exactly. Decision is
+OPT2_TARGET_CHECKER_RESULT_LATENCY. All pending: 3,178,984 cycles / 1,152
+entries; strictly unsafe WaitSafe: 3,100,681. Exclusive breakdown: unformed
+result 2,993,080; formed-result transfer 3,720; prefix hole 87,361; registered
+watermark propagation 178; post-safe release 78,275; multi-cause 16,370;
+unresolved pending classification 0. Of unformed-result wait, 2,981,282 is
+before exec_done, including 2,867,231 after producer seal. The dominant
+waiting stage is proven; scheduling alone causing all that wait is not.
+
+Maximum allocated missing-frontier lifetime is 50,424 (seq112, no later PASS
+held behind); maximum actual later-PASS blocking is 12,772 (hole320); peak
+single-hole amplification is three later PASS. Commit-ready opportunities,
+per-MSHR lifetimes and exact causal/avoidable ROI cost are not continuously
+observed. Remaining delta 3,704,838 minus pending gives arithmetic remainder
+525,854, not proven independent lost cycles. R_IC does not consume L1 safe
+watermark; result release is the common upstream of gate and safety branches.
+
+Existing Opt2 functional delta is only ght_sch.scala and R_IC.scala:
+availability-aware round-robin advance on actual package allocation, with
+existing first-available fallback when a target becomes busy. Ownership,
+admission, safe prefix, result CDC, cache preservation and Opt1 stay intact.
+Observed checker assignments 97/94/91/50 and static low-index priority support
+the policy experiment, but do not establish its isolated performance benefit
+or perfect fairness. No RTL was changed in this continuation.
+
+Prior optimization_2_20261026_202323_9020fd02 completed verilog/default builds
+and observer audits, then failed before simulator Popen with missing
+compact_capture. It did not run the Opt2 workload. The dependency is now
+provided and checked before build/attempt guards. Explicit --resume-built-run
+permits one simulation using only that verified existing build; checks old
+failure/no simulation artifacts, source/software/executable/model identities,
+observer hierarchy and unique guard. Old guard/manifest/build are preserved;
+a new durable guard prevents any second attempt. No automatic retry.
+
+READY_TO_RUN_OPTIMIZATION_2 means static implementation/launch/analysis ready;
+Opt2 dynamic correctness and ROI gain are PENDING. All 18 mock/file tests,
+Python AST, shell/diff, source/old-evidence identity, phase conservation and
+actual saved-model static audits PASS. No simulation, hardware generation,
+SBT, native/software/hardware compilation or benchmark was executed in this
+continuation. User alone runs the dynamic command:
+
+```bash
+cd /data1/gzh/EC
+./slowdown/run_optimization_2.sh \
+  --resume-built-run optimization_2_20261026_202323_9020fd02
+```
+
+Reports (16), minimal patch, launcher entry, snapshots and evidence hashes:
+[Opt2 final delivery](../../TMP/opt2_rootcause_final_20261026_f3d927c1/README.md).
+Exact downstream commit/MSHR/set-collateral/replay metrics remain explicitly
+UNOBSERVED/null in the new analyzer; no additional observation run is proposed.
+
+## Safe-chain boot observer overflow fixed; repaired runtime pending (2026-10-26)
+
+DIRECT_EVIDENCE: user run safe_chain_20261026_114110_076b64d2 completed
+RTL generation and Verilator build (both return code 0), then failed with
+SAFE_CHAIN_OBSERVER_OVERFLOW before software ROI. Its 50,000 TSV records
+are exclusively KIND=10/hart=0/RESET=1, cycles 0..49,999; no START, ROI or
+SC_END. The old boundary logger had ROI=true, level-sensitive RESET/START
+sample and force_event=true. Boot-held RESET therefore exhausted its budget.
+This supersedes older notes below saying no safe-chain simulation had started.
+
+The repair changes RESET/START boundary logging to rising edges using two
+logger-only RegNext registers. STOP uses its existing pulse. No functional
+cache, Opt1, watermark, protection, statistics or workload logic changes;
+no Opt2 functionality. Per-observer and byte budgets remain unchanged.
+Capture retains the exact overflow observer identity, exit code and byte/count
+statistics; a secondary close error no longer masks the first failure.
+
+Old evidence and guards remain immutable. Default launcher still refuses
+another simulation. A user-only explicit replacement for this known pre-ROI
+failure is prepared with --retry-observer-overflow
+safe_chain_20261026_114110_076b64d2. It requires a different source identity,
+validates the complete old RESET prefix, and permits no further replacement
+after the replacement simulation starts. No automatic retry or guard deletion.
+
+Validation: all 35 offline tests and static identity/resource/AST/JSON/bash/diff
+checks passed. The original failed run hashes, HEAD and index are preserved.
+Validation in this repair is offline synthetic/static only; no Scala/native
+compilation, elaboration, RTL generation, workload or simulation. Existing
+generated RTL belongs to the failed old source, not the edge-logging repair.
+Runtime completeness, Opt2 attribution, ROB critical-path impact,
+RUN_PROVENANCE and full cache/package/DRAM drain remain UNRESOLVED.
+
+Evidence: AI/TMP/safe_chain_boundary_overflow_fix_20261026_abd48b5a/.
+User entry: slowdown/run_safe_chain_trace.sh (explicit recovery option above).
+
+## Safe-chain generation errors fixed; hierarchy audit rechecked offline (2026-10-26)
+
+DIRECT_EVIDENCE: existing RTL-only run safe_chain_rtl_20261026_090815_3f50a7ca
+completed its make verilog command with return code 0. Its final FAILED status
+came from the old observer audit counting KIND text in module definitions.
+One deduplicated Rocket definition contains KIND=6; four checker Rocket
+instances give four KIND=6 observers. The prior explanation calling KIND=6
+a single main-core observer was incorrect and is superseded by this evidence.
+
+The audit now joins the full TestHarness instance hierarchy to KIND parameters
+in each parent's emitted RTL. Exact counts remain 53 total, with four each
+for KIND=3/4/5/6 and 32 for KIND=9. Missing checkers, unreachable definition
+decoys, duplicate hierarchy paths, unavailable hierarchy, mismatched RTL and
+output-bearing logger resources are rejected. Existing generated RTL passes
+offline re-audit; all 21 recorded source hashes match current preparation
+(source digest 4dd7c81e158619d10778d13e36a9fd8615fb43985e42ca88fe03abb2f1bc1c4d).
+
+Earlier Bool padding, unknown-width getWidth, and whole-IO dontTouch failures
+are addressed by the existing fixed UInt observation sinks and removal of the
+unnecessary annotation. No hardware source was changed in this continuation.
+The observation-only review patch was reconstructed in memory from the saved
+pre-observation delta; 17 prior Opt1 input hashes and all marked source
+boundaries match. Its stale top-level hash is now checked by identity preflight.
+
+The later RTL-only run safe_chain_rtl_20261026_094812_33ad715f has no visible
+live process, no final return code and a stale IN_PROGRESS manifest. It is
+incomplete evidence, not a passing run. Original manifests/logs are retained.
+No new generation, Verilator build, workload or simulation was started in
+this continuation. User-only entry: slowdown/run_safe_chain_trace.sh.
+Runtime correctness, Opt2 attribution, RUN_PROVENANCE and full cache/package/
+DRAM drain remain UNRESOLVED. No Opt2 functionality or Git index change.
+
+Evidence: AI/TMP/safe_chain_error_fix_20261026_0b61333e/.
+
+## Safe-chain compact observation prepared; new run NOT executed (2026-10-25)
+
+Current + Opt1 now has OBSERVATION_ONLY safe-chain instrumentation. No Opt2
+functional change is included. Source fingerprint:
+912e879e81823ee4541a8074f7f23f4f8556e6286764a04301925b9de3502ba7.
+The earlier Opt1 user run optimization_1_20261025_123241_e7c5f139 succeeded:
+ROI 4,706,513 cycles versus Original Current 4,734,881 and Baseline 1,001,675;
+observed improvement is 28,368 cycles (0.599128%). Older dynamic-not-run notes
+below are history for their original preparation states.
+
+User-only entry: /data1/gzh/EC/slowdown/run_safe_chain_trace.sh.
+No launcher mode, SBT, elaboration, hardware/software/native compilation or
+simulation was executed in this preparation. Normal nontrace Verilator build;
+no full FST/VCD, no +verbose. The logger routes event rows through stderr apart
+from byte-stream UART stdout into one bounded TSV (96 MiB); diagnostic logs
+are capped at 8 MiB each. It captures traffic START through exit, then clips
+by unchanged software rdcycle ROI. 53 observer count/episode/footer checks,
+exact-tag checkpoint, main-clock time alignment and one-attempt guard prevent
+silent partial attribution or automatic expensive retries.
+
+Offline synthetic checks: 19 passed. Static source review confirms existing
+Opt1 functional code is unchanged outside marked observation blocks; generated
+RTL/compiler/runtime behavior remains unverified. Analysis classifies result
+formation/mandatory cleanup/CDC/L1 acceptance separately from prefix holes,
+registered watermark propagation and post-safe release. Decision remains
+ROOT_CAUSE_STILL_UNRESOLVED until complete future evidence. Activity is not
+ROB critical-path loss, avoidable cycles or a mechanism slowdown estimate.
+RUN_PROVENANCE and full cache/package/DRAM drain remain UNRESOLVED.
+
+Reports: AI/TMP/safe_chain_targeted_trace_20261025_baab7979/.
+Sealed launcher/schema/source/resource inputs: slowdown/safe_chain/manifests/.
+Original evidence, user deletion docs/paper_design_reference.typ, untracked
+DOC/Figure and the Git index are preserved. No staging/commit/push/cleanup.
+
+## Optimization 1 trace gate remediation; dynamic validation not run (2026-10-25)
+
+The user-run attempt `optimization_1_20261025_083906_1d2467bb` completed RTL
+generation but intentionally stopped before Verilator build when the generated
+RTL trace gate reported missing aliases. Source-to-generated review separated
+the report into 13 false negatives from CIRCT instance flattening
+(`ghm_slowdown_opt1_*`) and seven actual DCache direct aliases that disappeared
+before emitted FIRRTL. The seven probes now use observation-only `WireInit`
+aliases before `dontTouch`; generated RTL and compiled-trace audits now match a
+complete flattened leaf with only an optional numeric Vec suffix. The previous
+failed build/run evidence is retained. The repair passed 16 synthetic
+parser/contract/ledger tests, Python AST, JSON, bash syntax, and diff checks.
+The repaired source has not been regenerated, built, or simulated.
+
+## Optimization 1 candidate prepared; dynamic validation not run (2026-10-24)
+
+Decision: `IMPLEMENT_SET_FREEZE_OPTIMIZATION_FIRST`. One functional DCache
+change admits qualified ordinary different-tag loads to hit-only lookup during
+unsafe WaitSafe; misses nack with MSHR valid/fire suppressed. Existing snapshot
+drain, watermark, ACK, barrier and recovery conditions remain. GHM, R_IC and
+InclusiveCache changes are observation aliases only. This candidate has NOT
+been elaborated, compiled or simulated; the sealed Stage 3 results below apply
+to their original source/run, not to these new source bytes.
+
+Design/evidence: `AI/TMP/low_sim_optimization_plan_20261024_e5076be7/` and
+`slowdown/optimization_1/analysis/design/`. Persistent preparation and static
+checks: `slowdown/optimization_1/manifests/`. User-only Verilator entry:
+`/data1/gzh/EC/slowdown/run_optimization_1.sh`. No launcher mode was executed
+in this preparation. `RUN_PROVENANCE=UNRESOLVED` and full package/cache/DRAM
+drain remain unresolved. Complete offline analysis of the first run before
+considering another hardware version.
+
 ## Stage 3 closure evidence reviewed (2026-10-21)
 
 The sealed run `AI/TMP/stage3_runs/run_qx63gyhc/` passed the final evidence
@@ -657,3 +1018,10 @@ Evidence: `AI/TMP/rca_phase1_625000_20261012_212146/`
 ## 状态维护规则
 
 每次 `Root Cause → Fix Design → Implementation → Validation` 完成后，更新本文件；结论进入 bug/history；通用经验进入 skills/checks；脚本进入 scripts；大型输出只进 TMP。
+# Optimization 2 root-cause review; no safe RTL candidate yet (2026-10-25)
+
+The successful Optimization 1 run `slowdown/optimization_1/runs/optimization_1_20261025_123241_e7c5f139/` is now dynamic evidence: ROI is 4,706,513 cycles versus the pinned Original Current ROI 4,734,881, an actual reduction of 28,368 cycles (0.599128%), not the earlier informal 80k estimate. Same-set different-line exposure fell from 273,179 to 996 observed cycles, while MSHR lifetime stayed approximately unchanged (mean 88.3239 -> 88.0368, p95 107) and direct IC gate opportunity did not fall.
+
+The Opt1 trace was replayed offline into `AI/TMP/optimization2_rootcause_and_impl_20261025_d9703cb7/opt1_causal/`. Pending samples separate target PASS absence at the observed endpoint (3,012,446 cycles), result/prefix propagation (88,235 cycles), and post-safe WB/meta-clear stages (about 77k cycles). The first category is not an optimization proof; the prefix category has only 12 intervals and lacks per-predecessor/epoch evidence. R_IC gate ownership/snapshot conditions do not consume the L1 safe watermark directly. No common safe predecessor root cause is closed.
+
+Decision: `NO_SIMULATION_YET`. No Optimization 2 RTL, patch, build, elaboration, Verilator run, or workload was executed. `RUN_PROVENANCE=UNRESOLVED` and full cache/package/DRAM drain remain unresolved. Future evidence must add checker instruction/tail progress, per-slot predecessor state, R_ICSL/RocketCore cleanup/result lifecycle, and complete MSHR release joins before any safe release optimization is designed.

@@ -1,5 +1,7 @@
 # Debug 演化时间线
 
+2026-10-26：safe-chain 用户仿真在 ROI 前耗尽 KIND10 的 50,000 条预算；原日志全部为 boot-held RESET。修复观测器 RESET/START 上升沿采样与首次失败诊断保存；35 项离线测试及静态 identity 通过，未重新生成/构建/仿真。旧 guard 和证据保留，仅准备用户显式替代入口。见 [根因、修复及验证边界](../bugs/safe_chain_held_boundary_overflow_20261026.md)。
+
 | 时间/标识 | last good → first bad | 根因/状态 | 证据位置 |
 |---|---|---|---|
 | 2026-10-21 / Stage3 final closure evidence | `run_qx63gyhc` BUILD/DIRECTED/SYSTEM PASS → all closure gates PASS | 19/19 directed CASE、Stage 1/2/3 scoreboard、architectural data、main/checker、effect/terminal/release、clear/refill、progress、exit drain 和 provenance/seals 全部通过；同一 metadata-clear witness 完成 `PRESERVE_DONE → CLEAR_CHECK fire → EFFECT → TERMINAL → RELEASE`。Stage 3 closure YES；bounded v1Config/workload evidence，未改 RTL。 | `history/reports/stage3_closure_evidence_20261021.md`、`AI/TMP/stage3_runs/run_qx63gyhc/` |
@@ -103,3 +105,102 @@ helper，新增协议roundtrip CASE，现严格19/19。保留所有outer/跨包/
 - 2026-10-20：将剩余timer环落实为具体hart2/seq2链：旧FST1459857已有PASS2入队但handoff0；1459889进入timer trap；1460361 handler PC800006bc对80007e40发Acquire，word2与BOOM unsafe writer0/genb920/seq2的word0共行，watermark1。当前gate会使handler与自己的PASS交付互等。最小修复仅timer C/header按hart隔离64B完整block，硬件1463文件hash未变；2个provenance脚本检查真实ELF布局并在用户下次执行同入口时自动准备变更软件。C syntax-only/Python/shell/mock-only/diff静态PASS；已知timer unsafe-transfer环切断，READY_FOR_DYNAMIC_VALIDATION=YES、closure仍NO。未运行任何build/生成/仿真或runner。详见 [timer wait graph与control-domain修复](reports/stage3_timer_control_domain_20261020.md)。
 
 - 2026-10-20：用户run_jp4_qkjb在workload preparation失败：新增符号size解析把objdump的`.hidden`误当size。统一处理可选visibility并复用到_exit；3项offline测试及实际新ELF261符号/5个hidden、timer aligned64/size256、AMO/HTIF/LOAD头静态检查PASS。未改硬件或控制域设计，未build/转换/仿真或执行runner；同一入口待用户重跑，closure仍NO。详见 [symbol parser修复](reports/stage3_workload_symbol_parser_20261020.md)。
+
+
+## 2026-10-27 — Safe-chain RCA / Optimization 2 delivery, static only
+
+成功 safe_chain_20261026_141031_5b330641 exit0，GAPBS512 verified/checksum43439728，ROI4,706,513。原summary离线精确重现，compact TSV12,633,982B / 53 footers完整；此前“repaired run pending”状态已过时。全部pending3,178,984（strict unsafe3,100,681）：result未形成2,993,080、transfer3,720、prefix87,361、watermark传播178、post-safe78,275、multi16,370。Top1=OPT2_TARGET_CHECKER_RESULT_LATENCY；2,981,282在exec_done前，其中2,867,231在producer seal后。调度偏置贡献未隔离，不能承诺同数ROI收益。
+
+最大frontier缺失50,424（当时没有later PASS），最大actual PASS阻塞12,772，最大放大3个later PASS。commit/MSHR exact同源归因缺连续字段；525,854为delta−pending算术差，不是已证明未解释损失。R_IC无safe→gate直接边，result release为共同上游。
+
+保留此前两文件Opt2（ght_sch/R_IC，实际allocation触发availability-aware轮转，原fallback/ownership/safe不改）。旧Opt2 build成功后pre-Popen缺compact_capture，实际仿真没启动；补依赖提前检查与限定known-failure的显式现有build复用，旧guard/manifest/build不改且禁止自动重试。18项mock/file回归、AST/bash/diff、冻结source/事件/旧guard/model身份审计PASS；本轮无RTL改动、仿真、生成、SBT或任何编译/benchmark。READY_TO_RUN_OPTIMIZATION_2只指静态交付就绪，动态收益/正确性PENDING。
+
+16份报告、最小patch、launcher转发、分析器snapshot与hash索引：
+[最终交付](../../TMP/opt2_rootcause_final_20261026_f3d927c1/README.md)。用户命令：`./slowdown/run_optimization_2.sh --resume-built-run optimization_2_20261026_202323_9020fd02`。全局drain/RUN_PROVENANCE及未观测downstream指标继续unresolved。
+
+## 2026-10-27 — Opt2b checker execution / bounded SVB go-no-go
+
+用户成功 Opt2 `optimization_2_20261027_144838_fdf571b7` exit0、GAPBS512
+verified/checksum43439728、ROI4,707,273（比Opt1 +760）；allocation已均衡
+82/85/82/82。旧“Opt2 dynamic pending”状态由此取代。331 accepted results，
+FAIL/CANCEL/collision/stale/duplicate0、53 observer coverage COMPLETE。
+Stage1 L1/LSU exit drain PASS；full cache/package/DRAM drain 与 RUN_PROVENANCE未关闭。
+
+离线证据：pending3,241,793、strict unsafe3,162,560；unformed result3,019,697，
+其中sealed→exec_done2,897,079。全部assignment早于seal，流式执行；
+assign→admit均值14.93、admit→done均值28,893.46 main cycles。
+650,116 checked instructions，weighted main CPI14.7108；top10 latency包只关联
+7.301% unsafe pending。广泛执行成本有支持，内部主stall旧trace仍不足以判定。
+
+SVB未实现：深度/容量coverage均null，串行trace看不到未发出Store；
+3,162,560只是宽松OPPORTUNITY_UPPER_BOUND，不是ROI gain。
+具体no-go是P1 PASS/P2 FAIL需要恢复SVB P1，而现有路径只有sticky/fail-closed，
+无SVB safe restore selector；原WB读live L1、voluntary T→N且ACK后清metadata，
+不能只换seq就发布旧P1并继续持有newest P2。snapshot后failure/probe不能靠
+allocation前fallback解决。本轮没有以“复杂”代替正确性反例，也未声称机会小。
+
+仅一个功能优化：Frontend当前READY响应被FQ接受时，同拍允许已解析successor
+Icache req.fire，移除固定EMPTY issue空拍；每eligible chunk至多提前一个checker
+local cycle，性能收益未测。RocketCore owned-package stall分类/时间戳、Frontend
+累计状态计数、DCache semantic write/first block均仅观测，67 observer；
+Opt1/Opt2与其他dirty修改/删除保留，不修改L2/DRAM功能。
+
+13份报告和三文件增量patch已准备；19项offline synthetic/contract tests与
+纯static-check通过（27 source、26 dependency projects），日志和provenance原地保存。
+本轮未Scala/SBT/native/software编译、elaboration、RTL生成、Verilator、仿真或benchmark。
+**READY_TO_RUN_OPT2B_CHECKER**；下一次由用户执行
+`bash /data1/gzh/EC/slowdown/run_optimization_2b.sh`，一次完整GAPBS512/seed1，
+无FST/VCD、无自动retry。局部分类不是旧2.897M的精确因果加权分摊，动态收益/正确性待测。
+[交付与证据](../../TMP/opt2b_checker_and_multiversion_20261027_184537_3891819a/README.md)。
+## 2026-10-28 — Opt2b attribution and Opt3 checker delivery
+
+Opt2b completed with GAPBS512 checksum `43439728`, ROI `3,760,243` main
+cycles, and complete compact evidence. The dominant checker category is
+`WAIT_INSTRUCTION`: 1,980,533 of 3,739,176 owned local cycles, rising to
+75.2005% after producer seal. Strict cross-package same-line Store exposure is
+2,296,726 main cycles, but serialized WaitSafe execution cannot establish SVB
+depth/occupancy, and the P1 PASS/P2 FAIL restore invariant remains unclosed.
+
+The next single optimization is `CHECKER_FRONTEND_BOUND`. `Frontend.scala`
+now classifies the accepted S2 response on the response edge, removes the
+mandatory `checker_classify` state, retains FQ/BJL/redirect/partial-RVC
+ownership semantics, and emits four kind16 cumulative observers. Static
+identity/resource/contract checks pass. No hardware generation, compilation,
+simulation, or benchmark was run; status is `READY_TO_RUN_CHECKER_OPT3` for
+the user-run launcher.
+
+
+## 2026-10-28 — Opt3 run measured, clear gain over Opt2b
+
+`optimization_3_checker_20261028_090640_a56794e2` SUCCEEDED/exit0, GAPBS512 verified/checksum43439728.
+ROI 2,928,347; vs Opt2b reduction 831,896 (22.123464%), vs original
+reduction 1,806,534 (38.153736%); 2.923450x Baseline. 315 PASS results,
+all observed FAIL/CANCEL/stale/duplicate/collision counters0; Stage1 L1/LSU
+drain PASS. 71 complete observers; independent compact parse/hash and
+classification-partition checks PASS. 630,932 fused responses, CLASSIFY0.
+Strict unsafe WaitSafe decreases to 1,547,483; instruction wait to 1,346,930
+local cycles. Full drain/provenance/failure-probe recovery remain open.
+Raw summary uses inherited Opt2 performance labels; corrected comparison
+in [results](../../TMP/opt3_results_20261028_122909_092f25bb/README.md), original artifacts preserved.
+This continuation only reads existing simulation evidence and writes reports.
+
+## 2026-10-28 — Opt3 frontend design and source release
+
+Documented Opt2b accepted-response handoff and Opt3 fused S2 classification,
+ownership/BJL/RVC guards, checker gated-clock scope, measured performance and
+validation boundaries in [Opt3 design](../../Design/opt3_checker_frontend_optimization_20261028.md).
+The release retains the successful run's hardware bytes and required cumulative
+Opt1/Opt2/Opt2b dependencies, including both shared observer resources. Large
+runtime products, old evidence and unrelated paper edits remain local and intact.
+
+Release tooling now reports Opt3 gains against the correct Opt2b reference,
+checks every kind16 partition/counter snapshot, recreates empty runtime directories
+after checkout and supports explicit repetition of the latest successful complete
+run with unchanged source/software identity. Default/failed-run no-retry guards
+remain in force. Sixteen offline regression tests, source contracts and static
+preflight passed; offline replay reproduced ROI 2,928,347, 22.123464% gain,
+COMPLETE coverage and OBSERVED_CHECKS_PASS. No hardware generation, compilation,
+simulation or benchmark was executed. Full drain/provenance/failure recovery and
+timing closure remain open; Git/index/source identity is audited separately.
+Historical comparison inputs are pinned as small versioned snapshots with source
+hashes; the analyzer no longer reads the old untracked safe-chain run directory.

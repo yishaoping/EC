@@ -144,6 +144,9 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   val snapshot_armed                            = RegInit(false.B)
   val packet_alloc_valid_reg                    = RegInit(false.B)
   val packet_alloc_seq_reg                      = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  // Driven after snapshot acceptance is defined; declared here so the
+  // scheduler input is connected without depending on declaration order.
+  val scheduler_advance                           = WireDefault(false.B)
 
 
   // Track owner: capture on first idle→busy transition, clear when idle & excluded from mask
@@ -169,7 +172,10 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   val u_sch_fp                                  = Module (new GHT_SCH_ANYAVILIABLE(GHT_SCH_Params (num_checkers)))
   u_sch_fp.io.core_s                           := 1.U
   u_sch_fp.io.core_e                           := num_checkers.U
-  u_sch_fp.io.inst_c                           := 1.U // Holding the scheduling results
+  // Advance the availability search only when a snapshot actually allocates
+  // a package.  This preserves the stable target while the FSM waits for a
+  // snapshot, then starts the next search after the checker just selected.
+  u_sch_fp.io.inst_c                           := scheduler_advance.asUInt
 
   for (i <- 0 until num_checkers) {
     // core_na = 1 means checker is NOT available (busy under ANY big core OR disabled by mask)
@@ -255,6 +261,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
     barrierCloseAckSeqReg := io.barrier_force_close_seq
   }
   val package_allocated = snapshot_accepted && !capture_ctrl(0)
+  scheduler_advance := package_allocated
   val allocated_packet_seq = packet_seq_counter + 1.U
   packet_alloc_valid_reg := false.B
   for (i <- 0 until params.totalnumber_of_cores) {
@@ -498,6 +505,86 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   io.snapshot_drain                             := snapshot_drain_active
   io.snapshot_capture                           := snapshot_accepted
   io.old_crnt_target                            := old_crnt_target
+  // OPTIMIZATION_1_TRACE_BEGIN: preserve the individual package-control
+  // predicates behind the existing ROB gate.  These aliases have no consumer
+  // in the scheduler, snapshot, or checker-release protocol.
+  val slowdown_opt1_ic_fsm_state = WireInit(fsm_state)
+  dontTouch(slowdown_opt1_ic_fsm_state)
+  val slowdown_opt1_ic_ctrl = WireInit(ctrl)
+  dontTouch(slowdown_opt1_ic_ctrl)
+  val slowdown_opt1_ic_scheduler_available = WireInit(scheduler_available)
+  dontTouch(slowdown_opt1_ic_scheduler_available)
+  val slowdown_opt1_ic_selected_available = WireInit(selected_available)
+  dontTouch(slowdown_opt1_ic_selected_available)
+  val slowdown_opt1_ic_package_owned = WireInit(package_owned)
+  dontTouch(slowdown_opt1_ic_package_owned)
+  val slowdown_opt1_ic_status = WireInit(ic_status)
+  dontTouch(slowdown_opt1_ic_status)
+  val slowdown_opt1_ic_global_status = WireInit(io.global_ic_status)
+  dontTouch(slowdown_opt1_ic_global_status)
+  val slowdown_opt1_ic_clear_status = WireInit(io.clear_ic_status)
+  dontTouch(slowdown_opt1_ic_clear_status)
+  val slowdown_opt1_ic_producer_open = WireInit(producer_open)
+  dontTouch(slowdown_opt1_ic_producer_open)
+  val slowdown_opt1_ic_producer_release = WireInit(producer_release)
+  dontTouch(slowdown_opt1_ic_producer_release)
+  val slowdown_opt1_ic_close_tail_ready = WireInit(io.close_tail_ready)
+  dontTouch(slowdown_opt1_ic_close_tail_ready)
+  val slowdown_opt1_ic_rsu_busy = WireInit(io.rsu_busy)
+  dontTouch(slowdown_opt1_ic_rsu_busy)
+  val slowdown_opt1_ic_barrier_close_request = WireInit(barrierCloseRequest)
+  dontTouch(slowdown_opt1_ic_barrier_close_request)
+  val slowdown_opt1_ic_pipeline_stall = WireInit(io.if_pipeline_stall)
+  dontTouch(slowdown_opt1_ic_pipeline_stall)
+  val slowdown_opt1_ic_active_packet_seq = WireInit(active_packet_seq)
+  dontTouch(slowdown_opt1_ic_active_packet_seq)
+  val slowdown_opt1_ic_clock = WireInit(clock.asBool)
+  dontTouch(slowdown_opt1_ic_clock)
+  val slowdown_opt1_ic_exit_requested = WireInit(exit_requested)
+  dontTouch(slowdown_opt1_ic_exit_requested)
+  val slowdown_opt1_ic_mode_switch = WireInit(io.mode_switch)
+  dontTouch(slowdown_opt1_ic_mode_switch)
+  val slowdown_opt1_ic_mode_ret = WireInit(io.mode_ret)
+  dontTouch(slowdown_opt1_ic_mode_ret)
+  val slowdown_opt1_ic_excp_mode = WireInit(io.excp_mode)
+  dontTouch(slowdown_opt1_ic_excp_mode)
+  val slowdown_opt1_ic_threshold_reached = WireInit(ic_counter(crnt_target_ic) >= io.ic_threshold)
+  dontTouch(slowdown_opt1_ic_threshold_reached)
+  val slowdown_opt1_ic_icsl_na = WireInit(io.icsl_na)
+  dontTouch(slowdown_opt1_ic_icsl_na)
+  val slowdown_opt1_ic_snapshot_ready = WireInit(snapshot_ready)
+  dontTouch(slowdown_opt1_ic_snapshot_ready)
+  val slowdown_opt1_ic_snapshot_armed = WireInit(snapshot_armed)
+  dontTouch(slowdown_opt1_ic_snapshot_armed)
+  val slowdown_opt1_ic_snapshot_accepted = WireInit(snapshot_accepted)
+  dontTouch(slowdown_opt1_ic_snapshot_accepted)
+  val slowdown_opt1_ic_selected_target = WireInit(crnt_target_ic)
+  dontTouch(slowdown_opt1_ic_selected_target)
+  val slowdown_opt1_ic_scheduler_target = WireInit(sch_result_ic)
+  dontTouch(slowdown_opt1_ic_scheduler_target)
+  val slowdown_opt1_ic_checker_enable = WireInit(checker_enable_reg)
+  dontTouch(slowdown_opt1_ic_checker_enable)
+  val slowdown_opt1_ic_correct_process = WireInit(io.if_correct_process)
+  dontTouch(slowdown_opt1_ic_correct_process)
+  // OPTIMIZATION_1_TRACE_END
+  // SAFE_CHAIN_OBSERVATION_BEGIN — no changes to package/gate progression.
+  val (safeChainCycle, safeChainRoi) = freechips.rocketchip.util.SafeChainObservation.context()
+  val safeChainIcFlags = VecInit(Seq(producer_open, snapshot_accepted,
+    boundary_has_old, final_pending, io.rsu_busy.asBool, io.close_tail_ready,
+    scheduler_available, selected_available,
+    (fsm_state === fsm_snap || fsm_state === fsm_cooling) && snapshot_ready, snapshot_armed,
+    (fsm_state === fsm_snap || fsm_state === fsm_cooling) && io.rob_empty, exit_requested, barrierCloseRequest, io.if_pipeline_stall.asBool,
+    package_allocated)).asUInt
+  val safeChainIcFields = Seq(active_packet_seq, boundary_seq, safeChainIcFlags,
+    Cat(fsm_state, ctrl), Cat(producer_target, crnt_target, sch_result),
+    package_owned.asUInt, io.global_ic_status.asUInt, io.clear_ic_status.asUInt) ++
+    (0 until params.totalnumber_of_cores).map(checker_segment_id_reg(_))
+  freechips.rocketchip.util.SafeChainObservation.emit(7, clock, reset.asBool,
+    safeChainCycle, safeChainCycle, io.big_core_id - 1.U, safeChainRoi, true.B,
+    safeChainIcFields, Cat(safeChainIcFields.take(2) ++
+      Seq(safeChainIcFlags & ((BigInt(1) << 15) - 1 - (BigInt(1) << 13)).U(15.W)) ++
+      safeChainIcFields.drop(3)), snapshot_accepted)
+  // SAFE_CHAIN_OBSERVATION_END
   // Preserve the boundary state in generated collateral for focused traces.
   dontTouch(fsm_state)
   dontTouch(snapshot_ready)

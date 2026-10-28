@@ -1,0 +1,233 @@
+{
+  "schema": 1,
+  "event_coverage": "COMPLETE",
+  "clock_alignment": {
+    "period": "1",
+    "offset": "103",
+    "async_policy": "ceil raw timestamp to first main pre-edge sample; equal-time batch unordered"
+  },
+  "performance": {
+    "baseline_roi": 1001675,
+    "original_current_roi": 4734881,
+    "opt1_roi": 4706513,
+    "measured_roi": 4706513,
+    "opt2_incremental_gain": 0,
+    "total_gain": 28368,
+    "slowdown_delta": 3704838,
+    "caution": "Opt2 gain field applies only when input is an Opt2 run; pinned reference is Opt1"
+  },
+  "pending_cycles": 3178984,
+  "strict_unsafe_waitsafe_cycles": 3100681,
+  "categories": [
+    {
+      "category": "RESULT_NOT_AVAILABLE",
+      "events": 174,
+      "cycles": 2993080,
+      "percent_pending": 94.15209387653414,
+      "percent_current_roi": 63.59442755177772,
+      "percent_slowdown_delta": 80.7884177391832
+    },
+    {
+      "category": "RESULT_TRANSFER_DELAY",
+      "events": 166,
+      "cycles": 3720,
+      "percent_pending": 0.11701851912434916,
+      "percent_current_roi": 0.0790394077313714,
+      "percent_slowdown_delta": 0.10040924866350431
+    },
+    {
+      "category": "PREFIX_HOLE",
+      "events": 12,
+      "cycles": 87361,
+      "percent_pending": 2.74807926054362,
+      "percent_current_roi": 1.8561724996828863,
+      "percent_slowdown_delta": 2.3580248313151615
+    },
+    {
+      "category": "WATERMARK_PROPAGATION_DELAY",
+      "events": 178,
+      "cycles": 178,
+      "percent_pending": 0.005599273226917782,
+      "percent_current_roi": 0.0037819931656408894,
+      "percent_slowdown_delta": 0.004804528565081658
+    },
+    {
+      "category": "POST_SAFE_RELEASE",
+      "events": 1152,
+      "cycles": 78275,
+      "percent_pending": 2.4622646732415134,
+      "percent_current_roi": 1.6631208710142733,
+      "percent_slowdown_delta": 2.1127779406279035
+    },
+    {
+      "category": "MULTI_CAUSE",
+      "events": 51,
+      "cycles": 16370,
+      "percent_pending": 0.5149443973294613,
+      "percent_current_roi": 0.3478158883232661,
+      "percent_slowdown_delta": 0.44185467758644237
+    },
+    {
+      "category": "UNRESOLVED",
+      "events": 0,
+      "cycles": 0,
+      "percent_pending": 0.0,
+      "percent_current_roi": 0.0,
+      "percent_slowdown_delta": 0.0
+    }
+  ],
+  "production_wait_cycles": {
+    "before_exec_done": 2981282,
+    "exec_done_to_result": 11798
+  },
+  "transfer_wait_cycles": {
+    "formed_to_enqueue_cleanup": 3058,
+    "cdc": 662,
+    "dequeue_to_accept": 0
+  },
+  "production_seal_phases": {
+    "before_producer_seal": 114051,
+    "sealed_before_exec_done": 2867231,
+    "after_exec_done": 11798
+  },
+  "latency_distributions": {
+    "allocated_cycle_to_checker_start_cycle": {
+      "n": 332,
+      "min": 11,
+      "p50": 11,
+      "p95": 12,
+      "max": 507
+    },
+    "checker_start_cycle_to_producer_sealed_cycle": {
+      "n": 332,
+      "min": 1140,
+      "p50": 10068,
+      "p95": 40286,
+      "max": 50222
+    },
+    "checker_start_cycle_to_exec_done_cycle": {
+      "n": 332,
+      "min": 1510,
+      "p50": 27826,
+      "p95": 58158,
+      "max": 75424
+    },
+    "producer_sealed_cycle_to_result_formed_cycle": {
+      "n": 332,
+      "min": 72,
+      "p50": 15958,
+      "p95": 26374,
+      "max": 32926
+    },
+    "exec_done_cycle_to_result_formed_cycle": {
+      "n": 332,
+      "min": 68,
+      "p50": 68,
+      "p95": 68,
+      "max": 68
+    },
+    "allocated_cycle_to_result_formed_cycle": {
+      "n": 332,
+      "min": 1589,
+      "p50": 27905,
+      "p95": 58274,
+      "max": 75504
+    },
+    "result_formed_cycle_to_cdc_enqueued_cycle": {
+      "n": 332,
+      "min": 18,
+      "p50": 18,
+      "p95": 58,
+      "max": 626
+    },
+    "cdc_enqueued_cycle_to_cdc_dequeued_cycle": {
+      "n": 332,
+      "min": 4,
+      "p50": 4,
+      "p95": 4,
+      "max": 4
+    },
+    "cdc_dequeued_cycle_to_accepted_cycle": {
+      "n": 332,
+      "min": 0,
+      "p50": 0,
+      "p95": 0,
+      "max": 0
+    }
+  },
+  "checker_assignments": {
+    "1": 97,
+    "2": 94,
+    "3": 91,
+    "4": 50
+  },
+  "post_safe_exclusive_stage_cycles": {
+    "writeback_fire_edge": 1151,
+    "writeback_receipt": 75742,
+    "metadata_clear": 1153,
+    "writeback_ready": 225,
+    "admission:drain": 4
+  },
+  "terminal_observed_stage_entries": {
+    "metadata_clear": 1152
+  },
+  "hole_summary": {
+    "global_allocated_frontiers": 287,
+    "amplified_holes": 51,
+    "max_observed_frontier_lifetime": 50424,
+    "max_pass_blocking_cycles": 12772,
+    "passed_behind_peak": {
+      "n": 51,
+      "min": 1,
+      "p50": 1,
+      "p95": 1,
+      "max": 3
+    },
+    "mean_passed_behind_peak": 1.0588235294117647,
+    "blocked_entries": {
+      "n": 51,
+      "min": 0,
+      "p50": 0,
+      "p95": 1,
+      "max": 1
+    },
+    "mean_blocked_entries": 0.39215686274509803,
+    "passed_result_cycle_area": 248228,
+    "pending_prefix_cycles": 87361
+  },
+  "correctness": {
+    "accepted": 332,
+    "stale_level_observations": 0,
+    "held_duplicate_observations": 0,
+    "failed": 0,
+    "cancelled": 0,
+    "allocation_collisions": 0
+  },
+  "downstream": {
+    "commit_gate": {
+      "value": null,
+      "status": "UNOBSERVED: no ready-head/commit per-cycle predicate in SC1"
+    },
+    "mshr_lifetime": {
+      "value": null,
+      "status": "UNOBSERVED: no allocation/free/state lifetimes in SC1"
+    },
+    "set_collateral": {
+      "value": null,
+      "status": "UNOBSERVED: no continuous collateral-hit opportunities in SC1"
+    },
+    "replay_nack": {
+      "value": null,
+      "status": "UNOBSERVED: no counted replay/nack events in SC1"
+    }
+  },
+  "decision": "OPT2_TARGET_CHECKER_RESULT_LATENCY",
+  "critical_path_attributed_cycles": null,
+  "avoidable_cycles": null,
+  "limitations": [
+    "Pending-state cycles are not an additive causal ROI budget.",
+    "Ingress/LSL early samples are censored; do not integrate them as continuous blockers.",
+    "Terminal observed stage is a protocol stage, not proof of one exclusive ACK/DRAM cause.",
+    "Package release is distinct from software completion; full drain and RUN_PROVENANCE unresolved."
+  ]
+}

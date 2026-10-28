@@ -582,6 +582,64 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
     dontTouch(packet_dest)
     dontTouch(arfs_dest_vec)
     dontTouch(arfs_ecp_dest_vec)
+
+    // OPTIMIZATION_1_TRACE_BEGIN: result production, CDC delivery, and
+    // BOOM ownership-release state are observation-only.  They retain the
+    // distinct checker and BOOM clock-domain handshake points for the single
+    // optimization experiment.
+    val slowdown_opt1_result_input = WireInit(io.checker_result_in)
+    dontTouch(slowdown_opt1_result_input)
+    val slowdown_opt1_result_input_ready = WireInit(io.checker_result_ready)
+    dontTouch(slowdown_opt1_result_input_ready)
+    val slowdown_opt1_result_cdc_enq_valid = WireInit(VecInit(u_result_cdc.map(_.io.enq.valid)))
+    dontTouch(slowdown_opt1_result_cdc_enq_valid)
+    val slowdown_opt1_result_cdc_enq_ready = WireInit(VecInit(u_result_cdc.map(_.io.enq.ready)))
+    dontTouch(slowdown_opt1_result_cdc_enq_ready)
+    val slowdown_opt1_result_cdc_deq_valid = WireInit(VecInit(u_result_cdc.map(_.io.deq.valid)))
+    dontTouch(slowdown_opt1_result_cdc_deq_valid)
+    val slowdown_opt1_result_cdc_deq_ready = WireInit(VecInit(u_result_cdc.map(_.io.deq.ready)))
+    dontTouch(slowdown_opt1_result_cdc_deq_ready)
+    val slowdown_opt1_result_cdc_deq_fire = WireInit(VecInit(u_result_cdc.map(q => q.io.deq.valid && q.io.deq.ready)))
+    dontTouch(slowdown_opt1_result_cdc_deq_fire)
+    val slowdown_opt1_result_release_pending = WireInit(result_release_pending)
+    dontTouch(slowdown_opt1_result_release_pending)
+    val slowdown_opt1_result_release = WireInit(checker_result_release)
+    dontTouch(slowdown_opt1_result_release)
+    val slowdown_opt1_ic_status_global = WireInit(io.ic_status_bigcore.reduce(_|_))
+    dontTouch(slowdown_opt1_ic_status_global)
+    val slowdown_opt1_result_clocks = WireInit(io.ghm_clock)
+    dontTouch(slowdown_opt1_result_clocks)
+    val slowdown_opt1_result_cdc_deq_payload = WireInit(VecInit(u_result_cdc.map(_.io.deq.bits)))
+    dontTouch(slowdown_opt1_result_cdc_deq_payload)
+    val slowdown_opt1_result_output = WireInit(io.checker_results_out)
+    dontTouch(slowdown_opt1_result_output)
+    // OPTIMIZATION_1_TRACE_END
+    // SAFE_CHAIN_OBSERVATION_BEGIN — read-only taps in each owning clock.
+    val (safeChainCycle, safeChainRoi) = SafeChainObservation.context()
+    for (i <- 0 until params.number_of_little_cores) {
+      val q = u_result_cdc(i)
+      val enqFlags = VecInit(Seq(q.io.enq.valid, q.io.enq.ready, q.io.enq.fire)).asUInt
+      val checkerClock = io.ghm_clock(i + GH_GlobalParams.GH_NUM_BIG_CORES).asClock
+      val checkerReset = io.ghm_reset(i + GH_GlobalParams.GH_NUM_BIG_CORES)
+      val safeChainLocalCycle = withClockAndReset(checkerClock, checkerReset.asAsyncReset) {
+        val count = RegInit(0.U(64.W))
+        count := count + 1.U
+        count
+      }
+      SafeChainObservation.emit(4, checkerClock, checkerReset,
+        safeChainCycle, safeChainLocalCycle, (i + GH_GlobalParams.GH_NUM_BIG_CORES).U,
+        safeChainRoi, true.B,
+        Seq(q.io.enq.bits, enqFlags),
+        Cat(Mux(q.io.enq.valid, q.io.enq.bits, 0.U), enqFlags), q.io.enq.fire)
+      val deqFlags = VecInit(Seq(q.io.deq.valid, q.io.deq.ready, q.io.deq.fire,
+        result_release_pending(i), checker_result_release(i),
+        io.ic_status_bigcore.reduce(_|_)(i + GH_GlobalParams.GH_NUM_BIG_CORES))).asUInt
+      SafeChainObservation.emit(5, io.ghm_clock(0).asClock, io.ghm_reset(0),
+        safeChainCycle, safeChainCycle, (i + GH_GlobalParams.GH_NUM_BIG_CORES).U,
+        safeChainRoi, true.B, Seq(q.io.deq.bits, deqFlags),
+        Cat(Mux(q.io.deq.valid, q.io.deq.bits, 0.U), deqFlags), q.io.deq.fire)
+    }
+    // SAFE_CHAIN_OBSERVATION_END
     
     //所有信号都需要展宽
     val cdc_ghe_event                              = WireInit(VecInit(b_rctrl.map{i=>i(5,0)}))  //可以采样，3周期一采样,但这样做就无法去得到正确的反压信号

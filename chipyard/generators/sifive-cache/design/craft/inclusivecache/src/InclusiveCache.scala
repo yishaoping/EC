@@ -302,6 +302,44 @@ class InclusiveCache(
       val barrierErrorDetected = barrierTimedOut || barrierFailed
       val barrierReleased = barrierActive &&
         barrierCloseAccepted && barrierSeq <= l2SafeWatermark
+      // OPTIMIZATION_1_TRACE_BEGIN: these are observation-only per-bank
+      // watermark and validation-barrier stages.  They let the one planned
+      // run distinguish result/CDC/prefix delay from L2 barrier delay.
+      val slowdown_opt1_l2_safe_gray_in = chisel3.WireInit(safeWatermarkGrayIn)
+      chisel3.dontTouch(slowdown_opt1_l2_safe_gray_in)
+      val slowdown_opt1_l2_safe_gray_sync = chisel3.WireInit(safeWatermarkGraySync)
+      chisel3.dontTouch(slowdown_opt1_l2_safe_gray_sync)
+      val slowdown_opt1_l2_safe_watermark = chisel3.WireInit(l2SafeWatermark)
+      chisel3.dontTouch(slowdown_opt1_l2_safe_watermark)
+      val slowdown_opt1_l2_validation_block = chisel3.WireInit(scheduler.io.validationBlock)
+      chisel3.dontTouch(slowdown_opt1_l2_validation_block)
+      val slowdown_opt1_l2_client_validation_block = chisel3.WireInit(scheduler.io.clientValidationBlock)
+      chisel3.dontTouch(slowdown_opt1_l2_client_validation_block)
+      val slowdown_opt1_l2_outer_candidate_unsafe = chisel3.WireInit(outerCandidateUnsafe)
+      chisel3.dontTouch(slowdown_opt1_l2_outer_candidate_unsafe)
+      val slowdown_opt1_l2_barrier_candidate_unsafe = chisel3.WireInit(barrierCandidateUnsafe)
+      chisel3.dontTouch(slowdown_opt1_l2_barrier_candidate_unsafe)
+      val slowdown_opt1_l2_barrier_active = chisel3.WireInit(barrierActive)
+      chisel3.dontTouch(slowdown_opt1_l2_barrier_active)
+      val slowdown_opt1_l2_barrier_seq = chisel3.WireInit(barrierSeq)
+      chisel3.dontTouch(slowdown_opt1_l2_barrier_seq)
+      val slowdown_opt1_l2_barrier_close_accepted = chisel3.WireInit(barrierCloseAccepted)
+      chisel3.dontTouch(slowdown_opt1_l2_barrier_close_accepted)
+      val slowdown_opt1_l2_barrier_released = chisel3.WireInit(barrierReleased)
+      chisel3.dontTouch(slowdown_opt1_l2_barrier_released)
+      val slowdown_opt1_l2_bank = chisel3.WireInit(UInt(bank, width = 8))
+      chisel3.dontTouch(slowdown_opt1_l2_bank)
+      val slowdown_opt1_l2_clock = chisel3.WireInit(clock.asBool)
+      chisel3.dontTouch(slowdown_opt1_l2_clock)
+      val slowdown_opt1_l2_validation_seq = chisel3.WireInit(scheduler.io.validationSeq)
+      chisel3.dontTouch(slowdown_opt1_l2_validation_seq)
+      val slowdown_opt1_l2_client_validation_seq = chisel3.WireInit(scheduler.io.clientValidationSeq)
+      chisel3.dontTouch(slowdown_opt1_l2_client_validation_seq)
+      val slowdown_opt1_l2_barrier_close_ack = chisel3.WireInit(barrierCloseAckSync)
+      chisel3.dontTouch(slowdown_opt1_l2_barrier_close_ack)
+      val slowdown_opt1_l2_barrier_close_ack_seq = chisel3.WireInit(barrierCloseAckSeqSync)
+      chisel3.dontTouch(slowdown_opt1_l2_barrier_close_ack_seq)
+      // OPTIMIZATION_1_TRACE_END
       if (realBarrierEnabled) {
         barrierAllow := (!barrierActive && !outerCandidateUnsafe) || barrierReleased ||
           (barrierActive && !barrierBlocksOuter && !outerCandidateUnsafe)

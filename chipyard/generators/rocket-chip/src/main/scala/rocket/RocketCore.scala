@@ -1702,6 +1702,46 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   io.packet_lsl_mem_ready := lsl.io.cdc_ready_mem
   io.packet_lsl_csr_ready := lsl.io.cdc_ready_csr
   io.packet_lsl_rocc_ready := lsl.io.cdc_ready_rocc
+  // SAFE_CHAIN_OBSERVATION_BEGIN — input-only simulation sinks, no feedback.
+  val (safeChainCycle, safeChainRoi) = SafeChainObservation.context()
+  val safeChainCheckerFlags = VecInit(Seq(package_check_active, package_start_pending,
+    producer_sealed_for_package, packet_ingress_drained, lsl.io.quiescent,
+    arf_check_complete, csr_check_required, csr_check_complete,
+    icsl.io.package_exec_done, full_check_complete, checker_cleanup_done,
+    package_result_handoff_allowed, package_result_waiting, package_result_outstanding,
+    package_cleanup_pending, package_result_queue.io.deq.valid,
+    package_result_fire, package_result_handoff_fire, package_cancelled,
+    arf_done_owned, new_package, package_start_accepted,
+    package_error || package_error_now, package_transport_error || package_transport_error_now,
+    rsu_slave.io.ecp_complete, rsu_slave.io.compare_busy,
+    icsl.io.ic_counter_valid && io.ic_counter(15))).asUInt
+  val safeChainContextFlags = Cat(icsl.io.trap_depth,
+    VecInit(Seq(icsl.io.context_idle, icsl.io.return_pending, excpt_mode,
+      checker_clear_pending, io.imem.checker_clear_done, rsu_slave.io.compare_idle,
+      rsu_slave.io.ecp_idle, icsl.io.arch_compare_ready,
+      arf_wait_timeout, package_exec_timeout, package_progress_timeout)).asUInt)
+  val safeChainCheckerFields = Seq(package_seq_reg, rsu_slave.io.ecp_epoch,
+    safeChainCheckerFlags, safeChainContextFlags, icsl.io.debug_sl_counter,
+    io.ic_counter, package_result_queue.io.deq.bits, package_result_queue.io.enq.bits,
+    io.producer_sealed_seq, rsu_slave.io.ecp_seq, rsu_slave.io.compare_done_seq,
+    rsu_slave.io.compare_done_epoch, rsu_slave.io.rsu_status,
+    Mux(wb_reg_valid, wb_reg_pc, 0.U), Mux(new_package, new_package_seq, 0.U),
+    icsl.io.icsl_status)
+  // Exact retirement/timer counters are sampled on lifecycle changes, NOT
+  // change-detection inputs. Progress milestones are once per 1024 checks.
+  val safeChainCheckerKey = Cat(package_seq_reg, rsu_slave.io.ecp_epoch,
+    // Per-memory-operation empty/quiescent toggles are not tail progress.
+    // Retain exact fields in every row; trigger on these bits only at tail.
+    safeChainCheckerFlags & Mux(icsl.io.package_exec_done || icsl.io.arch_compare_ready,
+      ((BigInt(1) << 27) - 1).U(27.W),
+      (((BigInt(1) << 27) - 1) ^ (BigInt(3) << 3)).U(27.W)),
+    safeChainContextFlags, rsu_slave.io.rsu_status,
+    Mux(package_owned, icsl.io.debug_sl_counter >> 10, 0.U),
+    Mux(package_result_queue.io.deq.valid, package_result_queue.io.deq.bits, 0.U))
+  SafeChainObservation.emit(6, clock, reset.asBool, safeChainCycle, csr.io.time,
+    io.hartid, safeChainRoi, true.B, safeChainCheckerFields, safeChainCheckerKey,
+    package_result_fire || package_result_handoff_fire || new_package)
+  // SAFE_CHAIN_OBSERVATION_END
   //===== GuardianCouncil Function: End   ====//
 
   dontTouch(csr.io.counters)
@@ -2073,6 +2113,94 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   imiss_cnt := Mux(io.imem.perf.acquire && (checker_mode.asBool || checker_priv_mode.asBool), imiss_cnt + 1.U, imiss_cnt)
   dontTouch(imiss_cnt)
 
+  // OPT2B_OBSERVATION_ONLY: exact per-package local-cycle partition from
+  // admission to exec_done; raw predicates deliberately overlap. No observer
+  // value feeds the functional control path. Resource wait is counted AFTER
+  // exec_done, separately from this execution partition.
+  val opt2bTracking = RegInit(false.B)
+  val opt2bAdmit = RegInit(0.U(64.W))
+  val opt2bStart = RegInit(0.U(64.W))
+  val opt2bSeal = RegInit(0.U(64.W))
+  val opt2bDone = RegInit(0.U(64.W))
+  val opt2bCounts = RegInit(VecInit(Seq.fill(9)(0.U(64.W))))
+  val opt2bRaw = RegInit(VecInit(Seq.fill(10)(0.U(64.W))))
+  val opt2bExec = opt2bTracking && !icsl.io.package_exec_done
+  val opt2bMode = checker_mode.asBool || checker_priv_mode.asBool
+  val opt2bLslWait = (lsl_req_valid && !lsl_req_ready) ||
+    (lsl_req_valid_csr && !lsl_req_ready_csr) ||
+    (lsl_req_valid_rocc && !lsl_req_ready_rocc)
+  val opt2bDependency = id_ex_hazard || id_mem_hazard || id_wb_hazard ||
+    id_sboard_hazard || id_stall_fpu
+  // Priority encodes attribution, not independent causal lost-cycle claims.
+  val opt2bCategory = MuxCase(8.U(4.W), Seq(
+    (!opt2bMode || icsl.io.icsl_stalld || rsu_slave.io.core_hang_up.asBool ||
+      excpt_mode || take_pc_mem_wb || csr.io.interrupt) -> 6.U,
+    opt2bLslWait -> 2.U,
+    (ibuf.io.inst(0).valid && id_ctrl.mem && dcache_blocked) -> 3.U,
+    (replay_wb || ibuf.io.inst(0).valid && ibuf.io.inst(0).bits.replay) -> 5.U,
+    (!ibuf.io.inst(0).valid) -> 1.U,
+    opt2bDependency -> 4.U,
+    (!ctrl_killd) -> 0.U))
+  val opt2bRawEvents = Seq(
+    checker_instruction_progress,
+    checker_instruction_progress && wb_ctrl.mem && isRead(wb_ctrl.mem_cmd),
+    checker_instruction_progress && wb_ctrl.mem && isWrite(wb_ctrl.mem_cmd),
+    lsl.io.ld_deq, lsl.io.st_deq,
+    lsl_req_valid_csr && lsl_req_ready_csr,
+    lsl_req_valid_rocc && lsl_req_ready_rocc,
+    opt2bMode && !ibuf.io.inst(0).valid,
+    opt2bLslWait,
+    checker_instruction_progress && wb_ctrl.mem)
+  val opt2bResultWait = RegInit(0.U(64.W))
+  when (new_package) {
+    opt2bTracking := true.B
+    opt2bAdmit := csr.io.time
+    opt2bStart := Mux(package_start_accepted, csr.io.time, 0.U)
+    opt2bSeal := 0.U
+    opt2bDone := 0.U
+    opt2bCounts.foreach(_ := 0.U)
+    opt2bRaw.foreach(_ := 0.U)
+    opt2bResultWait := 0.U
+  }.otherwise {
+    when (opt2bTracking && package_start_accepted && opt2bStart === 0.U) {
+      opt2bStart := csr.io.time
+    }
+    when (opt2bTracking && producer_sealed_for_package && opt2bSeal === 0.U) {
+      opt2bSeal := csr.io.time
+    }
+    when (opt2bTracking && icsl.io.package_exec_done && opt2bDone === 0.U) {
+      opt2bDone := csr.io.time
+    }
+    when (opt2bExec) {
+      opt2bCounts(opt2bCategory) := opt2bCounts(opt2bCategory) + 1.U
+      for ((event, i) <- opt2bRawEvents.zipWithIndex) {
+        when (event) { opt2bRaw(i) := opt2bRaw(i) + 1.U }
+      }
+    }
+    when (opt2bTracking && icsl.io.package_exec_done &&
+      package_result_queue.io.enq.valid && !package_result_queue.io.enq.ready) {
+      opt2bResultWait := opt2bResultWait + 1.U
+    }
+    when (package_result_fire) { opt2bTracking := false.B }
+  }
+  val opt2bTerminal = (icsl.io.package_exec_done && !package_exec_done_prev) || package_result_fire
+  // Bits 5..7 expose boundaries for offline counter differences; they do
+  // not introduce a new functional handshake or a second package identity.
+  val opt2bFlags = Cat(VecInit(Seq(producer_sealed_for_package,
+    opt2bStart =/= 0.U || package_start_accepted, opt2bTracking)).asUInt, package_result_status,
+    VecInit(Seq(icsl.io.package_exec_done, package_result_fire, package_cancelled)).asUInt)
+  val opt2bExecCycles = opt2bCounts.reduce(_ + _)
+  SafeChainObservation.emit(11, clock, reset.asBool, safeChainCycle, csr.io.time,
+    io.hartid, safeChainRoi, true.B,
+    Seq(package_seq_reg, rsu_slave.io.ecp_epoch, opt2bFlags, opt2bExecCycles) ++
+      opt2bCounts.toSeq ++ opt2bRaw.take(3),
+    Cat(package_seq_reg, opt2bFlags), opt2bTerminal)
+  SafeChainObservation.emit(12, clock, reset.asBool, safeChainCycle, csr.io.time,
+    io.hartid, safeChainRoi, true.B,
+    Seq(package_seq_reg, rsu_slave.io.ecp_epoch, opt2bFlags, opt2bAdmit, opt2bStart,
+      opt2bSeal, opt2bDone) ++ opt2bRaw.drop(3).take(6) ++
+      Seq(opt2bResultWait, icsl.io.debug_sl_counter, opt2bRaw(9)),
+    Cat(package_seq_reg, opt2bFlags), opt2bTerminal)
   val icache_blocked = !(io.imem.resp.valid || RegNext(io.imem.resp.valid))
   csr.io.counters foreach { c => c.inc := RegNext(perfEvents.evaluate(c.eventSel)) }
 

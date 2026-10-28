@@ -77,7 +77,7 @@ class FrontendIO(implicit p: Parameters) extends CoreBundle()(p) {
   val if_check_already_done = Output(Bool())
 }
 
-class Frontend(val icacheParams: ICacheParams, staticIdForMetadataUseOnly: Int)(implicit p: Parameters) extends LazyModule {
+class Frontend(val icacheParams: ICacheParams, val staticIdForMetadataUseOnly: Int)(implicit p: Parameters) extends LazyModule {
   lazy val module = new FrontendModule(this)
   val icache = LazyModule(new ICache(icacheParams, staticIdForMetadataUseOnly))
   val masterNode = icache.masterNode
@@ -136,7 +136,7 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
 
   val tlb = Module(new TLB(true, log2Ceil(fetchBytes), TLBConfig(nTLBSets, nTLBWays, outer.icacheParams.nTLBBasePageSectors, outer.icacheParams.nTLBSuperpages)))
 
-  val checker_empty :: checker_fetching :: checker_classify :: checker_wait_bjl :: checker_ready :: Nil = Enum(5)
+  val checker_empty :: checker_fetching :: checker_wait_bjl :: checker_ready :: Nil = Enum(4)
   val checker_state = RegInit(checker_empty)
   val checker_resp = Reg(new FrontendResp)
   val checker_fetch_pc = Reg(UInt(vaddrBitsExtended.W))
@@ -150,6 +150,11 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   val checker_partial_bits = Reg(UInt(coreInstBits.W))
   val checker_partial_pc = Reg(UInt(vaddrBitsExtended.W))
   val checker_partial_seq = Reg(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  // OPT3: classification and partial-tail capture share the accepted S2
+  // response edge. Held responses never depend on the live I$ data bus.
+  val checker_tail_valid = RegInit(false.B)
+  val checker_tail_bits = Reg(UInt(coreInstBits.W))
+  val checker_tail_pc = Reg(UInt(vaddrBitsExtended.W))
   val checker_path_live = RegInit(false.B)
   val checker_clear_ack = RegInit(true.B)
   val checker_seen_seq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
@@ -165,6 +170,11 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   val checker_busy = checker_state =/= checker_empty || checker_s1_owner || checker_s2_owner
   val checker_flow = checker_request || checker_busy
   val checker_emit = checker_state === checker_ready && !io.cpu.checker_clear
+  // OPT2B: accept the already-resolved successor while the current response
+  // is handed to FQ. Never look ahead across a held response, replay or fault.
+  val checker_handoff = checker_emit && fq.io.enq.ready && checker_request &&
+    !checker_resp.replay && !checker_resp.xcpt.asUInt.orR &&
+    !redirect_pending && !redirect_settle && !io.cpu.req.valid
   val legacy_resp = Wire(new FrontendResp)
   val legacy_emit = Wire(Bool())
   val legacy_fire = legacy_emit && fq.io.enq.ready
@@ -179,7 +189,7 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   // Redirect first changes the PC/mode; accept the target request only after
   // the registered settle cycle, and keep it pending until req.fire.
   val s0_valid = !io.cpu.req.valid && !redirect_settle && Mux(checker_flow,
-    checker_state === checker_empty && !io.cpu.checker_clear,
+    (checker_state === checker_empty || checker_handoff) && !io.cpu.checker_clear,
     s0_fq_has_space || !io.cpu.if_overtaking)
   dontTouch(s0_fq_has_space)
   // During the redirect handoff, S1 validity is an acceptance fact.  The
@@ -487,21 +497,38 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
     when (io.cpu.req.valid) { wrong_path := false.B }
     dontTouch(specialJalrVec)
   }
+  // OPT3: classify the incoming owned response before registering it. This
+  // removes the unconditional CLASSIFY state; BJL reservation still happens
+  // only in WAIT_BJL and FQ delivery still happens only in READY.
+  val checker_cache_valid = if (outer.icacheParams.latency == 1)
+    RegNext(checker_s1_owner && icache.io.resp.valid, false.B) else icache.io.resp.valid
+  val checker_cache_bits = if (outer.icacheParams.latency == 1)
+    RegEnable(icache.io.resp.bits, checker_s1_owner) else icache.io.resp.bits
+  val checker_incoming = Wire(new FrontendResp)
+  checker_incoming := legacy_resp
+  checker_incoming.data := checker_cache_bits.data
+  checker_incoming.replay := checker_cache_valid && checker_cache_bits.replay ||
+    icache.io.s2_kill && !checker_cache_valid && !s2_xcpt
+  when (checker_cache_valid && checker_cache_bits.ae) { checker_incoming.xcpt.ae.inst := true.B }
+  val checker_classify_fire = checker_s2_owner && checker_state === checker_fetching &&
+    !s2_tlb_resp.miss && (checker_cache_valid || icache.io.s2_kill) &&
+    !io.cpu.req.valid && !io.cpu.checker_clear
   // One checker response owns its data and reservation until FQ accepts it.
   val checker_start = checker_resp.pc.extract(log2Ceil(fetchBytes)-1, log2Ceil(coreInstBytes))
-  val checker_base = checker_resp.pc & ~(fetchBytes-1).U(vaddrBitsExtended.W)
+  val checker_scan_start = checker_incoming.pc.extract(log2Ceil(fetchBytes)-1, log2Ceil(coreInstBytes))
+  val checker_base = checker_incoming.pc & ~(fetchBytes-1).U(vaddrBitsExtended.W)
   val cfi_valid = Wire(Vec(fetchWidth, Bool()))
   val cfi_pc = Wire(Vec(fetchWidth, UInt(vaddrBitsExtended.W)))
   val cfi_start = Wire(Vec(fetchWidth, UInt(math.max(1, log2Ceil(fetchWidth+1)).W)))
   val cfi_rvc = Wire(Vec(fetchWidth, Bool()))
   val cfi_special = Wire(Vec(fetchWidth, Bool()))
   var lowValid: Bool = checker_partial_valid && checker_partial_seq === checker_fetch_seq &&
-    checker_resp.pc === checker_partial_pc + coreInstBytes.U
+    checker_incoming.pc === checker_partial_pc + coreInstBytes.U
   var lowBits: UInt = checker_partial_bits
   var lowPC: UInt = checker_partial_pc
   for (i <- 0 until fetchWidth) {
-    val bits = checker_resp.data((i+1)*coreInstBits-1, i*coreInstBits)
-    val active = i.U >= checker_start
+    val bits = checker_incoming.data((i+1)*coreInstBits-1, i*coreInstBits)
+    val active = i.U >= checker_scan_start
     val high = if (usingCompressed) active && lowValid else false.B
     val first = active && !high
     val rvc = if (usingCompressed) bits(1,0) =/= 3.U else false.B
@@ -528,6 +555,7 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   val first_cfi = if (fetchWidth == 1) 0.U(1.W) else PriorityEncoder(cfi_valid.asUInt)
   val has_cfi = cfi_valid.asUInt.orR
   val checker_fault = checker_resp.replay || checker_resp.xcpt.asUInt.orR
+  val checker_incoming_fault = checker_incoming.replay || checker_incoming.xcpt.asUInt.orR
   val checker_head_match = BJL.io.bj_resp_cpc === checker_cfi_pc &&
     BJL.io.bj_resp_is_rvc === checker_cfi_rvc
   BJL.io.bj_req_valid := checker_state === checker_wait_bjl && checker_head_match &&
@@ -540,11 +568,6 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   when (checker_emit) {
     fq.io.enq.bits.mask := ((UIntToOH(checker_resp.prefixLength, fetchWidth+1) - 1.U) << checker_start)(fetchWidth-1, 0)
   }
-  val checker_cache_valid = if (outer.icacheParams.latency == 1)
-    RegNext(checker_s1_owner && icache.io.resp.valid, false.B) else icache.io.resp.valid
-  val checker_cache_bits = if (outer.icacheParams.latency == 1)
-    RegEnable(icache.io.resp.bits, checker_s1_owner) else icache.io.resp.bits
-
   checker_s1_owner := icache.io.req.fire && checker_request && !io.cpu.req.valid
   checker_s2_owner := checker_s1_owner && !io.cpu.req.valid && !io.cpu.checker_clear
   when (icache.io.req.fire && checker_request) {
@@ -555,38 +578,38 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   }
   when (checker_s2_owner && checker_state === checker_fetching) {
     when (!s2_tlb_resp.miss && (checker_cache_valid || icache.io.s2_kill)) {
-      checker_resp := legacy_resp
-      checker_resp.data := checker_cache_bits.data
-      checker_resp.replay := checker_cache_valid && checker_cache_bits.replay ||
-        icache.io.s2_kill && !checker_cache_valid && !s2_xcpt
-      when (checker_cache_valid && checker_cache_bits.ae) { checker_resp.xcpt.ae.inst := true.B }
-      checker_resp.btb.taken := false.B
-      checker_resp.prefixLength := fetchWidth.U - s2_start
-      checker_gpa := s2_tlb_resp.gpa
-      checker_state := checker_classify
+      // The clear/redirect guard also applies to every incoming metadata
+      // field, including the trailing RVC half used after a held FQ response.
+      when (checker_classify_fire) {
+        checker_resp := checker_incoming
+        checker_resp.btb.taken := false.B
+        checker_resp.prefixLength := fetchWidth.U - checker_scan_start
+        checker_resp.bjlEndMask := 0.U
+        checker_gpa := s2_tlb_resp.gpa
+        checker_next_pc := checker_base + fetchBytes.U
+        checker_tail_valid := lowValid
+        checker_tail_bits := lowBits
+        checker_tail_pc := lowPC
+        when (!has_cfi || checker_incoming_fault) {
+          checker_state := checker_ready
+        }.elsewhen (cfi_start(first_cfi) > checker_scan_start) {
+          checker_resp.prefixLength := cfi_start(first_cfi) - checker_scan_start
+          checker_next_pc := cfi_pc(first_cfi)
+          checker_state := checker_ready
+        }.elsewhen (cfi_special(first_cfi)) {
+          checker_resp.prefixLength := (first_cfi +& 1.U) - checker_scan_start
+          checker_next_pc := cfi_pc(first_cfi) + 4.U
+          checker_state := checker_ready
+        }.otherwise {
+          checker_cfi_pc := cfi_pc(first_cfi)
+          checker_cfi_end := first_cfi
+          checker_cfi_rvc := cfi_rvc(first_cfi)
+          checker_state := checker_wait_bjl
+        }
+      }
     }.otherwise {
       // I$ and TLB misses do not promise a later response to this request.
       checker_state := checker_empty
-    }
-  }
-  when (checker_state === checker_classify) {
-    checker_next_pc := checker_base + fetchBytes.U
-    checker_resp.bjlEndMask := 0.U
-    when (!has_cfi || checker_fault) {
-      checker_state := checker_ready
-    }.elsewhen (cfi_start(first_cfi) > checker_start) {
-      checker_resp.prefixLength := cfi_start(first_cfi) - checker_start
-      checker_next_pc := cfi_pc(first_cfi)
-      checker_state := checker_ready
-    }.elsewhen (cfi_special(first_cfi)) {
-      checker_resp.prefixLength := (first_cfi +& 1.U) - checker_start
-      checker_next_pc := cfi_pc(first_cfi) + 4.U
-      checker_state := checker_ready
-    }.otherwise {
-      checker_cfi_pc := cfi_pc(first_cfi)
-      checker_cfi_end := first_cfi
-      checker_cfi_rvc := cfi_rvc(first_cfi)
-      checker_state := checker_wait_bjl
     }
   }
   when (BJL.io.bj_req_valid && BJL.io.bj_req_ready) {
@@ -598,13 +621,46 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
     checker_state := checker_ready
   }
   when (checker_emit && fq.io.enq.fire) {
-    checker_state := checker_empty
-    checker_partial_valid := lowValid &&
+    // A newly accepted S0 request owns the FSM after this edge. If I$ is not
+    // ready, keep the original EMPTY retry path and the accepted next PC.
+    checker_state := Mux(icache.io.req.fire && checker_request,
+      checker_fetching, checker_empty)
+    checker_partial_valid := checker_tail_valid &&
       checker_resp.prefixLength === fetchWidth.U - checker_start && !checker_fault &&
       !checker_resp.bjlEndMask.orR
-    checker_partial_bits := lowBits
-    checker_partial_pc := lowPC
+    checker_partial_bits := checker_tail_bits
+    checker_partial_pc := checker_tail_pc
     checker_partial_seq := checker_fetch_seq
+  }
+  val checker_handoff_fire = checker_handoff && icache.io.req.fire
+  val checker_classify_prev = RegNext(checker_classify_fire, false.B)
+  val checker_classify_wait = RegEnable(has_cfi && !checker_incoming_fault &&
+    cfi_start(first_cfi) <= checker_scan_start && !cfi_special(first_cfi), checker_classify_fire)
+  val checker_classify_data = RegEnable(checker_incoming.data, checker_classify_fire)
+  val checker_classify_pc = RegEnable(checker_incoming.pc, checker_classify_fire)
+  when (checker_classify_fire) {
+    // checker_s1_owner is the current response owner on this edge; only a
+    // second FQ consumer would violate the single-owner boundary.
+    assert(!fq.io.enq.fire, "checker classification overlaps FQ delivery")
+    assert(checker_incoming.pc === checker_fetch_pc,
+      "checker classifier response PC does not match accepted request")
+    assert(!BJL.io.bj_req_valid, "checker classifier reserved BJL before WAIT_BJL")
+  }
+  when (checker_classify_prev && !io.cpu.req.valid && !io.cpu.checker_clear) {
+    assert(checker_state === Mux(checker_classify_wait, checker_wait_bjl, checker_ready),
+      "checker fused classification lost its response")
+    assert(checker_resp.data === checker_classify_data && checker_resp.pc === checker_classify_pc,
+      "checker fused classification changed response ownership")
+  }
+  when (checker_handoff_fire) {
+    assert(fq.io.enq.fire && !checker_s1_owner && !checker_s2_owner,
+      "checker successor launched without retiring the sole response owner")
+    assert(io.cpu.npc === alignPC(checker_next_pc), "checker successor PC mismatch")
+  }
+  val checker_handoff_prev = RegNext(checker_handoff_fire, false.B)
+  when (checker_handoff_prev && !io.cpu.req.valid && !io.cpu.checker_clear) {
+    assert(checker_state === checker_fetching && checker_s1_owner,
+      "checker handoff lost the accepted successor")
   }
   when (checker_state === checker_ready) {
     // Prefix metadata is authoritative in IBuf, including on the first READY cycle.
@@ -638,6 +694,60 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
     !checker_s1_owner && !checker_s2_owner && !io.cpu.bjl_commit
   when (io.cpu.checker_clear) { checker_clear_ack := bjl_clear }
   io.cpu.checker_clear_done := checker_clear_ack
+  // OPT2B_OBSERVATION_ONLY: cumulative counters, sparse snapshots. These
+  // registers feed only the input-only logger; they cannot affect fetching.
+  val (opt2bCycle, opt2bRoi) = SafeChainObservation.context()
+  val opt2bLocal = RegInit(0.U(64.W))
+  opt2bLocal := opt2bLocal + 1.U
+  val opt2bFrontendLive = checker_flow && io.cpu.checker_seq =/= 0.U
+  val opt2bFrontendEvents = Seq(
+    opt2bFrontendLive,
+    opt2bFrontendLive && checker_state === checker_empty,
+    opt2bFrontendLive && checker_state === checker_fetching,
+    false.B, // Retired CLASSIFY state: preserve kind13 counter field position.
+    opt2bFrontendLive && checker_state === checker_wait_bjl,
+    opt2bFrontendLive && checker_state === checker_ready,
+    checker_emit && fq.io.enq.fire,
+    checker_handoff_fire,
+    icache.io.req.fire && checker_request,
+    checker_emit && !fq.io.enq.ready,
+    checker_emit && fq.io.enq.fire && (checker_resp.replay || checker_resp.xcpt.asUInt.orR),
+    opt2bFrontendLive && icache.io.perf.acquire,
+    opt2bFrontendLive && tlb.io.resp.miss,
+    opt2bFrontendLive && io.cpu.req.valid)
+  val opt2bFrontendCounts = RegInit(VecInit(Seq.fill(14)(0.U(64.W))))
+  for ((event, i) <- opt2bFrontendEvents.zipWithIndex) {
+    when (event) { opt2bFrontendCounts(i) := opt2bFrontendCounts(i) + 1.U }
+  }
+  val opt2bFrontendFlags = VecInit(Seq(checkerMode, io.cpu.checker_clear,
+    io.cpu.if_check_completed)).asUInt
+  SafeChainObservation.emit(13, gated_clock, reset.asBool, opt2bCycle, opt2bLocal,
+    outer.staticIdForMetadataUseOnly.U, opt2bRoi, true.B,
+    Seq(io.cpu.checker_seq) ++ opt2bFrontendCounts.toSeq ++ Seq(opt2bFrontendFlags),
+    Cat(io.cpu.checker_seq, opt2bFrontendFlags, opt2bFrontendCounts(6) >> 10))
+  // OPT3_OBSERVATION_ONLY: bounded cumulative snapshots, no per-fetch log.
+  // Classification modes partition accepted responses; BJL misses and held
+  // READY cycles are overlapping diagnostics, not execution categories.
+  val opt3NoCfi = !has_cfi || checker_incoming_fault
+  val opt3Prefix = !opt3NoCfi && cfi_start(first_cfi) > checker_scan_start
+  val opt3Special = !opt3NoCfi && !opt3Prefix && cfi_special(first_cfi)
+  val opt3Events = Seq(checker_classify_fire,
+    checker_classify_fire && opt3NoCfi,
+    checker_classify_fire && opt3Prefix,
+    checker_classify_fire && opt3Special,
+    checker_classify_fire && !opt3NoCfi && !opt3Prefix && !opt3Special,
+    BJL.io.bj_req_valid && BJL.io.bj_req_ready,
+    opt2bFrontendLive && checker_state === checker_wait_bjl && !BJL.io.bj_req_ready,
+    opt2bFrontendLive && checker_state === checker_wait_bjl && BJL.io.bj_req_ready && !checker_head_match,
+    checker_emit && !fq.io.enq.ready)
+  val opt3Counts = RegInit(VecInit(Seq.fill(9)(0.U(64.W))))
+  for ((event, i) <- opt3Events.zipWithIndex) {
+    when (event) { opt3Counts(i) := opt3Counts(i) + 1.U }
+  }
+  SafeChainObservation.emit(16, gated_clock, reset.asBool, opt2bCycle, opt2bLocal,
+    outer.staticIdForMetadataUseOnly.U, opt2bRoi, true.B,
+    Seq(io.cpu.checker_seq) ++ opt3Counts.toSeq ++ Seq(opt2bFrontendFlags),
+    Cat(io.cpu.checker_seq, opt2bFrontendFlags, opt2bFrontendCounts(6) >> 10))
   dontTouch(icache.io)
   dontTouch(predicted_taken)
   dontTouch(io)

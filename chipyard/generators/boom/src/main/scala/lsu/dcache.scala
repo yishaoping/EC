@@ -601,6 +601,12 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val clearFreezeSet = Wire(UInt(idxBits.W))
   val clearFreezeTag = Wire(UInt(tagBits.W))
   val clearFreezeWay = Wire(UInt(nWays.W))
+  // Optimization 1 only relaxes the LSU *entry* during the unsafe WaitSafe
+  // phase.  This wire is driven after the pending-state registers below so
+  // the ingress path does not need to depend on their declaration order.
+  // Snapshot issue, receipt/ACK, metadata clear, and every downstream owner
+  // guard continue to use clearFreezeValid without relaxation.
+  val clearFreezeReadBypassWindow = WireDefault(false.B)
   val victimDrainReady = WireDefault(true.B)
   val probeDrainReady = WireDefault(true.B)
   val replayPipelineBusy = WireDefault(false.B)
@@ -668,9 +674,29 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val killed_store_replay_reqs = Wire(Vec(memWidth, new BoomDCacheReq))
   killed_store_replay_reqs := 0.U.asTypeOf(Vec(memWidth, new BoomDCacheReq))
   killed_store_replay_reqs(0) := killed_store_replay_req
+  // A protected predecessor still excludes every same-line request, every
+  // store/AMO/LR/SC/MMIO request, and all traffic after WaitSafe closes.  The
+  // sole new admission class is an ordinary cacheable different-line load.
+  // Its S2 lookup is explicitly hit-only below: a permission miss or cache
+  // miss is nacked before it can allocate an MSHR, choose a victim, or reserve
+  // any way in the protected set.
+  val lsu_clear_freeze_read_bypass_lane = Wire(Vec(memWidth, Bool()))
+  for (w <- 0 until memWidth) {
+    val r = io.lsu.req.bits(w)
+    lsu_clear_freeze_read_bypass_lane(w) := clearFreezeReadBypassWindow &&
+      r.valid && r.bits.addr(idxMSB, idxLSB) === clearFreezeSet &&
+      (r.bits.addr >> untagBits) =/= clearFreezeTag &&
+      !slotReserved(clearFreezeSet).asUInt.orR &&
+      !(prober.io.state.valid && prober.io.state.bits(idxMSB, idxLSB) === clearFreezeSet) &&
+      edge.manager.supportsAcquireBFast(r.bits.addr, lgCacheBlockBytes.U) &&
+      r.bits.uop.mem_cmd === M_XRD && r.bits.uop.uses_ldq && !r.bits.uop.uses_stq &&
+      !r.bits.is_hella
+  }
+  val lsu_clear_freeze_read_bypass_any = lsu_clear_freeze_read_bypass_lane.asUInt.orR
   val lsu_clear_freeze_set_conflict = clearFreezeValid &&
-    io.lsu.req.bits.map(r => r.valid &&
-      r.bits.addr(idxMSB, idxLSB) === clearFreezeSet).reduce(_ || _)
+    (0 until memWidth).map(w => io.lsu.req.bits(w).valid &&
+      io.lsu.req.bits(w).bits.addr(idxMSB, idxLSB) === clearFreezeSet &&
+      !lsu_clear_freeze_read_bypass_lane(w)).reduce(_ || _)
   val killed_replay_clear_freeze_set_conflict = clearFreezeValid &&
     killed_store_replay_valid &&
     killed_store_replay_req.addr(idxMSB, idxLSB) === clearFreezeSet
@@ -679,7 +705,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     !killed_replay_clear_freeze_set_conflict
 
   // A metadata clear writes one way but must drain all lookups to its set.
-  // Hold new same-set LSU traffic outside S1/S2 until that commit completes.
+  // WaitSafe permits only the qualified hit-only reads above; all same-set
+  // LSU traffic is held outside S1/S2 once the safe/clear boundary begins.
   val lsu_clear_freeze_allowed = !killed_store_replay_valid &&
     !lsu_clear_freeze_set_conflict
   val killed_replay_clear_freeze_allowed = !killed_replay_clear_freeze_set_conflict
@@ -827,6 +854,12 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   }
   // Capture owner epochs with the tag-array read, not from a later S2 lookup.
   val s1_lookup_epoch = RegNext(widthMap(w => slotEpoch(s0_req(w).addr(idxMSB, idxLSB))))
+  // Preserve the entry decision across the tag lookup.  s1_before_freeze is
+  // intentionally still true for these different-line reads, so the existing
+  // snapshot/metadata-clear drain waits for every accepted bypass request.
+  val s1_clear_freeze_read_bypass = RegNext(VecInit((0 until memWidth).map(w =>
+    io.lsu.req.fire && lsu_clear_freeze_read_bypass_lane(w))),
+    VecInit(Seq.fill(memWidth)(false.B)))
   val s1_before_freeze = RegNext(widthMap(w => {
     val r = s0_req(w)
     val set = r.addr(idxMSB, idxLSB)
@@ -900,6 +933,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val s2_lookup_epoch = RegNext(widthMap(w => Mux1H(s1_tag_match_way(w), s1_lookup_epoch(w))))
   val s2_type  = RegNext(s1_type)
   val s2_before_freeze = RegNext(s1_before_freeze)
+  val s2_clear_freeze_read_bypass = RegNext(s1_clear_freeze_read_bypass,
+    VecInit(Seq.fill(memWidth)(false.B)))
   val s2_replay_issued = RegNext(s1_replay_issued, false.B)
   val s2_valid = widthMap(w =>
                   RegNext(s1_valid(w) &&
@@ -1097,6 +1132,10 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val s2_nack_data   = widthMap(w => data.io.nacks(w))
   // Can't allocate MSHR for same set currently being written back
   val s2_nack_wb     = widthMap(w => s2_valid(w) && !s2_hit(w) && s2_wb_idx_matches(w))
+  // A bypass request is allowed to use the normal tag/data lookup only when
+  // it is already a local hit.  Nack every miss before MSHRFile sees it.
+  val s2_clear_freeze_read_bypass_miss = widthMap(w => s2_valid(w) &&
+    s2_type === t_lsu && s2_clear_freeze_read_bypass(w) && !s2_hit(w))
   val s2_clear_slot_conflict = widthMap(w => clearFreezeValid &&
     edge.manager.supportsAcquireBFast(s2_raw_req(w).addr, lgCacheBlockBytes.U) &&
     s2_raw_req(w).addr(idxMSB, idxLSB) === clearFreezeSet &&
@@ -1110,7 +1149,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val l1CrossPackageBlocked = WireDefault(false.B)
   s2_nack           := widthMap(w =>
     ((s2_nack_miss(w) || s2_nack_hit(w) || s2_nack_victim(w) ||
-      s2_nack_data(w) || s2_nack_wb(w) || s2_owner_block(w) || s2_clear_slot_conflict(w) ||
+      s2_nack_data(w) || s2_nack_wb(w) || s2_clear_freeze_read_bypass_miss(w) ||
+      s2_owner_block(w) || s2_clear_slot_conflict(w) ||
       (isWrite(s2_raw_req(w).uop.mem_cmd) && s2_write_busy)) && s2_type =/= t_replay) ||
       ((w == 0).B && s2_realloc_owner_conflict && s2_type === t_lsu) ||
       ((w == 0).B && l1CrossPackageBlocked && s2_type === t_lsu &&
@@ -1152,6 +1192,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
                             !s2_nack_victim(w)    &&
                             !s2_nack_data(w)      &&
                             !s2_nack_wb(w)        &&
+                            !s2_clear_freeze_read_bypass_miss(w) &&
                             !s2_owner_block(w)    &&
                             !s2_clear_slot_conflict(w) &&
                             !(isWrite(s2_raw_req(w).uop.mem_cmd) && s2_write_busy) &&
@@ -1164,6 +1205,16 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
                               isRead(s2_req(w).uop.mem_cmd)     ||
                               isWrite(s2_req(w).uop.mem_cmd))
     assert(!(mshrs.io.req(w).valid && s2_type === t_replay), "Replays should not need to go back into MSHRs")
+    when (s2_valid(w) && s2_clear_freeze_read_bypass(w)) {
+      assert(s2_type === t_lsu && s2_raw_req(w).uop.mem_cmd === M_XRD &&
+        s2_raw_req(w).uop.uses_ldq && !s2_raw_req(w).uop.uses_stq &&
+        !s2_raw_req(w).is_hella,
+        "freeze bypass admitted a non-load request")
+      assert(!mshrs.io.req(w).valid,
+        "freeze bypass miss allocated an MSHR")
+      assert(s2_before_freeze(w),
+        "freeze bypass escaped the existing lookup drain")
+    }
     mshrs.io.req(w).bits := s2_effective_req(w)
     mshrs.io.req(w).bits.uop.br_mask := GetNewBrMask(io.lsu.brupdate, s2_req(w).uop)
     mshrs.io.req_is_probe(w)         := s2_type === t_probe && s2_valid(w)
@@ -1502,6 +1553,17 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       mshrs.io.owner_line_addr(i)(idxMSB, blockOffBits) ===
         crossPackagePendingAddr(idxMSB, blockOffBits) &&
       mshrs.io.owner_line_way(i) === UIntToOH(crossPackagePendingWay)).reduce(_ || _)
+  // WaitSafe ends on the first safe watermark observation.  The conservative
+  // entry relaxation is disabled before the voluntary WB can be issued and
+  // remains disabled through receipt, metadata clear, and slot revocation.
+  // Keeping the existing drain predicate in this window means previously
+  // accepted lookups still drain before the snapshot is captured.
+  clearFreezeReadBypassWindow := crossPackagePending && crossPackageResidentMatch &&
+    !crossPackageIssued && !crossPackageMetaClearPending &&
+    !crossPackageSlotConflict && !crossPackageMetaClearBlock &&
+    !completionPending(crossPackagePendingSet)(crossPackagePendingWay) &&
+    !(prober.io.state.valid && prober.io.state.bits(idxMSB, idxLSB) === crossPackagePendingSet) &&
+    !L1Preservation.safe(imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)
   l1CrossPackageBlocked := crossPackageDomainWait || crossPackagePendingLine
 
   crossPackageWbReq.valid := crossPackagePending &&
@@ -2647,8 +2709,12 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val debug_install_fault = mshrs.io.install_fault
   val debug_refill_fault = mshrs.io.refill_fault
   val debug_store_terminal_fire = io.lsu.store_done.fire
-  val debug_store_terminal_token = io.lsu.store_done.bits.req.request_token
-  val debug_store_terminal_status = io.lsu.store_done.bits.status
+  // Use named WireInit aliases for fields that do not otherwise drive cache
+  // logic.  Direct aliases of these Bundle leaves were dropped before FIRRTL
+  // emitted the DontTouch annotation in the Optimization 1 generated model.
+  // The probes remain observation-only.
+  val debug_store_terminal_token = WireInit(io.lsu.store_done.bits.req.request_token)
+  val debug_store_terminal_status = WireInit(io.lsu.store_done.bits.status)
   val debug_new_image_generation = imageSerial
   Seq(debug_s2_admission, debug_owner_reservation_fire, debug_s2_transaction_token,
     debug_s2_request_token, debug_s2_owner_way, debug_install_fire, debug_install_fault,
@@ -2712,7 +2778,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val debug_refill_owner_match = refillReqOwnerMatch
   val debug_cross_package_mshr_conflict = crossPackageMshrConflict
   val debug_cross_package_slot_conflict = crossPackageSlotConflict
-  val debug_cross_package_meta_clear_block = crossPackageMetaClearBlock
+  val debug_cross_package_meta_clear_block = WireInit(crossPackageMetaClearBlock)
   val debug_s2_realloc_owner_conflict = s2_realloc_owner_conflict
   val debug_cache_completion = completed_strict_store_cache
   val debug_uncache_completion = completed_strict_store_uncache
@@ -2722,7 +2788,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val debug_cross_package_block_condition = crossPackageBlockCondition
   val debug_cross_package_pending = crossPackagePending
   val debug_cross_package_issued = crossPackageIssued
-  val debug_cross_package_meta_clear_pending = crossPackageMetaClearPending
+  val debug_cross_package_meta_clear_pending = WireInit(crossPackageMetaClearPending)
   val debug_cross_package_pending_seq = crossPackagePendingSeq
   val debug_safe_packet_watermark = safePacketWatermark
   // Keep the complete parent[] load/store provenance visible. These aliases
@@ -2774,11 +2840,13 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   debug_modifying_way := modifyingWay
   debug_overwritten_packet_seq := overwrittenPacketSeq
   debug_overwritten_packet_tracked := overwrittenPacketTracked
-  val debug_cross_package_wb_valid = crossPackageWbReq.valid
-  val debug_cross_package_wb_ready = crossPackageWbReq.ready
+  // These handshake/status taps must be explicit wires so DontTouch survives
+  // through emitted RTL, rather than a Chisel-only alias of a decoupled field.
+  val debug_cross_package_wb_valid = WireInit(crossPackageWbReq.valid)
+  val debug_cross_package_wb_ready = WireInit(crossPackageWbReq.ready)
   val debug_cross_package_wb_fire = crossPackageWbReq.fire
   val debug_cross_package_wb_param = crossPackageWbReq.bits.param
-  val debug_cross_package_wb_done = crossPackageWbDone
+  val debug_cross_package_wb_done = WireInit(crossPackageWbDone)
   val debug_cross_package_meta_clear_valid = crossPackageMetaClear.valid
   val debug_cross_package_meta_clear_fire = crossPackageMetaClear.fire
   val debug_meta_write_valid = metaWriteArb.io.out.valid
@@ -3077,6 +3145,231 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val slowdown_lsu_resp_token_valid = chisel3.WireInit(VecInit(io.lsu.resp.map(_.bits.request_token_valid)))
   chisel3.dontTouch(slowdown_lsu_resp_token_valid)
   // SLOWDOWN_TRACE_END
+
+  // OPTIMIZATION_1_TRACE_BEGIN: observation-only.  These aliases distinguish
+  // entry qualification, local hit/miss outcome, and the safety predecessor
+  // state without participating in cache control.
+  val slowdown_opt1_bypass_window = chisel3.WireInit(clearFreezeReadBypassWindow)
+  chisel3.dontTouch(slowdown_opt1_bypass_window)
+  val slowdown_opt1_bypass_lane = chisel3.WireInit(lsu_clear_freeze_read_bypass_lane)
+  chisel3.dontTouch(slowdown_opt1_bypass_lane)
+  val slowdown_opt1_bypass_any = chisel3.WireInit(lsu_clear_freeze_read_bypass_any)
+  chisel3.dontTouch(slowdown_opt1_bypass_any)
+  val slowdown_opt1_s1_bypass = chisel3.WireInit(s1_clear_freeze_read_bypass)
+  chisel3.dontTouch(slowdown_opt1_s1_bypass)
+  val slowdown_opt1_s1_valid = chisel3.WireInit(s1_valid)
+  chisel3.dontTouch(slowdown_opt1_s1_valid)
+  val slowdown_opt1_s1_before_freeze = chisel3.WireInit(s1_before_freeze)
+  chisel3.dontTouch(slowdown_opt1_s1_before_freeze)
+  val slowdown_opt1_s2_bypass = chisel3.WireInit(s2_clear_freeze_read_bypass)
+  chisel3.dontTouch(slowdown_opt1_s2_bypass)
+  val slowdown_opt1_s2_before_freeze = chisel3.WireInit(s2_before_freeze)
+  chisel3.dontTouch(slowdown_opt1_s2_before_freeze)
+  val slowdown_opt1_s2_type = chisel3.WireInit(s2_type)
+  chisel3.dontTouch(slowdown_opt1_s2_type)
+  val slowdown_opt1_s2_bypass_miss = chisel3.WireInit(s2_clear_freeze_read_bypass_miss)
+  chisel3.dontTouch(slowdown_opt1_s2_bypass_miss)
+  val slowdown_opt1_s2_hit = chisel3.WireInit(s2_hit)
+  chisel3.dontTouch(slowdown_opt1_s2_hit)
+  val slowdown_opt1_s2_nack = chisel3.WireInit(s2_nack)
+  chisel3.dontTouch(slowdown_opt1_s2_nack)
+  val slowdown_opt1_s2_send_resp = chisel3.WireInit(s2_send_resp)
+  chisel3.dontTouch(slowdown_opt1_s2_send_resp)
+  val slowdown_opt1_s2_valid = chisel3.WireInit(s2_valid)
+  chisel3.dontTouch(slowdown_opt1_s2_valid)
+  val slowdown_opt1_s2_addr = chisel3.WireInit(VecInit(s2_raw_req.map(_.addr)))
+  chisel3.dontTouch(slowdown_opt1_s2_addr)
+  val slowdown_opt1_s2_set = chisel3.WireInit(VecInit(s2_raw_req.map(_.addr(idxMSB, idxLSB))))
+  chisel3.dontTouch(slowdown_opt1_s2_set)
+  val slowdown_opt1_s2_tag = chisel3.WireInit(VecInit(s2_raw_req.map(_.addr >> untagBits)))
+  chisel3.dontTouch(slowdown_opt1_s2_tag)
+  val slowdown_opt1_s2_token = chisel3.WireInit(VecInit(s2_raw_req.map(_.request_token)))
+  chisel3.dontTouch(slowdown_opt1_s2_token)
+  val slowdown_opt1_s2_token_valid = chisel3.WireInit(VecInit(s2_raw_req.map(_.request_token_valid)))
+  chisel3.dontTouch(slowdown_opt1_s2_token_valid)
+  val slowdown_opt1_s2_rob_idx = chisel3.WireInit(VecInit(s2_raw_req.map(_.uop.rob_idx)))
+  chisel3.dontTouch(slowdown_opt1_s2_rob_idx)
+  val slowdown_opt1_s2_pc = chisel3.WireInit(VecInit(s2_raw_req.map(_.uop.debug_pc)))
+  chisel3.dontTouch(slowdown_opt1_s2_pc)
+  val slowdown_opt1_s2_cmd = chisel3.WireInit(VecInit(s2_raw_req.map(_.uop.mem_cmd)))
+  chisel3.dontTouch(slowdown_opt1_s2_cmd)
+  val slowdown_opt1_s2_uses_ldq = chisel3.WireInit(VecInit(s2_raw_req.map(_.uop.uses_ldq)))
+  chisel3.dontTouch(slowdown_opt1_s2_uses_ldq)
+  val slowdown_opt1_s2_uses_stq = chisel3.WireInit(VecInit(s2_raw_req.map(_.uop.uses_stq)))
+  chisel3.dontTouch(slowdown_opt1_s2_uses_stq)
+  val slowdown_opt1_s2_is_hella = chisel3.WireInit(VecInit(s2_raw_req.map(_.is_hella)))
+  chisel3.dontTouch(slowdown_opt1_s2_is_hella)
+  val slowdown_opt1_s2_send_nack = chisel3.WireInit(s2_send_nack)
+  chisel3.dontTouch(slowdown_opt1_s2_send_nack)
+  val slowdown_opt1_s1_kill = chisel3.WireInit(io.lsu.s1_kill)
+  chisel3.dontTouch(slowdown_opt1_s1_kill)
+  val slowdown_opt1_exception = chisel3.WireInit(io.lsu.exception)
+  chisel3.dontTouch(slowdown_opt1_exception)
+  val slowdown_opt1_recovery = chisel3.WireInit(io.lsu.exception ||
+    io.lsu.brupdate.b1.mispredict_mask.orR || io.lsu.brupdate.b2.mispredict)
+  chisel3.dontTouch(slowdown_opt1_recovery)
+  val slowdown_opt1_mshr_req_valid = chisel3.WireInit(VecInit(mshrs.io.req.map(_.valid)))
+  chisel3.dontTouch(slowdown_opt1_mshr_req_valid)
+  val slowdown_opt1_mshr_req_fire = chisel3.WireInit(VecInit(mshrs.io.req.map(_.fire)))
+  chisel3.dontTouch(slowdown_opt1_mshr_req_fire)
+  val slowdown_opt1_safe_watermark = chisel3.WireInit(safePacketWatermark)
+  chisel3.dontTouch(slowdown_opt1_safe_watermark)
+  val slowdown_opt1_safe_advance = chisel3.WireInit(safeAdvance)
+  chisel3.dontTouch(slowdown_opt1_safe_advance)
+  val slowdown_opt1_new_safe_watermark = chisel3.WireInit(newSafePacketWatermark)
+  chisel3.dontTouch(slowdown_opt1_new_safe_watermark)
+  val slowdown_opt1_checker_result = chisel3.WireInit(io.checker_results)
+  chisel3.dontTouch(slowdown_opt1_checker_result)
+  val slowdown_opt1_result_accepted = chisel3.WireInit(resultAccepted)
+  chisel3.dontTouch(slowdown_opt1_result_accepted)
+  val slowdown_opt1_result_stale = chisel3.WireInit(resultStale)
+  chisel3.dontTouch(slowdown_opt1_result_stale)
+  val slowdown_opt1_result_failed = chisel3.WireInit(resultFailed)
+  chisel3.dontTouch(slowdown_opt1_result_failed)
+  val slowdown_opt1_result_cancelled = chisel3.WireInit(resultCancelled)
+  chisel3.dontTouch(slowdown_opt1_result_cancelled)
+  val slowdown_opt1_pending_live_key = chisel3.WireInit(imageKey(crossPackagePendingSet)(crossPackagePendingWay))
+  chisel3.dontTouch(slowdown_opt1_pending_live_key)
+  val slowdown_opt1_pending_safe = chisel3.WireInit(L1Preservation.safe(
+    imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark))
+  chisel3.dontTouch(slowdown_opt1_pending_safe)
+  val slowdown_opt1_prefix_seq = chisel3.WireInit(safePacketWatermark + 1.U)
+  chisel3.dontTouch(slowdown_opt1_prefix_seq)
+  val slowdown_opt1_prefix_allocated = chisel3.WireInit(allocatedNext((safePacketWatermark + 1.U)(statsIndexBits - 1, 0)))
+  chisel3.dontTouch(slowdown_opt1_prefix_allocated)
+  val slowdown_opt1_prefix_slot_seq = chisel3.WireInit(seqNext((safePacketWatermark + 1.U)(statsIndexBits - 1, 0)))
+  chisel3.dontTouch(slowdown_opt1_prefix_slot_seq)
+  val slowdown_opt1_prefix_completed = chisel3.WireInit(completedNext((safePacketWatermark + 1.U)(statsIndexBits - 1, 0)))
+  chisel3.dontTouch(slowdown_opt1_prefix_completed)
+  val slowdown_opt1_prefix_passed = chisel3.WireInit(passedNext((safePacketWatermark + 1.U)(statsIndexBits - 1, 0)))
+  chisel3.dontTouch(slowdown_opt1_prefix_passed)
+  val slowdown_opt1_packet_alloc_valid = chisel3.WireInit(functionalPacketAlloc)
+  chisel3.dontTouch(slowdown_opt1_packet_alloc_valid)
+  val slowdown_opt1_packet_alloc_seq = chisel3.WireInit(io.packet_alloc_seq)
+  chisel3.dontTouch(slowdown_opt1_packet_alloc_seq)
+  val slowdown_opt1_result_held_duplicate = chisel3.WireInit(resultHeldDuplicate)
+  chisel3.dontTouch(slowdown_opt1_result_held_duplicate)
+  // OPTIMIZATION_1_TRACE_END
+  // SAFE_CHAIN_OBSERVATION_BEGIN — input-only simulation sinks. No protocol
+  // predicate below drives cache, LSU, watermark, ACK, barrier or recovery.
+  // Hardware statistics STOP precedes software ROI STOP/session completion.
+  // Keep sparse observation enabled through that tail; the parser clips to
+  // the unchanged software [start, stop) marker rather than guessing its end.
+  val safeChainCapture = RegInit(false.B)
+  when (io.traffic_reset) { safeChainCapture := false.B }
+    .elsewhen (io.traffic_start) { safeChainCapture := true.B }
+  val safeChainRoi = safeChainCapture || io.traffic_start
+  BoringUtils.addSource(io.csr_cycle, SafeChainObservation.CycleTap)
+  BoringUtils.addSource(safeChainRoi, SafeChainObservation.RoiTap)
+  def safeChainLog(kind: Int, fields: Seq[UInt], key: UInt,
+                   sample: Bool = true.B, force: Bool = false.B,
+                   hart: UInt = 0.U): Unit =
+    SafeChainObservation.emit(kind, clock, reset.asBool, io.csr_cycle,
+      io.csr_cycle, hart, safeChainRoi, sample, fields, key, force)
+
+  // OPT2B_OBSERVATION_ONLY: semantic writes and first preservation blocks.
+  // Payload is identity/metadata only, never cacheline bytes. These events
+  // cannot reveal younger stores that the existing serializing path never issues.
+  val opt2bWriteSet = s3_req.addr(idxMSB, idxLSB)
+  val opt2bWriteWay = OHToUInt(s3_way)
+  val opt2bWriteKey = imageKey(opt2bWriteSet)(opt2bWriteWay)
+  val opt2bWriteFire = dataWriteArb.io.in(0).fire
+  safeChainLog(14, Seq(opt2bWriteFire.asUInt, s3_req.packet_seq,
+    (s3_req.addr >> blockOffBits) << blockOffBits,
+    opt2bWriteKey.contentSeq, opt2bWriteKey.generation, opt2bWriteKey.writer,
+    opt2bWriteKey.valid.asUInt, safePacketWatermark, s3_req.slot_epoch,
+    s3_req.request_token, imageSerial, s3_req.uop.mem_cmd,
+    lowerPreserved(opt2bWriteSet)(opt2bWriteWay).asUInt, s3_replay.asUInt),
+    0.U, true.B, opt2bWriteFire)
+  val opt2bBlock = crossPackageDomainWait && !crossPackagePending
+  safeChainLog(15, Seq(opt2bBlock.asUInt, s2_req(0).packet_seq,
+    (s2_req(0).addr >> blockOffBits) << blockOffBits,
+    s2_overwrittenKey.contentSeq, s2_overwrittenKey.generation,
+    s2_overwrittenKey.writer, s2_overwrittenKey.valid.asUInt, safePacketWatermark,
+    s2_lookup_epoch(0), s2_req(0).request_token,
+    lowerPreserved(s2_store_set)(s2_store_way).asUInt, (s2_type === t_replay).asUInt),
+    0.U, true.B, opt2bBlock)
+  val safeChainHole = newSafePacketWatermark + 1.U
+  val safeChainHoleIdx = safeChainHole(statsIndexBits - 1, 0)
+  val safeChainFirst = safePacketWatermark + 1.U
+  val safeChainFirstIdx = safeChainFirst(statsIndexBits - 1, 0)
+  val safeChainHoleFlags = VecInit(Seq(allocatedNext(safeChainHoleIdx),
+    completedNext(safeChainHoleIdx), passedNext(safeChainHoleIdx))).asUInt
+  val safeChainFirstFlags = VecInit(Seq(allocatedNext(safeChainFirstIdx),
+    completedNext(safeChainFirstIdx), passedNext(safeChainFirstIdx))).asUInt
+  val safeChainPassedBehind = PopCount((0 until statsWindow).map(i =>
+    allocatedNext(i) && completedNext(i) && passedNext(i) && seqNext(i) > safeChainHole))
+  val safeChainPrefixFields = Seq(safePacketWatermark, newSafePacketWatermark,
+    safeChainHole, seqNext(safeChainHoleIdx), safeChainHoleFlags,
+    safeChainFirst, seqNext(safeChainFirstIdx), safeChainFirstFlags,
+    safeChainPassedBehind, PopCount(allocatedNext))
+  safeChainLog(1, safeChainPrefixFields, Cat(safeChainPrefixFields))
+  safeChainLog(2, Seq(io.packet_alloc_seq, allocationCollision.asUInt),
+    io.packet_alloc_seq, functionalPacketAlloc, true.B)
+  for (i <- io.checker_results.indices) {
+    val result = io.checker_results(i)
+    val valid = result(GH_GlobalParams.GH_CHECKER_RESULT_BITS - 1)
+    val seq = result(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0)
+    val idx = seq(statsIndexBits - 1, 0)
+    val flags = VecInit(Seq(valid, resultAccepted(i), resultStale(i),
+      resultHeldDuplicate(i), resultFailed(i), resultCancelled(i))).asUInt
+    safeChainLog(3, Seq(result, flags, bitmapSeq(idx),
+      VecInit(Seq(bitmapAllocated(idx), bitmapCompleted(idx), bitmapPassed(idx))).asUInt),
+      Cat(Mux(valid, result, 0.U), flags), hart = (i + GH_GlobalParams.GH_NUM_BIG_CORES).U)
+  }
+  // Small ROI-entry checkpoint, not a per-cycle table dump. Exact tags for
+  // both the earliest hole and the pending target are logged independently.
+  val safeChainRoiPrevious = RegNext(safeChainRoi, false.B)
+  for (chunk <- 0 until 32) {
+    val indices = (chunk * 8 until chunk * 8 + 8)
+    val fields = Seq(chunk.U, safePacketWatermark,
+      VecInit(indices.map(bitmapAllocated(_))).asUInt,
+      VecInit(indices.map(bitmapCompleted(_))).asUInt,
+      VecInit(indices.map(bitmapPassed(_))).asUInt) ++ indices.map(bitmapSeq(_))
+    safeChainLog(9, fields, chunk.U, !safeChainRoiPrevious, true.B, hart = chunk.U)
+  }
+  val safeChainPreviousPending = RegNext(crossPackagePending, false.B)
+  val safeChainEntryCounter = RegInit(0.U(64.W))
+  val safeChainNewEntry = crossPackagePending && !safeChainPreviousPending
+  val safeChainEntry = Mux(safeChainNewEntry, safeChainEntryCounter + 1.U, safeChainEntryCounter)
+  when (safeChainNewEntry) { safeChainEntryCounter := safeChainEntryCounter + 1.U }
+  val safeChainLiveKey = imageKey(crossPackagePendingSet)(crossPackagePendingWay)
+  val safeChainTargetIdx = safeChainLiveKey.contentSeq(statsIndexBits - 1, 0)
+  // LSB-first, fixed bit definitions are recorded in event_schema.json.
+  val safeChainReleaseBits = VecInit(Seq(crossPackagePending,
+    L1Preservation.safe(safeChainLiveKey, safePacketWatermark), crossPackageResidentMatch,
+    crossPackageIssued, crossPackageMetaClearPending, crossPackageMshrConflict,
+    crossPackageSlotConflict, crossPackageMetaClearBlock,
+    completionPending(crossPackagePendingSet)(crossPackagePendingWay),
+    prober.io.state.valid && prober.io.state.bits(idxMSB, idxLSB) === crossPackagePendingSet,
+    crossPackageWbReq.valid, crossPackageWbReq.ready, crossPackageWbReq.fire,
+    crossPackageWbDone, lowerPreserved(crossPackagePendingSet)(crossPackagePendingWay),
+    crossPackageMetaClear.valid, crossPackageMetaClear.ready, crossPackageMetaClear.fire,
+    preservationRevoked, wb.io.idx.valid, wb.io.pending_idx.valid, wb.io.pending_sent,
+    wb.io.mem_grant, io.lsu.exception, io.lsu.s1_kill.asUInt.orR)).asUInt
+  val safeChainTargetFlags = VecInit(Seq(allocatedNext(safeChainTargetIdx),
+    completedNext(safeChainTargetIdx), passedNext(safeChainTargetIdx))).asUInt
+  val safeChainPendingFields = Seq(safeChainEntry, safeChainLiveKey.contentSeq,
+    crossPackagePendingEpoch, crossPackagePendingSet, crossPackagePendingTag,
+    crossPackagePendingWay, safeChainLiveKey.generation, safeChainLiveKey.writer,
+    safeChainLiveKey.valid.asUInt, safeChainReleaseBits, seqNext(safeChainTargetIdx),
+    safeChainTargetFlags, crossPackagePendingSeq, crossPackagePendingAddr)
+  safeChainLog(8, safeChainPendingFields,
+    Mux(crossPackagePending, Cat(safeChainPendingFields), 0.U))
+  // These software control bits are held levels, not one-cycle commands.
+  // Observe only their rising edges: forcing a row while RESET/START stays
+  // high logs every cycle (including boot) and exhausts the observer budget.
+  // These registers feed only the logger; functional statistics are unchanged.
+  val safeChainResetPrevious = RegNext(io.traffic_reset, false.B)
+  val safeChainStartPrevious = RegNext(io.traffic_start, false.B)
+  val safeChainResetPulse = io.traffic_reset && !safeChainResetPrevious
+  val safeChainStartPulse = io.traffic_start && !safeChainStartPrevious
+  val safeChainBoundaryPulse = safeChainResetPulse || safeChainStartPulse || trafficStopPulse
+  SafeChainObservation.emit(10, clock, reset.asBool, io.csr_cycle, io.csr_cycle,
+    0.U, true.B, safeChainBoundaryPulse,
+    Seq(safeChainResetPulse.asUInt, safeChainStartPulse.asUInt, trafficStopPulse.asUInt),
+    0.U, true.B)
+  // SAFE_CHAIN_OBSERVATION_END
   io.lsu.ordered := mshrs.io.fence_rdy && !s1_valid.reduce(_||_) && !s2_valid.reduce(_||_) &&
     !s3_valid && completionQ.io.count === 0.U && replayResultQ.map(_.io.count === 0.U).reduce(_ && _) &&
     !wb.io.idx.valid && !wb.io.pending_idx.valid && !crossPackagePending
