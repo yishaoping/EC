@@ -23,9 +23,16 @@ import boom.exu.BrUpdateInfo
 import boom.util.{IsKilledByBranch, GetNewBrMask, BranchKillableQueue, IsOlder, UpdateBrMask, AgePriorityEncoder, WrapInc, Transpose}
 
 
-class BoomWritebackUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1HellaCacheModule()(p) {
+class BoomWritebackUnit(val svbEntries: Int)(implicit edge: TLEdgeOut, p: Parameters) extends L1HellaCacheModule()(p) {
   val io = IO(new Bundle {
     val req = Flipped(Decoupled(new WritebackReq(edge.bundle)))
+    val req_is_mshr = Input(Bool())
+    val svb_req = Flipped(Decoupled(new SpeculativeVersionPromotion(refillCycles, encRowBits, log2Ceil(svbEntries))))
+    val svb_done = Output(Valid(new SpeculativeVersionCompletion(log2Ceil(svbEntries))))
+    val svb_release_done = Output(Bool())
+    val pending_svb = Output(Bool())
+    val pending_entry = Output(UInt(log2Ceil(svbEntries).W))
+    val pending_line = Output(UInt(coreMaxAddrBits.W))
     val meta_read = Decoupled(new L1MetaReadReq)
     val resp = Output(Bool())
     val idx = Output(Valid(UInt()))
@@ -34,6 +41,7 @@ class BoomWritebackUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1Hella
     val mem_grant = Input(Bool())
     val image_key = Input(new CacheImageKey)
     val pending_key = Output(new CacheImageKey)
+    val debug_state = Output(UInt(3.W))
     val pending_idx = Output(Valid(UInt(idxBits.W)))
     val pending_sent = Output(Bool())
     val probe_done = Output(Bool())
@@ -46,18 +54,27 @@ class BoomWritebackUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1Hella
     val packet_tracked = Input(Bool())
     val active_packet_seq = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
     val active_packet_tracked = Output(Bool())
+    val snapshot_valid = Output(Bool())
+    val snapshot_ready = Input(Bool())
+    val snapshot_line = Output(UInt(coreMaxAddrBits.W))
+    val snapshot_key = Output(new CacheImageKey)
+    val snapshot_epoch = Output(UInt(16.W))
+    val snapshot_param = Output(UInt(TLPermissions.cWidth.W))
+    val snapshot_data = Output(Vec(refillCycles, UInt(encRowBits.W)))
     val release = Decoupled(new TLBundleC(edge.bundle))
     val lsu_release = Decoupled(new TLBundleC(edge.bundle))
   })
 
   val req = Reg(new WritebackReq(edge.bundle))
+  val reqIsMshr = RegInit(false.B)
   val snapshotKey = Reg(new CacheImageKey)
   val snapshotEpoch = Reg(UInt(16.W))
   val snapshotGeneration = Reg(UInt(32.W))
   val snapshotImageValid = Reg(Bool())
   dontTouch(snapshotEpoch); dontTouch(snapshotGeneration); dontTouch(snapshotImageValid)
-  val s_invalid :: s_fill_buffer :: s_lsu_release :: s_active :: Nil = Enum(4)
+  val s_invalid :: s_fill_buffer :: s_lsu_release :: s_active :: s_capture_hold :: Nil = Enum(5)
   val state = RegInit(s_invalid)
+  io.debug_state := state
   val r1_data_req_fired = RegInit(false.B)
   val r2_data_req_fired = RegInit(false.B)
   val r1_data_req_cnt = Reg(UInt(log2Up(refillCycles+1).W))
@@ -65,6 +82,14 @@ class BoomWritebackUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1Hella
   val data_req_cnt = RegInit(0.U(log2Up(refillCycles+1).W))
   val (_, last_beat, all_beats_done, beat_count) = edge.count(io.release)
   val wb_buffer = Reg(Vec(refillCycles, UInt(encRowBits.W)))
+  val snapshotValid = RegInit(false.B)
+  io.snapshot_valid := snapshotValid
+  io.snapshot_line := (Cat(req.tag, req.idx) << blockOffBits).pad(coreMaxAddrBits)
+  io.snapshot_key := snapshotKey
+  io.snapshot_epoch := snapshotEpoch
+  io.snapshot_param := req.param
+  io.snapshot_data := wb_buffer
+  when (snapshotValid && io.snapshot_ready) { snapshotValid := false.B }
   // The data buffer can service probes while the single voluntary source
   // waits for D. Never reuse that source/receipt until its ACK is consumed.
   val ackPending = RegInit(false.B)
@@ -73,19 +98,31 @@ class BoomWritebackUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1Hella
   val pendingKey = Reg(new CacheImageKey)
   val pendingEpoch = Reg(UInt(16.W))
   val pendingIdx = Reg(UInt(idxBits.W))
+  val pendingIsSvb = RegInit(false.B)
+  val pendingEntry = Reg(UInt(log2Ceil(svbEntries).W))
+  val pendingLine = Reg(UInt(coreMaxAddrBits.W))
+  io.pending_svb := ackPending && pendingIsSvb
+  io.pending_entry := pendingEntry
+  io.pending_line := pendingLine
   io.pending_key := pendingKey
   io.pending_idx.valid := ackPending
   io.pending_idx.bits := pendingIdx
   io.pending_sent := ackPending && allSent
   io.probe_done := false.B
-  io.done.valid := ackPending && allSent && acked
+  val receiptDone = ackPending && allSent && acked
+  io.done.valid := receiptDone && !pendingIsSvb
+  io.svb_done.valid := receiptDone && pendingIsSvb
+  io.svb_done.bits.entry := pendingEntry
+  io.svb_done.bits.key := pendingKey
+  io.svb_release_done := false.B
   io.done.bits := pendingKey
   io.done_epoch := pendingEpoch
-  when (ackPending && io.mem_grant) {
+  when (io.mem_grant) {
+    assert(ackPending, "WB ACK without source owner")
     assert(allSent && !acked, "WB receipt before full C transfer or duplicate receipt")
     acked := true.B
   }
-  when (io.done.valid) { ackPending := false.B }
+  when (receiptDone) { ackPending := false.B }
 
   val packet_seq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
   val packet_tracked = RegInit(false.B)
@@ -97,6 +134,7 @@ class BoomWritebackUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1Hella
   io.release.valid   := false.B
   io.release.bits    := DontCare
   io.req.ready       := false.B
+  io.svb_req.ready := false.B
   io.meta_read.valid := false.B
   io.meta_read.bits  := DontCare
   io.data_req.valid  := false.B
@@ -128,10 +166,14 @@ class BoomWritebackUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1Hella
 
   when (state === s_invalid) {
     io.req.ready := !io.req.bits.voluntary || !ackPending
+    // Existing probe/MSHR/capture/fallback arbitration retains priority.
+    // Both voluntary producers acquire the same receipt before any C beat.
+    io.svb_req.ready := !ackPending && !io.req.valid
     when (io.req.fire) {
       state := s_fill_buffer
       data_req_cnt := 0.U
       req := io.req.bits
+      reqIsMshr := io.req_is_mshr
       snapshotKey := io.image_key
       when (io.req.bits.voluntary) {
         ackPending := true.B
@@ -140,12 +182,42 @@ class BoomWritebackUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1Hella
         pendingKey := io.image_key
         pendingEpoch := io.owner_epoch
         pendingIdx := io.req.bits.idx
+        pendingIsSvb := false.B
+        pendingLine := (Cat(io.req.bits.tag, io.req.bits.idx) << blockOffBits).pad(coreMaxAddrBits)
       }
       snapshotEpoch := io.owner_epoch
       snapshotGeneration := io.image_generation
       snapshotImageValid := io.image_valid
       packet_seq := io.packet_seq
       packet_tracked := io.packet_tracked
+    }
+    when (io.svb_req.fire) {
+      assert(!ackPending && !io.req.fire, "SVB source allocation while busy")
+      state := s_active
+      data_req_cnt := 0.U
+      req := 0.U.asTypeOf(new WritebackReq(edge.bundle))
+      req.voluntary := true.B
+      req.source := id.U
+      req.tag := io.svb_req.bits.line >> untagBits
+      req.idx := io.svb_req.bits.line(idxMSB, idxLSB)
+      req.param := io.svb_req.bits.param
+      reqIsMshr := false.B
+      wb_buffer := io.svb_req.bits.data
+      snapshotKey := io.svb_req.bits.key
+      snapshotEpoch := io.svb_req.bits.epoch
+      ackPending := true.B
+      allSent := false.B
+      acked := false.B
+      pendingKey := io.svb_req.bits.key
+      pendingEpoch := io.svb_req.bits.epoch
+      pendingIdx := io.svb_req.bits.line(idxMSB, idxLSB)
+      pendingLine := io.svb_req.bits.line
+      pendingIsSvb := true.B
+      pendingEntry := io.svb_req.bits.entry
+      packet_seq := io.svb_req.bits.key.contentSeq
+      packet_tracked := io.svb_req.bits.key.valid
+      // Snapshot is already buffered: do not read/invalidate the younger L1
+      // image, and do not produce an MSHR row-reader completion.
     }
   } .elsewhen (state === s_fill_buffer) {
     io.meta_read.valid := data_req_cnt < refillCycles.U
@@ -170,8 +242,13 @@ class BoomWritebackUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1Hella
     when (r2_data_req_fired) {
       wb_buffer(r2_data_req_cnt) := io.data_resp
       when (r2_data_req_cnt === (refillCycles-1).U) {
-        io.resp := true.B
-        state := s_lsu_release
+        io.resp := reqIsMshr
+        when (req.svb_capture) {
+          snapshotValid := true.B
+          state := s_capture_hold
+        }.otherwise {
+          state := s_lsu_release
+        }
         data_req_cnt := 0.U
       }
     }
@@ -190,11 +267,31 @@ class BoomWritebackUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1Hella
       data_req_cnt := data_req_cnt + 1.U
     }
     when ((data_req_cnt === (refillCycles-1).U) && io.release.fire) {
-      when (req.voluntary) { allSent := true.B }
+      when (req.voluntary) {
+        allSent := true.B
+        io.svb_release_done := pendingIsSvb
+      }
       .otherwise { io.probe_done := true.B }
       state := s_invalid
     }
+  } .elsewhen (state === s_capture_hold) {
+    // Hold the snapshot until the SVB accepts it.  This is the atomicity
+    // boundary: the producer cannot be reused and the predecessor cannot be
+    // overwritten before the full line has a durable SVB owner.
+    when (snapshotValid && io.snapshot_ready) {
+      state := s_invalid
+    }
   }
+
+  when (io.req.fire && io.req.bits.voluntary) {
+    assert(!ackPending, "normal WB allocated a busy release source")
+  }
+  when (io.release.fire && req.voluntary) {
+    assert(ackPending && !allSent && !acked, "C Release without exclusive source owner")
+    assert(snapshotKey.asUInt === pendingKey.asUInt && r_address === pendingLine,
+      "C Release identity differs from reserved receipt")
+  }
+  assert(!(io.done.valid && io.svb_done.valid), "normal and SVB completion overlap")
 
 }
 
@@ -214,6 +311,7 @@ class BoomProbeUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1HellaCach
     val lsu_release = Decoupled(new TLBundleC(edge.bundle))
 
     val state = Output(Valid(UInt(coreMaxAddrBits.W)))
+    val diagnosticState = Output(UInt(4.W))
   })
 
   val (s_invalid :: s_meta_read :: s_meta_resp :: s_mshr_req ::
@@ -234,6 +332,7 @@ class BoomProbeUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1HellaCach
 
   io.state.valid := state =/= s_invalid
   io.state.bits  := req.address
+  io.diagnosticState := state
 
   io.req.ready := state === s_invalid
   io.rep.valid := state === s_release
@@ -261,6 +360,7 @@ class BoomProbeUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1HellaCach
   io.wb_req.bits.param := report_param
   io.wb_req.bits.way_en := way_en
   io.wb_req.bits.voluntary := false.B
+  io.wb_req.bits.svb_capture := false.B
   when (io.wb_done) { assert(state === s_writeback_resp, "orphan ProbeAckData completion") }
 
 
@@ -521,9 +621,55 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
 
   val t_replay :: t_probe :: t_wb :: t_mshr_meta_read :: t_lsu :: t_prefetch :: Nil = Enum(6)
 
-  val wb = Module(new BoomWritebackUnit)
+  val nSVBEntries = p(SVBEntries)
+  val wb = Module(new BoomWritebackUnit(nSVBEntries))
+  val wbOwnerType = RegInit(0.U(3.W))
+  val wbOwnerSource = RegInit(0.U(log2Ceil(cfg.nMSHRs + 1).W))
+  // Optimization 4: one shared snapshot reader feeds a bounded global SVB.
+  // The normal writeback/probe path remains the fallback when this buffer is
+  // full or the event is outside the deliberately narrow fast-path scope.
+  val svb = Module(new SpeculativeVersionBuffer(entries = nSVBEntries))
+  val svbCapturePending = RegInit(false.B)
+  val svbCaptureIssued = RegInit(false.B)
+  val svbFastLineValid = RegInit(false.B)
+  val svbFastSet = Reg(UInt(idxBits.W))
+  val svbFastWay = Reg(UInt(log2Ceil(nWays max 2).W))
+  val svbFastTag = Reg(UInt(tagBits.W))
+  val svbFastEpoch = Reg(UInt(16.W))
+  val svbFastSeq = Reg(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val svbFastKey = Reg(new CacheImageKey)
+  val svbFastAcquireCycle = Reg(UInt(64.W))
+  val svbFastReleaseCycle = Reg(UInt(64.W))
+  val svbFastLine = Wire(UInt(coreMaxAddrBits.W))
+  svbFastLine := (Cat(svbFastTag, svbFastSet) << blockOffBits).pad(coreMaxAddrBits)
+  val lastLsuProgressCycle = RegInit(0.U(64.W))
+  val lastWatermarkProgressCycle = RegInit(0.U(64.W))
+  val lastCheckerResultCycle = RegInit(0.U(64.W))
+  val lastWbCompletionCycle = RegInit(0.U(64.W))
+  val lastProbeCompletionCycle = RegInit(0.U(64.W))
+  val lastMshrFreeCycle = RegInit(0.U(64.W))
+  val lastSvbCompletionCycle = RegInit(0.U(64.W))
+  val svbEpoch = RegInit(0.U(16.W))
+  val svbFlush = WireDefault(false.B)
+  val svbInvalidate = Wire(Valid(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))
+  svbInvalidate.valid := false.B
+  svbInvalidate.bits := 0.U
+  svb.io.currentEpoch := svbEpoch
+  val svbDiagnosticDump = WireDefault(false.B)
+  svb.io.diagnosticDump := svbDiagnosticDump
+  svb.io.diagnosticCycle := io.csr_cycle
+  svb.io.resetStats := io.traffic_reset
+  svb.io.countStats := trafficCounting && !trafficStopPulse
+  svb.io.flush := svbFlush
+  svb.io.invalidate := svbInvalidate
+  svb.io.ack := wb.io.svb_done
+  val svbCaptureWbReq = Wire(Decoupled(new WritebackReq(edge.bundle)))
   val prober = Module(new BoomProbeUnit)
   val mshrs = Module(new BoomMSHRFile)
+  val dcacheWatchdogSnapshot = WireDefault(false.B)
+  BoringUtils.addSink(dcacheWatchdogSnapshot, "EC_PIPELINE_WATCHDOG_SNAPSHOT")
+  val dcacheWatchdogSnapshotPrinted = RegInit(false.B)
+  when (!dcacheWatchdogSnapshot) { dcacheWatchdogSnapshotPrinted := false.B }
   // Completion feedback for an RPQ entry is generated at the physical L1
   // effect point below.  The request remains owned by its MSHR until then.
   val replayEffectDone = WireDefault(false.B)
@@ -573,6 +719,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     Seq.fill(nWays)(0.U.asTypeOf(new CacheImageKey))))))
   val lowerPreserved = RegInit(VecInit(Seq.fill(nSets)(VecInit(Seq.fill(nWays)(false.B)))))
   val safePacketWatermark = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  svb.io.safeWatermark := safePacketWatermark
   val imageSerial = RegInit(1.U(32.W))
   val imageValid = RegInit(VecInit(Seq.fill(nSets)(VecInit(Seq.fill(nWays)(false.B)))))
   val slotReserved = RegInit(VecInit(Seq.fill(nSets)(VecInit(Seq.fill(nWays)(false.B)))))
@@ -833,6 +980,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // LSU 已按 LDQ/STQ 项锁存统计资格；DCache 只补充地址管理器给出的
   // 可缓存属性，并让两者随 MSHR/refill/replay 一直传播到完成点。
   when (io.lsu.req.fire) {
+    lastLsuProgressCycle := io.csr_cycle
     for (w <- 0 until memWidth) {
       s0_req(w).traffic_cacheable := edge.manager.supportsAcquireBFast(
         io.lsu.req.bits(w).bits.addr, lgCacheBlockBytes.U)
@@ -1244,8 +1392,9 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   tl_out.a <> mshrs.io.mem_acquire
 
   // probes and releases
-  prober.io.req.valid   := tl_out.b.valid && !lrsc_valid
-  tl_out.b.ready        := prober.io.req.ready && !lrsc_valid
+  svb.io.releaseLines(3) := (tl_out.b.bits.address >> blockOffBits) << blockOffBits
+  prober.io.req.valid   := tl_out.b.valid && !lrsc_valid && !svb.io.releaseBlocked(3)
+  tl_out.b.ready        := prober.io.req.ready && !lrsc_valid && !svb.io.releaseBlocked(3)
   prober.io.req.bits    := tl_out.b.bits
   prober.io.way_en      := s2_tag_match_way(0)
   prober.io.block_state := s2_hit_state(0)
@@ -1400,17 +1549,32 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   tl_out.e <> mshrs.io.mem_finish
 
   // writebacks
-  val wbArb = Module(new Arbiter(new WritebackReq(edge.bundle), 3))
-  // 0 goes to prober, 1 to MSHR evictions, 2 to the cross-package shadow
-  // writeback. The latter is a local request and does not alter the TL bundle.
-  wbArb.io.in(0).valid := prober.io.wb_req.valid && probeDrainReady
-  wbArb.io.in(0).bits := prober.io.wb_req.bits
-  prober.io.wb_req.ready := wbArb.io.in(0).ready && probeDrainReady
-  wbArb.io.in(1).valid := mshrs.io.wb_req.valid && victimDrainReady
-  wbArb.io.in(1).bits := mshrs.io.wb_req.bits
-  mshrs.io.wb_req.ready := wbArb.io.in(1).ready && victimDrainReady
+  val wbArb = Module(new Arbiter(new WritebackReq(edge.bundle), 4))
+  // 0 goes to prober, 1 to MSHR evictions, 2 to the SVB snapshot reader,
+  // 3 to the legacy cross-package WaitSafe shadow writeback.
+  def wbLine(r: WritebackReq): UInt = (Cat(r.tag, r.idx) << blockOffBits).pad(coreMaxAddrBits)
+  svb.io.releaseLines(0) := wbLine(prober.io.wb_req.bits)
+  svb.io.releaseLines(1) := wbLine(mshrs.io.wb_req.bits)
   val crossPackageWbReq = Wire(Decoupled(new WritebackReq(edge.bundle)))
-  wbArb.io.in(2)       <> crossPackageWbReq
+  svb.io.releaseLines(2) := wbLine(crossPackageWbReq.bits)
+  // Correctness ordering, independent of source allocation: ordinary WB and
+  // probe data may not overtake an older snapshot on the SAME physical line.
+  // Gate before arbitration so a blocked normal request cannot starve SVB.
+  wbArb.io.in(0).valid := prober.io.wb_req.valid && probeDrainReady && !svb.io.releaseBlocked(0)
+  wbArb.io.in(0).bits := prober.io.wb_req.bits
+  prober.io.wb_req.ready := wbArb.io.in(0).ready && probeDrainReady && !svb.io.releaseBlocked(0)
+  wbArb.io.in(1).valid := mshrs.io.wb_req.valid && victimDrainReady && !svb.io.releaseBlocked(1)
+  wbArb.io.in(1).bits := mshrs.io.wb_req.bits
+  mshrs.io.wb_req.ready := wbArb.io.in(1).ready && victimDrainReady && !svb.io.releaseBlocked(1)
+  wbArb.io.in(2) <> svbCaptureWbReq
+  wbArb.io.in(3).valid := crossPackageWbReq.valid && !svb.io.releaseBlocked(2)
+  wbArb.io.in(3).bits := crossPackageWbReq.bits
+  crossPackageWbReq.ready := wbArb.io.in(3).ready && !svb.io.releaseBlocked(2)
+  for (q <- Seq(0, 1, 3)) {
+    when (wbArb.io.in(q).fire) {
+      assert(!svb.io.releaseBlocked(if (q == 3) 2 else q), "ORDER-1: normal WB overtook retained SVB predecessor")
+    }
+  }
   wb.io.req            <> wbArb.io.out
   val wbReqSet = wbArb.io.out.bits.idx
   val wbReqWay = OHToUInt(wbArb.io.out.bits.way_en)
@@ -1418,6 +1582,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // actual pending sequence is driven with the barrier state later in this
   // module; avoiding a Scala forward reference is required during elaboration.
   val crossPackageWbPacketSeq = WireDefault(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val svbCapturePacketSeq = WireDefault(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
   // Capture the line-level replacement acceptance point separately from the
   // later C-channel transfer. Port 1 is the MSHR dirty-victim path; probe
   // writebacks on port 0 are outside the current single-core barrier scope.
@@ -1429,9 +1594,22 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   wb.io.image_valid := imageValid(wbReqSet)(wbReqWay)
   wb.io.image_key := imageKey(wbReqSet)(wbReqWay)
   wb.io.packet_seq := Mux(wbArb.io.chosen === 2.U,
-    crossPackageWbPacketSeq, dirtyPacketSeq(wbReqSet)(wbReqWay))
+    svbCapturePacketSeq,
+    Mux(wbArb.io.chosen === 3.U,
+      crossPackageWbPacketSeq, dirtyPacketSeq(wbReqSet)(wbReqWay)))
   wb.io.packet_tracked := dirtyPacketTracked(wbReqSet)(wbReqWay)
   wb.io.data_resp       := s2_data_muxed(0)
+  wb.io.snapshot_ready  := svb.io.capture.ready
+  wb.io.svb_req <> svb.io.promote
+  wb.io.req_is_mshr := wbArb.io.chosen === 1.U
+  svb.io.capture.valid := wb.io.snapshot_valid
+  svb.io.capture.bits.line := wb.io.snapshot_line
+  svb.io.capture.bits.key := wb.io.snapshot_key
+  svb.io.capture.bits.epoch := svbEpoch
+  svb.io.capture.bits.param := wb.io.snapshot_param
+  svb.io.capture.bits.data := wb.io.snapshot_data
+  // SVB snapshots use the same row reader but are not MSHR evictions; do not
+  // let their line-read completion pulse retire an unrelated MSHR WB state.
   mshrs.io.wb_resp      := wb.io.resp
   val wbAck = tl_out.d.fire && tl_out.d.bits.source === cfg.nMSHRs.U
   val wbAckKey = tl_out.d.bits.user.lift(CacheImage).getOrElse(0.U.asTypeOf(new CacheImageKey))
@@ -1439,13 +1617,10 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     !tl_out.d.bits.denied && !tl_out.d.bits.corrupt &&
     tl_out.d.bits.size === lgCacheBlockBytes.U && wbAckKey.asUInt === wb.io.pending_key.asUInt
   wb.io.mem_grant := wbAck && wbAckMatches
+  // Only the shared engine consumes this source's ACK. The latched
+  // receipt selects normal completion versus SVB entry completion.
   when (wbAck) {
-    printf("STAGE2_TX ACK source=%x gen=%x seq=%x writer=%x valid=%x matched=%x\n",
-      tl_out.d.bits.source, wbAckKey.generation, wbAckKey.contentSeq,
-      wbAckKey.writer, wbAckKey.valid, wbAckMatches)
-    assert(!tl_out.d.bits.denied, "preservation release denied")
-    assert(tl_out.d.bits.opcode === TLMessages.ReleaseAck && !tl_out.d.bits.corrupt,
-      "invalid response on the voluntary WB source")
+    assert(wbAckMatches, "invalid/unmatched response on the voluntary WB source")
   }
 
   val lsu_release_arb = Module(new Arbiter(new TLBundleC(edge.bundle), 2))
@@ -1459,7 +1634,82 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // beat is accepted. A ReleaseData/ProbeAckData transaction is a dirty
   // writeback; this single-core design currently has no ProbeAck traffic from
   // another coherent tile, so the C-channel count is the useful total here.
-  val (c_first, _, _, _) = edge.count(tl_out.c)
+  val (c_first, c_last, _, c_beat) = edge.count(tl_out.c)
+  val cReleaseKey = tl_out.c.bits.user.lift(CacheImage).get
+  // C arbitration covers beats; this scoreboard covers the ACK lifetime.
+  val releaseBeat = tl_out.c.fire &&
+    tl_out.c.bits.opcode.isOneOf(TLMessages.Release, TLMessages.ReleaseData)
+  val releaseFirst = releaseBeat && c_first
+  val releaseLast = releaseBeat && c_last
+  when (releaseFirst || releaseLast) {
+    printf("C_CHANNEL cycle=%x first=%x last=%x owner=%x line=%x source=%x opcode=%x seq=%x generation=%x\n",
+      io.csr_cycle, releaseFirst, releaseLast, wb.io.pending_svb,
+      tl_out.c.bits.address, tl_out.c.bits.source, tl_out.c.bits.opcode,
+      cReleaseKey.contentSeq, cReleaseKey.generation)
+    when (wb.io.pending_svb) {
+      printf("SVB_C_FIRE cycle=%x first=%x last=%x entry=%x line=%x seq=%x generation=%x source=%x\n",
+        io.csr_cycle, releaseFirst, releaseLast, wb.io.pending_entry,
+        tl_out.c.bits.address, cReleaseKey.contentSeq, cReleaseKey.generation,
+        tl_out.c.bits.source)
+    }
+  }
+  when (wbAck) {
+    printf("D_ACK cycle=%x line=%x source=%x opcode=%x matched=%x sent=%x owner_svb=%x entry=%x seq=%x generation=%x\n",
+      io.csr_cycle, wb.io.pending_line, tl_out.d.bits.source,
+      tl_out.d.bits.opcode, wbAckMatches, wb.io.pending_sent,
+      wb.io.pending_svb, wb.io.pending_entry, wbAckKey.contentSeq,
+      wbAckKey.generation)
+  }
+  val releaseSourceBusy = RegInit(false.B)
+  val releaseSourceSent = RegInit(false.B)
+  val sourceConflict = releaseFirst && (releaseSourceBusy ||
+    !wb.io.pending_idx.valid || tl_out.c.bits.source =/= cfg.nMSHRs.U)
+  val invalidReleaseAck = wbAck && (!wbAckMatches || !releaseSourceBusy || !releaseSourceSent)
+  when (releaseFirst) {
+    assert(!sourceConflict, "C release source reused or missing shared WB reservation")
+    releaseSourceBusy := true.B
+    releaseSourceSent := false.B
+  }
+  when (releaseLast) { releaseSourceSent := true.B }
+  when (wbAck && wbAckMatches) {
+    assert(releaseSourceBusy && releaseSourceSent, "ACK without complete outstanding C release")
+    releaseSourceBusy := false.B
+    releaseSourceSent := false.B
+  }
+  val releaseIssued = RegInit(0.U(64.W))
+  val releaseMatched = RegInit(0.U(64.W))
+  val svbReleaseIssued = RegInit(0.U(64.W))
+  val svbReleaseMatched = RegInit(0.U(64.W))
+  val sourceConflicts = RegInit(0.U(64.W))
+  val invalidReleaseAcks = RegInit(0.U(64.W))
+  when (releaseFirst) {
+    releaseIssued := releaseIssued + 1.U
+    when (wb.io.pending_svb) { svbReleaseIssued := svbReleaseIssued + 1.U }
+  }
+  when (wbAck && wbAckMatches) {
+    releaseMatched := releaseMatched + 1.U
+    when (wb.io.pending_svb) { svbReleaseMatched := svbReleaseMatched + 1.U }
+  }
+  when (sourceConflict) { sourceConflicts := sourceConflicts + 1.U }
+  when (invalidReleaseAck) { invalidReleaseAcks := invalidReleaseAcks + 1.U }
+  val svbSourceBusyCycles = RegInit(0.U(64.W))
+  val svbQueuedCycles = RegInit(0.U(64.W))
+  val svbMaxQueued = RegInit(0.U(log2Ceil(nSVBEntries + 1).W))
+  val svbCoalesced = RegInit(0.U(64.W))
+  val svbSourceBlocked = svb.io.promote.valid && wb.io.pending_idx.valid
+  val svbSourceBlockedPrevious = RegNext(svbSourceBlocked, false.B)
+  when (io.traffic_reset) {
+    svbSourceBusyCycles := 0.U
+    svbQueuedCycles := 0.U
+    svbMaxQueued := 0.U
+    svbCoalesced := 0.U
+  }.elsewhen (trafficCounting) {
+    when (wb.io.pending_idx.valid && (svb.io.queued =/= 0.U || wb.io.pending_svb)) { svbSourceBusyCycles := svbSourceBusyCycles + 1.U }
+    when (svb.io.queued =/= 0.U) { svbQueuedCycles := svbQueuedCycles + 1.U }
+    when (svb.io.queued > svbMaxQueued) { svbMaxQueued := svb.io.queued }
+    svbCoalesced := svbCoalesced + svb.io.coalesced
+  }
+
   val l1_l2_c_event = tl_out.c.fire && c_first
   val l1_l2_dirty_wb_event = l1_l2_c_event &&
     tl_out.c.bits.opcode.isOneOf(TLMessages.ReleaseData, TLMessages.ProbeAckData)
@@ -1495,10 +1745,10 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) === crossPackagePendingEpoch &&
     (!(crossPackageIssued || crossPackageMetaClearPending) ||
       imageKey(crossPackagePendingSet)(crossPackagePendingWay).asUInt === crossPackagePendingKey.asUInt)
-  clearFreezeValid := crossPackagePending
-  clearFreezeSet := crossPackagePendingSet
-  clearFreezeTag := crossPackagePendingTag
-  clearFreezeWay := UIntToOH(crossPackagePendingWay)
+  clearFreezeValid := crossPackagePending || svbCapturePending
+  clearFreezeSet := Mux(svbCapturePending, svbFastSet, crossPackagePendingSet)
+  clearFreezeTag := Mux(svbCapturePending, svbFastTag, crossPackagePendingTag)
+  clearFreezeWay := UIntToOH(Mux(svbCapturePending, svbFastWay, crossPackagePendingWay), nWays)
   // The metadata clear is a commit point.  A store already in S3 must retire
   // before that point, otherwise its old ownership check would still pass in
   // the same cycle as the clear.
@@ -1516,8 +1766,32 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val s2_preservationAllowed = L1Preservation.allow(
     imageValid(s2_store_set)(s2_store_way), s2_overwrittenKey,
     lowerPreserved(s2_store_set)(s2_store_way), s2_req(0).packet_seq, safePacketWatermark, outer.staticImageWriter.U)
-  val crossPackageDomainWait = s2_valid(0) && s2_type.isOneOf(t_lsu, t_replay) &&
+  // A fast-line lease grants permission for exactly one resident incarnation.
+  // The retained SVB entry, independently, owns the predecessor until ACK.
+  val svbCaptureResidentMatch = residentValid(svbFastSet)(svbFastWay) &&
+    residentTag(svbFastSet)(svbFastWay) === svbFastTag &&
+    slotEpoch(svbFastSet)(svbFastWay) === svbFastEpoch &&
+    imageKey(svbFastSet)(svbFastWay).asUInt === svbFastKey.asUInt
+  val svbFastRequestSameLine = s2_store_set === svbFastSet &&
+    (s2_req(0).addr >> untagBits) === svbFastTag
+  val svbFastPreservationConflict = svbFastLineValid && svbFastRequestSameLine
+  val svbFastLineMatch = svbFastPreservationConflict && svbCaptureResidentMatch &&
+    s2_store_way === svbFastWay && s2_req(0).packet_seq === svbFastSeq
+  val crossPackageDomainWaitRaw = s2_valid(0) && s2_type.isOneOf(t_lsu, t_replay) &&
     s2_tag_match(0) && isWrite(s2_req(0).uop.mem_cmd) && !s2_preservationAllowed
+  // Once the predecessor is durably in SVB, this line no longer waits for
+  // the watermark. The held store still carries the fast-line identity and
+  // is admitted only after the capture handshake below.
+  val crossPackageDomainWait = crossPackageDomainWaitRaw && !svbFastLineMatch
+  val svbEligibleCandidate = crossPackageDomainWaitRaw && !svbFastLineMatch &&
+    s2_type === t_lsu && s2_req(0).uop.mem_cmd === M_XWR &&
+    s2_req(0).traffic_cacheable && s2_req(0).packet_seq =/= 0.U &&
+    s2_req(0).packet_seq > s2_overwrittenKey.contentSeq &&
+    s2_overwrittenKey.valid && !L1Preservation.safe(s2_overwrittenKey, safePacketWatermark) &&
+    // Both capture and legacy preservation use the single freeze descriptor.
+    !crossPackagePending && !svbCapturePending && !svbFastLineValid
+  val svbEligible = svbEligibleCandidate && svb.io.capture.ready
+  val svbFullFallback = svbEligibleCandidate && !svb.io.capture.ready
   // Gate permission misses before reserving a destination as well as hits.
   // Refilled images already have a receipt; an RPQ blocked on safety retries
   // without releasing its head/SDQ. Never park a shadow clear behind that RPQ.
@@ -1534,7 +1808,119 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     // s2_lookup_epoch is already the epoch captured for the selected way.
     // Indexing it again treats the way number as a bit index (way 1 made
     // epoch 1 compare as bit 1 == 1), suppressing the preservation request.
-    s2_lookup_epoch(0) === slotEpoch(s2_store_set)(s2_store_way)
+    s2_lookup_epoch(0) === slotEpoch(s2_store_set)(s2_store_way) &&
+    !svbEligible && !svbCapturePending && !svbFastPreservationConflict
+  // A single capture descriptor remains serialized, but an unrelated legacy
+  // handoff must not wait for a lease whose store may be behind it in STQ.
+  val fastLineBlocksOtherLine = crossPackageDomainWait && svbFastLineValid &&
+    !svbFastRequestSameLine && !crossPackageBlockCondition
+  // Report only cases where the global fast-line-valid term is the sole
+  // condition preventing this different line from starting preservation.
+  val crossPackageBlockWithoutFastLine = crossPackageDomainWait &&
+    s2_type === t_lsu && !slotReserved(s2_store_set)(s2_store_way) &&
+    !s2_nack_hit(0) && s2_lookup_epoch(0) === slotEpoch(s2_store_set)(s2_store_way) &&
+    !svbEligible && !svbCapturePending && !crossPackagePending
+  val fastLineBlockedOtherPrevious = RegInit(false.B)
+  val fastLineBlockedOtherLine = RegInit(0.U(coreMaxAddrBits.W))
+  val fastLineBlockedOtherSeq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val fastLineBlockedOtherToken = RegInit(0.U(64.W))
+  val fastLineBlockEvent = fastLineBlocksOtherLine && crossPackageBlockWithoutFastLine &&
+    (!fastLineBlockedOtherPrevious ||
+      (s2_req(0).addr >> blockOffBits) =/= (fastLineBlockedOtherLine >> blockOffBits) ||
+      s2_req(0).packet_seq =/= fastLineBlockedOtherSeq ||
+      s2_req(0).request_token =/= fastLineBlockedOtherToken)
+  when (!fastLineBlocksOtherLine) { fastLineBlockedOtherPrevious := false.B }
+  when (fastLineBlockEvent) {
+    printf("FASTLINE_BLOCK_OTHER_LINE cycle=%x line=%x request_type=%x package_seq=%x request_token=%x blocked_by=svbFastLineValid owner=SVB fast_valid=%x fast_line=%x fast_set=%x fast_tag=%x fast_seq=%x fast_epoch=%x fast_generation=%x owner_state=%x acquire_cycle=%x release_cycle=%x gate_fast_valid=%x gate_other_line=%x gate_capture_pending=%x gate_fast_match=%x gate_slot_free=%x gate_nack_clear=%x gate_epoch_match=%x gate_no_pending_handoff=%x gate_would_handoff_without_fastline=%x cross_package_block_condition=%x\n",
+      io.csr_cycle, (s2_req(0).addr >> blockOffBits) << blockOffBits,
+      s2_req(0).uop.mem_cmd, s2_req(0).packet_seq, s2_req(0).request_token,
+      svbFastLineValid, svbFastLine, svbFastSet, svbFastTag, svbFastSeq,
+      svbFastEpoch, svbFastKey.generation, Mux(svbCapturePending, 1.U, 2.U),
+      svbFastAcquireCycle, svbFastReleaseCycle,
+      svbFastLineValid, (s2_req(0).addr(idxMSB, idxLSB) =/= svbFastSet ||
+        (s2_req(0).addr >> untagBits) =/= svbFastTag),
+      svbCapturePending, svbFastLineMatch, !slotReserved(s2_store_set)(s2_store_way),
+      !s2_nack_hit(0), s2_lookup_epoch(0) === slotEpoch(s2_store_set)(s2_store_way),
+      !crossPackagePending, crossPackageBlockWithoutFastLine, crossPackageBlockCondition)
+  }
+  when (fastLineBlockEvent) {
+    fastLineBlockedOtherPrevious := true.B
+    fastLineBlockedOtherLine := s2_req(0).addr
+    fastLineBlockedOtherSeq := s2_req(0).packet_seq
+    fastLineBlockedOtherToken := s2_req(0).request_token
+  }
+  svbCaptureWbReq.bits := 0.U.asTypeOf(new WritebackReq(edge.bundle))
+  svbCaptureWbReq.bits.source := cfg.nMSHRs.U
+  svbCaptureWbReq.bits.idx := svbFastSet
+  svbCaptureWbReq.bits.tag := svbFastTag
+  // SVB promotion keeps the younger L1 image resident. Report the
+  // predecessor's permission without shrinking the actual L1 client.
+  svbCaptureWbReq.bits.param := Mux(
+    residentCoh(svbFastSet)(svbFastWay).state === ClientStates.Branch,
+    TLPermissions.BtoB, TLPermissions.TtoT)
+  svbCaptureWbReq.bits.way_en := UIntToOH(svbFastWay)
+  svbCaptureWbReq.bits.voluntary := false.B
+  svbCaptureWbReq.bits.svb_capture := true.B
+  svbCapturePacketSeq := svbFastSeq
+  when (svbEligible) {
+    svbCapturePending := true.B
+    svbCaptureIssued := false.B
+    svbFastSet := s2_store_set
+    svbFastWay := s2_store_way
+    svbFastTag := s2_req(0).addr >> untagBits
+    svbFastEpoch := slotEpoch(s2_store_set)(s2_store_way)
+    svbFastSeq := s2_req(0).packet_seq
+    svbFastKey := s2_overwrittenKey
+  }
+  when (svbCaptureWbReq.fire) {
+    svbCaptureIssued := true.B
+  }
+  when (wb.io.snapshot_valid && svb.io.capture.fire) {
+    assert(!svbFastLineValid, "OWNER-1: capture overwrote an outstanding fast-line lease")
+    assert(svbCapturePending && svbCaptureIssued,
+      "SVB snapshot arrived without an issued capture request")
+    assert(wb.io.snapshot_key.asUInt === svbFastKey.asUInt &&
+      wb.io.snapshot_epoch === svbFastEpoch &&
+      wb.io.snapshot_line === (Cat(svbFastTag, svbFastSet) << blockOffBits),
+      "SVB capture changed pre-overwrite identity")
+    svbCapturePending := false.B
+    svbCaptureIssued := false.B
+    when (svbFastLineValid) {
+      printf("FASTLINE_OWNER_CHANGE cycle=%x old_line=%x old_seq=%x old_epoch=%x old_acquire_cycle=%x new_line=%x new_seq=%x new_epoch=%x reason=unexpected_capture_overlap\n",
+        io.csr_cycle, svbFastLine, svbFastSeq, svbFastEpoch, svbFastAcquireCycle,
+        wb.io.snapshot_line, wb.io.snapshot_key.contentSeq, wb.io.snapshot_epoch)
+    }
+    printf("FASTLINE_ACQUIRE cycle=%x line=%x set=%x tag=%x seq=%x epoch=%x generation=%x owner_state=captured_waiting_store acquire_reason=unsafe_predecessor_snapshot\n",
+      io.csr_cycle, wb.io.snapshot_line, svbFastSet, svbFastTag, svbFastSeq,
+      svbFastEpoch, wb.io.snapshot_key.generation)
+    svbFastAcquireCycle := io.csr_cycle
+    svbFastLineValid := true.B
+  }
+  val svbFastLeaseRevoked = svbFastLineValid && !svbCaptureResidentMatch
+  assert(!(svbCapturePending && crossPackagePending),
+    "OWNER-1: capture and preservation overlapped the single freeze descriptor")
+  when (svbFastLeaseRevoked) {
+    // Replacement, probe invalidation or a new image can retire this slot
+    // before the held store returns. Revoke only the bypass permission;
+    // never invalidate/free the retained version or manufacture a receipt.
+    svbFastLineValid := false.B
+    svbFastReleaseCycle := io.csr_cycle
+    printf("FASTLINE_RELEASE cycle=%x line=%x set=%x tag=%x seq=%x epoch=%x acquire_cycle=%x release_reason=resident_identity_revoked\n",
+      io.csr_cycle, svbFastLine, svbFastSet, svbFastTag, svbFastSeq,
+      svbFastEpoch, svbFastAcquireCycle)
+  }
+  when (RegNext(svbFastLeaseRevoked, false.B)) {
+    assert(!svbFastLineValid, "DEADLOCK-1: stale fast-line lease survived revocation")
+  }
+  when (crossPackageBlockWithoutFastLine && svbFastLineValid && !svbFastRequestSameLine) {
+    assert(crossPackageBlockCondition,
+      "WB-1: unrelated preservation waits for a fast-line lease before WB admission")
+  }
+  when (svbCapturePending && !svbCaptureIssued && !svbCaptureResidentMatch) {
+    // A probe/replacement won the race before snapshot admission. The
+    // existing WaitSafe path will retry from the live metadata identity.
+    svbCapturePending := false.B
+  }
   val crossPackagePendingLine = crossPackagePending &&
     s2_type.isOneOf(t_lsu, t_replay) && isWrite(s2_req(0).uop.mem_cmd) &&
     s2_req(0).addr(idxMSB, idxLSB) === crossPackagePendingSet &&
@@ -1553,12 +1939,32 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       mshrs.io.owner_line_addr(i)(idxMSB, blockOffBits) ===
         crossPackagePendingAddr(idxMSB, blockOffBits) &&
       mshrs.io.owner_line_way(i) === UIntToOH(crossPackagePendingWay)).reduce(_ || _)
+  val svbCapturePendingAddr = Wire(UInt(coreMaxAddrBits.W))
+  svbCapturePendingAddr := (Cat(svbFastTag, svbFastSet) << blockOffBits).pad(coreMaxAddrBits)
+  val svbCaptureMshrConflict = svbCapturePending &&
+    (0 until cfg.nMSHRs).map(i => mshrs.io.owner_line_valid(i) &&
+      mshrs.io.owner_line_addr(i)(coreMaxAddrBits-1, blockOffBits) ===
+        svbCapturePendingAddr(coreMaxAddrBits-1, blockOffBits)).reduce(_ || _)
+  val svbCaptureSlotConflict = svbCapturePending &&
+    (0 until cfg.nMSHRs).map(i => mshrs.io.owner_line_valid(i) &&
+      mshrs.io.owner_line_addr(i)(idxMSB, blockOffBits) ===
+        svbCapturePendingAddr(idxMSB, blockOffBits) &&
+      mshrs.io.owner_line_way(i) === UIntToOH(svbFastWay)).reduce(_ || _)
+  val svbCaptureDrained = !(s3_valid && s3_req.addr(idxMSB, idxLSB) === svbFastSet) &&
+    !completionPending(svbFastSet).asUInt.orR &&
+    !(0 until memWidth).map(w =>
+      (s1_valid(w) && s1_type === t_lsu && s1_req(w).addr(idxMSB, idxLSB) === svbFastSet) ||
+      (s2_valid(w) && s2_type === t_lsu && s2_req(w).addr(idxMSB, idxLSB) === svbFastSet)).reduce(_ || _)
+  svbCaptureWbReq.valid := svbCapturePending && !svbCaptureIssued && svbCaptureDrained &&
+    svbCaptureResidentMatch && !crossPackagePending &&
+    !(prober.io.state.valid && prober.io.state.bits(idxMSB, idxLSB) === svbFastSet) &&
+    !svbCaptureMshrConflict && !svbCaptureSlotConflict
   // WaitSafe ends on the first safe watermark observation.  The conservative
   // entry relaxation is disabled before the voluntary WB can be issued and
   // remains disabled through receipt, metadata clear, and slot revocation.
   // Keeping the existing drain predicate in this window means previously
   // accepted lookups still drain before the snapshot is captured.
-  clearFreezeReadBypassWindow := crossPackagePending && crossPackageResidentMatch &&
+  clearFreezeReadBypassWindow := crossPackagePending && !svbCapturePending && crossPackageResidentMatch &&
     !crossPackageIssued && !crossPackageMetaClearPending &&
     !crossPackageSlotConflict && !crossPackageMetaClearBlock &&
     !completionPending(crossPackagePendingSet)(crossPackagePendingWay) &&
@@ -1584,7 +1990,397 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     residentCoh(crossPackagePendingSet)(crossPackagePendingWay).onCacheControl(M_FLUSH)._2
   crossPackageWbReq.bits.way_en := UIntToOH(crossPackagePendingWay)
   crossPackageWbReq.bits.voluntary := true.B
+  crossPackageWbReq.bits.svb_capture := false.B
+  val preservationWaitLine = Mux(crossPackagePending, crossPackagePendingAddr,
+    (s2_req(0).addr >> blockOffBits) << blockOffBits)
+  val preservationMshrSameLineMask = VecInit((0 until cfg.nMSHRs).map(i =>
+    mshrs.io.owner_line_valid(i) &&
+      mshrs.io.owner_line_addr(i)(coreMaxAddrBits-1, blockOffBits) ===
+        preservationWaitLine(coreMaxAddrBits-1, blockOffBits))).asUInt
+
+  // Long-stall snapshots are sparse and observational. The host collector
+  // keeps only a bounded tail and writes it only when the simulator fails.
+  def diagnosticAgeReached(age: UInt): Bool =
+    age === 4095.U || age === 16383.U || age === 65535.U || age === 131071.U
+  val preservationWaitActive = crossPackageDomainWait || crossPackagePending || svbCapturePending
+  val preservationWaitAge = RegInit(0.U(32.W))
+  val probeBusyAge = RegInit(0.U(32.W))
+  val writebackBusy = wb.io.idx.valid || wb.io.pending_idx.valid
+  val writebackBusyAge = RegInit(0.U(32.W))
+  val promotionBusy = svb.io.promote.valid || wb.io.pending_svb
+  val promotionBusyAge = RegInit(0.U(32.W))
+  val preservationAgeReported = RegInit(false.B)
+  val probeBusyAgeReported = RegInit(false.B)
+  val writebackBusyAgeReported = RegInit(false.B)
+  val promotionBusyAgeReported = RegInit(false.B)
+  val fastLineAge = RegInit(0.U(32.W))
+  val fastLineAgeReported = RegInit(false.B)
+  val probeBlockedBySvb = tl_out.b.valid && svb.io.releaseBlocked(3)
+  val probeBlockedAge = RegInit(0.U(32.W))
+  val probeBlockedAgeReported = RegInit(false.B)
+  val mshrAges = RegInit(VecInit(Seq.fill(cfg.nMSHRs)(0.U(32.W))))
+  val mshrAgeReported = RegInit(VecInit(Seq.fill(cfg.nMSHRs)(false.B)))
+  val mshrPrevValid = RegInit(VecInit(Seq.fill(cfg.nMSHRs)(false.B)))
+  val mshrPrevState = RegInit(VecInit(Seq.fill(cfg.nMSHRs)(0.U(5.W))))
+  val mshrPrevLine = RegInit(VecInit(Seq.fill(cfg.nMSHRs)(0.U(coreMaxAddrBits.W))))
+  val mshrPrevWait = RegInit(VecInit(Seq.fill(cfg.nMSHRs)(0.U(4.W))))
+  when (!preservationWaitActive) { preservationWaitAge := 0.U }
+    .elsewhen (preservationWaitAge =/= ~0.U(32.W)) { preservationWaitAge := preservationWaitAge + 1.U }
+  when (!prober.io.state.valid) { probeBusyAge := 0.U }
+    .elsewhen (probeBusyAge =/= ~0.U(32.W)) { probeBusyAge := probeBusyAge + 1.U }
+  when (!writebackBusy) { writebackBusyAge := 0.U }
+    .elsewhen (writebackBusyAge =/= ~0.U(32.W)) { writebackBusyAge := writebackBusyAge + 1.U }
+  when (!promotionBusy) { promotionBusyAge := 0.U }
+    .elsewhen (promotionBusyAge =/= ~0.U(32.W)) { promotionBusyAge := promotionBusyAge + 1.U }
+  when (!preservationWaitActive) { preservationAgeReported := false.B }
+  when (!prober.io.state.valid) { probeBusyAgeReported := false.B }
+  when (!writebackBusy) { writebackBusyAgeReported := false.B }
+  when (!promotionBusy) { promotionBusyAgeReported := false.B }
+  when (preservationWaitActive && preservationWaitAge === 65535.U && !preservationAgeReported) {
+    printf("LONG_STALL object=PRESERVATION cycle=%x age=%x line=%x seq=%x pending=%x fastline_valid=%x fastline=%x lower_preserved=%x watermark=%x waiting_reason=%x\n",
+      io.csr_cycle, preservationWaitAge, preservationWaitLine,
+      Mux(crossPackagePending, crossPackagePendingSeq, s2_req(0).packet_seq),
+      crossPackagePending, svbFastLineValid, svbFastLine,
+      lowerPreserved(s2_store_set)(s2_store_way), safePacketWatermark,
+      Mux(svbFastLineValid && !svbFastLineMatch, 1.U,
+        Mux(!L1Preservation.safe(s2_overwrittenKey, safePacketWatermark), 2.U, 3.U)))
+    preservationAgeReported := true.B
+  }
+  when (prober.io.state.valid && probeBusyAge === 65535.U && !probeBusyAgeReported) {
+    printf("LONG_STALL object=PROBE_FSM cycle=%x age=%x line=%x state=%x waiting_reason=%x wb_pending=%x wb_line=%x\n",
+      io.csr_cycle, probeBusyAge, prober.io.state.bits,
+      prober.io.diagnosticState, Mux(prober.io.diagnosticState === 8.U, 1.U, 2.U),
+      wb.io.pending_idx.valid, wb.io.pending_line)
+    probeBusyAgeReported := true.B
+  }
+  when (writebackBusy && writebackBusyAge === 65535.U && !writebackBusyAgeReported) {
+    printf("LONG_STALL object=WB cycle=%x age=%x owner=%x owner_type=%x line=%x mshr=%x svb=%x probe=%x state=%x waiting_reason=%x sent=%x source_busy=%x\n",
+      io.csr_cycle, writebackBusyAge, wb.io.pending_idx.valid, wb.io.pending_svb,
+      Mux(wb.io.pending_idx.valid, wb.io.pending_line, wb.io.snapshot_line),
+      wbArb.io.chosen === 1.U, wb.io.pending_svb, prober.io.state.valid,
+      wb.io.debug_state, Mux(!wb.io.pending_sent, 1.U, 2.U), wb.io.pending_sent,
+      releaseSourceBusy)
+    writebackBusyAgeReported := true.B
+  }
+  when (promotionBusy && promotionBusyAge === 65535.U && !promotionBusyAgeReported) {
+    printf("LONG_STALL object=SVB_PROMOTION cycle=%x age=%x entry=%x line=%x seq=%x state=%x safe=%x selected=%x waiting_reason=%x wb_state=%x\n",
+      io.csr_cycle, promotionBusyAge, svb.io.activeEntry, svb.io.activeLine,
+      svb.io.activeKey.contentSeq, wb.io.pending_svb,
+      svb.io.activeKey.contentSeq <= safePacketWatermark, svb.io.selected,
+      Mux(wb.io.pending_idx.valid, 1.U, Mux(!svb.io.promote.ready, 2.U, 3.U)),
+      wb.io.debug_state)
+    promotionBusyAgeReported := true.B
+  }
+
+  val preservationWaitPrevious = RegInit(false.B)
+  when (crossPackageDomainWait && !preservationWaitPrevious) {
+    printf("PRESERVATION_WAIT cycle=%x line=%x request_type=%x request_seq=%x old_seq=%x old_generation=%x watermark=%x handoff_valid=%x handoff_ready=%x handoff_fire=%x wb_valid=%x wb_ready=%x wb_fire=%x pending=%x blocked_fastline=%x fast_line=%x fast_seq=%x capture_pending=%x slot_reserved=%x nack_hit=%x lookup_epoch=%x live_epoch=%x probe_same_set=%x mshr_same_line=%x reason=%x\n",
+      io.csr_cycle, (s2_req(0).addr >> blockOffBits) << blockOffBits,
+      s2_req(0).uop.mem_cmd, s2_req(0).packet_seq, s2_overwrittenKey.contentSeq,
+      s2_overwrittenKey.generation, safePacketWatermark,
+      crossPackageDomainWait, crossPackageBlockCondition,
+      crossPackageDomainWait && crossPackageBlockCondition,
+      crossPackageWbReq.valid, crossPackageWbReq.ready, crossPackageWbReq.fire,
+      crossPackagePending, svbFastLineValid && !svbFastLineMatch, svbFastLine,
+      svbFastSeq, svbCapturePending, slotReserved(s2_store_set)(s2_store_way), s2_nack_hit(0),
+      s2_lookup_epoch(0), slotEpoch(s2_store_set)(s2_store_way),
+      prober.io.state.valid && prober.io.state.bits(idxMSB, idxLSB) === s2_store_set,
+      preservationMshrSameLineMask,
+      Mux(svbFastLineValid && !svbFastLineMatch, 1.U,
+        Mux(slotReserved(s2_store_set)(s2_store_way), 2.U,
+          Mux(s2_nack_hit(0), 3.U, Mux(s2_lookup_epoch(0) =/= slotEpoch(s2_store_set)(s2_store_way), 4.U, 0.U))))
+    )
+  }
+  preservationWaitPrevious := crossPackageDomainWait
+
+  val preservationPendingProbeConflict = prober.io.state.valid &&
+    prober.io.state.bits(idxMSB, idxLSB) === crossPackagePendingSet
+  val preservationWBBlocked = crossPackagePending && !crossPackageIssued &&
+    !crossPackageMetaClearPending && !crossPackageWbReq.fire &&
+    (!crossPackageWbReq.valid || !crossPackageWbReq.ready)
+  val preservationWBWaitingReason = Mux(!crossPackageResidentMatch, 1.U,
+    Mux(crossPackageSlotConflict, 2.U, Mux(crossPackageMetaClearBlock, 3.U,
+      Mux(completionPending(crossPackagePendingSet)(crossPackagePendingWay), 4.U,
+        Mux(preservationPendingProbeConflict, 5.U,
+          Mux(!L1Preservation.safe(crossPackagePendingKey, safePacketWatermark), 6.U,
+            Mux(crossPackageWbReq.valid && !crossPackageWbReq.ready, 7.U, 8.U)))))))
+  val preservationWBBlockedPrevious = RegInit(false.B)
+  val preservationWBBlockedReasonPrevious = RegInit(0.U(4.W))
+  when (!preservationWBBlocked) { preservationWBBlockedPrevious := false.B }
+  when (preservationWBBlocked && (!preservationWBBlockedPrevious ||
+    preservationWBWaitingReason =/= preservationWBBlockedReasonPrevious)) {
+    printf("PRESERVATION_BLOCKED cycle=%x line=%x seq=%x generation=%x request_valid=%x request_ready=%x request_fire=%x blocked_fastline=%x fast_line=%x slot_conflict=%x meta_clear_block=%x completion_pending=%x probe_same_set=%x mshr_same_line=%x safe=%x wb_pending=%x wb_pending_svb=%x wb_line=%x wb_source_busy=%x waiting_reason=%x\n",
+      io.csr_cycle, crossPackagePendingAddr, crossPackagePendingSeq,
+      crossPackagePendingKey.generation, crossPackageWbReq.valid,
+      crossPackageWbReq.ready, crossPackageWbReq.fire,
+      svbFastLineValid && !svbFastLineMatch, svbFastLine,
+      crossPackageSlotConflict, crossPackageMetaClearBlock,
+      completionPending(crossPackagePendingSet)(crossPackagePendingWay),
+      preservationPendingProbeConflict,
+      preservationMshrSameLineMask,
+      L1Preservation.safe(crossPackagePendingKey, safePacketWatermark),
+      wb.io.pending_idx.valid, wb.io.pending_svb,
+      Mux(wb.io.pending_idx.valid, wb.io.pending_line, wb.io.snapshot_line),
+      releaseSourceBusy,
+      preservationWBWaitingReason)
+    preservationWBBlockedPrevious := true.B
+    preservationWBBlockedReasonPrevious := preservationWBWaitingReason
+  }
+
+  val blockedWbArb = wbArb.io.out.valid && !wbArb.io.out.ready
+  val blockedWbPrevious = RegInit(false.B)
+  when (blockedWbArb && !blockedWbPrevious) {
+    printf("WB_BLOCK cycle=%x owner_type=%x line=%x mshr=%x svb=%x probe=%x wb_state=%x wb_pending=%x pending_svb=%x pending_line=%x source_busy=%x waiting_reason=%x\n",
+      io.csr_cycle, wbArb.io.chosen, wbLine(wbArb.io.out.bits),
+      wbArb.io.chosen === 1.U, wbArb.io.chosen === 2.U,
+      wbArb.io.chosen === 0.U, wb.io.debug_state, wb.io.pending_idx.valid,
+      wb.io.pending_svb, wb.io.pending_line, releaseSourceBusy,
+      Mux(wb.io.debug_state === 0.U, 0.U, Mux(wb.io.pending_idx.valid, 2.U, 1.U)))
+  }
+  blockedWbPrevious := blockedWbArb
+  val promotionSourceBlocked = svb.io.promote.valid && !svb.io.promote.ready
+  val promotionSourceBlockedPrevious = RegNext(promotionSourceBlocked, false.B)
+  when (promotionSourceBlocked && !promotionSourceBlockedPrevious) {
+    printf("WB_BLOCK cycle=%x owner_type=SVB_PROMOTION entry=%x line=%x seq=%x wb_state=%x wb_pending=%x pending_svb=%x pending_line=%x source_busy=%x waiting_reason=shared_writeback_source\n",
+      io.csr_cycle, svb.io.activeEntry, svb.io.activeLine,
+      svb.io.activeKey.contentSeq, wb.io.debug_state, wb.io.pending_idx.valid,
+      wb.io.pending_svb, wb.io.pending_line, releaseSourceBusy)
+  }
+
+  val probeWasValid = RegNext(prober.io.state.valid, false.B)
+  val probePreviousLine = RegNext(prober.io.state.bits)
+  val probeBlockedPrevious = RegInit(false.B)
+  when (probeBlockedBySvb && !probeBlockedPrevious) {
+    val entry = svb.io.releaseBlockingEntry(3)
+    printf("PROBE_BLOCKED cycle=%x line=%x probe_valid=%x probe_state=%x blocked_retained_svb=%x fastline_valid=%x fastline_same_line=%x blocking_entry=%x blocking_line=%x blocking_seq=%x blocking_generation=%x reason=svb_release_blocked\n",
+      io.csr_cycle, (tl_out.b.bits.address >> blockOffBits) << blockOffBits,
+      prober.io.state.valid, prober.io.diagnosticState, svb.io.releaseBlocked(3),
+      svbFastLineValid, svbFastLine === ((tl_out.b.bits.address >> blockOffBits) << blockOffBits),
+      entry, svb.io.releaseBlockingLine(3), svb.io.releaseBlockingSeq(3),
+      svb.io.releaseBlockingGeneration(3))
+  }
+  probeBlockedPrevious := probeBlockedBySvb
+  when (prober.io.req.fire) {
+    printf("PROBE_START cycle=%x line=%x state=%x retained_svb_block=%x fastline_valid=%x fastline_same_line=%x\n",
+      io.csr_cycle, (tl_out.b.bits.address >> blockOffBits) << blockOffBits,
+      prober.io.diagnosticState, svb.io.releaseBlocked(3), svbFastLineValid,
+      svbFastLine === ((tl_out.b.bits.address >> blockOffBits) << blockOffBits))
+  }
+  when (probeWasValid && !prober.io.state.valid) {
+    lastProbeCompletionCycle := io.csr_cycle
+    printf("PROBE_COMPLETE cycle=%x line=%x\n", io.csr_cycle, probePreviousLine)
+  }
+
+  when (wb.io.req.fire) {
+    wbOwnerType := wbArb.io.chosen
+    wbOwnerSource := wbArb.io.out.bits.source
+    printf("WB_START cycle=%x owner_type=%x line=%x mshr=%x svb=%x probe=%x source=%x wb_state=%x request_valid=%x\n",
+      io.csr_cycle, wbArb.io.chosen, wbLine(wbArb.io.out.bits),
+      wbArb.io.chosen === 1.U, wbArb.io.chosen === 2.U,
+      wbArb.io.chosen === 0.U, wbArb.io.out.bits.source, wb.io.debug_state,
+      wb.io.req.valid)
+  }
+  when (wb.io.done.valid || wb.io.svb_done.valid || wb.io.probe_done) {
+    lastWbCompletionCycle := io.csr_cycle
+    when (wb.io.svb_done.valid) { lastSvbCompletionCycle := io.csr_cycle }
+    printf("WB_COMPLETE cycle=%x kind=%x line=%x entry=%x seq=%x generation=%x probe=%x\n",
+      io.csr_cycle, Mux(wb.io.svb_done.valid, 2.U, Mux(wb.io.probe_done, 3.U, 1.U)),
+      Mux(wb.io.pending_idx.valid, wb.io.pending_line, wb.io.snapshot_line),
+      wb.io.pending_entry, wb.io.pending_key.contentSeq, wb.io.pending_key.generation,
+      wb.io.probe_done)
+  }
+  when (!svbFastLineValid) {
+    fastLineAge := 0.U
+    fastLineAgeReported := false.B
+  }.otherwise {
+    when (fastLineAge =/= ~0.U(32.W)) { fastLineAge := fastLineAge + 1.U }
+    when (fastLineAge === 65535.U && !fastLineAgeReported) {
+      printf("LONG_STALL object=FAST_LINE cycle=%x age=%x line=%x set=%x tag=%x seq=%x epoch=%x owner_state=%x acquire_cycle=%x waiting_reason=matching_semantic_write_or_epoch_flush\n",
+        io.csr_cycle, fastLineAge, svbFastLine, svbFastSet, svbFastTag,
+        svbFastSeq, svbFastEpoch, Mux(svbCapturePending, 1.U, 2.U), svbFastAcquireCycle)
+      fastLineAgeReported := true.B
+    }
+  }
+  when (!probeBlockedBySvb) {
+    probeBlockedAge := 0.U
+    probeBlockedAgeReported := false.B
+  }.otherwise {
+    when (probeBlockedAge =/= ~0.U(32.W)) { probeBlockedAge := probeBlockedAge + 1.U }
+    when (probeBlockedAge === 65535.U && !probeBlockedAgeReported) {
+      val blockedEntry = svb.io.releaseBlockingEntry(3)
+      printf("LONG_STALL object=PROBE_INGRESS cycle=%x age=%x line=%x entry=%x owner_seq=%x owner_generation=%x fastline_valid=%x fastline=%x waiting_reason=retained_svb_blocks_b_ready\n",
+        io.csr_cycle, probeBlockedAge,
+        (tl_out.b.bits.address >> blockOffBits) << blockOffBits,
+        blockedEntry, svb.io.activeKey.contentSeq, svb.io.activeKey.generation,
+        svbFastLineValid, svbFastLine)
+      probeBlockedAgeReported := true.B
+    }
+  }
+  for (i <- 0 until cfg.nMSHRs) {
+    val activeMshr = mshrs.io.owner_line_valid(i)
+    val mshrLine = mshrs.io.owner_line_addr(i)
+    val mshrStateChanged = activeMshr && (!mshrPrevValid(i) ||
+      mshrs.io.debug_state(i) =/= mshrPrevState(i) || mshrLine =/= mshrPrevLine(i))
+    when (mshrStateChanged) {
+      printf("MSHR_STATE cycle=%x entry=%x line=%x state=%x waiting_resource=%x wb_dependency=%x probe_dependency=%x svb_dependency=%x fastline_valid=%x fastline=%x\n",
+        io.csr_cycle, i.U, mshrLine, mshrs.io.debug_state(i),
+        mshrs.io.debug_waiting_resource(i),
+        mshrs.io.debug_state(i) === 9.U || mshrs.io.debug_state(i) === 10.U,
+        prober.io.state.valid && prober.io.state.bits(coreMaxAddrBits-1, blockOffBits) ===
+          mshrLine(coreMaxAddrBits-1, blockOffBits),
+        svb.io.releaseBlocked(1) && svb.io.releaseLines(1) === mshrLine,
+        svbFastLineValid, svbFastLine)
+      mshrAges(i) := 0.U
+      mshrAgeReported(i) := false.B
+    }.elsewhen (!activeMshr) {
+      mshrAges(i) := 0.U
+      mshrAgeReported(i) := false.B
+    }.otherwise {
+      when (mshrAges(i) =/= ~0.U(32.W)) { mshrAges(i) := mshrAges(i) + 1.U }
+      when (mshrAges(i) === 65535.U && !mshrAgeReported(i)) {
+        printf("LONG_STALL object=MSHR cycle=%x age=%x entry=%x line=%x state=%x waiting_resource=%x wb_dependency=%x probe_dependency=%x svb_dependency=%x fastline_valid=%x fastline=%x\n",
+          io.csr_cycle, mshrAges(i), i.U, mshrLine, mshrs.io.debug_state(i),
+          mshrs.io.debug_waiting_resource(i),
+          mshrs.io.debug_state(i) === 9.U || mshrs.io.debug_state(i) === 10.U,
+          prober.io.state.valid && prober.io.state.bits(coreMaxAddrBits-1, blockOffBits) ===
+            mshrLine(coreMaxAddrBits-1, blockOffBits),
+          svb.io.releaseBlocked(1) && svb.io.releaseLines(1) === mshrLine,
+          svbFastLineValid, svbFastLine)
+        mshrAgeReported(i) := true.B
+      }
+    }
+    when (mshrPrevValid(i) && !activeMshr) {
+      lastMshrFreeCycle := io.csr_cycle
+      printf("MSHR_FREE cycle=%x entry=%x line=%x state=%x waiting_resource=%x\n",
+        io.csr_cycle, i.U, mshrPrevLine(i), mshrPrevState(i), mshrPrevWait(i))
+    }
+    mshrPrevValid(i) := activeMshr
+    mshrPrevState(i) := mshrs.io.debug_state(i)
+    mshrPrevLine(i) := mshrLine
+    mshrPrevWait(i) := mshrs.io.debug_waiting_resource(i)
+  }
+
+  val preservationWaitDiagnostic = preservationWaitActive && diagnosticAgeReached(preservationWaitAge)
+  val probeBusyDiagnostic = prober.io.state.valid && diagnosticAgeReached(probeBusyAge)
+  val writebackBusyDiagnostic = writebackBusy && diagnosticAgeReached(writebackBusyAge)
+  val promotionBusyDiagnostic = promotionBusy && diagnosticAgeReached(promotionBusyAge)
+  svbDiagnosticDump := preservationWaitDiagnostic || probeBusyDiagnostic ||
+    writebackBusyDiagnostic || promotionBusyDiagnostic ||
+    (dcacheWatchdogSnapshot && !dcacheWatchdogSnapshotPrinted)
+
+  when (preservationWaitDiagnostic) {
+    printf("CACHE_HANG_SNAPSHOT reason=PRESERVATION_WAIT cycle=%x age=%x line=%x seq=%x old_seq=%x old_generation=%x watermark=%x lower_preserved=%x pending=%x block_condition=%x eligible=%x capture_pending=%x capture_issued=%x fast_line=%x nack_hit=%x nack=%x nack_victim=%x nack_wb=%x slot_reserved=%x lookup_epoch=%x live_epoch=%x probe_valid=%x probe_line=%x probe_phase=%x probe_same_set=%x probe_drain_ready=%x wb_active=%x wb_pending=%x wb_pending_svb=%x wb_sent=%x wb_line=%x wb_source_busy=%x mshr_active=%x mshr_same_line=%x mshr_conflict=%x svb_occupancy=%x svb_active=%x svb_active_line=%x svb_active_seq=%x\n",
+      io.csr_cycle, preservationWaitAge,
+      preservationWaitLine,
+      Mux(crossPackagePending, crossPackagePendingSeq, s2_req(0).packet_seq),
+      s2_overwrittenKey.contentSeq, s2_overwrittenKey.generation,
+      safePacketWatermark, lowerPreserved(s2_store_set)(s2_store_way),
+      crossPackagePending, crossPackageBlockCondition, svbEligibleCandidate,
+      svbCapturePending, svbCaptureIssued, svbFastLineValid,
+      s2_nack_hit(0), s2_nack(0), s2_nack_victim(0), s2_nack_wb(0),
+      slotReserved(s2_store_set)(s2_store_way), s2_lookup_epoch(0),
+      slotEpoch(s2_store_set)(s2_store_way), prober.io.state.valid,
+      prober.io.state.bits, prober.io.diagnosticState,
+      prober.io.state.valid && prober.io.state.bits(idxMSB, idxLSB) === s2_store_set,
+      probeDrainReady, wb.io.idx.valid, wb.io.pending_idx.valid,
+      wb.io.pending_svb, wb.io.pending_sent,
+      Mux(wb.io.pending_idx.valid, wb.io.pending_line, wb.io.snapshot_line),
+      releaseSourceBusy, mshrs.io.active_transactions,
+      preservationMshrSameLineMask, crossPackageMshrConflict, svb.io.occupancy, svb.io.promote.valid,
+      svb.io.activeLine, svb.io.activeKey.contentSeq)
+  }
+  when (probeBusyDiagnostic) {
+    printf("CACHE_HANG_SNAPSHOT reason=PROBE_BUSY cycle=%x age=%x line=%x phase=%x drain_ready=%x wb_active=%x wb_pending=%x wb_line=%x svb_occupancy=%x svb_blocked_ingress=%x svb_blocked_wb=%x mshr_active=%x\n",
+      io.csr_cycle, probeBusyAge, prober.io.state.bits, prober.io.diagnosticState,
+      probeDrainReady, wb.io.idx.valid, wb.io.pending_idx.valid,
+      Mux(wb.io.pending_idx.valid, wb.io.pending_line, wb.io.snapshot_line),
+      svb.io.occupancy, svb.io.releaseBlocked(3), svb.io.releaseBlocked(0),
+      mshrs.io.active_transactions)
+  }
+  when (writebackBusyDiagnostic) {
+    printf("CACHE_HANG_SNAPSHOT reason=WB_BUSY cycle=%x age=%x active=%x pending=%x pending_svb=%x entry=%x sent=%x line=%x key_seq=%x key_generation=%x source_busy=%x probe_valid=%x probe_line=%x mshr_active=%x\n",
+      io.csr_cycle, writebackBusyAge, wb.io.idx.valid, wb.io.pending_idx.valid,
+      wb.io.pending_svb, wb.io.pending_entry, wb.io.pending_sent,
+      Mux(wb.io.pending_idx.valid, wb.io.pending_line, wb.io.snapshot_line),
+      wb.io.pending_key.contentSeq, wb.io.pending_key.generation,
+      releaseSourceBusy, prober.io.state.valid, prober.io.state.bits,
+      mshrs.io.active_transactions)
+  }
+  when (promotionBusyDiagnostic) {
+    printf("CACHE_HANG_SNAPSHOT reason=SVB_PROMOTION cycle=%x age=%x promote_valid=%x entry=%x line=%x seq=%x generation=%x wb_active=%x wb_pending=%x wb_pending_svb=%x wb_sent=%x source_busy=%x\n",
+      io.csr_cycle, promotionBusyAge, svb.io.promote.valid,
+      svb.io.activeEntry, svb.io.activeLine, svb.io.activeKey.contentSeq,
+      svb.io.activeKey.generation, wb.io.idx.valid, wb.io.pending_idx.valid,
+      wb.io.pending_svb, wb.io.pending_sent, releaseSourceBusy)
+  }
+  val fastOwnerS1Present = svbFastLineValid && s1_valid(0) && s1_type === t_lsu &&
+    s1_req(0).packet_seq === svbFastSeq && s1_req(0).addr(idxMSB, idxLSB) === svbFastSet &&
+    (s1_req(0).addr >> untagBits) === svbFastTag
+  val fastOwnerS2Present = svbFastLineValid && s2_valid(0) && s2_type.isOneOf(t_lsu, t_replay) &&
+    s2_req(0).packet_seq === svbFastSeq && s2_req(0).addr(idxMSB, idxLSB) === svbFastSet &&
+    (s2_req(0).addr >> untagBits) === svbFastTag
+  val fastOwnerS3Present = svbFastLineValid && s3_valid &&
+    s3_req.packet_seq === svbFastSeq && s3_req.addr(idxMSB, idxLSB) === svbFastSet &&
+    (s3_req.addr >> untagBits) === svbFastTag
+  val fastOwnerState = Mux(svbCapturePending, 1.U,
+    Mux(fastOwnerS3Present, 4.U, Mux(fastOwnerS2Present, 3.U,
+      Mux(fastOwnerS1Present, 2.U, 5.U))))
+  when (dcacheWatchdogSnapshot && !dcacheWatchdogSnapshotPrinted) {
+    dcacheWatchdogSnapshotPrinted := true.B
+    printf("DCACHE_WATCHDOG_SNAPSHOT cycle=%x watermark=%x fast_valid=%x fast_line=%x fast_set=%x fast_tag=%x fast_seq=%x fast_epoch=%x fast_generation=%x fast_state=%x fast_s1=%x fast_s2=%x fast_s3=%x fast_acquire_cycle=%x fast_release_cycle=%x capture_pending=%x capture_issued=%x svb_occupancy=%x svb_active=%x svb_entry=%x svb_line=%x svb_seq=%x wb_state=%x wb_owner_type=%x wb_owner_source=%x wb_mshr_assoc=%x wb_probe_assoc=%x wb_capture_assoc=%x wb_preservation_assoc=%x wb_waiting_reason=%x wb_valid=%x wb_pending=%x wb_pending_svb=%x wb_entry=%x wb_line=%x wb_sent=%x source_busy=%x source_sent=%x probe_valid=%x probe_line=%x probe_state=%x probe_drain_ready=%x probe_svb_blocked=%x probe_block_entry=%x probe_block_line=%x probe_block_seq=%x probe_block_generation=%x mshr_active=%x mshr_same_line=%x preservation_wait=%x preservation_line=%x preservation_seq=%x preservation_pending=%x preservation_block_condition=%x promotion_valid=%x promotion_selected=%x promotion_safe=%x promotion_entry=%x promotion_line=%x promotion_seq=%x pending_target=%x pending_target_seq=%x safe_watermark=%x c_source_busy=%x c_source_sent=%x d_ack_pending=%x d_ack_matched=%x last_lsu=%x last_watermark=%x last_checker_result=%x last_wb=%x last_probe=%x last_mshr_free=%x last_svb=%x\n",
+      io.csr_cycle, safePacketWatermark,
+      svbFastLineValid, svbFastLine, svbFastSet, svbFastTag, svbFastSeq,
+      svbFastEpoch, svbFastKey.generation, fastOwnerState,
+      fastOwnerS1Present, fastOwnerS2Present, fastOwnerS3Present,
+      svbFastAcquireCycle, svbFastReleaseCycle, svbCapturePending,
+      svbCaptureIssued, svb.io.occupancy, svb.io.promote.valid,
+      svb.io.activeEntry, svb.io.activeLine, svb.io.activeKey.contentSeq,
+      wb.io.debug_state, Mux(wb.io.pending_svb, 4.U, wbOwnerType), wbOwnerSource,
+      wb.io.pending_idx.valid && !wb.io.pending_svb && wbOwnerType === 1.U,
+      wb.io.pending_idx.valid && !wb.io.pending_svb && wbOwnerType === 0.U,
+      svbCapturePending,
+      wb.io.pending_idx.valid && !wb.io.pending_svb && wbOwnerType === 3.U,
+      Mux(!wb.io.pending_idx.valid, Mux(wb.io.idx.valid, 3.U, 0.U),
+        Mux(wb.io.pending_sent, 2.U, 1.U)), wb.io.idx.valid,
+      wb.io.pending_idx.valid, wb.io.pending_svb, wb.io.pending_entry,
+      Mux(wb.io.pending_idx.valid, wb.io.pending_line, wb.io.snapshot_line),
+      wb.io.pending_sent, releaseSourceBusy, releaseSourceSent,
+      prober.io.state.valid, prober.io.state.bits, prober.io.diagnosticState,
+      probeDrainReady, probeBlockedBySvb, svb.io.releaseBlockingEntry(3),
+      svb.io.releaseBlockingLine(3), svb.io.releaseBlockingSeq(3),
+      svb.io.releaseBlockingGeneration(3), mshrs.io.active_transactions,
+      preservationMshrSameLineMask, preservationWaitActive, preservationWaitLine,
+      s2_req(0).packet_seq, crossPackagePending, crossPackageBlockCondition,
+      svb.io.promote.valid, svb.io.selected,
+      svb.io.activeKey.contentSeq <= safePacketWatermark,
+      svb.io.activeEntry, svb.io.activeLine,
+      svb.io.activeKey.contentSeq, crossPackagePendingAddr,
+      crossPackagePendingSeq, safePacketWatermark, releaseSourceBusy,
+      releaseSourceSent, wb.io.pending_idx.valid, wbAckMatches,
+      lastLsuProgressCycle, lastWatermarkProgressCycle, lastCheckerResultCycle,
+      lastWbCompletionCycle, lastProbeCompletionCycle, lastMshrFreeCycle,
+      lastSvbCompletionCycle)
+    for (i <- 0 until cfg.nMSHRs) {
+      when (mshrs.io.owner_line_valid(i)) {
+        printf("MSHR_HANG_ENTRY cycle=%x entry=%x line=%x state=%x waiting_resource=%x wb_dependency=%x probe_dependency=%x svb_dependency=%x\n",
+          io.csr_cycle, i.U, mshrs.io.owner_line_addr(i), mshrs.io.debug_state(i),
+          mshrs.io.debug_waiting_resource(i),
+          mshrs.io.debug_state(i) === 9.U || mshrs.io.debug_state(i) === 10.U,
+          prober.io.state.valid && prober.io.state.bits(coreMaxAddrBits-1, blockOffBits) ===
+            mshrs.io.owner_line_addr(i)(coreMaxAddrBits-1, blockOffBits),
+          svb.io.releaseBlocked(1) && svb.io.releaseLines(1) === mshrs.io.owner_line_addr(i))
+      }
+    }
+  }
   when (crossPackageBlockCondition && !crossPackagePending) {
+    printf("PRESERVATION_START cycle=%x line=%x request_seq=%x owner_seq=%x owner_generation=%x valid=%x ready=%x fire=%x blocked_fastline=%x fast_line=%x block_condition=%x slot_reserved=%x nack_hit=%x lookup_epoch=%x live_epoch=%x\n",
+      io.csr_cycle, (s2_req(0).addr >> blockOffBits) << blockOffBits,
+      s2_req(0).packet_seq, s2_overwrittenKey.contentSeq,
+      s2_overwrittenKey.generation, crossPackageWbReq.valid,
+      crossPackageWbReq.ready, crossPackageWbReq.fire,
+      svbFastLineValid && !svbFastLineMatch, svbFastLine,
+      crossPackageBlockCondition, slotReserved(s2_store_set)(s2_store_way),
+      s2_nack_hit(0), s2_lookup_epoch(0), slotEpoch(s2_store_set)(s2_store_way))
     crossPackagePending := true.B
     crossPackageIssued := false.B
     crossPackagePendingSet := s2_store_set
@@ -1611,6 +2407,12 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq,
       imageKey(crossPackagePendingSet)(crossPackagePendingWay).writer,
       imageKey(crossPackagePendingSet)(crossPackagePendingWay).valid)
+    printf("PRESERVATION_WB_FIRE cycle=%x line=%x request_seq=%x owner_seq=%x generation=%x valid=%x ready=%x fire=%x wb_state=%x wb_pending=%x\n",
+      io.csr_cycle, crossPackagePendingAddr, crossPackagePendingSeq,
+      imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq,
+      imageKey(crossPackagePendingSet)(crossPackagePendingWay).generation,
+      crossPackageWbReq.valid, crossPackageWbReq.ready, crossPackageWbReq.fire,
+      wb.io.debug_state, wb.io.pending_idx.valid)
   }
   val crossPackageWbDone = crossPackageIssued && wb.io.done.valid &&
     wb.io.done_epoch === crossPackagePendingEpoch && wb.io.done.bits.asUInt === crossPackagePendingKey.asUInt
@@ -1625,6 +2427,11 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       crossPackagePendingAddr, crossPackagePendingEpoch, crossPackagePendingKey.generation,
       crossPackagePendingKey.contentSeq, crossPackagePendingKey.writer, crossPackagePendingKey.valid,
       crossPackageResidentMatch && !preservationRevoked)
+    printf("PRESERVATION_WB_COMPLETE cycle=%x line=%x seq=%x generation=%x valid=%x ready=%x fire=%x resident_match=%x revoked=%x\n",
+      io.csr_cycle, crossPackagePendingAddr, crossPackagePendingKey.contentSeq,
+      crossPackagePendingKey.generation, crossPackageWbReq.valid,
+      crossPackageWbReq.ready, crossPackageWbDone, crossPackageResidentMatch,
+      preservationRevoked)
     when (crossPackageResidentMatch && !preservationRevoked) {
       lowerPreserved(crossPackagePendingSet)(crossPackagePendingWay) := true.B
     }
@@ -1643,6 +2450,10 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   crossPackageMetaClear.bits.data.tag := crossPackagePendingTag
   crossPackageMetaClear.bits.data.coh := ClientMetadata.onReset
   when (crossPackageMetaClear.fire) {
+    printf("PRESERVATION_COMPLETE cycle=%x line=%x seq=%x epoch=%x valid=%x ready=%x fire=%x\n",
+      io.csr_cycle, crossPackagePendingAddr, crossPackagePendingSeq,
+      crossPackagePendingEpoch, crossPackageMetaClear.valid,
+      crossPackageMetaClear.ready, crossPackageMetaClear.fire)
     printf("STAGE1_TX CLEAR source=DCACHE cycle=%x line=%x set=%x way=%x epoch=%x gen=%x mshr=%x txn=%x token=%x token_valid=%x seq=%x\n",
       io.csr_cycle, (Cat(crossPackagePendingTag, crossPackagePendingSet) << blockOffBits).pad(coreMaxAddrBits),
       crossPackagePendingSet, crossPackagePendingWay,
@@ -1734,6 +2545,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     resultCancelled(i) := resultAccepted(i) &&
       status === GH_GlobalParams.GH_CHECKER_STATUS_CANCELLED.U
     when (resultAccepted(i)) {
+      lastCheckerResultCycle := io.csr_cycle
       completedNext(idx) := true.B
       passedNext(idx) := pass
     }
@@ -1751,6 +2563,17 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     barrierFailureSeq := Mux1H(barrierFailureOH, barrierFailureCandidates)
   }
   val barrierFailureSticky = barrierFailureSeq =/= 0.U
+  // Session reset/exception are epoch boundaries. A checker failure only
+  // invalidates versions newer than the safe watermark, preserving a safe
+  // predecessor that may still be waiting for promotion or ACK.
+  svbFlush := io.traffic_reset || io.lsu.exception
+  svbInvalidate.valid := barrierFailureAny
+  svbInvalidate.bits := safePacketWatermark
+  when (io.traffic_reset) {
+    svbEpoch := 0.U
+  }.elsewhen (io.lsu.exception) {
+    when (svbEpoch =/= ~0.U(16.W)) { svbEpoch := svbEpoch + 1.U }
+  }
   BoringUtils.addSource(barrierFailureSticky,
     GH_GlobalParams.GH_L2_BARRIER_FAILURE_BORE)
   BoringUtils.addSource(barrierFailureSeq,
@@ -1801,6 +2624,11 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   bitmapCompleted := bitmapCompletedFinal
   bitmapPassed := bitmapPassedFinal
   bitmapSeq := seqNext
+  when (newSafePacketWatermark =/= safePacketWatermark) {
+    lastWatermarkProgressCycle := io.csr_cycle
+    printf("WATERMARK_ADVANCE cycle=%x old=%x new=%x\n",
+      io.csr_cycle, safePacketWatermark, newSafePacketWatermark)
+  }
   safePacketWatermark := newSafePacketWatermark
 
   // Buckets intentionally use separate storage from the verification bitmap:
@@ -2239,9 +3067,17 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     appliedEffectToken(s3_set)(s3_way_idx) === s3_req.effect_token
   val s3_image_match = s3_req.image_valid === imageValid(s3_set)(s3_way_idx) &&
     (!s3_req.image_valid || s3_req.line_generation === lineGeneration(s3_set)(s3_way_idx))
+  val s3_svbOwnsPredecessor = svbFastLineValid &&
+    svbCaptureResidentMatch &&
+    s3_set === svbFastSet && s3_way_idx === svbFastWay &&
+    (s3_req.addr >> untagBits) === svbFastTag &&
+    s3_req.packet_seq === svbFastSeq &&
+    s3_req.slot_epoch === svbFastEpoch &&
+    s3_req.slot_epoch === slotEpoch(s3_set)(s3_way_idx)
   val s3_preservationAllowed = L1Preservation.allow(imageValid(s3_set)(s3_way_idx),
     imageKey(s3_set)(s3_way_idx), lowerPreserved(s3_set)(s3_way_idx),
-    s3_req.packet_seq, safePacketWatermark, outer.staticImageWriter.U)
+    s3_req.packet_seq, safePacketWatermark, outer.staticImageWriter.U) ||
+    s3_svbOwnsPredecessor
   val s3_effect_eligible = s3_valid && !s3_applied && s3_owner_match &&
     s3_image_match && s3_preservationAllowed && !s3_duplicate_effect && !s3_owner_revoked && !s3_pre_effect_kill && !s3_cancelled
   when (s3_valid && !s3_applied && !s3_duplicate_effect && !s3_cancelled && !s3_pre_effect_kill) {
@@ -2249,6 +3085,12 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     assert(s3_preservationAllowed, "write grant bypassed L1 preservation")
   }
   s3_effect_fire := dataWriteArb.io.in(0).fire
+  when (svbCapturePending && svbCaptureIssued) {
+    assert(!(s3_effect_fire && s3_set === svbFastSet && s3_way_idx === svbFastWay),
+      "semantic write changed an in-progress SVB snapshot")
+    assert(!(dataWriteArb.io.in(1).fire && refillReqSet === svbFastSet && refillReqWay === svbFastWay),
+      "refill changed an in-progress SVB snapshot")
+  }
   when (crossPackageIssued || crossPackageMetaClearPending) {
     assert(!(s3_effect_fire && s3_set === crossPackagePendingSet &&
       s3_way_idx === crossPackagePendingWay), "semantic write changed a frozen WB snapshot")
@@ -2390,6 +3232,61 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       overwrittenPacketSeq =/= s3_req.packet_seq &&
       overwrittenPacketSeq > safePacketWatermark)
 
+  // Compact SVB accounting.  These counters are observation-only and are
+  // exported through the sparse event stream below; they never participate
+  // in admission, watermark generation, or TileLink ordering.
+  val svbEligibleCount = RegInit(0.U(64.W))
+  val svbAllocationCount = RegInit(0.U(64.W))
+  val svbFullFallbackCount = RegInit(0.U(64.W))
+  val svbUnsupportedFallbackCount = RegInit(0.U(64.W))
+  val svbBypassCount = RegInit(0.U(64.W))
+  val svbPromotionCount = RegInit(0.U(64.W))
+  val svbAckCount = RegInit(0.U(64.W))
+  val svbRecoveryCount = RegInit(0.U(64.W))
+  val svbWouldFullAt8 = RegInit(0.U(64.W))
+  val svbCyclesAbove8 = RegInit(0.U(64.W))
+  val svbCaptureFailures = RegInit(0.U(64.W))
+  when (io.traffic_reset) {
+    svbEligibleCount := 0.U
+    svbAllocationCount := 0.U
+    svbFullFallbackCount := 0.U
+    svbUnsupportedFallbackCount := 0.U
+    svbBypassCount := 0.U
+    svbPromotionCount := 0.U
+    svbAckCount := 0.U
+    svbRecoveryCount := 0.U
+    svbWouldFullAt8 := 0.U
+    svbCyclesAbove8 := 0.U
+    svbCaptureFailures := 0.U
+  }
+  val svbEligibleCandidatePrev = RegNext(svbEligibleCandidate, false.B)
+  val svbFullFallbackPrev = RegNext(svbFullFallback, false.B)
+  val svbUnsupportedFallback = crossPackageDomainWaitRaw && !svbFastLineMatch &&
+    !svbEligibleCandidate && !svbFullFallback
+  val svbUnsupportedFallbackPrev = RegNext(svbUnsupportedFallback, false.B)
+  val svbEligibleEvent = svbEligibleCandidate && !svbEligibleCandidatePrev
+  val svbFullFallbackEvent = svbFullFallback && !svbFullFallbackPrev
+  val svbUnsupportedFallbackEvent = svbUnsupportedFallback && !svbUnsupportedFallbackPrev
+  when (trafficCounting && svbEligibleEvent) { svbEligibleCount := svbEligibleCount + 1.U }
+  when (trafficCounting && svbFullFallbackEvent) { svbFullFallbackCount := svbFullFallbackCount + 1.U }
+  when (trafficCounting && svbUnsupportedFallbackEvent) {
+    svbUnsupportedFallbackCount := svbUnsupportedFallbackCount + 1.U
+  }
+  when (trafficCounting && svb.io.capture.fire) { svbAllocationCount := svbAllocationCount + 1.U }
+  when (trafficCounting && !trafficStopPulse && svb.io.capture.fire && svb.io.occupancy >= 8.U) {
+    svbWouldFullAt8 := svbWouldFullAt8 + 1.U
+  }
+  when (trafficCounting && !trafficStopPulse && svb.io.occupancy > 8.U) { svbCyclesAbove8 := svbCyclesAbove8 + 1.U }
+  when (trafficCounting && svbCapturePending && !svbCaptureIssued && !svbCaptureResidentMatch) {
+    svbCaptureFailures := svbCaptureFailures + 1.U
+  }
+  when (trafficCounting && svbFastLineValid && !RegNext(svbFastLineValid, false.B)) {
+    svbBypassCount := svbBypassCount + 1.U
+  }
+  when (trafficCounting && wb.io.svb_release_done) { svbPromotionCount := svbPromotionCount + 1.U }
+  when (trafficCounting && svb.io.acked) { svbAckCount := svbAckCount + 1.U }
+  when (trafficCounting && svb.io.recoveryFromSvb) { svbRecoveryCount := svbRecoveryCount + 1.U }
+
   // A refill installs a new tag in this set/way and must discard attribution
   // left by the evicted line before any replayed store dirties the new line.
   val refillLastBeat = dataWriteArb.io.in(1).bits.addr(blockOffBits-1, rowOffBits) ===
@@ -2423,6 +3320,15 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     assert(imageSerial =/= ~0.U(32.W), "local image serial exhausted")
     val set = s3_req.addr(idxMSB, idxLSB)
     val way = OHToUInt(s3_way)
+    when (s3_svbOwnsPredecessor) {
+      // The younger image now owns L1.  The SVB entry remains the recovery
+      // owner until its own safe promotion receives the L2 ACK.
+      printf("FASTLINE_RELEASE cycle=%x line=%x set=%x tag=%x seq=%x epoch=%x acquire_cycle=%x release_reason=matching_semantic_write\n",
+        io.csr_cycle, svbFastLine, svbFastSet, svbFastTag, svbFastSeq,
+        svbFastEpoch, svbFastAcquireCycle)
+      svbFastReleaseCycle := io.csr_cycle
+      svbFastLineValid := false.B
+    }
     lineGeneration(set)(way) := imageSerial
     imageValid(set)(way) := true.B
     imageSerial := imageSerial + 1.U
@@ -2445,6 +3351,30 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       appliedEffectToken(set)(way) := s3_req.effect_token
       appliedEffectResult(set)(way) := s3_result
     }
+  }
+  val svbFastLeaseAcquire = wb.io.snapshot_valid && svb.io.capture.fire
+  val svbFastLeaseRelease = svbFastLineValid &&
+    (svbFastLeaseRevoked || (s3_effect_fire && s3_svbOwnsPredecessor) || svbFlush)
+  val svbFastWasValid = RegNext(svbFastLineValid, false.B)
+  val svbFastAcquiredPrevious = RegNext(svbFastLeaseAcquire, false.B)
+  val svbFastReleasedPrevious = RegNext(svbFastLeaseRelease, false.B)
+  when (svbFastLineValid && !svbFastWasValid) {
+    assert(svbFastAcquiredPrevious, "OWNER-1: lease acquired without snapshot")
+  }
+  when (!svbFastLineValid && svbFastWasValid) {
+    assert(svbFastReleasedPrevious, "OWNER-1: lease released without a terminal event")
+  }
+  // Give an epoch boundary priority over any same-cycle fast-line update.
+  when (svbFlush) {
+    svbCapturePending := false.B
+    svbCaptureIssued := false.B
+    when (svbFastLineValid) {
+      printf("FASTLINE_RELEASE cycle=%x line=%x set=%x tag=%x seq=%x epoch=%x acquire_cycle=%x release_reason=epoch_flush\n",
+        io.csr_cycle, svbFastLine, svbFastSet, svbFastTag, svbFastSeq,
+        svbFastEpoch, svbFastAcquireCycle)
+      svbFastReleaseCycle := io.csr_cycle
+    }
+    svbFastLineValid := false.B
   }
 
   // New barrier-cost measurements use independent storage and do not alter
@@ -3274,21 +4204,38 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val opt2bWriteWay = OHToUInt(s3_way)
   val opt2bWriteKey = imageKey(opt2bWriteSet)(opt2bWriteWay)
   val opt2bWriteFire = dataWriteArb.io.in(0).fire
+  // Counts cover every ROI event; address-bearing examples are sampled once
+  // per 4096 events. A long WaitSafe episode must not become a cycle trace.
+  val opt2bBlock = crossPackageDomainWait && !crossPackagePending
+  val opt4WriteCount = RegInit(0.U(64.W))
+  val opt4BlockCycles = RegInit(0.U(64.W))
+  val opt4BlockEpisodes = RegInit(0.U(64.W))
+  val opt4BlockPrevious = RegNext(opt2bBlock && trafficCounting, false.B)
+  when (io.traffic_reset) {
+    opt4WriteCount := 0.U
+    opt4BlockCycles := 0.U
+    opt4BlockEpisodes := 0.U
+  }.elsewhen (trafficCounting) {
+    when (opt2bWriteFire) { opt4WriteCount := opt4WriteCount + 1.U }
+    when (opt2bBlock) { opt4BlockCycles := opt4BlockCycles + 1.U }
+    when (opt2bBlock && !opt4BlockPrevious) { opt4BlockEpisodes := opt4BlockEpisodes + 1.U }
+  }
   safeChainLog(14, Seq(opt2bWriteFire.asUInt, s3_req.packet_seq,
     (s3_req.addr >> blockOffBits) << blockOffBits,
     opt2bWriteKey.contentSeq, opt2bWriteKey.generation, opt2bWriteKey.writer,
     opt2bWriteKey.valid.asUInt, safePacketWatermark, s3_req.slot_epoch,
     s3_req.request_token, imageSerial, s3_req.uop.mem_cmd,
     lowerPreserved(opt2bWriteSet)(opt2bWriteWay).asUInt, s3_replay.asUInt),
-    0.U, true.B, opt2bWriteFire)
-  val opt2bBlock = crossPackageDomainWait && !crossPackagePending
+    0.U, trafficCounting && opt2bWriteFire && opt4WriteCount(11, 0) === 0.U, true.B)
   safeChainLog(15, Seq(opt2bBlock.asUInt, s2_req(0).packet_seq,
     (s2_req(0).addr >> blockOffBits) << blockOffBits,
     s2_overwrittenKey.contentSeq, s2_overwrittenKey.generation,
     s2_overwrittenKey.writer, s2_overwrittenKey.valid.asUInt, safePacketWatermark,
     s2_lookup_epoch(0), s2_req(0).request_token,
     lowerPreserved(s2_store_set)(s2_store_way).asUInt, (s2_type === t_replay).asUInt),
-    0.U, true.B, opt2bBlock)
+    0.U, trafficCounting && opt2bBlock && opt4BlockCycles(11, 0) === 0.U, true.B)
+  safeChainLog(31, Seq(1.U, opt4WriteCount, opt4BlockCycles, opt4BlockEpisodes, 4096.U),
+    0.U, trafficStopPulse, true.B)
   val safeChainHole = newSafePacketWatermark + 1.U
   val safeChainHoleIdx = safeChainHole(statsIndexBits - 1, 0)
   val safeChainFirst = safePacketWatermark + 1.U
@@ -3356,6 +4303,116 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     safeChainTargetFlags, crossPackagePendingSeq, crossPackagePendingAddr)
   safeChainLog(8, safeChainPendingFields,
     Mux(crossPackagePending, Cat(safeChainPendingFields), 0.U))
+  // Protocol v1: version, owner(1=SVB), entry(255=normal), line, pkg,
+  // source, opcode, generation, writer, keyValid, epoch, first, last,
+  // matched, sourceBusy, size. Full-run handshake events, no cache payload.
+  def releaseProtocolLog(kind: Int, event: Bool, owner: Bool, entry: UInt,
+      line: UInt, key: CacheImageKey, source: UInt, opcode: UInt,
+      epoch: UInt, first: Bool = false.B, last: Bool = false.B,
+      matched: Bool = true.B, size: UInt = lgCacheBlockBytes.U): Unit = {
+    SafeChainObservation.emit(kind, clock, reset.asBool, io.csr_cycle, io.csr_cycle,
+      0.U, true.B, event, Seq(1.U, owner.asUInt, Mux(owner, entry, 255.U),
+        line, key.contentSeq, source, opcode, key.generation, key.writer,
+        key.valid.asUInt, epoch, first.asUInt, last.asUInt, matched.asUInt,
+        releaseSourceBusy.asUInt, size), 0.U, true.B)
+  }
+  releaseProtocolLog(19, svb.io.selected, true.B, svb.io.activeEntry,
+    svb.io.activeLine, svb.io.activeKey, cfg.nMSHRs.U, TLMessages.ReleaseData, svbEpoch)
+  releaseProtocolLog(20, releaseFirst || releaseLast, wb.io.pending_svb,
+    wb.io.pending_entry, tl_out.c.bits.address, cReleaseKey, tl_out.c.bits.source,
+    tl_out.c.bits.opcode, wb.io.done_epoch, c_first, c_last, !sourceConflict, tl_out.c.bits.size)
+  releaseProtocolLog(21, wbAck, wb.io.pending_svb, wb.io.pending_entry,
+    wb.io.pending_line, wbAckKey, tl_out.d.bits.source, tl_out.d.bits.opcode,
+    wb.io.done_epoch, matched = !invalidReleaseAck, size = tl_out.d.bits.size)
+  releaseProtocolLog(22, wb.io.svb_done.valid, true.B, wb.io.svb_done.bits.entry,
+    wb.io.pending_line, wb.io.svb_done.bits.key, cfg.nMSHRs.U, TLMessages.ReleaseAck, wb.io.done_epoch)
+  releaseProtocolLog(23, svbSourceBlocked && !svbSourceBlockedPrevious, true.B,
+    svb.io.activeEntry, svb.io.activeLine, svb.io.activeKey, cfg.nMSHRs.U,
+    TLMessages.ReleaseData, svbEpoch)
+  releaseProtocolLog(24, sourceConflict || invalidReleaseAck, wb.io.pending_svb,
+    wb.io.pending_entry, wb.io.pending_line, wb.io.pending_key, cfg.nMSHRs.U,
+    Mux(wbAck, tl_out.d.bits.opcode, tl_out.c.bits.opcode), wb.io.done_epoch,
+    first = sourceConflict, last = invalidReleaseAck, matched = false.B)
+  SafeChainObservation.emit(25, clock, reset.asBool, io.csr_cycle, io.csr_cycle,
+    0.U, true.B, trafficStopPulse, Seq(1.U, svbSourceBusyCycles, svbQueuedCycles,
+      svbMaxQueued, sourceConflicts, invalidReleaseAcks, releaseIssued,
+      releaseMatched, releaseSourceBusy.asUInt, wb.io.pending_svb.asUInt,
+      wb.io.pending_entry, wb.io.pending_line, svbCoalesced, svbReleaseIssued,
+      svbReleaseMatched, svb.io.occupancy), 0.U, true.B)
+  // Emit the level counters once at STOP. The two histograms use separate
+  // records because SafeChainObservation reserves 16 words per event.
+  val svbObservationFields = Seq(
+    svbEligibleCount, svbAllocationCount, svbFullFallbackCount,
+    svbUnsupportedFallbackCount,
+    svbBypassCount, svbPromotionCount, svbAckCount, svbRecoveryCount,
+    svb.io.occupancy, svb.io.maxOccupancy, svb.io.maxDepth,
+    svbFastLineValid.asUInt, svbCapturePending.asUInt, svbCaptureIssued.asUInt)
+  safeChainLog(16, svbObservationFields, Cat(svbObservationFields), trafficStopPulse, true.B)
+  safeChainLog(30, Seq(2.U, nSVBEntries.U, svbWouldFullAt8, svbCyclesAbove8,
+    svbCaptureFailures) ++ svb.io.entryAccounting.toSeq,
+    0.U, trafficStopPulse, true.B)
+  // One event has at most 16 words; 16 entries need 17 histogram bins.
+  for ((bins, chunk) <- svb.io.occupancyHistogram.toSeq.grouped(15).zipWithIndex) {
+    safeChainLog(17, Seq(chunk.U) ++ bins, 0.U, trafficStopPulse, true.B, hart = chunk.U)
+  }
+  for ((bins, chunk) <- svb.io.depthHistogram.toSeq.grouped(15).zipWithIndex) {
+    safeChainLog(18, Seq(chunk.U) ++ bins, 0.U, trafficStopPulse, true.B, hart = chunk.U)
+  }
+
+  // Full-run integrity evidence survives host diagnostic sampling and STOP.
+  // Hash words follow increasing physical byte address, independent of bus width.
+  val integrityPendingSerial = RegEnable(svb.io.observationSerial, svb.io.promote.fire)
+  SafeChainObservation.emit(37, clock, reset.asBool, io.csr_cycle, io.csr_cycle,
+    0.U, true.B, releaseBeat && wb.io.pending_svb,
+    Seq(2.U, integrityPendingSerial, wb.io.pending_entry,
+      tl_out.c.bits.address, cReleaseKey.contentSeq, cReleaseKey.generation,
+      cReleaseKey.writer, wb.io.done_epoch,
+      CacheOpportunityObservation.rowHash(tl_out.c.bits.data, edge.bundle.dataBits),
+      c_beat * ((edge.bundle.dataBits + 63) / 64).U,
+      ((edge.bundle.dataBits + 63) / 64).U, (cfg.blockBytes / 8).U), 0.U, true.B)
+
+  // CACHE_OPPORTUNITY_OBSERVATION_ONLY. Values flow only into an input-only
+  // DPI sink; no counter, shadow tag, fingerprint, or decision feeds the LSU.
+  val cacheObservationEvents = (0 until memWidth).flatMap { w =>
+    val r = s2_req(w)
+    val set = r.addr(idxMSB, idxLSB)
+    val lookupMeta = RegNext(meta(w).io.resp)
+    val validWays = PopCount(lookupMeta.map(_.coh.isValid()))
+    val demand = s2_valid(w) && s2_type === t_lsu && r.traffic_cacheable &&
+      !IsKilledByBranch(io.lsu.brupdate, r.uop) && !(io.lsu.exception && r.uop.uses_ldq)
+    val flags = VecInit(Seq(isRead(r.uop.mem_cmd), isWrite(r.uop.mem_cmd),
+      s2_tag_match(w), !s2_tag_match(w), s2_tag_match(w) && !s2_hit(w))).asUInt
+    val replacement = mshrs.io.req(w).fire && r.admission === CacheAdmission.primary &&
+      s2_lookup(w).old_meta.coh.isValid()
+    Seq(CacheOpportunityObservation.event(demand, 1, flags,
+        (r.addr >> blockOffBits) << blockOffBits, r.request_token, 0.U,
+        set, OHToUInt(s2_lookup(w).way_en), validWays),
+      CacheOpportunityObservation.event(replacement, 2,
+        VecInit(Seq(s2_lookup(w).old_meta.coh.onCacheControl(M_FLUSH)._1,
+          validWays === nWays.U)).asUInt, set = set, way = OHToUInt(s2_lookup(w).way_en)))
+  } ++ Seq(
+    CacheOpportunityObservation.event(metaWriteArb.io.out.fire, 5,
+      VecInit(Seq(metaWriteArb.io.out.bits.data.coh.isValid(),
+        metaWriteArb.io.out.bits.data.coh.onCacheControl(M_FLUSH)._1)).asUInt,
+      (Cat(metaWriteArb.io.out.bits.data.tag, metaWriteArb.io.out.bits.idx) << blockOffBits).pad(64),
+      set = metaWriteArb.io.out.bits.idx, way = OHToUInt(metaWriteArb.io.out.bits.way_en)),
+    CacheOpportunityObservation.event(prober.io.meta_write.fire &&
+      !prober.io.meta_write.bits.data.coh.isValid(), 3,
+      address = prober.io.state.bits),
+    CacheOpportunityObservation.event(svbFullFallbackEvent || svbUnsupportedFallbackEvent, 4,
+      VecInit(Seq(svbFullFallbackEvent, svbUnsupportedFallbackEvent)).asUInt),
+    CacheOpportunityObservation.event(l1_l2_dirty_wb_event, 8),
+    CacheOpportunityObservation.event(trafficStopPulse, 30, nSVBEntries.U,
+      svb.io.entryAccounting(2), svb.io.entryAccounting(0), svb.io.entryAccounting(1),
+      svb.io.entryAccounting(3)(31, 0), svb.io.occupancy, svb.io.maxDepth),
+    CacheOpportunityObservation.event(trafficStopPulse, 31, address = svbWouldFullAt8,
+      tag = svbCyclesAbove8, value = svbCaptureFailures, set = svb.io.maxOccupancy),
+    CacheOpportunityObservation.event(trafficCounting && !trafficStopPulse, 32, nSVBEntries.U,
+      way = svb.io.occupancy, occupancy = svb.io.depth))
+  CacheOpportunityObservation.emit(1, nSets, nWays, cfg.blockBytes, cfg.nMSHRs,
+    clock, reset.asBool, io.traffic_reset, trafficCounting && !trafficStopPulse, trafficStopPulse,
+    outer.staticImageWriter.U, io.csr_cycle, PopCount(mshrs.io.owner_line_valid),
+    PopCount(mshrs.io.owner_line_valid) === cfg.nMSHRs.U, cacheObservationEvents)
   // These software control bits are held levels, not one-cycle commands.
   // Observe only their rising edges: forcing a row while RESET/START stays
   // high logs every cycle (including boot) and exhausts the observer budget.

@@ -1,4 +1,295 @@
+# Latest Opt4 SVB state — integrity observer closure prepared (2026-10-30)
+
+**CURRENT_DATA_FUNDAMENTALLY_INSUFFICIENT** for retrospectively certifying run
+`optimization_4_svb_20261030_044205_dbaf743b`. This is a concrete information loss:
+old DPI emitted only aggregate hashes/counts, and success discarded the failure ring.
+No additional pure diagnostic run is requested or executed.
+
+84 mismatch increments = 76 proven observer duplicates (72 lower64-bit beats +
+4 C128-bit beats caused by 8 repeated version identities) + 8 final hash comparisons
+without recorded key/hash. The 8 failing keys cannot be identified from the saved
+aggregate. No real functional data bug has been proved or excluded. All 391 promotions
+match C/ACK/completion; 406=391+12 coalesced+3 discarded in aggregate, but the last
+15 allocation identities/terminals were not recorded. The CSV explicitly marks them
+unknown; it is not a fabricated complete lifecycle ledger.
+
+Histogram root cause fully closed: old DPI included STOP edge while SC snapshots
+were pre-edge. Both histograms differed only by bin0+1. Revised analyzer normalizes
+this exact reviewed legacy patch in memory and preserves raw evidence; no original
+run files changed. Correct hardware window is [712021,2430802), 1,718,781 cycles,
+distinct from software ROI1,707,863.
+
+SVB16_SUFFICIENT for BFS512: occupancy>8=65,102 cycles/3.79%, would_full_at8=56,
+full16=4,888 cycles/0.2844%, full fallback1, max line depth5. Keep16. Old L1/L2 S0
+miss errors58.74%/389.26% forbid a geometry candidate; do not change cache geometry.
+Current raw ROI remains PENDING_INTEGRITY_CLOSURE.
+
+Observer/analyzer fixes are implemented: episode/allocation serial lifecycle;
+SC32 capture hash,33 stored,34 promotion,35 terminal/coalesce successor,36 safe,
+37 SVB C beats,38 actual bank writes; immutable/atomic occupancy assertions;
+START-inclusive/STOP-exclusive histogram window; S0 metadata replay and deferred
+fill/C-only install/probe-invalidation model corrections; fail-closed final validation.
+Function data/control logic unchanged, proved by exact inverse source comparison.
+
+BOOM+sifive-cache Scala compile, full fresh v1Config Chisel/FIRRTL/firtool/CheckCombLoops,
+120 offline tests (18 new), syntax/lint/patch/launcher/failure-overlay all PASS.
+Only domain lint warning references pre-existing default old generated collateral.
+No hardware simulation, simulator build, FST or VCD executed in this turn.
+
+Next is one **FINAL_OPT4_VALIDATION** fresh integrated run (not a diagnostic run):
+
+```bash
+cd /data1/gzh/EC
+source chipyard/env.sh
+bash slowdown/run_optimization_4_svb.sh --jobs 8
+```
+
+Do not --resume or use the waveform entry. Revision mode
+`corrected_svb16_integrity_v2`, 8192 failure ring, no trace. Unique missing evidence
+is the allocation-scoped capture/stored/promotion/C/lower fingerprint+terminal ledger,
+now included in this final run.
+
+[Report](../../TMP/opt4_one_shot_closure_20261030_143326_a1dcf391/README.md)
+· [18 answers](../../TMP/opt4_one_shot_closure_20261030_143326_a1dcf391/answers_18.md)
+· [Validation](../../TMP/opt4_one_shot_closure_20261030_143326_a1dcf391/validation_result.json).
+Older entries below are historical and superseded.
+
+# Latest Opt4 SVB state — formal run completed, integrity validation failed (2026-10-30)
+
+Run `optimization_4_svb_20261030_044205_dbaf743b` used `corrected_svb16_fst_owner_fix_v1`,
+patch SHA256 `c74a132789a70cb021314c9b708f628b0fc33210f855d04c31afc53420d1ee3c` and DCache SHA256
+`6b41f67629f7f557b15a0aab6f0020c8774f86f391d93369490a1bab92a486d7`.
+Simulation completed normally (exit 0) at host cycle 2,449,614, with no assertion
+failure or watchdog. BFS512 verified=1, checksum=43439728, COMPUTATION/END PASS.
+This run completed beyond the previously observed hang; broader correctness is pending.
+
+**Overall result FAILED / correctness FAIL / performance_valid=false.**
+Data fingerprint observer reports captured405/issued390/matched_lower382/mismatches84,
+while full-run SVB accounting has allocations406 and promotions/ACK/completions391.
+Analyzer also rejects SC/host occupancy and depth histogram agreement. These are
+observed validation failures; actual RTL data corruption versus observer/accounting
+error is **UNRESOLVED**. Successful benchmark output alone does not prove backup integrity.
+
+Protocol PASS: 7408 Release/ACK pairs, 391 SVB promotions/ACK/completions, no source
+conflicts or invalid ACK, no outstanding or retained entries at end. Observed same-line
+stale publications=0. SVB max occupancy16, max per-line depth5, final occupancy0.
+Raw ROI=1,707,863 cycles, **not eligible for validated slowdown/gain claims**.
+No RTL change, build, or simulation was performed during this result check.
+
+[Run manifest](../../../slowdown/optimization_4_svb/runs/optimization_4_svb_20261030_044205_dbaf743b/run_manifest.json)
+· [Analysis](../../../slowdown/optimization_4_svb/analysis/optimization_4_svb_20261030_044205_dbaf743b/summary.json)
+· [Benchmark stdout](../../../slowdown/optimization_4_svb/runs/optimization_4_svb_20261030_044205_dbaf743b/stdout.log).
+The READY/formal-run-pending entries below are historical.
+
+# Latest Opt4 SVB state — FST root cause fixed, formal run pending (2026-10-30)
+
+**READY_TO_RERUN_OPT4_SVB_AFTER_FST_FIX**. Final FST run
+`optimization_4_svb_waveform_20261030_014511_32d45e01` ended at the watchdog,
+not benchmark success. Root cause is a stale fast-line bypass lease following
+resident slot replacement; global admission then blocked unrelated line
+0x80008040. Original owner store completed in way0 but lease retained way1/epoch0x16.
+At hang all WB/probe/MSHR/SVB resources were idle/free; ROB empty and STQ full.
+Last commit core1,837,022; first bad core1,827,940. No proven ABBA resource cycle.
+
+DCache fix: bounded identity-loss revocation; full S2/S3 way/epoch/key/package
+checks; line-scoped legacy handoff conflict; capture/legacy freeze ownership
+mutual exclusion. Same-line retained SVB protections through ACK remain.
+Other eleven hardware inputs are byte-identical to the FST build.
+
+Final Scala compile and fresh v1Config generation, FIRRTL/firtool/CheckCombLoops,
+102 offline tests (12 directed), syntax/lint, patch identity and launcher checks
+passed. No hardware simulation was run during this fix. Runtime correctness
+and ROI remain **unvalidated**, and no new pure observation run is prepared.
+
+Next user command:
+
+```bash
+cd /data1/gzh/EC
+source chipyard/env.sh
+bash slowdown/run_optimization_4_svb.sh --jobs 8
+```
+
+[Report and 26 answers](../../TMP/opt4_svb_fst_rootcause_fix_20261030_114113_773ea77d/README.md);
+[confirmed bug](../bugs/opt4_fastline_orphaned_lease_20261030.md).
+Older current/READY/UNRESOLVED entries below are historical and superseded for Opt4.
+
 # Current Debug State
+
+## Opt4 final FST diagnostic prepared; user execution pending (2026-10-30)
+
+准备状态 **READY_FOR_OPT4_SVB_WAVEFORM_RUN**；硬件根因仍为 **HANG_DIAGNOSTIC_EVIDENCE_INSUFFICIENT**。本轮仅准备，不启动硬件仿真、fresh Chipyard elaboration或整机模拟器build。原失败版本功能源码、SVB16/ordering/ACK/checker/watermark/geometry/shadow和正式性能launcher默认配置保持。
+
+新增独立入口：`bash /data1/gzh/EC/slowdown/run_optimization_4_svb_waveform_debug.sh --jobs 8`。用户执行时fresh generation/build，FST从simulator time1,500,000至终止，FST raw time约为2倍；主BOOM/Rob/LSU/DCache/SVB/WB/probe/6MSHR/TL B/C/D与safe-chain控制高覆盖。4455只读aliases和189项payload/datapath排除在每次生成物上重新核对，compiled trace声明缺失则仿真前拒绝。关键snapshot/既有稀疏事件启用与verbose无关；普通printf仍关闭。host copy对assertion保存当前eval尾边并非零退出，真正fatal关闭最后完整FST。保留8192-event/1MiB失败ring。
+
+唯一波形留在`slowdown/optimization_4_svb/waveform_debug/<run_id>/hang.fst`，manifest记录hash，解除本次56MiB限制；估算1–20GiB，实际未测。一次性启动guard禁止自动第二次纯诊断run，无resume。用户运行结束后Codex直接读取原FST查last commit→ROB/LSU→cache gate→owner→依赖区间，闭合first-bad/wait-for graph后直接fix或证明非SVB；不凭最终snapshot确认死锁。
+
+88项离线测试、4455/4455声明类型fixture trace审查、SVB695/695静态trace审查、native FST字面量fixture、C++/Python/Bash syntax、source identity与observation-only字节逆变换PASS。整机fresh生成/build/动态覆盖均待用户执行。本次没有新correctness或slowdown结果。见 [waveform preparation](../../TMP/opt4_svb_waveform_debug_prepare_20261030_091449_2f46ad8a/README.md)。下方为原失败证据与历史准备。
+
+## Opt4 latest diagnostic run still hung; diagnostic printf channel disabled (2026-10-30)
+
+状态 **HANG_DIAGNOSTIC_EVIDENCE_INSUFFICIENT**，取代下方旧 READY。用户 fresh run `optimization_4_svb_20261029_120415_a83514b4` generation/build PASS，simulation COMPLETED、exit1/result FAILED，在 `$time=2099000` 再触发 `BoomCore.sv:6915` 的 `assert(~ecWatchdogImminent)`。没有 verified/checksum/完整 ROI，不能报告性能。
+
+已证明诊断失效原因：Makefile `PRINTF_COND=verbose&&done_reset`，emulator 的 verbose 默认为false，pinned launcher没有启用参数。全部新增 Chisel printf（含CORE/DCACHE snapshot、fast-line/WB/probe/MSHR）被关闭；8192-event/1MiB ring只有2条native fatal，无overflow/eviction。生成RTL/compiled C++/源码hash和启动参数闭合。缺失的核心证据是watchdog ownership snapshot，不能从blocked line推断fast owner，也不能据此修改global ordering gate。旧准备未核对该runtime enable；旧分析器的NO_WATCHDOG_OBSERVED为漏检。
+
+修正仅限offline analyzer/tests：native assert按同run生成文件/行识别watchdog，缺snapshot明确判证据不足；protocol缺STOP capacity时使用manifest的16 entries，消除59条误报。当前prefix all Release/ACK6999/6999、SVB325/325/325、conflict0/invalidACK0、C generation regression0；缺footer仍FAIL。最后SVB completion1,837,183，watermark advance1,845,013，checker CANCEL183在1,969,461接受、1,969,462清除；blocked183/0x80008040持续采样到2,088,049。精确last commit和final owner状态未知，未闭合deadlock/livelock/ABBA因果环。
+
+没有改功能RTL、watchdog、launcher参数、16-entry容量或cache opportunity；70离线测试、BOOM compile、Scala parser、native host fixture、SV lint、launcher static-check及patch/diff检查PASS。原run和硬件hash保持；本轮未elaborate/生成RTL/Verilator build/仿真。未准备新的纯观测run，当前不满足READY_TO_RERUN_OPT4_SVB_FIXED。见 [完整结果与工具修复](../../TMP/opt4_svb_hang_rootcause_fix_20261030_a83514b4_7c92e1d0/README.md)、[诊断producer gate缺陷](../bugs/opt4_hang_diagnostic_printf_gate_20261030.md)。
+
+## Opt4 SVB pipeline hang: ready for final diagnostic run; root cause unresolved (2026-10-29)
+
+状态 **READY_FOR_FINAL_HANG_DIAGNOSTIC_RUN**。一次 fresh build-only 预检 `optimization_4_svb_20261029_110442_61fcd0f2` 的 RTL generation 与 Verilator build 均 PASS；manifest 为 `simulation=NOT_STARTED` 且无 `SIMULATION_STARTED.json`。本轮没有执行仿真，动态 hang 根因仍未确认。
+
+当前诊断版包含 fast-line ownership/acquire/release/owner-change 与 one-shot unrelated-line gate 证据，稀疏 WB/probe/MSHR/preservation/promotion 状态和 age 事件、watchdog 状态快照及 progress timestamps。失败时 host ring 上限 8192 events / 1 MiB，仅异常落盘；分析器在运行后生成 `last_progress.json`、`wait_for_graph.json`、`hang_rootcause.md`，未闭合依赖不会判为 confirmed cycle。
+
+21+3+11+20+8 项离线 tests、launcher static-check、patch reverse-check、shell syntax 和 diff check PASS。下一步用户只运行一次 fresh 默认入口，不带 `--resume`：`bash /data1/gzh/EC/slowdown/run_optimization_4_svb.sh`。完整准备与旧失败证据见 [final diagnostic preparation](../../TMP/opt4_svb_hang_fix_20261029_9f3c2d71/README.md)。
+
+### Previous dynamic evidence
+
+状态 **HANG_ROOT_CAUSE_STILL_UNRESOLVED**。最新 run `optimization_4_svb_20261029_062302_0291a6b9` 在 `$time=2099000` 触发 BOOM `Pipeline has hung.`，exit 1；不可据此评价备份 correctness 或 slowdown。
+kind15 显示 seq183 / line `0x80008040` 长时间阻塞，old seq182、watermark182、`lowerPreserved=0`；kind8 未显示 seq183 的 crossPackagePending handoff。watchdog core cycle 约 2,098,897，last watchdog counter reset 推算约 1,836,753，但精确最后 commit 未记录。
+SVB occupancy/state、最终 WB/probe/MSHR/slot 状态缺失，故 true deadlock/livelock/超长 stall 未分类，也未确认 wait-for cycle。seq179 同线 SVB ReleaseData 在1,837,042发出，1,837,100收到匹配ACK，1,837,101完成；只能排除该笔promotion自身未完成。seq183 后来被 checker 以 `package_progress_timeout` 取消，水位停在182。保存的 protocol 分析另有60条 duplicate-selection错误且覆盖不完整。
+源码审查发现全局单行 `svbFastLineValid` 会禁止其他任意line开始SVB fast path / crossPackagePending，直到其owner的匹配semantic write fire或epoch flush；这是可能的head-of-line进展风险，但旧run没有记录该bit/owner，不能定为根因。没有改功能RTL。该次审查时通过了 BOOM Scala compile、51项离线 tests、launcher `--static-check` 和 `git diff --check`，但尚未做Chisel elaboration、RTL生成或Verilator build。随后完成的最终诊断预检见本节顶部。旧诊断报告：[RCA review](../../TMP/opt4_svb_hang_review_20261029_180710_9000d01d/README.md)，前序诊断设计：[bounded diagnostics](../../TMP/opt4_svb_hang_fix_20261029_9f3c2d71/README.md)。死锁仍未修复或验证。
+
+## 先前 Opt4 观测预算修复状态（已被上方 hang 诊断状态取代）
+
+状态 **READY_TO_RERUN_OPT4_SVB_WITH_CACHE_OPPORTUNITY**：静态准备完成，无新有效性能结果。
+旧run `optimization_4_svb_20261029_020351_481d089a` 确认已因采集器48MiB预算中止，
+不是仍在执行；旧证据及其FAILED结论保留。kind14/15占75.27%的SC行。
+本轮只改BOOM observation block/shared input-only logger及采集/分析/launcher工具。
+逐事件64位counter+每4096事件抽样，kind31输出traffic-enable窗口STOP前的精确计数；
+kind14/15在Opt4 budgeted模式各限1024样例，超限统计省略而不fatal。
+host48MiB按39协议/8样例/1summary-footer分区，stream总上限仍56MiB；
+预算耗尽继续drain，不终止workload；必需证据丢失/producer-footer不守恒/缺counter/
+runtime failure或未正常exit0均禁止correctness/performance PASS。
+Capture异常更新simulation=ABORTED，工具/源码hash变化拒绝旧生成物resume。
+
+BOOM Scala compile、shared SV lint-only、57offline tests、source-scope、patch往返/
+隔离index重建及launcher static-check PASS。原50MiB前缀离线路由后15,152,548bytes，
+22,222条必需记录内容与顺序hash相同，省略114,620条可选记录；无footer仍判证据不完整。
+本轮未执行Chisel elaboration/FIRRTL/RTL generation、Verilator model build、hardware simulation/benchmark。
+本轮没有新的备份正确性或slowdown测量，不把静态通过/回放当runtime PASS。
+SVB功能、source生命周期、cache geometry/checker/watermark/benchmark保持；失败恢复仍暂不实现。
+
+用户下一步fresh执行：`bash /data1/gzh/EC/slowdown/run_optimization_4_svb.sh`，不带--resume。
+报告：[观测预算修复](../../TMP/opt4_observation_budget_fix_20261029_0802a3c4/README.md)。
+下方为历史状态，旧READY/FAILED不代表本版runtime结论。
+
+## Opt4最新仿真因compact事件预算中止，结果未完成（2026-10-29）
+
+Run `optimization_4_svb_20261029_020351_481d089a`：RTL generation/Verilator build PASS，
+旧L2 observer heterogeneous Mux错误没有重现；simulation启动后在12:52:41(+08:00)报
+SAFE_CHAIN_EVENT_BUDGET_EXCEEDED而被采集器提前终止，exit -9，result FAILED。
+manifest simulation=STARTED是异常退出时保留的字段；当前无对应运行进程，不是仍在执行。
+SC日志50,331,374bytes接近48MiB上限，164,352条，无SC_END/footer；kind15/hart0 81,121、kind14/hart0 42,582占大部分。
+无verified/checksum、完整ROI/END或cache final summary，performance_valid=false，不能判断SVB备份正确或slowdown收益。
+已保留前缀的partial protocol/generation ledger不代替完整运行PASS；现有日志未见assertion/fatal，不排除其他运行期问题。
+当前源码/观测工具hash与run manifest核对一致。下一步先审查高频kind14/15并压缩必要证据，不能直接把预算失败当硬件正确。
+本次仅只读核对/保存报告/更新状态，未改硬件、未扩大预算、未自动重跑。
+报告：[Opt4预算中止状态](../../TMP/opt4_run_status_20261029_481d089a/README.md)。
+下方READY和先前静态通过均为历史阶段状态；当前没有新的有效Opt4性能结果。
+
+## Opt4 L2 observer Mux elaboration failure repaired（2026-10-29）
+
+用户run `optimization_4_svb_20261029_013322_1d198f2e`在RTL_GENERATION阶段Chisel展开失败，
+make exit2；simulation=NOT_STARTED，没有新ROI。真实异常为Scheduler.scala:697：
+`can't create Mux with heterogeneous types ... QueuedRequest and ... FullRequest`。
+新增observationLookup直接Mux queued/full bundle；Scala继承允许编译，Chisel运行时拒绝不同形状。
+FullRequest仅额外含set，set本来已由directory.io.read.bits.set独立对齐；
+修复用`Wire(new QueuedRequest(params), init = request.bits)`按字段投影，再与queue端Mux。
+该写法与既有functional MSHR allocation相同，不用asUInt/asTypeOf截断。
+strip观察块后的Scheduler主体逐字未变；其他8个hardware/resource文件未变。
+
+已增加source-contract回归并更新launcher到独立新累计patch，旧run/旧报告/旧patch保留。
+本次sifive_cache Scala compile、20capacity/cache+11protocol+6launcher=37offline tests、
+source-scope/三patch往返/独立index重建、launcher --static-check均PASS。
+本轮只做Scala编译及离线/源码/patch检查，不执行新硬件生成、Verilator build、仿真或benchmark。
+展开/FIRRTL及runtime尚待用户fresh run，不能把编译通过称为展开已通过。
+入口仍为`bash /data1/gzh/EC/slowdown/run_optimization_4_svb.sh`，不带--resume；
+旧失败run源码/patch身份不同，不复用其生成物。
+报告：[observer Mux fix](../../TMP/opt4_observer_mux_fix_20261029_df6ad056/README.md)。
+
+## Opt4 correctness fix + SVB16 + cache opportunity prepared（2026-10-29）
+
+状态 **READY_TO_RERUN_OPT4_SVB_WITH_CACHE_OPPORTUNITY**：仅静态准备，新版本runtime pending。
+旧run `optimization_4_svb_20261028_104359_b1e0aeee`已完成exit1/verified0/checksum43440224，
+ROI1720057无效；当前有效Opt3 ROI2928347/checksum43439728，Baseline1001675。
+新分析器将明确FAIL正确分类，并从原compact ledger复现17次same-line/writer generation回退：
+normal WB较新image发布/ACK后，旧SVB ReleaseData晚到，L2 existing metadata/data覆写会回退版本。
+首例line0x80011f40：normal seq119/gen67826 C.first csr1458055、ACK1458071；
+SVB seq116/gen65841 C.first1459713。旧日志未记录first-wrong byte/load，不能称全部corruption动态闭环。
+
+新修复对所有retained SVB（含WB_WAIT）做同线普通WB/probe anti-overtake，进入arbiter前门控避免阻塞自身promotion；
+capture freeze/drain并核对line/key/resident epoch；equal-seq按generation排序/安全coalesce。
+source/ACK共享WB engine主体与preimage逐字不变；原7422/7422、SVB353/353/353协议结果保持独立证据。
+SVBEntries默认16且参数化，仅global capacity增加，无32entry/per-line新协议/恢复设计。
+shadow8、17-bin hist、全程entry守恒、snapshot/C/L2 bank hash加入；hash非密码学诊断。
+
+L1D32KiB=256×2、L2 1MiB=1024×16、block64B、MSHR/实际geometry/checker/watermark/barrier/benchmark不改。
+input-only DPI host观察actual pressure和四shadow geometry（S0 current；S1同容量双ways；S2双容量sameways；S3双容量双ways）。
+random-family近似，非cycle-exact；S0 miss误差>10%禁geometry decision，无predicted ROI，最多一个候选假设。
+
+最终Scala BOOM+sifive_cache compile、19新capacity/cache+11protocol+6launcher离线tests、native C++11 fixture、
+独立SV lint、Python/Bash语法、17ownership contracts、source-scope、三patch往返/独立index重建及launcher static-check通过。
+本轮没有Chisel elaboration/FIRRTL/RTL generation、Verilator model build、hardware simulation或benchmark。
+无full FST/VCD或新增逐access地址trace；compact流cap56MiB，shadow仅host memory，no feedback。
+新版本数据备份正确性、ROI、容量及geometry机会必须由唯一fresh run取得；8→16的独立ROI不可从组合实验拆出。
+失败恢复和完整durable cache/DRAM drain仍unresolved，按用户范围暂不实现。
+
+用户执行（不带--resume，不复用旧failed simulator，无自动retry）：
+`bash /data1/gzh/EC/slowdown/run_optimization_4_svb.sh`。
+报告：[Opt4 SVB16/cache delivery](../../TMP/opt4_svb_fix_capacity_cache_opportunity_20261029_b1e0aeee/README.md)。
+下方旧FAIL/READY记录均为历史状态；原run、patch与Architecture用户删除保持。
+
+## Opt4 source lifecycle runtime PASS; benchmark FAIL（2026-10-29）
+
+用户运行 `optimization_4_svb_20261028_104359_b1e0aeee` 已结束，记录更新时间
+2026-10-28 21:39:37 +08:00。RTL generation/Verilator build PASS，simulation COMPLETED，
+result FAILED、exit1（tsi_fail）。当前三个硬件文件 hash 与运行 manifest 相符。
+不是旧 C source assertion 再现：本次 assertion0，完整协议账本 all Release/ACK7422/7422，
+SVB promotion/ACK/completion353/353/353，source conflict0、invalid ACK0、exit outstanding0，
+coverage COMPLETE、protocol PASS。STOP snapshot7410/7410与全程7422/7422窗口不同。
+
+但 GAPBS512 verified=0、parent_checksum43440224（成功 Opt3为43439728），
+COMPUTATION/END FAIL。ROI1720057 vs Opt3 2928347，原始减少41.261845%，
+因计算错误 performance_valid=false，不是已验证 slowdown 收益，也不证明备份数据正确。
+SVB alloc/bypass369，full fallback21，max occupancy8、depth4、STOP occupancy0；
+busy53900、queued26000、max safe awaiting8。first wrong data/ordering 尚未定位。
+
+现有分析器显式 benchmark FAIL会被总状态标成UNOBSERVED_OR_PENDING，属于分类不足；
+以原始FAIL日志与launcher FAILED为准，不能理解为仅缺观察。未修改该工具或硬件。
+本轮只核对现有证据、hash并离线重放，summary完全一致；没有编译、生成或新仿真。
+报告：[Opt4 runtime results](../../TMP/opt4_results_20261029_b1e0aeee/README.md)。
+下方 READY_TO_RERUN 仅是修复交付时的历史状态，已被本次运行推进。
+
+## Opt4 SVB Release source lifecycle 修复，静态通过、runtime pending（2026-10-28）
+
+状态 **READY_TO_RERUN_OPT4_SVB**。旧运行 `optimization_4_svb_20261028_054141_eff5a3cd`
+在 TLMonitor_50.sv:904 ($time722487) 因 C source 重用中止、exit1，无完整 ROI。
+旧 generated 显示 voluntary source=6 (3 bits)。缺少 C/D observer，无法证明两笔事务的
+完整 address/opcode/cycle；最后 kind8 支持 legacy crossPackage WB 紧邻失败，SVB 先发、
+normal 后复用是 supported transaction identity，不能当作已观测完整 trace。
+源码根因已证实：SVB 与 WB 独立 busy、共用 source，C arbiter 只覆盖多拍而不覆盖 ACK wait。
+
+修复将 SVB 的 immutable snapshot/entry 送入共享 WritebackUnit，普通/SVB voluntary
+统一 ackPending reservation，最大 outstanding promotion1，SVB 不再直接驱动 C。
+D.fire/source/ReleaseAck/size/denied/corrupt/完整 CacheImage/已发完 C 全匹配后，
+WB 定向 entry/key completion 才释放 WB_WAIT；正常 done 与 SVB done 分离。
+MSHR completion 使用请求接受时锁存身份，保持 snapshot 不误完成 MSHR 的不变量。
+补 A1–A6、retention、global C/D scoreboard、全程 compact protocol ledger 与 busy/queued/
+coalescing/conflict counters；修正分析器把 harts1–4 kind16 frontend 误当 SVB 的 bug。
+保持8-entry/Store fast path/各 fallback/checker/watermark/benchmark/L2及DRAM barrier。
+
+SBT boom compile、Scala parser、Python AST、6 launcher + 11 protocol offline tests、Bash、
+git diff --check、Opt4 static-check、17 source contracts 与 patch往返校验通过。
+没有运行 elaboration/FIRRTL、RTL generation、Verilator build 或 hardware simulation。
+备份正确性、实际 C/ACK 配对、benchmark PASS、ROI/WaitSafe/occupancy/depth/串行瓶颈待新运行；
+退出 pending entry 不等于 durable drain，failure recovery 不在本轮范围。
+
+报告与增量/累计 patch：
+[Opt4 source fix](../../TMP/opt4_svb_release_source_fix_20261028_181450_7c08b4/README.md)。
+必须 fresh 重新生成与编译，**不可复用旧失败 simulator，不带 --resume**：
+`bash /data1/gzh/EC/slowdown/run_optimization_4_svb.sh`。
+下一次只跑一次、不启用 FST/VCD、无自动重试。旧失败 evidence 与原 Opt4 patch 原样保留。
 
 ## Opt3 design and Git delivery prepared (2026-10-28)
 

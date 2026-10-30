@@ -45,7 +45,7 @@
 [INIT] software_interrupt=pass
 [RUN] hart=0 status=started
 [CONFIG] big_core_perf=off checker_perf=on interval_cycles=5000 sample_readback=not_collected
-[RUN] benchmark=gapbs_bfs nodes=512 source=0 reached=512 edges=8192 verified=1 parent_checksum=43439728
+[RUN] benchmark=gapbs_bfs nodes=512 source=0 reached=512 edges=8192 verified=1 parent_checksum=43 439 728
 [PERF] boom_cycles=1012405 boom_inst=649956
 [VERIFY] packages allocated=279 completed=279 passed=279 status=PASS
 [TRAFFIC] source        st_total   st_cache st_uncache   ld_total   ld_cache ld_uncache ld_response ld_forward

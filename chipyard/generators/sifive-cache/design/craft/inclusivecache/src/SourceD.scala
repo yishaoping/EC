@@ -335,6 +335,22 @@ class SourceD(params: InclusiveCacheParameters) extends Module
       s4_req.image.contentSeq, s4_req.image.writer, s4_req.image.valid, s4_need_bs)
   }
 
+  // Observation-only row fingerprints at the actual bank-write handshake.
+  // No new acknowledge condition or L2 data/version update is introduced.
+  private val observation = freechips.rocketchip.util.CacheOpportunityObservation
+  private val observationContext = freechips.rocketchip.util.SafeChainObservation.context()
+  // All ReleaseData bank writes are tagged. Host pairs only the selected
+  // SVB transaction, so normal releases and repeated versions cannot pollute it.
+  freechips.rocketchip.util.SafeChainObservation.emit(38, clock, reset,
+    observationContext._1, observationContext._1, UInt(0), Bool(true),
+    io.bs_wadr.fire() && !s4_req.prio(0) && s4_req.opcode === ReleaseData,
+    Seq(UInt(2), params.restoreAddress(params.expandAddress(s4_req.tag, s4_req.set, UInt(0))),
+      s4_req.image.contentSeq, s4_req.image.generation, s4_req.image.writer,
+      s4_req.source, observation.rowHash(io.bs_wdat.data, params.inner.bundle.dataBits),
+      s4_beat * UInt((params.inner.bundle.dataBits + 63) / 64),
+      UInt((params.inner.bundle.dataBits + 63) / 64), UInt(params.cache.blockBytes / 8)),
+    UInt(0), Bool(true))
+
   ////////////////////////////////////// RETIRED //////////////////////////////////////
 
   // Record for bypass the last three retired writebacks

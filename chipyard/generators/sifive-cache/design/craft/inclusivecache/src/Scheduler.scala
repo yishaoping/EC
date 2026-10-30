@@ -22,6 +22,8 @@ import freechips.rocketchip.diplomacy.AddressSet
 import freechips.rocketchip.tilelink._
 import freechips.rocketchip.util._
 import freechips.rocketchip.guardiancouncil.GH_GlobalParams
+import freechips.rocketchip.util.{CacheOpportunityObservation, SafeChainObservation}
+import chisel3.util.experimental.BoringUtils
 
 // Diagnostic outputs only. Host-idle and checkpoint capture are different
 // drains: neither these observations nor host ledgers feed the protocol.
@@ -681,6 +683,68 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
             abc_mshrs.map(_.io.status.bits.way)))
   sinkD.io.way := Vec(mshrs.map(_.io.status.bits.way))(sinkD.io.source)
   sinkD.io.set := Vec(mshrs.map(_.io.status.bits.set))(sinkD.io.source)
+
+  // CACHE_OPPORTUNITY_OBSERVATION_ONLY: actual accepted lookups/traffic and
+  // input-only host shadow models. No ready/valid, replacement, or barrier
+  // predicate depends on these observations.
+  val observationReset = chisel3.WireInit(false.B)
+  val observationEnable = chisel3.WireInit(false.B)
+  BoringUtils.addSink(observationReset, GH_GlobalParams.GH_L2_STATS_RESET_BORE)
+  BoringUtils.addSink(observationEnable, GH_GlobalParams.GH_L2_STATS_ENABLE_BORE)
+  val observationContext = SafeChainObservation.context()
+  val observationStop = RegNext(observationEnable, Bool(false)) && !observationEnable
+  // FullRequest adds fields to QueuedRequest, so a direct aggregate Mux
+  // fails Chisel's runtime type check. Project by field connection, exactly
+  // as the functional MSHR allocation path does above; do not bit-cast.
+  val observationIncoming = Wire(new QueuedRequest(params), init = request.bits)
+  val observationLookup = params.dirReg(RegEnable(
+    Mux(mshr_uses_directory_for_lb, requests.io.data, observationIncoming), directory.io.read.valid))
+  val observationDemand = directory.io.result.valid && observationLookup.prio(0) &&
+    !observationLookup.control && observationLookup.opcode =/= TLMessages.Hint
+  val observationSet = params.dirReg(RegEnable(directory.io.read.bits.set, directory.io.read.valid))
+  val observationAddress = params.expandAddress(observationLookup.tag, observationSet, UInt(0))
+  val observationWrite = observationLookup.opcode === TLMessages.PutFullData ||
+    observationLookup.opcode === TLMessages.PutPartialData ||
+    observationLookup.opcode === TLMessages.ArithmeticData || observationLookup.opcode === TLMessages.LogicalData ||
+    (observationLookup.opcode === TLMessages.AcquirePerm) ||
+    (observationLookup.opcode === TLMessages.AcquireBlock && observationLookup.param =/= TLPermissions.NtoB)
+  val (observationAFirst, _, _, _) = params.inner.count(io.in.a)
+  val (observationCFirst, _, _, _) = params.inner.count(io.in.c)
+  val (observationOuterAFirst, _, _, _) = params.outer.count(io.out.a)
+  val (observationOuterCFirst, _, _, _) = params.outer.count(io.out.c)
+  val observationMemRead = io.out.a.bits.opcode === TLMessages.Get ||
+    io.out.a.bits.opcode === TLMessages.AcquireBlock
+  val observationMemWrite = io.out.a.bits.opcode === TLMessages.PutFullData ||
+    io.out.a.bits.opcode === TLMessages.PutPartialData
+  val observationEvents = Seq(
+    CacheOpportunityObservation.event(observationDemand, 1,
+      Vec(Seq(!observationWrite, observationWrite, directory.io.result.bits.hit,
+        !directory.io.result.bits.hit)).asUInt,
+      observationAddress, set = observationSet, way = directory.io.result.bits.way,
+      occupancy = directory.io.observationValidWays),
+    CacheOpportunityObservation.event(sourceC.io.req.fire() && sourceC.io.req.bits.reason === UInt(1),
+      2, sourceC.io.req.bits.dirty.asUInt,
+      set = sourceC.io.req.bits.set, way = sourceC.io.req.bits.way),
+    CacheOpportunityObservation.event(directory.io.write.fire(), 5,
+      Vec(Seq(directory.io.write.bits.data.state =/= MetaData.INVALID,
+        directory.io.write.bits.data.dirty)).asUInt,
+      params.expandAddress(directory.io.write.bits.data.tag, directory.io.write.bits.set, UInt(0)),
+      set = directory.io.write.bits.set, way = directory.io.write.bits.way),
+    CacheOpportunityObservation.event(io.in.a.fire() && observationAFirst, 6, UInt(1)),
+    CacheOpportunityObservation.event(io.in.c.fire() && observationCFirst, 6, UInt(2)),
+    CacheOpportunityObservation.event(io.out.a.fire() && observationOuterAFirst &&
+      (observationMemRead || observationMemWrite), 7,
+      Vec(Seq(observationMemRead, observationMemWrite)).asUInt,
+      value = UInt(1, width = 64) << io.out.a.bits.size),
+    CacheOpportunityObservation.event(io.out.c.fire() && observationOuterCFirst &&
+      io.out.c.bits.opcode === TLMessages.ReleaseData, 7, UInt(2), value = UInt(params.cache.blockBytes)),
+    CacheOpportunityObservation.event(sourceC.io.req.fire(), 8),
+    CacheOpportunityObservation.event(io.in.c.fire() && observationCFirst &&
+      io.in.c.bits.opcode === TLMessages.ReleaseData, 12, address = io.in.c.bits.address))
+  CacheOpportunityObservation.emit(2, params.cache.sets, params.cache.ways,
+    params.cache.blockBytes, params.mshrs, clock, reset, observationReset,
+    observationEnable, observationStop, io.bank, observationContext._1,
+    PopCount(mshrs.map(_.io.status.valid)), mshrs.map(_.io.status.valid).reduce(_ && _), observationEvents)
 
   // Beat buffer connections between components
   sinkA.io.pb_pop <> sourceD.io.pb_pop

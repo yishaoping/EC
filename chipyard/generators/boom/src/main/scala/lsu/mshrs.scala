@@ -55,6 +55,8 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
     val idx = Output(Valid(UInt()))
     val way = Output(Valid(UInt()))
     val tag = Output(Valid(UInt()))
+    val debug_state = Output(UInt(5.W))
+    val debug_waiting_resource = Output(UInt(4.W))
 
 
     val mem_acquire = Decoupled(new TLBundleA(edge.bundle))
@@ -117,6 +119,21 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
 
   val s_invalid :: s_refill_req :: s_refill_resp :: s_drain_rpq_loads :: s_meta_read :: s_meta_resp_1 :: s_meta_resp_2 :: s_meta_clear :: s_wb_meta_read :: s_wb_req :: s_wb_resp :: s_commit_line :: s_drain_rpq :: s_meta_write_req :: s_mem_finish_1 :: s_mem_finish_2 :: s_prefetched :: s_prefetch :: Nil = Enum(18)
   val state = RegInit(s_invalid)
+  io.debug_state := state
+  val debugWaitingResource = WireDefault(0.U(4.W))
+  when (state === s_refill_req)       { debugWaitingResource := 1.U }
+  when (state === s_refill_resp)      { debugWaitingResource := 2.U }
+  when (state === s_drain_rpq_loads)  { debugWaitingResource := 3.U }
+  when (state === s_meta_read || state === s_wb_meta_read) { debugWaitingResource := 4.U }
+  when (state === s_meta_resp_1 || state === s_meta_resp_2) { debugWaitingResource := 5.U }
+  when (state === s_meta_clear || state === s_meta_write_req) { debugWaitingResource := 6.U }
+  when (state === s_wb_req)           { debugWaitingResource := 7.U }
+  when (state === s_wb_resp)          { debugWaitingResource := 8.U }
+  when (state === s_commit_line)      { debugWaitingResource := 9.U }
+  when (state === s_drain_rpq)        { debugWaitingResource := 10.U }
+  when (state === s_mem_finish_1 || state === s_mem_finish_2) { debugWaitingResource := 11.U }
+  when (state === s_prefetch || state === s_prefetched) { debugWaitingResource := 12.U }
+  io.debug_waiting_resource := debugWaitingResource
 
   val req     = Reg(new BoomDCacheReqInternal)
   val transactionSerial = RegInit(0.U(32.W))
@@ -778,6 +795,8 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
     val owner_line_valid = Output(Vec(cfg.nMSHRs, Bool()))
     val owner_line_addr = Output(Vec(cfg.nMSHRs, UInt(coreMaxAddrBits.W)))
     val owner_line_way = Output(Vec(cfg.nMSHRs, UInt(nWays.W)))
+    val debug_state = Output(Vec(cfg.nMSHRs, UInt(5.W)))
+    val debug_waiting_resource = Output(Vec(cfg.nMSHRs, UInt(4.W)))
 
     val brupdate       = Input(new BrUpdateInfo)
     val exception    = Input(Bool())
@@ -944,6 +963,8 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
     io.owner_line_valid(i) := mshr.io.idx.valid
     io.owner_line_addr(i) := Cat(mshr.io.tag.bits, mshr.io.idx.bits) << blockOffBits
     io.owner_line_way(i) := mshr.io.way.bits
+    io.debug_state(i) := mshr.io.debug_state
+    io.debug_waiting_resource(i) := mshr.io.debug_waiting_resource
 
 
 

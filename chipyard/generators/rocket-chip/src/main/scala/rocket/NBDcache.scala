@@ -51,6 +51,10 @@ class WritebackReq(params: TLBundleParameters)(implicit p: Parameters) extends L
   val param = UInt(TLPermissions.cWidth.W) 
   val way_en = Bits(nWays.W)
   val voluntary = Bool()
+  // Optimization 4: the WritebackUnit may stop after the line read and hand
+  // the immutable image to the bounded speculative version buffer.  Ordinary
+  // probe/victim writebacks leave this bit clear.
+  val svb_capture = Bool()
 
 }
 
@@ -293,6 +297,7 @@ class MSHR(id: Int)(implicit edge: TLEdgeOut, p: Parameters) extends L1HellaCach
   io.wb_req.bits.param := shrink_param
   io.wb_req.bits.way_en := req.way_en
   io.wb_req.bits.voluntary := true.B
+  io.wb_req.bits.svb_capture := false.B
 
   io.mem_acquire.valid := state === s_refill_req && grantackq.io.enq.ready
   io.mem_acquire.bits := edge.AcquireBlock(
@@ -593,6 +598,7 @@ class ProbeUnit(implicit edge: TLEdgeOut, p: Parameters) extends L1HellaCacheMod
   io.wb_req.bits.param := report_param
   io.wb_req.bits.way_en := way_en
   io.wb_req.bits.voluntary := false.B
+  io.wb_req.bits.svb_capture := false.B
 
   // state === s_invalid
   when (io.req.fire) {

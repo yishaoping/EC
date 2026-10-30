@@ -1,0 +1,756 @@
+{
+  "baseline_roi_cycles": 1001675,
+  "benchmark_result": {
+    "checksum": null,
+    "verified": null
+  },
+  "cache_opportunity": {
+    "cache_opt_candidate": null,
+    "candidate_policy": "one hypothesis only; hardware cost and real validation required",
+    "classification": "COUNTERFACTUAL_CACHE_TRAFFIC_ESTIMATE",
+    "data_fingerprints": {},
+    "entry_accounting": {},
+    "errors": [
+      "missing L1 or L2 summary",
+      "missing/invalid 16-entry final conservation",
+      "missing shadow-8 counters",
+      "missing/inconsistent data fingerprint ledger",
+      "missing/incomplete final occupancy_histogram",
+      "missing/incomplete final depth_histogram",
+      "missing/invalid SC capacity schema",
+      "incomplete SC capacity/histogram coverage: kind17",
+      "incomplete SC capacity/histogram coverage: kind18",
+      "incomplete SC capacity/histogram coverage: kind30",
+      "missing/invalid exact pressure counter snapshot"
+    ],
+    "models": [],
+    "predicted_roi": null,
+    "shadow_8_capacity": {},
+    "status": "FAIL"
+  },
+  "capture_evidence": {
+    "errors": [
+      "mandatory observation evidence incomplete",
+      "runtime failure marker observed by capture",
+      "missing producer accounting; budgeted logger not observed",
+      "22:0: invalid mandatory producer accounting",
+      "22:0: missing/inconsistent producer/footer conservation",
+      "2:0: invalid mandatory producer accounting",
+      "2:0: missing/inconsistent producer/footer conservation",
+      "23:0: invalid mandatory producer accounting",
+      "23:0: missing/inconsistent producer/footer conservation",
+      "3:1: invalid mandatory producer accounting",
+      "3:1: missing/inconsistent producer/footer conservation",
+      "3:3: invalid mandatory producer accounting",
+      "3:3: missing/inconsistent producer/footer conservation",
+      "19:0: invalid mandatory producer accounting",
+      "19:0: missing/inconsistent producer/footer conservation",
+      "3:2: invalid mandatory producer accounting",
+      "3:2: missing/inconsistent producer/footer conservation",
+      "3:4: invalid mandatory producer accounting",
+      "3:4: missing/inconsistent producer/footer conservation",
+      "21:0: invalid mandatory producer accounting",
+      "21:0: missing/inconsistent producer/footer conservation",
+      "20:0: invalid mandatory producer accounting",
+      "20:0: missing/inconsistent producer/footer conservation",
+      "workload did not complete with exit status zero"
+    ],
+    "required": true,
+    "status": "FAIL",
+    "summary": {
+      "cache_opportunity_limit_bytes": 4194304,
+      "closed": true,
+      "counts": {
+        "discarded_diagnostic_bytes": 552,
+        "discarded_diagnostic_lines": 8,
+        "event_records_seen": 40683,
+        "failure_markers_seen": 2,
+        "safe_chain_events.tsv_lines": 40683,
+        "stdout.log_lines": 7
+      },
+      "diagnostic_limit_bytes": 2097152,
+      "event_budgets": {
+        "diagnostic": 8388608,
+        "protocol": 40894464,
+        "summary": 1048576
+      },
+      "event_bytes_by_class": {
+        "diagnostic": 5626202,
+        "protocol": 6764138,
+        "stdout.log_essential": 330,
+        "stdout.log_general": 199
+      },
+      "event_limit_bytes": 50331648,
+      "event_storage": "priority reserved TSV; explicit loss accounting; bounded final JSON",
+      "incomplete_reasons": [
+        "mandatory_producer_footer_mismatch"
+      ],
+      "mandatory_evidence_complete": false,
+      "observers": {
+        "10:0": {
+          "events_seen": 2,
+          "footers_seen": 0,
+          "kept": 2,
+          "omitted": 0,
+          "seen": 2
+        },
+        "11:1": {
+          "events_seen": 364,
+          "footers_seen": 0,
+          "kept": 364,
+          "omitted": 0,
+          "seen": 364
+        },
+        "11:2": {
+          "events_seen": 349,
+          "footers_seen": 0,
+          "kept": 349,
+          "omitted": 0,
+          "seen": 349
+        },
+        "11:3": {
+          "events_seen": 362,
+          "footers_seen": 0,
+          "kept": 362,
+          "omitted": 0,
+          "seen": 362
+        },
+        "11:4": {
+          "events_seen": 367,
+          "footers_seen": 0,
+          "kept": 367,
+          "omitted": 0,
+          "seen": 367
+        },
+        "12:1": {
+          "events_seen": 364,
+          "footers_seen": 0,
+          "kept": 364,
+          "omitted": 0,
+          "seen": 364
+        },
+        "12:2": {
+          "events_seen": 349,
+          "footers_seen": 0,
+          "kept": 349,
+          "omitted": 0,
+          "seen": 349
+        },
+        "12:3": {
+          "events_seen": 362,
+          "footers_seen": 0,
+          "kept": 362,
+          "omitted": 0,
+          "seen": 362
+        },
+        "12:4": {
+          "events_seen": 367,
+          "footers_seen": 0,
+          "kept": 367,
+          "omitted": 0,
+          "seen": 367
+        },
+        "13:1": {
+          "events_seen": 421,
+          "footers_seen": 0,
+          "kept": 421,
+          "omitted": 0,
+          "seen": 421
+        },
+        "13:2": {
+          "events_seen": 334,
+          "footers_seen": 0,
+          "kept": 334,
+          "omitted": 0,
+          "seen": 334
+        },
+        "13:3": {
+          "events_seen": 419,
+          "footers_seen": 0,
+          "kept": 419,
+          "omitted": 0,
+          "seen": 419
+        },
+        "13:4": {
+          "events_seen": 342,
+          "footers_seen": 0,
+          "kept": 342,
+          "omitted": 0,
+          "seen": 342
+        },
+        "14:0": {
+          "events_seen": 11,
+          "footers_seen": 0,
+          "kept": 11,
+          "omitted": 0,
+          "seen": 11
+        },
+        "15:0": {
+          "events_seen": 23,
+          "footers_seen": 0,
+          "kept": 23,
+          "omitted": 0,
+          "seen": 23
+        },
+        "16:1": {
+          "events_seen": 421,
+          "footers_seen": 0,
+          "kept": 421,
+          "omitted": 0,
+          "seen": 421
+        },
+        "16:2": {
+          "events_seen": 334,
+          "footers_seen": 0,
+          "kept": 334,
+          "omitted": 0,
+          "seen": 334
+        },
+        "16:3": {
+          "events_seen": 419,
+          "footers_seen": 0,
+          "kept": 419,
+          "omitted": 0,
+          "seen": 419
+        },
+        "16:4": {
+          "events_seen": 342,
+          "footers_seen": 0,
+          "kept": 342,
+          "omitted": 0,
+          "seen": 342
+        },
+        "19:0": {
+          "events_seen": 325,
+          "footers_seen": 0,
+          "kept": 325,
+          "omitted": 0,
+          "seen": 325
+        },
+        "1:0": {
+          "events_seen": 482,
+          "footers_seen": 0,
+          "kept": 482,
+          "omitted": 0,
+          "seen": 482
+        },
+        "20:0": {
+          "events_seen": 13998,
+          "footers_seen": 0,
+          "kept": 13998,
+          "omitted": 0,
+          "seen": 13998
+        },
+        "21:0": {
+          "events_seen": 6999,
+          "footers_seen": 0,
+          "kept": 6999,
+          "omitted": 0,
+          "seen": 6999
+        },
+        "22:0": {
+          "events_seen": 325,
+          "footers_seen": 0,
+          "kept": 325,
+          "omitted": 0,
+          "seen": 325
+        },
+        "23:0": {
+          "events_seen": 22,
+          "footers_seen": 0,
+          "kept": 22,
+          "omitted": 0,
+          "seen": 22
+        },
+        "2:0": {
+          "events_seen": 183,
+          "footers_seen": 0,
+          "kept": 183,
+          "omitted": 0,
+          "seen": 183
+        },
+        "3:1": {
+          "events_seen": 93,
+          "footers_seen": 0,
+          "kept": 93,
+          "omitted": 0,
+          "seen": 93
+        },
+        "3:2": {
+          "events_seen": 89,
+          "footers_seen": 0,
+          "kept": 89,
+          "omitted": 0,
+          "seen": 89
+        },
+        "3:3": {
+          "events_seen": 93,
+          "footers_seen": 0,
+          "kept": 93,
+          "omitted": 0,
+          "seen": 93
+        },
+        "3:4": {
+          "events_seen": 95,
+          "footers_seen": 0,
+          "kept": 95,
+          "omitted": 0,
+          "seen": 95
+        },
+        "4:1": {
+          "events_seen": 93,
+          "footers_seen": 0,
+          "kept": 93,
+          "omitted": 0,
+          "seen": 93
+        },
+        "4:2": {
+          "events_seen": 89,
+          "footers_seen": 0,
+          "kept": 89,
+          "omitted": 0,
+          "seen": 89
+        },
+        "4:3": {
+          "events_seen": 93,
+          "footers_seen": 0,
+          "kept": 93,
+          "omitted": 0,
+          "seen": 93
+        },
+        "4:4": {
+          "events_seen": 95,
+          "footers_seen": 0,
+          "kept": 95,
+          "omitted": 0,
+          "seen": 95
+        },
+        "5:1": {
+          "events_seen": 185,
+          "footers_seen": 0,
+          "kept": 185,
+          "omitted": 0,
+          "seen": 185
+        },
+        "5:2": {
+          "events_seen": 177,
+          "footers_seen": 0,
+          "kept": 177,
+          "omitted": 0,
+          "seen": 177
+        },
+        "5:3": {
+          "events_seen": 185,
+          "footers_seen": 0,
+          "kept": 185,
+          "omitted": 0,
+          "seen": 185
+        },
+        "5:4": {
+          "events_seen": 190,
+          "footers_seen": 0,
+          "kept": 190,
+          "omitted": 0,
+          "seen": 190
+        },
+        "6:1": {
+          "events_seen": 1149,
+          "footers_seen": 0,
+          "kept": 1149,
+          "omitted": 0,
+          "seen": 1149
+        },
+        "6:2": {
+          "events_seen": 1064,
+          "footers_seen": 0,
+          "kept": 1064,
+          "omitted": 0,
+          "seen": 1064
+        },
+        "6:3": {
+          "events_seen": 1149,
+          "footers_seen": 0,
+          "kept": 1149,
+          "omitted": 0,
+          "seen": 1149
+        },
+        "6:4": {
+          "events_seen": 1019,
+          "footers_seen": 0,
+          "kept": 1019,
+          "omitted": 0,
+          "seen": 1019
+        },
+        "7:0": {
+          "events_seen": 2585,
+          "footers_seen": 0,
+          "kept": 2585,
+          "omitted": 0,
+          "seen": 2585
+        },
+        "8:0": {
+          "events_seen": 3922,
+          "footers_seen": 0,
+          "kept": 3922,
+          "omitted": 0,
+          "seen": 3922
+        },
+        "9:0": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:1": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:10": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:11": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:12": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:13": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:14": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:15": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:16": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:17": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:18": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:19": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:2": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:20": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:21": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:22": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:23": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:24": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:25": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:26": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:27": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:28": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:29": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:3": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:30": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:31": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:4": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:5": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:6": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:7": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:8": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        },
+        "9:9": {
+          "events_seen": 1,
+          "footers_seen": 0,
+          "kept": 1,
+          "omitted": 0,
+          "seen": 1
+        }
+      },
+      "optional_evidence_complete": true,
+      "optional_records_omitted": 0,
+      "policy": "priority_reserved_v2",
+      "producers": {},
+      "schema": 2,
+      "sizes": {
+        "safe_chain_events.tsv": 12390340,
+        "stdout.log": 529
+      },
+      "total_stream_limit_bytes": 58720256
+    }
+  },
+  "correctness": {
+    "assertion_failures": 2,
+    "benchmark_pass": false,
+    "cancelled_results": 1,
+    "failed_results": 0,
+    "status": "FAIL"
+  },
+  "data_ordering": {
+    "examples": [],
+    "scope": "full_run_C_ReleaseData_same_line_writer_generation",
+    "stale_publications": 0,
+    "status": "PASS"
+  },
+  "depth_histogram": null,
+  "event_records": 40683,
+  "observer_status": "UNKNOWN_FROM_MISSING_SVB_EVENT",
+  "occupancy_histogram": null,
+  "opt3_roi_cycles": 2928347,
+  "opt3_strict_unsafe_waitsafe_cycles": 1547483,
+  "opt4_incremental_gain_cycles": null,
+  "opt4_observed_waitsafe_block_records": 23,
+  "opt4_ratio_to_baseline": null,
+  "opt4_roi_cycles": null,
+  "opt4_total_gain_from_baseline_cycles": null,
+  "opt4_waitsafe_measurement_status": "SAMPLED_EXAMPLES_PLUS_EXACT_TRAFFIC_WINDOW_COUNTERS",
+  "performance_valid": false,
+  "protocol": {
+    "coverage": "INCOMPLETE",
+    "end_policy": "STOP may retain WB_WAIT; exit with retained entries is not proof of full durable drain",
+    "errors": [
+      "time=1487171 kind=19: duplicate/invalid selection",
+      "time=1487233 kind=19: duplicate/invalid selection",
+      "time=1487362 kind=19: duplicate/invalid selection",
+      "time=1487426 kind=19: duplicate/invalid selection",
+      "time=1487515 kind=19: duplicate/invalid selection",
+      "time=1498757 kind=19: duplicate/invalid selection",
+      "time=1517835 kind=19: duplicate/invalid selection",
+      "time=1549133 kind=19: duplicate/invalid selection",
+      "time=1549195 kind=19: duplicate/invalid selection",
+      "time=1549257 kind=19: duplicate/invalid selection",
+      "time=1549319 kind=19: duplicate/invalid selection",
+      "time=1549448 kind=19: duplicate/invalid selection",
+      "time=1549513 kind=19: duplicate/invalid selection",
+      "time=1559421 kind=19: duplicate/invalid selection",
+      "time=1559483 kind=19: duplicate/invalid selection",
+      "time=1559545 kind=19: duplicate/invalid selection",
+      "time=1559607 kind=19: duplicate/invalid selection",
+      "time=1559672 kind=19: duplicate/invalid selection",
+      "time=1559734 kind=19: duplicate/invalid selection",
+      "time=1565330 kind=19: duplicate/invalid selection",
+      "time=1565392 kind=19: duplicate/invalid selection",
+      "time=1588123 kind=19: duplicate/invalid selection",
+      "time=1598719 kind=19: duplicate/invalid selection",
+      "time=1608277 kind=19: duplicate/invalid selection",
+      "time=1630925 kind=19: duplicate/invalid selection",
+      "time=1641209 kind=19: duplicate/invalid selection",
+      "time=1651207 kind=19: duplicate/invalid selection",
+      "time=1651269 kind=19: duplicate/invalid selection",
+      "time=1651331 kind=19: duplicate/invalid selection",
+      "time=1651463 kind=19: duplicate/invalid selection",
+      "time=1651525 kind=19: duplicate/invalid selection",
+      "time=1651587 kind=19: duplicate/invalid selection",
+      "time=1651776 kind=19: duplicate/invalid selection",
+      "time=1661558 kind=19: duplicate/invalid selection",
+      "time=1661620 kind=19: duplicate/invalid selection",
+      "time=1661682 kind=19: duplicate/invalid selection",
+      "time=1661747 kind=19: duplicate/invalid selection",
+      "time=1662766 kind=19: duplicate/invalid selection",
+      "time=1662893 kind=19: duplicate/invalid selection",
+      "time=1665331 kind=19: duplicate/invalid selection",
+      "time=1665393 kind=19: duplicate/invalid selection",
+      "time=1695127 kind=19: duplicate/invalid selection",
+      "time=1711787 kind=19: duplicate/invalid selection",
+      "time=1712102 kind=19: duplicate/invalid selection",
+      "time=1712231 kind=19: duplicate/invalid selection",
+      "time=1712296 kind=19: duplicate/invalid selection",
+      "time=1712358 kind=19: duplicate/invalid selection",
+      "time=1714541 kind=19: duplicate/invalid selection",
+      "time=1714603 kind=19: duplicate/invalid selection",
+      "time=1734379 kind=19: duplicate/invalid selection",
+      "time=1734503 kind=19: duplicate/invalid selection",
+      "time=1734565 kind=19: duplicate/invalid selection",
+      "time=1736783 kind=19: duplicate/invalid selection",
+      "time=1736845 kind=19: duplicate/invalid selection",
+      "time=1736907 kind=19: duplicate/invalid selection",
+      "time=1749283 kind=19: duplicate/invalid selection",
+      "time=1759962 kind=19: duplicate/invalid selection",
+      "time=1769595 kind=19: duplicate/invalid selection",
+      "time=1802087 kind=19: duplicate/invalid selection",
+      "protocol observer footer count mismatch/missing footer"
+    ],
+    "invalid_ack": 0,
+    "outstanding_at_end": 0,
+    "release_acks_matched": 6999,
+    "releases_issued": 6999,
+    "source_conflicts": 0,
+    "status": "FAIL",
+    "stop_snapshot": null,
+    "svb_completions": 325,
+    "svb_entry_retained_at_end": false,
+    "svb_promotions_issued": 325,
+    "svb_release_acks_matched": 325
+  },
+  "source_stats": null,
+  "svb": {
+    "acks": null,
+    "allocations": null,
+    "bypass": null,
+    "capture_issued": null,
+    "capture_pending": null,
+    "eligible": null,
+    "fast_line": null,
+    "full_fallback": null,
+    "max_depth": null,
+    "max_occupancy": null,
+    "occupancy": null,
+    "promotions": null,
+    "recovery_from_svb": null,
+    "unsupported_fallback": null
+  },
+  "traffic_pressure_counters": null
+}

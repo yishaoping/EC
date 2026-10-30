@@ -68,6 +68,7 @@ class Directory(params: InclusiveCacheParameters) extends Module
     val read   = Valid(new DirectoryRead(params)).flip // sees same-cycle write
     val result = Valid(new DirectoryResult(params))
     val ready  = Bool() // reset complete; can enable access
+    val observationValidWays = UInt(width = log2Ceil(params.cache.ways + 1))
   }
 
   val codeBits = new DirectoryEntry(params).getWidth
@@ -135,6 +136,11 @@ class Directory(params: InclusiveCacheParameters) extends Module
   val wayMatch = bypass.way === victimWay
 
   val ways = Vec(regout.map(d => new DirectoryEntry(params).fromBits(d)))
+  // Input to a host counter only; include the same pending-write bypass used
+  // by the functional directory lookup. Never participates in replacement.
+  io.observationValidWays := PopCount(ways.zipWithIndex.map { case (w, i) =>
+    Mux(setQuash && bypass.way === UInt(i), bypass.data.state, w.state) =/= INVALID
+  })
   val hits = Cat(ways.zipWithIndex.map { case (w, i) =>
     w.tag === tag && w.state =/= INVALID && (!setQuash || UInt(i) =/= bypass.way)
   }.reverse)

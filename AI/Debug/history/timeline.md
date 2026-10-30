@@ -1,5 +1,22 @@
 # Debug 演化时间线
 
+2026-10-30：按用户要求准备一次性最终FST诊断入口，状态`READY_FOR_OPT4_SVB_WAVEFORM_RUN`，硬件根因仍证据不足。新入口fresh generation/debug build、窗口sim time1500000至终止、主BOOM/Rob/LSU/cache/fast-line gates/WB/probe/6MSHR/TL/safe控制高覆盖，4455只读aliases、189项排除、启动前compiled trace审查；关键既有snapshot/事件不再受verbose门控。仅build-local observation overlay与host FST退出处理，功能源码及性能入口不改；唯一FST留waveform_debug/run下并hash，8192-event失败ring保留，无resume/自动重跑。88offline tests、全部表达式fixture lint/trace audit、SVB独立静态trace audit、native FST字面量fixture和source identity通过。未fresh elaboration/整机build/仿真；下一步用户唯一命令`bash /data1/gzh/EC/slowdown/run_optimization_4_svb_waveform_debug.sh --jobs 8`。见 [准备报告](../../TMP/opt4_svb_waveform_debug_prepare_20261030_091449_2f46ad8a/README.md)。
+
+2026-10-30：最新Opt4 diagnostic user run `optimization_4_svb_20261029_120415_a83514b4` 再于time2099000 watchdog exit1，未完成benchmark。查明全部诊断printf被`verbose&&done_reset`关闭（launcher未启用verbose），failure ring只有2 fatal，owner snapshot无法恢复；旧READY的静态检查漏掉runtime enable。仅修offline native-watchdog识别与SVB16 manifest容量fallback，消除NO_WATCHDOG漏检和59 slot误报；corrected prefix6999/6999、SVB325/325/325、conflict/invalidACK/regression0，仍缺footer/最终correctness。70tests、BOOM compile/parser、host fixture、SV lint、static-check、patch/diff PASS。没有功能RTL改动/新观测run/生成/build/仿真；状态HANG_DIAGNOSTIC_EVIDENCE_INSUFFICIENT，硬件根因仍unresolved，不ready正式rerun。见 [结果与修复边界](../../TMP/opt4_svb_hang_rootcause_fix_20261030_a83514b4_7c92e1d0/README.md)。
+
+2026-10-29：Opt4 最终 hang diagnostic 准备完成，状态 `READY_FOR_FINAL_HANG_DIAGNOSTIC_RUN`，根因仍 unresolved。fresh build-only run `optimization_4_svb_20261029_110442_61fcd0f2` 的 RTL generation/Verilator build PASS，manifest `simulation=NOT_STARTED` 且没有启动标记。21+3+11+20+8 项离线测试、launcher static-check、patch reverse-check、shell syntax 和 diff check PASS。已准备 fast-line、unrelated preservation gate、WB/probe/MSHR/promotion、watchdog snapshot、failure-only 8192-event/1MiB ring 与 wait-for analyzer；没有执行仿真。用户下一步仅一次 fresh 默认运行，不带 `--resume`：`bash /data1/gzh/EC/slowdown/run_optimization_4_svb.sh`。见 [最终诊断准备](../../TMP/opt4_svb_hang_fix_20261029_9f3c2d71/README.md)。
+
+2026-10-29：Opt4 run `optimization_4_svb_20261029_062302_0291a6b9` build通过后在 BOOM idle watchdog exit1。
+kind15反复观察到 seq183/line `0x80008040`、old seq182、watermark182、lowerPreserved=0；没有 seq183 pending handoff 记录。缺最终SVB/WB/probe/MSHR/slot状态和ROB commit波形，无法确认死锁环或根因。seq179同线promotion有ACK/completion，seq183 checker后来 `package_progress_timeout` 取消；protocol summary另报duplicate-selection错误及不完整footer，correctness/performance无效。
+新增稀疏 age snapshots、watchdog last-commit/reset记录和 failure-only 1MiB/8192-line host ring；仅诊断，未作功能修复。51 offline tests、launcher static-check、patch reverse-check、diff check PASS；未编译/生成/build/sim。状态 `HANG_ROOT_CAUSE_STILL_UNRESOLVED`。见 [诊断报告](../../TMP/opt4_svb_hang_fix_20261029_9f3c2d71/README.md)。
+
+2026-10-29：Opt4 run `optimization_4_svb_20261029_020351_481d089a` generation/build通过，
+因逐写/逐阻塞周期观测耗尽48MiB而被capture中止。改为精确counter+4096间隔样例，
+协议/样例/summary预算隔离，超限继续workload、必需丢失拒绝PASS，异常状态标ABORTED。
+57offline tests、Scala compile、SV lint-only及静态交付检查通过；原前缀22,222条必需记录离线回放零丢失。
+未执行新生成/build/硬件仿真；备份正确性/slowdown仍待fresh run。
+见 [预算中止修复](../bugs/opt4_observation_budget_abort_20261029.md)。
+
 2026-10-26：safe-chain 用户仿真在 ROI 前耗尽 KIND10 的 50,000 条预算；原日志全部为 boot-held RESET。修复观测器 RESET/START 上升沿采样与首次失败诊断保存；35 项离线测试及静态 identity 通过，未重新生成/构建/仿真。旧 guard 和证据保留，仅准备用户显式替代入口。见 [根因、修复及验证边界](../bugs/safe_chain_held_boundary_overflow_20261026.md)。
 
 | 时间/标识 | last good → first bad | 根因/状态 | 证据位置 |
@@ -204,3 +221,42 @@ simulation or benchmark was executed. Full drain/provenance/failure recovery and
 timing closure remain open; Git/index/source identity is audited separately.
 Historical comparison inputs are pinned as small versioned snapshots with source
 hashes; the analyzer no longer reads the old untracked safe-chain run directory.
+
+## 2026-10-30 — Opt4 FST root cause closed and RTL fixed (runtime pending)
+
+Final saved FST proved stale fast-line ownership after replacement at core1,827,940.
+The original store completed on another way; unrelated preservation was still
+blocked at the watchdog, with all shared backend resources idle and ROB empty.
+Implemented identity-loss revocation, exact bypass identity, line-scoped legacy
+handoff admission and single-freeze mutual exclusion. Retained SVB16/order/ACK
+semantics preserved. Final Scala + fresh FIRRTL/firtool/comb-loop checks, 102 offline
+(12 directed) tests and launcher/static checks passed. No simulator executed.
+State READY_TO_RERUN_OPT4_SVB_AFTER_FST_FIX; next run is formal non-trace correctness
+and ROI validation. [Evidence and patch](../../TMP/opt4_svb_fst_rootcause_fix_20261030_114113_773ea77d/README.md).
+
+
+## 2026-10-30 — Opt4 formal result check: optimization_4_svb_20261030_044205_dbaf743b
+
+Confirmed normal simulator exit0, host cycles2449614, verified1/checksum43439728,
+COMPUTATION/END PASS, no assertions/watchdog. Protocol PASS with 7408 Release/ACK
+and 391 SVB completion pairs, no retained/outstanding entries; stale publications0.
+Overall FAILED because fingerprint observer mismatch84 plus incomplete/inconsistent
+fingerprint ledger and SC/host occupancy/depth histogram mismatch. Actual backup
+corruption versus observation/accounting error remains unresolved. ROI1707863 is raw,
+performance_valid=false; no validated slowdown gain. Source mode/patch matches the
+FST owner fix. Read existing manifest/stdout/stderr/summary only; updated status docs;
+no RTL edit, build, or simulation. See latest current_debug_state.md for evidence links.
+
+
+## 2026-10-30 — Opt4 one-shot integrity/observer/capacity closure
+
+Existing complete run only: proved 76 duplicate observer increments and 8 unlocalized
+final hash failures; no basis to claim all observer-only. Reconstructed391 promotions,
+406=391+12+3 aggregate; missing15 terminal identities explicitly marked unknown.
+Closed STOP histogram one-cycle bug offline, SVB16 sufficient (full16 0.2844%,fallback1),
+no cache geometry candidate because S0 sanity fails. Added allocation serial +
+three-stage/transfer hashes/terminal ledger, host/parser/window/shadow fixes; functional
+control/data untouched by exact inverse proof. Full Scala/FIRRTL/firtool/comb-loop,
+120 offline checks PASS; no hardware simulation. Final status CURRENT_DATA_FUNDAMENTALLY_INSUFFICIENT,
+FINAL_OPT4_VALIDATION_PREPARED; no new pure diagnostic run. See current state and
+AI/TMP/opt4_one_shot_closure_20261030_143326_a1dcf391/README.md.

@@ -1773,14 +1773,24 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
 
   // detect pipeline freezes and throw error
   val idle_cycles = freechips.rocketchip.util.WideCounter(32)
-  when (rob.io.commit.valids.asUInt.orR ||
-        csr.io.csr_stall ||
-        io.rocc.busy ||
-        reset.asBool) {
+  val watchdogProgress = rob.io.commit.valids.asUInt.orR ||
+    csr.io.csr_stall || io.rocc.busy
+  val lastWatchdogProgressCycle = RegInit(0.U(xLen.W))
+  val lastRobCommitCycle = RegInit(0.U(xLen.W))
+  when (watchdogProgress || reset.asBool) {
     idle_cycles := 0.U
+    lastWatchdogProgressCycle := io.csr_cycle
   }
+  when (rob.io.commit.valids.asUInt.orR) { lastRobCommitCycle := io.csr_cycle }
   // Use the common 2^18 watchdog threshold for all EC protocol watchdogs.
   val ecWatchdogBit = 18
+  val ecWatchdogImminent = idle_cycles.value(ecWatchdogBit)
+  BoringUtils.addSource(ecWatchdogImminent, "EC_PIPELINE_WATCHDOG_SNAPSHOT")
+  when (ecWatchdogImminent) {
+    printf("CORE_WATCHDOG_SNAPSHOT cycle=%x idle=%x last_progress=%x last_commit=%x commit=%x csr_stall=%x rocc_busy=%x\n",
+      io.csr_cycle, idle_cycles.value, lastWatchdogProgressCycle, lastRobCommitCycle,
+      rob.io.commit.valids.asUInt.orR, csr.io.csr_stall, io.rocc.busy)
+  }
   assert (!(idle_cycles.value(ecWatchdogBit)), "Pipeline has hung.")
 
   val little_status1 = freechips.rocketchip.util.WideCounter(32)
