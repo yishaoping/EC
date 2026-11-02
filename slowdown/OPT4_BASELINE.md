@@ -23,7 +23,7 @@ and in the final cleanup report; no self-referential commit hash is embedded.
 |---|---|
 |Opt4 run|optimization_4_svb_20261030_072604_18475a92|
 |Opt4 ROI|1,707,863 main cycles; start712114, stop2419977|
-|Native/reference ROI|1,001,675; check/runs/b3_20261023_162309_15ywsnjz (historical baseline/ path retained as an alias)|
+|Native/reference ROI|1,001,675; check/runs/b3_20261023_162309_15ywsnjz|
 |Ratio|1.7050071130855817×|
 |SVB|16 entries|
 |Configuration|v1Config, BOOM hart0 at200MHz, Rocket checker harts1–4 at100MHz|

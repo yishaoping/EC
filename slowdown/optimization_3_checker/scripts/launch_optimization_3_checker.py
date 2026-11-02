@@ -35,7 +35,9 @@ from sbt_inputs import build_plan, checked_resource_inventory
 ROOT = Path("/data1/gzh/EC")
 OUT = ROOT / "slowdown" / "optimization_3_checker"
 CURRENT = ROOT / "chipyard"
-BASELINE = ROOT / "baseline"
+BASELINE = ROOT / "check"
+sys.path.insert(0, str(BASELINE))
+from recorded_paths import read_record
 PREP = OUT / "manifests/preparation.json"
 ELF = BASELINE / "software_common_builds/gapbs512_20261023_03/test.riscv"
 LOADMEM = ELF.with_name("test.loadmem_hex")
@@ -161,7 +163,7 @@ def ensure_inputs():
     return descriptor
 
 def tool_config():
-    env_record = json.loads((BASELINE / "manifests/environment.json").read_text())
+    env_record = read_record(BASELINE / "manifests/environment.json")
     native = json.loads((BASELINE / "native_environment.json").read_text())
     env = dict(env_record["environment"])
     env.update(native["environment"])
@@ -215,7 +217,7 @@ def identity_check():
     if errors:
         raise RuntimeError('Identity/path preflight failures:\n- ' + '\n- '.join(errors))
     if PREP.is_file():
-        frozen = json.loads(PREP.read_text())
+        frozen = read_record(PREP)
         if inventory['source_digest'] != frozen['source_digest']:
             raise RuntimeError('Hardware differs from reviewed Opt3 preparation; do not silently run changed source')
     else:

@@ -5,8 +5,11 @@ import hashlib
 import json
 from pathlib import Path
 import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / 'check'))
+from recorded_paths import current_path
 ARCHIVE = ROOT / 'slowdown/analysis_archive'
 
 
@@ -88,9 +91,17 @@ def audit():
     relocations = read(ARCHIVE / 'cleanup_evidence/log_relocation.json')['moved']
     moved = {x['source']: x for x in relocations}
     for item in read(ARCHIVE / 'cleanup_evidence/dramsim_log_inventory_before.json'):
-        path = moved.get(item['path'], {}).get('destination', item['path'])
-        check((ROOT / path).is_file() and digest(ROOT / path) == item['sha256'], 'DRAM log ' + path)
+        path = current_path(ROOT / moved.get(item['path'], {}).get('destination', item['path']))
+        check(path.is_file() and digest(path) == item['sha256'], 'DRAM log ' + str(path))
     check(not (ROOT / 'dramsim.log').exists(), 'root dramsim.log absent')
+    check(not (ROOT / 'baseline').exists() and not (ROOT / 'baseline').is_symlink(),
+          'retired directory and compatibility symlink absent')
+    relocation = read(ROOT / 'slowdown/manifests/workspace_relocation_20261102.json')
+    for item in relocation['numbered_dramsim_logs']:
+        target = ROOT / item['destination']
+        check(target.is_file() and digest(target) == item['sha256'],
+              'relocated numbered DRAM log ' + item['source'])
+        check(not (ROOT / item['source']).exists(), 'retired root log ' + item['source'])
     for item in read(ARCHIVE / 'cleanup_evidence/deleted_files.json')['files']:
         check(not (ROOT / item['path']).exists(), 'deleted bytecode ' + item['path'])
     return dict(status='FAIL' if failures else 'PASS', checks=checked, failures=failures,

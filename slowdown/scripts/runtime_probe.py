@@ -16,7 +16,7 @@ tmp.relative_to(root)
 # Check mount flags before attempting writes. Never create a test file in a
 # protected directory, even if an incorrectly configured sandbox exposed it.
 for protected in (root.parent, root.parent / "chipyard/generators",
-                  root.parent / "chipyard/build.sbt", root.parent / "baseline",
+                  root.parent / "chipyard/build.sbt", root.parent / "check",
                   root.parent / ".git", Path.home(), Path("/proc")):
     if not os.statvfs(protected).f_flag & os.ST_RDONLY:
         raise RuntimeError("protected path is not mounted read only: " + str(protected))

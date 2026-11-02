@@ -7,10 +7,10 @@
 1 个 BOOM 主核及 4 个 Rocket checker 核；`software_common/core/checker.c`
 保留 GHE/GHT 初始化、自检、重放与 release 协议，因此它是历史检错实现及其配套实验目录。
 
-为保持实验来源和哈希可复核，旧 manifest、构建副本、日志和封存记录中的 `baseline/`
-路径及文件内容保持原样。仓库根目录的 `baseline -> check` 为兼容符号链接；实际目录
-只有 `check/`，新入口使用下方更新后的路径。启动器内原有 Baseline 命名、环境变量、
-协议字段及脚本文件名保留，以免更改历史接口。当前 Opt4 仍为稳定版本，优化工作保持暂停。
+旧目录及兼容符号链接已移除，所有当前入口均使用 `check/`。封存 manifest、构建副本和
+原始日志保持原字节及哈希；`recorded_paths.py` 在读取时将其中的历史路径解析到本目录，
+无需恢复旧目录。脚本文件名、协议字段及环境变量继续保留历史接口名称。
+当前 Opt4 仍为稳定版本，优化工作保持暂停。
 
 ## 当前入口（2026-10-23）
 
@@ -63,7 +63,7 @@
 
 `DIRECT_EVIDENCE`：构建使用 RISC-V GCC 12.2.0，`-march=rv64imafd -O2 -static -fno-common -fno-builtin-printf -fdata-sections`，静态 libgloss/HTIF。完整 argv、编译器/库哈希、输入快照和布局在同目录 `build.manifest.json`、`test.map`、`test.symbols`、`test.dump`。loadmem 为基址 `0x80000000`、512 KiB、8192 行，每行按历史 mm.cc 格式反转64字节。编译失败的 `_01`、`_02` 目录保留，不被入口选择；`_03` 已成功且完成静态检查。
 
-`DIRECT_EVIDENCE`：软件来自 Current 修复版的独立副本 `software_common/`。BFS C 主体、AMO.W 自检、timer handler 和64字节 timer slot 源文件保持一致；主数组、timer、HTIF、栈/堆关键地址逐项对照旧 ELF，18项布局合同检查通过。移除了统计 readback `0x7B/0x55/0x79/0x77/0x78`，保留 checker 的初始化、上下文/replay/copy/release 和低位 observer reset/clear 协议。所有软件改动均在 baseline 内。
+`DIRECT_EVIDENCE`：软件来自 Current 修复版的独立副本 `software_common/`。BFS C 主体、AMO.W 自检、timer handler 和64字节 timer slot 源文件保持一致；主数组、timer、HTIF、栈/堆关键地址逐项对照旧 ELF，18项布局合同检查通过。移除了统计 readback `0x7B/0x55/0x79/0x77/0x78`，保留 checker 的初始化、上下文/replay/copy/release 和低位 observer reset/clear 协议。所有软件改动均在 check 内。
 
 ### Workload 和计时
 
@@ -103,7 +103,7 @@
 
 ### SBT socket 启动修复（2026-10-23）
 
-用户首轮构建因`java.io.tmpdir`位于长build路径、SBT boot socket总路径110字节而退出。启动器已改用独立`baseline/tmp/j_<随机>/`短目录，并在preflight中实际创建SBT同层级Unix socket验证长度及权限。新的非硬件preflight通过；原失败目录保留，不改硬件或软件。详情见 `manifests/sbt_socket_path_fix_20261023_c8f437a2/README.md`。用户仍执行相同一键命令；本次修复没有代为重跑硬件生成、构建或仿真。
+用户首轮构建因`java.io.tmpdir`位于长build路径、SBT boot socket总路径110字节而退出。启动器已改用独立`check/tmp/j_<随机>/`短目录，并在preflight中实际创建SBT同层级Unix socket验证长度及权限。新的非硬件preflight通过；原失败目录保留，不改硬件或软件。详情见 `manifests/sbt_socket_path_fix_20261023_c8f437a2/README.md`。用户仍执行相同一键命令；本次修复没有代为重跑硬件生成、构建或仿真。
 
 ---
 
@@ -153,10 +153,10 @@
 ## 隔离与复用依据
 
 - 源码采用独立 `git clone --no-local --no-checkout --no-tags`，仅在 baseline clone 内 detach 至完整 SHA；无 alternates、硬链接或 worktree。
-- 每次构建将完整历史源码和独立 Git 元数据复制到该次 `build/.../source/`。历史 Makefile 会在源码树内生成 SBT target 和 DRAMSim 对象，因此副本属于本次构建目录；规范的 `baseline/source/` 在执行隔离中只读挂载。
+- 每次构建将完整历史源码和独立 Git 元数据复制到该次 `build/.../source/`。历史 Makefile 会在源码树内生成 SBT target 和 DRAMSim 对象，因此副本属于本次构建目录；规范的 `check/source/` 在执行隔离中只读挂载。
 - 所有实际工具、构建和 simulator 子进程通过 `/usr/bin/bwrap`：宿主文件系统只读，仅 baseline 可写，规范源码及本次副本 Git 元数据只读，网络隔离。隔离不可用即停止，没有无隔离后备路径。本轮未启动隔离进程，其运行可用性尚未验证。
 - 复用本机 `.conda-env` 的 RISC-V、JDK、firtool、SBT launcher，以及现有 Verilator/Nix 编译环境作为外部只读工具。未安装、升级或重建工具链。精确路径在 `manifests/environment.json`，实际版本和哈希由用户构建/运行时采集。
-- 已独立复制 `/home/guozh/.cache/coursier` 和 current 的 `.sbt/boot` 至 `baseline/cache/`，未使用硬链接或符号链接，未复制全局 SBT 插件或 current 硬件 target。缓存完整性未经构建验证；网络隔离下缺失依赖就停止，不自动下载或升级工具链。
+- 已独立复制 `/home/guozh/.cache/coursier` 和 current 的 `.sbt/boot` 至 `check/cache/`，未使用硬链接或符号链接，未复制全局 SBT 插件或 current 硬件 target。缓存完整性未经构建验证；网络隔离下缺失依赖就停止，不自动下载或升级工具链。
 - TMPDIR、Java tmp、Ivy/SBT/Coursier、XDG、ccache 均指向 baseline。保留 HOME 环境变量原值，Java `user.home` 显式重定向；宿主 home 只读，未知固定写入将失败。
 - make 命令结构取自 `AI/TMP/control_stop_sync_20261021_audit/source/stage1_build_and_run.sh`，并核对 b3 的 `sims/verilator/Makefile`、`variables.mk`、`common.mk`。采用 `debug`、`CONFIG=v1Config`、`VERILATOR_FST_MODE=1`，不带 current 的 `STAGE1_EXIT_PORTS`。
 - 仿真参数参考同目录 `stage1_run_trace.sh`；`-v`、`-s`、`+cycle-count`、`+max-cycles` 与退出条件对照 b3 `emulator.cc`，DRAM/loadmem 参数对照 b3 `variables.mk` 及 testchipip。不会调用 current 的 AI/Debug 脚本、生成模型或 simulator。

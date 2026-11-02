@@ -17,7 +17,11 @@ import tempfile
 import uuid
 
 ROOT = Path('/data1/gzh/EC/check')
-LEGACY_ROOT = ROOT.with_name('baseline')
+_paths_spec = importlib.util.spec_from_file_location('check_recorded_paths', ROOT / 'recorded_paths.py')
+_paths = importlib.util.module_from_spec(_paths_spec)
+_paths_spec.loader.exec_module(_paths)
+LEGACY_ROOT = _paths.LEGACY_ROOT
+current_path = _paths.current_path
 REV = 'b3d7adddd1e2d2cf428dd933529de878226420cd'
 SOURCE = ROOT / 'source'
 CHIPYARD = SOURCE / 'chipyard'
@@ -59,20 +63,17 @@ def stamp():
 
 def sha(path):
     h = hashlib.sha256()
-    with Path(path).open('rb') as stream:
+    with current_path(path).open('rb') as stream:
         for block in iter(lambda: stream.read(1048576), b''):
             h.update(block)
     return h.hexdigest()
 
 
 def inside(path, parent=ROOT):
-    path = Path(path).absolute()
-    # Old sealed manifests retain their original absolute paths. Translate
-    # only the repository's verified compatibility alias, then apply all
-    # existing containment and symlink checks to the canonical check path.
-    if (path.is_relative_to(LEGACY_ROOT) and LEGACY_ROOT.is_symlink()
-            and LEGACY_ROOT.resolve() == ROOT):
-        path = ROOT / path.relative_to(LEGACY_ROOT)
+    # Interpret recorded paths at their current location before applying the
+    # unchanged containment and symlink checks. No filesystem alias is needed.
+    path = current_path(path).absolute()
+    parent = current_path(parent)
     if not path.resolve().is_relative_to(parent.resolve()) or path.resolve() == parent.resolve():
         fail('Path escapes the permitted directory: ' + str(path))
     # Reject symlink components even when their current target is inside ROOT.
@@ -85,8 +86,7 @@ def inside(path, parent=ROOT):
 
 
 def read_json(path):
-    with Path(path).open() as stream:
-        return json.load(stream)
+    return _paths.read_record(path)
 
 
 def configured_environment():
@@ -250,7 +250,7 @@ def isolation_probe(env, minimum, dependencies=True):
     m = {'kind': 'baseline_preflight', 'start': stamp(), 'commands': [],
          'minimum_free_gib': minimum, 'temporary_directory': str(temporary),
          'infrastructure_identity': {name: sha(ROOT / name) for name in
-                                     ('launch_baseline.py', 'baseline_preflight.py', 'native_environment.json',
+                                     ('launch_baseline.py', 'recorded_paths.py', 'baseline_preflight.py', 'native_environment.json',
                                       'source_resource_audit.py', 'resource_restoration.json',
                                       'runtime_io_probe.py')},
          'native_environment': env['local_override'],
@@ -311,7 +311,7 @@ def isolation_probe(env, minimum, dependencies=True):
 def workload(path):
     if not path:
         fail('Run requires --workload /absolute/path/to/reviewed-workload.json; no implicit ELF selection')
-    p = Path(path)
+    p = current_path(path)
     if not p.is_absolute() or not p.is_file():
         fail('Workload descriptor must be an existing absolute path')
     d = read_json(p)
@@ -558,7 +558,7 @@ def build(args, identity, env):
          'preflight_manifest_sha256': sha(args.preflight_manifest),
          'native_environment': env['local_override'],
          'resource_restoration': env['resource_restoration'],
-         'temporary_directory_policy': 'fresh short baseline/tmp/j_*; retained; no outside writable paths'}
+         'temporary_directory_policy': 'fresh short check/tmp/j_*; retained; no outside writable paths'}
     record(destination / 'manifest.json', m)
     try:
         print('PHASE=BUILD\nBUILD_DIRECTORY=' + str(destination), flush=True)

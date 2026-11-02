@@ -23,8 +23,8 @@ is a new shared measurement profile, not an adjustment to old cycle data.
 Manual future build, with a new output directory:
 
 ```bash
-bash /data1/gzh/EC/baseline/build_common_benchmark.sh \
-  --output /data1/gzh/EC/baseline/software_common_builds/paired_bfs512_01
+bash /data1/gzh/EC/check/build_common_benchmark.sh \
+  --output /data1/gzh/EC/check/software_common_builds/paired_bfs512_01
 ```
 
 That script builds software only, creates one descriptor with real hashes,

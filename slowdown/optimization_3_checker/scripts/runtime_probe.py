@@ -18,7 +18,7 @@ tmp.relative_to(root)
 # protected directory, even if an incorrectly configured sandbox exposed it.
 for protected in (root.parent, project_root / "chipyard/generators",
                   project_root / "chipyard/build.sbt",
-                  project_root / "baseline", project_root / ".git",
+                  project_root / "check", project_root / ".git",
                   Path.home(), Path("/proc")):
     if not os.statvfs(protected).f_flag & os.ST_RDONLY:
         raise RuntimeError("protected path is not mounted read only: " + str(protected))

@@ -129,13 +129,13 @@ def finalize(output, symbols_text, disassembly):
 
 def main():
     parser = argparse.ArgumentParser(description='Build ONE shared performance ELF; never runs it')
-    parser.add_argument('--output', required=True, help='New absolute directory under baseline/software_common_builds/')
+    parser.add_argument('--output', required=True, help='New absolute directory under check/software_common_builds/')
     args = parser.parse_args()
     output = Path(args.output)
     parent = ROOT / 'software_common_builds'
     if (not output.is_absolute() or not output.resolve().is_relative_to(parent.resolve()) or
             output.resolve() == parent.resolve() or output.exists() or output.is_symlink()):
-        raise ValueError('Output must be a new directory below baseline/software_common_builds')
+        raise ValueError('Output must be a new directory below check/software_common_builds')
     for path in (ROOT, SOURCE, parent, *output.parents):
         if path.is_symlink():
             raise ValueError('Symlink in build path: ' + str(path))
@@ -221,7 +221,7 @@ def main():
         descriptor = {'schema': 2, 'name': 'common_amo_w_gapbs_bfs512',
                       'origin_description': 'One common source snapshot; fixed 64-byte per-hart timer slots; no legacy statistics readback dependency',
                       'baseline_compatibility': 'REVIEWED_FOR_BASELINE',
-                      'baseline_compatibility_evidence': 'Static shared protocol review: baseline/manifests/common_benchmark_20261023_fa82d07b; NOT_RUNTIME_VALIDATED',
+                      'baseline_compatibility_evidence': 'Static shared protocol review: check/manifests/common_benchmark_20261023_fa82d07b; NOT_RUNTIME_VALIDATED',
                       'timing_boundary': 'Hart 0 common_roi_start/stop rdcycle; AMO.W + BFS512 + STOP/session completion; not simulator exit/drain',
                       'exit_drain_evidence': 'Finite HTIF _exit; checker software ready only; cache/package/DRAM drain remains UNRESOLVED; exit drain excluded from ROI',
                       'elf': str(output / 'test.riscv'), 'elf_sha256': record['elf_sha256'],

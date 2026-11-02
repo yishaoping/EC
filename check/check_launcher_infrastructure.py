@@ -45,11 +45,12 @@ class InfrastructureChecks(unittest.TestCase):
     def test_legacy_manifest_paths_map_to_check(self):
         legacy = launcher.LEGACY_ROOT / 'software_common_builds/gapbs512_20261023_03/workload.json'
         canonical = ROOT / legacy.relative_to(launcher.LEGACY_ROOT)
-        self.assertTrue(launcher.LEGACY_ROOT.is_symlink())
+        self.assertFalse(launcher.LEGACY_ROOT.exists())
+        self.assertFalse(launcher.LEGACY_ROOT.is_symlink())
         self.assertEqual(launcher.inside(legacy), canonical)
         self.assertEqual(launcher.sha(legacy), launcher.sha(canonical))
 
-    def test_legacy_alias_preserves_nested_symlink_rejection(self):
+    def test_relocated_paths_preserve_nested_symlink_rejection(self):
         alias = self.directory / 'alias'
         alias.symlink_to(self.directory, target_is_directory=True)
         legacy = launcher.LEGACY_ROOT / alias.relative_to(ROOT) / 'fixture'
@@ -57,6 +58,16 @@ class InfrastructureChecks(unittest.TestCase):
             launcher.inside(legacy)
         with self.assertRaisesRegex(RuntimeError, 'Path escapes the permitted directory'):
             launcher.inside(launcher.LEGACY_ROOT / '../chipyard')
+
+    def test_sealed_workload_resolves_without_rewriting_descriptor(self):
+        legacy = launcher.LEGACY_ROOT / 'software_common_builds/gapbs512_20261023_03/workload.json'
+        descriptor, inputs = launcher.workload(legacy)
+        self.assertEqual(descriptor['descriptor_sha256'],
+                         '71373bcfeb4609c9c5b4a6a8e5212c3d1ddafcb340488736785dbd873e2dc743')
+        self.assertTrue(Path(descriptor['elf']).is_relative_to(ROOT))
+        self.assertTrue(all(Path(path).is_relative_to(ROOT) for _, path, _ in inputs))
+        self.assertEqual(descriptor['baseline_compatibility'], 'REVIEWED_FOR_BASELINE')
+        self.assertIn(str(launcher.LEGACY_ROOT), launcher.current_path(legacy).read_text())
 
     def test_source_copy_preserves_modes_and_detects_mode_changes(self):
         original = self.directory / 'original'

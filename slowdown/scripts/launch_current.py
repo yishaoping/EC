@@ -35,7 +35,9 @@ from sbt_inputs import build_plan, checked_resource_inventory
 ROOT = Path("/data1/gzh/EC")
 OUT = ROOT / "slowdown"
 CURRENT = ROOT / "chipyard"
-BASELINE = ROOT / "baseline"
+BASELINE = ROOT / "check"
+sys.path.insert(0, str(BASELINE))
+from recorded_paths import read_record
 PREP = OUT / "manifests/preparation.json"
 ELF = BASELINE / "software_common_builds/gapbs512_20261023_03/test.riscv"
 LOADMEM = ELF.with_name("test.loadmem_hex")
@@ -127,7 +129,7 @@ def ensure_inputs():
     return descriptor
 
 def tool_config():
-    env_record = json.loads((BASELINE / "manifests/environment.json").read_text())
+    env_record = read_record(BASELINE / "manifests/environment.json")
     native = json.loads((BASELINE / "native_environment.json").read_text())
     env = dict(env_record["environment"])
     env.update(native["environment"])
@@ -145,7 +147,7 @@ def tool_config():
 def identity_check():
     if not PREP.is_file():
         raise RuntimeError("Missing preparation manifest; experiment is not prepared")
-    p = json.loads(PREP.read_text())
+    p = read_record(PREP)
     errors = []
     try:
         checked_resource_inventory(build_plan(CURRENT, OUT / 'build/static-plan/scala'),

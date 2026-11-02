@@ -5,8 +5,8 @@
 
 [`check/`](check/README.md) 保存固定在 `b3d7adddd1e2d2cf428dd933529de878226420cd`
 的历史检错版源码、配套软件及实验记录。其 `v1Config` 启用 GHE、1 个 BOOM 主核和
-4 个 Rocket checker 核。该目录原名 `baseline/`，于 2026-11-02 改名；旧名保留为
-指向 `check/` 的兼容符号链接，供未改写的历史 manifest、构建路径和 Opt4 封存校验使用。
+4 个 Rocket checker 核。该目录于 2026-11-02 从旧名改为 `check/`，旧目录及兼容链接已移除。
+当前入口均使用新路径；读取工具在内存中迁移封存记录里的旧路径，保留原文件哈希。
 当前稳定 Opt4 的入口与状态见 [`slowdown/`](slowdown/README.md)。
 
 ## Nix 仿真编译环境
