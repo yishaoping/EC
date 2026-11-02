@@ -1,0 +1,115 @@
+{
+  "schema": 1,
+  "baseline_commit": "b3d7adddd1e2d2cf428dd933529de878226420cd",
+  "config": "chipyard.v1Config",
+  "identity_status": "STATIC_INFERENCE: compatible restoration; original flattened EC upstream gitlink unavailable",
+  "provenance": "manifests/resource_closure_20261023_QFzhRhSA/restoration_provenance.json",
+  "provenance_sha256": "5c45c7d4e7f8e14760f2dd0a58716264feb60b038558c76a585763ea6b1ec1bc",
+  "upstream_revision": "25e2c63567689ebe1fc5e60fdfe3375a8dba071c",
+  "files": [
+    {
+      "target": "generators/rocket-chip/src/main/resources/vsrc/ClockDivider2.v",
+      "payload": "resource_overlays/rocketchip_25e2c6356768/ClockDivider2.v",
+      "sha256": "753672a56deb6f6f89857d7336bd634b38e8ebd00fd39bee92e16669988c9d16",
+      "git_blob": "b1190d33bb81be48e147e32f82df4137d94a33f8",
+      "origin_url": "https://raw.githubusercontent.com/chipsalliance/rocket-chip/25e2c63567689ebe1fc5e60fdfe3375a8dba071c/src/main/resources/vsrc/ClockDivider2.v",
+      "matches_existing_current": true
+    },
+    {
+      "target": "generators/rocket-chip/src/main/resources/vsrc/ClockDivider3.v",
+      "payload": "resource_overlays/rocketchip_25e2c6356768/ClockDivider3.v",
+      "sha256": "4943ad841b27c365546e0c2b08a344c87078750b4df9dd6bee3bb56d18f92906",
+      "git_blob": "f9fba48cf42114b0abdd6d9c6264145714b90ebe",
+      "origin_url": "https://raw.githubusercontent.com/chipsalliance/rocket-chip/25e2c63567689ebe1fc5e60fdfe3375a8dba071c/src/main/resources/vsrc/ClockDivider3.v",
+      "matches_existing_current": true
+    },
+    {
+      "target": "generators/rocket-chip/src/main/resources/vsrc/EICG_wrapper.v",
+      "payload": "resource_overlays/rocketchip_25e2c6356768/EICG_wrapper.v",
+      "sha256": "8532a50a212f146f10208717be24168a2de73a9754786da272d0dbfcd556c307",
+      "git_blob": "76ee093b616f637970788445432ef8d9f1b70056",
+      "origin_url": "https://raw.githubusercontent.com/chipsalliance/rocket-chip/25e2c63567689ebe1fc5e60fdfe3375a8dba071c/src/main/resources/vsrc/EICG_wrapper.v",
+      "matches_existing_current": true
+    },
+    {
+      "target": "generators/rocket-chip/src/main/resources/vsrc/SimJTAG.v",
+      "payload": "resource_overlays/rocketchip_25e2c6356768/SimJTAG.v",
+      "sha256": "3a5df6035e4658031b96dc27155086425fdf50af4e86e1e33036f2acd04eacf3",
+      "git_blob": "22908a6f7ed40c43801c55c131e3a02a9882d39e",
+      "origin_url": "https://raw.githubusercontent.com/chipsalliance/rocket-chip/25e2c63567689ebe1fc5e60fdfe3375a8dba071c/src/main/resources/vsrc/SimJTAG.v",
+      "matches_existing_current": true
+    },
+    {
+      "target": "generators/rocket-chip/src/main/resources/vsrc/plusarg_reader.v",
+      "payload": "resource_overlays/rocketchip_25e2c6356768/plusarg_reader.v",
+      "sha256": "482a63c1f24a7ac920909620bd0df108e6954eabf9520de6e72334a2b5450efb",
+      "git_blob": "c1e03111296a173d2d5aea4e1a360f1df3a4b131",
+      "origin_url": "https://raw.githubusercontent.com/chipsalliance/rocket-chip/25e2c63567689ebe1fc5e60fdfe3375a8dba071c/src/main/resources/vsrc/plusarg_reader.v",
+      "matches_existing_current": true
+    }
+  ],
+  "dynamic_reviews": [
+    {
+      "source": "generators/rocket-chip/src/main/scala/tile/LazyRoCC.scala",
+      "api": "addResource",
+      "expression": "s\"/vsrc/$blackBoxFile.v\"",
+      "source_sha256": "375155fa700fb12212b3ed4b905460d29c33ceddbf94f9eb383613f1d3bd6b21",
+      "status": "INACTIVE_FOR_PINNED_V1CONFIG",
+      "reason": "BlackBoxExample is selected by WithRoccExample only; v1Config selects WithGHE. Saved failed-generation FIR has no RoccBlackBox extmodule. This is not an active resource requirement."
+    },
+    {
+      "source": "generators/rocket-chip/src/main/scala/util/ClockGate.scala",
+      "api": "addPath",
+      "expression": "vsrc",
+      "source_sha256": "82fb0c21fa4d3a355342226db1c06d53979aaca85131b2347bd745c729270b56",
+      "status": "RESOLVED_CONFIG_RESOURCE",
+      "reason": "v1Config -> AbstractConfig:59 -> WithClockGateModel default /vsrc/EICG_wrapper.v at subsystem/Configs.scala:524; file presence is explicitly gated."
+    },
+    {
+      "source": "generators/rocket-chip/src/main/scala/util/ClockGate.scala",
+      "api": "addResource",
+      "expression": "vsrc",
+      "source_sha256": "82fb0c21fa4d3a355342226db1c06d53979aaca85131b2347bd745c729270b56",
+      "status": "RESOLVED_CONFIG_RESOURCE",
+      "reason": "v1Config -> AbstractConfig:59 -> WithClockGateModel default /vsrc/EICG_wrapper.v at subsystem/Configs.scala:524; file presence is explicitly gated."
+    },
+    {
+      "source": "generators/cva6/src/main/scala/CVA6CoreBlackbox.scala",
+      "api": "addPath",
+      "expression": "s\"$cva6VsrcDir/CVA6CoreBlackbox.preprocessed.sv\"",
+      "source_sha256": "7c82dcc16149ca5c4af46191420e45b397bd90f629932e10876fb7e267cc7839",
+      "status": "INACTIVE_FOR_PINNED_V1CONFIG",
+      "reason": "Optional CVA6/Ibex/NVDLA/DspReal generator is not selected by v1Config -> BOOM + GCChecker/WithGHE + AbstractConfig; absent from saved failed-generation FIR extmodule definitions. No preprocessing/generation is executed for this check."
+    },
+    {
+      "source": "generators/nvdla/src/main/scala/ip/nvdla.scala",
+      "api": "addPath",
+      "expression": "s\"$nvdlaVsrcDir/nvdla_${configName}.preprocessed.v\"",
+      "source_sha256": "e6c4b077b796c0c2c55c4b098d9c3d87030a615e537e569522f04f335af2dbca",
+      "status": "INACTIVE_FOR_PINNED_V1CONFIG",
+      "reason": "Optional CVA6/Ibex/NVDLA/DspReal generator is not selected by v1Config -> BOOM + GCChecker/WithGHE + AbstractConfig; absent from saved failed-generation FIR extmodule definitions. No preprocessing/generation is executed for this check."
+    },
+    {
+      "source": "generators/ibex/src/main/scala/IbexCoreBlackbox.scala",
+      "api": "addPath",
+      "expression": "s\"$ibexVsrcDir/IbexCoreBlackbox.preprocessed.sv\"",
+      "source_sha256": "f7572f7655c30bd64eb99b31d0cfb07fb0c7deba74829d34a2d13e7ad4c7dc04",
+      "status": "INACTIVE_FOR_PINNED_V1CONFIG",
+      "reason": "Optional CVA6/Ibex/NVDLA/DspReal generator is not selected by v1Config -> BOOM + GCChecker/WithGHE + AbstractConfig; absent from saved failed-generation FIR extmodule definitions. No preprocessing/generation is executed for this check."
+    },
+    {
+      "source": "tools/dsptools/src/main/scala/dsptools/numbers/blackbox_compatibility/DspRealVerilatorBB.scala",
+      "api": "addResource",
+      "expression": "\"/\" + this.getClass.getSimpleName + \".v\"",
+      "source_sha256": "e5e4c0e5835e352ca947bf49fc3e20918162eff4febbbde8d59d38a5efd3a74c",
+      "status": "INACTIVE_FOR_PINNED_V1CONFIG",
+      "reason": "Optional CVA6/Ibex/NVDLA/DspReal generator is not selected by v1Config -> BOOM + GCChecker/WithGHE + AbstractConfig; absent from saved failed-generation FIR extmodule definitions. No preprocessing/generation is executed for this check."
+    }
+  ],
+  "excluded_payloads": {
+    "SimDTM.v": "Own-path restoration is unnecessary for v1 JTAG. Sodor provides a different /vsrc/SimDTM.v; adding a second provider would introduce a classpath collision.",
+    "RoccBlackBox.v": "Not selected by v1Config; existing Current differs and is not used.",
+    "TestDriver.v": "VCS-only input; selected Verilator top is TestHarness.",
+    "AsyncResetReg.v": "b3 AsyncResetReg.scala implements this in Chisel; no active resource reference."
+  }
+}

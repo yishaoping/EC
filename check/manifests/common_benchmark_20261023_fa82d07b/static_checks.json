@@ -1,0 +1,53 @@
+{
+  "status": "STATIC_PREPARATION_CHECKED_NOT_BUILT_OR_RUN",
+  "bash_syntax": "PASS (bash -n only)",
+  "python_ast": "PASS, three files",
+  "required_unchanged_files": [
+    "Benchmark/gapbs/gapbs_bfs.c",
+    "Benchmark/gapbs/gapbs_bfs.h",
+    "bench/stage1_amo.h",
+    "hw/interrupt.c",
+    "hw/interrupt.h",
+    "hw/ght.h",
+    "hw/rocc.h",
+    "cfg/init.c",
+    "hw/spin_lock.c",
+    "hw/spin_lock.h"
+  ],
+  "changed_copied_files": [
+    "cfg/config.h",
+    "core/checker.c",
+    "core/secondary.c",
+    "hw/ghe.h",
+    "stat/report.c",
+    "stat/report.h",
+    "test.c"
+  ],
+  "reference_elf_layout_items_checked": 18,
+  "linker_fixed_bss_positions_checked": {
+    "timer_flags": 2147515968,
+    "next_bits": 2147516224,
+    "front_bits": 2147520320,
+    "next_frontier": 2147524416,
+    "frontier": 2147540800,
+    "parent": 2147557184,
+    "in_edge": 2147573568,
+    "out_edge": 2147704640,
+    "in_offset": 2147835712,
+    "out_offset": 2147852104,
+    "hart_traffic_ready": 2147868496
+  },
+  "pure_synthetic_log_parser": {
+    "valid_accepted": 1,
+    "invalid_rejected": 9
+  },
+  "descriptor_in_memory_only": {
+    "valid_shape_accepted": 1,
+    "missing_pc_rejected": 1
+  },
+  "new_elf_or_loadmem": "ABSENT",
+  "builder_executed": false,
+  "launcher_executed": false,
+  "hardware_generation_or_simulation_executed": false,
+  "RUN_PROVENANCE": "UNRESOLVED"
+}

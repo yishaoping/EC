@@ -9,6 +9,7 @@ Approximate slowdown: **~1.7x** (measured1.7050071×)
 All subsequent experiments should use Opt4 unless explicitly stated otherwise.
 
 - [Frozen Opt4 identity, metrics and correctness boundaries](OPT4_BASELINE.md)
+- Historical checking reference: [check/](../check/README.md), renamed from `baseline/`; the old path remains a compatibility symlink for sealed records.
 - Stable implementation/run tools: [optimization_4_svb/](optimization_4_svb/); config `v1Config`, SVB16, BOOM L1D32KiB.
 - Read-only verification: `python3 -I -B slowdown/scripts/verify_opt4_frozen.py` and `bash slowdown/run_optimization_4_svb.sh --static-check`.
 - Existing compatible benchmark entry: `slowdown/run_optimization_4_svb.sh`; it starts hardware when explicitly run. No benchmark is started by this cleanup.

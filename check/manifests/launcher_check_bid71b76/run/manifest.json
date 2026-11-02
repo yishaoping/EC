@@ -1,0 +1,156 @@
+{
+  "schema": 1,
+  "kind": "baseline_run",
+  "start": "2026-10-23T08:12:18.616174+00:00",
+  "source": {
+    "status": ""
+  },
+  "config": "chipyard.v1Config",
+  "build_directory": "/data1/gzh/EC/baseline/manifests/launcher_check_bid71b76/build",
+  "build_manifest_sha256": "7717520110454c6532689344cdf5a63dddf8235f8d968feec83d1f1c6019600b",
+  "simulator": "/data1/gzh/EC/baseline/manifests/launcher_check_bid71b76/build/never-executed",
+  "simulator_sha256": "fixture-only",
+  "generated_model_identity_sha256": "fixture-only",
+  "generated_model_identity_path": "/data1/gzh/EC/baseline/manifests/launcher_check_bid71b76/build/generated_identity.json",
+  "baseline_commit": "b3d7adddd1e2d2cf428dd933529de878226420cd",
+  "git_status": "",
+  "elf_sha256": "fixture-only",
+  "loadmem_sha256": null,
+  "benchmark": "gapbs_bfs",
+  "input": "deterministic directed ring+1..16; no external inputs",
+  "workload_parameters": null,
+  "comparison": "BASELINE_GAPBS_COMPARISON_IS_APPROXIMATE",
+  "environment": {
+    "PATH": "/data1/gzh/EC/chipyard/.conda-env/bin:/data1/gzh/EC/chipyard/.conda-env/riscv-tools/bin:/nix/store/bj3wbpawbk71c082cvrnqkfyix7ipx0g-verilator-5.048/bin:/nix/store/zxw41nfy4gjlzd31ly7q6mkv4vkybx15-clang-wrapper-16.0.6/bin:/usr/bin:/bin",
+    "RISCV": "/data1/gzh/EC/chipyard/.conda-env/riscv-tools",
+    "JAVA_HOME": "/data1/gzh/EC/chipyard/.conda-env/lib/jvm",
+    "CONDA_PREFIX": "/data1/gzh/EC/chipyard/.conda-env",
+    "CC": "/nix/store/zxw41nfy4gjlzd31ly7q6mkv4vkybx15-clang-wrapper-16.0.6/bin/clang",
+    "CXX": "/nix/store/zxw41nfy4gjlzd31ly7q6mkv4vkybx15-clang-wrapper-16.0.6/bin/clang++",
+    "LIBRARY_PATH": "/data1/gzh/EC/baseline/cache/native-zlib/lib",
+    "CPLUS_INCLUDE_PATH": "/data1/gzh/EC/baseline/cache/native-zlib/include",
+    "LDFLAGS": "-Wl,-rpath,/data1/gzh/EC/baseline/cache/native-zlib/lib",
+    "HOME": "/home/guozh",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "TMPDIR": "/data1/gzh/EC/baseline/manifests/launcher_check_bid71b76/run/tmp",
+    "TMP": "/data1/gzh/EC/baseline/manifests/launcher_check_bid71b76/run/tmp",
+    "TEMP": "/data1/gzh/EC/baseline/manifests/launcher_check_bid71b76/run/tmp",
+    "XDG_CACHE_HOME": "/data1/gzh/EC/baseline/cache/xdg",
+    "XDG_CONFIG_HOME": "/data1/gzh/EC/baseline/cache/config",
+    "XDG_DATA_HOME": "/data1/gzh/EC/baseline/cache/data",
+    "COURSIER_CACHE": "/data1/gzh/EC/baseline/cache/coursier/v1",
+    "CCACHE_DIR": "/data1/gzh/EC/baseline/cache/ccache",
+    "CCACHE_DISABLE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "JAVA_TOOL_OPTIONS": "-Xmx8G -Xss8M -XX:ActiveProcessorCount=8 -Dsbt.task.cpus=4 -Dsbt.supershell=false -Dsbt.log.noformat=true -Dsbt.color=false -Dlog4j2.disable.jmx=true -Djava.io.tmpdir=/data1/gzh/EC/baseline/manifests/launcher_check_bid71b76/run/tmp -Duser.home=/data1/gzh/EC/baseline/cache/java-home -Dsbt.ivy.home=/data1/gzh/EC/baseline/cache/ivy2 -Dsbt.global.base=/data1/gzh/EC/baseline/cache/sbt -Dsbt.boot.directory=/data1/gzh/EC/baseline/cache/sbt/boot -Dcoursier.cache=/data1/gzh/EC/baseline/cache/coursier/v1 -Dsbt.offline=true -Dsbt.server.autostart=false"
+  },
+  "workload": {
+    "schema": 2,
+    "required_pass_patterns": [
+      "^\\[INIT\\] checker_mask=0xf status=ready$",
+      "^\\[COMPUTATION\\] status=PASS scope=amo_w_and_bfs_result$",
+      "^\\[END\\] hart=0 status=PASS$",
+      "^\\[COMPLETION\\] checker_software_ready=4 cache_drain=UNRESOLVED$"
+    ],
+    "failure_patterns": [
+      "\\[ERROR\\]",
+      "\\bstatus=FAIL\\b",
+      "\\*\\*\\* FAILED \\*\\*\\*",
+      "Assertion.*failed",
+      "%Error",
+      "\\[VERIFY_DIAG\\].*=FAIL"
+    ],
+    "name": "fixture",
+    "elf_sha256": "fixture-only"
+  },
+  "commands": [],
+  "result": "FAILED",
+  "RUN_PROVENANCE": "UNRESOLVED",
+  "correctness": "EXPECTED_MARKERS_PASS_ONLY; architectural/package/drain correctness remains UNRESOLVED",
+  "process_and_marker_success": true,
+  "complete_experiment_success": "UNRESOLVED_REQUIRES_CORRECTNESS_REVIEW",
+  "timing_definition": "emulator.cc trace_count: 100 reset iterations plus one count per harness loop, until dtm/tsi/jtag done, io_success, or max_cycles; not BOOM cycles or ROI cycles",
+  "primary_performance_metric": "ROI_cycles",
+  "rob_gate_cycles": "UNRESOLVED_NOT_INSTRUMENTED",
+  "recovery_validation": "UNRESOLVED",
+  "input_snapshots": {
+    "elf": {
+      "origin": "/data1/gzh/EC/baseline/manifests/launcher_check_bid71b76/fixture.elf",
+      "snapshot": "/data1/gzh/EC/baseline/manifests/launcher_check_bid71b76/run/inputs/elf_fixture.elf",
+      "sha256": "f101948a4903148d008befdce1455df26f84b2f6253bf6d2ed83bd654d00da5d"
+    }
+  },
+  "runtime_io": {
+    "status": "PASS_FIXTURE_ONLY"
+  },
+  "tools": {},
+  "actual_command": [
+    "/data1/gzh/EC/baseline/manifests/launcher_check_bid71b76/build/never-executed",
+    "-v",
+    "/data1/gzh/EC/baseline/manifests/launcher_check_bid71b76/run/test.fst",
+    "-s",
+    "1",
+    "+cycle-count",
+    "+verbose",
+    "+permissive",
+    "+dramsim",
+    "+dramsim_ini_dir=/data1/gzh/EC/baseline/manifests/launcher_check_bid71b76/build/generators/testchipip/src/main/resources/dramsim2_ini",
+    "+max-cycles=500000000",
+    "+permissive-off",
+    "/data1/gzh/EC/baseline/manifests/launcher_check_bid71b76/run/inputs/elf_fixture.elf"
+  ],
+  "log_path": "/data1/gzh/EC/baseline/manifests/launcher_check_bid71b76/run/test.log",
+  "waveform": "/data1/gzh/EC/baseline/manifests/launcher_check_bid71b76/run/test.fst",
+  "waveform_format": "FST; historical debug driver traces 99 hierarchy levels, no wrapper signal filtering",
+  "max_cycles": 500000000,
+  "seed": 1,
+  "simulator_exit_code": 0,
+  "expected_marker_matches": {
+    "^\\[INIT\\] checker_mask=0xf status=ready$": true,
+    "^\\[COMPUTATION\\] status=PASS scope=amo_w_and_bfs_result$": true,
+    "^\\[END\\] hart=0 status=PASS$": true,
+    "^\\[COMPLETION\\] checker_software_ready=4 cache_drain=UNRESOLVED$": true
+  },
+  "emulator_reported_cycle_counts": [
+    1200611
+  ],
+  "failure_marker_seen": false,
+  "harness_cycles": 1200611,
+  "software_roi": {
+    "ROI_cycles": 1001675,
+    "samples": {
+      "hart": 0,
+      "start": 181025,
+      "stop": 1182700,
+      "cycles": 1001675
+    },
+    "workload_result": {
+      "nodes": 512,
+      "source": 0,
+      "reached": 512,
+      "edges": 8192,
+      "verified": 1,
+      "parent_checksum": 43439728
+    },
+    "measurement": "SOFTWARE_ROI",
+    "correctness_scope": "AMO_W_AND_BFS_SELF_CHECKS_ONLY",
+    "cache_package_drain": "UNRESOLVED"
+  },
+  "ROI_cycles": 1001675,
+  "workload_result": {
+    "nodes": 512,
+    "source": 0,
+    "reached": 512,
+    "edges": 8192,
+    "verified": 1,
+    "parent_checksum": 43439728
+  },
+  "waveform_bytes": 0,
+  "waveform_status": "MISSING_OR_EMPTY",
+  "error": "Missing/empty required FST waveform; software/harness observations preserved separately. Inspect runtime_io_probe.json, filesystem space and test.log; no experiment success inferred",
+  "end": "2026-10-23T08:12:18.620356+00:00"
+}

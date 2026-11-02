@@ -25,7 +25,7 @@ import uuid
 ROOT = Path("/data1/gzh/EC")
 CHIPYARD = ROOT / "chipyard"
 OUT = ROOT / "slowdown/optimization_4_svb"
-BASELINE = ROOT / "baseline/software_common_builds/gapbs512_20261023_03"
+BASELINE = ROOT / "check/software_common_builds/gapbs512_20261023_03"
 ELF = BASELINE / "test.riscv"
 LOADMEM = BASELINE / "test.loadmem_hex"
 OPT3_HEAD = "9afd806830ce32e2e8ad317a4530747e852c881f"

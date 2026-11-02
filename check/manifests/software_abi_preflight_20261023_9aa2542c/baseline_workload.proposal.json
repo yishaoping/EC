@@ -1,0 +1,118 @@
+{
+  "schema": 1,
+  "name": "gapbs_bfs_512_with_stage1_amo_w_fixed_timer_candidate",
+  "audit_classification": "BLOCKED_BY_SOFTWARE_ABI",
+  "runnable": false,
+  "origin_description": "Existing saved fixed candidate. Its 40 recorded source/link-input hashes match current files; key sources match current HEAD 9b0f34648d5ef483fcebaef6bdfb2c18f1b5014f. ELF/dump/loadmem bytes checked statically. No build or run performed.",
+  "origin_manifest": "/data1/gzh/EC/baseline/software/fixed_candidate/origin.stage1_workload.json",
+  "elf": "/data1/gzh/EC/baseline/software/fixed_candidate/test.riscv",
+  "elf_sha256": "f5f84a1727e1c5466bd69e5e89c96410f1622297c1e62bf31408f176a2b65610",
+  "loadmem": "/data1/gzh/EC/baseline/software/fixed_candidate/test.loadmem_hex",
+  "loadmem_sha256": "a3b7a4f8e50cc28101b0a51f55406595fb113f9695ca54ee912555138fe7894c",
+  "loadmem_addr": "80000000",
+  "baseline_compatibility": "BLOCKED_BY_SOFTWARE_ABI",
+  "baseline_compatibility_evidence": "STATIC_INFERENCE: b3 GHE lacks funct 0x7B and returns default zero with a response. Candidate report_end requires stats_valid==1, so if reached it fails PACKAGE_DRAIN_HARD_ERROR. Timer padding and HTIF load/exit formats are not the blockers. See software_abi_review.md and timing_exit_contract.md.",
+  "timing_boundary": "Candidate hart0 rdcycle at PC 0x80000368 to rdcycle at PC 0x800003d4 after funct06 status>=0x1ffff; includes AMO+BFS and checker completion wait; excludes report and HTIF exit. Actual cycles UNRESOLVED.",
+  "exit_drain_evidence": "UNRESOLVED: main returns 0 regardless of report FAIL; finite HTIF stores then spins. Historical harness stops at host success and has no proven post-exit cache drain predicate. Candidate Current-only stats-valid drain contract cannot validate b3.",
+  "required_pass_patterns": [
+    "\\[RUN\\] benchmark=gapbs_bfs nodes=512 source=0 reached=512 edges=8192 verified=1 parent_checksum=[0-9]+",
+    "\\[PERF\\] boom_cycles=[0-9]+ boom_inst=[0-9]+",
+    "\\[END\\] hart=0 status=PASS"
+  ],
+  "required_pass_patterns_status": "NOT_SATISFIABLE_FOR_CURRENT_CANDIDATE_ON_B3_IF_REPORT_REACHED; not an approved launcher descriptor",
+  "inputs": [],
+  "software_contract": {
+    "harts": {
+      "boom": [
+        0
+      ],
+      "checkers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "timer": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "timer_flags": {
+      "base": "0x80007e40",
+      "stride_bytes": 64,
+      "size_bytes": 256,
+      "layout": "KEEP_FIXED_LAYOUT"
+    },
+    "timer_compare_delta": {
+      "value": 32,
+      "unit": "CLINT mtime ticks",
+      "limit": 50,
+      "mmio_base": "0x02000000"
+    },
+    "requested_perf_interval": {
+      "value": 5000,
+      "unit": "requested local cycles",
+      "hardware_application": "NOT_IMPLEMENTED_IN_AUDITED_GHE_PATH"
+    },
+    "package_drain_timeout_cycles": 100000,
+    "monitor_start": {
+      "funct": "0x31",
+      "pc": "0x8000035c"
+    },
+    "checking_start": {
+      "funct": "0x70",
+      "rs1": 1,
+      "pc": "0x80000364"
+    },
+    "checking_stop": {
+      "funct": "0x70",
+      "rs1": 2,
+      "pc": "0x80000394"
+    },
+    "monitor_stop": {
+      "funct": "0x32",
+      "pc": "0x800003a8"
+    },
+    "ght_completion": {
+      "funct": "0x06",
+      "rs1": 0,
+      "rs2": 0,
+      "predicate": "returned status >= 0x1ffff; not full cache drain"
+    },
+    "workload": {
+      "name": "stage1_amo_w_test + gapbs_bfs_run_512",
+      "nodes": 512,
+      "source": 0,
+      "degree": 16,
+      "alpha": 15,
+      "beta": 18,
+      "graph": "node i -> (i+1)..(i+16) modulo 512",
+      "external_inputs": []
+    },
+    "exit": {
+      "code_from_main": 0,
+      "fromhost": "0x80007d08",
+      "tohost": "0x80007d00",
+      "tohost_value_if_reached": "0x1",
+      "pc_range": [
+        "0x800007b0",
+        "0x800007d8"
+      ],
+      "post_store": "fence rw,rw; self-loop"
+    },
+    "r_kernel_required": false
+  },
+  "future_launcher_requirements": {
+    "run_build_directory": "UNRESOLVED_NO_BUILD_PERFORMED",
+    "workload_descriptor": "UNRESOLVED_NO_REVIEWED_COMPATIBLE_DESCRIPTOR",
+    "seed": "future explicit paired value; proposed 1",
+    "max_cycles": "UNRESOLVED_EXPLICIT_FINITE_SMOKE_LIMIT_REQUIRED; do not infer timing from default",
+    "environment": "/data1/gzh/EC/baseline/manifests/environment.json",
+    "additional_start_stop_interval_drain_arguments": "NONE_SUPPORTED_BY_EXISTING_LAUNCHER",
+    "baseline_full_drain": "UNRESOLVED"
+  },
+  "fair_software_comparison": "FAIR_SOFTWARE_COMPARISON_BLOCKED_FOR_PREPARED_ARTIFACTS",
+  "RUN_PROVENANCE": "UNRESOLVED"
+}

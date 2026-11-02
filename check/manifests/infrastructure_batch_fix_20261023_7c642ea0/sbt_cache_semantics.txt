@@ -1,0 +1,2130 @@
+Compiled from "LMCoursier.scala"
+public final class sbt.coursierint.LMCoursier$ {
+  public static sbt.coursierint.LMCoursier$ MODULE$;
+
+  private final java.util.concurrent.ConcurrentHashMap<scala.Tuple2<java.lang.String, java.lang.String>, sbt.librarymanagement.ivy.Credentials> credentialRegistry;
+
+  public static {};
+    Code:
+       0: new           #2                  // class sbt/coursierint/LMCoursier$
+       3: invokespecial #76                 // Method "<init>":()V
+       6: return
+
+  public java.io.File defaultCacheLocation();
+    Code:
+       0: getstatic     #83                 // Field scala/sys/package$.MODULE$:Lscala/sys/package$;
+       3: invokevirtual #87                 // Method scala/sys/package$.props:()Lscala/sys/SystemProperties;
+       6: ldc           #89                 // String sbt.coursier.home
+       8: invokevirtual #95                 // Method scala/sys/SystemProperties.get:(Ljava/lang/String;)Lscala/Option;
+      11: invokedynamic #118,  0            // InvokeDynamic #0:apply:()Lscala/Function1;
+      16: invokevirtual #124                // Method scala/Option.map:(Lscala/Function1;)Lscala/Option;
+      19: invokedynamic #135,  0            // InvokeDynamic #1:apply:()Lscala/Function0;
+      24: invokevirtual #139                // Method scala/Option.orElse:(Lscala/Function0;)Lscala/Option;
+      27: invokedynamic #144,  0            // InvokeDynamic #2:apply:()Lscala/Function0;
+      32: invokevirtual #139                // Method scala/Option.orElse:(Lscala/Function0;)Lscala/Option;
+      35: astore_2
+      36: aload_2
+      37: instanceof    #146                // class scala/Some
+      40: ifeq          60
+      43: aload_2
+      44: checkcast     #146                // class scala/Some
+      47: astore_3
+      48: aload_3
+      49: invokevirtual #149                // Method scala/Some.value:()Ljava/lang/Object;
+      52: checkcast     #151                // class java/io/File
+      55: astore        4
+      57: aload         4
+      59: areturn
+      60: goto          63
+      63: getstatic     #156                // Field sbt/internal/util/Util$.MODULE$:Lsbt/internal/util/Util$;
+      66: invokevirtual #160                // Method sbt/internal/util/Util$.isWindows:()Z
+      69: ifeq          76
+      72: invokestatic  #163                // Method windowsCacheDirectory$1:()Ljava/io/File;
+      75: areturn
+      76: getstatic     #168                // Field lmcoursier/CoursierDependencyResolution$.MODULE$:Llmcoursier/CoursierDependencyResolution$;
+      79: invokevirtual #170                // Method lmcoursier/CoursierDependencyResolution$.defaultCacheLocation:()Ljava/io/File;
+      82: areturn
+
+  public scala.collection.Seq<scala.Tuple2<lmcoursier.definitions.ModuleMatchers, lmcoursier.definitions.Reconciliation>> relaxedForAllModules();
+    Code:
+       0: getstatic     #181                // Field scala/package$.MODULE$:Lscala/package$;
+       3: invokevirtual #185                // Method scala/package$.Vector:()Lscala/collection/immutable/Vector$;
+       6: getstatic     #190                // Field scala/Predef$.MODULE$:Lscala/Predef$;
+       9: iconst_1
+      10: anewarray     #192                // class scala/Tuple2
+      13: dup
+      14: iconst_0
+      15: new           #192                // class scala/Tuple2
+      18: dup
+      19: getstatic     #197                // Field lmcoursier/syntax/package$.MODULE$:Llmcoursier/syntax/package$;
+      22: getstatic     #202                // Field lmcoursier/definitions/ModuleMatchers$.MODULE$:Llmcoursier/definitions/ModuleMatchers$;
+      25: invokevirtual #205                // Method lmcoursier/syntax/package$.ModuleMatchersModule:(Llmcoursier/definitions/ModuleMatchers$;)Llmcoursier/syntax/package$ModuleMatchersModule;
+      28: invokevirtual #209                // Method lmcoursier/syntax/package$ModuleMatchersModule.all:()Llmcoursier/definitions/ModuleMatchers;
+      31: getstatic     #212                // Field lmcoursier/definitions/Reconciliation$Relaxed$.MODULE$:Llmcoursier/definitions/Reconciliation$Relaxed$;
+      34: invokespecial #215                // Method scala/Tuple2."<init>":(Ljava/lang/Object;Ljava/lang/Object;)V
+      37: aastore
+      38: checkcast     #217                // class "[Ljava/lang/Object;"
+      41: invokevirtual #221                // Method scala/Predef$.wrapRefArray:([Ljava/lang/Object;)Lscala/collection/mutable/WrappedArray;
+      44: invokevirtual #226                // Method scala/collection/immutable/Vector$.apply:(Lscala/collection/Seq;)Lscala/collection/GenTraversable;
+      47: checkcast     #228                // class scala/collection/Seq
+      50: areturn
+
+  public lmcoursier.CoursierConfiguration coursierConfiguration(scala.collection.Seq<sbt.librarymanagement.Resolver>, scala.collection.Seq<lmcoursier.definitions.Project>, scala.collection.Seq<lmcoursier.definitions.Project>, scala.collection.Seq<lmcoursier.FallbackDependency>, xsbti.AppConfiguration, scala.Option<scala.collection.Seq<lmcoursier.definitions.Classifier>>, scala.collection.immutable.Set<java.lang.String>, java.lang.String, java.lang.String, java.lang.String, boolean, scala.Option<sbt.librarymanagement.ScalaModuleInfo>, scala.collection.Seq<sbt.librarymanagement.InclExclRule>, scala.collection.Seq<lmcoursier.credentials.Credentials>, scala.Option<lmcoursier.definitions.CacheLogger>, java.io.File, scala.collection.Seq<scala.Tuple2<lmcoursier.definitions.ModuleMatchers, lmcoursier.definitions.Reconciliation>>, scala.Option<java.io.File>, scala.Option<lmcoursier.definitions.Strict>, scala.collection.Seq<sbt.librarymanagement.ModuleID>, sbt.util.Logger);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: aload_3
+       4: aload         4
+       6: aload         5
+       8: aload         6
+      10: aload         7
+      12: aload         8
+      14: aload         9
+      16: aload         10
+      18: iload         11
+      20: aload         12
+      22: aload         13
+      24: aload         14
+      26: aload         15
+      28: aload         16
+      30: aload         17
+      32: aload         18
+      34: aload         19
+      36: aload         20
+      38: getstatic     #257                // Field scala/None$.MODULE$:Lscala/None$;
+      41: aload         21
+      43: invokevirtual #260                // Method coursierConfiguration:(Lscala/collection/Seq;Lscala/collection/Seq;Lscala/collection/Seq;Lscala/collection/Seq;Lxsbti/AppConfiguration;Lscala/Option;Lscala/collection/immutable/Set;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLscala/Option;Lscala/collection/Seq;Lscala/collection/Seq;Lscala/Option;Ljava/io/File;Lscala/collection/Seq;Lscala/Option;Lscala/Option;Lscala/collection/Seq;Lscala/Option;Lsbt/util/Logger;)Llmcoursier/CoursierConfiguration;
+      46: areturn
+
+  public lmcoursier.CoursierConfiguration coursierConfiguration(scala.collection.Seq<sbt.librarymanagement.Resolver>, scala.collection.Seq<lmcoursier.definitions.Project>, scala.collection.Seq<lmcoursier.definitions.Project>, scala.collection.Seq<lmcoursier.FallbackDependency>, xsbti.AppConfiguration, scala.Option<scala.collection.Seq<lmcoursier.definitions.Classifier>>, scala.collection.immutable.Set<java.lang.String>, java.lang.String, java.lang.String, java.lang.String, boolean, scala.Option<sbt.librarymanagement.ScalaModuleInfo>, scala.collection.Seq<sbt.librarymanagement.InclExclRule>, scala.collection.Seq<lmcoursier.credentials.Credentials>, scala.Option<lmcoursier.definitions.CacheLogger>, java.io.File, scala.collection.Seq<scala.Tuple2<lmcoursier.definitions.ModuleMatchers, lmcoursier.definitions.Reconciliation>>, scala.Option<java.io.File>, scala.Option<lmcoursier.definitions.Strict>, scala.collection.Seq<sbt.librarymanagement.ModuleID>, scala.Option<sbt.librarymanagement.UpdateConfiguration>, sbt.util.Logger);
+    Code:
+       0: getstatic     #274                // Field lmcoursier/Inputs$.MODULE$:Llmcoursier/Inputs$;
+       3: aload         13
+       5: aload         9
+       7: aload         10
+       9: aload         22
+      11: invokevirtual #278                // Method lmcoursier/Inputs$.exclusions:(Lscala/collection/Seq;Ljava/lang/String;Ljava/lang/String;Lsbt/util/Logger;)Lscala/collection/immutable/Set;
+      14: invokeinterface #284,  1          // InterfaceMethod scala/collection/immutable/Set.toVector:()Lscala/collection/immutable/Vector;
+      19: invokedynamic #291,  0            // InvokeDynamic #3:apply:()Lscala/Function1;
+      24: getstatic     #294                // Field scala/collection/immutable/Vector$.MODULE$:Lscala/collection/immutable/Vector$;
+      27: invokevirtual #298                // Method scala/collection/immutable/Vector$.canBuildFrom:()Lscala/collection/generic/CanBuildFrom;
+      30: invokevirtual #303                // Method scala/collection/immutable/Vector.map:(Lscala/Function1;Lscala/collection/generic/CanBuildFrom;)Ljava/lang/Object;
+      33: checkcast     #305                // class scala/collection/SeqLike
+      36: getstatic     #310                // Field scala/math/Ordering$.MODULE$:Lscala/math/Ordering$;
+      39: getstatic     #313                // Field scala/math/Ordering$String$.MODULE$:Lscala/math/Ordering$String$;
+      42: getstatic     #313                // Field scala/math/Ordering$String$.MODULE$:Lscala/math/Ordering$String$;
+      45: invokevirtual #317                // Method scala/math/Ordering$.Tuple2:(Lscala/math/Ordering;Lscala/math/Ordering;)Lscala/math/Ordering;
+      48: invokeinterface #321,  2          // InterfaceMethod scala/collection/SeqLike.sorted:(Lscala/math/Ordering;)Ljava/lang/Object;
+      53: checkcast     #300                // class scala/collection/immutable/Vector
+      56: astore        24
+      58: iload         11
+      60: ifeq          80
+      63: aload         12
+      65: invokedynamic #328,  0            // InvokeDynamic #4:apply:()Lscala/Function1;
+      70: invokevirtual #332                // Method scala/Option.forall:(Lscala/Function1;)Z
+      73: ifeq          80
+      76: iconst_1
+      77: goto          81
+      80: iconst_0
+      81: istore        25
+      83: aload         5
+      85: invokeinterface #338,  1          // InterfaceMethod xsbti/AppConfiguration.provider:()Lxsbti/AppProvider;
+      90: invokeinterface #344,  1          // InterfaceMethod xsbti/AppProvider.scalaProvider:()Lxsbti/ScalaProvider;
+      95: astore        26
+      97: aload         26
+      99: invokeinterface #350,  1          // InterfaceMethod xsbti/ScalaProvider.jars:()[Ljava/io/File;
+     104: astore        27
+     106: aload         26
+     108: invokeinterface #354,  1          // InterfaceMethod xsbti/ScalaProvider.version:()Ljava/lang/String;
+     113: astore        28
+     115: ldc_w         #356                // String org.scala-lang
+     118: astore        29
+     120: getstatic     #274                // Field lmcoursier/Inputs$.MODULE$:Llmcoursier/Inputs$;
+     123: aload         20
+     125: aload         9
+     127: aload         10
+     129: invokevirtual #360                // Method lmcoursier/Inputs$.forceVersions:(Lscala/collection/Seq;Ljava/lang/String;Ljava/lang/String;)Lscala/collection/Seq;
+     132: astore        30
+     134: getstatic     #365                // Field sbt/Classpaths$.MODULE$:Lsbt/Classpaths$;
+     137: aload_1
+     138: aload         22
+     140: invokevirtual #369                // Method sbt/Classpaths$.warnResolversConflict:(Lscala/collection/Seq;Lsbt/util/Logger;)V
+     143: getstatic     #365                // Field sbt/Classpaths$.MODULE$:Lsbt/Classpaths$;
+     146: aload_1
+     147: aload         22
+     149: invokevirtual #372                // Method sbt/Classpaths$.errorInsecureProtocol:(Lscala/collection/Seq;Lsbt/util/Logger;)V
+     152: aload         21
+     154: astore        32
+     156: aload         32
+     158: instanceof    #146                // class scala/Some
+     161: ifeq          189
+     164: aload         32
+     166: checkcast     #146                // class scala/Some
+     169: astore        33
+     171: aload         33
+     173: invokevirtual #149                // Method scala/Some.value:()Ljava/lang/Object;
+     176: checkcast     #374                // class sbt/librarymanagement/UpdateConfiguration
+     179: astore        34
+     181: aload         34
+     183: invokevirtual #377                // Method sbt/librarymanagement/UpdateConfiguration.missingOk:()Z
+     186: goto          196
+     189: goto          192
+     192: iconst_0
+     193: goto          196
+     196: istore        31
+     198: getstatic     #197                // Field lmcoursier/syntax/package$.MODULE$:Llmcoursier/syntax/package$;
+     201: getstatic     #197                // Field lmcoursier/syntax/package$.MODULE$:Llmcoursier/syntax/package$;
+     204: getstatic     #197                // Field lmcoursier/syntax/package$.MODULE$:Llmcoursier/syntax/package$;
+     207: getstatic     #197                // Field lmcoursier/syntax/package$.MODULE$:Llmcoursier/syntax/package$;
+     210: getstatic     #197                // Field lmcoursier/syntax/package$.MODULE$:Llmcoursier/syntax/package$;
+     213: getstatic     #197                // Field lmcoursier/syntax/package$.MODULE$:Llmcoursier/syntax/package$;
+     216: getstatic     #382                // Field lmcoursier/CoursierConfiguration$.MODULE$:Llmcoursier/CoursierConfiguration$;
+     219: invokevirtual #385                // Method lmcoursier/CoursierConfiguration$.apply:()Llmcoursier/CoursierConfiguration;
+     222: aload_1
+     223: invokeinterface #386,  1          // InterfaceMethod scala/collection/Seq.toVector:()Lscala/collection/immutable/Vector;
+     228: invokevirtual #392                // Method lmcoursier/CoursierConfiguration.withResolvers:(Lscala/collection/immutable/Vector;)Llmcoursier/CoursierConfiguration;
+     231: aload_2
+     232: invokeinterface #386,  1          // InterfaceMethod scala/collection/Seq.toVector:()Lscala/collection/immutable/Vector;
+     237: invokevirtual #395                // Method lmcoursier/CoursierConfiguration.withInterProjectDependencies:(Lscala/collection/immutable/Vector;)Llmcoursier/CoursierConfiguration;
+     240: aload_3
+     241: invokeinterface #386,  1          // InterfaceMethod scala/collection/Seq.toVector:()Lscala/collection/immutable/Vector;
+     246: invokevirtual #398                // Method lmcoursier/CoursierConfiguration.withExtraProjects:(Lscala/collection/immutable/Vector;)Llmcoursier/CoursierConfiguration;
+     249: aload         4
+     251: invokeinterface #386,  1          // InterfaceMethod scala/collection/Seq.toVector:()Lscala/collection/immutable/Vector;
+     256: invokevirtual #401                // Method lmcoursier/CoursierConfiguration.withFallbackDependencies:(Lscala/collection/immutable/Vector;)Llmcoursier/CoursierConfiguration;
+     259: aload         24
+     261: invokevirtual #404                // Method lmcoursier/CoursierConfiguration.withExcludeDependencies:(Lscala/collection/immutable/Vector;)Llmcoursier/CoursierConfiguration;
+     264: iload         25
+     266: invokevirtual #408                // Method lmcoursier/CoursierConfiguration.withAutoScalaLibrary:(Z)Llmcoursier/CoursierConfiguration;
+     269: new           #58                 // class scala/collection/mutable/ArrayOps$ofRef
+     272: dup
+     273: getstatic     #190                // Field scala/Predef$.MODULE$:Lscala/Predef$;
+     276: aload         27
+     278: checkcast     #217                // class "[Ljava/lang/Object;"
+     281: invokevirtual #412                // Method scala/Predef$.refArrayOps:([Ljava/lang/Object;)[Ljava/lang/Object;
+     284: invokespecial #415                // Method scala/collection/mutable/ArrayOps$ofRef."<init>":([Ljava/lang/Object;)V
+     287: invokevirtual #416                // Method scala/collection/mutable/ArrayOps$ofRef.toVector:()Lscala/collection/immutable/Vector;
+     290: invokevirtual #419                // Method lmcoursier/CoursierConfiguration.withSbtScalaJars:(Lscala/collection/immutable/Vector;)Llmcoursier/CoursierConfiguration;
+     293: invokevirtual #422                // Method lmcoursier/syntax/package$.CoursierConfigurationOp:(Llmcoursier/CoursierConfiguration;)Llmcoursier/syntax/package$CoursierConfigurationOp;
+     296: aload         28
+     298: invokevirtual #426                // Method lmcoursier/syntax/package$CoursierConfigurationOp.withSbtScalaVersion:(Ljava/lang/String;)Llmcoursier/CoursierConfiguration;
+     301: invokevirtual #422                // Method lmcoursier/syntax/package$.CoursierConfigurationOp:(Llmcoursier/CoursierConfiguration;)Llmcoursier/syntax/package$CoursierConfigurationOp;
+     304: aload         29
+     306: invokevirtual #429                // Method lmcoursier/syntax/package$CoursierConfigurationOp.withSbtScalaOrganization:(Ljava/lang/String;)Llmcoursier/CoursierConfiguration;
+     309: getstatic     #434                // Field scala/Option$.MODULE$:Lscala/Option$;
+     312: aload         6
+     314: invokevirtual #438                // Method scala/Option$.option2Iterable:(Lscala/Option;)Lscala/collection/Iterable;
+     317: invokeinterface #441,  1          // InterfaceMethod scala/collection/Iterable.toVector:()Lscala/collection/immutable/Vector;
+     322: getstatic     #190                // Field scala/Predef$.MODULE$:Lscala/Predef$;
+     325: invokevirtual #445                // Method scala/Predef$.$conforms:()Lscala/Predef$$less$colon$less;
+     328: invokevirtual #449                // Method scala/collection/immutable/Vector.flatten:(Lscala/Function1;)Lscala/collection/GenTraversable;
+     331: checkcast     #451                // class scala/collection/TraversableLike
+     334: invokedynamic #458,  0            // InvokeDynamic #5:apply:()Lscala/Function1;
+     339: getstatic     #294                // Field scala/collection/immutable/Vector$.MODULE$:Lscala/collection/immutable/Vector$;
+     342: invokevirtual #298                // Method scala/collection/immutable/Vector$.canBuildFrom:()Lscala/collection/generic/CanBuildFrom;
+     345: invokeinterface #459,  3          // InterfaceMethod scala/collection/TraversableLike.map:(Lscala/Function1;Lscala/collection/generic/CanBuildFrom;)Ljava/lang/Object;
+     350: checkcast     #300                // class scala/collection/immutable/Vector
+     353: invokevirtual #462                // Method lmcoursier/CoursierConfiguration.withClassifiers:(Lscala/collection/immutable/Vector;)Llmcoursier/CoursierConfiguration;
+     356: aload         6
+     358: invokevirtual #465                // Method scala/Option.nonEmpty:()Z
+     361: invokevirtual #468                // Method lmcoursier/CoursierConfiguration.withHasClassifiers:(Z)Llmcoursier/CoursierConfiguration;
+     364: aload         7
+     366: invokeinterface #284,  1          // InterfaceMethod scala/collection/immutable/Set.toVector:()Lscala/collection/immutable/Vector;
+     371: getstatic     #313                // Field scala/math/Ordering$String$.MODULE$:Lscala/math/Ordering$String$;
+     374: invokevirtual #469                // Method scala/collection/immutable/Vector.sorted:(Lscala/math/Ordering;)Ljava/lang/Object;
+     377: checkcast     #300                // class scala/collection/immutable/Vector
+     380: invokevirtual #472                // Method lmcoursier/CoursierConfiguration.withMavenProfiles:(Lscala/collection/immutable/Vector;)Llmcoursier/CoursierConfiguration;
+     383: invokevirtual #422                // Method lmcoursier/syntax/package$.CoursierConfigurationOp:(Llmcoursier/CoursierConfiguration;)Llmcoursier/syntax/package$CoursierConfigurationOp;
+     386: aload         8
+     388: invokevirtual #475                // Method lmcoursier/syntax/package$CoursierConfigurationOp.withScalaOrganization:(Ljava/lang/String;)Llmcoursier/CoursierConfiguration;
+     391: invokevirtual #422                // Method lmcoursier/syntax/package$.CoursierConfigurationOp:(Llmcoursier/CoursierConfiguration;)Llmcoursier/syntax/package$CoursierConfigurationOp;
+     394: aload         9
+     396: invokevirtual #478                // Method lmcoursier/syntax/package$CoursierConfigurationOp.withScalaVersion:(Ljava/lang/String;)Llmcoursier/CoursierConfiguration;
+     399: aload         14
+     401: invokevirtual #482                // Method lmcoursier/CoursierConfiguration.withCredentials:(Lscala/collection/Seq;)Llmcoursier/CoursierConfiguration;
+     404: aload         15
+     406: invokevirtual #486                // Method lmcoursier/CoursierConfiguration.withLogger:(Lscala/Option;)Llmcoursier/CoursierConfiguration;
+     409: invokevirtual #422                // Method lmcoursier/syntax/package$.CoursierConfigurationOp:(Llmcoursier/CoursierConfiguration;)Llmcoursier/syntax/package$CoursierConfigurationOp;
+     412: aload         16
+     414: invokevirtual #490                // Method lmcoursier/syntax/package$CoursierConfigurationOp.withCache:(Ljava/io/File;)Llmcoursier/CoursierConfiguration;
+     417: aload         17
+     419: invokeinterface #386,  1          // InterfaceMethod scala/collection/Seq.toVector:()Lscala/collection/immutable/Vector;
+     424: invokevirtual #493                // Method lmcoursier/CoursierConfiguration.withReconciliation:(Lscala/collection/immutable/Vector;)Llmcoursier/CoursierConfiguration;
+     427: invokevirtual #422                // Method lmcoursier/syntax/package$.CoursierConfigurationOp:(Llmcoursier/CoursierConfiguration;)Llmcoursier/syntax/package$CoursierConfigurationOp;
+     430: aload         22
+     432: invokevirtual #497                // Method lmcoursier/syntax/package$CoursierConfigurationOp.withLog:(Lxsbti/Logger;)Llmcoursier/CoursierConfiguration;
+     435: aload         18
+     437: invokevirtual #500                // Method lmcoursier/CoursierConfiguration.withIvyHome:(Lscala/Option;)Llmcoursier/CoursierConfiguration;
+     440: aload         19
+     442: invokevirtual #503                // Method lmcoursier/CoursierConfiguration.withStrict:(Lscala/Option;)Llmcoursier/CoursierConfiguration;
+     445: aload         30
+     447: invokeinterface #386,  1          // InterfaceMethod scala/collection/Seq.toVector:()Lscala/collection/immutable/Vector;
+     452: invokevirtual #506                // Method lmcoursier/CoursierConfiguration.withForceVersions:(Lscala/collection/immutable/Vector;)Llmcoursier/CoursierConfiguration;
+     455: iload         31
+     457: invokevirtual #509                // Method lmcoursier/CoursierConfiguration.withMissingOk:(Z)Llmcoursier/CoursierConfiguration;
+     460: areturn
+
+  public sbt.internal.util.Init<sbt.Scope>.Initialize<sbt.Task<lmcoursier.CoursierConfiguration>> coursierConfigurationTask();
+    Code:
+       0: getstatic     #534                // Field sbt/std/FullInstance$.MODULE$:Lsbt/std/FullInstance$;
+       3: new           #536                // class sbt/internal/util/KCons
+       6: dup
+       7: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      10: invokevirtual #545                // Method sbt/Keys$.streams:()Lsbt/TaskKey;
+      13: new           #536                // class sbt/internal/util/KCons
+      16: dup
+      17: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      20: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      23: invokevirtual #554                // Method sbt/Keys$.updateConfiguration:()Lsbt/SettingKey;
+      26: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      29: new           #536                // class sbt/internal/util/KCons
+      32: dup
+      33: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      36: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      39: invokevirtual #561                // Method sbt/Keys$.dependencyOverrides:()Lsbt/SettingKey;
+      42: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      45: new           #536                // class sbt/internal/util/KCons
+      48: dup
+      49: getstatic     #566                // Field sbt/coursierint/CoursierInputsTasks$.MODULE$:Lsbt/coursierint/CoursierInputsTasks$;
+      52: invokevirtual #569                // Method sbt/coursierint/CoursierInputsTasks$.strictTask:()Lsbt/internal/util/Init$Initialize;
+      55: new           #536                // class sbt/internal/util/KCons
+      58: dup
+      59: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      62: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      65: invokevirtual #572                // Method sbt/Keys$.ivyPaths:()Lsbt/SettingKey;
+      68: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      71: new           #536                // class sbt/internal/util/KCons
+      74: dup
+      75: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      78: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      81: invokevirtual #575                // Method sbt/Keys$.csrReconciliations:()Lsbt/SettingKey;
+      84: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      87: new           #536                // class sbt/internal/util/KCons
+      90: dup
+      91: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      94: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      97: invokevirtual #578                // Method sbt/Keys$.csrCacheDirectory:()Lsbt/SettingKey;
+     100: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     103: new           #536                // class sbt/internal/util/KCons
+     106: dup
+     107: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     110: invokevirtual #581                // Method sbt/Keys$.csrLogger:()Lsbt/TaskKey;
+     113: new           #536                // class sbt/internal/util/KCons
+     116: dup
+     117: getstatic     #566                // Field sbt/coursierint/CoursierInputsTasks$.MODULE$:Lsbt/coursierint/CoursierInputsTasks$;
+     120: invokevirtual #584                // Method sbt/coursierint/CoursierInputsTasks$.credentialsTask:()Lsbt/internal/util/Init$Initialize;
+     123: new           #536                // class sbt/internal/util/KCons
+     126: dup
+     127: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     130: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     133: invokevirtual #587                // Method sbt/Keys$.allExcludeDependencies:()Lsbt/SettingKey;
+     136: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     139: new           #536                // class sbt/internal/util/KCons
+     142: dup
+     143: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     146: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     149: invokevirtual #590                // Method sbt/Keys$.scalaModuleInfo:()Lsbt/SettingKey;
+     152: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     155: new           #536                // class sbt/internal/util/KCons
+     158: dup
+     159: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     162: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     165: invokevirtual #593                // Method sbt/Keys$.autoScalaLibrary:()Lsbt/SettingKey;
+     168: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     171: new           #536                // class sbt/internal/util/KCons
+     174: dup
+     175: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     178: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     181: invokevirtual #596                // Method sbt/Keys$.scalaBinaryVersion:()Lsbt/SettingKey;
+     184: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     187: new           #536                // class sbt/internal/util/KCons
+     190: dup
+     191: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     194: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     197: invokevirtual #599                // Method sbt/Keys$.scalaOrganization:()Lsbt/SettingKey;
+     200: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     203: new           #536                // class sbt/internal/util/KCons
+     206: dup
+     207: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     210: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     213: invokevirtual #602                // Method sbt/Keys$.csrMavenProfiles:()Lsbt/SettingKey;
+     216: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     219: new           #536                // class sbt/internal/util/KCons
+     222: dup
+     223: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     226: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     229: invokevirtual #605                // Method sbt/Keys$.appConfiguration:()Lsbt/SettingKey;
+     232: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     235: new           #536                // class sbt/internal/util/KCons
+     238: dup
+     239: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     242: invokevirtual #608                // Method sbt/Keys$.csrFallbackDependencies:()Lsbt/TaskKey;
+     245: new           #536                // class sbt/internal/util/KCons
+     248: dup
+     249: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     252: invokevirtual #611                // Method sbt/Keys$.csrExtraProjects:()Lsbt/TaskKey;
+     255: new           #536                // class sbt/internal/util/KCons
+     258: dup
+     259: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     262: invokevirtual #614                // Method sbt/Keys$.csrInterProjectDependencies:()Lsbt/TaskKey;
+     265: new           #536                // class sbt/internal/util/KCons
+     268: dup
+     269: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     272: invokevirtual #617                // Method sbt/Keys$.csrRecursiveResolvers:()Lsbt/TaskKey;
+     275: new           #536                // class sbt/internal/util/KCons
+     278: dup
+     279: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     282: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     285: invokevirtual #620                // Method sbt/Keys$.scalaVersion:()Lsbt/SettingKey;
+     288: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     291: getstatic     #625                // Field sbt/internal/util/KNil$.MODULE$:Lsbt/internal/util/KNil$;
+     294: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     297: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     300: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     303: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     306: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     309: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     312: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     315: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     318: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     321: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     324: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     327: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     330: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     333: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     336: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     339: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     342: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     345: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     348: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     351: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     354: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     357: invokedynamic #635,  0            // InvokeDynamic #6:apply:()Lscala/Function1;
+     362: getstatic     #640                // Field sbt/internal/util/AList$.MODULE$:Lsbt/internal/util/AList$;
+     365: invokevirtual #644                // Method sbt/internal/util/AList$.klist:()Lsbt/internal/util/AList;
+     368: invokevirtual #648                // Method sbt/std/FullInstance$.app:(Ljava/lang/Object;Lscala/Function1;Lsbt/internal/util/AList;)Ljava/lang/Object;
+     371: checkcast     #40                 // class sbt/internal/util/Init$Initialize
+     374: areturn
+
+  public sbt.internal.util.Init<sbt.Scope>.Initialize<sbt.Task<lmcoursier.CoursierConfiguration>> updateClassifierConfigurationTask();
+    Code:
+       0: getstatic     #534                // Field sbt/std/FullInstance$.MODULE$:Lsbt/std/FullInstance$;
+       3: new           #536                // class sbt/internal/util/KCons
+       6: dup
+       7: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      10: invokevirtual #545                // Method sbt/Keys$.streams:()Lsbt/TaskKey;
+      13: new           #536                // class sbt/internal/util/KCons
+      16: dup
+      17: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      20: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      23: invokevirtual #554                // Method sbt/Keys$.updateConfiguration:()Lsbt/SettingKey;
+      26: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      29: new           #536                // class sbt/internal/util/KCons
+      32: dup
+      33: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      36: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      39: invokevirtual #561                // Method sbt/Keys$.dependencyOverrides:()Lsbt/SettingKey;
+      42: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      45: new           #536                // class sbt/internal/util/KCons
+      48: dup
+      49: getstatic     #566                // Field sbt/coursierint/CoursierInputsTasks$.MODULE$:Lsbt/coursierint/CoursierInputsTasks$;
+      52: invokevirtual #569                // Method sbt/coursierint/CoursierInputsTasks$.strictTask:()Lsbt/internal/util/Init$Initialize;
+      55: new           #536                // class sbt/internal/util/KCons
+      58: dup
+      59: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      62: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      65: invokevirtual #572                // Method sbt/Keys$.ivyPaths:()Lsbt/SettingKey;
+      68: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      71: new           #536                // class sbt/internal/util/KCons
+      74: dup
+      75: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      78: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      81: invokevirtual #575                // Method sbt/Keys$.csrReconciliations:()Lsbt/SettingKey;
+      84: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      87: new           #536                // class sbt/internal/util/KCons
+      90: dup
+      91: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      94: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      97: invokevirtual #578                // Method sbt/Keys$.csrCacheDirectory:()Lsbt/SettingKey;
+     100: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     103: new           #536                // class sbt/internal/util/KCons
+     106: dup
+     107: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     110: invokevirtual #581                // Method sbt/Keys$.csrLogger:()Lsbt/TaskKey;
+     113: new           #536                // class sbt/internal/util/KCons
+     116: dup
+     117: getstatic     #566                // Field sbt/coursierint/CoursierInputsTasks$.MODULE$:Lsbt/coursierint/CoursierInputsTasks$;
+     120: invokevirtual #584                // Method sbt/coursierint/CoursierInputsTasks$.credentialsTask:()Lsbt/internal/util/Init$Initialize;
+     123: new           #536                // class sbt/internal/util/KCons
+     126: dup
+     127: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     130: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     133: invokevirtual #587                // Method sbt/Keys$.allExcludeDependencies:()Lsbt/SettingKey;
+     136: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     139: new           #536                // class sbt/internal/util/KCons
+     142: dup
+     143: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     146: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     149: invokevirtual #590                // Method sbt/Keys$.scalaModuleInfo:()Lsbt/SettingKey;
+     152: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     155: new           #536                // class sbt/internal/util/KCons
+     158: dup
+     159: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     162: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     165: invokevirtual #593                // Method sbt/Keys$.autoScalaLibrary:()Lsbt/SettingKey;
+     168: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     171: new           #536                // class sbt/internal/util/KCons
+     174: dup
+     175: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     178: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     181: invokevirtual #596                // Method sbt/Keys$.scalaBinaryVersion:()Lsbt/SettingKey;
+     184: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     187: new           #536                // class sbt/internal/util/KCons
+     190: dup
+     191: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     194: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     197: invokevirtual #599                // Method sbt/Keys$.scalaOrganization:()Lsbt/SettingKey;
+     200: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     203: new           #536                // class sbt/internal/util/KCons
+     206: dup
+     207: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     210: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     213: invokevirtual #602                // Method sbt/Keys$.csrMavenProfiles:()Lsbt/SettingKey;
+     216: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     219: new           #536                // class sbt/internal/util/KCons
+     222: dup
+     223: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     226: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     229: invokevirtual #652                // Method sbt/Keys$.transitiveClassifiers:()Lsbt/SettingKey;
+     232: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     235: new           #536                // class sbt/internal/util/KCons
+     238: dup
+     239: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     242: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     245: invokevirtual #605                // Method sbt/Keys$.appConfiguration:()Lsbt/SettingKey;
+     248: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     251: new           #536                // class sbt/internal/util/KCons
+     254: dup
+     255: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     258: invokevirtual #608                // Method sbt/Keys$.csrFallbackDependencies:()Lsbt/TaskKey;
+     261: new           #536                // class sbt/internal/util/KCons
+     264: dup
+     265: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     268: invokevirtual #611                // Method sbt/Keys$.csrExtraProjects:()Lsbt/TaskKey;
+     271: new           #536                // class sbt/internal/util/KCons
+     274: dup
+     275: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     278: invokevirtual #614                // Method sbt/Keys$.csrInterProjectDependencies:()Lsbt/TaskKey;
+     281: new           #536                // class sbt/internal/util/KCons
+     284: dup
+     285: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     288: invokevirtual #617                // Method sbt/Keys$.csrRecursiveResolvers:()Lsbt/TaskKey;
+     291: new           #536                // class sbt/internal/util/KCons
+     294: dup
+     295: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     298: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     301: invokevirtual #620                // Method sbt/Keys$.scalaVersion:()Lsbt/SettingKey;
+     304: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     307: getstatic     #625                // Field sbt/internal/util/KNil$.MODULE$:Lsbt/internal/util/KNil$;
+     310: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     313: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     316: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     319: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     322: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     325: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     328: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     331: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     334: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     337: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     340: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     343: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     346: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     349: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     352: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     355: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     358: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     361: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     364: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     367: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     370: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     373: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     376: invokedynamic #657,  0            // InvokeDynamic #7:apply:()Lscala/Function1;
+     381: getstatic     #640                // Field sbt/internal/util/AList$.MODULE$:Lsbt/internal/util/AList$;
+     384: invokevirtual #644                // Method sbt/internal/util/AList$.klist:()Lsbt/internal/util/AList;
+     387: invokevirtual #648                // Method sbt/std/FullInstance$.app:(Ljava/lang/Object;Lscala/Function1;Lsbt/internal/util/AList;)Ljava/lang/Object;
+     390: checkcast     #40                 // class sbt/internal/util/Init$Initialize
+     393: areturn
+
+  public sbt.internal.util.Init<sbt.Scope>.Initialize<sbt.Task<lmcoursier.CoursierConfiguration>> updateSbtClassifierConfigurationTask();
+    Code:
+       0: getstatic     #534                // Field sbt/std/FullInstance$.MODULE$:Lsbt/std/FullInstance$;
+       3: new           #536                // class sbt/internal/util/KCons
+       6: dup
+       7: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      10: invokevirtual #545                // Method sbt/Keys$.streams:()Lsbt/TaskKey;
+      13: new           #536                // class sbt/internal/util/KCons
+      16: dup
+      17: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      20: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      23: invokevirtual #554                // Method sbt/Keys$.updateConfiguration:()Lsbt/SettingKey;
+      26: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      29: new           #536                // class sbt/internal/util/KCons
+      32: dup
+      33: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      36: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      39: invokevirtual #561                // Method sbt/Keys$.dependencyOverrides:()Lsbt/SettingKey;
+      42: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      45: new           #536                // class sbt/internal/util/KCons
+      48: dup
+      49: getstatic     #566                // Field sbt/coursierint/CoursierInputsTasks$.MODULE$:Lsbt/coursierint/CoursierInputsTasks$;
+      52: invokevirtual #569                // Method sbt/coursierint/CoursierInputsTasks$.strictTask:()Lsbt/internal/util/Init$Initialize;
+      55: new           #536                // class sbt/internal/util/KCons
+      58: dup
+      59: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      62: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      65: invokevirtual #572                // Method sbt/Keys$.ivyPaths:()Lsbt/SettingKey;
+      68: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      71: new           #536                // class sbt/internal/util/KCons
+      74: dup
+      75: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      78: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      81: invokevirtual #575                // Method sbt/Keys$.csrReconciliations:()Lsbt/SettingKey;
+      84: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      87: new           #536                // class sbt/internal/util/KCons
+      90: dup
+      91: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      94: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      97: invokevirtual #578                // Method sbt/Keys$.csrCacheDirectory:()Lsbt/SettingKey;
+     100: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     103: new           #536                // class sbt/internal/util/KCons
+     106: dup
+     107: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     110: invokevirtual #581                // Method sbt/Keys$.csrLogger:()Lsbt/TaskKey;
+     113: new           #536                // class sbt/internal/util/KCons
+     116: dup
+     117: getstatic     #566                // Field sbt/coursierint/CoursierInputsTasks$.MODULE$:Lsbt/coursierint/CoursierInputsTasks$;
+     120: invokevirtual #584                // Method sbt/coursierint/CoursierInputsTasks$.credentialsTask:()Lsbt/internal/util/Init$Initialize;
+     123: new           #536                // class sbt/internal/util/KCons
+     126: dup
+     127: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     130: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     133: invokevirtual #587                // Method sbt/Keys$.allExcludeDependencies:()Lsbt/SettingKey;
+     136: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     139: new           #536                // class sbt/internal/util/KCons
+     142: dup
+     143: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     146: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     149: invokevirtual #590                // Method sbt/Keys$.scalaModuleInfo:()Lsbt/SettingKey;
+     152: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     155: new           #536                // class sbt/internal/util/KCons
+     158: dup
+     159: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     162: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     165: invokevirtual #593                // Method sbt/Keys$.autoScalaLibrary:()Lsbt/SettingKey;
+     168: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     171: new           #536                // class sbt/internal/util/KCons
+     174: dup
+     175: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     178: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     181: invokevirtual #596                // Method sbt/Keys$.scalaBinaryVersion:()Lsbt/SettingKey;
+     184: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     187: new           #536                // class sbt/internal/util/KCons
+     190: dup
+     191: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     194: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     197: invokevirtual #599                // Method sbt/Keys$.scalaOrganization:()Lsbt/SettingKey;
+     200: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     203: new           #536                // class sbt/internal/util/KCons
+     206: dup
+     207: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     210: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     213: invokevirtual #602                // Method sbt/Keys$.csrMavenProfiles:()Lsbt/SettingKey;
+     216: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     219: new           #536                // class sbt/internal/util/KCons
+     222: dup
+     223: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     226: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     229: invokevirtual #605                // Method sbt/Keys$.appConfiguration:()Lsbt/SettingKey;
+     232: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     235: new           #536                // class sbt/internal/util/KCons
+     238: dup
+     239: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     242: invokevirtual #608                // Method sbt/Keys$.csrFallbackDependencies:()Lsbt/TaskKey;
+     245: new           #536                // class sbt/internal/util/KCons
+     248: dup
+     249: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     252: invokevirtual #661                // Method sbt/Keys$.csrSbtResolvers:()Lsbt/TaskKey;
+     255: new           #536                // class sbt/internal/util/KCons
+     258: dup
+     259: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     262: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     265: invokevirtual #620                // Method sbt/Keys$.scalaVersion:()Lsbt/SettingKey;
+     268: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     271: getstatic     #625                // Field sbt/internal/util/KNil$.MODULE$:Lsbt/internal/util/KNil$;
+     274: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     277: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     280: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     283: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     286: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     289: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     292: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     295: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     298: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     301: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     304: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     307: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     310: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     313: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     316: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     319: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     322: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     325: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     328: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     331: invokedynamic #666,  0            // InvokeDynamic #8:apply:()Lscala/Function1;
+     336: getstatic     #640                // Field sbt/internal/util/AList$.MODULE$:Lsbt/internal/util/AList$;
+     339: invokevirtual #644                // Method sbt/internal/util/AList$.klist:()Lsbt/internal/util/AList;
+     342: invokevirtual #648                // Method sbt/std/FullInstance$.app:(Ljava/lang/Object;Lscala/Function1;Lsbt/internal/util/AList;)Ljava/lang/Object;
+     345: checkcast     #40                 // class sbt/internal/util/Init$Initialize
+     348: areturn
+
+  public sbt.internal.util.Init<sbt.Scope>.Initialize<sbt.Task<lmcoursier.CoursierConfiguration>> scalaCompilerBridgeConfigurationTask();
+    Code:
+       0: getstatic     #534                // Field sbt/std/FullInstance$.MODULE$:Lsbt/std/FullInstance$;
+       3: new           #536                // class sbt/internal/util/KCons
+       6: dup
+       7: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      10: invokevirtual #545                // Method sbt/Keys$.streams:()Lsbt/TaskKey;
+      13: new           #536                // class sbt/internal/util/KCons
+      16: dup
+      17: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      20: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      23: invokevirtual #554                // Method sbt/Keys$.updateConfiguration:()Lsbt/SettingKey;
+      26: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      29: new           #536                // class sbt/internal/util/KCons
+      32: dup
+      33: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      36: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      39: invokevirtual #561                // Method sbt/Keys$.dependencyOverrides:()Lsbt/SettingKey;
+      42: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      45: new           #536                // class sbt/internal/util/KCons
+      48: dup
+      49: getstatic     #566                // Field sbt/coursierint/CoursierInputsTasks$.MODULE$:Lsbt/coursierint/CoursierInputsTasks$;
+      52: invokevirtual #569                // Method sbt/coursierint/CoursierInputsTasks$.strictTask:()Lsbt/internal/util/Init$Initialize;
+      55: new           #536                // class sbt/internal/util/KCons
+      58: dup
+      59: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      62: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      65: invokevirtual #572                // Method sbt/Keys$.ivyPaths:()Lsbt/SettingKey;
+      68: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      71: new           #536                // class sbt/internal/util/KCons
+      74: dup
+      75: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      78: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      81: invokevirtual #575                // Method sbt/Keys$.csrReconciliations:()Lsbt/SettingKey;
+      84: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      87: new           #536                // class sbt/internal/util/KCons
+      90: dup
+      91: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      94: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      97: invokevirtual #578                // Method sbt/Keys$.csrCacheDirectory:()Lsbt/SettingKey;
+     100: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     103: new           #536                // class sbt/internal/util/KCons
+     106: dup
+     107: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     110: invokevirtual #581                // Method sbt/Keys$.csrLogger:()Lsbt/TaskKey;
+     113: new           #536                // class sbt/internal/util/KCons
+     116: dup
+     117: getstatic     #566                // Field sbt/coursierint/CoursierInputsTasks$.MODULE$:Lsbt/coursierint/CoursierInputsTasks$;
+     120: invokevirtual #584                // Method sbt/coursierint/CoursierInputsTasks$.credentialsTask:()Lsbt/internal/util/Init$Initialize;
+     123: new           #536                // class sbt/internal/util/KCons
+     126: dup
+     127: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     130: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     133: invokevirtual #587                // Method sbt/Keys$.allExcludeDependencies:()Lsbt/SettingKey;
+     136: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     139: new           #536                // class sbt/internal/util/KCons
+     142: dup
+     143: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     146: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     149: invokevirtual #590                // Method sbt/Keys$.scalaModuleInfo:()Lsbt/SettingKey;
+     152: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     155: new           #536                // class sbt/internal/util/KCons
+     158: dup
+     159: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     162: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     165: invokevirtual #593                // Method sbt/Keys$.autoScalaLibrary:()Lsbt/SettingKey;
+     168: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     171: new           #536                // class sbt/internal/util/KCons
+     174: dup
+     175: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     178: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     181: invokevirtual #596                // Method sbt/Keys$.scalaBinaryVersion:()Lsbt/SettingKey;
+     184: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     187: new           #536                // class sbt/internal/util/KCons
+     190: dup
+     191: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     194: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     197: invokevirtual #599                // Method sbt/Keys$.scalaOrganization:()Lsbt/SettingKey;
+     200: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     203: new           #536                // class sbt/internal/util/KCons
+     206: dup
+     207: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     210: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     213: invokevirtual #602                // Method sbt/Keys$.csrMavenProfiles:()Lsbt/SettingKey;
+     216: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     219: new           #536                // class sbt/internal/util/KCons
+     222: dup
+     223: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     226: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     229: invokevirtual #605                // Method sbt/Keys$.appConfiguration:()Lsbt/SettingKey;
+     232: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     235: new           #536                // class sbt/internal/util/KCons
+     238: dup
+     239: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     242: invokevirtual #608                // Method sbt/Keys$.csrFallbackDependencies:()Lsbt/TaskKey;
+     245: new           #536                // class sbt/internal/util/KCons
+     248: dup
+     249: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     252: invokevirtual #670                // Method sbt/Keys$.csrResolvers:()Lsbt/TaskKey;
+     255: new           #536                // class sbt/internal/util/KCons
+     258: dup
+     259: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+     262: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+     265: invokevirtual #620                // Method sbt/Keys$.scalaVersion:()Lsbt/SettingKey;
+     268: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+     271: getstatic     #625                // Field sbt/internal/util/KNil$.MODULE$:Lsbt/internal/util/KNil$;
+     274: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     277: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     280: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     283: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     286: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     289: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     292: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     295: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     298: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     301: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     304: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     307: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     310: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     313: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     316: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     319: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     322: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     325: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     328: invokespecial #628                // Method sbt/internal/util/KCons."<init>":(Ljava/lang/Object;Lsbt/internal/util/KList;)V
+     331: invokedynamic #675,  0            // InvokeDynamic #9:apply:()Lscala/Function1;
+     336: getstatic     #640                // Field sbt/internal/util/AList$.MODULE$:Lsbt/internal/util/AList$;
+     339: invokevirtual #644                // Method sbt/internal/util/AList$.klist:()Lsbt/internal/util/AList;
+     342: invokevirtual #648                // Method sbt/std/FullInstance$.app:(Ljava/lang/Object;Lscala/Function1;Lsbt/internal/util/AList;)Ljava/lang/Object;
+     345: checkcast     #40                 // class sbt/internal/util/Init$Initialize
+     348: areturn
+
+  public sbt.internal.util.Init<sbt.Scope>.Initialize<sbt.Task<scala.Option<lmcoursier.definitions.CacheLogger>>> coursierLoggerTask();
+    Code:
+       0: getstatic     #534                // Field sbt/std/FullInstance$.MODULE$:Lsbt/std/FullInstance$;
+       3: new           #192                // class scala/Tuple2
+       6: dup
+       7: getstatic     #550                // Field sbt/Def$.MODULE$:Lsbt/Def$;
+      10: getstatic     #682                // Field sbt/SlashSyntax0$.MODULE$:Lsbt/SlashSyntax0$;
+      13: getstatic     #687                // Field sbt/ThisBuild$.MODULE$:Lsbt/ThisBuild$;
+      16: invokevirtual #691                // Method sbt/SlashSyntax0$.sbtSlashSyntaxRichReference:(Lsbt/Reference;)Lsbt/SlashSyntax$RichReference;
+      19: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      22: invokevirtual #694                // Method sbt/Keys$.useSuperShell:()Lsbt/SettingKey;
+      25: invokevirtual #698                // Method sbt/SlashSyntax$RichReference.$div:(Lsbt/Scoped$ScopingSetting;)Ljava/lang/Object;
+      28: checkcast     #40                 // class sbt/internal/util/Init$Initialize
+      31: invokevirtual #558                // Method sbt/Def$.toITask:(Lsbt/internal/util/Init$Initialize;)Lsbt/internal/util/Init$Initialize;
+      34: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      37: invokevirtual #545                // Method sbt/Keys$.streams:()Lsbt/TaskKey;
+      40: invokespecial #215                // Method scala/Tuple2."<init>":(Ljava/lang/Object;Ljava/lang/Object;)V
+      43: invokedynamic #705,  0            // InvokeDynamic #10:apply:()Lscala/Function1;
+      48: getstatic     #640                // Field sbt/internal/util/AList$.MODULE$:Lsbt/internal/util/AList$;
+      51: invokevirtual #708                // Method sbt/internal/util/AList$.tuple2:()Lsbt/internal/util/AList;
+      54: invokevirtual #648                // Method sbt/std/FullInstance$.app:(Ljava/lang/Object;Lscala/Function1;Lsbt/internal/util/AList;)Ljava/lang/Object;
+      57: checkcast     #40                 // class sbt/internal/util/Init$Initialize
+      60: areturn
+
+  public sbt.internal.util.Init<sbt.Scope>.Setting<?> publicationsSetting(scala.collection.Seq<scala.Tuple2<sbt.librarymanagement.Configuration, lmcoursier.definitions.Configuration>>);
+    Code:
+       0: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+       3: invokevirtual #715                // Method sbt/Keys$.csrPublications:()Lsbt/TaskKey;
+       6: getstatic     #534                // Field sbt/std/FullInstance$.MODULE$:Lsbt/std/FullInstance$;
+       9: getstatic     #720                // Field sbt/coursierint/CoursierArtifactsTasks$.MODULE$:Lsbt/coursierint/CoursierArtifactsTasks$;
+      12: aload_1
+      13: invokevirtual #724                // Method sbt/coursierint/CoursierArtifactsTasks$.coursierPublicationsTask:(Lscala/collection/Seq;)Lsbt/internal/util/Init$Initialize;
+      16: invokedynamic #731,  0            // InvokeDynamic #11:apply:()Lscala/Function1;
+      21: invokevirtual #734                // Method sbt/std/FullInstance$.map:(Ljava/lang/Object;Lscala/Function1;)Ljava/lang/Object;
+      24: checkcast     #40                 // class sbt/internal/util/Init$Initialize
+      27: new           #736                // class sbt/internal/util/LinePosition
+      30: dup
+      31: ldc_w         #738                // String (sbt.coursierint.LMCoursier.publicationsSetting) LMCoursier.scala
+      34: sipush        326
+      37: invokespecial #741                // Method sbt/internal/util/LinePosition."<init>":(Ljava/lang/String;I)V
+      40: invokevirtual #747                // Method sbt/TaskKey.set:(Lsbt/internal/util/Init$Initialize;Lsbt/internal/util/SourcePosition;)Lsbt/internal/util/Init$Setting;
+      43: areturn
+
+  public sbt.internal.util.Init<sbt.Scope>.Initialize<sbt.Task<scala.collection.Seq<sbt.librarymanagement.ivy.Credentials>>> allCredentialsTask();
+    Code:
+       0: getstatic     #534                // Field sbt/std/FullInstance$.MODULE$:Lsbt/std/FullInstance$;
+       3: new           #751                // class scala/Tuple4
+       6: dup
+       7: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      10: invokevirtual #753                // Method sbt/Keys$.credentials:()Lsbt/TaskKey;
+      13: getstatic     #682                // Field sbt/SlashSyntax0$.MODULE$:Lsbt/SlashSyntax0$;
+      16: getstatic     #758                // Field sbt/LocalRootProject$.MODULE$:Lsbt/LocalRootProject$;
+      19: invokevirtual #691                // Method sbt/SlashSyntax0$.sbtSlashSyntaxRichReference:(Lsbt/Reference;)Lsbt/SlashSyntax$RichReference;
+      22: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      25: invokevirtual #753                // Method sbt/Keys$.credentials:()Lsbt/TaskKey;
+      28: invokevirtual #698                // Method sbt/SlashSyntax$RichReference.$div:(Lsbt/Scoped$ScopingSetting;)Ljava/lang/Object;
+      31: getstatic     #682                // Field sbt/SlashSyntax0$.MODULE$:Lsbt/SlashSyntax0$;
+      34: getstatic     #687                // Field sbt/ThisBuild$.MODULE$:Lsbt/ThisBuild$;
+      37: invokevirtual #691                // Method sbt/SlashSyntax0$.sbtSlashSyntaxRichReference:(Lsbt/Reference;)Lsbt/SlashSyntax$RichReference;
+      40: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      43: invokevirtual #753                // Method sbt/Keys$.credentials:()Lsbt/TaskKey;
+      46: invokevirtual #698                // Method sbt/SlashSyntax$RichReference.$div:(Lsbt/Scoped$ScopingSetting;)Ljava/lang/Object;
+      49: getstatic     #541                // Field sbt/Keys$.MODULE$:Lsbt/Keys$;
+      52: invokevirtual #545                // Method sbt/Keys$.streams:()Lsbt/TaskKey;
+      55: invokespecial #761                // Method scala/Tuple4."<init>":(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
+      58: invokedynamic #768,  0            // InvokeDynamic #12:apply:()Lscala/Function1;
+      63: getstatic     #640                // Field sbt/internal/util/AList$.MODULE$:Lsbt/internal/util/AList$;
+      66: invokevirtual #771                // Method sbt/internal/util/AList$.tuple4:()Lsbt/internal/util/AList;
+      69: invokevirtual #648                // Method sbt/std/FullInstance$.app:(Ljava/lang/Object;Lscala/Function1;Lsbt/internal/util/AList;)Ljava/lang/Object;
+      72: checkcast     #40                 // class sbt/internal/util/Init$Initialize
+      75: areturn
+
+  private static final java.io.File absoluteFile$1(java.lang.String);
+    Code:
+       0: new           #151                // class java/io/File
+       3: dup
+       4: aload_0
+       5: invokespecial #776                // Method java/io/File."<init>":(Ljava/lang/String;)V
+       8: invokevirtual #779                // Method java/io/File.getAbsoluteFile:()Ljava/io/File;
+      11: areturn
+
+  public static final java.io.File $anonfun$defaultCacheLocation$1(java.lang.String);
+    Code:
+       0: aload_0
+       1: invokestatic  #782                // Method absoluteFile$1:(Ljava/lang/String;)Ljava/io/File;
+       4: areturn
+
+  public static final java.io.File $anonfun$defaultCacheLocation$2();
+    Code:
+       0: getstatic     #788                // Field sbt/io/RichFile$.MODULE$:Lsbt/io/RichFile$;
+       3: getstatic     #793                // Field sbt/io/syntax$.MODULE$:Lsbt/io/syntax$;
+       6: getstatic     #788                // Field sbt/io/RichFile$.MODULE$:Lsbt/io/RichFile$;
+       9: getstatic     #793                // Field sbt/io/syntax$.MODULE$:Lsbt/io/syntax$;
+      12: getstatic     #83                 // Field scala/sys/package$.MODULE$:Lscala/sys/package$;
+      15: invokevirtual #87                 // Method scala/sys/package$.props:()Lscala/sys/SystemProperties;
+      18: ldc_w         #795                // String user.home
+      21: invokevirtual #797                // Method scala/sys/SystemProperties.apply:(Ljava/lang/Object;)Ljava/lang/Object;
+      24: checkcast     #523                // class java/lang/String
+      27: invokestatic  #782                // Method absoluteFile$1:(Ljava/lang/String;)Ljava/io/File;
+      30: invokevirtual #801                // Method sbt/io/syntax$.fileToRichFile:(Ljava/io/File;)Ljava/io/File;
+      33: ldc_w         #803                // String AppData
+      36: invokevirtual #807                // Method sbt/io/RichFile$.$div$extension:(Ljava/io/File;Ljava/lang/String;)Ljava/io/File;
+      39: invokevirtual #801                // Method sbt/io/syntax$.fileToRichFile:(Ljava/io/File;)Ljava/io/File;
+      42: ldc_w         #809                // String Local
+      45: invokevirtual #807                // Method sbt/io/RichFile$.$div$extension:(Ljava/io/File;Ljava/lang/String;)Ljava/io/File;
+      48: areturn
+
+  private static final java.io.File windowsCacheDirectory$1();
+    Code:
+       0: getstatic     #83                 // Field scala/sys/package$.MODULE$:Lscala/sys/package$;
+       3: invokevirtual #813                // Method scala/sys/package$.env:()Lscala/collection/immutable/Map;
+       6: ldc_w         #815                // String LOCALAPPDATA
+       9: invokeinterface #820,  2          // InterfaceMethod scala/collection/immutable/Map.get:(Ljava/lang/Object;)Lscala/Option;
+      14: invokedynamic #824,  0            // InvokeDynamic #13:apply:()Lscala/Function1;
+      19: invokevirtual #124                // Method scala/Option.map:(Lscala/Function1;)Lscala/Option;
+      22: invokedynamic #829,  0            // InvokeDynamic #14:apply:()Lscala/Function0;
+      27: invokevirtual #833                // Method scala/Option.getOrElse:(Lscala/Function0;)Ljava/lang/Object;
+      30: checkcast     #151                // class java/io/File
+      33: astore_0
+      34: getstatic     #788                // Field sbt/io/RichFile$.MODULE$:Lsbt/io/RichFile$;
+      37: getstatic     #793                // Field sbt/io/syntax$.MODULE$:Lsbt/io/syntax$;
+      40: getstatic     #788                // Field sbt/io/RichFile$.MODULE$:Lsbt/io/RichFile$;
+      43: getstatic     #793                // Field sbt/io/syntax$.MODULE$:Lsbt/io/syntax$;
+      46: getstatic     #788                // Field sbt/io/RichFile$.MODULE$:Lsbt/io/RichFile$;
+      49: getstatic     #793                // Field sbt/io/syntax$.MODULE$:Lsbt/io/syntax$;
+      52: aload_0
+      53: invokevirtual #801                // Method sbt/io/syntax$.fileToRichFile:(Ljava/io/File;)Ljava/io/File;
+      56: ldc_w         #835                // String Coursier
+      59: invokevirtual #807                // Method sbt/io/RichFile$.$div$extension:(Ljava/io/File;Ljava/lang/String;)Ljava/io/File;
+      62: invokevirtual #801                // Method sbt/io/syntax$.fileToRichFile:(Ljava/io/File;)Ljava/io/File;
+      65: ldc_w         #837                // String Cache
+      68: invokevirtual #807                // Method sbt/io/RichFile$.$div$extension:(Ljava/io/File;Ljava/lang/String;)Ljava/io/File;
+      71: invokevirtual #801                // Method sbt/io/syntax$.fileToRichFile:(Ljava/io/File;)Ljava/io/File;
+      74: ldc_w         #839                // String v1
+      77: invokevirtual #807                // Method sbt/io/RichFile$.$div$extension:(Ljava/io/File;Ljava/lang/String;)Ljava/io/File;
+      80: areturn
+
+  public static final java.io.File $anonfun$defaultCacheLocation$3(java.lang.String);
+    Code:
+       0: getstatic     #788                // Field sbt/io/RichFile$.MODULE$:Lsbt/io/RichFile$;
+       3: getstatic     #793                // Field sbt/io/syntax$.MODULE$:Lsbt/io/syntax$;
+       6: aload_0
+       7: invokestatic  #782                // Method absoluteFile$1:(Ljava/lang/String;)Ljava/io/File;
+      10: invokevirtual #801                // Method sbt/io/syntax$.fileToRichFile:(Ljava/io/File;)Ljava/io/File;
+      13: ldc_w         #843                // String cache
+      16: invokevirtual #807                // Method sbt/io/RichFile$.$div$extension:(Ljava/io/File;Ljava/lang/String;)Ljava/io/File;
+      19: areturn
+
+  public static final java.io.File $anonfun$defaultCacheLocation$5(java.lang.String);
+    Code:
+       0: aload_0
+       1: invokestatic  #782                // Method absoluteFile$1:(Ljava/lang/String;)Ljava/io/File;
+       4: areturn
+
+  public static final scala.Option $anonfun$defaultCacheLocation$4();
+    Code:
+       0: getstatic     #83                 // Field scala/sys/package$.MODULE$:Lscala/sys/package$;
+       3: invokevirtual #813                // Method scala/sys/package$.env:()Lscala/collection/immutable/Map;
+       6: ldc_w         #846                // String COURSIER_CACHE
+       9: invokeinterface #820,  2          // InterfaceMethod scala/collection/immutable/Map.get:(Ljava/lang/Object;)Lscala/Option;
+      14: invokedynamic #850,  0            // InvokeDynamic #15:apply:()Lscala/Function1;
+      19: invokevirtual #124                // Method scala/Option.map:(Lscala/Function1;)Lscala/Option;
+      22: areturn
+
+  public static final java.io.File $anonfun$defaultCacheLocation$7(java.lang.String);
+    Code:
+       0: aload_0
+       1: invokestatic  #782                // Method absoluteFile$1:(Ljava/lang/String;)Ljava/io/File;
+       4: areturn
+
+  public static final scala.Option $anonfun$defaultCacheLocation$6();
+    Code:
+       0: getstatic     #83                 // Field scala/sys/package$.MODULE$:Lscala/sys/package$;
+       3: invokevirtual #87                 // Method scala/sys/package$.props:()Lscala/sys/SystemProperties;
+       6: ldc_w         #853                // String coursier.cache
+       9: invokevirtual #95                 // Method scala/sys/SystemProperties.get:(Ljava/lang/String;)Lscala/Option;
+      12: invokedynamic #857,  0            // InvokeDynamic #16:apply:()Lscala/Function1;
+      17: invokevirtual #124                // Method scala/Option.map:(Lscala/Function1;)Lscala/Option;
+      20: areturn
+
+  public static final scala.Tuple2 $anonfun$coursierConfiguration$1(scala.Tuple2);
+    Code:
+       0: aload_0
+       1: astore_2
+       2: aload_2
+       3: ifnull        40
+       6: aload_2
+       7: invokevirtual #861                // Method scala/Tuple2._1:()Ljava/lang/Object;
+      10: checkcast     #863                // class lmcoursier/definitions/Organization
+      13: invokevirtual #865                // Method lmcoursier/definitions/Organization.value:()Ljava/lang/String;
+      16: astore_3
+      17: aload_2
+      18: invokevirtual #868                // Method scala/Tuple2._2:()Ljava/lang/Object;
+      21: checkcast     #870                // class lmcoursier/definitions/ModuleName
+      24: invokevirtual #871                // Method lmcoursier/definitions/ModuleName.value:()Ljava/lang/String;
+      27: astore        4
+      29: new           #192                // class scala/Tuple2
+      32: dup
+      33: aload_3
+      34: aload         4
+      36: invokespecial #215                // Method scala/Tuple2."<init>":(Ljava/lang/Object;Ljava/lang/Object;)V
+      39: areturn
+      40: goto          43
+      43: new           #873                // class scala/MatchError
+      46: dup
+      47: aload_2
+      48: invokespecial #876                // Method scala/MatchError."<init>":(Ljava/lang/Object;)V
+      51: athrow
+
+  public static final boolean $anonfun$coursierConfiguration$2(sbt.librarymanagement.ScalaModuleInfo);
+    Code:
+       0: aload_0
+       1: invokevirtual #887                // Method sbt/librarymanagement/ScalaModuleInfo.overrideScalaVersion:()Z
+       4: ireturn
+
+  public static final java.lang.String $anonfun$coursierConfiguration$3(java.lang.String);
+    Code:
+       0: aload_0
+       1: areturn
+
+  public static final lmcoursier.CoursierConfiguration $anonfun$coursierConfigurationTask$1(sbt.internal.util.KCons);
+    Code:
+       0: aload_0
+       1: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+       4: checkcast     #897                // class sbt/std/TaskStreams
+       7: astore_1
+       8: aload_0
+       9: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      12: checkcast     #536                // class sbt/internal/util/KCons
+      15: astore_2
+      16: aload_2
+      17: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      20: checkcast     #374                // class sbt/librarymanagement/UpdateConfiguration
+      23: astore_3
+      24: aload_2
+      25: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      28: checkcast     #536                // class sbt/internal/util/KCons
+      31: astore        4
+      33: aload         4
+      35: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      38: checkcast     #228                // class scala/collection/Seq
+      41: astore        5
+      43: aload         4
+      45: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      48: checkcast     #536                // class sbt/internal/util/KCons
+      51: astore        6
+      53: aload         6
+      55: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      58: checkcast     #120                // class scala/Option
+      61: astore        7
+      63: aload         6
+      65: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      68: checkcast     #536                // class sbt/internal/util/KCons
+      71: astore        8
+      73: aload         8
+      75: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      78: checkcast     #903                // class sbt/librarymanagement/ivy/IvyPaths
+      81: astore        9
+      83: aload         8
+      85: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      88: checkcast     #536                // class sbt/internal/util/KCons
+      91: astore        10
+      93: aload         10
+      95: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      98: checkcast     #228                // class scala/collection/Seq
+     101: astore        11
+     103: aload         10
+     105: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     108: checkcast     #536                // class sbt/internal/util/KCons
+     111: astore        12
+     113: aload         12
+     115: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     118: checkcast     #151                // class java/io/File
+     121: astore        13
+     123: aload         12
+     125: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     128: checkcast     #536                // class sbt/internal/util/KCons
+     131: astore        14
+     133: aload         14
+     135: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     138: checkcast     #120                // class scala/Option
+     141: astore        15
+     143: aload         14
+     145: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     148: checkcast     #536                // class sbt/internal/util/KCons
+     151: astore        16
+     153: aload         16
+     155: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     158: checkcast     #228                // class scala/collection/Seq
+     161: astore        17
+     163: aload         16
+     165: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     168: checkcast     #536                // class sbt/internal/util/KCons
+     171: astore        18
+     173: aload         18
+     175: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     178: checkcast     #228                // class scala/collection/Seq
+     181: astore        19
+     183: aload         18
+     185: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     188: checkcast     #536                // class sbt/internal/util/KCons
+     191: astore        20
+     193: aload         20
+     195: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     198: checkcast     #120                // class scala/Option
+     201: astore        21
+     203: aload         20
+     205: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     208: checkcast     #536                // class sbt/internal/util/KCons
+     211: astore        22
+     213: aload         22
+     215: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     218: invokestatic  #909                // Method scala/runtime/BoxesRunTime.unboxToBoolean:(Ljava/lang/Object;)Z
+     221: istore        23
+     223: aload         22
+     225: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     228: checkcast     #536                // class sbt/internal/util/KCons
+     231: astore        24
+     233: aload         24
+     235: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     238: checkcast     #523                // class java/lang/String
+     241: astore        25
+     243: aload         24
+     245: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     248: checkcast     #536                // class sbt/internal/util/KCons
+     251: astore        26
+     253: aload         26
+     255: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     258: checkcast     #523                // class java/lang/String
+     261: astore        27
+     263: aload         26
+     265: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     268: checkcast     #536                // class sbt/internal/util/KCons
+     271: astore        28
+     273: aload         28
+     275: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     278: checkcast     #280                // class scala/collection/immutable/Set
+     281: astore        29
+     283: aload         28
+     285: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     288: checkcast     #536                // class sbt/internal/util/KCons
+     291: astore        30
+     293: aload         30
+     295: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     298: checkcast     #334                // class xsbti/AppConfiguration
+     301: astore        31
+     303: aload         30
+     305: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     308: checkcast     #536                // class sbt/internal/util/KCons
+     311: astore        32
+     313: aload         32
+     315: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     318: checkcast     #228                // class scala/collection/Seq
+     321: astore        33
+     323: aload         32
+     325: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     328: checkcast     #536                // class sbt/internal/util/KCons
+     331: astore        34
+     333: aload         34
+     335: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     338: checkcast     #228                // class scala/collection/Seq
+     341: astore        35
+     343: aload         34
+     345: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     348: checkcast     #536                // class sbt/internal/util/KCons
+     351: astore        36
+     353: aload         36
+     355: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     358: checkcast     #228                // class scala/collection/Seq
+     361: astore        37
+     363: aload         36
+     365: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     368: checkcast     #536                // class sbt/internal/util/KCons
+     371: astore        38
+     373: aload         38
+     375: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     378: checkcast     #228                // class scala/collection/Seq
+     381: astore        39
+     383: aload         38
+     385: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     388: checkcast     #536                // class sbt/internal/util/KCons
+     391: astore        40
+     393: aload         40
+     395: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     398: checkcast     #523                // class java/lang/String
+     401: astore        41
+     403: aload         41
+     405: astore        42
+     407: getstatic     #911                // Field MODULE$:Lsbt/coursierint/LMCoursier$;
+     410: aload         39
+     412: aload         37
+     414: invokeinterface #386,  1          // InterfaceMethod scala/collection/Seq.toVector:()Lscala/collection/immutable/Vector;
+     419: aload         35
+     421: invokeinterface #386,  1          // InterfaceMethod scala/collection/Seq.toVector:()Lscala/collection/immutable/Vector;
+     426: aload         33
+     428: aload         31
+     430: getstatic     #257                // Field scala/None$.MODULE$:Lscala/None$;
+     433: aload         29
+     435: aload         27
+     437: aload         42
+     439: aload         25
+     441: iload         23
+     443: ifeq          461
+     446: getstatic     #916                // Field sbt/librarymanagement/ScalaArtifacts$.MODULE$:Lsbt/librarymanagement/ScalaArtifacts$;
+     449: aload         42
+     451: invokevirtual #920                // Method sbt/librarymanagement/ScalaArtifacts$.isScala3:(Ljava/lang/String;)Z
+     454: ifne          461
+     457: iconst_1
+     458: goto          462
+     461: iconst_0
+     462: aload         21
+     464: aload         19
+     466: aload         17
+     468: aload         15
+     470: aload         13
+     472: aload         11
+     474: aload         9
+     476: invokevirtual #922                // Method sbt/librarymanagement/ivy/IvyPaths.ivyHome:()Lscala/Option;
+     479: aload         7
+     481: aload         5
+     483: new           #146                // class scala/Some
+     486: dup
+     487: aload_3
+     488: invokespecial #923                // Method scala/Some."<init>":(Ljava/lang/Object;)V
+     491: aload_1
+     492: invokeinterface #926,  1          // InterfaceMethod sbt/std/TaskStreams.log:()Lsbt/internal/util/ManagedLogger;
+     497: invokevirtual #260                // Method coursierConfiguration:(Lscala/collection/Seq;Lscala/collection/Seq;Lscala/collection/Seq;Lscala/collection/Seq;Lxsbti/AppConfiguration;Lscala/Option;Lscala/collection/immutable/Set;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLscala/Option;Lscala/collection/Seq;Lscala/collection/Seq;Lscala/Option;Ljava/io/File;Lscala/collection/Seq;Lscala/Option;Lscala/Option;Lscala/collection/Seq;Lscala/Option;Lsbt/util/Logger;)Llmcoursier/CoursierConfiguration;
+     500: areturn
+
+  public static final java.lang.String $anonfun$updateClassifierConfigurationTask$2(java.lang.String);
+    Code:
+       0: aload_0
+       1: areturn
+
+  public static final lmcoursier.CoursierConfiguration $anonfun$updateClassifierConfigurationTask$1(sbt.internal.util.KCons);
+    Code:
+       0: aload_0
+       1: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+       4: checkcast     #897                // class sbt/std/TaskStreams
+       7: astore_1
+       8: aload_0
+       9: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      12: checkcast     #536                // class sbt/internal/util/KCons
+      15: astore_2
+      16: aload_2
+      17: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      20: checkcast     #374                // class sbt/librarymanagement/UpdateConfiguration
+      23: astore_3
+      24: aload_2
+      25: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      28: checkcast     #536                // class sbt/internal/util/KCons
+      31: astore        4
+      33: aload         4
+      35: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      38: checkcast     #228                // class scala/collection/Seq
+      41: astore        5
+      43: aload         4
+      45: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      48: checkcast     #536                // class sbt/internal/util/KCons
+      51: astore        6
+      53: aload         6
+      55: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      58: checkcast     #120                // class scala/Option
+      61: astore        7
+      63: aload         6
+      65: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      68: checkcast     #536                // class sbt/internal/util/KCons
+      71: astore        8
+      73: aload         8
+      75: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      78: checkcast     #903                // class sbt/librarymanagement/ivy/IvyPaths
+      81: astore        9
+      83: aload         8
+      85: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      88: checkcast     #536                // class sbt/internal/util/KCons
+      91: astore        10
+      93: aload         10
+      95: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      98: checkcast     #228                // class scala/collection/Seq
+     101: astore        11
+     103: aload         10
+     105: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     108: checkcast     #536                // class sbt/internal/util/KCons
+     111: astore        12
+     113: aload         12
+     115: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     118: checkcast     #151                // class java/io/File
+     121: astore        13
+     123: aload         12
+     125: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     128: checkcast     #536                // class sbt/internal/util/KCons
+     131: astore        14
+     133: aload         14
+     135: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     138: checkcast     #120                // class scala/Option
+     141: astore        15
+     143: aload         14
+     145: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     148: checkcast     #536                // class sbt/internal/util/KCons
+     151: astore        16
+     153: aload         16
+     155: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     158: checkcast     #228                // class scala/collection/Seq
+     161: astore        17
+     163: aload         16
+     165: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     168: checkcast     #536                // class sbt/internal/util/KCons
+     171: astore        18
+     173: aload         18
+     175: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     178: checkcast     #228                // class scala/collection/Seq
+     181: astore        19
+     183: aload         18
+     185: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     188: checkcast     #536                // class sbt/internal/util/KCons
+     191: astore        20
+     193: aload         20
+     195: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     198: checkcast     #120                // class scala/Option
+     201: astore        21
+     203: aload         20
+     205: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     208: checkcast     #536                // class sbt/internal/util/KCons
+     211: astore        22
+     213: aload         22
+     215: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     218: invokestatic  #909                // Method scala/runtime/BoxesRunTime.unboxToBoolean:(Ljava/lang/Object;)Z
+     221: istore        23
+     223: aload         22
+     225: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     228: checkcast     #536                // class sbt/internal/util/KCons
+     231: astore        24
+     233: aload         24
+     235: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     238: checkcast     #523                // class java/lang/String
+     241: astore        25
+     243: aload         24
+     245: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     248: checkcast     #536                // class sbt/internal/util/KCons
+     251: astore        26
+     253: aload         26
+     255: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     258: checkcast     #523                // class java/lang/String
+     261: astore        27
+     263: aload         26
+     265: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     268: checkcast     #536                // class sbt/internal/util/KCons
+     271: astore        28
+     273: aload         28
+     275: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     278: checkcast     #280                // class scala/collection/immutable/Set
+     281: astore        29
+     283: aload         28
+     285: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     288: checkcast     #536                // class sbt/internal/util/KCons
+     291: astore        30
+     293: aload         30
+     295: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     298: checkcast     #228                // class scala/collection/Seq
+     301: astore        31
+     303: aload         30
+     305: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     308: checkcast     #536                // class sbt/internal/util/KCons
+     311: astore        32
+     313: aload         32
+     315: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     318: checkcast     #334                // class xsbti/AppConfiguration
+     321: astore        33
+     323: aload         32
+     325: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     328: checkcast     #536                // class sbt/internal/util/KCons
+     331: astore        34
+     333: aload         34
+     335: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     338: checkcast     #228                // class scala/collection/Seq
+     341: astore        35
+     343: aload         34
+     345: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     348: checkcast     #536                // class sbt/internal/util/KCons
+     351: astore        36
+     353: aload         36
+     355: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     358: checkcast     #228                // class scala/collection/Seq
+     361: astore        37
+     363: aload         36
+     365: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     368: checkcast     #536                // class sbt/internal/util/KCons
+     371: astore        38
+     373: aload         38
+     375: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     378: checkcast     #228                // class scala/collection/Seq
+     381: astore        39
+     383: aload         38
+     385: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     388: checkcast     #536                // class sbt/internal/util/KCons
+     391: astore        40
+     393: aload         40
+     395: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     398: checkcast     #228                // class scala/collection/Seq
+     401: astore        41
+     403: aload         40
+     405: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     408: checkcast     #536                // class sbt/internal/util/KCons
+     411: astore        42
+     413: aload         42
+     415: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     418: checkcast     #523                // class java/lang/String
+     421: astore        43
+     423: aload         43
+     425: astore        44
+     427: getstatic     #911                // Field MODULE$:Lsbt/coursierint/LMCoursier$;
+     430: aload         41
+     432: aload         39
+     434: invokeinterface #386,  1          // InterfaceMethod scala/collection/Seq.toVector:()Lscala/collection/immutable/Vector;
+     439: aload         37
+     441: invokeinterface #386,  1          // InterfaceMethod scala/collection/Seq.toVector:()Lscala/collection/immutable/Vector;
+     446: aload         35
+     448: aload         33
+     450: new           #146                // class scala/Some
+     453: dup
+     454: aload         31
+     456: invokedynamic #958,  0            // InvokeDynamic #17:apply:()Lscala/Function1;
+     461: getstatic     #963                // Field scala/collection/Seq$.MODULE$:Lscala/collection/Seq$;
+     464: invokevirtual #964                // Method scala/collection/Seq$.canBuildFrom:()Lscala/collection/generic/CanBuildFrom;
+     467: invokeinterface #965,  3          // InterfaceMethod scala/collection/Seq.map:(Lscala/Function1;Lscala/collection/generic/CanBuildFrom;)Ljava/lang/Object;
+     472: invokespecial #923                // Method scala/Some."<init>":(Ljava/lang/Object;)V
+     475: aload         29
+     477: aload         27
+     479: aload         44
+     481: aload         25
+     483: iload         23
+     485: ifeq          503
+     488: getstatic     #916                // Field sbt/librarymanagement/ScalaArtifacts$.MODULE$:Lsbt/librarymanagement/ScalaArtifacts$;
+     491: aload         44
+     493: invokevirtual #920                // Method sbt/librarymanagement/ScalaArtifacts$.isScala3:(Ljava/lang/String;)Z
+     496: ifne          503
+     499: iconst_1
+     500: goto          504
+     503: iconst_0
+     504: aload         21
+     506: aload         19
+     508: aload         17
+     510: aload         15
+     512: aload         13
+     514: aload         11
+     516: aload         9
+     518: invokevirtual #922                // Method sbt/librarymanagement/ivy/IvyPaths.ivyHome:()Lscala/Option;
+     521: aload         7
+     523: aload         5
+     525: new           #146                // class scala/Some
+     528: dup
+     529: aload_3
+     530: invokespecial #923                // Method scala/Some."<init>":(Ljava/lang/Object;)V
+     533: aload_1
+     534: invokeinterface #926,  1          // InterfaceMethod sbt/std/TaskStreams.log:()Lsbt/internal/util/ManagedLogger;
+     539: invokevirtual #260                // Method coursierConfiguration:(Lscala/collection/Seq;Lscala/collection/Seq;Lscala/collection/Seq;Lscala/collection/Seq;Lxsbti/AppConfiguration;Lscala/Option;Lscala/collection/immutable/Set;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLscala/Option;Lscala/collection/Seq;Lscala/collection/Seq;Lscala/Option;Ljava/io/File;Lscala/collection/Seq;Lscala/Option;Lscala/Option;Lscala/collection/Seq;Lscala/Option;Lsbt/util/Logger;)Llmcoursier/CoursierConfiguration;
+     542: areturn
+
+  public static final lmcoursier.CoursierConfiguration $anonfun$updateSbtClassifierConfigurationTask$1(sbt.internal.util.KCons);
+    Code:
+       0: aload_0
+       1: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+       4: checkcast     #897                // class sbt/std/TaskStreams
+       7: astore_1
+       8: aload_0
+       9: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      12: checkcast     #536                // class sbt/internal/util/KCons
+      15: astore_2
+      16: aload_2
+      17: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      20: checkcast     #374                // class sbt/librarymanagement/UpdateConfiguration
+      23: astore_3
+      24: aload_2
+      25: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      28: checkcast     #536                // class sbt/internal/util/KCons
+      31: astore        4
+      33: aload         4
+      35: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      38: checkcast     #228                // class scala/collection/Seq
+      41: astore        5
+      43: aload         4
+      45: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      48: checkcast     #536                // class sbt/internal/util/KCons
+      51: astore        6
+      53: aload         6
+      55: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      58: checkcast     #120                // class scala/Option
+      61: astore        7
+      63: aload         6
+      65: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      68: checkcast     #536                // class sbt/internal/util/KCons
+      71: astore        8
+      73: aload         8
+      75: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      78: checkcast     #903                // class sbt/librarymanagement/ivy/IvyPaths
+      81: astore        9
+      83: aload         8
+      85: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      88: checkcast     #536                // class sbt/internal/util/KCons
+      91: astore        10
+      93: aload         10
+      95: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      98: checkcast     #228                // class scala/collection/Seq
+     101: astore        11
+     103: aload         10
+     105: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     108: checkcast     #536                // class sbt/internal/util/KCons
+     111: astore        12
+     113: aload         12
+     115: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     118: checkcast     #151                // class java/io/File
+     121: astore        13
+     123: aload         12
+     125: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     128: checkcast     #536                // class sbt/internal/util/KCons
+     131: astore        14
+     133: aload         14
+     135: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     138: checkcast     #120                // class scala/Option
+     141: astore        15
+     143: aload         14
+     145: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     148: checkcast     #536                // class sbt/internal/util/KCons
+     151: astore        16
+     153: aload         16
+     155: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     158: checkcast     #228                // class scala/collection/Seq
+     161: astore        17
+     163: aload         16
+     165: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     168: checkcast     #536                // class sbt/internal/util/KCons
+     171: astore        18
+     173: aload         18
+     175: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     178: checkcast     #228                // class scala/collection/Seq
+     181: astore        19
+     183: aload         18
+     185: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     188: checkcast     #536                // class sbt/internal/util/KCons
+     191: astore        20
+     193: aload         20
+     195: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     198: checkcast     #120                // class scala/Option
+     201: astore        21
+     203: aload         20
+     205: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     208: checkcast     #536                // class sbt/internal/util/KCons
+     211: astore        22
+     213: aload         22
+     215: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     218: invokestatic  #909                // Method scala/runtime/BoxesRunTime.unboxToBoolean:(Ljava/lang/Object;)Z
+     221: istore        23
+     223: aload         22
+     225: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     228: checkcast     #536                // class sbt/internal/util/KCons
+     231: astore        24
+     233: aload         24
+     235: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     238: checkcast     #523                // class java/lang/String
+     241: astore        25
+     243: aload         24
+     245: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     248: checkcast     #536                // class sbt/internal/util/KCons
+     251: astore        26
+     253: aload         26
+     255: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     258: checkcast     #523                // class java/lang/String
+     261: astore        27
+     263: aload         26
+     265: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     268: checkcast     #536                // class sbt/internal/util/KCons
+     271: astore        28
+     273: aload         28
+     275: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     278: checkcast     #280                // class scala/collection/immutable/Set
+     281: astore        29
+     283: aload         28
+     285: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     288: checkcast     #536                // class sbt/internal/util/KCons
+     291: astore        30
+     293: aload         30
+     295: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     298: checkcast     #334                // class xsbti/AppConfiguration
+     301: astore        31
+     303: aload         30
+     305: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     308: checkcast     #536                // class sbt/internal/util/KCons
+     311: astore        32
+     313: aload         32
+     315: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     318: checkcast     #228                // class scala/collection/Seq
+     321: astore        33
+     323: aload         32
+     325: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     328: checkcast     #536                // class sbt/internal/util/KCons
+     331: astore        34
+     333: aload         34
+     335: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     338: checkcast     #228                // class scala/collection/Seq
+     341: astore        35
+     343: aload         34
+     345: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     348: checkcast     #536                // class sbt/internal/util/KCons
+     351: astore        36
+     353: aload         36
+     355: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     358: checkcast     #523                // class java/lang/String
+     361: astore        37
+     363: aload         37
+     365: astore        38
+     367: getstatic     #911                // Field MODULE$:Lsbt/coursierint/LMCoursier$;
+     370: aload         35
+     372: getstatic     #181                // Field scala/package$.MODULE$:Lscala/package$;
+     375: invokevirtual #185                // Method scala/package$.Vector:()Lscala/collection/immutable/Vector$;
+     378: getstatic     #973                // Field scala/collection/immutable/Nil$.MODULE$:Lscala/collection/immutable/Nil$;
+     381: invokevirtual #226                // Method scala/collection/immutable/Vector$.apply:(Lscala/collection/Seq;)Lscala/collection/GenTraversable;
+     384: checkcast     #228                // class scala/collection/Seq
+     387: getstatic     #181                // Field scala/package$.MODULE$:Lscala/package$;
+     390: invokevirtual #185                // Method scala/package$.Vector:()Lscala/collection/immutable/Vector$;
+     393: getstatic     #973                // Field scala/collection/immutable/Nil$.MODULE$:Lscala/collection/immutable/Nil$;
+     396: invokevirtual #226                // Method scala/collection/immutable/Vector$.apply:(Lscala/collection/Seq;)Lscala/collection/GenTraversable;
+     399: checkcast     #228                // class scala/collection/Seq
+     402: aload         33
+     404: aload         31
+     406: getstatic     #257                // Field scala/None$.MODULE$:Lscala/None$;
+     409: aload         29
+     411: aload         27
+     413: aload         38
+     415: aload         25
+     417: iload         23
+     419: ifeq          437
+     422: getstatic     #916                // Field sbt/librarymanagement/ScalaArtifacts$.MODULE$:Lsbt/librarymanagement/ScalaArtifacts$;
+     425: aload         38
+     427: invokevirtual #920                // Method sbt/librarymanagement/ScalaArtifacts$.isScala3:(Ljava/lang/String;)Z
+     430: ifne          437
+     433: iconst_1
+     434: goto          438
+     437: iconst_0
+     438: aload         21
+     440: aload         19
+     442: aload         17
+     444: aload         15
+     446: aload         13
+     448: aload         11
+     450: aload         9
+     452: invokevirtual #922                // Method sbt/librarymanagement/ivy/IvyPaths.ivyHome:()Lscala/Option;
+     455: aload         7
+     457: aload         5
+     459: new           #146                // class scala/Some
+     462: dup
+     463: aload_3
+     464: invokespecial #923                // Method scala/Some."<init>":(Ljava/lang/Object;)V
+     467: aload_1
+     468: invokeinterface #926,  1          // InterfaceMethod sbt/std/TaskStreams.log:()Lsbt/internal/util/ManagedLogger;
+     473: invokevirtual #260                // Method coursierConfiguration:(Lscala/collection/Seq;Lscala/collection/Seq;Lscala/collection/Seq;Lscala/collection/Seq;Lxsbti/AppConfiguration;Lscala/Option;Lscala/collection/immutable/Set;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLscala/Option;Lscala/collection/Seq;Lscala/collection/Seq;Lscala/Option;Ljava/io/File;Lscala/collection/Seq;Lscala/Option;Lscala/Option;Lscala/collection/Seq;Lscala/Option;Lsbt/util/Logger;)Llmcoursier/CoursierConfiguration;
+     476: areturn
+
+  public static final lmcoursier.CoursierConfiguration $anonfun$scalaCompilerBridgeConfigurationTask$1(sbt.internal.util.KCons);
+    Code:
+       0: aload_0
+       1: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+       4: checkcast     #897                // class sbt/std/TaskStreams
+       7: astore_1
+       8: aload_0
+       9: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      12: checkcast     #536                // class sbt/internal/util/KCons
+      15: astore_2
+      16: aload_2
+      17: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      20: checkcast     #374                // class sbt/librarymanagement/UpdateConfiguration
+      23: astore_3
+      24: aload_2
+      25: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      28: checkcast     #536                // class sbt/internal/util/KCons
+      31: astore        4
+      33: aload         4
+      35: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      38: checkcast     #228                // class scala/collection/Seq
+      41: astore        5
+      43: aload         4
+      45: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      48: checkcast     #536                // class sbt/internal/util/KCons
+      51: astore        6
+      53: aload         6
+      55: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      58: checkcast     #120                // class scala/Option
+      61: astore        7
+      63: aload         6
+      65: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      68: checkcast     #536                // class sbt/internal/util/KCons
+      71: astore        8
+      73: aload         8
+      75: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      78: checkcast     #903                // class sbt/librarymanagement/ivy/IvyPaths
+      81: astore        9
+      83: aload         8
+      85: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+      88: checkcast     #536                // class sbt/internal/util/KCons
+      91: astore        10
+      93: aload         10
+      95: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+      98: checkcast     #228                // class scala/collection/Seq
+     101: astore        11
+     103: aload         10
+     105: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     108: checkcast     #536                // class sbt/internal/util/KCons
+     111: astore        12
+     113: aload         12
+     115: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     118: checkcast     #151                // class java/io/File
+     121: astore        13
+     123: aload         12
+     125: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     128: checkcast     #536                // class sbt/internal/util/KCons
+     131: astore        14
+     133: aload         14
+     135: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     138: checkcast     #120                // class scala/Option
+     141: astore        15
+     143: aload         14
+     145: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     148: checkcast     #536                // class sbt/internal/util/KCons
+     151: astore        16
+     153: aload         16
+     155: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     158: checkcast     #228                // class scala/collection/Seq
+     161: astore        17
+     163: aload         16
+     165: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     168: checkcast     #536                // class sbt/internal/util/KCons
+     171: astore        18
+     173: aload         18
+     175: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     178: checkcast     #228                // class scala/collection/Seq
+     181: astore        19
+     183: aload         18
+     185: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     188: checkcast     #536                // class sbt/internal/util/KCons
+     191: astore        20
+     193: aload         20
+     195: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     198: checkcast     #120                // class scala/Option
+     201: astore        21
+     203: aload         20
+     205: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     208: checkcast     #536                // class sbt/internal/util/KCons
+     211: astore        22
+     213: aload         22
+     215: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     218: invokestatic  #909                // Method scala/runtime/BoxesRunTime.unboxToBoolean:(Ljava/lang/Object;)Z
+     221: istore        23
+     223: aload         22
+     225: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     228: checkcast     #536                // class sbt/internal/util/KCons
+     231: astore        24
+     233: aload         24
+     235: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     238: checkcast     #523                // class java/lang/String
+     241: astore        25
+     243: aload         24
+     245: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     248: checkcast     #536                // class sbt/internal/util/KCons
+     251: astore        26
+     253: aload         26
+     255: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     258: checkcast     #523                // class java/lang/String
+     261: astore        27
+     263: aload         26
+     265: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     268: checkcast     #536                // class sbt/internal/util/KCons
+     271: astore        28
+     273: aload         28
+     275: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     278: checkcast     #280                // class scala/collection/immutable/Set
+     281: astore        29
+     283: aload         28
+     285: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     288: checkcast     #536                // class sbt/internal/util/KCons
+     291: astore        30
+     293: aload         30
+     295: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     298: checkcast     #334                // class xsbti/AppConfiguration
+     301: astore        31
+     303: aload         30
+     305: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     308: checkcast     #536                // class sbt/internal/util/KCons
+     311: astore        32
+     313: aload         32
+     315: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     318: checkcast     #228                // class scala/collection/Seq
+     321: astore        33
+     323: aload         32
+     325: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     328: checkcast     #536                // class sbt/internal/util/KCons
+     331: astore        34
+     333: aload         34
+     335: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     338: checkcast     #228                // class scala/collection/Seq
+     341: astore        35
+     343: aload         34
+     345: invokevirtual #901                // Method sbt/internal/util/KCons.tail:()Lsbt/internal/util/KList;
+     348: checkcast     #536                // class sbt/internal/util/KCons
+     351: astore        36
+     353: aload         36
+     355: invokevirtual #895                // Method sbt/internal/util/KCons.head:()Ljava/lang/Object;
+     358: checkcast     #523                // class java/lang/String
+     361: astore        37
+     363: aload         37
+     365: astore        38
+     367: getstatic     #911                // Field MODULE$:Lsbt/coursierint/LMCoursier$;
+     370: aload         35
+     372: getstatic     #181                // Field scala/package$.MODULE$:Lscala/package$;
+     375: invokevirtual #185                // Method scala/package$.Vector:()Lscala/collection/immutable/Vector$;
+     378: getstatic     #973                // Field scala/collection/immutable/Nil$.MODULE$:Lscala/collection/immutable/Nil$;
+     381: invokevirtual #226                // Method scala/collection/immutable/Vector$.apply:(Lscala/collection/Seq;)Lscala/collection/GenTraversable;
+     384: checkcast     #228                // class scala/collection/Seq
+     387: getstatic     #181                // Field scala/package$.MODULE$:Lscala/package$;
+     390: invokevirtual #185                // Method scala/package$.Vector:()Lscala/collection/immutable/Vector$;
+     393: getstatic     #973                // Field scala/collection/immutable/Nil$.MODULE$:Lscala/collection/immutable/Nil$;
+     396: invokevirtual #226                // Method scala/collection/immutable/Vector$.apply:(Lscala/collection/Seq;)Lscala/collection/GenTraversable;
+     399: checkcast     #228                // class scala/collection/Seq
+     402: aload         33
+     404: aload         31
+     406: getstatic     #257                // Field scala/None$.MODULE$:Lscala/None$;
+     409: aload         29
+     411: aload         27
+     413: aload         38
+     415: aload         25
+     417: iload         23
+     419: ifeq          437
+     422: getstatic     #916                // Field sbt/librarymanagement/ScalaArtifacts$.MODULE$:Lsbt/librarymanagement/ScalaArtifacts$;
+     425: aload         38
+     427: invokevirtual #920                // Method sbt/librarymanagement/ScalaArtifacts$.isScala3:(Ljava/lang/String;)Z
+     430: ifne          437
+     433: iconst_1
+     434: goto          438
+     437: iconst_0
+     438: aload         21
+     440: aload         19
+     442: aload         17
+     444: aload         15
+     446: aload         13
+     448: aload         11
+     450: aload         9
+     452: invokevirtual #922                // Method sbt/librarymanagement/ivy/IvyPaths.ivyHome:()Lscala/Option;
+     455: aload         7
+     457: aload         5
+     459: new           #146                // class scala/Some
+     462: dup
+     463: aload_3
+     464: invokespecial #923                // Method scala/Some."<init>":(Ljava/lang/Object;)V
+     467: aload_1
+     468: invokeinterface #926,  1          // InterfaceMethod sbt/std/TaskStreams.log:()Lsbt/internal/util/ManagedLogger;
+     473: invokevirtual #260                // Method coursierConfiguration:(Lscala/collection/Seq;Lscala/collection/Seq;Lscala/collection/Seq;Lscala/collection/Seq;Lxsbti/AppConfiguration;Lscala/Option;Lscala/collection/immutable/Set;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLscala/Option;Lscala/collection/Seq;Lscala/collection/Seq;Lscala/Option;Ljava/io/File;Lscala/collection/Seq;Lscala/Option;Lscala/Option;Lscala/collection/Seq;Lscala/Option;Lsbt/util/Logger;)Llmcoursier/CoursierConfiguration;
+     476: areturn
+
+  public static final scala.Option $anonfun$coursierLoggerTask$1(scala.Tuple2);
+    Code:
+       0: aload_0
+       1: invokevirtual #979                // Method scala/Tuple2._1$mcZ$sp:()Z
+       4: istore_1
+       5: aload_0
+       6: invokevirtual #868                // Method scala/Tuple2._2:()Ljava/lang/Object;
+       9: checkcast     #897                // class sbt/std/TaskStreams
+      12: astore_2
+      13: aload_2
+      14: astore_3
+      15: iload_1
+      16: istore        4
+      18: iload         4
+      20: ifeq          27
+      23: getstatic     #257                // Field scala/None$.MODULE$:Lscala/None$;
+      26: areturn
+      27: new           #146                // class scala/Some
+      30: dup
+      31: new           #35                 // class sbt/coursierint/LMCoursier$CoursierLogger
+      34: dup
+      35: aload_3
+      36: invokeinterface #926,  1          // InterfaceMethod sbt/std/TaskStreams.log:()Lsbt/internal/util/ManagedLogger;
+      41: invokespecial #982                // Method sbt/coursierint/LMCoursier$CoursierLogger."<init>":(Lsbt/util/Logger;)V
+      44: invokespecial #923                // Method scala/Some."<init>":(Ljava/lang/Object;)V
+      47: areturn
+
+  public static final scala.collection.Seq $anonfun$publicationsSetting$1(scala.collection.Seq);
+    Code:
+       0: aload_0
+       1: areturn
+
+  public static final java.lang.String $anonfun$allCredentialsTask$2(java.lang.String);
+    Code:
+       0: aload_0
+       1: areturn
+
+  private static final void registerCredentials$1(sbt.librarymanagement.ivy.Credentials, sbt.std.TaskStreams);
+    Code:
+       0: aload_0
+       1: astore        5
+       3: aload         5
+       5: instanceof    #994                // class sbt/librarymanagement/ivy/DirectCredentials
+       8: ifeq          32
+      11: aload         5
+      13: checkcast     #994                // class sbt/librarymanagement/ivy/DirectCredentials
+      16: astore        6
+      18: getstatic     #181                // Field scala/package$.MODULE$:Lscala/package$;
+      21: invokevirtual #998                // Method scala/package$.Right:()Lscala/util/Right$;
+      24: aload         6
+      26: invokevirtual #1003               // Method scala/util/Right$.apply:(Ljava/lang/Object;)Lscala/util/Right;
+      29: goto          77
+      32: goto          35
+      35: aload         5
+      37: instanceof    #1005               // class sbt/librarymanagement/ivy/FileCredentials
+      40: ifeq          64
+      43: aload         5
+      45: checkcast     #1005               // class sbt/librarymanagement/ivy/FileCredentials
+      48: astore        7
+      50: getstatic     #1010               // Field sbt/librarymanagement/ivy/Credentials$.MODULE$:Lsbt/librarymanagement/ivy/Credentials$;
+      53: aload         7
+      55: invokevirtual #1012               // Method sbt/librarymanagement/ivy/FileCredentials.path:()Ljava/io/File;
+      58: invokevirtual #1016               // Method sbt/librarymanagement/ivy/Credentials$.loadCredentials:(Ljava/io/File;)Lscala/util/Either;
+      61: goto          77
+      64: goto          67
+      67: new           #873                // class scala/MatchError
+      70: dup
+      71: aload         5
+      73: invokespecial #876                // Method scala/MatchError."<init>":(Ljava/lang/Object;)V
+      76: athrow
+      77: astore        4
+      79: aload         4
+      81: instanceof    #1018               // class scala/util/Left
+      84: ifeq          125
+      87: aload         4
+      89: checkcast     #1018               // class scala/util/Left
+      92: astore        8
+      94: aload         8
+      96: invokevirtual #1019               // Method scala/util/Left.value:()Ljava/lang/Object;
+      99: checkcast     #523                // class java/lang/String
+     102: astore        9
+     104: aload_1
+     105: invokeinterface #926,  1          // InterfaceMethod sbt/std/TaskStreams.log:()Lsbt/internal/util/ManagedLogger;
+     110: aload         9
+     112: invokedynamic #1026,  0           // InvokeDynamic #18:apply:(Ljava/lang/String;)Lscala/Function0;
+     117: invokevirtual #1032               // Method sbt/internal/util/ManagedLogger.warn:(Lscala/Function0;)V
+     120: getstatic     #1038               // Field scala/runtime/BoxedUnit.UNIT:Lscala/runtime/BoxedUnit;
+     123: pop
+     124: return
+     125: goto          128
+     128: aload         4
+     130: instanceof    #1040               // class scala/util/Right
+     133: ifeq          187
+     136: aload         4
+     138: checkcast     #1040               // class scala/util/Right
+     141: astore        10
+     143: aload         10
+     145: invokevirtual #1041               // Method scala/util/Right.value:()Ljava/lang/Object;
+     148: checkcast     #994                // class sbt/librarymanagement/ivy/DirectCredentials
+     151: astore        11
+     153: getstatic     #911                // Field MODULE$:Lsbt/coursierint/LMCoursier$;
+     156: getfield      #1043               // Field credentialRegistry:Ljava/util/concurrent/ConcurrentHashMap;
+     159: new           #192                // class scala/Tuple2
+     162: dup
+     163: aload         11
+     165: invokevirtual #1046               // Method sbt/librarymanagement/ivy/DirectCredentials.host:()Ljava/lang/String;
+     168: aload         11
+     170: invokevirtual #1049               // Method sbt/librarymanagement/ivy/DirectCredentials.realm:()Ljava/lang/String;
+     173: invokespecial #215                // Method scala/Tuple2."<init>":(Ljava/lang/Object;Ljava/lang/Object;)V
+     176: aload         11
+     178: invokevirtual #1055               // Method java/util/concurrent/ConcurrentHashMap.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     181: pop
+     182: getstatic     #1038               // Field scala/runtime/BoxedUnit.UNIT:Lscala/runtime/BoxedUnit;
+     185: pop
+     186: return
+     187: goto          190
+     190: new           #873                // class scala/MatchError
+     193: dup
+     194: aload         4
+     196: invokespecial #876                // Method scala/MatchError."<init>":(Ljava/lang/Object;)V
+     199: athrow
+
+  public static final void $anonfun$allCredentialsTask$3(sbt.std.TaskStreams, sbt.librarymanagement.ivy.Credentials);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: invokestatic  #1067               // Method registerCredentials$1:(Lsbt/librarymanagement/ivy/Credentials;Lsbt/std/TaskStreams;)V
+       5: return
+
+  public static final void $anonfun$allCredentialsTask$4(sbt.std.TaskStreams, sbt.librarymanagement.ivy.Credentials);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: invokestatic  #1067               // Method registerCredentials$1:(Lsbt/librarymanagement/ivy/Credentials;Lsbt/std/TaskStreams;)V
+       5: return
+
+  public static final void $anonfun$allCredentialsTask$5(sbt.std.TaskStreams, sbt.librarymanagement.ivy.Credentials);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: invokestatic  #1067               // Method registerCredentials$1:(Lsbt/librarymanagement/ivy/Credentials;Lsbt/std/TaskStreams;)V
+       5: return
+
+  public static final scala.collection.immutable.Vector $anonfun$allCredentialsTask$1(scala.Tuple4);
+    Code:
+       0: aload_0
+       1: invokevirtual #1071               // Method scala/Tuple4._1:()Ljava/lang/Object;
+       4: checkcast     #228                // class scala/collection/Seq
+       7: astore_1
+       8: aload_0
+       9: invokevirtual #1072               // Method scala/Tuple4._2:()Ljava/lang/Object;
+      12: checkcast     #228                // class scala/collection/Seq
+      15: astore_2
+      16: aload_0
+      17: invokevirtual #1075               // Method scala/Tuple4._3:()Ljava/lang/Object;
+      20: checkcast     #228                // class scala/collection/Seq
+      23: astore_3
+      24: aload_0
+      25: invokevirtual #1078               // Method scala/Tuple4._4:()Ljava/lang/Object;
+      28: checkcast     #897                // class sbt/std/TaskStreams
+      31: astore        4
+      33: aload         4
+      35: astore        5
+      37: aload_3
+      38: aload         5
+      40: invokedynamic #1088,  0           // InvokeDynamic #19:apply:(Lsbt/std/TaskStreams;)Lscala/Function1;
+      45: invokeinterface #1092,  2         // InterfaceMethod scala/collection/Seq.foreach:(Lscala/Function1;)V
+      50: aload_2
+      51: aload         5
+      53: invokedynamic #1097,  0           // InvokeDynamic #20:apply:(Lsbt/std/TaskStreams;)Lscala/Function1;
+      58: invokeinterface #1092,  2         // InterfaceMethod scala/collection/Seq.foreach:(Lscala/Function1;)V
+      63: aload_1
+      64: aload         5
+      66: invokedynamic #1102,  0           // InvokeDynamic #21:apply:(Lsbt/std/TaskStreams;)Lscala/Function1;
+      71: invokeinterface #1092,  2         // InterfaceMethod scala/collection/Seq.foreach:(Lscala/Function1;)V
+      76: getstatic     #1107               // Field scala/collection/JavaConverters$.MODULE$:Lscala/collection/JavaConverters$;
+      79: getstatic     #911                // Field MODULE$:Lsbt/coursierint/LMCoursier$;
+      82: getfield      #1043               // Field credentialRegistry:Ljava/util/concurrent/ConcurrentHashMap;
+      85: invokevirtual #1111               // Method java/util/concurrent/ConcurrentHashMap.values:()Ljava/util/Collection;
+      88: invokevirtual #1115               // Method scala/collection/JavaConverters$.collectionAsScalaIterableConverter:(Ljava/util/Collection;)Lscala/collection/convert/Decorators$AsScala;
+      91: invokevirtual #1118               // Method scala/collection/convert/Decorators$AsScala.asScala:()Ljava/lang/Object;
+      94: checkcast     #1120               // class scala/collection/TraversableOnce
+      97: invokeinterface #1121,  1         // InterfaceMethod scala/collection/TraversableOnce.toVector:()Lscala/collection/immutable/Vector;
+     102: areturn
+
+  private sbt.coursierint.LMCoursier$();
+    Code:
+       0: aload_0
+       1: invokespecial #1123               // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: putstatic     #911                // Field MODULE$:Lsbt/coursierint/LMCoursier$;
+       8: aload_0
+       9: new           #1051               // class java/util/concurrent/ConcurrentHashMap
+      12: dup
+      13: invokespecial #1124               // Method java/util/concurrent/ConcurrentHashMap."<init>":()V
+      16: putfield      #1043               // Field credentialRegistry:Ljava/util/concurrent/ConcurrentHashMap;
+      19: return
+
+  public static final java.lang.Object $anonfun$coursierConfiguration$2$adapted(sbt.librarymanagement.ScalaModuleInfo);
+    Code:
+       0: aload_0
+       1: invokestatic  #1126               // Method $anonfun$coursierConfiguration$2:(Lsbt/librarymanagement/ScalaModuleInfo;)Z
+       4: invokestatic  #1130               // Method scala/runtime/BoxesRunTime.boxToBoolean:(Z)Ljava/lang/Boolean;
+       7: areturn
+
+  public static final java.lang.String $anonfun$coursierConfiguration$3$adapted(java.lang.Object);
+    Code:
+       0: aload_0
+       1: checkcast     #1132               // class lmcoursier/definitions/Classifier
+       4: invokevirtual #1133               // Method lmcoursier/definitions/Classifier.value:()Ljava/lang/String;
+       7: invokestatic  #1135               // Method $anonfun$coursierConfiguration$3:(Ljava/lang/String;)Ljava/lang/String;
+      10: areturn
+
+  public static final java.lang.Object $anonfun$updateClassifierConfigurationTask$2$adapted(java.lang.String);
+    Code:
+       0: new           #1132               // class lmcoursier/definitions/Classifier
+       3: dup
+       4: aload_0
+       5: invokestatic  #1138               // Method $anonfun$updateClassifierConfigurationTask$2:(Ljava/lang/String;)Ljava/lang/String;
+       8: invokespecial #1139               // Method lmcoursier/definitions/Classifier."<init>":(Ljava/lang/String;)V
+      11: areturn
+
+  public static final java.lang.Object $anonfun$allCredentialsTask$3$adapted(sbt.std.TaskStreams, sbt.librarymanagement.ivy.Credentials);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokestatic  #1141               // Method $anonfun$allCredentialsTask$3:(Lsbt/std/TaskStreams;Lsbt/librarymanagement/ivy/Credentials;)V
+       5: getstatic     #1038               // Field scala/runtime/BoxedUnit.UNIT:Lscala/runtime/BoxedUnit;
+       8: areturn
+
+  public static final java.lang.Object $anonfun$allCredentialsTask$4$adapted(sbt.std.TaskStreams, sbt.librarymanagement.ivy.Credentials);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokestatic  #1143               // Method $anonfun$allCredentialsTask$4:(Lsbt/std/TaskStreams;Lsbt/librarymanagement/ivy/Credentials;)V
+       5: getstatic     #1038               // Field scala/runtime/BoxedUnit.UNIT:Lscala/runtime/BoxedUnit;
+       8: areturn
+
+  public static final java.lang.Object $anonfun$allCredentialsTask$5$adapted(sbt.std.TaskStreams, sbt.librarymanagement.ivy.Credentials);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokestatic  #1145               // Method $anonfun$allCredentialsTask$5:(Lsbt/std/TaskStreams;Lsbt/librarymanagement/ivy/Credentials;)V
+       5: getstatic     #1038               // Field scala/runtime/BoxedUnit.UNIT:Lscala/runtime/BoxedUnit;
+       8: areturn
+
+  private static java.lang.Object $deserializeLambda$(java.lang.invoke.SerializedLambda);
+    Code:
+       0: aload_0
+       1: invokedynamic #1157,  0           // InvokeDynamic #22:lambdaDeserialize:(Ljava/lang/invoke/SerializedLambda;)Ljava/lang/Object;
+       6: areturn
+}

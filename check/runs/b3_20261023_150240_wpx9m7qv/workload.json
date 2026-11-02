@@ -1,0 +1,512 @@
+{
+  "schema": 2,
+  "name": "common_amo_w_gapbs_bfs512",
+  "origin_description": "One common source snapshot; fixed 64-byte per-hart timer slots; no legacy statistics readback dependency",
+  "baseline_compatibility": "REVIEWED_FOR_BASELINE",
+  "baseline_compatibility_evidence": "Static shared protocol review: baseline/manifests/common_benchmark_20261023_fa82d07b; NOT_RUNTIME_VALIDATED",
+  "timing_boundary": "Hart 0 common_roi_start/stop rdcycle; AMO.W + BFS512 + STOP/session completion; not simulator exit/drain",
+  "exit_drain_evidence": "Finite HTIF _exit; checker software ready only; cache/package/DRAM drain remains UNRESOLVED; exit drain excluded from ROI",
+  "elf": "/data1/gzh/EC/baseline/software_common_builds/gapbs512_20261023_03/test.riscv",
+  "elf_sha256": "da8897e790f0c5e91eff3e9560d2b0e7b4e1de6dff208788fb4d9e2ae462c81c",
+  "loadmem": "/data1/gzh/EC/baseline/software_common_builds/gapbs512_20261023_03/test.loadmem_hex",
+  "loadmem_sha256": "f1c0335e8a7ffc6f57232e9bcb8c80a49f45eacaa1e4f533f4cb3af91ad308ad",
+  "loadmem_addr": "80000000",
+  "inputs": [],
+  "roi": {
+    "schema": 1,
+    "hart": 0,
+    "counter": "cycle",
+    "start_symbol": "common_roi_start",
+    "stop_symbol": "common_roi_stop",
+    "start_pc": "0x80000340",
+    "stop_pc": "0x8000039c",
+    "definition": "stop_cycle - start_cycle",
+    "scope": "amo_w_plus_bfs512_plus_stop_and_session_completion",
+    "instruction_sites": [
+      {
+        "pc": "0x800002b0",
+        "funct": "0x1b"
+      },
+      {
+        "pc": "0x800002ec",
+        "funct": "0x16"
+      },
+      {
+        "pc": "0x80000308",
+        "funct": "0x76"
+      },
+      {
+        "pc": "0x80000310",
+        "funct": "0x76"
+      },
+      {
+        "pc": "0x80000318",
+        "funct": "0x76"
+      },
+      {
+        "pc": "0x80000320",
+        "funct": "0x76"
+      },
+      {
+        "pc": "0x80000334",
+        "funct": "0x31"
+      },
+      {
+        "pc": "0x8000033c",
+        "funct": "0x70"
+      },
+      {
+        "pc": "0x8000036c",
+        "funct": "0x70"
+      },
+      {
+        "pc": "0x80000380",
+        "funct": "0x32"
+      },
+      {
+        "pc": "0x80000394",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80000438",
+        "funct": "0x16"
+      },
+      {
+        "pc": "0x8000043c",
+        "funct": "0x30"
+      },
+      {
+        "pc": "0x80001158",
+        "funct": "0x76"
+      },
+      {
+        "pc": "0x80001160",
+        "funct": "0x76"
+      },
+      {
+        "pc": "0x80001338",
+        "funct": "0x1c"
+      },
+      {
+        "pc": "0x80001348",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001354",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001360",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x8000136c",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001378",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001384",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001390",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x8000139c",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800013a8",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800013b4",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800013c4",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800013d4",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800013e4",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800013f4",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001404",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001414",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001424",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001434",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001444",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001454",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001464",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001474",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001480",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x8000148c",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001498",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800014a4",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800014b0",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800014bc",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800014c8",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800014d8",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800014e8",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800014f8",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001508",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001518",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001528",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001538",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001548",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001558",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001568",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001578",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001588",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001594",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800015a0",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800015ac",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800015b8",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800015c4",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800015d0",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800015dc",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800015e8",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800015f4",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001600",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x8000160c",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001618",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001660",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001668",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001670",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001678",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001680",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001688",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001690",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x80001698",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800016a0",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800016a8",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800016b0",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800016b8",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800016cc",
+        "funct": "0x6"
+      },
+      {
+        "pc": "0x800016d4",
+        "funct": "0x7d"
+      },
+      {
+        "pc": "0x800016d8",
+        "funct": "0x7e"
+      },
+      {
+        "pc": "0x8000172c",
+        "funct": "0x1"
+      },
+      {
+        "pc": "0x80001730",
+        "funct": "0x16"
+      },
+      {
+        "pc": "0x80001734",
+        "funct": "0x40"
+      },
+      {
+        "pc": "0x80001738",
+        "funct": "0x76"
+      },
+      {
+        "pc": "0x80001740",
+        "funct": "0x76"
+      },
+      {
+        "pc": "0x80001744",
+        "funct": "0x51"
+      },
+      {
+        "pc": "0x80001748",
+        "funct": "0x75"
+      },
+      {
+        "pc": "0x8000174c",
+        "funct": "0x73"
+      },
+      {
+        "pc": "0x80001750",
+        "funct": "0x64"
+      },
+      {
+        "pc": "0x80001768",
+        "funct": "0x65"
+      },
+      {
+        "pc": "0x8000176c",
+        "funct": "0x66"
+      },
+      {
+        "pc": "0x80001788",
+        "funct": "0x63"
+      },
+      {
+        "pc": "0x8000178c",
+        "funct": "0x66"
+      },
+      {
+        "pc": "0x800017ac",
+        "funct": "0x61"
+      },
+      {
+        "pc": "0x800017b8",
+        "funct": "0x7"
+      },
+      {
+        "pc": "0x800017c0",
+        "funct": "0x72"
+      },
+      {
+        "pc": "0x800017c4",
+        "funct": "0x60"
+      },
+      {
+        "pc": "0x800017e0",
+        "funct": "0x7"
+      },
+      {
+        "pc": "0x800017e8",
+        "funct": "0x43"
+      },
+      {
+        "pc": "0x800017f0",
+        "funct": "0x16"
+      },
+      {
+        "pc": "0x80001814",
+        "funct": "0x60"
+      }
+    ],
+    "loadable_segments": [
+      {
+        "address": "0x80000000",
+        "filesz": 14048,
+        "memsz": 14048
+      },
+      {
+        "address": "0x80007d00",
+        "filesz": 232,
+        "memsz": 359624
+      }
+    ],
+    "layout_verified": true
+  },
+  "interval": "NOT_USED; no funct 0x79",
+  "workload_parameters": {
+    "algorithm": "AMO.W self-check then GAPBS BFS",
+    "nodes": 512,
+    "source": 0,
+    "degree": 16,
+    "alpha": 15,
+    "beta": 18,
+    "external_inputs": []
+  },
+  "harts": {
+    "boom": [
+      0
+    ],
+    "checkers": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "timers": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "timer": {
+    "stride_bytes": 64,
+    "limit": 50,
+    "delta_clint_ticks": 32
+  },
+  "software_build_manifest": "/data1/gzh/EC/baseline/software_common_builds/gapbs512_20261023_03/build.manifest.json",
+  "software_build_manifest_sha256": "b7e8b3997735423bca9762cbda44cb675bc26f725f967d97877a5fe9104e1b61",
+  "required_pass_patterns": [
+    "^\\[INIT\\] checker_mask=0xf status=ready$",
+    "^\\[COMPUTATION\\] status=PASS scope=amo_w_and_bfs_result$",
+    "^\\[END\\] hart=0 status=PASS$",
+    "^\\[COMPLETION\\] checker_software_ready=4 cache_drain=UNRESOLVED$"
+  ],
+  "failure_patterns": [
+    "\\[ERROR\\]",
+    "\\bstatus=FAIL\\b",
+    "\\*\\*\\* FAILED \\*\\*\\*",
+    "Assertion.*failed",
+    "%Error",
+    "\\[VERIFY_DIAG\\].*=FAIL"
+  ],
+  "RUN_PROVENANCE": "UNRESOLVED",
+  "descriptor_original_path": "/data1/gzh/EC/baseline/software_common_builds/gapbs512_20261023_03/workload.json",
+  "descriptor_sha256": "71373bcfeb4609c9c5b4a6a8e5212c3d1ddafcb340488736785dbd873e2dc743"
+}

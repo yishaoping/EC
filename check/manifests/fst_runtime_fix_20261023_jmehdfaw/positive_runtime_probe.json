@@ -1,0 +1,33 @@
+{
+  "origin": "/data1/gzh/EC/baseline/manifests/launcher_check_6bgun6e3/runtime_io_probe.json",
+  "origin_sha256": "6e0ee333ab07430ced3f68eb2e5f67bec823c2642f5845a71d4092913a32159a",
+  "script_sha256": "8abb63431efe2d47c4972be84ffe65e3ebe319466480b1755159b4d78435fa73",
+  "report": {
+    "status": "PASS",
+    "checks": {
+      "mount_isolation": {
+        "status": "PASS",
+        "detail": {
+          "TMPDIR": "/data1/gzh/EC/baseline/manifests/launcher_check_6bgun6e3/private_tmp",
+          "private_mounts": [
+            "/tmp",
+            "/var/tmp"
+          ],
+          "current_and_canonical_source": "READ_ONLY"
+        }
+      },
+      "libc_tmpfile_and_mmap": {
+        "status": "PASS",
+        "detail": {
+          "simultaneous_libc_tmpfiles": 4,
+          "read_write_mmap": "PASS"
+        }
+      },
+      "waveform_directory_io": {
+        "status": "PASS",
+        "detail": "output, adjacent hierarchy and TMPDIR I/O passed; no FST decoding performed"
+      }
+    },
+    "scope": "FILESYSTEM_AND_LIBC_ONLY_NO_SIMULATION"
+  }
+}

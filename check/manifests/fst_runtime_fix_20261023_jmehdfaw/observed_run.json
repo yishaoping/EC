@@ -1,0 +1,51 @@
+{
+  "simulator_exit_code": 0,
+  "expected_marker_matches": {
+    "^\\[INIT\\] checker_mask=0xf status=ready$": true,
+    "^\\[COMPUTATION\\] status=PASS scope=amo_w_and_bfs_result$": true,
+    "^\\[END\\] hart=0 status=PASS$": true,
+    "^\\[COMPLETION\\] checker_software_ready=4 cache_drain=UNRESOLVED$": true
+  },
+  "emulator_reported_cycle_counts": [
+    1200611
+  ],
+  "failure_marker_seen": false,
+  "process_and_marker_success": true,
+  "harness_cycles": 1200611,
+  "software_roi": {
+    "ROI_cycles": 1001675,
+    "samples": {
+      "hart": 0,
+      "start": 181025,
+      "stop": 1182700,
+      "cycles": 1001675
+    },
+    "workload_result": {
+      "nodes": 512,
+      "source": 0,
+      "reached": 512,
+      "edges": 8192,
+      "verified": 1,
+      "parent_checksum": 43439728
+    },
+    "measurement": "SOFTWARE_ROI",
+    "correctness_scope": "AMO_W_AND_BFS_SELF_CHECKS_ONLY",
+    "cache_package_drain": "UNRESOLVED"
+  },
+  "ROI_cycles": 1001675,
+  "workload_result": {
+    "nodes": 512,
+    "source": 0,
+    "reached": 512,
+    "edges": 8192,
+    "verified": 1,
+    "parent_checksum": 43439728
+  },
+  "correctness": "EXPECTED_MARKERS_PASS_ONLY; architectural/package/drain correctness remains UNRESOLVED",
+  "interpretation": "RETROSPECTIVE_READ_ONLY_OBSERVATIONS; does not change old result or prove full correctness",
+  "original_run": "/data1/gzh/EC/baseline/runs/b3_20261023_150240_wpx9m7qv",
+  "original_result": "FAILED",
+  "waveform_bytes": 0,
+  "RUN_PROVENANCE": "UNRESOLVED",
+  "comparison": "BASELINE_GAPBS_COMPARISON_IS_APPROXIMATE"
+}

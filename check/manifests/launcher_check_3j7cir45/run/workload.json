@@ -1,0 +1,19 @@
+{
+  "schema": 2,
+  "required_pass_patterns": [
+    "^\\[INIT\\] checker_mask=0xf status=ready$",
+    "^\\[COMPUTATION\\] status=PASS scope=amo_w_and_bfs_result$",
+    "^\\[END\\] hart=0 status=PASS$",
+    "^\\[COMPLETION\\] checker_software_ready=4 cache_drain=UNRESOLVED$"
+  ],
+  "failure_patterns": [
+    "\\[ERROR\\]",
+    "\\bstatus=FAIL\\b",
+    "\\*\\*\\* FAILED \\*\\*\\*",
+    "Assertion.*failed",
+    "%Error",
+    "\\[VERIFY_DIAG\\].*=FAIL"
+  ],
+  "name": "fixture",
+  "elf_sha256": "fixture-only"
+}

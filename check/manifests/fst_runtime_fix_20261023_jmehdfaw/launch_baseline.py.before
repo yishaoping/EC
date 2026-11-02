@@ -1,0 +1,778 @@
+"""Baseline-only launcher; invoked by the accompanying Bash entry point."""
+import argparse
+import datetime
+import fcntl
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import re
+import shlex
+import shutil
+import stat
+import subprocess
+import sys
+import tempfile
+import uuid
+
+ROOT = Path('/data1/gzh/EC/baseline')
+REV = 'b3d7adddd1e2d2cf428dd933529de878226420cd'
+SOURCE = ROOT / 'source'
+CHIPYARD = SOURCE / 'chipyard'
+CONFIG = 'v1Config'
+ORIGINAL = Path('/data1/gzh/EC/chipyard')
+
+
+def common_contract():
+    path = ROOT / 'common_benchmark_contract.py'
+    spec = importlib.util.spec_from_file_location('common_benchmark_contract', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def infrastructure_checks():
+    path = ROOT / 'baseline_preflight.py'
+    spec = importlib.util.spec_from_file_location('baseline_preflight', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def resource_checks():
+    path = ROOT / 'source_resource_audit.py'
+    spec = importlib.util.spec_from_file_location('source_resource_audit', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def fail(message):
+    raise RuntimeError(message)
+
+
+def stamp():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        for block in iter(lambda: stream.read(1048576), b''):
+            h.update(block)
+    return h.hexdigest()
+
+
+def inside(path, parent=ROOT):
+    path = Path(path).absolute()
+    if not path.resolve().is_relative_to(parent.resolve()) or path.resolve() == parent.resolve():
+        fail('Path escapes the permitted directory: ' + str(path))
+    # Reject symlink components even when their current target is inside ROOT.
+    for part in (path, *path.parents):
+        if part == ROOT.parent:
+            break
+        if part.is_symlink():
+            fail('Symlink in a writable/artifact path: ' + str(part))
+    return path
+
+
+def read_json(path):
+    with Path(path).open() as stream:
+        return json.load(stream)
+
+
+def configured_environment():
+    env = read_json(ROOT / 'manifests/environment.json')
+    override = ROOT / 'native_environment.json'
+    local = read_json(override)
+    allowed = {'CPLUS_INCLUDE_PATH', 'LIBRARY_PATH', 'LDFLAGS'}
+    if local.get('schema') != 1 or set(local['environment']) != allowed:
+        fail('Unexpected native environment override schema/keys')
+    errors = []
+    for relative, expected in local['files'].items():
+        p = inside(ROOT / relative)
+        if not p.is_file() or sha(p) != expected:
+            errors.append(relative)
+    if errors:
+        fail('Native dependency identity mismatches: ' + ', '.join(errors))
+    env['environment'].update(local['environment'])
+    env['local_override'] = {'path': str(override), 'sha256': sha(override),
+                             'native_files': local['files']}
+    return env
+
+
+def record(path, obj):
+    inside(path)
+    # Only lifecycle files in this invocation's newly created directory update.
+    temporary = path.with_name(path.name + '.' + uuid.uuid4().hex + '.tmp')
+    with temporary.open('x') as stream:
+        json.dump(obj, stream, indent=2, ensure_ascii=False)
+        stream.write('\n')
+    os.replace(temporary, path)
+
+
+def git(*args):
+    env = {'PATH': '/usr/bin:/bin', 'LANG': 'C.UTF-8',
+           'GIT_OPTIONAL_LOCKS': '0', 'GIT_CONFIG_NOSYSTEM': '1',
+           'GIT_CONFIG_GLOBAL': '/dev/null'}
+    return subprocess.check_output(
+        ['/usr/bin/git', '--no-optional-locks', '-c', 'core.fsmonitor=false',
+         '-c', 'core.hooksPath=/dev/null', '-C', str(SOURCE), *args],
+        env=env, text=True).strip()
+
+
+def source_identity():
+    if git('rev-parse', 'HEAD') != REV:
+        fail('Baseline HEAD does not match the full pinned SHA')
+    if git('status', '--porcelain=v1', '--untracked-files=normal'):
+        fail('Baseline tracked/unignored source state changed; refusing to relabel it as b3')
+    if git('ls-files', '--others', '--ignored', '--exclude-standard'):
+        fail('Canonical historical source contains ignored local products; refusing to copy mixed inputs')
+    if (SOURCE / '.git/objects/info/alternates').exists():
+        fail('Shared Git object alternates are not permitted')
+    return {'commit': REV, 'tree': git('rev-parse', 'HEAD^{tree}'),
+            'status': git('status', '--porcelain=v1'),
+            'gitlinks': read_json(ROOT / 'manifests/source_identity.json')['gitlinks']}
+
+
+def preflight(min_free_gib=50):
+    if ROOT.is_symlink() or ROOT.resolve() != ROOT or sys.argv[1] != str(ROOT):
+        fail('Baseline root identity mismatch')
+    for name in ('source', 'build', 'runs', 'software', 'manifests', 'cache', 'tmp'):
+        p = inside(ROOT / name)
+        if not p.is_dir():
+            fail('Missing directory: ' + str(p))
+    # Writable roots must not already contain links to outside directories.
+    for name in ('software', 'manifests', 'cache', 'tmp'):
+        for directory, dirs, files in os.walk(ROOT / name, followlinks=False):
+            for item in dirs + files:
+                p = Path(directory) / item
+                if p.is_symlink() and not p.resolve().is_relative_to(ROOT):
+                    fail('External symlink in baseline output/cache: ' + str(p))
+    # Preserve historical internal links, but never alias the current project.
+    for directory, dirs, files in os.walk(SOURCE, followlinks=False):
+        if directory == str(SOURCE):
+            dirs[:] = [d for d in dirs if d != '.git']
+        for item in dirs + files:
+            p = Path(directory) / item
+            if p.is_symlink() and p.resolve().is_relative_to(ORIGINAL):
+                fail('Historical source aliases current chipyard: ' + str(p))
+    identity = source_identity()
+    env = configured_environment()
+    errors = []
+    for tool, path in env['tools'].items():
+        if not path or not Path(path).is_file() or not os.access(path, os.X_OK):
+            errors.append('Required tool unavailable: ' + tool + ': ' + str(path))
+    if not Path(env['sbt_launch_jar']).is_file():
+        errors.append('Missing recorded SBT launcher JAR; no automatic download')
+    if not Path(env['sbt_script']).is_file():
+        errors.append('Missing recorded SBT script')
+    for relative in ('cache/sbt/boot/scala-2.12.17/org.scala-sbt/sbt/1.8.2',
+                     'cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.10'):
+        cache = inside(ROOT / relative)
+        if not cache.is_dir() or not any(cache.rglob('*.jar')):
+            errors.append('Required offline dependency cache missing: ' + str(cache))
+    free = shutil.disk_usage(ROOT).free
+    if free < min_free_gib * 1024**3:
+        errors.append('Insufficient free disk space; require ' + str(min_free_gib) + ' GiB')
+    required = ['sims/verilator/Makefile', 'variables.mk', 'common.mk', 'build.sbt',
+                'project/build.properties', 'generators/chipyard/src/main/scala/config/RocketConfigs.scala',
+                'generators/testchipip/src/main/resources/testchipip/bootrom/bootrom.rv64.img',
+                'generators/testchipip/src/main/resources/testchipip/bootrom/bootrom.rv32.img',
+                'generators/testchipip/src/main/resources/dramsim2_ini/system.ini',
+                'generators/testchipip/src/main/resources/dramsim2_ini/DDR3_micron_64M_8B_x4_sg15.ini',
+                'scripts/split-module-files.py', 'scripts/split-bb-files.py',
+                'scripts/split-mems-conf.py', 'tools/DRAMSim2/Makefile']
+    for relative in required:
+        if not (CHIPYARD / relative).is_file():
+            errors.append('Historical build input missing: ' + relative)
+    resources = resource_checks()
+    try:
+        resource_report = resources.checked_inventory(sys.modules[__name__])
+        env['resource_restoration'] = resource_report['restoration']
+        for item in resource_report['missing'] + resource_report['ambiguous']:
+            errors.append('BlackBox resource ' + item['status'] + ': ' + item['resource'] +
+                          ' at ' + item['source'] + ':' + str(item['line']))
+        for item in resource_report['unreviewed_dynamic']:
+            errors.append('Unreviewed dynamic BlackBox input: ' + item['source'] +
+                          ':' + str(item['line']) + ': ' + item['expression'])
+    except (OSError, ValueError, KeyError, RuntimeError) as exc:
+        errors.append('Resource restoration: ' + str(exc))
+    # Check the complete literal SIM_FILE_REQS list and unconditional make
+    # includes, not just a short list of convenient anchor files.
+    for item in resources.make_inputs(CHIPYARD):
+        if not item['present']:
+            errors.append('Historical Make input missing: ' + item['path'])
+    if ((CHIPYARD / required[5]).is_file() and
+            'class v1Config extends Config(' not in (CHIPYARD / required[5]).read_text()):
+        errors.append('Expected historical v1Config is missing')
+    for relative in ('scripts/split-module-files.py', 'scripts/split-bb-files.py',
+                     'scripts/split-mems-conf.py'):
+        if not os.access(CHIPYARD / relative, os.X_OK):
+            errors.append('Required historical script is not executable: ' + relative)
+    for relative in ('include/fesvr/htif.h', 'lib/libfesvr.a'):
+        if not (Path(env['environment']['RISCV']) / relative).is_file():
+            errors.append('Existing read-only RISC-V environment is incomplete: ' + relative)
+    bridge = ROOT / ('cache/sbt/boot/scala-2.12.17/org.scala-sbt/sbt/1.8.2/'
+                     'org.scala-sbt-compiler-bridge_2.13-1.8.0-bin_2.13.10__61.0/'
+                     'org.scala-sbt-compiler-bridge_2.13-1.8.0-bin_2.13.10__61.0.jar')
+    if not bridge.is_file():
+        errors.append('Missing pinned Java17/Scala2.13.10 Zinc bridge: ' + str(bridge))
+    for executable in ('bash', 'python3', 'g++', 'clang++', 'ar', 'git', 'find', 'sort', 'sed',
+                       'grep', 'awk', 'cp', 'rm', 'mkdir', 'mktemp', 'which', 'patch', 'ld',
+                       'jq', 'perl', 'cat', 'mv', 'touch', 'basename'):
+        if not shutil.which(executable, path=env['environment']['PATH']):
+            errors.append('Historical recipe tool missing from sandbox PATH: ' + executable)
+    if errors:
+        fail('Static preflight found ' + str(len(errors)) + ' issues:\n- ' + '\n- '.join(errors))
+    print('COMMIT=' + REV + '\nCONFIG=chipyard.v1Config\nSOURCE=' + str(SOURCE), flush=True)
+    print('DISK_FREE_BYTES=' + str(free), flush=True)
+    print('SOURCE_RESOURCE_CHECK=PASS; literals/config resources=' +
+          str(len(resource_report['literal_references'])) + '; reviewed dynamic=' +
+          str(len(resource_report['dynamic'])), flush=True)
+    print('ISOLATION=bwrap, host read-only, baseline writable, network disabled', flush=True)
+    print('RUN_PROVENANCE=UNRESOLVED; Software/R-Kernel historical gitlink remains unavailable', flush=True)
+    return identity, env
+
+
+def isolation_probe(env, minimum, dependencies=True):
+    destination = inside(Path(tempfile.mkdtemp(prefix='preflight_', dir=ROOT / 'manifests')))
+    temporary = short_temporary_directory()
+    environment = sandbox_environment(env, temporary)
+    m = {'kind': 'baseline_preflight', 'start': stamp(), 'commands': [],
+         'minimum_free_gib': minimum, 'temporary_directory': str(temporary),
+         'infrastructure_identity': {name: sha(ROOT / name) for name in
+                                     ('launch_baseline.py', 'baseline_preflight.py', 'native_environment.json',
+                                      'source_resource_audit.py', 'resource_restoration.json')},
+         'native_environment': env['local_override'],
+         'result': 'IN_PROGRESS'}
+    print('PREFLIGHT_MANIFEST=' + str(destination / 'manifest.json'), flush=True)
+    try:
+        code = ('import os,pathlib,socket; '
+                'assert os.statvfs("/data1/gzh/EC/chipyard").f_flag & os.ST_RDONLY; '
+                'assert os.statvfs("/data1/gzh/EC/baseline/source").f_flag & os.ST_RDONLY; '
+                'assert not os.statvfs(".").f_flag & os.ST_RDONLY; '
+                'pathlib.Path("baseline_writable_probe").write_text("baseline only\\n"); '
+                'p=pathlib.Path(os.environ["TMPDIR"])/".sbt"/"sbt-socket-18446744073709551615"/"sbt-load.sock"; '
+                'p.parent.mkdir(parents=True); '
+                'assert len(os.fsencode(p)) < 100; '
+                's=socket.socket(socket.AF_UNIX,socket.SOCK_STREAM); s.bind(str(p)); s.close(); p.unlink(); '
+                'print("SBT_SOCKET_BIND=PASS; SOCKET_PATH_BYTES="+str(len(os.fsencode(p)))); '
+                'print("CURRENT_READ_ONLY=PASS; SOURCE_READ_ONLY=PASS; BASELINE_WRITABLE=PASS")')
+        if invoke(['/usr/bin/python3', '-I', '-B', '-c', code], destination,
+                  destination / 'isolation.txt', environment, m):
+            fail('Read-only host/baseline-only writable isolation probe failed')
+        m['tools'] = version_records(destination, environment, env, m)
+        m['resources'] = resource_checks().checked_inventory(sys.modules[__name__])
+        record(destination / 'source_resources.json', m['resources'])
+        record(destination / 'make_inputs.json', resource_checks().make_inputs(CHIPYARD))
+        checks = infrastructure_checks()
+        m['native_checks'] = checks.native_probe(sys.modules[__name__], destination, environment, env, m)
+        if dependencies:
+            m['dependencies'] = checks.dependency_probe(sys.modules[__name__], destination, environment, env, m)
+        failures = [name for name, item in m['native_checks'].items() if item['status'] != 'PASS']
+        if m['resources']['status'] != 'PASS':
+            failures.append('source_resources')
+        failures.extend('version.' + name for name, item in m['tools'].items()
+                        if item.get('return_code', 0))
+        if dependencies and m['dependencies']['status'] != 'PASS':
+            failures.append('sbt_dependencies')
+        m['cache_status'] = 'DEPENDENCY_RESOLUTION_CHECKED' if dependencies else 'NOT_REQUIRED_FOR_EXISTING_SIMULATOR'
+        m['failed_groups'] = failures
+        for name, item in m['native_checks'].items():
+            print('CHECK=' + name + '; STATUS=' + item['status'], flush=True)
+        print('CHECK=source_resources; STATUS=' + m['resources']['status'], flush=True)
+        if dependencies:
+            print('CHECK=sbt_dependencies; STATUS=' + m['dependencies']['status'], flush=True)
+        if failures:
+            fail('Preflight found ' + str(len(failures)) + ' failing groups: ' + ', '.join(failures) +
+                 '; see ' + str(destination / 'manifest.json'))
+        m['result'] = 'PASS_NO_HARDWARE_OR_SIMULATION'
+        print('PREFLIGHT=PASS; project compilation, RTL generation and simulation remain untested', flush=True)
+        return destination
+    except BaseException as exc:
+        m.update({'result': 'FAILED', 'error': str(exc)})
+        raise
+    finally:
+        m['end'] = stamp()
+        record(destination / 'manifest.json', m)
+
+
+def workload(path):
+    if not path:
+        fail('Run requires --workload /absolute/path/to/reviewed-workload.json; no implicit ELF selection')
+    p = Path(path)
+    if not p.is_absolute() or not p.is_file():
+        fail('Workload descriptor must be an existing absolute path')
+    d = read_json(p)
+    if d.get('schema') not in (1, 2):
+        fail('Unsupported workload descriptor schema')
+    if d['schema'] == 2:
+        common_contract().validate_roi_descriptor(d)
+        build_manifest = Path(d['software_build_manifest'])
+        if (not build_manifest.is_absolute() or not build_manifest.is_file() or
+                sha(build_manifest) != d['software_build_manifest_sha256']):
+            fail('Common software build manifest identity mismatch')
+        built = read_json(build_manifest)
+        if (built.get('state') != 'BUILT_STATIC_CHECKS_PASSED_NOT_RUN' or
+                built.get('elf_sha256') != d.get('elf_sha256') or
+                built.get('loadmem_sha256') != d.get('loadmem_sha256') or
+                built.get('roi') != d.get('roi') or
+                built.get('contract_sha256') != sha(ROOT / 'common_benchmark_contract.py')):
+            fail('Common software descriptor does not match its build/ROI contract')
+    required_text = ('name', 'origin_description', 'baseline_compatibility_evidence',
+                     'timing_boundary', 'exit_drain_evidence')
+    if d.get('baseline_compatibility') != 'REVIEWED_FOR_BASELINE':
+        fail('Software compatibility is unresolved. Review the descriptor; never just rename an ELF')
+    for key in required_text:
+        if not isinstance(d.get(key), str) or not d[key].strip() or d[key] == 'UNRESOLVED':
+            fail('Workload requires a concrete review/evidence field: ' + key)
+    patterns = d.get('required_pass_patterns')
+    if not isinstance(patterns, list) or not patterns or not all(isinstance(x, str) and x for x in patterns):
+        fail('Specify workload-specific required_pass_patterns; simulator exit alone is not correctness')
+    for expression in patterns:
+        re.compile(expression)
+    inputs = [('elf', d.get('elf'), d.get('elf_sha256'))]
+    if d['schema'] == 2:
+        inputs.append(('software_build_manifest', d['software_build_manifest'],
+                       d['software_build_manifest_sha256']))
+    if d.get('loadmem') is not None:
+        if not re.fullmatch('[0-9a-fA-F]{1,16}', str(d.get('loadmem_addr', ''))):
+            fail('Specify the verified hexadecimal loadmem_addr')
+        inputs.append(('loadmem', d['loadmem'], d.get('loadmem_sha256')))
+    if not isinstance(d.get('inputs'), list):
+        fail('inputs must be an explicit list (possibly empty)')
+    if d['inputs']:
+        fail('No historical argv/file mapping has been established for additional inputs; configure that mapping before running')
+    for i, item in enumerate(d['inputs']):
+        inputs.append(('input_' + str(i), item.get('path'), item.get('sha256')))
+    for label, filename, expected in inputs:
+        if not filename or not Path(filename).is_absolute() or not Path(filename).is_file():
+            fail('Missing absolute input path: ' + label)
+        if not isinstance(expected, str) or not re.fullmatch('[0-9a-f]{64}', expected) or sha(filename) != expected:
+            fail('Input SHA-256 mismatch or missing identity: ' + label)
+    if d.get('loadmem') is not None:
+        with Path(d['loadmem']).open() as stream:
+            count = 0
+            for line in stream:
+                value = line.rstrip('\n\r')
+                if not re.fullmatch('[0-9a-f]+', value) or len(value) % 2:
+                    fail('loadmem must match historical mm.cc: lowercase byte-paired hex lines, no @ records')
+                count += 1
+            if not count:
+                fail('Empty loadmem input')
+    if Path(d['elf']).read_bytes()[:4] != b'\x7fELF':
+        fail('The selected software is not an ELF')
+    d['descriptor_original_path'] = str(p.resolve())
+    d['descriptor_sha256'] = sha(p)
+    return d, inputs
+
+
+def short_temporary_directory():
+    # SBT adds a socket directory and filename to java.io.tmpdir. Build/run
+    # paths can exceed AF_UNIX's limit even before project loading begins.
+    directory = inside(Path(tempfile.mkdtemp(prefix='j_', dir=inside(ROOT / 'tmp'))))
+    longest_socket = directory / '.sbt' / ('sbt-socket-' + '18446744073709551615') / 'sbt-load.sock'
+    if len(os.fsencode(longest_socket)) >= 100:
+        fail('Baseline temporary directory is too long for an SBT Unix socket: ' + str(directory))
+    return directory
+
+
+def sandbox_environment(env, temporary):
+    result = dict(env['environment'])
+    result.update({'HOME': os.environ.get('HOME', '/home/guozh'),
+                   'LANG': 'C.UTF-8', 'LC_ALL': 'C.UTF-8',
+                   'TMPDIR': str(temporary), 'TMP': str(temporary), 'TEMP': str(temporary),
+                   'XDG_CACHE_HOME': str(ROOT / 'cache/xdg'),
+                   'XDG_CONFIG_HOME': str(ROOT / 'cache/config'),
+                   'XDG_DATA_HOME': str(ROOT / 'cache/data'),
+                   'COURSIER_CACHE': str(ROOT / 'cache/coursier/v1'),
+                   'CCACHE_DIR': str(ROOT / 'cache/ccache'), 'CCACHE_DISABLE': '1',
+                   'PYTHONDONTWRITEBYTECODE': '1', 'GIT_OPTIONAL_LOCKS': '0',
+                   'GIT_CONFIG_NOSYSTEM': '1', 'GIT_CONFIG_GLOBAL': '/dev/null',
+                   'JAVA_TOOL_OPTIONS': ' '.join([
+                       '-Xmx8G', '-Xss8M', '-XX:ActiveProcessorCount=8',
+                       '-Dsbt.task.cpus=4', '-Dsbt.supershell=false',
+                       '-Dsbt.log.noformat=true', '-Dsbt.color=false',
+                       '-Dlog4j2.disable.jmx=true',
+                       '-Djava.io.tmpdir=' + str(temporary),
+                       '-Duser.home=' + str(ROOT / 'cache/java-home'),
+                       '-Dsbt.ivy.home=' + str(ROOT / 'cache/ivy2'),
+                       '-Dsbt.global.base=' + str(ROOT / 'cache/sbt'),
+                       '-Dsbt.boot.directory=' + str(ROOT / 'cache/sbt/boot'),
+                       # sbt.coursier.home appends /cache and takes precedence
+                       # over COURSIER_CACHE; use the exact cache path instead.
+                       '-Dcoursier.cache=' + str(ROOT / 'cache/coursier/v1'),
+                       '-Dsbt.offline=true', '-Dsbt.server.autostart=false'])})
+    return result
+
+
+def invoke(command, cwd, log, env, description, stdout_log=None, stderr_log=None):
+    inside(cwd)
+    inside(log)
+    bwrap = read_json(ROOT / 'manifests/environment.json')['tools']['bwrap']
+    wrapped = [bwrap, '--die-with-parent', '--new-session', '--unshare-all',
+               '--ro-bind', '/', '/', '--bind', str(ROOT), str(ROOT),
+               '--ro-bind', str(SOURCE), str(SOURCE),
+               '--dev', '/dev']
+    if (cwd / 'source/.git').is_dir():
+        wrapped.extend(['--ro-bind', str(cwd / 'source/.git'), str(cwd / 'source/.git')])
+    wrapped.extend(['--chdir', str(cwd)])
+    for key, value in sorted(env.items()):
+        wrapped.extend(['--setenv', key, value])
+    wrapped.extend(['--', *map(str, command)])
+    description['commands'].append({'argv': list(map(str, command)), 'cwd': str(cwd),
+                                    'sandbox_argv': wrapped, 'log': str(log), 'start': stamp()})
+    record(cwd / 'manifest.json', description)
+    print('EXECUTE=' + json.dumps(list(map(str, command))) + '\nLOG=' + str(log), flush=True)
+    with log.open('xb') as output:
+        proc = subprocess.Popen(wrapped, stdin=subprocess.DEVNULL,
+                                stdout=subprocess.PIPE if stdout_log else output,
+                                stderr=subprocess.PIPE if stderr_log else subprocess.STDOUT,
+                                env={'PATH': '/usr/bin:/bin'})
+        try:
+            if stdout_log:
+                # Separate raw streams plus a combined evidence log, with bounded memory.
+                import selectors
+                selector = selectors.DefaultSelector()
+                with inside(stdout_log).open('xb') as out, inside(stderr_log).open('xb') as err:
+                    selector.register(proc.stdout, selectors.EVENT_READ, out)
+                    selector.register(proc.stderr, selectors.EVENT_READ, err)
+                    while selector.get_map():
+                        for key, _ in selector.select():
+                            block = os.read(key.fileobj.fileno(), 65536)
+                            if block:
+                                key.data.write(block)
+                                output.write(block)
+                            else:
+                                selector.unregister(key.fileobj)
+                                key.fileobj.close()
+                selector.close()
+            rc = proc.wait()
+        except BaseException:
+            proc.terminate()
+            proc.wait()
+            raise
+    description['commands'][-1].update({'end': stamp(), 'return_code': rc})
+    return rc
+
+
+def version_records(destination, environment, env, description):
+    names = ('make', 'verilator', 'firtool', 'gcc', 'g++', 'riscv64-unknown-elf-gcc')
+    commands = {n: [env['tools'][n], '--version'] for n in names}
+    commands['java'] = [env['tools']['java'], '-version']
+    commands['actual_CC'] = [env['environment']['CC'], '--version']
+    commands['actual_CXX'] = [env['environment']['CXX'], '--version']
+    tools = {}
+    for name, command in commands.items():
+        log = destination / ('version.' + name.replace('+', 'p') + '.txt')
+        rc = invoke(command, destination, log, environment, description)
+        tools[name] = {'path': command[0], 'resolved': str(Path(command[0]).resolve()),
+                       'sha256': sha(command[0]), 'version_log': str(log), 'return_code': rc}
+    tools['sbt'] = {'version_from_pinned_build_properties': '1.8.2',
+                    'launcher_jar': env['sbt_launch_jar'], 'sha256': sha(env['sbt_launch_jar'])}
+    return tools
+
+
+def generated_identity(directory):
+    suffixes = {'.v', '.sv', '.fir', '.json', '.cpp', '.cc', '.c', '.h', '.f', '.mk', '.img', '.conf', '.mem'}
+    result = {}
+    for p in sorted(directory.rglob('*')):
+        if p.is_file() and p.suffix in suffixes:
+            inside(p)
+            result[str(p.relative_to(directory))] = sha(p)
+    if not any(k.endswith(('.v', '.sv')) for k in result):
+        fail('No generated HDL found; cannot attest this build')
+    return result
+
+
+def copy_identity(directory):
+    result = {}
+    for current, dirs, files in os.walk(directory, followlinks=False):
+        for name in dirs + files:
+            p = Path(current) / name
+            relative = str(p.relative_to(directory))
+            if p.is_symlink():
+                result[relative] = {'symlink': os.readlink(p)}
+            elif p.is_file():
+                result[relative] = {'sha256': sha(p), 'mode': stat.S_IMODE(p.stat().st_mode)}
+    return result
+
+
+def verify_copy(directory, expected):
+    for relative, identity in expected.items():
+        p = directory / relative
+        if 'symlink' in identity:
+            if not p.is_symlink() or os.readlink(p) != identity['symlink']:
+                fail('Historical source symlink changed: ' + str(p))
+        elif p.is_symlink() or not p.is_file() or sha(p) != identity['sha256']:
+            fail('Historical source content changed during/after build: ' + str(p))
+        elif 'mode' in identity and stat.S_IMODE(p.stat().st_mode) != identity['mode']:
+            fail('Historical source permissions changed during/after build: ' + str(p))
+
+
+def build(args, identity, env):
+    destination = inside(Path(tempfile.mkdtemp(prefix='b3_' + datetime.datetime.now().strftime('%Y%m%d_%H%M%S') + '_', dir=ROOT / 'build')))
+    temporary = short_temporary_directory()
+    environment = sandbox_environment(env, temporary)
+    m = {'schema': 1, 'kind': 'baseline_build', 'start': stamp(), 'source': identity,
+         'config': 'chipyard.v1Config', 'environment': environment, 'commands': [],
+         'result': 'IN_PROGRESS', 'RUN_PROVENANCE': 'UNRESOLVED', 'build_directory': str(destination),
+         'temporary_directory': str(temporary),
+         'preflight_manifest': str(args.preflight_manifest),
+         'preflight_manifest_sha256': sha(args.preflight_manifest),
+         'native_environment': env['local_override'],
+         'resource_restoration': env['resource_restoration'],
+         'temporary_directory_policy': 'fresh short baseline/tmp/j_*; retained; no outside writable paths'}
+    record(destination / 'manifest.json', m)
+    try:
+        print('PHASE=BUILD\nBUILD_DIRECTORY=' + str(destination), flush=True)
+        m['tools'] = version_records(destination, environment, env, m)
+        # Historical Make writes target/, .sbt/, and DRAMSim objects in its
+        # source tree. Each build gets new byte copies, never hardlinks.
+        # The canonical historical clone is mounted read-only in the sandbox.
+        execution_source = destination / 'source'
+        execution_chipyard = execution_source / 'chipyard'
+        shutil.copytree(SOURCE, execution_source, symlinks=True,
+                        copy_function=shutil.copy2)
+        m['resource_restoration'] = resource_checks().apply_restoration(
+            sys.modules[__name__], execution_chipyard)
+        if m['resource_restoration'] != env['resource_restoration']:
+            fail('Resource restoration changed after preflight')
+        shutil.copy2(ROOT / 'resource_restoration.json', destination / 'resource_restoration.json')
+        resource_report = resource_checks().verify_execution_inputs(
+            sys.modules[__name__], execution_chipyard)
+        record(destination / 'source_resources.json', resource_report)
+        m['execution_resource_report_sha256'] = sha(destination / 'source_resources.json')
+        m['execution_chipyard'] = str(execution_chipyard)
+        m['source_copy_method'] = 'independent copy2 of clean b3 clone + explicitly hashed missing-resource restoration; canonical source unchanged; historical symlinks retained'
+        m['source_copy_identity'] = copy_identity(execution_chipyard)
+        record(destination / 'source_copy_identity.json', m['source_copy_identity'])
+        m['source_copy_identity_sha256'] = sha(destination / 'source_copy_identity.json')
+        del m['source_copy_identity']
+        generated = destination / 'generated-src/chipyard.TestHarness.v1Config'
+        # Command structure: existing stage1_build_and_run.sh; flags are present
+        # in the pinned historical Makefile. No STAGE1_EXIT_PORTS/current extras.
+        sbt = env['environment']['JAVA_HOME'] + '/bin/java -jar ' + env['sbt_launch_jar']
+        command = [env['tools']['make'], '-C', str(destination), '-f', str(execution_chipyard / 'sims/verilator/Makefile'),
+                   'base_dir=' + str(execution_chipyard), 'sim_dir=' + str(destination),
+                   'build_dir=' + str(generated), 'CONFIG=v1Config', 'VERILATOR_FST_MODE=1',
+                   'SBT_BIN=' + sbt, 'JAVA_TMP_DIR=' + str(temporary), '-j' + str(args.jobs)]
+        m['stages'] = []
+        for phase, target, logfile in [('RTL_GENERATION', 'verilog', 'rtl_generation.log'),
+                                       ('VERILATOR_BUILD', 'debug', 'build.log')]:
+            print('PHASE=' + phase, flush=True)
+            stage = {'phase': phase, 'start': stamp(), 'target': target}
+            m['stages'].append(stage)
+            rc = invoke(command + [target], destination, destination / logfile, environment, m)
+            stage.update({'end': stamp(), 'return_code': rc})
+            if rc:
+                stage['error_excerpt'] = resource_checks().failure_summary(destination / logfile)
+                for item in stage['error_excerpt']:
+                    print('CAUSE=' + logfile + ':' + str(item['line']) + ': ' + item['text'],
+                          file=sys.stderr, flush=True)
+                fail(phase + ' failed; see ' + str(destination / logfile) +
+                     '; partial outputs retained, never used for a run')
+        m['source_after'] = source_identity()
+        verify_copy(execution_chipyard, read_json(destination / 'source_copy_identity.json'))
+        simulator = inside(destination / 'simulator-chipyard-v1Config-debug')
+        if not simulator.is_file() or not os.access(simulator, os.X_OK):
+            fail('Expected historical simulator path was not produced')
+        model = generated_identity(generated)
+        record(destination / 'generated_identity.json', model)
+        m.update({'result': 'SUCCEEDED', 'simulator': str(simulator), 'simulator_sha256': sha(simulator),
+                  'generated_directory': str(generated),
+                  'generated_identity_sha256': sha(destination / 'generated_identity.json')})
+        print('BUILD_COMPLETE=' + str(destination), flush=True)
+        return destination
+    except BaseException as exc:
+        m.update({'result': 'FAILED', 'error': str(exc)})
+        raise
+    finally:
+        m['end'] = stamp()
+        record(destination / 'manifest.json', m)
+
+
+def verified_build(path):
+    directory = inside(Path(path), ROOT / 'build')
+    m = read_json(directory / 'manifest.json')
+    if m.get('kind') != 'baseline_build' or m.get('result') != 'SUCCEEDED' or m['source']['commit'] != REV or m['config'] != 'chipyard.v1Config':
+        fail('Only a successful, attested b3 build from this launcher can be run')
+    sim = inside(m['simulator'], directory)
+    if sha(sim) != m['simulator_sha256']:
+        fail('Simulator identity changed after building')
+    model_path = inside(directory / 'generated_identity.json', directory)
+    if sha(model_path) != m['generated_identity_sha256']:
+        fail('Generated-model identity record changed')
+    source_record = inside(directory / 'source_copy_identity.json', directory)
+    if sha(source_record) != m['source_copy_identity_sha256']:
+        fail('Build source identity record changed')
+    execution_chipyard = inside(m['execution_chipyard'], directory)
+    verify_copy(execution_chipyard, read_json(source_record))
+    generated = inside(m['generated_directory'], directory)
+    for relative, expected in read_json(model_path).items():
+        if sha(inside(generated / relative, generated)) != expected:
+            fail('Generated-model content changed: ' + relative)
+    return directory, m, sim
+
+
+def run(args, build_directory, selected, identity, env):
+    build_directory, bm, simulator = verified_build(build_directory)
+    d, inputs = selected
+    destination = inside(Path(tempfile.mkdtemp(prefix='b3_' + datetime.datetime.now().strftime('%Y%m%d_%H%M%S') + '_', dir=ROOT / 'runs')))
+    (destination / 'tmp').mkdir()
+    (destination / 'inputs').mkdir()
+    environment = sandbox_environment(env, destination / 'tmp')
+    m = {'schema': 1, 'kind': 'baseline_run', 'start': stamp(), 'source': identity,
+         'config': 'chipyard.v1Config', 'build_directory': str(build_directory),
+         'build_manifest_sha256': sha(build_directory / 'manifest.json'),
+         'simulator': str(simulator), 'simulator_sha256': bm['simulator_sha256'],
+         'generated_model_identity_sha256': bm['generated_identity_sha256'],
+         'generated_model_identity_path': str(build_directory / 'generated_identity.json'),
+         'baseline_commit': REV, 'git_status': identity['status'],
+         'elf_sha256': d['elf_sha256'], 'loadmem_sha256': d.get('loadmem_sha256'),
+         'benchmark': 'gapbs_bfs', 'input': 'deterministic directed ring+1..16; no external inputs',
+         'workload_parameters': d.get('workload_parameters'),
+         'comparison': 'BASELINE_GAPBS_COMPARISON_IS_APPROXIMATE',
+         'environment': environment, 'workload': d, 'commands': [],
+         'result': 'IN_PROGRESS', 'RUN_PROVENANCE': 'UNRESOLVED',
+         'correctness': 'UNRESOLVED', 'process_and_marker_success': False,
+         'complete_experiment_success': 'UNRESOLVED_REQUIRES_CORRECTNESS_REVIEW',
+         'timing_definition': 'emulator.cc trace_count: 100 reset iterations plus one count per harness loop, until dtm/tsi/jtag done, io_success, or max_cycles; not BOOM cycles or ROI cycles',
+         'primary_performance_metric': 'ROI_cycles' if d['schema'] == 2 else 'UNRESOLVED_NO_ROI_CONTRACT',
+         'rob_gate_cycles': 'UNRESOLVED_NOT_INSTRUMENTED', 'recovery_validation': 'UNRESOLVED'}
+    record(destination / 'manifest.json', m)
+    record(destination / 'run_manifest.json', m)
+    try:
+        print('PHASE=RUN\nWORKLOAD=' + d['name'] + '\nRUN_DIRECTORY=' + str(destination), flush=True)
+        # Snapshot inputs; the simulator never receives the original software path.
+        copied = {}
+        m['input_snapshots'] = {}
+        for label, origin, expected in inputs:
+            target = destination / 'inputs' / (label + '_' + Path(origin).name)
+            with Path(origin).open('rb') as src, target.open('xb') as dst:
+                shutil.copyfileobj(src, dst)
+            if sha(target) != expected:
+                fail('Input changed during snapshot: ' + label)
+            copied[label] = target
+            m['input_snapshots'][label] = {'origin': origin, 'snapshot': str(target), 'sha256': expected}
+        record(destination / 'workload.json', d)
+        m['tools'] = version_records(destination, environment, env, m)
+        # Option ordering and flags are supported by the historical emulator.cc.
+        command = [str(simulator), '-v', str(destination / 'test.fst'), '-s', str(args.seed),
+                   '+cycle-count', '+verbose', '+permissive', '+dramsim',
+                   '+dramsim_ini_dir=' + str(Path(bm['execution_chipyard']) / 'generators/testchipip/src/main/resources/dramsim2_ini'),
+                   '+max-cycles=' + str(args.max_cycles)]
+        if 'loadmem' in copied:
+            command.extend(['+loadmem=' + str(copied['loadmem']), '+loadmem_addr=' + d['loadmem_addr']])
+        command.extend(['+permissive-off', str(copied['elf'])])
+        m['actual_command'] = command
+        m['log_path'] = str(destination / 'test.log')
+        m['waveform'] = str(destination / 'test.fst')
+        m['waveform_format'] = 'FST; historical debug driver traces 99 hierarchy levels, no wrapper signal filtering'
+        m['max_cycles'] = args.max_cycles
+        m['seed'] = args.seed
+        with (destination / 'command.txt').open('x') as stream:
+            stream.write(shlex.join(command) + '\n')
+        record(destination / 'run_manifest.json', m)
+        rc = invoke(command, destination, destination / 'test.log', environment, m,
+                    destination / 'stdout.log', destination / 'stderr.log')
+        m['simulator_exit_code'] = rc
+        # Stream the potentially large verbose log, preserving the raw evidence.
+        expressions = [re.compile(p) for p in d['required_pass_patterns']]
+        matched = [False] * len(expressions)
+        passed_cycles = []
+        failure_seen = False
+        roi_records = []
+        contract = common_contract() if d['schema'] == 2 else None
+        rejected = [re.compile(p) for p in d.get('failure_patterns', [])]
+        # Parse each intact stream; the combined log orders pipe chunks and can
+        # interleave stdout/stderr in the middle of a software record.
+        for name in ('stdout.log', 'stderr.log'):
+            with (destination / name).open(errors='replace') as stream:
+                for line in stream:
+                    for i, expression in enumerate(expressions):
+                        matched[i] = matched[i] or bool(expression.search(line))
+                    match = re.search(r'\*\*\* PASSED \*\*\* Completed after (\d+) cycles', line)
+                    if match:
+                        passed_cycles.append(int(match.group(1)))
+                    failure_seen |= '*** FAILED ***' in line
+                    failure_seen |= any(p.search(line) for p in rejected)
+                    if contract and (line.startswith('[ROI]') or line.startswith('[RUN] benchmark=gapbs_bfs')):
+                        roi_records.append(line)
+        m.update({'expected_marker_matches': dict(zip(d['required_pass_patterns'], matched)),
+                  'emulator_reported_cycle_counts': passed_cycles,
+                  'failure_marker_seen': failure_seen})
+        if rc or failure_seen or not all(matched) or len(passed_cycles) != 1:
+            fail('Simulation/expected markers/cycle completion failed; preserve and inspect test.log')
+        if not Path(m['waveform']).is_file() or Path(m['waveform']).stat().st_size == 0:
+            fail('Missing/empty required FST waveform')
+        m['harness_cycles'] = passed_cycles[0]
+        if contract:
+            m['software_roi'] = contract.parse_common_log(roi_records)
+            m['ROI_cycles'] = m['software_roi']['ROI_cycles']
+            print('ROI_CYCLES=' + str(m['ROI_cycles']) + '\nHARNESS_CYCLES_AUXILIARY_ONLY=' +
+                  str(passed_cycles[0]), flush=True)
+        m['source_after'] = source_identity()
+        m['workload_result'] = m.get('software_roi', {}).get('workload_result', 'UNRESOLVED')
+        m.update({'result': 'PROCESS_AND_EXPECTED_MARKERS_PASSED', 'process_and_marker_success': True,
+                  'correctness': 'EXPECTED_MARKERS_PASS_ONLY; architectural/package/drain correctness remains UNRESOLVED'})
+        print('RUN_COMPLETE=' + str(destination) + '\nRUN_PROVENANCE=UNRESOLVED', flush=True)
+    except BaseException as exc:
+        m.update({'result': 'FAILED', 'error': str(exc)})
+        raise
+    finally:
+        m['end'] = stamp()
+        record(destination / 'manifest.json', m)
+        record(destination / 'run_manifest.json', m)
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Manual isolated b3 baseline launcher. No action without an explicit phase.')
+    phases = parser.add_mutually_exclusive_group()
+    phases.add_argument('--check', action='store_true', help='static paths/source/tools check only; executes no build, simulator, or tool version probe')
+    phases.add_argument('--preflight', action='store_true', help='paths, hashes, disk, isolation and tool-version checks; no hardware generation or simulation')
+    phases.add_argument('--build', action='store_true', help='user-authorized fresh hardware generation and debug simulator build')
+    phases.add_argument('--run', metavar='BUILD_DIRECTORY', help='run a verified successful baseline build')
+    phases.add_argument('--all', action='store_true', help='fresh build then one run; requires a reviewed workload descriptor')
+    parser.add_argument('--workload', help='explicit absolute JSON descriptor; schema 2 binds common ELF/loadmem hashes, build identity, and software ROI; no implicit software')
+    parser.add_argument('--jobs', type=int, default=1)
+    parser.add_argument('--max-cycles', type=int, default=500000000)
+    parser.add_argument('--seed', type=int, default=1)
+    parser.add_argument('--min-free-gib', type=int, default=50)
+    args = parser.parse_args(sys.argv[2:])
+    if not any((args.check, args.preflight, args.build, args.run, args.all)):
+        parser.print_help()
+        return
+    if args.jobs < 1 or not 100 < args.max_cycles < 2**63 or not 0 <= args.seed < 2**31 or args.min_free_gib < 1:
+        fail('Invalid jobs/max-cycles/seed')
+    identity, env = preflight(args.min_free_gib)
+    selected = workload(args.workload) if args.workload or args.run or args.all else None
+    if args.check:
+        print('STATIC_CHECK=PASS; no build/generation/simulation/tool-version execution')
+        print('WORKLOAD=' + (selected[0]['name'] if selected else 'NOT_SELECTED; run is blocked until explicitly reviewed'))
+        return
+    # Shared dependency caches require one launcher at a time.
+    lock_path = inside(ROOT / 'manifests/experiment.lock')
+    fd = os.open(lock_path, os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(fd, 'a') as lock:
+        try:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            fail('Another baseline experiment is active; no cleanup or override performed')
+        probe_directory = isolation_probe(env, args.min_free_gib, dependencies=not bool(args.run))
+        args.preflight_manifest = probe_directory / 'manifest.json'
+        if args.preflight:
+            return
+        directory = build(args, identity, env) if args.build or args.all else args.run
+        if args.run or args.all:
+            run(args, directory, selected, identity, env)
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except (Exception, KeyboardInterrupt) as error:
+        print('STOP: ' + str(error), file=sys.stderr)
+        sys.exit(2)

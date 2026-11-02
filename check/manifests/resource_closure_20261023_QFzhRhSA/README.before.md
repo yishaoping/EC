@@ -1,0 +1,151 @@
+# 历史检错版 Baseline GAPBS 512 一键实验
+
+## 当前入口（2026-10-23）
+
+用户执行以下唯一命令，会依次进行 preflight、历史硬件生成、Verilator debug 构建和一次 GAPBS512 仿真：
+
+```bash
+/data1/gzh/EC/baseline/run_baseline_gapbs512.sh
+```
+
+**最新基础设施修复（2026-10-23）**：修正 SBT 缓存路径覆盖、源码复制执行权限丢失和失效的 zlib 头文件路径；同时消除隔离环境的 Log4j JMX 初始化异常。正式构建前现在自动执行批量非硬件预检，集中汇总工具、头文件、参数、脚本权限和依赖问题。最终 `manifests/preflight_6j0t9w3i/manifest.json` 已通过：27 个依赖范围、274 个解析后的 JAR 完整性及 SHA256、10 组本机构建前检查。5 项启动器回归自检也通过。详情见 [批量修复记录](manifests/infrastructure_batch_fix_20261023_7c642ea0/README.md)。硬件源码编译、elaboration、RTL generation、Verilator 构建及仿真仍未由此次修复执行。
+
+只做上述非硬件预检，可执行：
+
+```bash
+/data1/gzh/EC/baseline/start_baseline_experiment.sh --preflight \
+  --workload /data1/gzh/EC/baseline/software_common_builds/gapbs512_20261023_03/workload.json
+```
+
+预检会在独立目录加载历史 SBT 构建定义并执行依赖 `update`，不编译工程 Scala/Chisel，不执行 `runMain`、硬件生成或仿真。它会处理 SBT 构建定义自身的元数据。安全隔离和输入身份失败仍立即停止；其余可独立执行的检查尽量集中上报。
+
+`DIRECT_EVIDENCE`：Baseline 源码为 `source/`，HEAD 固定为 `b3d7adddd1e2d2cf428dd933529de878226420cd`，Config 为历史 `chipyard.v1Config`。规范源码不修改；执行时复制至独立新建的 `build/b3_<时间>_<随机>/source/`。保留 b3 错误检测语义，没有添加 Current preservation、validation barrier、版本追踪或跨层保护 wiring。
+
+`DIRECT_EVIDENCE`：本轮已实际完成软件编译、ELF/loadmem/反汇编/符号检查和非硬件 preflight。**没有执行上述一键脚本，没有执行硬件生成、elaboration、Verilator 硬件构建、仿真或 workload。** 以下旧版准备说明是早期阶段记录，其“未编译、隔离未测试、候选待选择”等描述已由本节和最新 manifest 更新。原 README 已另存 `manifests/gapbs512_preparation_20261023_6f02a91c/README.previous.md`。
+
+### 已编译软件
+
+软件构建目录：`/data1/gzh/EC/baseline/software_common_builds/gapbs512_20261023_03/`。
+
+| 文件 | SHA256 |
+|---|---|
+| `test.riscv` | `da8897e790f0c5e91eff3e9560d2b0e7b4e1de6dff208788fb4d9e2ae462c81c` |
+| `test.loadmem_hex` | `f1c0335e8a7ffc6f57232e9bcb8c80a49f45eacaa1e4f533f4cb3af91ad308ad` |
+| `workload.json` | `71373bcfeb4609c9c5b4a6a8e5212c3d1ddafcb340488736785dbd873e2dc743` |
+
+`DIRECT_EVIDENCE`：构建使用 RISC-V GCC 12.2.0，`-march=rv64imafd -O2 -static -fno-common -fno-builtin-printf -fdata-sections`，静态 libgloss/HTIF。完整 argv、编译器/库哈希、输入快照和布局在同目录 `build.manifest.json`、`test.map`、`test.symbols`、`test.dump`。loadmem 为基址 `0x80000000`、512 KiB、8192 行，每行按历史 mm.cc 格式反转64字节。编译失败的 `_01`、`_02` 目录保留，不被入口选择；`_03` 已成功且完成静态检查。
+
+`DIRECT_EVIDENCE`：软件来自 Current 修复版的独立副本 `software_common/`。BFS C 主体、AMO.W 自检、timer handler 和64字节 timer slot 源文件保持一致；主数组、timer、HTIF、栈/堆关键地址逐项对照旧 ELF，18项布局合同检查通过。移除了统计 readback `0x7B/0x55/0x79/0x77/0x78`，保留 checker 的初始化、上下文/replay/copy/release 和低位 observer reset/clear 协议。所有软件改动均在 baseline 内。
+
+### Workload 和计时
+
+`DIRECT_EVIDENCE`：512 是 BFS 节点数，不是字节数或图文件编号。输入在程序内确定生成：节点 `i` 有16条出边，连接 `(i+1)..(i+16) mod 512`，共8192条有向边；source=0，alpha=15，beta=18，无外部输入。先进行 AMO.W 双 lane/符号扩展自检，再建图/BFS/验证；大型共用数组仍为4096容量，地址布局未缩小。1个 BOOM hart0 + 4个 checker hart1..4；timer hart0..3，stride=64 bytes，limit=50，delta=32 CLINT ticks。`interval=NOT_USED`，旧日志的5000不是实际 timer 周期。
+
+`DIRECT_EVIDENCE`：软件 ROI 为 hart0 `common_roi_start=0x80000340` 到 `common_roi_stop=0x8000039c` 的两个 `rdcycle` 之差。开始位于 monitor/checking START 后；结束位于 AMO+BFS、checking STOP、26次NOP的C循环、monitor STOP以及 GHT status>=`0x1ffff` 后。ROI 包含必要 session-completion 等待，报告/checker软件ready等待和HTIF退出在ROI外。`ROI_cycles` 与 `harness_cycles` 分开保存，禁止互换或人为补偿。
+
+`STATIC_INFERENCE`：静态 HTIF 软件运行不依赖缺失的 `Software/R-Kernel` 源码或镜像。软件/包/缓存的实际运行正确性需首轮仿真确认。历史 harness 在 host success 后退出，没有 Current 可选 `stage1_l1_drained` 退出端口；软件ready、GHT session状态不能证明所有package、L2或DRAM已drain。脚本保持历史退出语义并记录 `cache_package_drain=UNRESOLVED`。
+
+### 已有 Current 实验
+
+`DIRECT_EVIDENCE`：现有日志输出 `nodes=512 source=0 reached=512 edges=8192 verified=1 parent_checksum=43439728`；软件 `boom_cycles=4512796`。
+
+- 日志：`/data1/gzh/EC/chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.log`。
+- 波形：`/data1/gzh/EC/chipyard/sims/verilator/output/chipyard.TestHarness.v1Config/test.vcd`。**真实格式是 FST**，不是 VCD；本入口对应生成 `test.fst`。
+- verbose输出：同目录 `test.out`；loadmem：同目录 `test.loadmem_hex`。
+- 已闭合封存 Current 运行：`/data1/gzh/EC/AI/TMP/stage3_runs/run_qx63gyhc/system/system.run/`，包含 `run.json`、`workload.json`、`trace.log`、`trace.fst` 和 correctness/scoreboard 证据。
+- 封存 Current 实际 argv 使用该次 `build/system.build/simulator-chipyard-v1Config-debug -v .../trace.fst +verbose +permissive +dramsim +dramsim_ini_dir=... +max-cycles=500000000 +loadmem=... +loadmem_addr=80000000 +permissive-off .../test.riscv`；Config=v1Config、FST debug，软件SHA `f5f84a17...`、loadmem `a3b7a4f8...`。新入口显式 seed=1；不能倒推缺少argv的独立旧输出seed。
+
+`UNRESOLVED`：独立 Current 输出缺少与其一一绑定的源快照/model/simulator/argv manifest，保持 **`RUN_PROVENANCE=UNRESOLVED`**。封存运行的身份不能转移给路径相邻或结束周期相同的独立输出。详见 `manifests/gapbs512_preparation_20261023_6f02a91c/current_evidence.md`。
+
+**`BASELINE_GAPBS_COMPARISON_IS_APPROXIMATE`**：新 ELF 删除了旧统计调用和checker snapshot，代码地址/取指行为改变，旧 Current 未用此新二进制，退出drain语义也有差异。可作基础 cache/LSU/MSHR/Scheduler/TL 和等待结构比较，cycle差仅供参考；不能宣称精确净slowdown。
+
+### 自动阶段与输出
+
+0. 检查完整SHA、clean源码、工具/缓存/ELF/loadmem/描述哈希、磁盘和可写路径；bwrap中检查挂载权限、socket、工具版本、C++头文件、FESVR归档、zlib、历史工具参数和脚本权限。独立的SBT构建定义副本批量解析27个依赖范围，并核验解析后的JAR。汇总失败组后停止，未通过不进入硬件构建。
+1. 在新建独立副本中调用 b3 Makefile 的 `verilog`，生成 historical v1Config RTL，保存 `rtl_generation.log`。
+2. 相同Make配置执行 `debug`，默认jobs=1，FST开启；保存 `build.log`、tool版本、source copy identity、generated model哈希和simulator SHA256。不复用旧构建。
+3. 新建 `runs/b3_<时间>_<随机>/`，先复制并核验软件输入，再用历史driver支持的参数仿真；从reset开始，trace 99层，无wrapper信号过滤。
+4. 保存 `test.log`（合并证据）、`stdout.log`、`stderr.log`、`test.fst`、`command.txt`、`workload.json`、`inputs/`、`run_manifest.json` 及生命周期 `manifest.json`。manifest记录源码/config/model/simulator/ELF/loadmem、实际argv/环境/版本/起止时间、exit code、软件ROI、harness cycles、结果字段。失败也保留日志和状态，不覆盖历史结果。
+
+默认无需参数。可选环境变量：`BASELINE_JOBS=1`、`BASELINE_MAX_CYCLES=500000000`、`BASELINE_SEED=1`、`BASELINE_MIN_FREE_GIB=50`。50 GiB是启动检查阈值，不是完整波形大小上限。相关模块已完成断网依赖解析与JAR核验；工程源码编译、生成和链接仍待用户执行。缺失会保留失败现场并退出，不下载、不切换软件、不降级到无隔离执行。
+
+`DIRECT_EVIDENCE`：非硬件preflight在 `manifests/preflight_m8eu3149/` 通过，JDK17.0.3、SBT1.8.2（固定build.properties及launcher）、firtool LLVM17/CIRCT版本字符串unknown（记录二进制SHA）、Verilator5.048、GCC12.2。已修复本机bwrap不支持`--clearenv`及不允许新挂载proc的问题：通过最小subprocess环境+显式setenv，保留宿主只读proc，不放宽Current只读限制。
+
+本轮证据和最终保全检查位于 `manifests/gapbs512_preparation_20261023_6f02a91c/`。
+
+### SBT socket 启动修复（2026-10-23）
+
+用户首轮构建因`java.io.tmpdir`位于长build路径、SBT boot socket总路径110字节而退出。启动器已改用独立`baseline/tmp/j_<随机>/`短目录，并在preflight中实际创建SBT同层级Unix socket验证长度及权限。新的非硬件preflight通过；原失败目录保留，不改硬件或软件。详情见 `manifests/sbt_socket_path_fix_20261023_c8f437a2/README.md`。用户仍执行相同一键命令；本次修复没有代为重跑硬件生成、构建或仿真。
+
+---
+
+## 早期通用入口记录
+
+完整提交：**b3d7adddd1e2d2cf428dd933529de878226420cd**；父提交：`6d899a71d68e5e15cb4c108a48375ea60edb2280`。独立源码位于 `source/`，Config 为历史 `chipyard.v1Config`。活动源码采用 `main/scala`，inclusive cache 采用 `design/craft`，没有混入 current 的保护机制或修改硬件语义。
+
+**本轮没有执行启动脚本，包括 --help、--check；没有执行硬件生成、elaboration、编译、仿真、测试或 workload。** 只执行源码恢复、独立文件复制、只读审阅及静态语法检查。
+
+## 用户手动使用
+
+查看帮助和只做静态环境检查：
+
+```bash
+/data1/gzh/EC/baseline/start_baseline_experiment.sh --help
+/data1/gzh/EC/baseline/start_baseline_experiment.sh --check
+```
+
+`--check` 不运行 make、SBT、工具版本探测或 simulator。单独构建无需先选软件；用户执行以下命令后，才会生成硬件和编译 simulator：
+
+```bash
+/data1/gzh/EC/baseline/start_baseline_experiment.sh --build --jobs 1
+```
+
+每次创建新的 `build/b3_<时间>_<随机后缀>/`，并输出 `BUILD_COMPLETE=<绝对目录>`。先检查隔离和工具版本，失败立即停止。保留全部失败输出，不自动清理，不使用失败产物启动仿真。
+
+运行前须在 `software/` 下准备新的、已核对的软件描述 JSON，可参考 `software/historical_workload.template.json`。原模板保持 UNRESOLVED，不能直接运行。描述文件记录 ELF 路径与 SHA-256、软件来源、b3 硬件 ABI 兼容性依据、计时边界、退出/drain 依据及程序正确性标记。只有具备具体依据后才将 `baseline_compatibility` 填写为 `REVIEWED_FOR_BASELINE`；仅修改字符串不构成兼容性证据。保留原始模板和候选描述。
+
+填写并审阅一个新文件，例如 `software/reviewed_workload.json` 后，用户可执行：
+
+```bash
+/data1/gzh/EC/baseline/start_baseline_experiment.sh --check \
+  --workload /data1/gzh/EC/baseline/software/reviewed_workload.json
+
+# 将下面占位目录替换为脚本实际输出的 BUILD_COMPLETE 路径。
+/data1/gzh/EC/baseline/start_baseline_experiment.sh \
+  --run /data1/gzh/EC/baseline/build/<BUILD_COMPLETE目录名> \
+  --workload /data1/gzh/EC/baseline/software/reviewed_workload.json
+
+# 或明确启动一次新构建和一次仿真的完整流程：
+/data1/gzh/EC/baseline/start_baseline_experiment.sh --all --jobs 1 \
+  --workload /data1/gzh/EC/baseline/software/reviewed_workload.json
+```
+
+不传阶段参数时只显示帮助，不隐式选择软件。可显式设置 `--seed`（默认 1）和 `--max-cycles`（默认 500000000）。`inputs` 当前须为空：尚无证据支持其他输入的历史 argv/文件映射，脚本会拒绝猜测。
+
+## 隔离与复用依据
+
+- 源码采用独立 `git clone --no-local --no-checkout --no-tags`，仅在 baseline clone 内 detach 至完整 SHA；无 alternates、硬链接或 worktree。
+- 每次构建将完整历史源码和独立 Git 元数据复制到该次 `build/.../source/`。历史 Makefile 会在源码树内生成 SBT target 和 DRAMSim 对象，因此副本属于本次构建目录；规范的 `baseline/source/` 在执行隔离中只读挂载。
+- 所有实际工具、构建和 simulator 子进程通过 `/usr/bin/bwrap`：宿主文件系统只读，仅 baseline 可写，规范源码及本次副本 Git 元数据只读，网络隔离。隔离不可用即停止，没有无隔离后备路径。本轮未启动隔离进程，其运行可用性尚未验证。
+- 复用本机 `.conda-env` 的 RISC-V、JDK、firtool、SBT launcher，以及现有 Verilator/Nix 编译环境作为外部只读工具。未安装、升级或重建工具链。精确路径在 `manifests/environment.json`，实际版本和哈希由用户构建/运行时采集。
+- 已独立复制 `/home/guozh/.cache/coursier` 和 current 的 `.sbt/boot` 至 `baseline/cache/`，未使用硬链接或符号链接，未复制全局 SBT 插件或 current 硬件 target。缓存完整性未经构建验证；网络隔离下缺失依赖就停止，不自动下载或升级工具链。
+- TMPDIR、Java tmp、Ivy/SBT/Coursier、XDG、ccache 均指向 baseline。保留 HOME 环境变量原值，Java `user.home` 显式重定向；宿主 home 只读，未知固定写入将失败。
+- make 命令结构取自 `AI/TMP/control_stop_sync_20261021_audit/source/stage1_build_and_run.sh`，并核对 b3 的 `sims/verilator/Makefile`、`variables.mk`、`common.mk`。采用 `debug`、`CONFIG=v1Config`、`VERILATOR_FST_MODE=1`，不带 current 的 `STAGE1_EXIT_PORTS`。
+- 仿真参数参考同目录 `stage1_run_trace.sh`；`-v`、`-s`、`+cycle-count`、`+max-cycles` 与退出条件对照 b3 `emulator.cc`，DRAM/loadmem 参数对照 b3 `variables.mk` 及 testchipip。不会调用 current 的 AI/Debug 脚本、生成模型或 simulator。
+- 每次运行新建 `runs/b3_<时间>_<随机后缀>/`，保存输入副本、实际 argv、白名单环境、工具版本/哈希、源码和模型身份、日志、FST、退出码、周期提取及 marker 结果。仅接受本入口成功构建并通过哈希核验的模型和 simulator。
+
+## 未解决的软件与依赖
+
+1. b3 记录 `Software/R-Kernel` gitlink `9978da2da42a5f53f690d99d92c64013a0cb72b9`，本机对象不可用，根 `.gitmodules` 缺少映射；未以 current 替代。所查硬件 build 和 Software/Test 不引用它，故保留硬件构建入口；不能声称完整历史依赖闭合或可重建该内核。
+2. 历史 `source/Software/Test/test.riscv` 为 18040 bytes，SHA-256 `5b27ff378ac84ac4c0c0a6f07999e456adffe0866c071ed17be56ed200454b34`。ELF 是 RISC-V，入口 `0x80000000`，含 tohost/fromhost。可以显式选择历史驱动支持的 ELF/HTIF 加载方式（loadmem 为 null），但软件正确性和退出/drain 尚未运行确认。历史 `TC_OverTaking.riscv.loadmem_hex` 不被当作该 ELF 的配套输入。
+3. 已核验并保存 `AI/TMP/stage1_workload.json` 对应的修复后软件至 `software/fixed_candidate/`，包括 ELF、loadmem、dump 和原 manifest。ELF 哈希 `f5f84a1727e1c5466bd69e5e89c96410f1622297c1e62bf31408f176a2b65610`，loadmem 哈希 `a3b7a4f8e50cc28101b0a51f55406595fb113f9695ca54ee912555138fe7894c`。这些是显式候选，没有自动选用。
+4. **不能直接认定修复后软件兼容 b3。** b3 `Software/Test/ghe.h:165` 和 `GHE.scala:279` 表明 funct 0x76 只有 reset 与 5-bit selector；current `Software/Test/hw/ghe.h:69` 的 START/STOP 使用 bit 5/6，interval 使用 funct 0x79，且存在新增流量统计/退出接口。统计 ABI 不同，候选描述保持 UNRESOLVED，脚本默认拒绝启动它。本轮未编译兼容软件或修改硬件协议。
+5. 配套 loadmem 如使用，须显式记录来源、哈希和地址；格式须符合历史 mm.cc 的小写、偶数字节十六进制行。无配套 loadmem 时可以显式选择 ELF/HTIF，不能静默换用另一份 ELF 或 loadmem。
+
+## 统计与正确性边界
+
+历史 emulator 的 Completed after N cycles 是 harness `trace_count`：包括 100 次 reset 循环，再按 harness 循环递增，直到 dtm/tsi/jtag done、io_success 或 timeout。不能自动视为 BOOM 时钟周期、软件 ROI 或退出 drain 周期，更不能直接用于已闭合的成对性能比较。
+
+脚本分别记录 simulator 返回值、软件自定义 marker 和 harness cycle 字段。marker 全部出现也只标为 `PROCESS_AND_EXPECTED_MARKERS_PASSED`；架构、包完成及 drain 正确性和 `complete_experiment_success` 仍须审阅。ROB gate、冲突等待和关键路径周期没有新增计数器，保持 UNRESOLVED。
+
+`RUN_PROVENANCE=UNRESOLVED` 保持不变。未来比较 current，须使用同一 ELF、loadmem、输入、配置容量/频率、seed、计时边界和退出规则，并分别记录模型/simulator 哈希及正确性证据。当前只完成环境准备。
