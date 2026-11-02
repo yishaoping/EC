@@ -2,5 +2,7 @@
 # not source files being reformatted by cleanup.
 slowdown/opt4/*.patch -whitespace
 slowdown/analysis_archive/**/*.patch -whitespace
+# CSV evidence retains the producer's original CRLF record endings.
+slowdown/analysis_archive/**/*.csv -whitespace
 slowdown/analysis_archive/cleanup_evidence/pre_cleanup_files/** -whitespace
 slowdown/unclassified_logs/**/dramsim.log -whitespace

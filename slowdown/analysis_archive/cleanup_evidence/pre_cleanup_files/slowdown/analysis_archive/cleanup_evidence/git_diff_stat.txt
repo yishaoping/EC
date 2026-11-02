@@ -1,0 +1,20 @@
+ AI/Debug/history/timeline.md                       |  16 +
+ AI/Debug/scripts/README.md                         |  46 +++
+ AI/Debug/state/current_debug_state.md              | 412 +++++++++++++++++++++
+ .../generators/boom/src/main/scala/exu/core.scala  |  28 ++
+ .../generators/boom/src/main/scala/exu/rob.scala   |  19 +
+ .../boom/src/main/scala/lsu/dcache.scala           |  95 ++++-
+ .../generators/boom/src/main/scala/lsu/lsu.scala   |  38 ++
+ .../src/main/scala/config/RocketConfigs.scala      |  13 +
+ .../src/main/resources/csrc/cache_opportunity.cc   | 229 +++++++++++-
+ .../rocket-chip/src/main/scala/r/R_IC.scala        |  16 +
+ .../rocket-chip/src/main/scala/r/R_ICSL.scala      |   9 +
+ .../src/main/scala/rocket/RocketCore.scala         |  68 +++-
+ .../src/main/scala/util/SafeChainObservation.scala |  31 ++
+ .../craft/inclusivecache/src/Directory.scala       |  10 +
+ .../craft/inclusivecache/src/L2Preservation.scala  |   7 +
+ .../craft/inclusivecache/src/Scheduler.scala       |  63 +++-
+ .../optimization_4_svb/analysis/analyze_svb.py     |  71 +++-
+ .../optimization_4_svb/scripts/compact_capture.py  |   2 +
+ .../scripts/launch_optimization_4_svb.py           |  65 +++-
+ 19 files changed, 1208 insertions(+), 30 deletions(-)

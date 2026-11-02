@@ -1,0 +1,64 @@
+{
+  "AST": "PASS",
+  "A_prime_executed": false,
+  "bounds_scope": "Fixed observed trace only: deleting marked direct head-load waiting; not a bound on timing feedback, dependency propagation or a new execution.",
+  "exact_roi_occupancy_partition": "PASS",
+  "hardware_generation": "NOT_EXECUTED",
+  "hardware_sources_modified": 0,
+  "manual_review": "overlap/window/cohort/expected-vs-upper-bound distinctions checked",
+  "missing_per_token_retry_and_head_episode_history": "EXPLICIT_NULL",
+  "new_hardware_runs_prepared": 0,
+  "numeric_report_invariants": "PASS",
+  "offline_tests": {
+    "command": [
+      "/data1/gzh/EC/chipyard/.conda-env/bin/python3",
+      "-I",
+      "-B",
+      "/data1/gzh/EC/AI/Debug/scripts/test_opt5_sub1p5_gap.py"
+    ],
+    "count": 17,
+    "exit_code": 0,
+    "log": "offline_tests.log",
+    "status": "PASS"
+  },
+  "old_A_vs_B": "REFERENCE_COMPARISON",
+  "original_hash_counts": {
+    "hardware": 19,
+    "original_evidence": 85,
+    "prior_generated_native_files": 8,
+    "sealed_tools": 19
+  },
+  "raw_STOP_vs_saved_view": "PASS",
+  "raw_native_vs_recovered_view": "PASS",
+  "required_artifacts": [
+    "README.md",
+    "146k_gap_analysis.md",
+    "nack_retry_breakdown.md",
+    "rob_head_remaining_wait.md",
+    "retry_amplification.md",
+    "candidate_upper_bounds.md",
+    "opt5_design_options.md",
+    "opt5_gain_budget.md",
+    "sub1p5_feasibility.md",
+    "next_run_plan.md",
+    "validation_result.json"
+  ],
+  "required_artifacts_present": true,
+  "scope": "offline evidence/attribution audit; no new hardware validation",
+  "sealed_hardware_tools_original_evidence_unchanged": "PASS",
+  "simulation": "NOT_EXECUTED",
+  "source_generated_signatures": {
+    "direct_line_buffer_load_response_exists": true,
+    "generated_bank_nack_constant_zero": true,
+    "generated_sdq_same_set_admission_equation": true,
+    "generated_single_memory_lane": true,
+    "ldq_age_wakeup_exists": true,
+    "nack_clears_executed": true,
+    "nack_miss_is_not_ready_predicate": true,
+    "same_set_tag_secondary_readiness": true,
+    "secondary_drain_closed": true
+  },
+  "status": "PASS",
+  "strict_pairing": "STRICT_PAIRING_PENDING",
+  "verilator_build": "NOT_EXECUTED"
+}

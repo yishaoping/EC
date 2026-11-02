@@ -1,0 +1,100 @@
+--- a/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala
++++ b/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala
+@@ -33,6 +33,9 @@
+     val watermark = UInt(width = 32).flip
+     val bank = UInt(width = 8).flip
+     val lock = Valid(new L2PreservationCandidate(params))
++    // Only this phase has no bank reads or A beats left. The set lock remains
++    // live until the matching terminal ACK; it is not the SourceC port lease.
++    val waitingAck = Bool()
+     val completed = Valid(new L2PreservationCandidate(params))
+     val a = Decoupled(new TLBundleA(params.outer.bundle))
+     val d = Decoupled(new TLBundleD(params.outer.bundle)).flip
+@@ -50,6 +53,7 @@
+     "Stage3 requires end-to-end completion echo")
+   val idle :: read :: delay1 :: delay2 :: send :: waitAck :: failed :: Nil = chisel3.util.Enum(7)
+   val state = RegInit(idle)
++  io.waitingAck := state === waitAck
+   val snapshot = Reg(new L2PreservationCandidate(params))
+   val serial = RegInit(UInt(0, width = 64))
+   val lastAck = RegInit(UInt(0, width = 64))
+@@ -101,6 +105,9 @@
+   when (state === delay2) { data := io.bs_dat.data; state := send }
+   val finalBeat = beat === UInt(params.cache.blockBytes / params.outer.manager.beatBytes - 1)
+   io.a.valid := state === send
++  when (io.waitingAck) {
++    assert(!io.bs_adr.valid && !io.a.valid, "L2 waitAck still uses checkpoint data path")
++  }
+   io.a.bits := 0.U.asTypeOf(new TLBundleA(params.outer.bundle))
+   io.a.bits.opcode := TLMessages.PutFullData
+   io.a.bits.size := UInt(params.offsetBits)
+--- a/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala
++++ b/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala
+@@ -108,6 +108,9 @@
+   val sourceE = Module(new SourceE(params))
+   val sourceX = Module(new SourceX(params))
+   val preservation = Module(new L2Preservation(params))
++  // Keep the captured set locked through terminal ACK, but return the shared
++  // SourceC read port once every checkpoint A beat has been accepted.
++  val sourceCReserved = preservation.io.lock.valid && !preservation.io.waitingAck
+   preservation.io.watermark := io.safeWatermark
+   preservation.io.bank := io.bank
+   sourceC.io.watermark := io.safeWatermark
+@@ -332,7 +335,7 @@
+   val stage3Allowed = mshrs.zip(candidates).map { case (m, x) =>
+     val outerSafe = !m.io.schedule.bits.c.valid || CacheImage.safe(m.io.resident.bits.image, io.safeWatermark)
+     !x.valid && !locked(m.io.status.bits.set) && outerSafe &&
+-      (!m.io.schedule.bits.c.valid || (!preservation.io.lock.valid && !drainForCheckpoint)) &&
++      (!m.io.schedule.bits.c.valid || (!sourceCReserved && !drainForCheckpoint)) &&
+       (!m.io.schedule.bits.d.valid || !drainForCheckpoint)
+   }
+   val unsafeVictims = mshrs.map(m => m.io.schedule.valid && m.io.schedule.bits.c.valid &&
+@@ -773,10 +776,10 @@
+   bankedStore.io.sinkC_dat := sinkC.io.bs_dat
+   bankedStore.io.sinkD_adr <> sinkD.io.bs_adr
+   bankedStore.io.sinkD_dat := sinkD.io.bs_dat
+-  bankedStore.io.sourceC_adr.valid := Mux(preservation.io.lock.valid, preservation.io.bs_adr.valid, sourceC.io.bs_adr.valid)
+-  bankedStore.io.sourceC_adr.bits := Mux(preservation.io.lock.valid, preservation.io.bs_adr.bits, sourceC.io.bs_adr.bits)
+-  preservation.io.bs_adr.ready := preservation.io.lock.valid && bankedStore.io.sourceC_adr.ready
+-  sourceC.io.bs_adr.ready := !preservation.io.lock.valid && bankedStore.io.sourceC_adr.ready
++  bankedStore.io.sourceC_adr.valid := Mux(sourceCReserved, preservation.io.bs_adr.valid, sourceC.io.bs_adr.valid)
++  bankedStore.io.sourceC_adr.bits := Mux(sourceCReserved, preservation.io.bs_adr.bits, sourceC.io.bs_adr.bits)
++  preservation.io.bs_adr.ready := sourceCReserved && bankedStore.io.sourceC_adr.ready
++  sourceC.io.bs_adr.ready := !sourceCReserved && bankedStore.io.sourceC_adr.ready
+   bankedStore.io.sourceD_radr <> sourceD.io.bs_radr
+   bankedStore.io.sourceD_wadr <> sourceD.io.bs_wadr
+   bankedStore.io.sourceD_wdat := sourceD.io.bs_wdat
+@@ -798,6 +801,8 @@
+     assert(!(sinkD.io.bs_adr.fire() && !sinkD.io.bs_adr.bits.noop && locked(sinkD.io.bs_adr.bits.set)), "L2_PREMATURE_OVERWRITE_ERROR refill")
+   }
+   when (sourceC.io.req.fire()) {
++    assert(!sourceCReserved && !locked(sourceC.io.req.bits.set),
++      "L2 SourceC bypass violates checkpoint reservation")
+     assert(sourceC.io.req.bits.source < UInt(InclusiveCacheParameters.out_mshrs(params.cache, params.micro)),
+       "L2 MSHR release aliases checkpoint source")
+     assert(CacheImage.safe(sourceC.io.req.bits.image, io.safeWatermark), "L2_SPEC_OUTER_WRITE_ERROR victim")
+@@ -816,6 +821,24 @@
+     assert(preservation.io.a.fire() && CacheImage.safe(preservation.io.lock.bits.image, io.safeWatermark),
+       "L2_SPEC_OUTER_WRITE_ERROR A source")
+   }
++
++  // One bounded STOP record, SC48/schema1. Pending is a raw MSHR voluntary
++  // Release/ReleaseData opportunity, before scheduling gates. It does not prove
++  // that SourceC is the only blocker. Counts use the existing traffic window.
++  val sourceCReleasePending = mshrs.map(m => m.io.schedule.valid &&
++    m.io.schedule.bits.c.valid && m.io.schedule.bits.c.bits.opcode(1)).reduce(_||_)
++  val sourceCReleaseFire = sourceC.io.req.fire() && sourceC.io.req.bits.opcode(1)
++  val sourceCObservation = SafeChainObservation.remainingContext()
++  SafeChainObservation.remainingCounters(48, clock, reset, observationContext._1,
++    sourceCObservation._1, sourceCObservation._2, sourceCObservation._3, Seq(
++      sourceCReserved, // sourcec_reserved_cycles (actual narrowed lease)
++      sourceCReserved && sourceCReleasePending, // sourcec_reserved_with_pending_release
++      preservation.io.waitingAck && sourceCReleaseFire, // release_bypass_count (requests)
++      sourceCReleasePending && !sourceCReleaseFire, // release_still_blocked_count (cycles)
++      preservation.io.waitingAck, // waitAck_cycles
++      preservation.io.waitingAck && sourceCReleasePending, // waitAck_with_pending_release
++      preservation.io.lock.valid, // target_set_locked_cycles (old global lease)
++      preservation.io.lock.valid && sourceCReleasePending)) // old_reserved_with_pending_release
+ 
+   // SLOWDOWN_TRACE_BEGIN: observation-only; no functional consumers.
+   val slowdown_scheduler_request_valid = chisel3.WireInit(request.valid)

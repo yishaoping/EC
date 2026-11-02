@@ -1,3 +1,441 @@
+# Current: Opt4 frozen, optimization PAUSED (2026-11-02)
+
+Latest user request supersedes every historical READY/NEXT_ACTION command below.
+CURRENT_STABLE_OPT=Opt4; STATUS=FROZEN; OPTIMIZATION_STATUS=PAUSED.
+Use slowdown/OPT4_BASELINE.md and slowdown/README.md for subsequent DAC experiments.
+Opt4 ROI1,707,863 / native1,001,675 =1.7050071×, SVB16, v1Config/L1D32KiB.
+Functional hardware restored byte-identically to476a76091; original12 measured hashes
+and expanded20-file frozen scope are recorded under slowdown/opt4/frozen_manifest.json.
+Seq67 function/diagnostics,64KiB config, causal/snapshot observers and SourceC bypass
+are archived, NOT active Opt4. SourceC had no hardware run at pause.
+
+Actual patches reconstruct all16 pre-cleanup hardware/host files (bytes and modes),
+with original dirty source/script snapshots under slowdown/analysis_archive/cleanup_evidence/.
+Original AI/TMP seals, claims, raw FAIL/recovery/reports and large artifacts remain.
+Stable host analyzer keeps proven L2 shadow-vs-correctness separation, not experimental
+schema/counters. Stable launcher guard patch now has a versioned slowdown/opt4 copy.
+Two unclassified dramsim logs moved to slowdown/unclassified_logs;22 run/evidence logs
+kept. Only46 reproducible bytecode files and10 empty cache dirs deleted.
+No hardware generation/build/benchmark or performance optimization in this cleanup.
+Historical baseline durable-drain/provenance limits and failed L2 S0 remain explicit.
+
+NEXT_ACTION=USE_FROZEN_OPT4_FOR_DAC_EXPERIMENTS.
+Optimization resumes only by explicit decision; read slowdown/analysis_archive/RESUME_OPTIMIZATION.md.
+
+---
+
+# Opt5 SourceC waitAck bypass — implementation sealed, user one-shot ready (2026-11-01)
+
+Latest user request supersedes further precision attribution: static quick GO→minimal
+RTL fix→one formal candidate experiment. STATIC_HOL_ROOT_CAUSE=PROVEN;
+SOURCEC_OPT5_GO=YES under user B/D rules. Global SourceC lease spans checkpoint
+waitAck, blocks unrelated victim Release and delays its MSHR Acquire.
+Runtime critical gain/upper bound UNKNOWN; static confidence HIGH, gain confidence LOW.
+
+Two L2 files changed vs completed B: L2Preservation exports waitingAck;
+Scheduler reserves SourceC only for lock&&!waitingAck. Target-set lock remains
+capture→matching terminal ACK. Existing image/watermark, physical overwrite, source,
+packet/hazard, ReleaseAck ordering and next-capture drain remain. New SC48 is one
+bounded STOP row with8 predicates; no percycle trace/ROB mapping. Raw pending overlaps
+other blockers; traffic START→STOP counters are not exact ROI or recoverable savings.
+
+Report (only5 primary files): `AI/TMP/opt5_sourcec_one_shot_20261101_173240/`.
+Scala typer PASS (no hardware generation),14 CPU contract/diagnostic/guard tests PASS,
+shell/diff checks PASS, real shell --static-check PASS. Seal20hardware/23tools:
+`dc55be848aa333d96d2cd5299896c1957208e34b784e156b38a4e6ae53fcb335`.
+These are source checks/witnesses, not Chisel/comb-loop/TL runtime validation.
+Hardware generation/Verilator/simulation NOT_EXECUTED; no launch claim consumed.
+Correctness and performance remain PENDING_USER_RUN. Risk MEDIUM until hardware checks.
+
+NEXT_ACTION=USER_RUN_ONE_OPT5_SOURCEC_EXPERIMENT:
+`bash AI/Debug/scripts/run_opt5_sourcec.sh --report AI/TMP/opt5_sourcec_one_shot_20261101_173240 --jobs 4`
+Same B64K config/software/ROI/seed1/SVB16/MSHR6/clocks. Candidate compared with current
+completed B ROI1,648,923, not a new baseline. One persistent exclusive claim; no retries,
+A-prime, sweep or second SourceC micro-tuning run. Host capture overlay changes only
+identity dictionaries128→256, preserving byte budgets, priority and all validation gates.
+Original B raw FAIL and lossless recovery, old seals/reports/claims are unchanged.
+Original19hardware exceptScheduler plus newly changedL2Preservation and all original
+sealed tools were verified against pre-edit snapshots. Strict historical A/newB pairing
+remains pending. ROI<1,502,513=sub1.5; saving≥100k strong,50k–100k moderate;
+<50k STOP_SOURCEC_DIRECTION. All correctness/observer/measurement gates required first.
+
+---
+
+# Opt5 preservation/outer-A — packet-to-ACK hypothesis refuted; move to SourceC HOL (2026-11-01)
+
+Latest report: `AI/TMP/opt5_preservation_outerA_attribution_20261101_135133/` (all13 artifacts).
+Offline only; no hardware patch, elaboration/generation/build/simulation, A-prime/newB,
+sweep/geometry/MSHR/frontend/SVB32/promotion, subagents or cleanup. Original B closure,
+seals/raw FAIL/recovery/claims/old reports unchanged. Strict pairing remains pending.
+
+Source/generated proof distinguishes3 resources: target-set lock capture→terminalACK;
+outer-A beatsLeft packet lock first→last accepted Put only; global SourceC reservation
+while target lock active. Ordinary SourceA ready contains packet idle/selection, NOT
+target lock/ACK. Pre-capture bank reads/delay may allow ordinary A; after final A,
+waitAck allows ordinary A while set remains protected. Inner Get hits use SourceD.
+SourceA depth2 FIFO keeps one presented unique head during continuous packet lock;
+held-valid repeats are NOT blocked unique requests or LSU retry events.
+
+Intrinsic gap-only fixed-trace UB≤(1623 memory-write starts+1possible carry-in)*21=34,104
+cycles. This is a scoped service-slot ceiling, NOT whole-lock/preservation UB; excludes
+bank waits, downstream ready-low, drain, waitAck and feedback. Refute packet lock
+spanning drain/terminalACK; stop intrinsic-gap-only direction as Opt5 main (<50k).
+
+More concrete NEXT offline mechanism: checkpoint waitAck uses no bank read but
+Scheduler globally gates all SourceC schedule/read on !preservation.lock.valid.
+Unrelated dirty-victim Release can wait; its MSHR new Acquire requires s_release AND
+w_releaseack. Structural SourceC reservation→release/acquire HOL proven, runtime
+occurrence/critical budget NOT_PROVEN. Design-only narrower borrow phase must retain
+target-set lock and terminal ACK/provenance, recheck hazards/next capture drain.
+Separate ingress C-priority locked-set HOL and downstream CacheCork C→A arb also exist.
+Checkpoint has priority above normal SinkD/SourceD bank work; those cannot starve it
+via BankedStore arb. SinkC/noop reservation may block, duration unknown.
+
+67,366 prebank union unchanged; trueT1–T5 not reconstructable (candidate/req may precede
+lastC; not everyC triggerspreservation). No actual preservation/packet top20;20 real
+release prebank proxies saved with unknown fields null, not mislabeled episodes.
+Complete-prefix prebank×scheduler94cycles is proxy only. UB1–UB4, critical joins,
+request/retry amplification, independent whole-chain critical UB UNKNOWN; conservative
+credit0. Direct head nested envelopes53,845/80,832 are NOT global transfer bounds.
+
+AMPLIFICATION_PROVEN=NOT_PROVEN; MAIN_MECHANISM=NONE_JUSTIFIED;
+OPT5_STATUS=NONE_JUSTIFIED; SUB1P5_FEASIBILITY=NOT_SUPPORTED;
+CHECKER_FRONTEND_PRIORITY=LAST_RESORT; NEXT_ACTION=MOVE_TO_NEXT_OFFLINE_BOTTLENECK.
+Next offline: SourceC waitAck reservation/release-acquire HOL, then L2 ingress/SourceD
+service; no functional run prepared. B1,648,923,target<1,502,513,required saving146,411.
+19 targeted CPU tests + offline integration PASS, original19 hardware/19tools/85evidence/
+8generated-native hashes unchanged. Synthetic contract witness is NOT a runtime trace.
+Tools/reference: analyze_opt5_preservation_outer_a.py and renderer;
+AI/Debug/references/opt5_preservation_outer_a_limits.md. Historical A-prime commands
+below remain superseded by current offline-only scope.
+
+---
+
+# Opt5 cache-transfer attribution — specific pre-bank wait found, critical budget unknown (2026-11-01)
+
+Latest priority: cache transfer/refill/WB/arbitration/backpressure, then LSU/retry,
+then BOOM/checker resource availability; checker frontend LAST_RESORT. Offline only:
+no elaboration/generation/build/simulation, A-prime, sweep, MSHR expansion, SVB32,
+promotion, subagents, cleanup. Existing B correctness and seals remain closed.
+Report: `AI/TMP/opt5_cache_transfer_attribution_20261101_113310/` (all13 requested artifacts).
+
+Mandatory SC20/38/21 reconstructs6,735 source6 voluntary ReleaseData transactions,
+all53,880 actual L2 bank-word writes (8/8 each), complete matching ACKs. Software ROI
+contains2,231 complete transactions (normal1,793/SVB438), no boundary-censored cases.
+`[firstC,ACK)` phase union100,915; lastC→firstbank67,366; first→last of8 consecutive
+bank writes15,617; lastbank→ACK4,546. lastC→ACK median52/p99=65/max85, firstC→ACK
+max91. This is post-first-C phase exposure, NOT whole-source lifetime or removable
+critical gain. Long52-cycle mode1,405 cases vs10-cycle mode690 cases has no saved
+checkpoint-state join. Optional complete prefix release92,448/scheduler280,215
+overlap151; do not extend to missing suffix or infer all cache/checker delays absent.
+
+Source audit: MSHR WB response is final victim row capture, not ReleaseAck; ACK still
+holds source/same-set admission. Full Grant creates E responsibility independently
+of later RPQ/install/meta; ordinary read already has LB forwarding before physical
+install.6 full-line LB slots share write-priority read scheduling and per-MSHR row
+staging; active DuplicatedDataArray bank-nack0 does not mean every refill blocks hits.
+Most specific static hypothesis: L2 checkpoint global pre-capture drain, target-set
+lock, single-engine read/delay1/delay2/send, outerA multibeat arb held across gaps.
+After capture other-set D may proceed; SourceC read/schedule remains restricted.
+No runtime critical budget. Native detect→data22/1052 tail samples>=1024cycles have
+summed elapsed-duration bounds169,083..189,549 out of211,045 total; this is NOT ROI
+critical cycles (overlap/pre-ROI starts possible), no Tier1 credit inferred.
+Potential512bit checkpoint buffer/burst is design only,
+must retain old image/provenance/safe watermark/matching terminal ACK. No hardware patch.
+
+`CACHE_TRANSFER_MAJOR_BOTTLENECK=NOT_PROVEN`; largest measured transfer phase100,915,
+whole-mechanism `INDEPENDENT_CRITICAL_UPPER_BOUND=null`; conservative credit0,
+expected gainunknown; `MAIN_OPT5_CANDIDATE=NONE_JUSTIFIED`;
+`1P5_FEASIBILITY=SUB1P5_NOT_SUPPORTED`; `NEXT_ACTION=MORE_OFFLINE_ATTRIBUTION`.
+80,832 direct headpending is NOT a global cache-transfer/checker/nonhead bound.
+Current B1,648,923; target<1,502,513; approximate gap146,410, strict saving146,411.
+No new hardware run prepared; no diagnostic-only run or frontend promotion.
+
+Reusable `analyze_opt5_cache_transfer.py` + renderer;21 targeted CPU tests PASS,
+mandatory identity/word/order/lifetime checks and offline integration audit PASS.
+19 hardware/19 sealed tools/85 original evidence/8 prior generated-native hashes
+rechecked unchanged. New generated hierarchy/FSM/arbitration/config evidence saved
+separately. A/new B remains REFERENCE_COMPARISON/STRICT_PAIRING_PENDING; historical
+A-prime commands below are superseded by current offline-only scope. All old reports,
+seals/claims/raw FAIL and corrected B recovery preserved. See reference
+`AI/Debug/references/opt5_cache_transfer_limits.md` for scope and future bounded counters.
+
+---
+
+# Opt5 sub-1.5 opportunity — no justified candidate from current load evidence (2026-11-01)
+
+Latest user objective supersedes treating 64KiB/2way as final Opt5: seek a coherent
+L1/load critical-path optimization with credible sub1.5 budget. Analysis only;
+no elaboration/RTL generation/Verilator build/benchmark simulation, no subagents,
+no cleanup. Report: `AI/TMP/opt5_sub1p5_gap_analysis_20261101_110130/` (all11 required files).
+
+`OPT5_1P5_TARGET_NOT_SUPPORTED_BY_CURRENT_EVIDENCE`;
+`OPT5_PRIMARY=NONE_JUSTIFIED`; `NEXT_ACTION=MORE_OFFLINE_ATTRIBUTION`.
+No hardware change or new hardware-run launcher prepared. 64KiB remains a causal
+probe/optional future component, not a final Opt5 or a rejected geometry.
+A-prime remains unrun; `STRICT_PAIRING_PENDING`. Do not mechanically run the
+historical refresh command below. Old A/new B deltas remain reference-only.
+Corrected B correctness/capture recovery and old seals/claims remain intact.
+
+Target native1,001,675; current B1,648,923/1.646165672x; user exclusive threshold
+1,502,513, approximate gap146,410. Strict integer saving must be146,411.
+B head miss53,845; all head-load pending80,832 (nested, not additive); retries47,162;
+RPQ replay issues229; head miss AND MSHRbusy53,795/full0; head miss AND scheduler0.
+Ideal deletion of direct head-miss wait yields1,595,078/1.592410712x; deleting all
+head-load pending yields1,568,091/1.565468840x. `LOAD_PATH_ALONE_CANNOT_REACH_1P5`
+is scoped to deleting these measured waits in the fixed observed trace. It is
+NOT a universal bound on nonhead dependence or new-execution timing feedback.
+STOP noCommit AND anyLoadPending ROI exposure148,359..159,519 remains a wider
+unattributed correlation, not recoverable load delay. Scheduler347,409 is a
+separate, unproven-removable control opportunity; do not bundle into load Opt5.
+
+Structural retry amplification is proven: retained stable LDQ token -> repeated
+S2 lookup/nack -> executed=false -> age-priority wakeup. Age/retention already
+exist. MSHR not-ready includes same-set/tag, secondary state/RPQ and SDQ gates;
+39,072 reason predicates are not20,433 valid-request rejects or full-MSHR stalls.
+Active generated bank-nack constant0; max occupancy2/6/full0. Ordinary load
+line-buffer forwarding already exists; RPQ terminal/owner guards must remain.
+No per-token/address retry trace or contiguous head episodes were saved. Exact
+retry factor is unknown ([1,47162] trivial bounds); miss-lookup-attempt cohort
+factor is separately bounded37.1364..37.6959 with at most16 carry-in LDQ tokens,
+implying some token has>=38 miss lookups, not a measured critical nack factor.
+
+New offline analyzer/test: `analyze_opt5_sub1p5_gap.py`, `test_opt5_sub1p5_gap.py`.
+17 targeted CPU tests PASS; raw counters/STOP and source/generated signatures
+audited; all19 hardware/19 sealed tools/85 original evidence hashes unchanged.
+Design-only options are progress-aware retry suppression, measured refill/meta
+arbitration, and load-specific SDQ admission. Each lacks runtime critical budget;
+expected gain/final ROI remain unknown, conservative credit0. Preserve all old
+reports; details and revalidation boundary in the latest validation_result.json.
+
+---
+
+# L1-Causal-1 — corrected B PASS after offline host-accounting recovery (2026-11-01)
+
+Latest user request is analysis-only; do not execute elaboration, RTL generation,
+Verilator build or benchmark simulation. No subagents, cleanup or automatic retry.
+Report: `AI/TMP/l1_one_shot_postanalysis_20261101_095815/` (all9 requested artifacts).
+
+The user named `_094628`, which never simulated. Actual completed B is
+`checker_seq67_one_shot_20261031_103130/sealed/arms/B/runs/optimization_4_svb_20261031_024551_8fbf8937`.
+B generation/build PASS, simulation exit0, verified1/checksum43439728, exact software
+ROI[698301,2347224)=1,648,923. Original overall FAIL is preserved:133 logger identities
+exceeded128 host dictionary slots. Five STOP identities16/17/18/30/31:0 were merged
+into `other`, but their events/footers and mandatory producer statistics all survive.
+Five lost producer-stat entries are optional only. Scoped lossless deaggregation in
+a separate derived view passes all24 unchanged arm gates; mandatory conservation
+is complete, optional evidence remains incomplete. No raw artifact/seal/claim changed.
+
+ROOT_CAUSE_CONFIRMED: pending privileged CPS meets machine timer trap at939413;
+new dispatch defers through architectural eret939857, exception/depth clear939859,
+start accepts939861, exec completes940821, result forms940889, special return clears
+return_pending940905, cleanup/handoff940907, BOOM accepts PASS940911, ownership busy
+clears940912, release deasserts940913. Local depth remains0 because trap is processed
+before checker entry. Registered-entry trap-capture alternative is unexercised (counter0).
+All320 allocations match320 clean handoffs and320 accepted PASS results; checker3 has84.
+No CANCEL, failed/stale/duplicate result, assertion, watchdog or unmatched sequence.
+Checker/observer/integrity PASS. L2 S0 exact159; L1 shadow2866 vs actual2624 has9.22%
+error within unchanged10% gate. Do not replace actual misses with shadow predictions.
+
+Old A vs new B is REFERENCE_COMPARISON only: ROI1,707,863→1,648,923 saves58,940/3.4511%;
+actual lookup misses3272→2624; exact-ROI ROB-head miss wait139694→53845 (−85849);
+nack retry111548→47162 (−64386); RPQ321→229; MSHRbusy313150→194905/full0;
+scheduler318150→347409, scheduler∩busy269/full0. No MSHR expansion evidence.
+A_NON_INTERFERENCE_PROVEN remains NO (old A701 SC6 drops). Strict geometry-only
+MISS_TO_CRITICAL_PATH_REDUCTION remains NOT_PROVEN; reference causal signal is strong.
+
+STRICT_BASELINE_REFRESH_JUSTIFIED / STRONG_OPT5_SIGNAL (reference only).
+Prepared exactly one A-prime; user execution only, no B rerun:
+`bash AI/Debug/scripts/run_checker_seq67_baseline_refresh.sh --report AI/TMP/l1_one_shot_postanalysis_20261101_095815/baseline_refresh --jobs 4`
+A-prime's19 hardware inputs equal completed B; baseline config32KiB/2way/6MSHR,
+software/checkers/observer/STOP/causal counters/seed unchanged. A separately sealed host
+capture copy changes only two identity caps128→256 (budgets/classification unchanged).
+Original B seal/guard remains intact; new A-only wrapper calls all original guards,
+rejects B, uses persistent one-run claim and never retries. Static preflight PASS;
+no A claim or run manifest exists yet.55 offline CPU tests PASS this turn.
+
+After the user runs A-prime, read baseline_refresh/A_prime_result.json and raw A
+results. Final pairing must pass identical hardware/software/arguments, generated
+geometry/clocks/L2/native copies, full correctness/ROI and host-exception audit.
+If A-prime fails, diagnose offline; do not retry or launch another arm automatically.
+
+---
+
+# L1-Causal-1 — fix user RTL-generation combinational loop (2026-10-31)
+
+The user ran the previous one-shot command. It failed RTL_GENERATION before
+Verilator build/simulation: all4 Rocket checker modules had
+check_exception -> wb_valid -> CSR.retire -> trace.exception -> privileged_start_ready
+-> check_exception. The prior source-only claim that unsigned retire>=0 removed
+the structural edge before CheckCombLoops was incorrect; Scala typer cannot prove this.
+
+Minimal correction: privileged_start_ready consumes existing CSR r_exception.asBool,
+whose raw exception equation has no retire input. The same-cycle trap/return priority
+is retained without adding RegNext latency. No other hardware file changed relative
+to the failed seal. Saved failed FIRRTL reproduces the old loop in all4 Rocket/CSR
+cones; the one-input corrected graph has no such cycle. This is a scoped offline
+audit, not a new full FIRRTL PASS. Scala typer PASS;45 offline CPU tests PASS.
+
+New report: `AI/TMP/checker_seq67_one_shot_20261031_103130/`.
+New user command:
+`bash AI/Debug/scripts/run_checker_seq67_one_shot.sh --report AI/TMP/checker_seq67_one_shot_20261031_103130 --jobs 4`
+The old seal, claim, failed generation artifacts/log and NOT_STARTED simulation
+manifest remain preserved. No benchmark was consumed by that failure. Exactly one
+B64K/2way is still requested; no A or diagnostic-only run. Agent did not elaborate,
+generate RTL, build Verilator or simulate. A_NON_INTERFERENCE_PROVEN remains NO.
+Full FIRRTL/build/runtime validation is pending the new user command.
+
+---
+
+# L1-Causal-1 — seq67 one-shot B command ready (2026-10-31)
+
+Latest user constraint: **agent must not execute elaboration, RTL generation,
+Verilator build or benchmark simulation.** This supersedes the older run permission
+below. Target is one user-run corrected B64KiB/2way only; no A or diagnostic-only run.
+Report: `AI/TMP/checker_seq67_one_shot_20261031_094628/`.
+
+Offline RCA identifies a TYPE1 privileged-dispatch/architectural-trap race: B seq67
+start accepted at939415 with context_idle0, excpt_mode1, local trap_depth0 and ICSL
+nonchecking. Normal/fallback start paths are false, so registered privileged entry
+is inferred. Old dispatch lacks current-trap exclusion and treats delayed CSR.eret
+(also ECALL/EBREAK) as return permission. Final CANCEL67 context wait is proven;
+exact CSR cause/vector remains unlogged. ROOT_CAUSE=
+MOST_LIKELY_WITH_BOUNDED_RUNTIME_CONFIRMATION, not a justified watchdog increase.
+
+Implemented held privileged CPS dispatch with real-trap/current-return priority,
+plus R_ICSL trap capture on the registered privileged-entry edge. Added bounded
+SC46/47 diagnostics in the same version. Cleanup/result release/compare/watchdog
+guards and all17 previously sealed hardware inputs remain byte-identical. Scala
+type-only check PASS;42 offline CPU tests PASS. Hardware phases NOT EXECUTED.
+
+A remains correctness-valid at ROI1,707,863, but **A_NON_INTERFERENCE_PROVEN=NO**:
+701 optional SC6 host records were dropped. None of283 retained starts is abnormal;
+zero CANCELs does not prove a timing-changing safe deferral never occurred. Thus no
+automatic strict old-A/new-B causal interpretation and no prearranged A refresh.
+
+User command (from repository root):
+`bash AI/Debug/scripts/run_checker_seq67_one_shot.sh --report AI/TMP/checker_seq67_one_shot_20261031_094628 --jobs 4`
+It verifies a new seal, invokes the existing launcher once for B, performs offline
+diagnostic/provenance/correctness/observer/ROI checks, and forbids automatic retry.
+If B passes, status is CORRECTNESS_CLOSED_BUT_STRICT_PAIRING_REQUIRES_BASELINE_REFRESH;
+numeric reference differences stay explicitly unpaired. Discuss A only if that B
+first demonstrates worthwhile apparent benefit. No extra geometry/policy work.
+
+---
+
+# L1-Causal-1 — r2 INCONCLUSIVE after B checker3 ownership timeout (2026-10-30)
+
+The user explicitly authorized paired hardware generation/build and real simulations.
+Keep the validated original Opt4 ROI1,707,863 / SVB16 conclusions below. Do not substitute
+that historical run or r1 A for the final corrected paired baseline.
+
+Report: `AI/TMP/l1_causal_opt5_probe_20261030_200000_4235a1de/`.
+Active revision: `revisions/r2`, source fingerprint
+`b6f9a8739a0be1a64cd349625e37dc8b5b8cd246b418041bc3ee68dd1af414b1`.
+A = Opt4/SVB16, BOOM L1D256sets/2way/64B/6MSHR =32KiB;
+B changes only nSets512 =64KiB. Software/checkers/seed/observers/instrumentation match.
+
+R1 A completed exit0, verified1/checksum43439728, exact historical ROI reproduced,
+functional/integrity/protocol/STOP40–45 and corrected L2 snapshot PASS. Causal
+measurement failed: two ROI snapshot lookup errors. Root source defect: causal
+marker selected pre-CSR-mux WB data rather than architectural `debug_wb_wdata`.
+R1 B was deliberately interrupted before ROI after this defect was proven.
+R1 seals, builds/runs and proofs remain preserved. No r1 paired performance conclusion.
+See `roi_marker_rca.md` and `r1_measurement_failure.json` in report.
+
+R2 changes only the read-only marker source to the existing CSR-muxed value, adds
+bounded4-line marker diagnostics and fixed2-record JSON fields, and preserves them
+as essential capture. Scala9-file typer PASS;82 unique offline tests PASS (including
+two new aborted-run report cases), plus separate native count-definition fixture PASS; six-file exact
+observation/config inverse PASS. Both RTL generation and Verilator builds PASS.
+R2 A completed exit0, verified1/checksum43439728, ROI1,707,863 [712114,2419977),
+all24 functional/observer/measurement gates PASS. Both ROI markers have exact timestamps
+and lookup_valid1; causal errors0. Exact-ROI MSHRbusy313150/full0, matched head-miss
+wait139694, head∩busy139500, scheduler318150. These are exposures, not additive losses.
+B build PASS and real simulation terminated exit1 at the existing checker3
+ownership assert24 (generated BoomCore.sv:6977; source core.scala:2211; total counter
+bit18 =262144 BOOM cycles). B start marker698301 valid, but no stop/benchmark/final
+cache/counter summaries. No B ROI, miss delta or causal performance delta is available.
+Execution argv equality/generated clocks+L2/native copies/seal audits PASS.
+
+Saved SC6 evidence: checker3 seq67 no-progress timeout at global1070889 enqueues
+CANCEL67; final local record1070897 has result_queue_valid/outstanding1,
+context_idle0/return_pending1/excpt_mode1/trap_depth1, handoff_allowed0.
+Frontend clear ack is present. Local cancellation is not BOOM ownership release.
+Upstream trap/start/return trigger remains UNRESOLVED; no functional checker fix,
+policy change, waveform run or extra geometry run was attempted.
+
+**INCONCLUSIVE_DUE_TO_CORRECTNESS_OR_MEASUREMENT. NEXT_OPTIMIZATION = NONE_JUSTIFIED.**
+**L1 miss reduction -> critical-path cycle reduction: NOT YET PROVEN.**
+Next: close seq67 context/cleanup/CANCEL handoff correctness before any new paired
+performance experiment. Report README, all required artifacts and20 answers complete;
+missing B metrics are explicit null/unavailable, never0 or shadow1301.
+[Failure chain](../../TMP/l1_causal_opt5_probe_20261030_200000_4235a1de/r2_B_correctness_failure.md)
+· [Durable unresolved finding](../bugs/l1_causal_64k_checker3_ownership_20261030.md).
+
+---
+
+# Latest Opt4 state — validated reference; next optimization not yet justified (2026-10-30)
+
+**Authoritative run:** `optimization_4_svb_20261030_072604_18475a92`.
+**Opt4 correctness PASS / ROI VALIDATED:** 1,707,863 cycles; baseline1,001,675;
+Opt3 2,928,347; remaining706,188; Opt4/baseline1.705007×; Opt3 reduction41.68%.
+exit0, GAPBS verified1, checksum43439728; all406 allocation identities closed as
+391 promoted+12 coalesced+3 discarded; fingerprints/protocol/order/histograms PASS.
+Do not reopen SVB correctness or rerun Opt4 because L2 shadow fails. The old
+analyzer incorrectly coupled cache-model fidelity to functional validity; repaired
+offline results keep functional PASS, L1 S0 PASS, and L2 shadow FAIL separate.
+
+**Decision:** `NEXT_OPTIMIZATION_NOT_YET_JUSTIFIED`;
+`NEXT_OPTIMIZATION = NONE_JUSTIFIED`; `KEEP_SVB16` / `DO_NOT_EXPAND_SVB`;
+`L2_GEOMETRY_DEFERRED_UNTIL_NEXT_FUNCTIONAL_RUN`.
+No functional optimization or READY Opt5 launcher is implemented. The pending
+Opt5 directory contains a decision note only. No observation-only run is prepared.
+
+Opt4-only analysis: SVB16 full4,888 cycles/0.2844%, fallback1. The unique full-related
+legacy episode is [1598099,1603353), 5,254 cycles: fixed-trace local deletion ceiling,
+not a global timing-feedback theorem. All16 owners were unsafe at full onset;
+first safe1602974. Keep16. Promotion safe→terminal union24,569 cycles; source busy23,788,
+queue15,714 in traffic window; not a justified next primary direction.
+
+L1 S0 misses3,286 vs actual3,272 (0.427873% error); alternate misses32K/4way1,494,
+64K/2way1,301, 64K/4way1,178. Conditional cache preference64K/2way, but no per-miss
+MSHR/ROB identity join to establish ~85,393 recoverable critical cycles. All-L1 MSHR
+busy315,637 is a resource envelope, not geometry benefit. Replacement definitions
+differ and alternative models omit some mandatory preservation invalidation detail.
+Equal-service proxies173,911/192,641/204,578 are not ROI predictions or strict bounds.
+Control scheduler-unavailable267,087 is the largest identifiable control exposure
+within the complete optional prefix, not proven recoverable slowdown.
+
+Software ROI[712114,2419977); traffic[712021,2430802). Optional records omit3,099;
+conservatively proven complete prefix ends2289264, leaving130,713 unknown ROI cycles.
+Do not hold sparse state through that suffix or add overlapping activities into706,188.
+Exact LSU load/store/request/nack and ROB-critical overlap counters were not in this run.
+
+L2 observer structural defect: accepted-write mirror is not the delayed Directory
+read image with queued-write bypass. CPU fixture confirms a false-miss mechanism;
+the missing raw lookup/metadata order prevents exact attribution of all40,220 excess
+misses in this run. Implemented read-consistent way snapshot + independent key/tag
+audit, canonical address restore, A/C/opcode semantics, fail-closed invalid deltas.
+Added six bounded STOP observers kind40–45 (121→127/128 identities) for activities,
+ROB no-commit overlaps and actual admission-guard priority classes. These source
+changes are staged for the next independently justified functional run only.
+Old Opt4 launcher source/patch protection is unchanged and does not accept the new
+staged source as a READY runnable revision. Do not bypass it or create an observer run.
+
+Validation this turn:58 CPU/offline tests PASS;7 modified Scala files typer-only
+(`-Ystop-after:typer`) PASS;7 hardware files exact observation inverse PASS;
+original evidence hashes unchanged. No Chisel elaboration, RTL generation,
+Verilator build, hardware simulation or benchmark. Dynamic observer validation pending.
+
+[Report](../../TMP/opt4_remaining_slowdown_next_opt_20261030_e6901889/README.md)
+· [18 answers](../../TMP/opt4_remaining_slowdown_next_opt_20261030_e6901889/answers_18.md)
+· [Candidate ranking](../../TMP/opt4_remaining_slowdown_next_opt_20261030_e6901889/candidate_ranking.md)
+· [Validation](../../TMP/opt4_remaining_slowdown_next_opt_20261030_e6901889/validation_result.json)
+· [Durable observer finding](../bugs/l2_shadow_read_image_semantics_20261030.md).
+All older current/READY/insufficient entries below are historical and superseded
+for the authoritative 072604 run; no prior evidence has been deleted.
+
 # Latest Opt4 SVB state — integrity observer closure prepared (2026-10-30)
 
 **CURRENT_DATA_FUNDAMENTALLY_INSUFFICIENT** for retrospectively certifying run

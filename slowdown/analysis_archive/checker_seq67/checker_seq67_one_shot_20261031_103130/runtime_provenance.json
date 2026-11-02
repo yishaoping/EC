@@ -1,0 +1,109 @@
+{
+  "actual_argv_A": [
+    "/data1/gzh/EC/AI/TMP/l1_causal_opt5_probe_20261030_200000_4235a1de/revisions/r2/arms/A/build/optimization_4_svb_20261030_135448_0c744900/verilator/simulator-chipyard-L1Causal32Config",
+    "-s",
+    "1",
+    "+cycle-count",
+    "+permissive",
+    "+safe-chain-events",
+    "+safe-chain-budgeted",
+    "+cache-opportunity",
+    "+dramsim",
+    "+dramsim_ini_dir=/data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/dramsim2_ini",
+    "+max-cycles=500000000",
+    "+loadmem=/data1/gzh/EC/baseline/software_common_builds/gapbs512_20261023_03/test.loadmem_hex",
+    "+loadmem_addr=80000000",
+    "+permissive-off",
+    "/data1/gzh/EC/baseline/software_common_builds/gapbs512_20261023_03/test.riscv"
+  ],
+  "actual_argv_B": [
+    "/data1/gzh/EC/AI/TMP/checker_seq67_one_shot_20261031_103130/sealed/arms/B/build/optimization_4_svb_20261031_024551_8fbf8937/verilator/simulator-chipyard-L1Causal64Config",
+    "-s",
+    "1",
+    "+cycle-count",
+    "+permissive",
+    "+safe-chain-events",
+    "+safe-chain-budgeted",
+    "+cache-opportunity",
+    "+dramsim",
+    "+dramsim_ini_dir=/data1/gzh/EC/chipyard/generators/testchipip/src/main/resources/dramsim2_ini",
+    "+max-cycles=500000000",
+    "+loadmem=/data1/gzh/EC/baseline/software_common_builds/gapbs512_20261023_03/test.loadmem_hex",
+    "+loadmem_addr=80000000",
+    "+permissive-off",
+    "/data1/gzh/EC/baseline/software_common_builds/gapbs512_20261023_03/test.riscv"
+  ],
+  "checks": {
+    "A_native_copies": true,
+    "B_native_copies": true,
+    "B_source_sealed": true,
+    "expected_B_executable": true,
+    "generated_geometry_only": true,
+    "same_actual_execution_arguments": true,
+    "same_software": true,
+    "unchanged_buildTopClockGenerator.freq-summary": true,
+    "unchanged_harnessDividerOnlyClockGenerator.freq-summary": true,
+    "unchanged_l2.json": true,
+    "unchanged_native_source": true
+  },
+  "errors": [],
+  "generated": {
+    "buildTopClockGenerator.freq-summary": [
+      {
+        "path": "/data1/gzh/EC/AI/TMP/l1_causal_opt5_probe_20261030_200000_4235a1de/revisions/r2/arms/A/build/optimization_4_svb_20261030_135448_0c744900/generated/chipyard.TestHarness.L1Causal32Config.buildTopClockGenerator.freq-summary",
+        "sha256": "5be28ffad0f15844aa89536a63436201e0712162bb721ea53a23cb8e5b273127"
+      },
+      {
+        "path": "/data1/gzh/EC/AI/TMP/checker_seq67_one_shot_20261031_103130/sealed/arms/B/build/optimization_4_svb_20261031_024551_8fbf8937/generated/chipyard.TestHarness.L1Causal64Config.buildTopClockGenerator.freq-summary",
+        "sha256": "5be28ffad0f15844aa89536a63436201e0712162bb721ea53a23cb8e5b273127"
+      }
+    ],
+    "differences": [
+      [
+        "/cpus/cpu@0/d-cache-sets/0",
+        256,
+        512
+      ],
+      [
+        "/cpus/cpu@0/d-cache-size/0",
+        32768,
+        65536
+      ]
+    ],
+    "harnessDividerOnlyClockGenerator.freq-summary": [
+      {
+        "path": "/data1/gzh/EC/AI/TMP/l1_causal_opt5_probe_20261030_200000_4235a1de/revisions/r2/arms/A/build/optimization_4_svb_20261030_135448_0c744900/generated/chipyard.TestHarness.L1Causal32Config.harnessDividerOnlyClockGenerator.freq-summary",
+        "sha256": "cb534ba4b33379f8d52159f94d96f44e697355389889329b05fff8b228f26846"
+      },
+      {
+        "path": "/data1/gzh/EC/AI/TMP/checker_seq67_one_shot_20261031_103130/sealed/arms/B/build/optimization_4_svb_20261031_024551_8fbf8937/generated/chipyard.TestHarness.L1Causal64Config.harnessDividerOnlyClockGenerator.freq-summary",
+        "sha256": "cb534ba4b33379f8d52159f94d96f44e697355389889329b05fff8b228f26846"
+      }
+    ],
+    "l2.json": [
+      {
+        "path": "/data1/gzh/EC/AI/TMP/l1_causal_opt5_probe_20261030_200000_4235a1de/revisions/r2/arms/A/build/optimization_4_svb_20261030_135448_0c744900/generated/chipyard.TestHarness.L1Causal32Config.l2.json",
+        "sha256": "af63a59d653c8faa707aed1dd72dfa7f7ae70d08ba12366e8e312027092315a5"
+      },
+      {
+        "path": "/data1/gzh/EC/AI/TMP/checker_seq67_one_shot_20261031_103130/sealed/arms/B/build/optimization_4_svb_20261031_024551_8fbf8937/generated/chipyard.TestHarness.L1Causal64Config.l2.json",
+        "sha256": "af63a59d653c8faa707aed1dd72dfa7f7ae70d08ba12366e8e312027092315a5"
+      }
+    ]
+  },
+  "native_resources": {
+    "A": [
+      {
+        "path": "/data1/gzh/EC/AI/TMP/l1_causal_opt5_probe_20261030_200000_4235a1de/revisions/r2/arms/A/build/optimization_4_svb_20261030_135448_0c744900/generated/gen-collateral/cache_opportunity.cc",
+        "sha256": "7635662b13b9fe17a0d9d36ed1283c2e7701d4a5b5cd1d1b8d587b110517bd97"
+      }
+    ],
+    "B": [
+      {
+        "path": "/data1/gzh/EC/AI/TMP/checker_seq67_one_shot_20261031_103130/sealed/arms/B/build/optimization_4_svb_20261031_024551_8fbf8937/generated/gen-collateral/cache_opportunity.cc",
+        "sha256": "7635662b13b9fe17a0d9d36ed1283c2e7701d4a5b5cd1d1b8d587b110517bd97"
+      }
+    ]
+  },
+  "status": "PASS"
+}

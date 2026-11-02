@@ -8,12 +8,15 @@ SLOWDOWN ~= 1.7x
 
 OPTIMIZATION_STATUS = PAUSED
 
-OPT4_COMMIT = 476a760910f3bfbd3c111000ebe40343870ab439
+OPT4_COMMIT = 962c4b87db2a810bc025a87f5f7289dd7aedc5cf
 
-This is the existing measured functional-source commit, not a new optimization.
+This freeze commit records the stable host recertification and reproducibility files.
+MEASURED_FUNCTIONAL_SOURCE_COMMIT = 476a760910f3bfbd3c111000ebe40343870ab439
+
+There is no new hardware optimization.
 The cleanup restores later experiments to that exact hardware tree; it does not change
 Opt4 functional RTL. Freeze/archive commits only add host recertification/reproducibility
-and organization. Their identities are available with `git log --oneline -- slowdown/OPT4_BASELINE.md`
+and organization. The archive commit identity is available with `git log --oneline -- slowdown/OPT4_BASELINE.md`
 and in the final cleanup report; no self-referential commit hash is embedded.
 
 |Item|Verified value|

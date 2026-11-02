@@ -1,0 +1,103 @@
+{
+  "A_prime_execution": "PENDING_USER_COMMAND_ONLY",
+  "A_prime_static_preflight": "PASS",
+  "actual_A_wrapper_B_rejection": "PASS",
+  "fresh_generated_and_native_provenance": "PASS",
+  "hardware_phases_executed": [],
+  "offline_tests": [
+    {
+      "exit_code": 0,
+      "output": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.025s\n\nOK\n",
+      "test_file": "test_seq67_capture_recovery.py"
+    },
+    {
+      "exit_code": 0,
+      "output": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.025s\n\nOK\n",
+      "test_file": "test_checker_seq67_baseline_refresh.py"
+    },
+    {
+      "exit_code": 0,
+      "output": "{\"status\": \"PASS\", \"target\": \"B_ONLY_64K_2WAY\", \"hardware_generation\": \"NOT_EXECUTED\", \"verilator_build\": \"NOT_EXECUTED\", \"simulation\": \"NOT_EXECUTED\"}\n........................\n----------------------------------------------------------------------\nRan 24 tests in 0.025s\n\nOK\n",
+      "test_file": "test_checker_seq67_one_shot.py"
+    },
+    {
+      "exit_code": 0,
+      "output": "...........\n----------------------------------------------------------------------\nRan 11 tests in 0.059s\n\nOK\n",
+      "test_file": "test_l1_causal_pair_analysis.py"
+    }
+  ],
+  "old_B_static_preflight": "PASS",
+  "original_evidence": {
+    "AST_and_shell_syntax": "PASS",
+    "A_prime_claim_exists": false,
+    "A_prime_run_manifests": 0,
+    "changed_original_files": [],
+    "changed_sealed_inputs": [],
+    "hardware_files_identical_to_B": 19,
+    "hardware_generation": "NOT_EXECUTED",
+    "original_files_checked": 85,
+    "required_artifacts_present": [
+      "README.md",
+      "correctness_closure.md",
+      "seq67_runtime_confirmation.md",
+      "observer_integrity.md",
+      "performance_comparison.md",
+      "causal_attribution.md",
+      "strict_baseline_gate.md",
+      "next_candidate_ranking.md",
+      "final_decision.json"
+    ],
+    "simulation": "NOT_EXECUTED",
+    "status": "PASS",
+    "verilator_build": "NOT_EXECUTED"
+  },
+  "original_sealed_tools_modified": 0,
+  "seq67_gates": {
+    "admitted": true,
+    "boom_result_accepted_pass": true,
+    "bounded_summaries_not_exhausted": true,
+    "bounded_target_covers_handoff": true,
+    "exec_done": true,
+    "full_compare_complete": true,
+    "handoff_context_clean": true,
+    "local_handoff": true,
+    "local_result_fire": true,
+    "mandatory_capture": true,
+    "no_cancel": true,
+    "no_global_cancel": true,
+    "no_stale_trap_start": true,
+    "ordered_lifecycle": true,
+    "single_target_hart": true,
+    "start_accepted": true
+  },
+  "source_edits_to_hardware": 0,
+  "status": "PASS",
+  "unchanged_24_arm_gates": {
+    "benchmark": true,
+    "bounded_stop_counters": true,
+    "capture": true,
+    "causal": true,
+    "complete_cache_summaries": true,
+    "completed_software_roi": true,
+    "elaboration_rtl": true,
+    "exact_roi": true,
+    "functional": true,
+    "geometry": true,
+    "integrity": true,
+    "l1_s0": true,
+    "l2_s0": true,
+    "l2_snapshot": true,
+    "latency_histograms": true,
+    "occupancy": true,
+    "ordering": true,
+    "overlaps": true,
+    "partition": true,
+    "protocol": true,
+    "roi_accounting": true,
+    "roi_marker_records": true,
+    "simulation": true,
+    "verilator_build": true
+  },
+  "unique_offline_test_count": 55,
+  "whole_run_checker_status": "PASS"
+}

@@ -1,0 +1,24 @@
+diff --git a/chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala b/chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala
+index 42ca5855e..56f4ebcfb 100644
+--- a/chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala
++++ b/chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala
+@@ -29,6 +29,19 @@ class v1Config extends Config(
+   new chipyard.config.AbstractConfig
+ )
+ //===== EC Config: End   =====//
++// L1_CAUSAL_GEOMETRY_BEGIN: the two arms differ only in BOOM DCache nSets.
++class WithL1CausalSets(sets: Int) extends Config((site, here, up) => {
++  case freechips.rocketchip.subsystem.TilesLocated(freechips.rocketchip.subsystem.InSubsystem) =>
++    up(freechips.rocketchip.subsystem.TilesLocated(freechips.rocketchip.subsystem.InSubsystem), site).map {
++      case b: boom.common.BoomTileAttachParams => b.copy(tileParams = b.tileParams.copy(
++        dcache = b.tileParams.dcache.map(_.copy(nSets = sets))))
++      case other => other
++    }
++})
++class L1Causal32Config extends Config(new WithL1CausalSets(256) ++ new v1Config)
++class L1Causal64Config extends Config(new WithL1CausalSets(512) ++ new v1Config)
++// L1_CAUSAL_GEOMETRY_END
++
+ 
+ // --------------
+ // Rocket Configs

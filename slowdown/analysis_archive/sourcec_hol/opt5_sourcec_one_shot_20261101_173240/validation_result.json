@@ -1,0 +1,66 @@
+{
+  "SOURCEC_OPT5_GO": "YES",
+  "STATIC_HOL_ROOT_CAUSE": "PROVEN",
+  "changed_vs_B": [
+    "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala",
+    "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala"
+  ],
+  "correctness_risk": "MEDIUM until elaboration/comb-loop/TL/benchmark validation; protocol invariants statically retained",
+  "cpu_tests": {
+    "command": [
+      "python3",
+      "-I",
+      "-B",
+      "AI/Debug/scripts/test_opt5_sourcec.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "scope": "CPU protocol-contract witnesses, source invariant checks, capture/diagnostics/one-run guards; no RTL execution",
+    "status": "PASS",
+    "tests": 14
+  },
+  "cumulative_patch_reverse_check": "PASS",
+  "diff_whitespace": "PASS",
+  "hardware_generation": "NOT_EXECUTED",
+  "minimal_patch_reverse_check": "PASS",
+  "one_run_only": true,
+  "reports": [
+    "README.md",
+    "sourcec_quick_decision.md",
+    "sourcec_fix.md",
+    "validation_result.json",
+    "next_run.md"
+  ],
+  "runtime": {
+    "status": "PENDING_USER_RUN"
+  },
+  "runtime_gain": "UNKNOWN",
+  "scala_typecheck": {
+    "exit_code": 0,
+    "scope": "Scala source typing only (-Ystop-after:typer); no hardware generation"
+  },
+  "shell_syntax": "PASS",
+  "simulation": "NOT_EXECUTED",
+  "source_fingerprint": "dc55be848aa333d96d2cd5299896c1957208e34b784e156b38a4e6ae53fcb335",
+  "source_seal": "/data1/gzh/EC/AI/TMP/opt5_sourcec_one_shot_20261101_173240/sealed/source_seal.json",
+  "static_preflight": {
+    "command": [
+      "bash",
+      "AI/Debug/scripts/run_opt5_sourcec.sh",
+      "--report",
+      "AI/TMP/opt5_sourcec_one_shot_20261101_173240",
+      "--jobs",
+      "4",
+      "--static-check"
+    ],
+    "fingerprint": "dc55be848aa333d96d2cd5299896c1957208e34b784e156b38a4e6ae53fcb335",
+    "hardware_generation": "NOT_EXECUTED",
+    "launch_claim_consumed": false,
+    "simulation": "NOT_EXECUTED",
+    "status": "PASS",
+    "verilator_build": "NOT_EXECUTED"
+  },
+  "status": "OFFLINE_PASS_RUNTIME_PENDING",
+  "unmodified_B_hardware_and_tools_hashes": "PASS",
+  "verilator_build": "NOT_EXECUTED"
+}

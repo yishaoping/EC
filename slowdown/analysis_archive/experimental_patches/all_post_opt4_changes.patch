@@ -1,0 +1,1218 @@
+diff --git a/chipyard/generators/boom/src/main/scala/exu/core.scala b/chipyard/generators/boom/src/main/scala/exu/core.scala
+index 7cf0108a0..5243eda2c 100644
+--- a/chipyard/generators/boom/src/main/scala/exu/core.scala
++++ b/chipyard/generators/boom/src/main/scala/exu/core.scala
+@@ -2113,6 +2113,34 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
+   val producerSealTargetSeq = ic_master.io.closing_seq
+   ic_master.io.close_tail_ready := io.producer_seal_ready
+   rob.io.gh_stall := io.gh_stall || rsu_stall.asBool || ic_stall.asBool || io.big_hang
++
++  // L1_CAUSAL_OBSERVATION_BEGIN
++  // PCs and ELF hash are pinned by the paired launcher/workload contract.
++  val causalRoiStart = rob.io.wb_resps.map(r => r.valid && r.bits.uop.debug_pc === "h80000340".U)
++  val causalRoiStop = rob.io.wb_resps.map(r => r.valid && r.bits.uop.debug_pc === "h8000039c".U)
++  val causalRoiRead = Mux1H(causalRoiStart.zip(causalRoiStop).map { case (a,b) => a || b },
++    rob.io.debug_wb_wdata.map(_(63,0))) // includes the CSR architectural result mux
++  BoringUtils.addSource(Cat(causalRoiStart.reduce(_ || _), causalRoiStop.reduce(_ || _), causalRoiRead),
++    "ec_l1_causal_roi_marker_v1")
++  // L1_CAUSAL_OBSERVATION_END
++  // REMAINING_SLOWDOWN_OBSERVATION_BEGIN
++  val remainingRobNoCommit = !rob.io.empty && !rob.io.commit.valids.asUInt.orR
++  val remainingRobState = VecInit(Seq(!rob.io.empty, rob.io.commit.valids.asUInt.orR,
++    rob.io.can_commit_withoutGC, rob.io.com_load_is_at_rob_head,
++    rob.io.gh_stall, remainingRobNoCommit)).asUInt
++  BoringUtils.addSource(remainingRobState, "ec_remaining_rob_state_v1")
++  val (remainingClear, remainingEnable, remainingStop) =
++    freechips.rocketchip.util.SafeChainObservation.remainingContext()
++  freechips.rocketchip.util.SafeChainObservation.remainingCounters(44, clock, reset.asBool,
++    csr.io.time, remainingClear, remainingEnable, remainingStop, Seq(
++      rob.io.empty, remainingRobNoCommit, rob.io.can_commit_withoutGC,
++      rob.io.can_commit_withoutGC && !rob.io.commit.valids.asUInt.orR,
++      io.gh_stall, rsu_stall.asBool, ic_stall.asBool, io.big_hang,
++      remainingRobNoCommit && io.gh_stall, remainingRobNoCommit && rsu_stall.asBool,
++      remainingRobNoCommit && ic_stall.asBool, remainingRobNoCommit && rob.io.gh_stall,
++      remainingRobNoCommit && rob.io.com_load_is_at_rob_head,
++      rob.io.can_commit_withoutGC && rob.io.gh_stall && !rob.io.commit.valids.asUInt.orR))
++  // REMAINING_SLOWDOWN_OBSERVATION_END
+   // SLOWDOWN_TRACE_BEGIN: observation-only; no functional consumers.
+   val slowdown_gate_gh = chisel3.WireInit(io.gh_stall)
+   chisel3.dontTouch(slowdown_gate_gh)
+diff --git a/chipyard/generators/boom/src/main/scala/exu/rob.scala b/chipyard/generators/boom/src/main/scala/exu/rob.scala
+index 6f3540de4..150bc7bd4 100644
+--- a/chipyard/generators/boom/src/main/scala/exu/rob.scala
++++ b/chipyard/generators/boom/src/main/scala/exu/rob.scala
+@@ -279,6 +279,10 @@ class Rob(
+   val rob_tail_vals       = Wire(Vec(coreWidth, Bool())) // are the instructions at the tail valid? (to track partial row dispatches)
+   val rob_head_uses_stq   = Wire(Vec(coreWidth, Bool()))
+   val rob_head_uses_ldq   = Wire(Vec(coreWidth, Bool()))
++  // L1_CAUSAL_OBSERVATION_BEGIN
++  val causalHeadBusy = Wire(Vec(coreWidth, Bool()))
++  // L1_CAUSAL_OBSERVATION_END
++
+   val rob_head_fflags     = Wire(Vec(coreWidth, UInt(freechips.rocketchip.tile.FPConstants.FLAGS_SZ.W)))
+ //===== GuardianCouncil Function: Start ====//
+   val rob_head_pcs        = Wire(Vec(coreWidth, UInt(40.W)))
+@@ -574,6 +578,10 @@ class Rob(
+     // Outputs
+   // SLOWDOWN_TRACE_BEGIN: observation-only; no functional consumers.
+     val slowdown_head_busy = chisel3.WireInit(rob_bsy(rob_head))
++    // L1_CAUSAL_OBSERVATION_BEGIN
++    causalHeadBusy(w) := rob_bsy(rob_head)
++    // L1_CAUSAL_OBSERVATION_END
++
+     slowdown_head_busy.suggestName(s"slowdown_head_busy_$w")
+     chisel3.dontTouch(slowdown_head_busy)
+   // SLOWDOWN_TRACE_END
+@@ -1033,6 +1041,17 @@ class Rob(
+   // -----------------------------------------------
+   // Outputs
+ 
++
++  // L1_CAUSAL_OBSERVATION_BEGIN
++  val causalHeadBank = PriorityEncoder(rob_head_vals.asUInt)
++  val causalHeadUop = io.commit.uops(causalHeadBank)
++  val causalHeadLoadBusy = rob_head_vals.asUInt.orR &&
++    rob_head_uses_ldq(causalHeadBank) && causalHeadBusy(causalHeadBank) &&
++    rob_state =/= s_rollback && !io.commit.valids.asUInt.orR && !io.flush.valid && !io.com_xcpt.valid
++  chisel3.util.experimental.BoringUtils.addSource(
++    Cat(causalHeadLoadBusy, causalHeadUop.rob_idx, causalHeadUop.ldq_idx),
++    "ec_l1_causal_rob_head_v1")
++  // L1_CAUSAL_OBSERVATION_END
+   io.com_load_is_at_rob_head := RegNext(rob_head_uses_ldq(PriorityEncoder(rob_head_vals.asUInt)) &&
+                                         !will_commit_noGC.reduce(_||_))
+ 
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/dcache.scala b/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
+index 0505e851a..8d8073a77 100644
+--- a/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
+@@ -4371,6 +4371,99 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+       c_beat * ((edge.bundle.dataBits + 63) / 64).U,
+       ((edge.bundle.dataBits + 63) / 64).U, (cfg.blockBytes / 8).U), 0.U, true.B)
+ 
++  // REMAINING_SLOWDOWN_OBSERVATION_BEGIN
++  BoringUtils.addSource(io.traffic_reset, "ec_remaining_clear_v1")
++  BoringUtils.addSource(trafficCounting, "ec_remaining_enable_v1")
++  BoringUtils.addSource(trafficStopPulse, "ec_remaining_stop_v1")
++  val remainingRobState = WireInit(0.U(6.W))
++  BoringUtils.addSink(remainingRobState, "ec_remaining_rob_state_v1")
++  val remainingRobBlocked = remainingRobState(5)
++  val remainingPredicates = Seq(crossPackageDomainWaitRaw, crossPackageDomainWait,
++    crossPackagePending, svbCapturePending, svbFullFallback, svbUnsupportedFallback,
++    svb.io.queued =/= 0.U, wb.io.pending_idx.valid && wb.io.pending_svb,
++    prober.io.wb_req.valid && svb.io.releaseBlocked(0),
++    mshrs.io.wb_req.valid && svb.io.releaseBlocked(1),
++    crossPackageWbReq.valid && svb.io.releaseBlocked(2),
++    mshrs.io.owner_line_valid.asUInt.orR, io.lsu.req.valid && !io.lsu.req.ready)
++  val remainingActivity = remainingPredicates :+ remainingPredicates.reduce(_ || _)
++  SafeChainObservation.remainingCounters(40, clock, reset.asBool, io.csr_cycle,
++    io.traffic_reset, trafficCounting, trafficStopPulse, remainingActivity)
++  SafeChainObservation.remainingCounters(41, clock, reset.asBool, io.csr_cycle,
++    io.traffic_reset, trafficCounting, trafficStopPulse,
++    remainingActivity.map(_ && remainingRobBlocked))
++  // Mutually exclusive *priority* labels for actual SVB admission guards.
++  // Probe/replacement coactivity is counted separately above, never silently
++  // promoted to the cause of an unrelated Store's WaitSafe condition.
++  val remainingSupportedEvent = s2_type === t_lsu && s2_req(0).uop.mem_cmd === M_XWR &&
++    s2_req(0).traffic_cacheable && s2_req(0).packet_seq =/= 0.U &&
++    s2_req(0).packet_seq > s2_overwrittenKey.contentSeq && s2_overwrittenKey.valid &&
++    !L1Preservation.safe(s2_overwrittenKey, safePacketWatermark)
++  val remainingClassConditions = Seq(svbFullFallback, !remainingSupportedEvent,
++    crossPackagePending, svbCapturePending, svbFastPreservationConflict, svbFastLineValid)
++  val remainingClasses = remainingClassConditions.zipWithIndex.map { case (condition, i) =>
++    crossPackageDomainWait && condition &&
++      !remainingClassConditions.take(i).foldLeft(false.B)(_ || _)
++  } :+ (crossPackageDomainWait && !remainingClassConditions.reduce(_ || _))
++  SafeChainObservation.remainingCounters(42, clock, reset.asBool, io.csr_cycle,
++    io.traffic_reset, trafficCounting, trafficStopPulse,
++    Seq(crossPackageDomainWait) ++ remainingClasses)
++  // REMAINING_SLOWDOWN_OBSERVATION_END
++
++  // L1_CAUSAL_OBSERVATION_BEGIN
++  val causalHeadWait = WireInit(false.B)
++  val causalHeadToken = WireInit(0.U(64.W))
++  val causalHeadLdq = WireInit(0.U(ldqAddrSz.W))
++  val causalLdqLive = WireInit(0.U(numLdqEntries.W))
++  val causalSchedulerWait = WireInit(false.B)
++  val causalRoiMarker = WireInit(0.U(66.W))
++  BoringUtils.addSink(causalHeadWait, "ec_l1_causal_head_wait_v1")
++  BoringUtils.addSink(causalHeadToken, "ec_l1_causal_head_token_v1")
++  BoringUtils.addSink(causalHeadLdq, "ec_l1_causal_head_ldq_v1")
++  BoringUtils.addSink(causalLdqLive, "ec_l1_causal_ldq_live_v1")
++  BoringUtils.addSink(causalSchedulerWait, "ec_l1_causal_scheduler_wait_v1")
++  BoringUtils.addSink(causalRoiMarker, "ec_l1_causal_roi_marker_v1")
++  val causalEvents = (0 until memWidth).flatMap { w =>
++    val r = s2_req(w)
++    val accepted = mshrs.io.req(w).bits
++    val live = s2_valid(w) && s2_type === t_lsu && r.traffic_cacheable &&
++      !IsKilledByBranch(io.lsu.brupdate, r.uop) && !(io.lsu.exception && r.uop.uses_ldq)
++    val missFlags = VecInit(Seq(r.uop.uses_ldq, r.uop.uses_stq,
++      !s2_tag_match(w), s2_tag_match(w) && !s2_hit(w),
++      s2_nack_miss(w), s2_nack_victim(w), s2_nack_data(w), s2_nack_wb(w),
++      s2_nack_hit(w), s2_send_nack(w))).asUInt
++    val admissionFlags = VecInit(Seq(accepted.uop.uses_ldq, accepted.uop.uses_stq,
++      accepted.admission === CacheAdmission.primary,
++      accepted.admission === CacheAdmission.secondary,
++      accepted.admission === CacheAdmission.upgrade)).asUInt
++    Seq(
++      CacheOpportunityObservation.event(io.lsu.req.fire && io.lsu.req.bits(w).valid &&
++        io.lsu.req.bits(w).bits.uop.uses_ldq, 22,
++        tag = io.lsu.req.bits(w).bits.request_token, set = io.lsu.req.bits(w).bits.uop.ldq_idx),
++      CacheOpportunityObservation.event(live && !s2_hit(w), 14, missFlags,
++        r.addr, r.request_token, r.uop.rob_idx,
++        Mux(r.uop.uses_ldq, r.uop.ldq_idx, r.uop.stq_idx)),
++      CacheOpportunityObservation.event(mshrs.io.req(w).fire && accepted.traffic_cacheable, 15,
++        admissionFlags, accepted.addr, accepted.request_token, accepted.transaction_token,
++        Mux(accepted.uop.uses_ldq, accepted.uop.ldq_idx, accepted.uop.stq_idx), accepted.replay_mshr_id),
++      CacheOpportunityObservation.event(mshrs.io.req(w).valid && !mshrs.io.req(w).ready &&
++        accepted.traffic_cacheable, 24),
++      CacheOpportunityObservation.event(io.lsu.nack(w).valid && io.lsu.nack(w).bits.uop.uses_ldq, 21,
++        missFlags, tag = io.lsu.nack(w).bits.request_token, set = io.lsu.nack(w).bits.uop.ldq_idx))
++  } ++ Seq(
++    CacheOpportunityObservation.event(dataWriteArb.io.in(1).fire && refillLastBeat && refillOwnerMatch,
++      16, tag = mshrs.io.refill.bits.transaction_token, way = mshrs.io.refill.bits.mshr_id),
++    // Head sample precedes response removal: the return cycle still cannot commit this busy load.
++    CacheOpportunityObservation.event(true.B, 18,
++      VecInit(Seq(causalHeadWait, causalSchedulerWait, remainingRobState(5))).asUInt,
++      tag = causalHeadToken, value = causalLdqLive, set = causalHeadLdq),
++    CacheOpportunityObservation.event(mshrs.io.replay.fire && mshrs.io.replay.bits.uop.uses_ldq,
++      20, tag = mshrs.io.replay.bits.request_token, set = mshrs.io.replay.bits.uop.ldq_idx)) ++
++    (0 until memWidth).map { w =>
++      CacheOpportunityObservation.event(io.lsu.resp(w).valid && io.lsu.resp(w).bits.uop.uses_ldq,
++        17, tag = io.lsu.resp(w).bits.request_token, set = io.lsu.resp(w).bits.uop.ldq_idx)
++    } ++ Seq(CacheOpportunityObservation.event(causalRoiMarker(65,64).orR, 23,
++      causalRoiMarker(65,64), tag = causalRoiMarker(63,0)))
++  // L1_CAUSAL_OBSERVATION_END
+   // CACHE_OPPORTUNITY_OBSERVATION_ONLY. Values flow only into an input-only
+   // DPI sink; no counter, shadow tag, fingerprint, or decision feeds the LSU.
+   val cacheObservationEvents = (0 until memWidth).flatMap { w =>
+@@ -4412,7 +4505,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+   CacheOpportunityObservation.emit(1, nSets, nWays, cfg.blockBytes, cfg.nMSHRs,
+     clock, reset.asBool, io.traffic_reset, trafficCounting && !trafficStopPulse, trafficStopPulse,
+     outer.staticImageWriter.U, io.csr_cycle, PopCount(mshrs.io.owner_line_valid),
+-    PopCount(mshrs.io.owner_line_valid) === cfg.nMSHRs.U, cacheObservationEvents)
++    PopCount(mshrs.io.owner_line_valid) === cfg.nMSHRs.U, cacheObservationEvents ++ causalEvents)
+   // These software control bits are held levels, not one-cycle commands.
+   // Observe only their rising edges: forcing a row while RESET/START stays
+   // high logs every cycle (including boot) and exhausts the observer budget.
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/lsu.scala b/chipyard/generators/boom/src/main/scala/lsu/lsu.scala
+index 1636fd156..b424daf88 100644
+--- a/chipyard/generators/boom/src/main/scala/lsu/lsu.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/lsu.scala
+@@ -2494,6 +2494,44 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
+   // Keep the queue identity, strict-store token, request and completion
+   // edges visible in generated RTL.  These signals intentionally do not feed
+   // any control or accounting path.
++
++  // L1_CAUSAL_OBSERVATION_BEGIN
++  require(numLdqEntries <= 64 && numStqEntries <= 64)
++  val causalRobHead = WireInit(0.U((1 + robAddrSz + ldqAddrSz).W))
++  BoringUtils.addSink(causalRobHead, "ec_l1_causal_rob_head_v1")
++  val causalHeadIdx = causalRobHead(ldqAddrSz - 1, 0)
++  val causalHeadRobIdx = causalRobHead(ldqAddrSz + robAddrSz - 1, ldqAddrSz)
++  val causalHeadEntry = ldq(causalHeadIdx)
++  val causalHeadWaiting = causalRobHead(ldqAddrSz + robAddrSz) && causalHeadEntry.valid &&
++    causalHeadEntry.bits.uop.rob_idx === causalHeadRobIdx && !causalHeadEntry.bits.succeeded
++  val causalHeadTokenForObserver = WireInit(causalHeadEntry.bits.functional_token)
++  BoringUtils.addSource(causalHeadWaiting, "ec_l1_causal_head_wait_v1")
++  BoringUtils.addSource(causalHeadTokenForObserver, "ec_l1_causal_head_token_v1")
++  BoringUtils.addSource(causalHeadIdx, "ec_l1_causal_head_ldq_v1")
++  BoringUtils.addSource(VecInit(ldq.map(_.valid)).asUInt, "ec_l1_causal_ldq_live_v1")
++  // L1_CAUSAL_OBSERVATION_END
++  // REMAINING_SLOWDOWN_OBSERVATION_BEGIN
++  val (remainingClear, remainingEnable, remainingStop) =
++    freechips.rocketchip.util.SafeChainObservation.remainingContext()
++  val remainingRobState = WireInit(0.U(6.W))
++  BoringUtils.addSink(remainingRobState, "ec_remaining_rob_state_v1")
++  val remainingLoadPending = ldq.map(e => e.valid && !e.bits.succeeded).reduce(_ || _)
++  val remainingStorePending = stq.map(e => e.valid && !e.bits.succeeded).reduce(_ || _)
++  val remainingRequestWait = io.dmem.req.valid && !io.dmem.req.ready
++  val remainingLoadRequest = dmem_req.map(r => r.valid && r.bits.uop.uses_ldq).reduce(_ || _)
++  val remainingStoreRequest = dmem_req.map(r => r.valid && r.bits.uop.uses_stq).reduce(_ || _)
++  freechips.rocketchip.util.SafeChainObservation.remainingCounters(43, clock, reset.asBool,
++    io.dmem.csr_cycle, remainingClear, remainingEnable, remainingStop, Seq(
++      remainingLoadPending, remainingStorePending, io.core.ldq_full.asUInt.orR,
++      io.core.stq_full.asUInt.orR, remainingRequestWait,
++      remainingRequestWait && remainingLoadRequest, remainingRequestWait && remainingStoreRequest,
++      io.dmem.nack.map(n => n.valid && n.bits.uop.uses_ldq).reduce(_ || _),
++      io.dmem.nack.map(n => n.valid && n.bits.uop.uses_stq).reduce(_ || _),
++      remainingRobState(5) && remainingLoadPending, remainingRobState(5) && remainingStorePending,
++      remainingRobState(5) && remainingRequestWait,
++      remainingRobState(5) && remainingRobState(3) && remainingLoadPending,
++      remainingLoadPending || remainingStorePending))
++  // REMAINING_SLOWDOWN_OBSERVATION_END
+   val debug_stq_full = WrapInc(stq_tail, numStqEntries) === stq_head
+   // Copy the dynamically selected entry into named wires before applying
+   // dontTouch. FIRRTL target annotations require static component names;
+diff --git a/chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala b/chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala
+index 42ca5855e..56f4ebcfb 100644
+--- a/chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala
++++ b/chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala
+@@ -29,6 +29,19 @@ class v1Config extends Config(
+   new chipyard.config.AbstractConfig
+ )
+ //===== EC Config: End   =====//
++// L1_CAUSAL_GEOMETRY_BEGIN: the two arms differ only in BOOM DCache nSets.
++class WithL1CausalSets(sets: Int) extends Config((site, here, up) => {
++  case freechips.rocketchip.subsystem.TilesLocated(freechips.rocketchip.subsystem.InSubsystem) =>
++    up(freechips.rocketchip.subsystem.TilesLocated(freechips.rocketchip.subsystem.InSubsystem), site).map {
++      case b: boom.common.BoomTileAttachParams => b.copy(tileParams = b.tileParams.copy(
++        dcache = b.tileParams.dcache.map(_.copy(nSets = sets))))
++      case other => other
++    }
++})
++class L1Causal32Config extends Config(new WithL1CausalSets(256) ++ new v1Config)
++class L1Causal64Config extends Config(new WithL1CausalSets(512) ++ new v1Config)
++// L1_CAUSAL_GEOMETRY_END
++
+ 
+ // --------------
+ // Rocket Configs
+diff --git a/chipyard/generators/rocket-chip/src/main/resources/csrc/cache_opportunity.cc b/chipyard/generators/rocket-chip/src/main/resources/csrc/cache_opportunity.cc
+index 3341225ac..da676e882 100644
+--- a/chipyard/generators/rocket-chip/src/main/resources/csrc/cache_opportunity.cc
++++ b/chipyard/generators/rocket-chip/src/main/resources/csrc/cache_opportunity.cc
+@@ -60,8 +60,168 @@ static std::string data_summary() {
+   return "{\"schema\":2,\"status\":\"SC_LIFECYCLE_LEDGER_REQUIRED\"}";
+ }
+ 
++
++// L1_CAUSAL_OBSERVATION_BEGIN: fixed-size native state; no per-cycle output.
++struct Causal {
++  static const unsigned N=192, BINS=32, HIST=64, OCC=48, RING=64;
++  enum {Samples,Busy,Full,LoadMiss,StoreMiss,LoadAttempts,StoreAttempts,
++    Primary,Upgrade,Merge,AllocationReject,Refill,LoadReplay,LoadReplayCycles,
++    LoadNack,LoadNackCycles,Retry,RetryCycles,HeadMiss,HeadBusy,HeadFull,
++    Scheduler,SchedulerBusy,SchedulerFull,HeadScheduler,HeadPending,
++    MissPending,ReplayBusy,ReplayFull,NackMshr,NackVictim,NackData,NackWb,NackHit,
++    DetectAllocN,DetectAllocSum,AllocRefillN,AllocRefillSum,DetectDataN,DetectDataSum,
++    MissReturnHead,MissEverHead,HeadEpisodeCycles,Recycled,PermissionLoad,PermissionStore};
++  struct Slot { U token=0,detect=0,alloc=0,headCycles=0; bool known=false,miss=false,detected=false,allocated=false,nack=false,everHead=false; };
++  struct Tx { U token=0,born=0; bool valid=false; };
++  struct Snapshot { U cycle=~U(0); std::vector<U> counters; Snapshot():counters(N,0) {} };
++  std::vector<U> c,begin,end;
++  std::vector<Slot> loads,stores;
++  std::vector<Tx> tx;
++  std::vector<Snapshot> history;
++  U cycle=0,start=0,stop=0,errors=0,startMarkers=0,stopMarkers=0;
++  U markerEvents=0,markerSnapshotErrors=0,markerObserved[2]={0,0},markerRequested[2]={0,0};
++  bool markerFound[2]={false,false};
++  U lastReplay=~U(0),lastNack=~U(0),lastRetry=~U(0);
++  bool busy=false,full=false,headCurrent=false;
++  U headToken=0;
++  Causal():c(N,0),begin(N,0),end(N,0),loads(64),stores(64),tx(6),history(RING) {}
++  void clear() {
++    std::fill(c.begin(),c.end(),0);start=stop=errors=startMarkers=stopMarkers=0;
++    markerEvents=markerSnapshotErrors=0;
++    std::fill(markerObserved,markerObserved+2,0);std::fill(markerRequested,markerRequested+2,0);
++    std::fill(markerFound,markerFound+2,false);
++    for(auto &h:history) h.cycle=~U(0);
++    lastReplay=lastNack=lastRetry=~U(0);
++  }
++  void tick(U now,unsigned occupied,bool all) {
++    cycle=now;busy=occupied!=0;full=all;
++    auto &h=history[cycle%RING];h.cycle=cycle;h.counters=c;
++    ++c[Samples];c[Busy]+=busy;c[Full]+=full;
++    if(occupied<=6) ++c[OCC+occupied]; else ++errors;
++  }
++  Slot &touch(std::vector<Slot> &slots,unsigned index,U token) {
++    if(index>=slots.size()) { ++errors;index=0; }
++    auto &x=slots[index];
++    if(!x.known || x.token!=token) { if(x.miss) ++c[Recycled];x=Slot();x.known=true;x.token=token; }
++    return x;
++  }
++  void latency(unsigned which,U delta) {
++    unsigned b=0;U v=delta;while(v && b<BINS-1) { ++b;v>>=1; }
++    ++c[HIST+which*BINS+b];
++  }
++  void event(int kind,unsigned flags,U address,U token,U value,unsigned index,unsigned way) {
++    (void)address;
++    if(kind==14) {
++      bool load=flags&1,store=flags&2;
++      if(!load && !store)return;
++      c[load?LoadAttempts:StoreAttempts]++;
++      auto &x=touch(load?loads:stores,index,token);
++      if(!x.detected) {
++        x.detected=x.miss=true;x.detect=cycle;
++        if(flags&4)++c[load?LoadMiss:StoreMiss];
++        if(flags&8)++c[load?PermissionLoad:PermissionStore];
++      }
++    } else if(kind==15) {
++      c[Primary]+=(flags&4)!=0;c[Merge]+=(flags&8)!=0;c[Upgrade]+=(flags&16)!=0;
++      if(way>=tx.size()) { ++errors;return; }
++      if(flags&(4|16)) { tx[way].token=value;tx[way].born=cycle;tx[way].valid=true; }
++      if(flags&1) {
++        auto &x=touch(loads,index,token);
++        if(x.miss && !x.allocated) {
++          x.allocated=true;x.alloc=cycle;++c[DetectAllocN];c[DetectAllocSum]+=cycle-x.detect;
++          latency(0,cycle-x.detect);
++        }
++      }
++    } else if(kind==16) {
++      ++c[Refill];if(way>=tx.size()) { ++errors;return; }
++      auto &t=tx[way];
++      if(t.valid && t.token==token) {
++        ++c[AllocRefillN];c[AllocRefillSum]+=cycle-t.born;latency(1,cycle-t.born);t.valid=false;
++      } else ++errors;
++    } else if(kind==17) {
++      if(index>=loads.size()) { ++errors;return; }
++      auto &x=loads[index];
++      if(x.known && x.token==token && x.miss) {
++        ++c[DetectDataN];c[DetectDataSum]+=cycle-x.detect;latency(2,cycle-x.detect);
++        c[MissReturnHead]+=headCurrent && headToken==token;
++        c[MissEverHead]+=x.everHead;c[HeadEpisodeCycles]+=x.headCycles;
++        x.miss=false;
++      }
++    } else if(kind==18) {
++      if(index>=loads.size()) { ++errors;return; }
++      for(unsigned i=0;i<loads.size();++i) if(!(value&(U(1)<<i))) loads[i].miss=false;
++      auto &x=loads[index];
++      bool head=(flags&1) && x.known && x.token==token && x.miss;
++      bool sched=flags&2;
++      headCurrent=head;headToken=token;
++      c[HeadPending]+=(flags&1)!=0;c[HeadMiss]+=head;c[HeadBusy]+=head&&busy;c[HeadFull]+=head&&full;
++      c[Scheduler]+=sched;c[SchedulerBusy]+=sched&&busy;c[SchedulerFull]+=sched&&full;
++      c[HeadScheduler]+=head&&sched;
++      bool any=false;for(const auto &slot:loads)any|=slot.miss;c[MissPending]+=any;
++      if(head) {x.everHead=true;++x.headCycles;}
++    } else if(kind==20) {
++      ++c[LoadReplay];c[ReplayBusy]+=busy;c[ReplayFull]+=full;
++      if(lastReplay!=cycle) {++c[LoadReplayCycles];lastReplay=cycle;}
++    } else if(kind==21) {
++      auto &x=touch(loads,index,token);x.nack=true;++c[LoadNack];
++      if(lastNack!=cycle) {++c[LoadNackCycles];lastNack=cycle;}
++      c[NackMshr]+=(flags&16)!=0;c[NackVictim]+=(flags&32)!=0;c[NackData]+=(flags&64)!=0;
++      c[NackWb]+=(flags&128)!=0;c[NackHit]+=(flags&256)!=0;
++    } else if(kind==22) {
++      auto &x=touch(loads,index,token);
++      if(x.nack) { ++c[Retry];if(lastRetry!=cycle) {++c[RetryCycles];lastRetry=cycle;}x.nack=false; }
++    } else if(kind==23) {
++      const auto &h=history[token%RING];
++      unsigned markerIndex=(flags&2)?0:1;
++      markerObserved[markerIndex]=cycle;markerRequested[markerIndex]=token;markerFound[markerIndex]=h.cycle==token;
++      if(++markerEvents<=4) {
++        std::fprintf(stderr,"[CAUSAL_ROI_MARKER] flags=%u observer_cycle=%llu sample_cycle=%llu lookup_valid=%u\n",
++          flags,(unsigned long long)cycle,(unsigned long long)token,unsigned(h.cycle==token));
++        std::fflush(stderr);
++      }
++      if(h.cycle!=token) {++errors;++markerSnapshotErrors;return;}
++      if(flags&2) {++startMarkers;start=token;begin=h.counters;}
++      if(flags&1) {++stopMarkers;stop=token;end=h.counters;}
++    } else if(kind==24) ++c[AllocationReject];
++  }
++  std::string json() const {
++    static const char *names[]={"sample_cycles","mshr_busy_cycles","mshr_full_cycles",
++      "load_tag_miss_requests","store_tag_miss_requests","load_miss_lookup_attempts","store_miss_lookup_attempts",
++      "mshr_primary_allocations","mshr_upgrade_allocations","mshr_merges","mshr_request_rejects",
++      "refill_completions","load_rpq_replays","load_rpq_replay_cycles","load_nacks","load_nack_cycles",
++      "load_nack_retries","load_nack_retry_cycles","ROB_HEAD_WAITING_ON_LOAD_MISS_CYCLES",
++      "ROB_HEAD_WAITING_ON_LOAD_MISS_AND_MSHR_BUSY_CYCLES","ROB_HEAD_WAITING_ON_LOAD_MISS_AND_MSHR_FULL_CYCLES",
++      "scheduler_unavailable_cycles","SCHEDULER_UNAVAILABLE_AND_MSHR_BUSY_CYCLES",
++      "SCHEDULER_UNAVAILABLE_AND_MSHR_FULL_CYCLES","ROB_HEAD_LOAD_BLOCK_AND_SCHEDULER_UNAVAILABLE_CYCLES",
++      "rob_head_load_pending_cycles","any_ldq_miss_pending_cycles","load_rpq_replay_and_mshr_busy_events",
++      "load_rpq_replay_and_mshr_full_events","nack_mshr_not_ready","nack_victim","nack_data","nack_writeback","nack_hit",
++      "detect_alloc_samples","detect_alloc_sum","alloc_refill_samples","alloc_refill_sum",
++      "detect_data_samples","detect_data_sum","miss_returns_still_head","completed_misses_ever_head",
++      "completed_miss_head_episode_cycles","recycled_pending_slots","load_permission_miss_requests","store_permission_miss_requests"};
++    bool valid=startMarkers==1 && stopMarkers==1 && stop>start && !errors && end[Samples]-begin[Samples]==stop-start;
++    std::ostringstream o;o<<"{\"schema\":1,\"bounded_slots\":64,\"mshr_slots\":6,\"snapshot_ring\":64"
++      <<",\"roi_start\":"<<start<<",\"roi_stop\":"<<stop<<",\"errors\":"<<errors
++      <<",\"start_markers\":"<<startMarkers<<",\"stop_markers\":"<<stopMarkers
++      <<",\"roi_marker_events\":"<<markerEvents<<",\"roi_snapshot_lookup_errors\":"<<markerSnapshotErrors
++      <<",\"roi_marker_observed_cycles\":["<<markerObserved[0]<<','<<markerObserved[1]<<']'
++      <<",\"roi_marker_requested_cycles\":["<<markerRequested[0]<<','<<markerRequested[1]<<']'
++      <<",\"roi_marker_snapshot_found\":["<<unsigned(markerFound[0])<<','<<unsigned(markerFound[1])<<']'
++      <<",\"status\":\""<<(valid?"PASS":"FAIL")<<"\",\"window\":\"exact_software_rdcycle_half_open_via_bounded_prefix_snapshots\""
++      <<",\"counts\":{";
++    for(unsigned i=0;i<sizeof(names)/sizeof(names[0]);++i) {if(i)o<<',';o<<'"'<<names[i]<<"\":"<<(valid?end[i]-begin[i]:0);}
++    o<<"},\"mshr_occupancy_histogram\":[";
++    for(unsigned i=0;i<=6;++i){if(i)o<<',';o<<(valid?end[OCC+i]-begin[OCC+i]:0);}o<<']';
++    o<<",\"latency_bin_definition\":\"bin0=0; binN=[2^(N-1),2^N-1]; bin31_saturates\""
++      <<",\"latency_cohort\":\"completion_in_ROI; may_start_before_ROI; unfinished_censored\",\"latency_histograms\":[";
++    for(unsigned j=0;j<3;++j){if(j)o<<',';o<<'[';for(unsigned i=0;i<BINS;++i){if(i)o<<',';o<<(valid?end[HIST+j*BINS+i]-begin[HIST+j*BINS+i]:0);}o<<']';}
++    o<<"]}";return o.str();
++  }
++};
++// L1_CAUSAL_OBSERVATION_END
++
+ struct Cache {
+   int level,id; unsigned sets,ways,block,mshrs;
++  Causal causal;
+   bool enabled=false,seen_clear=false,seen_reset=false,finished=false,stop_seen=false;
+   U cycle=0,cycles=0,loads=0,stores=0,permission_miss=0,request_a=0,request_c=0;
+   U compulsory_like=0,set_full=0,set_conflict_replacements=0,repeated_set_miss=0,repeated_line_miss=0;
+@@ -74,12 +234,19 @@ struct Cache {
+   unsigned svb_entries=0; bool svb_frame=false,capacity_frame=false;
+   std::vector<Shadow> models;
+   std::vector<Tag> mirror;
++  std::vector<Tag> lookup_view;
++  std::vector<bool> lookup_seen;
++  unsigned lookup_set=0;
++  U lookup_snapshots=0,lookup_snapshot_errors=0,lookup_key_errors=0,temporal_mirror_disagreements=0;
++  std::vector<U> a_opcodes,c_opcodes,lookup_opcodes;
++  bool lookup_snapshot_mode=false,lookup_frame_open=false;
+   std::vector<U> valid_hist, mshr_hist, set_access, set_miss, set_full_hist, last_miss;
+   std::vector<U> svb_occupancy_hist,svb_depth_hist;
+   std::vector<bool> had_miss;
+   std::unordered_set<U> tokens,seen_lines;
+   Cache(int l,int i,unsigned s,unsigned w,unsigned b,unsigned m):
+     level(l),id(i),sets(s),ways(w),block(b),mshrs(m),mirror(s*w),
++    lookup_view(w),lookup_seen(w),a_opcodes(8),c_opcodes(8),lookup_opcodes(8),
+     valid_hist(w+1),mshr_hist(m+1),set_access(s),set_miss(s),set_full_hist(s),last_miss(s),had_miss(s) {
+     models.emplace_back(s,w,b,l);
+     if(s>=2) models.emplace_back(s/2,w*2,b,l);
+@@ -87,16 +254,22 @@ struct Cache {
+     models.emplace_back(s,w*2,b,l);
+   }
+   void clear_stats() {
++    if(level==1) causal.clear();
+     cycles=loads=stores=permission_miss=request_a=request_c=compulsory_like=set_full=set_conflict_replacements=0;
+     repeated_set_miss=repeated_line_miss=probe_evictions=svb_full=svb_unsupported=writebacks=0;
+     memory_reads=memory_writes=memory_read_bytes=memory_write_bytes=mshr_full_cycles=0;
+     metadata_replacements=metadata_invalidations=dirty_metadata_retirements=0; actual={};
++    lookup_snapshots=lookup_snapshot_errors=lookup_key_errors=temporal_mirror_disagreements=0;
++    std::fill(a_opcodes.begin(),a_opcodes.end(),0);
++    std::fill(c_opcodes.begin(),c_opcodes.end(),0);
++    std::fill(lookup_opcodes.begin(),lookup_opcodes.end(),0);
+     for(auto &m:models) m.c={};
+     for(auto *v:{&valid_hist,&mshr_hist,&set_access,&set_miss,&set_full_hist}) std::fill(v->begin(),v->end(),0);
+     svb_occupancy_hist.clear(); svb_depth_hist.clear();
+     std::fill(had_miss.begin(),had_miss.end(),false); stop_seen=false;
+   }
+   void event(int kind,unsigned flags,U address,U tag,U value,unsigned set,unsigned way,unsigned occupancy) {
++    if(level==1 && kind>=14 && kind<=24) { causal.event(kind,flags,address,tag,value,set,way);return; }
+     if(kind>=20 && kind<=22) return; // legacy identity is intentionally not trusted
+     if(kind==30) { svb_frame=true; svb_entries=flags; svb_coalesced=address;
+       svb_allocated=tag; svb_completed=value; svb_discarded=set; svb_occupancy=way; max_svb_depth=occupancy; return; }
+@@ -109,7 +282,24 @@ struct Cache {
+       }
+       return;
+     }
++    if(kind==13 && level==2) {
++      lookup_snapshot_mode=true;
++      if(way==0) {
++        if(enabled && lookup_frame_open) ++lookup_snapshot_errors;
++        lookup_frame_open=true;
++        lookup_set=set;
++        std::fill(lookup_seen.begin(),lookup_seen.end(),false);
++      }
++      if(set>=sets || way>=ways || set!=lookup_set || lookup_seen[way]) {
++        if(enabled) ++lookup_snapshot_errors;
++        return;
++      }
++      lookup_seen[way]=true;
++      lookup_view[way]={address,(flags&1)!=0,(flags&2)!=0};
++      return;
++    }
+     if(kind==1) {
++      if(set>=sets) { if(enabled) ++lookup_snapshot_errors; return; }
+       if(level==1 && !tokens.insert(tag).second) return; // one first lookup per request token
+       bool fresh=seen_lines.insert(address/block).second;
+       // S0 independently replays real metadata writes instead of installing on
+@@ -118,6 +308,21 @@ struct Cache {
+       for(unsigned w=0;w<ways;++w) {
+         const auto &t=mirror[set*ways+w]; s0_hit |= t.valid && t.line==address;
+       }
++      if(level==2 && lookup_snapshot_mode) {
++        bool complete=set==lookup_set && std::all_of(lookup_seen.begin(),lookup_seen.end(),[](bool v){return v;});
++        bool read_hit=false;
++        for(const auto &t:lookup_view) read_hit |= t.valid && t.line==address;
++        if(enabled) {
++          ++lookup_snapshots;
++          lookup_snapshot_errors+=!complete;
++          lookup_key_errors+=value!=address;
++          temporal_mirror_disagreements+=s0_hit!=read_hit;
++        }
++        s0_hit=complete && read_hit;
++        lookup_frame_open=false;
++        std::fill(lookup_seen.begin(),lookup_seen.end(),false);
++      }
++      if(enabled && level==2) ++lookup_opcodes[(flags>>8)&7];
+       if(enabled) { ++models[0].c.access; models[0].c.hit+=s0_hit; models[0].c.miss+=!s0_hit; }
+       for(size_t i=1;i<models.size();++i) models[i].access(address,flags&2,enabled,!(flags&8));
+       if(!enabled) return;
+@@ -164,7 +369,11 @@ struct Cache {
+       }
+       case 3: ++probe_evictions; break;
+       case 4: svb_full+=(flags&1)!=0; svb_unsupported+=(flags&2)!=0; break;
+-      case 6: request_a+=(flags&1)!=0; request_c+=(flags&2)!=0; break;
++      case 6:
++        request_a+=(flags&1)!=0; request_c+=(flags&2)!=0;
++        if(flags&1) ++a_opcodes[value&7];
++        if(flags&2) ++c_opcodes[value&7];
++        break;
+       case 7: memory_reads+=(flags&1)!=0; memory_writes+=(flags&2)!=0;
+         if(flags&1) memory_read_bytes+=value;
+         if(flags&2) memory_write_bytes+=value;
+@@ -189,14 +398,25 @@ static void finish(Cache &c) {
+   c.finished=true;
+   U shadow_miss=c.models[0].c.miss,real_miss=c.actual.miss;
+   double gap=double(shadow_miss>real_miss ? shadow_miss-real_miss:real_miss-shadow_miss)/std::max<U>(real_miss,1);
+-  bool sane=c.actual.access && gap<=0.10 && c.stop_seen;
++  bool replay_complete=c.level!=2 || (c.lookup_snapshot_mode &&
++    c.lookup_snapshots==c.actual.access && !c.lookup_frame_open &&
++    !c.lookup_snapshot_errors && !c.lookup_key_errors);
++  bool sane=c.actual.access && gap<=0.10 && c.stop_seen && replay_complete;
+   std::ostringstream o;
+   o<<"{\"schema\":1,\"classification\":\"COUNTERFACTUAL_CACHE_TRAFFIC_ESTIMATE\",\"level\":"<<c.level
+    <<",\"instance\":"<<c.id<<",\"sets\":"<<c.sets<<",\"ways\":"<<c.ways<<",\"block_bytes\":"<<c.block
+    <<",\"mshrs\":"<<c.mshrs<<",\"stop_seen\":"<<(c.stop_seen?"true":"false")
+-   <<",\"replacement_policy\":\"random\",\"shadow_policy\":\"metadata_replay_S0_deferred_fill_random_alternatives\""
+-   <<",\"semantics\":\"L1_unique_first_S2_token_lookup_L2_A_directory_lookup_including_retries\""
++   <<",\"replacement_policy\":\"random\",\"shadow_policy\":\"read_consistent_L2_snapshot_S0_L1_metadata_replay_random_alternatives\""
++   <<",\"semantics\":\"L1_unique_first_S2_token_lookup_L2_nonHint_A_directory_results_including_relookups_not_C\""
+    <<",\"limitations\":\"no_timing_feedback_no_cycle_exact_replacement_metadata_fill_replay_no_cycle_exact_lookup_pipeline_no_predicted_ROI\""
++   <<",\"s0_replay_schema\":2,\"s0_replay_complete\":"<<(replay_complete?"true":"false")
++   <<",\"read_consistent_snapshots\":"<<c.lookup_snapshots
++   <<",\"snapshot_errors\":"<<c.lookup_snapshot_errors<<",\"lookup_key_errors\":"<<c.lookup_key_errors
++   <<",\"temporal_mirror_disagreements\":"<<c.temporal_mirror_disagreements
++   <<",\"inner_a_first_by_opcode\":"<<array(c.a_opcodes)
++   <<",\"inner_c_first_by_opcode\":"<<array(c.c_opcodes)
++   <<",\"directory_demand_by_opcode\":"<<array(c.lookup_opcodes)
++   <<",\"causal\":"<<(c.level==1?c.causal.json():"null")
+    <<",\"actual\":"<<counts(c.actual)<<",\"loads\":"<<c.loads<<",\"stores\":"<<c.stores
+    <<",\"permission_miss\":"<<c.permission_miss<<",\"request_a\":"<<c.request_a<<",\"request_c\":"<<c.request_c
+    <<",\"compulsory_like\":"<<c.compulsory_like<<",\"conflict_candidate\":"<<c.set_full
+@@ -247,6 +467,7 @@ extern "C" void ec_cache_tick(int level,int id,int sets,int ways,int block_bytes
+   if(reset_stats && !p->seen_clear) p->clear_stats();
+   p->seen_clear=reset_stats; p->enabled=enabled && !reset_stats; p->cycle=cycle;
+   p->stop_seen|=stopped;
++  if(level==1) p->causal.tick(cycle,unsigned(occupied),full);
+   if(p->enabled) { ++p->cycles; p->mshr_full_cycles+=full;
+     if(occupied>=0 && unsigned(occupied)<p->mshr_hist.size()) ++p->mshr_hist[occupied];
+   }
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/r/R_IC.scala b/chipyard/generators/rocket-chip/src/main/scala/r/R_IC.scala
+index 281f6057e..31a51c722 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/r/R_IC.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/r/R_IC.scala
+@@ -584,6 +584,22 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
+     safeChainIcFields, Cat(safeChainIcFields.take(2) ++
+       Seq(safeChainIcFlags & ((BigInt(1) << 15) - 1 - (BigInt(1) << 13)).U(15.W)) ++
+       safeChainIcFields.drop(3)), snapshot_accepted)
++
++  // L1_CAUSAL_OBSERVATION_BEGIN
++  chisel3.util.experimental.BoringUtils.addSource(fsm_state === fsm_sch && !scheduler_available,
++    "ec_l1_causal_scheduler_wait_v1")
++  // L1_CAUSAL_OBSERVATION_END
++  // REMAINING_SLOWDOWN_OBSERVATION_BEGIN
++  val (remainingClear, remainingEnable, remainingStop) =
++    freechips.rocketchip.util.SafeChainObservation.remainingContext()
++  freechips.rocketchip.util.SafeChainObservation.remainingCounters(45, clock, reset.asBool,
++    safeChainCycle, remainingClear, remainingEnable, remainingStop,
++    (0 until 8).map(i => fsm_state === i.U) ++ Seq(
++      io.if_pipeline_stall.asBool, fsm_state === fsm_sch && !scheduler_available,
++      fsm_state === fsm_sch && io.if_correct_process.asBool && !scheduler_available,
++      fsm_state === fsm_snap && !io.rob_empty, barrierCloseRequest,
++      io.snapshot_drain))
++  // REMAINING_SLOWDOWN_OBSERVATION_END
+   // SAFE_CHAIN_OBSERVATION_END
+   // Preserve the boundary state in generated collateral for focused traces.
+   dontTouch(fsm_state)
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/r/R_ICSL.scala b/chipyard/generators/rocket-chip/src/main/scala/r/R_ICSL.scala
+index 651e47a7e..054520102 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/r/R_ICSL.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/r/R_ICSL.scala
+@@ -207,6 +207,15 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
+       icsl_checkerpriv_mode                     := 0.U
+       if_rh_cp_pc                               := 0.U
+       fsm_state                                 := Mux(icsl_run.asBool, fsm_checking, Mux(io.if_check_privrun, fsm_checking_priv, fsm_nonchecking))
++      // SEQ67_PRIV_ENTRY_FIX: a real trap may arrive in the one-cycle gap
++      // between the synthetic CPS redirect and its registered start pulse.
++      // Capture it on the entry edge too, then run the real handler outside
++      // checker mode and resume the owned package after its matching xRET.
++      when (io.if_check_privrun && !icsl_run.asBool && io.self_xcpt) {
++        trap_depth                              := 1.U
++        resume_state                            := fsm_checking_priv
++        fsm_state                               := fsm_self_xcpt_priv
++      }
+     }
+     //并未对lsl满作出处理
+     is (fsm_checking){
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala b/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala
+index 80de191dc..b91df2f6d 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala
+@@ -1026,7 +1026,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
+ 
+ 
+   // Instantiate RSU
+-  val priv_status  = Reg(UInt(2.W))
++  val priv_status  = RegInit(0.U(2.W))
+   val check_priv   = Reg(UInt(2.W))
+   val check_ret_priv = Reg(UInt(2.W))
+   val arfs_is_CSR  = (io.packet_arfs(135+1) === 0x01.U) && (io.packet_arfs(138+1, 136+1) === 0x07.U)
+@@ -1038,7 +1038,18 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
+   check_priv  := Mux(io.arfs_if_CPS.asBool && arfs_is_CSR, io.packet_arfs(135, 134), Mux(check_exception, 0.U, check_priv))
+   check_ret_priv := Mux(!io.arfs_if_CPS.asBool && arfs_is_CSR, io.packet_arfs(135, 134), Mux(csr.io.if_priv_checkcomp, 0.U, check_ret_priv))
+ 
+-  check_exception := (RegNext(priv_cps_done) && !excpt_mode) || ((priv_status === 1.U) && RegNext(csr.io.eret))
++  // SEQ67_PRIV_DISPATCH_FIX: CPS is a held request, not permission to steal
++  // the architectural trap/return redirect. CSR.eret includes ECALL/EBREAK,
++  // so its delayed pulse is NOT evidence that an architectural trap unwound.
++  // Keep priv_status pending until the real context is idle. In the common
++  // trap-free case this fires on the same edge as the original delayed CPS.
++  val privileged_cps_arrived = RegNext(priv_cps_done, false.B)
++  val privileged_start_requested = privileged_cps_arrived || priv_status === 1.U
++  // Use the raw CSR exception, not trace.exception: the trace carries a
++  // structural dependency on retire (= wb_valid, gated by check_exception).
++  // Even trace slot0's retire>=0 comparison is an edge to CheckCombLoops.
++  val privileged_start_ready = !excpt_mode && !csr.io.r_exception.asBool && !csr.io.eret
++  check_exception := privileged_start_requested && privileged_start_ready
+   check_privret   := RegNext(icsl.io.if_check_privret)
+   csr.io.checker_priv_mode := checker_priv_mode.asBool
+   csr.io.checker_mode := checker_mode.asBool
+@@ -1741,6 +1752,59 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
+   SafeChainObservation.emit(6, clock, reset.asBool, safeChainCycle, csr.io.time,
+     io.hartid, safeChainRoi, true.B, safeChainCheckerFields, safeChainCheckerKey,
+     package_result_fire || package_result_handoff_fire || new_package)
++  // SEQ67_BOUNDED_DIAGNOSTICS_BEGIN: observers only; no functional consumers.
++  // Reserve 64 lifecycle rows for seq67 independently of 16 conflict examples.
++  // Kind46/47 are mandatory host-capture records (unlike optional SC6).
++  val seq67Target = package_seq_reg === 67.U || (new_package && new_package_seq === 67.U)
++  val seq67Blocked = privileged_start_requested && !privileged_start_ready
++  val seq67BlockedRise = seq67Blocked && !RegNext(seq67Blocked, false.B)
++  val seq67StartTrap = icsl.io.if_check_privrun && csr.io.trace(0).exception
++  val seq67BadStart = icsl.io.if_check_privrun && excpt_mode && !csr.io.trace(0).exception
++  val seq67DiagFlags = VecInit(Seq(priv_cps_done, privileged_start_requested,
++    privileged_start_ready, check_exception, icsl.io.if_check_privrun,
++    csr.io.trace(0).exception, csr.io.eret, excpt_mode,
++    seq67BlockedRise, seq67StartTrap, seq67BadStart,
++    package_result_fire, package_result_handoff_fire, package_cancelled,
++    icsl.io.package_exec_done, returned_to_special_address_valid)).asUInt
++  val seq67DiagKey = Cat(Mux(new_package, new_package_seq, package_seq_reg),
++    safeChainCheckerKey, icsl.io.debug_state,
++    arch_trap_depth, seq67DiagFlags)
++  val seq67DiagKeyPrev = RegNext(seq67DiagKey)
++  val seq67TargetRows = RegInit(0.U(7.W))
++  val seq67ConflictRows = RegInit(0.U(5.W))
++  val seq67TargetEvent = seq67Target && seq67TargetRows < 64.U &&
++    (seq67DiagKey =/= seq67DiagKeyPrev || new_package || package_result_handoff_fire)
++  val seq67ConflictEvent = !seq67Target && seq67ConflictRows < 16.U &&
++    (seq67BlockedRise || seq67StartTrap || seq67BadStart || package_cancelled)
++  when (seq67TargetEvent) { seq67TargetRows := seq67TargetRows + 1.U }
++  when (seq67ConflictEvent) { seq67ConflictRows := seq67ConflictRows + 1.U }
++  val seq67DiagEvents = Seq(priv_cps_done, check_exception, seq67BlockedRise,
++    seq67StartTrap, seq67BadStart, package_cancelled,
++    seq67Target && package_start_accepted, seq67Target && icsl.io.package_exec_done && !package_exec_done_prev,
++    seq67Target && full_check_complete && package_result_fire,
++    seq67Target && package_result_handoff_fire)
++  val seq67DiagCounts = RegInit(VecInit(Seq.fill(10)(0.U(32.W))))
++  for ((event, i) <- seq67DiagEvents.zipWithIndex) {
++    when (event && !seq67DiagCounts(i).andR) { seq67DiagCounts(i) := seq67DiagCounts(i) + 1.U }
++  }
++  SafeChainObservation.emit(46, clock, reset.asBool, safeChainCycle, csr.io.time,
++    io.hartid, safeChainRoi, seq67TargetEvent || seq67ConflictEvent,
++    Seq(Mux(new_package, new_package_seq, package_seq_reg), 1.U, seq67DiagFlags,
++      safeChainCheckerFlags, safeChainContextFlags, icsl.io.debug_state,
++      arch_trap_depth, csr.io.trace(0).iaddr, csr.io.trace(0).cause,
++      priv_status, check_priv, rsu_pc, icsl.io.trap_depth, io.imem.req.bits.pc,
++      seq67TargetRows, seq67ConflictRows), seq67DiagKey, true.B)
++  // Cumulative counters sampled at each handoff and every CANCEL. These do
++  // not depend on optional trace retention or on a checker seeing a BOOM pulse.
++  val seq67SummaryRows = RegInit(0.U(8.W))
++  val seq67SummaryEvent = (package_result_handoff_fire || package_cancelled) && seq67SummaryRows < 128.U
++  when (seq67SummaryEvent) { seq67SummaryRows := seq67SummaryRows + 1.U }
++  SafeChainObservation.emit(47, clock, reset.asBool, safeChainCycle, csr.io.time,
++    io.hartid, safeChainRoi, seq67SummaryEvent,
++    Seq(package_seq_reg, 1.U, seq67DiagFlags) ++
++      seq67DiagCounts.zip(seq67DiagEvents).map { case (c, e) => c +& e.asUInt } ++
++      Seq(seq67TargetRows, Cat(seq67SummaryRows, seq67ConflictRows), safeChainContextFlags), 0.U, true.B)
++  // SEQ67_BOUNDED_DIAGNOSTICS_END
+   // SAFE_CHAIN_OBSERVATION_END
+   //===== GuardianCouncil Function: End   ====//
+ 
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/util/SafeChainObservation.scala b/chipyard/generators/rocket-chip/src/main/scala/util/SafeChainObservation.scala
+index 4c1fb6505..46a6fc240 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/util/SafeChainObservation.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/util/SafeChainObservation.scala
+@@ -77,4 +77,35 @@ object SafeChainObservation {
+     }
+     logger.io.data := words.asUInt
+   }
++  // REMAINING_SLOWDOWN_OBSERVATION_ONLY: bounded STOP counters. All new state
++  // feeds only input-only event sinks. Counts overlap unless explicitly classed.
++  def remainingContext(): (Bool, Bool, Bool) = {
++    val clear = WireInit(false.B)
++    val enable = WireInit(false.B)
++    val stop = WireInit(false.B)
++    BoringUtils.addSink(clear, "ec_remaining_clear_v1")
++    BoringUtils.addSink(enable, "ec_remaining_enable_v1")
++    BoringUtils.addSink(stop, "ec_remaining_stop_v1")
++    (clear, enable, stop)
++  }
++
++  def remainingCounters(kind: Int, clk: Clock, rst: Bool, cycle: UInt,
++      clear: Bool, enable: Bool, stop: Bool, predicates: Seq[Bool]): Unit = {
++    require(predicates.size <= 14)
++    val counts = withClockAndReset(clk, rst) {
++      val c = RegInit(VecInit(Seq.fill(predicates.size + 1)(0.U(64.W))))
++      when (clear) { c.foreach(_ := 0.U) }
++        .elsewhen (enable && !stop) {
++          c(0) := c(0) + 1.U
++          predicates.zipWithIndex.foreach { case (condition, i) =>
++            when (condition) { c(i + 1) := c(i + 1) + 1.U }
++          }
++        }
++      c
++    }
++    emit(kind, clk, rst, cycle, cycle, 0.U, true.B, stop,
++      Seq(1.U) ++ counts.toSeq, 0.U, true.B)
++  }
++  // REMAINING_SLOWDOWN_OBSERVATION_END
++
+ }
+diff --git a/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Directory.scala b/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Directory.scala
+index 1cc682d7a..c19c75d55 100644
+--- a/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Directory.scala
++++ b/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Directory.scala
+@@ -69,6 +69,11 @@ class Directory(params: InclusiveCacheParameters) extends Module
+     val result = Valid(new DirectoryResult(params))
+     val ready  = Bool() // reset complete; can enable access
+     val observationValidWays = UInt(width = log2Ceil(params.cache.ways + 1))
++    // Read-consistent host-only snapshot, including the functional write-queue
++    // bypass. Accepted directory writes are not the RAM image of an older read.
++    val observationRows = Vec(params.cache.ways, new DirectoryEntry(params))
++    val observationSet = UInt(width = params.setBits)
++    val observationTag = UInt(width = params.tagBits)
+   }
+ 
+   val codeBits = new DirectoryEntry(params).getWidth
+@@ -141,6 +146,11 @@ class Directory(params: InclusiveCacheParameters) extends Module
+   io.observationValidWays := PopCount(ways.zipWithIndex.map { case (w, i) =>
+     Mux(setQuash && bypass.way === UInt(i), bypass.data.state, w.state) =/= INVALID
+   })
++  io.observationRows := Vec(ways.zipWithIndex.map { case (w, i) =>
++    Mux(setQuash && bypass.way === UInt(i), bypass.data, w)
++  })
++  io.observationSet := set
++  io.observationTag := tag
+   val hits = Cat(ways.zipWithIndex.map { case (w, i) =>
+     w.tag === tag && w.state =/= INVALID && (!setQuash || UInt(i) =/= bypass.way)
+   }.reverse)
+diff --git a/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala b/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala
+index 608e489ab..8370c85cd 100644
+--- a/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala
++++ b/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala
+@@ -33,6 +33,9 @@ class L2Preservation(params: InclusiveCacheParameters) extends Module {
+     val watermark = UInt(width = 32).flip
+     val bank = UInt(width = 8).flip
+     val lock = Valid(new L2PreservationCandidate(params))
++    // Only this phase has no bank reads or A beats left. The set lock remains
++    // live until the matching terminal ACK; it is not the SourceC port lease.
++    val waitingAck = Bool()
+     val completed = Valid(new L2PreservationCandidate(params))
+     val a = Decoupled(new TLBundleA(params.outer.bundle))
+     val d = Decoupled(new TLBundleD(params.outer.bundle)).flip
+@@ -50,6 +53,7 @@ class L2Preservation(params: InclusiveCacheParameters) extends Module {
+     "Stage3 requires end-to-end completion echo")
+   val idle :: read :: delay1 :: delay2 :: send :: waitAck :: failed :: Nil = chisel3.util.Enum(7)
+   val state = RegInit(idle)
++  io.waitingAck := state === waitAck
+   val snapshot = Reg(new L2PreservationCandidate(params))
+   val serial = RegInit(UInt(0, width = 64))
+   val lastAck = RegInit(UInt(0, width = 64))
+@@ -101,6 +105,9 @@ class L2Preservation(params: InclusiveCacheParameters) extends Module {
+   when (state === delay2) { data := io.bs_dat.data; state := send }
+   val finalBeat = beat === UInt(params.cache.blockBytes / params.outer.manager.beatBytes - 1)
+   io.a.valid := state === send
++  when (io.waitingAck) {
++    assert(!io.bs_adr.valid && !io.a.valid, "L2 waitAck still uses checkpoint data path")
++  }
+   io.a.bits := 0.U.asTypeOf(new TLBundleA(params.outer.bundle))
+   io.a.bits.opcode := TLMessages.PutFullData
+   io.a.bits.size := UInt(params.offsetBits)
+diff --git a/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala b/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala
+index f89f25010..cdbbcfb69 100644
+--- a/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala
++++ b/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala
+@@ -108,6 +108,9 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
+   val sourceE = Module(new SourceE(params))
+   val sourceX = Module(new SourceX(params))
+   val preservation = Module(new L2Preservation(params))
++  // Keep the captured set locked through terminal ACK, but return the shared
++  // SourceC read port once every checkpoint A beat has been accepted.
++  val sourceCReserved = preservation.io.lock.valid && !preservation.io.waitingAck
+   preservation.io.watermark := io.safeWatermark
+   preservation.io.bank := io.bank
+   sourceC.io.watermark := io.safeWatermark
+@@ -332,7 +335,7 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
+   val stage3Allowed = mshrs.zip(candidates).map { case (m, x) =>
+     val outerSafe = !m.io.schedule.bits.c.valid || CacheImage.safe(m.io.resident.bits.image, io.safeWatermark)
+     !x.valid && !locked(m.io.status.bits.set) && outerSafe &&
+-      (!m.io.schedule.bits.c.valid || (!preservation.io.lock.valid && !drainForCheckpoint)) &&
++      (!m.io.schedule.bits.c.valid || (!sourceCReserved && !drainForCheckpoint)) &&
+       (!m.io.schedule.bits.d.valid || !drainForCheckpoint)
+   }
+   val unsafeVictims = mshrs.map(m => m.io.schedule.valid && m.io.schedule.bits.c.valid &&
+@@ -702,7 +705,12 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
+   val observationDemand = directory.io.result.valid && observationLookup.prio(0) &&
+     !observationLookup.control && observationLookup.opcode =/= TLMessages.Hint
+   val observationSet = params.dirReg(RegEnable(directory.io.read.bits.set, directory.io.read.valid))
+-  val observationAddress = params.expandAddress(observationLookup.tag, observationSet, UInt(0))
++  // Always use the Directory's own delayed key for S0. Keep the independently
++  // delayed scheduler key as an audit, not as an alternate definition of hit.
++  val observationScheduledAddress = params.restoreAddress(params.expandAddress(
++    observationLookup.tag, observationSet, UInt(0)))
++  val observationAddress = params.restoreAddress(params.expandAddress(
++    directory.io.observationTag, directory.io.observationSet, UInt(0)))
+   val observationWrite = observationLookup.opcode === TLMessages.PutFullData ||
+     observationLookup.opcode === TLMessages.PutPartialData ||
+     observationLookup.opcode === TLMessages.ArithmeticData || observationLookup.opcode === TLMessages.LogicalData ||
+@@ -716,11 +724,20 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
+     io.out.a.bits.opcode === TLMessages.AcquireBlock
+   val observationMemWrite = io.out.a.bits.opcode === TLMessages.PutFullData ||
+     io.out.a.bits.opcode === TLMessages.PutPartialData
+-  val observationEvents = Seq(
++  val observationReadRows = (0 until params.cache.ways).map { w =>
++    val row = directory.io.observationRows(w)
++    CacheOpportunityObservation.event(observationDemand, 13,
++      Vec(Seq(row.state =/= MetaData.INVALID, row.dirty)).asUInt,
++      params.restoreAddress(params.expandAddress(row.tag, directory.io.observationSet, UInt(0))),
++      set = directory.io.observationSet, way = UInt(w))
++  }
++  // Snapshot rows precede the corresponding demand in the input-only DPI sink.
++  val observationEvents = observationReadRows ++ Seq(
+     CacheOpportunityObservation.event(observationDemand, 1,
+       Vec(Seq(!observationWrite, observationWrite, directory.io.result.bits.hit,
+-        !directory.io.result.bits.hit)).asUInt,
+-      observationAddress, set = observationSet, way = directory.io.result.bits.way,
++        !directory.io.result.bits.hit)).asUInt | (observationLookup.opcode << 8),
++      observationAddress, value = observationScheduledAddress,
++      set = directory.io.observationSet, way = directory.io.result.bits.way,
+       occupancy = directory.io.observationValidWays),
+     CacheOpportunityObservation.event(sourceC.io.req.fire() && sourceC.io.req.bits.reason === UInt(1),
+       2, sourceC.io.req.bits.dirty.asUInt,
+@@ -728,10 +745,12 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
+     CacheOpportunityObservation.event(directory.io.write.fire(), 5,
+       Vec(Seq(directory.io.write.bits.data.state =/= MetaData.INVALID,
+         directory.io.write.bits.data.dirty)).asUInt,
+-      params.expandAddress(directory.io.write.bits.data.tag, directory.io.write.bits.set, UInt(0)),
++      params.restoreAddress(params.expandAddress(directory.io.write.bits.data.tag, directory.io.write.bits.set, UInt(0))),
+       set = directory.io.write.bits.set, way = directory.io.write.bits.way),
+-    CacheOpportunityObservation.event(io.in.a.fire() && observationAFirst, 6, UInt(1)),
+-    CacheOpportunityObservation.event(io.in.c.fire() && observationCFirst, 6, UInt(2)),
++    CacheOpportunityObservation.event(io.in.a.fire() && observationAFirst, 6, UInt(1),
++      io.in.a.bits.address, tag = io.in.a.bits.source, value = io.in.a.bits.opcode),
++    CacheOpportunityObservation.event(io.in.c.fire() && observationCFirst, 6, UInt(2),
++      io.in.c.bits.address, tag = io.in.c.bits.source, value = io.in.c.bits.opcode),
+     CacheOpportunityObservation.event(io.out.a.fire() && observationOuterAFirst &&
+       (observationMemRead || observationMemWrite), 7,
+       Vec(Seq(observationMemRead, observationMemWrite)).asUInt,
+@@ -757,10 +776,10 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
+   bankedStore.io.sinkC_dat := sinkC.io.bs_dat
+   bankedStore.io.sinkD_adr <> sinkD.io.bs_adr
+   bankedStore.io.sinkD_dat := sinkD.io.bs_dat
+-  bankedStore.io.sourceC_adr.valid := Mux(preservation.io.lock.valid, preservation.io.bs_adr.valid, sourceC.io.bs_adr.valid)
+-  bankedStore.io.sourceC_adr.bits := Mux(preservation.io.lock.valid, preservation.io.bs_adr.bits, sourceC.io.bs_adr.bits)
+-  preservation.io.bs_adr.ready := preservation.io.lock.valid && bankedStore.io.sourceC_adr.ready
+-  sourceC.io.bs_adr.ready := !preservation.io.lock.valid && bankedStore.io.sourceC_adr.ready
++  bankedStore.io.sourceC_adr.valid := Mux(sourceCReserved, preservation.io.bs_adr.valid, sourceC.io.bs_adr.valid)
++  bankedStore.io.sourceC_adr.bits := Mux(sourceCReserved, preservation.io.bs_adr.bits, sourceC.io.bs_adr.bits)
++  preservation.io.bs_adr.ready := sourceCReserved && bankedStore.io.sourceC_adr.ready
++  sourceC.io.bs_adr.ready := !sourceCReserved && bankedStore.io.sourceC_adr.ready
+   bankedStore.io.sourceD_radr <> sourceD.io.bs_radr
+   bankedStore.io.sourceD_wadr <> sourceD.io.bs_wadr
+   bankedStore.io.sourceD_wdat := sourceD.io.bs_wdat
+@@ -782,6 +801,8 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
+     assert(!(sinkD.io.bs_adr.fire() && !sinkD.io.bs_adr.bits.noop && locked(sinkD.io.bs_adr.bits.set)), "L2_PREMATURE_OVERWRITE_ERROR refill")
+   }
+   when (sourceC.io.req.fire()) {
++    assert(!sourceCReserved && !locked(sourceC.io.req.bits.set),
++      "L2 SourceC bypass violates checkpoint reservation")
+     assert(sourceC.io.req.bits.source < UInt(InclusiveCacheParameters.out_mshrs(params.cache, params.micro)),
+       "L2 MSHR release aliases checkpoint source")
+     assert(CacheImage.safe(sourceC.io.req.bits.image, io.safeWatermark), "L2_SPEC_OUTER_WRITE_ERROR victim")
+@@ -801,6 +822,24 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
+       "L2_SPEC_OUTER_WRITE_ERROR A source")
+   }
+ 
++  // One bounded STOP record, SC48/schema1. Pending is a raw MSHR voluntary
++  // Release/ReleaseData opportunity, before scheduling gates. It does not prove
++  // that SourceC is the only blocker. Counts use the existing traffic window.
++  val sourceCReleasePending = mshrs.map(m => m.io.schedule.valid &&
++    m.io.schedule.bits.c.valid && m.io.schedule.bits.c.bits.opcode(1)).reduce(_||_)
++  val sourceCReleaseFire = sourceC.io.req.fire() && sourceC.io.req.bits.opcode(1)
++  val sourceCObservation = SafeChainObservation.remainingContext()
++  SafeChainObservation.remainingCounters(48, clock, reset, observationContext._1,
++    sourceCObservation._1, sourceCObservation._2, sourceCObservation._3, Seq(
++      sourceCReserved, // sourcec_reserved_cycles (actual narrowed lease)
++      sourceCReserved && sourceCReleasePending, // sourcec_reserved_with_pending_release
++      preservation.io.waitingAck && sourceCReleaseFire, // release_bypass_count (requests)
++      sourceCReleasePending && !sourceCReleaseFire, // release_still_blocked_count (cycles)
++      preservation.io.waitingAck, // waitAck_cycles
++      preservation.io.waitingAck && sourceCReleasePending, // waitAck_with_pending_release
++      preservation.io.lock.valid, // target_set_locked_cycles (old global lease)
++      preservation.io.lock.valid && sourceCReleasePending)) // old_reserved_with_pending_release
++
+   // SLOWDOWN_TRACE_BEGIN: observation-only; no functional consumers.
+   val slowdown_scheduler_request_valid = chisel3.WireInit(request.valid)
+   chisel3.dontTouch(slowdown_scheduler_request_valid)
+diff --git a/slowdown/optimization_4_svb/analysis/analyze_svb.py b/slowdown/optimization_4_svb/analysis/analyze_svb.py
+index f87298e0b..8ce4cf788 100755
+--- a/slowdown/optimization_4_svb/analysis/analyze_svb.py
++++ b/slowdown/optimization_4_svb/analysis/analyze_svb.py
+@@ -258,6 +258,13 @@ def cache_opportunity(run, benchmark, integrity=None):
+         gap = abs(base['miss'] - actual.get('miss', 0)) / max(actual.get('miss', 0), 1)
+         sane = bool(row.get('geometry_decision_eligible') and actual.get('access') and gap <= 0.10)
+         row['analyzer_s0_miss_relative_error'] = gap
++        if row.get('s0_replay_schema') == 2 and row.get('level') == 2:
++            audit_ok = (row.get('s0_replay_complete') is True and
++                        row.get('read_consistent_snapshots') == actual.get('access') and
++                        row.get('snapshot_errors') == 0 and row.get('lookup_key_errors') == 0)
++            sane = sane and audit_ok
++            row['geometry_decision_eligible'] = sane
++            row['analyzer_read_consistency_audit'] = 'PASS' if audit_ok else 'FAIL'
+         for m in models:
+             st = m['stats']
+             if st['access'] != st['hit'] + st['miss'] or st['access'] != base['access']:
+@@ -275,6 +282,15 @@ def cache_opportunity(run, benchmark, integrity=None):
+             m['dram_read_opportunity_reduction'] = m['miss_reduction_vs_s0'] if row['level'] == 2 else None
+             # A dirty-victim delta is an opportunity proxy, not predicted actual DRAM traffic.
+             m['dirty_victim_opportunity_reduction'] = base['dirty_victim'] - st['dirty_victim']
++            if not sane:
++                # Keep raw observations for diagnosis, but never publish a
++                # geometry-benefit number from a failed S0 model.
++                for field in ('miss_reduction_vs_s0', 'replacement_reduction_vs_s0',
++                              'miss_reduction_vs_actual', 'replacement_reduction_vs_actual',
++                              'miss_reduction_percent', 'replacement_reduction_percent',
++                              'conflict_candidate_reduction_vs_s0',
++                              'dram_read_opportunity_reduction', 'dirty_victim_opportunity_reduction'):
++                    m[field] = None
+             if m['name'] != 'S0' and sane and benchmark and \
+                     base['miss'] >= 10 and m['miss_reduction_percent'] >= 10:
+                 candidates.append(dict(level=row['level'], instance=row['instance'], name=m['name'],
+@@ -287,7 +303,8 @@ def cache_opportunity(run, benchmark, integrity=None):
+         else:
+             associativity = models[1]['miss_reduction_percent'] or 0
+             capacity = models[2]['miss_reduction_percent'] or 0
+-            row['decision'] = ('associativity-sensitive' if associativity >= 10 else
++            row['decision'] = ('associativity-and-capacity-sensitive' if associativity >= 10 and capacity >= 10 else
++                               'associativity-sensitive' if associativity >= 10 else
+                                'capacity-sensitive' if capacity >= 10 else 'insensitive')
+     if not any(k[0] == 1 for k in seen) or not any(k[0] == 2 for k in seen):
+         errors.append('missing L1 or L2 summary')
+@@ -322,7 +339,39 @@ def cache_opportunity(run, benchmark, integrity=None):
+                 cache_opt_candidate=(max(candidates, key=lambda x: x['estimated_misses_avoided'])
+                                      if candidates and not errors else None),
+                 classification='COUNTERFACTUAL_CACHE_TRAFFIC_ESTIMATE',
+-                predicted_roi=None, candidate_policy='one hypothesis only; hardware cost and real validation required')
++                predicted_roi=None, candidate_policy='traffic hypothesis only; per-level S0 sanity, critical-path evidence, hardware cost and real validation required')
++
++
++def remaining_observation(records, path):
++    rows = [r for r in records if 40 <= r['kind'] <= 45 and r['hart'] == 0]
++    if not rows:
++        return dict(status='UNOBSERVED', reason='legacy run; exact ROB/stall counters not recorded')
++    errors, groups = [], {}
++    footers = {}
++    for raw in Path(path).read_text().splitlines():
++        p = raw.split('\t')
++        if len(p) == 8 and p[0] == 'SC_END':
++            footers[int(p[5]), int(p[6])] = int(p[7])
++    starts = [r['cycle'] for r in records if r['kind'] == 10 and r['nums'][1]]
++    stops = [r['cycle'] for r in records if r['kind'] == 30 and r['hart'] == 0]
++    expected = stops[0]-starts[0] if len(starts) == len(stops) == 1 else None
++    for kind in range(40, 46):
++        selected = [r for r in rows if r['kind'] == kind]
++        if len(selected) != 1 or footers.get((kind, 0)) != 1:
++            errors.append(f'kind{kind}: missing/duplicate STOP/footer')
++            continue
++        n = selected[0]['nums']
++        if n[0] != 1 or n[1] != expected or any(v > n[1] for v in n[2:]):
++            errors.append(f'kind{kind}: invalid schema/window/counter range')
++        groups[str(kind)] = n
++    if '40' in groups and '41' in groups and any(a > b for a,b in zip(groups['41'][2:],groups['40'][2:])):
++        errors.append('ROB overlaps exceed corresponding activity')
++    if '42' in groups and sum(groups['42'][3:10]) != groups['42'][2]:
++        errors.append('priority WaitSafe classes do not partition post-bypass cycles')
++    if '45' in groups and sum(groups['45'][2:10]) != groups['45'][1]:
++        errors.append('R_IC state histogram does not conserve measurement window')
++    return dict(status='FAIL' if errors else 'PASS', errors=errors, groups=groups,
++                policy='activity and observed ROB overlap; not strict counterfactual loss')
+ 
+ 
+ def run_summary(run):
+@@ -373,11 +422,18 @@ def run_summary(run):
+             integrity['errors'].append('integrity/protocol completion count mismatch')
+             integrity['status'] = 'FAIL'
+     cache = cache_opportunity(run, benchmark, integrity)
+-    if require_integrity and (not cache.get('models') or
+-            any(not model.get('geometry_decision_eligible') or model.get('analyzer_s0_miss_relative_error',1)>0.10
+-                for model in cache['models'])):
+-        cache.setdefault('errors',[]).append('final cache shadow S0 sanity failed')
+-        cache['status']='FAIL'
++    # Cache-model fidelity is not SVB/benchmark correctness. A failed L2
++    # counterfactual must block L2 geometry decisions, not invalidate a closed
++    # allocation-scoped integrity/protocol ledger or a valid L1 S0 comparison.
++    cache['shadow_validation_status'] = ('PASS' if cache.get('models') and
++        all(model.get('geometry_decision_eligible') and
++            model.get('analyzer_s0_miss_relative_error', 1) <= 0.10
++            for model in cache['models']) else 'FAIL')
++    cache['shadow_validation_by_level'] = {
++        str(model.get('level')) + ':' + str(model.get('instance')):
++        ('PASS' if model.get('geometry_decision_eligible') and
++         model.get('analyzer_s0_miss_relative_error', 1) <= 0.10 else 'FAIL')
++        for model in cache.get('models', [])}
+     if require_integrity and integrity['status'] != 'PASS':
+         cache.setdefault('errors',[]).append('integrity lifecycle ledger failed')
+         cache['status'] = 'FAIL'
+@@ -506,6 +562,7 @@ def run_summary(run):
+                                      if require_cache else histogram(17, occupancy)),
+                 depth_histogram=(cache.get('shadow_8_capacity', {}).get('depth_histogram')
+                                  if require_cache else histogram(18, depth)),
++                remaining_observation=remaining_observation(records, events),
+                 observer_status='OBSERVED' if svb else 'UNKNOWN_FROM_MISSING_SVB_EVENT',
+                 event_records=len(records))
+ 
+diff --git a/slowdown/optimization_4_svb/scripts/compact_capture.py b/slowdown/optimization_4_svb/scripts/compact_capture.py
+index 225177970..2d4d5b9f3 100644
+--- a/slowdown/optimization_4_svb/scripts/compact_capture.py
++++ b/slowdown/optimization_4_svb/scripts/compact_capture.py
+@@ -231,6 +231,7 @@ class Router:
+         failure=bool(re.search(rb'\b(assert|assertion|fatal|failed|abort)\b|%error',lower))
+         if failure:self.counts['failure_markers_seen'] += 1
+         essential=(failure or line.startswith((b'[ROI]', b'[RUN] benchmark=', b'[COMPUTATION]', b'[END]',
++                    b'[CAUSAL_ROI_MARKER]',
+                     b'STAGE1_HOST_SUCCESS', b'STAGE1_SIM_EXIT', b'STAGE1_TX EXIT_', b'SC_OVERFLOW', b'***')))
+         retained=(essential or line.startswith((b'[',b'%')) or any(t in lower for t in (b'error',b'fail',b'timeout')))
+         if not retained:
+@@ -245,6 +246,7 @@ class Router:
+             if essential:self.incomplete('essential_diagnostic_budget_exhausted')
+             self.warn_limit(category);return
+         self.used[category] += len(line); self.write(dest,line)
++        if line.startswith(b'[CAUSAL_ROI_MARKER]'):self.files[dest].flush()
+ 
+     def feed(self, data, stream):
+         if self.discarding[stream]:
+diff --git a/slowdown/optimization_4_svb/scripts/launch_optimization_4_svb.py b/slowdown/optimization_4_svb/scripts/launch_optimization_4_svb.py
+index 49ac32aca..3a1f67ce3 100755
+--- a/slowdown/optimization_4_svb/scripts/launch_optimization_4_svb.py
++++ b/slowdown/optimization_4_svb/scripts/launch_optimization_4_svb.py
+@@ -25,6 +25,8 @@ import uuid
+ ROOT = Path("/data1/gzh/EC")
+ CHIPYARD = ROOT / "chipyard"
+ OUT = ROOT / "slowdown/optimization_4_svb"
++CAUSAL_CONTEXT = None
++ACTIVE_CONFIG = "v1Config"
+ BASELINE = ROOT / "baseline/software_common_builds/gapbs512_20261023_03"
+ ELF = BASELINE / "test.riscv"
+ LOADMEM = BASELINE / "test.loadmem_hex"
+@@ -60,6 +62,8 @@ def git(*args):
+ 
+ 
+ def identity():
++    if CAUSAL_CONTEXT is not None:
++        return causal_identity()
+     subprocess.check_call(["git", "cat-file", "-e", OPT3_HEAD + "^{commit}"], cwd=ROOT)
+     if subprocess.call(["git", "merge-base", "--is-ancestor", OPT3_HEAD, "HEAD"], cwd=ROOT):
+         raise RuntimeError("HEAD is not based on the validated Opt3 commit")
+@@ -123,6 +127,43 @@ def identity():
+     }
+ 
+ 
++def causal_identity():
++    """Explicit paired mode preserves the default Opt4 identity guard."""
++    experiment, arm = CAUSAL_CONTEXT
++    seal_path = experiment / "source_seal.json"
++    seal = json.loads(seal_path.read_text())
++    if seal.get("experiment") != "L1-Causal-1" or seal.get("svb_entries") != 16:
++        raise RuntimeError("invalid causal experiment seal")
++    if seal.get("one_shot_contract"):
++        contract = seal["one_shot_contract"]
++        if arm != "B" or sha(ROOT / contract["path"]) != contract["sha256"]:
++            raise RuntimeError("one-shot seal requires B only and an unchanged run contract")
++    changed = set(git("diff", "--name-only", OPT3_HEAD, "--", "chipyard").splitlines())
++    untracked = set(git("ls-files", "--others", "--exclude-standard", "--", "chipyard").splitlines())
++    if changed | untracked != set(seal["hardware_sha256"]):
++        raise RuntimeError("causal hardware source set differs from reviewed seal")
++    for relative, expected in {**seal["hardware_sha256"], **seal["tool_sha256"]}.items():
++        if sha(ROOT / relative) != expected:
++            raise RuntimeError("causal sealed input changed: " + relative)
++    patch = experiment / "causal_cumulative.patch"
++    if sha(patch) != seal["patch_sha256"]:
++        raise RuntimeError("causal patch hash mismatch")
++    subprocess.check_call(["git", "apply", "--reverse", "--check", str(patch)], cwd=ROOT)
++    for path, expected in ((ELF, ELF_SHA), (LOADMEM, LOADMEM_SHA)):
++        if sha(path) != expected:
++            raise RuntimeError("pinned paired software mismatch: " + str(path))
++    from compact_capture import budget_contract
++    return dict(opt3_head=OPT3_HEAD, git_head=git("rev-parse", "HEAD"),
++                patch_sha256=seal["patch_sha256"], hardware_sha256=seal["hardware_sha256"],
++                tool_sha256=seal["tool_sha256"], elf_sha256=ELF_SHA, loadmem_sha256=LOADMEM_SHA,
++                revision_mode="l1_causal_1_same_instrumentation", validation_purpose="L1_CAUSAL_PAIRED_EXPERIMENT",
++                paired_source_fingerprint=seal["paired_source_fingerprint"],
++                experiment="L1-Causal-1", arm=arm, config=ACTIVE_CONFIG,
++                l1_sets=256 if arm == "A" else 512, l1_ways=2, l1_block_bytes=64, l1_mshrs=6,
++                n_svb_entries=16, integrity_schema=2, trace_enabled=False,
++                observation_policy="priority_reserved_v2", observation_budget=budget_contract())
++
++
+ def static_check():
+     result = identity()
+     result.update(status="PASS", hardware_generation="NOT_EXECUTED",
+@@ -361,7 +402,7 @@ def make_argv(build, jobs):
+             "base_dir=" + str(CHIPYARD), "sim_dir=" + str(build / "verilator"),
+             "gen_dir=" + str(build / "generated"), "build_dir=" + str(build / "generated"),
+             "output_dir=" + str(build / "make-output"),
+-            "dramsim_dir=" + str(build / "dramsim"), "CONFIG=v1Config",
++            "dramsim_dir=" + str(build / "dramsim"), "CONFIG=" + ACTIVE_CONFIG,
+             "VERILATOR_THREADS=1", "EXTRA_SIM_CXXFLAGS=-DSTAGE1_EXIT_PORTS -DSAFE_CHAIN_EVENTS",
+             "-j" + str(jobs)]
+ 
+@@ -407,6 +448,7 @@ def resume_manifest(run_id, ident):
+ 
+ 
+ def main():
++    global CAUSAL_CONTEXT, ACTIVE_CONFIG
+     ap = argparse.ArgumentParser()
+     ap.add_argument("--static-check", action="store_true")
+     ap.add_argument("--resume", metavar="RUN_ID", help="reuse completed RTL from a run that never started simulation")
+@@ -416,7 +458,20 @@ def main():
+     ap.add_argument("--jobs", type=int, default=1)
+     ap.add_argument("--seed", type=int, default=1)
+     ap.add_argument("--max-cycles", type=int, default=500000000)
++    ap.add_argument("--l1-causal-arm", choices=("A", "B"))
++    ap.add_argument("--experiment-dir", type=Path)
+     args = ap.parse_args()
++    if bool(args.l1_causal_arm) != bool(args.experiment_dir):
++        ap.error("causal arm and experiment-dir are required together")
++    if args.l1_causal_arm:
++        if args.resume or args.analysis_only:
++            ap.error("causal experiment uses fresh runs; resume/analysis-only are not paired runs")
++        experiment = args.experiment_dir.resolve()
++        if not experiment.is_relative_to(ROOT / "AI/TMP"):
++            ap.error("causal artifacts must remain in AI/TMP")
++        CAUSAL_CONTEXT = (experiment, args.l1_causal_arm)
++        ACTIVE_CONFIG = "L1Causal32Config" if args.l1_causal_arm == "A" else "L1Causal64Config"
++        sys.path.insert(0, str(OUT / "scripts"))
+     if args.jobs < 1 or args.seed != 1 or args.max_cycles != 500000000:
+         ap.error("paired run requires --jobs >= 1, seed=1, max-cycles=500000000")
+     if args.analysis_only and (args.static_check or args.resume or args.build_only):
+@@ -491,8 +546,9 @@ def main():
+         else:
+             stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%d_%H%M%S")
+             run_id = "optimization_4_svb_" + stamp + "_" + uuid.uuid4().hex[:8]
+-            build = OUT / "build" / run_id
+-            run = OUT / "runs" / run_id
++            arm_root = (CAUSAL_CONTEXT[0] / "arms" / CAUSAL_CONTEXT[1]) if CAUSAL_CONTEXT else OUT
++            build = arm_root / "build" / run_id
++            run = arm_root / "runs" / run_id
+             build.mkdir(parents=True)
+             run.mkdir(parents=True)
+             dramsim_src = CHIPYARD / "tools/DRAMSim2"
+@@ -523,7 +579,7 @@ def main():
+             build_log = build / ("verilator_build.resume_" + uuid.uuid4().hex[:8] + ".log")
+         execute_phase("VERILATOR_BUILD", make + ["default"], build_log)
+         manifest["verilator_build"] = "PASS"
+-        simulator = build / "verilator" / "simulator-chipyard-v1Config"
++        simulator = build / "verilator" / ("simulator-chipyard-" + ACTIVE_CONFIG)
+         if not simulator.is_file() or not os.access(simulator, os.X_OK):
+             raise RuntimeError("generated simulator missing: " + str(simulator))
+         record(run / "run_manifest.json", manifest)
+@@ -540,6 +596,7 @@ def main():
+                 "+max-cycles=" + str(args.max_cycles), "+loadmem=" + str(LOADMEM),
+                 "+loadmem_addr=80000000", "+permissive-off", str(ELF)]
+         phase = "SIMULATION"
++        manifest["simulation_argv"] = argv
+         # The guard belongs immediately before capture/Popen, never before
+         # hardware generation. A failed build can then be safely resumed.
+         with (run / "SIMULATION_STARTED.json").open("x") as f:

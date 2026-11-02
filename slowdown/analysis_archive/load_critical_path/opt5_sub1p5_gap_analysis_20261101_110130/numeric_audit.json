@@ -1,0 +1,2790 @@
+{
+  "arms": {
+    "A": {
+      "actual_l1": {
+        "access": 156289,
+        "dirty_victim": 1126,
+        "hit": 153017,
+        "miss": 3272,
+        "replacement": 1419,
+        "set_full_miss": 991
+      },
+      "arm": "A",
+      "causal": {
+        "bounded_slots": 64,
+        "counts": {
+          "ROB_HEAD_LOAD_BLOCK_AND_SCHEDULER_UNAVAILABLE_CYCLES": 17,
+          "ROB_HEAD_WAITING_ON_LOAD_MISS_AND_MSHR_BUSY_CYCLES": 139500,
+          "ROB_HEAD_WAITING_ON_LOAD_MISS_AND_MSHR_FULL_CYCLES": 0,
+          "ROB_HEAD_WAITING_ON_LOAD_MISS_CYCLES": 139694,
+          "SCHEDULER_UNAVAILABLE_AND_MSHR_BUSY_CYCLES": 154,
+          "SCHEDULER_UNAVAILABLE_AND_MSHR_FULL_CYCLES": 0,
+          "alloc_refill_samples": 2162,
+          "alloc_refill_sum": 274470,
+          "any_ldq_miss_pending_cycles": 145926,
+          "completed_miss_head_episode_cycles": 139694,
+          "completed_misses_ever_head": 409,
+          "detect_alloc_samples": 1380,
+          "detect_alloc_sum": 447552,
+          "detect_data_samples": 1530,
+          "detect_data_sum": 532192,
+          "load_miss_lookup_attempts": 112461,
+          "load_nack_cycles": 111557,
+          "load_nack_retries": 111548,
+          "load_nack_retry_cycles": 111548,
+          "load_nacks": 111557,
+          "load_permission_miss_requests": 9,
+          "load_rpq_replay_and_mshr_busy_events": 321,
+          "load_rpq_replay_and_mshr_full_events": 0,
+          "load_rpq_replay_cycles": 321,
+          "load_rpq_replays": 321,
+          "load_tag_miss_requests": 1533,
+          "miss_returns_still_head": 409,
+          "mshr_busy_cycles": 313150,
+          "mshr_full_cycles": 0,
+          "mshr_merges": 952,
+          "mshr_primary_allocations": 2162,
+          "mshr_request_rejects": 47064,
+          "mshr_upgrade_allocations": 115,
+          "nack_data": 0,
+          "nack_hit": 0,
+          "nack_mshr_not_ready": 111074,
+          "nack_victim": 474,
+          "nack_writeback": 3885,
+          "recycled_pending_slots": 2565,
+          "refill_completions": 2162,
+          "rob_head_load_pending_cycles": 151352,
+          "sample_cycles": 1707863,
+          "scheduler_unavailable_cycles": 318150,
+          "store_miss_lookup_attempts": 6898,
+          "store_permission_miss_requests": 103,
+          "store_tag_miss_requests": 2478
+        },
+        "errors": 0,
+        "latency_bin_definition": "bin0=0; binN=[2^(N-1),2^N-1]; bin31_saturates",
+        "latency_cohort": "completion_in_ROI; may_start_before_ROI; unfinished_censored",
+        "latency_histograms": [
+          [
+            1006,
+            0,
+            0,
+            25,
+            47,
+            45,
+            175,
+            44,
+            0,
+            0,
+            0,
+            4,
+            5,
+            1,
+            28,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            1000,
+            604,
+            517,
+            25,
+            0,
+            0,
+            1,
+            5,
+            1,
+            8,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            3,
+            82,
+            269,
+            829,
+            90,
+            204,
+            1,
+            0,
+            0,
+            4,
+            17,
+            3,
+            28,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "mshr_occupancy_histogram": [
+          1394713,
+          312184,
+          953,
+          13,
+          0,
+          0,
+          0
+        ],
+        "mshr_slots": 6,
+        "roi_marker_events": 2,
+        "roi_marker_observed_cycles": [
+          712114,
+          2419977
+        ],
+        "roi_marker_requested_cycles": [
+          712114,
+          2419977
+        ],
+        "roi_marker_snapshot_found": [
+          1,
+          1
+        ],
+        "roi_snapshot_lookup_errors": 0,
+        "roi_start": 712114,
+        "roi_stop": 2419977,
+        "schema": 1,
+        "snapshot_ring": 64,
+        "start_markers": 1,
+        "status": "PASS",
+        "stop_markers": 1,
+        "window": "exact_software_rdcycle_half_open_via_bounded_prefix_snapshots"
+      },
+      "contiguous_head_episode_histogram": null,
+      "critical_retry_amplification": {
+        "bounds": null,
+        "reason": "critical event/token association absent; empty critical cohort possible",
+        "value": null
+      },
+      "latency": [
+        {
+          "at_least_1024": 38,
+          "at_least_4096": 29,
+          "bins": [
+            1006,
+            0,
+            0,
+            25,
+            47,
+            45,
+            175,
+            44,
+            0,
+            0,
+            0,
+            4,
+            5,
+            1,
+            28,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "highest_nonempty_bin": 14,
+          "metric": "detect_to_alloc",
+          "samples": 1380
+        },
+        {
+          "at_least_1024": 16,
+          "at_least_4096": 10,
+          "bins": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            1000,
+            604,
+            517,
+            25,
+            0,
+            0,
+            1,
+            5,
+            1,
+            8,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "highest_nonempty_bin": 15,
+          "metric": "alloc_to_refill",
+          "samples": 2162
+        },
+        {
+          "at_least_1024": 52,
+          "at_least_4096": 31,
+          "bins": [
+            0,
+            0,
+            3,
+            82,
+            269,
+            829,
+            90,
+            204,
+            1,
+            0,
+            0,
+            4,
+            17,
+            3,
+            28,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "highest_nonempty_bin": 14,
+          "metric": "detect_to_data",
+          "samples": 1530
+        }
+      ],
+      "latency_cohort": "completion_in_ROI; may_start_before_ROI; unfinished_censored",
+      "maximum_retry_episode_cycles": null,
+      "miss_attempt_amplification": {
+        "affected_miss_token_count_bounds": [
+          1542,
+          1558
+        ],
+        "assumptions": [
+          "stable functional token over LDQ lifetime",
+          "no observer-slot alias between different live LDQ entries",
+          "one first detection per token, tag/permission cases partition",
+          "at most physical LDQ size already detected at ROI entry"
+        ],
+        "attempts": 112461,
+        "attempts_per_miss_token_bounds": [
+          72.1829268292683,
+          72.93190661478599
+        ],
+        "first_detections_in_roi": 1542,
+        "maximum_boundary_carry_in_tokens": 16,
+        "metric": "miss lookup attempts per affected miss token; NOT nack retry factor",
+        "some_token_attempt_count_at_least": 73
+      },
+      "optional_complete_prefix": [
+        712114,
+        2289264
+      ],
+      "optional_records_omitted": 3099,
+      "optional_unknown_suffix_cycles": 130713,
+      "per_line_retry_histogram": null,
+      "per_request_retry_histogram": null,
+      "retry_amplification": {
+        "bounds": [
+          1,
+          111548
+        ],
+        "reason": "unique affected retry-token count was not exported",
+        "value": null
+      },
+      "roi_cycles": 1707863,
+      "run": "/data1/gzh/EC/AI/TMP/l1_causal_opt5_probe_20261030_200000_4235a1de/revisions/r2/arms/A/runs/optimization_4_svb_20261030_135448_0c744900",
+      "scheduler_prefix": {
+        "cycles": 267087,
+        "distribution": {
+          "max": 13762,
+          "mean": 3815.5285714285715,
+          "min": 24,
+          "n": 70,
+          "p50": 3180,
+          "p95": 8526
+        },
+        "full_roi_native_cycles": 318150,
+        "intervals": [
+          [
+            1455453,
+            1456313
+          ],
+          [
+            1494764,
+            1498687
+          ],
+          [
+            1529735,
+            1530725
+          ],
+          [
+            1589143,
+            1590969
+          ],
+          [
+            1594487,
+            1596755
+          ],
+          [
+            1613251,
+            1614431
+          ],
+          [
+            1639136,
+            1640561
+          ],
+          [
+            1645597,
+            1650681
+          ],
+          [
+            1682032,
+            1683335
+          ],
+          [
+            1688377,
+            1693455
+          ],
+          [
+            1725172,
+            1726379
+          ],
+          [
+            1731421,
+            1736489
+          ],
+          [
+            1790208,
+            1791543
+          ],
+          [
+            1793380,
+            1793459
+          ],
+          [
+            1795934,
+            1800919
+          ],
+          [
+            1838223,
+            1841635
+          ],
+          [
+            1857097,
+            1863141
+          ],
+          [
+            1864751,
+            1868009
+          ],
+          [
+            1869710,
+            1871835
+          ],
+          [
+            1875073,
+            1881139
+          ],
+          [
+            1884243,
+            1889577
+          ],
+          [
+            1891160,
+            1891545
+          ],
+          [
+            1893475,
+            1898693
+          ],
+          [
+            1912525,
+            1921051
+          ],
+          [
+            1922635,
+            1923871
+          ],
+          [
+            1925489,
+            1927339
+          ],
+          [
+            1930544,
+            1938245
+          ],
+          [
+            1939849,
+            1941211
+          ],
+          [
+            1942801,
+            1945375
+          ],
+          [
+            1949364,
+            1956279
+          ],
+          [
+            1965965,
+            1971349
+          ],
+          [
+            1972944,
+            1979297
+          ],
+          [
+            1980991,
+            1982301
+          ],
+          [
+            1985411,
+            1989275
+          ],
+          [
+            1990862,
+            1997273
+          ],
+          [
+            1998873,
+            2000239
+          ],
+          [
+            2004265,
+            2007201
+          ],
+          [
+            2015001,
+            2015339
+          ],
+          [
+            2016923,
+            2024297
+          ],
+          [
+            2025963,
+            2030385
+          ],
+          [
+            2035017,
+            2041811
+          ],
+          [
+            2043419,
+            2048333
+          ],
+          [
+            2049899,
+            2049923
+          ],
+          [
+            2056683,
+            2059863
+          ],
+          [
+            2065315,
+            2067961
+          ],
+          [
+            2069571,
+            2078137
+          ],
+          [
+            2081257,
+            2081803
+          ],
+          [
+            2083395,
+            2086013
+          ],
+          [
+            2087617,
+            2096073
+          ],
+          [
+            2113943,
+            2127705
+          ],
+          [
+            2133733,
+            2143259
+          ],
+          [
+            2155703,
+            2162321
+          ],
+          [
+            2163919,
+            2169775
+          ],
+          [
+            2171367,
+            2172053
+          ],
+          [
+            2175080,
+            2180339
+          ],
+          [
+            2182792,
+            2185569
+          ],
+          [
+            2195229,
+            2201575
+          ],
+          [
+            2203175,
+            2209933
+          ],
+          [
+            2211527,
+            2211583
+          ],
+          [
+            2215703,
+            2219583
+          ],
+          [
+            2226597,
+            2227647
+          ],
+          [
+            2230973,
+            2233623
+          ],
+          [
+            2235219,
+            2245759
+          ],
+          [
+            2256519,
+            2257649
+          ],
+          [
+            2259215,
+            2259383
+          ],
+          [
+            2260865,
+            2263715
+          ],
+          [
+            2265307,
+            2269995
+          ],
+          [
+            2271601,
+            2276981
+          ],
+          [
+            2278785,
+            2279045
+          ],
+          [
+            2286683,
+            2287411
+          ]
+        ],
+        "left_boundary_censored": false,
+        "right_boundary_censored": false,
+        "scope": "complete optional prefix only; suffix interval locations unknown",
+        "unknown_suffix_native_total": 51063
+      },
+      "simulator_time_minus_boom_cycle": 103,
+      "software_roi": [
+        712114,
+        2419977
+      ],
+      "stop_groups": {
+        "40": [
+          1,
+          1718781,
+          5605,
+          5183,
+          58118,
+          3399,
+          1,
+          4774,
+          15714,
+          22446,
+          0,
+          157915,
+          310,
+          315637,
+          61441,
+          392937
+        ],
+        "41": [
+          1,
+          1718781,
+          3282,
+          3073,
+          6275,
+          1525,
+          1,
+          2901,
+          8936,
+          13174,
+          0,
+          118838,
+          0,
+          215695,
+          8476,
+          231428
+        ],
+        "42": [
+          1,
+          1718781,
+          5183,
+          1,
+          4774,
+          0,
+          0,
+          0,
+          0,
+          408,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "43": [
+          1,
+          1718781,
+          404294,
+          1198146,
+          2528,
+          371741,
+          61441,
+          2877,
+          58564,
+          111719,
+          6311,
+          232368,
+          847773,
+          8476,
+          150894,
+          1439745
+        ],
+        "44": [
+          1,
+          1718781,
+          180573,
+          1230235,
+          1173351,
+          865378,
+          0,
+          800,
+          350871,
+          23402,
+          0,
+          0,
+          318493,
+          339421,
+          150958,
+          338995
+        ],
+        "45": [
+          1,
+          1718781,
+          1,
+          10974,
+          318237,
+          400,
+          8350,
+          31836,
+          1348670,
+          313,
+          350871,
+          318150,
+          318150,
+          6913,
+          168,
+          359136
+        ]
+      },
+      "traffic_window": [
+        712021,
+        2430802
+      ]
+    },
+    "B": {
+      "actual_l1": {
+        "access": 156303,
+        "dirty_victim": 1007,
+        "hit": 153679,
+        "miss": 2624,
+        "replacement": 1099,
+        "set_full_miss": 477
+      },
+      "arm": "B",
+      "causal": {
+        "bounded_slots": 64,
+        "counts": {
+          "ROB_HEAD_LOAD_BLOCK_AND_SCHEDULER_UNAVAILABLE_CYCLES": 0,
+          "ROB_HEAD_WAITING_ON_LOAD_MISS_AND_MSHR_BUSY_CYCLES": 53795,
+          "ROB_HEAD_WAITING_ON_LOAD_MISS_AND_MSHR_FULL_CYCLES": 0,
+          "ROB_HEAD_WAITING_ON_LOAD_MISS_CYCLES": 53845,
+          "SCHEDULER_UNAVAILABLE_AND_MSHR_BUSY_CYCLES": 269,
+          "SCHEDULER_UNAVAILABLE_AND_MSHR_FULL_CYCLES": 0,
+          "alloc_refill_samples": 1883,
+          "alloc_refill_sum": 157331,
+          "any_ldq_miss_pending_cycles": 57440,
+          "completed_miss_head_episode_cycles": 53845,
+          "completed_misses_ever_head": 251,
+          "detect_alloc_samples": 960,
+          "detect_alloc_sum": 157622,
+          "detect_data_samples": 1052,
+          "detect_data_sum": 211045,
+          "load_miss_lookup_attempts": 40033,
+          "load_nack_cycles": 47163,
+          "load_nack_retries": 47162,
+          "load_nack_retry_cycles": 47162,
+          "load_nacks": 47163,
+          "load_permission_miss_requests": 2,
+          "load_rpq_replay_and_mshr_busy_events": 229,
+          "load_rpq_replay_and_mshr_full_events": 0,
+          "load_rpq_replay_cycles": 229,
+          "load_rpq_replays": 229,
+          "load_tag_miss_requests": 1060,
+          "miss_returns_still_head": 251,
+          "mshr_busy_cycles": 194905,
+          "mshr_full_cycles": 0,
+          "mshr_merges": 741,
+          "mshr_primary_allocations": 1883,
+          "mshr_request_rejects": 20433,
+          "mshr_upgrade_allocations": 74,
+          "nack_data": 0,
+          "nack_hit": 25,
+          "nack_mshr_not_ready": 39072,
+          "nack_victim": 8087,
+          "nack_writeback": 2354,
+          "recycled_pending_slots": 2400,
+          "refill_completions": 1883,
+          "rob_head_load_pending_cycles": 80832,
+          "sample_cycles": 1648923,
+          "scheduler_unavailable_cycles": 347409,
+          "store_miss_lookup_attempts": 4518,
+          "store_permission_miss_requests": 92,
+          "store_tag_miss_requests": 2324
+        },
+        "errors": 0,
+        "latency_bin_definition": "bin0=0; binN=[2^(N-1),2^N-1]; bin31_saturates",
+        "latency_cohort": "completion_in_ROI; may_start_before_ROI; unfinished_censored",
+        "latency_histograms": [
+          [
+            758,
+            0,
+            1,
+            9,
+            11,
+            8,
+            118,
+            37,
+            0,
+            0,
+            0,
+            0,
+            6,
+            4,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            851,
+            559,
+            444,
+            17,
+            1,
+            3,
+            0,
+            3,
+            2,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            4,
+            52,
+            200,
+            584,
+            63,
+            124,
+            3,
+            0,
+            0,
+            0,
+            6,
+            4,
+            12,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "mshr_occupancy_histogram": [
+          1454018,
+          194510,
+          395,
+          0,
+          0,
+          0,
+          0
+        ],
+        "mshr_slots": 6,
+        "roi_marker_events": 2,
+        "roi_marker_observed_cycles": [
+          698301,
+          2347224
+        ],
+        "roi_marker_requested_cycles": [
+          698301,
+          2347224
+        ],
+        "roi_marker_snapshot_found": [
+          1,
+          1
+        ],
+        "roi_snapshot_lookup_errors": 0,
+        "roi_start": 698301,
+        "roi_stop": 2347224,
+        "schema": 1,
+        "snapshot_ring": 64,
+        "start_markers": 1,
+        "status": "PASS",
+        "stop_markers": 1,
+        "window": "exact_software_rdcycle_half_open_via_bounded_prefix_snapshots"
+      },
+      "contiguous_head_episode_histogram": null,
+      "critical_retry_amplification": {
+        "bounds": null,
+        "reason": "critical event/token association absent; empty critical cohort possible",
+        "value": null
+      },
+      "latency": [
+        {
+          "at_least_1024": 18,
+          "at_least_4096": 12,
+          "bins": [
+            758,
+            0,
+            1,
+            9,
+            11,
+            8,
+            118,
+            37,
+            0,
+            0,
+            0,
+            0,
+            6,
+            4,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "highest_nonempty_bin": 14,
+          "metric": "detect_to_alloc",
+          "samples": 960
+        },
+        {
+          "at_least_1024": 8,
+          "at_least_4096": 5,
+          "bins": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            851,
+            559,
+            444,
+            17,
+            1,
+            3,
+            0,
+            3,
+            2,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "highest_nonempty_bin": 14,
+          "metric": "alloc_to_refill",
+          "samples": 1883
+        },
+        {
+          "at_least_1024": 22,
+          "at_least_4096": 16,
+          "bins": [
+            0,
+            0,
+            4,
+            52,
+            200,
+            584,
+            63,
+            124,
+            3,
+            0,
+            0,
+            0,
+            6,
+            4,
+            12,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "highest_nonempty_bin": 14,
+          "metric": "detect_to_data",
+          "samples": 1052
+        }
+      ],
+      "latency_cohort": "completion_in_ROI; may_start_before_ROI; unfinished_censored",
+      "maximum_retry_episode_cycles": null,
+      "miss_attempt_amplification": {
+        "affected_miss_token_count_bounds": [
+          1062,
+          1078
+        ],
+        "assumptions": [
+          "stable functional token over LDQ lifetime",
+          "no observer-slot alias between different live LDQ entries",
+          "one first detection per token, tag/permission cases partition",
+          "at most physical LDQ size already detected at ROI entry"
+        ],
+        "attempts": 40033,
+        "attempts_per_miss_token_bounds": [
+          37.13636363636363,
+          37.695856873822976
+        ],
+        "first_detections_in_roi": 1062,
+        "maximum_boundary_carry_in_tokens": 16,
+        "metric": "miss lookup attempts per affected miss token; NOT nack retry factor",
+        "some_token_attempt_count_at_least": 38
+      },
+      "optional_complete_prefix": [
+        698301,
+        2192911
+      ],
+      "optional_records_omitted": 4052,
+      "optional_unknown_suffix_cycles": 154313,
+      "per_line_retry_histogram": null,
+      "per_request_retry_histogram": null,
+      "retry_amplification": {
+        "bounds": [
+          1,
+          47162
+        ],
+        "reason": "unique affected retry-token count was not exported",
+        "value": null
+      },
+      "roi_cycles": 1648923,
+      "run": "/data1/gzh/EC/AI/TMP/checker_seq67_one_shot_20261031_103130/sealed/arms/B/runs/optimization_4_svb_20261031_024551_8fbf8937",
+      "scheduler_prefix": {
+        "cycles": 280215,
+        "distribution": {
+          "max": 12504,
+          "mean": 3687.0394736842104,
+          "min": 60,
+          "n": 76,
+          "p50": 2604,
+          "p95": 10522
+        },
+        "full_roi_native_cycles": 347409,
+        "intervals": [
+          [
+            1449353,
+            1451525
+          ],
+          [
+            1513397,
+            1513955
+          ],
+          [
+            1517651,
+            1518583
+          ],
+          [
+            1520219,
+            1522101
+          ],
+          [
+            1540990,
+            1547001
+          ],
+          [
+            1563349,
+            1564981
+          ],
+          [
+            1567038,
+            1567321
+          ],
+          [
+            1569185,
+            1573951
+          ],
+          [
+            1605571,
+            1607139
+          ],
+          [
+            1611937,
+            1616637
+          ],
+          [
+            1647483,
+            1648871
+          ],
+          [
+            1653905,
+            1658983
+          ],
+          [
+            1666232,
+            1669125
+          ],
+          [
+            1672447,
+            1673875
+          ],
+          [
+            1676586,
+            1679181
+          ],
+          [
+            1710577,
+            1715505
+          ],
+          [
+            1722040,
+            1725793
+          ],
+          [
+            1729039,
+            1729667
+          ],
+          [
+            1732455,
+            1734887
+          ],
+          [
+            1742969,
+            1746709
+          ],
+          [
+            1760251,
+            1763347
+          ],
+          [
+            1783856,
+            1785689
+          ],
+          [
+            1787397,
+            1790001
+          ],
+          [
+            1791581,
+            1792627
+          ],
+          [
+            1794209,
+            1799937
+          ],
+          [
+            1801527,
+            1802095
+          ],
+          [
+            1803703,
+            1807933
+          ],
+          [
+            1809531,
+            1810577
+          ],
+          [
+            1812179,
+            1816839
+          ],
+          [
+            1819963,
+            1825937
+          ],
+          [
+            1827531,
+            1828607
+          ],
+          [
+            1830801,
+            1834791
+          ],
+          [
+            1843129,
+            1843877
+          ],
+          [
+            1846985,
+            1857717
+          ],
+          [
+            1859315,
+            1860181
+          ],
+          [
+            1861819,
+            1861943
+          ],
+          [
+            1865053,
+            1875575
+          ],
+          [
+            1878767,
+            1879881
+          ],
+          [
+            1881405,
+            1881465
+          ],
+          [
+            1883958,
+            1891555
+          ],
+          [
+            1900961,
+            1906813
+          ],
+          [
+            1908405,
+            1913389
+          ],
+          [
+            1915021,
+            1917199
+          ],
+          [
+            1920303,
+            1924789
+          ],
+          [
+            1926387,
+            1930985
+          ],
+          [
+            1932581,
+            1935185
+          ],
+          [
+            1939238,
+            1942803
+          ],
+          [
+            1952163,
+            1959495
+          ],
+          [
+            1961181,
+            1966455
+          ],
+          [
+            1971105,
+            1976845
+          ],
+          [
+            1978438,
+            1984505
+          ],
+          [
+            1992363,
+            1994791
+          ],
+          [
+            2000461,
+            2003357
+          ],
+          [
+            2004945,
+            2013643
+          ],
+          [
+            2015245,
+            2016307
+          ],
+          [
+            2019415,
+            2021305
+          ],
+          [
+            2022897,
+            2031695
+          ],
+          [
+            2034160,
+            2034255
+          ],
+          [
+            2044341,
+            2045465
+          ],
+          [
+            2047071,
+            2058343
+          ],
+          [
+            2062967,
+            2063509
+          ],
+          [
+            2065081,
+            2076269
+          ],
+          [
+            2088351,
+            2093505
+          ],
+          [
+            2095093,
+            2101157
+          ],
+          [
+            2102759,
+            2104621
+          ],
+          [
+            2107705,
+            2111453
+          ],
+          [
+            2113866,
+            2119201
+          ],
+          [
+            2128923,
+            2133847
+          ],
+          [
+            2135451,
+            2143465
+          ],
+          [
+            2145061,
+            2145183
+          ],
+          [
+            2149282,
+            2151877
+          ],
+          [
+            2154991,
+            2156901
+          ],
+          [
+            2160372,
+            2161415
+          ],
+          [
+            2166307,
+            2178811
+          ],
+          [
+            2180417,
+            2181243
+          ],
+          [
+            2189639,
+            2192099
+          ]
+        ],
+        "left_boundary_censored": false,
+        "right_boundary_censored": false,
+        "scope": "complete optional prefix only; suffix interval locations unknown",
+        "unknown_suffix_native_total": 67194
+      },
+      "simulator_time_minus_boom_cycle": 103,
+      "software_roi": [
+        698301,
+        2347224
+      ],
+      "stop_groups": {
+        "40": [
+          1,
+          1660083,
+          5975,
+          5515,
+          81189,
+          3712,
+          4,
+          5053,
+          19431,
+          25666,
+          0,
+          51135,
+          0,
+          197091,
+          83325,
+          302183
+        ],
+        "41": [
+          1,
+          1660083,
+          4574,
+          4366,
+          6910,
+          1610,
+          0,
+          4203,
+          8739,
+          12282,
+          0,
+          48448,
+          0,
+          140544,
+          8345,
+          157719
+        ],
+        "42": [
+          1,
+          1660083,
+          5515,
+          4,
+          5053,
+          0,
+          0,
+          0,
+          0,
+          458,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "43": [
+          1,
+          1660083,
+          331796,
+          1200153,
+          2610,
+          341001,
+          83325,
+          1541,
+          81784,
+          47210,
+          4088,
+          159519,
+          866015,
+          8345,
+          80037,
+          1372257
+        ],
+        "44": [
+          1,
+          1660083,
+          171929,
+          1179873,
+          1118203,
+          809922,
+          0,
+          844,
+          381206,
+          22478,
+          0,
+          0,
+          340519,
+          361202,
+          80103,
+          360738
+        ],
+        "45": [
+          1,
+          1660083,
+          1,
+          11236,
+          347511,
+          422,
+          11583,
+          32856,
+          1256154,
+          320,
+          381206,
+          347409,
+          347409,
+          10064,
+          905,
+          392692
+        ]
+      },
+      "traffic_window": [
+        698208,
+        2358291
+      ]
+    }
+  },
+  "broad_no_commit_AND_load_pending_roi_bounds": [
+    148359,
+    159519
+  ],
+  "comparison": {
+    "actual_lookup_miss_delta": -648,
+    "actual_miss_window": "traffic window; causal counters use exact software ROI",
+    "causal_deltas": {
+      "ROB_HEAD_LOAD_BLOCK_AND_SCHEDULER_UNAVAILABLE_CYCLES": -17,
+      "ROB_HEAD_WAITING_ON_LOAD_MISS_AND_MSHR_BUSY_CYCLES": -85705,
+      "ROB_HEAD_WAITING_ON_LOAD_MISS_AND_MSHR_FULL_CYCLES": 0,
+      "ROB_HEAD_WAITING_ON_LOAD_MISS_CYCLES": -85849,
+      "SCHEDULER_UNAVAILABLE_AND_MSHR_BUSY_CYCLES": 115,
+      "SCHEDULER_UNAVAILABLE_AND_MSHR_FULL_CYCLES": 0,
+      "alloc_refill_samples": -279,
+      "alloc_refill_sum": -117139,
+      "any_ldq_miss_pending_cycles": -88486,
+      "completed_miss_head_episode_cycles": -85849,
+      "completed_misses_ever_head": -158,
+      "detect_alloc_samples": -420,
+      "detect_alloc_sum": -289930,
+      "detect_data_samples": -478,
+      "detect_data_sum": -321147,
+      "load_miss_lookup_attempts": -72428,
+      "load_nack_cycles": -64394,
+      "load_nack_retries": -64386,
+      "load_nack_retry_cycles": -64386,
+      "load_nacks": -64394,
+      "load_permission_miss_requests": -7,
+      "load_rpq_replay_and_mshr_busy_events": -92,
+      "load_rpq_replay_and_mshr_full_events": 0,
+      "load_rpq_replay_cycles": -92,
+      "load_rpq_replays": -92,
+      "load_tag_miss_requests": -473,
+      "miss_returns_still_head": -158,
+      "mshr_busy_cycles": -118245,
+      "mshr_full_cycles": 0,
+      "mshr_merges": -211,
+      "mshr_primary_allocations": -279,
+      "mshr_request_rejects": -26631,
+      "mshr_upgrade_allocations": -41,
+      "nack_data": 0,
+      "nack_hit": 25,
+      "nack_mshr_not_ready": -72002,
+      "nack_victim": 7613,
+      "nack_writeback": -1531,
+      "recycled_pending_slots": -165,
+      "refill_completions": -279,
+      "rob_head_load_pending_cycles": -70520,
+      "sample_cycles": -58940,
+      "scheduler_unavailable_cycles": 29259,
+      "store_miss_lookup_attempts": -2380,
+      "store_permission_miss_requests": -11,
+      "store_tag_miss_requests": -154
+    },
+    "label": "REFERENCE_COMPARISON",
+    "roi_delta": -58940,
+    "strict_pairing": "STRICT_PAIRING_PENDING"
+  },
+  "decision": {
+    "CACHE_64K_ROLE": "OPTIONAL_CAUSAL_PROBE_OR_FUTURE_COMPONENT",
+    "CONFIDENCE": "LOW",
+    "CONSERVATIVE_RECOVERABLE_CYCLES": 0,
+    "CURRENT_B_ROI": 1648923,
+    "EXPECTED_FINAL_ROI": null,
+    "EXPECTED_FINAL_SLOWDOWN": null,
+    "EXPECTED_RECOVERABLE_CYCLES": null,
+    "HARDWARE_PHASES_EXECUTED": [],
+    "HARDWARE_RUNS_PREPARED": 0,
+    "LOAD_PATH_VERDICT": "LOAD_PATH_ALONE_CANNOT_REACH_1P5",
+    "MAIN_MECHANISM": "NONE_JUSTIFIED",
+    "NEGATIVE_EVIDENCE_CONFIDENCE": "HIGH_WITHIN_OBSERVED_HEAD_WAIT_SCOPE",
+    "NEXT_ACTION": "MORE_OFFLINE_ATTRIBUTION",
+    "NO_CREDIT_PLANNING_ROI": 1648923,
+    "NO_CREDIT_PLANNING_SLOWDOWN": 1.646165672498565,
+    "OPT5_INCLUDE_64K_2WAY": "NO",
+    "OPT5_PRIMARY": "NONE_JUSTIFIED",
+    "REMAINING_ALL_HEAD_LOAD_PENDING": 80832,
+    "REMAINING_GAP": 146410,
+    "REMAINING_NACK_RETRY": 47162,
+    "REMAINING_REPLAY": 229,
+    "REMAINING_ROB_HEAD_LOAD_WAIT": 53845,
+    "STRICT_PAIRING": "STRICT_PAIRING_PENDING",
+    "STRUCTURAL_AMPLIFIER": "RETRY_AMPLIFICATION",
+    "TARGET_ROI": 1502513,
+    "TARGET_SLOWDOWN": 1.5,
+    "UPPER_BOUND_CYCLES": 80832,
+    "UPPER_BOUND_SCOPE": "Fixed observed trace only: deleting marked direct head-load waiting; not a bound on timing feedback, dependency propagation or a new execution.",
+    "VERDICT": "OPT5_1P5_TARGET_NOT_SUPPORTED_BY_CURRENT_EVIDENCE"
+  },
+  "fixed_trace_envelopes": {
+    "additional_nonmiss_head_pending": 26987,
+    "all_head_load_pending_cycles": 80832,
+    "combined_upper_bound": 80832,
+    "head_miss_cycles": 53845,
+    "ideal_all_head_load_deletion_roi": 1568091,
+    "ideal_all_head_load_deletion_slowdown": 1.5654688396935135,
+    "ideal_miss_deletion_roi": 1595078,
+    "ideal_miss_deletion_slowdown": 1.5924107120573041,
+    "scope": "Fixed observed trace only: deleting marked direct head-load waiting; not a bound on timing feedback, dependency propagation or a new execution."
+  },
+  "inputs": {
+    "A_run": "/data1/gzh/EC/AI/TMP/l1_causal_opt5_probe_20261030_200000_4235a1de/revisions/r2/arms/A/runs/optimization_4_svb_20261030_135448_0c744900",
+    "B_run": "/data1/gzh/EC/AI/TMP/checker_seq67_one_shot_20261031_103130/sealed/arms/B/runs/optimization_4_svb_20261031_024551_8fbf8937",
+    "actual_completed_report": "/data1/gzh/EC/AI/TMP/checker_seq67_one_shot_20261031_103130",
+    "requested_report": "AI/TMP/checker_seq67_one_shot_20261031_094628",
+    "source_seal_fingerprint": "497d232770160bea6901dc20a6d5f411bab5f685d9c560c0b3b75bf7184c7cc0"
+  },
+  "overlaps": {
+    "all_head_pending_AND_scheduler": [
+      0,
+      26987
+    ],
+    "head_miss_AND_data_bank_conflict": [
+      0,
+      0
+    ],
+    "head_miss_AND_mshr_busy": [
+      53795,
+      53795
+    ],
+    "head_miss_AND_mshr_full": [
+      0,
+      0
+    ],
+    "head_miss_AND_nack": [
+      0,
+      47163
+    ],
+    "head_miss_AND_port_conflict": null,
+    "head_miss_AND_refill_wait": null,
+    "head_miss_AND_replay_issue": [
+      0,
+      229
+    ],
+    "head_miss_AND_retry": [
+      0,
+      47162
+    ],
+    "head_miss_AND_scheduler": [
+      0,
+      0
+    ]
+  },
+  "previous_report": "/data1/gzh/EC/AI/TMP/l1_one_shot_postanalysis_20261101_095815",
+  "revalidated_hash_counts": {
+    "hardware": 19,
+    "original_evidence": 85,
+    "prior_generated_native_files": 8,
+    "sealed_tools": 19
+  },
+  "source_audit": {
+    "artifacts": {
+      "/data1/gzh/EC/AI/TMP/checker_seq67_one_shot_20261031_103130/sealed/arms/B/build/optimization_4_svb_20261031_024551_8fbf8937/generated/gen-collateral/BoomMSHRFile.sv": {
+        "excerpts": [
+          {
+            "line": 1843,
+            "text": "  assign slowdown_mshr_file_req_ready_0 = cacheable ? slowdown_mshr_sdq_ready & (idx_match_0 ? tag_match_0 & (_mshrs_0_io_req_sec_rdy & _mshr_io_req_sec_val_T_3 | _mshrs_1_io_req_sec_rdy & _mshr_io_req_sec_val_T_7 | _mshrs_2_io_req_sec_rdy & _mshr_io_req_sec_val_T_11 | _mshrs_3_io_req_sec_rdy & _mshr_io_req_sec_val_T_15 | _mshrs_4_io_req_sec_rdy & _mshr_io_req_sec_val_T_19 | _mshrs_5_io_req_sec_rdy & _mshr_io_req_sec_val_T_23) : pri_rdy) : _mmios_0_io_req_ready;\t// @[Mux.scala:27:73, Parameters.scala:671:42, mshrs.scala:902:58, :954:22, :976:99, :1039:{25,49}, :1091:22, :1139:{10,41,47,75}, :1170:54, :1172:49, mshrs.scala 972:35:973:15]"
+          },
+          {
+            "line": 5776,
+            "text": "  assign io_secondary_miss_0 = idx_match_0 & (idx_matches_0_0 & _mshrs_0_io_way_valid & _mshrs_0_io_way_bits == io_lookup_0_way_en | idx_matches_0_1 & _mshrs_1_io_way_valid & _mshrs_1_io_way_bits == io_lookup_0_way_en | idx_matches_0_2 & _mshrs_2_io_way_valid & _mshrs_2_io_way_bits == io_lookup_0_way_en | idx_matches_0_3 & _mshrs_3_io_way_valid & _mshrs_3_io_way_bits == io_lookup_0_way_en | idx_matches_0_4 & _mshrs_4_io_way_valid & _mshrs_4_io_way_bits == io_lookup_0_way_en | idx_matches_0_5 & _mshrs_5_io_way_valid & _mshrs_5_io_way_bits == io_lookup_0_way_en) & ~tag_match_0;\t// @[Mux.scala:27:73, mshrs.scala:902:58, :954:22, :958:46, :960:66, :1007:61, :1140:58]"
+          },
+          {
+            "line": 5777,
+            "text": "  assign io_block_hit_0 = idx_match_0 & tag_match_0;\t// @[Mux.scala:27:73, mshrs.scala:902:58, :1141:42]"
+          }
+        ],
+        "sha256": "6e554ccd1f71431125aa7b43c159c29ebc6804d55538befb1e4f695f025ad10d"
+      },
+      "/data1/gzh/EC/AI/TMP/checker_seq67_one_shot_20261031_103130/sealed/arms/B/build/optimization_4_svb_20261031_024551_8fbf8937/generated/gen-collateral/BoomNonBlockingDCache.sv": {
+        "excerpts": [
+          {
+            "line": 42732,
+            "text": "  wire               debug_s2_nack_miss_0 = debug_s2_valid_0 & ~debug_s2_hit_0 & ~_mshrs_io_req_0_ready;\t// @[dcache.scala:620:49, :668:21, :1278:{53,64,67}]"
+          },
+          {
+            "line": 42735,
+            "text": "  wire               debug_s2_nack_victim_0 = _s2_write_grant_T & _mshrs_io_secondary_miss_0;\t// @[dcache.scala:620:49, :668:21, :1276:{50,64}]"
+          },
+          {
+            "line": 42736,
+            "text": "  wire               debug_s2_nack_data_0 = 1'h0;\t// @[dcache.scala:620:49]"
+          }
+        ],
+        "sha256": "34f64bb1aafd40b4e11281c34cef315635fe9e95b380b1922cab4aae39225bb2"
+      },
+      "/data1/gzh/EC/AI/TMP/checker_seq67_one_shot_20261031_103130/sealed/arms/B/build/optimization_4_svb_20261031_024551_8fbf8937/generated/gen-collateral/LSU.sv": {
+        "excerpts": [
+          {
+            "line": 2563,
+            "text": "  reg               ldq_15_valid;\t// @[lsu.scala:329:16]"
+          },
+          {
+            "line": 4323,
+            "text": "  wire [15:0]       _GEN_4 = {{ldq_15_valid}, {ldq_14_valid}, {ldq_13_valid}, {ldq_12_valid}, {ldq_11_valid}, {ldq_10_valid}, {ldq_9_valid}, {ldq_8_valid}, {ldq_7_valid}, {ldq_6_valid}, {ldq_5_valid}, {ldq_4_valid}, {ldq_3_valid}, {ldq_2_valid}, {ldq_1_valid}, {ldq_0_valid}};\t// @[lsu.scala:329:16, :536:15, lsu.scala 329:16:514:44]"
+          }
+        ],
+        "physical_ldq_entries": 16,
+        "sha256": "dbc3c2bae3658ec6aded8fd9bf2cda94c0e0be28ff0ca68b0c974a93cb5d9149"
+      },
+      "chipyard/generators/boom/src/main/scala/common/config-mixins.scala": {
+        "excerpts": [
+          {
+            "end": 283,
+            "lines": [
+              "238:           tileParams = BoomTileParams(",
+              "239:             core = BoomCoreParams(",
+              "240:               fetchWidth = 8,",
+              "241:               decodeWidth = 3,",
+              "242:               numRobEntries = 42,",
+              "243:               issueParams = Seq(",
+              "244:                 IssueParams(issueWidth=1, numEntries=16, iqType=IQT_MEM.litValue, dispatchWidth=3),",
+              "245:                 IssueParams(issueWidth=3, numEntries=32, iqType=IQT_INT.litValue, dispatchWidth=3),",
+              "246:                 IssueParams(issueWidth=1, numEntries=24, iqType=IQT_FP.litValue , dispatchWidth=3)),",
+              "247:               numIntPhysRegisters = 128,",
+              "248:               numFpPhysRegisters = 128,",
+              "249:               numLdqEntries = 16,",
+              "250:               numStqEntries = 16,",
+              "251:               maxBrCount = 16,",
+              "252:               numFetchBufferEntries = 24,",
+              "253:               numRasEntries = 16,",
+              "254:               ftq = FtqParameters(nEntries=32),",
+              "255:               fpu = Some(freechips.rocketchip.tile.FPUParams(sfmaLatency=4, dfmaLatency=4, divSqrt=true))",
+              "256:             ),",
+              "257:             dcache = Some(",
+              "258:               DCacheParams(rowBits = 128, nSets=256, nWays=2, nMSHRs=6, nTLBWays=16)",
+              "259:             ),",
+              "260:             icache = Some(",
+              "261:               ICacheParams(rowBits = 128, nSets=64, nWays=8, fetchBytes=4*4)",
+              "262:             ),",
+              "263:             hartId = i + idOffset",
+              "264:           ),",
+              "265:           crossingParams = RocketCrossingParams()",
+              "266:         )",
+              "267:       } ++ prev",
+              "268:     }",
+              "269:     case XLen => 64",
+              "270:   })",
+              "271: )",
+              "272: ",
+              "273: /**",
+              "274:  * 4-wide BOOM.",
+              "275:  */",
+              "276: class WithNMegaBooms(n: Int = 1, overrideIdOffset: Option[Int] = None) extends Config(",
+              "277:   new WithTAGELBPD ++ // Default to TAGE-L BPD",
+              "278:   new WithBoomCommitLogPrintf++",
+              "279:   new Config((site, here, up) => {",
+              "280:     case TilesLocated(InSubsystem) => {",
+              "281:       val prev = up(TilesLocated(InSubsystem), site)",
+              "282:       val idOffset = overrideIdOffset.getOrElse(prev.size)",
+              "283:       (0 until n).map { i =>"
+            ],
+            "start": 238
+          }
+        ],
+        "sha256": "eece45bebf5280aa498b762198148e10b9157ade0ee7fef1fec33c39de017b11"
+      },
+      "chipyard/generators/boom/src/main/scala/common/parameters.scala": {
+        "excerpts": [
+          {
+            "end": 58,
+            "lines": [
+              "50:   intToFpLatency: Int = 2,",
+              "51:   imulLatency: Int = 3,",
+              "52:   nPerfCounters: Int = 29,",
+              "53:   numRXQEntries: Int = 4,",
+              "54:   numRCQEntries: Int = 8,",
+              "55:   numDCacheBanks: Int = 1,",
+              "56:   nPMPs: Int = 8,",
+              "57:   enableICacheDelay: Boolean = false,",
+              "58: "
+            ],
+            "start": 50
+          }
+        ],
+        "sha256": "048ef409c1bfa7aafae8816c8ca3ff6afb6b81ee9b4c2bf3ae78e0744b8dda56"
+      },
+      "chipyard/generators/boom/src/main/scala/lsu/dcache.scala": {
+        "excerpts": [
+          {
+            "end": 461,
+            "lines": [
+              "451:         data = Vec(rowWords, Bits(encDataBits.W))",
+              "452:       )",
+              "453:       when (io.write.bits.way_en(w) && io.write.valid) {",
+              "454:         val data = VecInit((0 until rowWords) map (i => io.write.bits.data(encDataBits*(i+1)-1,encDataBits*i)))",
+              "455:         array.write(waddr, data, io.write.bits.wmask.asBools)",
+              "456:       }",
+              "457:       io.resp(j)(w) := RegNext(array.read(raddr, io.read(j).bits.way_en(w) && io.read(j).valid).asUInt)",
+              "458:     }",
+              "459:     io.nacks(j) := false.B",
+              "460:   }",
+              "461: }"
+            ],
+            "start": 451
+          },
+          {
+            "end": 809,
+            "lines": [
+              "772:   // 0 goes to MSHR replays, 1 goes to prober, 2 goes to wb, 3 goes to MSHR meta read,",
+              "773:   // 4 goes to pipeline, 5 goes to prefetcher",
+              "774: ",
+              "775:   metaReadArb.io.in := DontCare",
+              "776:   for (w <- 0 until memWidth) {",
+              "777:     meta(w).io.write.valid := metaWriteArb.io.out.fire",
+              "778:     meta(w).io.write.bits  := metaWriteArb.io.out.bits",
+              "779:     meta(w).io.read.valid  := metaReadArb.io.out.valid",
+              "780:     meta(w).io.read.bits   := metaReadArb.io.out.bits.req(w)",
+              "781:   }",
+              "782:   metaReadArb.io.out.ready  := meta.map(_.io.read.ready).reduce(_||_)",
+              "783:   metaWriteArb.io.out.ready := meta.map(_.io.write.ready).reduce(_||_)",
+              "784:   when (metaWriteArb.io.out.fire) {",
+              "785:     val r = metaWriteArb.io.out.bits",
+              "786:     for (way <- 0 until nWays) {",
+              "787:       when (r.way_en(way)) {",
+              "788:         residentValid(r.idx)(way) := r.data.coh.isValid()",
+              "789:         residentCoh(r.idx)(way) := r.data.coh",
+              "790:         when (r.data.coh.isValid()) { residentTag(r.idx)(way) := r.data.tag }",
+              "791:       }",
+              "792:     }",
+              "793:   }",
+              "794: ",
+              "795:   // data",
+              "796:   val data = Module(if (boomParams.numDCacheBanks == 1) new BoomDuplicatedDataArray else new BoomBankedDataArray)",
+              "797:   val dataWriteArb = Module(new Arbiter(new L1DataWriteReq, 2))",
+              "798:   // 0 goes to pipeline, 1 goes to MSHR refills",
+              "799:   val dataReadArb = Module(new Arbiter(new BoomL1DataReadReq, 3))",
+              "800:   // 0 goes to MSHR replays, 1 goes to wb, 2 goes to pipeline",
+              "801:   dataReadArb.io.in := DontCare",
+              "802: ",
+              "803:   for (w <- 0 until memWidth) {",
+              "804:     data.io.read(w).valid := dataReadArb.io.out.bits.valid(w) && dataReadArb.io.out.valid",
+              "805:     data.io.read(w).bits  := dataReadArb.io.out.bits.req(w)",
+              "806:   }",
+              "807:   dataReadArb.io.out.ready := true.B",
+              "808: ",
+              "809:   data.io.write.valid := dataWriteArb.io.out.fire"
+            ],
+            "start": 772
+          },
+          {
+            "end": 862,
+            "lines": [
+              "848:     killed_store_replay_valid &&",
+              "849:     killed_store_replay_req.addr(idxMSB, idxLSB) === clearFreezeSet",
+              "850:   val lsu_pipeline_ready = metaReadArb.io.in(4).ready && dataReadArb.io.in(2).ready",
+              "851:   val killed_store_replay_fire = killed_store_replay_valid && lsu_pipeline_ready &&",
+              "852:     !killed_replay_clear_freeze_set_conflict",
+              "853: ",
+              "854:   // A metadata clear writes one way but must drain all lookups to its set.",
+              "855:   // WaitSafe permits only the qualified hit-only reads above; all same-set",
+              "856:   // LSU traffic is held outside S1/S2 once the safe/clear boundary begins.",
+              "857:   val lsu_clear_freeze_allowed = !killed_store_replay_valid &&",
+              "858:     !lsu_clear_freeze_set_conflict",
+              "859:   val killed_replay_clear_freeze_allowed = !killed_replay_clear_freeze_set_conflict",
+              "860:   io.lsu.req.ready := lsu_clear_freeze_allowed && lsu_pipeline_ready",
+              "861:   metaReadArb.io.in(4).valid :=",
+              "862:     (io.lsu.req.valid && lsu_clear_freeze_allowed) ||"
+            ],
+            "start": 848
+          },
+          {
+            "end": 900,
+            "lines": [
+              "889:   mshrs.io.replay.ready    := metaReadArb.io.in(0).ready && dataReadArb.io.in(0).ready &&",
+              "890:     !replayPipelineBusy && !s3_valid && completionQ.io.count === 0.U",
+              "891:   // Tag read for MSHR replays",
+              "892:   // We don't actually need to read the metadata, for replays we already know our way",
+              "893:   metaReadArb.io.in(0).valid              := mshrs.io.replay.valid && !replayPipelineBusy && !s3_valid && completionQ.io.count === 0.U",
+              "894:   metaReadArb.io.in(0).bits.req(0).idx    := mshrs.io.replay.bits.addr >> blockOffBits",
+              "895:   metaReadArb.io.in(0).bits.req(0).way_en := DontCare",
+              "896:   metaReadArb.io.in(0).bits.req(0).tag    := DontCare",
+              "897:   // Data read for MSHR replays",
+              "898:   dataReadArb.io.in(0).valid              := mshrs.io.replay.valid && !replayPipelineBusy && !s3_valid && completionQ.io.count === 0.U",
+              "899:   dataReadArb.io.in(0).bits.req(0).addr   := mshrs.io.replay.bits.addr",
+              "900:   dataReadArb.io.in(0).bits.req(0).way_en := mshrs.io.replay.bits.way_en"
+            ],
+            "start": 889
+          },
+          {
+            "end": 1042,
+            "lines": [
+              "1033:                          init=false.B))",
+              "1034:   for (w <- 0 until memWidth)",
+              "1035:     assert(!(io.lsu.s1_kill(w) && !RegNext(io.lsu.req.fire) && !RegNext(io.lsu.req.bits(w).valid)))",
+              "1036:   val s1_addr         = s1_req.map(_.addr)",
+              "1037:   val s1_nack         = s1_addr.map(a => a(idxMSB,idxLSB) === prober.io.meta_write.bits.idx && !prober.io.req.ready)",
+              "1038:   val s1_send_resp_or_nack = RegNext(s0_send_resp_or_nack)",
+              "1039:   val s1_type         = RegNext(s0_type)",
+              "1040:   val s1_replay_issued = RegNext(mshrs.io.replay.fire, false.B)",
+              "1041:   val s1_replay_killed = s1_replay_issued && s1_type === t_replay && !s1_valid(0)",
+              "1042: "
+            ],
+            "start": 1033
+          },
+          {
+            "end": 1304,
+            "lines": [
+              "1250:   }",
+              "1251:   val s2_owner_block = widthMap(w => {",
+              "1252:     val set = s2_raw_req(w).addr(idxMSB, idxLSB)",
+              "1253:     val way = OHToUInt(s2_lookup(w).way_en)",
+              "1254:     val stale = s2_tag_match(w) && s2_lookup_epoch(w) =/= slotEpoch(set)(way)",
+              "1255:     val clearing = clearFreezeValid && set === clearFreezeSet &&",
+              "1256:       (s2_raw_req(w).addr >> untagBits) === clearFreezeTag",
+              "1257:     val frozen = slotReserved(set)(way) || completionPending(set)(way)",
+              "1258:     // A stale permission miss must relookup just like a stale hit. A legal",
+              "1259:     // secondary instead inherits the captured MSHR owner and may join its RPQ.",
+              "1260:     s2_type === t_lsu && edge.manager.supportsAcquireBFast(s2_raw_req(w).addr, lgCacheBlockBytes.U) && (clearing ||",
+              "1261:       (stale && !mshrs.io.block_hit(w)) || (s2_hit(w) && frozen) ||",
+              "1262:       (!s2_hit(w) && slotReserved(set)(way) && !mshrs.io.block_hit(w)))",
+              "1263:   })",
+              "1264:   val s2_write_busy = s3_valid || completionQ.io.count =/= 0.U",
+              "1265:   val s2_replay_owner_match = s2_raw_req(0).owner_context_valid &&",
+              "1266:     s2_raw_req(0).owner_way === s2_tag_match_way(0) &&",
+              "1267:     s2_raw_req(0).slot_epoch === slotEpoch(s2_raw_req(0).addr(idxMSB, idxLSB))(",
+              "1268:       OHToUInt(s2_raw_req(0).owner_way))",
+              "1269:   when (s2_valid(0) && s2_type === t_replay) {",
+              "1270:     assert(s2_replay_owner_match, \"replay reached a revoked slot owner\")",
+              "1271:   }",
+              "1272: ",
+              "1273:   // nack because of incoming probe",
+              "1274:   val s2_nack_hit    = RegNext(VecInit(s1_nack))",
+              "1275:   // Nack when we hit something currently being evicted",
+              "1276:   val s2_nack_victim = widthMap(w => s2_valid(w) &&  s2_hit(w) && mshrs.io.secondary_miss(w))",
+              "1277:   // MSHRs not ready for request",
+              "1278:   val s2_nack_miss   = widthMap(w => s2_valid(w) && !s2_hit(w) && !mshrs.io.req(w).ready)",
+              "1279:   // Bank conflict on data arrays",
+              "1280:   val s2_nack_data   = widthMap(w => data.io.nacks(w))",
+              "1281:   // Can't allocate MSHR for same set currently being written back",
+              "1282:   val s2_nack_wb     = widthMap(w => s2_valid(w) && !s2_hit(w) && s2_wb_idx_matches(w))",
+              "1283:   // A bypass request is allowed to use the normal tag/data lookup only when",
+              "1284:   // it is already a local hit.  Nack every miss before MSHRFile sees it.",
+              "1285:   val s2_clear_freeze_read_bypass_miss = widthMap(w => s2_valid(w) &&",
+              "1286:     s2_type === t_lsu && s2_clear_freeze_read_bypass(w) && !s2_hit(w))",
+              "1287:   val s2_clear_slot_conflict = widthMap(w => clearFreezeValid &&",
+              "1288:     edge.manager.supportsAcquireBFast(s2_raw_req(w).addr, lgCacheBlockBytes.U) &&",
+              "1289:     s2_raw_req(w).addr(idxMSB, idxLSB) === clearFreezeSet &&",
+              "1290:     s2_lookup(w).way_en === clearFreezeWay &&",
+              "1291:     !s2_tag_match(w))",
+              "1292:   // Filled below once the S3 effect identity is available.  This keeps a",
+              "1293:   // replacement miss from reallocating a way in the same cycle as an older",
+              "1294:   // store effect to that way.",
+              "1295:   val s2_realloc_owner_conflict = WireDefault(false.B)",
+              "1296: ",
+              "1297:   val l1CrossPackageBlocked = WireDefault(false.B)",
+              "1298:   s2_nack           := widthMap(w =>",
+              "1299:     ((s2_nack_miss(w) || s2_nack_hit(w) || s2_nack_victim(w) ||",
+              "1300:       s2_nack_data(w) || s2_nack_wb(w) || s2_clear_freeze_read_bypass_miss(w) ||",
+              "1301:       s2_owner_block(w) || s2_clear_slot_conflict(w) ||",
+              "1302:       (isWrite(s2_raw_req(w).uop.mem_cmd) && s2_write_busy)) && s2_type =/= t_replay) ||",
+              "1303:       ((w == 0).B && s2_realloc_owner_conflict && s2_type === t_lsu) ||",
+              "1304:       ((w == 0).B && l1CrossPackageBlocked && s2_type === t_lsu &&"
+            ],
+            "start": 1250
+          },
+          {
+            "end": 1355,
+            "lines": [
+              "1330:   when (killed_store_replay_candidate) {",
+              "1331:     killed_store_replay_req := s1_req(0)",
+              "1332:     killed_store_replay_valid := true.B",
+              "1333:   }",
+              "1334: ",
+              "1335:   // Miss handling",
+              "1336:   for (w <- 0 until memWidth) {",
+              "1337:     mshrs.io.req(w).valid := s2_valid(w)          &&",
+              "1338:                             !s2_hit(w)            &&",
+              "1339:                             !s2_nack_hit(w)       &&",
+              "1340:                             !s2_nack_victim(w)    &&",
+              "1341:                             !s2_nack_data(w)      &&",
+              "1342:                             !s2_nack_wb(w)        &&",
+              "1343:                             !s2_clear_freeze_read_bypass_miss(w) &&",
+              "1344:                             !s2_owner_block(w)    &&",
+              "1345:                             !s2_clear_slot_conflict(w) &&",
+              "1346:                             !(isWrite(s2_raw_req(w).uop.mem_cmd) && s2_write_busy) &&",
+              "1347:                             !((w == 0).B && isWrite(s2_raw_req(w).uop.mem_cmd) && l1CrossPackageBlocked) &&",
+              "1348:                             ((w != 0).B || !s2_realloc_owner_conflict) &&",
+              "1349:                              s2_type.isOneOf(t_lsu, t_prefetch)             &&",
+              "1350:                             !IsKilledByBranch(io.lsu.brupdate, s2_req(w).uop) &&",
+              "1351:                             !(io.lsu.exception && s2_req(w).uop.uses_ldq)   &&",
+              "1352:                              (isPrefetch(s2_req(w).uop.mem_cmd) ||",
+              "1353:                               isRead(s2_req(w).uop.mem_cmd)     ||",
+              "1354:                               isWrite(s2_req(w).uop.mem_cmd))",
+              "1355:     assert(!(mshrs.io.req(w).valid && s2_type === t_replay), \"Replays should not need to go back into MSHRs\")"
+            ],
+            "start": 1330
+          },
+          {
+            "end": 1535,
+            "lines": [
+              "1495:     mshrs.io.refill.bits.image.asUInt === installedImage(refillReqSet)(refillReqWay).asUInt &&",
+              "1496:     mshrs.io.refill.bits.slot_epoch === selectedRefillReservedEpoch &&",
+              "1497:     mshrs.io.refill.bits.transaction_token === reservedTransaction(refillReqSet)(refillReqWay) &&",
+              "1498:     mshrs.io.refill.bits.mshr_id === reservedMshr(refillReqSet)(refillReqWay) &&",
+              "1499:     (mshrs.io.refill.bits.line_addr >> untagBits) === reservedTag(refillReqSet)(refillReqWay) &&",
+              "1500:     Mux(reservedNewOwner(refillReqSet)(refillReqWay),",
+              "1501:       selectedRefillSlotEpoch + 1.U === selectedRefillReservedEpoch,",
+              "1502:       selectedRefillSlotEpoch === selectedRefillReservedEpoch)",
+              "1503:   val refillPreservationAllowed = reservedNewOwner(refillReqSet)(refillReqWay) ||",
+              "1504:     L1Preservation.copyAllowed(imageValid(refillReqSet)(refillReqWay),",
+              "1505:       imageKey(refillReqSet)(refillReqWay), lowerPreserved(refillReqSet)(refillReqWay),",
+              "1506:       mshrs.io.refill.bits.image, safePacketWatermark)",
+              "1507:   dataWriteArb.io.in(1).valid := mshrs.io.refill.valid && refillReqOwnerMatch && refillPreservationAllowed",
+              "1508:   for (name <- (new L1DataWriteReq).elements.keys) {",
+              "1509:     dataWriteArb.io.in(1).bits.elements(name) := mshrs.io.refill.bits.elements(name)",
+              "1510:   }",
+              "1511:   mshrs.io.refill.ready := dataWriteArb.io.in(1).ready && refillReqOwnerMatch && refillPreservationAllowed",
+              "1512:   when (mshrs.io.refill.valid) {",
+              "1513:     assert(refillPreservationAllowed, \"refill bypassed L1 preservation gate\")",
+              "1514:   }",
+              "1515:   for (i <- 0 until cfg.nMSHRs) {",
+              "1516:     mshrs.io.refill_fault(i) := mshrs.io.refill.valid &&",
+              "1517:       mshrs.io.refill.bits.mshr_id === i.U && !refillReqOwnerMatch",
+              "1518:   }",
+              "1519:   when (mshrs.io.refill.valid) { assert(refillReqOwnerMatch, \"active refill owner changed\") }",
+              "1520:   when (mshrs.io.refill.fire) {",
+              "1521:     printf(\"STAGE1_TX REFILL source=DCACHE cycle=%x line=%x set=%x way=%x beat=%x mshr=%x txn=%x token=%x epoch=%x gen=%x addr=%x\\n\",",
+              "1522:       io.csr_cycle, mshrs.io.refill.bits.line_addr, refillReqSet, refillReqWay,",
+              "1523:       mshrs.io.refill.bits.addr(blockOffBits-1, rowOffBits),",
+              "1524:       mshrs.io.refill.bits.mshr_id, mshrs.io.refill.bits.transaction_token,",
+              "1525:       mshrs.io.refill.bits.transaction_token,",
+              "1526:       mshrs.io.refill.bits.slot_epoch, mshrs.io.refill.bits.line_generation,",
+              "1527:       mshrs.io.refill.bits.addr)",
+              "1528:   }",
+              "1529:   val mshrMetaSet = mshrs.io.meta_write.bits.idx",
+              "1530:   val mshrMetaWay = mshrs.io.meta_write.bits.way_en",
+              "1531:   val mshrMetaDrain = !(s3_valid && s3_req.addr(idxMSB, idxLSB) === mshrMetaSet &&",
+              "1532:     s3_way === mshrMetaWay) && !completionPending(mshrMetaSet)(OHToUInt(mshrMetaWay)) &&",
+              "1533:     !(0 until memWidth).map(w =>",
+              "1534:       (s1_valid(w) && s1_type === t_lsu && s1_before_freeze(w) &&",
+              "1535:         s1_req(w).addr(idxMSB, idxLSB) === mshrMetaSet) ||"
+            ],
+            "start": 1495
+          },
+          {
+            "end": 2908,
+            "lines": [
+              "2890:                             !(io.lsu.exception && resp(w).bits.uop.uses_ldq) &&",
+              "2891:                             !IsKilledByBranch(io.lsu.brupdate, resp(w).bits.uop)",
+              "2892:     io.lsu.resp(w).bits  := UpdateBrMask(io.lsu.brupdate, resp(w).bits)",
+              "2893:     if (w == 0) {",
+              "2894:       io.lsu.resp(w).bits.traffic_check := Mux(",
+              "2895:         resp(w).bits.uop.mem_cmd === M_XSC && lr_traffic_check_valid,",
+              "2896:         lr_traffic_check,",
+              "2897:         resp(w).bits.traffic_check)",
+              "2898:     }",
+              "2899: ",
+              "2900:     io.lsu.nack(w).valid := staleStoreNack || (s2_valid(w) && s2_send_nack(w) &&",
+              "2901:                             !(io.lsu.exception && s2_req(w).uop.uses_ldq) &&",
+              "2902:                             !IsKilledByBranch(io.lsu.brupdate, s2_req(w).uop))",
+              "2903:     io.lsu.nack(w).bits  := UpdateBrMask(io.lsu.brupdate,",
+              "2904:       Mux(staleStoreNack, staleS3StoreReq, s2_req(w)))",
+              "2905:     assert(!(io.lsu.nack(w).valid && s2_type =/= t_lsu && !staleStoreNack))",
+              "2906:   }",
+              "2907:   when (io.lsu.resp(0).valid && io.lsu.resp(0).bits.uop.mem_cmd === M_XLR) {",
+              "2908:     lr_traffic_check := io.lsu.resp(0).bits.traffic_check"
+            ],
+            "start": 2890
+          },
+          {
+            "end": 3014,
+            "lines": [
+              "3001:     !prober.io.meta_write.bits.data.coh.isValid() &&",
+              "3002:     s3_set === prober.io.meta_write.bits.idx &&",
+              "3003:     s3_way === prober.io.meta_write.bits.way_en",
+              "3004:   val s3_owner_revoked = s3_same_clear_line || s3_same_probe_invalidate",
+              "3005:   s2_realloc_owner_conflict := s2_valid(0) && s2_type === t_lsu &&",
+              "3006:     edge.manager.supportsAcquireBFast(s2_raw_req(0).addr, lgCacheBlockBytes.U) &&",
+              "3007:     !s2_tag_match(0) && s3_valid &&",
+              "3008:     s2_selected_set === s3_set && s2_selected_way === s3_way",
+              "3009:   // Drain prevents owner revocation of a held grant. A real mismatch is a",
+              "3010:   // protocol fault; ordinary retry cannot hide it or release its request.",
+              "3011:   val s3_stale_or_revoked = s3_valid && (!s3_owner_match || s3_owner_revoked)",
+              "3012:   staleS3StoreNack := false.B",
+              "3013:   when (s3_valid) { assert(!s3_stale_or_revoked, \"held write grant owner revoked\") }",
+              "3014:   crossPackageMetaClearBlock := (s3_valid &&"
+            ],
+            "start": 3001
+          },
+          {
+            "end": 4470,
+            "lines": [
+              "4419:   BoringUtils.addSink(causalHeadWait, \"ec_l1_causal_head_wait_v1\")",
+              "4420:   BoringUtils.addSink(causalHeadToken, \"ec_l1_causal_head_token_v1\")",
+              "4421:   BoringUtils.addSink(causalHeadLdq, \"ec_l1_causal_head_ldq_v1\")",
+              "4422:   BoringUtils.addSink(causalLdqLive, \"ec_l1_causal_ldq_live_v1\")",
+              "4423:   BoringUtils.addSink(causalSchedulerWait, \"ec_l1_causal_scheduler_wait_v1\")",
+              "4424:   BoringUtils.addSink(causalRoiMarker, \"ec_l1_causal_roi_marker_v1\")",
+              "4425:   val causalEvents = (0 until memWidth).flatMap { w =>",
+              "4426:     val r = s2_req(w)",
+              "4427:     val accepted = mshrs.io.req(w).bits",
+              "4428:     val live = s2_valid(w) && s2_type === t_lsu && r.traffic_cacheable &&",
+              "4429:       !IsKilledByBranch(io.lsu.brupdate, r.uop) && !(io.lsu.exception && r.uop.uses_ldq)",
+              "4430:     val missFlags = VecInit(Seq(r.uop.uses_ldq, r.uop.uses_stq,",
+              "4431:       !s2_tag_match(w), s2_tag_match(w) && !s2_hit(w),",
+              "4432:       s2_nack_miss(w), s2_nack_victim(w), s2_nack_data(w), s2_nack_wb(w),",
+              "4433:       s2_nack_hit(w), s2_send_nack(w))).asUInt",
+              "4434:     val admissionFlags = VecInit(Seq(accepted.uop.uses_ldq, accepted.uop.uses_stq,",
+              "4435:       accepted.admission === CacheAdmission.primary,",
+              "4436:       accepted.admission === CacheAdmission.secondary,",
+              "4437:       accepted.admission === CacheAdmission.upgrade)).asUInt",
+              "4438:     Seq(",
+              "4439:       CacheOpportunityObservation.event(io.lsu.req.fire && io.lsu.req.bits(w).valid &&",
+              "4440:         io.lsu.req.bits(w).bits.uop.uses_ldq, 22,",
+              "4441:         tag = io.lsu.req.bits(w).bits.request_token, set = io.lsu.req.bits(w).bits.uop.ldq_idx),",
+              "4442:       CacheOpportunityObservation.event(live && !s2_hit(w), 14, missFlags,",
+              "4443:         r.addr, r.request_token, r.uop.rob_idx,",
+              "4444:         Mux(r.uop.uses_ldq, r.uop.ldq_idx, r.uop.stq_idx)),",
+              "4445:       CacheOpportunityObservation.event(mshrs.io.req(w).fire && accepted.traffic_cacheable, 15,",
+              "4446:         admissionFlags, accepted.addr, accepted.request_token, accepted.transaction_token,",
+              "4447:         Mux(accepted.uop.uses_ldq, accepted.uop.ldq_idx, accepted.uop.stq_idx), accepted.replay_mshr_id),",
+              "4448:       CacheOpportunityObservation.event(mshrs.io.req(w).valid && !mshrs.io.req(w).ready &&",
+              "4449:         accepted.traffic_cacheable, 24),",
+              "4450:       CacheOpportunityObservation.event(io.lsu.nack(w).valid && io.lsu.nack(w).bits.uop.uses_ldq, 21,",
+              "4451:         missFlags, tag = io.lsu.nack(w).bits.request_token, set = io.lsu.nack(w).bits.uop.ldq_idx))",
+              "4452:   } ++ Seq(",
+              "4453:     CacheOpportunityObservation.event(dataWriteArb.io.in(1).fire && refillLastBeat && refillOwnerMatch,",
+              "4454:       16, tag = mshrs.io.refill.bits.transaction_token, way = mshrs.io.refill.bits.mshr_id),",
+              "4455:     // Head sample precedes response removal: the return cycle still cannot commit this busy load.",
+              "4456:     CacheOpportunityObservation.event(true.B, 18,",
+              "4457:       VecInit(Seq(causalHeadWait, causalSchedulerWait, remainingRobState(5))).asUInt,",
+              "4458:       tag = causalHeadToken, value = causalLdqLive, set = causalHeadLdq),",
+              "4459:     CacheOpportunityObservation.event(mshrs.io.replay.fire && mshrs.io.replay.bits.uop.uses_ldq,",
+              "4460:       20, tag = mshrs.io.replay.bits.request_token, set = mshrs.io.replay.bits.uop.ldq_idx)) ++",
+              "4461:     (0 until memWidth).map { w =>",
+              "4462:       CacheOpportunityObservation.event(io.lsu.resp(w).valid && io.lsu.resp(w).bits.uop.uses_ldq,",
+              "4463:         17, tag = io.lsu.resp(w).bits.request_token, set = io.lsu.resp(w).bits.uop.ldq_idx)",
+              "4464:     } ++ Seq(CacheOpportunityObservation.event(causalRoiMarker(65,64).orR, 23,",
+              "4465:       causalRoiMarker(65,64), tag = causalRoiMarker(63,0)))",
+              "4466:   // L1_CAUSAL_OBSERVATION_END",
+              "4467:   // CACHE_OPPORTUNITY_OBSERVATION_ONLY. Values flow only into an input-only",
+              "4468:   // DPI sink; no counter, shadow tag, fingerprint, or decision feeds the LSU.",
+              "4469:   val cacheObservationEvents = (0 until memWidth).flatMap { w =>",
+              "4470:     val r = s2_req(w)"
+            ],
+            "start": 4419
+          }
+        ],
+        "sha256": "c4858e749b1fed72930a057d282687d20998697017289358f1590e4d48ba7b3c"
+      },
+      "chipyard/generators/boom/src/main/scala/lsu/lsu.scala": {
+        "excerpts": [
+          {
+            "end": 526,
+            "lines": [
+              "517:       ldq(ld_enq_idx).bits.st_dep_mask     := next_live_store_mask",
+              "518: ",
+              "519:       ldq(ld_enq_idx).bits.addr.valid      := false.B",
+              "520:       ldq(ld_enq_idx).bits.vaddr.valid     := false.B",
+              "521:       ldq(ld_enq_idx).bits.executed        := false.B",
+              "522:       ldq(ld_enq_idx).bits.succeeded       := false.B",
+              "523:       ldq(ld_enq_idx).bits.functional_token := nextFunctionalToken",
+              "524:       ldq(ld_enq_idx).bits.order_fail      := false.B",
+              "525:       ldq(ld_enq_idx).bits.observed        := false.B",
+              "526:       ldq(ld_enq_idx).bits.forward_std_val := false.B"
+            ],
+            "start": 517
+          },
+          {
+            "end": 672,
+            "lines": [
+              "650:   val ldq_retry_idx = RegNext(AgePriorityEncoder((0 until numLdqEntries).map(i => {",
+              "651:     val e = ldq(i).bits",
+              "652:     val block = block_load_mask(i) || p1_block_load_mask(i)",
+              "653:     e.addr.valid && e.addr_is_virtual && !block",
+              "654:   }), ldq_head))",
+              "655:   val ldq_retry_e            = ldq(ldq_retry_idx)",
+              "656: ",
+              "657:   val stq_retry_idx = RegNext(AgePriorityEncoder((0 until numStqEntries).map(i => {",
+              "658:     val e = stq(i).bits",
+              "659:     e.addr.valid && e.addr_is_virtual",
+              "660:   }), stq_commit_head))",
+              "661:   val stq_retry_e   = stq(stq_retry_idx)",
+              "662: ",
+              "663:   val stq_commit_e  = stq(stq_execute_head)",
+              "664: ",
+              "665:   val ldq_wakeup_idx = RegNext(AgePriorityEncoder((0 until numLdqEntries).map(i=> {",
+              "666:     val e = ldq(i).bits",
+              "667:     val block = block_load_mask(i) || p1_block_load_mask(i)",
+              "668:     e.addr.valid && !e.executed && !e.succeeded && !e.addr_is_virtual && !block",
+              "669:   }), ldq_head))",
+              "670:   val ldq_wakeup_e   = ldq(ldq_wakeup_idx)",
+              "671: ",
+              "672:   // -----------------------"
+            ],
+            "start": 650
+          },
+          {
+            "end": 760,
+            "lines": [
+              "740:   val block_load_wakeup = WireInit(false.B)",
+              "741:   val can_fire_load_wakeup = widthMap(w =>",
+              "742:                              ( ldq_wakeup_e.valid                                      &&",
+              "743:                                ldq_wakeup_e.bits.addr.valid                            &&",
+              "744:                               !ldq_wakeup_e.bits.succeeded                             &&",
+              "745:                               !ldq_wakeup_e.bits.addr_is_virtual                       &&",
+              "746:                               !ldq_wakeup_e.bits.executed                              &&",
+              "747:                               !ldq_wakeup_e.bits.order_fail                            &&",
+              "748:                               !p1_block_load_mask(ldq_wakeup_idx)                      &&",
+              "749:                               !p2_block_load_mask(ldq_wakeup_idx)                      &&",
+              "750:                               !store_needs_order                                       &&",
+              "751:                               !block_load_wakeup                                       &&",
+              "752:                               (w == memWidth-1).B                                      &&",
+              "753:                               (!ldq_wakeup_e.bits.addr_is_uncacheable || (io.core.commit_load_at_rob_head &&",
+              "754:                                                                           ldq_head === ldq_wakeup_idx &&",
+              "755:                                                                           ldq_wakeup_e.bits.st_dep_mask.asUInt === 0.U))))",
+              "756: ",
+              "757:   // Can we fire an incoming hellacache request",
+              "758:   val can_fire_hella_incoming  = WireInit(widthMap(w => false.B)) // This is assigned to in the hellashim ocntroller",
+              "759: ",
+              "760:   // Can we fire a hellacache request that the dcache nack'd"
+            ],
+            "start": 740
+          },
+          {
+            "end": 815,
+            "lines": [
+              "785: ",
+              "786:     // The order of these statements is the priority",
+              "787:     // Some restrictions",
+              "788:     //  - Incoming ops must get precedence, can't backpresure memaddrgen",
+              "789:     //  - Incoming hellacache ops must get precedence over retrying ops (PTW must get precedence over retrying translation)",
+              "790:     // Notes on performance",
+              "791:     //  - Prioritize releases, this speeds up cache line writebacks and refills",
+              "792:     //  - Store commits are lowest priority, since they don't \"block\" younger instructions unless stq fills up",
+              "793:     will_fire_load_incoming (w) := lsu_sched(can_fire_load_incoming (w) , true , true , true , false) // TLB , DC , LCAM",
+              "794:     will_fire_stad_incoming (w) := lsu_sched(can_fire_stad_incoming (w) , true , false, true , true)  // TLB ,    , LCAM , ROB",
+              "795:     will_fire_sta_incoming  (w) := lsu_sched(can_fire_sta_incoming  (w) , true , false, true , true)  // TLB ,    , LCAM , ROB",
+              "796:     will_fire_std_incoming  (w) := lsu_sched(can_fire_std_incoming  (w) , false, false, false, true)  //                 , ROB",
+              "797:     will_fire_sfence        (w) := lsu_sched(can_fire_sfence        (w) , true , false, false, true)  // TLB ,    ,      , ROB",
+              "798:     will_fire_release       (w) := lsu_sched(can_fire_release       (w) , false, false, true , false) //            LCAM",
+              "799:     will_fire_hella_incoming(w) := lsu_sched(can_fire_hella_incoming(w) , true , true , false, false) // TLB , DC",
+              "800:     will_fire_hella_wakeup  (w) := lsu_sched(can_fire_hella_wakeup  (w) , false, true , false, false) //     , DC",
+              "801:     will_fire_load_retry    (w) := lsu_sched(can_fire_load_retry    (w) , true , true , true , false) // TLB , DC , LCAM",
+              "802:     will_fire_sta_retry     (w) := lsu_sched(can_fire_sta_retry     (w) , true , false, true , true)  // TLB ,    , LCAM , ROB // TODO: This should be higher priority",
+              "803:     will_fire_load_wakeup   (w) := lsu_sched(can_fire_load_wakeup   (w) , false, true , true , false) //     , DC , LCAM1",
+              "804:     will_fire_store_commit  (w) := lsu_sched(can_fire_store_commit  (w) , false, true , false, false) //     , DC",
+              "805: ",
+              "806: ",
+              "807:     assert(!(exe_req(w).valid && !(will_fire_load_incoming(w) || will_fire_stad_incoming(w) || will_fire_sta_incoming(w) || will_fire_std_incoming(w) || will_fire_sfence(w))))",
+              "808: ",
+              "809:     when (will_fire_load_wakeup(w)) {",
+              "810:       block_load_mask(ldq_wakeup_idx)           := true.B",
+              "811:     } .elsewhen (will_fire_load_incoming(w)) {",
+              "812:       block_load_mask(exe_req(w).bits.uop.ldq_idx) := true.B",
+              "813:     } .elsewhen (will_fire_load_retry(w)) {",
+              "814:       block_load_mask(ldq_retry_idx)            := true.B",
+              "815:     }"
+            ],
+            "start": 785
+          },
+          {
+            "end": 1239,
+            "lines": [
+              "1230:   // Bind every producer, including retries and the Hella adapter, to its",
+              "1231:   // functional allocation rather than the measurement session.",
+              "1232:   for (w <- 0 until memWidth) {",
+              "1233:     val r = dmem_req(w).bits",
+              "1234:     r.request_token_valid := dmem_req(w).valid",
+              "1235:     r.request_token := Mux(r.is_hella, hellaFunctionalToken,",
+              "1236:       Mux(r.uop.uses_stq, stq(r.uop.stq_idx).bits.functional_token,",
+              "1237:         ldq(r.uop.ldq_idx).bits.functional_token))",
+              "1238:     when (r.is_hella && rocket.isWrite(r.uop.mem_cmd)) {",
+              "1239:       r.effect_token_valid := true.B"
+            ],
+            "start": 1230
+          },
+          {
+            "end": 1697,
+            "lines": [
+              "1684:       }",
+              "1685:         .elsewhen (io.dmem.nack(w).bits.uop.uses_ldq)",
+              "1686:       {",
+              "1687:         val idx = io.dmem.nack(w).bits.uop.ldq_idx",
+              "1688:         when (ldq(idx).valid && io.dmem.nack(w).bits.request_token_valid &&",
+              "1689:           ldq(idx).bits.functional_token === io.dmem.nack(w).bits.request_token) {",
+              "1690:           assert(ldq(idx).bits.executed)",
+              "1691:           ldq(idx).bits.executed := false.B",
+              "1692:           nacking_loads(idx) := true.B",
+              "1693:         }",
+              "1694:       }",
+              "1695:         .otherwise",
+              "1696:       {",
+              "1697:         assert(io.dmem.nack(w).bits.uop.uses_stq)"
+            ],
+            "start": 1684
+          },
+          {
+            "end": 2515,
+            "lines": [
+              "2499:   require(numLdqEntries <= 64 && numStqEntries <= 64)",
+              "2500:   val causalRobHead = WireInit(0.U((1 + robAddrSz + ldqAddrSz).W))",
+              "2501:   BoringUtils.addSink(causalRobHead, \"ec_l1_causal_rob_head_v1\")",
+              "2502:   val causalHeadIdx = causalRobHead(ldqAddrSz - 1, 0)",
+              "2503:   val causalHeadRobIdx = causalRobHead(ldqAddrSz + robAddrSz - 1, ldqAddrSz)",
+              "2504:   val causalHeadEntry = ldq(causalHeadIdx)",
+              "2505:   val causalHeadWaiting = causalRobHead(ldqAddrSz + robAddrSz) && causalHeadEntry.valid &&",
+              "2506:     causalHeadEntry.bits.uop.rob_idx === causalHeadRobIdx && !causalHeadEntry.bits.succeeded",
+              "2507:   val causalHeadTokenForObserver = WireInit(causalHeadEntry.bits.functional_token)",
+              "2508:   BoringUtils.addSource(causalHeadWaiting, \"ec_l1_causal_head_wait_v1\")",
+              "2509:   BoringUtils.addSource(causalHeadTokenForObserver, \"ec_l1_causal_head_token_v1\")",
+              "2510:   BoringUtils.addSource(causalHeadIdx, \"ec_l1_causal_head_ldq_v1\")",
+              "2511:   BoringUtils.addSource(VecInit(ldq.map(_.valid)).asUInt, \"ec_l1_causal_ldq_live_v1\")",
+              "2512:   // L1_CAUSAL_OBSERVATION_END",
+              "2513:   // REMAINING_SLOWDOWN_OBSERVATION_BEGIN",
+              "2514:   val (remainingClear, remainingEnable, remainingStop) =",
+              "2515:     freechips.rocketchip.util.SafeChainObservation.remainingContext()"
+            ],
+            "start": 2499
+          }
+        ],
+        "sha256": "f72be39b316b59ea4a49891b3b3853c2d793f94f78d6b641a7b433681e5a3e1e"
+      },
+      "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala": {
+        "excerpts": [
+          {
+            "end": 240,
+            "lines": [
+              "220:   // SLOWDOWN_TRACE_END",
+              "221:   // Both drain phases must finish a finite set of already-owned requests.",
+              "222:   // New secondaries retry instead of extending the active drain.",
+              "223:   val drainAdmissionClosed = state.isOneOf(s_drain_rpq, s_drain_rpq_loads)",
+              "224:   val sec_rdy = (!cmd_requires_second_acquire && !io.req_is_probe &&",
+              "225:                  !cross_package_secondary_write && !protocolFault &&",
+              "226:                  !drainAdmissionClosed &&",
+              "227:                  !state.isOneOf(s_invalid, s_meta_write_req, s_mem_finish_1, s_mem_finish_2))",
+              "228: ",
+              "229:   val rpq = Module(new BranchKillableQueue(new BoomDCacheReqInternal, cfg.nRPQ,",
+              "230:     u => u.uses_ldq, false, holdable = true))",
+              "231:   rpq.io.brupdate := io.brupdate",
+              "232:   rpq.io.flush  := io.exception",
+              "233:   assert(!(state === s_invalid && !rpq.io.empty))",
+              "234: ",
+              "235:   rpq.io.enq.valid := ((io.req_pri_val && io.req_pri_rdy) || (io.req_sec_val && io.req_sec_rdy)) && !isPrefetch(io.req.uop.mem_cmd)",
+              "236:   rpq.io.enq.bits  := io.req",
+              "237:   rpq.io.deq.ready := false.B",
+              "238:   when (drainAdmissionClosed) {",
+              "239:     assert(!(io.req_sec_val && io.req_sec_rdy), \"secondary accepted during RPQ drain\")",
+              "240:     // RPQ has only primary/secondary producers; replay RETRY holds its head."
+            ],
+            "start": 220
+          },
+          {
+            "end": 315,
+            "lines": [
+              "310: ",
+              "311:   io.meta_write.valid    := false.B",
+              "312:   io.meta_write.bits     := 0.U.asTypeOf(new L1MetaWriteReq)",
+              "313:   io.req_pri_rdy         := false.B",
+              "314:   io.req_sec_rdy         := sec_rdy && rpq.io.enq.ready",
+              "315:   io.mem_acquire.valid   := false.B"
+            ],
+            "start": 310
+          },
+          {
+            "end": 477,
+            "lines": [
+              "447:   } .elsewhen (state === s_drain_rpq_loads) {",
+              "448:     val drain_load = (isRead(rpq.io.deq.bits.uop.mem_cmd) &&",
+              "449:                      !isWrite(rpq.io.deq.bits.uop.mem_cmd) &&",
+              "450:                      (rpq.io.deq.bits.uop.mem_cmd =/= M_XLR)) // LR should go through replay",
+              "451:     // drain all loads for now",
+              "452:     val rp_addr = Cat(req_tag, req_idx, rpq.io.deq.bits.addr(blockOffBits-1,0))",
+              "453:     val word_idx  = if (rowWords == 1) 0.U else rp_addr(log2Up(rowWords*coreDataBytes)-1, log2Up(wordBytes))",
+              "454:     val data      = io.lb_resp",
+              "455:     val data_word = data >> Cat(word_idx, 0.U(log2Up(coreDataBits).W))",
+              "456:     val loadgen = new LoadGen(rpq.io.deq.bits.uop.mem_size, rpq.io.deq.bits.uop.mem_signed,",
+              "457:       Cat(req_tag, req_idx, rpq.io.deq.bits.addr(blockOffBits-1,0)),",
+              "458:       data_word, false.B, wordBytes)",
+              "459: ",
+              "460: ",
+              "461:     rpq.io.deq.ready       := io.resp.ready && io.lb_read.ready && drain_load",
+              "462:     io.lb_read.valid       := rpq.io.deq.valid && drain_load",
+              "463:     io.lb_read.bits.id     := io.id",
+              "464:     io.lb_read.bits.offset := rpq.io.deq.bits.addr >> rowOffBits",
+              "465: ",
+              "466:     io.resp.valid     := rpq.io.deq.valid && io.lb_read.fire && drain_load",
+              "467:     io.resp.bits.uop  := rpq.io.deq.bits.uop",
+              "468:     io.resp.bits.data := loadgen.data",
+              "469:     io.resp.bits.is_hella := rpq.io.deq.bits.is_hella",
+              "470:     io.resp.bits.traffic_check := rpq.io.deq.bits.traffic_check",
+              "471:     io.resp.bits.traffic_seen  := rpq.io.deq.bits.traffic_seen",
+              "472:     io.resp.bits.traffic_cacheable := rpq.io.deq.bits.traffic_cacheable",
+              "473:     io.resp.bits.request_token_valid := rpq.io.deq.bits.request_token_valid",
+              "474:     io.resp.bits.request_token := rpq.io.deq.bits.request_token",
+              "475:     when (rpq.io.deq.fire) {",
+              "476:       io.retired.valid := true.B",
+              "477:       io.retired.bits := rpq.io.deq.bits"
+            ],
+            "start": 447
+          },
+          {
+            "end": 604,
+            "lines": [
+              "575:       when (refill_ctr === (cacheDataBeats - 1).U) { state := s_drain_rpq }",
+              "576:     }",
+              "577:   } .elsewhen (state === s_drain_rpq) {",
+              "578:     io.replay.valid := rpq.io.deq.valid && !replay_inflight",
+              "579:     io.replay.bits  := rpq.io.deq.bits",
+              "580:     io.replay.bits.way_en    := req.way_en",
+              "581:     io.replay.bits.addr := Cat(req_tag, req_idx, rpq.io.deq.bits.addr(blockOffBits-1,0))",
+              "582:     io.replay.bits.replay_mshr_id := io.id",
+              "583:     when (io.replay.fire) {",
+              "584:       replay_inflight := true.B",
+              "585:       inflight := io.replay.bits",
+              "586:       inflightGrantValid := false.B",
+              "587:     }",
+              "588:     rpq.io.deq.ready := replayTerminal",
+              "589:     when (replayTerminal && io.replay_result.bits.status === CacheTerminal.applied &&",
+              "590:         isWrite(inflight.uop.mem_cmd)) {",
+              "591:       // Set dirty bit",
+              "592:       val (is_hit, _, coh_on_hit) = new_coh.onAccess(rpq.io.deq.bits.uop.mem_cmd)",
+              "593:       assert(is_hit, \"We still don't have permissions for this store\")",
+              "594:       new_coh := coh_on_hit",
+              "595:     }",
+              "596:     when (rpq.io.empty && !rpq.io.enq.valid && !replay_inflight) {",
+              "597:       state := s_meta_write_req",
+              "598:     }",
+              "599:   } .elsewhen (state === s_meta_write_req) {",
+              "600:     io.meta_write.valid         := true.B",
+              "601:     io.meta_write.bits.idx      := req_idx",
+              "602:     io.meta_write.bits.tag      := req_tag",
+              "603:     io.meta_write.bits.data.coh := new_coh",
+              "604:     io.meta_write.bits.data.tag := req_tag"
+            ],
+            "start": 575
+          },
+          {
+            "end": 866,
+            "lines": [
+              "849:     io.req(w).ready := false.B",
+              "850: ",
+              "851:   val prefetcher: DataPrefetcher = if (enablePrefetching) Module(new NLPrefetcher)",
+              "852:                                                      else Module(new NullPrefetcher)",
+              "853: ",
+              "854:   io.prefetch <> prefetcher.io.prefetch",
+              "855: ",
+              "856: ",
+              "857:   val cacheable = edge.manager.supportsAcquireBFast(raw.addr, lgCacheBlockBytes.U)",
+              "858: ",
+              "859:   // --------------------",
+              "860:   // The MSHR SDQ",
+              "861:   val sdq_val      = RegInit(0.U(cfg.nSDQ.W))",
+              "862:   val sdq_alloc_id = PriorityEncoder(~sdq_val(cfg.nSDQ-1,0))",
+              "863:   val sdq_rdy      = !sdq_val.andR",
+              "864:   val sdq_enq      = req.fire && cacheable && isWrite(req.bits.uop.mem_cmd)",
+              "865:   val sdq          = Mem(cfg.nSDQ, UInt(coreDataBits.W))",
+              "866:   val sdqOwner = Reg(Vec(cfg.nSDQ, new BoomDCacheReqInternal))"
+            ],
+            "start": 849
+          },
+          {
+            "end": 983,
+            "lines": [
+              "967:     io.debug_waiting_resource(i) := mshr.io.debug_waiting_resource",
+              "968: ",
+              "969: ",
+              "970: ",
+              "971:     mshr.io.req_pri_val  := (i.U === mshr_alloc_idx) && pri_val",
+              "972:     when (i.U === mshr_alloc_idx) {",
+              "973:       pri_rdy := mshr.io.req_pri_rdy",
+              "974:     }",
+              "975: ",
+              "976:     mshr.io.req_sec_val  := req.valid && sdq_rdy && tag_match(req_idx) && idx_matches(req_idx)(i) && cacheable",
+              "977:     mshr.io.req          := req.bits",
+              "978:     installArb.io.in(i) <> mshr.io.install",
+              "979:     mshr.io.install_fault := io.install_fault(i)",
+              "980:     mshr.io.refill_fault := io.refill_fault(i)",
+              "981:     mshr.io.replay_result <> io.replay_result(i)",
+              "982:     mshr.io.replay_grant := io.replay_grant(i)",
+              "983:     when (!idx_match(req_idx) && i.U === mshr_alloc_idx && cacheable) {"
+            ],
+            "start": 967
+          },
+          {
+            "end": 1093,
+            "lines": [
+              "1074:   val mshr_head      = RegInit(0.U(log2Ceil(cfg.nMSHRs).W))",
+              "1075:   mshr_alloc_idx    := RegNext(AgePriorityEncoder(mshrs.map(m=>m.io.req_pri_rdy), mshr_head))",
+              "1076:   when (pri_rdy && pri_val) { mshr_head := WrapInc(mshr_head, cfg.nMSHRs) }",
+              "1077: ",
+              "1078: ",
+              "1079: ",
+              "1080:   io.meta_write <> meta_write_arb.io.out",
+              "1081:   io.meta_read  <> meta_read_arb.io.out",
+              "1082:   io.wb_req     <> wb_req_arb.io.out",
+              "1083: ",
+              "1084:   val mmio_alloc_arb = Module(new Arbiter(Bool(), nIOMSHRs))",
+              "1085: ",
+              "1086: ",
+              "1087:   var mmio_rdy = false.B",
+              "1088: ",
+              "1089:   val mmios = (0 until nIOMSHRs) map { i =>",
+              "1090:     val id = cfg.nMSHRs + 1 + i // +1 for wb unit",
+              "1091:     val mshr = Module(new BoomIOMSHR(id))",
+              "1092: ",
+              "1093:     mmio_alloc_arb.io.in(i).valid := mshr.io.req.ready"
+            ],
+            "start": 1074
+          },
+          {
+            "end": 1143,
+            "lines": [
+              "1136: ",
+              "1137:   for (w <- 0 until memWidth) {",
+              "1138:     io.req(w).ready      := (w.U === req_idx) &&",
+              "1139:       Mux(!cacheable, mmio_rdy, sdq_rdy && Mux(idx_match(w), tag_match(w) && sec_rdy, pri_rdy))",
+              "1140:     io.secondary_miss(w) := idx_match(w) && way_match(w) && !tag_match(w)",
+              "1141:     io.block_hit(w)      := idx_match(w) && tag_match(w)",
+              "1142:   }",
+              "1143:   io.refill         <> refill_arb.io.out"
+            ],
+            "start": 1136
+          }
+        ],
+        "sha256": "041d108608a7c580c3347515a690fea31dc0c5d6054924186cb05cfbc974bf57"
+      },
+      "chipyard/generators/rocket-chip/src/main/resources/csrc/cache_opportunity.cc": {
+        "excerpts": [
+          {
+            "end": 82,
+            "lines": [
+              "70:     Scheduler,SchedulerBusy,SchedulerFull,HeadScheduler,HeadPending,",
+              "71:     MissPending,ReplayBusy,ReplayFull,NackMshr,NackVictim,NackData,NackWb,NackHit,",
+              "72:     DetectAllocN,DetectAllocSum,AllocRefillN,AllocRefillSum,DetectDataN,DetectDataSum,",
+              "73:     MissReturnHead,MissEverHead,HeadEpisodeCycles,Recycled,PermissionLoad,PermissionStore};",
+              "74:   struct Slot { U token=0,detect=0,alloc=0,headCycles=0; bool known=false,miss=false,detected=false,allocated=false,nack=false,everHead=false; };",
+              "75:   struct Tx { U token=0,born=0; bool valid=false; };",
+              "76:   struct Snapshot { U cycle=~U(0); std::vector<U> counters; Snapshot():counters(N,0) {} };",
+              "77:   std::vector<U> c,begin,end;",
+              "78:   std::vector<Slot> loads,stores;",
+              "79:   std::vector<Tx> tx;",
+              "80:   std::vector<Snapshot> history;",
+              "81:   U cycle=0,start=0,stop=0,errors=0,startMarkers=0,stopMarkers=0;",
+              "82:   U markerEvents=0,markerSnapshotErrors=0,markerObserved[2]={0,0},markerRequested[2]={0,0};"
+            ],
+            "start": 70
+          },
+          {
+            "end": 183,
+            "lines": [
+              "104:     auto &x=slots[index];",
+              "105:     if(!x.known || x.token!=token) { if(x.miss) ++c[Recycled];x=Slot();x.known=true;x.token=token; }",
+              "106:     return x;",
+              "107:   }",
+              "108:   void latency(unsigned which,U delta) {",
+              "109:     unsigned b=0;U v=delta;while(v && b<BINS-1) { ++b;v>>=1; }",
+              "110:     ++c[HIST+which*BINS+b];",
+              "111:   }",
+              "112:   void event(int kind,unsigned flags,U address,U token,U value,unsigned index,unsigned way) {",
+              "113:     (void)address;",
+              "114:     if(kind==14) {",
+              "115:       bool load=flags&1,store=flags&2;",
+              "116:       if(!load && !store)return;",
+              "117:       c[load?LoadAttempts:StoreAttempts]++;",
+              "118:       auto &x=touch(load?loads:stores,index,token);",
+              "119:       if(!x.detected) {",
+              "120:         x.detected=x.miss=true;x.detect=cycle;",
+              "121:         if(flags&4)++c[load?LoadMiss:StoreMiss];",
+              "122:         if(flags&8)++c[load?PermissionLoad:PermissionStore];",
+              "123:       }",
+              "124:     } else if(kind==15) {",
+              "125:       c[Primary]+=(flags&4)!=0;c[Merge]+=(flags&8)!=0;c[Upgrade]+=(flags&16)!=0;",
+              "126:       if(way>=tx.size()) { ++errors;return; }",
+              "127:       if(flags&(4|16)) { tx[way].token=value;tx[way].born=cycle;tx[way].valid=true; }",
+              "128:       if(flags&1) {",
+              "129:         auto &x=touch(loads,index,token);",
+              "130:         if(x.miss && !x.allocated) {",
+              "131:           x.allocated=true;x.alloc=cycle;++c[DetectAllocN];c[DetectAllocSum]+=cycle-x.detect;",
+              "132:           latency(0,cycle-x.detect);",
+              "133:         }",
+              "134:       }",
+              "135:     } else if(kind==16) {",
+              "136:       ++c[Refill];if(way>=tx.size()) { ++errors;return; }",
+              "137:       auto &t=tx[way];",
+              "138:       if(t.valid && t.token==token) {",
+              "139:         ++c[AllocRefillN];c[AllocRefillSum]+=cycle-t.born;latency(1,cycle-t.born);t.valid=false;",
+              "140:       } else ++errors;",
+              "141:     } else if(kind==17) {",
+              "142:       if(index>=loads.size()) { ++errors;return; }",
+              "143:       auto &x=loads[index];",
+              "144:       if(x.known && x.token==token && x.miss) {",
+              "145:         ++c[DetectDataN];c[DetectDataSum]+=cycle-x.detect;latency(2,cycle-x.detect);",
+              "146:         c[MissReturnHead]+=headCurrent && headToken==token;",
+              "147:         c[MissEverHead]+=x.everHead;c[HeadEpisodeCycles]+=x.headCycles;",
+              "148:         x.miss=false;",
+              "149:       }",
+              "150:     } else if(kind==18) {",
+              "151:       if(index>=loads.size()) { ++errors;return; }",
+              "152:       for(unsigned i=0;i<loads.size();++i) if(!(value&(U(1)<<i))) loads[i].miss=false;",
+              "153:       auto &x=loads[index];",
+              "154:       bool head=(flags&1) && x.known && x.token==token && x.miss;",
+              "155:       bool sched=flags&2;",
+              "156:       headCurrent=head;headToken=token;",
+              "157:       c[HeadPending]+=(flags&1)!=0;c[HeadMiss]+=head;c[HeadBusy]+=head&&busy;c[HeadFull]+=head&&full;",
+              "158:       c[Scheduler]+=sched;c[SchedulerBusy]+=sched&&busy;c[SchedulerFull]+=sched&&full;",
+              "159:       c[HeadScheduler]+=head&&sched;",
+              "160:       bool any=false;for(const auto &slot:loads)any|=slot.miss;c[MissPending]+=any;",
+              "161:       if(head) {x.everHead=true;++x.headCycles;}",
+              "162:     } else if(kind==20) {",
+              "163:       ++c[LoadReplay];c[ReplayBusy]+=busy;c[ReplayFull]+=full;",
+              "164:       if(lastReplay!=cycle) {++c[LoadReplayCycles];lastReplay=cycle;}",
+              "165:     } else if(kind==21) {",
+              "166:       auto &x=touch(loads,index,token);x.nack=true;++c[LoadNack];",
+              "167:       if(lastNack!=cycle) {++c[LoadNackCycles];lastNack=cycle;}",
+              "168:       c[NackMshr]+=(flags&16)!=0;c[NackVictim]+=(flags&32)!=0;c[NackData]+=(flags&64)!=0;",
+              "169:       c[NackWb]+=(flags&128)!=0;c[NackHit]+=(flags&256)!=0;",
+              "170:     } else if(kind==22) {",
+              "171:       auto &x=touch(loads,index,token);",
+              "172:       if(x.nack) { ++c[Retry];if(lastRetry!=cycle) {++c[RetryCycles];lastRetry=cycle;}x.nack=false; }",
+              "173:     } else if(kind==23) {",
+              "174:       const auto &h=history[token%RING];",
+              "175:       unsigned markerIndex=(flags&2)?0:1;",
+              "176:       markerObserved[markerIndex]=cycle;markerRequested[markerIndex]=token;markerFound[markerIndex]=h.cycle==token;",
+              "177:       if(++markerEvents<=4) {",
+              "178:         std::fprintf(stderr,\"[CAUSAL_ROI_MARKER] flags=%u observer_cycle=%llu sample_cycle=%llu lookup_valid=%u\\n\",",
+              "179:           flags,(unsigned long long)cycle,(unsigned long long)token,unsigned(h.cycle==token));",
+              "180:         std::fflush(stderr);",
+              "181:       }",
+              "182:       if(h.cycle!=token) {++errors;++markerSnapshotErrors;return;}",
+              "183:       if(flags&2) {++startMarkers;start=token;begin=h.counters;}"
+            ],
+            "start": 104
+          },
+          {
+            "end": 217,
+            "lines": [
+              "198:       \"detect_alloc_samples\",\"detect_alloc_sum\",\"alloc_refill_samples\",\"alloc_refill_sum\",",
+              "199:       \"detect_data_samples\",\"detect_data_sum\",\"miss_returns_still_head\",\"completed_misses_ever_head\",",
+              "200:       \"completed_miss_head_episode_cycles\",\"recycled_pending_slots\",\"load_permission_miss_requests\",\"store_permission_miss_requests\"};",
+              "201:     bool valid=startMarkers==1 && stopMarkers==1 && stop>start && !errors && end[Samples]-begin[Samples]==stop-start;",
+              "202:     std::ostringstream o;o<<\"{\\\"schema\\\":1,\\\"bounded_slots\\\":64,\\\"mshr_slots\\\":6,\\\"snapshot_ring\\\":64\"",
+              "203:       <<\",\\\"roi_start\\\":\"<<start<<\",\\\"roi_stop\\\":\"<<stop<<\",\\\"errors\\\":\"<<errors",
+              "204:       <<\",\\\"start_markers\\\":\"<<startMarkers<<\",\\\"stop_markers\\\":\"<<stopMarkers",
+              "205:       <<\",\\\"roi_marker_events\\\":\"<<markerEvents<<\",\\\"roi_snapshot_lookup_errors\\\":\"<<markerSnapshotErrors",
+              "206:       <<\",\\\"roi_marker_observed_cycles\\\":[\"<<markerObserved[0]<<','<<markerObserved[1]<<']'",
+              "207:       <<\",\\\"roi_marker_requested_cycles\\\":[\"<<markerRequested[0]<<','<<markerRequested[1]<<']'",
+              "208:       <<\",\\\"roi_marker_snapshot_found\\\":[\"<<unsigned(markerFound[0])<<','<<unsigned(markerFound[1])<<']'",
+              "209:       <<\",\\\"status\\\":\\\"\"<<(valid?\"PASS\":\"FAIL\")<<\"\\\",\\\"window\\\":\\\"exact_software_rdcycle_half_open_via_bounded_prefix_snapshots\\\"\"",
+              "210:       <<\",\\\"counts\\\":{\";",
+              "211:     for(unsigned i=0;i<sizeof(names)/sizeof(names[0]);++i) {if(i)o<<',';o<<'\"'<<names[i]<<\"\\\":\"<<(valid?end[i]-begin[i]:0);}",
+              "212:     o<<\"},\\\"mshr_occupancy_histogram\\\":[\";",
+              "213:     for(unsigned i=0;i<=6;++i){if(i)o<<',';o<<(valid?end[OCC+i]-begin[OCC+i]:0);}o<<']';",
+              "214:     o<<\",\\\"latency_bin_definition\\\":\\\"bin0=0; binN=[2^(N-1),2^N-1]; bin31_saturates\\\"\"",
+              "215:       <<\",\\\"latency_cohort\\\":\\\"completion_in_ROI; may_start_before_ROI; unfinished_censored\\\",\\\"latency_histograms\\\":[\";",
+              "216:     for(unsigned j=0;j<3;++j){if(j)o<<',';o<<'[';for(unsigned i=0;i<BINS;++i){if(i)o<<',';o<<(valid?end[HIST+j*BINS+i]-begin[HIST+j*BINS+i]:0);}o<<']';}",
+              "217:     o<<\"]}\";return o.str();"
+            ],
+            "start": 198
+          }
+        ],
+        "sha256": "7635662b13b9fe17a0d9d36ed1283c2e7701d4a5b5cd1d1b8d587b110517bd97"
+      }
+    },
+    "signatures": {
+      "direct_line_buffer_load_response_exists": true,
+      "generated_bank_nack_constant_zero": true,
+      "generated_sdq_same_set_admission_equation": true,
+      "generated_single_memory_lane": true,
+      "ldq_age_wakeup_exists": true,
+      "nack_clears_executed": true,
+      "nack_miss_is_not_ready_predicate": true,
+      "same_set_tag_secondary_readiness": true,
+      "secondary_drain_closed": true
+    },
+    "status": "PASS"
+  },
+  "target": {
+    "approximate_gap": 146410,
+    "baseline_roi": 1707863,
+    "current_b_roi": 1648923,
+    "current_slowdown": 1.646165672498565,
+    "exact_threshold": "3005025/2",
+    "max_integer_roi_below_target": 1502512,
+    "minimum_integer_saving": 146411,
+    "native_roi": 1001675,
+    "target_slowdown": 1.5,
+    "total_minimum_integer_saving": 205351,
+    "user_exclusive_roi_threshold": 1502513
+  }
+}

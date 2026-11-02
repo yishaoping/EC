@@ -1,3 +1,19 @@
+# Current: frozen stable Opt4 — 2026-11-02
+
+**Opt4 is FROZEN; optimization is PAUSED.** Measured ROI1,707,863 versus
+reference1,001,675 gives1.7050071×. Use [OPT4_BASELINE](../OPT4_BASELINE.md) for the
+source/config/software identity and [opt4/](../opt4/) for versioned reference records.
+Functional hardware exactly matches476a76091. No64KiB/seq67/SourceC experimental
+changes remain active. Proven host-only shadow/correctness separation is retained;
+failed original L2 S0 estimates stay ineligible for geometry conclusions.
+
+Read-only checks: `python3 -I -B slowdown/scripts/verify_opt4_frozen.py` and
+`bash slowdown/run_optimization_4_svb.sh --static-check`. Existing launch paths remain
+compatible; this cleanup does not authorize a benchmark. All earlier READY/result
+notes and suggested hardware commands below are historical and superseded by PAUSED.
+
+---
+
 # Latest: final integrated integrity validation prepared (2026-10-30)
 
 Current-run recertification status: **CURRENT_DATA_FUNDAMENTALLY_INSUFFICIENT**.

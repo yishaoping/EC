@@ -1,0 +1,1577 @@
+{
+  "additional_prior_input_hashes_rechecked": 18,
+  "comparison": {
+    "actual_lookup_miss_delta": -648,
+    "actual_miss_window": "traffic window; causal counters use exact software ROI",
+    "causal_deltas": {
+      "ROB_HEAD_LOAD_BLOCK_AND_SCHEDULER_UNAVAILABLE_CYCLES": -17,
+      "ROB_HEAD_WAITING_ON_LOAD_MISS_AND_MSHR_BUSY_CYCLES": -85705,
+      "ROB_HEAD_WAITING_ON_LOAD_MISS_AND_MSHR_FULL_CYCLES": 0,
+      "ROB_HEAD_WAITING_ON_LOAD_MISS_CYCLES": -85849,
+      "SCHEDULER_UNAVAILABLE_AND_MSHR_BUSY_CYCLES": 115,
+      "SCHEDULER_UNAVAILABLE_AND_MSHR_FULL_CYCLES": 0,
+      "alloc_refill_samples": -279,
+      "alloc_refill_sum": -117139,
+      "any_ldq_miss_pending_cycles": -88486,
+      "completed_miss_head_episode_cycles": -85849,
+      "completed_misses_ever_head": -158,
+      "detect_alloc_samples": -420,
+      "detect_alloc_sum": -289930,
+      "detect_data_samples": -478,
+      "detect_data_sum": -321147,
+      "load_miss_lookup_attempts": -72428,
+      "load_nack_cycles": -64394,
+      "load_nack_retries": -64386,
+      "load_nack_retry_cycles": -64386,
+      "load_nacks": -64394,
+      "load_permission_miss_requests": -7,
+      "load_rpq_replay_and_mshr_busy_events": -92,
+      "load_rpq_replay_and_mshr_full_events": 0,
+      "load_rpq_replay_cycles": -92,
+      "load_rpq_replays": -92,
+      "load_tag_miss_requests": -473,
+      "miss_returns_still_head": -158,
+      "mshr_busy_cycles": -118245,
+      "mshr_full_cycles": 0,
+      "mshr_merges": -211,
+      "mshr_primary_allocations": -279,
+      "mshr_request_rejects": -26631,
+      "mshr_upgrade_allocations": -41,
+      "nack_data": 0,
+      "nack_hit": 25,
+      "nack_mshr_not_ready": -72002,
+      "nack_victim": 7613,
+      "nack_writeback": -1531,
+      "recycled_pending_slots": -165,
+      "refill_completions": -279,
+      "rob_head_load_pending_cycles": -70520,
+      "sample_cycles": -58940,
+      "scheduler_unavailable_cycles": 29259,
+      "store_miss_lookup_attempts": -2380,
+      "store_permission_miss_requests": -11,
+      "store_tag_miss_requests": -154
+    },
+    "label": "REFERENCE_COMPARISON",
+    "roi_delta": -58940,
+    "strict_pairing": "STRICT_PAIRING_PENDING"
+  },
+  "counts": {
+    "ROB_HEAD_LOAD_BLOCK_AND_SCHEDULER_UNAVAILABLE_CYCLES": 0,
+    "ROB_HEAD_WAITING_ON_LOAD_MISS_AND_MSHR_BUSY_CYCLES": 53795,
+    "ROB_HEAD_WAITING_ON_LOAD_MISS_AND_MSHR_FULL_CYCLES": 0,
+    "ROB_HEAD_WAITING_ON_LOAD_MISS_CYCLES": 53845,
+    "SCHEDULER_UNAVAILABLE_AND_MSHR_BUSY_CYCLES": 269,
+    "SCHEDULER_UNAVAILABLE_AND_MSHR_FULL_CYCLES": 0,
+    "alloc_refill_samples": 1883,
+    "alloc_refill_sum": 157331,
+    "any_ldq_miss_pending_cycles": 57440,
+    "completed_miss_head_episode_cycles": 53845,
+    "completed_misses_ever_head": 251,
+    "detect_alloc_samples": 960,
+    "detect_alloc_sum": 157622,
+    "detect_data_samples": 1052,
+    "detect_data_sum": 211045,
+    "load_miss_lookup_attempts": 40033,
+    "load_nack_cycles": 47163,
+    "load_nack_retries": 47162,
+    "load_nack_retry_cycles": 47162,
+    "load_nacks": 47163,
+    "load_permission_miss_requests": 2,
+    "load_rpq_replay_and_mshr_busy_events": 229,
+    "load_rpq_replay_and_mshr_full_events": 0,
+    "load_rpq_replay_cycles": 229,
+    "load_rpq_replays": 229,
+    "load_tag_miss_requests": 1060,
+    "miss_returns_still_head": 251,
+    "mshr_busy_cycles": 194905,
+    "mshr_full_cycles": 0,
+    "mshr_merges": 741,
+    "mshr_primary_allocations": 1883,
+    "mshr_request_rejects": 20433,
+    "mshr_upgrade_allocations": 74,
+    "nack_data": 0,
+    "nack_hit": 25,
+    "nack_mshr_not_ready": 39072,
+    "nack_victim": 8087,
+    "nack_writeback": 2354,
+    "recycled_pending_slots": 2400,
+    "refill_completions": 1883,
+    "rob_head_load_pending_cycles": 80832,
+    "sample_cycles": 1648923,
+    "scheduler_unavailable_cycles": 347409,
+    "store_miss_lookup_attempts": 4518,
+    "store_permission_miss_requests": 92,
+    "store_tag_miss_requests": 2324
+  },
+  "decision": {
+    "1P5_FEASIBILITY": "SUB1P5_NOT_SUPPORTED",
+    "CACHE_TRANSFER_MAJOR_BOTTLENECK": "NOT_PROVEN",
+    "CHECKER_FRONTEND_PRIORITY": "LAST_RESORT",
+    "CONSERVATIVE_RECOVERABLE": 0,
+    "CURRENT_B_ROI": 1648923,
+    "EXPECTED_RECOVERABLE": null,
+    "HARDWARE_PHASES_EXECUTED": [],
+    "INDEPENDENT_CRITICAL_UPPER_BOUND": null,
+    "LARGEST_CACHE_TRANSFER_MECHANISM": "MEASURED_L1_RELEASE_TO_L2_BANK_COMMIT_AND_ACK; HYPOTHESIS_L2_PRESERVATION_DRAIN_AND_OUTER_A_LOCK",
+    "MAIN_OPT5_CANDIDATE": "NONE_JUSTIFIED",
+    "MINIMUM_INTEGER_SAVING": 146411,
+    "NEW_HARDWARE_RUNS_PREPARED": 0,
+    "NEXT_ACTION": "MORE_OFFLINE_ATTRIBUTION",
+    "REMAINING_GAP": 146410,
+    "STRICT_PAIRING": "STRICT_PAIRING_PENDING",
+    "TARGET_ROI": 1502513,
+    "UPPER_BOUND_SCOPE": "whole cache-transfer critical budget unknown; measured post-first-C phase exposure only 100915 cycles"
+  },
+  "excluded_other_client_bank_events": {
+    "20": 24,
+    "24": 8,
+    "28": 24
+  },
+  "inputs": {
+    "A_run": "/data1/gzh/EC/AI/TMP/l1_causal_opt5_probe_20261030_200000_4235a1de/revisions/r2/arms/A/runs/optimization_4_svb_20261030_135448_0c744900",
+    "B_run": "/data1/gzh/EC/AI/TMP/checker_seq67_one_shot_20261031_103130/sealed/arms/B/runs/optimization_4_svb_20261031_024551_8fbf8937",
+    "actual_completed_report": "/data1/gzh/EC/AI/TMP/checker_seq67_one_shot_20261031_103130",
+    "requested_report": "AI/TMP/checker_seq67_one_shot_20261031_094628",
+    "source_seal_fingerprint": "497d232770160bea6901dc20a6d5f411bab5f685d9c560c0b3b75bf7184c7cc0"
+  },
+  "l2": {
+    "actual": {
+      "access": 40555,
+      "dirty_victim": 48,
+      "hit": 40396,
+      "miss": 159,
+      "replacement": 48,
+      "set_full_miss": 0
+    },
+    "cycles": 1660084,
+    "dram_facing_read_bytes": 10176,
+    "dram_facing_reads": 159,
+    "dram_facing_write_bytes": 103872,
+    "dram_facing_writes": 1623,
+    "inner_a_first_by_opcode": [
+      0,
+      10,
+      0,
+      0,
+      38633,
+      0,
+      1914,
+      0
+    ],
+    "inner_c_first_by_opcode": [
+      0,
+      0,
+      0,
+      0,
+      6,
+      24,
+      0,
+      2254
+    ],
+    "mshr_full_cycles": 0,
+    "mshr_occupancy_histogram": [
+      1474620,
+      177880,
+      7564,
+      20,
+      0
+    ],
+    "writebacks": 48
+  },
+  "native_histograms": {
+    "alloc_to_physical_final_refill": {
+      "at_least_1024": {
+        "elapsed_duration_sum_bounds": [
+          38912,
+          77816
+        ],
+        "fraction_of_latency_sum_bounds": [
+          0.24732570186422256,
+          0.49460055551671317
+        ],
+        "samples": 8,
+        "scope": "completion-cohort elapsed durations; may overlap/start before ROI; not critical ROI cycles"
+      },
+      "cohort": "completion_in_ROI; may_start_before_ROI; unfinished_censored",
+      "exact_quantiles": null,
+      "max_bounds": [
+        8192,
+        16383
+      ],
+      "mean": 83.55337227827934,
+      "median_bounds": [
+        32,
+        63
+      ],
+      "n": 1883,
+      "p90_bounds": [
+        64,
+        127
+      ],
+      "p99_bounds": [
+        128,
+        255
+      ],
+      "sum": 157331
+    },
+    "detect_to_alloc": {
+      "at_least_1024": {
+        "elapsed_duration_sum_bounds": [
+          145010,
+          151224
+        ],
+        "fraction_of_latency_sum_bounds": [
+          0.9199857887858294,
+          0.9594092195251932
+        ],
+        "samples": 18,
+        "scope": "completion-cohort elapsed durations; may overlap/start before ROI; not critical ROI cycles"
+      },
+      "cohort": "completion_in_ROI; may_start_before_ROI; unfinished_censored",
+      "exact_quantiles": null,
+      "max_bounds": [
+        8192,
+        16383
+      ],
+      "mean": 164.18958333333333,
+      "median_bounds": [
+        0,
+        0
+      ],
+      "n": 960,
+      "p90_bounds": [
+        32,
+        63
+      ],
+      "p99_bounds": [
+        4096,
+        8191
+      ],
+      "sum": 157622
+    },
+    "detect_to_data": {
+      "at_least_1024": {
+        "elapsed_duration_sum_bounds": [
+          169083,
+          189549
+        ],
+        "fraction_of_latency_sum_bounds": [
+          0.8011703665095122,
+          0.8981449453907935
+        ],
+        "samples": 22,
+        "scope": "completion-cohort elapsed durations; may overlap/start before ROI; not critical ROI cycles"
+      },
+      "cohort": "completion_in_ROI; may_start_before_ROI; unfinished_censored",
+      "exact_quantiles": null,
+      "max_bounds": [
+        8192,
+        16383
+      ],
+      "mean": 200.61311787072242,
+      "median_bounds": [
+        16,
+        31
+      ],
+      "n": 1052,
+      "p90_bounds": [
+        64,
+        127
+      ],
+      "p99_bounds": [
+        8192,
+        16383
+      ],
+      "sum": 211045
+    }
+  },
+  "optional_complete_prefix": [
+    698301,
+    2192911
+  ],
+  "optional_unknown_suffix_cycles": 154313,
+  "previous_report": "/data1/gzh/EC/AI/TMP/opt5_sub1p5_gap_analysis_20261101_110130",
+  "release": {
+    "boundary_censored_transactions": 0,
+    "conservative_recoverable_cycles": 0,
+    "critical_subset": null,
+    "distributions": {
+      "SVB": {
+        "first_C_to_ACK": {
+          "max": 91,
+          "mean": 56.461187214611876,
+          "median": 58,
+          "min": 16,
+          "n": 438,
+          "p90": 60,
+          "p99": 71,
+          "quantiles": "nearest_rank",
+          "sum": 24730
+        },
+        "first_C_to_first_bank": {
+          "max": 82,
+          "mean": 47.36529680365297,
+          "median": 49,
+          "min": 7,
+          "n": 438,
+          "p90": 50,
+          "p99": 62,
+          "quantiles": "nearest_rank",
+          "sum": 20746
+        },
+        "first_C_to_last_C": {
+          "max": 6,
+          "mean": 6.0,
+          "median": 6,
+          "min": 6,
+          "n": 438,
+          "p90": 6,
+          "p99": 6,
+          "quantiles": "nearest_rank",
+          "sum": 2628
+        },
+        "first_bank_to_last_bank": {
+          "max": 7,
+          "mean": 7.0,
+          "median": 7,
+          "min": 7,
+          "n": 438,
+          "p90": 7,
+          "p99": 7,
+          "quantiles": "nearest_rank",
+          "sum": 3066
+        },
+        "last_C_to_ACK": {
+          "max": 85,
+          "mean": 50.461187214611876,
+          "median": 52,
+          "min": 10,
+          "n": 438,
+          "p90": 54,
+          "p99": 65,
+          "quantiles": "nearest_rank",
+          "sum": 22102
+        },
+        "last_C_to_first_bank": {
+          "max": 76,
+          "mean": 41.36529680365297,
+          "median": 43,
+          "min": 1,
+          "n": 438,
+          "p90": 44,
+          "p99": 56,
+          "quantiles": "nearest_rank",
+          "sum": 18118
+        },
+        "last_C_to_last_bank": {
+          "max": 83,
+          "mean": 48.36529680365297,
+          "median": 50,
+          "min": 8,
+          "n": 438,
+          "p90": 51,
+          "p99": 63,
+          "quantiles": "nearest_rank",
+          "sum": 21184
+        },
+        "last_bank_to_ACK": {
+          "max": 9,
+          "mean": 2.095890410958904,
+          "median": 2,
+          "min": 2,
+          "n": 438,
+          "p90": 2,
+          "p99": 9,
+          "quantiles": "nearest_rank",
+          "sum": 918
+        }
+      },
+      "all": {
+        "first_C_to_ACK": {
+          "max": 91,
+          "mean": 45.23307933662035,
+          "median": 58,
+          "min": 16,
+          "n": 2231,
+          "p90": 58,
+          "p99": 71,
+          "quantiles": "nearest_rank",
+          "sum": 100915
+        },
+        "first_C_to_first_bank": {
+          "max": 82,
+          "mean": 36.1954280591663,
+          "median": 49,
+          "min": 7,
+          "n": 2231,
+          "p90": 49,
+          "p99": 62,
+          "quantiles": "nearest_rank",
+          "sum": 80752
+        },
+        "first_C_to_last_C": {
+          "max": 6,
+          "mean": 6.0,
+          "median": 6,
+          "min": 6,
+          "n": 2231,
+          "p90": 6,
+          "p99": 6,
+          "quantiles": "nearest_rank",
+          "sum": 13386
+        },
+        "first_bank_to_last_bank": {
+          "max": 7,
+          "mean": 7.0,
+          "median": 7,
+          "min": 7,
+          "n": 2231,
+          "p90": 7,
+          "p99": 7,
+          "quantiles": "nearest_rank",
+          "sum": 15617
+        },
+        "last_C_to_ACK": {
+          "max": 85,
+          "mean": 39.23307933662035,
+          "median": 52,
+          "min": 10,
+          "n": 2231,
+          "p90": 52,
+          "p99": 65,
+          "quantiles": "nearest_rank",
+          "sum": 87529
+        },
+        "last_C_to_first_bank": {
+          "max": 76,
+          "mean": 30.195428059166293,
+          "median": 43,
+          "min": 1,
+          "n": 2231,
+          "p90": 43,
+          "p99": 56,
+          "quantiles": "nearest_rank",
+          "sum": 67366
+        },
+        "last_C_to_last_bank": {
+          "max": 83,
+          "mean": 37.1954280591663,
+          "median": 50,
+          "min": 8,
+          "n": 2231,
+          "p90": 50,
+          "p99": 63,
+          "quantiles": "nearest_rank",
+          "sum": 82983
+        },
+        "last_bank_to_ACK": {
+          "max": 9,
+          "mean": 2.0376512774540565,
+          "median": 2,
+          "min": 2,
+          "n": 2231,
+          "p90": 2,
+          "p99": 2,
+          "quantiles": "nearest_rank",
+          "sum": 4546
+        }
+      },
+      "normal": {
+        "first_C_to_ACK": {
+          "max": 90,
+          "mean": 42.490239821528164,
+          "median": 58,
+          "min": 16,
+          "n": 1793,
+          "p90": 58,
+          "p99": 71,
+          "quantiles": "nearest_rank",
+          "sum": 76185
+        },
+        "first_C_to_first_bank": {
+          "max": 81,
+          "mean": 33.46681539319576,
+          "median": 49,
+          "min": 7,
+          "n": 1793,
+          "p90": 49,
+          "p99": 62,
+          "quantiles": "nearest_rank",
+          "sum": 60006
+        },
+        "first_C_to_last_C": {
+          "max": 6,
+          "mean": 6.0,
+          "median": 6,
+          "min": 6,
+          "n": 1793,
+          "p90": 6,
+          "p99": 6,
+          "quantiles": "nearest_rank",
+          "sum": 10758
+        },
+        "first_bank_to_last_bank": {
+          "max": 7,
+          "mean": 7.0,
+          "median": 7,
+          "min": 7,
+          "n": 1793,
+          "p90": 7,
+          "p99": 7,
+          "quantiles": "nearest_rank",
+          "sum": 12551
+        },
+        "last_C_to_ACK": {
+          "max": 84,
+          "mean": 36.490239821528164,
+          "median": 52,
+          "min": 10,
+          "n": 1793,
+          "p90": 52,
+          "p99": 65,
+          "quantiles": "nearest_rank",
+          "sum": 65427
+        },
+        "last_C_to_first_bank": {
+          "max": 75,
+          "mean": 27.466815393195763,
+          "median": 43,
+          "min": 1,
+          "n": 1793,
+          "p90": 43,
+          "p99": 56,
+          "quantiles": "nearest_rank",
+          "sum": 49248
+        },
+        "last_C_to_last_bank": {
+          "max": 82,
+          "mean": 34.46681539319576,
+          "median": 50,
+          "min": 8,
+          "n": 1793,
+          "p90": 50,
+          "p99": 63,
+          "quantiles": "nearest_rank",
+          "sum": 61799
+        },
+        "last_bank_to_ACK": {
+          "max": 9,
+          "mean": 2.0234244283324037,
+          "median": 2,
+          "min": 2,
+          "n": 1793,
+          "p90": 2,
+          "p99": 2,
+          "quantiles": "nearest_rank",
+          "sum": 3628
+        }
+      }
+    },
+    "full_run_transactions": 6735,
+    "independent_critical_upper_bound": null,
+    "interval_convention": "[first_C, ACK); ACK edge excluded; not registered sourceBusy count",
+    "largest_bank_interbeat_gap": 1,
+    "last_C_to_ACK_histogram": {
+      "10": 690,
+      "11": 1,
+      "13": 1,
+      "15": 1,
+      "17": 6,
+      "52": 1405,
+      "53": 28,
+      "54": 17,
+      "55": 38,
+      "56": 1,
+      "57": 3,
+      "58": 1,
+      "59": 10,
+      "60": 1,
+      "61": 1,
+      "62": 3,
+      "65": 3,
+      "66": 4,
+      "67": 1,
+      "68": 2,
+      "73": 2,
+      "74": 1,
+      "75": 1,
+      "76": 1,
+      "77": 2,
+      "78": 2,
+      "79": 1,
+      "81": 1,
+      "82": 1,
+      "84": 1,
+      "85": 1
+    },
+    "noncritical_subset": null,
+    "prefix_phase_union_cycles": 92448,
+    "roi_contained_transactions": 2231,
+    "roi_phase_union_cycles": 100915,
+    "roi_touched_transactions": 2231,
+    "scheduler_overlap_prefix_cycles": 151,
+    "scheduler_prefix_cycles": 280215,
+    "top_episodes": [
+      {
+        "ack": 2344733,
+        "bank_cycles": [
+          2344724,
+          2344725,
+          2344726,
+          2344727,
+          2344728,
+          2344729,
+          2344730,
+          2344731
+        ],
+        "bank_hashes": [
+          20734443,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2147484174
+        ],
+        "bank_word_offsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "entry": 1,
+        "epoch": 710,
+        "first_bank": 2344724,
+        "first_c": 2344642,
+        "generation": 106942,
+        "key_valid": 1,
+        "last_bank": 2344731,
+        "last_c": 2344648,
+        "line_address": 2148040640,
+        "owner": "SVB",
+        "package_seq": 315,
+        "raw_rows": {
+          "ack": 107450,
+          "bank": [
+            107442,
+            107443,
+            107444,
+            107445,
+            107446,
+            107447,
+            107448,
+            107449
+          ],
+          "first_c": 107436,
+          "last_c": 107440
+        },
+        "source": 6,
+        "writer": 0
+      },
+      {
+        "ack": 2184053,
+        "bank_cycles": [
+          2184044,
+          2184045,
+          2184046,
+          2184047,
+          2184048,
+          2184049,
+          2184050,
+          2184051
+        ],
+        "bank_hashes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "bank_word_offsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "entry": 255,
+        "epoch": 38,
+        "first_bank": 2184044,
+        "first_c": 2183963,
+        "generation": 97642,
+        "key_valid": 1,
+        "last_bank": 2184051,
+        "last_c": 2183969,
+        "line_address": 2147520576,
+        "owner": "normal",
+        "package_seq": 270,
+        "raw_rows": {
+          "ack": 104893,
+          "bank": [
+            104885,
+            104886,
+            104887,
+            104888,
+            104889,
+            104890,
+            104891,
+            104892
+          ],
+          "first_c": 104882,
+          "last_c": 104883
+        },
+        "source": 6,
+        "writer": 0
+      },
+      {
+        "ack": 2279213,
+        "bank_cycles": [
+          2279204,
+          2279205,
+          2279206,
+          2279207,
+          2279208,
+          2279209,
+          2279210,
+          2279211
+        ],
+        "bank_hashes": [
+          2001454760401,
+          2010044694995,
+          2018634629589,
+          2027224564183,
+          2035814498777,
+          2044404433371,
+          2052994367965,
+          2061584302559
+        ],
+        "bank_word_offsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "entry": 255,
+        "epoch": 39,
+        "first_bank": 2279204,
+        "first_c": 2279125,
+        "generation": 101866,
+        "key_valid": 1,
+        "last_bank": 2279211,
+        "last_c": 2279131,
+        "line_address": 2147524416,
+        "owner": "normal",
+        "package_seq": 294,
+        "raw_rows": {
+          "ack": 106352,
+          "bank": [
+            106344,
+            106345,
+            106346,
+            106347,
+            106348,
+            106349,
+            106350,
+            106351
+          ],
+          "first_c": 106342,
+          "last_c": 106343
+        },
+        "source": 6,
+        "writer": 0
+      },
+      {
+        "ack": 1280813,
+        "bank_cycles": [
+          1280804,
+          1280805,
+          1280806,
+          1280807,
+          1280808,
+          1280809,
+          1280810,
+          1280811
+        ],
+        "bank_hashes": [
+          389,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "bank_word_offsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "entry": 255,
+        "epoch": 8,
+        "first_bank": 1280804,
+        "first_c": 1280726,
+        "generation": 61874,
+        "key_valid": 1,
+        "last_bank": 1280811,
+        "last_c": 1280732,
+        "line_address": 2147586048,
+        "owner": "normal",
+        "package_seq": 112,
+        "raw_rows": {
+          "ack": 73721,
+          "bank": [
+            73713,
+            73714,
+            73715,
+            73716,
+            73717,
+            73718,
+            73719,
+            73720
+          ],
+          "first_c": 73711,
+          "last_c": 73712
+        },
+        "source": 6,
+        "writer": 0
+      },
+      {
+        "ack": 1535093,
+        "bank_cycles": [
+          1535084,
+          1535085,
+          1535086,
+          1535087,
+          1535088,
+          1535089,
+          1535090,
+          1535091
+        ],
+        "bank_hashes": [
+          12948050795298865,
+          11822133708324909,
+          10696216621350953,
+          9570299534376997,
+          13229530067042354,
+          12103612980068398,
+          10977695893094442,
+          9851778806120486
+        ],
+        "bank_word_offsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "entry": 255,
+        "epoch": 7,
+        "first_bank": 1535084,
+        "first_c": 1535008,
+        "generation": 49872,
+        "key_valid": 1,
+        "last_bank": 1535091,
+        "last_c": 1535014,
+        "line_address": 2147575168,
+        "owner": "normal",
+        "package_seq": 29,
+        "raw_rows": {
+          "ack": 81179,
+          "bank": [
+            81169,
+            81171,
+            81173,
+            81174,
+            81175,
+            81176,
+            81177,
+            81178
+          ],
+          "first_c": 81163,
+          "last_c": 81164
+        },
+        "source": 6,
+        "writer": 0
+      },
+      {
+        "ack": 1039013,
+        "bank_cycles": [
+          1039004,
+          1039005,
+          1039006,
+          1039007,
+          1039008,
+          1039009,
+          1039010,
+          1039011
+        ],
+        "bank_hashes": [
+          3074,
+          206,
+          2147515912,
+          2147573568,
+          14121852469248,
+          512,
+          196,
+          2147711216
+        ],
+        "bank_word_offsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "entry": 255,
+        "epoch": 80,
+        "first_bank": 1039004,
+        "first_c": 1038929,
+        "generation": 55790,
+        "key_valid": 1,
+        "last_bank": 1039011,
+        "last_c": 1038935,
+        "line_address": 2148040256,
+        "owner": "normal",
+        "package_seq": 93,
+        "raw_rows": {
+          "ack": 68121,
+          "bank": [
+            68113,
+            68114,
+            68115,
+            68116,
+            68117,
+            68118,
+            68119,
+            68120
+          ],
+          "first_c": 68111,
+          "last_c": 68112
+        },
+        "source": 6,
+        "writer": 0
+      },
+      {
+        "ack": 2043653,
+        "bank_cycles": [
+          2043644,
+          2043645,
+          2043646,
+          2043647,
+          2043648,
+          2043649,
+          2043650,
+          2043651
+        ],
+        "bank_hashes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "bank_word_offsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "entry": 255,
+        "epoch": 31,
+        "first_bank": 2043644,
+        "first_c": 2043569,
+        "generation": 94426,
+        "key_valid": 1,
+        "last_bank": 2043651,
+        "last_c": 2043575,
+        "line_address": 2147520768,
+        "owner": "normal",
+        "package_seq": 244,
+        "raw_rows": {
+          "ack": 100768,
+          "bank": [
+            100760,
+            100761,
+            100762,
+            100763,
+            100764,
+            100765,
+            100766,
+            100767
+          ],
+          "first_c": 100758,
+          "last_c": 100759
+        },
+        "source": 6,
+        "writer": 0
+      },
+      {
+        "ack": 750413,
+        "bank_cycles": [
+          750404,
+          750405,
+          750406,
+          750407,
+          750408,
+          750409,
+          750410,
+          750411
+        ],
+        "bank_hashes": [
+          17,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "bank_word_offsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "entry": 255,
+        "epoch": 10,
+        "first_bank": 750404,
+        "first_c": 750330,
+        "generation": 48562,
+        "key_valid": 1,
+        "last_bank": 750411,
+        "last_c": 750336,
+        "line_address": 2147574144,
+        "owner": "normal",
+        "package_seq": 15,
+        "raw_rows": {
+          "ack": 53249,
+          "bank": [
+            53241,
+            53242,
+            53243,
+            53244,
+            53245,
+            53246,
+            53247,
+            53248
+          ],
+          "first_c": 53239,
+          "last_c": 53240
+        },
+        "source": 6,
+        "writer": 0
+      },
+      {
+        "ack": 2187173,
+        "bank_cycles": [
+          2187164,
+          2187165,
+          2187166,
+          2187167,
+          2187168,
+          2187169,
+          2187170,
+          2187171
+        ],
+        "bank_hashes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "bank_word_offsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "entry": 255,
+        "epoch": 26,
+        "first_bank": 2187164,
+        "first_c": 2187090,
+        "generation": 98026,
+        "key_valid": 1,
+        "last_bank": 2187171,
+        "last_c": 2187096,
+        "line_address": 2147516288,
+        "owner": "normal",
+        "package_seq": 271,
+        "raw_rows": {
+          "ack": 105045,
+          "bank": [
+            105037,
+            105038,
+            105039,
+            105040,
+            105041,
+            105042,
+            105043,
+            105044
+          ],
+          "first_c": 105034,
+          "last_c": 105035
+        },
+        "source": 6,
+        "writer": 0
+      },
+      {
+        "ack": 895493,
+        "bank_cycles": [
+          895484,
+          895485,
+          895486,
+          895487,
+          895488,
+          895489,
+          895490,
+          895491
+        ],
+        "bank_hashes": [
+          1679,
+          113,
+          2147515912,
+          2147573568,
+          7743826034688,
+          512,
+          100,
+          2147708246
+        ],
+        "bank_word_offsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "entry": 255,
+        "epoch": 43,
+        "first_bank": 895484,
+        "first_c": 895411,
+        "generation": 52213,
+        "key_valid": 1,
+        "last_bank": 895491,
+        "last_c": 895417,
+        "line_address": 2148040256,
+        "owner": "normal",
+        "package_seq": 55,
+        "raw_rows": {
+          "ack": 60962,
+          "bank": [
+            60954,
+            60955,
+            60956,
+            60957,
+            60958,
+            60959,
+            60960,
+            60961
+          ],
+          "first_c": 60948,
+          "last_c": 60949
+        },
+        "source": 6,
+        "writer": 0
+      }
+    ]
+  },
+  "revalidated_hash_counts": {
+    "hardware": 19,
+    "original_evidence": 85,
+    "prior_generated_native_files": 8,
+    "sealed_tools": 19
+  },
+  "scheduler_prefix": {
+    "cycles": 280215,
+    "distribution": {
+      "max": 12504,
+      "mean": 3687.0394736842104,
+      "min": 60,
+      "n": 76,
+      "p50": 2604,
+      "p95": 10522
+    },
+    "full_roi_native_cycles": 347409,
+    "intervals": [
+      [
+        1449353,
+        1451525
+      ],
+      [
+        1513397,
+        1513955
+      ],
+      [
+        1517651,
+        1518583
+      ],
+      [
+        1520219,
+        1522101
+      ],
+      [
+        1540990,
+        1547001
+      ],
+      [
+        1563349,
+        1564981
+      ],
+      [
+        1567038,
+        1567321
+      ],
+      [
+        1569185,
+        1573951
+      ],
+      [
+        1605571,
+        1607139
+      ],
+      [
+        1611937,
+        1616637
+      ],
+      [
+        1647483,
+        1648871
+      ],
+      [
+        1653905,
+        1658983
+      ],
+      [
+        1666232,
+        1669125
+      ],
+      [
+        1672447,
+        1673875
+      ],
+      [
+        1676586,
+        1679181
+      ],
+      [
+        1710577,
+        1715505
+      ],
+      [
+        1722040,
+        1725793
+      ],
+      [
+        1729039,
+        1729667
+      ],
+      [
+        1732455,
+        1734887
+      ],
+      [
+        1742969,
+        1746709
+      ],
+      [
+        1760251,
+        1763347
+      ],
+      [
+        1783856,
+        1785689
+      ],
+      [
+        1787397,
+        1790001
+      ],
+      [
+        1791581,
+        1792627
+      ],
+      [
+        1794209,
+        1799937
+      ],
+      [
+        1801527,
+        1802095
+      ],
+      [
+        1803703,
+        1807933
+      ],
+      [
+        1809531,
+        1810577
+      ],
+      [
+        1812179,
+        1816839
+      ],
+      [
+        1819963,
+        1825937
+      ],
+      [
+        1827531,
+        1828607
+      ],
+      [
+        1830801,
+        1834791
+      ],
+      [
+        1843129,
+        1843877
+      ],
+      [
+        1846985,
+        1857717
+      ],
+      [
+        1859315,
+        1860181
+      ],
+      [
+        1861819,
+        1861943
+      ],
+      [
+        1865053,
+        1875575
+      ],
+      [
+        1878767,
+        1879881
+      ],
+      [
+        1881405,
+        1881465
+      ],
+      [
+        1883958,
+        1891555
+      ],
+      [
+        1900961,
+        1906813
+      ],
+      [
+        1908405,
+        1913389
+      ],
+      [
+        1915021,
+        1917199
+      ],
+      [
+        1920303,
+        1924789
+      ],
+      [
+        1926387,
+        1930985
+      ],
+      [
+        1932581,
+        1935185
+      ],
+      [
+        1939238,
+        1942803
+      ],
+      [
+        1952163,
+        1959495
+      ],
+      [
+        1961181,
+        1966455
+      ],
+      [
+        1971105,
+        1976845
+      ],
+      [
+        1978438,
+        1984505
+      ],
+      [
+        1992363,
+        1994791
+      ],
+      [
+        2000461,
+        2003357
+      ],
+      [
+        2004945,
+        2013643
+      ],
+      [
+        2015245,
+        2016307
+      ],
+      [
+        2019415,
+        2021305
+      ],
+      [
+        2022897,
+        2031695
+      ],
+      [
+        2034160,
+        2034255
+      ],
+      [
+        2044341,
+        2045465
+      ],
+      [
+        2047071,
+        2058343
+      ],
+      [
+        2062967,
+        2063509
+      ],
+      [
+        2065081,
+        2076269
+      ],
+      [
+        2088351,
+        2093505
+      ],
+      [
+        2095093,
+        2101157
+      ],
+      [
+        2102759,
+        2104621
+      ],
+      [
+        2107705,
+        2111453
+      ],
+      [
+        2113866,
+        2119201
+      ],
+      [
+        2128923,
+        2133847
+      ],
+      [
+        2135451,
+        2143465
+      ],
+      [
+        2145061,
+        2145183
+      ],
+      [
+        2149282,
+        2151877
+      ],
+      [
+        2154991,
+        2156901
+      ],
+      [
+        2160372,
+        2161415
+      ],
+      [
+        2166307,
+        2178811
+      ],
+      [
+        2180417,
+        2181243
+      ],
+      [
+        2189639,
+        2192099
+      ]
+    ],
+    "left_boundary_censored": false,
+    "right_boundary_censored": false,
+    "scope": "complete optional prefix only; suffix interval locations unknown",
+    "unknown_suffix_native_total": 67194
+  },
+  "simulator_time_minus_boom_cycle": 103,
+  "software_roi": [
+    698301,
+    2347224
+  ],
+  "target": {
+    "approximate_gap": 146410,
+    "baseline_roi": 1707863,
+    "current_b_roi": 1648923,
+    "current_slowdown": 1.646165672498565,
+    "exact_threshold": "3005025/2",
+    "max_integer_roi_below_target": 1502512,
+    "minimum_integer_saving": 146411,
+    "native_roi": 1001675,
+    "target_slowdown": 1.5,
+    "total_minimum_integer_saving": 205351,
+    "user_exclusive_roi_threshold": 1502513
+  },
+  "traffic_window": [
+    698208,
+    2358291
+  ]
+}

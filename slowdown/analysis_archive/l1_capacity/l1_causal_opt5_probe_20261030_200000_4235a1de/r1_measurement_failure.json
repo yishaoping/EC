@@ -1,0 +1,22 @@
+{
+  "revision": "/data1/gzh/EC/AI/TMP/l1_causal_opt5_probe_20261030_200000_4235a1de/revisions/r1",
+  "at": "2026-10-30T21:47:39.436496+08:00",
+  "direct_observation": {
+    "A_exit": 0,
+    "A_roi": 1707863,
+    "A_benchmark_verified": 1,
+    "A_l2_snapshot_errors": 0,
+    "A_causal_status": "FAIL",
+    "errors": 2,
+    "start_markers": 0,
+    "stop_markers": 0
+  },
+  "source_root_cause": "core.scala wires CSR architectural WB through debug_wb_wdata with csr.io.rw.rdata; causal marker incorrectly selected pre-CSR-mux wb_resps.bits.data",
+  "action": "Interrupt B with same known measurement defect, preserve r1, new immutable r2; repeat both paired runs after fix",
+  "interrupted_B_pid": 4145655,
+  "signal": "SIGINT",
+  "performance_interpretation": "NOT_PERMITTED",
+  "signal_followup": "SIGTERM after simulator continued through SIGINT",
+  "B_final_exit_status": 255,
+  "B_final_result": "FAILED"
+}

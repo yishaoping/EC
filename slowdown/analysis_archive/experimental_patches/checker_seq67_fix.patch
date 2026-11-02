@@ -1,0 +1,113 @@
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/r/R_ICSL.scala b/chipyard/generators/rocket-chip/src/main/scala/r/R_ICSL.scala
+index 651e47a7e..054520102 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/r/R_ICSL.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/r/R_ICSL.scala
+@@ -207,6 +207,15 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
+       icsl_checkerpriv_mode                     := 0.U
+       if_rh_cp_pc                               := 0.U
+       fsm_state                                 := Mux(icsl_run.asBool, fsm_checking, Mux(io.if_check_privrun, fsm_checking_priv, fsm_nonchecking))
++      // SEQ67_PRIV_ENTRY_FIX: a real trap may arrive in the one-cycle gap
++      // between the synthetic CPS redirect and its registered start pulse.
++      // Capture it on the entry edge too, then run the real handler outside
++      // checker mode and resume the owned package after its matching xRET.
++      when (io.if_check_privrun && !icsl_run.asBool && io.self_xcpt) {
++        trap_depth                              := 1.U
++        resume_state                            := fsm_checking_priv
++        fsm_state                               := fsm_self_xcpt_priv
++      }
+     }
+     //并未对lsl满作出处理
+     is (fsm_checking){
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala b/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala
+index 80de191dc..b91df2f6d 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala
+@@ -1026,7 +1026,7 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
+ 
+ 
+   // Instantiate RSU
+-  val priv_status  = Reg(UInt(2.W))
++  val priv_status  = RegInit(0.U(2.W))
+   val check_priv   = Reg(UInt(2.W))
+   val check_ret_priv = Reg(UInt(2.W))
+   val arfs_is_CSR  = (io.packet_arfs(135+1) === 0x01.U) && (io.packet_arfs(138+1, 136+1) === 0x07.U)
+@@ -1038,7 +1038,18 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
+   check_priv  := Mux(io.arfs_if_CPS.asBool && arfs_is_CSR, io.packet_arfs(135, 134), Mux(check_exception, 0.U, check_priv))
+   check_ret_priv := Mux(!io.arfs_if_CPS.asBool && arfs_is_CSR, io.packet_arfs(135, 134), Mux(csr.io.if_priv_checkcomp, 0.U, check_ret_priv))
+ 
+-  check_exception := (RegNext(priv_cps_done) && !excpt_mode) || ((priv_status === 1.U) && RegNext(csr.io.eret))
++  // SEQ67_PRIV_DISPATCH_FIX: CPS is a held request, not permission to steal
++  // the architectural trap/return redirect. CSR.eret includes ECALL/EBREAK,
++  // so its delayed pulse is NOT evidence that an architectural trap unwound.
++  // Keep priv_status pending until the real context is idle. In the common
++  // trap-free case this fires on the same edge as the original delayed CPS.
++  val privileged_cps_arrived = RegNext(priv_cps_done, false.B)
++  val privileged_start_requested = privileged_cps_arrived || priv_status === 1.U
++  // Use the raw CSR exception, not trace.exception: the trace carries a
++  // structural dependency on retire (= wb_valid, gated by check_exception).
++  // Even trace slot0's retire>=0 comparison is an edge to CheckCombLoops.
++  val privileged_start_ready = !excpt_mode && !csr.io.r_exception.asBool && !csr.io.eret
++  check_exception := privileged_start_requested && privileged_start_ready
+   check_privret   := RegNext(icsl.io.if_check_privret)
+   csr.io.checker_priv_mode := checker_priv_mode.asBool
+   csr.io.checker_mode := checker_mode.asBool
+@@ -1741,6 +1752,59 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
+   SafeChainObservation.emit(6, clock, reset.asBool, safeChainCycle, csr.io.time,
+     io.hartid, safeChainRoi, true.B, safeChainCheckerFields, safeChainCheckerKey,
+     package_result_fire || package_result_handoff_fire || new_package)
++  // SEQ67_BOUNDED_DIAGNOSTICS_BEGIN: observers only; no functional consumers.
++  // Reserve 64 lifecycle rows for seq67 independently of 16 conflict examples.
++  // Kind46/47 are mandatory host-capture records (unlike optional SC6).
++  val seq67Target = package_seq_reg === 67.U || (new_package && new_package_seq === 67.U)
++  val seq67Blocked = privileged_start_requested && !privileged_start_ready
++  val seq67BlockedRise = seq67Blocked && !RegNext(seq67Blocked, false.B)
++  val seq67StartTrap = icsl.io.if_check_privrun && csr.io.trace(0).exception
++  val seq67BadStart = icsl.io.if_check_privrun && excpt_mode && !csr.io.trace(0).exception
++  val seq67DiagFlags = VecInit(Seq(priv_cps_done, privileged_start_requested,
++    privileged_start_ready, check_exception, icsl.io.if_check_privrun,
++    csr.io.trace(0).exception, csr.io.eret, excpt_mode,
++    seq67BlockedRise, seq67StartTrap, seq67BadStart,
++    package_result_fire, package_result_handoff_fire, package_cancelled,
++    icsl.io.package_exec_done, returned_to_special_address_valid)).asUInt
++  val seq67DiagKey = Cat(Mux(new_package, new_package_seq, package_seq_reg),
++    safeChainCheckerKey, icsl.io.debug_state,
++    arch_trap_depth, seq67DiagFlags)
++  val seq67DiagKeyPrev = RegNext(seq67DiagKey)
++  val seq67TargetRows = RegInit(0.U(7.W))
++  val seq67ConflictRows = RegInit(0.U(5.W))
++  val seq67TargetEvent = seq67Target && seq67TargetRows < 64.U &&
++    (seq67DiagKey =/= seq67DiagKeyPrev || new_package || package_result_handoff_fire)
++  val seq67ConflictEvent = !seq67Target && seq67ConflictRows < 16.U &&
++    (seq67BlockedRise || seq67StartTrap || seq67BadStart || package_cancelled)
++  when (seq67TargetEvent) { seq67TargetRows := seq67TargetRows + 1.U }
++  when (seq67ConflictEvent) { seq67ConflictRows := seq67ConflictRows + 1.U }
++  val seq67DiagEvents = Seq(priv_cps_done, check_exception, seq67BlockedRise,
++    seq67StartTrap, seq67BadStart, package_cancelled,
++    seq67Target && package_start_accepted, seq67Target && icsl.io.package_exec_done && !package_exec_done_prev,
++    seq67Target && full_check_complete && package_result_fire,
++    seq67Target && package_result_handoff_fire)
++  val seq67DiagCounts = RegInit(VecInit(Seq.fill(10)(0.U(32.W))))
++  for ((event, i) <- seq67DiagEvents.zipWithIndex) {
++    when (event && !seq67DiagCounts(i).andR) { seq67DiagCounts(i) := seq67DiagCounts(i) + 1.U }
++  }
++  SafeChainObservation.emit(46, clock, reset.asBool, safeChainCycle, csr.io.time,
++    io.hartid, safeChainRoi, seq67TargetEvent || seq67ConflictEvent,
++    Seq(Mux(new_package, new_package_seq, package_seq_reg), 1.U, seq67DiagFlags,
++      safeChainCheckerFlags, safeChainContextFlags, icsl.io.debug_state,
++      arch_trap_depth, csr.io.trace(0).iaddr, csr.io.trace(0).cause,
++      priv_status, check_priv, rsu_pc, icsl.io.trap_depth, io.imem.req.bits.pc,
++      seq67TargetRows, seq67ConflictRows), seq67DiagKey, true.B)
++  // Cumulative counters sampled at each handoff and every CANCEL. These do
++  // not depend on optional trace retention or on a checker seeing a BOOM pulse.
++  val seq67SummaryRows = RegInit(0.U(8.W))
++  val seq67SummaryEvent = (package_result_handoff_fire || package_cancelled) && seq67SummaryRows < 128.U
++  when (seq67SummaryEvent) { seq67SummaryRows := seq67SummaryRows + 1.U }
++  SafeChainObservation.emit(47, clock, reset.asBool, safeChainCycle, csr.io.time,
++    io.hartid, safeChainRoi, seq67SummaryEvent,
++    Seq(package_seq_reg, 1.U, seq67DiagFlags) ++
++      seq67DiagCounts.zip(seq67DiagEvents).map { case (c, e) => c +& e.asUInt } ++
++      Seq(seq67TargetRows, Cat(seq67SummaryRows, seq67ConflictRows), safeChainContextFlags), 0.U, true.B)
++  // SEQ67_BOUNDED_DIAGNOSTICS_END
+   // SAFE_CHAIN_OBSERVATION_END
+   //===== GuardianCouncil Function: End   ====//
+ 

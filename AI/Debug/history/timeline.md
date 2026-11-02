@@ -1,5 +1,9 @@
 # Debug 演化时间线
 
+2026-11-01：preservation/outer-A专项离线审查区分target-set锁、packet锁与SourceC预约；source/generated证明packet末A即释放、不跨drain/terminalACK，inner Get hit不经outerA，held FIFO head不是重复新请求。固定gap-only UB≤34,104（非整机制），停止其Opt5主线。发现真正跨ACK的SourceC全局预约可阻无关victim Release，继而阻需ReleaseAck的新Acquire；动态critical预算仍未知，下一离线转SourceC release/acquire HOL，再看入口/SourceD。20笔真实release代理保留，真实preservation/lock episode与UB1–UB4关联null。19项CPU测试/离线integration及19硬件/19工具/85证据/8generated-native hash通过；无硬件修改/生成/build/仿真或新run。MAIN_MECHANISM/OPT5_STATUS=NONE_JUSTIFIED，NOT_SUPPORTED，MOVE_TO_NEXT_OFFLINE_BOTTLENECK，frontend LAST_RESORT。见 [报告](../../TMP/opt5_preservation_outerA_attribution_20261101_135133/README.md)。
+
+2026-11-01：Opt5 cache-transfer离线归因完成，mandatory SC20/38/21恢复6,735笔source6 release及53,880个实际bank写、ACK全匹配。ROI2,231笔首C→ACK phase union100,915；lastC→首bank67,366，8beat连续，末bank→ACK仅4,546。具体静态疑点是L2 preservation全局pre-capture drain/逐beat读取发送/outerA packet锁，尚无checkpoint→critical请求/package join。纠正MSHR等victim采集而非ACK、E责任独立于安装、ordinary load已有LB旁路。21项CPU测试及离线integration PASS；原19硬件/19工具/85证据/8generated-native hash不变。主候选NONE_JUSTIFIED，whole-mechanism UB未知、保守credit0，SUB1P5_NOT_SUPPORTED/MORE_OFFLINE_ATTRIBUTION；frontend LAST_RESORT。无硬件改动/生成/build/仿真/新run命令/清理。见 [报告](../../TMP/opt5_cache_transfer_attribution_20261101_113310/README.md)。
+
 2026-10-30：按用户要求准备一次性最终FST诊断入口，状态`READY_FOR_OPT4_SVB_WAVEFORM_RUN`，硬件根因仍证据不足。新入口fresh generation/debug build、窗口sim time1500000至终止、主BOOM/Rob/LSU/cache/fast-line gates/WB/probe/6MSHR/TL/safe控制高覆盖，4455只读aliases、189项排除、启动前compiled trace审查；关键既有snapshot/事件不再受verbose门控。仅build-local observation overlay与host FST退出处理，功能源码及性能入口不改；唯一FST留waveform_debug/run下并hash，8192-event失败ring保留，无resume/自动重跑。88offline tests、全部表达式fixture lint/trace audit、SVB独立静态trace audit、native FST字面量fixture和source identity通过。未fresh elaboration/整机build/仿真；下一步用户唯一命令`bash /data1/gzh/EC/slowdown/run_optimization_4_svb_waveform_debug.sh --jobs 8`。见 [准备报告](../../TMP/opt4_svb_waveform_debug_prepare_20261030_091449_2f46ad8a/README.md)。
 
 2026-10-30：最新Opt4 diagnostic user run `optimization_4_svb_20261029_120415_a83514b4` 再于time2099000 watchdog exit1，未完成benchmark。查明全部诊断printf被`verbose&&done_reset`关闭（launcher未启用verbose），failure ring只有2 fatal，owner snapshot无法恢复；旧READY的静态检查漏掉runtime enable。仅修offline native-watchdog识别与SVB16 manifest容量fallback，消除NO_WATCHDOG漏检和59 slot误报；corrected prefix6999/6999、SVB325/325/325、conflict/invalidACK/regression0，仍缺footer/最终correctness。70tests、BOOM compile/parser、host fixture、SV lint、static-check、patch/diff PASS。没有功能RTL改动/新观测run/生成/build/仿真；状态HANG_DIAGNOSTIC_EVIDENCE_INSUFFICIENT，硬件根因仍unresolved，不ready正式rerun。见 [结果与修复边界](../../TMP/opt4_svb_hang_rootcause_fix_20261030_a83514b4_7c92e1d0/README.md)。
@@ -260,3 +264,29 @@ control/data untouched by exact inverse proof. Full Scala/FIRRTL/firtool/comb-lo
 120 offline checks PASS; no hardware simulation. Final status CURRENT_DATA_FUNDAMENTALLY_INSUFFICIENT,
 FINAL_OPT4_VALIDATION_PREPARED; no new pure diagnostic run. See current state and
 AI/TMP/opt4_one_shot_closure_20261030_143326_a1dcf391/README.md.
+
+## 2026-11-01 — Opt5 SourceC minimal waitAck bypass, pending one user run
+
+Global C schedule/read reservation through checkpoint waitAck statically proven;
+user quick-GO rules B/D accepted without inventing runtime cycle credit. Two-file
+phase narrowing keeps target lock/terminal ACK and SourceC packets/drain. One SC48
+STOP row adds8 predicates. Scala typer,14 CPU tests and real shell static preflight
+PASS; no elaboration/build/simulation/claim. Report `AI/TMP/opt5_sourcec_one_shot_20261101_173240`;
+fingerprint `dc55be848aa333d96d2cd5299896c1957208e34b784e156b38a4e6ae53fcb335`. User command in next_run.md.
+Current B1,648,923 preserved (raw capture FAIL plus closed lossless recovery);
+identity-cap-only256 overlay avoids the known133-identity cap failure. Runtime gain
+UNKNOWN; correctness pending hardware. One experiment only; saving<50k ends direction.
+
+## 2026-11-02 — Opt4 frozen for DAC; optimization paused
+
+User authorized local archive/cleanup/commits, no benchmark or remote operation.
+Verified measuredOpt4 source476a76091 (all12 measured hashes), ROI1,707,863 versus
+1,001,675=1.7050071×. All13 postOpt4 hardware/resource edits restored only after actual
+diffs/snapshots and16-file forward replay. Seq67/L1/SourceC and observer/tool research
+preserved under slowdown/analysis_archive; original runtime evidence untouched.
+Proven host-only correctness/shadow recertification retained. Root+simulatorCWD DRAM
+logs unclassified and relocated;22 scoped logs preserved.46 bytecode files/10empty
+cache dirs removed; heavyweight/unknown artifacts kept. SourceC never ran. Stable
+entry slowdown/OPT4_BASELINE.md; recovery slowdown/analysis_archive/RESUME_OPTIMIZATION.md.
+
+Local freeze commit: `962c4b87db2a810bc025a87f5f7289dd7aedc5cf` — `ec: freeze Opt4 as stable optimization baseline`. Functional source still476a76091; no hardware tree change.

@@ -1,0 +1,76 @@
+{
+  "AST": "PASS",
+  "A_prime_executed": false,
+  "UB1_UB2_UB3_UB4": "UNKNOWN_WITH_SCOPED_TRIVIAL_AND_NESTED_RANGES",
+  "actual_preservation_outer_lock_episodes": "UNAVAILABLE_EXPLICIT_NULL",
+  "hardware_generation": "NOT_EXECUTED",
+  "hardware_runs_prepared": 0,
+  "hardware_sources_modified": 0,
+  "intrinsic_gap_only_bound": {
+    "scope": "delete only mandatory delay1/delay2/read gap slots while packet arb held; NOT whole lock/preservation UB",
+    "status": "PASS",
+    "value": 34104
+  },
+  "manual_review": "packet vs set vs SourceC lock separated; TL beat interleaving rejected; no global 80832 bound; proxy and synthetic are not runtime checkpoint episodes",
+  "measured_prebank_phase_union_and_top20_release_proxies": "PASS",
+  "new_source_generated_and_input_hashes": "PASS",
+  "offline_tests": {
+    "command": [
+      "/data1/gzh/EC/chipyard/.conda-env/bin/python3",
+      "-I",
+      "-B",
+      "/data1/gzh/EC/AI/Debug/scripts/test_opt5_preservation_outer_a.py"
+    ],
+    "count": 19,
+    "exit_code": 0,
+    "log": "offline_tests.log",
+    "status": "PASS"
+  },
+  "old_A_vs_B": "REFERENCE_COMPARISON",
+  "original_hash_counts": {
+    "hardware": 19,
+    "original_evidence": 85,
+    "prior_generated_native_files": 8,
+    "sealed_tools": 19
+  },
+  "prior_complete_report_output_hashes": "PASS",
+  "proposed_T1_T5": "UNAVAILABLE_EXPLICIT_NULL",
+  "required_artifacts": [
+    "README.md",
+    "preservation_state_machine.md",
+    "outer_a_lock_semantics.md",
+    "67k_latency_decomposition.md",
+    "episode_analysis.md",
+    "blocked_request_amplification.md",
+    "rob_critical_correlation.md",
+    "bank_arbitration_analysis.md",
+    "hol_blocking_analysis.md",
+    "upper_bound.md",
+    "candidate_fixes.md",
+    "next_run_plan.md",
+    "validation_result.json"
+  ],
+  "required_artifacts_present": true,
+  "runtime_amplification_and_critical_join": "UNAVAILABLE_EXPLICIT_NULL",
+  "scope": "offline evidence/source/generated/contract audit; not new hardware validation",
+  "sealed_sources_tools_evidence_unchanged": "PASS",
+  "simulation": "NOT_EXECUTED",
+  "source_generated_dependency_checks": {
+    "Acquire_requires_own_victim_receipt": true,
+    "SourceA_only_Acquire": true,
+    "final_A_enters_waitAck": true,
+    "generated_FIFO_no_dequeue_without_ready": true,
+    "generated_SourceA_FIFO2": true,
+    "generated_SourceC_port_block": true,
+    "generated_normal_A_ready_uses_packet_idle_not_target_lock": true,
+    "generated_packet_beats_count_down_on_A_fire": true,
+    "generated_target_set_lock_independent": true,
+    "global_SourceC_port_block": true,
+    "global_SourceC_schedule_block": true,
+    "normal_source_below_checkpoint_source": true,
+    "target_lock_until_terminal_ack": true
+  },
+  "status": "PASS",
+  "strict_pairing": "STRICT_PAIRING_PENDING",
+  "verilator_build": "NOT_EXECUTED"
+}

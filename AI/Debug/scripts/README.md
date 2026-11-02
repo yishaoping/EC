@@ -1,4 +1,38 @@
+# Current execution policy — Opt4 frozen, optimization paused (2026-11-02)
+
+Stable entry and read-only verification: slowdown/README.md and slowdown/OPT4_BASELINE.md.
+All Opt5/L1/seq67/SourceC commands below are historical and superseded by PAUSED.
+Their original scripts remain at compatible paths as archived research tools; source
+seals intentionally reject the frozen Opt4 tree. Do not execute historical run commands.
+Recovery: slowdown/analysis_archive/RESUME_OPTIMIZATION.md.
+
 # 可复用 Debug 工具
+
+Opt5 preservation/outer-A离线归因（2026-11-01）：
+`python3 -I -B AI/Debug/scripts/analyze_opt5_preservation_outer_a.py --out AI/TMP/opt5_preservation_outerA_attribution_<new_timestamp>`。
+复核前轮全部报告/原始证据与source/generated锁方程，分开target-set、packet、SourceC预约；
+输出13项报告及20笔release代理，不伪造缺失的preservation/lock episode或critical join。
+`opt5_preservation_outer_a_reports.py`为renderer；`test_opt5_preservation_outer_a.py`19项CPU
+测试涵盖ACK/packet生命周期、bank/ready stall、intrinsic gap范围、held FIFO unique计数与嵌套去重。
+gap-only≤34,104不是全机制UB。见[preservation/outer-A归因限制](../references/opt5_preservation_outer_a_limits.md)。
+
+Opt5 cache-transfer离线归因（2026-11-01）：
+`python3 -I -B AI/Debug/scripts/analyze_opt5_cache_transfer.py --out AI/TMP/opt5_cache_transfer_attribution_<new_timestamp>`。
+复用前轮审计，逐笔连接mandatory SC20/38/21，检查source/版本/8-word coverage/ACK终态，
+输出13项报告、全部release事务、phase分布/top episodes、source/generated摘录与hash。
+`opt5_cache_transfer_reports.py`是renderer；`test_opt5_cache_transfer.py`有21项CPU测试，
+包括丢word/错身份/早ACK/source重叠/reset/同edge/ROI删失/分位bin。
+不调用硬件、不覆盖旧目录、不清理fixture。critical join缺失保持null，phase exposure不当收益；
+边界见[cache transfer归因限制](../references/opt5_cache_transfer_limits.md)。
+
+Opt5 sub-1.5 离线机会审计（2026-11-01）：
+`python3 -I -B AI/Debug/scripts/analyze_opt5_sub1p5_gap.py --out AI/TMP/opt5_sub1p5_gap_analysis_<new_timestamp>`。
+仅消费已命名完成A/B及前轮B恢复视图；核验原始计数/STOP、seal hashes和source/generated
+signatures，输出11项报告及numeric/provenance。拒绝已有输出目录、未知run身份或新出现的A′结果，
+不调用硬件工具。缺逐token历史保持null，固定轨迹head-wait包络不作为时序反馈全局上界。
+`python3 -I -B AI/Debug/scripts/test_opt5_sub1p5_gap.py` 为17项CPU边界测试，
+synthetic hash fixture留在AI/TMP，不清理。结论边界见
+[load机会测量限制](../references/opt5_load_opportunity_limits.md)。
 
 Stage3 唯一入口（2026-10-19）：
 `bash /data1/gzh/EC/AI/Debug/scripts/stage3/stage3_run.sh`，不接受参数。
@@ -166,3 +200,23 @@ fixture 消费实际 L1 的 33 个 BoringUtils source：保留控制/统计和 e
 
 历史 r8baqbfq 的 CAM 连线失败、d5wr10l1 的 epoch 请求阻塞已由后续 agciqdp_ 越过。
 本轮只审计已有证据，没有编译/生成/仿真或单元测试；没有修改运行输入，也没有覆盖原run。
+
+## Opt5 SourceC one-shot (2026-11-01)
+
+- `run_opt5_sourcec.sh --report AI/TMP/opt5_sourcec_one_shot_20261101_173240 --jobs 4`: user-only
+  fresh B64K candidate experiment, existing launcher/source guard, same pinned software.
+  One persistent claim, no retry/resume/A-prime/sweep. **Starts hardware only when the user runs it.**
+- `launch_opt5_sourcec.py --report ... --static-check`: hash/contract/patch/software
+  preflight only; never generates/builds/simulates or claims a run.
+- `--analyze-only`: offline reanalysis of the sole candidate run; keeps existing
+  functional/benchmark/integrity/protocol/ordering/observer/native ROI gates and
+  additionally checks SC48 conservation, all package handoffs, config/clock/resources.
+  Updates the primary validation_result.json. No performance claim on invalid runs.
+- `test_opt5_sourcec.py`:14 CPU protocol-contract/source/diagnostics/capture/one-shot
+  guard tests. Not RTL execution. Fixtures retained in AI/TMP.
+
+SC48 uses hardware traffic window; pending is a raw voluntary MSHR C opportunity,
+not exclusive SourceC blockage. Actual lease and original-lock shadow partition with
+waitAck; no claimed cycle savings. Capture overlay changes just two128→256 dictionary
+caps; original script/budgets/mandatory gates remain. See report sourcec_fix.md for
+schema and safety, next_run.md for the sole hardware command and stop thresholds.

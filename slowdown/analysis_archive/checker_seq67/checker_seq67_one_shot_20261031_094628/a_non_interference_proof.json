@@ -1,0 +1,14 @@
+{
+  "proven": false,
+  "complete_dynamic_coverage": false,
+  "status": "NO",
+  "baseline_roi": 1707863,
+  "sc6_retained": 6518,
+  "sc6_host_records_omitted": 701,
+  "retained_starts": 283,
+  "retained_bad_starts": 0,
+  "cancelled_results": 0,
+  "reason": "A optional SC6 host loss; no complete dispatch/trap coincidence counter in r2. Zero retained bad starts and zero CANCELs are insufficient for strict timing equivalence.",
+  "consequence": "Request B only; if B passes, report CORRECTNESS_CLOSED_BUT_STRICT_PAIRING_REQUIRES_BASELINE_REFRESH. No A scheduled.",
+  "source_scope": "Only privileged dispatch/entry transitions changed; all 17 previously sealed hardware files byte-identical. This proves scope, not dynamic timing equivalence."
+}
