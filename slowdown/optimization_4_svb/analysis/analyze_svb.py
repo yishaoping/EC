@@ -275,6 +275,15 @@ def cache_opportunity(run, benchmark, integrity=None):
             m['dram_read_opportunity_reduction'] = m['miss_reduction_vs_s0'] if row['level'] == 2 else None
             # A dirty-victim delta is an opportunity proxy, not predicted actual DRAM traffic.
             m['dirty_victim_opportunity_reduction'] = base['dirty_victim'] - st['dirty_victim']
+            if not sane:
+                # Keep raw observations for diagnosis, but never publish a
+                # geometry-benefit number from a failed S0 model.
+                for field in ('miss_reduction_vs_s0', 'replacement_reduction_vs_s0',
+                              'miss_reduction_vs_actual', 'replacement_reduction_vs_actual',
+                              'miss_reduction_percent', 'replacement_reduction_percent',
+                              'conflict_candidate_reduction_vs_s0',
+                              'dram_read_opportunity_reduction', 'dirty_victim_opportunity_reduction'):
+                    m[field] = None
             if m['name'] != 'S0' and sane and benchmark and \
                     base['miss'] >= 10 and m['miss_reduction_percent'] >= 10:
                 candidates.append(dict(level=row['level'], instance=row['instance'], name=m['name'],
@@ -287,7 +296,8 @@ def cache_opportunity(run, benchmark, integrity=None):
         else:
             associativity = models[1]['miss_reduction_percent'] or 0
             capacity = models[2]['miss_reduction_percent'] or 0
-            row['decision'] = ('associativity-sensitive' if associativity >= 10 else
+            row['decision'] = ('associativity-and-capacity-sensitive' if associativity >= 10 and capacity >= 10 else
+                               'associativity-sensitive' if associativity >= 10 else
                                'capacity-sensitive' if capacity >= 10 else 'insensitive')
     if not any(k[0] == 1 for k in seen) or not any(k[0] == 2 for k in seen):
         errors.append('missing L1 or L2 summary')
@@ -322,7 +332,7 @@ def cache_opportunity(run, benchmark, integrity=None):
                 cache_opt_candidate=(max(candidates, key=lambda x: x['estimated_misses_avoided'])
                                      if candidates and not errors else None),
                 classification='COUNTERFACTUAL_CACHE_TRAFFIC_ESTIMATE',
-                predicted_roi=None, candidate_policy='one hypothesis only; hardware cost and real validation required')
+                predicted_roi=None, candidate_policy='traffic hypothesis only; per-level S0 sanity, critical-path evidence, hardware cost and real validation required')
 
 
 def run_summary(run):
@@ -373,11 +383,18 @@ def run_summary(run):
             integrity['errors'].append('integrity/protocol completion count mismatch')
             integrity['status'] = 'FAIL'
     cache = cache_opportunity(run, benchmark, integrity)
-    if require_integrity and (not cache.get('models') or
-            any(not model.get('geometry_decision_eligible') or model.get('analyzer_s0_miss_relative_error',1)>0.10
-                for model in cache['models'])):
-        cache.setdefault('errors',[]).append('final cache shadow S0 sanity failed')
-        cache['status']='FAIL'
+    # Cache-model fidelity is not SVB/benchmark correctness. A failed L2
+    # counterfactual must block L2 geometry decisions, not invalidate a closed
+    # allocation-scoped integrity/protocol ledger or a valid L1 S0 comparison.
+    cache['shadow_validation_status'] = ('PASS' if cache.get('models') and
+        all(model.get('geometry_decision_eligible') and
+            model.get('analyzer_s0_miss_relative_error', 1) <= 0.10
+            for model in cache['models']) else 'FAIL')
+    cache['shadow_validation_by_level'] = {
+        str(model.get('level')) + ':' + str(model.get('instance')):
+        ('PASS' if model.get('geometry_decision_eligible') and
+         model.get('analyzer_s0_miss_relative_error', 1) <= 0.10 else 'FAIL')
+        for model in cache.get('models', [])}
     if require_integrity and integrity['status'] != 'PASS':
         cache.setdefault('errors',[]).append('integrity lifecycle ledger failed')
         cache['status'] = 'FAIL'

@@ -68,7 +68,7 @@ def identity():
     unexpected = (changed | untracked) - ALLOWED_HARDWARE
     if unexpected:
         raise RuntimeError("unreviewed hardware changes: " + repr(sorted(unexpected)))
-    patch = ROOT / "AI/TMP/opt4_one_shot_closure_20261030_143326_a1dcf391/opt4_integrity_cumulative.patch"
+    patch = ROOT / "slowdown/opt4/opt4_integrity_cumulative.patch"
     if not patch.is_file():
         raise RuntimeError("SVB patch artifact missing: " + str(patch))
     patch_text = patch.read_text(errors="replace")

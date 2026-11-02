@@ -1,0 +1,6 @@
+# Preserve patch context and forensic source/log bytes exactly. These are data,
+# not source files being reformatted by cleanup.
+slowdown/opt4/*.patch -whitespace
+slowdown/analysis_archive/**/*.patch -whitespace
+slowdown/analysis_archive/cleanup_evidence/pre_cleanup_files/** -whitespace
+slowdown/unclassified_logs/**/dramsim.log -whitespace
