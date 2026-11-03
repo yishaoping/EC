@@ -83,7 +83,7 @@ printf("[OUTPUT] benchmark=blackscholes checksum=%016lx verified=%d options=N ru
     (src/'adapter.c').write_text(adapter)
     return ['adapter.c'],{'input_class':size,'parent_input':parent_input,'input_filename':inp.name,'input_sha256':sha(inp),'options':n,'iterations':100,'operations':n*100,'command_line':f'blackscholes 1 {inp.name} prices.txt','output_verification':'all options finite, abs error < 1e-4 vs official DGrefval; full bit checksum'},False
 def streamcluster(src,size):
-    args={'test':(2,5,1,10,10,5),'simdev':(3,10,3,16,16,10),'project128':(3,10,16,128,128,64),'project256':(3,10,16,256,256,128),'simsmall':(10,20,32,4096,4096,1000)}[size]
+    args={'test':(2,5,1,10,10,5),'simdev':(3,10,3,16,16,10),'project32':(3,10,3,32,32,16),'project64':(3,10,3,64,64,32),'project128':(3,10,16,128,128,64),'project256':(3,10,16,256,256,128),'simsmall':(10,20,32,4096,4096,1000)}[size]
     q=src/'streamcluster.cpp';text=q.read_text()
     # File output and progress logging are replaced by a pointer handoff.
     # The original clustering, RNG, all iteration bounds and distance code remain.

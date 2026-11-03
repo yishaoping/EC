@@ -1,0 +1,300 @@
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008cc4 addr=008044ef70 pc=00800001c4 ldq=c cacheable=1 cycle=000000000001d42b
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cc2 addr=008044ef60 pc=00800001c0 ldq=a cacheable=1 data=0000000000000100 cycle=000000000001d42b
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cc1 addr=008044ef58 pc=00800001be ldq=9 scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d42b
+STAGE1_TX S1 source=DCACHE cycle=000000000001d42b line=008044ef40 set=bd way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cc3 effect=0000000000000000 pc=00800001c2 cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d42b line=008044ef40 set=bd way=1 epoch=0001 gen=000041ee mshr=00 txn=00000000 req=0000000000008cc2 effect=0000000000000000 pc=00800001c0 cmd=00 admission=7
+C:0 3 0x00000000800001c0 bigcomp:7 (0x7606) x12 0x0000000000000100
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=d req=0000000000008cc5 effect=0000000000000000 seq=00000000 addr=008044ef78 cycle=000000000001d42c
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008cc5 addr=008044ef78 pc=00800001c6 ldq=d cacheable=1 cycle=000000000001d42c
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cc3 addr=008044ef68 pc=00800001c2 ldq=b cacheable=1 data=0000000000000009 cycle=000000000001d42c
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cc2 addr=008044ef60 pc=00800001c0 ldq=a scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d42c
+STAGE1_TX S1 source=DCACHE cycle=000000000001d42c line=008044ef40 set=bd way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cc4 effect=0000000000000000 pc=00800001c4 cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d42c line=008044ef40 set=bd way=1 epoch=0001 gen=000041ee mshr=00 txn=00000000 req=0000000000008cc3 effect=0000000000000000 pc=00800001c2 cmd=00 admission=7
+C1:      59874 [1] pc=[0000000080000178] W[r 0=0000000000000000][0] R[r 2=0000000080456f00] R[r22=0000000000000000] inst=[0000f95a] DASM(0000f95a)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2:      59851 [1] pc=[0000000080000182] W[r 0=0000000000000000][0] R[r 2=000000008045ef00] R[r27=0000000000000000] inst=[0000edee] DASM(0000edee)
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3:      59829 [1] pc=[0000000080000ab8] W[r15=0000000000000004][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[342027f3] DASM(342027f3)
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4:      59806 [1] pc=[0000000080000ae0] W[r 0=0000000080000ae4][1] R[r 1=000000008000019e] R[r 0=0000000000000000] inst=[00008067] DASM(00008067)
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C:0 3 0x00000000800001c2 bigcomp:7 (0x76a6) x13 0x0000000000000009
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=e req=0000000000008cc6 effect=0000000000000000 seq=00000000 addr=008044ef80 cycle=000000000001d42d
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008cc6 addr=008044ef80 pc=00800001c8 ldq=e cacheable=1 cycle=000000000001d42d
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cc4 addr=008044ef70 pc=00800001c4 ldq=c cacheable=1 data=0000000080046b90 cycle=000000000001d42d
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cc3 addr=008044ef68 pc=00800001c2 ldq=b scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d42d
+STAGE1_TX S1 source=DCACHE cycle=000000000001d42d line=008044ef40 set=bd way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cc5 effect=0000000000000000 pc=00800001c6 cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d42d line=008044ef40 set=bd way=1 epoch=0001 gen=000041ee mshr=00 txn=00000000 req=0000000000008cc4 effect=0000000000000000 pc=00800001c4 cmd=00 admission=7
+C:0 3 0x00000000800001c4 bigcomp:7 (0x7746) x14 0x0000000080046b90
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=f req=0000000000008cc7 effect=0000000000000000 seq=00000000 addr=008044ef88 cycle=000000000001d42e
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008cc7 addr=008044ef88 pc=00800001ca ldq=f cacheable=1 cycle=000000000001d42e
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cc5 addr=008044ef78 pc=00800001c6 ldq=d cacheable=1 data=0000000000000050 cycle=000000000001d42e
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cc4 addr=008044ef70 pc=00800001c4 ldq=c scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d42e
+STAGE1_TX S1 source=DCACHE cycle=000000000001d42e line=008044ef80 set=be way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cc6 effect=0000000000000000 pc=00800001c8 cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d42e line=008044ef40 set=bd way=1 epoch=0001 gen=000041ee mshr=00 txn=00000000 req=0000000000008cc5 effect=0000000000000000 pc=00800001c6 cmd=00 admission=7
+C1:      59875 [1] pc=[000000008000017a] W[r 0=0000000000000000][0] R[r 2=0000000080456f00] R[r23=0000000000000000] inst=[0000fd5e] DASM(0000fd5e)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2:      59852 [1] pc=[0000000080000184] W[r 0=0000000000000000][0] R[r 2=000000008045ef00] R[r28=0000000000000000] inst=[0000f1f2] DASM(0000f1f2)
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C:0 3 0x00000000800001c6 bigcomp:7 (0x77e6) x15 0x0000000000000050
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=0 req=0000000000008cc8 effect=0000000000000000 seq=00000000 addr=008044ef90 cycle=000000000001d42f
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008cc8 addr=008044ef90 pc=00800001cc ldq=0 cacheable=1 cycle=000000000001d42f
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cc6 addr=008044ef80 pc=00800001c8 ldq=e cacheable=1 data=0000000080046918 cycle=000000000001d42f
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cc5 addr=008044ef78 pc=00800001c6 ldq=d scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d42f
+STAGE1_TX S1 source=DCACHE cycle=000000000001d42f line=008044ef80 set=be way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cc7 effect=0000000000000000 pc=00800001ca cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d42f line=008044ef80 set=be way=1 epoch=0001 gen=000041f6 mshr=00 txn=00000000 req=0000000000008cc6 effect=0000000000000000 pc=00800001c8 cmd=00 admission=7
+C:0 3 0x00000000800001c8 bigcomp:7 (0x680a) x16 0x0000000080046918
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=1 req=0000000000008cc9 effect=0000000000000000 seq=00000000 addr=008044ef98 cycle=000000000001d430
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008cc9 addr=008044ef98 pc=00800001ce ldq=1 cacheable=1 cycle=000000000001d430
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cc7 addr=008044ef88 pc=00800001ca ldq=f cacheable=1 data=0000000000000002 cycle=000000000001d430
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cc6 addr=008044ef80 pc=00800001c8 ldq=e scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d430
+STAGE1_TX S1 source=DCACHE cycle=000000000001d430 line=008044ef80 set=be way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cc8 effect=0000000000000000 pc=00800001cc cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d430 line=008044ef80 set=be way=1 epoch=0001 gen=000041f6 mshr=00 txn=00000000 req=0000000000008cc7 effect=0000000000000000 pc=00800001ca cmd=00 admission=7
+C1:      59876 [1] pc=[000000008000017c] W[r 0=0000000000000000][0] R[r 2=0000000080456f00] R[r24=0000000000000000] inst=[0000e1e2] DASM(0000e1e2)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2:      59853 [1] pc=[0000000080000186] W[r 0=0000000000000000][0] R[r 2=000000008045ef00] R[r29=0000000000000000] inst=[0000f5f6] DASM(0000f5f6)
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4:      59808 [1] pc=[000000008000019e] W[r 0=0000000080000216][1] R[r10=0000000080000216] R[r 0=0000000000000000] inst=[34151073] DASM(34151073)
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C:0 3 0x00000000800001ca bigcomp:7 (0x68aa) x17 0x0000000000000002
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=2 req=0000000000008cca effect=0000000000000000 seq=00000000 addr=008044efa0 cycle=000000000001d431
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008cca addr=008044efa0 pc=00800001d0 ldq=2 cacheable=1 cycle=000000000001d431
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cc8 addr=008044ef90 pc=00800001cc ldq=0 cacheable=1 data=0000000000000000 cycle=000000000001d431
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cc7 addr=008044ef88 pc=00800001ca ldq=f scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d431
+STAGE1_TX S1 source=DCACHE cycle=000000000001d431 line=008044ef80 set=be way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cc9 effect=0000000000000000 pc=00800001ce cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d431 line=008044ef80 set=be way=1 epoch=0001 gen=000041f6 mshr=00 txn=00000000 req=0000000000008cc8 effect=0000000000000000 pc=00800001cc cmd=00 admission=7
+C:0 3 0x00000000800001cc bigcomp:7 (0x694a) x18 0x0000000000000000
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=3 req=0000000000008ccb effect=0000000000000000 seq=00000000 addr=008044efa8 cycle=000000000001d432
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008ccb addr=008044efa8 pc=00800001d2 ldq=3 cacheable=1 cycle=000000000001d432
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cc9 addr=008044ef98 pc=00800001ce ldq=1 cacheable=1 data=0000000000000000 cycle=000000000001d432
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cc8 addr=008044ef90 pc=00800001cc ldq=0 scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d432
+STAGE1_TX S1 source=DCACHE cycle=000000000001d432 line=008044ef80 set=be way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cca effect=0000000000000000 pc=00800001d0 cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d432 line=008044ef80 set=be way=1 epoch=0001 gen=000041f6 mshr=00 txn=00000000 req=0000000000008cc9 effect=0000000000000000 pc=00800001ce cmd=00 admission=7
+C1:      59877 [1] pc=[000000008000017e] W[r 0=0000000000000000][0] R[r 2=0000000080456f00] R[r25=0000000000000000] inst=[0000e5e6] DASM(0000e5e6)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2:      59854 [1] pc=[0000000080000188] W[r 0=0000000000000000][0] R[r 2=000000008045ef00] R[r30=0000000000000000] inst=[0000f9fa] DASM(0000f9fa)
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3:      59832 [1] pc=[0000000080000abc] W[r 0=0000000000000000][0] R[r15=0000000000000004] R[r 0=0000000000000000] inst=[0a07d263] DASM(0a07d263)
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4:      59809 [1] pc=[00000000800001a2] W[r 5=0000000000002000][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[00006289] DASM(00006289)
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C:0 3 0x00000000800001ce bigcomp:7 (0x69ea) x19 0x0000000000000000
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=4 req=0000000000008ccc effect=0000000000000000 seq=00000000 addr=008044efb0 cycle=000000000001d433
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008ccc addr=008044efb0 pc=00800001d4 ldq=4 cacheable=1 cycle=000000000001d433
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cca addr=008044efa0 pc=00800001d0 ldq=2 cacheable=1 data=0000000000000000 cycle=000000000001d433
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cc9 addr=008044ef98 pc=00800001ce ldq=1 scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d433
+STAGE1_TX S1 source=DCACHE cycle=000000000001d433 line=008044ef80 set=be way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008ccb effect=0000000000000000 pc=00800001d2 cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d433 line=008044ef80 set=be way=1 epoch=0001 gen=000041f6 mshr=00 txn=00000000 req=0000000000008cca effect=0000000000000000 pc=00800001d0 cmd=00 admission=7
+C:0 3 0x00000000800001d0 bigcomp:7 (0x7a0a) x20 0x0000000000000000
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=5 req=0000000000008ccd effect=0000000000000000 seq=00000000 addr=008044efb8 cycle=000000000001d434
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008ccd addr=008044efb8 pc=00800001d6 ldq=5 cacheable=1 cycle=000000000001d434
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008ccb addr=008044efa8 pc=00800001d2 ldq=3 cacheable=1 data=0000000000000000 cycle=000000000001d434
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cca addr=008044efa0 pc=00800001d0 ldq=2 scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d434
+STAGE1_TX S1 source=DCACHE cycle=000000000001d434 line=008044ef80 set=be way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008ccc effect=0000000000000000 pc=00800001d4 cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d434 line=008044ef80 set=be way=1 epoch=0001 gen=000041f6 mshr=00 txn=00000000 req=0000000000008ccb effect=0000000000000000 pc=00800001d2 cmd=00 admission=7
+C1:      59878 [1] pc=[0000000080000180] W[r 0=0000000000000000][0] R[r 2=0000000080456f00] R[r26=0000000000000000] inst=[0000e9ea] DASM(0000e9ea)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2:      59855 [1] pc=[000000008000018a] W[r 0=0000000000000000][0] R[r 2=000000008045ef00] R[r31=0000000000000000] inst=[0000fdfe] DASM(0000fdfe)
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3:      59833 [1] pc=[0000000080000b60] W[r14=000000000000000b][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[00b00713] DASM(00b00713)
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4:      59810 [1] pc=[00000000800001a4] W[r 5=0000000000001800][1] R[r 5=0000000000002000] R[r 0=0000000000000000] inst=[8002829b] DASM(8002829b)
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C:0 3 0x00000000800001d2 bigcomp:7 (0x7aaa) x21 0x0000000000000000
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=6 req=0000000000008cce effect=0000000000000000 seq=00000000 addr=008044efc0 cycle=000000000001d435
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008cce addr=008044efc0 pc=00800001d8 ldq=6 cacheable=1 cycle=000000000001d435
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008ccc addr=008044efb0 pc=00800001d4 ldq=4 cacheable=1 data=0000000000000000 cycle=000000000001d435
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008ccb addr=008044efa8 pc=00800001d2 ldq=3 scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d435
+STAGE1_TX S1 source=DCACHE cycle=000000000001d435 line=008044ef80 set=be way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008ccd effect=0000000000000000 pc=00800001d6 cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d435 line=008044ef80 set=be way=1 epoch=0001 gen=000041f6 mshr=00 txn=00000000 req=0000000000008ccc effect=0000000000000000 pc=00800001d4 cmd=00 admission=7
+C:0 3 0x00000000800001d4 bigcomp:7 (0x7b4a) x22 0x0000000000000000
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=7 req=0000000000008ccf effect=0000000000000000 seq=00000000 addr=008044efc8 cycle=000000000001d436
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008ccf addr=008044efc8 pc=00800001da ldq=7 cacheable=1 cycle=000000000001d436
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008ccd addr=008044efb8 pc=00800001d6 ldq=5 cacheable=1 data=0000000000000000 cycle=000000000001d436
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008ccc addr=008044efb0 pc=00800001d4 ldq=4 scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d436
+STAGE1_TX S1 source=DCACHE cycle=000000000001d436 line=008044efc0 set=bf way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cce effect=0000000000000000 pc=00800001d8 cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d436 line=008044ef80 set=be way=1 epoch=0001 gen=000041f6 mshr=00 txn=00000000 req=0000000000008ccd effect=0000000000000000 pc=00800001d6 cmd=00 admission=7
+C1:      59879 [1] pc=[0000000080000182] W[r 0=0000000000000000][0] R[r 2=0000000080456f00] R[r27=0000000000000000] inst=[0000edee] DASM(0000edee)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2:      59856 [1] pc=[000000008000018c] W[r10=0000000080000216][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[34102573] DASM(34102573)
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3:      59834 [1] pc=[0000000080000b64] W[r 0=0000000000000000][0] R[r15=0000000000000004] R[r14=000000000000000b] inst=[f6e79ce3] DASM(f6e79ce3)
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4:      59811 [1] pc=[00000000800001a8] W[r 0=8000000a0001f800][1] R[r 5=0000000000001800] R[r 0=0000000000000000] inst=[3002a073] DASM(3002a073)
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C:0 3 0x00000000800001d6 bigcomp:7 (0x7bea) x23 0x0000000000000000
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=8 req=0000000000008cd0 effect=0000000000000000 seq=00000000 addr=008044efd0 cycle=000000000001d437
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008cd0 addr=008044efd0 pc=00800001dc ldq=8 cacheable=1 cycle=000000000001d437
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cce addr=008044efc0 pc=00800001d8 ldq=6 cacheable=1 data=0000000000000000 cycle=000000000001d437
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008ccd addr=008044efb8 pc=00800001d6 ldq=5 scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d437
+STAGE1_TX S1 source=DCACHE cycle=000000000001d437 line=008044efc0 set=bf way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008ccf effect=0000000000000000 pc=00800001da cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d437 line=008044efc0 set=bf way=1 epoch=0001 gen=000041fe mshr=00 txn=00000000 req=0000000000008cce effect=0000000000000000 pc=00800001d8 cmd=00 admission=7
+C:0 3 0x00000000800001d8 bigcomp:7 (0x6c0e) x24 0x0000000000000000
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=9 req=0000000000008cd1 effect=0000000000000000 seq=00000000 addr=008044efd8 cycle=000000000001d438
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008cd1 addr=008044efd8 pc=00800001de ldq=9 cacheable=1 cycle=000000000001d438
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008ccf addr=008044efc8 pc=00800001da ldq=7 cacheable=1 data=0000000000000000 cycle=000000000001d438
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cce addr=008044efc0 pc=00800001d8 ldq=6 scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d438
+STAGE1_TX S1 source=DCACHE cycle=000000000001d438 line=008044efc0 set=bf way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cd0 effect=0000000000000000 pc=00800001dc cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d438 line=008044efc0 set=bf way=1 epoch=0001 gen=000041fe mshr=00 txn=00000000 req=0000000000008ccf effect=0000000000000000 pc=00800001da cmd=00 admission=7
+C1:      59880 [1] pc=[0000000080000184] W[r 0=0000000000000000][0] R[r 2=0000000080456f00] R[r28=0000000000000000] inst=[0000f1f2] DASM(0000f1f2)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2:      59857 [1] pc=[0000000080000190] W[r11=0000000000000004][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[342025f3] DASM(342025f3)
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C:0 3 0x00000000800001da bigcomp:7 (0x6cae) x25 0x0000000000000000
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=a req=0000000000008cd2 effect=0000000000000000 seq=00000000 addr=008044efe0 cycle=000000000001d439
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008cd2 addr=008044efe0 pc=00800001e0 ldq=a cacheable=1 cycle=000000000001d439
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cd0 addr=008044efd0 pc=00800001dc ldq=8 cacheable=1 data=0000000000000000 cycle=000000000001d439
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008ccf addr=008044efc8 pc=00800001da ldq=7 scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d439
+STAGE1_TX S1 source=DCACHE cycle=000000000001d439 line=008044efc0 set=bf way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cd1 effect=0000000000000000 pc=00800001de cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d439 line=008044efc0 set=bf way=1 epoch=0001 gen=000041fe mshr=00 txn=00000000 req=0000000000008cd0 effect=0000000000000000 pc=00800001dc cmd=00 admission=7
+C:0 3 0x00000000800001dc bigcomp:7 (0x6d4e) x26 0x0000000000000000
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=b req=0000000000008cd3 effect=0000000000000000 seq=00000000 addr=008044efe8 cycle=000000000001d43a
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008cd3 addr=008044efe8 pc=00800001e2 ldq=b cacheable=1 cycle=000000000001d43a
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cd1 addr=008044efd8 pc=00800001de ldq=9 cacheable=1 data=0000000000000000 cycle=000000000001d43a
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cd0 addr=008044efd0 pc=00800001dc ldq=8 scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d43a
+STAGE1_TX S1 source=DCACHE cycle=000000000001d43a line=008044efc0 set=bf way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cd2 effect=0000000000000000 pc=00800001e0 cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d43a line=008044efc0 set=bf way=1 epoch=0001 gen=000041fe mshr=00 txn=00000000 req=0000000000008cd1 effect=0000000000000000 pc=00800001de cmd=00 admission=7
+C1:      59881 [1] pc=[0000000080000186] W[r 0=0000000000000000][0] R[r 2=0000000080456f00] R[r29=0000000000000000] inst=[0000f5f6] DASM(0000f5f6)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2:      59858 [1] pc=[0000000080000194] W[r12=0000000080046b3b][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[34302673] DASM(34302673)
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C:0 3 0x00000000800001de bigcomp:7 (0x6dee) x27 0x0000000000000000
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=c req=0000000000008cd4 effect=0000000000000000 seq=00000000 addr=008044eff0 cycle=000000000001d43b
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008cd4 addr=008044eff0 pc=00800001e4 ldq=c cacheable=1 cycle=000000000001d43b
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cd2 addr=008044efe0 pc=00800001e0 ldq=a cacheable=1 data=0000000000000000 cycle=000000000001d43b
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cd1 addr=008044efd8 pc=00800001de ldq=9 scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d43b
+STAGE1_TX S1 source=DCACHE cycle=000000000001d43b line=008044efc0 set=bf way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cd3 effect=0000000000000000 pc=00800001e2 cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d43b line=008044efc0 set=bf way=1 epoch=0001 gen=000041fe mshr=00 txn=00000000 req=0000000000008cd2 effect=0000000000000000 pc=00800001e0 cmd=00 admission=7
+C:0 3 0x00000000800001e0 bigcomp:7 (0x7e0e) x28 0x0000000000000000
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=d req=0000000000008cd5 effect=0000000000000000 seq=00000000 addr=008044eff8 cycle=000000000001d43c
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008cd5 addr=008044eff8 pc=00800001e6 ldq=d cacheable=1 cycle=000000000001d43c
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cd3 addr=008044efe8 pc=00800001e2 ldq=b cacheable=1 data=0000000000000000 cycle=000000000001d43c
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cd2 addr=008044efe0 pc=00800001e0 ldq=a scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d43c
+STAGE1_TX S1 source=DCACHE cycle=000000000001d43c line=008044efc0 set=bf way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cd4 effect=0000000000000000 pc=00800001e4 cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d43c line=008044efc0 set=bf way=1 epoch=0001 gen=000041fe mshr=00 txn=00000000 req=0000000000008cd3 effect=0000000000000000 pc=00800001e2 cmd=00 admission=7
+C1:      59882 [1] pc=[0000000080000188] W[r 0=0000000000000000][0] R[r 2=0000000080456f00] R[r30=0000000000000000] inst=[0000f9fa] DASM(0000f9fa)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2:      59859 [1] pc=[0000000080000198] W[r13=000000008045ef00][1] R[r 0=0000000000000000] R[r 2=000000008045ef00] inst=[0000868a] DASM(0000868a)
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C:0 3 0x00000000800001e2 bigcomp:7 (0x7eae) x29 0x0000000000000000
+STAGE1_TX ISSUE source=LSU cmd=00 stq=5 ldq=e req=0000000000008cd6 effect=0000000000000000 seq=00000000 addr=008044ef10 cycle=000000000001d43d
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008cd6 addr=008044ef10 pc=00800001e8 ldq=e cacheable=1 cycle=000000000001d43d
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cd4 addr=008044eff0 pc=00800001e4 ldq=c cacheable=1 data=0000000000000000 cycle=000000000001d43d
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cd3 addr=008044efe8 pc=00800001e2 ldq=b scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d43d
+STAGE1_TX S1 source=DCACHE cycle=000000000001d43d line=008044efc0 set=bf way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cd5 effect=0000000000000000 pc=00800001e6 cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d43d line=008044efc0 set=bf way=1 epoch=0001 gen=000041fe mshr=00 txn=00000000 req=0000000000008cd4 effect=0000000000000000 pc=00800001e4 cmd=00 admission=7
+C:0 3 0x00000000800001e4 bigcomp:7 (0x7f4e) x30 0x0000000000000000
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cd5 addr=008044eff8 pc=00800001e6 ldq=d cacheable=1 data=0000000000000000 cycle=000000000001d43e
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cd4 addr=008044eff0 pc=00800001e4 ldq=c scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d43e
+STAGE1_TX S1 source=DCACHE cycle=000000000001d43e line=008044ef00 set=bc way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cd6 effect=0000000000000000 pc=00800001e8 cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d43e line=008044efc0 set=bf way=1 epoch=0001 gen=000041fe mshr=00 txn=00000000 req=0000000000008cd5 effect=0000000000000000 pc=00800001e6 cmd=00 admission=7
+C1:      59883 [1] pc=[000000008000018a] W[r 0=0000000000000000][0] R[r 2=0000000080456f00] R[r31=0000000000000000] inst=[0000fdfe] DASM(0000fdfe)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2:      59860 [1] pc=[000000008000019a] W[r 1=000000008000019e][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[11b000ef] DASM(11b000ef)
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C:0 3 0x00000000800001e6 bigcomp:7 (0x7fee) x31 0x0000000000000000
+STAGE1_TX LOAD_RESP source=BOOM token=0000000000008cd6 addr=008044ef10 pc=00800001e8 ldq=e cacheable=1 data=000000008044f000 cycle=000000000001d43f
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cd5 addr=008044eff8 pc=00800001e6 ldq=d scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d43f
+STAGE1_TX S2 source=DCACHE cycle=000000000001d43f line=008044ef00 set=bc way=1 epoch=0001 gen=000041e6 mshr=00 txn=00000000 req=0000000000008cd6 effect=0000000000000000 pc=00800001e8 cmd=00 admission=7
+C:0 3 0x00000000800001e8 bigcomp:7 (0x6142) x 2 0x000000008044f000
+STAGE1_TX LOAD_TERMINAL source=BOOM token=0000000000008cd6 addr=008044ef10 pc=00800001e8 ldq=e scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001d440
+C1:      59884 [1] pc=[000000008000018c] W[r10=0000000080000216][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[34102573] DASM(34102573)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2:      59861 [1] pc=[0000000080000ab4] W[r14=0000000000000002][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[f1402773] DASM(f1402773)
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C1:      59885 [1] pc=[0000000080000190] W[r11=0000000000000004][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[342025f3] DASM(342025f3)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2:      59862 [1] pc=[0000000080000ab8] W[r15=0000000000000004][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[342027f3] DASM(342027f3)
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3:      59840 [1] pc=[0000000080000adc] W[r10=0000000080000216][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[34102573] DASM(34102573)
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C1:      59886 [1] pc=[0000000080000194] W[r12=0000000080046b3b][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[34302673] DASM(34302673)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3:      59841 [1] pc=[0000000080000ae0] W[r 0=0000000080000ae4][1] R[r 1=000000008000019e] R[r 0=0000000000000000] inst=[00008067] DASM(00008067)
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4:      59818 [1] pc=[00000000800001ac] W[r 1=000000008000010c][1] R[r 2=000000008046ef00] R[r 0=0000000000000000] inst=[000060a2] DASM(000060a2)
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C:0 3 0x00000000800001ea bigcomp:7 (0x30200073)
+C1:      59887 [1] pc=[0000000080000198] W[r13=0000000080456f00][1] R[r 0=0000000000000000] R[r 2=0000000080456f00] inst=[0000868a] DASM(0000868a)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4:      59819 [1] pc=[00000000800001ae] W[r 3=00000000800448c0][1] R[r 2=000000008046ef00] R[r 0=0000000000000000] inst=[000061e2] DASM(000061e2)
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C1:      59888 [1] pc=[000000008000019a] W[r 1=000000008000019e][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[11b000ef] DASM(11b000ef)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2:      59865 [1] pc=[0000000080000abc] W[r 0=0000000000000000][0] R[r15=0000000000000004] R[r 0=0000000000000000] inst=[0a07d263] DASM(0a07d263)
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3:      59843 [1] pc=[000000008000019e] W[r 0=0000000080000216][1] R[r10=0000000080000216] R[r 0=0000000000000000] inst=[34151073] DASM(34151073)
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4:      59820 [1] pc=[00000000800001b0] W[r 4=0000000080467000][1] R[r 2=000000008046ef00] R[r 0=0000000000000000] inst=[00007202] DASM(00007202)
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C1:      59889 [1] pc=[0000000080000ab4] W[r14=0000000000000001][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[f1402773] DASM(f1402773)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2:      59866 [1] pc=[0000000080000b60] W[r14=000000000000000b][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[00b00713] DASM(00b00713)
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3:      59844 [1] pc=[00000000800001a2] W[r 5=0000000000002000][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[00006289] DASM(00006289)
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4:      59821 [1] pc=[00000000800001b2] W[r 5=0000000000000000][1] R[r 2=000000008046ef00] R[r 0=0000000000000000] inst=[000072a2] DASM(000072a2)
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C1:      59890 [1] pc=[0000000080000ab8] W[r15=0000000000000004][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[342027f3] DASM(342027f3)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2:      59867 [1] pc=[0000000080000b64] W[r 0=0000000000000000][0] R[r15=0000000000000004] R[r14=000000000000000b] inst=[f6e79ce3] DASM(f6e79ce3)
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3:      59845 [1] pc=[00000000800001a4] W[r 5=0000000000001800][1] R[r 5=0000000000002000] R[r 0=0000000000000000] inst=[8002829b] DASM(8002829b)
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4:      59822 [1] pc=[00000000800001b4] W[r 6=0000000080047212][1] R[r 2=000000008046ef00] R[r 0=0000000000000000] inst=[00007342] DASM(00007342)
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3:      59846 [1] pc=[00000000800001a8] W[r 0=8000000a0001f800][1] R[r 5=0000000000001800] R[r 0=0000000000000000] inst=[3002a073] DASM(3002a073)
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4:      59823 [1] pc=[00000000800001b6] W[r 7=0000000000000000][1] R[r 2=000000008046ef00] R[r 0=0000000000000000] inst=[000073e2] DASM(000073e2)
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4:      59824 [1] pc=[00000000800001b8] W[r 8=0000000000000004][1] R[r 2=000000008046ef00] R[r 0=0000000000000000] inst=[00006406] DASM(00006406)
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+STAGE1_TX ISSUE source=LSU cmd=00 stq=6 ldq=0 req=0000000000008cd8 effect=0000000000000000 seq=00000000 addr=0080044138 cycle=000000000001d452
+STAGE1_TX LOAD_REQ source=BOOM token=0000000000008cd8 addr=0080044138 pc=0080000206 ldq=0 cacheable=1 cycle=000000000001d452
+C1:      59893 [1] pc=[0000000080000abc] W[r 0=0000000000000000][0] R[r15=0000000000000004] R[r 0=0000000000000000] inst=[0a07d263] DASM(0a07d263)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4:      59825 [1] pc=[00000000800001ba] W[r 9=0000000000000000][1] R[r 2=000000008046ef00] R[r 0=0000000000000000] inst=[000064a6] DASM(000064a6)
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+STAGE1_TX S1 source=DCACHE cycle=000000000001d453 line=0080044100 set=04 way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cd8 effect=0000000000000000 pc=0080000206 cmd=00
+STAGE1_TX S2 source=DCACHE cycle=000000000001d454 line=0080044100 set=04 way=1 epoch=0001 gen=00000000 mshr=00 txn=00000000 req=0000000000008cd8 effect=0000000000000000 pc=0080000206 cmd=00 admission=7
+C1:      59894 [1] pc=[0000000080000b60] W[r14=000000000000000b][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[00b00713] DASM(00b00713)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4:      59826 [1] pc=[00000000800001bc] W[r10=0000000080467000][1] R[r 2=000000008046ef00] R[r 0=0000000000000000] inst=[00006546] DASM(00006546)
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+STAGE3_TX L2_EXECUTE set=023 way=0 tag=1004 old_valid=0 old_writer=0000 old_gen=00000000 old_seq=00000000 dirty=0 outer=1 new_valid=0 new_writer=0000 new_gen=00000000 new_seq=00000000 opcode=4 prio=1
+C1:      59895 [1] pc=[0000000080000b64] W[r 0=0000000000000000][0] R[r15=0000000000000004] R[r14=000000000000000b] inst=[f6e79ce3] DASM(f6e79ce3)
+C1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+C4:      59827 [1] pc=[00000000800001be] W[r11=0000000000000000][1] R[r 2=000000008046ef00] R[r 0=0000000000000000] inst=[000065e6] DASM(000065e6)
+C4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]
+STAGE1_TX EXIT_DRAIN snapshot=sim_exit source=DCACHE schema=1 cycle=1d459 s1_valid=0 s2_valid=0 mshr_outstanding=0 fence_ready=1 replay_valid=0 replay_busy=0 replay_result_q=0 completion_q=0 s3_valid=0 store_done_valid=0 wb_valid=0 probe_valid=0 refill_valid=0 install_active=0 completion_pending=0 killed_store=0 slot_reserved=0 cross_package_pending=0 pending_response=0 response_valid=0 mem_finish=0 mem_grant=0 mem_acquire=0 s3_req=8cb7 completion_req=15 replay_req=0 mshr_owners=0
+STAGE1_TX EXIT_DRAIN snapshot=sim_exit source=LSU schema=1 stq_valid=0 stq_committed=0 stq_inflight=0 stq_done=0 ldq_valid=0 ldq_pending=0 hella_pending=0 request_valid=0 force_order=0
+*** FAILED *** via trace_count (timeout, seed 1) after 120000 cycles
+STAGE1_SIM_EXIT reason=timeout io_success=0 dtm_exit=0 tsi_exit=0 jtag_exit=0 cycles=120000

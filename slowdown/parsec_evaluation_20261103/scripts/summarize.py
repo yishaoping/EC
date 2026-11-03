@@ -8,7 +8,7 @@ FIELDS=['benchmark','input','design','run_id','roi_cycles','total_harness_cycles
 def dump(p,x):p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(x,indent=2)+'\n')
 def csvout(p,rows,fields):
     p.parent.mkdir(parents=True,exist_ok=True)
-    with p.open('w')as f:w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(rows)
+    with p.open('w',newline='')as f:w=csv.DictWriter(f,fieldnames=fields,lineterminator='\n');w.writeheader();w.writerows(rows)
 def mdtable(fields,rows):return '\n'.join(['|'+'|'.join(fields)+'|','|'+'|'.join(['---']*len(fields))+'|',*['|'+'|'.join(str(r.get(k,NA))for k in fields)+'|'for r in rows]])
 def metrics(run,m,a):
     r={k:NA for k in FIELDS};r.update(benchmark=m['software']['benchmark'],input=m['software']['input_class'],design=m['design'],run_id=m['run_id'],roi_cycles=m['roi_cycles'],total_harness_cycles=m['total_harness_cycles'],roi_instructions=m['roi_instret'],roi_IPC=m['ipc'],host_seconds=m['host_wall_seconds'],correct=a['status'])
@@ -35,6 +35,7 @@ def metrics(run,m,a):
     return r
 def main():
     rows=[];runs={};excluded=[]
+    revision_path=OUT/'hardware_revision.json';revision=json.loads(revision_path.read_text()) if revision_path.exists() else {}
     for run in sorted((OUT/'runs').iterdir()):
         mp=run/'run_manifest.json';ap=run/'analysis.json'
         if not mp.exists():continue
@@ -55,7 +56,8 @@ def main():
         same_input=len({json.dumps({k:x[0]['software'].get(k)for k in ['input_sha256','parameters','iterations','options']},sort_keys=True)for x in triplet.values()})==1
         same_protected_elf=triplet['check'][0]['elf_sha256']==triplet['correction'][0]['elf_sha256']
         clean=all(x[0].get('evaluation_git_status')==''for x in triplet.values())
-        eq={'workload':workload,'identical_ROI_instructions':same_inst,'identical_output':same_output,'identical_input_and_loops':same_input,'identical_protected_ELF':same_protected_elf,'clean_source_at_launch':clean,'valid':all([same_inst,same_output,same_input,same_protected_elf,clean])};equivalence.append(eq)
+        accepted=revision.get('status')=='ACCEPTED' and all(triplet[k][0].get('canonical_hardware_commit')==revision.get('canonical_hardware_commit') and triplet[k][0]['simulator_sha256']==revision.get('simulator_sha256') for k in ['native','correction'])
+        eq={'workload':workload,'identical_ROI_instructions':same_inst,'identical_output':same_output,'identical_input_and_loops':same_input,'identical_protected_ELF':same_protected_elf,'clean_source_at_launch':clean,'accepted_canonical_hardware':accepted,'valid':all([same_inst,same_output,same_input,same_protected_elf,clean,accepted])};equivalence.append(eq)
         if not eq['valid']:continue
         n,c,o=[triplet[k][0]['roi_cycles']for k in ['native','check','correction']]
         comparisons.append(dict(benchmark=triplet['correction'][0]['software']['benchmark'],input=triplet['correction'][0]['software']['input_class'],native_ROI=n,check_ROI=c,correction_ROI=o,check_native=c/n,correction_native=o/n,correction_check=o/c,native_baseline_scope='same frozen hardware, protected session disabled'))

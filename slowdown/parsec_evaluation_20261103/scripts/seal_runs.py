@@ -27,7 +27,12 @@ def main():
         elf=run/'test.riscv';copyonce(elf,OUT/'raw/elf'/(sha(elf)+'.riscv.gz'),True)
     for d in sorted((OUT/'build').iterdir()):
         p=d/'build.manifest.json'
-        if not p.exists():continue
+        if not p.exists():
+            if d.name.endswith('_diagnostic') and (d/'result.json').exists():
+                for src in sorted(d.iterdir()):
+                    if src.is_file() and src.name in ['raw.log.gz','tail.log','command.json','result.json']:
+                        copyonce(src,OUT/'raw/diagnostics'/d.name/src.name)
+            continue
         dest=OUT/'raw/software'/d.name;dest.mkdir(parents=True,exist_ok=True)
         for name in ['build.manifest.json','build.log','htif.ld','symbols.txt','host_reference.json','host_build.log']:
             src=d/name

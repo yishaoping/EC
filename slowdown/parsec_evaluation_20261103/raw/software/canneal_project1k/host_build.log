@@ -1,0 +1,310 @@
+In file included from /data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/rng.h:39,
+                 from /data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/annealer_thread.h:43,
+                 from /data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/adapter.cpp:7:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘MTRand::uint32 MTRand::randInt()’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:187:25: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  187 |         register uint32 s1;
+      |                         ^~
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::seed(MTRand::uint32*, MTRand::uint32)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:232:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  232 |         register int i = 1;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:233:25: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  233 |         register uint32 j = 0;
+      |                         ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:234:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  234 |         register int k = ( N > seedLength ? N : seedLength );
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::seed()’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:269:34: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  269 |                 register uint32 *s = bigSeed;
+      |                                  ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:270:30: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  270 |                 register int i = N;
+      |                              ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:271:31: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  271 |                 register bool success = true;
+      |                               ^~~~~~~
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::initialize(MTRand::uint32)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:289:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  289 |         register uint32 *s = state;
+      |                          ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:290:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  290 |         register uint32 *r = state;
+      |                          ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:291:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  291 |         register int i = 1;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::reload()’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:305:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  305 |         register uint32 *p = state;
+      |                          ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:306:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  306 |         register int i;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::save(MTRand::uint32*) const’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:345:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  345 |         register uint32 *sa = saveArray;
+      |                          ^~
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:346:32: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  346 |         register const uint32 *s = state;
+      |                                ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:347:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  347 |         register int i = N;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::load(MTRand::uint32*)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:355:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  355 |         register uint32 *s = state;
+      |                          ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:356:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  356 |         register uint32 *la = loadArray;
+      |                          ^~
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:357:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  357 |         register int i = N;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In function ‘std::ostream& operator<<(std::ostream&, const MTRand&)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:366:40: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  366 |         register const MTRand::uint32 *s = mtrand.state;
+      |                                        ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:367:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  367 |         register int i = mtrand.N;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In function ‘std::istream& operator>>(std::istream&, MTRand&)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:375:34: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  375 |         register MTRand::uint32 *s = mtrand.state;
+      |                                  ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:376:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  376 |         register int i = mtrand.N;
+      |                      ^
+In file included from /data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/rng.h:39,
+                 from /data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/annealer_thread.h:43,
+                 from /data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/annealer_thread.cpp:34:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘MTRand::uint32 MTRand::randInt()’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:187:25: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  187 |         register uint32 s1;
+      |                         ^~
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::seed(MTRand::uint32*, MTRand::uint32)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:232:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  232 |         register int i = 1;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:233:25: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  233 |         register uint32 j = 0;
+      |                         ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:234:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  234 |         register int k = ( N > seedLength ? N : seedLength );
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::seed()’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:269:34: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  269 |                 register uint32 *s = bigSeed;
+      |                                  ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:270:30: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  270 |                 register int i = N;
+      |                              ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:271:31: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  271 |                 register bool success = true;
+      |                               ^~~~~~~
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::initialize(MTRand::uint32)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:289:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  289 |         register uint32 *s = state;
+      |                          ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:290:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  290 |         register uint32 *r = state;
+      |                          ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:291:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  291 |         register int i = 1;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::reload()’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:305:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  305 |         register uint32 *p = state;
+      |                          ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:306:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  306 |         register int i;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::save(MTRand::uint32*) const’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:345:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  345 |         register uint32 *sa = saveArray;
+      |                          ^~
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:346:32: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  346 |         register const uint32 *s = state;
+      |                                ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:347:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  347 |         register int i = N;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::load(MTRand::uint32*)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:355:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  355 |         register uint32 *s = state;
+      |                          ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:356:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  356 |         register uint32 *la = loadArray;
+      |                          ^~
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:357:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  357 |         register int i = N;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In function ‘std::ostream& operator<<(std::ostream&, const MTRand&)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:366:40: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  366 |         register const MTRand::uint32 *s = mtrand.state;
+      |                                        ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:367:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  367 |         register int i = mtrand.N;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In function ‘std::istream& operator>>(std::istream&, MTRand&)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:375:34: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  375 |         register MTRand::uint32 *s = mtrand.state;
+      |                                  ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:376:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  376 |         register int i = mtrand.N;
+      |                      ^
+In file included from /data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/rng.h:39,
+                 from /data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/rng.cpp:30:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘MTRand::uint32 MTRand::randInt()’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:187:25: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  187 |         register uint32 s1;
+      |                         ^~
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::seed(MTRand::uint32*, MTRand::uint32)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:232:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  232 |         register int i = 1;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:233:25: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  233 |         register uint32 j = 0;
+      |                         ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:234:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  234 |         register int k = ( N > seedLength ? N : seedLength );
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::seed()’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:269:34: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  269 |                 register uint32 *s = bigSeed;
+      |                                  ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:270:30: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  270 |                 register int i = N;
+      |                              ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:271:31: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  271 |                 register bool success = true;
+      |                               ^~~~~~~
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::initialize(MTRand::uint32)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:289:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  289 |         register uint32 *s = state;
+      |                          ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:290:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  290 |         register uint32 *r = state;
+      |                          ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:291:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  291 |         register int i = 1;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::reload()’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:305:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  305 |         register uint32 *p = state;
+      |                          ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:306:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  306 |         register int i;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::save(MTRand::uint32*) const’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:345:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  345 |         register uint32 *sa = saveArray;
+      |                          ^~
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:346:32: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  346 |         register const uint32 *s = state;
+      |                                ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:347:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  347 |         register int i = N;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::load(MTRand::uint32*)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:355:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  355 |         register uint32 *s = state;
+      |                          ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:356:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  356 |         register uint32 *la = loadArray;
+      |                          ^~
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:357:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  357 |         register int i = N;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In function ‘std::ostream& operator<<(std::ostream&, const MTRand&)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:366:40: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  366 |         register const MTRand::uint32 *s = mtrand.state;
+      |                                        ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:367:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  367 |         register int i = mtrand.N;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In function ‘std::istream& operator>>(std::istream&, MTRand&)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:375:34: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  375 |         register MTRand::uint32 *s = mtrand.state;
+      |                                  ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:376:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  376 |         register int i = mtrand.N;
+      |                      ^
+In file included from /data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/rng.h:39,
+                 from /data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/netlist.cpp:33:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘MTRand::uint32 MTRand::randInt()’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:187:25: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  187 |         register uint32 s1;
+      |                         ^~
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::seed(MTRand::uint32*, MTRand::uint32)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:232:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  232 |         register int i = 1;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:233:25: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  233 |         register uint32 j = 0;
+      |                         ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:234:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  234 |         register int k = ( N > seedLength ? N : seedLength );
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::seed()’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:269:34: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  269 |                 register uint32 *s = bigSeed;
+      |                                  ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:270:30: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  270 |                 register int i = N;
+      |                              ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:271:31: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  271 |                 register bool success = true;
+      |                               ^~~~~~~
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::initialize(MTRand::uint32)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:289:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  289 |         register uint32 *s = state;
+      |                          ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:290:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  290 |         register uint32 *r = state;
+      |                          ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:291:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  291 |         register int i = 1;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::reload()’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:305:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  305 |         register uint32 *p = state;
+      |                          ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:306:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  306 |         register int i;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::save(MTRand::uint32*) const’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:345:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  345 |         register uint32 *sa = saveArray;
+      |                          ^~
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:346:32: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  346 |         register const uint32 *s = state;
+      |                                ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:347:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  347 |         register int i = N;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In member function ‘void MTRand::load(MTRand::uint32*)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:355:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  355 |         register uint32 *s = state;
+      |                          ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:356:26: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  356 |         register uint32 *la = loadArray;
+      |                          ^~
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:357:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  357 |         register int i = N;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In function ‘std::ostream& operator<<(std::ostream&, const MTRand&)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:366:40: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  366 |         register const MTRand::uint32 *s = mtrand.state;
+      |                                        ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:367:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  367 |         register int i = mtrand.N;
+      |                      ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h: In function ‘std::istream& operator>>(std::istream&, MTRand&)’:
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:375:34: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  375 |         register MTRand::uint32 *s = mtrand.state;
+      |                                  ^
+/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project1k/source/MersenneTwister.h:376:22: warning: ISO C++17 does not allow ‘register’ storage class specifier [-Wregister]
+  376 |         register int i = mtrand.N;
+      |                      ^
