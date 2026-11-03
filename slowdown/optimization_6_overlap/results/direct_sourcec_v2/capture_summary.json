@@ -1,0 +1,1765 @@
+{
+  "cache_opportunity_limit_bytes": 4194304,
+  "closed": true,
+  "counts": {
+    "cache_opportunity.jsonl_lines": 2,
+    "diagnostic_records_omitted": 2162,
+    "discarded_diagnostic_bytes": 26235559,
+    "discarded_diagnostic_lines": 156288,
+    "event_records_seen": 115845,
+    "safe_chain_events.tsv_lines": 113683,
+    "stderr.log_lines": 5,
+    "stdout.log_lines": 10
+  },
+  "diagnostic_limit_bytes": 2097152,
+  "diagnostic_ringbuffer": {
+    "dumped": false,
+    "duplicate_events": 3321,
+    "file": null,
+    "limit_bytes": 1048576,
+    "limit_lines": 8192,
+    "policy": "named_diagnostic_events_and_failure_lines_only",
+    "retained_bytes": 1048552,
+    "retained_lines": 5444
+  },
+  "event_budgets": {
+    "diagnostic": 8388608,
+    "protocol": 40894464,
+    "summary": 1048576
+  },
+  "event_bytes_by_class": {
+    "diagnostic": 8388363,
+    "protocol": 26212122,
+    "stderr.log_essential": 857,
+    "stdout.log_essential": 236,
+    "stdout.log_general": 260,
+    "summary": 7438
+  },
+  "event_limit_bytes": 50331648,
+  "event_storage": "priority reserved TSV; explicit loss accounting; bounded final JSON",
+  "incomplete_reasons": [],
+  "mandatory_evidence_complete": true,
+  "observers": {
+    "10:0": {
+      "events_seen": 3,
+      "footer_emitted_count": 3,
+      "footers_seen": 1,
+      "kept": 4,
+      "omitted": 0,
+      "seen": 4
+    },
+    "11:1": {
+      "events_seen": 584,
+      "footer_emitted_count": 584,
+      "footers_seen": 1,
+      "kept": 541,
+      "omitted": 44,
+      "seen": 585
+    },
+    "11:2": {
+      "events_seen": 580,
+      "footer_emitted_count": 580,
+      "footers_seen": 1,
+      "kept": 537,
+      "omitted": 44,
+      "seen": 581
+    },
+    "11:3": {
+      "events_seen": 574,
+      "footer_emitted_count": 574,
+      "footers_seen": 1,
+      "kept": 532,
+      "omitted": 43,
+      "seen": 575
+    },
+    "11:4": {
+      "events_seen": 575,
+      "footer_emitted_count": 575,
+      "footers_seen": 1,
+      "kept": 533,
+      "omitted": 43,
+      "seen": 576
+    },
+    "12:1": {
+      "events_seen": 584,
+      "footer_emitted_count": 584,
+      "footers_seen": 1,
+      "kept": 541,
+      "omitted": 44,
+      "seen": 585
+    },
+    "12:2": {
+      "events_seen": 580,
+      "footer_emitted_count": 580,
+      "footers_seen": 1,
+      "kept": 537,
+      "omitted": 44,
+      "seen": 581
+    },
+    "12:3": {
+      "events_seen": 574,
+      "footer_emitted_count": 574,
+      "footers_seen": 1,
+      "kept": 532,
+      "omitted": 43,
+      "seen": 575
+    },
+    "12:4": {
+      "events_seen": 575,
+      "footer_emitted_count": 575,
+      "footers_seen": 1,
+      "kept": 533,
+      "omitted": 43,
+      "seen": 576
+    },
+    "13:1": {
+      "events_seen": 656,
+      "footer_emitted_count": 656,
+      "footers_seen": 1,
+      "kept": 611,
+      "omitted": 46,
+      "seen": 657
+    },
+    "13:2": {
+      "events_seen": 607,
+      "footer_emitted_count": 607,
+      "footers_seen": 1,
+      "kept": 564,
+      "omitted": 44,
+      "seen": 608
+    },
+    "13:3": {
+      "events_seen": 626,
+      "footer_emitted_count": 626,
+      "footers_seen": 1,
+      "kept": 581,
+      "omitted": 46,
+      "seen": 627
+    },
+    "13:4": {
+      "events_seen": 584,
+      "footer_emitted_count": 584,
+      "footers_seen": 1,
+      "kept": 539,
+      "omitted": 46,
+      "seen": 585
+    },
+    "14:0": {
+      "events_seen": 15,
+      "footer_emitted_count": 15,
+      "footers_seen": 1,
+      "kept": 15,
+      "omitted": 1,
+      "seen": 16
+    },
+    "15:0": {
+      "events_seen": 2,
+      "footer_emitted_count": 2,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 1,
+      "seen": 3
+    },
+    "16:0": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "16:1": {
+      "events_seen": 656,
+      "footer_emitted_count": 656,
+      "footers_seen": 1,
+      "kept": 611,
+      "omitted": 46,
+      "seen": 657
+    },
+    "16:2": {
+      "events_seen": 607,
+      "footer_emitted_count": 607,
+      "footers_seen": 1,
+      "kept": 564,
+      "omitted": 44,
+      "seen": 608
+    },
+    "16:3": {
+      "events_seen": 626,
+      "footer_emitted_count": 626,
+      "footers_seen": 1,
+      "kept": 581,
+      "omitted": 46,
+      "seen": 627
+    },
+    "16:4": {
+      "events_seen": 584,
+      "footer_emitted_count": 584,
+      "footers_seen": 1,
+      "kept": 539,
+      "omitted": 46,
+      "seen": 585
+    },
+    "17:0": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "17:1": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "18:0": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "18:1": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "19:0": {
+      "events_seen": 294,
+      "footer_emitted_count": 294,
+      "footers_seen": 1,
+      "kept": 295,
+      "omitted": 0,
+      "seen": 295
+    },
+    "1:0": {
+      "events_seen": 852,
+      "footer_emitted_count": 852,
+      "footers_seen": 1,
+      "kept": 792,
+      "omitted": 61,
+      "seen": 853
+    },
+    "20:0": {
+      "events_seen": 14872,
+      "footer_emitted_count": 14872,
+      "footers_seen": 1,
+      "kept": 14873,
+      "omitted": 0,
+      "seen": 14873
+    },
+    "21:0": {
+      "events_seen": 7436,
+      "footer_emitted_count": 7436,
+      "footers_seen": 1,
+      "kept": 7437,
+      "omitted": 0,
+      "seen": 7437
+    },
+    "22:0": {
+      "events_seen": 294,
+      "footer_emitted_count": 294,
+      "footers_seen": 1,
+      "kept": 295,
+      "omitted": 0,
+      "seen": 295
+    },
+    "23:0": {
+      "events_seen": 26,
+      "footer_emitted_count": 26,
+      "footers_seen": 1,
+      "kept": 27,
+      "omitted": 0,
+      "seen": 27
+    },
+    "25:0": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "2:0": {
+      "events_seen": 295,
+      "footer_emitted_count": 295,
+      "footers_seen": 1,
+      "kept": 296,
+      "omitted": 0,
+      "seen": 296
+    },
+    "30:0": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "31:0": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "32:0": {
+      "events_seen": 304,
+      "footer_emitted_count": 304,
+      "footers_seen": 1,
+      "kept": 305,
+      "omitted": 0,
+      "seen": 305
+    },
+    "33:0": {
+      "events_seen": 304,
+      "footer_emitted_count": 304,
+      "footers_seen": 1,
+      "kept": 305,
+      "omitted": 0,
+      "seen": 305
+    },
+    "34:0": {
+      "events_seen": 294,
+      "footer_emitted_count": 294,
+      "footers_seen": 1,
+      "kept": 295,
+      "omitted": 0,
+      "seen": 295
+    },
+    "35:0": {
+      "events_seen": 75,
+      "footer_emitted_count": 75,
+      "footers_seen": 1,
+      "kept": 76,
+      "omitted": 0,
+      "seen": 76
+    },
+    "35:1": {
+      "events_seen": 62,
+      "footer_emitted_count": 62,
+      "footers_seen": 1,
+      "kept": 63,
+      "omitted": 0,
+      "seen": 63
+    },
+    "35:10": {
+      "events_seen": 8,
+      "footer_emitted_count": 8,
+      "footers_seen": 1,
+      "kept": 9,
+      "omitted": 0,
+      "seen": 9
+    },
+    "35:11": {
+      "events_seen": 6,
+      "footer_emitted_count": 6,
+      "footers_seen": 1,
+      "kept": 7,
+      "omitted": 0,
+      "seen": 7
+    },
+    "35:12": {
+      "events_seen": 6,
+      "footer_emitted_count": 6,
+      "footers_seen": 1,
+      "kept": 7,
+      "omitted": 0,
+      "seen": 7
+    },
+    "35:13": {
+      "events_seen": 5,
+      "footer_emitted_count": 5,
+      "footers_seen": 1,
+      "kept": 6,
+      "omitted": 0,
+      "seen": 6
+    },
+    "35:14": {
+      "events_seen": 5,
+      "footer_emitted_count": 5,
+      "footers_seen": 1,
+      "kept": 6,
+      "omitted": 0,
+      "seen": 6
+    },
+    "35:15": {
+      "events_seen": 5,
+      "footer_emitted_count": 5,
+      "footers_seen": 1,
+      "kept": 6,
+      "omitted": 0,
+      "seen": 6
+    },
+    "35:2": {
+      "events_seen": 33,
+      "footer_emitted_count": 33,
+      "footers_seen": 1,
+      "kept": 34,
+      "omitted": 0,
+      "seen": 34
+    },
+    "35:3": {
+      "events_seen": 27,
+      "footer_emitted_count": 27,
+      "footers_seen": 1,
+      "kept": 28,
+      "omitted": 0,
+      "seen": 28
+    },
+    "35:4": {
+      "events_seen": 18,
+      "footer_emitted_count": 18,
+      "footers_seen": 1,
+      "kept": 19,
+      "omitted": 0,
+      "seen": 19
+    },
+    "35:5": {
+      "events_seen": 13,
+      "footer_emitted_count": 13,
+      "footers_seen": 1,
+      "kept": 14,
+      "omitted": 0,
+      "seen": 14
+    },
+    "35:6": {
+      "events_seen": 13,
+      "footer_emitted_count": 13,
+      "footers_seen": 1,
+      "kept": 14,
+      "omitted": 0,
+      "seen": 14
+    },
+    "35:7": {
+      "events_seen": 11,
+      "footer_emitted_count": 11,
+      "footers_seen": 1,
+      "kept": 12,
+      "omitted": 0,
+      "seen": 12
+    },
+    "35:8": {
+      "events_seen": 9,
+      "footer_emitted_count": 9,
+      "footers_seen": 1,
+      "kept": 10,
+      "omitted": 0,
+      "seen": 10
+    },
+    "35:9": {
+      "events_seen": 8,
+      "footer_emitted_count": 8,
+      "footers_seen": 1,
+      "kept": 9,
+      "omitted": 0,
+      "seen": 9
+    },
+    "36:0": {
+      "events_seen": 73,
+      "footer_emitted_count": 73,
+      "footers_seen": 1,
+      "kept": 74,
+      "omitted": 0,
+      "seen": 74
+    },
+    "36:1": {
+      "events_seen": 62,
+      "footer_emitted_count": 62,
+      "footers_seen": 1,
+      "kept": 63,
+      "omitted": 0,
+      "seen": 63
+    },
+    "36:10": {
+      "events_seen": 8,
+      "footer_emitted_count": 8,
+      "footers_seen": 1,
+      "kept": 9,
+      "omitted": 0,
+      "seen": 9
+    },
+    "36:11": {
+      "events_seen": 6,
+      "footer_emitted_count": 6,
+      "footers_seen": 1,
+      "kept": 7,
+      "omitted": 0,
+      "seen": 7
+    },
+    "36:12": {
+      "events_seen": 6,
+      "footer_emitted_count": 6,
+      "footers_seen": 1,
+      "kept": 7,
+      "omitted": 0,
+      "seen": 7
+    },
+    "36:13": {
+      "events_seen": 5,
+      "footer_emitted_count": 5,
+      "footers_seen": 1,
+      "kept": 6,
+      "omitted": 0,
+      "seen": 6
+    },
+    "36:14": {
+      "events_seen": 5,
+      "footer_emitted_count": 5,
+      "footers_seen": 1,
+      "kept": 6,
+      "omitted": 0,
+      "seen": 6
+    },
+    "36:15": {
+      "events_seen": 5,
+      "footer_emitted_count": 5,
+      "footers_seen": 1,
+      "kept": 6,
+      "omitted": 0,
+      "seen": 6
+    },
+    "36:2": {
+      "events_seen": 33,
+      "footer_emitted_count": 33,
+      "footers_seen": 1,
+      "kept": 34,
+      "omitted": 0,
+      "seen": 34
+    },
+    "36:3": {
+      "events_seen": 27,
+      "footer_emitted_count": 27,
+      "footers_seen": 1,
+      "kept": 28,
+      "omitted": 0,
+      "seen": 28
+    },
+    "36:4": {
+      "events_seen": 18,
+      "footer_emitted_count": 18,
+      "footers_seen": 1,
+      "kept": 19,
+      "omitted": 0,
+      "seen": 19
+    },
+    "36:5": {
+      "events_seen": 13,
+      "footer_emitted_count": 13,
+      "footers_seen": 1,
+      "kept": 14,
+      "omitted": 0,
+      "seen": 14
+    },
+    "36:6": {
+      "events_seen": 13,
+      "footer_emitted_count": 13,
+      "footers_seen": 1,
+      "kept": 14,
+      "omitted": 0,
+      "seen": 14
+    },
+    "36:7": {
+      "events_seen": 11,
+      "footer_emitted_count": 11,
+      "footers_seen": 1,
+      "kept": 12,
+      "omitted": 0,
+      "seen": 12
+    },
+    "36:8": {
+      "events_seen": 9,
+      "footer_emitted_count": 9,
+      "footers_seen": 1,
+      "kept": 10,
+      "omitted": 0,
+      "seen": 10
+    },
+    "36:9": {
+      "events_seen": 8,
+      "footer_emitted_count": 8,
+      "footers_seen": 1,
+      "kept": 9,
+      "omitted": 0,
+      "seen": 9
+    },
+    "37:0": {
+      "events_seen": 1176,
+      "footer_emitted_count": 1176,
+      "footers_seen": 1,
+      "kept": 1177,
+      "omitted": 0,
+      "seen": 1177
+    },
+    "38:0": {
+      "events_seen": 59560,
+      "footer_emitted_count": 59560,
+      "footers_seen": 1,
+      "kept": 59561,
+      "omitted": 0,
+      "seen": 59561
+    },
+    "3:1": {
+      "events_seen": 151,
+      "footer_emitted_count": 151,
+      "footers_seen": 1,
+      "kept": 152,
+      "omitted": 0,
+      "seen": 152
+    },
+    "3:2": {
+      "events_seen": 149,
+      "footer_emitted_count": 149,
+      "footers_seen": 1,
+      "kept": 150,
+      "omitted": 0,
+      "seen": 150
+    },
+    "3:3": {
+      "events_seen": 147,
+      "footer_emitted_count": 147,
+      "footers_seen": 1,
+      "kept": 148,
+      "omitted": 0,
+      "seen": 148
+    },
+    "3:4": {
+      "events_seen": 147,
+      "footer_emitted_count": 147,
+      "footers_seen": 1,
+      "kept": 148,
+      "omitted": 0,
+      "seen": 148
+    },
+    "48:0": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "4:1": {
+      "events_seen": 151,
+      "footer_emitted_count": 151,
+      "footers_seen": 1,
+      "kept": 140,
+      "omitted": 12,
+      "seen": 152
+    },
+    "4:2": {
+      "events_seen": 149,
+      "footer_emitted_count": 149,
+      "footers_seen": 1,
+      "kept": 138,
+      "omitted": 12,
+      "seen": 150
+    },
+    "4:3": {
+      "events_seen": 147,
+      "footer_emitted_count": 147,
+      "footers_seen": 1,
+      "kept": 136,
+      "omitted": 12,
+      "seen": 148
+    },
+    "4:4": {
+      "events_seen": 147,
+      "footer_emitted_count": 147,
+      "footers_seen": 1,
+      "kept": 136,
+      "omitted": 12,
+      "seen": 148
+    },
+    "5:1": {
+      "events_seen": 301,
+      "footer_emitted_count": 301,
+      "footers_seen": 1,
+      "kept": 279,
+      "omitted": 23,
+      "seen": 302
+    },
+    "5:2": {
+      "events_seen": 297,
+      "footer_emitted_count": 297,
+      "footers_seen": 1,
+      "kept": 275,
+      "omitted": 23,
+      "seen": 298
+    },
+    "5:3": {
+      "events_seen": 293,
+      "footer_emitted_count": 293,
+      "footers_seen": 1,
+      "kept": 271,
+      "omitted": 23,
+      "seen": 294
+    },
+    "5:4": {
+      "events_seen": 293,
+      "footer_emitted_count": 293,
+      "footers_seen": 1,
+      "kept": 271,
+      "omitted": 23,
+      "seen": 294
+    },
+    "6:1": {
+      "events_seen": 1781,
+      "footer_emitted_count": 1781,
+      "footers_seen": 1,
+      "kept": 1657,
+      "omitted": 125,
+      "seen": 1782
+    },
+    "6:2": {
+      "events_seen": 1739,
+      "footer_emitted_count": 1739,
+      "footers_seen": 1,
+      "kept": 1619,
+      "omitted": 121,
+      "seen": 1740
+    },
+    "6:3": {
+      "events_seen": 1734,
+      "footer_emitted_count": 1734,
+      "footers_seen": 1,
+      "kept": 1615,
+      "omitted": 120,
+      "seen": 1735
+    },
+    "6:4": {
+      "events_seen": 1627,
+      "footer_emitted_count": 1627,
+      "footers_seen": 1,
+      "kept": 1508,
+      "omitted": 120,
+      "seen": 1628
+    },
+    "7:0": {
+      "events_seen": 4384,
+      "footer_emitted_count": 4384,
+      "footers_seen": 1,
+      "kept": 4055,
+      "omitted": 330,
+      "seen": 4385
+    },
+    "8:0": {
+      "events_seen": 6140,
+      "footer_emitted_count": 6140,
+      "footers_seen": 1,
+      "kept": 5710,
+      "omitted": 431,
+      "seen": 6141
+    },
+    "9:0": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:1": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:10": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:11": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:12": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:13": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:14": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:15": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:16": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:17": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:18": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:19": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:2": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:20": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:21": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:22": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:23": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:24": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:25": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:26": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:27": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:28": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:29": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:3": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:30": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:31": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:4": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:5": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:6": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:7": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:8": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    },
+    "9:9": {
+      "events_seen": 1,
+      "footer_emitted_count": 1,
+      "footers_seen": 1,
+      "kept": 2,
+      "omitted": 0,
+      "seen": 2
+    }
+  },
+  "optional_evidence_complete": false,
+  "optional_records_omitted": 2162,
+  "policy": "priority_reserved_v2",
+  "producers": {
+    "10:0": {
+      "emitted": 3,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 3
+    },
+    "11:1": {
+      "emitted": 584,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 584
+    },
+    "11:2": {
+      "emitted": 580,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 580
+    },
+    "11:3": {
+      "emitted": 574,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 574
+    },
+    "11:4": {
+      "emitted": 575,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 575
+    },
+    "12:1": {
+      "emitted": 584,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 584
+    },
+    "12:2": {
+      "emitted": 580,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 580
+    },
+    "12:3": {
+      "emitted": 574,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 574
+    },
+    "12:4": {
+      "emitted": 575,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 575
+    },
+    "13:1": {
+      "emitted": 656,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 656
+    },
+    "13:2": {
+      "emitted": 607,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 607
+    },
+    "13:3": {
+      "emitted": 626,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 626
+    },
+    "13:4": {
+      "emitted": 584,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 584
+    },
+    "14:0": {
+      "emitted": 15,
+      "limit": 1024,
+      "omitted": 0,
+      "produced": 15
+    },
+    "15:0": {
+      "emitted": 2,
+      "limit": 1024,
+      "omitted": 0,
+      "produced": 2
+    },
+    "16:0": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "16:1": {
+      "emitted": 656,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 656
+    },
+    "16:2": {
+      "emitted": 607,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 607
+    },
+    "16:3": {
+      "emitted": 626,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 626
+    },
+    "16:4": {
+      "emitted": 584,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 584
+    },
+    "17:0": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "17:1": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "18:0": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "18:1": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "19:0": {
+      "emitted": 294,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 294
+    },
+    "1:0": {
+      "emitted": 852,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 852
+    },
+    "20:0": {
+      "emitted": 14872,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 14872
+    },
+    "21:0": {
+      "emitted": 7436,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 7436
+    },
+    "22:0": {
+      "emitted": 294,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 294
+    },
+    "23:0": {
+      "emitted": 26,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 26
+    },
+    "25:0": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "2:0": {
+      "emitted": 295,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 295
+    },
+    "30:0": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "31:0": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "32:0": {
+      "emitted": 304,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 304
+    },
+    "33:0": {
+      "emitted": 304,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 304
+    },
+    "34:0": {
+      "emitted": 294,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 294
+    },
+    "35:0": {
+      "emitted": 75,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 75
+    },
+    "35:1": {
+      "emitted": 62,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 62
+    },
+    "35:10": {
+      "emitted": 8,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 8
+    },
+    "35:11": {
+      "emitted": 6,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 6
+    },
+    "35:12": {
+      "emitted": 6,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 6
+    },
+    "35:13": {
+      "emitted": 5,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 5
+    },
+    "35:14": {
+      "emitted": 5,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 5
+    },
+    "35:15": {
+      "emitted": 5,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 5
+    },
+    "35:2": {
+      "emitted": 33,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 33
+    },
+    "35:3": {
+      "emitted": 27,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 27
+    },
+    "35:4": {
+      "emitted": 18,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 18
+    },
+    "35:5": {
+      "emitted": 13,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 13
+    },
+    "35:6": {
+      "emitted": 13,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 13
+    },
+    "35:7": {
+      "emitted": 11,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 11
+    },
+    "35:8": {
+      "emitted": 9,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 9
+    },
+    "35:9": {
+      "emitted": 8,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 8
+    },
+    "36:0": {
+      "emitted": 73,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 73
+    },
+    "36:1": {
+      "emitted": 62,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 62
+    },
+    "36:10": {
+      "emitted": 8,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 8
+    },
+    "36:11": {
+      "emitted": 6,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 6
+    },
+    "36:12": {
+      "emitted": 6,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 6
+    },
+    "36:13": {
+      "emitted": 5,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 5
+    },
+    "36:14": {
+      "emitted": 5,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 5
+    },
+    "36:15": {
+      "emitted": 5,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 5
+    },
+    "36:2": {
+      "emitted": 33,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 33
+    },
+    "36:3": {
+      "emitted": 27,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 27
+    },
+    "36:4": {
+      "emitted": 18,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 18
+    },
+    "36:5": {
+      "emitted": 13,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 13
+    },
+    "36:6": {
+      "emitted": 13,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 13
+    },
+    "36:7": {
+      "emitted": 11,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 11
+    },
+    "36:8": {
+      "emitted": 9,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 9
+    },
+    "36:9": {
+      "emitted": 8,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 8
+    },
+    "37:0": {
+      "emitted": 1176,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1176
+    },
+    "38:0": {
+      "emitted": 59560,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 59560
+    },
+    "3:1": {
+      "emitted": 151,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 151
+    },
+    "3:2": {
+      "emitted": 149,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 149
+    },
+    "3:3": {
+      "emitted": 147,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 147
+    },
+    "3:4": {
+      "emitted": 147,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 147
+    },
+    "48:0": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "4:1": {
+      "emitted": 151,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 151
+    },
+    "4:2": {
+      "emitted": 149,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 149
+    },
+    "4:3": {
+      "emitted": 147,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 147
+    },
+    "4:4": {
+      "emitted": 147,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 147
+    },
+    "5:1": {
+      "emitted": 301,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 301
+    },
+    "5:2": {
+      "emitted": 297,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 297
+    },
+    "5:3": {
+      "emitted": 293,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 293
+    },
+    "5:4": {
+      "emitted": 293,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 293
+    },
+    "6:1": {
+      "emitted": 1781,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1781
+    },
+    "6:2": {
+      "emitted": 1739,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1739
+    },
+    "6:3": {
+      "emitted": 1734,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1734
+    },
+    "6:4": {
+      "emitted": 1627,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1627
+    },
+    "7:0": {
+      "emitted": 4384,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 4384
+    },
+    "8:0": {
+      "emitted": 6140,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 6140
+    },
+    "9:0": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:1": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:10": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:11": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:12": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:13": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:14": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:15": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:16": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:17": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:18": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:19": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:2": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:20": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:21": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:22": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:23": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:24": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:25": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:26": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:27": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:28": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:29": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:3": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:30": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:31": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:4": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:5": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:6": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:7": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:8": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    },
+    "9:9": {
+      "emitted": 1,
+      "limit": 200000,
+      "omitted": 0,
+      "produced": 1
+    }
+  },
+  "schema": 2,
+  "sizes": {
+    "cache_opportunity.jsonl": 13469,
+    "safe_chain_events.tsv": 34607923,
+    "stderr.log": 857,
+    "stdout.log": 496
+  },
+  "total_stream_limit_bytes": 58720256
+}
