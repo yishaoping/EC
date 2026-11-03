@@ -1,0 +1,141 @@
+{
+  "failure_diagnostics": {
+    "files": {
+      "/data1/gzh/EC-opt4-perf/slowdown/optimization_6_overlap/build/overlap_streamcluster_epoch_fix_20261103_094832_b61742d7/generated/gen-collateral/BoomCore.sv": {
+        "after_sha256": "fd95b31b8c3e9d30a3a61ce39ada6499822ae34ebdf541c942ec6c717356c0a6",
+        "before_sha256": "1ad1d44d5d86920e00a70eafb82fd6d1faa48432ba91e1154ea6171af2f2b10b",
+        "events": {
+          "CORE_WATCHDOG_SNAPSHOT": 1
+        }
+      },
+      "/data1/gzh/EC-opt4-perf/slowdown/optimization_6_overlap/build/overlap_streamcluster_epoch_fix_20261103_094832_b61742d7/generated/gen-collateral/BoomNonBlockingDCache.sv": {
+        "after_sha256": "cfede67bd1e9e0196d24073ee2b03514de0fbc533e74bfb21352333656d6100e",
+        "before_sha256": "c1876569c48cd44491667ae1fbbd0d164f0ae717459e6e9cb1f283e734f8d2b5",
+        "events": {
+          "CACHE_HANG_SNAPSHOT": 4,
+          "C_CHANNEL": 1,
+          "DCACHE_WATCHDOG_SNAPSHOT": 1,
+          "D_ACK": 1,
+          "FASTLINE_ACQUIRE": 1,
+          "FASTLINE_BLOCK_OTHER_LINE": 1,
+          "FASTLINE_RELEASE": 3,
+          "LONG_STALL": 12,
+          "MSHR_HANG_ENTRY": 6,
+          "MSHR_STATE": 6,
+          "PRESERVATION_BLOCKED": 1,
+          "PRESERVATION_COMPLETE": 1,
+          "PRESERVATION_START": 1,
+          "PRESERVATION_WAIT": 1,
+          "PRESERVATION_WB_COMPLETE": 1,
+          "PRESERVATION_WB_FIRE": 1,
+          "PROBE_BLOCKED": 1,
+          "PROBE_COMPLETE": 1,
+          "PROBE_START": 1,
+          "SVB_C_FIRE": 1,
+          "WATERMARK_ADVANCE": 1,
+          "WB_BLOCK": 2,
+          "WB_COMPLETE": 1,
+          "WB_START": 1
+        }
+      },
+      "/data1/gzh/EC-opt4-perf/slowdown/optimization_6_overlap/build/overlap_streamcluster_epoch_fix_20261103_094832_b61742d7/generated/gen-collateral/SpeculativeVersionBuffer.sv": {
+        "after_sha256": "a9543c2c3bf0bd8d678e5ff5dc4ba737625f8605208c5ab0072d17b9feaaec5b",
+        "before_sha256": "4391519c4500f1a3a9f40f49823e1eaece2a9fc66473fa2ea30118187d7717cb",
+        "events": {
+          "LONG_STALL": 16,
+          "SVB_COMPLETION": 1,
+          "SVB_ENTRY_ALLOC": 16,
+          "SVB_HANG_ENTRY": 16,
+          "SVB_PROMOTION_SELECT": 1,
+          "SVB_SAFE": 16
+        }
+      }
+    },
+    "proof": "exact inverse of selected printf-enable edits equals fresh generated source",
+    "status": "PASS",
+    "storage": "host 8192-event bounded ring; failure-only dump",
+    "trace_enabled": false,
+    "verbose": false
+  },
+  "hardware_generation": "PASS",
+  "run_id": "overlap_streamcluster_epoch_fix_20261103_094832_b61742d7",
+  "schema": 2,
+  "simulation": "NOT_STARTED",
+  "software": {
+    "elf": "/data1/gzh/EC/check/software_common_builds/gapbs512_20261023_03/test.riscv",
+    "elf_sha256": "da8897e790f0c5e91eff3e9560d2b0e7b4e1de6dff208788fb4d9e2ae462c81c",
+    "loadmem": "/data1/gzh/EC/check/software_common_builds/gapbs512_20261023_03/test.loadmem_hex",
+    "loadmem_sha256": "f1c0335e8a7ffc6f57232e9bcb8c80a49f45eacaa1e4f533f4cb3af91ad308ad"
+  },
+  "source": {
+    "base_head": "2ea467ba0",
+    "checker_harts": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "config": "v1Config",
+    "elf_sha256": "da8897e790f0c5e91eff3e9560d2b0e7b4e1de6dff208788fb4d9e2ae462c81c",
+    "experiment": "opt4_overlap",
+    "git_head": "19d19360ade2fe6bec084179ae1dcd786866871f",
+    "hardware_sha256": {
+      "chipyard/generators/boom/src/main/scala/exu/core.scala": "a1635b2e6636623a70a4b7617620f2eb10b2f585bd90585aa3b59e9062cdb6cb",
+      "chipyard/generators/boom/src/main/scala/exu/rob.scala": "81406711678554e6fa40354b8f169bc3ebff4c3868d645c2df479572ff703b38",
+      "chipyard/generators/boom/src/main/scala/lsu/dcache.scala": "6cd3146548f45d2f0dafa1f97ab56cfb4cf57782d1ca251a8457570480924bda",
+      "chipyard/generators/boom/src/main/scala/lsu/lsu.scala": "dd7cc4f0843db21feb8581e19b33e955502283c0ab4aea8876a6b21960a3e555",
+      "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala": "041d108608a7c580c3347515a690fea31dc0c5d6054924186cb05cfbc974bf57",
+      "chipyard/generators/boom/src/main/scala/lsu/speculative-version-buffer.scala": "06ea7878bc47cd55b076fc8634d9ef62db53509435fd87225d9e6b82d41df870",
+      "chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala": "cf042432f71c5812f2f93eab1abc5522aa35c61d67042363ab2260be11b6c477",
+      "chipyard/generators/rocket-chip/src/main/resources/csrc/cache_opportunity.cc": "c32d68e0652106a0e7f818869e0a49b5b98b20aece696fb0dfa78fc7ccb1422c",
+      "chipyard/generators/rocket-chip/src/main/resources/vsrc/CacheOpportunityObserver.sv": "6ba6e3330406196f1186af4d065b607a0569aa88187144a33b80bcd6d09c55e5",
+      "chipyard/generators/rocket-chip/src/main/resources/vsrc/SafeChainEventLogger.v": "2ed96c76c7f475c327186ae9379385d5a7c6cd6a2a592d5a1000e4b99b66e263",
+      "chipyard/generators/rocket-chip/src/main/scala/r/R_IC.scala": "5d74332982cb492283a11d36fbe6d14884b5843df7b46e83148e4784806351de",
+      "chipyard/generators/rocket-chip/src/main/scala/r/R_ICSL.scala": "7f4728f0981fa0fede24713e4daad22a0b37faf8b9adfea8294dd4e1fdb5edeb",
+      "chipyard/generators/rocket-chip/src/main/scala/rocket/Frontend.scala": "abf469e993c1adddd081a0995285a74b175a793c034ef55ce0a2006661e7348b",
+      "chipyard/generators/rocket-chip/src/main/scala/rocket/IBuf.scala": "e224117404345623efe9e349884f3527705566da38d86c3a1db37d8467524d76",
+      "chipyard/generators/rocket-chip/src/main/scala/rocket/NBDcache.scala": "418dc952af4c1b0f6ba0f89c13f36a73545be55fda11439e97bb0e20c325225b",
+      "chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala": "c793c7ce1ad3c45b87b30aeca6fe1af01efe1c1a3b82fb5cf93fb0c2884a44e3",
+      "chipyard/generators/rocket-chip/src/main/scala/subsystem/Configs.scala": "118017ddc1d0eb46da20e00567671b4f747aef90f37ec0a73e1e094757dc3eb4",
+      "chipyard/generators/rocket-chip/src/main/scala/util/CacheOpportunityObservation.scala": "390d69fca410c3fd251c570a7760a9c04f0d688500ede3aaf4547446056e1cea",
+      "chipyard/generators/rocket-chip/src/main/scala/util/SafeChainObservation.scala": "7e93dc74de56b9e7279686a35e6efa67d9008b002d5ceceddfb9b88252dceb22",
+      "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Directory.scala": "4385637900ab09966a6aeca7bece2d748fda944e6f72911baa4ac5f4f8a68fb3",
+      "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala": "1a03d2df8ec7c2520601aec91f4603f4d779ecea4af9a6ce09582c3d0e990b36",
+      "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala": "0baec9bb5711de2399bb8d100926e55546ad467b85e0f76bfa8e00fd43fa7a5f",
+      "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/SourceD.scala": "473ec55685a8f3ef8b2f39cc9db78f33d470f490f58d5b8ad603f9f4e9fb125c"
+    },
+    "loadmem_sha256": "f1c0335e8a7ffc6f57232e9bcb8c80a49f45eacaa1e4f533f4cb3af91ad308ad",
+    "n_svb_entries": 16,
+    "observation_budget": {
+      "event_budgets": {
+        "diagnostic": 8388608,
+        "protocol": 40894464,
+        "summary": 1048576
+      },
+      "mandatory_loss_policy": "continue_workload_reject_validation",
+      "optional_loss_policy": "count_and_continue",
+      "policy": "priority_reserved_v2",
+      "total_stream_limit_bytes": 58720256
+    },
+    "observation_policy": "priority_reserved_v2",
+    "patch_sha256": "f47579d71df39b3d2a7891daf7d05364f213a5be82bb6662c0238968615b1ad0",
+    "restored_resource_sha256": {
+      "chipyard/generators/rocket-chip/src/main/resources/vsrc/ClockDivider2.v": "753672a56deb6f6f89857d7336bd634b38e8ebd00fd39bee92e16669988c9d16",
+      "chipyard/generators/rocket-chip/src/main/resources/vsrc/ClockDivider3.v": "4943ad841b27c365546e0c2b08a344c87078750b4df9dd6bee3bb56d18f92906",
+      "chipyard/generators/rocket-chip/src/main/resources/vsrc/EICG_wrapper.v": "8532a50a212f146f10208717be24168a2de73a9754786da272d0dbfcd556c307",
+      "chipyard/generators/rocket-chip/src/main/resources/vsrc/SimDTM.v": "6952c4f506ff117c1015aa0011357c6665bda9ef652643c78b932c0fa8e0b7f6",
+      "chipyard/generators/rocket-chip/src/main/resources/vsrc/SimJTAG.v": "3a5df6035e4658031b96dc27155086425fdf50af4e86e1e33036f2acd04eacf3",
+      "chipyard/generators/rocket-chip/src/main/resources/vsrc/plusarg_reader.v": "482a63c1f24a7ac920909620bd0df108e6954eabf9520de6e72334a2b5450efb"
+    },
+    "revision_mode": "corrected_svb16_integrity_v2",
+    "runner_sha256": "64ff69b80ada490c7954408f47f17b579de06891004f3f2e0df0f0a6a62b283f",
+    "tool_sha256": {
+      "slowdown/optimization_4_svb/analysis/analyze_svb.py": "4bb9f94d8f6fdeffbf803d9314d24e3fd9e9328ac0f016d5a963fdcc549a507d",
+      "slowdown/optimization_4_svb/analysis/integrity_ledger.py": "33a3bdc65480c9e14a0b8a7e0d6cb8fe2f62dfbca10d7728d09a856417588cea",
+      "slowdown/optimization_4_svb/scripts/compact_capture.py": "52639ad923ae27cd54565ab475ff3bf258237241fc2796ebad238c4333b93290",
+      "slowdown/optimization_4_svb/scripts/prepare_failure_diagnostics.py": "c844147313a0ebed4d6e4a6538478860605352c730d0b6fe8fcb50b21bd8628f"
+    },
+    "trace_enabled": false
+  },
+  "verilator_build": "PASS"
+}
