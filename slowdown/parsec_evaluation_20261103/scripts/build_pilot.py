@@ -59,7 +59,11 @@ int main(void) {
 }
 '''
 def blackscholes(src,size):
-    inp=input_file('blackscholes',size,src,'.txt');rows=[l.split() for l in inp.read_text().splitlines()[1:] if l.strip()];n=len(rows)
+    inp=input_file('blackscholes','simsmall'if size.startswith('project')else size,src,'.txt');rows=[l.split() for l in inp.read_text().splitlines()[1:] if l.strip()]
+    parent_input={'class':'simsmall','filename':inp.name,'sha256':sha(inp),'options':len(rows)}if size.startswith('project')else None
+    if parent_input:
+        rows=rows[:int(size.removeprefix('project'))];inp=src/('in_'+str(len(rows))+'_from_simsmall.txt');inp.write_text(str(len(rows))+'\n'+'\n'.join(' '.join(r)for r in rows)+'\n')
+    n=len(rows)
     q=src/'blackscholes.c';q.rename(src/'blackscholes.upstream.c')
     adapter='''#define main parsec_file_main
 #include "blackscholes.upstream.c"
@@ -77,7 +81,7 @@ printf("[OUTPUT] benchmark=blackscholes checksum=%016lx verified=%d options=N ru
 '''
     adapter=re.sub(r'\bN\b',str(n),adapter)
     (src/'adapter.c').write_text(adapter)
-    return ['adapter.c'],{'input_class':size,'input_filename':inp.name,'input_sha256':sha(inp),'options':n,'iterations':100,'operations':n*100,'command_line':f'blackscholes 1 {inp.name} prices.txt','output_verification':'all options finite, abs error < 1e-4 vs official DGrefval; full bit checksum'},False
+    return ['adapter.c'],{'input_class':size,'parent_input':parent_input,'input_filename':inp.name,'input_sha256':sha(inp),'options':n,'iterations':100,'operations':n*100,'command_line':f'blackscholes 1 {inp.name} prices.txt','output_verification':'all options finite, abs error < 1e-4 vs official DGrefval; full bit checksum'},False
 def streamcluster(src,size):
     args={'test':(2,5,1,10,10,5),'simdev':(3,10,3,16,16,10),'project128':(3,10,16,128,128,64),'simsmall':(10,20,32,4096,4096,1000)}[size]
     q=src/'streamcluster.cpp';text=q.read_text()
@@ -131,7 +135,7 @@ printf("[OUTPUT] benchmark=canneal checksum=%016lx verified=%d routing_cost=%lu\
 ''')
     return ['adapter.cpp','annealer_thread.cpp','rng.cpp','netlist.cpp','netlist_elem.cpp'],{'input_class':size,'input_filename':inp.name,'input_sha256':sha(inp),'iterations':steps,'swaps_per_temperature':swaps,'start_temperature':temp,'seed':'Rng::seed=0; srandom(3), upstream unchanged','command_line':f'canneal 1 {swaps} {temp} {inp.name} {steps}','output_verification':'finite nonnegative total routing cost, exact cost bits compared to host reference and all target modes'},True
 def main():
-    p=argparse.ArgumentParser();p.add_argument('benchmark',choices=['blackscholes','streamcluster','canneal']);p.add_argument('size',choices=['test','simdev','simsmall','project128','project1k']);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('benchmark',choices=['blackscholes','streamcluster','canneal']);p.add_argument('size',choices=['test','simdev','simsmall','project32','project64','project128','project1k']);a=p.parse_args()
     out=OUT/'build'/(a.benchmark+'_'+a.size);out.mkdir(parents=True,exist_ok=False)
     src=out/'source';shutil.copytree(COMMON,src)
     extract(a.benchmark,src)
@@ -147,6 +151,10 @@ def main():
     linker=(ROOT/'slowdown/blackscholes_validation/build/parsec_test4/htif.ld').read_text()
     linker=linker.replace('    .data ALIGN(64)', '    .eval_mode : ALIGN(64) { KEEP (*(.eval_mode)) }\n\n    .data ALIGN(64)')
     linker=linker.replace('PROVIDE(__heap_size = 128K)','PROVIDE(__heap_size = 4M)')
+    # HTIF crt.o declares its lw/sw boot-sync word in a byte-aligned .bss
+    # input section. C++ library BSS can leave its output offset unaligned.
+    # Keep the common 64-byte timer-slot guarantee while aligning every input.
+    if cpp:linker=linker.replace('.bss (NOLOAD) : ALIGN(64)', '.bss (NOLOAD) : ALIGN(64) SUBALIGN(64)')
     (out/'htif.ld').write_text(linker)
     flags=['-fno-common','-fno-builtin-printf','-fdata-sections','-ffunction-sections','-specs='+str(src/'support/htif_nano.specs'),'-L'+str(src/'support'),'-I'+str(src/'support'),'-I'+str(src),'-march=rv64imafd','-O2','-static']
     units=['hw/interrupt.c','test.c','stat/report.c','core/secondary.c','cfg/init.c','core/checker.c','hw/spin_lock.c']+files
@@ -160,6 +168,8 @@ def main():
         commands.append(cmd);subprocess.run(cmd,cwd=out,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
     sym=subprocess.check_output([str(TOOLS/'riscv64-unknown-elf-nm'),'-n',str(out/'protected.riscv')],text=True)
     (out/'symbols.txt').write_text(sym);symbols={l.split()[2]:int(l.split()[0],16) for l in sym.splitlines() if len(l.split())==3}
+    assert symbols['__boot_sync']%4==0,'HTIF boot-sync must permit aligned lw/sw'
+    assert symbols['timer_flags']%64==0,'timer slots must occupy private coherence blocks'
     elf=bytearray((out/'protected.riscv').read_bytes());h=struct.unpack_from('<16sHHIQQQIHHHHHH',elf);assert h[4]==0x80000000
     segments=[];modeoff=None
     for i in range(h[10]):

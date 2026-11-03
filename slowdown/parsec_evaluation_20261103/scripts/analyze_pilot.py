@@ -39,6 +39,14 @@ def analyze(run):
         packages['accepted_before_software_ROI']=sum(r['cycle']<roi['start_cycle']for r in results)
         packages['accepted_inside_software_ROI']=sum(roi['start_cycle']<=r['cycle']<roi['stop_cycle']for r in results)
         packages['accepted_after_software_ROI']=[{'hart':r['hart'],'seq':r['nums'][0]&0xffffffff,'cycle':r['cycle']}for r in results if r['cycle']>=roi['stop_cycle']]
+        roi_seqs={r['nums'][0] for r in allocations if r['cycle']<roi['stop_cycle']}
+        roi_results=[r for r in results if (r['nums'][0]&0xffffffff) in roi_seqs]
+        packages['allocated_before_app_end']=len(roi_seqs)
+        packages['outstanding_at_app_end']=len(roi_seqs)-sum(r['cycle']<roi['stop_cycle'] for r in roi_results)
+        packages['ROI_work_last_verification_cycle']=max((r['cycle'] for r in roi_results),default=None)
+        packages['ROI_work_drain_tail_cycles']=max(0,(packages['ROI_work_last_verification_cycle'] or 0)-roi['stop_cycle'])
+        packages['ROI_work_start_to_verified_cycles']=max(roi['stop_cycle'],packages['ROI_work_last_verification_cycle'] or 0)-roi['start_cycle']
+        packages['ROI_work_drain_scope']='all packages allocated before application end, including start boundary package; later STOP packages excluded'
         packages['last_accepted_cycle']=max((r['cycle']for r in results),default=None)
         packages['hardware_result_tail_after_software_ROI_cycles']=max(0,(packages['last_accepted_cycle'] or 0)-roi['stop_cycle'])
         packages['start_to_last_accepted_result_cycles']=(packages['last_accepted_cycle']-roi['start_cycle'])if results else None
