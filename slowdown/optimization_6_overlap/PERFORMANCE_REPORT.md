@@ -148,5 +148,6 @@ Full ignored runs/builds are retained under the matching run IDs. A is committed
 `4250b35fe` and B as `40c8a18ca`. C's sealed binary SHA256 is
 `66ab0661ba28dc040cc2fb6dae6bf5f6be6d21ed4bf035a94861dff7c9110e6a`;
 its completed simulation passed with 1,128,052 ROI cycles. The final hardware
-source and binary hashes match that seal. C is retained as an independent hardware
-milestone; branch history records its commit after this report and evidence.
+source and binary hashes match that seal. C is committed as `5343ea33f`; every
+committed hardware file matches the sealed source hash. The final measured
+implementation is A+B+C on branch `opt4/perf-20261103`.

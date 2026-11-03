@@ -22,7 +22,7 @@ check are in [`results/retained_copy`](results/retained_copy).
 It saves 579,811 cycles (33.95%) from frozen Opt4 and 46,722 (3.98%) from B.
 The previous best is retained in [`results/terminal_fetch8_prefix`](results/terminal_fetch8_prefix).
 The first milestone is retained in [`results/direct_sourcec_v2`](results/direct_sourcec_v2).
-The earlier validated hardware commits are `4250b35fe` (A) and `40c8a18ca` (B).
+Validated hardware commits: `4250b35fe` (A), `40c8a18ca` (B), `5343ea33f` (C).
 The ignored run/build directories retain full mandatory evidence and all failed
 attempts. [`OPTIMIZATION_LOG.md`](OPTIMIZATION_LOG.md) records decisions;
 [`CANDIDATE_AUDIT.md`](CANDIDATE_AUDIT.md) separates source arguments from runtime

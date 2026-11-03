@@ -237,3 +237,7 @@ Compact exact/incremental patches, source/binary seals, run manifest, configurat
 ROI, capture, protocol/integrity results and profiles are in `results/retained_copy/`.
 Full run/build artifacts remain in their private ignored directories. The main/FPGA
 tree and its processes were not altered.
+
+C hardware and evidence are committed as `5343ea33f`. Every committed hardware
+file was compared against the run's sealed source hash and matches. The scoped
+worktree is clean apart from the intentional untracked tool symlink.
