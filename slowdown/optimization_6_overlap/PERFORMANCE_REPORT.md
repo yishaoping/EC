@@ -2,6 +2,8 @@
 
 Worktree `/data1/gzh/EC-opt4-perf`, branch `opt4/perf-20261103`.
 Main/FPGA source and processes were left independent.
+The source-level version state machine is recorded in
+[CACHE_VERSION_STATE.md](CACHE_VERSION_STATE.md).
 
 ## Measured milestones
 

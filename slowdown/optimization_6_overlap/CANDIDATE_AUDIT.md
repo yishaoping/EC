@@ -1,9 +1,9 @@
 # Follow-on cache audit
 
-This is source reasoning, distinct from benchmark/RTL evidence. The first
-experiment completed at 1.424459x. Its sealed source patch is retained under
-`results/direct_sourcec_v2/`. Terminal bypass, prefix fusion and fetch8 are active
-only in the follow-on candidate currently being built.
+This records source reasoning separately from benchmark/RTL evidence. A completed
+at 1.424459x and B at 1.172810x; their exact patches and validation are retained in
+`results/direct_sourcec_v2/` and `results/terminal_fetch8_prefix/`. Terminal bypass,
+prefix fusion and fetch8 are validated B hardware. Candidate C remains separate.
 
 ## Completion overlap
 
@@ -20,8 +20,9 @@ only in the follow-on candidate currently being built.
 The terminal arbiter can enqueue on boundary 2 instead of waiting one extra cycle
 for `s3_applied`. A full completion queue still holds S3. `s3_applied` prevents a
 second physical effect while blocked; failed SC, duplicate and cancellation paths
-retain their existing registered handling. Queue flow-through is disabled, so a
-newly enqueued terminal result cannot be consumed before the physical-effect edge.
+retain their existing registered handling. B also enables native empty-queue
+flow-through: enqueue and dequeue may accept on the physical-effect edge. A
+terminal never acknowledges a physical write that the array did not accept.
 
 Removing the global `completionQ.count != 0` write-admission gate is separate.
 The affected hit slot remains blocked by `completionPending(set)(way)`. Refills
@@ -59,8 +60,9 @@ The enqueue and dequeue updates leave the pending bit clear after a bypass; a
 full queue still retains the applied S3 grant without repeating its effect.
 
 These changes reduce effect-to-terminal latency. A younger store still waits for
-the identity-matched terminal of every older inflight store. The candidate is
-active in `overlap_terminal_fetch8_prefix_20261103_031553_2a566233`.
+the identity-matched terminal of every older inflight store. The implementation
+was validated in `overlap_terminal_fetch8_prefix_20261103_031553_2a566233` and
+committed as `40c8a18ca`.
 
 For an empty terminal queue, free response lane and a hit that reaches S2 without
 another blocker, the source-level cycle example is:

@@ -24,7 +24,9 @@ The validated hardware commits are `4250b35fe` (A) and `40c8a18ca` (B).
 The ignored run/build directories retain full mandatory evidence and all failed
 attempts. [`OPTIMIZATION_LOG.md`](OPTIMIZATION_LOG.md) records decisions;
 [`CANDIDATE_AUDIT.md`](CANDIDATE_AUDIT.md) separates source arguments from runtime
-evidence. Candidate patch files are historical preparation artifacts; active
+evidence. [`CACHE_VERSION_STATE.md`](CACHE_VERSION_STATE.md) reconstructs the
+image/receipt/epoch, preservation, result and eviction boundaries. Candidate patch
+files are historical preparation artifacts; active
 changes are the Git diff and each run's sealed `source.patch`.
 
 From this worktree's root:
