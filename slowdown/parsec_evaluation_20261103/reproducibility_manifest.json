@@ -4,8 +4,8 @@
   "tag": "opt4-final-corrected-20261103",
   "branch": "opt4/final-eval-20261103",
   "worktree": "/data1/gzh/EC-opt4-perf",
-  "evaluation_head": "1532923803d7451b0c7843e9abad1c90ef9eb9ed",
-  "git_status": "M .gitignore\n?? slowdown/parsec_evaluation_20261103/",
+  "evaluation_head": "7e067ba52f5b13cf693004f4f109c78a2540afe6",
+  "git_status": "",
   "parent_history": [
     "1532923803d7451b0c7843e9abad1c90ef9eb9ed 83dec9d4c10ab8c097fe5ab5c8af1c0a270fba6d docs(opt4): record controlled Blackscholes validation and BFS repair regression",
     "83dec9d4c10ab8c097fe5ab5c8af1c0a270fba6d 5e7a6277cb28da4edf2cc72217fc191714ddf904 fix(opt4): drain issued captures across exception flushes",
@@ -69,10 +69,27 @@
     "FP_PRF": 128,
     "LQ": 16,
     "SQ": 16,
+    "boom_fetch_width": 8,
+    "boom_decode_retire_width": 3,
+    "issue_queue_entries": {
+      "MEM": 16,
+      "INT": 32,
+      "FP": 24
+    },
+    "fetch_buffer_entries": 24,
+    "FTQ_entries": 32,
+    "RAS_entries": 16,
+    "max_branches": 16,
     "checker_decode_retire_width": 1,
     "checker_fetch_bytes": 8
   },
   "caches": {
+    "boom_L1I": {
+      "bytes": 32768,
+      "sets": 64,
+      "ways": 8,
+      "fetch_bytes": 16
+    },
     "boom_L1D": {
       "bytes": 32768,
       "sets": 256,
@@ -97,6 +114,16 @@
       "outerLatencyCycles": 12
     },
     "SVB_entries": 16
+  },
+  "queues": {
+    "per_checker_data_CDC": 256,
+    "per_checker_ARF_CDC": 8,
+    "per_checker_l2b_control_CDC": 64,
+    "per_checker_b2l_control_CDC": 64,
+    "per_checker_session_CDC": 4,
+    "per_checker_result_CDC": 256,
+    "CDC_sync_stages": 2,
+    "segment_instruction_limit": 5000
   },
   "build_config": "chipyard.v1Config,assertions,1simulator_thread,DRAMSim2,seed1,no waveform,no verbose",
   "tool_evidence": "/data1/gzh/EC-opt4-perf/slowdown/blackscholes_validation/evidence/tool_version_audit.json",
