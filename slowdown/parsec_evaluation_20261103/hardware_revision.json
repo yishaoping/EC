@@ -1,0 +1,79 @@
+{
+  "status": "ACCEPTED",
+  "canonical_hardware_commit": "a6e63c75947739dfbb411b32bfe0eb5ed55c5bb1",
+  "proposed_tag": "opt4-final-corrected-r2-20261103",
+  "parent_hardware_revision": "1532923803d7451b0c7843e9abad1c90ef9eb9ed",
+  "build_id": "overlap_streamcluster_epoch_owner_fix_20261103_110307_9361110a",
+  "build_manifest": "slowdown/parsec_evaluation_20261103/revisions/a6e63c759/run_manifest.json",
+  "build_manifest_sha256": "de893ad98cb42d7288b4b92209631a81414eecc8ccd28c31b917175f13db5d7f",
+  "simulator": "slowdown/optimization_6_overlap/build/overlap_streamcluster_epoch_owner_fix_20261103_110307_9361110a/verilator/simulator-chipyard-v1Config",
+  "simulator_sha256": "4121b8a4005a39db85e7ad2c98f7ccebd7acd0b47b1c95e230f1fd6fbc9adc40",
+  "emitted_DCache_sha256": "3fe6a1df5974673d98d52097b633096775bd2b8b368dc246b658fc095edd009a",
+  "acceptance_required": [
+    "GAPBS BFS",
+    "Blackscholes simdev",
+    "Streamcluster simdev",
+    "Canneal simdev"
+  ],
+  "scope": "Correctness repair only; no performance optimization",
+  "canonical_tag": "opt4-final-corrected-r2-20261103",
+  "tag_target_commit": "a6e63c75947739dfbb411b32bfe0eb5ed55c5bb1",
+  "acceptance": {
+    "emitted_epoch_controller": {
+      "evidence": "logs/epoch_cone_f817517e.json"
+    },
+    "BFS": {
+      "run_id": "bfs_regression_20261103_114841_14d6fa39",
+      "result": {
+        "status": "PASS",
+        "ROI_cycles": 1128052,
+        "previous_revision_ROI": 1128052,
+        "delta_cycles": 0,
+        "correctness": {
+          "status": "PASS",
+          "benchmark_pass": true,
+          "failed_results": 0,
+          "cancelled_results": 0,
+          "assertion_failures": 0
+        },
+        "protocol": "PASS",
+        "integrity": "PASS",
+        "capture": "PASS",
+        "data_ordering": "PASS",
+        "benchmark_result": {
+          "verified": 1,
+          "checksum": 43439728
+        },
+        "run_id": "bfs_regression_20261103_114841_14d6fa39",
+        "canonical_hardware_commit": "a6e63c75947739dfbb411b32bfe0eb5ed55c5bb1"
+      }
+    },
+    "blackscholes": {
+      "run_id": "blackscholes_simdev_correction_20261103_114841_82e05265",
+      "ROI_cycles": 1615350,
+      "ROI_instret": 904747,
+      "output": [
+        "benchmark=blackscholes checksum=4fdc182d9488e778 verified=1 options=16 runs=100"
+      ],
+      "accepted_packages": 360
+    },
+    "streamcluster": {
+      "run_id": "streamcluster_simdev_correction_20261103_114841_c5f49cfc",
+      "ROI_cycles": 1452774,
+      "ROI_instret": 1094668,
+      "output": [
+        "benchmark=streamcluster checksum=5e0eed7ac7af71fb verified=1 centers=3 weight=16"
+      ],
+      "accepted_packages": 525
+    },
+    "canneal": {
+      "run_id": "canneal_simdev_correction_20261103_114841_dce33974",
+      "ROI_cycles": 182954,
+      "ROI_instret": 110507,
+      "output": [
+        "benchmark=canneal checksum=40b10d0000000000 verified=1 routing_cost=4365"
+      ],
+      "accepted_packages": 39
+    }
+  }
+}
