@@ -5,7 +5,7 @@ This is a controller-cone test, not a full DCache or architectural recovery test
 No control equation is rewritten in the test: wire RHSs and register next-state
 assignments are extracted from the candidate's emitted BoomNonBlockingDCache.sv.
 """
-import argparse,hashlib,json,os,re,subprocess,uuid
+import argparse,hashlib,json,os,re,shutil,subprocess,uuid
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[3];OUT=ROOT/'slowdown/parsec_evaluation_20261103'
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
@@ -46,5 +46,5 @@ def main():
     env=dict(os.environ,PATH='/nix/store/zxw41nfy4gjlzd31ly7q6mkv4vkybx15-clang-wrapper-16.0.6/bin:/usr/bin:/bin')
     with(d/'build.log').open('xb')as f:subprocess.run(cmd,cwd=ROOT,stdout=f,stderr=subprocess.STDOUT,env=env,check=True)
     run=subprocess.run([str(d/'VEpochCone')],capture_output=True,text=True,env=env);(d/'stdout.log').write_text(run.stdout);(d/'stderr.log').write_text(run.stderr)
-    dest=OUT/'logs'/('epoch_cone_'+uuid.uuid4().hex[:8]+'.json');dest.write_text(json.dumps({'status':'PASS'if run.returncode==0 else'FAIL','command':cmd,'emitted_source':str(a.emitted_dcache),'emitted_source_sha256':sha(a.emitted_dcache),'generated_test_rtl_sha256':sha(sv),'driver_sha256':sha(cpp),'wire_equations':definitions,'register_next_state':states,'cut_inputs':leaves,'stdout':run.stdout,'stderr':run.stderr,'scope':'Exact emitted Boolean controller cone; datapath identity, actual array effect, LSU/MSHR retry delivery and architectural rollback are not simulated here.'},indent=2)+'\n');print(run.stdout);print(dest);run.check_returncode()
+    dest=OUT/'logs'/('epoch_cone_'+uuid.uuid4().hex[:8]+'.json');dest.write_text(json.dumps({'status':'PASS'if run.returncode==0 else'FAIL','command':cmd,'emitted_source':str(a.emitted_dcache),'emitted_source_sha256':sha(a.emitted_dcache),'generated_test_rtl_sha256':sha(sv),'driver_sha256':sha(cpp),'wire_equations':definitions,'register_next_state':states,'cut_inputs':leaves,'stdout':run.stdout,'stderr':run.stderr,'scope':'Exact emitted Boolean controller cone; datapath identity, actual array effect, LSU/MSHR retry delivery and architectural rollback are not simulated here.'},indent=2)+'\n');shutil.copyfile(sv,dest.with_suffix('.sv'));shutil.copyfile(cpp,dest.with_suffix('.cpp'));print(run.stdout);print(dest);run.check_returncode()
 if __name__=='__main__':main()
