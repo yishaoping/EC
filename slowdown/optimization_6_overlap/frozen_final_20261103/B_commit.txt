@@ -1,0 +1,29 @@
+commit 40c8a18ca747cda97a8ced9a0aa10d73bd194244
+Author:     yishaoping <zhenghuiGuo@zohomail.cn>
+AuthorDate: Tue Nov 3 12:48:14 2026 +0800
+Commit:     yishaoping <zhenghuiGuo@zohomail.cn>
+CommitDate: Tue Nov 3 12:48:14 2026 +0800
+
+    perf(opt4): overlap store terminals and widen checker instruction supply
+    
+    Enqueue accepted store terminals on the physical effect edge and forward only an identity-matched accepted completion to successor admission. Preserve per-slot ownership and nack priority. Supply two instruction words per checker fetch, fuse a prefix with its ready matching CFI, and keep scalar decode/retirement.
+    
+    Pinned BFS ROI improves from 1,426,845 to 1,174,774 cycles (1.172809544x native). Functional, integrity, ordering, ACK protocol, mandatory capture, SC48/49/50 and generated configuration checks pass. Keep the sealed source and compact evidence with the milestone.
+
+ .../boom/src/main/scala/lsu/dcache.scala           |   46 +-
+ .../generators/boom/src/main/scala/lsu/lsu.scala   |   40 +-
+ .../src/main/scala/rocket/Frontend.scala           |   35 +-
+ .../rocket-chip/src/main/scala/rocket/IBuf.scala   |   10 +-
+ .../src/main/scala/rocket/RocketCore.scala         |    8 +-
+ .../src/main/scala/subsystem/Configs.scala         |    3 +-
+ .../optimization_6_overlap/experiment2_result.json |  407 +
+ .../terminal_fetch8_prefix/binary_seal.json        |   74 +
+ .../terminal_fetch8_prefix/checker_profile.json    | 9033 ++++++++++++++++++++
+ .../configuration_check.json                       |  242 +
+ .../results/terminal_fetch8_prefix/milestone.json  |   21 +
+ .../terminal_fetch8_prefix/overlap_analysis.json   |  407 +
+ .../preservation_profile.json                      |   30 +
+ .../results/terminal_fetch8_prefix/result.json     |  119 +
+ .../results/terminal_fetch8_prefix/roi.json        |    6 +
+ .../results/terminal_fetch8_prefix/source.patch    |  584 ++
+ 16 files changed, 11051 insertions(+), 14 deletions(-)

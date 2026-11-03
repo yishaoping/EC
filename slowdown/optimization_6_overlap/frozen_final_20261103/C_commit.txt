@@ -1,0 +1,32 @@
+commit 5343ea33f7ccc1b4d140eef09e2d07ab775ae72c
+Author:     yishaoping <zhenghuiGuo@zohomail.cn>
+AuthorDate: Tue Nov 3 13:37:14 2026 +0800
+Commit:     yishaoping <zhenghuiGuo@zohomail.cn>
+CommitDate: Tue Nov 3 13:37:14 2026 +0800
+
+    perf(opt4): retain acknowledged safe L1 copies after publication
+    
+    Publish safe T-permission predecessors as TtoT and retain matching L1 residency after the exact image/epoch receipt. Keep the existing freeze, drain, full C transfer, ACK source, lower history and overwrite gates. Preserve the invalidating Branch fallback and reject revoked resident receipts.
+    
+    Pinned BFS ROI is 1,128,052 cycles, 1.126165672x native: 46,722 cycles below B and 579,811 below frozen Opt4. Functional, integrity, ordering, ACK protocol, complete capture, configuration and SC48-51 checks pass. SC51 closes 859 retained receipts with zero invalidating clears. Preserve exact/incremental patches, binary seal and complete compact evidence; document limits of rollback and probe-race coverage.
+
+ .../boom/src/main/scala/lsu/dcache.scala           |   57 +-
+ .../optimization_6_overlap/CACHE_VERSION_STATE.md  |    4 +-
+ slowdown/optimization_6_overlap/CANDIDATE_AUDIT.md |   14 +-
+ .../optimization_6_overlap/OPTIMIZATION_LOG.md     |   58 +
+ .../optimization_6_overlap/PERFORMANCE_REPORT.md   |   69 +-
+ slowdown/optimization_6_overlap/README.md          |   12 +-
+ .../optimization_6_overlap/experiment3_result.json |  421 +
+ .../results/retained_copy/binary_seal.json         |   74 +
+ .../results/retained_copy/capture_summary.json     | 1849 ++++
+ .../results/retained_copy/checker_profile.json     | 9231 ++++++++++++++++++++
+ .../results/retained_copy/configuration_check.json |  242 +
+ .../results/retained_copy/incremental.patch        |  113 +
+ .../results/retained_copy/milestone.json           |   28 +
+ .../results/retained_copy/overlap_analysis.json    |  421 +
+ .../retained_copy/preservation_profile.json        |   30 +
+ .../results/retained_copy/result.json              |  119 +
+ .../results/retained_copy/roi.json                 |    6 +
+ .../results/retained_copy/run_manifest.json        | 1992 +++++
+ .../results/retained_copy/source.patch             |  686 ++
+ 19 files changed, 15386 insertions(+), 40 deletions(-)

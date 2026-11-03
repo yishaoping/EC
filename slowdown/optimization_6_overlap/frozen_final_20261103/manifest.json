@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "frozen_at_utc": "2026-11-03T06:22:51.645763+00:00",
+  "snapshot_base_commit": "2012af65d249cf206a4fcd2d87b5fe399cf3d731",
+  "hardware_commit": "5343ea33f7ccc1b4d140eef09e2d07ab775ae72c",
+  "branch": "opt4/perf-20261103",
+  "worktree": "/data1/gzh/EC-opt4-perf",
+  "git_status_before_freeze_files": "?? chipyard/.conda-env\n",
+  "run_id": "overlap_retained_copy_20261103_040650_0a6ef6bc",
+  "hardware_seal_matches_committed_and_current_source": true,
+  "simulator": "/data1/gzh/EC-opt4-perf/slowdown/optimization_6_overlap/build/overlap_retained_copy_20261103_040650_0a6ef6bc/verilator/simulator-chipyard-v1Config",
+  "simulator_sha256": "66ab0661ba28dc040cc2fb6dae6bf5f6be6d21ed4bf035a94861dff7c9110e6a",
+  "raw_events_sha256": "8b2ce546aa903c9591dd04b6a37003cd3bfa5b9671cec6e4703af0133284458e",
+  "history": [
+    {
+      "stage": "Frozen",
+      "commit": "476a760910f3bfbd3c111000ebe40343870ab439",
+      "roi_cycles": 1707863,
+      "ratio_to_native": 1.7050071130855817
+    },
+    {
+      "stage": "A",
+      "commit": "4250b35fea54eea0c321bf35bfc634ff38e74f2f",
+      "roi_cycles": 1426845,
+      "ratio_to_native": 1.424459031122869
+    },
+    {
+      "stage": "B",
+      "commit": "40c8a18ca747cda97a8ced9a0aa10d73bd194244",
+      "roi_cycles": 1174774,
+      "ratio_to_native": 1.172809544013777
+    },
+    {
+      "stage": "C",
+      "commit": "5343ea33f7ccc1b4d140eef09e2d07ab775ae72c",
+      "roi_cycles": 1128052,
+      "ratio_to_native": 1.126165672498565
+    }
+  ],
+  "bfs_native_roi_cycles": 1001675,
+  "final_harness_cycles": 1732174,
+  "seal_head_caveat": "Measured build HEAD is A; dirty B+C file hashes match hardware_commit. HEAD alone does not identify measured C.",
+  "files": {
+    "A_commit.txt": "bc4ecc087d2d1f4c5bb4927273332deb066940a4b029fdc4794fad22e2afd093",
+    "B_commit.txt": "41e4a6922acbf945f223b80c67db6e718fc1b497d33451b60e699effeb2a3da0",
+    "CACHE_VERSION_STATE.md": "8ee32d03aa6a1a100c6e319741c297006d699b5c0e9450756b2b6505a35cbeaa",
+    "CANDIDATE_AUDIT.md": "0e1295afaf7d1970fec36973631e79f75ddf94a598b36cb25fca7490427835bc",
+    "C_commit.txt": "379f9e7762cbdede76e814015fbede6ff0929c4abe3b65720749055206db8a4e",
+    "OPTIMIZATION_LOG.md": "e35029fe938167f54137e2ecb7bcf793ae31d02dd6aca49f8ca02d7e5d747910",
+    "PERFORMANCE_REPORT.md": "5e868873ec897b47a428232218dcc5c2b9c7be13f39be25d9577c14ad43a8f99",
+    "SIMULATION_STARTED.json": "23687c97e418b91eff82265d35c6dc73fb72177175e4cbacbbdbc30f6031a8ac",
+    "binary_seal.json": "aa1368caa5171d3343602aef00575a773af0d5cbd7b5d0cbd7f3c42aec74a533",
+    "cache_opportunity.jsonl": "1279ac5f78e471571bacb765a715ed477f07a16cfe46b99fe8de26fc108b1561",
+    "capture_summary.json": "694cfdb7dc8290651fe4a0973f32f804a6d3f7fd9ca08173d19561928cee1e24",
+    "checker_profile.json": "aa6730f3d833379d0d4ad7c130ba34f1b09840691a66f1a1b96c622bf57b14a8",
+    "chipyard.TestHarness.v1Config.buildTopClockGenerator.freq-summary": "5be28ffad0f15844aa89536a63436201e0712162bb721ea53a23cb8e5b273127",
+    "chipyard.TestHarness.v1Config.harnessDividerOnlyClockGenerator.freq-summary": "cb534ba4b33379f8d52159f94d96f44e697355389889329b05fff8b228f26846",
+    "configuration_check.json": "f6ae0377e0ba11c8cb7cd38d5543dd2fe1a092fc8e37dc3ae7745153d45da1c1",
+    "exact_commands.json": "afa77590ae3a9a4aef915eb818cada2cdbeae90458229c4e382b048142ed8ac6",
+    "git_status.txt": "b1b116d8f5f146162eb266d3847e7239a9cb0cfb425c9f27b0d449e693ffa993",
+    "ibuf_rtl_test.json": "5b2549628b4d36518942f8d7a7b45694fe8aefb034616b0746372d4d96dc1519",
+    "preservation_profile.json": "5291148a7c59901d02a4693d90a146f0db7a5d56af942659df40f33c3f78e59f",
+    "restored_resources/ClockDivider2.v": "753672a56deb6f6f89857d7336bd634b38e8ebd00fd39bee92e16669988c9d16",
+    "restored_resources/ClockDivider3.v": "4943ad841b27c365546e0c2b08a344c87078750b4df9dd6bee3bb56d18f92906",
+    "restored_resources/EICG_wrapper.v": "8532a50a212f146f10208717be24168a2de73a9754786da272d0dbfcd556c307",
+    "restored_resources/SimDTM.v": "6952c4f506ff117c1015aa0011357c6665bda9ef652643c78b932c0fa8e0b7f6",
+    "restored_resources/SimJTAG.v": "3a5df6035e4658031b96dc27155086425fdf50af4e86e1e33036f2acd04eacf3",
+    "restored_resources/plusarg_reader.v": "482a63c1f24a7ac920909620bd0df108e6954eabf9520de6e72334a2b5450efb",
+    "restored_resources.json": "10dc0b777732e8982d40a12d2967b2201707a326f246b49f3852215163c82c7c",
+    "roi.json": "e189108cec9ea83bf91c8a8c3f63b1cbe3fcb455819a0ac1d697d07348a65414",
+    "run_manifest.json": "b906de5c2b17d0001823ca727205cf817f1c06918cedf2477542502faee2be13",
+    "safe_chain_events.tsv.gz": "6cb3293ff0a30ced1dd3cc94b021434e15db038f078cced765059b302b3b3d27",
+    "stderr.log": "49d2f99973199a51de6e6e4bdc7faea78e9ad7688e9e80c6ea3bcebe72ab44a4",
+    "stdout.log": "8b88cc2341a22dcd02b76422cd93909ac2b6156ca5f3872abc69b98881388ae5",
+    "summary.json": "09fa7267614e6fc482a9a736228ff8b37f3fd1a98ce7c661444a809999be93db",
+    "wb_rtl_test.json": "38b28ef2a15363250d9400451e95d28d1f85b6669ada36de8206109c558a15ac",
+    "worktrees.txt": "7d7657521c258ec8a44c882a57490cdb90305da8cf883c512f26394aaee09a53"
+  }
+}

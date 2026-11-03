@@ -54,3 +54,6 @@ snapshots require complete mandatory capture and conservation. L2 shadow-model
 fidelity fails and its geometry estimates are not decision evidence. A passing
 benchmark and SVB lifecycle ledger do not establish all rollback paths or full
 durable recovery/drain; synthesis timing and FPGA signoff are outside these tests.
+
+Permanent final BFS freeze: [frozen_final_20261103](frozen_final_20261103/README.md),
+including the complete compressed event stream, source verification and exact commands.

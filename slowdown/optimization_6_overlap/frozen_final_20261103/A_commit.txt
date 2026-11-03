@@ -1,0 +1,44 @@
+commit 4250b35fea54eea0c321bf35bfc634ff38e74f2f
+Author:     yishaoping <zhenghuiGuo@zohomail.cn>
+AuthorDate: Tue Nov 3 11:51:58 2026 +0800
+Commit:     yishaoping <zhenghuiGuo@zohomail.cn>
+CommitDate: Tue Nov 3 11:51:58 2026 +0800
+
+    perf(opt4): deliver checker fetches directly and overlap SourceC waitAck
+
+ .../src/main/scala/rocket/Frontend.scala           | 119 ++++++--
+ .../craft/inclusivecache/src/L2Preservation.scala  |   7 +
+ .../craft/inclusivecache/src/Scheduler.scala       |  40 ++-
+ slowdown/optimization_6_overlap/.gitattributes     |   2 +
+ slowdown/optimization_6_overlap/.gitignore         |   4 +
+ slowdown/optimization_6_overlap/CANDIDATE_AUDIT.md | 106 +++++++
+ .../optimization_6_overlap/OPTIMIZATION_LOG.md     | 103 +++++++
+ slowdown/optimization_6_overlap/README.md          |  49 +++
+ .../optimization_6_overlap/baseline_frontend.json  | 205 +++++++++++++
+ .../candidates/checker_fetch8.patch                |  62 ++++
+ .../candidates/diagnostics.patch                   | 107 +++++++
+ .../candidates/prefix_cfi_fusion.patch             |  27 ++
+ .../candidates/runner_fixes.patch                  |  25 ++
+ .../candidates/safe_predecessor_svb.patch          |  11 +
+ .../candidates/store_completion_overlap.patch      |  20 ++
+ .../candidates/terminal_bypass.patch               |  83 ++++++
+ .../configuration_check.json                       | 242 +++++++++++++++
+ .../optimization_6_overlap/experiment1_result.json | 295 +++++++++++++++++++
+ slowdown/optimization_6_overlap/ibuf_rtl_test.json |  20 ++
+ .../optimization_6_overlap/next_static_check.json  |  70 +++++
+ .../optimization_6_overlap/restored_resources.json |   8 +
+ .../results/direct_sourcec_v2/binary_seal.json     |  72 +++++
+ .../direct_sourcec_v2/configuration_check.json     | 242 +++++++++++++++
+ .../direct_sourcec_v2/overlap_analysis.json        | 292 ++++++++++++++++++
+ .../results/direct_sourcec_v2/result.json          | 119 ++++++++
+ .../results/direct_sourcec_v2/roi.json             |   6 +
+ .../results/direct_sourcec_v2/source.patch         | 327 +++++++++++++++++++++
+ .../scripts/EmitCheckerIBuf.scala                  |  55 ++++
+ .../scripts/analyze_overlap.py                     | 174 +++++++++++
+ .../optimization_6_overlap/scripts/ibuf_driver.cpp | 140 +++++++++
+ .../scripts/offline_overlap_tests.py               | 243 +++++++++++++++
+ .../scripts/run_experiment.py                      | 226 ++++++++++++++
+ .../optimization_6_overlap/scripts/run_ibuf_rtl.py |  54 ++++
+ .../scripts/verify_configuration.py                |  51 ++++
+ slowdown/optimization_6_overlap/static_check.json  |  68 +++++
+ 35 files changed, 3650 insertions(+), 24 deletions(-)
