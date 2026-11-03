@@ -1,0 +1,33 @@
+{
+  "scope": "Main workload characterization after accepted candidate hardware and all simdev pilot gates pass",
+  "per_run_max_cycles": 10000000,
+  "runs_per_workload": ["native", "check", "correction"],
+  "selection": {
+    "blackscholes": {
+      "workload": "blackscholes_project64",
+      "input_class": "project64 derived from official simsmall/in_4K",
+      "options": 64,
+      "iterations": 100,
+      "command_line": "blackscholes 1 in_64_from_simsmall.txt prices.txt",
+      "input_correctness_reference": "official per-option DGrefval; exact output checksum across execution modes",
+      "selection_reason": "4x the simdev pricing work with a finite target budget; official 4096-option simsmall is approximately 256x the pilot"
+    },
+    "streamcluster": {
+      "workload": "streamcluster_project64",
+      "input_class": "project equivalent with official serial SimStream generator",
+      "command_line": "streamcluster 3 10 3 64 64 32 none output.txt 1",
+      "seed": 1,
+      "selection_reason": "4x the simdev host distance-call count while retaining the official clustering kernel, RNG and iteration control"
+    },
+    "canneal": {
+      "workload": "canneal_project400",
+      "input_class": "project swap-parameter scale on official simdev 100.nets",
+      "command_line": "canneal 1 400 300 100.nets 2",
+      "seed": "Rng::seed=0; srandom(3)",
+      "selection_reason": "4x simdev swaps on the same official 100-node netlist; project1k is approximately 20x and exceeds the per-run target budget"
+    }
+  },
+  "repeatability": "After primary triplets, rerun one correction case per benchmark on the exact same ELF, simulator and input; compare target ROI cycles and output, while keeping repeats outside geomean selection.",
+  "analysis_gates": ["identical retired instructions", "identical output/checksum", "identical input and loops", "identical protected ELF for Check/Correction", "clean launch", "Correction PASS with zero FAIL/CANCELLED", "full package/protocol/integrity accounting"],
+  "scope_limits": ["single-thread official serial kernels", "Native is unprotected mode of the matched detection model without recovery datapath", "no parallel scaling or full simsmall claim"]
+}

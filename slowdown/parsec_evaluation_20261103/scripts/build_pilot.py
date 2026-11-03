@@ -111,8 +111,8 @@ printf("[OUTPUT] benchmark=streamcluster checksum=%016lx verified=%d centers=%d 
 '''.replace('KMIN',str(args[0])).replace('KMAX',str(args[1])).replace('DIM',str(args[2])).replace('CHUNK',str(args[4])).replace('CENTER',str(args[5])).replace('stream(N)','stream('+str(args[3])+')').replace('weight-N','weight-'+str(args[3])))
     return ['adapter.cpp'],{'input_class':size,'input_filename':'official synthetic SimStream','input_sha256':None,'parameters':args,'seed':1,'iterations':'original ITER=3,SP=1; convergence unchanged','command_line':'streamcluster '+' '.join(map(str,args))+' none output.txt 1','output_verification':'center count in requested interval; total weight N; finite coordinates; center IDs/weight/coordinate bit checksum compared across modes'},True
 def canneal(src,size):
-    swaps,temp,steps,suffix={'test':(5,100,1,'10.nets'),'simdev':(100,300,2,'100.nets'),'project1k':(1000,300,4,'100.nets'),'simsmall':(10000,2000,32,'100000.nets')}[size]
-    inp=input_file('canneal','simdev'if size=='project1k'else size,src,suffix)
+    swaps,temp,steps,suffix={'test':(5,100,1,'10.nets'),'simdev':(100,300,2,'100.nets'),'project400':(400,300,2,'100.nets'),'project1k':(1000,300,4,'100.nets'),'simsmall':(10000,2000,32,'100000.nets')}[size]
+    inp=input_file('canneal','simdev'if size.startswith('project')else size,src,suffix)
     # The input parser executes outside ROI. Preserve its token and EOF semantics.
     q=src/'netlist.cpp';text=q.read_text().replace('#include <fstream>','#include <fstream>\n#include <sstream>\nextern const char eval_netlist[];')
     text=text.replace('ifstream fin (filename.c_str());','istringstream fin (eval_netlist);').replace('assert(fin.is_open());','/* embedded stream is always open */')
@@ -135,7 +135,7 @@ printf("[OUTPUT] benchmark=canneal checksum=%016lx verified=%d routing_cost=%lu\
 ''')
     return ['adapter.cpp','annealer_thread.cpp','rng.cpp','netlist.cpp','netlist_elem.cpp'],{'input_class':size,'input_filename':inp.name,'input_sha256':sha(inp),'iterations':steps,'swaps_per_temperature':swaps,'start_temperature':temp,'seed':'Rng::seed=0; srandom(3), upstream unchanged','command_line':f'canneal 1 {swaps} {temp} {inp.name} {steps}','output_verification':'finite nonnegative total routing cost, exact cost bits compared to host reference and all target modes'},True
 def main():
-    p=argparse.ArgumentParser();p.add_argument('benchmark',choices=['blackscholes','streamcluster','canneal']);p.add_argument('size',choices=['test','simdev','simsmall','project32','project64','project128','project256','project1k']);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('benchmark',choices=['blackscholes','streamcluster','canneal']);p.add_argument('size',choices=['test','simdev','simsmall','project32','project64','project128','project256','project400','project1k']);a=p.parse_args()
     out=OUT/'build'/(a.benchmark+'_'+a.size);out.mkdir(parents=True,exist_ok=False)
     src=out/'source';shutil.copytree(COMMON,src)
     extract(a.benchmark,src)

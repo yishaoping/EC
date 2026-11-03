@@ -1,0 +1,58 @@
+{
+  "cache_opportunity_limit_bytes": 4194304,
+  "closed": true,
+  "counts": {
+    "discarded_diagnostic_bytes": 2218,
+    "discarded_diagnostic_lines": 10,
+    "event_records_seen": 1,
+    "failure_markers_seen": 2,
+    "safe_chain_events.tsv_lines": 1,
+    "stdout.log_lines": 3
+  },
+  "diagnostic_limit_bytes": 2097152,
+  "diagnostic_ringbuffer": {
+    "dumped": true,
+    "duplicate_events": 0,
+    "file": "hang_ringbuffer.tsv",
+    "limit_bytes": 1048576,
+    "limit_lines": 8192,
+    "policy": "named_diagnostic_events_and_failure_lines_only",
+    "retained_bytes": 2114,
+    "retained_lines": 4
+  },
+  "event_budgets": {
+    "diagnostic": 8388608,
+    "protocol": 40894464,
+    "summary": 1048576
+  },
+  "event_bytes_by_class": {
+    "protocol": 291,
+    "stdout.log_essential": 356,
+    "stdout.log_general": 37
+  },
+  "event_limit_bytes": 50331648,
+  "event_storage": "priority reserved TSV; explicit loss accounting; bounded final JSON",
+  "incomplete_reasons": [
+    "mandatory_producer_footer_mismatch"
+  ],
+  "mandatory_evidence_complete": false,
+  "observers": {
+    "10:0": {
+      "events_seen": 1,
+      "footers_seen": 0,
+      "kept": 1,
+      "omitted": 0,
+      "seen": 1
+    }
+  },
+  "optional_evidence_complete": true,
+  "optional_records_omitted": 0,
+  "policy": "priority_reserved_v2",
+  "producers": {},
+  "schema": 2,
+  "sizes": {
+    "safe_chain_events.tsv": 291,
+    "stdout.log": 393
+  },
+  "total_stream_limit_bytes": 58720256
+}
