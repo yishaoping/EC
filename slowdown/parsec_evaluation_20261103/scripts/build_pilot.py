@@ -83,7 +83,7 @@ printf("[OUTPUT] benchmark=blackscholes checksum=%016lx verified=%d options=N ru
     (src/'adapter.c').write_text(adapter)
     return ['adapter.c'],{'input_class':size,'parent_input':parent_input,'input_filename':inp.name,'input_sha256':sha(inp),'options':n,'iterations':100,'operations':n*100,'command_line':f'blackscholes 1 {inp.name} prices.txt','output_verification':'all options finite, abs error < 1e-4 vs official DGrefval; full bit checksum'},False
 def streamcluster(src,size):
-    args={'test':(2,5,1,10,10,5),'simdev':(3,10,3,16,16,10),'project128':(3,10,16,128,128,64),'simsmall':(10,20,32,4096,4096,1000)}[size]
+    args={'test':(2,5,1,10,10,5),'simdev':(3,10,3,16,16,10),'project128':(3,10,16,128,128,64),'project256':(3,10,16,256,256,128),'simsmall':(10,20,32,4096,4096,1000)}[size]
     q=src/'streamcluster.cpp';text=q.read_text()
     # File output and progress logging are replaced by a pointer handoff.
     # The original clustering, RNG, all iteration bounds and distance code remain.
@@ -135,7 +135,7 @@ printf("[OUTPUT] benchmark=canneal checksum=%016lx verified=%d routing_cost=%lu\
 ''')
     return ['adapter.cpp','annealer_thread.cpp','rng.cpp','netlist.cpp','netlist_elem.cpp'],{'input_class':size,'input_filename':inp.name,'input_sha256':sha(inp),'iterations':steps,'swaps_per_temperature':swaps,'start_temperature':temp,'seed':'Rng::seed=0; srandom(3), upstream unchanged','command_line':f'canneal 1 {swaps} {temp} {inp.name} {steps}','output_verification':'finite nonnegative total routing cost, exact cost bits compared to host reference and all target modes'},True
 def main():
-    p=argparse.ArgumentParser();p.add_argument('benchmark',choices=['blackscholes','streamcluster','canneal']);p.add_argument('size',choices=['test','simdev','simsmall','project32','project64','project128','project1k']);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('benchmark',choices=['blackscholes','streamcluster','canneal']);p.add_argument('size',choices=['test','simdev','simsmall','project32','project64','project128','project256','project1k']);a=p.parse_args()
     out=OUT/'build'/(a.benchmark+'_'+a.size);out.mkdir(parents=True,exist_ok=False)
     src=out/'source';shutil.copytree(COMMON,src)
     extract(a.benchmark,src)
