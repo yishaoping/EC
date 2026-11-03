@@ -15,6 +15,6 @@ def main():
     for src in [manifest,base/'runs'/a.build_id/'source.patch',build/'rtl_generation.log',build/'verilator_build.log']:
         compressed=src.suffix=='.log';data=gzip.compress(src.read_bytes(),mtime=0)if compressed else src.read_bytes();(dest/(src.name+('.gz'if compressed else''))).write_bytes(data)
     sealed=dest/'run_manifest.json'
-    r={'status':'CANDIDATE','canonical_hardware_commit':commit,'proposed_tag':a.tag,'parent_hardware_revision':'1532923803d7451b0c7843e9abad1c90ef9eb9ed','build_id':a.build_id,'build_manifest':str(sealed.relative_to(ROOT)),'build_manifest_sha256':sha(sealed),'simulator':str(sim.relative_to(ROOT)),'simulator_sha256':sha(sim),'emitted_DCache_sha256':sha(build/'generated/gen-collateral/BoomNonBlockingDCache.sv'),'acceptance_required':['GAPBS BFS','Blackscholes simdev','Streamcluster simdev'],'scope':'Correctness repair only; no performance optimization'}
+    r={'status':'CANDIDATE','canonical_hardware_commit':commit,'proposed_tag':a.tag,'parent_hardware_revision':'1532923803d7451b0c7843e9abad1c90ef9eb9ed','build_id':a.build_id,'build_manifest':str(sealed.relative_to(ROOT)),'build_manifest_sha256':sha(sealed),'simulator':str(sim.relative_to(ROOT)),'simulator_sha256':sha(sim),'emitted_DCache_sha256':sha(build/'generated/gen-collateral/BoomNonBlockingDCache.sv'),'acceptance_required':['GAPBS BFS','Blackscholes simdev','Streamcluster simdev','Canneal simdev'],'scope':'Correctness repair only; no performance optimization'}
     dump(dest/'revision.json',r);print(dest/'revision.json')
 if __name__=='__main__':main()
