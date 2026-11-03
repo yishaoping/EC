@@ -134,6 +134,37 @@ def terminal_snapshots(records, capture, expected_cycles, required=False):
                 scope='hardware traffic-enable window, local clock counts; overlapping activity, not causal savings')
 
 
+def retained_copy(records, capture, expected_cycles, required=False):
+    rows = [r for r in records if r['kind'] == 51 and r['hart'] == 0]
+    if not required and not rows:
+        return dict(status='NOT_IN_THIS_REVISION')
+    errors = []
+    if len(rows) != 1:
+        return dict(status='FAIL', errors=['one SC51 STOP record required'])
+    n = rows[0]['nums']
+    observer = capture.get('observers', {}).get('51:0', {})
+    producer = capture.get('producers', {}).get('51:0', {})
+    if (observer.get('events_seen') != 1 or observer.get('footers_seen') != 1 or
+            observer.get('footer_emitted_count') != 1 or observer.get('omitted') or
+            producer.get('produced') != 1 or producer.get('emitted') != 1 or
+            producer.get('omitted') != 0):
+        errors.append('SC51 producer/capture conservation failed')
+    if n[0] != 1 or n[1] <= 0 or any(n[9:]) or any(v > n[1] for v in n[2:9]):
+        errors.append('SC51 invalid schema/window/padding')
+    if expected_cycles is None or n[1] != expected_cycles:
+        errors.append('SC51 differs from same-enable L2 window')
+    # Requests and receipts can straddle the measurement boundary. Only
+    # same-edge subsets are equalities; do not force issued == done in ROI.
+    if n[3] > n[2] or n[5] + max(n[6], n[7]) > n[4]:
+        errors.append('SC51 retention/receipt subsets failed')
+    names = ['schema', 'sample_cycles', 'wb_requests', 'retaining_wb_requests',
+             'wb_receipts', 'retained_receipts', 'retaining_receipts_owner_changed',
+             'retaining_receipts_probe_revoked', 'invalidating_clears']
+    return dict(status='FAIL' if errors else 'PASS', errors=errors,
+                counters=dict(zip(names, n)), cycle=rows[0]['cycle'],
+                scope='traffic-enable activity, not causal savings')
+
+
 def analyze(run):
     records = stable.parse_events(run / 'safe_chain_events.tsv')
     summary = json.loads((run / 'summary.json').read_text())
@@ -149,14 +180,19 @@ def analyze(run):
     final = terminal_snapshots(records, capture,
         next(iter(windows)) if len(windows) == 1 else None,
         required='OVERLAP_OBSERVATION_ONLY' in patch)
+    retained = retained_copy(records, capture,
+        next(iter(windows)) if len(windows) == 1 else None,
+        required='RETAINED_COPY_OBSERVATION_ONLY' in patch)
     valid = (bool(summary.get('performance_valid')) and sc['status'] == 'PASS' and
-             final['status'] in ('PASS', 'NOT_IN_THIS_REVISION'))
+             final['status'] in ('PASS', 'NOT_IN_THIS_REVISION') and
+             retained['status'] in ('PASS', 'NOT_IN_THIS_REVISION'))
     cycles = summary.get('opt4_roi_cycles')
     return dict(run=str(run.resolve()), status='PASS' if valid else 'FAIL',
         performance_valid=valid, roi_cycles=cycles,
         slowdown=cycles / 1001675 if valid else None,
         improvement_vs_frozen_opt4_cycles=1707863-cycles if valid else None,
         sourcec=sc, frontend=frontend(records, roi), terminal_snapshots=final,
+        retained_copy=retained,
         correctness=summary.get('correctness'), integrity=summary.get('integrity'),
         protocol=summary.get('protocol'), data_ordering=summary.get('data_ordering'))
 

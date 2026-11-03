@@ -104,3 +104,62 @@ full recovery path is validated.
 
 The previous 4,774 unsupported-fallback events are rising-edge events, include
 descriptor/resource guards, and cannot be called 4,774 avoidable stores or cycles.
+
+## Retain the acknowledged safe copy in L1 — candidate C
+
+This is separate from the withheld safe-SVB capture. SC8 in run A contains 787
+complete observed legacy handoffs inside ROI. Their observed phases total 10,512
+cycles from descriptor entry to safety, 766 from safety to WB acceptance, 51,079
+from WB acceptance to receipt, and 787 from receipt to metadata clear. Optional
+capture has gaps; these are observed local exposures, not full-run totals or
+causal savings. The clear creates an additional demand refill that this phase
+sum does not measure.
+
+For a resident with T permission, send the existing safe WB as ReleaseData TtoT.
+`MSHR.scala` explicitly retains TRUNK and the client bit for TtoT; this path is
+already exercised by the validated SVB publications. At L1 the same freeze,
+source allocation, same-line SVB ordering, data drain, full C transfer and exact
+ReleaseAck are retained. Only the receipt transition changes: when resident tag,
+slot epoch and image key still match, set `lowerPreserved` and release the freeze
+without the destructive metadata clear. Branch permission retains the original
+invalidating fallback. The candidate adds no permission-acquisition shortcut.
+
+The resident may still need a probe downgrade/upgrade. A real ProbeAck remains
+a coherence event; a simultaneous invalidating probe suppresses retained-receipt
+acceptance. A prior probe that revoked the resident causes the identity match to
+fail. Neither case resurrects local state, clears an active WB source early or
+creates a receipt for another epoch. A non-invalidating probe can leave Branch;
+ordinary permission checks still require an upgrade before writing.
+
+The safe image is copied to the lower level before the matching ACK. The next
+local write retains the existing lower receipt gate and clears that receipt on
+its physical effect. If a newer image later reaches L2, L2 must preserve the safe
+predecessor before overwrite, exactly as with a normal refill-derived receipt.
+Historical protection, checker-result semantics and the watermark are unchanged.
+No safe image is newly entrusted to SPEC SVB entries, so this candidate does not
+broaden reliance on SPEC survival across exception/epoch flush.
+
+An assertion checks the post-receipt resident epoch/key/receipt and freeze release;
+existing frozen-snapshot assertions prevent physical writes or refills before ACK.
+SC51 adds one mandatory traffic-window snapshot, reaching exactly 128 observer
+identities. It counts requests, retaining requests, receipts, retained receipts,
+revoked owners and invalidating clears. The analyzer requires source/capture
+conservation, window equality and event subsets, without requiring request/receipt
+equality across the sampled boundary.
+
+Seven independent CPU contracts pass, including delayed copy/ACK, exact identity,
+probe races, repeated lower-level historical retention and corrupted diagnostics.
+These are source/abstract witnesses only. Scala/FIRRTL, combinational-loop checks,
+firtool, generated geometry/clock comparison and C++ build passed in
+`overlap_retained_copy_20261103_040650_0a6ef6bc`. The sealed binary is now running
+the pinned BFS workload; top-level runtime validation remains pending.
+
+The actual emitted `BoomWritebackUnit.sv` from sealed B was also tested directly
+with Verilator: 300 voluntary TtoT/TtoN transactions, 1,600 accepted data beats,
+300 exact receipts, 900 attempts blocked by a busy voluntary source, and 100
+probe data transfers during the older ACK wait. Random stalls cover the row
+reader, LSU-release notification and C channel. The scoreboard checks full bytes,
+address, permission report, image key, epoch and receipt identity; probe buffering
+cannot replace the older receipt owner. This validates the unchanged WB engine,
+not the new top-level retained-receipt controller. Witness: `wb_rtl_test.json`;
+reproducer: `scripts/run_wb_rtl.py GENERATED_DIRECTORY`.

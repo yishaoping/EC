@@ -101,3 +101,81 @@ the reduced contracts, not new RTL execution. `analyze_overlap.py` validates SC4
 phase/window/producer conservation and reports checker-local cumulative deltas
 only between saved snapshots. Baseline frontend deltas are saved separately;
 their censored tail is explicit and cannot support full-window stall attribution.
+
+Checker profile extraction corrected an analysis identity error: ECP epoch can
+advance during a package, so SC11 is grouped by hart/sequence, with epoch retained
+as observed metadata. Complete ROI packages: frozen 278 packages/570,177 checked
+instructions; A 270/590,230. Priority-partition local cycles per instruction:
+
+| Category | Frozen | A |
+| --- | ---: | ---: |
+| Instruction starvation | 2.09273 | 0.72672 |
+| Issue available | 1.00018 | 1.00454 |
+| Dependency | 0.00040 | 0.10235 |
+| Setup/redirect/management | 0.15916 | 0.32014 |
+| LSL wait | 0.00009 | 0.00212 |
+| Other | 0 | 0.01904 |
+
+Packages change as BOOM timing changes. These are normalized observations of
+complete saved packages, not paired package traces or additive BOOM stall savings.
+Every accepted start has zero counters; counters are monotonic and sum to the
+execution partition. One ROI-boundary package and four incomplete captures are
+excluded in both reports. The issue-available category is not retirement count.
+
+Candidate C retains an acknowledged safe T-permission L1 copy instead of forcing
+invalidation/refill. The audit is in CANDIDATE_AUDIT.md. Run A's 787 complete
+observed traditional WBs expose 51,079 cycles before ACK plus invalidation/refill
+work. Seven CPU protocol/diagnostic contracts pass. Build-only started as
+`overlap_retained_copy_20261103_040650_0a6ef6bc`; no new full simulation launched
+while B's outcome is pending. B hardware is staged independently; C remains an
+unstaged delta so each measured milestone can be committed exactly.
+
+Candidate C completed Scala/FIRRTL lowering, combination-loop checking, firtool
+and memory generation. Generated geometry/clock comparison PASS. C++ simulator
+build is in progress. The actual emitted WB RTL is byte-identical to B's unit;
+the reproducible 300-publication/100-concurrent-probe RTL test also passes using
+C's emitted unit. Top-level receipt retention is still unvalidated at runtime.
+
+## Experiment 2 — validated below 1.3x
+
+`overlap_terminal_fetch8_prefix_20261103_031553_2a566233` completed with ROI
+1,174,774 cycles, slowdown 1.172809544. It saves 252,071 cycles (17.67%) from A
+and 533,089 (31.21%) from frozen Opt4. Checksum 43439728 / verified=1, no FAIL,
+CANCELLED or assertion. Integrity PASS (293 allocations, 291 completions,
+1 coalesced, 1 flush-discarded). Same-line ordering PASS. Full protocol PASS:
+7,438 releases and matching ACKs, no conflict/invalid ACK/outstanding source.
+Generated clock/cache geometry comparison PASS. All 127 observer identities
+and mandatory producer/footer evidence complete. Optional diagnostic limit omitted
+731 examples; mandatory capture stayed complete. L2 shadow fidelity still FAIL.
+
+SC48 phase/window/producer conservation PASS: 1,183,175 samples; reservation
+54,648, waitAck 15,467, target lock 70,115; one release accepted during waitAck.
+SC49 all four full local traffic-window state partitions PASS. SC50 PASS:
+61,219 effects all enqueued their terminal on the effect edge; 55,667 also
+completed terminal delivery that edge. 55,716 total empty-queue terminal bypasses;
+39,196 younger store admissions occurred using an older accepted terminal.
+No applied-S3 blocked cycles; 6,528 terminal queue blocked/occupied cycles.
+These support exercised mechanisms, not isolated attribution of ROI savings.
+
+Complete captured SC11 packages: 269 / 624,770 checked instructions. Local
+priority cycles/instruction: starvation 0.02017, issue available 1.00501,
+dependency 0.22094, setup/redirect/management 0.33373, LSL wait 0.00236,
+other 0.03863; DCache/replay categories zero. Full captured admission-to-start
+sum 13,619 local cycles (about 51 per package), result enqueue backpressure zero.
+This does not identify the dependency/management categories as causal BOOM stalls.
+It does show broad fetch bandwidth is no longer a strong next target on BFS.
+
+The 851 completely observed B legacy copy-to-clear episodes include 55,505
+WB-to-receipt and 851 receipt-to-clear cycles, plus the induced refill work.
+Candidate C will test retaining the copied L1 image. Its hardware is the only
+unstaged source delta; B staged hardware matches all six sealed source hashes.
+Compact B source/seal/configuration/result/diagnostics/profiles are saved under
+`results/terminal_fetch8_prefix/`.
+
+B's exact staged hardware was rechecked against every source hash in its binary
+seal and committed with compact evidence as `40c8a18ca`. C was excluded from that
+commit. C completed the C++ build, with binary SHA256
+`66ab0661ba28dc040cc2fb6dae6bf5f6be6d21ed4bf035a94861dff7c9110e6a`
+(43,281,728 bytes). Unchanged source/runner/HEAD was verified before resume and
+the exclusive simulation-start marker was created before committing B. The
+end-to-end C simulation is in progress; no performance claim is made yet.

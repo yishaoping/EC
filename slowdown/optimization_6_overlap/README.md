@@ -7,17 +7,20 @@ The FPGA/main working tree is independent and must not be reset or cleaned.
 | --- | ---: | ---: | --- |
 | Frozen Opt4 `476a76091` | 1,707,863 | 1.705007x | Frozen verifier / original measured run |
 | Direct checker delivery + SourceC waitAck overlap | 1,426,845 | 1.424459x | Functional, integrity, ordering, protocol and capture PASS |
-| Terminal bypass + prefix fusion + fetch8 | Pending | Pending | Emitted IBuf RTL PASS; full build in progress |
+| Terminal bypass + prefix fusion + fetch8 | 1,174,774 | 1.172810x | Functional, integrity, ordering, protocol, capture and SC48/49/50 PASS |
+| Retain acknowledged safe T copy in L1 | Pending | Pending | RTL generation/configuration and WB unit tests PASS; sealed simulation running |
 
 All rows use the pinned GAPBS BFS workload (512 nodes, 8,192 edges, source 0),
 native ROI 1,001,675 cycles, expected checksum 43,439,728. Four 100 MHz checkers,
 200 MHz BOOM, cache geometries and line sizes remain fixed. Fetch8 changes the
 checker instruction-supply width; scalar decode/retirement stays at one.
 
-The validated run is
-`overlap_direct_sourcec_v2_20261103_012634_e6006f81`.
+The current best validated run is
+`overlap_terminal_fetch8_prefix_20261103_031553_2a566233`.
 Its compact results, exact source patch, binary seal and generated configuration
-check are in [`results/direct_sourcec_v2`](results/direct_sourcec_v2).
+check are in [`results/terminal_fetch8_prefix`](results/terminal_fetch8_prefix).
+The first milestone is retained in [`results/direct_sourcec_v2`](results/direct_sourcec_v2).
+The validated hardware commits are `4250b35fe` (A) and `40c8a18ca` (B).
 The ignored run/build directories retain full mandatory evidence and all failed
 attempts. [`OPTIMIZATION_LOG.md`](OPTIMIZATION_LOG.md) records decisions;
 [`CANDIDATE_AUDIT.md`](CANDIDATE_AUDIT.md) separates source arguments from runtime
