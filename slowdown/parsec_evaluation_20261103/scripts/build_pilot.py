@@ -78,13 +78,68 @@ printf("[OUTPUT] benchmark=blackscholes checksum=%016lx verified=%d options=N ru
     adapter=re.sub(r'\bN\b',str(n),adapter)
     (src/'adapter.c').write_text(adapter)
     return ['adapter.c'],{'input_class':size,'input_filename':inp.name,'input_sha256':sha(inp),'options':n,'iterations':100,'operations':n*100,'command_line':f'blackscholes 1 {inp.name} prices.txt','output_verification':'all options finite, abs error < 1e-4 vs official DGrefval; full bit checksum'},False
+def streamcluster(src,size):
+    args={'test':(2,5,1,10,10,5),'simdev':(3,10,3,16,16,10),'project128':(3,10,16,128,128,64),'simsmall':(10,20,32,4096,4096,1000)}[size]
+    q=src/'streamcluster.cpp';text=q.read_text()
+    # File output and progress logging are replaced by a pointer handoff.
+    # The original clustering, RNG, all iteration bounds and distance code remain.
+    text=text.replace('void outcenterIDs(', 'void file_outcenterIDs(')
+    text=text.replace('outcenterIDs( &centers, centerIDs, outfile);','eval_capture( &centers, centerIDs);')
+    text=text.replace('} Points;','} Points;\nstatic void eval_capture(Points*,long*);\n#ifdef __riscv\ntypedef int pthread_barrier_t;\n#endif')
+    text=text.replace('    fprintf(stderr,"read %d points\\n",numRead);','    /* progress I/O omitted by baremetal adapter */')
+    q.write_text(text)
+    (src/'adapter.cpp').write_text(r'''
+#define main parsec_file_main
+#include "streamcluster.cpp"
+#undef main
+#include <stdint.h>
+static Points saved;static long *ids;
+static void eval_capture(Points* p,long* x){saved=*p;ids=x;}
+extern "C" void workload_prepare(void){nproc=1;srand48(SEED);}
+extern "C" void workload_run(void){SimStream stream(N);streamCluster(&stream,KMIN,KMAX,DIM,CHUNK,CENTER,(char*)"unused");}
+extern "C" int workload_verify(void){uint64_t h=14695981039346656037ULL;double weight=0;int count=0;int ok=1;
+for(int i=0;i<saved.num;i++){int median=0;for(int j=0;j<saved.num;j++)if(saved.p[j].assign==i)median=1;
+if(median){count++;weight+=saved.p[i].weight;h^=(uint64_t)ids[i];h*=1099511628211ULL;
+union{float f;uint32_t u;}v={saved.p[i].weight};h^=v.u;h*=1099511628211ULL;
+for(int k=0;k<saved.dim;k++){v.f=saved.p[i].coord[k];if(!isfinite(v.f))ok=0;h^=v.u;h*=1099511628211ULL;}}}
+ok=ok&&count>=KMIN&&count<=KMAX&&fabs(weight-N)<0.001;
+printf("[OUTPUT] benchmark=streamcluster checksum=%016lx verified=%d centers=%d weight=%lu\n",(unsigned long)h,ok,count,(unsigned long)weight);return ok;}
+'''.replace('KMIN',str(args[0])).replace('KMAX',str(args[1])).replace('DIM',str(args[2])).replace('CHUNK',str(args[4])).replace('CENTER',str(args[5])).replace('stream(N)','stream('+str(args[3])+')').replace('weight-N','weight-'+str(args[3])))
+    return ['adapter.cpp'],{'input_class':size,'input_filename':'official synthetic SimStream','input_sha256':None,'parameters':args,'seed':1,'iterations':'original ITER=3,SP=1; convergence unchanged','command_line':'streamcluster '+' '.join(map(str,args))+' none output.txt 1','output_verification':'center count in requested interval; total weight N; finite coordinates; center IDs/weight/coordinate bit checksum compared across modes'},True
+def canneal(src,size):
+    swaps,temp,steps,suffix={'test':(5,100,1,'10.nets'),'simdev':(100,300,2,'100.nets'),'project1k':(1000,300,4,'100.nets'),'simsmall':(10000,2000,32,'100000.nets')}[size]
+    inp=input_file('canneal','simdev'if size=='project1k'else size,src,suffix)
+    # The input parser executes outside ROI. Preserve its token and EOF semantics.
+    q=src/'netlist.cpp';text=q.read_text().replace('#include <fstream>','#include <fstream>\n#include <sstream>\nextern const char eval_netlist[];')
+    text=text.replace('ifstream fin (filename.c_str());','istringstream fin (eval_netlist);').replace('assert(fin.is_open());','/* embedded stream is always open */')
+    q.write_text(text)
+    # Newlib serial headers do not expose the unused pthread member's type.
+    q=src/'rng.h';text=q.read_text().replace('static pthread_mutex_t seed_lock;','#ifdef ENABLE_THREADS\n\tstatic pthread_mutex_t seed_lock;\n#endif');q.write_text(text)
+    (src/'adapter.cpp').write_text('''#include <stdint.h>
+#include <stdio.h>
+#include <math.h>
+#include "location_t.h"
+#include "netlist_elem.h"
+#include "netlist.h"
+#include "annealer_thread.h"
+extern const char eval_netlist[] = R"NET('''+inp.read_text()+''')NET";
+static netlist *nl;static annealer_thread *worker;
+extern "C" void workload_prepare(void){srandom(3);nl=new netlist("embedded");worker=new annealer_thread(nl,1,'''+str(swaps)+','+str(temp)+','+str(steps)+''');}
+extern "C" void workload_run(void){worker->Run();}
+extern "C" int workload_verify(void){double cost=nl->total_routing_cost();union{double f;uint64_t u;}x={cost};int ok=isfinite(cost)&&cost>=0;
+printf("[OUTPUT] benchmark=canneal checksum=%016lx verified=%d routing_cost=%lu\\n",(unsigned long)x.u,ok,(unsigned long)cost);return ok;}
+''')
+    return ['adapter.cpp','annealer_thread.cpp','rng.cpp','netlist.cpp','netlist_elem.cpp'],{'input_class':size,'input_filename':inp.name,'input_sha256':sha(inp),'iterations':steps,'swaps_per_temperature':swaps,'start_temperature':temp,'seed':'Rng::seed=0; srandom(3), upstream unchanged','command_line':f'canneal 1 {swaps} {temp} {inp.name} {steps}','output_verification':'finite nonnegative total routing cost, exact cost bits compared to host reference and all target modes'},True
 def main():
-    p=argparse.ArgumentParser();p.add_argument('benchmark',choices=['blackscholes']);p.add_argument('size',choices=['test','simdev','simsmall']);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('benchmark',choices=['blackscholes','streamcluster','canneal']);p.add_argument('size',choices=['test','simdev','simsmall','project128','project1k']);a=p.parse_args()
     out=OUT/'build'/(a.benchmark+'_'+a.size);out.mkdir(parents=True,exist_ok=False)
     src=out/'source';shutil.copytree(COMMON,src)
     extract(a.benchmark,src)
     upstream={p.name:sha(p) for p in src.iterdir() if p.is_file()}
-    files,meta,cpp=blackscholes(src,a.size)
+    files,meta,cpp=globals()[a.benchmark](src,a.size)
+    if cpp:
+        (src/'cxx_runtime.c').write_text('void *__dso_handle;\n')
+        files.append('cxx_runtime.c')
     common=(src/'test.c').read_text();idx=common.index('/* 执行');common=common[:idx]
     common=common.replace('#include "Benchmark/gapbs/gapbs_bfs.h"\n#include "bench/stage1_amo.h"','extern volatile uint64_t eval_protected;')
     common=common.replace('    ght_set_satp_priv();','    if(eval_protected) ght_set_satp_priv();')

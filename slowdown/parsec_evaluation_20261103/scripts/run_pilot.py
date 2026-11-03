@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Fresh immutable run directories, sealed models, existing compact capture."""
-import argparse,datetime,hashlib,json,os,platform,re,shlex,shutil,sys,time,uuid
+import argparse,datetime,hashlib,json,os,platform,re,shlex,shutil,subprocess,sys,time,uuid
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[3];OUT=ROOT/'slowdown/parsec_evaluation_20261103'
 sys.path.insert(0,str(ROOT/'slowdown/optimization_4_svb/scripts'))
@@ -17,6 +17,8 @@ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def dump(p,x):p.write_text(json.dumps(x,indent=2)+'\n')
 def main():
     p=argparse.ArgumentParser();p.add_argument('workload');p.add_argument('design',choices=['native','check','correction']);p.add_argument('--max-cycles',type=int,default=20000000);a=p.parse_args()
+    status=subprocess.check_output(['git','status','--porcelain=v1'],cwd=ROOT,text=True)
+    assert not status,'Evaluation must start from a clean worktree: '+status
     soft=OUT/'build'/a.workload;sm=json.loads((soft/'build.manifest.json').read_text());mode='native'if a.design=='native'else'protected'
     for ext,key in [('riscv','elf_sha256'),('loadmem_hex','loadmem_sha256')]:assert sha(soft/(mode+'.'+ext))==sm['artifacts'][mode][key]
     if a.design=='check':
@@ -36,7 +38,7 @@ def main():
     argv=[str(sim),'-s','1','+cycle-count','+permissive']
     if a.design!='check':argv+=['+safe-chain-events','+safe-chain-budgeted','+cache-opportunity']
     argv+=['+dramsim','+dramsim_ini_dir='+str(ROOT/'chipyard/generators/testchipip/src/main/resources/dramsim2_ini'),'+max-cycles='+str(a.max_cycles),'+loadmem='+str(run/'test.loadmem_hex'),'+loadmem_addr=80000000','+permissive-off',str(run/'test.riscv')]
-    m={'run_id':rid,'design':a.design,'software':sm,'elf_sha256':sha(run/'test.riscv'),'simulator_sha256':sha(sim),'canonical_hardware_commit':FINAL if a.design!='check' else None,'build_evidence':evidence,'command':argv,'host':platform.uname()._asdict(),'seed':1,'start_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'state':'STARTED','evaluation_git_head':os.popen('git -C '+shlex.quote(str(ROOT))+' rev-parse HEAD').read().strip()}
+    m={'run_id':rid,'design':a.design,'software':sm,'elf_sha256':sha(run/'test.riscv'),'simulator_sha256':sha(sim),'canonical_hardware_commit':FINAL if a.design!='check' else None,'build_evidence':evidence,'command':argv,'host':platform.uname()._asdict(),'seed':1,'start_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'state':'STARTED','evaluation_git_head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'evaluation_git_status':status}
     dump(run/'run_manifest.json',m);(run/'command.sh').write_text('cd '+shlex.quote(str(run))+'\n'+shlex.join(argv)+'\n');print('RUN_DIRECTORY='+str(run),flush=True)
     os.chdir(run);t=time.monotonic();rc,stats=compact_capture.capture(argv,run)
     m.update(state='COMPLETED',exit_status=rc,host_wall_seconds=time.monotonic()-t,end_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),capture=stats)
