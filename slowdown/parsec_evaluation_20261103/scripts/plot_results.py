@@ -25,6 +25,6 @@ def main():
     ax.bar(xs,app,label='Application ROI',color='#4477AA');ax.bar(xs,tail,bottom=app,label='Verification tail',color='#CCBB44');ax.set_xticks(list(xs),[r['benchmark'] for r in drain]);ax.set_ylabel('Correction BOOM cycles (millions)');ax.legend(frameon=False);ax.grid(axis='y',alpha=.2);ax.set_axisbelow(True);fig.tight_layout()
     for ext in ['pdf','svg','png']:fig.savefig(dest/('verified_completion.'+ext),dpi=300)
     plt.close(fig)
-    meta={'matplotlib':matplotlib.__version__,'scope':'Accepted work-equivalent primary triplets only. Native is unprotected mode of the same hardware. No host time or recovery fault trials are included.','inputs':{str(p.relative_to(OUT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [OUT/'RESULTS.csv',OUT/'counters/DRAIN.csv']},'script_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
+    meta={'matplotlib':matplotlib.__version__,'scope':'Accepted work-equivalent primary triplets only. Native is unprotected mode of the matched detection model without recovery datapath. No host time or recovery fault trials are included.','inputs':{str(p.relative_to(OUT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [OUT/'RESULTS.csv',OUT/'counters/DRAIN.csv']},'script_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
     (dest/'manifest.json').write_text(json.dumps(meta,indent=2)+'\n')
 if __name__=='__main__':main()

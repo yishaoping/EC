@@ -28,12 +28,12 @@ def hardware(path,validation=False):
     evidence={'revision_file':str(path),'revision_sha256':sha(path),'revision':revision,'source':seal['source']}
     return sim,evidence,revision['canonical_hardware_commit']
 def main():
-    p=argparse.ArgumentParser();p.add_argument('workload');p.add_argument('design',choices=['native','check','correction']);p.add_argument('--max-cycles',type=int,default=20000000);p.add_argument('--hardware-revision',type=Path,default=OUT/'hardware_revision.json');p.add_argument('--validation',action='store_true',help='Explicitly permit a candidate hardware revision for acceptance regressions');a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('workload');p.add_argument('design',choices=['native','check','correction']);p.add_argument('--max-cycles',type=int,default=20000000);p.add_argument('--hardware-revision',type=Path,default=OUT/'hardware_revision.json');p.add_argument('--native-model',choices=['detection','correction_auxiliary'],default='detection');p.add_argument('--validation',action='store_true',help='Explicitly permit a candidate hardware revision for acceptance regressions');a=p.parse_args()
     status=subprocess.check_output(['git','status','--porcelain=v1'],cwd=ROOT,text=True)
     assert not status,'Evaluation must start from a clean worktree: '+status
     soft=OUT/'build'/a.workload;sm=json.loads((soft/'build.manifest.json').read_text());mode='native'if a.design=='native'else'protected'
     for ext,key in [('riscv','elf_sha256'),('loadmem_hex','loadmem_sha256')]:assert sha(soft/(mode+'.'+ext))==sm['artifacts'][mode][key]
-    if a.design=='check':
+    if a.design=='check' or (a.design=='native' and a.native_model=='detection'):
         d=ROOT/'slowdown/blackscholes_validation/build/matched_check_v5048';bm=json.loads((d/'build.manifest.json').read_text());assert bm['state']=='BUILT'
         for path,h in bm['input_sha256'].items():assert sha(Path(path))==h,path
         sim=Path(bm['simulator']);assert sha(sim)==bm['simulator_sha256'];evidence={'manifest':str(d/'build.manifest.json'),'sha256':sha(d/'build.manifest.json'),'base_commit':bm['base_commit'],'config_patch_sha256':bm['configuration_patch_sha256']};canonical=None
@@ -43,9 +43,10 @@ def main():
     run=OUT/'runs'/rid;run.mkdir(parents=True,exist_ok=False)
     for ext in ['riscv','loadmem_hex']:shutil.copy2(soft/(mode+'.'+ext),run/('test.'+ext))
     argv=[str(sim),'-s','1','+cycle-count','+permissive']
-    if a.design!='check':argv+=['+safe-chain-events','+safe-chain-budgeted','+cache-opportunity']
+    if a.design=='correction' or (a.design=='native' and a.native_model=='correction_auxiliary'):argv+=['+safe-chain-events','+safe-chain-budgeted','+cache-opportunity']
     argv+=['+dramsim','+dramsim_ini_dir='+str(ROOT/'chipyard/generators/testchipip/src/main/resources/dramsim2_ini'),'+max-cycles='+str(a.max_cycles),'+loadmem='+str(run/'test.loadmem_hex'),'+loadmem_addr=80000000','+permissive-off',str(run/'test.riscv')]
     m={'run_id':rid,'design':a.design,'software':sm,'elf_sha256':sha(run/'test.riscv'),'simulator_sha256':sha(sim),'canonical_hardware_commit':canonical,'candidate_validation':a.validation,'build_evidence':evidence,'command':argv,'host':platform.uname()._asdict(),'seed':1,'start_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'state':'STARTED','evaluation_git_head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'evaluation_git_status':status}
+    if a.design=='native':m.update(native_model=a.native_model,native_baseline_scope='matched detection hardware without recovery datapath; protected session and GHT SATP matching disabled; checker harts run idle firmware'if a.native_model=='detection'else'auxiliary unprotected mode of correction hardware')
     dump(run/'run_manifest.json',m);(run/'command.sh').write_text('cd '+shlex.quote(str(run))+'\n'+shlex.join(argv)+'\n');print('RUN_DIRECTORY='+str(run),flush=True)
     os.chdir(run);t=time.monotonic();rc,stats=compact_capture.capture(argv,run)
     m.update(state='COMPLETED',exit_status=rc,host_wall_seconds=time.monotonic()-t,end_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),capture=stats)
@@ -53,12 +54,12 @@ def main():
     app=re.findall(r'\[APP\] protected=(\d+) start=(\d+) end=(\d+) cycles=(\d+) instret=(\d+) session_stop=(\d+)',logs)
     if len(app)==1:
         modeflag,start,end,cycles,inst,stop=map(int,app[0]);assert end-start==cycles
-        m.update(roi_cycles=cycles,roi_instret=inst,roi_start=start,roi_end=end,software_session_stop=stop,ipc=inst/cycles)
+        m.update(modeflag=modeflag,roi_cycles=cycles,roi_instret=inst,roi_start=start,roi_end=end,software_session_stop=stop,ipc=inst/cycles)
         dump(run/'roi.json',dict(start_cycle=start,stop_cycle=end,safe_chain_roi_cycles=cycles,scope=sm['roi_scope']))
     m['output']=re.findall(r'\[OUTPUT\] (.*)',logs)
     total=re.findall(r'\*\*\* PASSED \*\*\* Completed after (\d+) cycles',logs)
     if len(total)==1:m['total_harness_cycles']=int(total[0])
-    m['software_correct']=rc==0 and len(app)==1 and len(total)==1 and len(m['output'])==1 and 'verified=1' in m['output'][0] and '[COMPUTATION] status=PASS' in logs and '[END] hart=0 status=PASS' in logs and not re.search(r'\bAssertion\b|%Error|\*\*\* FAILED|status=FAIL',logs,re.I)
+    m['software_correct']=rc==0 and len(app)==1 and m.get('modeflag')==int(a.design!='native') and len(total)==1 and len(m['output'])==1 and 'verified=1' in m['output'][0] and '[COMPUTATION] status=PASS' in logs and '[END] hart=0 status=PASS' in logs and not re.search(r'\bAssertion\b|%Error|\*\*\* FAILED|status=FAIL',logs,re.I)
     m['validation']='SOFTWARE_PASS_PROTOCOL_PENDING'if m['software_correct']else'FAILED'
     dump(run/'run_manifest.json',m);print(json.dumps({k:m.get(k)for k in ['run_id','exit_status','roi_cycles','roi_instret','output','total_harness_cycles','host_wall_seconds','validation']},indent=2),flush=True)
     return int(not m['software_correct'])

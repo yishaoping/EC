@@ -33,20 +33,28 @@ run must start from a clean evaluation worktree; the launcher enforces this.
 The detection model uses historical detection commit
 `b3d7adddd1e2d2cf428dd933529de878226420cd` plus the previously sealed configuration
 patch. It matches the BOOM, cache and clock configuration. Checker fetch bytes are
-4 for detection and 8 for correction, an intentional final-design difference.
+4 for detection and 8 for correction, an intentional final-design difference. Correction/Check is therefore the net
+cost of these final designs, including that frontend difference; it is not a
+controlled measurement of recovery logic with identical checker microarchitecture.
 No detection datapath or protocol changes were made for evaluation. The Verilator
 and compiler audit and DRAMSim member equivalence are preserved in
 `../blackscholes_validation/evidence/`.
 
 ## Native execution mode
 
-Native uses the corrected model with the protected session disabled in software.
-The checker cores remain present and execute their existing idle/wait firmware;
-this is a native **execution mode**, not an area/power comparison against a
-physically checker-free chip. The mode must generate zero protected packages and
-zero SVB allocations, with complete mandatory capture. No separate unprotected
-RTL build has been established. Any ratio using this baseline must retain this
-scope label.
+Primary Native runs use the matched detection model with the protected session and
+GHT SATP matching disabled. That historical model contains no SVB/recovery datapath.
+Check uses the same model with the identical protected ELF used by Correction.
+Thus the primary Native baseline includes neither protected checker execution nor
+recovery data-path timing. Checker cores remain physically present and execute
+idle/wait firmware; this is not an area/power comparison against a checker-free chip.
+
+Earlier engineering pilots used unprotected mode of the correction model and prove
+zero package/SVB allocations through its sequenced observers. Those measurements
+remain auxiliary and cannot enter the primary table. The detection model lacks
+that observer, so primary Native package counts are explicitly N/A; disabled mode
+is confirmed from the ELF word, source control flow and `[APP] protected=0` marker.
+The absence of SVB follows from the sealed historical detection hardware source.
 
 The two ELF files differ only in the initialized 64-bit `eval_protected` word
 (1 vs 0). Their entire executable code, addresses, input and all iteration bounds

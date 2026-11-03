@@ -96,8 +96,10 @@ def analyze(run):
         svb_allocations=[r for r in records if r['kind']==32]
         cap=json.loads((run/'capture_summary.json').read_text())
         if allocations or svb_allocations:errors.append('Native mode generated protected packages or versions')
-        if not cap['mandatory_evidence_complete']:errors.append('Native observation incomplete')
-        out['native_evidence']={'package_allocations':len(allocations),'SVB_allocations':len(svb_allocations),'capture_complete':cap['mandatory_evidence_complete'],'scope':manifest['software']['native_scope']}
+        detection=manifest.get('native_model')=='detection'
+        if not detection and not cap['mandatory_evidence_complete']:errors.append('Native observation incomplete')
+        if detection and manifest.get('modeflag')!=0:errors.append('Detection native model did not confirm disabled protected session')
+        out['native_evidence']={'package_allocations':'N/A: detection model has no sequenced observer'if detection else len(allocations),'SVB_allocations':0 if detection else len(svb_allocations),'capture_complete':'N/A: detection model has no sequenced observer'if detection else cap['mandatory_evidence_complete'],'scope':manifest.get('native_baseline_scope',manifest['software']['native_scope']),'native_no_recovery_basis':'sealed historical detection source has no SVB; native ELF skips GHT matching and protected-session setup'if detection else'zero protected package/SVB events in complete correction-model capture'}
     out['status']='FAIL'if errors else 'PASS';dump(run/'analysis.json',out);return out
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('run',type=Path);args=p.parse_args();r=analyze(args.run);print(json.dumps({k:r[k]for k in ['run_id','status','ROI_cycles','host_wall_seconds_simulation_cost','errors']},indent=2));raise SystemExit(r['status']!='PASS')
