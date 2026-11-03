@@ -661,6 +661,11 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val svbFlushPending = RegInit(false.B)
   val svbResetPending = RegInit(false.B)
   val svbEpochBoundary = io.traffic_reset || io.lsu.exception || svbFlushPending
+  // The observer reset defaults high until firmware releases it. Ordinary
+  // boot stores have no SVB dependency and must still reach that firmware.
+  // Only live snapshot/lease ownership (or its deferred drain) needs a barrier.
+  val svbEpochWriteBarrier = svbEpochBoundary &&
+    (svbFastLineValid || svbCapturePending || svbFlushPending)
   val svbHeldWriteNeedsLease = WireDefault(false.B)
   val svbInvalidate = Wire(Valid(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))
   svbInvalidate.valid := false.B
@@ -1992,7 +1997,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     !L1Preservation.safe(imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)
   // This also supplies the existing LSU nack and MSHR replay retry paths;
   // simply suppressing s2_write_grant would lose an accepted replay owner.
-  l1CrossPackageBlocked := crossPackageDomainWait || crossPackagePendingLine || svbEpochBoundary
+  l1CrossPackageBlocked := crossPackageDomainWait || crossPackagePendingLine || svbEpochWriteBarrier
 
   crossPackageWbReq.valid := crossPackagePending &&
     crossPackageResidentMatch &&
@@ -2977,7 +2982,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val s2_write_grant = s2_valid(0) && s2_hit(0) && isWrite(s2_req(0).uop.mem_cmd) &&
     !s2_nack(0) && !l1CrossPackageBlocked && !s3_valid &&
     (s2_type =/= t_replay || s2_replay_owner_match)
-  assert(!(s2_write_grant && svbEpochBoundary), "write grant crossed an SVB epoch boundary")
+  assert(!(s2_write_grant && svbEpochWriteBarrier), "write grant crossed a live SVB epoch boundary")
   // RISC-V AMO.W returns its loaded 32-bit value sign-extended to XLEN,
   // independently of the arithmetic/logical operation. The ALU physical
   // write value remains unchanged below.

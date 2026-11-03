@@ -39,9 +39,12 @@ The correction drain includes all packages allocated before application end. Det
 |blackscholes|simdev|check|1551970|904747|0.5829668099254496|908.2512398082763|PASS|
 |blackscholes|simdev|correction|1615350|904747|0.5600934781935804|2316.4009550679475|PASS|
 |blackscholes|simdev|native|1534367|904747|0.5896548869990035|2235.0147724188864|PASS|
+|blackscholes|simdev|native|1522825|904747|0.5941240786039105|883.7430800311267|PASS|
 |canneal|simdev|check|119034|110507|0.928365004956567|555.2564487978816|PASS|
 |canneal|simdev|correction|182954|110507|0.6040152169397772|1846.998416500166|PASS|
+|canneal|simdev|native|92212|110507|1.1984015095649156|533.9054273888469|PASS|
 |streamcluster|simdev|check|920602|1094668|1.1890784508397765|572.5827882774174|PASS|
 |streamcluster|simdev|native|854140|1094668|1.2816025475917296|1374.92516323179|PASS|
+|streamcluster|simdev|native|751653|1094668|1.4563475433477948|468.55510263703763|PASS|
 
 Missing counters are N/A in counters/RUNS.csv. See CONFIG.md for counter-window and partial-package scope. Invalid, aborted and pending runs are listed in logs/exclusions.json. Recovery results are separate in recovery/.

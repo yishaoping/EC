@@ -11,7 +11,7 @@ ROOT=Path(__file__).resolve().parents[3];OUT=ROOT/'slowdown/parsec_evaluation_20
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def main():
     p=argparse.ArgumentParser();p.add_argument('emitted_dcache',type=Path);a=p.parse_args();source=a.emitted_dcache.read_text()
-    names=['svbEpochBoundary','svbHeldWriteNeedsLease','svbFlush','debug_l1_cross_package_blocked','svbCaptureDiscard','s2_write_grant']
+    names=['svbEpochBoundary','svbEpochWriteBarrier','svbHeldWriteNeedsLease','svbFlush','debug_l1_cross_package_blocked','svbCaptureDiscard','s2_write_grant']
     definitions={}
     for name in names:
         match=re.search(r'^  wire\s+'+name+r' = ([^;]+);',source,re.M);assert match,name

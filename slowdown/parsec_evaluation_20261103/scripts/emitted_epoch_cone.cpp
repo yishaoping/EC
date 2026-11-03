@@ -17,9 +17,13 @@ static void clear(VEpochCone& d){
 int main(int argc,char**argv){
   Verilated::commandArgs(argc,argv);VEpochCone d;
   clear(d);require(d.s2_write_grant,"ordinary eligible S2 grant must remain possible");
+  // GHE initializes observer reset HIGH. Firmware must execute ordinary stores
+  // before it can clear that register; reset alone cannot stop those stores.
+  clear(d);d.io__traffic_reset=1;
+  for(int i=0;i<32;++i){d.eval();require(d.svbFlush,"default reset still flushes SVB");require(d.s2_write_grant,"default observer reset cannot deadlock boot stores");edge(d);}++cases;
   // The observed failure: eligible S2 request shares the exception/flush edge.
   for(int reset=0;reset<2;++reset){
-    clear(d);d.io__lsu_exception=!reset;d.io__traffic_reset=reset;d.eval();
+    clear(d);d.svbFastLineValid=1;d.io__lsu_exception=!reset;d.io__traffic_reset=reset;d.eval();
     require(d.svbFlush,"boundary without held S3 lease must flush immediately");
     require(d.debug_l1_cross_package_blocked,"boundary must use the existing nack/retry blocker");
     require(!d.s2_write_grant,"same-edge new write grant must be blocked");
@@ -30,7 +34,7 @@ int main(int argc,char**argv){
   // Keep the datapath obligation live through the effect edge; release it only
   // on the following edge, as registered s3_applied does in the real pipeline.
   for(int delay=1;delay<=16;++delay)for(int useReset=0;useReset<2;++useReset)for(int repeated=0;repeated<2;++repeated){
-    clear(d);d.debug_s3_valid=1;d.s3_svbOwnsPredecessor=1;
+    clear(d);d.svbFastLineValid=1;d.debug_s3_valid=1;d.s3_svbOwnsPredecessor=1;
     d.io__lsu_exception=!useReset;d.io__traffic_reset=useReset;d.eval();
     require(!d.svbFlush,"held unapplied store must retain its predecessor");edge(d);
     d.io__lsu_exception=0;d.io__traffic_reset=0;
@@ -43,7 +47,7 @@ int main(int argc,char**argv){
       if(useReset)require(d.svbResetPending,"reset priority must survive pulse");
       edge(d);
     }
-    d.io__lsu_exception=0;d.s3_applied=1;d.eval();
+    d.io__lsu_exception=0;d.s3_applied=1;d.svbFastLineValid=0;d.eval();
     require(d.svbFlush,"physical effect must allow the pending flush to drain");
     if(useReset)require(d.svbResetPending,"reset reason must survive until actual flush");
     edge(d);require(!d.svbFlushPending&&!d.svbResetPending,"drained boundary must clear exactly once");

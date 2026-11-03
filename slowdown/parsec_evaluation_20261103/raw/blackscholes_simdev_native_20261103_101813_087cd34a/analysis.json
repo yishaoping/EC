@@ -1,0 +1,24 @@
+{
+  "design": "native",
+  "run_id": "blackscholes_simdev_native_20261103_101813_087cd34a",
+  "ROI_cycles": 1522825,
+  "total_harness_cycles": 1561265,
+  "host_wall_seconds_simulation_cost": 883.7430800311267,
+  "software_correct": true,
+  "price_bits": [],
+  "output": [
+    "benchmark=blackscholes checksum=4fdc182d9488e778 verified=1 options=16 runs=100"
+  ],
+  "main_hart_roi_instret": 904747,
+  "assertion_or_failure_markers": 0,
+  "errors": [],
+  "validation_scope": "software output and completion; correction additionally requires package/protocol/integrity/capture checks; detection has no equivalent sequenced-result or per-checker work counters",
+  "native_evidence": {
+    "package_allocations": "N/A: detection model has no sequenced observer",
+    "SVB_allocations": 0,
+    "capture_complete": "N/A: detection model has no sequenced observer",
+    "scope": "matched detection hardware without recovery datapath; protected session and GHT SATP matching disabled; checker harts run idle firmware",
+    "native_no_recovery_basis": "sealed historical detection source has no SVB; native ELF skips GHT matching and protected-session setup"
+  },
+  "status": "PASS"
+}

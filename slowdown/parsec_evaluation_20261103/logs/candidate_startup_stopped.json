@@ -1,0 +1,46 @@
+{
+  "reason": "Provisional candidate blocks startup writes because traffic_reset defaults high until firmware releases it. No performance evidence; revise epoch write barrier to active SVB ownership only.",
+  "time_utc": "2026-11-03T11:03:06.192127+00:00",
+  "stopped": [
+    {
+      "pid": 3633225,
+      "command": [
+        "/data1/gzh/EC-opt4-perf/slowdown/optimization_6_overlap/build/overlap_streamcluster_epoch_fix_20261103_094832_b61742d7/verilator/simulator-chipyard-v1Config",
+        "-s",
+        "1",
+        "+cycle-count",
+        "+permissive",
+        "+safe-chain-events",
+        "+safe-chain-budgeted",
+        "+cache-opportunity",
+        "+dramsim",
+        "+dramsim_ini_dir=/data1/gzh/EC-opt4-perf/chipyard/generators/testchipip/src/main/resources/dramsim2_ini",
+        "+max-cycles=3000000",
+        "+loadmem=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/runs/streamcluster_simdev_correction_20261103_105553_924e63fe/test.loadmem_hex",
+        "+loadmem_addr=80000000",
+        "+permissive-off",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/runs/streamcluster_simdev_correction_20261103_105553_924e63fe/test.riscv"
+      ]
+    },
+    {
+      "pid": 3633741,
+      "command": [
+        "/data1/gzh/EC-opt4-perf/slowdown/optimization_6_overlap/build/overlap_streamcluster_epoch_fix_20261103_094832_b61742d7/verilator/simulator-chipyard-v1Config",
+        "-s",
+        "1",
+        "+cycle-count",
+        "+permissive",
+        "+safe-chain-events",
+        "+safe-chain-budgeted",
+        "+cache-opportunity",
+        "+dramsim",
+        "+dramsim_ini_dir=/data1/gzh/EC-opt4-perf/chipyard/generators/testchipip/src/main/resources/dramsim2_ini",
+        "+max-cycles=3000000",
+        "+loadmem=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/runs/blackscholes_simdev_correction_20261103_105553_d72d75e5/test.loadmem_hex",
+        "+loadmem_addr=80000000",
+        "+permissive-off",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/runs/blackscholes_simdev_correction_20261103_105553_d72d75e5/test.riscv"
+      ]
+    }
+  ]
+}
