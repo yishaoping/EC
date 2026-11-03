@@ -26,6 +26,8 @@ case class RocketCoreParams(
   useAtomics: Boolean = true,
   useAtomicsOnlyForIO: Boolean = false,
   useCompressed: Boolean = true,
+  // Instruction-supply bandwidth is independent of scalar decode/retirement.
+  fetchWords: Int = 1,
   useRVE: Boolean = false,
   useSCIE: Boolean = false,
   useBitManip: Boolean = false,
@@ -60,9 +62,9 @@ case class RocketCoreParams(
   val lgPauseCycles = 5
   val haveFSDirty = false
   val pmpGranularity: Int = if (useHypervisor) 4096 else 4
-  val fetchWidth: Int = if (useCompressed) 2 else 1
-  //  fetchWidth doubled, but coreInstBytes halved, for RVC:
-  val decodeWidth: Int = fetchWidth / (if (useCompressed) 2 else 1)
+  require(fetchWords == 1 || fetchWords == 2, "Rocket fetch supports one or two 32-bit words")
+  val fetchWidth: Int = fetchWords * (if (useCompressed) 2 else 1)
+  val decodeWidth: Int = 1
   val retireWidth: Int = 1
   val instBits: Int = if (useCompressed) 16 else 32
   val lrscCycles: Int = 80 // worst case is 14 mispredicted branches + slop

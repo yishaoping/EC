@@ -574,15 +574,22 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   val checker_head_match = BJL.io.bj_resp_cpc === checker_cfi_pc &&
     BJL.io.bj_resp_is_rvc === checker_cfi_rvc
   val checker_incoming_prefix = has_cfi && cfi_start(first_cfi) > checker_scan_start
-  val checker_incoming_bjl = has_cfi && !checker_incoming_prefix && !cfi_special(first_cfi)
   val checker_incoming_head_match = BJL.io.bj_resp_cpc === cfi_pc(first_cfi) &&
     BJL.io.bj_resp_is_rvc === cfi_rvc(first_cfi)
+  // The end mask carries branch ownership through preceding instructions in
+  // IBuf. With the real matching head available, deliver prefix + CFI once,
+  // rather than refetching the same word at the CFI PC. Otherwise the existing
+  // prefix-only fallback can still make progress without a reservation.
+  val checker_folded_prefix = checker_incoming_prefix && !cfi_special(first_cfi) &&
+    checker_incoming_head_match && BJL.io.bj_req_ready
+  val checker_incoming_bjl = has_cfi && !cfi_special(first_cfi) &&
+    (!checker_incoming_prefix || checker_folded_prefix)
   checker_direct_resp := checker_incoming
   checker_direct_resp.btb.taken := false.B
   checker_direct_resp.prefixLength := fetchWidth.U - checker_scan_start
   checker_direct_resp.bjlEndMask := 0.U
   checker_direct_next_pc := checker_base + fetchBytes.U
-  when (checker_incoming_prefix) {
+  when (checker_incoming_prefix && !checker_folded_prefix) {
     checker_direct_resp.prefixLength := cfi_start(first_cfi) - checker_scan_start
     checker_direct_next_pc := cfi_pc(first_cfi)
   }.elsewhen (has_cfi && cfi_special(first_cfi)) {
@@ -829,6 +836,30 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
     outer.staticIdForMetadataUseOnly.U, opt2bRoi, true.B,
     Seq(io.cpu.checker_seq) ++ opt3Counts.toSeq ++ Seq(opt2bFrontendFlags) ++ overlapCounts.toSeq,
     Cat(io.cpu.checker_seq, opt2bFrontendFlags, opt2bFrontendCounts(6) >> 10))
+  // OVERLAP_OBSERVATION_ONLY: complete local traffic-window snapshot. The
+  // capture-context ROI tap above is sticky and is deliberately not a STOP.
+  val overlapStatsEnable = WireInit(false.B)
+  val overlapStatsReset = WireInit(false.B)
+  chisel3.util.experimental.BoringUtils.addSink(overlapStatsEnable,
+    GH_GlobalParams.GH_L2_STATS_ENABLE_BORE)
+  chisel3.util.experimental.BoringUtils.addSink(overlapStatsReset,
+    GH_GlobalParams.GH_L2_STATS_RESET_BORE)
+  val overlapStatsStop = RegNext(overlapStatsEnable, false.B) && !overlapStatsEnable
+  val overlapTrafficCycles = RegInit(0.U(64.W))
+  val overlapTrafficCounts = RegInit(VecInit(Seq.fill(14)(0.U(64.W))))
+  when (overlapStatsReset) {
+    overlapTrafficCycles := 0.U
+    overlapTrafficCounts.foreach(_ := 0.U)
+  }.elsewhen (overlapStatsEnable) {
+    overlapTrafficCycles := overlapTrafficCycles + 1.U
+    for ((event, i) <- opt2bFrontendEvents.zipWithIndex) {
+      when (event) { overlapTrafficCounts(i) := overlapTrafficCounts(i) + 1.U }
+    }
+  }
+  SafeChainObservation.emit(49, gated_clock, reset.asBool, opt2bCycle, opt2bLocal,
+    outer.staticIdForMetadataUseOnly.U, opt2bRoi, overlapStatsStop,
+    Seq(1.U, overlapTrafficCycles) ++ overlapTrafficCounts.toSeq,
+    0.U, force = overlapStatsStop)
   dontTouch(icache.io)
   dontTouch(predicted_taken)
   dontTouch(io)

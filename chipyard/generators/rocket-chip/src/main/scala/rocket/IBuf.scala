@@ -82,9 +82,13 @@ class IBuf(implicit p: Parameters) extends CoreModule {
   // val inst = icData & icMask | buf.data & ~icMask
 //===== GuardianCouncil Function: Start ====//
   val inst_checker = icData & icMask | buf.data & ~icMask
-  val inst_if_ebreak = Mux(((inst_checker === 0x00100073.U) || (inst_checker === 0x9002.U)), true.B, false.B)
-  val inst_if_ecall = Mux(inst_checker === 0x00000073.U, true.B, false.B)
-  val inst = Mux(io.checker_mode.asBool && (inst_if_ebreak || inst_if_ecall), 0x00000013.U, inst_checker) // An sys-call should not be executed in checker mode
+  // Classify only the instruction at the head, not later fetched bytes.
+  // Preserve the original compressed length when suppressing C.EBREAK.
+  val inst_if_cebreak = usingCompressed.B && inst_checker(15, 0) === 0x9002.U
+  val inst_if_ebreak = inst_checker(31, 0) === 0x00100073.U || inst_if_cebreak
+  val inst_if_ecall = inst_checker(31, 0) === 0x00000073.U
+  val inst = Mux(io.checker_mode.asBool && (inst_if_ebreak || inst_if_ecall),
+    Mux(inst_if_cebreak, 0x0001.U, 0x00000013.U), inst_checker)
 //===== GuardianCouncil Function: End ====//
   val valid = (UIntToOH(nValid) - 1.U)(fetchWidth-1, 0)
   val bufMask = UIntToOH(nBufValid) - 1.U

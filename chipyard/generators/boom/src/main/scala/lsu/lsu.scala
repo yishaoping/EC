@@ -719,6 +719,11 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
                                                  can_fire_std_incoming(i) &&
                                                  stq_incoming_idx(i) === stq_retry_idx).reduce(_||_))
                                ))
+  // An identity-checked terminal accepted on this edge satisfies the older
+  // store barrier for a new S0 request. The STQ owner is still released only
+  // by the existing terminal handler; no physical effect is acknowledged early.
+  val storeTerminalForward = WireDefault(false.B)
+  val storeTerminalForwardIdx = Wire(UInt(stqAddrSz.W))
   // Can we commit a store
   val can_fire_store_commit  = widthMap(w =>
                                ( stq_commit_e.valid                           &&
@@ -726,7 +731,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
                                 !stq_commit_e.bits.functional_done            &&
                                 !(0 until numStqEntries).map(i => stq(i).valid &&
                                   stq(i).bits.functional_inflight &&
-                                  IsOlder(i.U, stq_execute_head, stq_head)).reduce(_ || _) &&
+                                  IsOlder(i.U, stq_execute_head, stq_head) &&
+                                  !(storeTerminalForward && storeTerminalForwardIdx === i.U)).reduce(_ || _) &&
                                 !stq_commit_e.bits.uop.is_fence               &&
                                 !mem_xcpt_valid                               &&
                                 !stq_commit_e.bits.uop.exception              &&
@@ -2257,6 +2263,34 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       stq_head, stq_execute_head, stq_commit_head)
   }
 
+  // OVERLAP_OBSERVATION_ONLY: expose local counts to one DCache STOP record,
+  // preserving the bounded number of logger identities. No functional sinks.
+  val overlapOlderInflight = (0 until numStqEntries).map(i => stq(i).valid &&
+    stq(i).bits.functional_inflight &&
+    IsOlder(i.U, stq_execute_head, stq_head)).reduce(_ || _)
+  val overlapStoreCandidate = stq_commit_e.valid &&
+    !stq_commit_e.bits.functional_inflight && !stq_commit_e.bits.functional_done &&
+    !stq_commit_e.bits.uop.is_fence && !mem_xcpt_valid &&
+    !stq_commit_e.bits.uop.exception &&
+    (stq_commit_e.bits.committed || (stq_commit_e.bits.uop.is_amo &&
+      stq_commit_e.bits.addr.valid && !stq_commit_e.bits.addr_is_virtual &&
+      stq_commit_e.bits.data.valid))
+  val overlapStoreAdmission = (0 until memWidth).map(w =>
+    will_fire_store_commit(w) && dmem_req_fire(w)).reduce(_ || _)
+  val overlapLsuEvents = Seq(overlapStoreCandidate && overlapOlderInflight,
+    storeTerminalForward, overlapStoreAdmission && overlapOlderInflight,
+    overlapStoreAdmission)
+  val overlapLsuCounts = RegInit(VecInit(Seq.fill(4)(0.U(64.W))))
+  when (io.dmem.traffic_reset) { overlapLsuCounts.foreach(_ := 0.U) }
+    .elsewhen (io.dmem.traffic_counting) {
+      for ((event, i) <- overlapLsuEvents.zipWithIndex) {
+        when (event) { overlapLsuCounts(i) := overlapLsuCounts(i) + 1.U }
+      }
+    }
+  for ((value, i) <- overlapLsuCounts.zipWithIndex) {
+    BoringUtils.addSource(value, s"opt4_overlap_lsu_${tileParams.hartId}_$i")
+  }
+
   // store has been committed AND successfully sent data to memory
   io.dmem.store_done.ready := true.B
   val functionalDoneReq = io.dmem.store_done.bits.req
@@ -2266,6 +2300,10 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     functionalDoneReq.effect_token_valid &&
     stq(functionalDoneIdx).bits.functional_token === functionalDoneReq.request_token &&
     stq(functionalDoneIdx).bits.functional_token === functionalDoneReq.effect_token
+  storeTerminalForwardIdx := functionalDoneIdx
+  storeTerminalForward := io.dmem.store_done.fire && functionalDoneMatches &&
+    functionalDoneReq.uop.uses_stq && !functionalDoneReq.is_hella &&
+    !olderStoreNackForcesReplay
   when (io.dmem.store_done.fire && functionalDoneReq.uop.uses_stq && !functionalDoneReq.is_hella) {
     printf("STAGE1_TX STORE_DONE cmd=%x size=%x stq=%x req=%x effect=%x status=%x data=%x cycle=%x\n",
       functionalDoneReq.uop.mem_cmd, functionalDoneReq.uop.mem_size, functionalDoneReq.uop.stq_idx,

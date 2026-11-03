@@ -758,7 +758,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val probeDrainReady = WireDefault(true.B)
   val replayPipelineBusy = WireDefault(false.B)
   val completionArb = Module(new Arbiter(new BoomCacheCompletion, 3))
-  val completionQ = Module(new Queue(new BoomCacheCompletion, cfg.nMSHRs + nIOMSHRs + 2))
+  val completionQ = Module(new Queue(new BoomCacheCompletion, cfg.nMSHRs + nIOMSHRs + 2, flow = true))
   completionQ.io.enq <> completionArb.io.out
   completionArb.io.in(2) <> mshrs.io.mmio_completion
   val replayResultQ = Seq.fill(cfg.nMSHRs)(Module(new Queue(new BoomCacheCompletion, 2)))
@@ -1261,7 +1261,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       (stale && !mshrs.io.block_hit(w)) || (s2_hit(w) && frozen) ||
       (!s2_hit(w) && slotReserved(set)(way) && !mshrs.io.block_hit(w)))
   })
-  val s2_write_busy = s3_valid || completionQ.io.count =/= 0.U
+  val s2_write_busy = s3_valid
   val s2_replay_owner_match = s2_raw_req(0).owner_context_valid &&
     s2_raw_req(0).owner_way === s2_tag_match_way(0) &&
     s2_raw_req(0).slot_epoch === slotEpoch(s2_raw_req(0).addr(idxMSB, idxLSB))(
@@ -3110,7 +3110,11 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   when (s3_valid && s3_duplicate_effect) {
     s3_result := appliedEffectResult(s3_set)(s3_way_idx)
   }
-  completionArb.io.in(0).valid := s3_valid && s3_owner_match && (s3_applied || s3_cancelled)
+  // A terminal may enter the queue on the actual physical effect edge. The
+  // captured return value is already stable in S3. Array backpressure cannot
+  // create a completion, and a full queue retains S3/applied ownership.
+  completionArb.io.in(0).valid := s3_valid && s3_owner_match &&
+    (s3_applied || s3_cancelled || s3_effect_fire)
   completionArb.io.in(0).bits.req := s3_req
   completionArb.io.in(0).bits.status := Mux(s3_cancelled, CacheTerminal.cancel,
     Mux(s3_req.uop.mem_cmd === M_XSC && s3_result === 1.U,
@@ -3127,7 +3131,13 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   }
   when (completionQ.io.deq.fire && completionQ.io.deq.bits.req.owner_context_valid) {
     val r = completionQ.io.deq.bits.req
-    assert(completionPending(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) &&
+    // An empty flow-through queue can accept and deliver the same terminal
+    // on this edge. Its live S3 owner substitutes for a registered pending
+    // bit only for the identical accepted completion payload.
+    val sameEdgeResponsibility = completionArb.io.out.fire &&
+      completionArb.io.out.bits.asUInt === completionQ.io.deq.bits.asUInt
+    assert((completionPending(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) ||
+      sameEdgeResponsibility) &&
       slotEpoch(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) === r.slot_epoch,
       "completion lost its live slot responsibility")
     completionPending(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) := false.B
@@ -4196,6 +4206,34 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
                    hart: UInt = 0.U): Unit =
     SafeChainObservation.emit(kind, clock, reset.asBool, io.csr_cycle,
       io.csr_cycle, hart, safeChainRoi, sample, fields, key, force)
+
+  // OVERLAP_OBSERVATION_ONLY: traffic-window counts, including the STOP edge.
+  // Every count feeds only the input-only logger. Activity is not causal saving.
+  val overlapSameEdgeTerminal = completionArb.io.out.fire && completionQ.io.deq.fire &&
+    completionArb.io.out.bits.asUInt === completionQ.io.deq.bits.asUInt
+  val overlapCacheEvents = Seq(true.B, s3_effect_fire,
+    s3_effect_fire && completionArb.io.in(0).fire,
+    s3_effect_fire && overlapSameEdgeTerminal,
+    completionQ.io.count === 0.U && overlapSameEdgeTerminal,
+    completionArb.io.out.fire, completionQ.io.deq.fire,
+    s3_valid && s3_applied && !completionArb.io.in(0).fire,
+    completionQ.io.count =/= 0.U,
+    completionQ.io.deq.valid && !completionQ.io.deq.ready)
+  val overlapCacheCounts = RegInit(VecInit(Seq.fill(10)(0.U(64.W))))
+  when (io.traffic_reset) { overlapCacheCounts.foreach(_ := 0.U) }
+    .elsewhen (trafficCounting) {
+      for ((event, i) <- overlapCacheEvents.zipWithIndex) {
+        when (event) { overlapCacheCounts(i) := overlapCacheCounts(i) + 1.U }
+      }
+    }
+  val overlapLsuCounts = Seq.tabulate(4) { i =>
+    val count = WireInit(0.U(64.W))
+    BoringUtils.addSink(count, s"opt4_overlap_lsu_${outer.staticImageWriter}_$i")
+    count
+  }
+  val overlapTrafficStop = RegNext(trafficCounting, false.B) && !trafficCounting
+  safeChainLog(50, Seq(1.U) ++ overlapCacheCounts.toSeq ++ overlapLsuCounts ++ Seq(0.U),
+    0.U, overlapTrafficStop, true.B)
 
   // OPT2B_OBSERVATION_ONLY: semantic writes and first preservation blocks.
   // Payload is identity/metadata only, never cacheline bytes. These events

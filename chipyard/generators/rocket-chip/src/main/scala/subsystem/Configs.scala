@@ -238,7 +238,7 @@ class WithNGCCheckers(n: Int, overrideIdOffset: Option[Int] = None,crossing: Roc
     val prev = up(TilesLocated(InSubsystem), site)
     val idOffset = overrideIdOffset.getOrElse(prev.size)
     val checker = RocketTileParams(
-      core = RocketCoreParams(useDebug = false,
+      core = RocketCoreParams(useDebug = false, fetchWords = 2,
       mulDiv = Some(MulDivParams(
         mulUnroll = 8,
         divUnroll = 8,
@@ -253,6 +253,7 @@ class WithNGCCheckers(n: Int, overrideIdOffset: Option[Int] = None,crossing: Roc
         nMSHRs = 0,
         blockBytes = site(CacheBlockBytes))),
       icache = Some(ICacheParams(
+        fetchBytes = 8,
         rowBits = site(SystemBusKey).beatBits,
         nSets = 32,
         nWays = 1,
