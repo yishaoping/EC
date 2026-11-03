@@ -1,0 +1,421 @@
+{
+  "run": "/data1/gzh/EC-opt4-perf/slowdown/optimization_6_overlap/runs/overlap_blackscholes_capture_flush_fix_20261103_064936_fd6cd4a6",
+  "status": "PASS",
+  "performance_valid": true,
+  "roi_cycles": 1128052,
+  "slowdown": 1.126165672498565,
+  "improvement_vs_frozen_opt4_cycles": 579811,
+  "sourcec": {
+    "status": "PASS",
+    "errors": [],
+    "counters": {
+      "schema": 1,
+      "sample_cycles": 1136573,
+      "reserved_cycles": 52338,
+      "reserved_pending_cycles": 45,
+      "accepted_releases_in_wait_ack": 3,
+      "pending_no_accept_cycles": 3691,
+      "wait_ack_cycles": 14738,
+      "wait_ack_pending_cycles": 3,
+      "target_lock_cycles": 67076,
+      "target_lock_pending_cycles": 48
+    },
+    "cycle": 1715715,
+    "interpretation": "overlapping activity counts on the new schedule; not causal ROI savings"
+  },
+  "frontend": {
+    "scope": "checker-local cumulative deltas; do not sum as BOOM savings",
+    "harts": [
+      {
+        "hart": 1,
+        "snapshots": {
+          "13": {
+            "status": "EXACT_BETWEEN_SAVED_SNAPSHOTS",
+            "start_cycle": 579279,
+            "stop_cycle": 1698083,
+            "leading_roi_gap": 44,
+            "trailing_roi_gap": 9204,
+            "counters": {
+              "live_cycles": 231740,
+              "empty_cycles": 1699,
+              "fetching_cycles": 172959,
+              "retired_classify_cycles": 0,
+              "wait_bjl_cycles": 7096,
+              "ready_cycles": 49986,
+              "fq_deliveries": 86016,
+              "handoff_launches": 85930,
+              "icache_requests": 86722,
+              "held_ready_cycles": 37471,
+              "fault_deliveries": 0,
+              "icache_acquires": 25,
+              "tlb_miss_cycles": 0,
+              "redirect_cycles": 727
+            }
+          },
+          "16": {
+            "status": "EXACT_BETWEEN_SAVED_SNAPSHOTS",
+            "start_cycle": 579279,
+            "stop_cycle": 1698083,
+            "leading_roi_gap": 44,
+            "trailing_roi_gap": 9204,
+            "counters": {
+              "classifications": 86073,
+              "no_cfi_or_fault": 55453,
+              "prefix": 13861,
+              "special": 54,
+              "needs_bjl": 16705,
+              "bjl_reservations": 30383,
+              "bjl_not_ready_cycles": 2826,
+              "bjl_mismatch_cycles": 1420,
+              "held_ready_cycles": 37471,
+              "direct_deliveries": 73453,
+              "direct_bjl_reservations": 27533,
+              "direct_successor_launches": 73435,
+              "direct_fq_blocked_cycles": 12503
+            }
+          }
+        }
+      },
+      {
+        "hart": 2,
+        "snapshots": {
+          "13": {
+            "status": "EXACT_BETWEEN_SAVED_SNAPSHOTS",
+            "start_cycle": 585431,
+            "stop_cycle": 1695679,
+            "leading_roi_gap": 6196,
+            "trailing_roi_gap": 11608,
+            "counters": {
+              "live_cycles": 256460,
+              "empty_cycles": 1246,
+              "fetching_cycles": 182973,
+              "retired_classify_cycles": 0,
+              "wait_bjl_cycles": 9868,
+              "ready_cycles": 62373,
+              "fq_deliveries": 91136,
+              "handoff_launches": 91070,
+              "icache_requests": 91643,
+              "held_ready_cycles": 48609,
+              "fault_deliveries": 0,
+              "icache_acquires": 18,
+              "tlb_miss_cycles": 0,
+              "redirect_cycles": 549
+            }
+          },
+          "16": {
+            "status": "EXACT_BETWEEN_SAVED_SNAPSHOTS",
+            "start_cycle": 585431,
+            "stop_cycle": 1695679,
+            "leading_roi_gap": 6196,
+            "trailing_roi_gap": 11608,
+            "counters": {
+              "classifications": 91214,
+              "no_cfi_or_fault": 59386,
+              "prefix": 15369,
+              "special": 60,
+              "needs_bjl": 16399,
+              "bjl_reservations": 31598,
+              "bjl_not_ready_cycles": 5453,
+              "bjl_mismatch_cycles": 1591,
+              "held_ready_cycles": 48609,
+              "direct_deliveries": 77337,
+              "direct_bjl_reservations": 28774,
+              "direct_successor_launches": 77325,
+              "direct_fq_blocked_cycles": 13768
+            }
+          }
+        }
+      },
+      {
+        "hart": 3,
+        "snapshots": {
+          "13": {
+            "status": "EXACT_BETWEEN_SAVED_SNAPSHOTS",
+            "start_cycle": 586669,
+            "stop_cycle": 1696195,
+            "leading_roi_gap": 7434,
+            "trailing_roi_gap": 11092,
+            "counters": {
+              "live_cycles": 249305,
+              "empty_cycles": 1555,
+              "fetching_cycles": 177979,
+              "retired_classify_cycles": 0,
+              "wait_bjl_cycles": 12076,
+              "ready_cycles": 57695,
+              "fq_deliveries": 88580,
+              "handoff_launches": 88479,
+              "icache_requests": 89210,
+              "held_ready_cycles": 44780,
+              "fault_deliveries": 0,
+              "icache_acquires": 18,
+              "tlb_miss_cycles": 0,
+              "redirect_cycles": 693
+            }
+          },
+          "16": {
+            "status": "EXACT_BETWEEN_SAVED_SNAPSHOTS",
+            "start_cycle": 586669,
+            "stop_cycle": 1696195,
+            "leading_roi_gap": 7434,
+            "trailing_roi_gap": 11092,
+            "counters": {
+              "classifications": 88621,
+              "no_cfi_or_fault": 56662,
+              "prefix": 17814,
+              "special": 54,
+              "needs_bjl": 14091,
+              "bjl_reservations": 31722,
+              "bjl_not_ready_cycles": 8225,
+              "bjl_mismatch_cycles": 1477,
+              "held_ready_cycles": 44780,
+              "direct_deliveries": 75605,
+              "direct_bjl_reservations": 29348,
+              "direct_successor_launches": 75586,
+              "direct_fq_blocked_cycles": 12901
+            }
+          }
+        }
+      },
+      {
+        "hart": 4,
+        "snapshots": {
+          "13": {
+            "status": "EXACT_BETWEEN_SAVED_SNAPSHOTS",
+            "start_cycle": 592805,
+            "stop_cycle": 1698257,
+            "leading_roi_gap": 13570,
+            "trailing_roi_gap": 9030,
+            "counters": {
+              "live_cycles": 266671,
+              "empty_cycles": 1255,
+              "fetching_cycles": 189808,
+              "retired_classify_cycles": 0,
+              "wait_bjl_cycles": 6978,
+              "ready_cycles": 68630,
+              "fq_deliveries": 94541,
+              "handoff_launches": 94484,
+              "icache_requests": 95049,
+              "held_ready_cycles": 54155,
+              "fault_deliveries": 0,
+              "icache_acquires": 25,
+              "tlb_miss_cycles": 0,
+              "redirect_cycles": 516
+            }
+          },
+          "16": {
+            "status": "EXACT_BETWEEN_SAVED_SNAPSHOTS",
+            "start_cycle": 592805,
+            "stop_cycle": 1698257,
+            "leading_roi_gap": 13570,
+            "trailing_roi_gap": 9030,
+            "counters": {
+              "classifications": 94624,
+              "no_cfi_or_fault": 61612,
+              "prefix": 19373,
+              "special": 60,
+              "needs_bjl": 13579,
+              "bjl_reservations": 32766,
+              "bjl_not_ready_cycles": 3208,
+              "bjl_mismatch_cycles": 1465,
+              "held_ready_cycles": 54155,
+              "direct_deliveries": 80039,
+              "direct_bjl_reservations": 30461,
+              "direct_successor_launches": 80026,
+              "direct_fq_blocked_cycles": 14467
+            }
+          }
+        }
+      }
+    ]
+  },
+  "terminal_snapshots": {
+    "status": "PASS",
+    "errors": [],
+    "snapshots": {
+      "49:1": {
+        "cycle": 1715715,
+        "counters": {
+          "schema": 1,
+          "sample_cycles": 568286,
+          "live_cycles": 236960,
+          "empty_cycles": 1891,
+          "fetching_cycles": 177815,
+          "retired_classify_cycles": 0,
+          "wait_bjl_cycles": 7210,
+          "ready_cycles": 50044,
+          "fq_deliveries": 88393,
+          "handoff_launches": 88307,
+          "icache_requests": 89193,
+          "held_ready_cycles": 37471,
+          "fault_deliveries": 0,
+          "icache_acquires": 26,
+          "tlb_miss_cycles": 0,
+          "redirect_cycles": 819
+        }
+      },
+      "49:2": {
+        "cycle": 1715715,
+        "counters": {
+          "schema": 1,
+          "sample_cycles": 568286,
+          "live_cycles": 260838,
+          "empty_cycles": 1567,
+          "fetching_cycles": 186929,
+          "retired_classify_cycles": 0,
+          "wait_bjl_cycles": 9969,
+          "ready_cycles": 62373,
+          "fq_deliveries": 93032,
+          "handoff_launches": 92966,
+          "icache_requests": 93699,
+          "held_ready_cycles": 48609,
+          "fault_deliveries": 0,
+          "icache_acquires": 18,
+          "tlb_miss_cycles": 0,
+          "redirect_cycles": 711
+        }
+      },
+      "49:3": {
+        "cycle": 1715715,
+        "counters": {
+          "schema": 1,
+          "sample_cycles": 568286,
+          "live_cycles": 254949,
+          "empty_cycles": 1824,
+          "fetching_cycles": 183162,
+          "retired_classify_cycles": 0,
+          "wait_bjl_cycles": 12218,
+          "ready_cycles": 57745,
+          "fq_deliveries": 91099,
+          "handoff_launches": 90998,
+          "icache_requests": 91858,
+          "held_ready_cycles": 44780,
+          "fault_deliveries": 0,
+          "icache_acquires": 21,
+          "tlb_miss_cycles": 0,
+          "redirect_cycles": 812
+        }
+      },
+      "49:4": {
+        "cycle": 1715715,
+        "counters": {
+          "schema": 1,
+          "sample_cycles": 568286,
+          "live_cycles": 272264,
+          "empty_cycles": 1530,
+          "fetching_cycles": 194939,
+          "retired_classify_cycles": 0,
+          "wait_bjl_cycles": 7110,
+          "ready_cycles": 68685,
+          "fq_deliveries": 97030,
+          "handoff_launches": 96973,
+          "icache_requests": 97667,
+          "held_ready_cycles": 54155,
+          "fault_deliveries": 0,
+          "icache_acquires": 30,
+          "tlb_miss_cycles": 0,
+          "redirect_cycles": 627
+        }
+      },
+      "50:0": {
+        "cycle": 1715715,
+        "counters": {
+          "schema": 1,
+          "sample_cycles": 1136573,
+          "effects": 61219,
+          "effect_edge_terminal_enqueues": 61219,
+          "effect_edge_terminal_deliveries": 55601,
+          "empty_queue_bypasses": 55650,
+          "terminal_enqueues": 61268,
+          "terminal_deliveries": 61268,
+          "applied_s3_blocked_cycles": 0,
+          "queued_cycles": 6588,
+          "terminal_blocked_cycles": 6588,
+          "lsu_candidate_older_inflight_cycles": 216282,
+          "lsu_accepted_terminal_forward_cycles": 61268,
+          "lsu_forwarded_store_admissions": 39364,
+          "lsu_store_admissions": 63985,
+          "padding": 0
+        }
+      }
+    },
+    "scope": "hardware traffic-enable window, local clock counts; overlapping activity, not causal savings"
+  },
+  "retained_copy": {
+    "status": "PASS",
+    "errors": [],
+    "counters": {
+      "schema": 1,
+      "sample_cycles": 1136573,
+      "wb_requests": 859,
+      "retaining_wb_requests": 859,
+      "wb_receipts": 859,
+      "retained_receipts": 859,
+      "retaining_receipts_owner_changed": 0,
+      "retaining_receipts_probe_revoked": 0,
+      "invalidating_clears": 0
+    },
+    "cycle": 1715715,
+    "scope": "traffic-enable activity, not causal savings"
+  },
+  "correctness": {
+    "assertion_failures": 0,
+    "benchmark_pass": true,
+    "cancelled_results": 0,
+    "failed_results": 0,
+    "status": "PASS"
+  },
+  "integrity": {
+    "allocations": 373,
+    "completions": 368,
+    "duplicate_beats": 0,
+    "errors": [],
+    "schema": 2,
+    "status": "PASS",
+    "terminal_counts": {
+      "COALESCED": 3,
+      "FLUSH_DISCARDED": 2,
+      "PROMOTED_COMPLETED": 368
+    }
+  },
+  "protocol": {
+    "coverage": "COMPLETE",
+    "end_policy": "STOP may retain WB_WAIT; exit with retained entries is not proof of full durable drain",
+    "entry_capacity": 16,
+    "entry_capacity_source": "capacity_snapshot",
+    "errors": [],
+    "invalid_ack": 0,
+    "outstanding_at_end": 0,
+    "release_acks_matched": 7381,
+    "releases_issued": 7381,
+    "source_conflicts": 0,
+    "status": "PASS",
+    "stop_snapshot": [
+      1,
+      23896,
+      18334,
+      15,
+      0,
+      0,
+      7367,
+      7367,
+      0,
+      0,
+      0,
+      2147540800,
+      3,
+      368,
+      368,
+      0
+    ],
+    "svb_completions": 368,
+    "svb_entry_retained_at_end": false,
+    "svb_promotions_issued": 368,
+    "svb_release_acks_matched": 368
+  },
+  "data_ordering": {
+    "examples": [],
+    "scope": "full_run_C_ReleaseData_same_line_writer_generation",
+    "stale_publications": 0,
+    "status": "PASS"
+  }
+}

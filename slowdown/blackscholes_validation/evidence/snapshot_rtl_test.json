@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "scope": "actual emitted WB RTL with modeled controller cancellation; not top-level cancellation-controller RTL",
+  "output": "PASS actual_BoomWritebackUnit snapshots=160 responses_after_controller_cancel=80 cycles=2437 (controller cancellation is modeled; WB RTL unchanged)\n",
+  "stderr": "",
+  "driver_sha256": "ff4ae2ffdb555f6f08d3c74d4404d4d99c3dfd3e7932574b74d99fae22ce4d50",
+  "return_code": 0,
+  "rtl_path": "/data1/gzh/EC-opt4-perf/slowdown/optimization_6_overlap/build/overlap_retained_copy_20261103_040650_0a6ef6bc/generated/gen-collateral/BoomWritebackUnit.sv",
+  "rtl_sha256": "2d66469dfdf764981ce71c3d9bd1a4fffd4e3d14d878e6820378c58d64d411fc",
+  "build_command": [
+    "/nix/store/bj3wbpawbk71c082cvrnqkfyix7ipx0g-verilator-5.048/bin/verilator",
+    "--cc",
+    "--exe",
+    "--build",
+    "--assert",
+    "-Wno-fatal",
+    "--top-module",
+    "BoomWritebackUnit",
+    "-Mdir",
+    "/data1/gzh/EC-opt4-perf/slowdown/blackscholes_validation/build/snapshot_test",
+    "-CFLAGS",
+    "-O2 -std=c++17",
+    "/data1/gzh/EC-opt4-perf/slowdown/optimization_6_overlap/build/overlap_retained_copy_20261103_040650_0a6ef6bc/generated/gen-collateral/BoomWritebackUnit.sv",
+    "/data1/gzh/EC-opt4-perf/slowdown/blackscholes_validation/scripts/snapshot_driver.cpp",
+    "-o",
+    "snapshot_test"
+  ]
+}

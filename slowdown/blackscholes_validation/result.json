@@ -1,0 +1,112 @@
+{
+  "status": "PASS_NO_FAULT_RUNTIME",
+  "frozen_hardware_commit": "5343ea33f7ccc1b4d140eef09e2d07ab775ae72c",
+  "frozen_blackscholes_status": "ASSERTION_FAILED_NO_RATIO",
+  "correction_variant": "C plus dcache capture/exception ownership correctness repair",
+  "check_run": "check_matched_v5048_test4_20261103_072238_9f052bd1",
+  "correction_run": "correction_test4_20261103_072928_2409f537",
+  "workload": "Official PARSEC3.0 test/in_4.txt,4options,NUM_RUNS=100,400pricings",
+  "primary_target_ROI_ratio": 1.1214181464995612,
+  "target_ROI_additional_cycles": 46754,
+  "target_ROI_additional_percent": 12.141814649956117,
+  "host_simulation_cost_ratio": 2.7726252726428973,
+  "host_cost_limitations": "Instrumentation differs; nonexclusive host; correction overlapped BFS regression, check overlapped end of compile; no hardware slowdown inference",
+  "check": {
+    "ROI_cycles": 385066,
+    "total_harness_cycles": 436938,
+    "host_wall_seconds_simulation_cost": 252.80401341617107,
+    "main_hart_roi_instret": [
+      "220637"
+    ],
+    "software_correct": true
+  },
+  "correction": {
+    "ROI_cycles": 431820,
+    "total_harness_cycles": 507130,
+    "host_wall_seconds_simulation_cost": 700.93079662323,
+    "main_hart_roi_instret": [
+      "220637"
+    ],
+    "software_correct": true,
+    "full_session_checker_work": {
+      "fully_captured_session_packages": 161,
+      "checked_instructions": 220638,
+      "checked_loads": 35765,
+      "checked_stores": 12066,
+      "checker_local_active_cycles": 710587,
+      "scope": "entire protected session, including four packages crossing software ROI; counter interval validated for every BOOM-accepted result; management/boundary instructions can differ from hart0 rdinstret"
+    }
+  },
+  "packages": {
+    "generated": 161,
+    "unique_generated": 161,
+    "accepted_results": 161,
+    "PASS": 161,
+    "FAIL": 0,
+    "CANCELLED": 0,
+    "invalid_status": 0,
+    "scope": "full captured protected session; accepted BOOM-domain results, not local done",
+    "all_result_observation_flags": {
+      "stale": 0,
+      "held_duplicate": 0,
+      "failed": 0,
+      "cancelled": 0
+    },
+    "accepted_before_software_ROI": 0,
+    "accepted_inside_software_ROI": 158,
+    "accepted_after_software_ROI": [
+      {
+        "hart": 4,
+        "seq": 159,
+        "cycle": 460741
+      },
+      {
+        "hart": 2,
+        "seq": 161,
+        "cycle": 463653
+      },
+      {
+        "hart": 3,
+        "seq": 160,
+        "cycle": 466181
+      }
+    ],
+    "last_accepted_cycle": 466181,
+    "hardware_result_tail_after_software_ROI_cycles": 10204,
+    "start_to_last_accepted_result_cycles": 442024
+  },
+  "durable_recovery": "UNVALIDATED:692/692allocatedSVBimagesflush-discarded;0promotions",
+  "cache_shadow_fidelity": {
+    "2:0": "FAIL",
+    "1:0": "FAIL"
+  },
+  "bfs_regression": {
+    "status": "PASS",
+    "run_id": "overlap_blackscholes_capture_flush_fix_20261103_064936_fd6cd4a6",
+    "ROI_cycles": 1128052,
+    "frozen_C_ROI_cycles": 1128052,
+    "delta_cycles": 0,
+    "ratio_to_native": 1.126165672498565,
+    "correctness": {
+      "assertion_failures": 0,
+      "benchmark_pass": true,
+      "cancelled_results": 0,
+      "failed_results": 0,
+      "status": "PASS"
+    },
+    "protocol_status": "PASS",
+    "integrity_status": "PASS",
+    "capture_status": "PASS",
+    "data_ordering_status": "PASS",
+    "performance_valid": true,
+    "benchmark_result": {
+      "checksum": 43439728,
+      "verified": 1
+    },
+    "optional_records_omitted": 538,
+    "mandatory_evidence_complete": true
+  },
+  "correctness_repair_commit": "83dec9d4c10ab8c097fe5ab5c8af1c0a270fba6d",
+  "counter_window_caveat": "Cache and terminal/retention counters span observer START-to-STOP=464266 cycles, including portions outside software ROI; all-runtime package work spans161packages; ROI profile clips to157completepackages.",
+  "roi_completion_limit": "Shared software ROI, not hardware drain:158resultsinsideROI;3afterROI;lastafter10204cycles;correctionstart-to-last-result442024cycles;noequivalentdetectiontimestamp."
+}

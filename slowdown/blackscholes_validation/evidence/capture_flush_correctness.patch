@@ -1,0 +1,103 @@
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/dcache.scala b/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
+index 7f1d69021..905b30dbb 100644
+--- a/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
+@@ -631,6 +631,10 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+   val svb = Module(new SpeculativeVersionBuffer(entries = nSVBEntries))
+   val svbCapturePending = RegInit(false.B)
+   val svbCaptureIssued = RegInit(false.B)
++  // An exception cancels the semantic capture, but the row reader still
++  // owns its accepted request until its snapshot is consumed. Keep that
++  // descriptor and drain the old response without allocating in a new epoch.
++  val svbCaptureCancelled = RegInit(false.B)
+   val svbFastLineValid = RegInit(false.B)
+   val svbFastSet = Reg(UInt(idxBits.W))
+   val svbFastWay = Reg(UInt(log2Ceil(nWays max 2).W))
+@@ -1599,10 +1603,11 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+       crossPackageWbPacketSeq, dirtyPacketSeq(wbReqSet)(wbReqWay)))
+   wb.io.packet_tracked := dirtyPacketTracked(wbReqSet)(wbReqWay)
+   wb.io.data_resp       := s2_data_muxed(0)
+-  wb.io.snapshot_ready  := svb.io.capture.ready
++  val svbCaptureDiscard = svbCaptureCancelled || svbFlush
++  wb.io.snapshot_ready  := svbCaptureDiscard || svb.io.capture.ready
+   wb.io.svb_req <> svb.io.promote
+   wb.io.req_is_mshr := wbArb.io.chosen === 1.U
+-  svb.io.capture.valid := wb.io.snapshot_valid
++  svb.io.capture.valid := wb.io.snapshot_valid && !svbCaptureDiscard
+   svb.io.capture.bits.line := wb.io.snapshot_line
+   svb.io.capture.bits.key := wb.io.snapshot_key
+   svb.io.capture.bits.epoch := svbEpoch
+@@ -1868,6 +1873,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+   when (svbEligible) {
+     svbCapturePending := true.B
+     svbCaptureIssued := false.B
++    svbCaptureCancelled := false.B
+     svbFastSet := s2_store_set
+     svbFastWay := s2_store_way
+     svbFastTag := s2_req(0).addr >> untagBits
+@@ -1878,8 +1884,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+   when (svbCaptureWbReq.fire) {
+     svbCaptureIssued := true.B
+   }
+-  when (wb.io.snapshot_valid && svb.io.capture.fire) {
+-    assert(!svbFastLineValid, "OWNER-1: capture overwrote an outstanding fast-line lease")
++  val svbSnapshotConsumed = wb.io.snapshot_valid && wb.io.snapshot_ready
++  when (svbSnapshotConsumed) {
+     assert(svbCapturePending && svbCaptureIssued,
+       "SVB snapshot arrived without an issued capture request")
+     assert(wb.io.snapshot_key.asUInt === svbFastKey.asUInt &&
+@@ -1888,16 +1894,20 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+       "SVB capture changed pre-overwrite identity")
+     svbCapturePending := false.B
+     svbCaptureIssued := false.B
+-    when (svbFastLineValid) {
+-      printf("FASTLINE_OWNER_CHANGE cycle=%x old_line=%x old_seq=%x old_epoch=%x old_acquire_cycle=%x new_line=%x new_seq=%x new_epoch=%x reason=unexpected_capture_overlap\n",
+-        io.csr_cycle, svbFastLine, svbFastSeq, svbFastEpoch, svbFastAcquireCycle,
+-        wb.io.snapshot_line, wb.io.snapshot_key.contentSeq, wb.io.snapshot_epoch)
++    svbCaptureCancelled := false.B
++    when (svbCaptureDiscard) {
++      assert(!svb.io.capture.fire, "cancelled snapshot allocated in a new epoch")
++      printf("SVB_CAPTURE_DISCARD cycle=%x line=%x seq=%x slot_epoch=%x reason=epoch_flush\n",
++        io.csr_cycle, wb.io.snapshot_line, svbFastSeq, svbFastEpoch)
++    }.otherwise {
++      assert(svb.io.capture.fire, "live snapshot consumed without durable SVB owner")
++      assert(!svbFastLineValid, "OWNER-1: capture overwrote an outstanding fast-line lease")
++      printf("FASTLINE_ACQUIRE cycle=%x line=%x set=%x tag=%x seq=%x epoch=%x generation=%x owner_state=captured_waiting_store acquire_reason=unsafe_predecessor_snapshot\n",
++        io.csr_cycle, wb.io.snapshot_line, svbFastSet, svbFastTag, svbFastSeq,
++        svbFastEpoch, wb.io.snapshot_key.generation)
++      svbFastAcquireCycle := io.csr_cycle
++      svbFastLineValid := true.B
+     }
+-    printf("FASTLINE_ACQUIRE cycle=%x line=%x set=%x tag=%x seq=%x epoch=%x generation=%x owner_state=captured_waiting_store acquire_reason=unsafe_predecessor_snapshot\n",
+-      io.csr_cycle, wb.io.snapshot_line, svbFastSet, svbFastTag, svbFastSeq,
+-      svbFastEpoch, wb.io.snapshot_key.generation)
+-    svbFastAcquireCycle := io.csr_cycle
+-    svbFastLineValid := true.B
+   }
+   val svbFastLeaseRevoked = svbFastLineValid && !svbCaptureResidentMatch
+   assert(!(svbCapturePending && crossPackagePending),
+@@ -1958,7 +1968,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+     !(0 until memWidth).map(w =>
+       (s1_valid(w) && s1_type === t_lsu && s1_req(w).addr(idxMSB, idxLSB) === svbFastSet) ||
+       (s2_valid(w) && s2_type === t_lsu && s2_req(w).addr(idxMSB, idxLSB) === svbFastSet)).reduce(_ || _)
+-  svbCaptureWbReq.valid := svbCapturePending && !svbCaptureIssued && svbCaptureDrained &&
++  svbCaptureWbReq.valid := svbCapturePending && !svbCaptureIssued && !svbFlush && svbCaptureDrained &&
+     svbCaptureResidentMatch && !crossPackagePending &&
+     !(prober.io.state.valid && prober.io.state.bits(idxMSB, idxLSB) === svbFastSet) &&
+     !svbCaptureMshrConflict && !svbCaptureSlotConflict
+@@ -3407,8 +3417,13 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+   }
+   // Give an epoch boundary priority over any same-cycle fast-line update.
+   when (svbFlush) {
+-    svbCapturePending := false.B
+-    svbCaptureIssued := false.B
++    when (svbCapturePending && svbCaptureIssued && !svbSnapshotConsumed) {
++      svbCaptureCancelled := true.B
++    }.otherwise {
++      svbCapturePending := false.B
++      svbCaptureIssued := false.B
++      svbCaptureCancelled := false.B
++    }
+     when (svbFastLineValid) {
+       printf("FASTLINE_RELEASE cycle=%x line=%x set=%x tag=%x seq=%x epoch=%x acquire_cycle=%x release_reason=epoch_flush\n",
+         io.csr_cycle, svbFastLine, svbFastSet, svbFastTag, svbFastSeq,

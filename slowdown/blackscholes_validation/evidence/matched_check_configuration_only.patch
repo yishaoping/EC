@@ -1,0 +1,87 @@
+diff --git a/chipyard/generators/boom/src/main/scala/common/config-mixins.scala b/chipyard/generators/boom/src/main/scala/common/config-mixins.scala
+index 0b651b05f..b101f0a46 100644
+--- a/chipyard/generators/boom/src/main/scala/common/config-mixins.scala
++++ b/chipyard/generators/boom/src/main/scala/common/config-mixins.scala
+@@ -538,3 +538,47 @@ class WithSWBPD extends Config((site, here, up) => {
+     case other => other
+   }
+ })
++
++class WithNParaMedicBooms(n: Int = 1, overrideIdOffset: Option[Int] = None) extends Config(
++  new WithTAGELBPD ++ // Default to TAGE-L BPD
++  new Config((site, here, up) => {
++    case TilesLocated(InSubsystem) => {
++      val prev = up(TilesLocated(InSubsystem), site)
++      val idOffset = overrideIdOffset.getOrElse(prev.size)
++      (0 until n).map { i =>
++        BoomTileAttachParams(
++          tileParams = BoomTileParams(
++            core = BoomCoreParams(
++              fetchWidth = 8,
++              decodeWidth = 3,
++              numRobEntries = 42,
++              issueParams = Seq(
++                IssueParams(issueWidth=1, numEntries=16, iqType=IQT_MEM.litValue, dispatchWidth=3),
++                IssueParams(issueWidth=3, numEntries=32, iqType=IQT_INT.litValue, dispatchWidth=3),
++                IssueParams(issueWidth=1, numEntries=24, iqType=IQT_FP.litValue , dispatchWidth=3)),
++              numIntPhysRegisters = 128,
++              numFpPhysRegisters = 128,
++              numLdqEntries = 16,
++              numStqEntries = 16,
++              maxBrCount = 16,
++              numFetchBufferEntries = 24,
++              numRasEntries = 16,
++              ftq = FtqParameters(nEntries=32),
++              fpu = Some(freechips.rocketchip.tile.FPUParams(sfmaLatency=4, dfmaLatency=4, divSqrt=true))
++            ),
++            dcache = Some(
++              DCacheParams(rowBits = 128, nSets=256, nWays=2, nMSHRs=6, nTLBWays=16)
++            ),
++            icache = Some(
++              ICacheParams(rowBits = 128, nSets=64, nWays=8, fetchBytes=4*4)
++            ),
++            hartId = i + idOffset
++          ),
++          crossingParams = RocketCrossingParams()
++        )
++      } ++ prev
++    }
++    case XLen => 64
++  })
++)
++
+diff --git a/chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala b/chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala
+index 5395af250..42ca5855e 100644
+--- a/chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala
++++ b/chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala
+@@ -17,12 +17,14 @@ class v1Config extends Config(
+   new chipyard.config.WithMemoryBusFrequency(200) ++
+   new chipyard.config.WithPeripheryBusFrequency(200) ++
+   new chipyard.config.WithSystemBusFrequencyAsDefault ++
++  new freechips.rocketchip.subsystem.WithInclusiveCache(
++    nWays = 16, capacityKB = 1024, outerLatencyCycles = 12) ++
+   new freechips.rocketchip.guardiancouncil.WithGHE ++
+   new freechips.rocketchip.guardiancouncil.WithDisableROBDebug ++
+   new freechips.rocketchip.subsystem.WithAsynchronousRocketTiles(
+   AsynchronousCrossing().depth,
+   AsynchronousCrossing().sourceSync) ++
+-  new boom.common.WithNLargeBooms(GH_GlobalParams.GH_NUM_BIG_CORES, overrideIdOffset = Some(0)) ++
++  new boom.common.WithNParaMedicBooms(GH_GlobalParams.GH_NUM_BIG_CORES, overrideIdOffset = Some(0)) ++
+   new freechips.rocketchip.subsystem.WithNGCCheckers(GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES, overrideIdOffset=Some(GH_GlobalParams.GH_NUM_BIG_CORES)) ++
+   new chipyard.config.AbstractConfig
+ )
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/subsystem/Configs.scala b/chipyard/generators/rocket-chip/src/main/scala/subsystem/Configs.scala
+index 80ecdd2fc..bb2e87275 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/subsystem/Configs.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/subsystem/Configs.scala
+@@ -254,8 +254,8 @@ class WithNGCCheckers(n: Int, overrideIdOffset: Option[Int] = None,crossing: Roc
+         blockBytes = site(CacheBlockBytes))),
+       icache = Some(ICacheParams(
+         rowBits = site(SystemBusKey).beatBits,
+-        nSets = 64,
+-        nWays = 8,
++        nSets = 32,
++        nWays = 1,
+         nTLBSets = 1,
+         nTLBWays = 32,
+         blockBytes = site(CacheBlockBytes))))
