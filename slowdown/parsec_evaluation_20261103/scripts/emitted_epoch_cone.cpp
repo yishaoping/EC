@@ -21,6 +21,9 @@ int main(int argc,char**argv){
   // before it can clear that register; reset alone cannot stop those stores.
   clear(d);d.io__traffic_reset=1;
   for(int i=0;i<32;++i){d.eval();require(d.svbFlush,"default reset still flushes SVB");require(d.s2_write_grant,"default observer reset cannot deadlock boot stores");edge(d);}++cases;
+  clear(d);d.io__lsu_exception=1;d.eval();
+  require(d.svbFlush,"exception still establishes an epoch boundary without snapshot state");
+  require(d.s2_write_grant,"exception without SVB ownership must not suppress unrelated boot/store progress");++cases;
   // The observed failure: eligible S2 request shares the exception/flush edge.
   for(int reset=0;reset<2;++reset){
     clear(d);d.svbFastLineValid=1;d.io__lsu_exception=!reset;d.io__traffic_reset=reset;d.eval();
