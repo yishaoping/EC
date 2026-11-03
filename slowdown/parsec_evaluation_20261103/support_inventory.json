@@ -1,0 +1,277 @@
+[
+  {
+    "benchmark": "blackscholes",
+    "source": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes",
+    "installed_binaries": [
+      {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/inst/amd64-linux.gcc-serial/bin/blackscholes",
+        "file": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/inst/amd64-linux.gcc-serial/bin/blackscholes: ELF 64-bit LSB executable, UCB RISC-V, version 1 (SYSV), statically linked, for GNU/Linux 4.15.0, with debug_info, not stripped",
+        "sha256": "2a84139e04ee9b5d65a87f8465fe38c45c0df81b5a25df3ff57286188bced2be"
+      }
+    ],
+    "inputs": {
+      "test": "${NTHREADS} in_4.txt prices.txt",
+      "simdev": "${NTHREADS} in_16.txt prices.txt",
+      "simsmall": "${NTHREADS} in_4K.txt prices.txt",
+      "simmedium": "${NTHREADS} in_16K.txt prices.txt"
+    },
+    "verilator_baremetal": "verified_test4",
+    "ROI": "shared baremetal harness available",
+    "native": "PENDING_UNPROTECTED_MODE",
+    "check": "PASS_test4",
+    "correction": "PASS_test4",
+    "constraint": "Installed binaries require Linux syscalls/filesystem and different ROI hooks; no booted Verilator Linux/checker image is established. Do not treat installed RISC-V as Verilator support."
+  },
+  {
+    "benchmark": "bodytrack",
+    "source": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/bodytrack",
+    "installed_binaries": [
+      {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/bodytrack/inst/amd64-linux.gcc-serial/bin/bodytrack",
+        "file": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/bodytrack/inst/amd64-linux.gcc-serial/bin/bodytrack: ELF 64-bit LSB executable, UCB RISC-V, version 1 (GNU/Linux), statically linked, for GNU/Linux 4.15.0, with debug_info, not stripped",
+        "sha256": "b3f157f4ee21017c98c2c88fc4daca579154c7e08f23699b2b5b83ebfc55df1e"
+      }
+    ],
+    "inputs": {
+      "test": "sequenceB_1 4 1 5 1 0 ${NTHREADS}",
+      "simdev": "sequenceB_1 4 1 100 3 0 ${NTHREADS}",
+      "simsmall": "sequenceB_1 4 1 1000 5 0 ${NTHREADS}",
+      "simmedium": "sequenceB_2 4 2 2000 5 0 ${NTHREADS}"
+    },
+    "verilator_baremetal": "UNPROVEN",
+    "ROI": "Linux PARSEC hooks only; adaptation required",
+    "native": "PENDING_UNPROTECTED_MODE",
+    "check": "NOT_RUN",
+    "correction": "NOT_RUN",
+    "constraint": "Installed binaries require Linux syscalls/filesystem and different ROI hooks; no booted Verilator Linux/checker image is established. Do not treat installed RISC-V as Verilator support."
+  },
+  {
+    "benchmark": "canneal",
+    "source": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal",
+    "installed_binaries": [],
+    "inputs": {
+      "test": "${NTHREADS} 5 100 10.nets 1",
+      "simdev": "${NTHREADS} 100 300 100.nets 2",
+      "simsmall": "${NTHREADS} 10000 2000 100000.nets 32",
+      "simmedium": "${NTHREADS} 15000 2000 200000.nets 64"
+    },
+    "verilator_baremetal": "UNPROVEN",
+    "ROI": "Linux PARSEC hooks only; adaptation required",
+    "native": "PENDING_UNPROTECTED_MODE",
+    "check": "NOT_RUN",
+    "correction": "NOT_RUN",
+    "constraint": "Installed binaries require Linux syscalls/filesystem and different ROI hooks; no booted Verilator Linux/checker image is established. Do not treat installed RISC-V as Verilator support."
+  },
+  {
+    "benchmark": "dedup",
+    "source": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup",
+    "installed_binaries": [
+      {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/inst/amd64-linux.gcc-serial/bin/dedup",
+        "file": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/inst/amd64-linux.gcc-serial/bin/dedup: ELF 64-bit LSB executable, UCB RISC-V, version 1 (SYSV), statically linked, for GNU/Linux 4.15.0, with debug_info, not stripped",
+        "sha256": "1ff6dbb90c51f277cf6c76393c482314095ef87d56d48b42dbbade04780e7d0a"
+      }
+    ],
+    "inputs": {
+      "test": "-c -p -v -t ${NTHREADS} -i test.dat -o output.dat.ddp",
+      "simdev": "-c -p -v -t ${NTHREADS} -i hamlet.dat -o output.dat.ddp",
+      "simsmall": "-c -p -v -t ${NTHREADS} -i media.dat -o output.dat.ddp",
+      "simmedium": "-c -p -v -t ${NTHREADS} -i media.dat -o output.dat.ddp"
+    },
+    "verilator_baremetal": "UNPROVEN",
+    "ROI": "Linux PARSEC hooks only; adaptation required",
+    "native": "PENDING_UNPROTECTED_MODE",
+    "check": "NOT_RUN",
+    "correction": "NOT_RUN",
+    "constraint": "Installed binaries require Linux syscalls/filesystem and different ROI hooks; no booted Verilator Linux/checker image is established. Do not treat installed RISC-V as Verilator support."
+  },
+  {
+    "benchmark": "facesim",
+    "source": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/facesim",
+    "installed_binaries": [],
+    "inputs": {
+      "test": "-h",
+      "simdev": "-timing -threads ${NTHREADS}",
+      "simsmall": "-timing -threads ${NTHREADS}",
+      "simmedium": "-timing -threads ${NTHREADS}"
+    },
+    "verilator_baremetal": "UNPROVEN",
+    "ROI": "Linux PARSEC hooks only; adaptation required",
+    "native": "PENDING_UNPROTECTED_MODE",
+    "check": "NOT_RUN",
+    "correction": "NOT_RUN",
+    "constraint": "Installed binaries require Linux syscalls/filesystem and different ROI hooks; no booted Verilator Linux/checker image is established. Do not treat installed RISC-V as Verilator support."
+  },
+  {
+    "benchmark": "ferret",
+    "source": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret",
+    "installed_binaries": [
+      {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inst/amd64-linux.gcc-serial/bin/ferret",
+        "file": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inst/amd64-linux.gcc-serial/bin/ferret: ELF 64-bit LSB executable, UCB RISC-V, version 1 (SYSV), statically linked, for GNU/Linux 4.15.0, with debug_info, not stripped",
+        "sha256": "8dbc6b83f48b157c530cacdbb9a5999604d37709e891866adc9d42036e03ac66"
+      }
+    ],
+    "inputs": {
+      "test": "corel lsh queries 5 5 ${NTHREADS} output.txt",
+      "simdev": "corel lsh queries 5 5 ${NTHREADS} output.txt",
+      "simsmall": "corel lsh queries 10 20 ${NTHREADS} output.txt",
+      "simmedium": "corel lsh queries 10 20 ${NTHREADS} output.txt"
+    },
+    "verilator_baremetal": "UNPROVEN",
+    "ROI": "Linux PARSEC hooks only; adaptation required",
+    "native": "PENDING_UNPROTECTED_MODE",
+    "check": "NOT_RUN",
+    "correction": "NOT_RUN",
+    "constraint": "Installed binaries require Linux syscalls/filesystem and different ROI hooks; no booted Verilator Linux/checker image is established. Do not treat installed RISC-V as Verilator support."
+  },
+  {
+    "benchmark": "fluidanimate",
+    "source": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate",
+    "installed_binaries": [
+      {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/inst/amd64-linux.gcc-serial/bin/fluidanimate",
+        "file": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/inst/amd64-linux.gcc-serial/bin/fluidanimate: ELF 64-bit LSB executable, UCB RISC-V, version 1 (GNU/Linux), statically linked, for GNU/Linux 4.15.0, with debug_info, not stripped",
+        "sha256": "f2e0ca6a610995b2aea5a5e0ebe444cb12597534076930880cdc958726203bf2"
+      }
+    ],
+    "inputs": {
+      "test": "${NTHREADS} 1 in_5K.fluid out.fluid",
+      "simdev": "${NTHREADS} 3 in_15K.fluid out.fluid",
+      "simsmall": "${NTHREADS} 5 in_35K.fluid out.fluid",
+      "simmedium": "${NTHREADS} 5 in_100K.fluid out.fluid"
+    },
+    "verilator_baremetal": "UNPROVEN",
+    "ROI": "Linux PARSEC hooks only; adaptation required",
+    "native": "PENDING_UNPROTECTED_MODE",
+    "check": "NOT_RUN",
+    "correction": "NOT_RUN",
+    "constraint": "Installed binaries require Linux syscalls/filesystem and different ROI hooks; no booted Verilator Linux/checker image is established. Do not treat installed RISC-V as Verilator support."
+  },
+  {
+    "benchmark": "freqmine",
+    "source": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/freqmine",
+    "installed_binaries": [
+      {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/freqmine/inst/amd64-linux.gcc-serial/bin/freqmine",
+        "file": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/freqmine/inst/amd64-linux.gcc-serial/bin/freqmine: ELF 64-bit LSB executable, UCB RISC-V, version 1 (GNU/Linux), statically linked, for GNU/Linux 4.15.0, with debug_info, not stripped",
+        "sha256": "850067bba6b16103ca31ea7e6fc01848c674d1404f140562bf46c32185fed818"
+      }
+    ],
+    "inputs": {
+      "test": "T10I4D100K_3.dat 1",
+      "simdev": "T10I4D100K_1k.dat 3",
+      "simsmall": "kosarak_250k.dat 220",
+      "simmedium": "kosarak_500k.dat 410"
+    },
+    "verilator_baremetal": "UNPROVEN",
+    "ROI": "Linux PARSEC hooks only; adaptation required",
+    "native": "PENDING_UNPROTECTED_MODE",
+    "check": "NOT_RUN",
+    "correction": "NOT_RUN",
+    "constraint": "Installed binaries require Linux syscalls/filesystem and different ROI hooks; no booted Verilator Linux/checker image is established. Do not treat installed RISC-V as Verilator support."
+  },
+  {
+    "benchmark": "raytrace",
+    "source": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/raytrace",
+    "installed_binaries": [],
+    "inputs": {
+      "test": "octahedron.obj -automove -nthreads ${NTHREADS} -frames 1 -res 1 1",
+      "simdev": "bunny.obj -automove -nthreads ${NTHREADS} -frames 1 -res 16 16",
+      "simsmall": "happy_buddha.obj -automove -nthreads ${NTHREADS} -frames 3 -res 480 270",
+      "simmedium": "happy_buddha.obj -automove -nthreads ${NTHREADS} -frames 3 -res 960 540"
+    },
+    "verilator_baremetal": "UNPROVEN",
+    "ROI": "Linux PARSEC hooks only; adaptation required",
+    "native": "PENDING_UNPROTECTED_MODE",
+    "check": "NOT_RUN",
+    "correction": "NOT_RUN",
+    "constraint": "Installed binaries require Linux syscalls/filesystem and different ROI hooks; no booted Verilator Linux/checker image is established. Do not treat installed RISC-V as Verilator support."
+  },
+  {
+    "benchmark": "streamcluster",
+    "source": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/streamcluster",
+    "installed_binaries": [
+      {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/streamcluster/inst/amd64-linux.gcc-serial/bin/streamcluster",
+        "file": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/streamcluster/inst/amd64-linux.gcc-serial/bin/streamcluster: ELF 64-bit LSB executable, UCB RISC-V, version 1 (GNU/Linux), statically linked, for GNU/Linux 4.15.0, with debug_info, not stripped",
+        "sha256": "9e0740cfc948dac67edf849633ba9b0ed9fc3f9484f12d80343b520022fb709f"
+      }
+    ],
+    "inputs": {
+      "test": "2 5 1 10 10 5 none output.txt ${NTHREADS}",
+      "simdev": "3 10 3 16 16 10 none output.txt ${NTHREADS}",
+      "simsmall": "10 20 32 4096 4096 1000 none output.txt ${NTHREADS}",
+      "simmedium": "10 20 64 8192 8192 1000 none output.txt ${NTHREADS}"
+    },
+    "verilator_baremetal": "UNPROVEN",
+    "ROI": "Linux PARSEC hooks only; adaptation required",
+    "native": "PENDING_UNPROTECTED_MODE",
+    "check": "NOT_RUN",
+    "correction": "NOT_RUN",
+    "constraint": "Installed binaries require Linux syscalls/filesystem and different ROI hooks; no booted Verilator Linux/checker image is established. Do not treat installed RISC-V as Verilator support."
+  },
+  {
+    "benchmark": "swaptions",
+    "source": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/swaptions",
+    "installed_binaries": [
+      {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/swaptions/inst/amd64-linux.gcc-serial/bin/swaptions",
+        "file": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/swaptions/inst/amd64-linux.gcc-serial/bin/swaptions: ELF 64-bit LSB executable, UCB RISC-V, version 1 (GNU/Linux), statically linked, for GNU/Linux 4.15.0, with debug_info, not stripped",
+        "sha256": "10ce0b5cb51859462033f16a20cdb83afd002ef2f6efc9f115dac2a522e42b87"
+      }
+    ],
+    "inputs": {
+      "test": "-ns 1 -sm 5 -nt ${NTHREADS}",
+      "simdev": "-ns 3 -sm 50 -nt ${NTHREADS}",
+      "simsmall": "-ns 16 -sm 10000 -nt ${NTHREADS}",
+      "simmedium": "-ns 32 -sm 20000 -nt ${NTHREADS}"
+    },
+    "verilator_baremetal": "UNPROVEN",
+    "ROI": "Linux PARSEC hooks only; adaptation required",
+    "native": "PENDING_UNPROTECTED_MODE",
+    "check": "NOT_RUN",
+    "correction": "NOT_RUN",
+    "constraint": "Installed binaries require Linux syscalls/filesystem and different ROI hooks; no booted Verilator Linux/checker image is established. Do not treat installed RISC-V as Verilator support."
+  },
+  {
+    "benchmark": "vips",
+    "source": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/vips",
+    "installed_binaries": [],
+    "inputs": {
+      "test": "im_benchmark barbados_256x288.v output.v",
+      "simdev": "im_benchmark barbados_256x288.v output.v",
+      "simsmall": "im_benchmark pomegranate_1600x1200.v output.v",
+      "simmedium": "im_benchmark vulture_2336x2336.v output.v"
+    },
+    "verilator_baremetal": "UNPROVEN",
+    "ROI": "Linux PARSEC hooks only; adaptation required",
+    "native": "PENDING_UNPROTECTED_MODE",
+    "check": "NOT_RUN",
+    "correction": "NOT_RUN",
+    "constraint": "Installed binaries require Linux syscalls/filesystem and different ROI hooks; no booted Verilator Linux/checker image is established. Do not treat installed RISC-V as Verilator support."
+  },
+  {
+    "benchmark": "x264",
+    "source": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/x264",
+    "installed_binaries": [
+      {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/x264/inst/amd64-linux.gcc-serial/bin/x264",
+        "file": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/x264/inst/amd64-linux.gcc-serial/bin/x264: ELF 64-bit LSB executable, UCB RISC-V, version 1 (SYSV), statically linked, for GNU/Linux 4.15.0, with debug_info, not stripped",
+        "sha256": "d7f61e17999d23d1a596f431875dea70dbb59cda0f72d767d6f0466d2dd05c78"
+      }
+    ],
+    "inputs": {
+      "test": "--quiet --qp 20 --partitions b8x8,i4x4 --ref 5 --direct auto --b-pyramid --weightb --mixed-refs --no-fast-pskip --me umh --subme 7 --analyse b8x8,i4x4 --threads ${NTHREADS} -o eledream.264 eledream_32x18_1.y4m",
+      "simdev": "--quiet --qp 20 --partitions b8x8,i4x4 --ref 5 --direct auto --b-pyramid --weightb --mixed-refs --no-fast-pskip --me umh --subme 7 --analyse b8x8,i4x4 --threads ${NTHREADS} -o eledream.264 eledream_64x36_3.y4m",
+      "simsmall": "--quiet --qp 20 --partitions b8x8,i4x4 --ref 5 --direct auto --b-pyramid --weightb --mixed-refs --no-fast-pskip --me umh --subme 7 --analyse b8x8,i4x4 --threads ${NTHREADS} -o eledream.264 eledream_640x360_8.y4m",
+      "simmedium": "--quiet --qp 20 --partitions b8x8,i4x4 --ref 5 --direct auto --b-pyramid --weightb --mixed-refs --no-fast-pskip --me umh --subme 7 --analyse b8x8,i4x4 --threads ${NTHREADS} -o eledream.264 eledream_640x360_32.y4m"
+    },
+    "verilator_baremetal": "UNPROVEN",
+    "ROI": "Linux PARSEC hooks only; adaptation required",
+    "native": "PENDING_UNPROTECTED_MODE",
+    "check": "NOT_RUN",
+    "correction": "NOT_RUN",
+    "constraint": "Installed binaries require Linux syscalls/filesystem and different ROI hooks; no booted Verilator Linux/checker image is established. Do not treat installed RISC-V as Verilator support."
+  }
+]
