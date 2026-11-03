@@ -8,6 +8,9 @@ import compact_capture
 FINAL='1532923803d7451b0c7843e9abad1c90ef9eb9ed'
 FIXBUILD='overlap_blackscholes_capture_flush_fix_20261103_064936_fd6cd4a6'
 class Router(compact_capture.Router):
+    def write(self,dest,line):
+        super().write(dest,line)
+        if dest in ['stdout.log','stderr.log']:self.files[dest].flush()
     def line(self,line,stream):
         if line.startswith(b'SVB_CAPTURE_DISCARD '):
             self.counts['cancelled_snapshots_drained']+=1;self.write('stderr.log',line);return
