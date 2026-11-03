@@ -108,6 +108,9 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   val sourceE = Module(new SourceE(params))
   val sourceX = Module(new SourceX(params))
   val preservation = Module(new L2Preservation(params))
+  // Keep the captured set locked through terminal ACK, but return the shared
+  // SourceC read port once every checkpoint A beat has been accepted.
+  val sourceCReserved = preservation.io.lock.valid && !preservation.io.waitingAck
   preservation.io.watermark := io.safeWatermark
   preservation.io.bank := io.bank
   sourceC.io.watermark := io.safeWatermark
@@ -332,7 +335,7 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   val stage3Allowed = mshrs.zip(candidates).map { case (m, x) =>
     val outerSafe = !m.io.schedule.bits.c.valid || CacheImage.safe(m.io.resident.bits.image, io.safeWatermark)
     !x.valid && !locked(m.io.status.bits.set) && outerSafe &&
-      (!m.io.schedule.bits.c.valid || (!preservation.io.lock.valid && !drainForCheckpoint)) &&
+      (!m.io.schedule.bits.c.valid || (!sourceCReserved && !drainForCheckpoint)) &&
       (!m.io.schedule.bits.d.valid || !drainForCheckpoint)
   }
   val unsafeVictims = mshrs.map(m => m.io.schedule.valid && m.io.schedule.bits.c.valid &&
@@ -693,6 +696,31 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   BoringUtils.addSink(observationEnable, GH_GlobalParams.GH_L2_STATS_ENABLE_BORE)
   val observationContext = SafeChainObservation.context()
   val observationStop = RegNext(observationEnable, Bool(false)) && !observationEnable
+  // SC48: exact traffic-window counts, one forced STOP sample. These counts
+  // measure overlap opportunities/acceptance, not counterfactual ROI savings.
+  val overlapReleasePending = mshrs.map(m => m.io.schedule.valid &&
+    m.io.schedule.bits.c.valid && m.io.schedule.bits.c.bits.opcode(1)).reduce(_||_)
+  val overlapReleaseFire = sourceC.io.req.fire() && sourceC.io.req.bits.opcode(1)
+  val overlapPredicates = Seq(sourceCReserved,
+    sourceCReserved && overlapReleasePending,
+    preservation.io.waitingAck && overlapReleaseFire,
+    overlapReleasePending && !overlapReleaseFire,
+    preservation.io.waitingAck,
+    preservation.io.waitingAck && overlapReleasePending,
+    preservation.io.lock.valid,
+    preservation.io.lock.valid && overlapReleasePending)
+  val overlapCounts = RegInit(Vec(Seq.fill(9)(UInt(0, width = 64))))
+  when (observationReset) {
+    overlapCounts.foreach(_ := UInt(0))
+  }.elsewhen (observationEnable) {
+    overlapCounts(0) := overlapCounts(0) + UInt(1)
+    overlapPredicates.zipWithIndex.foreach { case (event, i) =>
+      when (event) { overlapCounts(i+1) := overlapCounts(i+1) + UInt(1) }
+    }
+  }
+  SafeChainObservation.emit(48, clock, reset, observationContext._1, observationContext._1,
+    UInt(0), observationContext._2, observationStop,
+    Seq(UInt(1)) ++ overlapCounts.toSeq, UInt(0), force = observationStop)
   // FullRequest adds fields to QueuedRequest, so a direct aggregate Mux
   // fails Chisel's runtime type check. Project by field connection, exactly
   // as the functional MSHR allocation path does above; do not bit-cast.
@@ -757,10 +785,10 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   bankedStore.io.sinkC_dat := sinkC.io.bs_dat
   bankedStore.io.sinkD_adr <> sinkD.io.bs_adr
   bankedStore.io.sinkD_dat := sinkD.io.bs_dat
-  bankedStore.io.sourceC_adr.valid := Mux(preservation.io.lock.valid, preservation.io.bs_adr.valid, sourceC.io.bs_adr.valid)
-  bankedStore.io.sourceC_adr.bits := Mux(preservation.io.lock.valid, preservation.io.bs_adr.bits, sourceC.io.bs_adr.bits)
-  preservation.io.bs_adr.ready := preservation.io.lock.valid && bankedStore.io.sourceC_adr.ready
-  sourceC.io.bs_adr.ready := !preservation.io.lock.valid && bankedStore.io.sourceC_adr.ready
+  bankedStore.io.sourceC_adr.valid := Mux(sourceCReserved, preservation.io.bs_adr.valid, sourceC.io.bs_adr.valid)
+  bankedStore.io.sourceC_adr.bits := Mux(sourceCReserved, preservation.io.bs_adr.bits, sourceC.io.bs_adr.bits)
+  preservation.io.bs_adr.ready := sourceCReserved && bankedStore.io.sourceC_adr.ready
+  sourceC.io.bs_adr.ready := !sourceCReserved && bankedStore.io.sourceC_adr.ready
   bankedStore.io.sourceD_radr <> sourceD.io.bs_radr
   bankedStore.io.sourceD_wadr <> sourceD.io.bs_wadr
   bankedStore.io.sourceD_wdat := sourceD.io.bs_wdat
@@ -782,6 +810,8 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
     assert(!(sinkD.io.bs_adr.fire() && !sinkD.io.bs_adr.bits.noop && locked(sinkD.io.bs_adr.bits.set)), "L2_PREMATURE_OVERWRITE_ERROR refill")
   }
   when (sourceC.io.req.fire()) {
+    assert(!sourceCReserved && !locked(sourceC.io.req.bits.set),
+      "L2 SourceC bypass violates checkpoint reservation")
     assert(sourceC.io.req.bits.source < UInt(InclusiveCacheParameters.out_mshrs(params.cache, params.micro)),
       "L2 MSHR release aliases checkpoint source")
     assert(CacheImage.safe(sourceC.io.req.bits.image, io.safeWatermark), "L2_SPEC_OUTER_WRITE_ERROR victim")

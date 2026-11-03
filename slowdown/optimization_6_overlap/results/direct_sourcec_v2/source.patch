@@ -1,0 +1,327 @@
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/rocket/Frontend.scala b/chipyard/generators/rocket-chip/src/main/scala/rocket/Frontend.scala
+index 1fc632bcb..80f6eaf52 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/rocket/Frontend.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/rocket/Frontend.scala
+@@ -170,6 +170,19 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
+   val checker_busy = checker_state =/= checker_empty || checker_s1_owner || checker_s2_owner
+   val checker_flow = checker_request || checker_busy
+   val checker_emit = checker_state === checker_ready && !io.cpu.checker_clear
++  // An owned S2 response may go straight to FQ after classification. These
++  // wires do not create another response owner; if FQ refuses it, the normal
++  // response register/WAIT_BJL path retains the transaction on this edge.
++  val checker_direct_emit = WireDefault(false.B)
++  val checker_direct_resp = Wire(new FrontendResp)
++  val checker_direct_next_pc = Wire(UInt(vaddrBitsExtended.W))
++  // FQ is flow-through: VALID must not depend on the redirect that its
++  // output can cause in Rocket. A redirect kills IBuf and resets FQ on this
++  // edge, just as for an already registered READY response. Ownership and
++  // BJL reservation advance only on a non-killed accepted delivery.
++  val checker_direct_fire = checker_direct_emit && fq.io.enq.ready && !io.cpu.req.valid
++  val checker_direct_handoff = checker_direct_fire && checker_request &&
++    !redirect_pending && !redirect_settle && !io.cpu.req.valid
+   // OPT2B: accept the already-resolved successor while the current response
+   // is handed to FQ. Never look ahead across a held response, replay or fault.
+   val checker_handoff = checker_emit && fq.io.enq.ready && checker_request &&
+@@ -189,7 +202,7 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
+   // Redirect first changes the PC/mode; accept the target request only after
+   // the registered settle cycle, and keep it pending until req.fire.
+   val s0_valid = !io.cpu.req.valid && !redirect_settle && Mux(checker_flow,
+-    (checker_state === checker_empty || checker_handoff) && !io.cpu.checker_clear,
++    (checker_state === checker_empty || checker_handoff || checker_direct_handoff) && !io.cpu.checker_clear,
+     s0_fq_has_space || !io.cpu.if_overtaking)
+   dontTouch(s0_fq_has_space)
+   // During the redirect handoff, S1 validity is an acceptance fact.  The
+@@ -297,8 +310,9 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
+     checker_state === checker_empty &&
+     (icache.io.resp.valid || (s2_kill_speculative_tlb_refill && s2_tlb_resp.miss) || (!s2_tlb_resp.miss && icache.io.s2_kill))
+   legacy_resp.pc := s2_pc
+-  val checker_pc = Mux(checker_state === checker_empty, s1_pc,
+-    Mux(checker_emit && fq.io.enq.ready, checker_next_pc, checker_fetch_pc))
++  val checker_pc = Mux(checker_direct_handoff, checker_direct_next_pc,
++    Mux(checker_state === checker_empty, s1_pc,
++      Mux(checker_emit && fq.io.enq.ready, checker_next_pc, checker_fetch_pc)))
+   io.cpu.npc := alignPC(Mux(io.cpu.req.valid, io.cpu.req.bits.pc,
+     Mux(redirect_pending, redirect_pc, Mux(checker_flow, checker_pc, npc))))
+ 
+@@ -497,9 +511,9 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
+     when (io.cpu.req.valid) { wrong_path := false.B }
+     dontTouch(specialJalrVec)
+   }
+-  // OPT3: classify the incoming owned response before registering it. This
+-  // removes the unconditional CLASSIFY state; BJL reservation still happens
+-  // only in WAIT_BJL and FQ delivery still happens only in READY.
++  // Classify the incoming owned response before registering it. The direct
++  // path may deliver it immediately; the held path retains misses/replays,
++  // FQ backpressure and CFIs without a matching available BJL head.
+   val checker_cache_valid = if (outer.icacheParams.latency == 1)
+     RegNext(checker_s1_owner && icache.io.resp.valid, false.B) else icache.io.resp.valid
+   val checker_cache_bits = if (outer.icacheParams.latency == 1)
+@@ -510,9 +524,10 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
+   checker_incoming.replay := checker_cache_valid && checker_cache_bits.replay ||
+     icache.io.s2_kill && !checker_cache_valid && !s2_xcpt
+   when (checker_cache_valid && checker_cache_bits.ae) { checker_incoming.xcpt.ae.inst := true.B }
+-  val checker_classify_fire = checker_s2_owner && checker_state === checker_fetching &&
++  val checker_classify_candidate = checker_s2_owner && checker_state === checker_fetching &&
+     !s2_tlb_resp.miss && (checker_cache_valid || icache.io.s2_kill) &&
+-    !io.cpu.req.valid && !io.cpu.checker_clear
++    !io.cpu.checker_clear
++  val checker_classify_fire = checker_classify_candidate && !io.cpu.req.valid
+   // One checker response owns its data and reservation until FQ accepts it.
+   val checker_start = checker_resp.pc.extract(log2Ceil(fetchBytes)-1, log2Ceil(coreInstBytes))
+   val checker_scan_start = checker_incoming.pc.extract(log2Ceil(fetchBytes)-1, log2Ceil(coreInstBytes))
+@@ -558,13 +573,43 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
+   val checker_incoming_fault = checker_incoming.replay || checker_incoming.xcpt.asUInt.orR
+   val checker_head_match = BJL.io.bj_resp_cpc === checker_cfi_pc &&
+     BJL.io.bj_resp_is_rvc === checker_cfi_rvc
+-  BJL.io.bj_req_valid := checker_state === checker_wait_bjl && checker_head_match &&
+-    !io.cpu.req.valid && !io.cpu.checker_clear
++  val checker_incoming_prefix = has_cfi && cfi_start(first_cfi) > checker_scan_start
++  val checker_incoming_bjl = has_cfi && !checker_incoming_prefix && !cfi_special(first_cfi)
++  val checker_incoming_head_match = BJL.io.bj_resp_cpc === cfi_pc(first_cfi) &&
++    BJL.io.bj_resp_is_rvc === cfi_rvc(first_cfi)
++  checker_direct_resp := checker_incoming
++  checker_direct_resp.btb.taken := false.B
++  checker_direct_resp.prefixLength := fetchWidth.U - checker_scan_start
++  checker_direct_resp.bjlEndMask := 0.U
++  checker_direct_next_pc := checker_base + fetchBytes.U
++  when (checker_incoming_prefix) {
++    checker_direct_resp.prefixLength := cfi_start(first_cfi) - checker_scan_start
++    checker_direct_next_pc := cfi_pc(first_cfi)
++  }.elsewhen (has_cfi && cfi_special(first_cfi)) {
++    checker_direct_resp.prefixLength := (first_cfi +& 1.U) - checker_scan_start
++    checker_direct_next_pc := cfi_pc(first_cfi) + 4.U
++  }.elsewhen (checker_incoming_bjl) {
++    checker_direct_resp.prefixLength := (first_cfi +& 1.U) - checker_scan_start
++    checker_direct_resp.bjlEndMask := UIntToOH(first_cfi, fetchWidth)
++    checker_direct_resp.btb.taken := BJL.io.bj_resp_taken
++    checker_direct_resp.btb.bridx := first_cfi
++    checker_direct_next_pc := BJL.io.bj_resp_npc
++  }
++  checker_direct_resp.mask := ((UIntToOH(checker_direct_resp.prefixLength, fetchWidth+1) - 1.U) <<
++    checker_scan_start)(fetchWidth-1, 0)
++  // Fault/replay uses the established held-response path. A CFI can bypass
++  // WAIT_BJL only with the real matching log head, reserved on FQ fire.
++  checker_direct_emit := checker_classify_candidate && !checker_incoming_fault &&
++    (!checker_incoming_bjl || checker_incoming_head_match && BJL.io.bj_req_ready)
++  val checker_direct_reserve = checker_direct_fire && checker_incoming_bjl
++  BJL.io.bj_req_valid := ((checker_state === checker_wait_bjl && checker_head_match) ||
++    checker_direct_reserve) && !io.cpu.req.valid && !io.cpu.checker_clear
+   BJL.io.bj_rollback := io.cpu.req.valid
+   BJL.io.bj_s2_replay := false.B
+   BJL.io.bj_commit_valid := io.cpu.bjl_commit
+-  fq.io.enq.valid := checker_emit || legacy_emit
+-  fq.io.enq.bits := Mux(checker_emit, checker_resp, legacy_resp)
++  fq.io.enq.valid := checker_emit || checker_direct_emit || legacy_emit
++  fq.io.enq.bits := Mux(checker_direct_emit, checker_direct_resp,
++    Mux(checker_emit, checker_resp, legacy_resp))
+   when (checker_emit) {
+     fq.io.enq.bits.mask := ((UIntToOH(checker_resp.prefixLength, fetchWidth+1) - 1.U) << checker_start)(fetchWidth-1, 0)
+   }
+@@ -612,7 +657,7 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
+       checker_state := checker_empty
+     }
+   }
+-  when (BJL.io.bj_req_valid && BJL.io.bj_req_ready) {
++  when (checker_state === checker_wait_bjl && BJL.io.bj_req_valid && BJL.io.bj_req_ready) {
+     checker_resp.prefixLength := (checker_cfi_end +& 1.U) - checker_start
+     checker_resp.bjlEndMask := UIntToOH(checker_cfi_end, fetchWidth)
+     checker_resp.btb.taken := BJL.io.bj_resp_taken
+@@ -632,8 +677,19 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
+     checker_partial_pc := checker_tail_pc
+     checker_partial_seq := checker_fetch_seq
+   }
++  when (checker_direct_fire) {
++    checker_state := Mux(icache.io.req.fire && checker_request,
++      checker_fetching, checker_empty)
++    checker_partial_valid := lowValid &&
++      checker_direct_resp.prefixLength === fetchWidth.U - checker_scan_start &&
++      !checker_direct_resp.bjlEndMask.orR
++    checker_partial_bits := lowBits
++    checker_partial_pc := lowPC
++    checker_partial_seq := checker_fetch_seq
++    when (!icache.io.req.fire) { s1_pc := checker_direct_next_pc }
++  }
+   val checker_handoff_fire = checker_handoff && icache.io.req.fire
+-  val checker_classify_prev = RegNext(checker_classify_fire, false.B)
++  val checker_classify_prev = RegNext(checker_classify_fire && !checker_direct_fire, false.B)
+   val checker_classify_wait = RegEnable(has_cfi && !checker_incoming_fault &&
+     cfi_start(first_cfi) <= checker_scan_start && !cfi_special(first_cfi), checker_classify_fire)
+   val checker_classify_data = RegEnable(checker_incoming.data, checker_classify_fire)
+@@ -641,10 +697,11 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
+   when (checker_classify_fire) {
+     // checker_s1_owner is the current response owner on this edge; only a
+     // second FQ consumer would violate the single-owner boundary.
+-    assert(!fq.io.enq.fire, "checker classification overlaps FQ delivery")
++    assert(!checker_emit && !legacy_emit, "checker classification overlaps another FQ owner")
+     assert(checker_incoming.pc === checker_fetch_pc,
+       "checker classifier response PC does not match accepted request")
+-    assert(!BJL.io.bj_req_valid, "checker classifier reserved BJL before WAIT_BJL")
++    assert(!BJL.io.bj_req_valid || checker_direct_reserve,
++      "checker classifier reserved BJL without accepted direct delivery")
+   }
+   when (checker_classify_prev && !io.cpu.req.valid && !io.cpu.checker_clear) {
+     assert(checker_state === Mux(checker_classify_wait, checker_wait_bjl, checker_ready),
+@@ -662,6 +719,24 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
+     assert(checker_state === checker_fetching && checker_s1_owner,
+       "checker handoff lost the accepted successor")
+   }
++  when (checker_direct_fire) {
++    assert(checker_s2_owner && checker_state === checker_fetching &&
++      checker_direct_resp.pc === checker_fetch_pc && !checker_incoming_fault,
++      "checker direct response lost ownership")
++    assert(checker_direct_resp.prefixLength > 0.U &&
++      checker_direct_resp.prefixLength <= fetchWidth.U - checker_scan_start,
++      "checker direct response has invalid prefix")
++    when (checker_incoming_bjl) {
++      assert(checker_incoming_head_match && BJL.io.bj_req_valid && BJL.io.bj_req_ready,
++        "checker direct CFI has no matching reservation")
++    }
++  }
++  val checker_direct_launch = checker_direct_handoff && icache.io.req.fire
++  val checker_direct_launch_prev = RegNext(checker_direct_launch, false.B)
++  when (checker_direct_launch_prev && !io.cpu.req.valid && !io.cpu.checker_clear) {
++    assert(checker_state === checker_fetching && checker_s1_owner,
++      "checker direct handoff lost accepted successor")
++  }
+   when (checker_state === checker_ready) {
+     // Prefix metadata is authoritative in IBuf, including on the first READY cycle.
+     assert(checker_resp.prefixLength > 0.U && checker_resp.prefixLength <= fetchWidth.U - checker_start)
+@@ -707,8 +782,8 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
+     false.B, // Retired CLASSIFY state: preserve kind13 counter field position.
+     opt2bFrontendLive && checker_state === checker_wait_bjl,
+     opt2bFrontendLive && checker_state === checker_ready,
+-    checker_emit && fq.io.enq.fire,
+-    checker_handoff_fire,
++    (checker_emit || checker_direct_emit) && fq.io.enq.fire,
++    checker_handoff_fire || checker_direct_launch,
+     icache.io.req.fire && checker_request,
+     checker_emit && !fq.io.enq.ready,
+     checker_emit && fq.io.enq.fire && (checker_resp.replay || checker_resp.xcpt.asUInt.orR),
+@@ -744,9 +819,15 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
+   for ((event, i) <- opt3Events.zipWithIndex) {
+     when (event) { opt3Counts(i) := opt3Counts(i) + 1.U }
+   }
++  val overlapEvents = Seq(checker_direct_fire, checker_direct_reserve,
++    checker_direct_launch, checker_direct_emit && !fq.io.enq.ready)
++  val overlapCounts = RegInit(VecInit(Seq.fill(4)(0.U(64.W))))
++  for ((event, i) <- overlapEvents.zipWithIndex) {
++    when (event) { overlapCounts(i) := overlapCounts(i) + 1.U }
++  }
+   SafeChainObservation.emit(16, gated_clock, reset.asBool, opt2bCycle, opt2bLocal,
+     outer.staticIdForMetadataUseOnly.U, opt2bRoi, true.B,
+-    Seq(io.cpu.checker_seq) ++ opt3Counts.toSeq ++ Seq(opt2bFrontendFlags),
++    Seq(io.cpu.checker_seq) ++ opt3Counts.toSeq ++ Seq(opt2bFrontendFlags) ++ overlapCounts.toSeq,
+     Cat(io.cpu.checker_seq, opt2bFrontendFlags, opt2bFrontendCounts(6) >> 10))
+   dontTouch(icache.io)
+   dontTouch(predicted_taken)
+diff --git a/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala b/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala
+index 608e489ab..8370c85cd 100644
+--- a/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala
++++ b/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala
+@@ -33,6 +33,9 @@ class L2Preservation(params: InclusiveCacheParameters) extends Module {
+     val watermark = UInt(width = 32).flip
+     val bank = UInt(width = 8).flip
+     val lock = Valid(new L2PreservationCandidate(params))
++    // Only this phase has no bank reads or A beats left. The set lock remains
++    // live until the matching terminal ACK; it is not the SourceC port lease.
++    val waitingAck = Bool()
+     val completed = Valid(new L2PreservationCandidate(params))
+     val a = Decoupled(new TLBundleA(params.outer.bundle))
+     val d = Decoupled(new TLBundleD(params.outer.bundle)).flip
+@@ -50,6 +53,7 @@ class L2Preservation(params: InclusiveCacheParameters) extends Module {
+     "Stage3 requires end-to-end completion echo")
+   val idle :: read :: delay1 :: delay2 :: send :: waitAck :: failed :: Nil = chisel3.util.Enum(7)
+   val state = RegInit(idle)
++  io.waitingAck := state === waitAck
+   val snapshot = Reg(new L2PreservationCandidate(params))
+   val serial = RegInit(UInt(0, width = 64))
+   val lastAck = RegInit(UInt(0, width = 64))
+@@ -101,6 +105,9 @@ class L2Preservation(params: InclusiveCacheParameters) extends Module {
+   when (state === delay2) { data := io.bs_dat.data; state := send }
+   val finalBeat = beat === UInt(params.cache.blockBytes / params.outer.manager.beatBytes - 1)
+   io.a.valid := state === send
++  when (io.waitingAck) {
++    assert(!io.bs_adr.valid && !io.a.valid, "L2 waitAck still uses checkpoint data path")
++  }
+   io.a.bits := 0.U.asTypeOf(new TLBundleA(params.outer.bundle))
+   io.a.bits.opcode := TLMessages.PutFullData
+   io.a.bits.size := UInt(params.offsetBits)
+diff --git a/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala b/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala
+index f89f25010..0f6be9a89 100644
+--- a/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala
++++ b/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala
+@@ -108,6 +108,9 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
+   val sourceE = Module(new SourceE(params))
+   val sourceX = Module(new SourceX(params))
+   val preservation = Module(new L2Preservation(params))
++  // Keep the captured set locked through terminal ACK, but return the shared
++  // SourceC read port once every checkpoint A beat has been accepted.
++  val sourceCReserved = preservation.io.lock.valid && !preservation.io.waitingAck
+   preservation.io.watermark := io.safeWatermark
+   preservation.io.bank := io.bank
+   sourceC.io.watermark := io.safeWatermark
+@@ -332,7 +335,7 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
+   val stage3Allowed = mshrs.zip(candidates).map { case (m, x) =>
+     val outerSafe = !m.io.schedule.bits.c.valid || CacheImage.safe(m.io.resident.bits.image, io.safeWatermark)
+     !x.valid && !locked(m.io.status.bits.set) && outerSafe &&
+-      (!m.io.schedule.bits.c.valid || (!preservation.io.lock.valid && !drainForCheckpoint)) &&
++      (!m.io.schedule.bits.c.valid || (!sourceCReserved && !drainForCheckpoint)) &&
+       (!m.io.schedule.bits.d.valid || !drainForCheckpoint)
+   }
+   val unsafeVictims = mshrs.map(m => m.io.schedule.valid && m.io.schedule.bits.c.valid &&
+@@ -693,6 +696,31 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
+   BoringUtils.addSink(observationEnable, GH_GlobalParams.GH_L2_STATS_ENABLE_BORE)
+   val observationContext = SafeChainObservation.context()
+   val observationStop = RegNext(observationEnable, Bool(false)) && !observationEnable
++  // SC48: exact traffic-window counts, one forced STOP sample. These counts
++  // measure overlap opportunities/acceptance, not counterfactual ROI savings.
++  val overlapReleasePending = mshrs.map(m => m.io.schedule.valid &&
++    m.io.schedule.bits.c.valid && m.io.schedule.bits.c.bits.opcode(1)).reduce(_||_)
++  val overlapReleaseFire = sourceC.io.req.fire() && sourceC.io.req.bits.opcode(1)
++  val overlapPredicates = Seq(sourceCReserved,
++    sourceCReserved && overlapReleasePending,
++    preservation.io.waitingAck && overlapReleaseFire,
++    overlapReleasePending && !overlapReleaseFire,
++    preservation.io.waitingAck,
++    preservation.io.waitingAck && overlapReleasePending,
++    preservation.io.lock.valid,
++    preservation.io.lock.valid && overlapReleasePending)
++  val overlapCounts = RegInit(Vec(Seq.fill(9)(UInt(0, width = 64))))
++  when (observationReset) {
++    overlapCounts.foreach(_ := UInt(0))
++  }.elsewhen (observationEnable) {
++    overlapCounts(0) := overlapCounts(0) + UInt(1)
++    overlapPredicates.zipWithIndex.foreach { case (event, i) =>
++      when (event) { overlapCounts(i+1) := overlapCounts(i+1) + UInt(1) }
++    }
++  }
++  SafeChainObservation.emit(48, clock, reset, observationContext._1, observationContext._1,
++    UInt(0), observationContext._2, observationStop,
++    Seq(UInt(1)) ++ overlapCounts.toSeq, UInt(0), force = observationStop)
+   // FullRequest adds fields to QueuedRequest, so a direct aggregate Mux
+   // fails Chisel's runtime type check. Project by field connection, exactly
+   // as the functional MSHR allocation path does above; do not bit-cast.
+@@ -757,10 +785,10 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
+   bankedStore.io.sinkC_dat := sinkC.io.bs_dat
+   bankedStore.io.sinkD_adr <> sinkD.io.bs_adr
+   bankedStore.io.sinkD_dat := sinkD.io.bs_dat
+-  bankedStore.io.sourceC_adr.valid := Mux(preservation.io.lock.valid, preservation.io.bs_adr.valid, sourceC.io.bs_adr.valid)
+-  bankedStore.io.sourceC_adr.bits := Mux(preservation.io.lock.valid, preservation.io.bs_adr.bits, sourceC.io.bs_adr.bits)
+-  preservation.io.bs_adr.ready := preservation.io.lock.valid && bankedStore.io.sourceC_adr.ready
+-  sourceC.io.bs_adr.ready := !preservation.io.lock.valid && bankedStore.io.sourceC_adr.ready
++  bankedStore.io.sourceC_adr.valid := Mux(sourceCReserved, preservation.io.bs_adr.valid, sourceC.io.bs_adr.valid)
++  bankedStore.io.sourceC_adr.bits := Mux(sourceCReserved, preservation.io.bs_adr.bits, sourceC.io.bs_adr.bits)
++  preservation.io.bs_adr.ready := sourceCReserved && bankedStore.io.sourceC_adr.ready
++  sourceC.io.bs_adr.ready := !sourceCReserved && bankedStore.io.sourceC_adr.ready
+   bankedStore.io.sourceD_radr <> sourceD.io.bs_radr
+   bankedStore.io.sourceD_wadr <> sourceD.io.bs_wadr
+   bankedStore.io.sourceD_wdat := sourceD.io.bs_wdat
+@@ -782,6 +810,8 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
+     assert(!(sinkD.io.bs_adr.fire() && !sinkD.io.bs_adr.bits.noop && locked(sinkD.io.bs_adr.bits.set)), "L2_PREMATURE_OVERWRITE_ERROR refill")
+   }
+   when (sourceC.io.req.fire()) {
++    assert(!sourceCReserved && !locked(sourceC.io.req.bits.set),
++      "L2 SourceC bypass violates checkpoint reservation")
+     assert(sourceC.io.req.bits.source < UInt(InclusiveCacheParameters.out_mshrs(params.cache, params.micro)),
+       "L2 MSHR release aliases checkpoint source")
+     assert(CacheImage.safe(sourceC.io.req.bits.image, io.safeWatermark), "L2_SPEC_OUTER_WRITE_ERROR victim")

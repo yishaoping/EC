@@ -1,0 +1,20 @@
+--- a/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
+@@ -1261,7 +1261,7 @@
+       (stale && !mshrs.io.block_hit(w)) || (s2_hit(w) && frozen) ||
+       (!s2_hit(w) && slotReserved(set)(way) && !mshrs.io.block_hit(w)))
+   })
+-  val s2_write_busy = s3_valid || completionQ.io.count =/= 0.U
++  val s2_write_busy = s3_valid
+   val s2_replay_owner_match = s2_raw_req(0).owner_context_valid &&
+     s2_raw_req(0).owner_way === s2_tag_match_way(0) &&
+     s2_raw_req(0).slot_epoch === slotEpoch(s2_raw_req(0).addr(idxMSB, idxLSB))(
+@@ -3110,7 +3110,7 @@
+   when (s3_valid && s3_duplicate_effect) {
+     s3_result := appliedEffectResult(s3_set)(s3_way_idx)
+   }
+-  completionArb.io.in(0).valid := s3_valid && s3_owner_match && (s3_applied || s3_cancelled)
++  completionArb.io.in(0).valid := s3_valid && s3_owner_match && (s3_applied || s3_cancelled || s3_effect_fire)
+   completionArb.io.in(0).bits.req := s3_req
+   completionArb.io.in(0).bits.status := Mux(s3_cancelled, CacheTerminal.cancel,
+     Mux(s3_req.uop.mem_cmd === M_XSC && s3_result === 1.U,

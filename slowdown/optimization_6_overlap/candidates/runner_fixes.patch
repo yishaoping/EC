@@ -1,0 +1,25 @@
+--- a/slowdown/optimization_6_overlap/scripts/run_experiment.py
++++ b/slowdown/optimization_6_overlap/scripts/run_experiment.py
+@@ -145,6 +145,10 @@
+         manifest = json.loads((run / "run_manifest.json").read_text())
+         if manifest["source"] != source or (run / "SIMULATION_STARTED.json").exists():
+             raise RuntimeError("resume requires unchanged source and no simulation attempt")
++        simulator = build / "verilator/simulator-chipyard-v1Config"
++        if (manifest.get("hardware_generation") != "PASS" or
++                manifest.get("verilator_build") != "PASS" or not simulator.is_file()):
++            raise RuntimeError("resume requires a completed successful build and existing simulator")
+     else:
+         run.mkdir(parents=True)
+         build.mkdir(parents=True)
+@@ -202,7 +206,10 @@
+                    start_cycle=start, stop_cycle=stop, safe_chain_roi_cycles=cycles))
+         summary = run_summary(run)
+         record(run / "summary.json", summary)
+-        print(json.dumps({k: summary.get(k) for k in ("status", "performance_valid", "opt4_roi_cycles", "slowdown_vs_baseline")}, indent=2))
++        print(json.dumps(dict(correctness=summary.get("correctness", {}).get("status"),
++                              performance_valid=summary.get("performance_valid"),
++                              opt4_roi_cycles=summary.get("opt4_roi_cycles"),
++                              slowdown_vs_native=summary.get("opt4_ratio_to_baseline")), indent=2))
+         return 0 if summary.get("performance_valid") else 1
+     except BaseException as exc:
+         manifest["error"] = str(exc)

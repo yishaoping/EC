@@ -1,0 +1,107 @@
+--- a/chipyard/generators/rocket-chip/src/main/scala/rocket/Frontend.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/rocket/Frontend.scala
+@@ -829,6 +829,30 @@
+     outer.staticIdForMetadataUseOnly.U, opt2bRoi, true.B,
+     Seq(io.cpu.checker_seq) ++ opt3Counts.toSeq ++ Seq(opt2bFrontendFlags) ++ overlapCounts.toSeq,
+     Cat(io.cpu.checker_seq, opt2bFrontendFlags, opt2bFrontendCounts(6) >> 10))
++  // OVERLAP_OBSERVATION_ONLY: complete local traffic-window snapshot. The
++  // capture-context ROI tap above is sticky and is deliberately not a STOP.
++  val overlapStatsEnable = WireInit(false.B)
++  val overlapStatsReset = WireInit(false.B)
++  chisel3.util.experimental.BoringUtils.addSink(overlapStatsEnable,
++    GH_GlobalParams.GH_L2_STATS_ENABLE_BORE)
++  chisel3.util.experimental.BoringUtils.addSink(overlapStatsReset,
++    GH_GlobalParams.GH_L2_STATS_RESET_BORE)
++  val overlapStatsStop = RegNext(overlapStatsEnable, false.B) && !overlapStatsEnable
++  val overlapTrafficCycles = RegInit(0.U(64.W))
++  val overlapTrafficCounts = RegInit(VecInit(Seq.fill(14)(0.U(64.W))))
++  when (overlapStatsReset) {
++    overlapTrafficCycles := 0.U
++    overlapTrafficCounts.foreach(_ := 0.U)
++  }.elsewhen (overlapStatsEnable) {
++    overlapTrafficCycles := overlapTrafficCycles + 1.U
++    for ((event, i) <- opt2bFrontendEvents.zipWithIndex) {
++      when (event) { overlapTrafficCounts(i) := overlapTrafficCounts(i) + 1.U }
++    }
++  }
++  SafeChainObservation.emit(49, gated_clock, reset.asBool, opt2bCycle, opt2bLocal,
++    outer.staticIdForMetadataUseOnly.U, opt2bRoi, overlapStatsStop,
++    Seq(1.U, overlapTrafficCycles) ++ overlapTrafficCounts.toSeq,
++    0.U, force = overlapStatsStop)
+   dontTouch(icache.io)
+   dontTouch(predicted_taken)
+   dontTouch(io)
+--- a/chipyard/generators/boom/src/main/scala/lsu/lsu.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/lsu.scala
+@@ -2255,6 +2255,34 @@
+       PopCount(stq.map(e => e.valid && e.bits.functional_inflight)),
+       PopCount(stq.map(e => e.valid && e.bits.functional_done)),
+       stq_head, stq_execute_head, stq_commit_head)
++  }
++
++  // OVERLAP_OBSERVATION_ONLY: expose local counts to one DCache STOP record,
++  // preserving the bounded number of logger identities. No functional sinks.
++  val overlapOlderInflight = (0 until numStqEntries).map(i => stq(i).valid &&
++    stq(i).bits.functional_inflight &&
++    IsOlder(i.U, stq_execute_head, stq_head)).reduce(_ || _)
++  val overlapStoreCandidate = stq_commit_e.valid &&
++    !stq_commit_e.bits.functional_inflight && !stq_commit_e.bits.functional_done &&
++    !stq_commit_e.bits.uop.is_fence && !mem_xcpt_valid &&
++    !stq_commit_e.bits.uop.exception &&
++    (stq_commit_e.bits.committed || (stq_commit_e.bits.uop.is_amo &&
++      stq_commit_e.bits.addr.valid && !stq_commit_e.bits.addr_is_virtual &&
++      stq_commit_e.bits.data.valid))
++  val overlapStoreAdmission = (0 until memWidth).map(w =>
++    will_fire_store_commit(w) && dmem_req_fire(w)).reduce(_ || _)
++  val overlapLsuEvents = Seq(overlapStoreCandidate && overlapOlderInflight,
++    storeTerminalForward, overlapStoreAdmission && overlapOlderInflight,
++    overlapStoreAdmission)
++  val overlapLsuCounts = RegInit(VecInit(Seq.fill(4)(0.U(64.W))))
++  when (io.dmem.traffic_reset) { overlapLsuCounts.foreach(_ := 0.U) }
++    .elsewhen (io.dmem.traffic_counting) {
++      for ((event, i) <- overlapLsuEvents.zipWithIndex) {
++        when (event) { overlapLsuCounts(i) := overlapLsuCounts(i) + 1.U }
++      }
++    }
++  for ((value, i) <- overlapLsuCounts.zipWithIndex) {
++    BoringUtils.addSource(value, s"opt4_overlap_lsu_${tileParams.hartId}_$i")
+   }
+ 
+   // store has been committed AND successfully sent data to memory
+--- a/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
+@@ -4197,6 +4197,34 @@
+     SafeChainObservation.emit(kind, clock, reset.asBool, io.csr_cycle,
+       io.csr_cycle, hart, safeChainRoi, sample, fields, key, force)
+ 
++  // OVERLAP_OBSERVATION_ONLY: traffic-window counts, including the STOP edge.
++  // Every count feeds only the input-only logger. Activity is not causal saving.
++  val overlapSameEdgeTerminal = completionArb.io.out.fire && completionQ.io.deq.fire &&
++    completionArb.io.out.bits.asUInt === completionQ.io.deq.bits.asUInt
++  val overlapCacheEvents = Seq(true.B, s3_effect_fire,
++    s3_effect_fire && completionArb.io.in(0).fire,
++    s3_effect_fire && overlapSameEdgeTerminal,
++    completionQ.io.count === 0.U && overlapSameEdgeTerminal,
++    completionArb.io.out.fire, completionQ.io.deq.fire,
++    s3_valid && s3_applied && !completionArb.io.in(0).fire,
++    completionQ.io.count =/= 0.U,
++    completionQ.io.deq.valid && !completionQ.io.deq.ready)
++  val overlapCacheCounts = RegInit(VecInit(Seq.fill(10)(0.U(64.W))))
++  when (io.traffic_reset) { overlapCacheCounts.foreach(_ := 0.U) }
++    .elsewhen (trafficCounting) {
++      for ((event, i) <- overlapCacheEvents.zipWithIndex) {
++        when (event) { overlapCacheCounts(i) := overlapCacheCounts(i) + 1.U }
++      }
++    }
++  val overlapLsuCounts = Seq.tabulate(4) { i =>
++    val count = WireInit(0.U(64.W))
++    BoringUtils.addSink(count, s"opt4_overlap_lsu_${outer.staticImageWriter}_$i")
++    count
++  }
++  val overlapTrafficStop = RegNext(trafficCounting, false.B) && !trafficCounting
++  safeChainLog(50, Seq(1.U) ++ overlapCacheCounts.toSeq ++ overlapLsuCounts ++ Seq(0.U),
++    0.U, overlapTrafficStop, true.B)
++
+   // OPT2B_OBSERVATION_ONLY: semantic writes and first preservation blocks.
+   // Payload is identity/metadata only, never cacheline bytes. These events
+   // cannot reveal younger stores that the existing serializing path never issues.

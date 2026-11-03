@@ -33,6 +33,9 @@ class L2Preservation(params: InclusiveCacheParameters) extends Module {
     val watermark = UInt(width = 32).flip
     val bank = UInt(width = 8).flip
     val lock = Valid(new L2PreservationCandidate(params))
+    // Only this phase has no bank reads or A beats left. The set lock remains
+    // live until the matching terminal ACK; it is not the SourceC port lease.
+    val waitingAck = Bool()
     val completed = Valid(new L2PreservationCandidate(params))
     val a = Decoupled(new TLBundleA(params.outer.bundle))
     val d = Decoupled(new TLBundleD(params.outer.bundle)).flip
@@ -50,6 +53,7 @@ class L2Preservation(params: InclusiveCacheParameters) extends Module {
     "Stage3 requires end-to-end completion echo")
   val idle :: read :: delay1 :: delay2 :: send :: waitAck :: failed :: Nil = chisel3.util.Enum(7)
   val state = RegInit(idle)
+  io.waitingAck := state === waitAck
   val snapshot = Reg(new L2PreservationCandidate(params))
   val serial = RegInit(UInt(0, width = 64))
   val lastAck = RegInit(UInt(0, width = 64))
@@ -101,6 +105,9 @@ class L2Preservation(params: InclusiveCacheParameters) extends Module {
   when (state === delay2) { data := io.bs_dat.data; state := send }
   val finalBeat = beat === UInt(params.cache.blockBytes / params.outer.manager.beatBytes - 1)
   io.a.valid := state === send
+  when (io.waitingAck) {
+    assert(!io.bs_adr.valid && !io.a.valid, "L2 waitAck still uses checkpoint data path")
+  }
   io.a.bits := 0.U.asTypeOf(new TLBundleA(params.outer.bundle))
   io.a.bits.opcode := TLMessages.PutFullData
   io.a.bits.size := UInt(params.offsetBits)

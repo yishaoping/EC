@@ -1,0 +1,119 @@
+{
+  "baseline_roi_cycles": 1001675,
+  "benchmark_result": {
+    "checksum": 43439728,
+    "verified": 1
+  },
+  "cache_shadow_validation": "FAIL",
+  "capture": {
+    "errors": [],
+    "mandatory_evidence_complete": true,
+    "status": "PASS"
+  },
+  "correctness": {
+    "assertion_failures": 0,
+    "benchmark_pass": true,
+    "cancelled_results": 0,
+    "failed_results": 0,
+    "status": "PASS"
+  },
+  "data_ordering": {
+    "examples": [],
+    "scope": "full_run_C_ReleaseData_same_line_writer_generation",
+    "stale_publications": 0,
+    "status": "PASS"
+  },
+  "integrity": {
+    "allocations": 304,
+    "completions": 294,
+    "duplicate_beats": 0,
+    "errors": [],
+    "schema": 2,
+    "status": "PASS",
+    "terminal_counts": {
+      "COALESCED": 8,
+      "FLUSH_DISCARDED": 2,
+      "PROMOTED_COMPLETED": 294
+    }
+  },
+  "opt4_ratio_to_baseline": 1.424459031122869,
+  "opt4_roi_cycles": 1426845,
+  "performance_valid": true,
+  "protocol": {
+    "coverage": "COMPLETE",
+    "end_policy": "STOP may retain WB_WAIT; exit with retained entries is not proof of full durable drain",
+    "entry_capacity": 16,
+    "entry_capacity_source": "capacity_snapshot",
+    "errors": [],
+    "invalid_ack": 0,
+    "outstanding_at_end": 0,
+    "release_acks_matched": 7436,
+    "releases_issued": 7436,
+    "source_conflicts": 0,
+    "status": "PASS",
+    "stop_snapshot": [
+      1,
+      19055,
+      13633,
+      16,
+      0,
+      0,
+      7424,
+      7424,
+      0,
+      0,
+      0,
+      2147581440,
+      8,
+      294,
+      294,
+      0
+    ],
+    "svb_completions": 294,
+    "svb_entry_retained_at_end": false,
+    "svb_promotions_issued": 294,
+    "svb_release_acks_matched": 294
+  },
+  "run_id": "overlap_direct_sourcec_v2_20261103_012634_e6006f81",
+  "source_stats": {
+    "all_acks_matched": 7424,
+    "all_releases_issued": 7424,
+    "coalesced": 8,
+    "invalid_ack": 0,
+    "max_safe_awaiting": 16,
+    "occupancy": 0,
+    "outstanding": 0,
+    "pending_entry": 0,
+    "pending_line": 2147581440,
+    "pending_svb": 0,
+    "queued_cycles": 13633,
+    "source_busy_cycles": 19055,
+    "source_conflicts": 0,
+    "svb_acks_matched": 294,
+    "svb_releases_issued": 294,
+    "version": 1
+  },
+  "svb": {
+    "acks": 294,
+    "allocations": 304,
+    "bypass": 304,
+    "capture_issued": 0,
+    "capture_pending": 0,
+    "eligible": 307,
+    "fast_line": 0,
+    "full_fallback": 3,
+    "max_depth": 3,
+    "max_occupancy": 16,
+    "occupancy": 0,
+    "promotions": 294,
+    "recovery_from_svb": 294,
+    "unsupported_fallback": 4157
+  },
+  "traffic_pressure_counters": {
+    "blocked_cycles": 4464,
+    "blocked_episodes": 4464,
+    "diagnostic_sampling_interval": 4096,
+    "scope": "traffic_enable_window_sampled_before_STOP_edge",
+    "semantic_writes": 61219
+  }
+}

@@ -1,0 +1,83 @@
+--- a/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
+@@ -758,7 +758,7 @@
+   val probeDrainReady = WireDefault(true.B)
+   val replayPipelineBusy = WireDefault(false.B)
+   val completionArb = Module(new Arbiter(new BoomCacheCompletion, 3))
+-  val completionQ = Module(new Queue(new BoomCacheCompletion, cfg.nMSHRs + nIOMSHRs + 2))
++  val completionQ = Module(new Queue(new BoomCacheCompletion, cfg.nMSHRs + nIOMSHRs + 2, flow = true))
+   completionQ.io.enq <> completionArb.io.out
+   completionArb.io.in(2) <> mshrs.io.mmio_completion
+   val replayResultQ = Seq.fill(cfg.nMSHRs)(Module(new Queue(new BoomCacheCompletion, 2)))
+@@ -1261,7 +1261,7 @@
+       (stale && !mshrs.io.block_hit(w)) || (s2_hit(w) && frozen) ||
+       (!s2_hit(w) && slotReserved(set)(way) && !mshrs.io.block_hit(w)))
+   })
+-  val s2_write_busy = s3_valid || completionQ.io.count =/= 0.U
++  val s2_write_busy = s3_valid
+   val s2_replay_owner_match = s2_raw_req(0).owner_context_valid &&
+     s2_raw_req(0).owner_way === s2_tag_match_way(0) &&
+     s2_raw_req(0).slot_epoch === slotEpoch(s2_raw_req(0).addr(idxMSB, idxLSB))(
+@@ -3110,7 +3110,11 @@
+   when (s3_valid && s3_duplicate_effect) {
+     s3_result := appliedEffectResult(s3_set)(s3_way_idx)
+   }
+-  completionArb.io.in(0).valid := s3_valid && s3_owner_match && (s3_applied || s3_cancelled)
++  // A terminal may enter the queue on the actual physical effect edge. The
++  // captured return value is already stable in S3. Array backpressure cannot
++  // create a completion, and a full queue retains S3/applied ownership.
++  completionArb.io.in(0).valid := s3_valid && s3_owner_match &&
++    (s3_applied || s3_cancelled || s3_effect_fire)
+   completionArb.io.in(0).bits.req := s3_req
+   completionArb.io.in(0).bits.status := Mux(s3_cancelled, CacheTerminal.cancel,
+     Mux(s3_req.uop.mem_cmd === M_XSC && s3_result === 1.U,
+@@ -3127,7 +3131,13 @@
+   }
+   when (completionQ.io.deq.fire && completionQ.io.deq.bits.req.owner_context_valid) {
+     val r = completionQ.io.deq.bits.req
+-    assert(completionPending(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) &&
++    // An empty flow-through queue can accept and deliver the same terminal
++    // on this edge. Its live S3 owner substitutes for a registered pending
++    // bit only for the identical accepted completion payload.
++    val sameEdgeResponsibility = completionArb.io.out.fire &&
++      completionArb.io.out.bits.asUInt === completionQ.io.deq.bits.asUInt
++    assert((completionPending(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) ||
++      sameEdgeResponsibility) &&
+       slotEpoch(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) === r.slot_epoch,
+       "completion lost its live slot responsibility")
+     completionPending(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) := false.B
+--- a/chipyard/generators/boom/src/main/scala/lsu/lsu.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/lsu.scala
+@@ -719,6 +719,11 @@
+                                                  can_fire_std_incoming(i) &&
+                                                  stq_incoming_idx(i) === stq_retry_idx).reduce(_||_))
+                                ))
++  // An identity-checked terminal accepted on this edge satisfies the older
++  // store barrier for a new S0 request. The STQ owner is still released only
++  // by the existing terminal handler; no physical effect is acknowledged early.
++  val storeTerminalForward = WireDefault(false.B)
++  val storeTerminalForwardIdx = Wire(UInt(stqAddrSz.W))
+   // Can we commit a store
+   val can_fire_store_commit  = widthMap(w =>
+                                ( stq_commit_e.valid                           &&
+@@ -726,7 +731,8 @@
+                                 !stq_commit_e.bits.functional_done            &&
+                                 !(0 until numStqEntries).map(i => stq(i).valid &&
+                                   stq(i).bits.functional_inflight &&
+-                                  IsOlder(i.U, stq_execute_head, stq_head)).reduce(_ || _) &&
++                                  IsOlder(i.U, stq_execute_head, stq_head) &&
++                                  !(storeTerminalForward && storeTerminalForwardIdx === i.U)).reduce(_ || _) &&
+                                 !stq_commit_e.bits.uop.is_fence               &&
+                                 !mem_xcpt_valid                               &&
+                                 !stq_commit_e.bits.uop.exception              &&
+@@ -2266,6 +2272,10 @@
+     functionalDoneReq.effect_token_valid &&
+     stq(functionalDoneIdx).bits.functional_token === functionalDoneReq.request_token &&
+     stq(functionalDoneIdx).bits.functional_token === functionalDoneReq.effect_token
++  storeTerminalForwardIdx := functionalDoneIdx
++  storeTerminalForward := io.dmem.store_done.fire && functionalDoneMatches &&
++    functionalDoneReq.uop.uses_stq && !functionalDoneReq.is_hella &&
++    !olderStoreNackForcesReplay
+   when (io.dmem.store_done.fire && functionalDoneReq.uop.uses_stq && !functionalDoneReq.is_hella) {
+     printf("STAGE1_TX STORE_DONE cmd=%x size=%x stq=%x req=%x effect=%x status=%x data=%x cycle=%x\n",
+       functionalDoneReq.uop.mem_cmd, functionalDoneReq.uop.mem_size, functionalDoneReq.uop.stq_idx,

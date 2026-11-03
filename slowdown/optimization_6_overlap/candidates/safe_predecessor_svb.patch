@@ -1,0 +1,11 @@
+--- a/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
+@@ -1787,7 +1787,7 @@
+     s2_type === t_lsu && s2_req(0).uop.mem_cmd === M_XWR &&
+     s2_req(0).traffic_cacheable && s2_req(0).packet_seq =/= 0.U &&
+     s2_req(0).packet_seq > s2_overwrittenKey.contentSeq &&
+-    s2_overwrittenKey.valid && !L1Preservation.safe(s2_overwrittenKey, safePacketWatermark) &&
++    s2_overwrittenKey.valid &&
+     // Both capture and legacy preservation use the single freeze descriptor.
+     !crossPackagePending && !svbCapturePending && !svbFastLineValid
+   val svbEligible = svbEligibleCandidate && svb.io.capture.ready

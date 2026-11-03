@@ -1,0 +1,27 @@
+--- a/chipyard/generators/rocket-chip/src/main/scala/rocket/Frontend.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/rocket/Frontend.scala
+@@ -574,15 +574,22 @@
+   val checker_head_match = BJL.io.bj_resp_cpc === checker_cfi_pc &&
+     BJL.io.bj_resp_is_rvc === checker_cfi_rvc
+   val checker_incoming_prefix = has_cfi && cfi_start(first_cfi) > checker_scan_start
+-  val checker_incoming_bjl = has_cfi && !checker_incoming_prefix && !cfi_special(first_cfi)
+   val checker_incoming_head_match = BJL.io.bj_resp_cpc === cfi_pc(first_cfi) &&
+     BJL.io.bj_resp_is_rvc === cfi_rvc(first_cfi)
++  // The end mask carries branch ownership through preceding instructions in
++  // IBuf. With the real matching head available, deliver prefix + CFI once,
++  // rather than refetching the same word at the CFI PC. Otherwise the existing
++  // prefix-only fallback can still make progress without a reservation.
++  val checker_folded_prefix = checker_incoming_prefix && !cfi_special(first_cfi) &&
++    checker_incoming_head_match && BJL.io.bj_req_ready
++  val checker_incoming_bjl = has_cfi && !cfi_special(first_cfi) &&
++    (!checker_incoming_prefix || checker_folded_prefix)
+   checker_direct_resp := checker_incoming
+   checker_direct_resp.btb.taken := false.B
+   checker_direct_resp.prefixLength := fetchWidth.U - checker_scan_start
+   checker_direct_resp.bjlEndMask := 0.U
+   checker_direct_next_pc := checker_base + fetchBytes.U
+-  when (checker_incoming_prefix) {
++  when (checker_incoming_prefix && !checker_folded_prefix) {
+     checker_direct_resp.prefixLength := cfi_start(first_cfi) - checker_scan_start
+     checker_direct_next_pc := cfi_pc(first_cfi)
+   }.elsewhen (has_cfi && cfi_special(first_cfi)) {

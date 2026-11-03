@@ -170,6 +170,19 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   val checker_busy = checker_state =/= checker_empty || checker_s1_owner || checker_s2_owner
   val checker_flow = checker_request || checker_busy
   val checker_emit = checker_state === checker_ready && !io.cpu.checker_clear
+  // An owned S2 response may go straight to FQ after classification. These
+  // wires do not create another response owner; if FQ refuses it, the normal
+  // response register/WAIT_BJL path retains the transaction on this edge.
+  val checker_direct_emit = WireDefault(false.B)
+  val checker_direct_resp = Wire(new FrontendResp)
+  val checker_direct_next_pc = Wire(UInt(vaddrBitsExtended.W))
+  // FQ is flow-through: VALID must not depend on the redirect that its
+  // output can cause in Rocket. A redirect kills IBuf and resets FQ on this
+  // edge, just as for an already registered READY response. Ownership and
+  // BJL reservation advance only on a non-killed accepted delivery.
+  val checker_direct_fire = checker_direct_emit && fq.io.enq.ready && !io.cpu.req.valid
+  val checker_direct_handoff = checker_direct_fire && checker_request &&
+    !redirect_pending && !redirect_settle && !io.cpu.req.valid
   // OPT2B: accept the already-resolved successor while the current response
   // is handed to FQ. Never look ahead across a held response, replay or fault.
   val checker_handoff = checker_emit && fq.io.enq.ready && checker_request &&
@@ -189,7 +202,7 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   // Redirect first changes the PC/mode; accept the target request only after
   // the registered settle cycle, and keep it pending until req.fire.
   val s0_valid = !io.cpu.req.valid && !redirect_settle && Mux(checker_flow,
-    (checker_state === checker_empty || checker_handoff) && !io.cpu.checker_clear,
+    (checker_state === checker_empty || checker_handoff || checker_direct_handoff) && !io.cpu.checker_clear,
     s0_fq_has_space || !io.cpu.if_overtaking)
   dontTouch(s0_fq_has_space)
   // During the redirect handoff, S1 validity is an acceptance fact.  The
@@ -297,8 +310,9 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
     checker_state === checker_empty &&
     (icache.io.resp.valid || (s2_kill_speculative_tlb_refill && s2_tlb_resp.miss) || (!s2_tlb_resp.miss && icache.io.s2_kill))
   legacy_resp.pc := s2_pc
-  val checker_pc = Mux(checker_state === checker_empty, s1_pc,
-    Mux(checker_emit && fq.io.enq.ready, checker_next_pc, checker_fetch_pc))
+  val checker_pc = Mux(checker_direct_handoff, checker_direct_next_pc,
+    Mux(checker_state === checker_empty, s1_pc,
+      Mux(checker_emit && fq.io.enq.ready, checker_next_pc, checker_fetch_pc)))
   io.cpu.npc := alignPC(Mux(io.cpu.req.valid, io.cpu.req.bits.pc,
     Mux(redirect_pending, redirect_pc, Mux(checker_flow, checker_pc, npc))))
 
@@ -497,9 +511,9 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
     when (io.cpu.req.valid) { wrong_path := false.B }
     dontTouch(specialJalrVec)
   }
-  // OPT3: classify the incoming owned response before registering it. This
-  // removes the unconditional CLASSIFY state; BJL reservation still happens
-  // only in WAIT_BJL and FQ delivery still happens only in READY.
+  // Classify the incoming owned response before registering it. The direct
+  // path may deliver it immediately; the held path retains misses/replays,
+  // FQ backpressure and CFIs without a matching available BJL head.
   val checker_cache_valid = if (outer.icacheParams.latency == 1)
     RegNext(checker_s1_owner && icache.io.resp.valid, false.B) else icache.io.resp.valid
   val checker_cache_bits = if (outer.icacheParams.latency == 1)
@@ -510,9 +524,10 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   checker_incoming.replay := checker_cache_valid && checker_cache_bits.replay ||
     icache.io.s2_kill && !checker_cache_valid && !s2_xcpt
   when (checker_cache_valid && checker_cache_bits.ae) { checker_incoming.xcpt.ae.inst := true.B }
-  val checker_classify_fire = checker_s2_owner && checker_state === checker_fetching &&
+  val checker_classify_candidate = checker_s2_owner && checker_state === checker_fetching &&
     !s2_tlb_resp.miss && (checker_cache_valid || icache.io.s2_kill) &&
-    !io.cpu.req.valid && !io.cpu.checker_clear
+    !io.cpu.checker_clear
+  val checker_classify_fire = checker_classify_candidate && !io.cpu.req.valid
   // One checker response owns its data and reservation until FQ accepts it.
   val checker_start = checker_resp.pc.extract(log2Ceil(fetchBytes)-1, log2Ceil(coreInstBytes))
   val checker_scan_start = checker_incoming.pc.extract(log2Ceil(fetchBytes)-1, log2Ceil(coreInstBytes))
@@ -558,13 +573,43 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   val checker_incoming_fault = checker_incoming.replay || checker_incoming.xcpt.asUInt.orR
   val checker_head_match = BJL.io.bj_resp_cpc === checker_cfi_pc &&
     BJL.io.bj_resp_is_rvc === checker_cfi_rvc
-  BJL.io.bj_req_valid := checker_state === checker_wait_bjl && checker_head_match &&
-    !io.cpu.req.valid && !io.cpu.checker_clear
+  val checker_incoming_prefix = has_cfi && cfi_start(first_cfi) > checker_scan_start
+  val checker_incoming_bjl = has_cfi && !checker_incoming_prefix && !cfi_special(first_cfi)
+  val checker_incoming_head_match = BJL.io.bj_resp_cpc === cfi_pc(first_cfi) &&
+    BJL.io.bj_resp_is_rvc === cfi_rvc(first_cfi)
+  checker_direct_resp := checker_incoming
+  checker_direct_resp.btb.taken := false.B
+  checker_direct_resp.prefixLength := fetchWidth.U - checker_scan_start
+  checker_direct_resp.bjlEndMask := 0.U
+  checker_direct_next_pc := checker_base + fetchBytes.U
+  when (checker_incoming_prefix) {
+    checker_direct_resp.prefixLength := cfi_start(first_cfi) - checker_scan_start
+    checker_direct_next_pc := cfi_pc(first_cfi)
+  }.elsewhen (has_cfi && cfi_special(first_cfi)) {
+    checker_direct_resp.prefixLength := (first_cfi +& 1.U) - checker_scan_start
+    checker_direct_next_pc := cfi_pc(first_cfi) + 4.U
+  }.elsewhen (checker_incoming_bjl) {
+    checker_direct_resp.prefixLength := (first_cfi +& 1.U) - checker_scan_start
+    checker_direct_resp.bjlEndMask := UIntToOH(first_cfi, fetchWidth)
+    checker_direct_resp.btb.taken := BJL.io.bj_resp_taken
+    checker_direct_resp.btb.bridx := first_cfi
+    checker_direct_next_pc := BJL.io.bj_resp_npc
+  }
+  checker_direct_resp.mask := ((UIntToOH(checker_direct_resp.prefixLength, fetchWidth+1) - 1.U) <<
+    checker_scan_start)(fetchWidth-1, 0)
+  // Fault/replay uses the established held-response path. A CFI can bypass
+  // WAIT_BJL only with the real matching log head, reserved on FQ fire.
+  checker_direct_emit := checker_classify_candidate && !checker_incoming_fault &&
+    (!checker_incoming_bjl || checker_incoming_head_match && BJL.io.bj_req_ready)
+  val checker_direct_reserve = checker_direct_fire && checker_incoming_bjl
+  BJL.io.bj_req_valid := ((checker_state === checker_wait_bjl && checker_head_match) ||
+    checker_direct_reserve) && !io.cpu.req.valid && !io.cpu.checker_clear
   BJL.io.bj_rollback := io.cpu.req.valid
   BJL.io.bj_s2_replay := false.B
   BJL.io.bj_commit_valid := io.cpu.bjl_commit
-  fq.io.enq.valid := checker_emit || legacy_emit
-  fq.io.enq.bits := Mux(checker_emit, checker_resp, legacy_resp)
+  fq.io.enq.valid := checker_emit || checker_direct_emit || legacy_emit
+  fq.io.enq.bits := Mux(checker_direct_emit, checker_direct_resp,
+    Mux(checker_emit, checker_resp, legacy_resp))
   when (checker_emit) {
     fq.io.enq.bits.mask := ((UIntToOH(checker_resp.prefixLength, fetchWidth+1) - 1.U) << checker_start)(fetchWidth-1, 0)
   }
@@ -612,7 +657,7 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
       checker_state := checker_empty
     }
   }
-  when (BJL.io.bj_req_valid && BJL.io.bj_req_ready) {
+  when (checker_state === checker_wait_bjl && BJL.io.bj_req_valid && BJL.io.bj_req_ready) {
     checker_resp.prefixLength := (checker_cfi_end +& 1.U) - checker_start
     checker_resp.bjlEndMask := UIntToOH(checker_cfi_end, fetchWidth)
     checker_resp.btb.taken := BJL.io.bj_resp_taken
@@ -632,8 +677,19 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
     checker_partial_pc := checker_tail_pc
     checker_partial_seq := checker_fetch_seq
   }
+  when (checker_direct_fire) {
+    checker_state := Mux(icache.io.req.fire && checker_request,
+      checker_fetching, checker_empty)
+    checker_partial_valid := lowValid &&
+      checker_direct_resp.prefixLength === fetchWidth.U - checker_scan_start &&
+      !checker_direct_resp.bjlEndMask.orR
+    checker_partial_bits := lowBits
+    checker_partial_pc := lowPC
+    checker_partial_seq := checker_fetch_seq
+    when (!icache.io.req.fire) { s1_pc := checker_direct_next_pc }
+  }
   val checker_handoff_fire = checker_handoff && icache.io.req.fire
-  val checker_classify_prev = RegNext(checker_classify_fire, false.B)
+  val checker_classify_prev = RegNext(checker_classify_fire && !checker_direct_fire, false.B)
   val checker_classify_wait = RegEnable(has_cfi && !checker_incoming_fault &&
     cfi_start(first_cfi) <= checker_scan_start && !cfi_special(first_cfi), checker_classify_fire)
   val checker_classify_data = RegEnable(checker_incoming.data, checker_classify_fire)
@@ -641,10 +697,11 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   when (checker_classify_fire) {
     // checker_s1_owner is the current response owner on this edge; only a
     // second FQ consumer would violate the single-owner boundary.
-    assert(!fq.io.enq.fire, "checker classification overlaps FQ delivery")
+    assert(!checker_emit && !legacy_emit, "checker classification overlaps another FQ owner")
     assert(checker_incoming.pc === checker_fetch_pc,
       "checker classifier response PC does not match accepted request")
-    assert(!BJL.io.bj_req_valid, "checker classifier reserved BJL before WAIT_BJL")
+    assert(!BJL.io.bj_req_valid || checker_direct_reserve,
+      "checker classifier reserved BJL without accepted direct delivery")
   }
   when (checker_classify_prev && !io.cpu.req.valid && !io.cpu.checker_clear) {
     assert(checker_state === Mux(checker_classify_wait, checker_wait_bjl, checker_ready),
@@ -661,6 +718,24 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   when (checker_handoff_prev && !io.cpu.req.valid && !io.cpu.checker_clear) {
     assert(checker_state === checker_fetching && checker_s1_owner,
       "checker handoff lost the accepted successor")
+  }
+  when (checker_direct_fire) {
+    assert(checker_s2_owner && checker_state === checker_fetching &&
+      checker_direct_resp.pc === checker_fetch_pc && !checker_incoming_fault,
+      "checker direct response lost ownership")
+    assert(checker_direct_resp.prefixLength > 0.U &&
+      checker_direct_resp.prefixLength <= fetchWidth.U - checker_scan_start,
+      "checker direct response has invalid prefix")
+    when (checker_incoming_bjl) {
+      assert(checker_incoming_head_match && BJL.io.bj_req_valid && BJL.io.bj_req_ready,
+        "checker direct CFI has no matching reservation")
+    }
+  }
+  val checker_direct_launch = checker_direct_handoff && icache.io.req.fire
+  val checker_direct_launch_prev = RegNext(checker_direct_launch, false.B)
+  when (checker_direct_launch_prev && !io.cpu.req.valid && !io.cpu.checker_clear) {
+    assert(checker_state === checker_fetching && checker_s1_owner,
+      "checker direct handoff lost accepted successor")
   }
   when (checker_state === checker_ready) {
     // Prefix metadata is authoritative in IBuf, including on the first READY cycle.
@@ -707,8 +782,8 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
     false.B, // Retired CLASSIFY state: preserve kind13 counter field position.
     opt2bFrontendLive && checker_state === checker_wait_bjl,
     opt2bFrontendLive && checker_state === checker_ready,
-    checker_emit && fq.io.enq.fire,
-    checker_handoff_fire,
+    (checker_emit || checker_direct_emit) && fq.io.enq.fire,
+    checker_handoff_fire || checker_direct_launch,
     icache.io.req.fire && checker_request,
     checker_emit && !fq.io.enq.ready,
     checker_emit && fq.io.enq.fire && (checker_resp.replay || checker_resp.xcpt.asUInt.orR),
@@ -744,9 +819,15 @@ class FrontendModule(outer: Frontend) extends LazyModuleImp(outer)
   for ((event, i) <- opt3Events.zipWithIndex) {
     when (event) { opt3Counts(i) := opt3Counts(i) + 1.U }
   }
+  val overlapEvents = Seq(checker_direct_fire, checker_direct_reserve,
+    checker_direct_launch, checker_direct_emit && !fq.io.enq.ready)
+  val overlapCounts = RegInit(VecInit(Seq.fill(4)(0.U(64.W))))
+  for ((event, i) <- overlapEvents.zipWithIndex) {
+    when (event) { overlapCounts(i) := overlapCounts(i) + 1.U }
+  }
   SafeChainObservation.emit(16, gated_clock, reset.asBool, opt2bCycle, opt2bLocal,
     outer.staticIdForMetadataUseOnly.U, opt2bRoi, true.B,
-    Seq(io.cpu.checker_seq) ++ opt3Counts.toSeq ++ Seq(opt2bFrontendFlags),
+    Seq(io.cpu.checker_seq) ++ opt3Counts.toSeq ++ Seq(opt2bFrontendFlags) ++ overlapCounts.toSeq,
     Cat(io.cpu.checker_seq, opt2bFrontendFlags, opt2bFrontendCounts(6) >> 10))
   dontTouch(icache.io)
   dontTouch(predicted_taken)
