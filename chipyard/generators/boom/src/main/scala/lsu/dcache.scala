@@ -655,6 +655,13 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val lastSvbCompletionCycle = RegInit(0.U(64.W))
   val svbEpoch = RegInit(0.U(16.W))
   val svbFlush = WireDefault(false.B)
+  // An epoch boundary must not revoke the predecessor of an already-owned
+  // S3 write. Stop new S2 grants immediately, then flush after that write's
+  // physical effect (or cancellation). Remember one-cycle exception pulses.
+  val svbFlushPending = RegInit(false.B)
+  val svbResetPending = RegInit(false.B)
+  val svbEpochBoundary = io.traffic_reset || io.lsu.exception || svbFlushPending
+  val svbHeldWriteNeedsLease = WireDefault(false.B)
   val svbInvalidate = Wire(Valid(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))
   svbInvalidate.valid := false.B
   svbInvalidate.bits := 0.U
@@ -1603,7 +1610,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       crossPackageWbPacketSeq, dirtyPacketSeq(wbReqSet)(wbReqWay)))
   wb.io.packet_tracked := dirtyPacketTracked(wbReqSet)(wbReqWay)
   wb.io.data_resp       := s2_data_muxed(0)
-  val svbCaptureDiscard = svbCaptureCancelled || svbFlush
+  val svbCaptureDiscard = svbCaptureCancelled || svbEpochBoundary
   wb.io.snapshot_ready  := svbCaptureDiscard || svb.io.capture.ready
   wb.io.svb_req <> svb.io.promote
   wb.io.req_is_mshr := wbArb.io.chosen === 1.U
@@ -1797,7 +1804,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     s2_req(0).packet_seq > s2_overwrittenKey.contentSeq &&
     s2_overwrittenKey.valid && !L1Preservation.safe(s2_overwrittenKey, safePacketWatermark) &&
     // Both capture and legacy preservation use the single freeze descriptor.
-    !crossPackagePending && !svbCapturePending && !svbFastLineValid
+    !crossPackagePending && !svbCapturePending && !svbFastLineValid && !svbEpochBoundary
   val svbEligible = svbEligibleCandidate && svb.io.capture.ready
   val svbFullFallback = svbEligibleCandidate && !svb.io.capture.ready
   // Gate permission misses before reserving a destination as well as hits.
@@ -1968,7 +1975,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     !(0 until memWidth).map(w =>
       (s1_valid(w) && s1_type === t_lsu && s1_req(w).addr(idxMSB, idxLSB) === svbFastSet) ||
       (s2_valid(w) && s2_type === t_lsu && s2_req(w).addr(idxMSB, idxLSB) === svbFastSet)).reduce(_ || _)
-  svbCaptureWbReq.valid := svbCapturePending && !svbCaptureIssued && !svbFlush && svbCaptureDrained &&
+  svbCaptureWbReq.valid := svbCapturePending && !svbCaptureIssued && !svbEpochBoundary && svbCaptureDrained &&
     svbCaptureResidentMatch && !crossPackagePending &&
     !(prober.io.state.valid && prober.io.state.bits(idxMSB, idxLSB) === svbFastSet) &&
     !svbCaptureMshrConflict && !svbCaptureSlotConflict
@@ -1983,7 +1990,9 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     !completionPending(crossPackagePendingSet)(crossPackagePendingWay) &&
     !(prober.io.state.valid && prober.io.state.bits(idxMSB, idxLSB) === crossPackagePendingSet) &&
     !L1Preservation.safe(imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)
-  l1CrossPackageBlocked := crossPackageDomainWait || crossPackagePendingLine
+  // This also supplies the existing LSU nack and MSHR replay retry paths;
+  // simply suppressing s2_write_grant would lose an accepted replay owner.
+  l1CrossPackageBlocked := crossPackageDomainWait || crossPackagePendingLine || svbEpochBoundary
 
   crossPackageWbReq.valid := crossPackagePending &&
     crossPackageResidentMatch &&
@@ -2607,13 +2616,21 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // Session reset/exception are epoch boundaries. A checker failure only
   // invalidates versions newer than the safe watermark, preserving a safe
   // predecessor that may still be waiting for promotion or ACK.
-  svbFlush := io.traffic_reset || io.lsu.exception
+  svbFlush := svbEpochBoundary && !svbHeldWriteNeedsLease
+  svbFlushPending := svbEpochBoundary && !svbFlush
+  when (svbFlush) {
+    svbResetPending := false.B
+  }.elsewhen (io.traffic_reset) {
+    svbResetPending := true.B
+  }
   svbInvalidate.valid := barrierFailureAny
   svbInvalidate.bits := safePacketWatermark
-  when (io.traffic_reset) {
-    svbEpoch := 0.U
-  }.elsewhen (io.lsu.exception) {
-    when (svbEpoch =/= ~0.U(16.W)) { svbEpoch := svbEpoch + 1.U }
+  when (svbFlush) {
+    when (io.traffic_reset || svbResetPending) {
+      svbEpoch := 0.U
+    }.elsewhen (svbEpoch =/= ~0.U(16.W)) {
+      svbEpoch := svbEpoch + 1.U
+    }
   }
   BoringUtils.addSource(barrierFailureSticky,
     GH_GlobalParams.GH_L2_BARRIER_FAILURE_BORE)
@@ -2960,6 +2977,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val s2_write_grant = s2_valid(0) && s2_hit(0) && isWrite(s2_req(0).uop.mem_cmd) &&
     !s2_nack(0) && !l1CrossPackageBlocked && !s3_valid &&
     (s2_type =/= t_replay || s2_replay_owner_match)
+  assert(!(s2_write_grant && svbEpochBoundary), "write grant crossed an SVB epoch boundary")
   // RISC-V AMO.W returns its loaded 32-bit value sign-extended to XLEN,
   // independently of the arithmetic/logical operation. The ALU physical
   // write value remains unchanged below.
@@ -3115,10 +3133,20 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     s3_req.packet_seq === svbFastSeq &&
     s3_req.slot_epoch === svbFastEpoch &&
     s3_req.slot_epoch === slotEpoch(s3_set)(s3_way_idx)
-  val s3_preservationAllowed = L1Preservation.allow(imageValid(s3_set)(s3_way_idx),
+  val s3_l1PreservationAllowed = L1Preservation.allow(imageValid(s3_set)(s3_way_idx),
     imageKey(s3_set)(s3_way_idx), lowerPreserved(s3_set)(s3_way_idx),
-    s3_req.packet_seq, safePacketWatermark, outer.staticImageWriter.U) ||
-    s3_svbOwnsPredecessor
+    s3_req.packet_seq, safePacketWatermark, outer.staticImageWriter.U)
+  val s3_preservationAllowed = s3_l1PreservationAllowed || s3_svbOwnsPredecessor
+  svbHeldWriteNeedsLease := s3_valid && !s3_applied && !s3_duplicate_effect &&
+    !s3_cancelled && !s3_pre_effect_kill && s3_svbOwnsPredecessor && !s3_l1PreservationAllowed
+  when (svbEpochBoundary && svbHeldWriteNeedsLease && !svbFlushPending) {
+    printf("SVB_EPOCH_DEFER cycle=%x req=%x line=%x epoch=%x reset=%x\n",
+      io.csr_cycle, s3_req.request_token, svbFastLine, svbEpoch, io.traffic_reset)
+  }
+  when (svbFlush && svbFlushPending) {
+    printf("SVB_EPOCH_DRAINED cycle=%x epoch=%x reset=%x\n",
+      io.csr_cycle, svbEpoch, io.traffic_reset || svbResetPending)
+  }
   val s3_effect_eligible = s3_valid && !s3_applied && s3_owner_match &&
     s3_image_match && s3_preservationAllowed && !s3_duplicate_effect && !s3_owner_revoked && !s3_pre_effect_kill && !s3_cancelled
   when (s3_valid && !s3_applied && !s3_duplicate_effect && !s3_cancelled && !s3_pre_effect_kill) {
