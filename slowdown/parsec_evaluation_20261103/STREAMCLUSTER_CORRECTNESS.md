@@ -1,7 +1,7 @@
 # Streamcluster: epoch flush revokes a granted store's predecessor
 
 Status: confirmed on frozen hardware `1532923803d7451b0c7843e9abad1c90ef9eb9ed`;
-correctness repair under validation. The old tag is retained as historical evidence.
+first correctness repair candidate under validation. The old tag is retained as historical evidence.
 No results from the failed run qualify as performance data.
 
 The pilot `streamcluster_simdev_correction_20261103_093035_f686267f`
@@ -36,8 +36,8 @@ intentionally not killed by `io.lsu.exception` (`uses_ldq` is false). Therefore
 the flush revoked permission from a store that still had to execute. A held S3
 write under array backpressure has the same ownership hazard.
 
-The repair blocks new write grants through the existing LSU nack / MSHR replay
-retry paths at any requested or pending epoch boundary. An already granted,
+The initial repair candidate blocked all writes while the observer reset defaulted high and prevented firmware startup. That candidate was rejected and all of its runs excluded. The revised repair blocks new write grants through the existing LSU nack / MSHR replay
+retry paths only while a snapshot/lease or deferred flush is live. An already granted,
 unapplied, uncancelled S3 write whose only predecessor permission is its SVB
 lease drains before the actual flush. Pending state remembers a one-cycle
 exception and preserves reset priority. The epoch changes on actual flush.
@@ -45,7 +45,6 @@ New captures are blocked and late issued snapshots remain discard-only; the
 previous capture-cancellation fix is retained. Assertions remain enabled.
 
 Required acceptance: emitted RTL build, directed epoch boundary witnesses,
-the failing Streamcluster workload, GAPBS BFS, and Blackscholes. Until those
-pass, this repair is provisional and no replacement canonical tag is claimed.
+the failing Streamcluster workload, GAPBS BFS, and Blackscholes. The first candidate failed startup and the second candidate remains provisional. Until the required regressions pass, no replacement canonical tag is claimed.
 This does not implement architectural rollback or durable snapshot retention
 across exceptions: the existing SPEC-flush behavior remains a recovery limit.

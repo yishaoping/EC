@@ -1,6 +1,6 @@
 # Current evaluation status
 
-Streamcluster exposed a second correctness defect in the previous frozen model. The explicit candidate repair is hardware commit `19d19360a`; the model build and 71 emitted-controller cases passed; mandatory full-system regressions are running. The old canonical tag is preserved as historical evidence. No complete accepted primary triplet or geometric mean is available yet. See [STREAMCLUSTER_CORRECTNESS.md](STREAMCLUSTER_CORRECTNESS.md).
+Streamcluster exposed a second correctness defect in the previous frozen model. The explicit candidate repair is hardware commit `19d19360a`; the first candidate failed startup because it treated the default-high observer reset as an active write barrier. That candidate was excluded; a narrower live-ownership repair is rebuilding. The old canonical tag is preserved as historical evidence. No complete accepted primary triplet or geometric mean is available yet. See [STREAMCLUSTER_CORRECTNESS.md](STREAMCLUSTER_CORRECTNESS.md).
 
 # Corrected Opt4 PARSEC evaluation
 

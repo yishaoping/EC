@@ -8,7 +8,7 @@ def main():
     assert subprocess.check_output(['git','status','--porcelain=v1'],cwd=ROOT,text=True)==''
     batch=OUT/'build'/('acceptance_'+datetime.datetime.now(datetime.timezone.utc).strftime('%H%M%S_')+uuid.uuid4().hex[:8]);batch.mkdir()
     scripts=OUT/'scripts';jobs=[('bfs',[sys.executable,str(scripts/'run_bfs_regression.py'),'--hardware-revision',str(candidate)])]
-    for app,mode in [('blackscholes','correction'),('streamcluster','correction'),('canneal','native'),('canneal','correction')]:jobs.append((app+'_'+mode,[sys.executable,str(scripts/'run_pilot.py'),app+'_simdev',mode,'--max-cycles','3000000','--hardware-revision',str(candidate),'--validation']))
+    for app,mode in [('blackscholes','correction'),('streamcluster','correction')]:jobs.append((app+'_'+mode,[sys.executable,str(scripts/'run_pilot.py'),app+'_simdev',mode,'--max-cycles','3000000','--hardware-revision',str(candidate),'--validation']))
     processes={};logs={};commands={}
     for label,cmd in jobs:
         logs[label]=(batch/(label+'.launch.log')).open('xb');commands[label]=cmd
