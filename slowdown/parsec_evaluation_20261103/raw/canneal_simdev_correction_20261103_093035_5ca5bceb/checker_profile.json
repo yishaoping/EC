@@ -1,0 +1,1376 @@
+{
+  "scope": "checker-local priority partition for complete captured packages inside ROI; optional loss excludes packages, not zero-filled; not causal BOOM savings",
+  "run": "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/runs/canneal_simdev_correction_20261103_093035_5ca5bceb",
+  "excluded": {
+    "crosses_roi_boundary": 2
+  },
+  "harts": [
+    {
+      "hart": 1,
+      "fully_captured_packages": 9,
+      "checked_instructions": 24743,
+      "counters": {
+        "issue_available": 27078,
+        "instruction_starvation": 18110,
+        "lsl_wait": 670,
+        "dcache_blocked": 0,
+        "dependency": 7616,
+        "replay": 0,
+        "setup_redirect_or_management": 8357,
+        "unused": 0,
+        "other": 0
+      },
+      "local_cycles_per_checked_instruction": {
+        "issue_available": 1.0943701248838056,
+        "instruction_starvation": 0.7319241805763246,
+        "lsl_wait": 0.02707836559835105,
+        "dcache_blocked": 0.0,
+        "dependency": 0.307804227458271,
+        "replay": 0.0,
+        "setup_redirect_or_management": 0.33775209150062646,
+        "unused": 0.0,
+        "other": 0.0
+      },
+      "lifecycle_captured_packages": 9,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 907,
+        "admission_to_producer_seal": 21004,
+        "admission_to_exec_done": 61840,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 18288,
+        "raw_lsl_wait": 962
+      }
+    },
+    {
+      "hart": 2,
+      "fully_captured_packages": 10,
+      "checked_instructions": 29004,
+      "counters": {
+        "issue_available": 31163,
+        "instruction_starvation": 17940,
+        "lsl_wait": 633,
+        "dcache_blocked": 0,
+        "dependency": 8508,
+        "replay": 0,
+        "setup_redirect_or_management": 5543,
+        "unused": 0,
+        "other": 0
+      },
+      "local_cycles_per_checked_instruction": {
+        "issue_available": 1.0744380085505447,
+        "instruction_starvation": 0.618535374431113,
+        "lsl_wait": 0.02182457592056268,
+        "dcache_blocked": 0.0,
+        "dependency": 0.2933388498138188,
+        "replay": 0.0,
+        "setup_redirect_or_management": 0.19111157081781824,
+        "unused": 0.0,
+        "other": 0.0
+      },
+      "lifecycle_captured_packages": 10,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 941,
+        "admission_to_producer_seal": 20424,
+        "admission_to_exec_done": 63797,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 18107,
+        "raw_lsl_wait": 885
+      }
+    },
+    {
+      "hart": 3,
+      "fully_captured_packages": 9,
+      "checked_instructions": 24393,
+      "counters": {
+        "issue_available": 26366,
+        "instruction_starvation": 16130,
+        "lsl_wait": 574,
+        "dcache_blocked": 0,
+        "dependency": 6527,
+        "replay": 0,
+        "setup_redirect_or_management": 4946,
+        "unused": 0,
+        "other": 0
+      },
+      "local_cycles_per_checked_instruction": {
+        "issue_available": 1.080883860123806,
+        "instruction_starvation": 0.6612552781535687,
+        "lsl_wait": 0.023531340958471692,
+        "dcache_blocked": 0.0,
+        "dependency": 0.2675767638256877,
+        "replay": 0.0,
+        "setup_redirect_or_management": 0.20276308777108187,
+        "unused": 0.0,
+        "other": 0.0
+      },
+      "lifecycle_captured_packages": 9,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 670,
+        "admission_to_producer_seal": 15486,
+        "admission_to_exec_done": 54552,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 16296,
+        "raw_lsl_wait": 816
+      }
+    },
+    {
+      "hart": 4,
+      "fully_captured_packages": 9,
+      "checked_instructions": 25205,
+      "counters": {
+        "issue_available": 27221,
+        "instruction_starvation": 18373,
+        "lsl_wait": 648,
+        "dcache_blocked": 0,
+        "dependency": 7508,
+        "replay": 0,
+        "setup_redirect_or_management": 6398,
+        "unused": 0,
+        "other": 0
+      },
+      "local_cycles_per_checked_instruction": {
+        "issue_available": 1.07998413013291,
+        "instruction_starvation": 0.7289426701051379,
+        "lsl_wait": 0.025709184685578257,
+        "dcache_blocked": 0.0,
+        "dependency": 0.2978774052767308,
+        "replay": 0.0,
+        "setup_redirect_or_management": 0.25383852410236063,
+        "unused": 0.0,
+        "other": 0.0
+      },
+      "lifecycle_captured_packages": 9,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 769,
+        "admission_to_producer_seal": 18910,
+        "admission_to_exec_done": 60157,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 18538,
+        "raw_lsl_wait": 908
+      }
+    }
+  ],
+  "packages": [
+    {
+      "hart": 2,
+      "seq": 2,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 951635,
+      "result_cycle": 966059,
+      "local_exec_cycles": 7178,
+      "counters": {
+        "issue_available": 4998,
+        "instruction_starvation": 293,
+        "lsl_wait": 0,
+        "dcache_blocked": 0,
+        "dependency": 545,
+        "replay": 0,
+        "setup_redirect_or_management": 1342,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 4998,
+      "checked_loads": 542,
+      "checked_stores": 379,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 76,
+        "admission_to_producer_seal": 5511,
+        "admission_to_exec_done": 7179,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 298,
+        "raw_lsl_wait": 0
+      }
+    },
+    {
+      "hart": 3,
+      "seq": 3,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 962587,
+      "result_cycle": 969111,
+      "local_exec_cycles": 3228,
+      "counters": {
+        "issue_available": 3070,
+        "instruction_starvation": 42,
+        "lsl_wait": 0,
+        "dcache_blocked": 0,
+        "dependency": 0,
+        "replay": 0,
+        "setup_redirect_or_management": 116,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 3070,
+      "checked_loads": 439,
+      "checked_stores": 219,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 77,
+        "admission_to_producer_seal": 1011,
+        "admission_to_exec_done": 3229,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 47,
+        "raw_lsl_wait": 0
+      }
+    },
+    {
+      "hart": 4,
+      "seq": 4,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 964539,
+      "result_cycle": 982577,
+      "local_exec_cycles": 8985,
+      "counters": {
+        "issue_available": 5120,
+        "instruction_starvation": 2480,
+        "lsl_wait": 83,
+        "dcache_blocked": 0,
+        "dependency": 1019,
+        "replay": 0,
+        "setup_redirect_or_management": 283,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 4853,
+      "checked_loads": 821,
+      "checked_stores": 251,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 84,
+        "admission_to_producer_seal": 4202,
+        "admission_to_exec_done": 8986,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 2504,
+        "raw_lsl_wait": 111
+      }
+    },
+    {
+      "hart": 1,
+      "seq": 5,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 972873,
+      "result_cycle": 984729,
+      "local_exec_cycles": 5894,
+      "counters": {
+        "issue_available": 2832,
+        "instruction_starvation": 1980,
+        "lsl_wait": 69,
+        "dcache_blocked": 0,
+        "dependency": 784,
+        "replay": 0,
+        "setup_redirect_or_management": 229,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2581,
+      "checked_loads": 507,
+      "checked_stores": 95,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 49,
+        "admission_to_producer_seal": 1415,
+        "admission_to_exec_done": 5895,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1997,
+        "raw_lsl_wait": 101
+      }
+    },
+    {
+      "hart": 2,
+      "seq": 6,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 975633,
+      "result_cycle": 987455,
+      "local_exec_cycles": 5877,
+      "counters": {
+        "issue_available": 3042,
+        "instruction_starvation": 1578,
+        "lsl_wait": 52,
+        "dcache_blocked": 0,
+        "dependency": 973,
+        "replay": 0,
+        "setup_redirect_or_management": 232,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2783,
+      "checked_loads": 534,
+      "checked_stores": 58,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 51,
+        "admission_to_producer_seal": 1429,
+        "admission_to_exec_done": 5878,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1594,
+        "raw_lsl_wait": 76
+      }
+    },
+    {
+      "hart": 3,
+      "seq": 7,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 978421,
+      "result_cycle": 1000253,
+      "local_exec_cycles": 10882,
+      "counters": {
+        "issue_available": 3756,
+        "instruction_starvation": 2873,
+        "lsl_wait": 93,
+        "dcache_blocked": 0,
+        "dependency": 1085,
+        "replay": 0,
+        "setup_redirect_or_management": 3075,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 3440,
+      "checked_loads": 653,
+      "checked_stores": 139,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 49,
+        "admission_to_producer_seal": 5927,
+        "admission_to_exec_done": 10883,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 2896,
+        "raw_lsl_wait": 130
+      }
+    },
+    {
+      "hart": 4,
+      "seq": 8,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 990205,
+      "result_cycle": 1003115,
+      "local_exec_cycles": 6421,
+      "counters": {
+        "issue_available": 2896,
+        "instruction_starvation": 2270,
+        "lsl_wait": 82,
+        "dcache_blocked": 0,
+        "dependency": 908,
+        "replay": 0,
+        "setup_redirect_or_management": 265,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2658,
+      "checked_loads": 495,
+      "checked_stores": 120,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 82,
+        "admission_to_producer_seal": 1462,
+        "admission_to_exec_done": 6422,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 2288,
+        "raw_lsl_wait": 112
+      }
+    },
+    {
+      "hart": 1,
+      "seq": 9,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 993059,
+      "result_cycle": 1011825,
+      "local_exec_cycles": 9349,
+      "counters": {
+        "issue_available": 3417,
+        "instruction_starvation": 1760,
+        "lsl_wait": 67,
+        "dcache_blocked": 0,
+        "dependency": 948,
+        "replay": 0,
+        "setup_redirect_or_management": 3157,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 3132,
+      "checked_loads": 604,
+      "checked_stores": 106,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 73,
+        "admission_to_producer_seal": 5052,
+        "admission_to_exec_done": 9350,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1777,
+        "raw_lsl_wait": 101
+      }
+    },
+    {
+      "hart": 2,
+      "seq": 10,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1003093,
+      "result_cycle": 1015129,
+      "local_exec_cycles": 5984,
+      "counters": {
+        "issue_available": 2650,
+        "instruction_starvation": 2235,
+        "lsl_wait": 75,
+        "dcache_blocked": 0,
+        "dependency": 791,
+        "replay": 0,
+        "setup_redirect_or_management": 233,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2447,
+      "checked_loads": 444,
+      "checked_stores": 126,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 73,
+        "admission_to_producer_seal": 1358,
+        "admission_to_exec_done": 5985,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 2255,
+        "raw_lsl_wait": 102
+      }
+    },
+    {
+      "hart": 3,
+      "seq": 11,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1005739,
+      "result_cycle": 1017671,
+      "local_exec_cycles": 5932,
+      "counters": {
+        "issue_available": 2933,
+        "instruction_starvation": 1781,
+        "lsl_wait": 65,
+        "dcache_blocked": 0,
+        "dependency": 888,
+        "replay": 0,
+        "setup_redirect_or_management": 265,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2675,
+      "checked_loads": 507,
+      "checked_stores": 79,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 75,
+        "admission_to_producer_seal": 1397,
+        "admission_to_exec_done": 5933,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1799,
+        "raw_lsl_wait": 90
+      }
+    },
+    {
+      "hart": 4,
+      "seq": 12,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1008463,
+      "result_cycle": 1020187,
+      "local_exec_cycles": 5828,
+      "counters": {
+        "issue_available": 2815,
+        "instruction_starvation": 1817,
+        "lsl_wait": 70,
+        "dcache_blocked": 0,
+        "dependency": 861,
+        "replay": 0,
+        "setup_redirect_or_management": 265,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2571,
+      "checked_loads": 494,
+      "checked_stores": 92,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 85,
+        "admission_to_producer_seal": 1245,
+        "admission_to_exec_done": 5829,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1835,
+        "raw_lsl_wait": 97
+      }
+    },
+    {
+      "hart": 1,
+      "seq": 13,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1011909,
+      "result_cycle": 1023259,
+      "local_exec_cycles": 5641,
+      "counters": {
+        "issue_available": 2568,
+        "instruction_starvation": 2026,
+        "lsl_wait": 69,
+        "dcache_blocked": 0,
+        "dependency": 691,
+        "replay": 0,
+        "setup_redirect_or_management": 287,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2354,
+      "checked_loads": 441,
+      "checked_stores": 116,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 125,
+        "admission_to_producer_seal": 1055,
+        "admission_to_exec_done": 5642,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 2047,
+        "raw_lsl_wait": 97
+      }
+    },
+    {
+      "hart": 2,
+      "seq": 14,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1015217,
+      "result_cycle": 1027049,
+      "local_exec_cycles": 5882,
+      "counters": {
+        "issue_available": 2797,
+        "instruction_starvation": 1928,
+        "lsl_wait": 70,
+        "dcache_blocked": 0,
+        "dependency": 796,
+        "replay": 0,
+        "setup_redirect_or_management": 291,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2572,
+      "checked_loads": 484,
+      "checked_stores": 116,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 128,
+        "admission_to_producer_seal": 1342,
+        "admission_to_exec_done": 5883,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1946,
+        "raw_lsl_wait": 100
+      }
+    },
+    {
+      "hart": 3,
+      "seq": 15,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1017907,
+      "result_cycle": 1029659,
+      "local_exec_cycles": 5842,
+      "counters": {
+        "issue_available": 2792,
+        "instruction_starvation": 1987,
+        "lsl_wait": 72,
+        "dcache_blocked": 0,
+        "dependency": 741,
+        "replay": 0,
+        "setup_redirect_or_management": 250,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2562,
+      "checked_loads": 488,
+      "checked_stores": 116,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 81,
+        "admission_to_producer_seal": 1219,
+        "admission_to_exec_done": 5843,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 2005,
+        "raw_lsl_wait": 104
+      }
+    },
+    {
+      "hart": 4,
+      "seq": 16,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1020367,
+      "result_cycle": 1040843,
+      "local_exec_cycles": 10204,
+      "counters": {
+        "issue_available": 2917,
+        "instruction_starvation": 2088,
+        "lsl_wait": 71,
+        "dcache_blocked": 0,
+        "dependency": 768,
+        "replay": 0,
+        "setup_redirect_or_management": 4360,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2697,
+      "checked_loads": 508,
+      "checked_stores": 137,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 78,
+        "admission_to_producer_seal": 5962,
+        "admission_to_exec_done": 10205,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 2107,
+        "raw_lsl_wait": 105
+      }
+    },
+    {
+      "hart": 1,
+      "seq": 17,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1032221,
+      "result_cycle": 1044171,
+      "local_exec_cycles": 5941,
+      "counters": {
+        "issue_available": 2795,
+        "instruction_starvation": 1958,
+        "lsl_wait": 73,
+        "dcache_blocked": 0,
+        "dependency": 860,
+        "replay": 0,
+        "setup_redirect_or_management": 255,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2559,
+      "checked_loads": 490,
+      "checked_stores": 100,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 79,
+        "admission_to_producer_seal": 1347,
+        "admission_to_exec_done": 5942,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1977,
+        "raw_lsl_wait": 102
+      }
+    },
+    {
+      "hart": 2,
+      "seq": 18,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1034845,
+      "result_cycle": 1046019,
+      "local_exec_cycles": 5553,
+      "counters": {
+        "issue_available": 2698,
+        "instruction_starvation": 1780,
+        "lsl_wait": 63,
+        "dcache_blocked": 0,
+        "dependency": 768,
+        "replay": 0,
+        "setup_redirect_or_management": 244,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2474,
+      "checked_loads": 468,
+      "checked_stores": 97,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 78,
+        "admission_to_producer_seal": 1179,
+        "admission_to_exec_done": 5554,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1794,
+        "raw_lsl_wait": 91
+      }
+    },
+    {
+      "hart": 3,
+      "seq": 19,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1037133,
+      "result_cycle": 1049267,
+      "local_exec_cycles": 6033,
+      "counters": {
+        "issue_available": 2817,
+        "instruction_starvation": 2122,
+        "lsl_wait": 76,
+        "dcache_blocked": 0,
+        "dependency": 771,
+        "replay": 0,
+        "setup_redirect_or_management": 247,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2589,
+      "checked_loads": 487,
+      "checked_stores": 131,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 82,
+        "admission_to_producer_seal": 1253,
+        "admission_to_exec_done": 6034,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 2143,
+        "raw_lsl_wait": 107
+      }
+    },
+    {
+      "hart": 4,
+      "seq": 20,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1040927,
+      "result_cycle": 1052507,
+      "local_exec_cycles": 5756,
+      "counters": {
+        "issue_available": 2663,
+        "instruction_starvation": 2101,
+        "lsl_wait": 70,
+        "dcache_blocked": 0,
+        "dependency": 644,
+        "replay": 0,
+        "setup_redirect_or_management": 278,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2460,
+      "checked_loads": 466,
+      "checked_stores": 137,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 130,
+        "admission_to_producer_seal": 1204,
+        "admission_to_exec_done": 5757,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 2118,
+        "raw_lsl_wait": 104
+      }
+    },
+    {
+      "hart": 1,
+      "seq": 21,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1044255,
+      "result_cycle": 1060407,
+      "local_exec_cycles": 8042,
+      "counters": {
+        "issue_available": 3937,
+        "instruction_starvation": 2407,
+        "lsl_wait": 94,
+        "dcache_blocked": 0,
+        "dependency": 1231,
+        "replay": 0,
+        "setup_redirect_or_management": 373,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 3592,
+      "checked_loads": 696,
+      "checked_stores": 113,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 134,
+        "admission_to_producer_seal": 3460,
+        "admission_to_exec_done": 8043,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 2431,
+        "raw_lsl_wait": 131
+      }
+    },
+    {
+      "hart": 2,
+      "seq": 22,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1051105,
+      "result_cycle": 1062753,
+      "local_exec_cycles": 5790,
+      "counters": {
+        "issue_available": 2950,
+        "instruction_starvation": 1610,
+        "lsl_wait": 65,
+        "dcache_blocked": 0,
+        "dependency": 915,
+        "replay": 0,
+        "setup_redirect_or_management": 250,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2701,
+      "checked_loads": 524,
+      "checked_stores": 87,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 77,
+        "admission_to_producer_seal": 1265,
+        "admission_to_exec_done": 5791,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1628,
+        "raw_lsl_wait": 94
+      }
+    },
+    {
+      "hart": 3,
+      "seq": 23,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1053565,
+      "result_cycle": 1064711,
+      "local_exec_cycles": 5539,
+      "counters": {
+        "issue_available": 2699,
+        "instruction_starvation": 1778,
+        "lsl_wait": 66,
+        "dcache_blocked": 0,
+        "dependency": 746,
+        "replay": 0,
+        "setup_redirect_or_management": 250,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2464,
+      "checked_loads": 480,
+      "checked_stores": 95,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 78,
+        "admission_to_producer_seal": 1160,
+        "admission_to_exec_done": 5540,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1796,
+        "raw_lsl_wait": 95
+      }
+    },
+    {
+      "hart": 4,
+      "seq": 24,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1055815,
+      "result_cycle": 1067709,
+      "local_exec_cycles": 5913,
+      "counters": {
+        "issue_available": 2814,
+        "instruction_starvation": 1943,
+        "lsl_wait": 72,
+        "dcache_blocked": 0,
+        "dependency": 829,
+        "replay": 0,
+        "setup_redirect_or_management": 255,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2573,
+      "checked_loads": 494,
+      "checked_stores": 97,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 73,
+        "admission_to_producer_seal": 1387,
+        "admission_to_exec_done": 5914,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1960,
+        "raw_lsl_wait": 101
+      }
+    },
+    {
+      "hart": 1,
+      "seq": 25,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1060495,
+      "result_cycle": 1080585,
+      "local_exec_cycles": 10011,
+      "counters": {
+        "issue_available": 3419,
+        "instruction_starvation": 2367,
+        "lsl_wait": 90,
+        "dcache_blocked": 0,
+        "dependency": 917,
+        "replay": 0,
+        "setup_redirect_or_management": 3218,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 3120,
+      "checked_loads": 608,
+      "checked_stores": 130,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 126,
+        "admission_to_producer_seal": 5142,
+        "admission_to_exec_done": 10012,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 2390,
+        "raw_lsl_wait": 129
+      }
+    },
+    {
+      "hart": 2,
+      "seq": 26,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1070709,
+      "result_cycle": 1083773,
+      "local_exec_cycles": 6498,
+      "counters": {
+        "issue_available": 3229,
+        "instruction_starvation": 1827,
+        "lsl_wait": 68,
+        "dcache_blocked": 0,
+        "dependency": 1091,
+        "replay": 0,
+        "setup_redirect_or_management": 283,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2957,
+      "checked_loads": 552,
+      "checked_stores": 78,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 82,
+        "admission_to_producer_seal": 1522,
+        "admission_to_exec_done": 6499,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1844,
+        "raw_lsl_wait": 91
+      }
+    },
+    {
+      "hart": 3,
+      "seq": 27,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1073683,
+      "result_cycle": 1084393,
+      "local_exec_cycles": 5321,
+      "counters": {
+        "issue_available": 2607,
+        "instruction_starvation": 1779,
+        "lsl_wait": 63,
+        "dcache_blocked": 0,
+        "dependency": 639,
+        "replay": 0,
+        "setup_redirect_or_management": 233,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2390,
+      "checked_loads": 458,
+      "checked_stores": 111,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 78,
+        "admission_to_producer_seal": 1000,
+        "admission_to_exec_done": 5322,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1796,
+        "raw_lsl_wait": 93
+      }
+    },
+    {
+      "hart": 4,
+      "seq": 28,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1075613,
+      "result_cycle": 1087097,
+      "local_exec_cycles": 5708,
+      "counters": {
+        "issue_available": 2547,
+        "instruction_starvation": 2111,
+        "lsl_wait": 70,
+        "dcache_blocked": 0,
+        "dependency": 767,
+        "replay": 0,
+        "setup_redirect_or_management": 213,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2378,
+      "checked_loads": 423,
+      "checked_stores": 136,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 81,
+        "admission_to_producer_seal": 1102,
+        "admission_to_exec_done": 5709,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 2127,
+        "raw_lsl_wait": 98
+      }
+    },
+    {
+      "hart": 1,
+      "seq": 29,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1080669,
+      "result_cycle": 1092057,
+      "local_exec_cycles": 5660,
+      "counters": {
+        "issue_available": 2732,
+        "instruction_starvation": 1812,
+        "lsl_wait": 68,
+        "dcache_blocked": 0,
+        "dependency": 745,
+        "replay": 0,
+        "setup_redirect_or_management": 303,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2488,
+      "checked_loads": 491,
+      "checked_stores": 95,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 126,
+        "admission_to_producer_seal": 1171,
+        "admission_to_exec_done": 5661,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1832,
+        "raw_lsl_wait": 99
+      }
+    },
+    {
+      "hart": 2,
+      "seq": 30,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1083865,
+      "result_cycle": 1096581,
+      "local_exec_cycles": 6324,
+      "counters": {
+        "issue_available": 2702,
+        "instruction_starvation": 2435,
+        "lsl_wait": 82,
+        "dcache_blocked": 0,
+        "dependency": 800,
+        "replay": 0,
+        "setup_redirect_or_management": 305,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2481,
+      "checked_loads": 451,
+      "checked_stores": 128,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 127,
+        "admission_to_producer_seal": 1313,
+        "admission_to_exec_done": 6325,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 2455,
+        "raw_lsl_wait": 109
+      }
+    },
+    {
+      "hart": 3,
+      "seq": 31,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1086421,
+      "result_cycle": 1098147,
+      "local_exec_cycles": 5829,
+      "counters": {
+        "issue_available": 2929,
+        "instruction_starvation": 1726,
+        "lsl_wait": 67,
+        "dcache_blocked": 0,
+        "dependency": 852,
+        "replay": 0,
+        "setup_redirect_or_management": 255,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2678,
+      "checked_loads": 516,
+      "checked_stores": 93,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 77,
+        "admission_to_producer_seal": 1297,
+        "admission_to_exec_done": 5830,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1749,
+        "raw_lsl_wait": 98
+      }
+    },
+    {
+      "hart": 4,
+      "seq": 32,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1088945,
+      "result_cycle": 1099977,
+      "local_exec_cycles": 5482,
+      "counters": {
+        "issue_available": 2691,
+        "instruction_starvation": 1699,
+        "lsl_wait": 64,
+        "dcache_blocked": 0,
+        "dependency": 789,
+        "replay": 0,
+        "setup_redirect_or_management": 239,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2467,
+      "checked_loads": 470,
+      "checked_stores": 95,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 76,
+        "admission_to_producer_seal": 1166,
+        "admission_to_exec_done": 5483,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1717,
+        "raw_lsl_wait": 91
+      }
+    },
+    {
+      "hart": 1,
+      "seq": 33,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1092145,
+      "result_cycle": 1102641,
+      "local_exec_cycles": 5214,
+      "counters": {
+        "issue_available": 2460,
+        "instruction_starvation": 1824,
+        "lsl_wait": 64,
+        "dcache_blocked": 0,
+        "dependency": 604,
+        "replay": 0,
+        "setup_redirect_or_management": 262,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2265,
+      "checked_loads": 431,
+      "checked_stores": 116,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 117,
+        "admission_to_producer_seal": 1030,
+        "admission_to_exec_done": 5215,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1840,
+        "raw_lsl_wait": 95
+      }
+    },
+    {
+      "hart": 2,
+      "seq": 34,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1096667,
+      "result_cycle": 1115193,
+      "local_exec_cycles": 9229,
+      "counters": {
+        "issue_available": 3473,
+        "instruction_starvation": 2485,
+        "lsl_wait": 93,
+        "dcache_blocked": 0,
+        "dependency": 1104,
+        "replay": 0,
+        "setup_redirect_or_management": 2074,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 3194,
+      "checked_loads": 597,
+      "checked_stores": 139,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 128,
+        "admission_to_producer_seal": 4389,
+        "admission_to_exec_done": 9230,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 2506,
+        "raw_lsl_wait": 128
+      }
+    },
+    {
+      "hart": 3,
+      "seq": 35,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1105375,
+      "result_cycle": 1117317,
+      "local_exec_cycles": 5937,
+      "counters": {
+        "issue_available": 2763,
+        "instruction_starvation": 2042,
+        "lsl_wait": 72,
+        "dcache_blocked": 0,
+        "dependency": 805,
+        "replay": 0,
+        "setup_redirect_or_management": 255,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2525,
+      "checked_loads": 482,
+      "checked_stores": 100,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 73,
+        "admission_to_producer_seal": 1222,
+        "admission_to_exec_done": 5938,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 2065,
+        "raw_lsl_wait": 99
+      }
+    },
+    {
+      "hart": 4,
+      "seq": 36,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1107749,
+      "result_cycle": 1119519,
+      "local_exec_cycles": 5851,
+      "counters": {
+        "issue_available": 2758,
+        "instruction_starvation": 1864,
+        "lsl_wait": 66,
+        "dcache_blocked": 0,
+        "dependency": 923,
+        "replay": 0,
+        "setup_redirect_or_management": 240,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2548,
+      "checked_loads": 466,
+      "checked_stores": 102,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 80,
+        "admission_to_producer_seal": 1180,
+        "admission_to_exec_done": 5852,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1882,
+        "raw_lsl_wait": 89
+      }
+    },
+    {
+      "hart": 1,
+      "seq": 37,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1110039,
+      "result_cycle": 1122265,
+      "local_exec_cycles": 6079,
+      "counters": {
+        "issue_available": 2918,
+        "instruction_starvation": 1976,
+        "lsl_wait": 76,
+        "dcache_blocked": 0,
+        "dependency": 836,
+        "replay": 0,
+        "setup_redirect_or_management": 273,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2652,
+      "checked_loads": 519,
+      "checked_stores": 95,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 78,
+        "admission_to_producer_seal": 1332,
+        "admission_to_exec_done": 6080,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1997,
+        "raw_lsl_wait": 107
+      }
+    },
+    {
+      "hart": 2,
+      "seq": 38,
+      "observed_epochs": [
+        0,
+        1
+      ],
+      "start_cycle": 1115277,
+      "result_cycle": 1126289,
+      "local_exec_cycles": 5472,
+      "counters": {
+        "issue_available": 2624,
+        "instruction_starvation": 1769,
+        "lsl_wait": 65,
+        "dcache_blocked": 0,
+        "dependency": 725,
+        "replay": 0,
+        "setup_redirect_or_management": 289,
+        "unused": 0,
+        "other": 0
+      },
+      "checked_instructions": 2397,
+      "checked_loads": 465,
+      "checked_stores": 95,
+      "lifecycle_local_cycles": {
+        "admission_to_start": 121,
+        "admission_to_producer_seal": 1116,
+        "admission_to_exec_done": 5473,
+        "result_queue_backpressure": 0,
+        "raw_ibuf_empty": 1787,
+        "raw_lsl_wait": 94
+      }
+    }
+  ]
+}

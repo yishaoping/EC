@@ -39,3 +39,9 @@ store boundaries. If the frozen design cannot provide a restore path, mark the
 case unsupported; implementing one would require an explicitly revised hardware
 version and BFS/Blackscholes regressions. These cases are never part of slowdown
 means.
+
+The historical Canneal simdev correction pilot on revision 153292380 completed
+206 SVB allocations through matching promotion ACKs, with no discard and zero
+final occupancy. Its 39 generated packages all passed. This is additional
+no-fault evidence that the promotion/ACK path is used, not evidence of rollback
+or architectural restoration. The revised model must be measured separately.

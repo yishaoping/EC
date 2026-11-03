@@ -1,0 +1,31 @@
+{
+  "hardware_commit": "19d19360a",
+  "type": "source-level ownership audit; not a dynamic test",
+  "invariants": [
+    {
+      "obligation": "No S2 store disappears at an epoch boundary",
+      "evidence": "svbEpochBoundary enters l1CrossPackageBlocked, which already drives LSU nack and MSHR preservationRetry, in addition to inhibiting s2_write_grant."
+    },
+    {
+      "obligation": "An owned committed S3 write retains its predecessor until physical effect",
+      "evidence": "Actual svbFlush is inhibited while s3_valid, unapplied, nonduplicate, uncancelled, not pre-effect killed, and uniquely dependent on the matching SVB lease. No new dependency on dataWriteArb ready/fire."
+    },
+    {
+      "obligation": "One-cycle exceptions are remembered",
+      "evidence": "svbFlushPending retains the boundary until actual flush. Reset priority is retained separately in svbResetPending."
+    },
+    {
+      "obligation": "No snapshot crosses an epoch boundary",
+      "evidence": "Capture eligibility and reader admission are inhibited by boundary; snapshot discard uses boundary, while the previous pending/issued cancellation descriptor still drains late responses."
+    },
+    {
+      "obligation": "No new combinational ready loop",
+      "evidence": "Held-write dependency uses registered S3 request/state, resident/image metadata and watermark. It does not use the S2 nack/grant, capture.ready, physical write fire, or actual flush."
+    },
+    {
+      "obligation": "No new recovery claim",
+      "evidence": "Existing SPEC flush and failure invalidation remain unchanged. No restore interface, rollback action, or architectural checkpoint is added."
+    }
+  ],
+  "dynamic_acceptance": "pending full-system failing workload, BFS and Blackscholes"
+}
