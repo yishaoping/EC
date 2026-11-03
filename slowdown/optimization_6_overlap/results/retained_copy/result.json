@@ -1,0 +1,119 @@
+{
+  "baseline_roi_cycles": 1001675,
+  "benchmark_result": {
+    "checksum": 43439728,
+    "verified": 1
+  },
+  "cache_shadow_validation": "FAIL",
+  "capture": {
+    "errors": [],
+    "mandatory_evidence_complete": true,
+    "status": "PASS"
+  },
+  "correctness": {
+    "assertion_failures": 0,
+    "benchmark_pass": true,
+    "cancelled_results": 0,
+    "failed_results": 0,
+    "status": "PASS"
+  },
+  "data_ordering": {
+    "examples": [],
+    "scope": "full_run_C_ReleaseData_same_line_writer_generation",
+    "stale_publications": 0,
+    "status": "PASS"
+  },
+  "integrity": {
+    "allocations": 373,
+    "completions": 368,
+    "duplicate_beats": 0,
+    "errors": [],
+    "schema": 2,
+    "status": "PASS",
+    "terminal_counts": {
+      "COALESCED": 3,
+      "FLUSH_DISCARDED": 2,
+      "PROMOTED_COMPLETED": 368
+    }
+  },
+  "opt4_ratio_to_baseline": 1.126165672498565,
+  "opt4_roi_cycles": 1128052,
+  "performance_valid": true,
+  "protocol": {
+    "coverage": "COMPLETE",
+    "end_policy": "STOP may retain WB_WAIT; exit with retained entries is not proof of full durable drain",
+    "entry_capacity": 16,
+    "entry_capacity_source": "capacity_snapshot",
+    "errors": [],
+    "invalid_ack": 0,
+    "outstanding_at_end": 0,
+    "release_acks_matched": 7381,
+    "releases_issued": 7381,
+    "source_conflicts": 0,
+    "status": "PASS",
+    "stop_snapshot": [
+      1,
+      23896,
+      18334,
+      15,
+      0,
+      0,
+      7367,
+      7367,
+      0,
+      0,
+      0,
+      2147540800,
+      3,
+      368,
+      368,
+      0
+    ],
+    "svb_completions": 368,
+    "svb_entry_retained_at_end": false,
+    "svb_promotions_issued": 368,
+    "svb_release_acks_matched": 368
+  },
+  "run_id": "overlap_retained_copy_20261103_040650_0a6ef6bc",
+  "source_stats": {
+    "all_acks_matched": 7367,
+    "all_releases_issued": 7367,
+    "coalesced": 3,
+    "invalid_ack": 0,
+    "max_safe_awaiting": 15,
+    "occupancy": 0,
+    "outstanding": 0,
+    "pending_entry": 0,
+    "pending_line": 2147540800,
+    "pending_svb": 0,
+    "queued_cycles": 18334,
+    "source_busy_cycles": 23896,
+    "source_conflicts": 0,
+    "svb_acks_matched": 368,
+    "svb_releases_issued": 368,
+    "version": 1
+  },
+  "svb": {
+    "acks": 368,
+    "allocations": 373,
+    "bypass": 373,
+    "capture_issued": 0,
+    "capture_pending": 0,
+    "eligible": 381,
+    "fast_line": 0,
+    "full_fallback": 8,
+    "max_depth": 4,
+    "max_occupancy": 16,
+    "occupancy": 0,
+    "promotions": 368,
+    "recovery_from_svb": 368,
+    "unsupported_fallback": 1402
+  },
+  "traffic_pressure_counters": {
+    "blocked_cycles": 1783,
+    "blocked_episodes": 1783,
+    "diagnostic_sampling_interval": 4096,
+    "scope": "traffic_enable_window_sampled_before_STOP_edge",
+    "semantic_writes": 61219
+  }
+}

@@ -8,7 +8,7 @@ The FPGA/main working tree is independent and must not be reset or cleaned.
 | Frozen Opt4 `476a76091` | 1,707,863 | 1.705007x | Frozen verifier / original measured run |
 | Direct checker delivery + SourceC waitAck overlap | 1,426,845 | 1.424459x | Functional, integrity, ordering, protocol and capture PASS |
 | Terminal bypass + prefix fusion + fetch8 | 1,174,774 | 1.172810x | Functional, integrity, ordering, protocol, capture and SC48/49/50 PASS |
-| Retain acknowledged safe T copy in L1 | Pending | Pending | RTL generation/configuration and WB unit tests PASS; sealed simulation running |
+| Retain acknowledged safe T copy in L1 | 1,128,052 | **1.126166x** | Functional, integrity, ordering, protocol, capture and SC48–51 PASS |
 
 All rows use the pinned GAPBS BFS workload (512 nodes, 8,192 edges, source 0),
 native ROI 1,001,675 cycles, expected checksum 43,439,728. Four 100 MHz checkers,
@@ -16,11 +16,13 @@ native ROI 1,001,675 cycles, expected checksum 43,439,728. Four 100 MHz checkers
 checker instruction-supply width; scalar decode/retirement stays at one.
 
 The current best validated run is
-`overlap_terminal_fetch8_prefix_20261103_031553_2a566233`.
+`overlap_retained_copy_20261103_040650_0a6ef6bc`.
 Its compact results, exact source patch, binary seal and generated configuration
-check are in [`results/terminal_fetch8_prefix`](results/terminal_fetch8_prefix).
+check are in [`results/retained_copy`](results/retained_copy).
+It saves 579,811 cycles (33.95%) from frozen Opt4 and 46,722 (3.98%) from B.
+The previous best is retained in [`results/terminal_fetch8_prefix`](results/terminal_fetch8_prefix).
 The first milestone is retained in [`results/direct_sourcec_v2`](results/direct_sourcec_v2).
-The validated hardware commits are `4250b35fe` (A) and `40c8a18ca` (B).
+The earlier validated hardware commits are `4250b35fe` (A) and `40c8a18ca` (B).
 The ignored run/build directories retain full mandatory evidence and all failed
 attempts. [`OPTIMIZATION_LOG.md`](OPTIMIZATION_LOG.md) records decisions;
 [`CANDIDATE_AUDIT.md`](CANDIDATE_AUDIT.md) separates source arguments from runtime
@@ -47,7 +49,7 @@ until `SIMULATION_STARTED.json` exists. Failed or incomplete builds cannot be
 resumed as successful binaries. Simulation inputs are never reused after start.
 
 Reported activity counters are overlapping local observations, not causal cycle
-savings. Optional frontend prefix snapshots have explicit gaps. SC48/49/50 final
+savings. Optional frontend prefix snapshots have explicit gaps. SC48–51 final
 snapshots require complete mandatory capture and conservation. L2 shadow-model
 fidelity fails and its geometry estimates are not decision evidence. A passing
 benchmark and SVB lifecycle ledger do not establish all rollback paths or full

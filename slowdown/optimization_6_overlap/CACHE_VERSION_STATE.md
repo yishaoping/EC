@@ -1,6 +1,6 @@
 # Cache image and transaction boundaries
 
-Source audit for A/B and candidate C in the isolated performance worktree.
+Source audit for validated A/B/C in the isolated performance worktree.
 This describes implemented predicates and ownership; it is not proof of every
 rollback/exception path. The benchmark and focused RTL witnesses are described
 separately in [PERFORMANCE_REPORT.md](PERFORMANCE_REPORT.md).
@@ -33,7 +33,7 @@ admission and S3 physical effect; accepting a lookup is not permission to mutate
 | Legacy WaitSafe | Frozen resident, with pre-freeze grants drained before snapshot | Watermark permits publication, not destructive overwrite by itself. Unrelated demand hits retain their ordinary path. |
 | Legacy WB issued | Frozen resident plus WB's exact image/epoch/source owner | No semantic write or refill can change snapshot bytes. Only matching completion can create its lower receipt. |
 | B legacy receipt | Exact image exists below | Matching live resident is invalidated through guarded metadata clear; epoch advances and duplicate/image metadata is retired. A later demand refill creates new residency. |
-| C retaining receipt, pending validation | Exact safe image exists below; matching L1 copy remains | T-to-T publication keeps permission. Matching receipt releases freeze and sets the lower receipt, preserving bytes/key/epoch/effect identity. Branch permission uses the invalidating fallback. |
+| C retaining receipt | Exact safe image exists below; matching L1 copy remains | T-to-T publication keeps permission. Matching receipt releases freeze and sets the lower receipt, preserving bytes/key/epoch/effect identity. Branch permission uses the invalidating fallback. |
 
 The legacy freeze has one descriptor. The SVB capture shares that descriptor, but
 SVB entries own their data independently after capture. An unrelated line does not

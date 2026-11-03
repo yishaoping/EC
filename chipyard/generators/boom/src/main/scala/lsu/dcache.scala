@@ -1733,6 +1733,9 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val measurementSeqFloor = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
   val crossPackagePending = RegInit(false.B)
   val crossPackageIssued = RegInit(false.B)
+  // A safe snapshot can be copied below without giving up the local T
+  // permission. Keep this choice with the WB owner through its exact ACK.
+  val crossPackageKeepResident = RegInit(false.B)
   val crossPackageMetaClearPending = RegInit(false.B)
   val crossPackagePendingSet = RegInit(0.U(idxBits.W))
   val crossPackagePendingWay = RegInit(0.U(log2Ceil(nWays max 2).W))
@@ -1984,10 +1987,14 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   crossPackageWbReq.bits.source := cfg.nMSHRs.U
   crossPackageWbReq.bits.idx := crossPackagePendingSet
   crossPackageWbReq.bits.tag := crossPackagePendingTag
-  // A shadow writeback invalidates the local copy.  Report T->N to L2 so its
-  // coherence state agrees with the metadata clear performed below.
+  // Preserve T permission for a safe copied image. L2 already handles TtoT
+  // publications (including SVB promotion) without removing its client bit.
+  // A Branch copy keeps the established invalidating fallback.
+  val crossPackageCanKeepResident = ClientStates.hasWritePermission(
+    residentCoh(crossPackagePendingSet)(crossPackagePendingWay).state)
   crossPackageWbReq.bits.param :=
-    residentCoh(crossPackagePendingSet)(crossPackagePendingWay).onCacheControl(M_FLUSH)._2
+    Mux(crossPackageCanKeepResident, TLPermissions.TtoT,
+      residentCoh(crossPackagePendingSet)(crossPackagePendingWay).onCacheControl(M_FLUSH)._2)
   crossPackageWbReq.bits.way_en := UIntToOH(crossPackagePendingWay)
   crossPackageWbReq.bits.voluntary := true.B
   crossPackageWbReq.bits.svb_capture := false.B
@@ -2383,6 +2390,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       s2_nack_hit(0), s2_lookup_epoch(0), slotEpoch(s2_store_set)(s2_store_way))
     crossPackagePending := true.B
     crossPackageIssued := false.B
+    crossPackageKeepResident := false.B
     crossPackagePendingSet := s2_store_set
     crossPackagePendingWay := s2_store_way
     crossPackagePendingTag := (s2_req(0).addr >> untagBits)
@@ -2400,6 +2408,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       imageValid(crossPackagePendingSet)(crossPackagePendingWay),
       "WB snapshot accepted before old grants/install owner drained")
     crossPackageIssued := true.B
+    crossPackageKeepResident := crossPackageCanKeepResident
     crossPackagePendingKey := imageKey(crossPackagePendingSet)(crossPackagePendingWay)
     printf("STAGE2_TX PRESERVE line=%x epoch=%x gen=%x seq=%x writer=%x valid=%x\n",
       crossPackagePendingAddr, crossPackagePendingEpoch,
@@ -2421,7 +2430,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     prober.io.meta_write.bits.idx === crossPackagePendingSet &&
     prober.io.meta_write.bits.way_en === UIntToOH(crossPackagePendingWay, nWays)
   when (crossPackageWbDone) {
-    crossPackageMetaClearPending := crossPackageResidentMatch && !preservationRevoked
+    crossPackageMetaClearPending := crossPackageResidentMatch && !preservationRevoked &&
+      !crossPackageKeepResident
     crossPackageIssued := false.B
     printf("STAGE2_TX PRESERVE_DONE line=%x epoch=%x gen=%x seq=%x writer=%x valid=%x accepted=%x\n",
       crossPackagePendingAddr, crossPackagePendingEpoch, crossPackagePendingKey.generation,
@@ -2434,7 +2444,28 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       preservationRevoked)
     when (crossPackageResidentMatch && !preservationRevoked) {
       lowerPreserved(crossPackagePendingSet)(crossPackagePendingWay) := true.B
+      when (crossPackageKeepResident) {
+        // The receipt names these exact frozen bytes. Retain tags, data,
+        // image identity, slot epoch and duplicate-effect ownership. A later
+        // semantic write still needs this receipt and revokes it normally.
+        crossPackagePending := false.B
+        crossPackagePendingSeq := 0.U
+        assert(L1Preservation.safe(crossPackagePendingKey, safePacketWatermark),
+          "retained WB receipt refers to an unsafe predecessor")
+      }
     }
+  }
+  val retainedReceiptAccepted = crossPackageWbDone && crossPackageKeepResident &&
+    crossPackageResidentMatch && !preservationRevoked
+  val retainedReceiptPrev = RegNext(retainedReceiptAccepted, false.B)
+  val retainedReceiptEpoch = RegEnable(crossPackagePendingEpoch, retainedReceiptAccepted)
+  val retainedReceiptKey = RegEnable(crossPackagePendingKey, retainedReceiptAccepted)
+  when (retainedReceiptPrev) {
+    assert(!crossPackagePending && !crossPackageMetaClearPending &&
+      lowerPreserved(crossPackagePendingSet)(crossPackagePendingWay) &&
+      slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) === retainedReceiptEpoch &&
+      imageKey(crossPackagePendingSet)(crossPackagePendingWay).asUInt === retainedReceiptKey.asUInt,
+      "retained WB receipt changed resident identity or failed to release freeze")
   }
   val crossPackageMetaClear = Wire(Decoupled(new L1MetaWriteReq))
   metaWriteArb.io.in(2) <> crossPackageMetaClear
@@ -4233,6 +4264,24 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   }
   val overlapTrafficStop = RegNext(trafficCounting, false.B) && !trafficCounting
   safeChainLog(50, Seq(1.U) ++ overlapCacheCounts.toSeq ++ overlapLsuCounts ++ Seq(0.U),
+    0.U, overlapTrafficStop, true.B)
+
+  // RETAINED_COPY_OBSERVATION_ONLY: exactly one additional STOP identity,
+  // bringing this candidate to the existing 128-identity capture limit.
+  val retainedCopyEvents = Seq(true.B, crossPackageWbReq.fire,
+    crossPackageWbReq.fire && crossPackageCanKeepResident,
+    crossPackageWbDone, retainedReceiptAccepted,
+    crossPackageWbDone && crossPackageKeepResident && !crossPackageResidentMatch,
+    crossPackageWbDone && crossPackageKeepResident && preservationRevoked,
+    crossPackageMetaClear.fire)
+  val retainedCopyCounts = RegInit(VecInit(Seq.fill(8)(0.U(64.W))))
+  when (io.traffic_reset) { retainedCopyCounts.foreach(_ := 0.U) }
+    .elsewhen (trafficCounting) {
+      for ((event, i) <- retainedCopyEvents.zipWithIndex) {
+        when (event) { retainedCopyCounts(i) := retainedCopyCounts(i) + 1.U }
+      }
+    }
+  safeChainLog(51, Seq(1.U) ++ retainedCopyCounts.toSeq,
     0.U, overlapTrafficStop, true.B)
 
   // OPT2B_OBSERVATION_ONLY: semantic writes and first preservation blocks.

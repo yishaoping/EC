@@ -179,3 +179,61 @@ commit. C completed the C++ build, with binary SHA256
 (43,281,728 bytes). Unchanged source/runner/HEAD was verified before resume and
 the exclusive simulation-start marker was created before committing B. The
 end-to-end C simulation is in progress; no performance claim is made yet.
+
+## Experiment 3 — retain the acknowledged copy, accepted
+
+`overlap_retained_copy_20261103_040650_0a6ef6bc` completed with ROI start 579,235,
+stop 1,707,287 and 1,128,052 cycles: **1.126165672x** native. C saves another
+46,722 cycles (3.977%) from B, for a cumulative 579,811 (33.950%) reduction from
+frozen Opt4. Excess overhead versus native falls from 706,188 to 126,377 cycles,
+an 82.104% reduction. Retain C. Four checker cores, clocks, all cache geometries,
+line sizes, SVB16 and existing version/result/ownership requirements are preserved.
+
+Checksum 43439728 / verified=1; no assertion, FAIL or CANCELLED. Integrity PASS:
+373 allocations close as 368 completed, three coalesced and two flush-discarded.
+Same-line generation ordering PASS. Full-run ACK protocol PASS: 7,381 releases
+and matching ACKs, zero conflicts/invalid ACK/outstanding source at exit.
+All 128 observer and producer identities close; mandatory capture complete with
+no incomplete reasons. Optional diagnostic loss is explicit (538 examples).
+SC48–51 window, phase, state, subset and producer/footer conservation PASS.
+Generated clock/cache comparison PASS. Source patch, every hardware source hash
+and simulator binary hash were rechecked after measurement. L1/L2 shadow-model
+fidelity still FAIL, so derived geometry estimates remain excluded.
+
+SC51's complete traffic window counts 859 traditional preservation requests,
+all T-to-T, with 859 matching retained receipts and zero invalidating clears,
+owner mismatches or same-edge probe revocations. Optional SC8 observes 858 complete
+WB-to-receipt intervals totaling 55,514 cycles, with no invalidating clear and a
+14,809-cycle censored tail. These are activity/exposure observations; the measured
+46,722-cycle incremental gain is the whole candidate's ROI result, not a sum of
+those phases. Top-level probe revocation and rollback are not exercised here.
+
+SC50 counts 61,219 physical effects, all with effect-edge terminal enqueue;
+55,601 also deliver on the effect edge. Terminal enqueue/deliver both 61,268,
+applied-S3 blocked zero, queued/blocked 6,588 cycles, accepted terminal forwarding
+61,268, forwarded successor admissions 39,364. Candidate older-inflight cycles
+decrease from B's 274,254 to 216,282. These predicates overlap ordinary pipeline,
+preservation, scheduling and response activity; they are not isolated lost cycles.
+SC48 records three releases accepted during waitAck. All L1/L2 MSHR-full counts
+are zero; final checker ICache acquires are 26/18/21/30, TLB miss zero.
+
+275 fully captured ROI packages contain 633,972 checked instructions. One crossing
+package and three incomplete captures are excluded. Checker-local priority cycles
+per instruction: starvation 0.020782, issue available 1.005205, dependency 0.219852,
+setup/redirect/management 0.309236, LSL wait 0.002486, other 0.038079; DCache/replay
+zero. Captured admission-to-start totals 13,860 local cycles (~50/package), result
+queue backpressure zero. Changed package boundaries preclude paired-trace claims.
+
+Current stopping decision: retain measured C without speculative gate removal.
+The requested below-1.3x target is exceeded, including a further measured cache
+improvement after B. Further fetch/cache/count scaling has weak evidence. More
+store issue overlap remains plausible but needs a new proof and focused RTL
+coverage for nack ordering, same-slot image generations, S3 turnover, probes,
+replay and exact terminal ownership; existing overlapping counters alone do not
+justify deleting the barrier. Management/dependency optimization needs finer
+attribution first. No additional full benchmark is launched without that evidence.
+
+Compact exact/incremental patches, source/binary seals, run manifest, configuration,
+ROI, capture, protocol/integrity results and profiles are in `results/retained_copy/`.
+Full run/build artifacts remain in their private ignored directories. The main/FPGA
+tree and its processes were not altered.

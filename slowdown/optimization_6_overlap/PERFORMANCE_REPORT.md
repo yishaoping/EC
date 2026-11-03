@@ -15,10 +15,11 @@ checksum 43,439,728 / verified=1. Native ROI is 1,001,675 BOOM cycles.
 | Frozen Opt4 `476a76091` | 1,707,863 | 1.705007x | — |
 | A: direct checker delivery + SourceC overlap | 1,426,845 | 1.424459x | 281,018 cycles / 16.45% |
 | B: terminal bypass + fetch8 + prefix fusion | 1,174,774 | 1.172810x | 533,089 cycles / 31.21% |
-| C: retain acknowledged safe L1 copy | Pending | Pending | Pending |
+| C: retain acknowledged safe L1 copy | **1,128,052** | **1.126166x** | **579,811 cycles / 33.95%** |
 
-B clears both 1.5x and 1.3x. Its remaining overhead is 173,099 cycles relative to
-native, versus 706,188 frozen: a 75.49% reduction of excess runtime. This is one
+C is retained as the best implementation. It saves another 46,722 cycles (3.98%)
+from B after clearing both targets. Remaining overhead is 126,377 cycles relative
+to native, versus 706,188 frozen: an 82.10% reduction of excess runtime. This is one
 workload and one pinned simulator seed, without timing/FPGA signoff.
 
 Four 100 MHz Rocket checkers, 200 MHz BOOM, L1D 32 KiB (256 sets, 2 ways,
@@ -44,6 +45,14 @@ priority suppresses forwarding. B also supplies two instruction words per fetch
 and fuses a straight-line prefix with its first CFI when the real matching BJL
 head is ready. Otherwise the original prefix/held fallback remains.
 
+C publishes the safe predecessor as T-to-T and keeps the matching resident L1
+copy after its exact ACK. The same freeze, drain, full-byte transfer, lower-level
+history protection and source/epoch/key ownership remain. A probe-revoked owner
+cannot be resurrected; Branch permission retains the invalidating fallback.
+The next semantic write still requires the existing receipt/safety predicate and
+revokes that receipt on its physical effect. This removes destructive clear and
+demand refill from the exercised T-permission preservation path.
+
 A and B each combine coherent mechanisms. Their measured increments are 281,018
 and 252,071 cycles respectively; no isolated component ROI claim is supported.
 SourceC overlap was exercised only three times in A and once in B. The much larger
@@ -56,18 +65,19 @@ Priority categories are checker-local cycles per checked instruction, from compl
 captured packages inside ROI. Package boundaries change as BOOM timing changes;
 these are normalized distributions, not paired traces or additive BOOM savings.
 
-| Category | Frozen | A | B |
-| --- | ---: | ---: | ---: |
-| Instruction starvation | 2.09273 | 0.72672 | 0.02017 |
-| Issue available | 1.00018 | 1.00454 | 1.00501 |
-| Dependency | 0.00040 | 0.10235 | 0.22094 |
-| Setup / redirect / management | 0.15916 | 0.32014 | 0.33373 |
-| LSL wait | 0.00009 | 0.00212 | 0.00236 |
-| Other | 0 | 0.01904 | 0.03863 |
+| Category | Frozen | A | B | C |
+| --- | ---: | ---: | ---: | ---: |
+| Instruction starvation | 2.09273 | 0.72672 | 0.02017 | 0.02078 |
+| Issue available | 1.00018 | 1.00454 | 1.00501 | 1.00521 |
+| Dependency | 0.00040 | 0.10235 | 0.22094 | 0.21985 |
+| Setup / redirect / management | 0.15916 | 0.32014 | 0.33373 | 0.30924 |
+| LSL wait | 0.00009 | 0.00212 | 0.00236 | 0.00249 |
+| Other | 0 | 0.01904 | 0.03863 | 0.03808 |
 
 Captured packages/instructions: frozen 278/570,177; A 270/590,230;
-B 269/624,770. One crossing package and four incomplete captures are excluded
-in each report. Epoch is sampled metadata and can change within one package;
+B 269/624,770; C 275/633,972. Each report excludes one crossing package;
+frozen/A/B exclude four incomplete captures and C excludes three.
+Epoch is sampled metadata and can change within one package;
 profile identity is hart/sequence. All accepted starts have zero counters, and
 per-owner counters are monotonic with exact partition conservation.
 
@@ -80,21 +90,25 @@ zero. Capacity expansion and further fetch-width growth have weak evidence here.
 
 B's observed traditional preservation path has 851 complete WB-to-clear episodes:
 55,505 cycles from WB acceptance to receipt, then 851 to clear, plus induced demand
-refills outside that phase count. C tests keeping the acknowledged T copy in L1.
+refills outside that phase count. C's full SC51 window records 859 requests,
+859 exact retaining receipts and zero invalidating clears. Its optional SC8
+observes 858 WB-to-receipt intervals totaling 55,514 cycles, with a censored tail;
+the copy/ACK wait remains. C reduces older-inflight candidate cycles from 274,254
+to 216,282, while physical effects remain 61,219 and terminal deliveries 61,268.
 Dependency/management predicates now exceed frontend starvation, but they overlap
 producer progress, tail waiting and architectural pipeline constraints; their causal
 BOOM contribution has not been isolated. Captured result-enqueue backpressure is
-zero, and admission-to-start is about 51 local cycles/package.
+zero, and admission-to-start is about 50 local cycles/package in C.
 
 ## Validation and evidence boundary
 
-B software, integrity, same-line ordering, result/ACK protocol and mandatory
-capture PASS; checksum correct; zero FAIL, CANCELLED and assertion. All 7,438
+C software, integrity, same-line ordering, result/ACK protocol and mandatory
+capture PASS; checksum correct; zero FAIL, CANCELLED and assertion. All 7,381
 releases match ACKs, with no source conflict, invalid ACK or outstanding source at
-exit. Integrity closes 293 allocations as 291 completions, one coalesced and one
-flush-discarded. All 127 mandatory observer/producer identities close, including
-SC48/49/50 phase, state, subset and same-enable window checks. Optional diagnostic
-loss is explicit (731 examples) and does not affect mandatory validation.
+exit. Integrity closes 373 allocations as 368 completions, three coalesced and two
+flush-discarded. All 128 mandatory observer/producer identities close, including
+SC48–51 phase, state, subset and same-enable window checks. Optional diagnostic
+loss is explicit (538 examples) and does not affect mandatory validation.
 
 Actual emitted IBuf RTL passed both fetch widths under mixed RVC/RVI, cross-word
 instructions, BJL ownership, random ready/valid, kills and syscall suppression.
@@ -103,8 +117,10 @@ pending, random array/C/LSU notification stalls, full data/identity checks and 9
 blocked busy-source attempts. Reduced CPU contracts cover completion and retained
 copy interleavings; these do not substitute for RTL runtime tests.
 
-L2 shadow-model fidelity fails in frozen/A/B; derived cache-geometry estimates are
-excluded. Benchmark/lifecycle PASS does not establish every injected rollback,
+Cache shadow-model fidelity fails in frozen/A/B/C; derived cache-geometry estimates
+are excluded. C records no top-level owner-mismatch or probe-revoked receipt, so
+those retention races have source/abstract coverage rather than benchmark coverage.
+Benchmark/lifecycle PASS does not establish every injected rollback,
 exception or full durable recovery/drain path. Version retention, watermark,
 PASS/FAIL/CANCELLED, source ownership and same-line ordering remain functional
 requirements rather than performance assumptions.
@@ -126,8 +142,11 @@ optimization first needs finer measured attribution. These are future experiment
 not reasons to remove safety gates from the current validated version.
 
 Exact patches, binary seals, generated configuration checks and compact results:
-`results/direct_sourcec_v2/` and `results/terminal_fetch8_prefix/`.
+`results/direct_sourcec_v2/`, `results/terminal_fetch8_prefix/` and
+`results/retained_copy/` (including C's incremental patch from B).
 Full ignored runs/builds are retained under the matching run IDs. A is committed as
 `4250b35fe` and B as `40c8a18ca`. C's sealed binary SHA256 is
 `66ab0661ba28dc040cc2fb6dae6bf5f6be6d21ed4bf035a94861dff7c9110e6a`;
-its end-to-end simulation is running and the source change remains independent.
+its completed simulation passed with 1,128,052 ROI cycles. The final hardware
+source and binary hashes match that seal. C is retained as an independent hardware
+milestone; branch history records its commit after this report and evidence.

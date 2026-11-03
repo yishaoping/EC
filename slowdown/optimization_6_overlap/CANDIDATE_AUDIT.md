@@ -3,7 +3,8 @@
 This records source reasoning separately from benchmark/RTL evidence. A completed
 at 1.424459x and B at 1.172810x; their exact patches and validation are retained in
 `results/direct_sourcec_v2/` and `results/terminal_fetch8_prefix/`. Terminal bypass,
-prefix fusion and fetch8 are validated B hardware. Candidate C remains separate.
+prefix fusion and fetch8 are validated B hardware. C's retained copy also passed
+the pinned end-to-end workload at 1.126166x; its evidence remains separate.
 
 ## Completion overlap
 
@@ -107,7 +108,7 @@ full recovery path is validated.
 The previous 4,774 unsupported-fallback events are rising-edge events, include
 descriptor/resource guards, and cannot be called 4,774 avoidable stores or cycles.
 
-## Retain the acknowledged safe copy in L1 — candidate C
+## Retain the acknowledged safe copy in L1 — validated C
 
 This is separate from the withheld safe-SVB capture. SC8 in run A contains 787
 complete observed legacy handoffs inside ROI. Their observed phases total 10,512
@@ -153,8 +154,13 @@ Seven independent CPU contracts pass, including delayed copy/ACK, exact identity
 probe races, repeated lower-level historical retention and corrupted diagnostics.
 These are source/abstract witnesses only. Scala/FIRRTL, combinational-loop checks,
 firtool, generated geometry/clock comparison and C++ build passed in
-`overlap_retained_copy_20261103_040650_0a6ef6bc`. The sealed binary is now running
-the pinned BFS workload; top-level runtime validation remains pending.
+`overlap_retained_copy_20261103_040650_0a6ef6bc`. The sealed binary completed the
+pinned BFS workload at 1,128,052 ROI cycles, checksum 43439728 / verified=1.
+Correctness, integrity, same-line ordering, ACK protocol, mandatory capture,
+SC48–51 and configuration checks PASS. SC51 counts 859 requests and matching
+retained receipts, zero owner mismatch/probe-revoked receipts and zero invalidating
+clears. This exercises retention; it does not provide top-level probe-race or
+injected rollback coverage. The complete evidence is in `results/retained_copy/`.
 
 The actual emitted `BoomWritebackUnit.sv` from sealed B was also tested directly
 with Verilator: 300 voluntary TtoT/TtoN transactions, 1,600 accepted data beats,
