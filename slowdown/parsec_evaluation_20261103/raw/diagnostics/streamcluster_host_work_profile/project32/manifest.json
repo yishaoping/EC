@@ -1,0 +1,25 @@
+{
+  "compile_command": [
+    "/usr/bin/g++",
+    "-O2",
+    "-pg",
+    "-fno-inline",
+    "-ffunction-sections",
+    "-fdata-sections",
+    "-Wl,--gc-sections",
+    "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/streamcluster_project32/source/adapter.cpp",
+    "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/streamcluster_host_work_profile/project32/driver.cpp",
+    "-lm",
+    "-o",
+    "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/streamcluster_host_work_profile/project32/profile"
+  ],
+  "profile_command": [
+    "/data1/gzh/EC/chipyard/.conda-env/bin/gprof",
+    "-b",
+    "-p",
+    "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/streamcluster_host_work_profile/project32/profile",
+    "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/streamcluster_host_work_profile/project32/gmon.out"
+  ],
+  "source_sha256": "8de46111b6962b6e4d13ce0e18be57ad4c8ca9f3b020cbd4cf642d65f5585546",
+  "scope": "Host function call counts for input feasibility only. No host elapsed time is a hardware performance measurement. -fno-inline and -pg apply to this host-only executable."
+}
