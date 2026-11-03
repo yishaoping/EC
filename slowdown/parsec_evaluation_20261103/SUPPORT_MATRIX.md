@@ -1,19 +1,19 @@
 # PARSEC support matrix
 
-Status after the initial three-workload pilot. The current candidate correctness repair is not yet accepted; see STREAMCLUSTER_CORRECTNESS.md. PASS below denotes validated pilot evidence on the previous hardware revision, not a primary publication comparison. Installed Linux executables require a different execution environment and were not launched.
+Status after r2 acceptance and three simdev pilots. PASS denotes validated simdev evidence on accepted hardware commit `a6e63c75947739dfbb411b32bfe0eb5ed55c5bb1`; project64/project400 main measurements are pending. Installed Linux executables require a different execution environment and were not launched.
 
 | Benchmark | Builds | Runs | ROI identifiable | Native | Check | Correction |
 |---|---|---|---|---|---|---|
-|blackscholes|yes: official serial kernel + HTIF|yes|application kernel only|PASS (engineering pilot)|PASS|PASS (previous revision); r2 pending|
+|blackscholes|yes: official serial kernel + HTIF|yes|application kernel only|PASS (simdev)|PASS (simdev)|PASS (r2 simdev); project64 pending|
 |bodytrack|Linux artifact/source only|unsupported by current HTIF harness|requires baremetal adaptation|N/A|N/A|N/A|
-|canneal|yes: official serial kernel + HTIF|check yes|application kernel only|cycle bound reached; retry pending|PASS|running (previous revision); r2 pending|
+|canneal|yes: official serial kernel + HTIF|yes|application kernel only|PASS (simdev)|PASS (simdev)|PASS (r2 simdev); project400 pending|
 |dedup|Linux artifact/source only|unsupported by current HTIF harness|requires baremetal adaptation|N/A|N/A|N/A|
 |facesim|Linux artifact/source only|unsupported by current HTIF harness|requires baremetal adaptation|N/A|N/A|N/A|
 |ferret|Linux artifact/source only|unsupported by current HTIF harness|requires baremetal adaptation|N/A|N/A|N/A|
 |fluidanimate|Linux artifact/source only|unsupported by current HTIF harness|requires baremetal adaptation|N/A|N/A|N/A|
 |freqmine|Linux artifact/source only|unsupported by current HTIF harness|requires baremetal adaptation|N/A|N/A|N/A|
 |raytrace|Linux artifact/source only|unsupported by current HTIF harness|requires baremetal adaptation|N/A|N/A|N/A|
-|streamcluster|yes: official serial kernel + HTIF|native/check yes|application kernel only|PASS|PASS|EXCLUDED: epoch flush / store lease assertion; r2 pending|
+|streamcluster|yes: official serial kernel + HTIF|yes|application kernel only|PASS (simdev)|PASS (simdev)|PASS (r2 simdev); project64 pending|
 |swaptions|Linux artifact/source only|unsupported by current HTIF harness|requires baremetal adaptation|N/A|N/A|N/A|
 |vips|Linux artifact/source only|unsupported by current HTIF harness|requires baremetal adaptation|N/A|N/A|N/A|
 |x264|Linux artifact/source only|unsupported by current HTIF harness|requires baremetal adaptation|N/A|N/A|N/A|

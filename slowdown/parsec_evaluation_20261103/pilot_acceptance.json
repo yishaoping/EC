@@ -1,0 +1,64 @@
+{
+  "status": "PASS",
+  "canonical_hardware_commit": "a6e63c75947739dfbb411b32bfe0eb5ed55c5bb1",
+  "cases": {
+    "blackscholes": {
+      "runs": {
+        "native": "blackscholes_simdev_native_20261103_101813_087cd34a",
+        "check": "blackscholes_simdev_check_20261103_085855_de9c6c74",
+        "correction": "blackscholes_simdev_correction_20261103_114841_82e05265"
+      },
+      "roi_cycles": {
+        "native": 1522825,
+        "check": 1551970,
+        "correction": 1615350
+      },
+      "ROI_instructions": 904747,
+      "output": [
+        "benchmark=blackscholes checksum=4fdc182d9488e778 verified=1 options=16 runs=100"
+      ],
+      "PASS": 360,
+      "FAIL": 0,
+      "CANCELLED": 0
+    },
+    "streamcluster": {
+      "runs": {
+        "native": "streamcluster_simdev_native_20261103_101813_2c632d9b",
+        "check": "streamcluster_simdev_check_20261103_093035_0d86fc45",
+        "correction": "streamcluster_simdev_correction_20261103_114841_c5f49cfc"
+      },
+      "roi_cycles": {
+        "native": 751653,
+        "check": 920602,
+        "correction": 1452774
+      },
+      "ROI_instructions": 1094668,
+      "output": [
+        "benchmark=streamcluster checksum=5e0eed7ac7af71fb verified=1 centers=3 weight=16"
+      ],
+      "PASS": 525,
+      "FAIL": 0,
+      "CANCELLED": 0
+    },
+    "canneal": {
+      "runs": {
+        "native": "canneal_simdev_native_20261103_101813_3bda30a0",
+        "check": "canneal_simdev_check_20261103_093035_460cd17b",
+        "correction": "canneal_simdev_correction_20261103_114841_dce33974"
+      },
+      "roi_cycles": {
+        "native": 92212,
+        "check": 119034,
+        "correction": 182954
+      },
+      "ROI_instructions": 110507,
+      "output": [
+        "benchmark=canneal checksum=40b10d0000000000 verified=1 routing_cost=4365"
+      ],
+      "PASS": 39,
+      "FAIL": 0,
+      "CANCELLED": 0
+    }
+  },
+  "scope": "Initial simdev pilots only. Primary input comparisons are separately selected."
+}
