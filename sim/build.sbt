@@ -1,6 +1,6 @@
 import Tests._
 
-val chiselVersion = "3.5.6"
+val chiselVersion = "3.5.5"
 
 // keep chisel/firrtl specific class files, rename other conflicts
 val chiselFirrtlMergeStrategy = CustomMergeStrategy.rename { dep =>
