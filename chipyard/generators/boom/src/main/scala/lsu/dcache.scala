@@ -1750,6 +1750,13 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val measurementSeqFloor = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
   val crossPackagePending = RegInit(false.B)
   val crossPackageIssued = RegInit(false.B)
+  // A full SVB may become available while the legacy descriptor waits for
+  // safety. Remember only the original fast-path qualification and requester
+  // sequence; moving the same frozen predecessor never grants a write.
+  val crossPackageRescueQualified = RegInit(false.B)
+  val crossPackageRescueSeq = Reg(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val crossPackageRescueEpoch = Reg(UInt(16.W))
+  val crossPackageSvbRescue = WireDefault(false.B)
   // A safe snapshot can be copied below without giving up the local T
   // permission. Keep this choice with the WB owner through its exact ACK.
   val crossPackageKeepResident = RegInit(false.B)
@@ -1882,16 +1889,17 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   svbCaptureWbReq.bits.voluntary := false.B
   svbCaptureWbReq.bits.svb_capture := true.B
   svbCapturePacketSeq := svbFastSeq
-  when (svbEligible) {
+  when (svbEligible || crossPackageSvbRescue) {
     svbCapturePending := true.B
     svbCaptureIssued := false.B
     svbCaptureCancelled := false.B
-    svbFastSet := s2_store_set
-    svbFastWay := s2_store_way
-    svbFastTag := s2_req(0).addr >> untagBits
-    svbFastEpoch := slotEpoch(s2_store_set)(s2_store_way)
-    svbFastSeq := s2_req(0).packet_seq
-    svbFastKey := s2_overwrittenKey
+    svbFastSet := Mux(crossPackageSvbRescue, crossPackagePendingSet, s2_store_set)
+    svbFastWay := Mux(crossPackageSvbRescue, crossPackagePendingWay, s2_store_way)
+    svbFastTag := Mux(crossPackageSvbRescue, crossPackagePendingTag, s2_req(0).addr >> untagBits)
+    svbFastEpoch := Mux(crossPackageSvbRescue, crossPackagePendingEpoch, slotEpoch(s2_store_set)(s2_store_way))
+    svbFastSeq := Mux(crossPackageSvbRescue, crossPackageRescueSeq, s2_req(0).packet_seq)
+    svbFastKey := Mux(crossPackageSvbRescue,
+      imageKey(crossPackagePendingSet)(crossPackagePendingWay), s2_overwrittenKey)
   }
   when (svbCaptureWbReq.fire) {
     svbCaptureIssued := true.B
@@ -1998,6 +2006,40 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // This also supplies the existing LSU nack and MSHR replay retry paths;
   // simply suppressing s2_write_grant would lose an accepted replay owner.
   l1CrossPackageBlocked := crossPackageDomainWait || crossPackagePendingLine || svbEpochWriteBarrier
+
+  // Use the unchanged capture/lease path if a full-SVB fallback gains space.
+  // The old descriptor has not issued a WB or clear; all older grants and
+  // owners must drain first. Preserve the same set/way/tag/slot epoch, current
+  // immutable predecessor and original incoming sequence across the handoff.
+  // Do not start across a flush, FAIL/CANCELLED, epoch change, safe boundary,
+  // probe, existing capture/lease, or any outstanding terminal responsibility.
+  crossPackageSvbRescue := crossPackagePending && crossPackageRescueQualified &&
+    crossPackageRescueEpoch === svbEpoch && !svbEpochBoundary && !svbInvalidate.valid &&
+    !crossPackageIssued && !crossPackageMetaClearPending && crossPackageResidentMatch &&
+    !crossPackageSlotConflict && !crossPackageMetaClearBlock &&
+    !completionPending(crossPackagePendingSet)(crossPackagePendingWay) &&
+    !(prober.io.state.valid && prober.io.state.bits(idxMSB, idxLSB) === crossPackagePendingSet) &&
+    !svbCapturePending && !svbFastLineValid && svb.io.capture.ready &&
+    imageValid(crossPackagePendingSet)(crossPackagePendingWay) &&
+    imageKey(crossPackagePendingSet)(crossPackagePendingWay).valid &&
+    crossPackageRescueSeq > imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq &&
+    !L1Preservation.safe(imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)
+  when (crossPackageSvbRescue) {
+    crossPackagePending := false.B
+    crossPackagePendingSeq := 0.U
+  }
+  val crossPackageRescued = RegNext(crossPackageSvbRescue, false.B)
+  val crossPackageRescuedSet = RegEnable(crossPackagePendingSet, crossPackageSvbRescue)
+  val crossPackageRescuedWay = RegEnable(crossPackagePendingWay, crossPackageSvbRescue)
+  val crossPackageRescuedTag = RegEnable(crossPackagePendingTag, crossPackageSvbRescue)
+  val crossPackageRescuedEpoch = RegEnable(crossPackagePendingEpoch, crossPackageSvbRescue)
+  when (crossPackageRescued) {
+    assert(!crossPackagePending && svbCapturePending && !svbCaptureIssued &&
+      clearFreezeValid && clearFreezeSet === crossPackageRescuedSet &&
+      svbFastSet === crossPackageRescuedSet && svbFastWay === crossPackageRescuedWay &&
+      svbFastTag === crossPackageRescuedTag && svbFastEpoch === crossPackageRescuedEpoch,
+      "SVB rescue lost or changed the frozen predecessor owner")
+  }
 
   crossPackageWbReq.valid := crossPackagePending &&
     crossPackageResidentMatch &&
@@ -2403,6 +2445,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       }
     }
   }
+  when (!crossPackagePending || crossPackageSvbRescue) { crossPackageRescueQualified := false.B }
   when (crossPackageBlockCondition && !crossPackagePending) {
     printf("PRESERVATION_START cycle=%x line=%x request_seq=%x owner_seq=%x owner_generation=%x valid=%x ready=%x fire=%x blocked_fastline=%x fast_line=%x block_condition=%x slot_reserved=%x nack_hit=%x lookup_epoch=%x live_epoch=%x\n",
       io.csr_cycle, (s2_req(0).addr >> blockOffBits) << blockOffBits,
@@ -2421,8 +2464,11 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     crossPackagePendingSeq := s2_overwrittenPacketSeq
     crossPackagePendingEpoch := slotEpoch(s2_store_set)(s2_store_way)
     crossPackagePendingKey := s2_overwrittenKey
+    crossPackageRescueQualified := svbFullFallback
+    crossPackageRescueSeq := s2_req(0).packet_seq
+    crossPackageRescueEpoch := svbEpoch
   }
-  when (crossPackagePending && !crossPackageIssued && !crossPackageMetaClearPending && crossPackageResidentMatch) {
+  when (crossPackagePending && !crossPackageSvbRescue && !crossPackageIssued && !crossPackageMetaClearPending && crossPackageResidentMatch) {
     // Pre-freeze grants drain before snapshot admission. Their final image is
     // the predecessor to preserve, even if its generation changed while draining.
     crossPackagePendingSeq := imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq
@@ -4346,6 +4392,23 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     safeChainLog(53 + page, Seq(1.U) ++ recoveryPerfCacheCounts.slice(page*15, (page+1)*15),
       0.U, io.csr_cycle(9,0) === 0.U, true.B)
   }
+  val rescuePerfEvents = Seq(crossPackagePending && crossPackageRescueQualified,
+    crossPackagePending && crossPackageRescueQualified && svb.io.capture.ready,
+    crossPackageSvbRescue)
+  val rescuePerfCounts = RegInit(VecInit(Seq.fill(3)(0.U(64.W))))
+  when (safeChainRoi) {
+    for ((event, i) <- rescuePerfEvents.zipWithIndex) {
+      when (event) { rescuePerfCounts(i) := rescuePerfCounts(i) + 1.U }
+    }
+  }
+  safeChainLog(55, Seq(1.U) ++ rescuePerfCounts.toSeq, 0.U,
+    io.csr_cycle(9,0) === 0.U, true.B)
+  safeChainLog(56, Seq(1.U, crossPackagePendingSet, crossPackagePendingWay,
+    crossPackagePendingTag, crossPackagePendingEpoch, crossPackageRescueSeq,
+    imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq,
+    imageKey(crossPackagePendingSet)(crossPackagePendingWay).generation,
+    svbEpoch, safePacketWatermark, svb.io.occupancy), 0.U,
+    crossPackageSvbRescue, true.B)
   // RETAINED_COPY_OBSERVATION_ONLY: exactly one additional STOP identity,
   // bringing this candidate to the existing 128-identity capture limit.
   val retainedCopyEvents = Seq(true.B, crossPackageWbReq.fire,

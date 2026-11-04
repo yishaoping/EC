@@ -188,3 +188,18 @@ re-execution work was skipped. Checker local work, protocol, SVB integrity,
 data ordering, source/release/ACK ledgers and capture validators PASS. The
 fixed project64/project400 and BFS regression suite is now running. This
 pilot does not satisfy the main-input target.
+
+## Candidate 2: retry full-SVB fallback through existing capture
+
+Independent branch/worktree `/data1/gzh/EC-opt4-recovery-rescue` preserves the
+ongoing candidate-1 regressions and source seal. Complete frozen Canneal SC8
+plus full SVB allocation/terminal streams reveal 97,796 unsafe-wait cycles
+where an episode began with all 16 entries full, but later had a free entry
+(15 episodes). This is an opportunity bound, not predicted savings. Candidate
+2 remembers the original narrow fast-path qualification and incoming packet
+sequence when a full fallback is created, then hands its frozen descriptor to
+the existing capture reader if space appears and all original owner/drain
+guards hold. The actual lease still requires durable capture, and safe
+versions continue using the original WB/ACK path. No retention, watermark,
+ACK or flush rule changes. Build, directed handoff tests and measurement are
+pending; no correctness/performance acceptance is claimed.

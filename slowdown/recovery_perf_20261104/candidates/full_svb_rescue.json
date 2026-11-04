@@ -1,0 +1,23 @@
+{
+  "state": "IMPLEMENTED_BUILD_PENDING",
+  "parent_hardware": "2b0ea7ff0",
+  "mechanism": "A full-SVB fallback descriptor can transfer its unchanged frozen predecessor into the existing capture reader once a slot becomes available, before becoming safe",
+  "proof_observation": {
+    "workload": "canneal_project400 frozen run",
+    "ROI": [
+      944668,
+      1613546
+    ],
+    "complete_SC8": true,
+    "candidate_exposure_cycles": 97796,
+    "full_start_episodes_with_later_space": 15,
+    "scope": "Upper exposure, not measured saving; original narrow eligibility and all guards further reduce opportunity"
+  },
+  "invariants": [
+    "No overwrite permission until unchanged snapshot capture handshake",
+    "Same frozen set/way/tag/slot epoch and original incoming seq; current predecessor immutable key",
+    "No rescue after WB issue, safe boundary, probe, owner conflict, outstanding completion, flush, FAIL/CANCELLED or epoch change",
+    "No changes to watermark, SVB retention/coalescing/flush, ACK, checker count or application work"
+  ],
+  "validation": "Required: emitted handoff guards/owner transition test, epoch cone, WB unit, system pilot then fixed regressions; persistent historical recovery remains an explicit limitation until directed evidence exists"
+}
