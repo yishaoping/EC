@@ -1,0 +1,74 @@
+{
+  "state": "COMPLETE",
+  "started_utc": "2026-11-03T13:22:40.503146+00:00",
+  "pid": 973494,
+  "batch_ids": {
+    "blackscholes_project64": "measurements_124710_1426a31f",
+    "streamcluster_project64": "measurements_131425_0ee6393e",
+    "canneal_project400": "measurements_131916_46c7c03f"
+  },
+  "unsupported_scope": "Only these three benchmarks have equivalent Native/Check/Correction HTIF builds; other PARSEC applications are listed in SUPPORT_MATRIX.md and are not hardware measurements.",
+  "failures": [],
+  "primary_triplets": {
+    "blackscholes_project64": {
+      "native": "blackscholes_project64_native_20261103_124710_a0b79670",
+      "check": "blackscholes_project64_check_20261103_124710_09e19e54",
+      "correction": "blackscholes_project64_correction_20261103_124710_3df62032"
+    },
+    "streamcluster_project64": {
+      "native": "streamcluster_project64_native_20261103_131426_8dc024e0",
+      "check": "streamcluster_project64_check_20261103_131426_433d3f88",
+      "correction": "streamcluster_project64_correction_20261103_131426_9a694362"
+    },
+    "canneal_project400": {
+      "native": "canneal_project400_native_20261103_131917_89eede0a",
+      "check": "canneal_project400_check_20261103_131917_a54e5f26",
+      "correction": "canneal_project400_correction_20261103_131917_9545510b"
+    }
+  },
+  "last_wait_check_utc": "2026-11-03T15:15:46.988490+00:00",
+  "batches": {
+    "correction_repeats": {
+      "plan": "slowdown/parsec_evaluation_20261103/build/finalize_running_20261103T132240_8653c8bc/correction_repeats.json",
+      "command": [
+        "/data1/gzh/EC/chipyard/.conda-env/bin/python3",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/scripts/run_measurement_batch.py",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/finalize_running_20261103T132240_8653c8bc/correction_repeats.json"
+      ],
+      "log": "slowdown/parsec_evaluation_20261103/build/finalize_running_20261103T132240_8653c8bc/correction_repeats.log",
+      "state": "COMPLETED",
+      "last_update_utc": "2026-11-03T17:47:55.500144+00:00",
+      "exit_status": 0,
+      "results_file": "slowdown/parsec_evaluation_20261103/build/measurements_151647_80f00eab/results.json",
+      "results": {
+        "canneal_project400_correction_repeat": {
+          "exit_status": 0,
+          "run_directory": "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/runs/canneal_project400_correction_20261103_151647_3dddbf58",
+          "analysis_exit_status": 0
+        },
+        "streamcluster_project64_correction_repeat": {
+          "exit_status": 0,
+          "run_directory": "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/runs/streamcluster_project64_correction_20261103_151647_d75315d1",
+          "analysis_exit_status": 0
+        },
+        "blackscholes_project64_correction_repeat": {
+          "exit_status": 0,
+          "run_directory": "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/runs/blackscholes_project64_correction_20261103_151647_37bcaf02",
+          "analysis_exit_status": 0
+        }
+      },
+      "end_utc": "2026-11-03T17:47:55.501732+00:00"
+    }
+  },
+  "repeat_verification": {
+    "exit_status": 0,
+    "stdout": "PASS\n",
+    "stderr": ""
+  },
+  "summary": {
+    "exit_status": 0,
+    "stdout": "{\n  \"validated_runs\": 25,\n  \"valid_primary_triplets\": 3,\n  \"excluded_or_pending\": 8,\n  \"stats\": {\n    \"check_native\": {\n      \"n\": 3,\n      \"geometric_mean\": 1.1409544124080222,\n      \"arithmetic_mean\": 1.1498185563733583,\n      \"median\": 1.0951786426402212,\n      \"min\": 1.0054788583327394,\n      \"max\": 1.3487981681471142,\n      \"minimum_benchmark\": \"blackscholes\",\n      \"maximum_benchmark\": \"canneal\"\n    },\n    \"correction_native\": {\n      \"n\": 3,\n      \"geometric_mean\": 1.53811321288143,\n      \"arithmetic_mean\": 1.605620918372971,\n      \"median\": 1.6242886503968132,\n      \"min\": 1.0414398095802408,\n      \"max\": 2.1511342951418593,\n      \"minimum_benchmark\": \"blackscholes\",\n      \"maximum_benchmark\": \"canneal\"\n    },\n    \"correction_check\": {\n      \"n\": 3,\n      \"geometric_mean\": 1.3480934874822832,\n      \"arithmetic_mean\": 1.3712480964359297,\n      \"median\": 1.4831266673362353,\n      \"min\": 1.035764999879889,\n      \"max\": 1.5948526220916648,\n      \"minimum_benchmark\": \"blackscholes\",\n      \"maximum_benchmark\": \"canneal\"\n    }\n  }\n}\n",
+    "stderr": ""
+  },
+  "ended_utc": "2026-11-03T17:48:01.166725+00:00"
+}
