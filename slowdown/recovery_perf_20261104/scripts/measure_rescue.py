@@ -57,7 +57,7 @@ def main():
         return 1
     generated = ROOT / "slowdown/optimization_6_overlap/build" / args.build_id / "generated"
     run("rescue_gate", [OUT / "scripts/test_emitted_rescue_gate.py", generated / "gen-collateral/BoomNonBlockingDCache.sv"])
-    run("epoch_cone", [ROOT / "slowdown/parsec_evaluation_20261103/scripts/test_emitted_epoch_cone.py", generated / "gen-collateral/BoomNonBlockingDCache.sv"])
+    run("epoch_cone", [OUT / "scripts/test_epoch_private.py", generated / "gen-collateral/BoomNonBlockingDCache.sv"])
     # The actual retained data/ACK tests were already run against this byte
     # identical SVB module; changed control is checked above and in system.
     old = Path("/data1/gzh/EC-opt4-recovery-perf/slowdown/optimization_6_overlap/build/overlap_checker_icache4k_20261104_021411_630679e4/generated/gen-collateral")
