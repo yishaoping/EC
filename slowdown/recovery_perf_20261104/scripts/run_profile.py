@@ -28,14 +28,19 @@ def main():
     run_pilot.compact_capture.Router = ProfileRouter
     old_optional = run_pilot.compact_capture.optional_event
     run_pilot.compact_capture.optional_event = lambda k, h: k not in (11, 12) and old_optional(k, h)
-    before = set((run_pilot.OUT / "runs").iterdir())
+    runs = set()
+    original_dump = run_pilot.dump
+    def capture_manifest(path, data):
+        if path.name == "run_manifest.json" and path.parent.parent == run_pilot.OUT / "runs":
+            runs.add(path.parent)
+        original_dump(path, data)
+    run_pilot.dump = capture_manifest
     sys.argv = ["run_pilot.py", args.workload, "correction", "--validation",
                 "--hardware-revision", str(args.revision.resolve()),
                 "--max-cycles", str(args.max_cycles)]
     rc = run_pilot.main()
-    fresh = set((run_pilot.OUT / "runs").iterdir()) - before
-    assert len(fresh) == 1
-    run = fresh.pop()
+    assert len(runs) == 1
+    run = runs.pop()
     manifest_path = run / "run_manifest.json"
     manifest = json.loads(manifest_path.read_text())
     manifest["profiling_capture_policy"] = {
