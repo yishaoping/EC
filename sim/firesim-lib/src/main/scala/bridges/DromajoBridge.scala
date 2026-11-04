@@ -3,24 +3,41 @@ package firesim.bridges
 
 import chisel3._
 import chisel3.util._
-import org.chipsalliance.cde.config.Parameters
+import freechips.rocketchip.config.Parameters
 import freechips.rocketchip.util._
 
-import testchipip.{TileTraceIO, TraceBundleWidths, SerializableTileTraceIO}
+import testchipip.{TileTraceIO, TracedInstructionWidths}
 
 import midas.widgets._
+
+//******
+//* MISC
+//******
+
+case class DromajoKey(
+  insnWidths: TracedInstructionWidths, // Widths of variable length fields in each TI
+  vecSizes: Int // The number of insns in each vec (= max insns retired at that core)
+)
+
+//*************
+//* TARGET LAND
+//*************
+
+class DromajoTargetIO(insnWidths: TracedInstructionWidths, numInsns: Int) extends Bundle {
+    val trace = Input(new TileTraceIO(insnWidths, numInsns))
+}
 
 /**
  * Blackbox that is instantiated in the target
  */
-class DromajoBridge(widths: TraceBundleWidths) extends BlackBox
-    with Bridge[HostPortIO[SerializableTileTraceIO], DromajoBridgeModule]
+class DromajoBridge(insnWidths: TracedInstructionWidths, numInsns: Int) extends BlackBox
+    with Bridge[HostPortIO[DromajoTargetIO], DromajoBridgeModule]
 {
-  val io = IO(new SerializableTileTraceIO(widths))
+  val io = IO(new DromajoTargetIO(insnWidths, numInsns))
   val bridgeIO = HostPort(io)
 
   // give the Dromajo key to the GG module
-  val constructorArg = Some(widths)
+  val constructorArg = Some(DromajoKey(insnWidths, numInsns))
 
   // generate annotations to pass to GG
   generateAnnotations()
@@ -31,8 +48,8 @@ class DromajoBridge(widths: TraceBundleWidths) extends BlackBox
  */
 object DromajoBridge {
   def apply(tracedInsns: TileTraceIO)(implicit p: Parameters): DromajoBridge = {
-    val b = Module(new DromajoBridge(tracedInsns.traceBundleWidths))
-    b.io.trace := tracedInsns.asSerializableTileTrace
+    val b = Module(new DromajoBridge(tracedInsns.insnWidths, tracedInsns.numInsns))
+    b.io.trace := tracedInsns
     b
   }
 }
@@ -42,7 +59,7 @@ object DromajoBridge {
 //* This lives in the host (still runs on the FPGA)
 //*************************************************
 
-class DromajoBridgeModule(key: TraceBundleWidths)(implicit p: Parameters) extends BridgeModule[HostPortIO[SerializableTileTraceIO]]()(p)
+class DromajoBridgeModule(key: DromajoKey)(implicit p: Parameters) extends BridgeModule[HostPortIO[DromajoTargetIO]]()(p)
     with StreamToHostCPU
 {
   // CONSTANTS: DMA Parameters
@@ -52,7 +69,7 @@ class DromajoBridgeModule(key: TraceBundleWidths)(implicit p: Parameters) extend
 
     // setup io
     val io = IO(new WidgetIO)
-    val hPort = IO(HostPort(new SerializableTileTraceIO(key)))
+    val hPort = IO(HostPort(new DromajoTargetIO(key.insnWidths, key.vecSizes)))
 
     // helper to get number to round up to nearest multiple
     def roundUp(num: Int, mult: Int): Int = { (num/mult).ceil.toInt * mult }
@@ -60,7 +77,7 @@ class DromajoBridgeModule(key: TraceBundleWidths)(implicit p: Parameters) extend
     // get the traces
     val traces = hPort.hBits.trace.insns.map({ unmasked =>
       val masked = WireDefault(unmasked)
-      masked.valid := unmasked.valid && !hPort.hBits.reset
+      masked.valid := unmasked.valid && !hPort.hBits.trace.reset
       masked
     })
     private val iaddrWidth = roundUp(traces.map(_.iaddr.getWidth).max, 8)
