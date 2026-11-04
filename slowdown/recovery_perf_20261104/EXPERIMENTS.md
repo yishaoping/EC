@@ -97,3 +97,39 @@ checker, four checkers, total +8 KiB data RAM plus tags/replacement state).
 The original main-core DCache, SVB, ACK, watermark and verification controls
 are unchanged. Measurement and regression gates decide keep/reject; no
 area/timing signoff or achieved speedup is claimed.
+
+## Steady-window source audit and rejected shortcuts
+
+Streamcluster simdev [200704,399360) has 198,656 measured BOOM cycles:
+64,640 commit cycles, 26,611 no-commit/IC-gate cycles, 54,726 no-commit with a
+nonempty ROB, and 51,345 no-commit with an empty ROB (the remaining priority
+categories account for the balance). Cache exposures overlap: 52,770 freeze-set
+ingress cycles, 47,730 legacy-preservation-pending cycles, 7,032 capture-pending
+cycles, 15,259 ACK-pending cycles, zero physical refill beats, zero MSHR-active
+cycles, and zero S2 write-busy cycles. This does not justify a larger main-core
+DCache, additional MSHRs, or speculative S3 turnover changes for Streamcluster.
+
+Observed SC7 state durations in [200000,400000) include 14,322 scheduling-state
+cycles and 12,289 transfer-state cycles, of which 12,052 show RSU busy. These
+are preliminary state exposures. The SC7 change key deliberately excludes the
+pipeline-stall bit: replaying its saved bit alone undercounts threshold-edge
+stalls (100 cycles in this window), so SC52 supplies the authoritative gate
+counter. Optional record accounting must also be checked before using a full
+SC7 interval as complete evidence.
+
+An apparent snapshot/dispatch overlap shortcut was rejected by source audit:
+`core.scala:2289` requires ROB empty for producerSealCoreReady, while R_IC's
+transfer state stalls retirement until close_tail_ready. Allowing dispatch
+alone during transfer can make the ROB nonempty and deadlock sealing. Relaxing
+this requires a new proof that all younger work is excluded from the old
+producer, plus boundary/rollback tests; the current candidate does neither.
+
+A second proposed shortcut, capturing already-safe predecessors in SVB by
+removing the eligibility safety test, is not applied. L1Preservation.allow
+requires both safety and a preserved lower copy; PASS alone is insufficient.
+SVB SPEC entries can be removed on an exception/epoch flush before promotion,
+while only WB_WAIT retains through ACK. Extending this path would require
+persistent historical-version recovery tests and a complete flush/epoch
+ownership design. The existing no-fault tests do not establish that broader
+recovery property. No ACK, preservation, flush, epoch or reclamation control
+has been relaxed in candidate 1.
