@@ -99,8 +99,8 @@ def perf(workload,revision,source,cycles):
         assert result['status']=='PASS' and m['exit_status']==0,result
         full=cache.read(run/'full_checker_work.json') if workload=='bfs' else result['full_session_checker_work']
         assert full['complete'],full
-        m['experiment_cache_identity']=expected
-        (run/'run_manifest.json').write_text(json.dumps(m,indent=2)+'\n')
+        with (run/'experiment_identity.json').open('x') as f:
+            json.dump(expected,f,indent=2);f.write('\n')
         entry.update(status='PASS',run=str(run),ROI_cycles=result['ROI_cycles'])
         STATE['results'][workload]=dict(status='PASS',run=str(run),ROI_cycles=result['ROI_cycles'],full_checker_work=full)
         return STATE['results'][workload]

@@ -84,8 +84,9 @@ def discover():
                     correct=correct and a['ROI_cycles']==m['roi_cycles']
                 metadata_complete=bool(source and sim and elf and swfile.exists() and lm.exists() and identity['roi_scope'])
                 intact=bool(swfile.exists() and elf and sha(swfile)==elf)
-                identity=m.get('experiment_cache_identity',identity)
-                if 'experiment_cache_identity' in m:
+                identity_file=p.parent/'experiment_identity.json'
+                identity=read(identity_file) if identity_file.exists() else m.get('experiment_cache_identity',identity)
+                if identity_file.exists() or 'experiment_cache_identity' in m:
                     intact=intact and lm.exists() and actual_sha(lm)==identity['loadmem_sha256']
                     intact=intact and bool(argv) and Path(argv[0]).exists() and actual_sha(argv[0])==identity['simulator_sha256']
                     work=read(p.parent/'full_checker_work.json') if benchmark=='gapbs_bfs512_8192_source0' and (p.parent/'full_checker_work.json').exists() else a.get('full_session_checker_work',{})
