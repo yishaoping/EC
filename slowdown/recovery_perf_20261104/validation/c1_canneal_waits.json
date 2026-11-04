@@ -1,0 +1,231 @@
+{
+  "run": "/data1/gzh/EC-opt4-recovery-perf/slowdown/parsec_evaluation_20261103/runs/canneal_project400_correction_20261104_034748_9af23859",
+  "ROI": {
+    "start_cycle": 942096,
+    "stop_cycle": 1490533,
+    "safe_chain_roi_cycles": 548437,
+    "scope": "workload_run call only, two adjacent CSR samples at each boundary; setup/STOP/checker completion/output excluded"
+  },
+  "scope": "complete state-stream wait exposure in main cycles; overlapping cache/core counters are not additive causal savings; same-edge uncertainty at most one cycle",
+  "status": "PASS",
+  "clock_fit": {
+    "period": "1",
+    "offset": "103",
+    "async_policy": "ceil raw timestamp to first main pre-edge sample; equal-time batch unordered"
+  },
+  "counts": {
+    "POST_SAFE_WAIT": 33154,
+    "MULTI_CAUSE": 3092,
+    "RESULT_NOT_AVAILABLE": 51403,
+    "PREFIX_PROPAGATION_DELAY": 11
+  },
+  "phases": {
+    "POST_SAFE_WAIT:none": 33154,
+    "MULTI_CAUSE:none": 3092,
+    "RESULT_NOT_AVAILABLE:checker_execution_or_tail": 50743,
+    "RESULT_NOT_AVAILABLE:pre_accept_transport_or_cleanup": 660,
+    "PREFIX_PROPAGATION_DELAY:watermark_register_edge": 11
+  },
+  "longest": [
+    {
+      "start": 1440713,
+      "cycles": 2942,
+      "category": "RESULT_NOT_AVAILABLE",
+      "context": {
+        "target": 115,
+        "entry": 477,
+        "slot_epoch": 10,
+        "generation": 148290,
+        "writer": 0,
+        "set": 61,
+        "tag": 131091,
+        "way": 1,
+        "safe_prefix": 114,
+        "next_prefix": 114,
+        "earliest_missing_predecessor": 115,
+        "hole_slot_tag": 115,
+        "hole_flags": 1,
+        "target_distance": 0,
+        "release_bits": 67589,
+        "unsafe": true,
+        "reason": "no target PASS formed/accepted",
+        "phase": "checker_execution_or_tail"
+      }
+    },
+    {
+      "start": 955495,
+      "cycles": 2774,
+      "category": "RESULT_NOT_AVAILABLE",
+      "context": {
+        "target": 1,
+        "entry": 6,
+        "slot_epoch": 3,
+        "generation": 132129,
+        "writer": 0,
+        "set": 167,
+        "tag": 131093,
+        "way": 1,
+        "safe_prefix": 0,
+        "next_prefix": 0,
+        "earliest_missing_predecessor": 1,
+        "hole_slot_tag": 1,
+        "hole_flags": 1,
+        "target_distance": 0,
+        "release_bits": 67589,
+        "unsafe": true,
+        "reason": "no target PASS formed/accepted",
+        "phase": "checker_execution_or_tail"
+      }
+    },
+    {
+      "start": 981295,
+      "cycles": 2408,
+      "category": "RESULT_NOT_AVAILABLE",
+      "context": {
+        "target": 6,
+        "entry": 62,
+        "slot_epoch": 3,
+        "generation": 133521,
+        "writer": 0,
+        "set": 230,
+        "tag": 131093,
+        "way": 1,
+        "safe_prefix": 5,
+        "next_prefix": 5,
+        "earliest_missing_predecessor": 6,
+        "hole_slot_tag": 6,
+        "hole_flags": 1,
+        "target_distance": 0,
+        "release_bits": 67589,
+        "unsafe": true,
+        "reason": "no target PASS formed/accepted",
+        "phase": "checker_execution_or_tail"
+      }
+    },
+    {
+      "start": 1102272,
+      "cycles": 2245,
+      "category": "RESULT_NOT_AVAILABLE",
+      "context": {
+        "target": 35,
+        "entry": 141,
+        "slot_epoch": 4,
+        "generation": 137177,
+        "writer": 0,
+        "set": 124,
+        "tag": 131348,
+        "way": 1,
+        "safe_prefix": 33,
+        "next_prefix": 33,
+        "earliest_missing_predecessor": 34,
+        "hole_slot_tag": 34,
+        "hole_flags": 1,
+        "target_distance": 1,
+        "release_bits": 65541,
+        "unsafe": true,
+        "reason": "no target PASS formed/accepted",
+        "phase": "checker_execution_or_tail"
+      }
+    },
+    {
+      "start": 952653,
+      "cycles": 2186,
+      "category": "RESULT_NOT_AVAILABLE",
+      "context": {
+        "target": 1,
+        "entry": 6,
+        "slot_epoch": 3,
+        "generation": 132129,
+        "writer": 0,
+        "set": 167,
+        "tag": 131093,
+        "way": 1,
+        "safe_prefix": 0,
+        "next_prefix": 0,
+        "earliest_missing_predecessor": 1,
+        "hole_slot_tag": 1,
+        "hole_flags": 1,
+        "target_distance": 0,
+        "release_bits": 67589,
+        "unsafe": true,
+        "reason": "no target PASS formed/accepted",
+        "phase": "checker_execution_or_tail"
+      }
+    },
+    {
+      "start": 1456792,
+      "cycles": 1949,
+      "category": "RESULT_NOT_AVAILABLE",
+      "context": {
+        "target": 119,
+        "entry": 494,
+        "slot_epoch": 15,
+        "generation": 148845,
+        "writer": 0,
+        "set": 122,
+        "tag": 131348,
+        "way": 1,
+        "safe_prefix": 117,
+        "next_prefix": 117,
+        "earliest_missing_predecessor": 118,
+        "hole_slot_tag": 118,
+        "hole_flags": 1,
+        "target_distance": 1,
+        "release_bits": 65541,
+        "unsafe": true,
+        "reason": "no target PASS formed/accepted",
+        "phase": "checker_execution_or_tail"
+      }
+    },
+    {
+      "start": 978915,
+      "cycles": 1864,
+      "category": "RESULT_NOT_AVAILABLE",
+      "context": {
+        "target": 6,
+        "entry": 62,
+        "slot_epoch": 3,
+        "generation": 133521,
+        "writer": 0,
+        "set": 230,
+        "tag": 131093,
+        "way": 1,
+        "safe_prefix": 4,
+        "next_prefix": 4,
+        "earliest_missing_predecessor": 5,
+        "hole_slot_tag": 5,
+        "hole_flags": 1,
+        "target_distance": 1,
+        "release_bits": 65541,
+        "unsafe": true,
+        "reason": "no target PASS formed/accepted",
+        "phase": "checker_execution_or_tail"
+      }
+    },
+    {
+      "start": 1099857,
+      "cycles": 1714,
+      "category": "RESULT_NOT_AVAILABLE",
+      "context": {
+        "target": 35,
+        "entry": 141,
+        "slot_epoch": 4,
+        "generation": 137177,
+        "writer": 0,
+        "set": 124,
+        "tag": 131348,
+        "way": 1,
+        "safe_prefix": 32,
+        "next_prefix": 32,
+        "earliest_missing_predecessor": 33,
+        "hole_slot_tag": 33,
+        "hole_flags": 1,
+        "target_distance": 2,
+        "release_bits": 65541,
+        "unsafe": true,
+        "reason": "no target PASS formed/accepted",
+        "phase": "checker_execution_or_tail"
+      }
+    }
+  ]
+}
