@@ -152,3 +152,19 @@ untouched. The collector now shares IDENTITY_LIMIT=144 for both dictionaries,
 retains bounded malformed-record diagnostics, and rejects identity 145 in a
 directed host test. The waiting candidate driver was superseded before it
 launched any simulation; its replacement uses the qualified baseline analysis.
+
+## Candidate 1 provisional windows (complete pilot still running)
+
+The initial [110592,189440) window is unfavorable: retirement 50,707 to
+46,059 and freeze-set ingress exposure 18,894 to 29,899 cycles. It is retained,
+not discarded. In the later [200704,399360) window, retirement increases
+144,136 to 169,232 while freeze-set ingress falls 52,770 to 32,952, legacy
+pending 47,730 to 26,746, ACK outstanding 15,259 to 9,028, and SVB-full
+exposure 12,792 to 4,139 cycles. S2 write-busy and physical refill exposure
+remain zero in that later interval. Before main cycle 400,000, the four
+checkers latest frontend samples show cumulative ICache acquisitions
+851/697/639/663 (baseline) versus 247/255/197/174 (candidate); endpoints differ
+by several thousand cycles and workload progress differs, so these are
+provisional exposures, not a matched full-ROI miss-rate or speedup claim.
+Both windows are saved under candidates/. The complete pilot and the fixed
+main inputs determine the final keep/reject decision.
