@@ -7,7 +7,7 @@ import chisel3._
 import chisel3.util._
 import org.chipsalliance.cde.config.Parameters
 
-import testchipip.{TSIIO, TSI}
+import testchipip.{SerialIO, SerialAdapter}
 
 /**
   * Class which parameterizes the TSIBridge
@@ -27,7 +27,7 @@ class TSIBridge(memoryRegionNameOpt: Option[String]) extends BlackBox with Bridg
 }
 
 object TSIBridge {
-  def apply(clock: Clock, port: TSIIO, memoryRegionNameOpt: Option[String], reset: Bool)(implicit p: Parameters): TSIBridge = {
+  def apply(clock: Clock, port: SerialIO, memoryRegionNameOpt: Option[String], reset: Bool)(implicit p: Parameters): TSIBridge = {
     val ep = Module(new TSIBridge(memoryRegionNameOpt))
     ep.io.tsi <> port
     ep.io.clock := clock
@@ -37,7 +37,7 @@ object TSIBridge {
 }
 
 class TSIBridgeTargetIO extends Bundle {
-  val tsi = Flipped(new TSIIO)
+  val tsi = Flipped(new SerialIO(32))
   val reset = Input(Bool())
   val clock = Input(Clock())
 }
@@ -48,8 +48,8 @@ class TSIBridgeModule(tsiBridgeParams: TSIBridgeParams)(implicit p: Parameters)
     val io = IO(new WidgetIO)
     val hPort = IO(HostPort(new TSIBridgeTargetIO))
 
-    val inBuf  = Module(new Queue(UInt(TSI.WIDTH.W), 16))
-    val outBuf = Module(new Queue(UInt(TSI.WIDTH.W), 16))
+    val inBuf  = Module(new Queue(UInt(SerialAdapter.SERIAL_TSI_WIDTH.W), 16))
+    val outBuf = Module(new Queue(UInt(SerialAdapter.SERIAL_TSI_WIDTH.W), 16))
     val tokensToEnqueue = RegInit(0.U(32.W))
 
     val target = hPort.hBits.tsi
@@ -105,4 +105,10 @@ class TSIBridgeModule(tsiBridgeParams: TSIBridgeParams)(implicit p: Parameters)
       )
     }
   }
+}
+
+// Chipyard 1.9.0 names its unchanged 32-bit harness TSI stream SerialIO.
+object SerialBridge {
+  def apply(clock: Clock, port: SerialIO, region: Option[String], reset: Bool)(implicit p: Parameters): TSIBridge =
+    TSIBridge(clock, port, region, reset)
 }
