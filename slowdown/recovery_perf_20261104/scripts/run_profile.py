@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Reuse sealed PARSEC binaries and gates, retaining every checker work interval."""
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -18,8 +19,13 @@ def main():
     p.add_argument("revision", type=Path)
     p.add_argument("--max-cycles", type=int, default=10000000)
     args = p.parse_args()
-    # Preserve the established capture budget while reserving protocol capacity
-    # for full-session checker instruction/load/store counters, not examples.
+    # A bounded 64 MiB event budget (72 MiB including other streams) retains
+    # full-session work counters plus the periodic main-core/cache samples.
+    base_router = run_pilot.compact_capture.Router
+    class ProfileRouter(base_router):
+        def __init__(self, directory):
+            super().__init__(directory, event_limit=64 * 1024 * 1024)
+    run_pilot.compact_capture.Router = ProfileRouter
     old_optional = run_pilot.compact_capture.optional_event
     run_pilot.compact_capture.optional_event = lambda k, h: k not in (11, 12) and old_optional(k, h)
     before = set((run_pilot.OUT / "runs").iterdir())
@@ -30,6 +36,13 @@ def main():
     fresh = set((run_pilot.OUT / "runs").iterdir()) - before
     assert len(fresh) == 1
     run = fresh.pop()
+    manifest_path = run / "run_manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    manifest["profiling_capture_policy"] = {
+        "runner_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "event_limit_bytes": 64 * 1024 * 1024,
+        "mandatory_checker_work_kinds": [11, 12]}
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
     if rc == 0:
         result = analyze_pilot.analyze(run)
         profile = report(run)
