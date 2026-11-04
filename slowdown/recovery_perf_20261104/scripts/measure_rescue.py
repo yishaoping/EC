@@ -16,6 +16,8 @@ from seal_candidate import ROOT, OUT, seal
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("build_id")
+    parser.add_argument("--parent-canneal", type=Path,
+                        help="compare against the running/completed ICache-only candidate before more regressions")
     args = parser.parse_args()
     work = OUT / "build" / (args.build_id + "_measurement_" + uuid.uuid4().hex[:6])
     work.mkdir(parents=True, exist_ok=False)
@@ -57,6 +59,7 @@ def main():
         return 1
     generated = ROOT / "slowdown/optimization_6_overlap/build" / args.build_id / "generated"
     run("rescue_gate", [OUT / "scripts/test_emitted_rescue_gate.py", generated / "gen-collateral/BoomNonBlockingDCache.sv"])
+    run("rescue_pulses", [OUT / "scripts/test_emitted_rescue_pulses.py", generated / "gen-collateral/BoomNonBlockingDCache.sv"])
     run("epoch_cone", [OUT / "scripts/test_epoch_private.py", generated / "gen-collateral/BoomNonBlockingDCache.sv"])
     # The actual retained data/ACK tests were already run against this byte
     # identical SVB module; changed control is checked above and in system.
@@ -102,7 +105,43 @@ def main():
                             correction_check=after["roi_cycles"] / 419398,
                             relative_ROI_reduction=1 - after["roi_cycles"] / before["roi_cycles"],
                             measured_ROI_rescue_handoffs=handoffs)
-    state["state"] = "REPRESENTATIVE_VALIDATED_MEASUREMENT_COMPLETE"
+    if args.parent_canneal:
+        parent = args.parent_canneal.resolve()
+        state.update(state="WAIT_PARENT_CANNEAL", parent_canneal=str(parent))
+        save()
+        parent_deadline = time.monotonic() + 4 * 3600
+        while not (parent / "analysis.json").exists():
+            if time.monotonic() >= parent_deadline:
+                state["state"] = "PARENT_WAIT_TIMEOUT"
+                save()
+                return 1
+            time.sleep(30)
+        parent_analysis = json.loads((parent / "analysis.json").read_text())
+        parent_manifest = json.loads((parent / "run_manifest.json").read_text())
+        assert parent_analysis["status"] == "PASS" and parent_analysis["full_session_checker_work"]["complete"]
+        for key in ["elf_sha256", "roi_instret", "output"]:
+            assert parent_manifest[key] == after[key], key
+        gain = 1 - after["roi_cycles"] / parent_manifest["roi_cycles"]
+        state["incremental_over_icache_candidate"] = {
+            "parent_ROI_cycles": parent_manifest["roi_cycles"], "ROI_reduction": gain,
+            "minimum_gain_for_additional_regressions": 0.005}
+        if gain < 0.005 or handoffs == 0:
+            state.update(state="REJECTED_AFTER_REPRESENTATIVE",
+                         decision="Rescue adds less than 0.5 percent over ICache-only, or has no measured ROI handoff; preserve evidence without spending a full regression suite")
+            state["end_utc"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+            save()
+            print(json.dumps(state), flush=True)
+            return 0
+        suite_log = run("regressions", [OUT / "scripts/run_regressions.py", revision,
+                                        "--reuse-canneal", actual])
+        suites = [line.split("=", 1)[1] for line in suite_log.read_text().splitlines()
+                  if line.startswith("SUITE_DIRECTORY=")]
+        assert len(suites) == 1
+        state["regressions"]["suite"] = suites[0]
+        run("comparison", [OUT / "scripts/compare_results.py", suites[0]])
+        state["state"] = "VALIDATED_MEASUREMENT_COMPLETE"
+    else:
+        state["state"] = "REPRESENTATIVE_VALIDATED_MEASUREMENT_COMPLETE"
     state["end_utc"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
     save()
     print(json.dumps(state), flush=True)

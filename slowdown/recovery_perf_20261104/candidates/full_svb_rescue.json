@@ -1,5 +1,5 @@
 {
-  "state": "IMPLEMENTED_BUILD_PENDING",
+  "state": "DIRECTED_PASS_VERILATOR_BUILD_PENDING",
   "parent_hardware": "2b0ea7ff0",
   "mechanism": "A full-SVB fallback descriptor can transfer its unchanged frozen predecessor into the existing capture reader once a slot becomes available, before becoming safe",
   "proof_observation": {
@@ -19,5 +19,6 @@
     "No rescue after WB issue, safe boundary, probe, owner conflict, outstanding completion, flush, FAIL/CANCELLED or epoch change",
     "No changes to watermark, SVB retention/coalescing/flush, ACK, checker count or application work"
   ],
-  "validation": "Required: emitted handoff guards/owner transition test, epoch cone, WB unit, system pilot then fixed regressions; persistent historical recovery remains an explicit limitation until directed evidence exists"
+  "validation": "Corrected emitted admission, sequential cancellation and epoch cone PASS; actual SVB retention test PASS against required byte-identical module. Full-system representative measurement, balanced regressions and architectural rollback remain pending.",
+  "directed_evidence": "candidates/rescue_directed_validation.json"
 }

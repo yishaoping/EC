@@ -222,3 +222,45 @@ pulse, with cancellation taking priority over new qualification. The first
 build was stopped before simulation and retained as SUPERSEDED; a fresh build
 records the corrected source seal. This does not alter existing recovery
 semantics; it removes the new optimization permission after cancellation.
+
+## Corrected rescue gates and unattended completion
+
+Corrected emitted DCache SHA256:
+`3ecb25cc407cf492a2a6ac1b660b978be459d8c4b386691458c58100bdadc2e5`.
+The original rescue source (not simulated) fails the new exact emitted
+qualification-register test after a one-cycle cancellation ends. Corrected
+r2 passes 10 cases / 353 checks, including 64-cycle full-buffer waits,
+consumed qualification, four cancellation sources, same-edge allocation
+priority, and no requalification of the surviving descriptor. The driver
+extracts actual ordered assignments and enclosing emitted conditions; it
+does not replace next-state logic with a handwritten model. A first driver
+version incorrectly cut the rescue feedback wire and failed its ordinary
+handoff case; that driver artifact remains, and the corrected driver checks
+both old and new RTL. See `candidates/rescue_directed_validation.json`.
+
+Corrected emitted admission gate passes 20,025 vectors. The first private
+epoch wrapper failed to find its C++ driver after isolating output paths;
+this was a host path error before compilation/simulation. The wrapper now
+copies the original driver into its private directory; 73 directed cases /
+2,818 ownership checks pass against corrected r2. Original failure records
+remain. This does not change any RTL or weaken a test assertion.
+
+`scripts/finish_evaluation.py` completes the existing evaluation without
+interactive polling. It leaves candidate-1 regressions intact, runs corrected
+rescue admission/pulse/epoch checks before system simulation, verifies emitted
+SVB/WB module identity, then measures the fixed Canneal project400 input. The
+same ELF, output, retired instructions and complete checker-work validators
+are mandatory. Only an incremental gain of at least 0.5% over the ICache-only
+candidate, with an observed ROI rescue handoff, justifies the remaining
+Streamcluster project64, Blackscholes project64 and BFS regressions. The
+already completed Canneal test is reused only for the same sealed simulator.
+Failures and unfavorable results remain in their original directories.
+
+The detached driver updates `RESULTS.md`, `FINAL_COMPARISON.csv` and
+`FINAL_STATUS.json`; its own state/log is under `runs/finish_*/`. Performance
+recommendation requires the completed fixed-input validations, positive
+PARSEC geometric-mean improvement, and at most 2% regression per PARSEC/BFS
+workload. It never moves an accepted reference or merges into FPGA/check.
+Cone/SVB tests and no-fault benchmarks do not establish full architectural
+rollback correctness; this limitation remains explicit. No new main-input
+rescue gain is claimed before the measurement completes.

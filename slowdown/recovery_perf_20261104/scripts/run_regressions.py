@@ -14,6 +14,8 @@ from seal_candidate import ROOT, OUT
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("revision", type=Path)
+    parser.add_argument("--reuse-canneal", type=Path,
+                        help="reuse the completed representative test from this same sealed simulator")
     args = parser.parse_args()
     revision = args.revision.resolve()
     suite = OUT / "runs" / ("regressions_" + datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d_%H%M%S_") + uuid.uuid4().hex[:6])
@@ -28,6 +30,18 @@ def main():
         "canneal_project400": [str(OUT / "scripts/run_profile.py"), "canneal_project400", str(revision), "--max-cycles", "2500000"],
         "blackscholes_project64": [str(OUT / "scripts/run_profile.py"), "blackscholes_project64", str(revision), "--max-cycles", "8000000"],
         "bfs": [str(OUT / "scripts/run_bfs_profile.py"), str(revision)]}
+    if args.reuse_canneal:
+        reused = args.reuse_canneal.resolve()
+        manifest = json.loads((reused / "run_manifest.json").read_text())
+        analysis = json.loads((reused / "analysis.json").read_text())
+        sealed = json.loads(revision.read_text())
+        assert reused.name.startswith("canneal_project400_correction_"), reused
+        assert manifest["simulator_sha256"] == sealed["simulator_sha256"]
+        assert analysis["status"] == "PASS" and analysis["full_session_checker_work"]["complete"]
+        status["tests"]["canneal_project400"] = {
+            "exit_status": 0, "run": str(reused), "reused_representative": True}
+        del commands["canneal_project400"]
+        save()
     def run(name):
         log = suite / (name + ".log")
         with log.open("xb") as stream:
