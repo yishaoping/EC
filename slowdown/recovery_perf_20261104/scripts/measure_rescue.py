@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate the rescue controller before a representative fixed Canneal run."""
 import argparse
+import atexit
 import datetime
 import hashlib
 import json
@@ -18,23 +19,50 @@ def main():
     parser.add_argument("build_id")
     parser.add_argument("--parent-canneal", type=Path,
                         help="compare against the running/completed ICache-only candidate before more regressions")
+    parser.add_argument("--resume-status", type=Path,
+                        help="reuse a sealed build and successful directed checks from a stopped attempt")
+    parser.add_argument("--preflight-only", action="store_true",
+                        help="verify the resumed seals and cleanliness without starting any simulation")
     args = parser.parse_args()
     work = OUT / "build" / (args.build_id + "_measurement_" + uuid.uuid4().hex[:6])
     work.mkdir(parents=True, exist_ok=False)
-    state = {"state": "WAIT_BUILD", "pid": os.getpid(), "build_id": args.build_id,
+    state = {"state": "WAIT_BUILD", "pid": os.getpid(), "pgid": os.getpgrp(),
+             "session_id": os.getsid(0), "build_id": args.build_id,
+             "run_id": work.name, "candidate": "ICache 4KiB plus full-SVB rescue r2",
+             "benchmark": "canneal_project400", "commands": [],
              "start_utc": datetime.datetime.now(datetime.timezone.utc).isoformat()}
     def save():
         temporary = work / "status.tmp"
         temporary.write_text(json.dumps(state, indent=2) + "\n")
         temporary.replace(work / "status.json")
+    def completed():
+        value = state["state"]
+        terminal = "COMPLETE" in value or "FAILED" in value or "TIMEOUT" in value or value.startswith("REJECTED")
+        if not terminal:
+            state["interrupted_phase"] = value
+            state["state"] = "RUNNER_FAILED"
+        state["exit_status"] = int("FAILED" in state["state"] or "TIMEOUT" in state["state"])
+        state["end_utc"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        state["completion_marker"] = "TERMINAL_STATUS_RECORDED"
+        save()
+    atexit.register(completed)
     def run(name, command):
         state["state"] = name.upper()
         save()
         log = work / (name + ".log")
+        argv = [sys.executable] + list(map(str, command))
+        record = {"phase": name, "command": argv, "log": str(log),
+                  "start_utc": datetime.datetime.now(datetime.timezone.utc).isoformat()}
+        state["commands"].append(record)
         with log.open("xb") as stream:
-            rc = subprocess.run([sys.executable] + list(map(str, command)), cwd=ROOT,
-                                stdout=stream, stderr=subprocess.STDOUT).returncode
-        state[name] = {"exit_status": rc, "log": str(log)}
+            child = subprocess.Popen(argv, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT)
+            record.update(pid=child.pid, pgid=os.getpgid(child.pid), session_id=os.getsid(child.pid))
+            state["active_child"] = record.copy()
+            save()
+            rc = child.wait()
+        record.update(exit_status=rc, end_utc=datetime.datetime.now(datetime.timezone.utc).isoformat())
+        state.pop("active_child", None)
+        state[name] = record.copy()
         save()
         if rc:
             state["state"] = name.upper() + "_FAILED"
@@ -42,6 +70,17 @@ def main():
             raise RuntimeError(name + " failed: " + str(log))
         return log
     save()
+    print("MEASUREMENT_DIRECTORY=" + str(work), flush=True)
+    resumed = json.loads(args.resume_status.read_text()) if args.resume_status else None
+    if resumed:
+        assert resumed["build_id"] == args.build_id
+        assert resumed["state"] == "CANNEAL_FAILED" and resumed["canneal"]["exit_status"] != 0
+        # This recovery is specifically for the prelaunch clean-worktree error.
+        failed_log = Path(resumed["canneal"]["log"]).read_text()
+        assert "Evaluation must start from a clean worktree" in failed_log
+        assert "RUN_DIRECTORY=" not in failed_log, "a real simulation started; inspect it before resuming"
+        state["resumed_from"] = str(args.resume_status.resolve())
+        save()
     manifest = ROOT / "slowdown/optimization_6_overlap/runs" / args.build_id / "run_manifest.json"
     deadline = time.monotonic() + 4 * 3600
     while time.monotonic() < deadline:
@@ -58,9 +97,24 @@ def main():
         save()
         return 1
     generated = ROOT / "slowdown/optimization_6_overlap/build" / args.build_id / "generated"
-    run("rescue_gate", [OUT / "scripts/test_emitted_rescue_gate.py", generated / "gen-collateral/BoomNonBlockingDCache.sv"])
-    run("rescue_pulses", [OUT / "scripts/test_emitted_rescue_pulses.py", generated / "gen-collateral/BoomNonBlockingDCache.sv"])
-    run("epoch_cone", [OUT / "scripts/test_epoch_private.py", generated / "gen-collateral/BoomNonBlockingDCache.sv"])
+    if resumed:
+        emitted_sha = hashlib.sha256((generated / "gen-collateral/BoomNonBlockingDCache.sv").read_bytes()).hexdigest()
+        for name in ["rescue_gate", "rescue_pulses", "epoch_cone"]:
+            previous = resumed[name]
+            assert previous["exit_status"] == 0
+            lines = Path(previous["log"]).read_text().splitlines()
+            results = [Path(line.removeprefix("RESULT=")) for line in lines
+                       if line.startswith("RESULT=") or line.startswith("/") and line.endswith(".json")]
+            assert len(results) == 1, (name, results)
+            result = json.loads(results[0].read_text())
+            assert result["status"] == "PASS"
+            assert (result.get("emitted_sha256") or result.get("emitted_source_sha256")) == emitted_sha
+            state[name] = dict(previous, reused=True, evidence=str(results[0]))
+        save()
+    else:
+        run("rescue_gate", [OUT / "scripts/test_emitted_rescue_gate.py", generated / "gen-collateral/BoomNonBlockingDCache.sv"])
+        run("rescue_pulses", [OUT / "scripts/test_emitted_rescue_pulses.py", generated / "gen-collateral/BoomNonBlockingDCache.sv"])
+        run("epoch_cone", [OUT / "scripts/test_epoch_private.py", generated / "gen-collateral/BoomNonBlockingDCache.sv"])
     # The actual retained data/ACK tests were already run against this byte
     # identical SVB module; changed control is checked above and in system.
     old = Path("/data1/gzh/EC-opt4-recovery-perf/slowdown/optimization_6_overlap/build/overlap_checker_icache4k_20261104_021411_630679e4/generated/gen-collateral")
@@ -86,8 +140,25 @@ def main():
         state["state"] = "BUILD_WAIT_TIMEOUT"
         save()
         return 1
-    revision = seal(args.build_id)
+    if resumed:
+        revision = Path(resumed["revision"])
+        sealed = json.loads(revision.read_text())
+        assert sealed["build_id"] == args.build_id
+        assert hashlib.sha256((ROOT / sealed["simulator"]).read_bytes()).hexdigest() == sealed["simulator_sha256"]
+        state["reused_build"] = True
+    else:
+        revision = seal(args.build_id)
     state["revision"] = str(revision)
+    state["hardware_commit"] = json.loads(revision.read_text())["canonical_hardware_commit"]
+    if args.preflight_only:
+        sys.path.insert(0, str(ROOT / "slowdown/parsec_evaluation_20261103/scripts"))
+        import run_pilot
+        run_pilot.hardware(revision, validation=True)
+        assert not subprocess.check_output(["git", "status", "--porcelain=v1"], cwd=ROOT)
+        state.update(state="PREFLIGHT_COMPLETE", simulation="NOT_STARTED")
+        save()
+        print(json.dumps(state), flush=True)
+        return 0
     log = run("canneal", [OUT / "scripts/run_profile.py", "canneal_project400", revision,
                           "--max-cycles", "2500000"])
     paths = [line.split("=", 1)[1] for line in log.read_text().splitlines() if line.startswith("RUN_DIRECTORY=")]

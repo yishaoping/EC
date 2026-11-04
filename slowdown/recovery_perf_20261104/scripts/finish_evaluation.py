@@ -52,6 +52,26 @@ def terminal(state):
             or value.startswith(("REJECTED", "SUPERSEDED")) or not alive(state.get("pid")))
 
 
+def process_tree(group):
+    result = []
+    for path in Path("/proc").iterdir():
+        if not path.name.isdigit():
+            continue
+        try:
+            raw = (path / "stat").read_text()
+            fields = raw[raw.rfind(")")+2:].split()
+            if int(fields[2]) != group:
+                continue
+            argv = (path / "cmdline").read_bytes().split(b"\0")
+            result.append({"pid": int(path.name), "ppid": int(fields[1]),
+                           "pgid": int(fields[2]), "session_id": int(fields[3]), "state": fields[0],
+                           "cpu_ticks": int(fields[11])+int(fields[12]),
+                           "command": [a.decode(errors="replace") for a in argv if a]})
+        except (OSError, ValueError):
+            continue
+    return result
+
+
 def comparison(state):
     suite = state.get("regressions", {}).get("suite")
     return read(Path(suite) / "comparison.json") if suite else {}
@@ -220,23 +240,35 @@ def report(state):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--report-only", action="store_true")
+    parser.add_argument("--resume-status", type=Path,
+                        help="resume only the prelaunch-failed rescue evaluation using its sealed build")
     args = parser.parse_args()
     directory = OUT / "runs" / ("finish_" + datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d_%H%M%S_%f"))
     directory.mkdir(parents=True, exist_ok=False)
-    state = {"state": "RUNNING", "pid": os.getpid(), "driver_directory": str(directory),
+    state = {"state": "RUNNING", "pid": os.getpid(), "pgid": os.getpgrp(),
+             "session_id": os.getsid(0), "start_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+             "driver_directory": str(directory),
              "runner_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), "errors": []}
     if args.report_only:
         state.update(state="PENDING", candidate_one=read(FIRST), candidate_two={})
         report(state)
         return 0
     log = directory / "rescue_driver.log"
+    command = [sys.executable, "-u", str(OUT / "scripts/measure_rescue.py"), BUILD,
+               "--parent-canneal", str(PARENT)]
+    if args.resume_status:
+        command += ["--resume-status", str(args.resume_status.resolve())]
+        state["resumed_from"] = str(args.resume_status.resolve())
     with log.open("xb") as stream:
-        process = subprocess.Popen([sys.executable, "-u", str(OUT / "scripts/measure_rescue.py"), BUILD,
-                                    "--parent-canneal", str(PARENT)], cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT)
+        process = subprocess.Popen(command, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT)
     state["rescue_pid"] = process.pid
+    state["rescue_process"] = {"pid": process.pid, "pgid": os.getpgid(process.pid),
+                               "session_id": os.getsid(process.pid), "command": command, "log": str(log)}
     print("DRIVER_DIRECTORY=" + str(directory), flush=True)
     deadline = time.monotonic() + 10 * 3600
     while True:
+        state["observed_processes"] = process_tree(os.getpgrp())
+        state["last_observed_utc"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
         state["candidate_one"] = read(FIRST)
         for path in (OUT / "build").glob(BUILD + "_measurement_*/status.json"):
             value = read(path)
@@ -246,6 +278,8 @@ def main():
                 break
         state.setdefault("candidate_two", {})
         rc = process.poll()
+        if rc is not None:
+            state["rescue_process"]["exit_status"] = rc
         if rc is not None and rc != 0:
             message = "Rescue driver failed (exit " + str(rc) + "); see " + str(log)
             if message not in state["errors"]:
@@ -256,6 +290,9 @@ def main():
             state["state"] = "COMPLETE" if first_ok and rc == 0 else "COMPLETE_WITH_FAILURES"
             if not first_ok:
                 state["errors"].append("Candidate-1 evaluation did not complete successfully; see " + str(FIRST))
+            state.update(end_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                         exit_status=int(state["state"] != "COMPLETE"),
+                         completion_marker="TERMINAL_STATUS_RECORDED")
         if time.monotonic() >= deadline and not done:
             state["state"] = "WATCH_TIMEOUT_JOBS_NOT_TERMINATED"
             state["errors"].append("Ten-hour report wait expired; existing build/simulation processes are left intact.")
