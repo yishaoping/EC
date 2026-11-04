@@ -1,0 +1,21 @@
+__pycache__/
+*.pyc
+.fpga-operation.lock
+work/
+tests/.build/
+
+# Reproducible guest binaries and traces; keep image source/config/receipts visible.
+/images/**/*.cpio
+/images/**/*.dtb
+/images/**/*.hex
+/images/**/*.o
+/images/**/*.dump
+/images/**/*.disassembly
+/images/**/*.log
+
+# Vivado synthesis intermediates outside the isolated work directory.
+/area/.Xil/
+/area/vivado*.jou
+/area/vivado*.log
+/area/*.dcp
+/area/*.str

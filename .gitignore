@@ -27,3 +27,19 @@
 
 # Future simulator-CWD DRAM output is local; legacy root log was archived.
 /dramsim.log
+
+# Local Python bytecode and Verilator compiler intermediates.
+/check/__pycache__/
+/chipyard/sims/verilator/obj_dir/
+/chipyard/sims/verilator/*.o
+/chipyard/sims/verilator/*.d
+/chipyard/sims/verilator/*.a
+
+# FireSim build logs and raw waveform streams stay on disk as local evidence.
+# Source scripts, patches, .dts and lightweight result JSON remain visible.
+/Experiment/dac2026/build-logs/*/*/build.log
+/Experiment/dac2026/build-logs/*/*/vivado.log
+/Experiment/dac2026/build-logs/*/*/vivado*.jou
+/Experiment/dac2026/opt4-linux-v6/*/raw/*/*.jsonl.gz
+/Experiment/dac2026/opt4-linux-v6/*/raw/*/*.fst
+/Experiment/dac2026/opt4-linux-v6/*/raw/*/*.vcd
