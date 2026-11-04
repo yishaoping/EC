@@ -136,11 +136,17 @@ class SpeculativeVersionBuffer(val entries: Int)
   val allocOH = PriorityEncoderOH(freeVec.asUInt)
   io.capture.ready := freeAny && !io.flush && !epochDraining
 
+  val publicationRequired = VecInit((0 until entries).map(i => safeAtCapture(i) ||
+    (epoch(i) === io.currentEpoch &&
+      (!key(i).valid || key(i).contentSeq === 0.U ||
+       key(i).contentSeq <= io.safeWatermark))))
   val entrySafe = VecInit((0 until entries).map(i =>
-    valid(i) && state(i) === stSpec && (safeAtCapture(i) ||
-      (epoch(i) === io.currentEpoch &&
-       (!key(i).valid || key(i).contentSeq === 0.U ||
-        key(i).contentSeq <= io.safeWatermark)))))
+    valid(i) && state(i) === stSpec && publicationRequired(i)))
+  // Safety may arrive after capture on the very edge that changes epoch.
+  // Latch this obligation before evaluating flush/invalidation deletion.
+  for (i <- 0 until entries) {
+    when (valid(i) && publicationRequired(i)) { safeAtCapture(i) := true.B }
+  }
 
   val entryAge = RegInit(VecInit(Seq.fill(entries)(0.U(32.W))))
   val entryAgeReported = RegInit(VecInit(Seq.fill(entries)(false.B)))
@@ -304,7 +310,7 @@ class SpeculativeVersionBuffer(val entries: Int)
         key(i).generation < key(j).generation))).reduce(_ || _)))
   io.coalesced := PopCount(coalesce)
   io.discarded := PopCount((0 until entries).map(i => valid(i) && state(i) === stSpec &&
-    !safeAtCapture(i) && !coalesce(i) && (io.flush || (io.invalidate.valid && key(i).valid &&
+    !publicationRequired(i) && !coalesce(i) && (io.flush || (io.invalidate.valid && key(i).valid &&
       key(i).contentSeq > io.invalidate.bits))))
   for (i <- 0 until entries) {
     // Transfer an irrevocable obligation to every newer safe successor. This
@@ -344,7 +350,7 @@ class SpeculativeVersionBuffer(val entries: Int)
   when (io.invalidate.valid) {
     for (i <- 0 until entries) {
       when (valid(i) && state(i) === stSpec && !safeAtCapture(i) &&
-        key(i).valid && key(i).contentSeq > io.invalidate.bits) {
+        key(i).valid && key(i).contentSeq > io.invalidate.bits && !publicationRequired(i)) {
         valid(i) := false.B
         state(i) := stFree
       }
@@ -352,7 +358,7 @@ class SpeculativeVersionBuffer(val entries: Int)
   }
   when (io.flush) {
     for (i <- 0 until entries) {
-      when (state(i) === stSpec && !safeAtCapture(i)) {
+      when (state(i) === stSpec && !publicationRequired(i)) {
         valid(i) := false.B
         state(i) := stFree
       }
@@ -383,7 +389,7 @@ class SpeculativeVersionBuffer(val entries: Int)
     CacheOpportunityObservation.lineHash(data(activeIdx).toSeq, encRowBits),
     CacheOpportunityObservation.lineHash(io.promote.bits.data.toSeq, encRowBits)))
   for (i <- 0 until entries) {
-    val discard = valid(i) && state(i) === stSpec && !safeAtCapture(i) && !coalesce(i) &&
+    val discard = valid(i) && state(i) === stSpec && !publicationRequired(i) && !coalesce(i) &&
       (io.flush || (io.invalidate.valid && key(i).valid && key(i).contentSeq > io.invalidate.bits))
     val complete = io.acked && activeIdx === i.U
     val terminal = coalesce(i) || discard || complete

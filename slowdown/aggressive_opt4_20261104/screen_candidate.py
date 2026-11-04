@@ -118,8 +118,8 @@ def main():
     (cache.OUT/'LATEST.json').write_text(json.dumps(latest,indent=2)+'\n');save()
     while True:
         with cache.locked():index=cache.read(cache.INDEX)
-        builds=index['local_builds'];assert len(builds)==1,builds
-        build=builds[0]
+        builds=index['local_builds'];assert builds,builds
+        build=builds[-1]
         if build['status']!='RUNNING':break
         assert Path('/proc/'+str(build['pid'])).exists(),'Build supervisor exited without final status'
         STATE['state']='WAIT_BUILD';save();time.sleep(30)
@@ -155,7 +155,6 @@ def main():
     perf('blackscholes_project64',revision,source,8000000)
     perf('bfs',revision,source,3000000)
     STATE['state']='PERFORMANCE_SCREEN_COMPLETE_RECOVERY_UNVALIDATED';save()
-    command('final_report',[sys.executable,cache.OUT/'summarize_results.py',OUT/'status.json'])
     return 0
 
 
@@ -165,4 +164,9 @@ if __name__=='__main__':
         STATE['state']='FAILED';STATE['error']=traceback.format_exc()
         if OUT.exists():save()
         raise
+    finally:
+        if OUT.exists():
+            # Produce a self-contained partial/rejection report as well.
+            with (OUT/'report_generation.log').open('a') as f:
+                subprocess.call([sys.executable,str(cache.OUT/'summarize_results.py'),str(OUT/'status.json')],cwd=ROOT,stdout=f,stderr=subprocess.STDOUT)
     sys.exit(rc)

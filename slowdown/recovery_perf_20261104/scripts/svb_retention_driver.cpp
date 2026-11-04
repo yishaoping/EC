@@ -108,8 +108,8 @@ static void safe_publication_cases() {
   d.io_safeWatermark=3;d.io_flush=1;d.eval();
   check(d.io_coalesced==0,"flush suppresses unsafe coalescing target");tick();
   d.io_flush=0;d.io_safeWatermark=0;d.io_currentEpoch=1;
-  check(d.io_occupancy==2,"safe source retained while non-obligated SPEC discarded");
-  complete(1,501);wait_payload(2,0x80003000ull,502);complete(2,502);tick();
+  check(d.io_occupancy==3,"all snapshots already safe at flush retain publication responsibility");
+  complete(1,501);wait_payload(3,0x80003000ull,503);complete(3,503);tick();
   check(d.io_occupancy==0,"safe source published once");
   std::puts("PASS safe_SPEC_flush=2048 same_epoch_reset=1 inherited_publication=1 simultaneous_flush_coalesce=1");
 }
@@ -133,20 +133,21 @@ int main(int argc,char**argv) {
   check(d.io_promote_valid,"safe predecessor becomes publishable");
   expect_payload(4,0x80000100ull,104);
   unsigned entry=d.io_promote_bits_entry;
-  // Invalidation of SPEC does not destroy a selected WB_WAIT owner.
+  // Once verified, all predecessors remain publication obligations even if
+  // an invalidate boundary is lower. WB_WAIT and safe SPEC both survive.
   d.io_invalidate_valid=1; d.io_invalidate_bits=0; tick(); d.io_invalidate_valid=0;
-  check(d.io_occupancy==1,"WB owner survives invalidate");
+  check(d.io_occupancy==4,"WB owner and verified SPEC survive invalidate");
   for(int i=0;i<1024;++i) {
     check(d.io_promote_valid && d.io_promote_bits_entry==entry,"held promotion under backpressure");
     expect_payload(4,0x80000100ull,104);tick();
   }
   d.io_promote_ready=1; tick(); d.io_promote_ready=0;
-  check(!d.io_promote_valid && d.io_occupancy==1,"sent owner waits for ACK");
+  check(!d.io_promote_valid && d.io_occupancy==4,"sent owner waits for ACK");
   d.io_flush=1; tick(); d.io_flush=0; d.io_currentEpoch=1;
   d.io_releaseLines_0=0x80000100ull;
   d.eval();
   for(int i=0;i<1024;++i) {
-    check(d.io_occupancy==1 && d.io_releaseBlocked_0 && !d.io_promote_valid,
+    check(d.io_occupancy==4 && d.io_releaseBlocked_0 && !d.io_promote_valid,
       "flush and epoch retain sent owner until matching ACK");
     expect_payload(4,0x80000100ull,104);tick();
   }
@@ -157,7 +158,11 @@ int main(int argc,char**argv) {
   d.eval();
   if(argc>1) { tick(); std::fprintf(stderr,"FAIL: wrong ACK escaped assertion\n");return 2; }
   check(d.io_acked,"matching ACK accepted");tick();d.io_ack_valid=0;d.eval();
-  check(d.io_occupancy==0 && !d.io_releaseBlocked_0,"only matching ACK reclaims WB owner");
+  check(d.io_occupancy==3 && !d.io_releaseBlocked_0,"only matching ACK reclaims WB owner");
+  for(unsigned seq: {3u,2u,1u}) {
+    wait_payload(seq,0x80000000ull+64*seq,100+seq);complete(seq,100+seq);
+  }
+  check(d.io_occupancy==0,"all verified publications completed");
   tick(); // boundary admission reopens after the retained owner has drained
   // Multiple versions of one line: rollback removes newer bytes, old payload
   // remains exact and is the one selected after its real safe boundary.

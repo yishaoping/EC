@@ -95,6 +95,18 @@ not exercised. It is a coverage failure, not a rollback pass.
 
 ## Rejected or deferred directions
 
+Candidate A initial RTL (commit `bd9e71f67`, build
+`overlap_safe_snapshot_a_20261104_104051_dad7186d`) was rejected before any
+performance simulation. Actual emitted SVB test
+`recovery_perf_20261104/build/svb_retention_12012c52/result.json` failed:
+a version safe only after capture was discarded at a simultaneous flush.
+The unused new simulator compilation was stopped; generated RTL/failure logs
+are retained. Repair latches a publication obligation for every entry when
+it becomes safe, and uses pre-edge safety to suppress flush/invalidation
+deletion. Directed tests now require all already-verified predecessors to
+survive invalidation/flush until coalescing or matching ACK, even when safety
+arrives on the boundary edge. The next build has a different source key.
+
 * Larger L1/more MSHRs: misses and admission blocking are too small on C2
   Streamcluster to justify making these the first target.
 * More checkers: forbidden, and unnecessary for the proposed decoupling.
