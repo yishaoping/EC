@@ -1,0 +1,14 @@
+{
+  "state": "PROPOSED_NOT_APPLIED",
+  "mechanism": "Checker instruction refill pressure delays PASS and therefore blocks main-core historical-version preservation",
+  "evidence": [
+    "Canneal ROI legacy wait: checker execution/tail 117975 cycles vs watermark edge 17 cycles",
+    "Canneal complete ROI package instruction starvation 268029 checker-local cycles",
+    "Canneal ROI saved frontend windows: checker ICache acquisitions 11794; L2 physical misses in broader window 1292; refills are predominantly L2 hits/repeated code"
+  ],
+  "change": "four checker I$ banks: 32 sets x 1 way -> 32 sets x 2 ways; 2KiB -> 4KiB each",
+  "added_data_bytes_total": 8192,
+  "checker_count": 4,
+  "control_changes": "none to checking, snapshots, DCache, SVB, watermark or ACK; generic ICache parameter only",
+  "acceptance": "actual target-cycle improvement, matching application instructions/output and complete package checks; BFS and Blackscholes regression; no area/timing signoff claimed"
+}
