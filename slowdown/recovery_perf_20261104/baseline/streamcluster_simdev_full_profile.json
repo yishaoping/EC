@@ -1,0 +1,332 @@
+{
+  "status": "PASS",
+  "roi_cycles": 1452774,
+  "roi_instret": 1094668,
+  "roi": {
+    "start_cycle": 99380,
+    "stop_cycle": 1552154,
+    "safe_chain_roi_cycles": 1452774,
+    "scope": "workload_run call only, two adjacent CSR samples at each boundary; setup/STOP/checker completion/output excluded"
+  },
+  "counters": {
+    "physical_cache_traffic": [
+      {
+        "level": 2,
+        "instance": 0,
+        "cycles": 1458563,
+        "actual": {
+          "access": 46323,
+          "hit": 46131,
+          "miss": 192,
+          "replacement": 8,
+          "dirty_victim": 6,
+          "set_full_miss": 0
+        },
+        "mshr_full_cycles": 0,
+        "writebacks": 8,
+        "dram_facing_reads": 192,
+        "dram_facing_writes": 2006
+      },
+      {
+        "level": 1,
+        "instance": 0,
+        "cycles": 1458562,
+        "actual": {
+          "access": 312623,
+          "hit": 312496,
+          "miss": 127,
+          "replacement": 24,
+          "dirty_victim": 18,
+          "set_full_miss": 16
+        },
+        "mshr_full_cycles": 0,
+        "writebacks": 2062,
+        "dram_facing_reads": 0,
+        "dram_facing_writes": 0
+      }
+    ],
+    "SVB_entry_accounting": {
+      "observed": true,
+      "scope": "full_run_final",
+      "entries": 16,
+      "allocations": 5521,
+      "completions": 919,
+      "coalesced": 0,
+      "discarded": 4602,
+      "occupancy": 0,
+      "conserved": true
+    },
+    "SVB_occupancy": {
+      "observed": true,
+      "scope": "hardware_traffic_START_inclusive_STOP_exclusive",
+      "would_full_at_8": 1777,
+      "cycles_above_8": 426114,
+      "capture_failures": 0,
+      "max_occupancy": 16,
+      "max_depth": 3,
+      "occupancy_histogram": [
+        406414,
+        81258,
+        208456,
+        146759,
+        50987,
+        40107,
+        43217,
+        30422,
+        24828,
+        17462,
+        17498,
+        22960,
+        21984,
+        58264,
+        41075,
+        52352,
+        194519
+      ],
+      "depth_histogram": [
+        406414,
+        746446,
+        303714,
+        1988,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "sourcec": {
+      "schema": 1,
+      "sample_cycles": 1458563,
+      "reserved_cycles": 66000,
+      "reserved_pending_cycles": 12,
+      "accepted_releases_in_wait_ack": 2,
+      "pending_no_accept_cycles": 4512,
+      "wait_ack_cycles": 18843,
+      "wait_ack_pending_cycles": 2,
+      "target_lock_cycles": 84843,
+      "target_lock_pending_cycles": 14
+    },
+    "retained_copy": {
+      "schema": 1,
+      "sample_cycles": 1458563,
+      "wb_requests": 1121,
+      "retaining_wb_requests": 1121,
+      "wb_receipts": 1121,
+      "retained_receipts": 1121,
+      "retaining_receipts_owner_changed": 0,
+      "retaining_receipts_probe_revoked": 0,
+      "invalidating_clears": 0
+    },
+    "checker_frontend_traffic_window": {
+      "49:1": {
+        "schema": 1,
+        "sample_cycles": 729282,
+        "live_cycles": 462096,
+        "empty_cycles": 36750,
+        "fetching_cycles": 353632,
+        "retired_classify_cycles": 0,
+        "wait_bjl_cycles": 22655,
+        "ready_cycles": 49059,
+        "fq_deliveries": 165264,
+        "handoff_launches": 164084,
+        "icache_requests": 178187,
+        "held_ready_cycles": 31418,
+        "fault_deliveries": 0,
+        "icache_acquires": 2618,
+        "tlb_miss_cycles": 0,
+        "redirect_cycles": 4435
+      },
+      "49:2": {
+        "schema": 1,
+        "sample_cycles": 729282,
+        "live_cycles": 512973,
+        "empty_cycles": 35920,
+        "fetching_cycles": 367102,
+        "retired_classify_cycles": 0,
+        "wait_bjl_cycles": 46007,
+        "ready_cycles": 63944,
+        "fq_deliveries": 172327,
+        "handoff_launches": 171138,
+        "icache_requests": 184859,
+        "held_ready_cycles": 45425,
+        "fault_deliveries": 0,
+        "icache_acquires": 2563,
+        "tlb_miss_cycles": 0,
+        "redirect_cycles": 4343
+      },
+      "49:3": {
+        "schema": 1,
+        "sample_cycles": 729282,
+        "live_cycles": 459663,
+        "empty_cycles": 35348,
+        "fetching_cycles": 344347,
+        "retired_classify_cycles": 0,
+        "wait_bjl_cycles": 29328,
+        "ready_cycles": 50640,
+        "fq_deliveries": 161135,
+        "handoff_launches": 160025,
+        "icache_requests": 173586,
+        "held_ready_cycles": 33380,
+        "fault_deliveries": 0,
+        "icache_acquires": 2492,
+        "tlb_miss_cycles": 0,
+        "redirect_cycles": 4435
+      },
+      "49:4": {
+        "schema": 1,
+        "sample_cycles": 729282,
+        "live_cycles": 511116,
+        "empty_cycles": 36005,
+        "fetching_cycles": 372644,
+        "retired_classify_cycles": 0,
+        "wait_bjl_cycles": 34870,
+        "ready_cycles": 67597,
+        "fq_deliveries": 175194,
+        "handoff_launches": 173936,
+        "icache_requests": 187707,
+        "held_ready_cycles": 49744,
+        "fault_deliveries": 0,
+        "icache_acquires": 2534,
+        "tlb_miss_cycles": 0,
+        "redirect_cycles": 4526
+      }
+    },
+    "checker_ROI_local_partition": {
+      "issue_available": 1122400,
+      "instruction_starvation": 246963,
+      "lsl_wait": 15797,
+      "dcache_blocked": 0,
+      "dependency": 331757,
+      "replay": 0,
+      "setup_redirect_or_management": 278703,
+      "unused": 0,
+      "other": 1332
+    },
+    "checker_ROI_captured_packages": 523,
+    "checker_ROI_capture_excluded": {
+      "crosses_roi_boundary": 2
+    },
+    "full_session_checker_work": {
+      "fully_captured_session_packages": 525,
+      "complete": true,
+      "checked_instructions": 1094912,
+      "checked_loads": 201100,
+      "checked_stores": 107654,
+      "checker_local_active_cycles": 2008437,
+      "scope": "entire protected session, including four packages crossing software ROI; counter interval validated for every BOOM-accepted result; management/boundary instructions can differ from hart0 rdinstret"
+    },
+    "scope": "physical traffic uses its recorded window, not automatically the application ROI; checker cycles are local; overlapping exposures are not additive savings"
+  },
+  "stall_profile": {
+    "run": "/data1/gzh/EC-opt4-recovery-perf/slowdown/recovery_perf_20261104/build/streamcluster_simdev_correction_20261104_020844_4954a08f_capture_reanalysis_60c753",
+    "requested_window": [
+      99380,
+      1552154
+    ],
+    "scope": "SC52 priority partition is exclusive; cache exposures overlap and are not lost-cycle attribution",
+    "groups": {
+      "52": {
+        "status": "EXACT_BETWEEN_SAMPLES",
+        "sampled_window": [
+          100352,
+          1551360
+        ],
+        "unmeasured_boundary_cycles": 1766,
+        "counts": {
+          "cycles": 1451008,
+          "commit_cycles": 485520,
+          "no_commit_gh": 0,
+          "no_commit_rsu": 1292,
+          "no_commit_ic": 83033,
+          "no_commit_big_hang": 402,
+          "no_commit_dispatch_drain": 6491,
+          "no_commit_csr": 0,
+          "no_commit_rob_nonempty": 404683,
+          "no_commit_rob_empty": 469587,
+          "raw_gh": 0,
+          "raw_rsu": 1292,
+          "raw_ic": 84325,
+          "raw_dispatch_drain": 95912,
+          "retired": 1093727
+        }
+      },
+      "53": {
+        "status": "EXACT_BETWEEN_SAMPLES",
+        "sampled_window": [
+          100352,
+          1551360
+        ],
+        "unmeasured_boundary_cycles": 1766,
+        "counts": {
+          "cycles": 1451008,
+          "lsu_ingress_block": 514956,
+          "freeze_set_ingress_block": 510090,
+          "array_arbitration_ingress_block": 26908,
+          "s2_nack": 7300,
+          "s2_write_busy": 0,
+          "preservation_block": 6984,
+          "legacy_preservation_pending": 480964,
+          "capture_pending": 44852,
+          "mshr_admission_block": 26,
+          "victim_nack": 56,
+          "replay_wait": 0,
+          "svb_full_fallback": 67,
+          "release_ack_pending": 108366,
+          "owner_block": 399
+        }
+      },
+      "54": {
+        "status": "EXACT_BETWEEN_SAMPLES",
+        "sampled_window": [
+          100352,
+          1551360
+        ],
+        "unmeasured_boundary_cycles": 1766,
+        "counts": {
+          "hit_nack": 15,
+          "data_nack": 0,
+          "refill_beats": 180,
+          "legacy_wb_requests": 1107,
+          "captures": 5521,
+          "promotions": 919,
+          "store_effects": 107507,
+          "lsu_requests": 325273,
+          "mshr_admissions": 406,
+          "mshr_active": 7443,
+          "install_wait": 304,
+          "a_beats": 392,
+          "c_beats": 8172,
+          "d_beats": 2567,
+          "svb_full_cycles": 194519
+        }
+      }
+    }
+  },
+  "capture_qualification": {
+    "original_run": "/data1/gzh/EC-opt4-recovery-perf/slowdown/parsec_evaluation_20261103/runs/streamcluster_simdev_correction_20261104_020844_4954a08f",
+    "original_capture_sha256": "bf93b6b71582c029d312351416a8ce797e22b5cbc4a065890fb6b9b402e4dff0",
+    "original_analysis_sha256": "a15c19aca65449f6c73d10fa7e2a6bc7a47d301c7f4a4e7287729adda547e489",
+    "missing_optional_producer_statistics": [
+      "4:4",
+      "5:3",
+      "5:4"
+    ],
+    "independent_footer_counts": {
+      "5:3": 541,
+      "4:4": 255,
+      "5:4": 509
+    },
+    "generated_top_sha256": "40270c04388a49d513de2e6d0d411a5c322fab397df85b5bf824186f004ed3e7",
+    "sealed_logger_sha256": "2ed96c76c7f475c327186ae9379385d5a7c6cd6a2a592d5a1000e4b99b66e263",
+    "scope": "Only optional final producer metadata was rejected after parser identity 128; all 128 retained producer totals match real footers. Missing optional totals are not invented. Default limit 200000 and emitted below limit prove zero source omissions. All mandatory protocol/integrity/package evidence remains subject to unchanged validators."
+  }
+}
