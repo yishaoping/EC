@@ -11,7 +11,7 @@
 
 BFS Candidate 1 / Native = 1.123691816. Matching BFS Check-only result is unavailable; no denominator is invented.
 
-Final report and exact CSV will be written by the detached supervisor to `runs/complete_comparison_20261104_083505/REPORT.md` and `exact_results.csv`. It waits for the untouched original driver and reuses completed runs. Failures remain in status.json and logs.
+Final report and exact CSV will be written by the detached supervisor to `REPORT.md` and `exact_results.csv` in the directory recorded by `LATEST_EVALUATION.txt`. It waits for the untouched original driver and reuses completed runs. Failures remain in status.json and logs.
 
 Canneal Candidate 2: same ELF, 392,248 application instructions, matching output; 135/135 accepted PASS results, complete checker-work coverage, protocol/integrity/data-ordering/capture PASS; zero fault/assertion markers. ROI excludes final verification drain; start-to-last-verification is 493,969 cycles. These no-fault checks do not establish rollback.
 
