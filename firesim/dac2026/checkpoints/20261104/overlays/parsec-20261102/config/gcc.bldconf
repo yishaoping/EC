@@ -1,0 +1,33 @@
+#!/bin/bash
+export CC_HOME="${RISCV:?set RISCV to the installed Linux cross-toolchain prefix}"
+export BINUTIL_HOME="$CC_HOME"
+export GNUTOOL_HOME=/usr
+export BINARY_PREFIX=riscv64-unknown-linux-gnu-
+export GNU_HOST_NAME="$(gcc -dumpmachine)"
+export GNU_TARGET_NAME=riscv64-unknown-linux-gnu
+export HOSTCC=gcc
+export M4=m4
+export MAKE=make
+export CC="$CC_HOME/bin/${BINARY_PREFIX}gcc"
+export CXX="$CC_HOME/bin/${BINARY_PREFIX}g++"
+export CPP="$CC_HOME/bin/${BINARY_PREFIX}cpp"
+export CXXCPP=""
+export LD="$CC_HOME/bin/${BINARY_PREFIX}ld"
+export AS="$CC_HOME/bin/${BINARY_PREFIX}as"
+export AR="$CC_HOME/bin/${BINARY_PREFIX}ar"
+export RANLIB="$CC_HOME/bin/${BINARY_PREFIX}ranlib"
+export STRIP="$CC_HOME/bin/${BINARY_PREFIX}strip"
+export CFLAGS="-O3 -march=rv64gc -mabi=lp64d"
+export CXXFLAGS="$CFLAGS -fpermissive -fno-exceptions -std=c++17"
+export CPPFLAGS=""
+export CXXCPPFLAGS=""
+export LDFLAGS="-static"
+export LIBS="-lpthread -lm -latomic"
+export EXTRA_LIBS=""
+export PARMACS_MACRO_FILE=pthreads
+export JAVA_HOME=/usr
+export JAVAC=/usr/bin/javac
+export CC_ver="$($CC --version | head -1)"
+export CXX_ver="$($CXX --version | head -1)"
+export LD_ver="$($LD --version | head -1)"
+export JAVAC_ver=""

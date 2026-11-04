@@ -1,0 +1,32 @@
+# Candidate only: no bitstream is approved or built by this file.
+# Actual manager/hardware root: opt4-alveo-v3/{B,C4}/chipyard/sims/firesim
+# FireSim 1.17.0 / 07efa6a6da18bd64d1159ae84a4701b37abb1228.
+# Run build_minimal.py for source generation/GoldenGate/driver first.
+# No infrasetup, enumeratefpgas, driver operation, target run or post-build hook.
+ec_dac_B_NOT_READY:
+  PLATFORM: xilinx_alveo_u280
+  TARGET_PROJECT: firesim
+  DESIGN: FireSim
+  TARGET_CONFIG: DacBaseline
+  PLATFORM_CONFIG: BaseXilinxAlveoConfig
+  deploy_quintuplet: null
+  platform_config_args:
+    fpga_frequency: null
+    build_strategy: null
+  post_build_hook: null
+  metasim_customruntimeconfig: null
+  bit_builder_recipe: bit-builder-recipes/xilinx_alveo_u280.yaml
+
+ec_dac_C4_NOT_READY:
+  PLATFORM: xilinx_alveo_u280
+  TARGET_PROJECT: firesim
+  DESIGN: FireSim
+  TARGET_CONFIG: DacOpt4C4
+  PLATFORM_CONFIG: BaseXilinxAlveoConfig
+  deploy_quintuplet: null
+  platform_config_args:
+    fpga_frequency: null
+    build_strategy: null
+  post_build_hook: null
+  metasim_customruntimeconfig: null
+  bit_builder_recipe: bit-builder-recipes/xilinx_alveo_u280.yaml

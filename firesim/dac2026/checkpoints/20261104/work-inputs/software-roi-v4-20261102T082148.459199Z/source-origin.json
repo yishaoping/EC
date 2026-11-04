@@ -1,0 +1,46 @@
+{
+  "phase": "prepare-roi-linux",
+  "returncode": 0,
+  "source": "/data1/gzh/EC/firesim/dac2026/work/software-v3/linux",
+  "destination": "/data1/gzh/EC/firesim/dac2026/work/software-roi-v4-20261102T082148.459199Z/linux",
+  "commands": [
+    [
+      "cp",
+      "-a",
+      "--reflink=auto",
+      "/data1/gzh/EC/firesim/dac2026/work/software-v3/linux",
+      "/data1/gzh/EC/firesim/dac2026/work/software-roi-v4-20261102T082148.459199Z/linux"
+    ]
+  ],
+  "changes": {
+    "drivers/misc/Kconfig": {
+      "before": "775811770f61b097612a5f928f9efec3222086182ca72e400b7b10a93d0ed202",
+      "after": "913a9ef24d71c0c7c8d997cb144a57dbd781edebf97409d7c7b8a0ad68120a2b"
+    },
+    "drivers/misc/Makefile": {
+      "before": "8ece02ae8f678bc433778d1711977859c85c785bfe0b66b988c96a4f3622d3e8",
+      "after": "ce83ccfdab0bd005054ac81c4d4409d88c3c34d9adf4cf3c661e25b191ac95cb"
+    },
+    "drivers/misc/ec_dac_roi.c": {
+      "before": null,
+      "after": "994d92fb832d210fe2920efb92ef3a545c229c7af236c66c458d71c6d91578ea"
+    },
+    "drivers/misc/ec_dac_roi_regs.h": {
+      "before": null,
+      "after": "bdc093895333f19db8a24640b62a4572bc61095b8773b051c0be632d8916ffb8"
+    },
+    "drivers/misc/ec_dac_roi_uapi.h": {
+      "before": null,
+      "after": "23e11341af35213abd1d69dc5cd2231541ee878e36c7ad6161ae685342e28365"
+    }
+  },
+  "source_files_preserved": 79394,
+  "driver_supported": [
+    "B"
+  ],
+  "C4": "REFUSED: Linux/checker mm/context protocol not implemented",
+  "target_controller": "NOT_IMPLEMENTED",
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN",
+  "script_sha256": "dde7225bd3c4f2c6daf4ece44e759739fbdea0066ff0ec354e28ddd3c05a55f8"
+}

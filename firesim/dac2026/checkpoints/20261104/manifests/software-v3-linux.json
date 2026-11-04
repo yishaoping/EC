@@ -1,0 +1,203 @@
+{
+  "schema": 1,
+  "label": "software-v3-linux",
+  "source_root": "/data1/gzh/EC/firesim/dac2026/work/software-v3/linux",
+  "roots": [
+    ".rustfmt.toml",
+    "lib",
+    "init",
+    "certs",
+    "drivers",
+    "README",
+    "net",
+    "fs",
+    "virt",
+    "LICENSES",
+    "sound",
+    ".mailmap",
+    "block",
+    "tools",
+    ".gitignore",
+    "CREDITS",
+    "security",
+    "MAINTAINERS",
+    "kernel",
+    ".clang-format",
+    "usr",
+    "COPYING",
+    "Makefile",
+    "Kbuild",
+    ".gitattributes",
+    "crypto",
+    "Kconfig",
+    "Documentation",
+    ".cocciconfig",
+    "scripts",
+    "io_uring",
+    "mm",
+    ".get_maintainer.ignore",
+    "arch",
+    "rust",
+    "include",
+    "samples",
+    "ipc"
+  ],
+  "skip_directories": [
+    ".Xil",
+    ".bloop",
+    ".git",
+    ".metals",
+    "__pycache__",
+    "build",
+    "builds",
+    "generated-src",
+    "node_modules",
+    "obj_dir",
+    "output",
+    "sim_build",
+    "target",
+    "test_run_dir"
+  ],
+  "artifact_suffixes": [
+    ".a",
+    ".bin",
+    ".bit",
+    ".class",
+    ".dcp",
+    ".fst",
+    ".jar",
+    ".jou",
+    ".log",
+    ".o",
+    ".pyc",
+    ".so",
+    ".vcd"
+  ],
+  "base_repositories": [
+    {
+      "repository": "/data1/gzh/EC",
+      "commit": "2ea467ba08f773dd55b77383da9f4f5c025b9607",
+      "prefix": "",
+      "strip_prefix": "chipyard/software/firemarshal/boards/default/linux/"
+    }
+  ],
+  "source_files": 79261,
+  "source_identity": "bac8a542191a139a129e2dea6068a06b7d22b0193599d0cf1cfbde66ae474ccd",
+  "overlay_files": [
+    {
+      "path": "drivers/clk/.kunitconfig",
+      "mode": "100644",
+      "blob": "2fbeb71316f8ad3747536a3e62bb402a12aa4e01",
+      "sha256": "575e75838325b04cd48c0a4a60f24c8e78aac82d9405eb24ab912f7d932da331",
+      "size": 117
+    },
+    {
+      "path": "drivers/gpu/drm/tests/.kunitconfig",
+      "mode": "100644",
+      "blob": "6ec04b4c979d45a082a5fb078b81346e1f60b0d2",
+      "sha256": "b621a84b96bcd4d2c7c306e91a9b27ef589c10c54011ed700b6018c769b87096",
+      "size": 52
+    },
+    {
+      "path": "drivers/hid/.kunitconfig",
+      "mode": "100644",
+      "blob": "04daeff5c970ea5f5ebd37d49bd8ef2d1a315556",
+      "sha256": "1f7fc478fcab9f0b4b0178bc610201841f3435d5f2bd2a3ed6390d7f12bc4e03",
+      "size": 90
+    },
+    {
+      "path": "fs/ext4/.kunitconfig",
+      "mode": "100644",
+      "blob": "bf51da7cd9fc7d9acf9cb7015a34c65dc11fe34b",
+      "sha256": "0a61ce82ef91bb2975d3d7c191afab87206662946f3794ce265be085a7b61099",
+      "size": 58
+    },
+    {
+      "path": "fs/fat/.kunitconfig",
+      "mode": "100644",
+      "blob": "0a6971dbeccb000be7dcd424c09a89496df57de3",
+      "sha256": "e1481a312ea506ecfac286df8b4066acd7a0a090dfc2e1a40bfcb01a13972d70",
+      "size": 90
+    },
+    {
+      "path": "kernel/kcsan/.kunitconfig",
+      "mode": "100644",
+      "blob": "e82f0f52ab0a5b7fb480724a715af694080678f6",
+      "sha256": "6e535c9ac56ac08e2441d9e331b9ce01899b13b2c1638c3337774e244e13d645",
+      "size": 798
+    },
+    {
+      "path": "lib/kunit/.kunitconfig",
+      "mode": "100644",
+      "blob": "9235b7d42d389d2c7bf912546c7bb084eae99235",
+      "sha256": "8633c6bbb5283393699437e42e3aa04c5bf1b58e7790c35c817be2cccc87e116",
+      "size": 63
+    },
+    {
+      "path": "mm/kfence/.kunitconfig",
+      "mode": "100644",
+      "blob": "f3d65e939bfa15c937aa9cb39369f70390128567",
+      "sha256": "dc27e6ba8507f1bbb09083ce1dac759ea7ace10a9061c25b331b3e2c2f5cff59",
+      "size": 102
+    },
+    {
+      "path": "tools/testing/selftests/arm64/tags/.gitignore",
+      "mode": "100644",
+      "blob": "f4f6c511246349d46ff51eebc82065ca4486070b",
+      "sha256": "912c2792ab8e9b027c702319433e77d3a5345099e76a69ac04e0d1ea2bce6ad2",
+      "size": 50,
+      "stored_path": "tools/testing/selftests/arm64/tags/.gitignore.source"
+    },
+    {
+      "path": "tools/testing/selftests/arm64/tags/Makefile",
+      "mode": "100644",
+      "blob": "41cb7507051171ac0ccc488384521d5396684213",
+      "sha256": "16d8e875742c1ea5e901a97ef1323f04e474e8232a136adf70196840ce489b7b",
+      "size": 157
+    },
+    {
+      "path": "tools/testing/selftests/arm64/tags/run_tags_test.sh",
+      "mode": "100755",
+      "blob": "745f1137993037a1b40969614b1d8d9265c8394f",
+      "sha256": "caa158b92efa9440f95c5d04fd2ae048009a0c59110a9d73093ecc2bb7e6efcc",
+      "size": 199
+    },
+    {
+      "path": "tools/testing/selftests/arm64/tags/tags_test.c",
+      "mode": "100644",
+      "blob": "5701163460ef7ff43e9d138f941821a22e3f3d32",
+      "sha256": "184cab0b37d1ef94592fc391b1de45de103e9f0f6f1b58e6cca5a817177264ba",
+      "size": 669
+    },
+    {
+      "path": "tools/testing/selftests/kvm/.gitignore",
+      "mode": "100644",
+      "blob": "6d9381d60172f39e9557f76179e420e69209d358",
+      "sha256": "e6c2c7badce6e55d950924b30277e8bc54236b8f2be72033d97077dc4bafbc20",
+      "size": 69,
+      "stored_path": "tools/testing/selftests/kvm/.gitignore.source"
+    },
+    {
+      "path": "tools/testing/selftests/kvm/Makefile",
+      "mode": "100644",
+      "blob": "1750f91dd936291a524cc89859a09ea0c1aea46b",
+      "sha256": "5439162637b51346b3acb9f7ab4ec0978c4d55adefd50c6c2e57ade914028716",
+      "size": 9778
+    },
+    {
+      "path": "tools/testing/selftests/kvm/config",
+      "mode": "100644",
+      "blob": "63ed533f73d6e82419b281b512cf32cbec100eb2",
+      "sha256": "f2830ffe827f69c9c0dc2d548ce382a5b354ab0284f15f8bf359490752db48a3",
+      "size": 49
+    },
+    {
+      "path": "tools/testing/selftests/kvm/settings",
+      "mode": "100644",
+      "blob": "6091b45d226baf192c2d380ba893be15592f323d",
+      "sha256": "47e22394c309d3eab5ffd5c6bb86fdc83062a94bc1d70d32a52ec270e7897ed7",
+      "size": 12
+    }
+  ],
+  "absent_from_source": []
+}

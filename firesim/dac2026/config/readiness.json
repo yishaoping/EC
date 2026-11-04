@@ -1,0 +1,43 @@
+{
+  "formal_run_ready": false,
+  "simulation_started": false,
+  "fpga_operated": false,
+  "primary_logical_configurations": 4,
+  "active_minimal_chain": [
+    "B",
+    "C4"
+  ],
+  "deferred": [
+    "C2",
+    "C8",
+    "ablation",
+    "area"
+  ],
+  "detection_check_in_current_scope": false,
+  "certified_bitstreams": 0,
+  "blockers": [
+    "B/C4 hardware generation, GoldenGate and native driver compile/link passed; bitstreams, implementation timing and runtime remain unbuilt/unvalidated.",
+    "B v5 source-clock ROI controller/MMIO, builtin Linux ROI driver, raw passive FireSim bridge and native driver compiled; no driver executed. Formal sample/job/output integration and C4 execution/final-compare/timebase/Linux-checker protocols remain incomplete.",
+    "Linux checker context ABI lacks demonstrated satp/stvec/VM and repeat-session integration; compiled generic firmware is not a C4 checker service.",
+    "Common FASED candidate parameters are fixed explicitly after finding B=4/C4=6 default request limits; runtime readback, certified images/bitstreams and output/run adapters remain unvalidated.",
+    "FPGA jobs and absence of proven per-card isolation keep deployment blocked; no simulation or FPGA operation executed."
+  ],
+  "build_evidence": {
+    "C4_native_alveo_goldengate": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/C4-goldengate-20261102T064527.983268Z/result.json",
+    "runtime_passed": false,
+    "B_parameters": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/B-parameters-20261102T072621.072649Z/result.json",
+    "B_elaborate": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/B-elaborate-20261102T072846.260336Z/result.json",
+    "B_goldengate": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/B-goldengate-20261102T073510.261663Z/result.json",
+    "B_driver": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/B-driver-20261102T074234.650129Z/result.json",
+    "C4_parameters": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/C4-parameters-20261102T072544.448409Z/result.json",
+    "C4_elaborate": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/C4-elaborate-20261102T064344.276368Z/result.json",
+    "C4_goldengate": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/C4-goldengate-20261102T064527.983268Z/result.json",
+    "C4_driver": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/C4-driver-20261102T072755.964947Z/result.json",
+    "software_prerequisites": "/data1/gzh/EC/Experiment/dac2026/preparation/opt4-alveo-v3/software-build-status.json",
+    "offline_contract_tests": 35,
+    "real_runtime_passed_samples": 0,
+    "B_v4_compile_content_verification": "/data1/gzh/EC/Experiment/dac2026/preparation/opt4-roi-v4/B-candidate-compile-content-verified.json",
+    "B_v4_hardware_compile": "/data1/gzh/EC/Experiment/dac2026/preparation/opt4-roi-v4/compile-receipts-verified.json",
+    "B_v5_passive_bridge": "/data1/gzh/EC/Experiment/dac2026/preparation/opt4-roi-v5/B-raw-bridge-compile-content-verified.json"
+  }
+}

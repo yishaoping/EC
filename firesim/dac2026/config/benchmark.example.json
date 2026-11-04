@@ -1,0 +1,14 @@
+{
+  "documentation_only": true,
+  "name": "blackscholes",
+  "binary": "/ABSOLUTE/HOST/WORKCOPY/PATH/blackscholes",
+  "inputs": ["/ABSOLUTE/HOST/WORKCOPY/PATH/in_4K.txt"],
+  "guest_argv": ["/opt/parsec/blackscholes", "1", "/opt/inputs/in_4K.txt", "/tmp/blackscholes.out"],
+  "guest_cwd": "/opt/parsec",
+  "guest_verify_argv": ["/opt/dac/verify-blackscholes", "/tmp/blackscholes.out"],
+  "validator": "/ABSOLUTE/HOST/PATH/verify-blackscholes",
+  "roi_hooks_verified": false,
+  "input_name": "simsmall",
+  "threads": 1,
+  "notes": "Replace all example paths after auditing real PARSEC; reference/ROI contracts differ per benchmark. This file is never executed by default."
+}

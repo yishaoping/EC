@@ -1,0 +1,10 @@
+#!/bin/sh
+export PATH=/bin:/sbin
+mount -t devtmpfs devtmpfs /dev
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+exec </dev/console >/dev/console 2>&1
+echo "EC_DAC_B_V5_SHARED_APPS_BOOT: no program runs automatically; one sample per boot"
+echo "Manual stage B: /opt/ec-dac/manual-link.sh smoke"
+echo "Manual stage C: /opt/ec-dac/manual-link.sh test"
+while true; do /bin/sh; sleep 1; done

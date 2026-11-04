@@ -1,0 +1,23 @@
+package chipyard
+import org.chipsalliance.cde.config.Config
+import freechips.rocketchip.diplomacy.AsynchronousCrossing
+import freechips.rocketchip.guardiancouncil.GH_GlobalParams
+class DacCommonClocking extends Config((1 to 8).map(i =>
+  new chipyard.config.WithTileFrequency(100, Some(i))).reduce(_ ++ _) ++
+  new chipyard.config.WithTileFrequency(200, Some(0)) ++
+  new chipyard.config.WithGCBusFrequency(100) ++
+  new chipyard.config.WithSystemBusFrequency(200) ++
+  new chipyard.config.WithMemoryBusFrequency(200) ++
+  new chipyard.config.WithPeripheryBusFrequency(200) ++
+  new chipyard.config.WithSystemBusFrequencyAsDefault)
+// C uses current source; D requires a reviewed port onto historical detection source.
+// Set GH_NUM_CORES=3 in this config's PRIVATE source tree; it is a Scala val.
+class DacC2 extends Config(
+  new DacCommonClocking ++
+  new freechips.rocketchip.subsystem.WithInclusiveCache(nWays=16,capacityKB=1024,outerLatencyCycles=12) ++
+  new freechips.rocketchip.guardiancouncil.WithGHE ++
+  new freechips.rocketchip.guardiancouncil.WithDisableROBDebug ++
+  new freechips.rocketchip.subsystem.WithAsynchronousRocketTiles(AsynchronousCrossing().depth,AsynchronousCrossing().sourceSync) ++
+  new boom.common.WithNParaMedicBooms(1,overrideIdOffset=Some(0)) ++
+  new freechips.rocketchip.subsystem.WithNGCCheckers(2,overrideIdOffset=Some(1)) ++
+  new chipyard.config.AbstractConfig)

@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "label": "opt4-linux-v6-diagnostic36-opensbi",
+  "source_root": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36/opensbi",
+  "roots": [
+    "lib",
+    ".gitignore",
+    "ThirdPartyNotices.md",
+    "CONTRIBUTORS.md",
+    "docs",
+    "platform",
+    ".clang-format",
+    "Makefile",
+    "COPYING.BSD",
+    "firmware",
+    "README.md",
+    "scripts",
+    "include"
+  ],
+  "skip_directories": [
+    ".Xil",
+    ".bloop",
+    ".git",
+    ".metals",
+    "__pycache__",
+    "build",
+    "builds",
+    "generated-src",
+    "node_modules",
+    "obj_dir",
+    "output",
+    "sim_build",
+    "target",
+    "test_run_dir"
+  ],
+  "artifact_suffixes": [
+    ".a",
+    ".bin",
+    ".bit",
+    ".class",
+    ".dcp",
+    ".fst",
+    ".jar",
+    ".jou",
+    ".log",
+    ".o",
+    ".pyc",
+    ".so",
+    ".vcd"
+  ],
+  "base_repositories": [
+    {
+      "repository": "/data1/gzh/EC",
+      "commit": "2ea467ba08f773dd55b77383da9f4f5c025b9607",
+      "prefix": "",
+      "strip_prefix": "chipyard/software/firemarshal/boards/default/firmware/opensbi/"
+    }
+  ],
+  "source_files": 220,
+  "source_identity": "f08f1458a632a130d63325c9e2fb1b88f922b867071efa54b54d514dacd84db4",
+  "overlay_files": [
+    {
+      "path": "lib/sbi/ec_opt4.c",
+      "mode": "100644",
+      "blob": "6914d6bcda22a827f2ba3e5eaa6bddd046d5f207",
+      "sha256": "b94345d9966d8134db069b22e2b37f33a3b56e7913210efe5c5bb8a598c99783",
+      "size": 3356
+    },
+    {
+      "path": "lib/sbi/ec_opt4_entry.S",
+      "mode": "100644",
+      "blob": "a64ccbf70008ce2f761fd2ba4c3397d5893f6306",
+      "sha256": "090f4b75bf0f73eb84199497d166b7bded97385987097bc246a7010099d84587",
+      "size": 1201
+    },
+    {
+      "path": "lib/sbi/objects.mk",
+      "mode": "100644",
+      "blob": "6287aff4a70bf56ecd5b76b09e3d5e8d80d5d92a",
+      "sha256": "78362b20c36484d6843f71ed2c6cd40ab75e725684cf4e38f2c25fc34e8f166b",
+      "size": 1226
+    },
+    {
+      "path": "lib/sbi/sbi_ecall.c",
+      "mode": "100644",
+      "blob": "d5dd0f273069fbe7f757819b704ea1e0f7c20358",
+      "sha256": "e7a19d93f97520814ce651f5f2af7f600fc24a200136d0421f05fc7d12635295",
+      "size": 4030
+    },
+    {
+      "path": "lib/sbi/sbi_hart.c",
+      "mode": "100644",
+      "blob": "9c083348516c6aa4df47b414995b4c617b08c6b6",
+      "sha256": "26a874c17b8a05c2d432f694968c07ff09c132853bfc7f8bef78c865682403f9",
+      "size": 12576
+    },
+    {
+      "path": "lib/sbi/sbi_init.c",
+      "mode": "100644",
+      "blob": "d21a4242c58c09d5f0407545f3aaf10fa8721037",
+      "sha256": "a6b7340d07addc7c400045dbd9df7a0767550e8b6897277343e65d0fcb34c756",
+      "size": 8962
+    }
+  ],
+  "absent_from_source": []
+}

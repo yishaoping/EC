@@ -1,0 +1,7 @@
+package chipyard
+import org.chipsalliance.cde.config.Config
+import freechips.rocketchip.guardiancouncil.GH_GlobalParams
+// Diagnostic only. Intentionally incomplete protection, not detection-only D.
+class DacC4NoRealBarrier extends Config(
+  new Config((site,here,up) => {case GH_GlobalParams.GH_REAL_BARRIER_ENABLED => false}) ++
+  new DacC4)

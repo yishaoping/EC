@@ -1,0 +1,100 @@
+{
+  "schema": "ec-dac/1",
+  "experiment_id": "dac-opt4-single-boom-v2",
+  "common": {
+    "boom_count": 1,
+    "boom_reference": "WithNParaMedicBooms: 3-wide, ROB42, 128/128 PRF, LQ16/SQ16",
+    "boom_mhz": 200,
+    "rocket_mhz": 100,
+    "uncore_mhz": 200,
+    "app_threads": 1,
+    "input": "simsmall",
+    "warmups": 0,
+    "cache_policy": "no-warmup; per-sample fresh process; Linux page cache retained; checker drained",
+    "memory_model": "FASED LatencyBandwidthPipe, readLatency=30, writeLatency=30, readMaxReqs=4, writeMaxReqs=4, relaxFunctionalModel=0; all five +mm_*_0 arguments required",
+    "l1i": "32 KiB, 8-way, 64 sets",
+    "l1d": "32 KiB, 2-way, 256 sets, 6 MSHRs",
+    "l2": "1 MiB, 16-way, outerLatencyCycles=12",
+    "measurement_definition": "package-exec-to-final-compare/1",
+    "counter_bits": 64,
+    "snapshot_seconds": 20,
+    "sample_timeout_seconds": 3600,
+    "repetitions": 3,
+    "target_time_unit": "BOOM-cycle ticks (5 ns); Rocket edges are 2 ticks at the candidate ratio",
+    "memory_runtime_manifest_sha256": "b9582f27d46ec6fb85b1cde54a6e341f0307abcaca8d4a4a4a1ff4fb002a8e19"
+  },
+  "configurations": [
+    {
+      "id": "B",
+      "mode": "unprotected",
+      "rockets": 0,
+      "source": "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/B/chipyard",
+      "ready": false,
+      "structural_ready": false
+    },
+    {
+      "id": "C2",
+      "mode": "correct",
+      "rockets": 2,
+      "source": "/data1/gzh/EC/chipyard/generators (slowdown/opt4 frozen functional source 476a760910f3bfbd3c111000ebe40343870ab439)",
+      "ready": false,
+      "structural_ready": false,
+      "deferred": true
+    },
+    {
+      "id": "C4",
+      "mode": "correct",
+      "rockets": 4,
+      "source": "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/C4/chipyard",
+      "ready": false,
+      "structural_ready": false,
+      "deferred": false
+    },
+    {
+      "id": "C8",
+      "mode": "correct",
+      "rockets": 8,
+      "source": "/data1/gzh/EC/chipyard/generators (slowdown/opt4 frozen functional source 476a760910f3bfbd3c111000ebe40343870ab439)",
+      "ready": false,
+      "structural_ready": false,
+      "deferred": true
+    }
+  ],
+  "stages": {
+    "link": [
+      "B",
+      "C4"
+    ],
+    "recovery": [
+      "B",
+      "C4"
+    ],
+    "main": [
+      "B",
+      "C4"
+    ],
+    "scan": [
+      "C2",
+      "C8"
+    ],
+    "ablation": []
+  },
+  "scope": {
+    "active": [
+      "B",
+      "C4"
+    ],
+    "deferred": [
+      "C2",
+      "C8",
+      "opt4 ablation",
+      "ASIC area"
+    ],
+    "excluded": [
+      "detection/check implementation"
+    ],
+    "functional_source_commit": "476a760910f3bfbd3c111000ebe40343870ab439",
+    "freeze_commit": "962c4b87db2a810bc025a87f5f7289dd7aedc5cf",
+    "opt4_identity": "/data1/gzh/EC/slowdown/opt4/frozen_manifest.json"
+  }
+}

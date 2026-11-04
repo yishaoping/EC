@@ -1,0 +1,42 @@
+{
+  "schema": "ec-dac/1",
+  "experiment_id": "dac-first-four",
+  "common": {
+    "boom_count": 1,
+    "boom_reference": "WithNParaMedicBooms: 3-wide, ROB42, 128/128 PRF, LQ16/SQ16",
+    "boom_mhz": 200,
+    "rocket_mhz": 100,
+    "uncore_mhz": 200,
+    "app_threads": 1,
+    "input": "simsmall",
+    "warmups": 0,
+    "cache_policy": "no-warmup; per-sample fresh process; Linux page cache retained; checker drained",
+    "memory_model": "BLOCKED: FASED timing parameters must be regenerated/validated at 200 MHz",
+    "l1i": "32 KiB, 8-way, 64 sets",
+    "l1d": "32 KiB, 2-way, 256 sets, 6 MSHRs",
+    "l2": "1 MiB, 16-way, outerLatencyCycles=12",
+    "measurement_definition": "package-exec-to-final-compare/1",
+    "counter_bits": 64,
+    "snapshot_seconds": 20,
+    "sample_timeout_seconds": 3600,
+    "repetitions": 3,
+    "target_time_unit": "BOOM-cycle ticks (5 ns); Rocket edges are 2 ticks at the candidate ratio"
+  },
+  "configurations": [
+    {"id":"B","mode":"unprotected","rockets":0,"source":"BLOCKED: true protection-free RTL with matched BOOM/cache is not supplied","ready":false},
+    {"id":"D2","mode":"detect","rockets":2,"source":"check/source/chipyard","ready":false},
+    {"id":"D4","mode":"detect","rockets":4,"source":"check/source/chipyard","ready":false},
+    {"id":"D8","mode":"detect","rockets":8,"source":"check/source/chipyard","ready":false},
+    {"id":"C2","mode":"correct","rockets":2,"source":"chipyard","ready":false},
+    {"id":"C4","mode":"correct","rockets":4,"source":"chipyard","ready":false},
+    {"id":"C8","mode":"correct","rockets":8,"source":"chipyard","ready":false},
+    {"id":"C4-no-real-barrier","mode":"diagnostic","rockets":4,"source":"chipyard","ready":false,"diagnostic":true,"ablation":{"mechanism":"GH_REAL_BARRIER_ENABLED","value":false,"scope":"existing L2 barrier request/BOOM force-close path; does not disable all L1/SVB preservation","full_protection":false}}
+  ],
+  "stages": {
+    "link": ["B","D4","C4"],
+    "recovery": ["B","D4","C4"],
+    "main": ["B","D4","C4"],
+    "scan": ["D2","C2","D8","C8"],
+    "ablation": ["C4-no-real-barrier"]
+  }
+}

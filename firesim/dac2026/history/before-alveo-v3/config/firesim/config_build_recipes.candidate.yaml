@@ -1,0 +1,16 @@
+# NOT BUILDABLE: resolve every BLOCKED value and port Dac classes first.
+# Schema copied from the pinned FireSim 1.17.1 native Alveo recipe.
+# No post-build deployment, driver operation, simulation, or benchmark hook.
+ec_dac_c4_NOT_READY:
+  PLATFORM: xilinx_alveo_u280
+  TARGET_PROJECT: firesim
+  DESIGN: FireSim
+  TARGET_CONFIG: BLOCKED_DacC4_WithReviewed200MHzFASED_AndPassiveObserver
+  PLATFORM_CONFIG: BaseXilinxAlveoConfig
+  deploy_quintuplet: null
+  platform_config_args:
+    fpga_frequency: null
+    build_strategy: TIMING
+  post_build_hook: null
+  metasim_customruntimeconfig: null
+  bit_builder_recipe: bit-builder-recipes/xilinx_alveo_u280.yaml

@@ -1,0 +1,273 @@
+{
+  "schema": 1,
+  "label": "opt4-linux-v6-c4",
+  "source_root": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/C4/chipyard",
+  "roots": [
+    "generators",
+    "tools",
+    "project",
+    "scripts",
+    "sims/verilator",
+    "sims/firesim/sim",
+    "sims/firesim/platforms",
+    "LICENSE.SiFive",
+    ".pre-commit-config.yaml",
+    ".ctags",
+    "variables.mk",
+    ".ctagsignore",
+    "CONTRIBUTING.md",
+    "build-setup.sh",
+    ".gitignore",
+    "common.mk",
+    "build.sbt",
+    ".gitattributes",
+    "README.md",
+    "CHANGELOG.md",
+    "xcelium.mk",
+    ".ciignore",
+    ".mergify.yml",
+    "LICENSE",
+    "vcs.mk",
+    ".readthedocs.yml",
+    ".checkmake-config.ini",
+    ".gitmodules"
+  ],
+  "skip_directories": [
+    ".Xil",
+    ".bloop",
+    ".git",
+    ".metals",
+    "__pycache__",
+    "build",
+    "builds",
+    "generated-src",
+    "node_modules",
+    "obj_dir",
+    "output",
+    "sim_build",
+    "target",
+    "test_run_dir"
+  ],
+  "artifact_suffixes": [
+    ".a",
+    ".bin",
+    ".bit",
+    ".class",
+    ".dcp",
+    ".fst",
+    ".jar",
+    ".jou",
+    ".log",
+    ".o",
+    ".pyc",
+    ".so",
+    ".vcd"
+  ],
+  "base_repositories": [
+    {
+      "repository": "/data1/gzh/EC",
+      "commit": "2ea467ba08f773dd55b77383da9f4f5c025b9607",
+      "prefix": "",
+      "strip_prefix": "chipyard/"
+    },
+    {
+      "repository": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/C4/chipyard/sims/firesim",
+      "commit": "7345ef3cf162c311153d7d0db983da22361b181b",
+      "prefix": "sims/firesim/"
+    }
+  ],
+  "source_files": 9141,
+  "source_identity": "d4c0c9401f8faba1aa536134873a38a38092632f6e0bc467a765b55fca573ab7",
+  "overlay_files": [
+    {
+      "path": "generators/boom/src/main/scala/exu/core.scala",
+      "mode": "100644",
+      "blob": "93aecf4428c7eb765bfe837e106811af8594c060",
+      "sha256": "99268ea4c0b726d545387671247d952c40db085702cb7e4d6dd591d1e0d34777",
+      "size": 125026
+    },
+    {
+      "path": "generators/boom/src/main/scala/lsu/dcache.scala",
+      "mode": "100644",
+      "blob": "10ff5c83177c20fc0a9886324782ed73e0904890",
+      "sha256": "070875a563d8773013e21bcbc2e54aeed9d225262419d43474a87090e2e0e057",
+      "size": 243448
+    },
+    {
+      "path": "generators/chipyard/src/main/scala/DigitalTop.scala",
+      "mode": "100644",
+      "blob": "5375c692f6d443e7c04dcd4574a3ba6e5c25a70b",
+      "sha256": "988a3c08e5580e93ae40bba20263c6c8bc368bb12af9688772c8100063183329",
+      "size": 3163
+    },
+    {
+      "path": "generators/chipyard/src/main/scala/config/DacLinux.scala",
+      "mode": "100644",
+      "blob": "9dd3c4f686bf52d68b2e2232d315b4e13caa46cc",
+      "sha256": "6ab75b189158499be17585b864077a5c2b21d69c8a86e334ba217ca9a34293fd",
+      "size": 140
+    },
+    {
+      "path": "generators/chipyard/src/main/scala/example/DacRoiPeripheral.scala",
+      "mode": "100644",
+      "blob": "74008cfb22f3daff9570f089d1030ba4be1375ba",
+      "sha256": "28b4bae58b07125369b09a784dae4775f3949a748d7f9f7749474d491d0936a2",
+      "size": 4689
+    },
+    {
+      "path": "generators/firechip/src/main/scala/BridgeBinders.scala",
+      "mode": "100644",
+      "blob": "ac180538c4fd3dbfdfe2a9f79979808e2ce42c14",
+      "sha256": "75bc2dd5ae1af1773f0f0dc3dd0fd36d0f86700238f9493c02703ac0fb477c2a",
+      "size": 9689
+    },
+    {
+      "path": "generators/firechip/src/main/scala/DacCommonPolicy.scala",
+      "mode": "100644",
+      "blob": "f67bc0d05c27ed568046768a94b96e5839bc7b3d",
+      "sha256": "b3b239fd2d5b497f8c55069126f2854d3c4fd4024a33275724714d6c1fdaca30",
+      "size": 634
+    },
+    {
+      "path": "generators/firechip/src/main/scala/DacParameterAudit.scala",
+      "mode": "100644",
+      "blob": "c3b4d003486543556bfdd8a6972c4d51813c5a3c",
+      "sha256": "580efea2bb88448a7f9304e2ca5f5c92772cd9e6093e8649bda39447523ee411",
+      "size": 1510
+    },
+    {
+      "path": "generators/firechip/src/main/scala/DacTarget.scala",
+      "mode": "100644",
+      "blob": "844763ad8f487f7e1c8e9c76c0c16b3d339d318f",
+      "sha256": "7b2b8d54f909b08ea67e0b8fe19b355e93e4267d3a3a6c09620aba98eeacbb3a",
+      "size": 353
+    },
+    {
+      "path": "generators/firechip/src/main/scala/FireSim.scala",
+      "mode": "100644",
+      "blob": "626fbbdde04e8fdf7fedd2a362db987aa588797c",
+      "sha256": "945a89a918a0e43775816933c9e3a7e42b3488bdf9e4b4212e48c59fc7103f90",
+      "size": 12357
+    },
+    {
+      "path": "generators/rocket-chip/src/main/resources/vsrc/AsyncResetReg.v",
+      "mode": "100644",
+      "blob": "be2450e169e09808ad638d50ca4227ab9bc42a60",
+      "sha256": "96700ec42cd45d2933942aa138d76a4e2352c853b7045cb5b7625043aa58652e",
+      "size": 1722
+    },
+    {
+      "path": "generators/rocket-chip/src/main/resources/vsrc/ClockDivider2.v",
+      "mode": "100644",
+      "blob": "b1190d33bb81be48e147e32f82df4137d94a33f8",
+      "sha256": "753672a56deb6f6f89857d7336bd634b38e8ebd00fd39bee92e16669988c9d16",
+      "size": 654
+    },
+    {
+      "path": "generators/rocket-chip/src/main/resources/vsrc/ClockDivider3.v",
+      "mode": "100644",
+      "blob": "f9fba48cf42114b0abdd6d9c6264145714b90ebe",
+      "sha256": "4943ad841b27c365546e0c2b08a344c87078750b4df9dd6bee3bb56d18f92906",
+      "size": 838
+    },
+    {
+      "path": "generators/rocket-chip/src/main/resources/vsrc/EICG_wrapper.v",
+      "mode": "100644",
+      "blob": "76ee093b616f637970788445432ef8d9f1b70056",
+      "sha256": "8532a50a212f146f10208717be24168a2de73a9754786da272d0dbfcd556c307",
+      "size": 297
+    },
+    {
+      "path": "generators/rocket-chip/src/main/resources/vsrc/RoccBlackBox.v",
+      "mode": "100644",
+      "blob": "4588cd38def10b259fc2ff3a4885791f4a69a880",
+      "sha256": "1af097895fd88442fb82447864af802e26e8962870c2d10005dbd5cd584ecda7",
+      "size": 11206
+    },
+    {
+      "path": "generators/rocket-chip/src/main/resources/vsrc/SimDTM.v",
+      "mode": "100644",
+      "blob": "9f403fdc1617dedb8361ed14a0798306a6178d9c",
+      "sha256": "6952c4f506ff117c1015aa0011357c6665bda9ef652643c78b932c0fa8e0b7f6",
+      "size": 2577
+    },
+    {
+      "path": "generators/rocket-chip/src/main/resources/vsrc/SimJTAG.v",
+      "mode": "100644",
+      "blob": "22908a6f7ed40c43801c55c131e3a02a9882d39e",
+      "sha256": "3a5df6035e4658031b96dc27155086425fdf50af4e86e1e33036f2acd04eacf3",
+      "size": 2458
+    },
+    {
+      "path": "generators/rocket-chip/src/main/resources/vsrc/TestDriver.v",
+      "mode": "100644",
+      "blob": "f9b7f5ae40a4e70630dd82767fa30a6c901e14fe",
+      "sha256": "5a58ee72cf693b0dfcfcbe5903cf7d7a4c77bc81e065457f7f90e26a4035d088",
+      "size": 4132
+    },
+    {
+      "path": "generators/rocket-chip/src/main/resources/vsrc/TraceSinkMonitor.v",
+      "mode": "100644",
+      "blob": "a0de8903bd29abd32084ef35a0d9c4cb4e33bcf6",
+      "sha256": "a925693660aacd9da0ed5ec39af2d9fa35b4757c26627093c044dff9c8a6801a",
+      "size": 513
+    },
+    {
+      "path": "generators/rocket-chip/src/main/resources/vsrc/debug_rob.v",
+      "mode": "100644",
+      "blob": "e57e30cc11bff45a9145cea22f628eeba86f48f0",
+      "sha256": "f553f113efa47ade8ef39d8c5de4b1bb75e528eb461fc8ebc620c71471cb3705",
+      "size": 6556
+    },
+    {
+      "path": "generators/rocket-chip/src/main/resources/vsrc/plusarg_reader.v",
+      "mode": "100644",
+      "blob": "c1e03111296a173d2d5aea4e1a360f1df3a4b131",
+      "sha256": "482a63c1f24a7ac920909620bd0df108e6954eabf9520de6e72334a2b5450efb",
+      "size": 596
+    },
+    {
+      "path": "generators/rocket-chip/src/main/scala/rocket/CSR.scala",
+      "mode": "100644",
+      "blob": "a438a5dbfce1c5eb0daa6f21c05d31cf7ae684ef",
+      "sha256": "f92f52d15868605f0fe8bdaf9ea4c84188eb75c339ecb07df4685645f2ca8620",
+      "size": 90632
+    },
+    {
+      "path": "generators/rocket-chip/src/main/scala/rocket/RocketCore.scala",
+      "mode": "100644",
+      "blob": "15e1cfde20dbcc87633ff7a390db57c3e8e434f6",
+      "sha256": "5505c14cc6d8d0c68ffc86fbea254a0dad1814d6355d0141d8c1a6b9459e0e83",
+      "size": 125890
+    },
+    {
+      "path": "generators/rocket-chip/src/main/scala/util/CacheOpportunityObservation.scala",
+      "mode": "100644",
+      "blob": "114ac229144df639913a374eab13981d9a639132",
+      "sha256": "66a1b648a58aca7724d7403e603a93e5cdf923a6c96bbd2292e9b85a3e197e9d",
+      "size": 4079
+    },
+    {
+      "path": "generators/rocket-chip/src/main/scala/util/DacRoi.scala",
+      "mode": "100644",
+      "blob": "eae23166589b76b7965bbd526f47e70a4ad7e8cd",
+      "sha256": "e41828d04b47ad2a209defc28c700113e3a74e53451e00a846c0ab63df9c4ed2",
+      "size": 6144
+    },
+    {
+      "path": "generators/rocket-chip/src/main/scala/util/SafeChainObservation.scala",
+      "mode": "100644",
+      "blob": "1888c8f05ccf2942d3ebce197efb7c73753e01c6",
+      "sha256": "dad325e10bcc86526e2b378c38ce94a9a3c5c79abf49a540c2b06bb46870a7b7",
+      "size": 3309
+    },
+    {
+      "path": "project/plugins.sbt",
+      "mode": "100644",
+      "blob": "ea67fc1e3835faba32e75e4d20f87f032f021cca",
+      "sha256": "3c9913829e86c7b70be30ff11d24ff372c4a4c4a81a8c67a35507d4e8c3a893a",
+      "size": 168
+    }
+  ],
+  "absent_from_source": []
+}
