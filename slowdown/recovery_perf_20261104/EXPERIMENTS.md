@@ -168,3 +168,14 @@ by several thousand cycles and workload progress differs, so these are
 provisional exposures, not a matched full-ROI miss-rate or speedup claim.
 Both windows are saved under candidates/. The complete pilot and the fixed
 main inputs determine the final keep/reject decision.
+
+The reproducible Canneal classifier refines the historical result endpoint:
+SC6 bit9 is full_check_complete and directly creates local result valid; bit16
+is local result enqueue, bit15 is result output valid. CDC SC4 enqueue occurs
+later. All 144 local formation endpoints precede CDC enqueue in the real
+trace. The old 117,975/68 execution-or-tail/transport split used CDC enqueue
+and includes local cleanup in its broad tail bucket. The refined split is
+116,989 not-yet-formed and 1,054 formed-result/cleanup/transport cycles; total
+RESULT_NOT_AVAILABLE remains exactly 118,043. A fixture check expecting the
+old subphase split failed, so the endpoint distinction was audited and saved
+in baseline/canneal_phase_endpoint_check.json. The earlier artifacts remain.
