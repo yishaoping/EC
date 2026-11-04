@@ -179,3 +179,12 @@ and includes local cleanup in its broad tail bucket. The refined split is
 RESULT_NOT_AVAILABLE remains exactly 118,043. A fixture check expecting the
 old subphase split failed, so the endpoint distinction was audited and saved
 in baseline/canneal_phase_endpoint_check.json. The earlier artifacts remain.
+
+Candidate 1 full simdev PASS: 1,420,838 ROI cycles (2.1983% reduction),
+1,094,668 retired application instructions, identical output and ELF. All
+510 generated packages have matching accepted PASS and complete checker-work
+intervals. Package count changes with timing-driven boundaries; no package or
+re-execution work was skipped. Checker local work, protocol, SVB integrity,
+data ordering, source/release/ACK ledgers and capture validators PASS. The
+fixed project64/project400 and BFS regression suite is now running. This
+pilot does not satisfy the main-input target.

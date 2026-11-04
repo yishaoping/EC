@@ -1,0 +1,315 @@
+{
+  "run": "/data1/gzh/EC-opt4-recovery-perf/slowdown/parsec_evaluation_20261103/runs/streamcluster_simdev_correction_20261104_025740_b24b7c7e",
+  "status": "PASS",
+  "ROI_cycles": 1420838,
+  "retired_instructions": 1094668,
+  "output": [
+    "benchmark=streamcluster checksum=5e0eed7ac7af71fb verified=1 centers=3 weight=16"
+  ],
+  "relative_ROI_reduction": 0.021982772268776873,
+  "counters": {
+    "physical_cache_traffic": [
+      {
+        "level": 2,
+        "instance": 0,
+        "cycles": 1425787,
+        "actual": {
+          "access": 36480,
+          "hit": 36292,
+          "miss": 188,
+          "replacement": 10,
+          "dirty_victim": 7,
+          "set_full_miss": 0
+        },
+        "mshr_full_cycles": 0,
+        "writebacks": 10,
+        "dram_facing_reads": 188,
+        "dram_facing_writes": 2134
+      },
+      {
+        "level": 1,
+        "instance": 0,
+        "cycles": 1425786,
+        "actual": {
+          "access": 311463,
+          "hit": 311319,
+          "miss": 144,
+          "replacement": 27,
+          "dirty_victim": 23,
+          "set_full_miss": 9
+        },
+        "mshr_full_cycles": 0,
+        "writebacks": 2196,
+        "dram_facing_reads": 0,
+        "dram_facing_writes": 0
+      }
+    ],
+    "SVB_entry_accounting": {
+      "observed": true,
+      "scope": "full_run_final",
+      "entries": 16,
+      "allocations": 5291,
+      "completions": 985,
+      "coalesced": 0,
+      "discarded": 4306,
+      "occupancy": 0,
+      "conserved": true
+    },
+    "SVB_occupancy": {
+      "observed": true,
+      "scope": "hardware_traffic_START_inclusive_STOP_exclusive",
+      "would_full_at_8": 1675,
+      "cycles_above_8": 420798,
+      "capture_failures": 0,
+      "max_occupancy": 16,
+      "max_depth": 3,
+      "occupancy_histogram": [
+        429732,
+        82060,
+        200231,
+        114777,
+        56845,
+        31281,
+        39854,
+        26336,
+        23872,
+        13416,
+        18356,
+        27905,
+        17373,
+        61880,
+        46267,
+        36660,
+        198941
+      ],
+      "depth_histogram": [
+        429732,
+        711142,
+        284900,
+        12,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "sourcec": {
+      "schema": 1,
+      "sample_cycles": 1425787,
+      "reserved_cycles": 70191,
+      "reserved_pending_cycles": 21,
+      "accepted_releases_in_wait_ack": 2,
+      "pending_no_accept_cycles": 21,
+      "wait_ack_cycles": 20044,
+      "wait_ack_pending_cycles": 2,
+      "target_lock_cycles": 90235,
+      "target_lock_pending_cycles": 23
+    },
+    "retained_copy": {
+      "schema": 1,
+      "sample_cycles": 1425787,
+      "wb_requests": 1181,
+      "retaining_wb_requests": 1181,
+      "wb_receipts": 1181,
+      "retained_receipts": 1181,
+      "retaining_receipts_owner_changed": 0,
+      "retaining_receipts_probe_revoked": 0,
+      "invalidating_clears": 0
+    },
+    "checker_frontend_traffic_window": {
+      "49:1": {
+        "schema": 1,
+        "sample_cycles": 712894,
+        "live_cycles": 462457,
+        "empty_cycles": 14387,
+        "fetching_cycles": 346263,
+        "retired_classify_cycles": 0,
+        "wait_bjl_cycles": 30812,
+        "ready_cycles": 70995,
+        "fq_deliveries": 169504,
+        "handoff_launches": 168057,
+        "icache_requests": 174405,
+        "held_ready_cycles": 51755,
+        "fault_deliveries": 0,
+        "icache_acquires": 525,
+        "tlb_miss_cycles": 0,
+        "redirect_cycles": 4355
+      },
+      "49:2": {
+        "schema": 1,
+        "sample_cycles": 712894,
+        "live_cycles": 462057,
+        "empty_cycles": 16266,
+        "fetching_cycles": 347426,
+        "retired_classify_cycles": 0,
+        "wait_bjl_cycles": 30639,
+        "ready_cycles": 67726,
+        "fq_deliveries": 169547,
+        "handoff_launches": 168039,
+        "icache_requests": 175171,
+        "held_ready_cycles": 48670,
+        "fault_deliveries": 0,
+        "icache_acquires": 620,
+        "tlb_miss_cycles": 0,
+        "redirect_cycles": 4781
+      },
+      "49:3": {
+        "schema": 1,
+        "sample_cycles": 712894,
+        "live_cycles": 444570,
+        "empty_cycles": 14933,
+        "fetching_cycles": 339397,
+        "retired_classify_cycles": 0,
+        "wait_bjl_cycles": 26918,
+        "ready_cycles": 63322,
+        "fq_deliveries": 165865,
+        "handoff_launches": 164451,
+        "icache_requests": 171003,
+        "held_ready_cycles": 44408,
+        "fault_deliveries": 0,
+        "icache_acquires": 570,
+        "tlb_miss_cycles": 0,
+        "redirect_cycles": 4372
+      },
+      "49:4": {
+        "schema": 1,
+        "sample_cycles": 712894,
+        "live_cycles": 464944,
+        "empty_cycles": 14151,
+        "fetching_cycles": 354691,
+        "retired_classify_cycles": 0,
+        "wait_bjl_cycles": 25439,
+        "ready_cycles": 70663,
+        "fq_deliveries": 173844,
+        "handoff_launches": 172386,
+        "icache_requests": 178650,
+        "held_ready_cycles": 50782,
+        "fault_deliveries": 0,
+        "icache_acquires": 494,
+        "tlb_miss_cycles": 0,
+        "redirect_cycles": 4415
+      }
+    },
+    "checker_ROI_local_partition": {
+      "issue_available": 1121565,
+      "instruction_starvation": 126676,
+      "lsl_wait": 15985,
+      "dcache_blocked": 0,
+      "dependency": 331398,
+      "replay": 0,
+      "setup_redirect_or_management": 268747,
+      "unused": 0,
+      "other": 1335
+    },
+    "checker_ROI_captured_packages": 507,
+    "checker_ROI_capture_excluded": {
+      "crosses_roi_boundary": 3
+    },
+    "full_session_checker_work": {
+      "fully_captured_session_packages": 510,
+      "complete": true,
+      "checked_instructions": 1095074,
+      "checked_loads": 201126,
+      "checked_stores": 107677,
+      "checker_local_active_cycles": 1878700,
+      "scope": "entire protected session, including four packages crossing software ROI; counter interval validated for every BOOM-accepted result; management/boundary instructions can differ from hart0 rdinstret"
+    },
+    "scope": "physical traffic uses its recorded window, not automatically the application ROI; checker cycles are local; overlapping exposures are not additive savings"
+  },
+  "stall_profile": {
+    "run": "/data1/gzh/EC-opt4-recovery-perf/slowdown/parsec_evaluation_20261103/runs/streamcluster_simdev_correction_20261104_025740_b24b7c7e",
+    "requested_window": [
+      99288,
+      1520126
+    ],
+    "scope": "SC52 priority partition is exclusive; cache exposures overlap and are not lost-cycle attribution",
+    "groups": {
+      "52": {
+        "status": "EXACT_BETWEEN_SAMPLES",
+        "sampled_window": [
+          99328,
+          1519616
+        ],
+        "unmeasured_boundary_cycles": 550,
+        "counts": {
+          "cycles": 1420288,
+          "commit_cycles": 485174,
+          "no_commit_gh": 0,
+          "no_commit_rsu": 1118,
+          "no_commit_ic": 65716,
+          "no_commit_big_hang": 459,
+          "no_commit_dispatch_drain": 5966,
+          "no_commit_csr": 0,
+          "no_commit_rob_nonempty": 399811,
+          "no_commit_rob_empty": 462044,
+          "raw_gh": 0,
+          "raw_rsu": 1118,
+          "raw_ic": 66834,
+          "raw_dispatch_drain": 77504,
+          "retired": 1094316
+        }
+      },
+      "53": {
+        "status": "EXACT_BETWEEN_SAMPLES",
+        "sampled_window": [
+          99328,
+          1519616
+        ],
+        "unmeasured_boundary_cycles": 550,
+        "counts": {
+          "cycles": 1420288,
+          "lsu_ingress_block": 506319,
+          "freeze_set_ingress_block": 501478,
+          "array_arbitration_ingress_block": 26202,
+          "s2_nack": 7105,
+          "s2_write_busy": 0,
+          "preservation_block": 6776,
+          "legacy_preservation_pending": 474975,
+          "capture_pending": 42926,
+          "mshr_admission_block": 26,
+          "victim_nack": 76,
+          "replay_wait": 0,
+          "svb_full_fallback": 67,
+          "release_ack_pending": 114837,
+          "owner_block": 365
+        }
+      },
+      "54": {
+        "status": "EXACT_BETWEEN_SAMPLES",
+        "sampled_window": [
+          99328,
+          1519616
+        ],
+        "unmeasured_boundary_cycles": 550,
+        "counts": {
+          "hit_nack": 30,
+          "data_nack": 0,
+          "refill_beats": 188,
+          "legacy_wb_requests": 1177,
+          "captures": 5288,
+          "promotions": 985,
+          "store_effects": 107599,
+          "lsu_requests": 325425,
+          "mshr_admissions": 400,
+          "mshr_active": 2828,
+          "install_wait": 406,
+          "a_beats": 394,
+          "c_beats": 8752,
+          "d_beats": 2717,
+          "svb_full_cycles": 198941
+        }
+      }
+    }
+  },
+  "all_accepted_results_complete": true,
+  "decision": "main-input regressions pending; pilot gain insufficient for target"
+}
