@@ -2468,6 +2468,12 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     crossPackageRescueSeq := s2_req(0).packet_seq
     crossPackageRescueEpoch := svbEpoch
   }
+  // Remember one-cycle cancellation/epoch pulses even if the old legacy
+  // descriptor survives them. It must never reacquire speculative permission
+  // in a later cycle after the cancellation signal has gone away.
+  when (svbEpochBoundary || svbInvalidate.valid) {
+    crossPackageRescueQualified := false.B
+  }
   when (crossPackagePending && !crossPackageSvbRescue && !crossPackageIssued && !crossPackageMetaClearPending && crossPackageResidentMatch) {
     // Pre-freeze grants drain before snapshot admission. Their final image is
     // the predecessor to preserve, even if its generation changed while draining.

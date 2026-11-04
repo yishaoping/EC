@@ -23,7 +23,7 @@ def report(run, start=None, stop=None):
         roi = json.loads((run / "roi.json").read_text())
         start, stop = roi["start_cycle"], roi["stop_cycle"]
     assert 0 <= start < stop
-    samples = {k: [] for k in (52, 53, 54)}
+    samples = {k: [] for k in (52, 53, 54, 55)}
     with (run / "safe_chain_events.tsv").open() as stream:
         for line in stream:
             words = line.split()
@@ -38,7 +38,8 @@ def report(run, start=None, stop=None):
     result = {"run": str(run.resolve()), "requested_window": [start, stop],
               "scope": "SC52 priority partition is exclusive; cache exposures overlap and are not lost-cycle attribution",
               "groups": {}}
-    for kind, names in [(52, CORE), (53, CACHE[:15]), (54, CACHE[15:])]:
+    for kind, names in [(52, CORE), (53, CACHE[:15]), (54, CACHE[15:]),
+                        (55, ["qualified_fallback_pending", "qualified_fallback_with_space", "rescue_handoffs"])]:
         rows = sorted(samples[kind])
         if len(rows) < 2:
             result["groups"][str(kind)] = {"status": "INSUFFICIENT_SAMPLES"}

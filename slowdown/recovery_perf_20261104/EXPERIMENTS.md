@@ -214,3 +214,11 @@ evaluates changed combinational inputs and matches the actual emitted
 assertion identity/predicate. This unit test does not prove architectural
 rollback or SPEC durability across every flush. Candidate-2 SVB RTL must
 remain identical, otherwise rerun these tests against its emitted source.
+
+A pre-runtime audit found that gating only the live exception/FAIL pulse
+would permit a surviving descriptor to requalify in a later cycle. Candidate
+2 now permanently clears its qualification on any epoch or invalidation
+pulse, with cancellation taking priority over new qualification. The first
+build was stopped before simulation and retained as SUPERSEDED; a fresh build
+records the corrected source seal. This does not alter existing recovery
+semantics; it removes the new optimization permission after cancellation.
