@@ -82,6 +82,13 @@ class BaseXilinxAlveoConfig extends Config(
   new midas.XilinxAlveoConfig
 )
 
+// C4 needs the existing Opt4 package and ROI evidence on the host. This only
+// enables FireSim's synthesized-printf bridge; it does not change target logic.
+class DacXilinxAlveoConfig extends Config(
+  new WithPrintfSynthesis ++
+  new BaseXilinxAlveoConfig
+)
+
 class BaseNitefuryConfig extends Config(
   new WithWiringTransform ++
   new WithAsyncResetReplacement ++
