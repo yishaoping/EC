@@ -37,7 +37,7 @@ import chisel3.util.experimental.BoringUtils
 import org.chipsalliance.cde.config.Parameters
 import freechips.rocketchip.rocket.Instructions._
 import freechips.rocketchip.rocket.{Causes, PRV, TracedInstruction}
-import freechips.rocketchip.util.{Str, UIntIsOneOf, CoreMonitorBundle, AsyncResetSynchronizerShiftReg}
+import freechips.rocketchip.util.{Str, UIntIsOneOf, CoreMonitorBundle, AsyncResetSynchronizerShiftReg, SafeChainObservation}
 import freechips.rocketchip.devices.tilelink.{PLICConsts, CLINTConsts}
 import freechips.rocketchip.rocket._
 import freechips.rocketchip.subsystem.BankedL2Key
