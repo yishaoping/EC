@@ -1,0 +1,85 @@
+{
+  "run": "/data1/gzh/EC-opt4-recovery-perf/slowdown/parsec_evaluation_20261103/runs/streamcluster_simdev_correction_20261104_020844_4954a08f",
+  "requested_window": [
+    110000,
+    190000
+  ],
+  "scope": "SC52 priority partition is exclusive; cache exposures overlap and are not lost-cycle attribution",
+  "groups": {
+    "52": {
+      "status": "EXACT_BETWEEN_SAMPLES",
+      "sampled_window": [
+        110592,
+        189440
+      ],
+      "unmeasured_boundary_cycles": 1152,
+      "counts": {
+        "cycles": 78848,
+        "commit_cycles": 23936,
+        "no_commit_gh": 0,
+        "no_commit_rsu": 96,
+        "no_commit_ic": 6703,
+        "no_commit_big_hang": 28,
+        "no_commit_dispatch_drain": 365,
+        "no_commit_csr": 0,
+        "no_commit_rob_nonempty": 29360,
+        "no_commit_rob_empty": 18360,
+        "raw_gh": 0,
+        "raw_rsu": 96,
+        "raw_ic": 6799,
+        "raw_dispatch_drain": 7344,
+        "retired": 50707
+      }
+    },
+    "53": {
+      "status": "EXACT_BETWEEN_SAMPLES",
+      "sampled_window": [
+        110592,
+        189440
+      ],
+      "unmeasured_boundary_cycles": 1152,
+      "counts": {
+        "cycles": 78848,
+        "lsu_ingress_block": 19201,
+        "freeze_set_ingress_block": 18894,
+        "array_arbitration_ingress_block": 1665,
+        "s2_nack": 525,
+        "s2_write_busy": 0,
+        "preservation_block": 421,
+        "legacy_preservation_pending": 17641,
+        "capture_pending": 2412,
+        "mshr_admission_block": 12,
+        "victim_nack": 28,
+        "replay_wait": 0,
+        "svb_full_fallback": 2,
+        "release_ack_pending": 5851,
+        "owner_block": 27
+      }
+    },
+    "54": {
+      "status": "EXACT_BETWEEN_SAMPLES",
+      "sampled_window": [
+        110592,
+        189440
+      ],
+      "unmeasured_boundary_cycles": 1152,
+      "counts": {
+        "hit_nack": 10,
+        "data_nack": 0,
+        "refill_beats": 88,
+        "legacy_wb_requests": 108,
+        "captures": 299,
+        "promotions": 15,
+        "store_effects": 4868,
+        "lsu_requests": 17099,
+        "mshr_admissions": 103,
+        "mshr_active": 1290,
+        "install_wait": 141,
+        "a_beats": 93,
+        "c_beats": 528,
+        "d_beats": 290,
+        "svb_full_cycles": 3149
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "window": [
+    110000,
+    190000
+  ],
+  "counts": {
+    "POST_SAFE_WAIT": 6899,
+    "MULTI_CAUSE": 58,
+    "RESULT_NOT_AVAILABLE": 10816,
+    "PREFIX_PROPAGATION_DELAY": 2
+  },
+  "phases": {
+    "('POST_SAFE_WAIT', None)": 6899,
+    "('MULTI_CAUSE', None)": 58,
+    "('RESULT_NOT_AVAILABLE', 'checker_execution_or_tail')": 10692,
+    "('RESULT_NOT_AVAILABLE', 'pre_accept_transport_or_cleanup')": 124,
+    "('PREFIX_PROPAGATION_DELAY', 'watermark_register_edge')": 2
+  },
+  "clock_fit": {
+    "period": "1",
+    "offset": "103",
+    "async_policy": "ceil raw timestamp to first main pre-edge sample; equal-time batch unordered"
+  },
+  "scope": "Preliminary observed interval; no optional omission reported by active capture yet; overlapping cache exposure, not causal savings"
+}

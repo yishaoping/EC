@@ -1,10 +1,12 @@
 {
-  "state": "PROPOSED_NOT_APPLIED",
+  "state": "APPLIED_MEASUREMENT_PENDING",
   "mechanism": "Checker instruction refill pressure delays PASS and therefore blocks main-core historical-version preservation",
   "evidence": [
     "Canneal ROI legacy wait: checker execution/tail 117975 cycles vs watermark edge 17 cycles",
     "Canneal complete ROI package instruction starvation 268029 checker-local cycles",
-    "Canneal ROI saved frontend windows: checker ICache acquisitions 11794; L2 physical misses in broader window 1292; refills are predominantly L2 hits/repeated code"
+    "Canneal ROI saved frontend windows: checker ICache acquisitions 11794; L2 physical misses in broader window 1292; refills are predominantly L2 hits/repeated code",
+    "Streamcluster simdev [110592,189440): 18894 freeze-set ingress blocked cycles / 78848 sampled cycles; s2 write-busy exposure zero",
+    "Streamcluster observed [110000,190000): 10692 checker execution/tail wait cycles vs 124 formed-result transport and 2 watermark propagation cycles"
   ],
   "change": "four checker I$ banks: 32 sets x 1 way -> 32 sets x 2 ways; 2KiB -> 4KiB each",
   "added_data_bytes_total": 8192,

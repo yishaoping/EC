@@ -81,3 +81,19 @@ and 17 as watermark register propagation. 36,778 post-safe wait cycles and
 instruction-starvation cycles in complete ROI packages. The proposal under
 `candidates/` tests a bounded ICache parameter change only after the profiled
 baseline is sealed. It is not an accepted optimization or measured benefit.
+
+## Candidate 1: bounded checker ICache associativity/capacity
+
+The observation-only build passed and launched sealed Streamcluster simdev
+`streamcluster_simdev_correction_20261104_020844_4954a08f`. Its initial saved
+window has 18,894 freeze-set ingress blocked cycles / 78,848 BOOM cycles,
+with zero S2 write-busy exposure. Observed legacy wait phases include 10,692
+checker-execution/tail cycles, 124 formed-result transport cycles, 2 watermark
+propagation cycles and 6,899 post-safe handoff cycles. These are exposures,
+not additive causal savings; full-run reproducibility remains pending.
+
+Candidate 1 changes only checker ICache nWays 1 to 2 (2 KiB to 4 KiB per
+checker, four checkers, total +8 KiB data RAM plus tags/replacement state).
+The original main-core DCache, SVB, ACK, watermark and verification controls
+are unchanged. Measurement and regression gates decide keep/reject; no
+area/timing signoff or achieved speedup is claimed.
