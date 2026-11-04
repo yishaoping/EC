@@ -81,6 +81,12 @@ def main():
             tar.add(cache.ROOT/'slowdown/optimization_6_overlap/runs'/build['build_id'],arcname='build-evidence')
             tar.add(build['simulator'],arcname='simulator-chipyard-v1Config')
             tar.add(Path(state['revision']),arcname='revision.json')
+            for name,r in rows.items():
+                if r['run']:tar.add(r['run'],arcname='raw-results/'+name)
+            for script in cache.OUT.glob('*.py'):tar.add(script,arcname='scripts/'+script.name)
+            for name in ['svb_retention_driver.cpp','test_svb_retention.py']:
+                tar.add(cache.ROOT/'slowdown/recovery_perf_20261104/scripts'/name,arcname='directed-tests/'+name)
+            tar.add(cache.INDEX,arcname='experiment_index.json')
         preservation=dict(tag=tag,commit=commit,backup=str(backup),archive_sha256=cache.sha(backup/'hardware-and-evidence.tar.gz'),recovery_accepted=False)
         (out/'preservation.json').write_text(json.dumps(preservation,indent=2)+'\n')
         (backup/'preservation.json').write_text(json.dumps(preservation,indent=2)+'\n')

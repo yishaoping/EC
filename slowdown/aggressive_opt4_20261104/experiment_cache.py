@@ -51,6 +51,11 @@ def build_identity(source):
 
 def discover():
     records=[]
+    file_hashes={}
+    def actual_sha(p):
+        p=Path(p)
+        if p not in file_hashes:file_hashes[p]=sha(p)
+        return file_hashes[p]
     for root in WORKTREES:
         area=root/'slowdown/parsec_evaluation_20261103'
         paths=list((area/'runs').glob('*/run_manifest.json'))+list((area/'build').glob('bfs_regression_*/run_manifest.json'))
@@ -75,9 +80,16 @@ def discover():
                 completed=m.get('exit_status') is not None
                 status='COMPLETE' if completed and m['exit_status']==0 else 'FAILED' if completed else 'INCOMPLETE'
                 correct=a.get('status')=='PASS' or (m.get('design') in ['native','check'] and m.get('software_correct') is True)
+                if a.get('ROI_cycles') is not None and m.get('roi_cycles') is not None:
+                    correct=correct and a['ROI_cycles']==m['roi_cycles']
                 metadata_complete=bool(source and sim and elf and swfile.exists() and lm.exists() and identity['roi_scope'])
                 intact=bool(swfile.exists() and elf and sha(swfile)==elf)
                 identity=m.get('experiment_cache_identity',identity)
+                if 'experiment_cache_identity' in m:
+                    intact=intact and lm.exists() and actual_sha(lm)==identity['loadmem_sha256']
+                    intact=intact and bool(argv) and Path(argv[0]).exists() and actual_sha(argv[0])==identity['simulator_sha256']
+                    work=read(p.parent/'full_checker_work.json') if benchmark=='gapbs_bfs512_8192_source0' and (p.parent/'full_checker_work.json').exists() else a.get('full_session_checker_work',{})
+                    correct=correct and work.get('complete') is True
                 records.append(dict(key=digest(identity),identity=identity,run=str(p.parent),manifest_sha256=sha(p),
                     analysis_sha256=sha(analysis if analysis.exists() else result) if a else None,
                     status=status,correctness='PASS' if correct else 'UNKNOWN_OR_FAIL',

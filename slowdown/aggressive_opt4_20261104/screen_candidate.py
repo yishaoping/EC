@@ -160,8 +160,9 @@ def main():
 
 
 if __name__=='__main__':
-    try:sys.exit(main())
+    try:rc=main()
     except BaseException:
         STATE['state']='FAILED';STATE['error']=traceback.format_exc()
         if OUT.exists():save()
         raise
+    sys.exit(rc)
