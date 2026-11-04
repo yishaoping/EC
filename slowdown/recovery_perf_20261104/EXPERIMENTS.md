@@ -66,3 +66,18 @@ JGit compatibility links/config as the pre-existing evaluation worktree.
 No shared source or FPGA configuration was edited. Failed build logs remain.
 
 No performance change or benefit has been accepted yet.
+
+Profiling generated RTL validation: epoch cone 73 directed cases / 2818
+ownership checks PASS (`logs/epoch_cone_a12391b6.json`); actual emitted WB
+300 transactions, 100 probes during ACK, 1600 beats, 300 receipts PASS
+(`baseline/profile_wb_unit.json`). These validate their controller/unit scopes,
+not whole-system fault recovery.
+
+Canneal's complete legacy wait trace classifies 117,975 ROI cycles as target
+checker execution/tail not yet finished, 68 as formed-result transport/cleanup,
+and 17 as watermark register propagation. 36,778 post-safe wait cycles and
+3,148 overlapping conditions remain. The frontend's saved ROI windows show
+11,794 ICache acquisitions across the four checkers and 268,029 local
+instruction-starvation cycles in complete ROI packages. The proposal under
+`candidates/` tests a bounded ICache parameter change only after the profiled
+baseline is sealed. It is not an accepted optimization or measured benefit.
