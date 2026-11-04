@@ -56,6 +56,7 @@ def record(path, data):
 
 def identity():
     frozen = json.loads((ROOT / "slowdown/opt4/frozen_manifest.json").read_text())
+    resources = json.loads((OUT / "restored_resources.json").read_text())
     changed = set(git("diff", "--name-only", BASE_HEAD, "--", "chipyard").splitlines())
     untracked = set(git("ls-files", "--others", "--exclude-standard", "--", "chipyard").splitlines())
     # The directory-only upstream ignore does not cover our read-only tool
@@ -63,8 +64,11 @@ def identity():
     tool_link = CHIPYARD / ".conda-env"
     if tool_link.is_symlink() and tool_link.resolve() == Path("/data1/gzh/EC/chipyard/.conda-env"):
         untracked.discard("chipyard/.conda-env")
-    if (changed | untracked) - REVIEWED:
-        raise RuntimeError("unreviewed hardware inputs: " + repr(sorted((changed | untracked) - REVIEWED)))
+    # Restored BlackBox inputs are tracked by the milestone. Their bytes are
+    # still checked against the evaluated manifest below, never regenerated.
+    reviewed_inputs = REVIEWED | set(resources)
+    if (changed | untracked) - reviewed_inputs:
+        raise RuntimeError("unreviewed hardware inputs: " + repr(sorted((changed | untracked) - reviewed_inputs)))
     protected = frozen["frozen_source_sha256"]
     for rel, expected in protected.items():
         if rel not in REVIEWED and sha(ROOT / rel) != expected:
@@ -75,7 +79,6 @@ def identity():
             raise RuntimeError("pinned software changed: " + name)
     patch = git("diff", "--binary", BASE_HEAD, "--", "chipyard")
     paths = sorted(set(protected) | REVIEWED)
-    resources = json.loads((OUT / "restored_resources.json").read_text())
     for rel, expected in resources.items():
         if sha(ROOT / rel) != expected:
             raise RuntimeError("restored frozen BlackBox resource changed: " + rel)

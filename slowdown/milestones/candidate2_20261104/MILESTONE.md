@@ -43,3 +43,10 @@ coverage, not a successful rollback test.
 The original frozen baseline `a6e63c75947739dfbb411b32bfe0eb5ed55c5bb1`
 and `/data1/gzh/EC-backups/opt4-parsec3-pre-rescue-20261104/` remain untouched.
 The aggressive optimization continues in its separate worktree and branch.
+
+Hardware checkpoint commit: `0d6ea4b9f468720a3fc7bee40dcb53a564ce9779`.
+
+Run `python3 slowdown/milestones/candidate2_20261104/verify_milestone.py`
+to verify committed sources and archived evidence without simulation.
+The milestone branch adds metadata and ignore maintenance after this hardware
+checkpoint; the release tag identifies the complete reproducible checkpoint.

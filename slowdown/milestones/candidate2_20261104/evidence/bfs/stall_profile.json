@@ -1,0 +1,98 @@
+{
+  "run": "/data1/gzh/EC-opt4-recovery-rescue/slowdown/parsec_evaluation_20261103/build/bfs_regression_20261104_082501_efb25b01",
+  "requested_window": [
+    578358,
+    1705163
+  ],
+  "scope": "SC52 priority partition is exclusive; cache exposures overlap and are not lost-cycle attribution",
+  "groups": {
+    "52": {
+      "status": "EXACT_BETWEEN_SAMPLES",
+      "sampled_window": [
+        578560,
+        1704960
+      ],
+      "unmeasured_boundary_cycles": 405,
+      "counts": {
+        "cycles": 1126400,
+        "commit_cycles": 283637,
+        "no_commit_gh": 0,
+        "no_commit_rsu": 668,
+        "no_commit_ic": 64475,
+        "no_commit_big_hang": 28994,
+        "no_commit_dispatch_drain": 4202,
+        "no_commit_csr": 0,
+        "no_commit_rob_nonempty": 682494,
+        "no_commit_rob_empty": 61930,
+        "raw_gh": 0,
+        "raw_rsu": 668,
+        "raw_ic": 65143,
+        "raw_dispatch_drain": 72512,
+        "retired": 649873
+      }
+    },
+    "53": {
+      "status": "EXACT_BETWEEN_SAMPLES",
+      "sampled_window": [
+        578560,
+        1704960
+      ],
+      "unmeasured_boundary_cycles": 405,
+      "counts": {
+        "cycles": 1126400,
+        "lsu_ingress_block": 69292,
+        "freeze_set_ingress_block": 67255,
+        "array_arbitration_ingress_block": 6339,
+        "s2_nack": 34763,
+        "s2_write_busy": 0,
+        "preservation_block": 1218,
+        "legacy_preservation_pending": 67670,
+        "capture_pending": 2888,
+        "mshr_admission_block": 22584,
+        "victim_nack": 4364,
+        "replay_wait": 6,
+        "svb_full_fallback": 11,
+        "release_ack_pending": 91140,
+        "owner_block": 2135
+      }
+    },
+    "54": {
+      "status": "EXACT_BETWEEN_SAMPLES",
+      "sampled_window": [
+        578560,
+        1704960
+      ],
+      "unmeasured_boundary_cycles": 405,
+      "counts": {
+        "hit_nack": 35,
+        "data_nack": 0,
+        "refill_beats": 4912,
+        "legacy_wb_requests": 860,
+        "captures": 358,
+        "promotions": 351,
+        "store_effects": 60520,
+        "lsu_requests": 185366,
+        "mshr_admissions": 2144,
+        "mshr_active": 123059,
+        "install_wait": 36469,
+        "a_beats": 1578,
+        "c_beats": 8920,
+        "d_beats": 7485,
+        "svb_full_cycles": 10890
+      }
+    },
+    "55": {
+      "status": "EXACT_BETWEEN_SAMPLES",
+      "sampled_window": [
+        578560,
+        1704960
+      ],
+      "unmeasured_boundary_cycles": 405,
+      "counts": {
+        "qualified_fallback_pending": 9582,
+        "qualified_fallback_with_space": 209,
+        "rescue_handoffs": 6
+      }
+    }
+  }
+}
