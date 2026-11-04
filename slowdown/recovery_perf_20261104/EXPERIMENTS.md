@@ -172,7 +172,7 @@ main inputs determine the final keep/reject decision.
 The reproducible Canneal classifier refines the historical result endpoint:
 SC6 bit9 is full_check_complete and directly creates local result valid; bit16
 is local result enqueue, bit15 is result output valid. CDC SC4 enqueue occurs
-later. All 144 local formation endpoints precede CDC enqueue in the real
+later. All 139 local formation endpoints precede CDC enqueue in the real
 trace. The old 117,975/68 execution-or-tail/transport split used CDC enqueue
 and includes local cleanup in its broad tail bucket. The refined split is
 116,989 not-yet-formed and 1,054 formed-result/cleanup/transport cycles; total
