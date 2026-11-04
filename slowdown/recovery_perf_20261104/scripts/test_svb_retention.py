@@ -47,7 +47,7 @@ def main():
               "emitted_source": str(source), "emitted_source_sha256": sha(source),
               "driver_sha256": sha(driver), "command": command,
               "expected_ACK_assertion": "assert__assert", "ACK_assertion_guard": guard[1],
-              "scope": "Full emitted SVB with assertions: persistent data, same-line versions, invalidation boundary, backpressure, flush/epoch while WB_WAIT, delayed/mismatching ACK. Does not simulate architectural register rollback or prove flush retains every SPEC historical version."}
+              "scope": "Full emitted SVB with assertions: persistent data, same-line versions, invalidation boundary, backpressure, safe SPEC across flush/epoch (including reused epoch), durable coalescing successor, simultaneous flush/coalescing, delayed/mismatching ACK. Component publication test; does not simulate architectural register/PC/memory rollback."}
     (run / "result.json").write_text(json.dumps(result, indent=2) + "\n")
     print("RESULT=" + str(run / "result.json"), flush=True)
     print(json.dumps(result), flush=True)

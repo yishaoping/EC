@@ -99,7 +99,7 @@ def discover():
             except (OSError,ValueError,KeyError):continue
     old=read(INDEX) if INDEX.exists() else {}
     value=dict(schema=1,updated_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),runs=records,builds=builds,
-        local_builds=old.get('local_builds',[]),launches=old.get('launches',[]),
+        local_builds=old.get('local_builds',[]),launches=old.get('launches',[]),directed_tests=old.get('directed_tests',[]),
         policy='Exact identity AND valid complete actual artifacts required. An old revision never substitutes for new hardware. Incomplete entries never hit.')
     save(value);return value
 
