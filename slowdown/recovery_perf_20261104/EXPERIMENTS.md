@@ -203,3 +203,14 @@ guards hold. The actual lease still requires durable capture, and safe
 versions continue using the original WB/ACK path. No retention, watermark,
 ACK or flush rule changes. Build, directed handoff tests and measurement are
 pending; no correctness/performance acceptance is claimed.
+
+Actual emitted SVB directed test PASS: 16 persistent unsafe entries for 1,024
+cycles, rollback invalidation preserving earlier bytes, 1,024-cycle held
+promotion, 1,024-cycle delayed ACK across flush/epoch, same-line older-version
+retention, and wrong-key/wrong-entry ACK assertion rejection. Initial driver
+failures were evaluation-order and expected assertion-text issues; their
+logs remain in build/svb_retention_*. The corrected driver explicitly
+evaluates changed combinational inputs and matches the actual emitted
+assertion identity/predicate. This unit test does not prove architectural
+rollback or SPEC durability across every flush. Candidate-2 SVB RTL must
+remain identical, otherwise rerun these tests against its emitted source.

@@ -1,0 +1,47 @@
+{
+  "status": "PASS",
+  "tests": [
+    {
+      "test": "normal",
+      "exit_status": 0,
+      "passed": true
+    },
+    {
+      "test": "wrong_key",
+      "exit_status": 1,
+      "passed": true
+    },
+    {
+      "test": "wrong_entry",
+      "exit_status": 1,
+      "passed": true
+    }
+  ],
+  "emitted_source": "/data1/gzh/EC-opt4-recovery-perf/slowdown/optimization_6_overlap/build/overlap_checker_icache4k_20261104_021411_630679e4/generated/gen-collateral/SpeculativeVersionBuffer.sv",
+  "emitted_source_sha256": "a9543c2c3bf0bd8d678e5ff5dc4ba737625f8605208c5ab0072d17b9feaaec5b",
+  "driver_sha256": "3e4b62d57436b5b311c48cb1b9eb7c9c411adf02f38653de5157422616f63423",
+  "command": [
+    "verilator",
+    "--cc",
+    "--exe",
+    "--build",
+    "--assert",
+    "-Wno-fatal",
+    "--top-module",
+    "SpeculativeVersionBuffer",
+    "--Mdir",
+    "/data1/gzh/EC-opt4-recovery-rescue/slowdown/recovery_perf_20261104/build/svb_retention_f4b42523/obj",
+    "-j",
+    "2",
+    "-CFLAGS",
+    "-O2 -std=c++17",
+    "-I/data1/gzh/EC-opt4-recovery-perf/slowdown/optimization_6_overlap/build/overlap_checker_icache4k_20261104_021411_630679e4/generated/gen-collateral",
+    "/data1/gzh/EC-opt4-recovery-perf/slowdown/optimization_6_overlap/build/overlap_checker_icache4k_20261104_021411_630679e4/generated/gen-collateral/SpeculativeVersionBuffer.sv",
+    "/data1/gzh/EC-opt4-recovery-rescue/slowdown/recovery_perf_20261104/scripts/svb_retention_driver.cpp",
+    "-o",
+    "svb_retention_test"
+  ],
+  "expected_ACK_assertion": "assert__assert",
+  "ACK_assertion_guard": "io_ack_valid & ~reset",
+  "scope": "Full emitted SVB with assertions: persistent data, same-line versions, invalidation boundary, backpressure, flush/epoch while WB_WAIT, delayed/mismatching ACK. Does not simulate architectural register rollback or prove flush retains every SPEC historical version."
+}
