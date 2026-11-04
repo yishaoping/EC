@@ -1,0 +1,56 @@
+{
+  "utc": "2026-11-03T03:04:06.670933+00:00",
+  "build_checks": {
+    "goldengate": {
+      "receipt": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-linux-v6/C4-goldengate-20261102T134256.430246Z/result.json",
+      "sha256": "4d5c3ba282b57887b90bf2099542c615b9898a489b30171d4ab98be649d16c45",
+      "returncode": 0,
+      "source_id": "bc340555ee99fbbf32e2fbc5930f1fa47a03a8e01338b714f1a5a2a22d2ab5eb",
+      "current_source_match": true,
+      "outputs_match": true
+    },
+    "driver": {
+      "receipt": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-linux-v6/C4-driver-20261102T142123.460974Z/result.json",
+      "sha256": "4198b827d9af6065d3ee01434c2c1160be0775872441a16c2ff2c9f55ff30e54",
+      "returncode": 0,
+      "source_id": "bc340555ee99fbbf32e2fbc5930f1fa47a03a8e01338b714f1a5a2a22d2ab5eb",
+      "current_source_match": true,
+      "outputs_match": true
+    },
+    "native": {
+      "receipt": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-build.json",
+      "source_id": "e9d85c4c16ee4179d5451ad618a49c90cb6d61892063c73422f82560185a7b38",
+      "current_source_match": false,
+      "outputs_match": true
+    }
+  },
+  "loader": "Native SimDRAM preload derived from ELF PT_LOAD with ordinary TSI reset; no custom_boot_pin",
+  "previous_boot_cause": "Serial ELF load completion was not proven; do not label previous UART silence a checker failure",
+  "attempt": "Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T025438.431971Z",
+  "fpga_access": "NONE",
+  "bitstream": "NOT_STARTED; Stage B evidence required by existing CAD wrapper",
+  "native_vs_current_source_differences": [
+    {
+      "file": "generators/rocket-chip/src/main/scala/rocket/RocketCore.scala",
+      "normalization": "remove SynthesizePrintf annotation wrapper only",
+      "reconstructed_sha256": "7f3ea43364cb2e536f0365a0495bf9f3ac89f5c24abc18bde7acbde257bc2da8",
+      "compiled_sha256": "7f3ea43364cb2e536f0365a0495bf9f3ac89f5c24abc18bde7acbde257bc2da8",
+      "exact_match": true
+    },
+    {
+      "file": "generators/rocket-chip/src/main/scala/util/DacRoi.scala",
+      "normalization": "remove SynthesizePrintf annotation wrapper only",
+      "reconstructed_sha256": "e5af6a51d335357b480cc9c4b4e21445bc70950ed6427cfe48960daa61f8de25",
+      "compiled_sha256": "e5af6a51d335357b480cc9c4b4e21445bc70950ed6427cfe48960daa61f8de25",
+      "exact_match": true
+    },
+    {
+      "file": "sims/firesim/sim/firesim-lib/src/main/scala/configs/CompilerConfigs.scala",
+      "normalization": "remove added FireSim-only DacXilinxAlveoConfig class/comment",
+      "reconstructed_sha256": "a7f99309b3889e31de3f1cc5905bb2cd3a91b0dd9202764bc16d2601f0d874a4",
+      "compiled_sha256": "a7f99309b3889e31de3f1cc5905bb2cd3a91b0dd9202764bc16d2601f0d874a4",
+      "exact_match": true
+    }
+  ],
+  "native_functional_source_preserved": true
+}

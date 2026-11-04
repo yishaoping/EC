@@ -1,0 +1,77 @@
+{
+  "valid": false,
+  "reasons": [
+    "simulator exit was nonzero/interrupted",
+    "guest command was not sent exactly once through SimUART stdin",
+    "sync/poweroff command was not sent exactly once",
+    "bound init command or actual guest command exit was not uniquely observed",
+    "native host-image integrity profile was not observed in guest",
+    "guest normal poweroff completion was not observed",
+    "no unique successful application/output check",
+    "application or guest-side output capture did not exit cleanly",
+    "smoke checksum output missing or incorrect",
+    "missing/duplicate Linux checker context",
+    "expected one END and one DRAIN hardware snapshot",
+    "missing/malformed hardware snapshot",
+    "missing final context teardown proof",
+    "missing/mismatched checker address-space installation",
+    "missing actual RTL participation events",
+    "RTL events disagree with BOOM result/release counters",
+    "RTL assertion/fatal",
+    "guest software manifest mismatch"
+  ],
+  "identity": "513ce3409eb4ff5681adecddc432c317d4883f93bcf74ef0e8fee453d00191ec",
+  "mode": "smoke",
+  "cycles": 0,
+  "drain_cycles": 0,
+  "hardware": {},
+  "rtl_packages": 0,
+  "rtl_results": 0,
+  "rtl_request_snapshots": [],
+  "latched_fault_flags": {
+    "time_overflow": false,
+    "invalid_roi_marker": false,
+    "ambiguous_roi_marker": false,
+    "exception_privilege_or_satp": false,
+    "failed_cancelled_or_dropped_task": false
+  },
+  "exception_event_count": "not_available; any exception sets exception_privilege_or_satp",
+  "raw_files": {
+    "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261104T082633.251577Z/htif-console.log": "634dab36507689431bc41a1c98d5ba9742646a402a29d707d40a74f0bcdb851b",
+    "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261104T082633.251577Z/rtl.log.gz": "3e78c5076e0b7510dcfcac8ca59792e3280b924655240e3bbf2c5c586afd9a58",
+    "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261104T082633.251577Z/uart0": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261104T082633.251577Z/progress.jsonl": "894fb3c53acba7e721b8dc8f0a4f94955af1efa6b312720b096b81b4081f8da1"
+  },
+  "exit": {
+    "returncode": null,
+    "interrupted": true,
+    "reason": "ACTIVELY_STOPPED_FOR_DIAGNOSED_EXCESSIVE_BOOT_TIME",
+    "identity": "513ce3409eb4ff5681adecddc432c317d4883f93bcf74ef0e8fee453d00191ec",
+    "valid": false
+  },
+  "slowdown_eligible": false,
+  "strict_latency": "NOT_IMPLEMENTED",
+  "console": "htif",
+  "image_attestation": {
+    "verified": true,
+    "method": "SHA256 of actual newc entry bytes before RTL execution",
+    "files": {
+      "opt/ec-dac/BUILD.json": "0917ff32350476aa680e08297e91a639055ca6c2a3bd9c6efc57a0c0647e11a9",
+      "opt/ec-dac/SHA256SUMS": "3df81945572714b85ae4faa9ba4b4a4ac5e26dfb7b0898415bcbe0efa8435e79",
+      "opt/ec-dac/blackscholes": "65b5eee74754503971612918f74d15dcdf3a4c35e88f8752bb068f4b470c1efe",
+      "opt/ec-dac/inputs/simsmall/in_4K.txt": "d918de616ed1956757f19b25e27c6b1a27fbab560a058c5de1e9d479fa331c64",
+      "opt/ec-dac/inputs/test/in_4.txt": "9a40f4a6f4b96a32bb834333487d6dcec4436eceae7efbf836574aacb1e6ce46",
+      "opt/ec-dac/manual-link.sh": "81a65e65dd509226e36f3bfe208458837ecdd7827d3033be3cf63504750a461f",
+      "opt/ec-dac/roi-smoke": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8"
+    },
+    "required_versions": {
+      "opt/ec-dac/roi-smoke": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8",
+      "opt/ec-dac/blackscholes": "65b5eee74754503971612918f74d15dcdf3a4c35e88f8752bb068f4b470c1efe",
+      "opt/ec-dac/inputs/test/in_4.txt": "9a40f4a6f4b96a32bb834333487d6dcec4436eceae7efbf836574aacb1e6ce46",
+      "opt/ec-dac/inputs/simsmall/in_4K.txt": "d918de616ed1956757f19b25e27c6b1a27fbab560a058c5de1e9d479fa331c64",
+      "opt/ec-dac/BUILD.json": "0917ff32350476aa680e08297e91a639055ca6c2a3bd9c6efc57a0c0647e11a9"
+    },
+    "input_still_hashed_in_guest": true
+  },
+  "runtime_validation": "INVALID"
+}

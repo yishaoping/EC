@@ -1,0 +1,50 @@
+{
+  "phase": "busybox",
+  "source_tree": "/data1/gzh/EC/firesim/dac2026/work/software-v3/busybox",
+  "source_id": "ac88baf79b55aa36df6a1b7d2ed9169e3f83af58553910fae9128c32878eb4b4",
+  "output_dir": "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/busybox-20261102T072414.541076Z",
+  "outputs": {
+    "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/busybox-20261102T072414.541076Z/.config": "f168a232098128c405417448e6d746a4eab374967eaeadef29950d85af6ee470"
+  },
+  "returncode": 1,
+  "error": "RuntimeError('compile failed; see /data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/busybox-20261102T072414.541076Z/build.log')",
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j1",
+        "O=/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/busybox-20261102T072414.541076Z",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "oldconfig"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/software-v3/busybox"
+    }
+  ],
+  "resources": {
+    "available_memory_gib": 259.1201629638672,
+    "free_disk_gib": 332.18043518066406,
+    "load_1min": 107.11572265625,
+    "host_cpus": 256,
+    "jobs": 2,
+    "make_jobs": 1,
+    "niceness": 15
+  },
+  "wall_seconds": 4.069415964186192,
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN",
+  "status": "BASE_PREREQUISITE_ONLY: no ROI/checker runtime or certified experiment image",
+  "build_script_sha256": "263ce8881bf9ac8d0180cf4d79925cf097ff1790d890f40a4123791a70c613b2",
+  "busybox_config_sha256": "f168a232098128c405417448e6d746a4eab374967eaeadef29950d85af6ee470",
+  "kernel_result": null,
+  "environment_overrides": {
+    "PATH": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin:/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin:/usr/local/bin:/usr/bin:/bin",
+    "CONDA_PREFIX": "/data1/gzh/EC/firesim/envs/manager-1.17.1",
+    "CC": "/usr/bin/gcc",
+    "HOSTCC": "/usr/bin/gcc",
+    "HOSTCXX": "/usr/bin/g++",
+    "MAKEFLAGS": "-j2"
+  }
+}

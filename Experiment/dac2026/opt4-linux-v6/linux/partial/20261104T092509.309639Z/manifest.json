@@ -1,0 +1,471 @@
+{
+  "identity": "2e6cff04bb2180d91faeea50ba02e1b4d3c1cacb9ca6e4b164eff1832d9a9204",
+  "receipts": {
+    "native": {
+      "receipt": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36/native-build.json",
+      "sha256": "704c79982189a16e25e04192607a272b5094724533d79db9be610651187b26b3",
+      "value": {
+        "phase": "native-events",
+        "configuration": "chipyard.DacLinuxC4-diagnostic36-events",
+        "returncode": 0,
+        "error": null,
+        "source_tree": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/C4/chipyard",
+        "source_id": "e9d85c4c16ee4179d5451ad618a49c90cb6d61892063c73422f82560185a7b38",
+        "resources": {
+          "available_memory_gib": 200.40974044799805,
+          "free_disk_gib": 295.2304458618164,
+          "load_1min": 96.42431640625,
+          "host_cpus": 256,
+          "jobs": 2,
+          "make_jobs": 1,
+          "niceness": 15
+        },
+        "command": [
+          "nice",
+          "-n",
+          "15",
+          "make",
+          "-j2",
+          "-C",
+          "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36/builds/native-events-20261104T082240.723777Z/model",
+          "-f",
+          "VTestHarness.mk",
+          "VM_PARALLEL_BUILDS=1"
+        ],
+        "output_dir": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T110754.343794Z",
+        "simulator": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36/builds/native-events-20261104T082240.723777Z/simulator-chipyard-DacLinuxC4-events",
+        "outputs": {
+          "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36/builds/native-events-20261104T082240.723777Z/simulator-chipyard-DacLinuxC4-events": "d64022148d7b0c83f93f27468b2fb3df1c90c0004436c6b0d7d5e6edac404810",
+          "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T110754.343794Z/generated/chipyard.TestHarness.DacLinuxC4.dts": "0d2737316e6ba7975ccff0f5a49a26343be2656c7b06e47fe551287b282ae761"
+        },
+        "wall_seconds": 47.431639555841684,
+        "target_execution": "NOT_RUN",
+        "runtime_validation": "NOT_RUN",
+        "observation": "actual RTL package begin/result plus source-clock ROI and live counters",
+        "legacy_input_only_loggers": "disabled using existing ec.dac.firesim guard; functional comparison retained",
+        "resume_input_result": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-linux-v6/C4-native-20261102T110754.343794Z/result.json",
+        "resume_input_result_sha256": "acc17663630b4f7ed61100df63efc81c3025d3c7221e412b0176d76e332f08e4",
+        "compiled_input_inventory": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-linux-v6/C4-native-complete-20261102T113434.891961Z/inputs.json",
+        "compiled_input_inventory_sha256": "35573ea76e95c739cb5c0d556aa87de606a33a67857344e8298c01c03dcdcc9c",
+        "completion_command": [
+          "nice",
+          "-n",
+          "15",
+          "make",
+          "-j8",
+          "-C",
+          "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T110754.343794Z/generated/chipyard.TestHarness.DacLinuxC4",
+          "-f",
+          "VTestHarness.mk",
+          "VM_PARALLEL_BUILDS=1"
+        ],
+        "completion_log": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-linux-v6/C4-native-complete-20261102T113434.891961Z",
+        "completion_wall_seconds": 6711.171818526462,
+        "parent_native_receipt": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-build.json",
+        "parent_native_receipt_sha256": "1d2b72e34736f22bc8f826dd2526235dd8d82c3f40e317b9d9821f490fcb93b6",
+        "generated_model_directory": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36/builds/native-events-20261104T082240.723777Z/model",
+        "observation_audit": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-linux-v6/native-events-20261104T082240.723777Z/observation-audit.json",
+        "observation_audit_sha256": "9959722050f71157417c68d0c192a19bea42a518a81d9fa2dad2ff209d4ef3b2",
+        "required_events_without_verbose": true,
+        "functional_rtl_changed": false,
+        "slowdown_eligible": false,
+        "diagnostic_max_physmem_bits": 36
+      }
+    },
+    "firmware": {
+      "receipt": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36-small/firmware-build.json",
+      "sha256": "e5632568fb289153268cac6baaab1eee38bdfc4f55849860b873c4ee6b124021",
+      "value": {
+        "phase": "firmware",
+        "configuration": "C4-v6-diagnostic36-small",
+        "source_tree": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36/opensbi",
+        "source_id": "1b402684b0360b0230f1105bacac6daa78830e35a1969fbe893d11aef90d0527",
+        "output_dir": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36-small/builds/diagnostic36-firmware-20261104T092428.656375Z",
+        "outputs": {
+          "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36-small/builds/diagnostic36-firmware-20261104T092428.656375Z/platform/generic/firmware/fw_payload.elf": "0605158360e1822babd54be48cd35638607dafb413cc4d9aee500ebcc1fdf6bc",
+          "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36-small/builds/diagnostic36-firmware-20261104T092428.656375Z/platform/generic/firmware/fw_payload.bin": "a3304c7829b2b7d5e1fa71774713f322a134e6b8bd9310aa6434ee96f5cdb446"
+        },
+        "returncode": 0,
+        "error": null,
+        "commands": [
+          {
+            "argv": [
+              "nice",
+              "-n",
+              "15",
+              "make",
+              "-j2",
+              "O=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36-small/builds/diagnostic36-firmware-20261104T092428.656375Z",
+              "PLATFORM=generic",
+              "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+              "FW_PAYLOAD_PATH=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36-small/builds/diagnostic36-kernel-20261104T091749.449736Z/arch/riscv/boot/Image",
+              "FW_OPTIONS=1",
+              "FW_PAYLOAD_FDT_PATH=/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/diagnostic36-small/fdt-20261104T091744.083486Z/C4.dtb"
+            ],
+            "cwd": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36/opensbi"
+          }
+        ],
+        "resources": {
+          "available_memory_gib": 262.4767761230469,
+          "free_disk_gib": 166.36884689331055,
+          "load_1min": 71.81689453125,
+          "host_cpus": 256,
+          "jobs": 2,
+          "make_jobs": 1,
+          "niceness": 15
+        },
+        "wall_seconds": 4.679514518007636,
+        "target_execution": "NOT_RUN",
+        "runtime_validation": "NOT_RUN",
+        "status": "BUILT_NOT_RUN: matching hardware and real checker/runtime validation required",
+        "build_script_sha256": "fe1d2e9f77a2df5905d6def93186b2714b78675675a38bc0fa4c7856abde6ba7",
+        "busybox_config_sha256": null,
+        "kernel_result": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-linux-v6/diagnostic36-kernel-20261104T091749.449736Z/result.json",
+        "input_files": {
+          "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/diagnostic36-small/fdt-20261104T091744.083486Z/C4.dtb": "7c094a11399ed289ff9a3dc79e0e98b00765247e7c4461793c5a1fd4cb83c12b",
+          "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-linux-v6/diagnostic36-kernel-20261104T091749.449736Z/result.json": "df10f3d5ad47ce1b40fbf50f853c9b11ed2587f928170a52a2001d85f0b7c9bb",
+          "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36-small/builds/diagnostic36-kernel-20261104T091749.449736Z/arch/riscv/boot/Image": "f50be0cd3947b694c6111cafbdd8f6c222f3df8a779922d0050070e54c6e6bef"
+        },
+        "content_checks": {
+          "kernel_Image": {
+            "path": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36-small/builds/diagnostic36-kernel-20261104T091749.449736Z/arch/riscv/boot/Image",
+            "sha256": "f50be0cd3947b694c6111cafbdd8f6c222f3df8a779922d0050070e54c6e6bef",
+            "size": 15524864,
+            "payload_offset": 2097152,
+            "exact_bytes_present": true
+          },
+          "fdt": {
+            "path": "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/diagnostic36-small/fdt-20261104T091744.083486Z/C4.dtb",
+            "sha256": "7c094a11399ed289ff9a3dc79e0e98b00765247e7c4461793c5a1fd4cb83c12b",
+            "size": 10385,
+            "payload_offset": 1712,
+            "exact_bytes_present": true
+          }
+        },
+        "tool_hashes": {
+          "/usr/bin/gcc": "989fde76585d597fbabf73c62541faea7ffe3a28b7e45a2d1461449df9772e7b",
+          "/usr/bin/g++": "3acb6a5165a96e9b55935bf85242f380b850cccfad3e64697f1ec19dd272d4a3",
+          "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+          "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ld": "10424f5eeafd5806fbca7b88bdae336c202be5a9fa332c1a662a8d0a7ae62fba",
+          "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objcopy": "2a38397dae082b022b6370eb9fbfac9c337b95433fc89cb35d384516a0997f1e"
+        },
+        "environment_overrides": {
+          "PATH": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin:/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin:/usr/local/bin:/usr/bin:/bin",
+          "CONDA_PREFIX": "/data1/gzh/EC/firesim/envs/manager-1.17.1",
+          "CC": "/usr/bin/gcc",
+          "HOSTCC": "/usr/bin/gcc",
+          "HOSTCXX": "/usr/bin/g++",
+          "MAKEFLAGS": "-j2"
+        },
+        "slowdown_eligible": false,
+        "diagnostic_max_physmem_bits": 36,
+        "linux_memory_limit_mib": 32,
+        "diagnostic_section_size_bits": 24
+      }
+    },
+    "apps": {
+      "receipt": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36-small/apps-build.json",
+      "sha256": "491cdf124df8c2b8f2462f69cafe81dfeea27f892ffaeae8199bc32b7e4d82b3",
+      "value": {
+        "phase": "apps",
+        "returncode": 0,
+        "output": "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/diagnostic36-small/20261104T091642.901232Z/apps",
+        "output_dir": "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/diagnostic36-small/20261104T091642.901232Z/apps",
+        "commands": [
+          [
+            "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+            "-O3",
+            "-march=rv64gc",
+            "-mabi=lp64d",
+            "-D_GNU_SOURCE",
+            "-static",
+            "-I/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/src/hooks",
+            "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/src/roi-smoke.c",
+            "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/src/hooks/dac_roi.c",
+            "-o",
+            "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/roi-smoke"
+          ],
+          [
+            "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+            "-O3",
+            "-march=rv64gc",
+            "-mabi=lp64d",
+            "-D_GNU_SOURCE",
+            "-static",
+            "-c",
+            "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/src/hooks/hooks.c",
+            "-o",
+            "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/hooks.o"
+          ],
+          [
+            "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+            "-O3",
+            "-march=rv64gc",
+            "-mabi=lp64d",
+            "-D_GNU_SOURCE",
+            "-static",
+            "-x",
+            "c++",
+            "-std=gnu++17",
+            "-DENABLE_PARSEC_HOOKS",
+            "-I/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/src/hooks/include",
+            "-I/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/src/blackscholes",
+            "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/src/blackscholes/blackscholes.c",
+            "-x",
+            "none",
+            "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/hooks.o",
+            "-lm",
+            "-o",
+            "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/blackscholes"
+          ],
+          [
+            "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+            "-d",
+            "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/roi-smoke"
+          ],
+          [
+            "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+            "-d",
+            "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/blackscholes"
+          ]
+        ],
+        "program": "blackscholes",
+        "primary_input": "test/in_4.txt",
+        "options": 4,
+        "runs": 100,
+        "application_threads": 1,
+        "build_variant": "upstream serial branch; ENABLE_THREADS undefined",
+        "shared_binary_for": [
+          "B-v5",
+          "C4-v6"
+        ],
+        "target_execution": "NOT_RUN",
+        "runtime_validation": "NOT_RUN",
+        "binaries": {
+          "roi-smoke": "3821228dbe5d277ebbd31c9e02f64e4e752a294c495ff84fc37531e5c5037b44",
+          "blackscholes": "01f56a7e6e41528cb46e36bf6f2f427de6fbbd3199603225ae69a2d9455f4682"
+        },
+        "inputs": {
+          "test": {
+            "archive_sha256": "92aadef92ac86d234c8fb97e41f20f663efc89b74097a4e4675b382cbbe1e541",
+            "files": {
+              "in_4.txt": "9a40f4a6f4b96a32bb834333487d6dcec4436eceae7efbf836574aacb1e6ce46"
+            }
+          },
+          "simsmall": {
+            "archive_sha256": "02bfbf3bf7b248d8ffc33f72f144b61b33a9761d539e05dce4eee9ecdd76bfcd",
+            "files": {
+              "in_4K.txt": "d918de616ed1956757f19b25e27c6b1a27fbab560a058c5de1e9d479fa331c64"
+            }
+          }
+        },
+        "sources": {
+          "roi-smoke.c": "d9018914db82046da32e59431bf10677424d3365cb9a835295c8eeb5fafcfa70",
+          "blackscholes/optionData.txt": "2b7e68e90055c124b93e3924d5c144e2314704589527b01f859e32e843353786",
+          "blackscholes/blackscholes.c": "d7be2bbc7d2bfa7dc27fb310ecb70d2f3065722a475f9b93b1d46affbb3971ec",
+          "blackscholes/spin_lock.h": "12f52926120e19c1153eec79de4ac191c1db6bd03da4b98cf295c9002f21fd49",
+          "blackscholes/COPYRIGHT": "aceb14c7afe15c91841942102b3c5f5263d3fdfcdc8a1a11a5d80acb358717b7",
+          "blackscholes/README": "73fc245f8fd2dd1522ce9150d54f58a8c743bc423579d4731af51d8112651168",
+          "blackscholes/blackscholes.sln": "a3a0caaf0d1c0f038c56b224ad93b95067aa7ab61a145cc1a1474f7ed3ca713f",
+          "blackscholes/custom.h": "6e718cb32808c417f1a7b512cd55bfaeb4cd56efeb4e8d50535a4e18f7ec08a1",
+          "blackscholes/blackscholes.simd.vcproj": "1d1cf582193aa537675ba56e8834ef41087002713a21bb15278054ca1fae0ee3",
+          "blackscholes/blackscholes.simd.c": "211f2efd708c2600774084a4cc50b190995e4dd8e1252cd15f2a24380371a1fd",
+          "blackscholes/Makefile": "14c453146cd8b32fd5583a8570c43665222e001ae4286dd8db535add8879d9bc",
+          "blackscholes/c.m4.pthreads": "f26226b5589e1e409f32680f1daadecd008ca61d1c7d346c526db6e9e259561c",
+          "blackscholes/blackscholes.vcproj": "a21f522c5c6b10658ebb4384c716a9fa84e8711b564409308385613fc8e1f958",
+          "blackscholes/inputgen.c": "28efd62b6d33fdcb9e20f158cb465f84d62946f5882bf44b3e09f5f8362d650d",
+          "blackscholes/encoding.h": "40513cda414c3292dfc9db1c4c83dbadd6424abe94d4cd6f4837dd6292072b39",
+          "blackscholes/rocc.h": "0153080a79febf77a0f79bf0579c868b9995166d858b29e2729149a1a99b59e4",
+          "hooks/Makefile.shared": "49fed21c02178e5cbfd0c1cd86dea102bdbc2126c78ec24573effe8869d13cbf",
+          "hooks/dac_roi.h": "67f346d9464922fbaa990bd5cb8a5a68ae17a9ccceec7c6d66a2c8091343f741",
+          "hooks/COPYRIGHT": "08d27b0523101759588edd1fd0f966910692049d0e75a76cff3d603bc9eb30a0",
+          "hooks/README": "8717af5deda488cbe5fd8d17f4373dca6c398c8ee6e880a7ecb5833ee45a76fc",
+          "hooks/Makefile.static": "979469cc04510fb4e5f9fe8602a4d7ace757a9f0ec3b5dfd146ed6be798c0a09",
+          "hooks/hooks.c": "c8aa8860fac1d4dd8d486c7498ea2a1ee9cdef775581d592e4bbe51cd2af6206",
+          "hooks/opt4_hw.h": "7372eb0c67523ce168a1788a86a2c92d7e9cda85d8da5d3b65979adbd1aee97f",
+          "hooks/Makefile": "f14f95939e1e59b8fa7944b64ce6f868f63aad928e38e3b3d15a744d705821a5",
+          "hooks/Doxyfile": "5795501bd84e69b068be7600128a93d4e8f1e5a6f1777df425bf193a44b16e1a",
+          "hooks/LICENSE": "4c37a95d0838a04edd68e286d2680aabf64d8fac653a4fb73ad42ab4fa253f3e",
+          "hooks/dac_roi.c": "4514140f54e4c7fc04692fc2d2884e19224893ea07833f0019859ce09f07eb1b",
+          "hooks/config.h": "eaac1960162337c50bebb5092ee2809b7f27c785d4f92509b0a31cb34a3fd096",
+          "hooks/include/hooks.h": "c69b4d07f3ce63a73a5f79b9be994923bac79cc5ec5b7128a1847f7aeb7a1db9"
+        },
+        "parent_apps_receipt": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/apps-build.json",
+        "parent_apps_receipt_sha256": "0917ff32350476aa680e08297e91a639055ca6c2a3bd9c6efc57a0c0647e11a9",
+        "diagnostic_transform": "strip-debug only; all loadable bytes and entry identical",
+        "elf_equivalence": {
+          "roi-smoke": {
+            "parent_sha256": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8",
+            "stripped_sha256": "3821228dbe5d277ebbd31c9e02f64e4e752a294c495ff84fc37531e5c5037b44",
+            "parent_bytes": 3541320,
+            "stripped_bytes": 469360,
+            "entry_program_headers_and_runtime_load_bytes_identical": true,
+            "ELF_header_metadata_normalized": [
+              "e_shoff",
+              "e_shentsize",
+              "e_shnum",
+              "e_shstrndx"
+            ]
+          },
+          "blackscholes": {
+            "parent_sha256": "65b5eee74754503971612918f74d15dcdf3a4c35e88f8752bb068f4b470c1efe",
+            "stripped_sha256": "01f56a7e6e41528cb46e36bf6f2f427de6fbbd3199603225ae69a2d9455f4682",
+            "parent_bytes": 4078728,
+            "stripped_bytes": 535584,
+            "entry_program_headers_and_runtime_load_bytes_identical": true,
+            "ELF_header_metadata_normalized": [
+              "e_shoff",
+              "e_shentsize",
+              "e_shnum",
+              "e_shstrndx"
+            ]
+          }
+        },
+        "slowdown_eligible": false
+      }
+    },
+    "rootfs": {
+      "receipt": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36-small/rootfs-build.json",
+      "sha256": "fcc515321c0e92e0dd91c65b821a2e5d48d1c2e098dee27cae4650fccd1bed92",
+      "value": {
+        "phase": "rootfs",
+        "returncode": 0,
+        "initramfs": "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/diagnostic36-small/20261104T091642.901232Z/initramfs.cpio",
+        "sha256": "52a07b83d7bc31dd59eea75ec452ca03f8d49016087a4f44bae020d2ba210ac7",
+        "output_dir": "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/diagnostic36-small/20261104T091642.901232Z",
+        "apps_manifest": "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/diagnostic36-small/20261104T091642.901232Z/apps/manifest.json",
+        "apps_manifest_sha256": "491cdf124df8c2b8f2462f69cafe81dfeea27f892ffaeae8199bc32b7e4d82b3",
+        "target_execution": "NOT_RUN",
+        "runtime_validation": "NOT_RUN",
+        "automatic_benchmark": false,
+        "configuration": "C4-v6-diagnostic36-small",
+        "integrity": "mandatory SHA256 of all application files extracted from this exact cpio before native execution; guest still hashes BUILD and actual input",
+        "image_application_files": {
+          "opt/ec-dac/BUILD.json": "491cdf124df8c2b8f2462f69cafe81dfeea27f892ffaeae8199bc32b7e4d82b3",
+          "opt/ec-dac/SHA256SUMS": "d40942d1440b9675419d5a57718298ed7c445aacd216c109e80290ac21a39f5b",
+          "opt/ec-dac/blackscholes": "01f56a7e6e41528cb46e36bf6f2f427de6fbbd3199603225ae69a2d9455f4682",
+          "opt/ec-dac/inputs/simsmall/in_4K.txt": "d918de616ed1956757f19b25e27c6b1a27fbab560a058c5de1e9d479fa331c64",
+          "opt/ec-dac/inputs/test/in_4.txt": "9a40f4a6f4b96a32bb834333487d6dcec4436eceae7efbf836574aacb1e6ce46",
+          "opt/ec-dac/manual-link.sh": "81a65e65dd509226e36f3bfe208458837ecdd7827d3033be3cf63504750a461f",
+          "opt/ec-dac/roi-smoke": "3821228dbe5d277ebbd31c9e02f64e4e752a294c495ff84fc37531e5c5037b44"
+        },
+        "slowdown_eligible": false,
+        "linux_memory_limit_mib": 32,
+        "ELF_PT_LOAD_equivalence": true,
+        "parent_rootfs_receipt": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-htif/rootfs-build.json",
+        "parent_rootfs_receipt_sha256": "4ebe1869c2c70618d86690eecc85d1b94172e036b1b40ee194e94273bede4341"
+      }
+    },
+    "fdt": {
+      "receipt": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36-small/fdt-build.json",
+      "sha256": "b91566f4c71512b7cbff6d0597ba2b6f812e40b824422b5b5862327fb4d7aac5",
+      "value": {
+        "phase": "fdt",
+        "configuration": "C4-v6-diagnostic36",
+        "returncode": 0,
+        "source_dts": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T110754.343794Z/generated/chipyard.TestHarness.DacLinuxC4.dts",
+        "source_dts_sha256": "0d2737316e6ba7975ccff0f5a49a26343be2656c7b06e47fe551287b282ae761",
+        "dts": "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/diagnostic36-small/fdt-20261104T091744.083486Z/C4.dts",
+        "dts_sha256": "e093898aa4a252282ff325be5577b38ca67a8c82cbcc8278c1d8bd97987a2a3a",
+        "fdt": "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/diagnostic36-small/fdt-20261104T091744.083486Z/C4.dtb",
+        "sha256": "7c094a11399ed289ff9a3dc79e0e98b00765247e7c4461793c5a1fd4cb83c12b",
+        "linux_harts": [
+          0
+        ],
+        "firmware_checker_harts": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "console": "HTIF/SBI hvc0",
+        "guest_mode": "smoke",
+        "memory_model": "unchanged native DRAMSim2 256 MiB; diagnostic kernel MAX_PHYSMEM_BITS=36",
+        "linux_memory_limit_mib": 32,
+        "slowdown_eligible": false,
+        "target_execution": "NOT_RUN",
+        "runtime_validation": "NOT_RUN"
+      }
+    }
+  },
+  "argv": [
+    "/usr/bin/stdbuf",
+    "-oL",
+    "-eL",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36/builds/native-events-20261104T082240.723777Z/simulator-chipyard-DacLinuxC4-events",
+    "-s",
+    "1",
+    "+cycle-count",
+    "+permissive",
+    "+dramsim",
+    "+dramsim_ini_dir=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/C4/chipyard/generators/testchipip/src/main/resources/dramsim2_ini",
+    "+uartlog=/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261104T092509.309639Z/uart",
+    "+max-cycles=100000000",
+    "+loadmem=/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/native-loadmem/a3304c7829b2b7d5e1fa71774713f322a134e6b8bd9310aa6434ee96f5cdb446.hex",
+    "+loadmem_addr=0",
+    "+uart-pty",
+    "+permissive-off",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36-small/builds/diagnostic36-firmware-20261104T092428.656375Z/platform/generic/firmware/fw_payload.elf"
+  ],
+  "mode": "smoke",
+  "raw_dir": "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261104T092509.309639Z",
+  "profile": "diagnostic36-small",
+  "runner_sha256": "b4e9f657e9f36aca167129f37fda82575435a971845b21d68a32fb99e448b238",
+  "console": "htif",
+  "console_file": "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261104T092509.309639Z/htif-console.log",
+  "guest_execution": "version-bound init command",
+  "integrity_helper_sha256": "a0a00d8e4145088b677a290c4effb77ee46e112bddcbfcba742ca78eb17c813a",
+  "image_attestation": {
+    "verified": true,
+    "method": "SHA256 of actual newc entry bytes before RTL execution",
+    "files": {
+      "opt/ec-dac/BUILD.json": "491cdf124df8c2b8f2462f69cafe81dfeea27f892ffaeae8199bc32b7e4d82b3",
+      "opt/ec-dac/SHA256SUMS": "d40942d1440b9675419d5a57718298ed7c445aacd216c109e80290ac21a39f5b",
+      "opt/ec-dac/blackscholes": "01f56a7e6e41528cb46e36bf6f2f427de6fbbd3199603225ae69a2d9455f4682",
+      "opt/ec-dac/inputs/simsmall/in_4K.txt": "d918de616ed1956757f19b25e27c6b1a27fbab560a058c5de1e9d479fa331c64",
+      "opt/ec-dac/inputs/test/in_4.txt": "9a40f4a6f4b96a32bb834333487d6dcec4436eceae7efbf836574aacb1e6ce46",
+      "opt/ec-dac/manual-link.sh": "81a65e65dd509226e36f3bfe208458837ecdd7827d3033be3cf63504750a461f",
+      "opt/ec-dac/roi-smoke": "3821228dbe5d277ebbd31c9e02f64e4e752a294c495ff84fc37531e5c5037b44"
+    },
+    "required_versions": {
+      "opt/ec-dac/roi-smoke": "3821228dbe5d277ebbd31c9e02f64e4e752a294c495ff84fc37531e5c5037b44",
+      "opt/ec-dac/blackscholes": "01f56a7e6e41528cb46e36bf6f2f427de6fbbd3199603225ae69a2d9455f4682",
+      "opt/ec-dac/inputs/test/in_4.txt": "9a40f4a6f4b96a32bb834333487d6dcec4436eceae7efbf836574aacb1e6ce46",
+      "opt/ec-dac/inputs/simsmall/in_4K.txt": "d918de616ed1956757f19b25e27c6b1a27fbab560a058c5de1e9d479fa331c64",
+      "opt/ec-dac/BUILD.json": "491cdf124df8c2b8f2462f69cafe81dfeea27f892ffaeae8199bc32b7e4d82b3"
+    },
+    "input_still_hashed_in_guest": true
+  },
+  "payload_loader": "native SimDRAM PT_LOAD hex preload; positional ELF symbols and normal TSI reset/MSIP",
+  "preload": {
+    "path": "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/native-loadmem/a3304c7829b2b7d5e1fa71774713f322a134e6b8bd9310aa6434ee96f5cdb446.hex",
+    "sha256": "9b89335079e79c1b83e2803a1757bceb91dcd2b5176837335c7d5dd57f2ae9b4",
+    "elf": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36-small/builds/diagnostic36-firmware-20261104T092428.656375Z/platform/generic/firmware/fw_payload.elf",
+    "elf_sha256": "0605158360e1822babd54be48cd35638607dafb413cc4d9aee500ebcc1fdf6bc",
+    "flat_sha256": "a3304c7829b2b7d5e1fa71774713f322a134e6b8bd9310aa6434ee96f5cdb446",
+    "size": 17622024,
+    "dram_base": 2147483648,
+    "loadmem_addr": 0,
+    "entry": 2147483648,
+    "segments": [
+      [
+        2147483648,
+        320,
+        83128,
+        95640
+      ],
+      [
+        2149580800,
+        83456,
+        15524872,
+        15524872
+      ]
+    ]
+  },
+  "status": "PREPARED_NOT_RUN",
+  "guest_command": "/opt/ec-dac/manual-link.sh smoke",
+  "shutdown_command": "/bin/busybox sync; /bin/busybox poweroff",
+  "scope": "C4 native RTL validation; native memory differs from B FireSim, ineligible for slowdown",
+  "slowdown_eligible": false,
+  "one_roi_per_boot": true
+}

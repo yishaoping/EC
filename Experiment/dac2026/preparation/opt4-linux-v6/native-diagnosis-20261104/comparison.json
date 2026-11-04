@@ -1,0 +1,142 @@
+{
+  "observed_utc": "2026-11-04T07:34:48.486505+00:00",
+  "ps": "USER         PID    PPID     ELAPSED     TIME %CPU   RSS    VSZ STAT WCHAN                    COMMAND\nguozh     982695 3631542    18:11:08     2879  4.3 29292  48804 Ss   ep_poll                  python3\nguozh     982710  982695    18:11:08    65398 99.8 113700 2447392 Rl -                        simulator-chipy\nguozh    1002289 3631542    18:09:13        0  0.0  9492  30128 Ss   do_select                python3\nguozh    2702785 2702766    15:12:46    19831 36.2 2577732 15679996 SNl futex_wait_queue_me   vivado\nguozh    2702992 2702938    15:12:44    19731 36.0 2470844 4870016 SNl futex_wait_queue_me    vivado\nguozh    3626122 3631542    20:39:48        3  0.0 16680  36436 Ss   do_wait                  python3\nguozh    3626207 3626187    20:39:45      242  0.3 2162156 3736900 SNl futex_wait_queue_me    vivado\nguozh    3664002 3663938    20:34:23    74139  100 21188312 51321236 SNl futex_wait_queue_me  vivado\nguozh    3664908 3664878    20:34:02        8  0.0 97816 2132552 SNl futex_wait_queue_me      parallel_synth_\n",
+  "io": {
+    "982710": {
+      "rchar": 39765903,
+      "wchar": 11959890613,
+      "syscr": 15036432,
+      "syscw": 97251152,
+      "read_bytes": 17874944,
+      "write_bytes": 2576384,
+      "cancelled_write_bytes": 0
+    },
+    "3664002": {
+      "rchar": 33427910237,
+      "wchar": 39377824355,
+      "syscr": 4972616,
+      "syscw": 7953149,
+      "read_bytes": 39198720,
+      "write_bytes": 39387643904,
+      "cancelled_write_bytes": 2429587456
+    }
+  },
+  "progress": {
+    "utc": "2026-11-04T07:34:44.109575+00:00",
+    "identity": "b88c102b268ffddb3e93dc57b5c22b170d88ac858c1c7f696825ea104b4658e9",
+    "uart_bytes": 276,
+    "rtl_bytes": 11958946063,
+    "observed_package_begin": 0,
+    "observed_result_enqueue": 0,
+    "last_observed_boom_cycle": 15030602,
+    "guest_command_sent": false,
+    "shutdown_sent": false,
+    "completion": "UNCOMMITTED",
+    "formal_sample": false
+  },
+  "initial_pointer": {
+    "compressed_eof": 1140770273,
+    "decoded_from_offset": 1140270044,
+    "bounded_read_bytes": 524288,
+    "t0_first": "0xffffffd80f005500",
+    "t0_last": "0xffffffd80f006700",
+    "t0_write_count": 7,
+    "t0_sample_monotonic": true,
+    "nearby_cycle": 14928022,
+    "first_cycle": 14914029,
+    "last_cycle": 14928208
+  },
+  "final_pointer": {
+    "compressed_eof": 1144084058,
+    "decoded_from_offset": 1143565441,
+    "bounded_read_bytes": 524288,
+    "t0_first": "0xffffffd80f010300",
+    "t0_last": "0xffffffd80f011d00",
+    "t0_write_count": 9,
+    "t0_sample_monotonic": true,
+    "nearby_cycle": 15031301,
+    "first_cycle": 15018214,
+    "last_cycle": 15031608
+  },
+  "raw_files": {
+    "Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T132309.330455Z/htif-console.log": {
+      "size": 276,
+      "allocated_bytes": 4096,
+      "mtime": 1793712220.261251
+    },
+    "Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T132309.330455Z/rtl.log.gz": {
+      "size": 1144084058,
+      "allocated_bytes": 1144090624,
+      "mtime": 1793777689.1831126
+    },
+    "Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T132309.330455Z/uart0": {
+      "size": 0,
+      "allocated_bytes": 0,
+      "mtime": 1793712220.261251
+    },
+    "Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T132309.330455Z/progress.jsonl": {
+      "size": 4846486,
+      "allocated_bytes": 4853760,
+      "mtime": 1793777689.1151104
+    }
+  },
+  "cad_files": {
+    "runme.log": {
+      "size": 5552545,
+      "mtime": 1793748003.1430516
+    },
+    "design_1_firesim_wrapper_0_0.vds": {
+      "size": 5554421,
+      "mtime": 1793748003.1430516
+    },
+    "vivado.pb": {
+      "size": 8145000,
+      "mtime": 1793748003.1430516
+    },
+    ".vivado.end.rst": null,
+    ".vivado.error.rst": null
+  },
+  "cad_subtree": {
+    "file_count": 4583,
+    "file_bytes": 11508691791,
+    "latest_mtime": 1793748003.1430516
+  },
+  "experiment_allocated_bytes": 2217398272,
+  "disk_available_bytes": 189070680064,
+  "baseline": {
+    "utc": "2026-11-04T07:25:30.888563+00:00",
+    "cpu_seconds": {
+      "982710": 64841,
+      "3664002": 73581
+    },
+    "experiment_allocated_bytes": 2213638144,
+    "disk_available_bytes": 189809356800,
+    "rtl_gz_bytes": 1140369506,
+    "rtl_gz_mtime": 1793777128.531407,
+    "sim_write_syscalls": 96830397,
+    "sim_cpu_ticks": 6484151,
+    "cad_write_bytes": 39387643904,
+    "pointer_observed_utc": "2026-11-04T07:26:32.998856+00:00"
+  },
+  "metrics": {
+    "pair_interval_seconds": 557.597942,
+    "pointer_interval_seconds": 495.487649,
+    "pointer_delta_bytes": 46592,
+    "cycle_delta_near_pointer": 103279,
+    "bytes_per_target_cycle": 0.4511275283455494,
+    "bytes_per_wall_second": 94.03261634075565,
+    "cycles_per_wall_second": 208.43910076959355,
+    "total_bytes": 16777216,
+    "completed_bytes": 2213120,
+    "remaining_bytes": 14564096,
+    "completed_percent": 13.19122314453125,
+    "remaining_current_memset_hours": 43.02318046284951,
+    "remaining_target_cycles": 32283766.972527474,
+    "experiment_growth_bytes": 3760128,
+    "experiment_gib_per_day": 0.5426194283954154,
+    "rtl_gz_growth_bytes": 3714552,
+    "total_free_disk_delta_bytes": -738676736,
+    "observed_whole_fs_consumption_gib_per_day": 106.59752759940916,
+    "sim_write_syscalls_per_second": 754.5849227685994
+  }
+}

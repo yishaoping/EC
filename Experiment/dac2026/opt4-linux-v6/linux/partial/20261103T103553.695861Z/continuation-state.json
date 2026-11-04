@@ -1,0 +1,88 @@
+{
+  "pid": 3516359,
+  "started_at": "2026-11-03T10:38:57.100742+00:00",
+  "smoke_attempt": "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T040138.912938Z",
+  "test_attempt": "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T103553.695861Z",
+  "smoke_manifest_sha256": "e7eb51a5c15a5e927d313e949f31e28beaac9f729fdbe4d2da03f04803c658f9",
+  "test_manifest_sha256": "fea4b5246092288827016d3110abf30de9dfb9a7d65e3ac47b384336a4d4c982",
+  "runner_sha256": "f6396ae8104b8c687a6dca807e623f14c04a35fb5963942d13a47e1df768c193",
+  "script_sha256": "8c8e7f3eb586b0a6449395f2a8a61bfc6bd72ed7715b501b5d0c9919321ba41d",
+  "status": "SMOKE_INVALID_TEST_NOT_STARTED",
+  "no_fpga_device_access": true,
+  "process_table_polling": false,
+  "smoke_verification": {
+    "valid": false,
+    "reasons": [
+      "simulator exit was nonzero/interrupted",
+      "guest command was not sent exactly once through SimUART stdin",
+      "sync/poweroff command was not sent exactly once",
+      "bound init command or actual guest command exit was not uniquely observed",
+      "native host-image integrity profile was not observed in guest",
+      "guest normal poweroff completion was not observed",
+      "no unique successful application/output check",
+      "application or guest-side output capture did not exit cleanly",
+      "smoke checksum output missing or incorrect",
+      "missing/duplicate Linux checker context",
+      "expected one END and one DRAIN hardware snapshot",
+      "missing/malformed hardware snapshot",
+      "missing final context teardown proof",
+      "missing/mismatched checker address-space installation",
+      "missing actual RTL participation events",
+      "RTL events disagree with BOOM result/release counters",
+      "guest software manifest mismatch"
+    ],
+    "identity": "5455fdfa148f57e8523b93577134bf9142931c98630ea1e71133f3b2a10d8b35",
+    "mode": "smoke",
+    "cycles": 0,
+    "drain_cycles": 0,
+    "hardware": {},
+    "rtl_packages": 0,
+    "rtl_results": 0,
+    "rtl_request_snapshots": [],
+    "latched_fault_flags": {
+      "time_overflow": false,
+      "invalid_roi_marker": false,
+      "ambiguous_roi_marker": false,
+      "exception_privilege_or_satp": false,
+      "failed_cancelled_or_dropped_task": false
+    },
+    "exception_event_count": "not_available; any exception sets exception_privilege_or_satp",
+    "raw_files": {
+      "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T040138.912938Z/htif-console.log": "fcbfc81926e491829665e04380691bc2c34fbd056dd7c5b39e6305392348810c",
+      "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T040138.912938Z/rtl.log.gz": "31020519035aa911fcdbb6875a3f6802c4c3b9b76300f4641a0860a51cecf847",
+      "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T040138.912938Z/uart0": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T040138.912938Z/progress.jsonl": "70c173857d1b2f1f7d2fe6e4aba4dd42f3e6ab466aa0b460d91f218765f06682"
+    },
+    "exit": {
+      "returncode": -9,
+      "identity": "5455fdfa148f57e8523b93577134bf9142931c98630ea1e71133f3b2a10d8b35",
+      "guest_command_sent": false,
+      "shutdown_sent": false
+    },
+    "slowdown_eligible": false,
+    "strict_latency": "NOT_IMPLEMENTED",
+    "console": "htif",
+    "image_attestation": {
+      "verified": true,
+      "method": "SHA256 of actual newc entry bytes before RTL execution",
+      "files": {
+        "opt/ec-dac/BUILD.json": "0917ff32350476aa680e08297e91a639055ca6c2a3bd9c6efc57a0c0647e11a9",
+        "opt/ec-dac/SHA256SUMS": "3df81945572714b85ae4faa9ba4b4a4ac5e26dfb7b0898415bcbe0efa8435e79",
+        "opt/ec-dac/blackscholes": "65b5eee74754503971612918f74d15dcdf3a4c35e88f8752bb068f4b470c1efe",
+        "opt/ec-dac/inputs/simsmall/in_4K.txt": "d918de616ed1956757f19b25e27c6b1a27fbab560a058c5de1e9d479fa331c64",
+        "opt/ec-dac/inputs/test/in_4.txt": "9a40f4a6f4b96a32bb834333487d6dcec4436eceae7efbf836574aacb1e6ce46",
+        "opt/ec-dac/manual-link.sh": "81a65e65dd509226e36f3bfe208458837ecdd7827d3033be3cf63504750a461f",
+        "opt/ec-dac/roi-smoke": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8"
+      },
+      "required_versions": {
+        "opt/ec-dac/roi-smoke": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8",
+        "opt/ec-dac/blackscholes": "65b5eee74754503971612918f74d15dcdf3a4c35e88f8752bb068f4b470c1efe",
+        "opt/ec-dac/inputs/test/in_4.txt": "9a40f4a6f4b96a32bb834333487d6dcec4436eceae7efbf836574aacb1e6ce46",
+        "opt/ec-dac/inputs/simsmall/in_4K.txt": "d918de616ed1956757f19b25e27c6b1a27fbab560a058c5de1e9d479fa331c64",
+        "opt/ec-dac/BUILD.json": "0917ff32350476aa680e08297e91a639055ca6c2a3bd9c6efc57a0c0647e11a9"
+      },
+      "input_still_hashed_in_guest": true
+    },
+    "runtime_validation": "INVALID"
+  }
+}

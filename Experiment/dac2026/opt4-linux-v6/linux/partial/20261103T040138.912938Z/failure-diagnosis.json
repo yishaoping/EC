@@ -1,0 +1,14 @@
+{
+  "utc": "2026-11-03T13:13:51.414436+00:00",
+  "reason": "confirmed OpenSBI ecall extension range collision, not UART silence",
+  "symptom": "sbi_ecall_init returned -3 (SBI_EINVAL), init_coldboot called sbi_hart_hang",
+  "last_boom_pc": "0x8000a5cc",
+  "ec_extension": "0x09004f50",
+  "vendor_range": [
+    "0x09000000",
+    "0x09ffffff"
+  ],
+  "action": "SIGTERM only version-bound own simulator; preserve partial/raw; rebuild software with experimental-range ID",
+  "pid": 3471636,
+  "identity": "5455fdfa148f57e8523b93577134bf9142931c98630ea1e71133f3b2a10d8b35"
+}

@@ -1,0 +1,49 @@
+{
+  "valid": false,
+  "reasons": [
+    "simulator exit was nonzero/interrupted",
+    "guest command was not sent exactly once through SimUART stdin",
+    "sync/poweroff command was not sent exactly once",
+    "guest normal poweroff completion was not observed",
+    "no unique successful application/output check",
+    "application or guest-side output capture did not exit cleanly",
+    "smoke checksum output missing or incorrect",
+    "missing/duplicate Linux checker context",
+    "expected one END and one DRAIN hardware snapshot",
+    "missing/malformed hardware snapshot",
+    "missing final context teardown proof",
+    "missing/mismatched checker address-space installation",
+    "missing actual RTL participation events",
+    "RTL events disagree with BOOM result/release counters",
+    "guest software manifest mismatch"
+  ],
+  "identity": "4fd7a0228f37ae7bd0613e7db3c9baff2fa099b9feca96ea0c4279597377c16a",
+  "mode": "smoke",
+  "cycles": 0,
+  "drain_cycles": 0,
+  "hardware": {},
+  "rtl_packages": 0,
+  "rtl_results": 0,
+  "rtl_request_snapshots": [],
+  "latched_fault_flags": {
+    "time_overflow": false,
+    "invalid_roi_marker": false,
+    "ambiguous_roi_marker": false,
+    "exception_privilege_or_satp": false,
+    "failed_cancelled_or_dropped_task": false
+  },
+  "exception_event_count": "not_available; any exception sets exception_privilege_or_satp",
+  "raw_files": {
+    "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T014443.996551Z/rtl.log.gz": "5221e84692e185e0980411dcfd7873fee839c92cc9ea42058435391cd6532a41",
+    "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T014443.996551Z/progress.jsonl": "435c84afcd1ce81cc053432f7b2049a971db342fa81ab571827fe03191b61afb"
+  },
+  "exit": {
+    "returncode": 1,
+    "identity": "4fd7a0228f37ae7bd0613e7db3c9baff2fa099b9feca96ea0c4279597377c16a",
+    "guest_command_sent": false,
+    "shutdown_sent": false
+  },
+  "slowdown_eligible": false,
+  "strict_latency": "NOT_IMPLEMENTED",
+  "runtime_validation": "INVALID"
+}

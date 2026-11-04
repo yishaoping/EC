@@ -1,0 +1,85 @@
+{
+  "build_script_sha256": "93cd471c12369ebf4928adad0cd540d5e8c891ba1860d6fa00e981a995723f81",
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/java",
+        "-jar",
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/sbt-launch.jar",
+        ";project firechip; runMain chipyard.Generator --target-dir /data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z --name firesim.firesim.FireSim --top-module firesim.firesim.FireSim --legacy-configs firesim.firesim:DacBaseline"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/B/chipyard",
+      "java_tool_options": "-Xmx8G -Xss8M -XX:ActiveProcessorCount=2 -Dsbt.task.cpus=2 -Dsbt.supershell=false -Dsbt.server.autostart=false -Dsbt.color=false -Dec.dac.firesim=true -Duser.home=/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/java-home -Dsbt.boot.directory=/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/sbt/boot -Dsbt.global.base=/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/sbt"
+    }
+  ],
+  "config": "DacBaseline",
+  "environment_overrides": {
+    "CC": "/usr/bin/gcc",
+    "CONDA_PREFIX": "/data1/gzh/EC/firesim/envs/manager-1.17.1",
+    "COURSIER_CACHE": "/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/coursier/v1",
+    "CXX": "/usr/bin/g++",
+    "JAVA_HOME": "/data1/gzh/EC/firesim/envs/manager-1.17.1/lib/jvm",
+    "JAVA_TOOL_OPTIONS": "-Xmx8G -Xss8M -XX:ActiveProcessorCount=2 -Dsbt.task.cpus=2 -Dsbt.supershell=false -Dsbt.server.autostart=false -Dsbt.color=false -Dec.dac.firesim=true -Duser.home=/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/java-home -Dsbt.boot.directory=/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/sbt/boot -Dsbt.global.base=/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/sbt",
+    "MAKEFLAGS": "-j1",
+    "PATH": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin:/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+    "RISCV": "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools",
+    "SBT_BIN": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/java -jar /data1/gzh/EC/firesim/envs/manager-1.17.1/bin/sbt-launch.jar"
+  },
+  "error": null,
+  "firesim_commit": "07efa6a6da18bd64d1159ae84a4701b37abb1228",
+  "firesim_standalone": "UNSET",
+  "integration": "opt4-alveo-v3",
+  "legacy_input_only_loggers": "disabled by ec.dac.firesim=true in v3 C4",
+  "no_target_execution": true,
+  "output_dir": "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z",
+  "outputs": {
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/FireSim.anno.json": "bdaf93b67b20133c4b7b8f8893cd79642e178dcfc152e0394c4eb5ed13b2f2fe",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.0x100000.0.regmap.json": "1f7be081969007fdd9acb47c8ed9fe5884a2b1695361386c1ce177033d5ea6e8",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.0x10015000.0.regmap.json": "43e0a74ea998fcc5f8d34a72b52c6802b3966012c918096ced9458469d16a01a",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.0x110000.0.regmap.json": "02fff981d66db8a1ef19c9c9042a90f201c7d4238cf7aa85e6c8729e32a31586",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.0x2000000.0.regmap.json": "4a51b6ac335b42a2d0ec678ed0319959655c67c4b0ef90f4267a669832888287",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.0x2010000.0.regmap.json": "37e5a8ef89390d72f953d1e44ed2f20c92a0b8d30cfe6181510284543dce1c85",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.0x4000.0.regmap.json": "011491af96a9ce119fa00b3acf81c0373f4fcae8bd1a2c42f661b47205f9ede1",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.0x54000000.0.regmap.json": "bf54e09b96b771485f4fc956a30712cbc0dda04e9cb398621a984ffe27530bd5",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.0xc000000.0.regmap.json": "a51c241de4a0860ad629a8ec7fce4fc2da69316ddddd222ba19cb6e5d0068a9c",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.anno.json": "bdaf93b67b20133c4b7b8f8893cd79642e178dcfc152e0394c4eb5ed13b2f2fe",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.d": "2273683bd68ef51957f7b50f9f6a0c96b05803836b2d4206992f5f7261aed055",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.dromajo_params.h": "4ddbd6b33c11df588326ce042d422ba3d0349b86ccc44abc83846dec10cfe4c8",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.dts": "260d3982194643769a193ca328c2620f77a9dfb47045eb4fe9bd29785c7efa87",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.fir": "b6f8fb6229c2ecab8b4cd8c2f1e6192b70145724501a1243741d88c6568a53f5",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.firesimBuildTopClockGenerator.freq-summary": "829b0eb8110236c489d0d462e088d7b571791558117513b5077425163083c75d",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.firesimOverallClockBridge.freq-summary": "4f98582e705af08f069062497d421d4b0fa6309b48855aaafc5e220a4f1e0392",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.graphml": "4fe49d34dc41f93a2f4b9a400ecb0c29be95afaeebf18a01f13fafb82fee1be3",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.json": "fff721a29454433fa6937a3d5d31aea17acae9c34c890a884af26e740422f46f",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.l2.json": "457c02be97d0c9133a1ac4e2720dfc7e0d41275d90c40971e9cf3865745989df",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.memmap.json": "29762ba3898c3a66afc8c494f5cb2923d68de6282f6db3d36b516e1208ba9414",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.plusArgs": "bdfd63a5c83b3f5756901a7e9ee33bf060838649d9a8a155d32b55e5644d8dfb",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.rom.conf": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "phase": "elaborate",
+  "platform": "xilinx_alveo_u280",
+  "platform_config": "BaseXilinxAlveoConfig",
+  "resources": {
+    "available_memory_gib": 260.12969970703125,
+    "free_disk_gib": 336.4346008300781,
+    "host_cpus": 256,
+    "jobs": 2,
+    "load_1min": 104.57421875,
+    "make_jobs": 1,
+    "niceness": 15
+  },
+  "returncode": 0,
+  "runtime_validation": "NOT_RUN",
+  "source_id": "d4f6b12d96a4f2921ee81a5bb8d0ef3a2e2ec9b0618338891bbdd451d9fbba96",
+  "source_tree": "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/B/chipyard",
+  "tool_hashes": {
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/java": "de51fc5d2d329ad93f030f2d4e47a5221fe8697c14c48fd0d674e256016a7af8",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/sbt-launch.jar": "b14490ad2ce5b7650bf2da813ca0f57d123318f819a1ce69207b8351057386a6",
+    "/usr/bin/g++": "3acb6a5165a96e9b55935bf85242f380b850cccfad3e64697f1ec19dd272d4a3",
+    "/usr/bin/gcc": "989fde76585d597fbabf73c62541faea7ffe3a28b7e45a2d1461449df9772e7b"
+  },
+  "wall_seconds": 44.48476768657565
+}

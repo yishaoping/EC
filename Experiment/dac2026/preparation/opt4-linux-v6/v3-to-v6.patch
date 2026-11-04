@@ -1,0 +1,1366 @@
+--- v3/generators/boom/src/main/scala/exu/core.scala
++++ v6/generators/boom/src/main/scala/exu/core.scala
+@@ -1910,6 +1910,39 @@
+         !dis_uops(w).exception
+       )
+     }
++  }
++
++  // DAC B ROI observer: original retirement timestamp, not package execution.
++  if (p(freechips.rocketchip.util.DacRoiEnabled)) {
++    import freechips.rocketchip.util.{DacRoiController, DacRoiRequest, DacRoiReply}
++    import chisel3.util.experimental.BoringUtils
++    require(xLen == 64)
++    val dac = Module(new DacRoiController(coreWidth))
++    dac.io.valid := VecInit(rob.io.commit.arch_valids.map(v => RegNext(v, false.B)))
++    dac.io.insn := rob.io.commit.debug_insts
++    dac.io.originalTick := RegNext(dac.io.tick, 0.U)
++    dac.io.satp := RegNext(Cat(csr.io.ptbr.mode, csr.io.ptbr.asid, csr.io.ptbr.ppn), 0.U)
++    dac.io.prv := RegNext(csr.io.status.prv, 3.U)
++    dac.io.hart := io.hartid
++    dac.io.trap := RegNext(csr.io.trace(0).exception, false.B)
++    dac.io.busy := io.ic_status.orR
++    val counters = WireInit(VecInit(Seq.fill(6)(0.U(64.W))))
++    BoringUtils.addSink(counters, "ec_opt4_package_counters")
++    dac.io.counters := counters
++    val requestBits = WireInit(0.U((new DacRoiRequest).getWidth.W))
++    val requestValid = WireInit(false.B)
++    val replyReady = WireInit(false.B)
++    BoringUtils.addSink(requestBits, "ec_dac_roi_request_bits")
++    BoringUtils.addSink(requestValid, "ec_dac_roi_request_valid")
++    BoringUtils.addSink(replyReady, "ec_dac_roi_reply_ready")
++    dac.io.request.bits := requestBits.asTypeOf(new DacRoiRequest)
++    dac.io.request.valid := requestValid
++    dac.io.reply.ready := replyReady
++    BoringUtils.addSource(dac.io.request.ready, "ec_dac_roi_request_ready")
++    BoringUtils.addSource(dac.io.reply.bits.asUInt, "ec_dac_roi_reply_bits")
++    BoringUtils.addSource(dac.io.reply.valid, "ec_dac_roi_reply_valid")
++    BoringUtils.addSource(clock, "ec_dac_roi_clock")
++    BoringUtils.addSource(reset.asBool, "ec_dac_roi_reset")
+   }
+ 
+   if (trace) {
+@@ -2362,6 +2395,7 @@
+   csr.io.checker_priv_mode                        := false.B
+   csr.io.ic_check_done                            := false.B
+   csr.io.clear_ic_status                          := false.B
++  csr.io.ec_service_idle                          := false.B
+   csr.io.check_ret_priv                           := 0.U
+   rsu_master.io.shadowcsr_in                      := csr.io.shadow_read
+   rsu_master.io.merge                             := snapshot_reg
+--- v3/generators/boom/src/main/scala/lsu/dcache.scala
++++ v6/generators/boom/src/main/scala/lsu/dcache.scala
+@@ -3619,6 +3619,21 @@
+     trafficCounterSnapshot := trafficCounterLive
+     trafficCounterSnapshotValid := true.B
+     trafficStopCapturePending := false.B
++  }
++  if (p(freechips.rocketchip.util.DacRoiEnabled)) {
++    // Live counters, not the software STOP snapshot. Same BOOM clock domain.
++    import chisel3.util.experimental.BoringUtils
++    val counters = Wire(Vec(6, UInt(64.W)))
++    for ((slot, index) <- Seq(
++      GH_GlobalParams.GH_TRAFFIC_ALLOCATED_PACKAGES,
++      GH_GlobalParams.GH_TRAFFIC_COMPLETED_PACKAGES,
++      GH_GlobalParams.GH_TRAFFIC_PASSED_PACKAGES,
++      GH_GlobalParams.GH_TRAFFIC_FAILED_PACKAGES,
++      GH_GlobalParams.GH_TRAFFIC_CANCELLED_PACKAGES,
++      GH_GlobalParams.GH_TRAFFIC_PACKAGE_RESULT_DROPPED).zipWithIndex) {
++      counters(index) := trafficCounterLive(slot)
++    }
++    BoringUtils.addSource(counters, "ec_opt4_package_counters")
+   }
+   io.traffic_counter := Mux(trafficCounterSnapshotValid,
+     trafficCounterSnapshot, trafficCounterLive)
+--- v3/generators/rocket-chip/src/main/resources/vsrc/AsyncResetReg.v
++++ v6/generators/rocket-chip/src/main/resources/vsrc/AsyncResetReg.v
+@@ -0,0 +1,80 @@
++// See LICENSE.SiFive for license details.
++
++/** This black-boxes an Async Reset
++  * Reg.
++  *  
++  * Because Chisel doesn't support
++  * parameterized black boxes, 
++  * we unfortunately have to 
++  * instantiate a number of these.
++  *  
++  * We also have to hard-code the set/reset.
++  *  
++  *  Do not confuse an asynchronous
++  *  reset signal with an asynchronously
++  *  reset reg. You should still 
++  *  properly synchronize your reset 
++  *  deassertion.
++  *  
++  *  @param d Data input
++  *  @param q Data Output
++  *  @param clk Clock Input
++  *  @param rst Reset Input
++  *  @param en Write Enable Input
++  *  
++  */
++
++`ifdef RANDOMIZE_GARBAGE_ASSIGN
++`define RANDOMIZE
++`endif
++`ifdef RANDOMIZE_INVALID_ASSIGN
++`define RANDOMIZE
++`endif
++`ifdef RANDOMIZE_REG_INIT
++`define RANDOMIZE
++`endif
++`ifdef RANDOMIZE_MEM_INIT
++`define RANDOMIZE
++`endif
++
++module AsyncResetReg (d, q, en, clk, rst);
++parameter RESET_VALUE = 0;
++
++input  wire d;
++output reg  q;
++input  wire en;
++input  wire clk;
++input  wire rst;
++
++   // There is a lot of initialization
++   // here you don't normally find in Verilog
++   // async registers because of scenarios in which reset
++   // is not actually asserted cleanly at time 0,
++   // and we want to make sure to properly model
++   // that, yet Chisel codebase is absolutely intolerant
++   // of Xs.
++`ifndef SYNTHESIS
++  initial begin:B0
++    `ifdef RANDOMIZE
++    integer    initvar;
++    reg [31:0] _RAND;
++    _RAND = {1{$random}};
++    q = _RAND[0];
++    `endif // RANDOMIZE
++    if (rst) begin
++      q = RESET_VALUE[0];
++    end 
++  end
++`endif
++
++   always @(posedge clk or posedge rst) begin
++
++      if (rst) begin
++         q <= RESET_VALUE[0];
++      end else if (en) begin
++         q <= d;
++      end
++   end
++ 
++endmodule // AsyncResetReg
++
+--- v3/generators/rocket-chip/src/main/resources/vsrc/ClockDivider2.v
++++ v6/generators/rocket-chip/src/main/resources/vsrc/ClockDivider2.v
+@@ -0,0 +1,24 @@
++// See LICENSE.SiFive for license details.
++
++/** This black-boxes a Clock Divider by 2.
++  * The output clock is phase-aligned to the input clock.
++  * If you use this in synthesis, make sure your sdc
++  * declares that you want it to do the same.
++  *
++  * Because Chisel does not support
++  * blocking assignments, it is impossible
++  * to create a deterministic divided clock.
++  *
++  *  @param clk_out Divided Clock
++  *  @param clk_in  Clock Input
++  *
++  */
++
++module ClockDivider2 (output reg clk_out, input clk_in);
++
++   initial clk_out = 1'b0;
++   always @(posedge clk_in) begin
++      clk_out = ~clk_out; // Must use =, NOT <=
++   end
++
++endmodule // ClockDivider2
+--- v3/generators/rocket-chip/src/main/resources/vsrc/ClockDivider3.v
++++ v6/generators/rocket-chip/src/main/resources/vsrc/ClockDivider3.v
+@@ -0,0 +1,37 @@
++// See LICENSE.SiFive for license details.
++
++/** This black-boxes a Clock Divider by 3.
++  * The output clock is phase-aligned to the input clock.
++  * Do NOT use this in synthesis; the duty cycle is 2:1.
++  *
++  * Because Chisel does not support
++  * blocking assignments, it is impossible
++  * to create a deterministic divided clock.
++  *
++  *  @param clk_out Divided Clock
++  *  @param clk_in  Clock Input
++  *
++  */
++
++module ClockDivider3 (output reg clk_out, input clk_in);
++
++   reg delay;
++
++   initial begin
++     clk_out = 1'b0;
++     delay = 1'b0;
++   end
++
++   always @(posedge clk_in) begin
++      if (clk_out == 1'b0) begin
++        clk_out = 1'b1;
++        delay <= 1'b0;
++      end else if (delay == 1'b1) begin
++        clk_out = 1'b0;
++        delay <= 1'b0;
++      end else begin
++        delay <= 1'b1;
++      end
++   end
++
++endmodule // ClockDivider3
+--- v3/generators/rocket-chip/src/main/resources/vsrc/EICG_wrapper.v
++++ v6/generators/rocket-chip/src/main/resources/vsrc/EICG_wrapper.v
+@@ -0,0 +1,20 @@
++/* verilator lint_off UNOPTFLAT */
++
++module EICG_wrapper(
++  output out,
++  input en,
++  input test_en,
++  input in
++);
++
++  reg en_latched /*verilator clock_enable*/;
++
++  always @(*) begin
++     if (!in) begin
++        en_latched = en || test_en;
++     end
++  end
++
++  assign out = en_latched && in;
++
++endmodule
+--- v3/generators/rocket-chip/src/main/resources/vsrc/RoccBlackBox.v
++++ v6/generators/rocket-chip/src/main/resources/vsrc/RoccBlackBox.v
+@@ -0,0 +1,205 @@
++// See LICENSE.SiFive for license details.
++
++module RoccBlackBox
++  #( parameter xLen = 64,
++     PRV_SZ = 2,
++     coreMaxAddrBits = 40,
++     dcacheReqTagBits = 9,
++     M_SZ = 5,
++     mem_req_bits_size_width = 2,
++     coreDataBits = 64,
++     coreDataBytes = 8,
++     paddrBits = 32,
++     vaddrBitsExtended = 40,
++     FPConstants_RM_SZ = 3,
++     fLen = 64,
++     FPConstants_FLAGS_SZ  = 5)
++  ( input clock,
++    input                                reset,
++    output                               rocc_cmd_ready,
++    input                                rocc_cmd_valid,
++    input [6:0]                          rocc_cmd_bits_inst_funct,
++    input [4:0]                          rocc_cmd_bits_inst_rs2,
++    input [4:0]                          rocc_cmd_bits_inst_rs1,
++    input                                rocc_cmd_bits_inst_xd,
++    input                                rocc_cmd_bits_inst_xs1,
++    input                                rocc_cmd_bits_inst_xs2,
++    input [4:0]                          rocc_cmd_bits_inst_rd,
++    input [6:0]                          rocc_cmd_bits_inst_opcode,
++    input [xLen-1:0]                     rocc_cmd_bits_rs1,
++    input [xLen-1:0]                     rocc_cmd_bits_rs2,
++    input                                rocc_cmd_bits_status_debug,
++    input                                rocc_cmd_bits_status_cease,
++    input                                rocc_cmd_bits_status_wfi,
++    input [31:0]                         rocc_cmd_bits_status_isa,
++    input [PRV_SZ-1:0]                   rocc_cmd_bits_status_dprv,
++    input                                rocc_cmd_bits_status_dv,
++    input [PRV_SZ-1:0]                   rocc_cmd_bits_status_prv,
++    input                                rocc_cmd_bits_status_v,
++    input                                rocc_cmd_bits_status_sd,
++    input [22:0]                         rocc_cmd_bits_status_zero2,
++    input                                rocc_cmd_bits_status_mpv,
++    input                                rocc_cmd_bits_status_gva,
++    input                                rocc_cmd_bits_status_mbe,
++    input                                rocc_cmd_bits_status_sbe,
++    input [1:0]                          rocc_cmd_bits_status_sxl,
++    input [1:0]                          rocc_cmd_bits_status_uxl,
++    input                                rocc_cmd_bits_status_sd_rv32,
++    input [7:0]                          rocc_cmd_bits_status_zero1,
++    input                                rocc_cmd_bits_status_tsr,
++    input                                rocc_cmd_bits_status_tw,
++    input                                rocc_cmd_bits_status_tvm,
++    input                                rocc_cmd_bits_status_mxr,
++    input                                rocc_cmd_bits_status_sum,
++    input                                rocc_cmd_bits_status_mprv,
++    input [1:0]                          rocc_cmd_bits_status_xs,
++    input [1:0]                          rocc_cmd_bits_status_fs,
++    input [1:0]                          rocc_cmd_bits_status_vs,
++    input [1:0]                          rocc_cmd_bits_status_mpp,
++    input [0:0]                          rocc_cmd_bits_status_spp,
++    input                                rocc_cmd_bits_status_mpie,
++    input                                rocc_cmd_bits_status_ube,
++    input                                rocc_cmd_bits_status_spie,
++    input                                rocc_cmd_bits_status_upie,
++    input                                rocc_cmd_bits_status_mie,
++    input                                rocc_cmd_bits_status_hie,
++    input                                rocc_cmd_bits_status_sie,
++    input                                rocc_cmd_bits_status_uie,
++    input                                rocc_resp_ready,
++    output                               rocc_resp_valid,
++    output [4:0]                         rocc_resp_bits_rd,
++    output [xLen-1:0]                    rocc_resp_bits_data,
++    input                                rocc_mem_req_ready,
++    output                               rocc_mem_req_valid,
++    output [coreMaxAddrBits-1:0]         rocc_mem_req_bits_addr,
++    output [dcacheReqTagBits-1:0]        rocc_mem_req_bits_tag,
++    output [M_SZ-1:0]                    rocc_mem_req_bits_cmd,
++    output [mem_req_bits_size_width-1:0] rocc_mem_req_bits_size,
++    output                               rocc_mem_req_bits_signed,
++    output                               rocc_mem_req_bits_phys,
++    output                               rocc_mem_req_bits_no_alloc,
++    output                               rocc_mem_req_bits_no_xcpt,
++    output                               rocc_mem_req_bits_no_resp,
++    output [1:0]                         rocc_mem_req_bits_dprv,
++    output                               rocc_mem_req_bits_dv,
++    output [coreDataBits-1:0]            rocc_mem_req_bits_data,
++    output [coreDataBytes-1:0]           rocc_mem_req_bits_mask,
++    output                               rocc_mem_s1_kill,
++    output [coreDataBits-1:0]            rocc_mem_s1_data_data,
++    output [coreDataBytes-1:0]           rocc_mem_s1_data_mask,
++    input                                rocc_mem_s2_nack,
++    input                                rocc_mem_s2_nack_cause_raw,
++    output                               rocc_mem_s2_kill,
++    input                                rocc_mem_s2_uncached,
++    input [paddrBits-1:0]                rocc_mem_s2_paddr,
++    input [vaddrBitsExtended-1:0]        rocc_mem_s2_gpa,
++    input                                rocc_mem_s2_gpa_is_pte,
++    input                                rocc_mem_resp_valid,
++    input [coreMaxAddrBits-1:0]          rocc_mem_resp_bits_addr,
++    input [dcacheReqTagBits-1:0]         rocc_mem_resp_bits_tag,
++    input [M_SZ-1:0]                     rocc_mem_resp_bits_cmd,
++    input [mem_req_bits_size_width-1:0]  rocc_mem_resp_bits_size,
++    input                                rocc_mem_resp_bits_signed,
++    input [coreDataBits-1:0]             rocc_mem_resp_bits_data,
++    input [coreDataBytes-1:0]            rocc_mem_resp_bits_mask,
++    input                                rocc_mem_resp_bits_replay,
++    input                                rocc_mem_resp_bits_has_data,
++    input [coreDataBits-1:0]             rocc_mem_resp_bits_data_word_bypass,
++    input [coreDataBits-1:0]             rocc_mem_resp_bits_data_raw,
++    input [coreDataBits-1:0]             rocc_mem_resp_bits_store_data,
++    input [1:0]                          rocc_mem_resp_bits_dprv,
++    input                                rocc_mem_resp_bits_dv,
++    input                                rocc_mem_replay_next,
++    input                                rocc_mem_s2_xcpt_ma_ld,
++    input                                rocc_mem_s2_xcpt_ma_st,
++    input                                rocc_mem_s2_xcpt_pf_ld,
++    input                                rocc_mem_s2_xcpt_pf_st,
++    input                                rocc_mem_s2_xcpt_gf_ld,
++    input                                rocc_mem_s2_xcpt_gf_st,
++    input                                rocc_mem_s2_xcpt_ae_ld,
++    input                                rocc_mem_s2_xcpt_ae_st,
++    input                                rocc_mem_ordered,
++    input                                rocc_mem_store_pending,
++    input                                rocc_mem_perf_acquire,
++    input                                rocc_mem_perf_release,
++    input                                rocc_mem_perf_grant,
++    input                                rocc_mem_perf_tlbMiss,
++    input                                rocc_mem_perf_blocked,
++    input                                rocc_mem_perf_canAcceptStoreThenLoad,
++    input                                rocc_mem_perf_canAcceptStoreThenRMW,
++    input                                rocc_mem_perf_canAcceptLoadThenLoad,
++    input                                rocc_mem_perf_storeBufferEmptyAfterLoad,
++    input                                rocc_mem_perf_storeBufferEmptyAfterStore,
++    output                               rocc_mem_keep_clock_enabled,
++    input                                rocc_mem_clock_enabled,
++    output                               rocc_busy,
++    output                               rocc_interrupt,
++    input                                rocc_exception,
++    input                                rocc_fpu_req_ready,
++    output                               rocc_fpu_req_valid,
++    output                               rocc_fpu_req_bits_ldst,
++    output                               rocc_fpu_req_bits_wen,
++    output                               rocc_fpu_req_bits_ren1,
++    output                               rocc_fpu_req_bits_ren2,
++    output                               rocc_fpu_req_bits_ren3,
++    output                               rocc_fpu_req_bits_swap12,
++    output                               rocc_fpu_req_bits_swap23,
++    output [1:0]                         rocc_fpu_req_bits_typeTagIn,
++    output [1:0]                         rocc_fpu_req_bits_typeTagOut,
++    output                               rocc_fpu_req_bits_fromint,
++    output                               rocc_fpu_req_bits_toint,
++    output                               rocc_fpu_req_bits_fastpipe,
++    output                               rocc_fpu_req_bits_fma,
++    output                               rocc_fpu_req_bits_div,
++    output                               rocc_fpu_req_bits_sqrt,
++    output                               rocc_fpu_req_bits_wflags,
++    output [FPConstants_RM_SZ-1:0]       rocc_fpu_req_bits_rm,
++    output [1:0]                         rocc_fpu_req_bits_fmaCmd,
++    output [1:0]                         rocc_fpu_req_bits_typ,
++    output [1:0]                         rocc_fpu_req_bits_fmt,
++    output [fLen:0]                      rocc_fpu_req_bits_in1,
++    output [fLen:0]                      rocc_fpu_req_bits_in2,
++    output [fLen:0]                      rocc_fpu_req_bits_in3,
++    output                               rocc_fpu_req_bits_vec,
++    output                               rocc_fpu_resp_ready,
++    input                                rocc_fpu_resp_valid,
++    input [fLen:0]                       rocc_fpu_resp_bits_data,
++    input [FPConstants_FLAGS_SZ-1:0]     rocc_fpu_resp_bits_exc );
++
++  assign rocc_cmd_ready = 1'b1;
++
++  assign rocc_mem_req_valid = 1'b0;
++  assign rocc_mem_s1_kill = 1'b0;
++  assign rocc_mem_s2_kill = 1'b0;
++
++  assign rocc_busy = 1'b0;
++  assign rocc_interrupt = 1'b0;
++
++  assign rocc_fpu_req_valid = 1'b0;
++  assign rocc_fpu_resp_ready = 1'b1;
++
++  /* Accumulate rs1 and rs2 into an accumulator */
++  reg [xLen-1:0] acc;
++  reg doResp;
++  reg [4:0] rocc_cmd_bits_inst_rd_d;
++  always @ (posedge clock) begin
++    if (reset) begin
++      acc <= {xLen{1'b0}};
++      doResp <= 1'b0;
++      rocc_cmd_bits_inst_rd_d <= 5'b0;
++    end
++    else if (rocc_cmd_valid && rocc_cmd_ready) begin
++      doResp                  <= rocc_cmd_bits_inst_xd;
++      rocc_cmd_bits_inst_rd_d <= rocc_cmd_bits_inst_rd;
++      acc                     <= acc + rocc_cmd_bits_rs1 + rocc_cmd_bits_rs2;
++    end
++    else begin
++      doResp <= 1'b0;
++    end
++  end
++
++  assign rocc_resp_valid = doResp;
++  assign rocc_resp_bits_rd = rocc_cmd_bits_inst_rd_d;
++  assign rocc_resp_bits_data = acc;
++
++endmodule
+--- v3/generators/rocket-chip/src/main/resources/vsrc/SimDTM.v
++++ v6/generators/rocket-chip/src/main/resources/vsrc/SimDTM.v
+@@ -0,0 +1,97 @@
++// See LICENSE.SiFive for license details.
++//VCS coverage exclude_file
++
++import "DPI-C" function int debug_tick
++(
++  output bit     debug_req_valid,
++  input  bit     debug_req_ready,
++  output int     debug_req_bits_addr,
++  output int     debug_req_bits_op,
++  output int     debug_req_bits_data,
++
++  input  bit        debug_resp_valid,
++  output bit        debug_resp_ready,
++  input  int        debug_resp_bits_resp,
++  input  int        debug_resp_bits_data
++);
++
++module SimDTM(
++  input clk,
++  input reset,
++
++  output        debug_req_valid,
++  input         debug_req_ready,
++  output [ 6:0] debug_req_bits_addr,
++  output [ 1:0] debug_req_bits_op,
++  output [31:0] debug_req_bits_data,
++
++  input         debug_resp_valid,
++  output        debug_resp_ready,
++  input  [ 1:0] debug_resp_bits_resp,
++  input  [31:0] debug_resp_bits_data,
++
++  output [31:0] exit
++);
++
++  bit r_reset;
++
++  wire __debug_req_ready = debug_req_ready;
++  wire __debug_resp_valid = debug_resp_valid;
++  wire [31:0] __debug_resp_bits_resp = {30'b0, debug_resp_bits_resp};
++  wire [31:0] __debug_resp_bits_data = debug_resp_bits_data;
++
++  bit __debug_req_valid;
++  int __debug_req_bits_addr;
++  int __debug_req_bits_op;
++  int __debug_req_bits_data;
++  bit __debug_resp_ready;
++  int __exit;
++
++  reg        debug_req_valid_reg;
++  reg [ 6:0] debug_req_bits_addr_reg;
++  reg [ 1:0] debug_req_bits_op_reg;
++  reg [31:0] debug_req_bits_data_reg;
++  reg        debug_resp_ready_reg;
++  reg [31:0] exit_reg;
++
++  always @(posedge clk) begin
++    debug_req_valid_reg <= __debug_req_valid;
++    debug_req_bits_addr_reg <= __debug_req_bits_addr[6:0];
++    debug_req_bits_op_reg <= __debug_req_bits_op[1:0];
++    debug_req_bits_data_reg <= __debug_req_bits_data[31:0];
++    debug_resp_ready_reg <= __debug_resp_ready;
++    exit_reg <= __exit;
++  end
++
++  assign debug_req_valid = debug_req_valid_reg;
++  assign debug_req_bits_addr = debug_req_bits_addr_reg;
++  assign debug_req_bits_op = debug_req_bits_op_reg;
++  assign debug_req_bits_data = debug_req_bits_data_reg;
++  assign debug_resp_ready = debug_resp_ready_reg;
++  assign exit = exit_reg;
++
++  always @(negedge clk)
++  begin
++    r_reset <= reset;
++    if (reset || r_reset)
++    begin
++      __debug_req_valid = 0;
++      __debug_resp_ready = 0;
++      __exit = 0;
++    end
++    else
++    begin
++      __exit = debug_tick(
++        __debug_req_valid,
++        __debug_req_ready,
++        __debug_req_bits_addr,
++        __debug_req_bits_op,
++        __debug_req_bits_data,
++        __debug_resp_valid,
++        __debug_resp_ready,
++        __debug_resp_bits_resp,
++        __debug_resp_bits_data
++      );
++    end
++  end
++endmodule
+--- v3/generators/rocket-chip/src/main/resources/vsrc/SimJTAG.v
++++ v6/generators/rocket-chip/src/main/resources/vsrc/SimJTAG.v
+@@ -0,0 +1,84 @@
++// See LICENSE.SiFive for license details.
++//VCS coverage exclude_file
++import "DPI-C" function int jtag_tick
++(
++ output bit jtag_TCK,
++ output bit jtag_TMS,
++ output bit jtag_TDI,
++ output bit jtag_TRSTn,
++ 
++ input bit  jtag_TDO
++);
++
++module SimJTAG #(
++                 parameter TICK_DELAY = 50
++                 )(
++
++                   input         clock,
++                   input         reset,
++                   
++                   input         enable,
++                   input         init_done,
++
++                   output        jtag_TCK,
++                   output        jtag_TMS,
++                   output        jtag_TDI,
++                   output        jtag_TRSTn,
++ 
++                   input         jtag_TDO_data,
++                   input         jtag_TDO_driven,
++                          
++                   output [31:0] exit
++                   );
++
++   reg [31:0]                    tickCounterReg;
++   wire [31:0]                   tickCounterNxt;
++   
++   assign tickCounterNxt = (tickCounterReg == 0) ? TICK_DELAY :  (tickCounterReg - 1);
++   
++   bit          r_reset;
++
++   wire [31:0]  random_bits = $random;
++   
++   wire         #0.1 __jtag_TDO = jtag_TDO_driven ? 
++                jtag_TDO_data : random_bits[0];
++      
++   bit          __jtag_TCK;
++   bit          __jtag_TMS;
++   bit          __jtag_TDI;
++   bit          __jtag_TRSTn;
++   int          __exit;
++
++   reg          init_done_sticky;
++   
++   assign #0.1 jtag_TCK   = __jtag_TCK;
++   assign #0.1 jtag_TMS   = __jtag_TMS;
++   assign #0.1 jtag_TDI   = __jtag_TDI;
++   assign #0.1 jtag_TRSTn = __jtag_TRSTn;
++   
++   assign #0.1 exit = __exit;
++
++   always @(posedge clock) begin
++      r_reset <= reset;
++      if (reset || r_reset) begin
++         __exit = 0;
++         tickCounterReg <= TICK_DELAY;
++         init_done_sticky <= 1'b0;
++         __jtag_TCK = !__jtag_TCK;
++      end else begin
++         init_done_sticky <= init_done | init_done_sticky;
++         if (enable && init_done_sticky) begin
++            tickCounterReg <= tickCounterNxt;
++            if (tickCounterReg == 0) begin
++               __exit = jtag_tick(
++                                  __jtag_TCK,
++                                  __jtag_TMS,
++                                  __jtag_TDI,
++                                  __jtag_TRSTn,
++                                  __jtag_TDO);
++            end
++         end // if (enable && init_done_sticky)
++      end // else: !if(reset || r_reset)
++   end // always @ (posedge clock)
++
++endmodule
+--- v3/generators/rocket-chip/src/main/resources/vsrc/TestDriver.v
++++ v6/generators/rocket-chip/src/main/resources/vsrc/TestDriver.v
+@@ -0,0 +1,170 @@
++// See LICENSE.SiFive for license details.
++//VCS coverage exclude_file
++`ifndef RESET_DELAY
++ `define RESET_DELAY 777.7
++`endif
++`ifndef MODEL
++ `define MODEL TestHarness
++`endif
++
++module TestDriver;
++
++  reg clock = 1'b0;
++  reg reset = 1'b1;
++
++  always #(`CLOCK_PERIOD/2.0) clock = ~clock;
++  initial #(`RESET_DELAY) reset = 0;
++
++  // Read input arguments and initialize
++  reg verbose = 1'b0;
++  wire printf_cond = verbose && !reset;
++  reg [63:0] max_cycles = 0;
++  reg [63:0] dump_start = 0;
++  reg [63:0] trace_count = 0;
++  reg [2047:0] fsdbfile = 0;
++  reg [2047:0] vcdplusfile = 0;
++  reg [2047:0] vcdfile = 0;
++  int unsigned rand_value;
++  initial
++  begin
++    void'($value$plusargs("max-cycles=%d", max_cycles));
++    void'($value$plusargs("dump-start=%d", dump_start));
++    verbose = $test$plusargs("verbose");
++
++    // do not delete the lines below.
++    // $random function needs to be called with the seed once to affect all
++    // the downstream $random functions within the Chisel-generated Verilog
++    // code.
++    // $urandom is seeded via cmdline (+ntb_random_seed in VCS) but that
++    // doesn't seed $random.
++    rand_value = $urandom;
++    rand_value = $random(rand_value);
++    if (verbose) begin
++`ifdef VCS
++      $fdisplay(stderr, "testing $random %0x seed %d", rand_value, unsigned'($get_initial_random_seed));
++`else
++      $fdisplay(stderr, "testing $random %0x", rand_value);
++`endif
++    end
++
++`ifdef DEBUG
++
++    if ($value$plusargs("vcdplusfile=%s", vcdplusfile))
++    begin
++`ifdef VCS
++      $vcdplusfile(vcdplusfile);
++`else
++      $fdisplay(stderr, "Error: +vcdplusfile is VCS-only; use +vcdfile instead or recompile with VCS=1");
++      $fatal;
++`endif
++    end
++
++    if ($value$plusargs("fsdbfile=%s", fsdbfile))
++    begin
++`ifdef FSDB
++      $fsdbDumpfile(fsdbfile);
++      $fsdbDumpvars("+all");
++      //$fsdbDumpSVA;
++`else
++      $fdisplay(stderr, "Error: +fsdbfile is FSDB-only; use +vcdfile/+vcdplus instead or recompile with FSDB=1");
++      $fatal;
++`endif
++    end
++
++    if ($value$plusargs("vcdfile=%s", vcdfile))
++    begin
++      $dumpfile(vcdfile);
++      $dumpvars(0, testHarness);
++    end
++
++`ifdef FSDB
++`define VCDPLUSON $fsdbDumpon;
++`define VCDPLUSCLOSE $fsdbDumpoff;
++`elsif VCS
++`define VCDPLUSON $vcdpluson(0); $vcdplusmemon(0);
++`define VCDPLUSCLOSE $vcdplusclose; $dumpoff;
++`else
++`define VCDPLUSON $dumpon;
++`define VCDPLUSCLOSE $dumpoff;
++`endif
++`else
++  // No +define+DEBUG
++`define VCDPLUSON
++`define VCDPLUSCLOSE
++
++    if ($test$plusargs("vcdplusfile=") || $test$plusargs("vcdfile=") || $test$plusargs("fsdbfile="))
++    begin
++      $fdisplay(stderr, "Error: +vcdfile, +vcdplusfile, or +fsdbfile requested but compile did not have +define+DEBUG enabled");
++      $fatal;
++    end
++
++`endif
++
++    if (dump_start == 0)
++    begin
++      // Start dumping before first clock edge to capture reset sequence in waveform
++      `VCDPLUSON
++    end
++  end
++
++`ifdef TESTBENCH_IN_UVM
++  // UVM library has its own way to manage end-of-simulation.
++  // A UVM-based testbench will raise an objection, watch this signal until this goes 1, then drop the objection.
++  reg finish_request = 1'b0;
++`endif
++  reg [255:0] reason = "";
++  reg failure = 1'b0;
++  wire success;
++  integer stderr = 32'h80000002;
++  always @(posedge clock)
++  begin
++`ifdef GATE_LEVEL
++    if (verbose)
++    begin
++      $fdisplay(stderr, "C: %10d", trace_count);
++    end
++`endif
++
++    trace_count = trace_count + 1;
++
++    if (trace_count == dump_start)
++    begin
++      `VCDPLUSON
++    end
++
++    if (!reset)
++    begin
++      if (max_cycles > 0 && trace_count > max_cycles)
++      begin
++        reason = " (timeout)";
++        failure = 1'b1;
++      end
++
++      if (failure)
++      begin
++        $fdisplay(stderr, "*** FAILED ***%s after %d simulation cycles", reason, trace_count);
++        `VCDPLUSCLOSE
++        $fatal;
++      end
++
++      if (success)
++      begin
++        if (verbose)
++          $fdisplay(stderr, "*** PASSED *** Completed after %d simulation cycles", trace_count);
++        `VCDPLUSCLOSE
++`ifdef TESTBENCH_IN_UVM
++        finish_request = 1;
++`else
++        $finish;
++`endif
++      end
++    end
++  end
++
++  `MODEL testHarness(
++    .clock(clock),
++    .reset(reset),
++    .io_success(success)
++  );
++
++endmodule
+--- v3/generators/rocket-chip/src/main/resources/vsrc/TraceSinkMonitor.v
++++ v6/generators/rocket-chip/src/main/resources/vsrc/TraceSinkMonitor.v
+@@ -0,0 +1,36 @@
++module TraceSinkMonitor
++#(
++    parameter FILE_NAME = "trace_sink_monitor.txt"
++)
++(
++    input clk,
++    input reset,
++    input in_fire,
++    input[7:0] in_byte
++);
++
++`ifndef SYNTHESIS
++
++integer file;
++
++initial begin
++    file = $fopen(FILE_NAME, "w");
++    if (file == 0) begin
++        $display("Failed to open %s", FILE_NAME);
++        $finish;
++    end
++end
++
++always @(posedge clk) begin
++    if (in_fire & ~reset) begin
++        $fwrite(file, "%c", in_byte);
++    end
++end 
++
++final begin
++    $fclose(file);
++end
++
++`endif
++
++endmodule--- v3/generators/rocket-chip/src/main/resources/vsrc/debug_rob.v
++++ v6/generators/rocket-chip/src/main/resources/vsrc/debug_rob.v
+@@ -0,0 +1,156 @@
++import "DPI-C" function void debug_rob_push_trace(input int     hartid,
++                                                  input bit     should_wb,
++                                                  input bit     has_wb,
++                                                  input longint wb_tag,
++                                                  input bit     trace_valid,
++                                                  input longint trace_iaddr,
++                                                  input longint trace_insn,
++                                                  input int     trace_priv,
++                                                  input bit     trace_exception,
++                                                  input bit     trace_interrupt,
++                                                  input longint trace_cause,
++                                                  input longint trace_tval,
++                                                  input longint trace_wdata[8]);
++
++import "DPI-C" function void debug_rob_push_wb(input int     hartid,
++                                               input bit     valid,
++                                               input longint wb_tag,
++                                               input longint wb_data[8]);
++
++import "DPI-C" function void debug_rob_pop_trace(input int      hartid,
++                                                 output bit     trace_valid,
++                                                 output longint trace_iaddr,
++                                                 output longint trace_insn,
++                                                 output int     trace_priv,
++                                                 output bit     trace_exception,
++                                                 output bit     trace_interrupt,
++                                                 output longint trace_cause,
++                                                 output longint trace_tval,
++                                                 output longint trace_wdata[8]);
++
++
++module DebugROBPushTrace (
++                          input		clock,
++                          input		reset,
++                          input [31:0]	hartid,
++                          input		should_wb,
++                          input		has_wb,
++                          input [63:0]	wb_tag,
++                          input		trace_valid,
++                          input [63:0]	trace_iaddr,
++                          input [63:0]	trace_insn,
++                          input [2:0]	trace_priv,
++                          input		trace_exception,
++                          input		trace_interrupt,
++                          input [63:0]	trace_cause,
++                          input [63:0]	trace_tval,
++                          input [511:0]	trace_wdata);
++
++   longint __trace_wdata[8];
++   genvar  i;
++
++   for (i = 0; i < 8; i = i + 1)
++     assign __trace_wdata[i] = trace_wdata[(i+1)*64-1:i*64];
++
++   always @(posedge clock) begin
++      if (!reset) begin
++         debug_rob_push_trace(hartid,
++                              should_wb, has_wb, wb_tag,
++                              trace_valid, trace_iaddr, trace_insn,
++                              trace_priv, trace_exception, trace_interrupt,
++                              trace_cause, trace_tval, __trace_wdata);
++      end
++   end
++endmodule; // DebugROBPushTrace
++
++module DebugROBPushWb (
++                       input         clock,
++                       input         reset,
++                       input [31:0]  hartid,
++                       input         valid,
++                       input [63:0]  wb_tag,
++                       input [511:0] wb_data);
++
++   longint __wb_data[8];
++   genvar  i;
++
++   for (i = 0; i < 8; i = i + 1)
++     assign __wb_data[i] = wb_data[(i+1)*64-1:i*64];
++
++   always @(posedge clock) begin
++      if (!reset) begin
++         debug_rob_push_wb(hartid, valid, wb_tag, __wb_data);
++      end
++   end
++endmodule; // DebugROBPushWb
++
++module DebugROBPopTrace (
++                         input		clock,
++                         input		reset,
++                         input [31:0]	hartid,
++                         output		trace_valid,
++                         output [63:0]	trace_iaddr,
++                         output [63:0]	trace_insn,
++                         output [2:0]	trace_priv,
++                         output		trace_exception,
++                         output		trace_interrupt,
++                         output [63:0]	trace_cause,
++                         output [63:0]	trace_tval,
++                         output [511:0]	trace_wdata);
++
++   bit					r_reset;
++
++   bit					__trace_valid;
++   longint				__trace_iaddr;
++   longint				__trace_insn;
++   int					__trace_priv;
++   bit					__trace_exception;
++   bit					__trace_interrupt;
++   longint				__trace_cause;
++   longint				__trace_tval;
++   longint				__trace_wdata[8];
++
++   reg					__trace_valid_reg;
++   reg [63:0]				__trace_iaddr_reg;
++   reg [63:0]				__trace_insn_reg;
++   reg [2:0]				__trace_priv_reg;
++   reg					__trace_exception_reg;
++   reg					__trace_interrupt_reg;
++   reg [63:0]				__trace_cause_reg;
++   reg [63:0]				__trace_tval_reg;
++   reg [511:0]				__trace_wdata_reg;
++
++   always @(posedge clock) begin
++      __trace_valid_reg <= __trace_valid;
++      __trace_iaddr_reg <= __trace_iaddr;
++      __trace_insn_reg <= __trace_insn;
++      __trace_priv_reg <= __trace_priv;
++      __trace_exception_reg <= __trace_exception;
++      __trace_interrupt_reg <= __trace_interrupt;
++      __trace_cause_reg <= __trace_cause;
++      __trace_tval_reg <= __trace_tval;
++      __trace_wdata_reg <= {__trace_wdata[7], __trace_wdata[6], __trace_wdata[5], __trace_wdata[4],
++                            __trace_wdata[3], __trace_wdata[2], __trace_wdata[1], __trace_wdata[0]};
++   end // always @ (posedge clock)
++
++   assign trace_valid = __trace_valid_reg;
++   assign trace_iaddr = __trace_iaddr_reg;
++   assign trace_insn = __trace_insn_reg;
++   assign trace_priv = __trace_priv_reg;
++   assign trace_exception = __trace_exception_reg;
++   assign trace_interrupt = __trace_interrupt_reg;
++   assign trace_cause = __trace_cause_reg;
++   assign trace_tval = __trace_tval_reg;
++   assign trace_wdata = __trace_wdata_reg;
++
++   always @(negedge clock) begin
++      r_reset <= reset;
++      if (!reset && !r_reset) begin
++         debug_rob_pop_trace(hartid,
++                             __trace_valid, __trace_iaddr, __trace_insn,
++                             __trace_priv, __trace_exception, __trace_interrupt,
++                             __trace_cause, __trace_tval, __trace_wdata);
++      end
++   end
++endmodule; // DebugROBPopTrace
++
+--- v3/generators/rocket-chip/src/main/resources/vsrc/plusarg_reader.v
++++ v6/generators/rocket-chip/src/main/resources/vsrc/plusarg_reader.v
+@@ -0,0 +1,26 @@
++// See LICENSE.SiFive for license details.
++
++//VCS coverage exclude_file
++
++// No default parameter values are intended, nor does IEEE 1800-2012 require them (clause A.2.4 param_assignment),
++// but Incisive demands them. These default values should never be used.
++module plusarg_reader #(
++   parameter FORMAT="borked=%d",
++   parameter WIDTH=1,
++   parameter [WIDTH-1:0] DEFAULT=0
++) (
++   output [WIDTH-1:0] out
++);
++
++`ifdef SYNTHESIS
++assign out = DEFAULT;
++`else
++reg [WIDTH-1:0] myplus;
++assign out = myplus;
++
++initial begin
++   if (!$value$plusargs(FORMAT, myplus)) myplus = DEFAULT;
++end
++`endif
++
++endmodule
+--- v3/generators/rocket-chip/src/main/scala/rocket/CSR.scala
++++ v6/generators/rocket-chip/src/main/scala/rocket/CSR.scala
+@@ -364,6 +364,7 @@
+   val r_exception_nocall = Output(Bool())
+   val core_trace = Input(UInt(1.W))
+ 
++  val ec_service_idle = Input(Bool()) // v6 read-only service teardown witness
+   val checker_mode = Input(Bool())
+   val checker_priv_mode = Input(Bool())
+   val arfs_is_CSR = Input(Bool())
+@@ -867,7 +868,8 @@
+     CSRs.mepc -> read_mepc,
+     CSRs.mtval -> reg_mtval.sextTo(xLen),
+     CSRs.mcause -> reg_mcause,
+-    CSRs.mhartid -> io.hartid)
++    CSRs.mhartid -> io.hartid,
++    0xcc0 -> io.ec_service_idle.asUInt) // custom U-mode read-only CSR
+ 
+ 
+   val debug_csrs = if (!usingDebug) LinkedHashMap() else LinkedHashMap[Int,Bits](
+--- v3/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala
++++ v6/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala
+@@ -1537,6 +1537,16 @@
+     Mux(package_result_waiting, package_result_status_waiting, package_result_status),
+     Mux(package_result_waiting, package_result_seq_waiting, package_seq_reg))
+   val package_result_fire = package_result_queue.io.enq.fire
++  if (p(freechips.rocketchip.util.DacRoiEnabled)) {
++    when (new_package) {
++      printf("EC_OPT4_PACKAGE_BEGIN hart=%d seq=%x satp=%x prv=%d\n",
++        io.hartid, new_package_seq, Cat(csr.io.ptbr.mode, csr.io.ptbr.asid, csr.io.ptbr.ppn), csr.io.status.prv)
++    }
++    when (package_result_fire) {
++      printf("EC_OPT4_PACKAGE_RESULT hart=%d seq=%x status=%d full_compare=%d cancelled=%d\n",
++        io.hartid, package_seq_reg, package_result_status, full_check_complete, package_cancelled)
++    }
++  }
+   // Result capture and RSUSL cleanup are separate state transitions. Delaying
+   // cleanup breaks the result-fire -> package-clear -> frame-start feedback;
+   // result handoff remains blocked by checker_cleanup_done until RSUSL is idle.
+@@ -1555,6 +1565,13 @@
+   package_result_queue.io.deq.ready := io.package_result_ready &&
+     package_result_handoff_allowed
+   val package_result_handoff_fire = package_result_queue.io.deq.fire
++  // Service FINISH is not architectural/package completion. U-mode firmware
++  // management may tear down satp only after this real cleanup witness.
++  val ec_service_safe = checker_cleanup_done && !package_owned &&
++    !pending_package_seq_valid && no_result_pending &&
++    !package_result_queue.io.deq.valid && io.cdc_empty
++  csr.io.ec_service_idle := ec_service_safe && RegNext(ec_service_safe, false.B)
++
+   io.package_result_valid := package_result_queue.io.deq.valid &&
+     package_result_handoff_allowed
+   io.package_result_seq := package_result_queue.io.deq.bits(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0)
+--- v3/generators/rocket-chip/src/main/scala/util/DacRoi.scala
++++ v6/generators/rocket-chip/src/main/scala/util/DacRoi.scala
+@@ -0,0 +1,145 @@
++package freechips.rocketchip.util
++
++import chisel3._
++import chisel3.util._
++import freechips.rocketchip.config.Field
++
++case object DacRoiEnabled extends Field[Boolean](false)
++
++class DacRoiRequest extends Bundle {
++  val token = UInt(64.W)
++  val epoch = UInt(64.W)
++  val satp = UInt(64.W)
++  val hart = UInt(64.W)
++}
++class DacRoiReply extends Bundle {
++  val token = UInt(64.W)
++  val error = UInt(64.W)
++  val state = UInt(64.W)
++  val epoch = UInt(64.W)
++  val begin = UInt(64.W)
++  val end = UInt(64.W)
++  val drain = UInt(64.W)
++  val outstanding = UInt(64.W)
++  val generated = UInt(64.W)
++  val completed = UInt(64.W)
++  val faults = UInt(64.W)
++}
++
++/** B-only source-clock observer. Control ready NEVER feeds the BOOM pipeline.
++  * Retired marker metadata is delayed one cycle by BOOM's debug instruction
++  * memory. originalTick tags that retirement edge, not its delivery edge.
++  * This measures ROI boundaries only; it provides NO execution timestamps.
++  */
++class DacRoiController(retireWidth: Int) extends Module {
++  val io = IO(new Bundle {
++    val request = Flipped(Decoupled(new DacRoiRequest))
++    val reply = Decoupled(new DacRoiReply)
++    val valid = Input(Vec(retireWidth, Bool()))
++    val insn = Input(Vec(retireWidth, UInt(32.W)))
++    val originalTick = Input(UInt(64.W))
++    val satp = Input(UInt(64.W))
++    val prv = Input(UInt(2.W))
++    val hart = Input(UInt(64.W))
++    val tick = Output(UInt(64.W))
++    val counters = Input(Vec(6, UInt(64.W)))
++    val busy = Input(Bool())
++    val trap = Input(Bool())
++  })
++  val idle = 0.U(64.W); val armed = 1.U(64.W); val running = 2.U(64.W)
++  val ended = 3.U(64.W); val drained = 4.U(64.W); val poison = 5.U(64.W)
++  val tick = RegInit(0.U(64.W))
++  val overflow = RegInit(false.B)
++  tick := tick + 1.U
++  when(tick.andR) { overflow := true.B }
++  io.tick := tick
++
++  val state = RegInit(idle)
++  val epoch = RegInit(0.U(64.W))
++  val expectedSatp = RegInit(0.U(64.W))
++  val beginTick = RegInit(0.U(64.W))
++  val endTick = RegInit(0.U(64.W))
++  val faults = RegInit(0.U(64.W))
++  val lastSerial = RegInit(0.U(56.W))
++  val reply = RegInit(0.U.asTypeOf(new DacRoiReply))
++  val replyValid = RegInit(false.B)
++  io.reply.bits := reply
++  io.reply.valid := replyValid
++  io.request.ready := !replyValid || io.reply.ready
++  when(io.reply.fire) { replyValid := false.B }
++
++  val base = RegInit(VecInit(Seq.fill(6)(0.U(64.W))))
++  val counts = VecInit((0 until 6).map(i => io.counters(i) - base(i)))
++  val countClean = counts(0) > 0.U && counts(0) === counts(1) && counts(1) === counts(2) &&
++    counts(3) === 0.U && counts(4) === 0.U && counts(5) === 0.U && !io.busy
++  val drainTick = RegInit(0.U(64.W))
++  when((state === running || (state === ended && io.busy)) && (io.trap || io.prv =/= 0.U || io.satp =/= expectedSatp)) {
++    faults := faults | 8.U
++  }
++  when((state === running || state === ended) && (counts(3).orR || counts(4).orR || counts(5).orR)) {
++    faults := faults | 16.U
++  }
++  when(state === ended && countClean && drainTick === 0.U) { drainTick := tick }
++  val matches = io.satp === expectedSatp && io.prv === 0.U && io.hart === 0.U
++  val starts = VecInit((0 until retireWidth).map(w => io.valid(w) && matches && io.insn(w) === "h6b100013".U))
++  val ends = VecInit((0 until retireWidth).map(w => io.valid(w) && matches && io.insn(w) === "h6b200013".U))
++  val active = state === armed || state === running || state === ended
++  val start = starts.asUInt.orR; val end = ends.asUInt.orR
++  when(active && (start || end)) {
++    when(PopCount(starts) +& PopCount(ends) =/= 1.U) {
++      state := poison; faults := faults | 4.U
++    }.elsewhen(start && state === armed) {
++      beginTick := io.originalTick; state := running
++    }.elsewhen(end && state === running && io.originalTick > beginTick) {
++      endTick := io.originalTick; state := ended
++    }.otherwise {
++      state := poison; faults := faults | 2.U
++    }
++  }
++
++  when(io.request.fire) {
++    val q = io.request.bits
++    val op = q.token(7, 0)
++    val serial = q.token(63, 8)
++    val goodToken = serial > lastSerial
++    val sameEpoch = q.epoch === epoch
++    val okArm = op === 1.U && (state === idle || state === drained) && !io.busy &&
++      io.counters(0) === io.counters(1) && q.epoch > epoch && q.satp(63, 60) =/= 0.U && q.hart === 0.U && !overflow && !tick.andR
++    val okEnd = op === 2.U && sameEpoch && state === ended && faults === 0.U
++    val okDrain = op === 3.U && sameEpoch && state === ended && faults === 0.U && countClean && drainTick =/= 0.U
++    val okAbort = op === 4.U && q.epoch >= epoch && !io.busy && io.counters(0) === io.counters(1)
++    val ok = goodToken && (okArm || okEnd || okDrain || okAbort)
++    replyValid := true.B
++    reply := 0.U.asTypeOf(new DacRoiReply)
++    reply.token := q.token
++    reply.error := Mux(ok, 0.U, 1.U)
++    reply.state := state
++    reply.epoch := epoch
++    reply.begin := beginTick
++    reply.end := endTick
++    reply.drain := drainTick
++    reply.generated := counts(0)
++    reply.completed := counts(1)
++    reply.outstanding := Mux(counts(0) >= counts(1), counts(0)-counts(1), Fill(64, 1.U(1.W)))
++    reply.faults := faults
++    when(goodToken) { lastSerial := serial }
++    when(ok && okArm) {
++      epoch := q.epoch; expectedSatp := q.satp; state := armed
++      base := io.counters; drainTick := 0.U
++      beginTick := 0.U; endTick := 0.U; faults := 0.U
++      reply.epoch := q.epoch; reply.state := armed
++      reply.begin := 0.U; reply.end := 0.U; reply.drain := 0.U; reply.faults := 0.U
++    }
++    when(ok && okDrain) { state := drained; reply.state := drained }
++    when(ok && okAbort) {
++      state := idle; epoch := q.epoch; reply.state := idle; reply.epoch := q.epoch
++    }
++  }
++  when(io.request.fire) {
++    printf("EC_OPT4_ROI token=%x epoch=%x state=%x begin=%x end=%x generated=%x completed=%x passed=%x failed=%x cancelled=%x dropped=%x busy=%d faults=%x\n",
++      io.request.bits.token, epoch, state, beginTick, endTick, counts(0), counts(1),
++      counts(2), counts(3), counts(4), counts(5), io.busy, faults)
++  }
++  // A wrapped source time can never be repaired by starting a new epoch.
++  when(overflow || tick.andR) { state := poison; faults := faults | 1.U }
++}
+--- v3/generators/chipyard/src/main/scala/DigitalTop.scala
++++ v6/generators/chipyard/src/main/scala/DigitalTop.scala
+@@ -27,6 +27,7 @@
+   with sifive.blocks.devices.spi.HasPeripherySPI // Enables optionally adding the sifive SPI port
+   with icenet.CanHavePeripheryIceNIC // Enables optionally adding the IceNIC for FireSim
+   with chipyard.example.CanHavePeripheryInitZero // Enables optionally adding the initzero example widget
++  with chipyard.example.CanHavePeripheryDacRoi
+   with chipyard.example.CanHavePeripheryGCD // Enables optionally adding the GCD example widget
+   with chipyard.example.CanHavePeripheryStreamingFIR // Enables optionally adding the DSPTools FIR example widget
+   with chipyard.example.CanHavePeripheryStreamingPassthrough // Enables optionally adding the DSPTools streaming-passthrough example widget
+--- v3/generators/chipyard/src/main/scala/config/DacLinux.scala
++++ v6/generators/chipyard/src/main/scala/config/DacLinux.scala
+@@ -0,0 +1,3 @@
++package chipyard
++import freechips.rocketchip.config.Config
++class DacLinuxC4 extends Config(new chipyard.example.WithDacRoi ++ new v1Config)
+--- v3/generators/chipyard/src/main/scala/example/DacRoiPeripheral.scala
++++ v6/generators/chipyard/src/main/scala/example/DacRoiPeripheral.scala
+@@ -0,0 +1,95 @@
++package chipyard.example
++
++import chisel3._
++import chisel3.util._
++import chisel3.util.experimental.BoringUtils
++import freechips.rocketchip.config.{Config, Parameters}
++import freechips.rocketchip.diplomacy._
++import freechips.rocketchip.regmapper._
++import freechips.rocketchip.subsystem.BaseSubsystem
++import freechips.rocketchip.tilelink._
++import freechips.rocketchip.util._
++
++/** Control/mailbox peripheral, not a checker and not the host measurement bridge.
++  * Both queues use RocketChip's real asynchronous crossing implementation.
++  * ACK snapshots preserve original BOOM marker times across that crossing.
++  */
++class DacRoiPeripheral(address: BigInt, beatBytes: Int)(implicit p: Parameters) extends LazyModule {
++  require(beatBytes == 8, "ROI ABI requires atomic RV64 MMIO")
++  val device = new SimpleDevice("ec-dac-roi", Seq("ec,dac-roi-v1"))
++  val node = TLRegisterNode(Seq(AddressSet(address, 4095)), device, beatBytes = beatBytes)
++  lazy val module = new LazyModuleImp(this) {
++    val coreClock = Wire(Clock()); coreClock := false.B.asClock
++    val coreReset = WireInit(true.B)
++    BoringUtils.addSink(coreClock, "ec_dac_roi_clock")
++    BoringUtils.addSink(coreReset, "ec_dac_roi_reset")
++    val requests = Module(new AsyncQueue(new DacRoiRequest, AsyncQueueParams(depth = 4)))
++    requests.io.enq_clock := clock; requests.io.enq_reset := reset.asBool
++    requests.io.deq_clock := coreClock; requests.io.deq_reset := coreReset
++    val responses = Module(new AsyncQueue(new DacRoiReply, AsyncQueueParams(depth = 4)))
++    responses.io.enq_clock := coreClock; responses.io.enq_reset := coreReset
++    responses.io.deq_clock := clock; responses.io.deq_reset := reset.asBool
++
++    BoringUtils.addSource(requests.io.deq.bits.asUInt, "ec_dac_roi_request_bits")
++    BoringUtils.addSource(requests.io.deq.valid, "ec_dac_roi_request_valid")
++    val reqReady = WireInit(false.B)
++    BoringUtils.addSink(reqReady, "ec_dac_roi_request_ready")
++    requests.io.deq.ready := reqReady
++    val rspBits = WireInit(0.U((new DacRoiReply).getWidth.W))
++    val rspValid = WireInit(false.B)
++    BoringUtils.addSink(rspBits, "ec_dac_roi_reply_bits")
++    BoringUtils.addSink(rspValid, "ec_dac_roi_reply_valid")
++    responses.io.enq.bits := rspBits.asTypeOf(new DacRoiReply)
++    responses.io.enq.valid := rspValid
++    BoringUtils.addSource(responses.io.enq.ready, "ec_dac_roi_reply_ready")
++    responses.io.deq.ready := true.B
++    val response = RegInit(0.U.asTypeOf(new DacRoiReply))
++    when(responses.io.deq.fire) { response := responses.io.deq.bits }
++    val requestEpoch = RegInit(0.U(64.W))
++    val requestSatp = RegInit(0.U(64.W))
++    val requestHart = RegInit(0.U(64.W))
++    val command = RegInit(0.U(64.W))
++    requests.io.enq.bits.epoch := requestEpoch
++    requests.io.enq.bits.satp := requestSatp
++    requests.io.enq.bits.hart := requestHart
++    val commandWrite = RegWriteFn((valid: Bool, data: UInt) => {
++      requests.io.enq.valid := valid
++      requests.io.enq.bits.token := data
++      when(valid && requests.io.enq.ready) { command := data }
++      requests.io.enq.ready
++    })
++    // Common + B capabilities only. No correction/execution/context claim.
++    val capabilities = ((1 << 0) | (1 << 1) | (1 << 2) | (1 << 3) | (1 << 5) | (1 << 6) | (1 << 7) |
++                        (1 << 8) | (1 << 9) | (1 << 10)).U(64.W)
++    node.regmap(
++      0x00 -> Seq(RegField.r(64, "h4543444143524f49".U(64.W))),
++      0x08 -> Seq(RegField.r(64, 1.U(64.W))),
++      0x10 -> Seq(RegField.r(64, capabilities)),
++      0x18 -> Seq(RegField.r(64, 4.U(64.W))),
++      0x20 -> Seq(RegField(64, RegReadFn(command), commandWrite)),
++      0x28 -> Seq(RegField(64, requestEpoch)),
++      0x30 -> Seq(RegField(64, requestSatp)),
++      0x38 -> Seq(RegField(64, requestHart)),
++      0x40 -> Seq(RegField.r(64, response.token)),
++      0x48 -> Seq(RegField.r(64, response.error)),
++      0x50 -> Seq(RegField.r(64, response.state)),
++      0x58 -> Seq(RegField.r(64, response.epoch)),
++      0x60 -> Seq(RegField.r(64, response.begin)),
++      0x68 -> Seq(RegField.r(64, response.end)),
++      0x70 -> Seq(RegField.r(64, response.drain)),
++      0x78 -> Seq(RegField.r(64, response.outstanding)),
++      0x80 -> Seq(RegField.r(64, response.generated)),
++      0x88 -> Seq(RegField.r(64, response.completed)),
++      0x90 -> Seq(RegField.r(64, response.faults)))
++  }
++}
++trait CanHavePeripheryDacRoi { this: BaseSubsystem =>
++  val dacRoi = if (p(DacRoiEnabled)) {
++    val controller = LazyModule(new DacRoiPeripheral(0x10040000L, pbus.beatBytes))
++    pbus.toVariableWidthSlave(Some("ec-dac-roi")) { controller.node }
++    Some(controller)
++  } else None
++}
++class WithDacRoi extends Config((site, here, up) => {
++  case DacRoiEnabled => true
++})
+--- v3/generators/firechip/src/main/scala/DacTarget.scala
++++ v6/generators/firechip/src/main/scala/DacTarget.scala
+@@ -2,6 +2,7 @@
+ import freechips.rocketchip.config.Config
+ // Preserve target frequency/cache/core parameters; no WithTestChipBusFreqs/1GHz override.
+ class DacOpt4C4 extends Config(
++  new chipyard.example.WithDacRoi ++
+   new WithDacMeasurementPolicy ++
+   new WithDefaultFireSimBridges ++
+   new WithFireSimDesignTweaks ++

@@ -1,0 +1,67 @@
+{
+  "as_of": "2026-11-04T01:46:00+00:00",
+  "stage_A": {
+    "status": "REAL_RTL_PASS",
+    "generated": 21,
+    "completed": 21,
+    "passed": 21,
+    "roi_cycles": 291811,
+    "drain_cycles": 9552,
+    "verification": "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/stage-A/partial/20261103T010323.872020Z/verification.json"
+  },
+  "stage_B": {
+    "status": "RUNNING_NOT_VERIFIED",
+    "attempt": "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132309.330455Z",
+    "identity": "b88c102b268ffddb3e93dc57b5c22b170d88ac858c1c7f696825ea104b4658e9",
+    "session_id": 60723,
+    "latest_target_cycle": 10590510,
+    "latest_progress_utc": "2026-11-04T01:45:57Z",
+    "guest_console_bytes": 276,
+    "package_begin": 0,
+    "package_result": 0,
+    "roi": "not reached",
+    "exit_status": null,
+    "raw_rtl": "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T132309.330455Z/rtl.log.gz"
+  },
+  "stage_C": {
+    "status": "PREPARED_WAITING_FOR_VALID_SMOKE",
+    "attempt": "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132500.630358Z",
+    "identity": "7919ce7999f69af2202a95032762e2708e40c8b655ea7d1987a08a821f08dc2f",
+    "continuation_session_id": 95198,
+    "started": false
+  },
+  "prior_failed_B": {
+    "attempt": "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T040138.912938Z",
+    "reason": "private SBI ID overlaps vendor range, ecall_init returns -3 before Linux",
+    "evidence": "boot-failure-evidence.json",
+    "status": "INVALID"
+  },
+  "actual_fix": {
+    "old_private_sbi_extension": "0x09004f50",
+    "new_private_sbi_extension": "0x08004f50",
+    "scope": "firmware + Linux driver ABI; original checker semantics and RTL unchanged",
+    "native_kernel_result": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-linux-v6/native-HTIF-kernel-20261103T131553.567157Z/result.json",
+    "native_smoke_firmware_result": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-linux-v6/native-HTIF-firmware-20261103T132214.897538Z/result.json",
+    "native_test_firmware_result": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-linux-v6/native-HTIF-firmware-20261103T132422.266455Z/result.json"
+  },
+  "blackscholes_validated": false,
+  "fpga_operations": "NOT_AUTHORIZED_NOT_PERFORMED",
+  "native_slowdown_eligible": false,
+  "C4_FireSim_driver": {
+    "status": "BUILT_NOT_RUN_RTL_UNCHANGED",
+    "receipt": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-linux-v6/C4-driver-20261102T142123.460974Z/result.json"
+  },
+  "C4_bitstream": {
+    "status": "PURE_CAD_RUNNING_NOT_DEPLOYED",
+    "build_log_dir": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-linux-v6/C4-bitstream-20261103T105502.826002Z",
+    "session_id": 62334,
+    "deployment_eligible": false,
+    "software_note": "build input references prior failed smoke; needs new successful smoke and rebuilt UART kernel/firmware before deployment; hardware source unchanged",
+    "receipt_exists": false,
+    "latest_top_wrapper_synthesis_log_bytes": 5552545
+  },
+  "FireSim_software_rebuild": {
+    "status": "KERNEL_COMPILING_FOR_NEW_SBI_ID",
+    "session_id": 92334
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "utc": "2026-11-03T04:04:23.638060+00:00",
+  "native_hardware_receipt": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-build.json",
+  "native_hardware_receipt_sha256": "1d2b72e34736f22bc8f826dd2526235dd8d82c3f40e317b9d9821f490fcb93b6",
+  "hardware_unchanged": true,
+  "software_receipts": {
+    "rootfs": {
+      "output_dir": "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/native-htif/rootfs-20261103T035505.166282Z",
+      "configuration": "C4-v6-native-HTIF",
+      "returncode": 0
+    },
+    "fdt": {
+      "output_dir": null,
+      "configuration": "C4-v6-native-HTIF",
+      "returncode": 0
+    },
+    "kernel": {
+      "output_dir": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-htif/builds/native-HTIF-kernel-20261103T035747.526360Z",
+      "configuration": "C4-v6-native-HTIF",
+      "returncode": 0
+    },
+    "firmware": {
+      "output_dir": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-htif/builds/native-HTIF-firmware-20261103T035810.825449Z",
+      "configuration": "C4-v6-native-HTIF",
+      "returncode": 0
+    }
+  },
+  "guest_mode": "smoke",
+  "console": "existing native HTIF -> OpenSBI legacy SBI console -> Linux hvc0; UART attached to an unused PTY",
+  "execution": "guest init executes exact mode-bound manual-link.sh once, records real rc, syncs and handles normal poweroff signal",
+  "kernel_delta": [
+    "enable CONFIG_RISCV_SBI_V01 and CONFIG_HVC_RISCV_SBI",
+    "quiet boot; manual command enables kernel printk before checker context setup"
+  ],
+  "firmware_delta": [
+    "same checker service and source",
+    "FW_OPTIONS=1 suppresses boot banner",
+    "embedded matching native DT with stdout=/htif"
+  ],
+  "app_binary_hashes": {
+    "roi-smoke": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8",
+    "blackscholes": "65b5eee74754503971612918f74d15dcdf3a4c35e88f8752bb068f4b470c1efe"
+  },
+  "application_integrity": {
+    "verified": true,
+    "method": "SHA256 of actual newc entry bytes before RTL execution",
+    "files": {
+      "opt/ec-dac/BUILD.json": "0917ff32350476aa680e08297e91a639055ca6c2a3bd9c6efc57a0c0647e11a9",
+      "opt/ec-dac/SHA256SUMS": "3df81945572714b85ae4faa9ba4b4a4ac5e26dfb7b0898415bcbe0efa8435e79",
+      "opt/ec-dac/blackscholes": "65b5eee74754503971612918f74d15dcdf3a4c35e88f8752bb068f4b470c1efe",
+      "opt/ec-dac/inputs/simsmall/in_4K.txt": "d918de616ed1956757f19b25e27c6b1a27fbab560a058c5de1e9d479fa331c64",
+      "opt/ec-dac/inputs/test/in_4.txt": "9a40f4a6f4b96a32bb834333487d6dcec4436eceae7efbf836574aacb1e6ce46",
+      "opt/ec-dac/manual-link.sh": "81a65e65dd509226e36f3bfe208458837ecdd7827d3033be3cf63504750a461f",
+      "opt/ec-dac/roi-smoke": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8"
+    },
+    "required_versions": {
+      "opt/ec-dac/roi-smoke": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8",
+      "opt/ec-dac/blackscholes": "65b5eee74754503971612918f74d15dcdf3a4c35e88f8752bb068f4b470c1efe",
+      "opt/ec-dac/inputs/test/in_4.txt": "9a40f4a6f4b96a32bb834333487d6dcec4436eceae7efbf836574aacb1e6ce46",
+      "opt/ec-dac/inputs/simsmall/in_4K.txt": "d918de616ed1956757f19b25e27c6b1a27fbab560a058c5de1e9d479fa331c64",
+      "opt/ec-dac/BUILD.json": "0917ff32350476aa680e08297e91a639055ca6c2a3bd9c6efc57a0c0647e11a9"
+    },
+    "input_still_hashed_in_guest": true
+  },
+  "input_hash_in_guest": true,
+  "runtime_validation": "RUNNING_NOT_PASSED",
+  "attempt": "Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T040138.912938Z",
+  "fpga_access": "NONE",
+  "slowdown_eligible": false
+}

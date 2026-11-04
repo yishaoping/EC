@@ -1,0 +1,50 @@
+{
+  "valid": false,
+  "reasons": [
+    "simulator exit was nonzero/interrupted",
+    "guest command was not sent exactly once through SimUART stdin",
+    "sync/poweroff command was not sent exactly once",
+    "guest normal poweroff completion was not observed",
+    "no unique successful application/output check",
+    "application or guest-side output capture did not exit cleanly",
+    "smoke checksum output missing or incorrect",
+    "missing/duplicate Linux checker context",
+    "expected one END and one DRAIN hardware snapshot",
+    "missing/malformed hardware snapshot",
+    "missing final context teardown proof",
+    "missing/mismatched checker address-space installation",
+    "missing actual RTL participation events",
+    "RTL events disagree with BOOM result/release counters",
+    "guest software manifest mismatch"
+  ],
+  "identity": "4fd7a0228f37ae7bd0613e7db3c9baff2fa099b9feca96ea0c4279597377c16a",
+  "mode": "smoke",
+  "cycles": 0,
+  "drain_cycles": 0,
+  "hardware": {},
+  "rtl_packages": 0,
+  "rtl_results": 0,
+  "rtl_request_snapshots": [],
+  "latched_fault_flags": {
+    "time_overflow": false,
+    "invalid_roi_marker": false,
+    "ambiguous_roi_marker": false,
+    "exception_privilege_or_satp": false,
+    "failed_cancelled_or_dropped_task": false
+  },
+  "exception_event_count": "not_available; any exception sets exception_privilege_or_satp",
+  "raw_files": {
+    "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T025438.431971Z/rtl.log.gz": "adb6abe8ea47c953bd431d2a78efa786937a1f472b6d1d62dbba28e8580b53ef",
+    "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T025438.431971Z/uart0": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T025438.431971Z/progress.jsonl": "6f78ccd882116e51dd8c3c4918a3946c249968af179057e22c78474bdca340b1"
+  },
+  "exit": {
+    "returncode": -9,
+    "identity": "4fd7a0228f37ae7bd0613e7db3c9baff2fa099b9feca96ea0c4279597377c16a",
+    "guest_command_sent": false,
+    "shutdown_sent": false
+  },
+  "slowdown_eligible": false,
+  "strict_latency": "NOT_IMPLEMENTED",
+  "runtime_validation": "INVALID"
+}

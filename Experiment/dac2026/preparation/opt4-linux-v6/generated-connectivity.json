@@ -1,0 +1,126 @@
+{
+  "status": "GENERATED_RTL_CONNECTIVITY_INSPECTED_NOT_RUN",
+  "source": "C4 native 20261102T110754.343794Z",
+  "evidence": {
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T110754.343794Z/generated/gen-collateral/BoomNonBlockingDCache.sv": {
+      "sha256": "e00b2511682c5dec8af2372d4b16e394134ce89fef7c4bb426b1e1be198dae93",
+      "connections": {
+        "assign counters_0 = allocatedPackages": [
+          {
+            "line": 95868,
+            "text": "assign counters_0 = allocatedPackages;\t// @[dcache.scala:2718:34, dcache.scala 3626:24:3634:23]"
+          }
+        ],
+        "assign counters_1 = completedPackages": [
+          {
+            "line": 95870,
+            "text": "assign counters_1 = completedPackages;\t// @[dcache.scala:2719:34, dcache.scala 3626:24:3634:23]"
+          }
+        ],
+        "assign counters_2 = passedPackages": [
+          {
+            "line": 95872,
+            "text": "assign counters_2 = passedPackages;\t// @[dcache.scala:2720:31, dcache.scala 3626:24:3634:23]"
+          }
+        ],
+        "assign counters_3 = failedPackages": [
+          {
+            "line": 95874,
+            "text": "assign counters_3 = failedPackages;\t// @[dcache.scala:2714:31, dcache.scala 3626:24:3634:23]"
+          }
+        ],
+        "assign counters_4 = cancelledPackages": [
+          {
+            "line": 95876,
+            "text": "assign counters_4 = cancelledPackages;\t// @[dcache.scala:2721:34, dcache.scala 3626:24:3634:23]"
+          }
+        ],
+        "assign counters_5 = packageResultDropped": [
+          {
+            "line": 95878,
+            "text": "assign counters_5 = packageResultDropped;\t// @[dcache.scala:2725:37, dcache.scala 3626:24:3634:23]"
+          }
+        ]
+      }
+    },
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T110754.343794Z/generated/gen-collateral/BoomTile.sv": {
+      "sha256": "b596d798d9fd0b626ddea217470456d5578bb1e6f60fb536f08ecd9f202830c7",
+      "connections": {
+        ".ec_opt4_package_counters_0": [
+          {
+            "line": 4696,
+            "text": ".ec_opt4_package_counters_0                          (_dcache_counters_0_0),\t// @[tile.scala:135:54]"
+          }
+        ],
+        ".ec_opt4_package_counters_5": [
+          {
+            "line": 4701,
+            "text": ".ec_opt4_package_counters_5                          (_dcache_counters_0_5),\t// @[tile.scala:135:54]"
+          }
+        ]
+      }
+    },
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T110754.343794Z/generated/gen-collateral/BoomCore.sv": {
+      "sha256": "b36604ac323b1ba0f525e4f75db537d1d14ae63f016ba01112f14f210e568764",
+      "connections": {
+        ".io__counters_0": [
+          {
+            "line": 18241,
+            "text": ".io__counters_0             (ec_opt4_package_counters_0),"
+          }
+        ],
+        ".io__counters_5": [
+          {
+            "line": 18246,
+            "text": ".io__counters_5             (ec_opt4_package_counters_5),"
+          }
+        ]
+      }
+    },
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T110754.343794Z/generated/gen-collateral/Rocket.sv": {
+      "sha256": "3eb1afce7083292e809d260b2718c5f3e56cb57dfac11f96a69e02a702911a4d",
+      "connections": {
+        ".io_ec_service_idle": [
+          {
+            "line": 2769,
+            "text": ".io_ec_service_idle                 (ec_service_safe & csr_io_ec_service_idle_REG),\t// @[RocketCore.scala:1572:40, :1573:{45,55}]"
+          }
+        ],
+        "ec_service_safe =": [
+          {
+            "line": 1233,
+            "text": "wire             ec_service_safe = checker_local_cleanup_done & ~package_owned & ~pending_package_seq_valid & no_result_pending & ~_package_result_queue_io_deq_valid & io_cdc_empty;\t// @[RocketCore.scala:1341:42, :1352:32, :1355:29, :1375:44, :1531:36, :1570:49, :1571:5, :1572:{5,40}]"
+          }
+        ],
+        "EC_OPT4_PACKAGE_BEGIN": [
+          {
+            "line": 1874,
+            "text": "$fwrite(32'h80000002, \"EC_OPT4_PACKAGE_BEGIN hart=%d seq=%x satp=%x prv=%d\\n\", io_hartid, new_package_seq, {_csr_io_ptbr_mode, _csr_io_ptbr_asid, _csr_io_ptbr_ppn}, _csr_io_status_prv);\t// @[Cat.scala:33:92, RocketCore.scala:325:19, :1368:28, :1542:13]"
+          }
+        ],
+        "EC_OPT4_PACKAGE_RESULT": [
+          {
+            "line": 1876,
+            "text": "$fwrite(32'h80000002, \"EC_OPT4_PACKAGE_RESULT hart=%d seq=%x status=%d full_compare=%d cancelled=%d\\n\", io_hartid, package_seq_reg, package_result_status, full_check_complete, package_cancelled);\t// @[RocketCore.scala:1300:32, :1459:51, :1502:65, :1525:34, :1542:13, :1546:13]"
+          }
+        ]
+      }
+    },
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T110754.343794Z/generated/gen-collateral/CSRFile_1.sv": {
+      "sha256": "202a337ec795798e6824d234d819200062ca3fd33e8d3a059f31715c96ce7b15",
+      "connections": {
+        "io_ec_service_idle": [
+          {
+            "line": 81,
+            "text": "io_ec_service_idle,"
+          },
+          {
+            "line": 674,
+            "text": "| {34'h0, _io_rw_rdata_T_125[29:8] | _io_rw_rdata_T_126[29:8] | _io_rw_rdata_T_127[29:8] | _io_rw_rdata_T_128[29:8] | _io_rw_rdata_T_129[29:8] | _io_rw_rdata_T_130[29:8] | _io_rw_rdata_T_131[29:8] | _io_rw_rdata_T_132[29:8], _io_rw_rdata_T_17[7:5] | _io_rw_rdata_T_125[7:5] | _io_rw_rdata_T_126[7:5] | _io_rw_rdata_T_127[7:5] | _io_rw_rdata_T_128[7:5] | _io_rw_rdata_T_129[7:5] | _io_rw_rdata_T_130[7:5] | _io_rw_rdata_T_131[7:5] | _io_rw_rdata_T_132[7:5], _io_rw_rdata_T_15[4:3] | _io_rw_rdata_T_17[4:3] | _io_rw_rdata_T_125[4:3] | _io_rw_rdata_T_126[4:3] | _io_rw_rdata_T_127[4:3] | _io_rw_rdata_T_128[4:3] | _io_rw_rdata_T_129[4:3] | _io_rw_rdata_T_130[4:3] | _io_rw_rdata_T_131[4:3] | _io_rw_rdata_T_132[4:3], _io_rw_rdata_T_13[2:1] | _io_rw_rdata_T_15[2:1] | _io_rw_rdata_T_16[2:1] | _io_rw_rdata_T_17[2:1] | _io_rw_rdata_T_18[2:1] | _GEN_19[2:1] | _GEN_20[2:1] | _io_rw_rdata_T_125[2:1] | _io_rw_rdata_T_126[2:1] | _io_rw_rdata_T_127[2:1] | _io_rw_rdata_T_128[2:1] | _io_rw_rdata_T_129[2:1] | _io_rw_rdata_T_130[2:1] | _io_rw_rdata_T_131[2:1] | _io_rw_rdata_T_132[2:1], _io_rw_rdata_T_13[0] | (&{io_rw_addr[7], decoded_decoded_invInputs[8], decoded_decoded_invInputs[9], io_rw_addr[10], io_rw_addr[11]}) & io_ec_service_idle | _io_rw_rdata_T_15[0] | _io_rw_rdata_T_16[0] | _io_rw_rdata_T_17[0] | _io_rw_rdata_T_18[0] | _GEN_19[0] | _GEN_20[0] | _io_rw_rdata_T_125[0] | _io_rw_rdata_T_126[0] | _io_rw_rdata_T_127[0] | _io_rw_rdata_T_128[0] | _io_rw_rdata_T_129[0] | _io_rw_rdata_T_130[0] | _io_rw_rdata_T_131[0] | _io_rw_rdata_T_132[0] | (&_decoded_decoded_T_284)} | ((&_decoded_decoded_T_286) ? 64'h20181004 : 64'h0);\t// @[Bitwise.scala:77:12, CSR.scala:460:28, :465:44, :543:55, :684:19, :685:20, :687:20, :690:38, :694:38, :698:27, :699:22, :701:25, :760:23, :761:22, :762:25, :764:21, :798:36, :799:26, :845:25, :846:{26,150}, :847:26, :848:26, :849:26, :850:26, :855:48, :956:46, :957:{30,158,165}, :961:{23,141}, :962:{23,142}, :963:28, :964:24, :965:26, :966:25, :991:43, :1015:43, :1162:14, :2022:20, :2101:26, Cat.scala:33:92, Mux.scala:27:73, :47:70, decoder.scala:40:16, package.scala:124:38, :155:13, pla.scala:77:22, :78:21, :90:45, :91:29, :98:74]"
+          }
+        ]
+      }
+    }
+  },
+  "claim": "Six real live DCache counters reach the BOOM ROI controller; teardown CSR is driven by real Rocket cleanup state. Does not prove runtime correctness."
+}

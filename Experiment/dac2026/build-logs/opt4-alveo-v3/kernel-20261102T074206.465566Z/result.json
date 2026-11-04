@@ -1,0 +1,49 @@
+{
+  "phase": "kernel",
+  "source_tree": "/data1/gzh/EC/firesim/dac2026/work/software-v3/linux",
+  "source_id": "52c66fee643f56ccf73b88a607c2c6431c5e8c232b5cd48cc9c0bdbdd7c91244",
+  "output_dir": "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T074206.465566Z",
+  "outputs": {},
+  "returncode": 1,
+  "error": "RuntimeError('compile failed; see /data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/kernel-20261102T074206.465566Z/build.log')",
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T074206.465566Z",
+        "ARCH=riscv",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "defconfig"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/software-v3/linux"
+    }
+  ],
+  "resources": {
+    "available_memory_gib": 266.7923698425293,
+    "free_disk_gib": 335.0603790283203,
+    "load_1min": 84.6123046875,
+    "host_cpus": 256,
+    "jobs": 2,
+    "make_jobs": 1,
+    "niceness": 15
+  },
+  "wall_seconds": 2.5565959624946117,
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN",
+  "status": "BASE_PREREQUISITE_ONLY: no ROI/checker runtime or certified experiment image",
+  "build_script_sha256": "263ce8881bf9ac8d0180cf4d79925cf097ff1790d890f40a4123791a70c613b2",
+  "busybox_config_sha256": "f168a232098128c405417448e6d746a4eab374967eaeadef29950d85af6ee470",
+  "kernel_result": null,
+  "environment_overrides": {
+    "PATH": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin:/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin:/usr/local/bin:/usr/bin:/bin",
+    "CONDA_PREFIX": "/data1/gzh/EC/firesim/envs/manager-1.17.1",
+    "CC": "/usr/bin/gcc",
+    "HOSTCC": "/usr/bin/gcc",
+    "HOSTCXX": "/usr/bin/g++",
+    "MAKEFLAGS": "-j2"
+  }
+}

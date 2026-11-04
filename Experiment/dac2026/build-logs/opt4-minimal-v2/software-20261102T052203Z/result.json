@@ -1,0 +1,141 @@
+{
+  "status": "COMPILED; NOT_EXECUTED; requires real ROI device and checker Linux integration",
+  "output": "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z",
+  "compiler": "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+  "compiler_version": "riscv64-unknown-linux-gnu-gcc (g2ee5e430018) 12.2.0",
+  "commands": [
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-D_GNU_SOURCE",
+        "-static",
+        "-I/data1/gzh/EC/firesim/dac2026/measurement",
+        "/data1/gzh/EC/firesim/dac2026/guest/roi-smoke.c",
+        "/data1/gzh/EC/firesim/dac2026/measurement/dac_roi.c",
+        "-o",
+        "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z/roi-smoke"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-D_GNU_SOURCE",
+        "-c",
+        "/data1/gzh/EC/firesim/dac2026/work/parsec-20261102/pkgs/libs/hooks/src/hooks.c",
+        "-o",
+        "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z/hooks.o"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z"
+    },
+    {
+      "argv": [
+        "m4",
+        "/data1/gzh/EC/firesim/dac2026/work/parsec-20261102/pkgs/apps/blackscholes/src/c.m4.pthreads",
+        "/data1/gzh/EC/firesim/dac2026/work/parsec-20261102/pkgs/apps/blackscholes/src/blackscholes.c"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-D_GNU_SOURCE",
+        "-std=gnu++17",
+        "-DENABLE_THREADS",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DNCO=4",
+        "-I/data1/gzh/EC/firesim/dac2026/work/parsec-20261102/pkgs/libs/hooks/src/include",
+        "-I/data1/gzh/EC/firesim/dac2026/work/parsec-20261102/pkgs/apps/blackscholes/src",
+        "-static",
+        "-pthread",
+        "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z/blackscholes.m4.cpp",
+        "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z/hooks.o",
+        "-lm",
+        "-latomic",
+        "-o",
+        "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z/blackscholes"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-readelf",
+        "-h",
+        "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z/roi-smoke"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+        "-d",
+        "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z/roi-smoke"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-readelf",
+        "-h",
+        "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z/blackscholes"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+        "-d",
+        "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z/blackscholes"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z"
+    }
+  ],
+  "binaries": {
+    "roi-smoke": "44e061b4116c3c715e1eab3a42ef8f7bb2aa67727c377aac1215c515255621c7",
+    "blackscholes": "434838ab31a3640e8830081879a4a1c2a5fe6640838a1320eab929fbdc226589"
+  },
+  "inputs": {
+    "test": {
+      "archive_sha256": "92aadef92ac86d234c8fb97e41f20f663efc89b74097a4e4675b382cbbe1e541",
+      "files": {
+        "in_4.txt": "9a40f4a6f4b96a32bb834333487d6dcec4436eceae7efbf836574aacb1e6ce46"
+      }
+    },
+    "simsmall": {
+      "archive_sha256": "02bfbf3bf7b248d8ffc33f72f144b61b33a9761d539e05dce4eee9ecdd76bfcd",
+      "files": {
+        "in_4K.txt": "d918de616ed1956757f19b25e27c6b1a27fbab560a058c5de1e9d479fa331c64"
+      }
+    }
+  },
+  "shared_binary_for": [
+    "B",
+    "C2",
+    "C4",
+    "C8"
+  ],
+  "application_threads": 1,
+  "target_execution": "NOT_RUN",
+  "linux_image": "NOT_BUILT",
+  "source_hashes": {
+    "/data1/gzh/EC/firesim/dac2026/guest/roi-smoke.c": "d9018914db82046da32e59431bf10677424d3365cb9a835295c8eeb5fafcfa70",
+    "/data1/gzh/EC/firesim/dac2026/measurement/dac_roi.c": "b8879c4f8a6193cd299c15710ab3c079d1570d2f0e0aacdd6c46b9a1a9badf86",
+    "/data1/gzh/EC/firesim/dac2026/measurement/dac_roi.h": "67f346d9464922fbaa990bd5cb8a5a68ae17a9ccceec7c6d66a2c8091343f741",
+    "/data1/gzh/EC/firesim/dac2026/work/parsec-20261102/pkgs/libs/hooks/src/hooks.c": "c8aa8860fac1d4dd8d486c7498ea2a1ee9cdef775581d592e4bbe51cd2af6206",
+    "/data1/gzh/EC/firesim/dac2026/work/parsec-20261102/pkgs/libs/hooks/src/config.h": "eaac1960162337c50bebb5092ee2809b7f27c785d4f92509b0a31cb34a3fd096",
+    "/data1/gzh/EC/firesim/dac2026/work/parsec-20261102/pkgs/libs/hooks/src/dac_roi.c": "b8879c4f8a6193cd299c15710ab3c079d1570d2f0e0aacdd6c46b9a1a9badf86",
+    "/data1/gzh/EC/firesim/dac2026/work/parsec-20261102/pkgs/libs/hooks/src/dac_roi.h": "67f346d9464922fbaa990bd5cb8a5a68ae17a9ccceec7c6d66a2c8091343f741",
+    "/data1/gzh/EC/firesim/dac2026/work/parsec-20261102/pkgs/apps/blackscholes/src/blackscholes.c": "d7be2bbc7d2bfa7dc27fb310ecb70d2f3065722a475f9b93b1d46affbb3971ec",
+    "/data1/gzh/EC/firesim/dac2026/work/parsec-20261102/pkgs/apps/blackscholes/src/c.m4.pthreads": "f26226b5589e1e409f32680f1daadecd008ca61d1c7d346c526db6e9e259561c",
+    "/data1/gzh/EC/firesim/dac2026/work/parsec-20261102/pkgs/apps/blackscholes/src/spin_lock.h": "12f52926120e19c1153eec79de4ac191c1db6bd03da4b98cf295c9002f21fd49"
+  }
+}

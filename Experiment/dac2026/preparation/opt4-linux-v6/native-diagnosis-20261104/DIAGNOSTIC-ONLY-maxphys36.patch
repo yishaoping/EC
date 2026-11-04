@@ -1,0 +1,11 @@
+--- a/arch/riscv/include/asm/sparsemem.h
++++ b/arch/riscv/include/asm/sparsemem.h
+@@ -5,7 +5,7 @@
+ 
+ #ifdef CONFIG_SPARSEMEM
+ #ifdef CONFIG_64BIT
+-#define MAX_PHYSMEM_BITS	56
++#define MAX_PHYSMEM_BITS	36
+ #else
+ #define MAX_PHYSMEM_BITS	34
+ #endif /* CONFIG_64BIT */

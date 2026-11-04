@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "python3",
+    "firesim/dac2026/dac.py",
+    "deploy",
+    "--config",
+    "C4",
+    "--phase",
+    "link"
+  ],
+  "returncode": 0,
+  "stdout": "{\n  \"dry_run\": true,\n  \"safety\": {\n    \"operation\": \"deploy\",\n    \"phase\": \"link\",\n    \"target_bdf\": null,\n    \"effects\": {\n      \"driver_unload\": false,\n      \"driver_reload\": false,\n      \"global_reset\": false,\n      \"pcie_rescan\": false,\n      \"device_unbind\": false,\n      \"program_target\": true,\n      \"reset_target\": true,\n      \"isolation_verified\": false\n    },\n    \"occupancy\": \"BUSY\",\n    \"processes\": [\n      {\n        \"pid\": 1967655,\n        \"cmdline\": \"python3 ./firesim -c config_runtime_dual_e2.yaml runworkload \"\n      },\n      {\n        \"pid\": 1970507,\n        \"cmdline\": \"./FireSim-xilinx_alveo_u280 +permissive +macaddr0=00:12:6D:00:00:02 +blkdev0=libquantum0-libquantum.img +niclog0=niclog0 +blkdev-log0=blkdev-log0 +trace-select=1 +trace-start=0 +trace-end=-1 +trace-output-format=0 +dwarf-file-name=libquantum0-libquantum-bin-dwarf +autocounter-readrate=0 +autocounter-filename-base=AUTOCOUNTERFILE +print-start=0000046545338464 +print-end=0000046545338465 +linklatency0=6405 +netbw0=200 +shmemportname0=default +domain=0x0000 +bus=0xe2 +device=0x00 +function=0x0 +bar=0x0 +pci-vendor=0x10ee +pci-device=0x903f +permissive-off +prog0=libquantum0-libquantum-bin \"\n      },\n      {\n        \"pid\": 2861930,\n        \"cmdline\": \"./FireSim-xilinx_alveo_u280 +permissive +macaddr0=00:12:6D:00:00:02 +blkdev0=hmmer0-hmmer.img +niclog0=niclog0 +blkdev-log0=blkdev-log0 +trace-select=1 +trace-start=0 +trace-end=-1 +trace-output-format=0 +dwarf-file-name=hmmer0-hmmer-bin-dwarf +autocounter-readrate=0 +autocounter-filename-base=AUTOCOUNTERFILE +print-start=0000046545338464 +print-end=0000046545338465 +linklatency0=6405 +netbw0=200 +shmemportname0=default +domain=0x0000 +bus=0x21 +device=0x00 +function=0x0 +bar=0x0 +pci-vendor=0x10ee +pci-device=0x903f +permissive-off +prog0=hmmer0-hmmer-bin \"\n      }\n    ],\n    \"proc_permission_denied\": 3664,\n    \"allowed\": false,\n    \"reasons\": [\n      \"target card is not selected or not present\",\n      \"existing FPGA tasks/device users detected; no deployment or new run is allowed\",\n      \"cannot inspect all process/device users; administrator/scheduler isolation is unresolved\",\n      \"per-card isolation is unverified\",\n      \"missing scheduler/administrator reservation (absence of FD users is not proof of idle)\",\n      \"missing compatibility/measurement/ Linux checker evidence\",\n      \"missing reviewed adapter; no default deployment command\"\n    ],\n    \"argv\": null\n  }\n}\n",
+  "stderr": ""
+}

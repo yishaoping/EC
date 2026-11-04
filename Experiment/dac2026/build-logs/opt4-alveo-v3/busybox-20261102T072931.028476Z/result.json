@@ -1,0 +1,63 @@
+{
+  "phase": "busybox",
+  "source_tree": "/data1/gzh/EC/firesim/dac2026/work/software-v3/busybox",
+  "source_id": "dcbed90680e328b72461c79a3452b88186973a116060bf4b3eaa80bceda5b822",
+  "output_dir": "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/busybox-20261102T072931.028476Z",
+  "outputs": {
+    "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/busybox-20261102T072931.028476Z/busybox": "8042e23f939f5876348784873251cced8cb88ad0b049701e16d8c36698099335",
+    "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/busybox-20261102T072931.028476Z/.config": "e806efccb30d70984b8df0196ac9401d73468e41004502f250b5881a7a27ef8f"
+  },
+  "returncode": 0,
+  "error": null,
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j1",
+        "O=/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/busybox-20261102T072931.028476Z",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "oldconfig"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/software-v3/busybox"
+    },
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/busybox-20261102T072931.028476Z",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/software-v3/busybox"
+    }
+  ],
+  "resources": {
+    "available_memory_gib": 249.36124420166016,
+    "free_disk_gib": 336.0111198425293,
+    "load_1min": 118.19775390625,
+    "host_cpus": 256,
+    "jobs": 2,
+    "make_jobs": 1,
+    "niceness": 15
+  },
+  "wall_seconds": 46.11382311210036,
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN",
+  "status": "BASE_PREREQUISITE_ONLY: no ROI/checker runtime or certified experiment image",
+  "build_script_sha256": "263ce8881bf9ac8d0180cf4d79925cf097ff1790d890f40a4123791a70c613b2",
+  "busybox_config_sha256": "f168a232098128c405417448e6d746a4eab374967eaeadef29950d85af6ee470",
+  "kernel_result": null,
+  "environment_overrides": {
+    "PATH": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin:/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin:/usr/local/bin:/usr/bin:/bin",
+    "CONDA_PREFIX": "/data1/gzh/EC/firesim/envs/manager-1.17.1",
+    "CC": "/usr/bin/gcc",
+    "HOSTCC": "/usr/bin/gcc",
+    "HOSTCXX": "/usr/bin/g++",
+    "MAKEFLAGS": "-j2"
+  }
+}

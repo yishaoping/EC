@@ -1,0 +1,49 @@
+{
+  "phase": "prepare-roi-bridge",
+  "returncode": 0,
+  "source": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v4/B/chipyard",
+  "destination": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/B/chipyard",
+  "commands": [
+    [
+      "cp",
+      "-a",
+      "--reflink=auto",
+      "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v4/B/chipyard",
+      "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/B/chipyard"
+    ]
+  ],
+  "changes": {
+    "generators/boom/src/main/scala/exu/core.scala": {
+      "before": "ed43f9635c3c5bd5ff483679d4535467bc1ba698d4d76a79115ca345a9ef569a",
+      "after": "8c406d1e65e5a0c927e525740fad15324d29ba9d1973ff96676b4c108c4aa551"
+    },
+    "generators/firechip/src/main/scala/FireSim.scala": {
+      "before": "858ef0402aaec6ae919e7c00e020cec47208452cf91150973b63adc18c03e515",
+      "after": "b78b65c05dbc1a30529afe1592362bdc460ff2b9ec2838fba2c9f9a1bd4334ec"
+    },
+    "generators/rocket-chip/src/main/scala/util/DacRoi.scala": {
+      "before": "88110ad46e5ada11b7a716b390edce2df578714dc96498bcbe6d414acf5614d7",
+      "after": "e68e4a4c6dc4e35ae736c63880f4f2ec30cc59be5de4180a72630a316f992ff9"
+    },
+    "sims/firesim/sim/firesim-lib/src/main/scala/bridges/DacRoiBridge.scala": {
+      "before": null,
+      "after": "b5f72d52cd2d66063f61a8b37d42c914e8d706980a8728a8e604a5119d281e5f"
+    },
+    "sims/firesim/sim/midas/src/main/cc/bridges/ec_dac_roi.cc": {
+      "before": null,
+      "after": "decf985a131bcf9712674ed1e8c67db03257798c61f414c6c077d03ac90abc6c"
+    },
+    "sims/firesim/sim/midas/src/main/cc/bridges/ec_dac_roi.h": {
+      "before": null,
+      "after": "c11c94f40a50276eea458284fd330a4e4352abae263257865736fc320e126cb3"
+    }
+  },
+  "configuration": "B",
+  "checkers": 0,
+  "C4": "NOT_INTEGRATED",
+  "bridge_status": "SOURCE_WRITTEN_NOT_YET_COMPILED",
+  "formal_completion_markers": false,
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN",
+  "script_sha256": "2cc745a78d340311f0f9773991559efa56d821241415681eb69dedc0bdf95b9a"
+}

@@ -1,0 +1,121 @@
+{
+  "schema": "ec-dac-memory/1",
+  "model": "LatencyBandwidthPipe",
+  "model_index": 0,
+  "settings": {
+    "readLatency": 30,
+    "writeLatency": 30,
+    "readMaxReqs": 4,
+    "writeMaxReqs": 4,
+    "relaxFunctionalModel": 0
+  },
+  "plusargs": [
+    "+mm_readLatency_0=30",
+    "+mm_readMaxReqs_0=4",
+    "+mm_relaxFunctionalModel_0=0",
+    "+mm_writeLatency_0=30",
+    "+mm_writeMaxReqs_0=4"
+  ],
+  "arguments_sha256": "24d7892eba46e63efce140a33ec1072a4266d105ce39ad53b372f88f2d6c126c",
+  "evidence": {
+    "B": {
+      "result": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/B-goldengate-20261102T073510.261663Z/result.json",
+      "result_sha256": "f69f83843179f6e44ad201e14bb2a290a85586c9069e8638879169e6ef3c8fb1",
+      "source_id": "d4f6b12d96a4f2921ee81a5bb8d0ef3a2e2ec9b0618338891bbdd451d9fbba96",
+      "generated_sha256": {
+        "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-goldengate-20261102T073510.261663Z/FireSim-generated.sv": "7a98050215d9181a4ae0a2ac645de7ba8a8adbbf85e767429a35b5d7c4a2655f",
+        "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-goldengate-20261102T073510.261663Z/FireSim-generated.const.h": "387601fabb0385405ef5a9ded8c668e8914d1f4dd2a066fb023258c76605d785"
+      },
+      "readable_registers": {
+        "writeLatency": 0,
+        "readLatency": 4,
+        "writeMaxReqs": 8,
+        "readMaxReqs": 12,
+        "writeOutstandingHistogram_0": 16,
+        "writeOutstandingHistogram_1": 20,
+        "writeOutstandingHistogram_2": 24,
+        "writeOutstandingHistogram_3": 28,
+        "writeOutstandingHistogram_4": 32,
+        "readOutstandingHistogram_0": 36,
+        "readOutstandingHistogram_1": 40,
+        "readOutstandingHistogram_2": 44,
+        "readOutstandingHistogram_3": 48,
+        "readOutstandingHistogram_4": 52,
+        "totalWriteBeats": 56,
+        "totalReadBeats": 60,
+        "totalWrites": 64,
+        "totalReads": 68,
+        "relaxFunctionalModel": 72,
+        "rrespError": 76,
+        "brespError": 80
+      },
+      "writable_registers": {
+        "writeLatency": 0,
+        "readLatency": 4,
+        "writeMaxReqs": 8,
+        "readMaxReqs": 12,
+        "relaxFunctionalModel": 72
+      },
+      "generated_reset_defaults": {
+        "writeLatency": 30,
+        "readLatency": 30,
+        "writeMaxReqs": 4,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0
+      }
+    },
+    "C4": {
+      "result": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/C4-goldengate-20261102T064527.983268Z/result.json",
+      "result_sha256": "e4b76bf30719d093e59f790ebfd9fe4a0641a3fbe12c40be50baefdac66abeb7",
+      "source_id": "5a6d6e84184ca13550f6f8047231e3d8c4e9cd1c288f518a843cd9fb1829a7f1",
+      "generated_sha256": {
+        "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/C4-goldengate-20261102T064527.983268Z/FireSim-generated.sv": "da6a71d5e5430e6c0b782d05fffa4b0f5d49faa274c72aa6f910054563fedd22",
+        "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/C4-goldengate-20261102T064527.983268Z/FireSim-generated.const.h": "f232dc39ea9702a13a09609661d745e0b28a99413241df99321592c05e04a475"
+      },
+      "readable_registers": {
+        "writeLatency": 0,
+        "readLatency": 4,
+        "writeMaxReqs": 8,
+        "readMaxReqs": 12,
+        "writeOutstandingHistogram_0": 16,
+        "writeOutstandingHistogram_1": 20,
+        "writeOutstandingHistogram_2": 24,
+        "writeOutstandingHistogram_3": 28,
+        "writeOutstandingHistogram_4": 32,
+        "readOutstandingHistogram_0": 36,
+        "readOutstandingHistogram_1": 40,
+        "readOutstandingHistogram_2": 44,
+        "readOutstandingHistogram_3": 48,
+        "readOutstandingHistogram_4": 52,
+        "totalWriteBeats": 56,
+        "totalReadBeats": 60,
+        "totalWrites": 64,
+        "totalReads": 68,
+        "relaxFunctionalModel": 72,
+        "rrespError": 76,
+        "brespError": 80
+      },
+      "writable_registers": {
+        "writeLatency": 0,
+        "readLatency": 4,
+        "writeMaxReqs": 8,
+        "readMaxReqs": 12,
+        "relaxFunctionalModel": 72
+      },
+      "generated_reset_defaults": {
+        "writeLatency": 30,
+        "readLatency": 30,
+        "writeMaxReqs": 6,
+        "readMaxReqs": 6,
+        "relaxFunctionalModel": 0
+      }
+    }
+  },
+  "boom_uncore_mhz": 200,
+  "requested_latency_ns": 150,
+  "bandwidth_policy": "AXI data width and R/W beat acceptance from generated target/model; no separate bandwidth runtime register exists",
+  "static_register_audit": "PASSED",
+  "runtime_readback": "NOT_RUN",
+  "target_execution": "NOT_RUN",
+  "warning": "B resets to max requests 4, C4 to 6. Use all explicit common arguments; hardware defaults are not comparable. These arguments are not runtime-validation evidence."
+}

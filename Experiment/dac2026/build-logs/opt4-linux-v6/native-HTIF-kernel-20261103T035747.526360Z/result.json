@@ -1,0 +1,163 @@
+{
+  "phase": "kernel",
+  "configuration": "C4-v6-native-HTIF",
+  "source_tree": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/linux",
+  "source_id": "5ab180f444af7151f80ad5f5c8bb8a5f7c31648b3f23fa2e5432a77cdc91f95f",
+  "output_dir": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-htif/builds/native-HTIF-kernel-20261103T035747.526360Z",
+  "outputs": {
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-htif/builds/native-HTIF-kernel-20261103T035747.526360Z/vmlinux": "442a13edc193632d4952f3cfca76793b645c249e27cce7ed96bd828193c1db0f",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-htif/builds/native-HTIF-kernel-20261103T035747.526360Z/arch/riscv/boot/Image": "9007cdd204b890dd924bb9f73b22d420e806c1fd33445576f941ef8d9b342ae0",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-htif/builds/native-HTIF-kernel-20261103T035747.526360Z/.config": "7ec127aeff876869bafbba3dd79e8f241a4763a2cb01d4f534db31d9009f395b"
+  },
+  "returncode": 0,
+  "error": null,
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/linux/scripts/config",
+        "--file",
+        "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-htif/builds/native-HTIF-kernel-20261103T035747.526360Z/.config",
+        "--disable",
+        "DRM",
+        "--disable",
+        "SOUND",
+        "--disable",
+        "NET",
+        "--disable",
+        "SCSI",
+        "--disable",
+        "ATA",
+        "--disable",
+        "USB_SUPPORT",
+        "--disable",
+        "PCI",
+        "--disable",
+        "VIRTIO",
+        "--disable",
+        "MODULES",
+        "--disable",
+        "BPF_SYSCALL",
+        "--disable",
+        "DEBUG_KERNEL",
+        "--disable",
+        "DEBUG_INFO",
+        "--disable",
+        "KALLSYMS",
+        "--enable",
+        "BLK_DEV_INITRD",
+        "--enable",
+        "DEVTMPFS",
+        "--enable",
+        "DEVTMPFS_MOUNT",
+        "--enable",
+        "PROC_FS",
+        "--enable",
+        "SYSFS",
+        "--enable",
+        "TMPFS",
+        "--enable",
+        "SERIAL_SIFIVE",
+        "--enable",
+        "SERIAL_SIFIVE_CONSOLE",
+        "--enable",
+        "UNIX98_PTYS",
+        "--enable",
+        "FUTEX",
+        "--enable",
+        "MULTIUSER",
+        "--enable",
+        "DEBUG_INFO_NONE",
+        "--disable",
+        "SMP",
+        "--enable",
+        "RISCV_SBI_V01",
+        "--enable",
+        "HVC_RISCV_SBI",
+        "--enable",
+        "EC_DAC_ROI",
+        "--set-str",
+        "INITRAMFS_SOURCE",
+        "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/native-htif/rootfs-20261103T035505.166282Z/initramfs.cpio"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/linux"
+    },
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-htif/builds/native-HTIF-kernel-20261103T035747.526360Z",
+        "ARCH=riscv",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "olddefconfig"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/linux"
+    },
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-htif/builds/native-HTIF-kernel-20261103T035747.526360Z",
+        "ARCH=riscv",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "Image",
+        "vmlinux"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/linux"
+    }
+  ],
+  "resources": {
+    "available_memory_gib": 186.78804779052734,
+    "free_disk_gib": 263.5913314819336,
+    "load_1min": 93.349609375,
+    "host_cpus": 256,
+    "jobs": 2,
+    "make_jobs": 1,
+    "niceness": 15
+  },
+  "wall_seconds": 17.369027888402343,
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN",
+  "status": "BUILT_NOT_RUN: matching hardware and real checker/runtime validation required",
+  "build_script_sha256": "bb8384d2317250ad75e22ee2da9984e0cfeae560cd7222869ab4b7249924c103",
+  "busybox_config_sha256": null,
+  "kernel_result": null,
+  "input_files": {
+    "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/native-htif/rootfs-20261103T035505.166282Z/initramfs.cpio": "819a612ae4739c922b295c5f053584661ae72db3726971be646f5dc174a62596",
+    "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-linux-v6/native-HTIF-kernel-20261103T035017.887729Z/result.json": "d172bba12cf7cff33447039ad5f021821d2626e03c4445712f30f5905e99d1bc"
+  },
+  "content_checks": {
+    "roi_driver": {
+      "compiled_builtin": true,
+      "object_sha256": "f1fb950f8ce55c9dd1fec197ba875f03447da9301ed97b9c6bfcb4f76db04d2c",
+      "supported": [
+        "C4_USER_ONLY_V6"
+      ],
+      "target_controller": "EXTERNAL_HARDWARE_RECEIPT_REQUIRED",
+      "runtime_validation": "NOT_RUN"
+    }
+  },
+  "tool_hashes": {
+    "/usr/bin/gcc": "989fde76585d597fbabf73c62541faea7ffe3a28b7e45a2d1461449df9772e7b",
+    "/usr/bin/g++": "3acb6a5165a96e9b55935bf85242f380b850cccfad3e64697f1ec19dd272d4a3",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ld": "10424f5eeafd5806fbca7b88bdae336c202be5a9fa332c1a662a8d0a7ae62fba",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objcopy": "2a38397dae082b022b6370eb9fbfac9c337b95433fc89cb35d384516a0997f1e"
+  },
+  "environment_overrides": {
+    "PATH": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin:/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin:/usr/local/bin:/usr/bin:/bin",
+    "CONDA_PREFIX": "/data1/gzh/EC/firesim/envs/manager-1.17.1",
+    "CC": "/usr/bin/gcc",
+    "HOSTCC": "/usr/bin/gcc",
+    "HOSTCXX": "/usr/bin/g++",
+    "MAKEFLAGS": "-j2"
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "phase": "firmware",
+  "source_tree": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/opensbi",
+  "source_id": "91f0364109e83667581a95daa135c93821ddc28cd95aafaeff8c349c29ab4e6c",
+  "output_dir": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/firmware-20261102T112111.930183Z",
+  "outputs": {
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/firmware-20261102T112111.930183Z/platform/generic/firmware/fw_payload.elf": "9c21e587b2f10c43effddb53f55848c52e2a3bed7b71afda1b796405a1a12767",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/firmware-20261102T112111.930183Z/platform/generic/firmware/fw_payload.bin": "ec145f35a1769d442cabad21fe52a1e2ca59ca2bf7beaa4fb2f916d894a2f3ad"
+  },
+  "returncode": 0,
+  "error": null,
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/firmware-20261102T112111.930183Z",
+        "PLATFORM=generic",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "FW_PAYLOAD_PATH=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/kernel-20261102T111527.421667Z/arch/riscv/boot/Image",
+        "FW_PAYLOAD_FDT_PATH=/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/fdt-20261102T110345.734906Z/C4.dtb"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/opensbi"
+    }
+  ],
+  "resources": {
+    "available_memory_gib": 249.4022560119629,
+    "free_disk_gib": 293.1557312011719,
+    "load_1min": 96.02392578125,
+    "host_cpus": 256,
+    "jobs": 2,
+    "make_jobs": 1,
+    "niceness": 15
+  },
+  "wall_seconds": 4.646803194656968,
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN",
+  "status": "BUILT_NOT_RUN: matching hardware and real checker/runtime validation required",
+  "build_script_sha256": "f7f5e1d243b8fe9901f8b7de1d8e1c74a867968afb60a8f680597ceec29d7649",
+  "busybox_config_sha256": null,
+  "kernel_result": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-linux-v6/kernel-20261102T111527.421667Z/result.json",
+  "input_files": {
+    "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/fdt-20261102T110345.734906Z/C4.dtb": "f7b8792391436a589665d220b043515564925c65b0ae6ebe0844d1541ad2266b",
+    "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-linux-v6/kernel-20261102T111527.421667Z/result.json": "7798e4e643b4b701686306bfb4323e7bdbe9dabb28776207cdb6fbc8163ef7d4",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/kernel-20261102T111527.421667Z/arch/riscv/boot/Image": "ed219436c96b3ee53cfae94fed49dffde1e5a9696167a1de10b5dbd1933c1495"
+  },
+  "content_checks": {
+    "kernel_Image": {
+      "path": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/kernel-20261102T111527.421667Z/arch/riscv/boot/Image",
+      "sha256": "ed219436c96b3ee53cfae94fed49dffde1e5a9696167a1de10b5dbd1933c1495",
+      "size": 17622016,
+      "payload_offset": 2097152,
+      "exact_bytes_present": true
+    },
+    "fdt": {
+      "path": "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/fdt-20261102T110345.734906Z/C4.dtb",
+      "sha256": "f7b8792391436a589665d220b043515564925c65b0ae6ebe0844d1541ad2266b",
+      "size": 10381,
+      "payload_offset": 1712,
+      "exact_bytes_present": true
+    }
+  },
+  "tool_hashes": {
+    "/usr/bin/gcc": "989fde76585d597fbabf73c62541faea7ffe3a28b7e45a2d1461449df9772e7b",
+    "/usr/bin/g++": "3acb6a5165a96e9b55935bf85242f380b850cccfad3e64697f1ec19dd272d4a3",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ld": "10424f5eeafd5806fbca7b88bdae336c202be5a9fa332c1a662a8d0a7ae62fba",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objcopy": "2a38397dae082b022b6370eb9fbfac9c337b95433fc89cb35d384516a0997f1e"
+  },
+  "environment_overrides": {
+    "PATH": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin:/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin:/usr/local/bin:/usr/bin:/bin",
+    "CONDA_PREFIX": "/data1/gzh/EC/firesim/envs/manager-1.17.1",
+    "CC": "/usr/bin/gcc",
+    "HOSTCC": "/usr/bin/gcc",
+    "HOSTCXX": "/usr/bin/g++",
+    "MAKEFLAGS": "-j2"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "valid": false,
+  "linux_entered": false,
+  "checker_tasks_observed": 0,
+  "assertion_symptom": "no RTL assertion; firmware coldboot halts after failed extension registration",
+  "immediate_block": "sbi_ecall_init returns SBI_EINVAL (-3)",
+  "upstream_cause": "ec_opt4_extension 0x09004f50 overlaps ecall_vendor [0x09000000,0x09ffffff]",
+  "downstream": "init_coldboot branches to sbi_hart_hang; no guest/checker can start",
+  "source": "firesim/dac2026/work/opt4-linux-v6/opensbi/lib/sbi/sbi_ecall.c",
+  "observed_chain": [
+    {
+      "pc": "0x800089cc",
+      "event": "extension overlap rejection returns -3"
+    },
+    {
+      "pc": "0x80008fcc",
+      "event": "return from vendor registration"
+    },
+    {
+      "pc": "0x800036b0",
+      "event": "init_coldboot receives -3"
+    },
+    {
+      "pc": "0x80003522",
+      "event": "calls sbi_hart_hang"
+    },
+    {
+      "pc": "0x8000a5cc",
+      "event": "halt function prologue; WFI follows"
+    }
+  ],
+  "version_binding": "5455fdfa148f57e8523b93577134bf9142931c98630ea1e71133f3b2a10d8b35",
+  "fix": "private SBI ID 0x08004f50 in firmware and Linux driver; no checker RTL change",
+  "rebuild_required": [
+    "native HTIF kernel and firmware",
+    "FireSim UART kernel and firmware"
+  ],
+  "hardware_rebuild_required": false
+}

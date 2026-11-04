@@ -1,0 +1,100 @@
+{
+  "phase": "B-boot-pack",
+  "returncode": 0,
+  "output_dir": "/data1/gzh/EC/firesim/dac2026/images/software-v3/B-boot-20261102T075945.828284Z",
+  "inputs": {
+    "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/busybox-20261102T072931.028476Z/result.json": "99951a1b9b73930027cba765c49be4e85bddc8f6494b2c02480e35e13251bc66",
+    "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/B-elaborate-20261102T072846.260336Z/result.json": "e6de1166696d4901cd34a128ccb62432f00a0067d152dbbe8fb32afb0b479f83",
+    "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/busybox-20261102T072931.028476Z/busybox": "8042e23f939f5876348784873251cced8cb88ad0b049701e16d8c36698099335",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/B-elaborate-20261102T072846.260336Z/firesim.firesim.FireSim.dts": "260d3982194643769a193ca328c2620f77a9dfb47045eb4fe9bd29785c7efa87",
+    "/data1/gzh/EC/firesim/dac2026/scripts/prepare_boot_prerequisite.py": "ee03b70c50133e62e2cee79b446df75fd83f465a68bc1b09e2e43c047f291fe1"
+  },
+  "files": {
+    "B-boot.dtb": {
+      "sha256": "cc066dfb9701266a257d341df353c55a1c5636110c6687c18923e7d5ccff332e"
+    },
+    "B-boot.dts": {
+      "sha256": "61f42a222e46ae93ff84e29f659dc9320f78adefddc821163329a84a9874b0be"
+    },
+    "initramfs.cpio": {
+      "sha256": "270f9d71220d27a293074c075bc07d9ab8f18fe1ffc72ccfc86436fa64929416"
+    },
+    "rootfs/bin/busybox": {
+      "sha256": "8042e23f939f5876348784873251cced8cb88ad0b049701e16d8c36698099335"
+    },
+    "rootfs/bin/cat": {
+      "link": "busybox"
+    },
+    "rootfs/bin/dmesg": {
+      "link": "busybox"
+    },
+    "rootfs/bin/echo": {
+      "link": "busybox"
+    },
+    "rootfs/bin/ls": {
+      "link": "busybox"
+    },
+    "rootfs/bin/mkdir": {
+      "link": "busybox"
+    },
+    "rootfs/bin/mknod": {
+      "link": "busybox"
+    },
+    "rootfs/bin/mount": {
+      "link": "busybox"
+    },
+    "rootfs/bin/poweroff": {
+      "link": "busybox"
+    },
+    "rootfs/bin/reboot": {
+      "link": "busybox"
+    },
+    "rootfs/bin/sh": {
+      "link": "busybox"
+    },
+    "rootfs/bin/sleep": {
+      "link": "busybox"
+    },
+    "rootfs/bin/umount": {
+      "link": "busybox"
+    },
+    "rootfs/bin/uname": {
+      "link": "busybox"
+    },
+    "rootfs/etc/PREPARATION_STATUS": {
+      "sha256": "60e94de0ec6a209c14c055d5c86e9240a40730c33b256e5b4544f45effbfc67c"
+    },
+    "rootfs/init": {
+      "sha256": "2fe08b8bcc8abb619dc1e48828e48822391adec02db2c1680e4851907279131b"
+    }
+  },
+  "error": null,
+  "commands": [
+    [
+      "/usr/bin/dtc",
+      "-I",
+      "dts",
+      "-O",
+      "dtb",
+      "-o",
+      "/data1/gzh/EC/firesim/dac2026/images/software-v3/B-boot-20261102T075945.828284Z/B-boot.dtb",
+      "/data1/gzh/EC/firesim/dac2026/images/software-v3/B-boot-20261102T075945.828284Z/B-boot.dts"
+    ]
+  ],
+  "dtc_sha256": "c2081684943decfc73c8fa7ed37aa0316889119bbd20eff7e430042ad2993828",
+  "status": "B_BASE_BOOT_PREREQUISITE_ONLY",
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN",
+  "software_dt_edits": [
+    "chosen console/interactive rdinit",
+    "lowercase existing ISA extension names",
+    "CPU0 200 MHz from audited generated clock schedule"
+  ],
+  "not_included": [
+    "ROI control driver",
+    "passive measurement bridge",
+    "Linux/checker service",
+    "PARSEC job/backend/Python3",
+    "certified experiment image"
+  ]
+}

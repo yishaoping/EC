@@ -1,0 +1,64 @@
+{
+  "build_script_sha256": "ede69e9a8c048593df365350619a11291e61797499c2b6c82a3daa38287b3476",
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/java",
+        "-jar",
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/sbt-launch.jar",
+        ";project firechip; runMain firesim.firesim.DacParameterAudit firesim.firesim.DacOpt4C4 /data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/C4-parameters-20261102T072544.448409Z/parameters.json"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/C4/chipyard",
+      "java_tool_options": "-Xmx8G -Xss8M -XX:ActiveProcessorCount=2 -Dsbt.task.cpus=2 -Dsbt.supershell=false -Dsbt.server.autostart=false -Dsbt.color=false -Dec.dac.firesim=true -Duser.home=/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/java-home -Dsbt.boot.directory=/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/sbt/boot -Dsbt.global.base=/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/sbt"
+    }
+  ],
+  "config": "DacOpt4C4",
+  "environment_overrides": {
+    "CC": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/gcc",
+    "CONDA_PREFIX": "/data1/gzh/EC/firesim/envs/manager-1.17.1",
+    "COURSIER_CACHE": "/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/coursier/v1",
+    "CXX": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/g++",
+    "JAVA_HOME": "/data1/gzh/EC/firesim/envs/manager-1.17.1/lib/jvm",
+    "JAVA_TOOL_OPTIONS": "-Xmx8G -Xss8M -XX:ActiveProcessorCount=2 -Dsbt.task.cpus=2 -Dsbt.supershell=false -Dsbt.server.autostart=false -Dsbt.color=false -Dec.dac.firesim=true -Duser.home=/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/java-home -Dsbt.boot.directory=/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/sbt/boot -Dsbt.global.base=/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/sbt",
+    "MAKEFLAGS": "-j1",
+    "PATH": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin:/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+    "RISCV": "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools",
+    "SBT_BIN": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/java -jar /data1/gzh/EC/firesim/envs/manager-1.17.1/bin/sbt-launch.jar"
+  },
+  "error": null,
+  "firesim_commit": "07efa6a6da18bd64d1159ae84a4701b37abb1228",
+  "firesim_standalone": "UNSET",
+  "integration": "opt4-alveo-v3",
+  "legacy_input_only_loggers": "disabled by ec.dac.firesim=true in v3 C4",
+  "no_target_execution": true,
+  "output_dir": "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/C4-parameters-20261102T072544.448409Z",
+  "outputs": {
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/builds/C4-parameters-20261102T072544.448409Z/parameters.json": "7fb7c251b25de6df8e722ee629de02ce4524144a723f575c6239ad7c14c945e8"
+  },
+  "phase": "parameters",
+  "platform": "xilinx_alveo_u280",
+  "platform_config": "BaseXilinxAlveoConfig",
+  "resources": {
+    "available_memory_gib": 245.31178665161133,
+    "free_disk_gib": 336.91715240478516,
+    "host_cpus": 256,
+    "jobs": 2,
+    "load_1min": 110.39013671875,
+    "make_jobs": 1,
+    "niceness": 15
+  },
+  "returncode": 0,
+  "runtime_validation": "NOT_RUN",
+  "source_id": "5a6d6e84184ca13550f6f8047231e3d8c4e9cd1c288f518a843cd9fb1829a7f1",
+  "source_tree": "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/C4/chipyard",
+  "tool_hashes": {
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/g++": "f4e2397b5973d45ea178a920da59bf3a602c1bcdd4765b2aa60316c07fb8f4d6",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/gcc": "99826ab01c7cb8c11077fd8738d16e0bc9e5bb0caedd14cc2f380c406fda689a",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/java": "de51fc5d2d329ad93f030f2d4e47a5221fe8697c14c48fd0d674e256016a7af8",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/sbt-launch.jar": "b14490ad2ce5b7650bf2da813ca0f57d123318f819a1ce69207b8351057386a6"
+  },
+  "wall_seconds": 19.227563831955194
+}

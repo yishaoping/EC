@@ -1,0 +1,66 @@
+{
+  "candidate": "opt4-alveo-v3",
+  "firesim_tag": "1.17.0",
+  "firesim_commit": "07efa6a6da18bd64d1159ae84a4701b37abb1228",
+  "source_mapping": {
+    "B": "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/B/chipyard",
+    "C4": "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/C4/chipyard"
+  },
+  "opt4_identity": {
+    "identity_directory": "/data1/gzh/EC/slowdown/opt4",
+    "functional_source": "/data1/gzh/EC/chipyard/generators",
+    "build_entry": "/data1/gzh/EC/slowdown/run_optimization_4_svb.sh",
+    "launcher": "/data1/gzh/EC/slowdown/optimization_4_svb/scripts/launch_optimization_4_svb.py",
+    "config": "chipyard.v1Config",
+    "functional_commit": "476a760910f3bfbd3c111000ebe40343870ab439",
+    "freeze_commit": "962c4b87db2a810bc025a87f5f7289dd7aedc5cf",
+    "workspace_head": "2ea467ba08f773dd55b77383da9f4f5c025b9607",
+    "hardware_uncommitted": "",
+    "full_tracked_uncommitted": "",
+    "fingerprint": "bc1843a9bae6448cb252c50d1c29362535bce8682951b254905c7284c27b23ff",
+    "frozen_source_sha256": {
+      "chipyard/generators/boom/src/main/scala/exu/core.scala": "a1635b2e6636623a70a4b7617620f2eb10b2f585bd90585aa3b59e9062cdb6cb",
+      "chipyard/generators/boom/src/main/scala/exu/rob.scala": "81406711678554e6fa40354b8f169bc3ebff4c3868d645c2df479572ff703b38",
+      "chipyard/generators/boom/src/main/scala/lsu/dcache.scala": "c6e335f0c9da7efdc19a8e47cd728f0900693c96713fbf5cc5f35cb9dcd3c5a5",
+      "chipyard/generators/boom/src/main/scala/lsu/lsu.scala": "cb634c7bff21d52f0bf2693d12b75cbbc49a43691f25cd0e94ac9de6fbfbdbcf",
+      "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala": "041d108608a7c580c3347515a690fea31dc0c5d6054924186cb05cfbc974bf57",
+      "chipyard/generators/boom/src/main/scala/lsu/speculative-version-buffer.scala": "06ea7878bc47cd55b076fc8634d9ef62db53509435fd87225d9e6b82d41df870",
+      "chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala": "cf042432f71c5812f2f93eab1abc5522aa35c61d67042363ab2260be11b6c477",
+      "chipyard/generators/rocket-chip/src/main/resources/csrc/cache_opportunity.cc": "c32d68e0652106a0e7f818869e0a49b5b98b20aece696fb0dfa78fc7ccb1422c",
+      "chipyard/generators/rocket-chip/src/main/resources/vsrc/CacheOpportunityObserver.sv": "6ba6e3330406196f1186af4d065b607a0569aa88187144a33b80bcd6d09c55e5",
+      "chipyard/generators/rocket-chip/src/main/resources/vsrc/SafeChainEventLogger.v": "2ed96c76c7f475c327186ae9379385d5a7c6cd6a2a592d5a1000e4b99b66e263",
+      "chipyard/generators/rocket-chip/src/main/scala/r/R_IC.scala": "5d74332982cb492283a11d36fbe6d14884b5843df7b46e83148e4784806351de",
+      "chipyard/generators/rocket-chip/src/main/scala/r/R_ICSL.scala": "7f4728f0981fa0fede24713e4daad22a0b37faf8b9adfea8294dd4e1fdb5edeb",
+      "chipyard/generators/rocket-chip/src/main/scala/rocket/NBDcache.scala": "418dc952af4c1b0f6ba0f89c13f36a73545be55fda11439e97bb0e20c325225b",
+      "chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala": "4ac68198276c5d064440ff319bc27f9c1dd8dbafc6fb34136db120e8b4705478",
+      "chipyard/generators/rocket-chip/src/main/scala/util/CacheOpportunityObservation.scala": "390d69fca410c3fd251c570a7760a9c04f0d688500ede3aaf4547446056e1cea",
+      "chipyard/generators/rocket-chip/src/main/scala/util/SafeChainObservation.scala": "7e93dc74de56b9e7279686a35e6efa67d9008b002d5ceceddfb9b88252dceb22",
+      "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Directory.scala": "4385637900ab09966a6aeca7bece2d748fda944e6f72911baa4ac5f4f8a68fb3",
+      "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala": "c044da2da26941b93fe7776a1f690e194d5ed9daa2a5fde2fa6ab7e98b8e64fc",
+      "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala": "c542db732d6d57d9b3f589d14505a4629a9ada7b8c420e076af9bdf779ecce85",
+      "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/SourceD.scala": "473ec55685a8f3ef8b2f39cc9db78f33d470f490f58d5b8ad603f9f4e9fb125c"
+    },
+    "check_is_excluded": true
+  },
+  "frozen_files_changed": {
+    "chipyard/generators/rocket-chip/src/main/scala/util/CacheOpportunityObservation.scala": {
+      "frozen_sha256": "390d69fca410c3fd251c570a7760a9c04f0d688500ede3aaf4547446056e1cea",
+      "work_sha256": "66a1b648a58aca7724d7403e603a93e5cdf923a6c96bbd2292e9b85a3e197e9d",
+      "diff": "--- /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/scala/util/CacheOpportunityObservation.scala\n+++ /data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/C4/chipyard/generators/rocket-chip/src/main/scala/util/CacheOpportunityObservation.scala\n@@ -61,6 +61,9 @@\n       id: UInt, cycle: UInt, occupied: UInt, full: Bool,\n       events: Seq[CacheOpportunityEvent]): Unit = {\n     require(events.nonEmpty)\n+    // This legacy DPI logger is input-only and has no FPGA implementation.\n+    // Its omission is explicit in the build manifest, not a DAC metric source.\n+    if (!sys.props.get(\"ec.dac.firesim\").contains(\"true\")) {\n     val o = Module(new CacheOpportunityObserver(level, sets, ways, blockBytes, mshrs, events.size))\n     o.io.clock := clk; o.io.reset := rst; o.io.clear := clear; o.io.enable := enable\n     o.io.stop := stop; o.io.instance_id := id; o.io.cycle := cycle\n@@ -74,6 +77,7 @@\n     o.io.event_set := VecInit(events.map(_.set)).asUInt\n     o.io.event_way := VecInit(events.map(_.way)).asUInt\n     o.io.event_occupancy := VecInit(events.map(_.occupancy)).asUInt\n+    }\n   }\n \n   def rotate(x: UInt, shift: Int): UInt = {\n"
+    },
+    "chipyard/generators/rocket-chip/src/main/scala/util/SafeChainObservation.scala": {
+      "frozen_sha256": "7e93dc74de56b9e7279686a35e6efa67d9008b002d5ceceddfb9b88252dceb22",
+      "work_sha256": "dad325e10bcc86526e2b378c38ce94a9a3c5c79abf49a540c2b06bb46870a7b7",
+      "diff": "--- /data1/gzh/EC/chipyard/generators/rocket-chip/src/main/scala/util/SafeChainObservation.scala\n+++ /data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/C4/chipyard/generators/rocket-chip/src/main/scala/util/SafeChainObservation.scala\n@@ -49,6 +49,10 @@\n       require(width <= 64, \"SC1 fields must fit one hex64 word\")))\n     key.widthOption.foreach(width =>\n       require(width <= 1024, \"SC1 change key exceeds observation bus\"))\n+    // Independent FireSim copy only: the legacy input-only $fwrite logger has\n+    // no GoldenGate model. Keep functional Opt4 logic and the source taps.\n+    // DAC measurement must use its own bridge; disabling this proves no stats.\n+    if (!sys.props.get(\"ec.dac.firesim\").contains(\"true\")) {\n     val logger = Module(new SafeChainEventLogger(kind))\n     logger.suggestName(s\"safe_chain_observer_$kind\")\n     logger.io.clock := clk\n@@ -76,5 +80,6 @@\n       words(i) := value\n     }\n     logger.io.data := words.asUInt\n+    }\n   }\n }\n"
+    }
+  },
+  "original_hardware_tracked_diff": "",
+  "runtime_validation": "NOT_RUN",
+  "fpga_operation": "NOT_PERFORMED",
+  "compatibility": "B/C4 parameters, elaboration, GoldenGate and native U280 driver compile/link passed; see compatibility-stage1.json; runtime NOT_RUN",
+  "B_type_only_CDE_adapter": {
+    "path": "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/B/chipyard/generators/rocket-chip/src/main/scala/org/chipsalliance/cde/config/package.scala",
+    "sha256": "db50b564df0cbafc913278ab09452b31fcca1cd9dc7fc6c47bf418f6f90385b8",
+    "reason": "FireSim 1.17.0 uses org.chipsalliance.cde.config; aliases preserve existing CDE type identity without importing GC logic"
+  }
+}

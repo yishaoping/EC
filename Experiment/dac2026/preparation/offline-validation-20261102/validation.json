@@ -1,0 +1,151 @@
+{
+  "tests_are_offline_fixtures_only": true,
+  "simulations_started": false,
+  "fpga_actions": false,
+  "checks": [
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "firesim/dac2026/tests",
+        "-v"
+      ],
+      "returncode": 0,
+      "log": "Experiment/dac2026/preparation/offline-validation-20261102/00.log"
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "compileall",
+        "-q",
+        "firesim/dac2026/ec_dac",
+        "firesim/dac2026/guest",
+        "firesim/dac2026/scripts"
+      ],
+      "returncode": 0,
+      "log": "Experiment/dac2026/preparation/offline-validation-20261102/01.log"
+    },
+    {
+      "argv": [
+        "g++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fsyntax-only",
+        "firesim/dac2026/tests/native_compile_check.cc"
+      ],
+      "returncode": 0,
+      "log": "Experiment/dac2026/preparation/offline-validation-20261102/02.log"
+    },
+    {
+      "argv": [
+        "riscv64-unknown-linux-gnu-gcc",
+        "-std=gnu11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Ifiresim/dac2026/measurement",
+        "-fsyntax-only",
+        "firesim/dac2026/measurement/dac_roi.c",
+        "firesim/dac2026/guest/roi-smoke.c"
+      ],
+      "returncode": 0,
+      "log": "Experiment/dac2026/preparation/offline-validation-20261102/03.log"
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "firesim/dac2026/env.sh"
+      ],
+      "returncode": 0,
+      "log": "Experiment/dac2026/preparation/offline-validation-20261102/04.log"
+    },
+    {
+      "argv": [
+        "zsh",
+        "-n",
+        "firesim/dac2026/env.sh"
+      ],
+      "returncode": 0,
+      "log": "Experiment/dac2026/preparation/offline-validation-20261102/05.log"
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "firesim/dac2026/scripts/01_static.sh"
+      ],
+      "returncode": 0,
+      "log": "Experiment/dac2026/preparation/offline-validation-20261102/06.log"
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "firesim/dac2026/scripts/02_link.sh"
+      ],
+      "returncode": 0,
+      "log": "Experiment/dac2026/preparation/offline-validation-20261102/07.log"
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "firesim/dac2026/scripts/03_recovery.sh"
+      ],
+      "returncode": 0,
+      "log": "Experiment/dac2026/preparation/offline-validation-20261102/08.log"
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "firesim/dac2026/scripts/04_main.sh"
+      ],
+      "returncode": 0,
+      "log": "Experiment/dac2026/preparation/offline-validation-20261102/09.log"
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "firesim/dac2026/scripts/05_scan.sh"
+      ],
+      "returncode": 0,
+      "log": "Experiment/dac2026/preparation/offline-validation-20261102/10.log"
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "firesim/dac2026/scripts/06_ablation.sh"
+      ],
+      "returncode": 0,
+      "log": "Experiment/dac2026/preparation/offline-validation-20261102/11.log"
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "firesim/dac2026/scripts/07_rerun.sh"
+      ],
+      "returncode": 0,
+      "log": "Experiment/dac2026/preparation/offline-validation-20261102/12.log"
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "firesim/dac2026/scripts/08_analyze.sh"
+      ],
+      "returncode": 0,
+      "log": "Experiment/dac2026/preparation/offline-validation-20261102/13.log"
+    }
+  ]
+}

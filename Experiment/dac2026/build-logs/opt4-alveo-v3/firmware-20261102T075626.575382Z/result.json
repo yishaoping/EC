@@ -1,0 +1,52 @@
+{
+  "phase": "firmware",
+  "source_tree": "/data1/gzh/EC/firesim/dac2026/work/software-v3/opensbi",
+  "source_id": "ba806bac1c35a13384eb18ea30f828503a7469f67b14abe4318215ec4b542ad4",
+  "output_dir": "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/firmware-20261102T075626.575382Z",
+  "outputs": {
+    "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/firmware-20261102T075626.575382Z/platform/generic/firmware/fw_payload.elf": "6279180ef4c8a0b20800f347f3ad1ccd8a106e8b3af6bbc925d035962c0d9092",
+    "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/firmware-20261102T075626.575382Z/platform/generic/firmware/fw_payload.bin": "6fa7c03547600bab60633b26faf762fd90b736e8a382825defd32e2bb51e0c8f"
+  },
+  "returncode": 0,
+  "error": null,
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/firmware-20261102T075626.575382Z",
+        "PLATFORM=generic",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "FW_PAYLOAD_PATH=/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T074919.790060Z/arch/riscv/boot/Image"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/software-v3/opensbi"
+    }
+  ],
+  "resources": {
+    "available_memory_gib": 259.3148727416992,
+    "free_disk_gib": 339.12350845336914,
+    "load_1min": 81.04345703125,
+    "host_cpus": 256,
+    "jobs": 2,
+    "make_jobs": 1,
+    "niceness": 15
+  },
+  "wall_seconds": 4.711007433012128,
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN",
+  "status": "BASE_PREREQUISITE_ONLY: no ROI/checker runtime or certified experiment image",
+  "build_script_sha256": "263ce8881bf9ac8d0180cf4d79925cf097ff1790d890f40a4123791a70c613b2",
+  "busybox_config_sha256": "f168a232098128c405417448e6d746a4eab374967eaeadef29950d85af6ee470",
+  "kernel_result": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/kernel-20261102T074919.790060Z/result.json",
+  "environment_overrides": {
+    "PATH": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin:/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin:/usr/local/bin:/usr/bin:/bin",
+    "CONDA_PREFIX": "/data1/gzh/EC/firesim/envs/manager-1.17.1",
+    "CC": "/usr/bin/gcc",
+    "HOSTCC": "/usr/bin/gcc",
+    "HOSTCXX": "/usr/bin/g++",
+    "MAKEFLAGS": "-j2"
+  }
+}

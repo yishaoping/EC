@@ -1,0 +1,125 @@
+{
+  "phase": "apps",
+  "returncode": 0,
+  "output": "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z",
+  "output_dir": "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z",
+  "commands": [
+    [
+      "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+      "-O3",
+      "-march=rv64gc",
+      "-mabi=lp64d",
+      "-D_GNU_SOURCE",
+      "-static",
+      "-I/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/src/hooks",
+      "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/src/roi-smoke.c",
+      "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/src/hooks/dac_roi.c",
+      "-o",
+      "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/roi-smoke"
+    ],
+    [
+      "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+      "-O3",
+      "-march=rv64gc",
+      "-mabi=lp64d",
+      "-D_GNU_SOURCE",
+      "-static",
+      "-c",
+      "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/src/hooks/hooks.c",
+      "-o",
+      "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/hooks.o"
+    ],
+    [
+      "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+      "-O3",
+      "-march=rv64gc",
+      "-mabi=lp64d",
+      "-D_GNU_SOURCE",
+      "-static",
+      "-x",
+      "c++",
+      "-std=gnu++17",
+      "-DENABLE_PARSEC_HOOKS",
+      "-I/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/src/hooks/include",
+      "-I/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/src/blackscholes",
+      "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/src/blackscholes/blackscholes.c",
+      "-x",
+      "none",
+      "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/hooks.o",
+      "-lm",
+      "-o",
+      "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/blackscholes"
+    ],
+    [
+      "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+      "-d",
+      "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/roi-smoke"
+    ],
+    [
+      "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+      "-d",
+      "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/apps-20261102T104634.523700Z/blackscholes"
+    ]
+  ],
+  "program": "blackscholes",
+  "primary_input": "test/in_4.txt",
+  "options": 4,
+  "runs": 100,
+  "application_threads": 1,
+  "build_variant": "upstream serial branch; ENABLE_THREADS undefined",
+  "shared_binary_for": [
+    "B-v5",
+    "C4-v6"
+  ],
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN",
+  "binaries": {
+    "roi-smoke": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8",
+    "blackscholes": "65b5eee74754503971612918f74d15dcdf3a4c35e88f8752bb068f4b470c1efe"
+  },
+  "inputs": {
+    "test": {
+      "archive_sha256": "92aadef92ac86d234c8fb97e41f20f663efc89b74097a4e4675b382cbbe1e541",
+      "files": {
+        "in_4.txt": "9a40f4a6f4b96a32bb834333487d6dcec4436eceae7efbf836574aacb1e6ce46"
+      }
+    },
+    "simsmall": {
+      "archive_sha256": "02bfbf3bf7b248d8ffc33f72f144b61b33a9761d539e05dce4eee9ecdd76bfcd",
+      "files": {
+        "in_4K.txt": "d918de616ed1956757f19b25e27c6b1a27fbab560a058c5de1e9d479fa331c64"
+      }
+    }
+  },
+  "sources": {
+    "roi-smoke.c": "d9018914db82046da32e59431bf10677424d3365cb9a835295c8eeb5fafcfa70",
+    "blackscholes/optionData.txt": "2b7e68e90055c124b93e3924d5c144e2314704589527b01f859e32e843353786",
+    "blackscholes/blackscholes.c": "d7be2bbc7d2bfa7dc27fb310ecb70d2f3065722a475f9b93b1d46affbb3971ec",
+    "blackscholes/spin_lock.h": "12f52926120e19c1153eec79de4ac191c1db6bd03da4b98cf295c9002f21fd49",
+    "blackscholes/COPYRIGHT": "aceb14c7afe15c91841942102b3c5f5263d3fdfcdc8a1a11a5d80acb358717b7",
+    "blackscholes/README": "73fc245f8fd2dd1522ce9150d54f58a8c743bc423579d4731af51d8112651168",
+    "blackscholes/blackscholes.sln": "a3a0caaf0d1c0f038c56b224ad93b95067aa7ab61a145cc1a1474f7ed3ca713f",
+    "blackscholes/custom.h": "6e718cb32808c417f1a7b512cd55bfaeb4cd56efeb4e8d50535a4e18f7ec08a1",
+    "blackscholes/blackscholes.simd.vcproj": "1d1cf582193aa537675ba56e8834ef41087002713a21bb15278054ca1fae0ee3",
+    "blackscholes/blackscholes.simd.c": "211f2efd708c2600774084a4cc50b190995e4dd8e1252cd15f2a24380371a1fd",
+    "blackscholes/Makefile": "14c453146cd8b32fd5583a8570c43665222e001ae4286dd8db535add8879d9bc",
+    "blackscholes/c.m4.pthreads": "f26226b5589e1e409f32680f1daadecd008ca61d1c7d346c526db6e9e259561c",
+    "blackscholes/blackscholes.vcproj": "a21f522c5c6b10658ebb4384c716a9fa84e8711b564409308385613fc8e1f958",
+    "blackscholes/inputgen.c": "28efd62b6d33fdcb9e20f158cb465f84d62946f5882bf44b3e09f5f8362d650d",
+    "blackscholes/encoding.h": "40513cda414c3292dfc9db1c4c83dbadd6424abe94d4cd6f4837dd6292072b39",
+    "blackscholes/rocc.h": "0153080a79febf77a0f79bf0579c868b9995166d858b29e2729149a1a99b59e4",
+    "hooks/Makefile.shared": "49fed21c02178e5cbfd0c1cd86dea102bdbc2126c78ec24573effe8869d13cbf",
+    "hooks/dac_roi.h": "67f346d9464922fbaa990bd5cb8a5a68ae17a9ccceec7c6d66a2c8091343f741",
+    "hooks/COPYRIGHT": "08d27b0523101759588edd1fd0f966910692049d0e75a76cff3d603bc9eb30a0",
+    "hooks/README": "8717af5deda488cbe5fd8d17f4373dca6c398c8ee6e880a7ecb5833ee45a76fc",
+    "hooks/Makefile.static": "979469cc04510fb4e5f9fe8602a4d7ace757a9f0ec3b5dfd146ed6be798c0a09",
+    "hooks/hooks.c": "c8aa8860fac1d4dd8d486c7498ea2a1ee9cdef775581d592e4bbe51cd2af6206",
+    "hooks/opt4_hw.h": "7372eb0c67523ce168a1788a86a2c92d7e9cda85d8da5d3b65979adbd1aee97f",
+    "hooks/Makefile": "f14f95939e1e59b8fa7944b64ce6f868f63aad928e38e3b3d15a744d705821a5",
+    "hooks/Doxyfile": "5795501bd84e69b068be7600128a93d4e8f1e5a6f1777df425bf193a44b16e1a",
+    "hooks/LICENSE": "4c37a95d0838a04edd68e286d2680aabf64d8fac653a4fb73ad42ab4fa253f3e",
+    "hooks/dac_roi.c": "4514140f54e4c7fc04692fc2d2884e19224893ea07833f0019859ce09f07eb1b",
+    "hooks/config.h": "eaac1960162337c50bebb5092ee2809b7f27c785d4f92509b0a31cb34a3fd096",
+    "hooks/include/hooks.h": "c69b4d07f3ce63a73a5f79b9be994923bac79cc5ec5b7128a1847f7aeb7a1db9"
+  }
+}

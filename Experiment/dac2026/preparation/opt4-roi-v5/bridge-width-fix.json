@@ -1,0 +1,19 @@
+{
+  "failure_receipt": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-roi-v5/B-goldengate-20261102T091205.778242Z/result.json",
+  "failure": "Chisel requirement in resetWord Bool.asUInt.pad(64); other state flag used same expression",
+  "fix": "Explicit width64 Mux on boolean; attach FIFO-front MMIO directly as in native AutoCounter to avoid unnecessary shadow latency",
+  "changes": [
+    {
+      "path": "/data1/gzh/EC/firesim/dac2026/measurement/hardware/DacRoiBridge.scala",
+      "before": "b5f72d52cd2d66063f61a8b37d42c914e8d706980a8728a8e604a5119d281e5f",
+      "after": "efeb7179ae3e057cf16ea0783864cd982511c5ac86fc4d9cf0cce7a3f761d2fd"
+    },
+    {
+      "path": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/B/chipyard/sims/firesim/sim/firesim-lib/src/main/scala/bridges/DacRoiBridge.scala",
+      "before": "b5f72d52cd2d66063f61a8b37d42c914e8d706980a8728a8e604a5119d281e5f",
+      "after": "efeb7179ae3e057cf16ea0783864cd982511c5ac86fc4d9cf0cce7a3f761d2fd"
+    }
+  ],
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN"
+}

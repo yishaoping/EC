@@ -1,0 +1,35 @@
+{
+  "evidence_type": "STATIC_SOURCE_AUDIT_ONLY",
+  "work_tree": "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/C4/chipyard/generators/rocket-chip/src/main/scala",
+  "files": {
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/C4/chipyard/generators/rocket-chip/src/main/scala/rocket/Instructions.scala": "c4c8eb7251036f0a82390c0beb4ca308d20dbdffcfe00edbab8f1e84192b8d0d",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/C4/chipyard/generators/rocket-chip/src/main/scala/rocket/CSR.scala": "02bfd7fe5e934d2f895ce2a1ef4d7f665582ff6599e85bbad382cccc0ee8f089",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/C4/chipyard/generators/rocket-chip/src/main/scala/rocket/Frontend.scala": "440723cfca389124c1889c96bdd36da9465e7f8eac98c1a3d8a6fe445ee2f05f",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/C4/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala": "4ac68198276c5d064440ff319bc27f9c1dd8dbafc6fb34136db120e8b4705478",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/C4/chipyard/generators/rocket-chip/src/main/scala/r/R_RSU.scala": "05d61838bf7a1dd053da324183c41882d7c9885a0b904efd99c98ee96dd9a9b9",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/C4/chipyard/generators/rocket-chip/src/main/scala/r/R_RSUSL.scala": "b52493f76f19061a4d41dc85c2862a32e62276e199bd3fe14a06b9cc66828d80",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-alveo-v3/C4/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GHE.scala": "7cd17aeb6e50bcc4da9700de3036c1c3343c5ae77f2a7f29b879800cd77e1d4b"
+  },
+  "proven_facts": [
+    "CSRshadows/allshadows includes mstatus,mie,mtvec,mscratch,mepc,mip,sstatus,sie,sscratch,sepc,scause,stval,sip, but not satp or stvec",
+    "CSR.io.ptbr is driven from local reg_satp; the shown CPS/ECP shadow write path writes reg_shadow/reg_shadow_ECP, not reg_satp",
+    "Frontend TLB uses s1_pc, io.ptw.status.prv, passthrough=false, and tlb.io.resp.paddr for instruction cache requests",
+    "GHE process selection matches satp PPN; it does not transport an address-space snapshot to a checker",
+    "Old Software/Test checker runner hardcodes harts 1..4 and idles forever after a completed session"
+  ],
+  "not_proven": [
+    "Linux/checker can fetch identical user code after exec/context switch",
+    "all page table roots/ASIDs and permissions are installed or physically bypassed for each package",
+    "SBI/syscall/interrupt replay preserves kernel/checker service state",
+    "per-sample re-entry can drain and reset every package ownership domain"
+  ],
+  "next_source_changes_to_review": [
+    "Define and version an explicit Linux/checker address-space context ABI before changing packet widths",
+    "Bind a pinned process mm/page-table lifetime and satp mode+ASID+PPN to each sample/session; define sfence/ICache invalidation and process exit ordering",
+    "Reserve Rocket harts in DT+firmware and implement a persistent checker loop with acknowledged arm/drain/release",
+    "Decide and document how normal syscall/trap/context-switch packages are checked without clobbering firmware-local CSR state",
+    "Only after that design, implement a real ROI driver and bridge with strict execution/final-compare source events"
+  ],
+  "runtime_validation": "NOT_RUN",
+  "changes_to_frozen_functional_sources": "NONE in this audit"
+}

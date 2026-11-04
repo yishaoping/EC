@@ -1,0 +1,158 @@
+{
+  "phase": "kernel",
+  "source_tree": "/data1/gzh/EC/firesim/dac2026/work/software-v3/linux",
+  "source_id": "41190fb34da450282efff95c7b5e7fcf07f2e8044befe0a4019d59411029567d",
+  "output_dir": "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T080011.711422Z",
+  "outputs": {
+    "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T080011.711422Z/vmlinux": "4886134c3bc425756b6e21ed812d999b1adc490c4fd5dc825fe3690d516a5b76",
+    "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T080011.711422Z/arch/riscv/boot/Image": "fd3e8165ccb82ed927037c5b049bc34849b575638f65fdc6b244670992698e4d",
+    "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T080011.711422Z/.config": "5ecff9929981430c144ab6c0f4f17c116f43eb27407217fb60f7d25d9c32792b"
+  },
+  "returncode": 0,
+  "error": null,
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T080011.711422Z",
+        "ARCH=riscv",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "defconfig"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/software-v3/linux"
+    },
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "/data1/gzh/EC/firesim/dac2026/work/software-v3/linux/scripts/config",
+        "--file",
+        "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T080011.711422Z/.config",
+        "--disable",
+        "DRM",
+        "--disable",
+        "SOUND",
+        "--disable",
+        "NET",
+        "--disable",
+        "SCSI",
+        "--disable",
+        "ATA",
+        "--disable",
+        "USB_SUPPORT",
+        "--disable",
+        "PCI",
+        "--disable",
+        "VIRTIO",
+        "--disable",
+        "MODULES",
+        "--disable",
+        "BPF_SYSCALL",
+        "--disable",
+        "DEBUG_KERNEL",
+        "--disable",
+        "DEBUG_INFO",
+        "--disable",
+        "KALLSYMS",
+        "--enable",
+        "BLK_DEV_INITRD",
+        "--enable",
+        "DEVTMPFS",
+        "--enable",
+        "DEVTMPFS_MOUNT",
+        "--enable",
+        "PROC_FS",
+        "--enable",
+        "SYSFS",
+        "--enable",
+        "TMPFS",
+        "--enable",
+        "SERIAL_SIFIVE",
+        "--enable",
+        "SERIAL_SIFIVE_CONSOLE",
+        "--enable",
+        "UNIX98_PTYS",
+        "--enable",
+        "FUTEX",
+        "--enable",
+        "MULTIUSER",
+        "--enable",
+        "DEBUG_INFO_NONE",
+        "--disable",
+        "SMP",
+        "--set-str",
+        "INITRAMFS_SOURCE",
+        "/data1/gzh/EC/firesim/dac2026/images/software-v3/B-boot-20261102T075945.828284Z/initramfs.cpio"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/software-v3/linux"
+    },
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T080011.711422Z",
+        "ARCH=riscv",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "olddefconfig"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/software-v3/linux"
+    },
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T080011.711422Z",
+        "ARCH=riscv",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "Image",
+        "vmlinux"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/software-v3/linux"
+    }
+  ],
+  "resources": {
+    "available_memory_gib": 258.43538665771484,
+    "free_disk_gib": 338.06045150756836,
+    "load_1min": 82.6962890625,
+    "host_cpus": 256,
+    "jobs": 2,
+    "make_jobs": 1,
+    "niceness": 15
+  },
+  "wall_seconds": 334.3718489911407,
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN",
+  "status": "BASE_PREREQUISITE_ONLY: no ROI/checker runtime or certified experiment image",
+  "build_script_sha256": "8234b0f92d8d9d6b60828f49a37afc99dfe5a179a94c52af280952a2ac05b841",
+  "busybox_config_sha256": "f168a232098128c405417448e6d746a4eab374967eaeadef29950d85af6ee470",
+  "kernel_result": null,
+  "input_files": {
+    "/data1/gzh/EC/firesim/dac2026/images/software-v3/B-boot-20261102T075945.828284Z/initramfs.cpio": "270f9d71220d27a293074c075bc07d9ab8f18fe1ffc72ccfc86436fa64929416"
+  },
+  "tool_hashes": {
+    "/usr/bin/gcc": "989fde76585d597fbabf73c62541faea7ffe3a28b7e45a2d1461449df9772e7b",
+    "/usr/bin/g++": "3acb6a5165a96e9b55935bf85242f380b850cccfad3e64697f1ec19dd272d4a3",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ld": "10424f5eeafd5806fbca7b88bdae336c202be5a9fa332c1a662a8d0a7ae62fba",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objcopy": "2a38397dae082b022b6370eb9fbfac9c337b95433fc89cb35d384516a0997f1e"
+  },
+  "environment_overrides": {
+    "PATH": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin:/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin:/usr/local/bin:/usr/bin:/bin",
+    "CONDA_PREFIX": "/data1/gzh/EC/firesim/envs/manager-1.17.1",
+    "CC": "/usr/bin/gcc",
+    "HOSTCC": "/usr/bin/gcc",
+    "HOSTCXX": "/usr/bin/g++",
+    "MAKEFLAGS": "-j2"
+  }
+}

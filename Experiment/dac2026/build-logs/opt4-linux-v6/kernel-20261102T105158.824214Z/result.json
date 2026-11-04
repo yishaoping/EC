@@ -1,0 +1,171 @@
+{
+  "phase": "kernel",
+  "source_tree": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/linux",
+  "source_id": "4e9fd5ed914f4cdd25290a14820cb919e402b221d9c31f6d007fafeecafcfa24",
+  "output_dir": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/kernel-20261102T105158.824214Z",
+  "outputs": {
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/kernel-20261102T105158.824214Z/vmlinux": "91af6fd6d7ada97530ed97191ebc0a6a13e0e7c526a0dc9b1476427b5b38f0b5",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/kernel-20261102T105158.824214Z/arch/riscv/boot/Image": "15aae6d4d190c2848942d6c3a9bdf4f0361960abee81f899792099233c92b522",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/kernel-20261102T105158.824214Z/.config": "36dcf8aa3643956d7029247709d14ba0e4d8c83faf01fcc905203c83b6c21b83"
+  },
+  "returncode": 0,
+  "error": null,
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/kernel-20261102T105158.824214Z",
+        "ARCH=riscv",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "defconfig"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/linux"
+    },
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/linux/scripts/config",
+        "--file",
+        "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/kernel-20261102T105158.824214Z/.config",
+        "--disable",
+        "DRM",
+        "--disable",
+        "SOUND",
+        "--disable",
+        "NET",
+        "--disable",
+        "SCSI",
+        "--disable",
+        "ATA",
+        "--disable",
+        "USB_SUPPORT",
+        "--disable",
+        "PCI",
+        "--disable",
+        "VIRTIO",
+        "--disable",
+        "MODULES",
+        "--disable",
+        "BPF_SYSCALL",
+        "--disable",
+        "DEBUG_KERNEL",
+        "--disable",
+        "DEBUG_INFO",
+        "--disable",
+        "KALLSYMS",
+        "--enable",
+        "BLK_DEV_INITRD",
+        "--enable",
+        "DEVTMPFS",
+        "--enable",
+        "DEVTMPFS_MOUNT",
+        "--enable",
+        "PROC_FS",
+        "--enable",
+        "SYSFS",
+        "--enable",
+        "TMPFS",
+        "--enable",
+        "SERIAL_SIFIVE",
+        "--enable",
+        "SERIAL_SIFIVE_CONSOLE",
+        "--enable",
+        "UNIX98_PTYS",
+        "--enable",
+        "FUTEX",
+        "--enable",
+        "MULTIUSER",
+        "--enable",
+        "DEBUG_INFO_NONE",
+        "--disable",
+        "SMP",
+        "--enable",
+        "EC_DAC_ROI",
+        "--set-str",
+        "INITRAMFS_SOURCE",
+        "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/rootfs-20261102T105148.076424Z/initramfs.cpio"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/linux"
+    },
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/kernel-20261102T105158.824214Z",
+        "ARCH=riscv",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "olddefconfig"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/linux"
+    },
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/kernel-20261102T105158.824214Z",
+        "ARCH=riscv",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "Image",
+        "vmlinux"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/linux"
+    }
+  ],
+  "resources": {
+    "available_memory_gib": 271.1164207458496,
+    "free_disk_gib": 300.4161911010742,
+    "load_1min": 85.62060546875,
+    "host_cpus": 256,
+    "jobs": 2,
+    "make_jobs": 1,
+    "niceness": 15
+  },
+  "wall_seconds": 329.1831180229783,
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN",
+  "status": "BASE_PREREQUISITE_ONLY: target ROI/checker/experiment evidence must be supplied separately",
+  "build_script_sha256": "99ba2bbcba55dc7ebc00c7602940a06ccc5eeb0eb1500f0e9e7fc8ec99db2518",
+  "busybox_config_sha256": null,
+  "kernel_result": null,
+  "input_files": {
+    "/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/rootfs-20261102T105148.076424Z/initramfs.cpio": "50f54508427aa859445cd03b4849a29bc6a310334dc93487365066fa518aeab6"
+  },
+  "content_checks": {
+    "roi_driver": {
+      "compiled_builtin": true,
+      "object_sha256": "f0aeffe6026d7d48006f396e92a68d43de06b26a14bb46a7cb1c2b819c233257",
+      "supported": [
+        "C4_USER_ONLY_V6"
+      ],
+      "target_controller": "EXTERNAL_HARDWARE_RECEIPT_REQUIRED",
+      "runtime_validation": "NOT_RUN"
+    }
+  },
+  "tool_hashes": {
+    "/usr/bin/gcc": "989fde76585d597fbabf73c62541faea7ffe3a28b7e45a2d1461449df9772e7b",
+    "/usr/bin/g++": "3acb6a5165a96e9b55935bf85242f380b850cccfad3e64697f1ec19dd272d4a3",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ld": "10424f5eeafd5806fbca7b88bdae336c202be5a9fa332c1a662a8d0a7ae62fba",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objcopy": "2a38397dae082b022b6370eb9fbfac9c337b95433fc89cb35d384516a0997f1e"
+  },
+  "environment_overrides": {
+    "PATH": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin:/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin:/usr/local/bin:/usr/bin:/bin",
+    "CONDA_PREFIX": "/data1/gzh/EC/firesim/envs/manager-1.17.1",
+    "CC": "/usr/bin/gcc",
+    "HOSTCC": "/usr/bin/gcc",
+    "HOSTCXX": "/usr/bin/g++",
+    "MAKEFLAGS": "-j2"
+  }
+}

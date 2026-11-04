@@ -1,0 +1,60 @@
+{
+  "phase": "native-verilator",
+  "configuration": "chipyard.DacLinuxC4",
+  "returncode": 2,
+  "error": null,
+  "source_tree": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/C4/chipyard",
+  "source_id": "304260797d8909f612cc2b8843cfb48c2104e10bb9946e54e1c60b396be661e4",
+  "resources": {
+    "available_memory_gib": 244.62475204467773,
+    "free_disk_gib": 294.8609428405762,
+    "load_1min": 102.12841796875,
+    "host_cpus": 256,
+    "jobs": 2,
+    "make_jobs": 1,
+    "niceness": 15
+  },
+  "command": {
+    "argv": [
+      "nice",
+      "-n",
+      "15",
+      "make",
+      "-j2",
+      "-C",
+      "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T105851.159475Z/verilator",
+      "-f",
+      "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/C4/chipyard/sims/verilator/Makefile",
+      "base_dir=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/C4/chipyard",
+      "sim_dir=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T105851.159475Z/verilator",
+      "gen_dir=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T105851.159475Z/generated",
+      "build_dir=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T105851.159475Z/generated",
+      "output_dir=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T105851.159475Z/output",
+      "dramsim_dir=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T105851.159475Z/dramsim",
+      "CONFIG=DacLinuxC4",
+      "VERILATOR_THREADS=1",
+      "EXTRA_SIM_CXXFLAGS=-DSTAGE1_EXIT_PORTS",
+      "default"
+    ],
+    "cwd": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/C4/chipyard",
+    "environment": {
+      "PATH": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin:/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin:/usr/local/bin:/usr/bin:/bin",
+      "RISCV": "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools",
+      "CONDA_PREFIX": "/data1/gzh/EC/firesim/envs/manager-1.17.1",
+      "SBT_BIN": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/java -jar /data1/gzh/EC/firesim/envs/manager-1.17.1/bin/sbt-launch.jar",
+      "JAVA_TOOL_OPTIONS": "-Xmx12G -Xss8M -XX:ActiveProcessorCount=2 -Dsbt.task.cpus=2 -Dsbt.supershell=false -Dsbt.server.autostart=false -Dsbt.color=false -Dec.dac.firesim=true -Duser.home=/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/java-home -Dsbt.boot.directory=/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/sbt/boot -Dsbt.global.base=/data1/gzh/EC/firesim/dac2026/work/opt4-minimal-v2/cache/sbt",
+      "CC": "/usr/bin/gcc",
+      "CXX": "/usr/bin/g++"
+    }
+  },
+  "output_dir": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T105851.159475Z",
+  "simulator": "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T105851.159475Z/verilator/simulator-chipyard-DacLinuxC4",
+  "outputs": {
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T105851.159475Z/generated/chipyard.TestHarness.DacLinuxC4.dts": "0d2737316e6ba7975ccff0f5a49a26343be2656c7b06e47fe551287b282ae761"
+  },
+  "wall_seconds": 434.8898147623986,
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN",
+  "observation": "actual RTL package begin/result plus source-clock ROI and live counters",
+  "legacy_input_only_loggers": "disabled using existing ec.dac.firesim guard; functional comparison retained"
+}

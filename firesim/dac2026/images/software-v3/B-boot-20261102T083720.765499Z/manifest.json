@@ -1,0 +1,128 @@
+{
+  "phase": "B-boot-pack",
+  "returncode": 0,
+  "output_dir": "/data1/gzh/EC/firesim/dac2026/images/software-v3/B-boot-20261102T083720.765499Z",
+  "inputs": {
+    "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/busybox-20261102T072931.028476Z/result.json": "99951a1b9b73930027cba765c49be4e85bddc8f6494b2c02480e35e13251bc66",
+    "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-roi-v4/B-elaborate-20261102T083459.886921Z/result.json": "8a59015573d6d40a14589cf8e902aef38d5d06b0cf35b839fffd8df0495d33b7",
+    "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/busybox-20261102T072931.028476Z/busybox": "8042e23f939f5876348784873251cced8cb88ad0b049701e16d8c36698099335",
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v4/builds/B-elaborate-20261102T083459.886921Z/firesim.firesim.FireSim.dts": "b97f7f1d8422f020b697facd6bf95db88d57b70d7add510b3106b5837db83e0f",
+    "/data1/gzh/EC/firesim/dac2026/scripts/prepare_boot_prerequisite.py": "795d3767252bec0cd6349db5bbcd627c32393c1b5afb27e992fd6e72f7e95915",
+    "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z/roi-smoke": "44e061b4116c3c715e1eab3a42ef8f7bb2aa67727c377aac1215c515255621c7",
+    "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z/blackscholes": "434838ab31a3640e8830081879a4a1c2a5fe6640838a1320eab929fbdc226589",
+    "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z/inputs/test/in_4.txt": "9a40f4a6f4b96a32bb834333487d6dcec4436eceae7efbf836574aacb1e6ce46",
+    "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z/inputs/simsmall/in_4K.txt": "d918de616ed1956757f19b25e27c6b1a27fbab560a058c5de1e9d479fa331c64",
+    "/data1/gzh/EC/firesim/dac2026/images/opt4-minimal-v2/20261102T052203Z/manifest.json": "65afad9c3bc5620bf1a03d6e4fc8a99520c12f983883f531be8abfac18f16b88",
+    "/data1/gzh/EC/firesim/dac2026/guest/manual-link.sh": "88a046405cd8d4138d45890fee4cbcfc9221f65c6ea9e15fd823da0da02d7f70"
+  },
+  "files": {
+    "B-boot.dtb": {
+      "sha256": "6c314efdba6cadefd27eebddc39b660b476a2a6d13b5646d0b0a5a9e5b25e75a"
+    },
+    "B-boot.dts": {
+      "sha256": "4d07a4b8310580f248fd27d99ab2e32f6200305a05a79791ec70bb8e0a76c8f6"
+    },
+    "initramfs.cpio": {
+      "sha256": "ad47bc87db90da005e49453e5d2f9e47f4a20941979078f3644ec1f57d612e65"
+    },
+    "rootfs/bin/busybox": {
+      "sha256": "8042e23f939f5876348784873251cced8cb88ad0b049701e16d8c36698099335"
+    },
+    "rootfs/bin/cat": {
+      "link": "busybox"
+    },
+    "rootfs/bin/dmesg": {
+      "link": "busybox"
+    },
+    "rootfs/bin/echo": {
+      "link": "busybox"
+    },
+    "rootfs/bin/ls": {
+      "link": "busybox"
+    },
+    "rootfs/bin/mkdir": {
+      "link": "busybox"
+    },
+    "rootfs/bin/mknod": {
+      "link": "busybox"
+    },
+    "rootfs/bin/mount": {
+      "link": "busybox"
+    },
+    "rootfs/bin/poweroff": {
+      "link": "busybox"
+    },
+    "rootfs/bin/reboot": {
+      "link": "busybox"
+    },
+    "rootfs/bin/sh": {
+      "link": "busybox"
+    },
+    "rootfs/bin/sleep": {
+      "link": "busybox"
+    },
+    "rootfs/bin/umount": {
+      "link": "busybox"
+    },
+    "rootfs/bin/uname": {
+      "link": "busybox"
+    },
+    "rootfs/etc/PREPARATION_STATUS": {
+      "sha256": "5f68915b8b894a27794cdb227280f9c4f3672716e7dd5e96380efe1e4b664305"
+    },
+    "rootfs/init": {
+      "sha256": "15d14172c5a0dcf89ad978e6ac1af892f903d9060145d8a30319f3017a2bcc0e"
+    },
+    "rootfs/opt/ec-dac/SHA256SUMS": {
+      "sha256": "bf54c77a82bd23df0fcf37bd7bec142eca9d637190a80517c6cc9aae7c1ac65f"
+    },
+    "rootfs/opt/ec-dac/blackscholes": {
+      "sha256": "434838ab31a3640e8830081879a4a1c2a5fe6640838a1320eab929fbdc226589"
+    },
+    "rootfs/opt/ec-dac/inputs/simsmall/in_4K.txt": {
+      "sha256": "d918de616ed1956757f19b25e27c6b1a27fbab560a058c5de1e9d479fa331c64"
+    },
+    "rootfs/opt/ec-dac/inputs/test/in_4.txt": {
+      "sha256": "9a40f4a6f4b96a32bb834333487d6dcec4436eceae7efbf836574aacb1e6ce46"
+    },
+    "rootfs/opt/ec-dac/manual-link.sh": {
+      "sha256": "88a046405cd8d4138d45890fee4cbcfc9221f65c6ea9e15fd823da0da02d7f70"
+    },
+    "rootfs/opt/ec-dac/roi-smoke": {
+      "sha256": "44e061b4116c3c715e1eab3a42ef8f7bb2aa67727c377aac1215c515255621c7"
+    },
+    "rootfs/opt/ec-dac/software-manifest.json": {
+      "sha256": "65afad9c3bc5620bf1a03d6e4fc8a99520c12f983883f531be8abfac18f16b88"
+    }
+  },
+  "error": null,
+  "commands": [
+    [
+      "/usr/bin/dtc",
+      "-I",
+      "dts",
+      "-O",
+      "dtb",
+      "-o",
+      "/data1/gzh/EC/firesim/dac2026/images/software-v3/B-boot-20261102T083720.765499Z/B-boot.dtb",
+      "/data1/gzh/EC/firesim/dac2026/images/software-v3/B-boot-20261102T083720.765499Z/B-boot.dts"
+    ]
+  ],
+  "dtc_sha256": "c2081684943decfc73c8fa7ed37aa0316889119bbd20eff7e430042ad2993828",
+  "status": "B_BASE_BOOT_PREREQUISITE_ONLY",
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN",
+  "software_dt_edits": [
+    "chosen console/interactive rdinit",
+    "lowercase existing ISA extension names",
+    "CPU0 200 MHz from audited generated clock schedule"
+  ],
+  "roi_candidate": true,
+  "static_smoke_software": true,
+  "not_included": [
+    "passive host measurement bridge",
+    "Linux/checker service",
+    "PARSEC batch backend/Python3",
+    "certified experiment image"
+  ]
+}

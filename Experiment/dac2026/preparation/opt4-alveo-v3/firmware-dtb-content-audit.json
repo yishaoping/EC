@@ -1,0 +1,33 @@
+{
+  "scope": "static content audit only; no target execution",
+  "old_result": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/firmware-20261102T080649.318315Z/result.json",
+  "old_result_sha256": "ac6e3296389ca0c8bbd90aee1a75bdfe60369005f458024c0cbee7240031ee18",
+  "old_make_returncode": 0,
+  "old_payload_dtb_offset": -1,
+  "old_integration_status": "REJECTED_DTB_NOT_EMBEDDED",
+  "cause": "FW_FDT_PATH silently ignored by vendored OpenSBI; use FW_PAYLOAD_FDT_PATH",
+  "source_evidence": [
+    "firmware/objects.mk:44",
+    "firmware/fw_payload.S:51",
+    "firmware/fw_payload.S:105"
+  ],
+  "corrected_result": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/firmware-20261102T081342.762467Z/result.json",
+  "corrected_result_sha256": "50bd0cab097a6498efcd42cc6f5caa8dd2009969566587288679c56bab066e1d",
+  "corrected_content_checks": {
+    "kernel_Image": {
+      "path": "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T080011.711422Z/arch/riscv/boot/Image",
+      "sha256": "fd3e8165ccb82ed927037c5b049bc34849b575638f65fdc6b244670992698e4d",
+      "size": 15524864,
+      "payload_offset": 2097152,
+      "exact_bytes_present": true
+    },
+    "fdt": {
+      "path": "/data1/gzh/EC/firesim/dac2026/images/software-v3/B-boot-20261102T075945.828284Z/B-boot.dtb",
+      "sha256": "cc066dfb9701266a257d341df353c55a1c5636110c6687c18923e7d5ccff332e",
+      "size": 3760,
+      "payload_offset": 1712,
+      "exact_bytes_present": true
+    }
+  },
+  "runtime_validation": "NOT_RUN"
+}

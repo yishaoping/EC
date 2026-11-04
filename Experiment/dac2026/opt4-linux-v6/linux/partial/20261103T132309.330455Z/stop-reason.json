@@ -1,0 +1,59 @@
+{
+  "utc": "2026-11-04T08:11:30.700817+00:00",
+  "status": "ACTIVELY_STOPPED_FOR_DIAGNOSED_EXCESSIVE_BOOT_TIME",
+  "valid": false,
+  "reason": "diagnosed finite 16 MiB mem_section root initialization; estimated remaining 43 hours; user authorizes new isolated diagnostic software",
+  "report": "/data1/gzh/EC/Experiment/dac2026/preparation/opt4-linux-v6/native-diagnosis-20261104/REPORT.zh.md",
+  "ownership_checks": {
+    "continuation": {
+      "pid": 1002289,
+      "argv": [
+        "python3",
+        "firesim/dac2026/scripts/continue_opt4_native.py",
+        "--smoke-attempt",
+        "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132309.330455Z",
+        "--test-attempt",
+        "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132500.630358Z"
+      ],
+      "kernel_started_at": "2026-11-03T13:25:34.700000+00:00",
+      "recorded_started_at": "2026-11-03T13:25:35.345126+00:00",
+      "uid": 1008,
+      "ppid": 3631542
+    },
+    "simulator": {
+      "pid": 982710,
+      "argv": [
+        "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T110754.343794Z/verilator/simulator-chipyard-DacLinuxC4",
+        "-s",
+        "1",
+        "+cycle-count",
+        "+verbose",
+        "+permissive",
+        "+dramsim",
+        "+dramsim_ini_dir=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/C4/chipyard/generators/testchipip/src/main/resources/dramsim2_ini",
+        "+uartlog=/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T132309.330455Z/uart",
+        "+max-cycles=200000000",
+        "+loadmem=/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/native-loadmem/08715be3947e0abee205087ca6a02417eb60fb968bc20590c999b0feedcef29c.hex",
+        "+loadmem_addr=0",
+        "+uart-pty",
+        "+permissive-off",
+        "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-htif/builds/native-HTIF-firmware-20261103T132214.897538Z/platform/generic/firmware/fw_payload.elf"
+      ],
+      "kernel_started_at": "2026-11-03T13:23:39.670000+00:00",
+      "recorded_started_at": "2026-11-03T13:23:40.224011+00:00",
+      "uid": 1008,
+      "ppid": 982695
+    },
+    "runner": {
+      "pid": 982695,
+      "argv": [
+        "python3",
+        "firesim/dac2026/scripts/opt4_linux_run.py",
+        "run",
+        "--attempt",
+        "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132309.330455Z"
+      ]
+    }
+  },
+  "automatic_restart": false
+}

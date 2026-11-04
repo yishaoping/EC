@@ -1,0 +1,79 @@
+{
+  "phase": "firmware",
+  "source_tree": "/data1/gzh/EC/firesim/dac2026/work/software-v3/opensbi",
+  "source_id": "ba806bac1c35a13384eb18ea30f828503a7469f67b14abe4318215ec4b542ad4",
+  "output_dir": "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/firmware-20261102T081342.762467Z",
+  "outputs": {
+    "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/firmware-20261102T081342.762467Z/platform/generic/firmware/fw_payload.elf": "6f9dcca1083cb58ca8b53e0e49723967ad2db83918bc3c7ef4a1303b8c913b1c",
+    "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/firmware-20261102T081342.762467Z/platform/generic/firmware/fw_payload.bin": "96612ba3e6273a1e47840fd499994a27db91b7d5c537b01909661216eb06e5b0"
+  },
+  "returncode": 0,
+  "error": null,
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/firmware-20261102T081342.762467Z",
+        "PLATFORM=generic",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "FW_PAYLOAD_PATH=/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T080011.711422Z/arch/riscv/boot/Image",
+        "FW_PAYLOAD_FDT_PATH=/data1/gzh/EC/firesim/dac2026/images/software-v3/B-boot-20261102T075945.828284Z/B-boot.dtb"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/software-v3/opensbi"
+    }
+  ],
+  "resources": {
+    "available_memory_gib": 253.61325454711914,
+    "free_disk_gib": 338.2533187866211,
+    "load_1min": 86.29345703125,
+    "host_cpus": 256,
+    "jobs": 2,
+    "make_jobs": 1,
+    "niceness": 15
+  },
+  "wall_seconds": 4.493194080889225,
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN",
+  "status": "BASE_PREREQUISITE_ONLY: no ROI/checker runtime or certified experiment image",
+  "build_script_sha256": "eb031f086eec2acfc74e7b85ebf40492938ab70b3bf8986f7afe91cb443a7305",
+  "busybox_config_sha256": "f168a232098128c405417448e6d746a4eab374967eaeadef29950d85af6ee470",
+  "kernel_result": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-alveo-v3/kernel-20261102T080011.711422Z/result.json",
+  "input_files": {
+    "/data1/gzh/EC/firesim/dac2026/images/software-v3/B-boot-20261102T075945.828284Z/B-boot.dtb": "cc066dfb9701266a257d341df353c55a1c5636110c6687c18923e7d5ccff332e"
+  },
+  "content_checks": {
+    "kernel_Image": {
+      "path": "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T080011.711422Z/arch/riscv/boot/Image",
+      "sha256": "fd3e8165ccb82ed927037c5b049bc34849b575638f65fdc6b244670992698e4d",
+      "size": 15524864,
+      "payload_offset": 2097152,
+      "exact_bytes_present": true
+    },
+    "fdt": {
+      "path": "/data1/gzh/EC/firesim/dac2026/images/software-v3/B-boot-20261102T075945.828284Z/B-boot.dtb",
+      "sha256": "cc066dfb9701266a257d341df353c55a1c5636110c6687c18923e7d5ccff332e",
+      "size": 3760,
+      "payload_offset": 1712,
+      "exact_bytes_present": true
+    }
+  },
+  "tool_hashes": {
+    "/usr/bin/gcc": "989fde76585d597fbabf73c62541faea7ffe3a28b7e45a2d1461449df9772e7b",
+    "/usr/bin/g++": "3acb6a5165a96e9b55935bf85242f380b850cccfad3e64697f1ec19dd272d4a3",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ld": "10424f5eeafd5806fbca7b88bdae336c202be5a9fa332c1a662a8d0a7ae62fba",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objcopy": "2a38397dae082b022b6370eb9fbfac9c337b95433fc89cb35d384516a0997f1e"
+  },
+  "environment_overrides": {
+    "PATH": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin:/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin:/usr/local/bin:/usr/bin:/bin",
+    "CONDA_PREFIX": "/data1/gzh/EC/firesim/envs/manager-1.17.1",
+    "CC": "/usr/bin/gcc",
+    "HOSTCC": "/usr/bin/gcc",
+    "HOSTCXX": "/usr/bin/g++",
+    "MAKEFLAGS": "-j2"
+  }
+}

@@ -1,0 +1,17 @@
+--- /data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T110754.343794Z/generated/gen-collateral/emulator.cc
++++ /data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36/builds/native-events-20261104T082240.723777Z/emulator.cc
+@@ -366,6 +366,14 @@
+       tfp->dump(static_cast<vluint64_t>(trace_count * 2 + 1));
+ #endif
+     trace_count++;
++#ifdef STAGE1_EXIT_PORTS
++    if ((trace_count & 0xffffU) == 0) {
++      fprintf(stderr, "EC_OPT4_SIM_PROGRESS cycle=%llx harness_cycle=%llx\n",
++              (unsigned long long)tile->io_stage1_cache_0,
++              (unsigned long long)trace_count);
++      fflush(stderr);
++    }
++#endif
+   }
+   // for verilator multithreading. need to do 1 loop before checking if
+   // tsi exists, since tsi is created by verilated thread on the first

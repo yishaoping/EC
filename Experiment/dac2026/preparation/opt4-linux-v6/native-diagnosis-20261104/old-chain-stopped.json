@@ -1,0 +1,206 @@
+{
+  "utc": "2026-11-04T08:28:00.189991+00:00",
+  "stage_b": {
+    "attempt": "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132309.330455Z",
+    "reason": {
+      "utc": "2026-11-04T08:11:30.700817+00:00",
+      "status": "ACTIVELY_STOPPED_FOR_DIAGNOSED_EXCESSIVE_BOOT_TIME",
+      "valid": false,
+      "reason": "diagnosed finite 16 MiB mem_section root initialization; estimated remaining 43 hours; user authorizes new isolated diagnostic software",
+      "report": "/data1/gzh/EC/Experiment/dac2026/preparation/opt4-linux-v6/native-diagnosis-20261104/REPORT.zh.md",
+      "ownership_checks": {
+        "continuation": {
+          "pid": 1002289,
+          "argv": [
+            "python3",
+            "firesim/dac2026/scripts/continue_opt4_native.py",
+            "--smoke-attempt",
+            "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132309.330455Z",
+            "--test-attempt",
+            "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132500.630358Z"
+          ],
+          "kernel_started_at": "2026-11-03T13:25:34.700000+00:00",
+          "recorded_started_at": "2026-11-03T13:25:35.345126+00:00",
+          "uid": 1008,
+          "ppid": 3631542
+        },
+        "simulator": {
+          "pid": 982710,
+          "argv": [
+            "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T110754.343794Z/verilator/simulator-chipyard-DacLinuxC4",
+            "-s",
+            "1",
+            "+cycle-count",
+            "+verbose",
+            "+permissive",
+            "+dramsim",
+            "+dramsim_ini_dir=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/C4/chipyard/generators/testchipip/src/main/resources/dramsim2_ini",
+            "+uartlog=/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T132309.330455Z/uart",
+            "+max-cycles=200000000",
+            "+loadmem=/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/native-loadmem/08715be3947e0abee205087ca6a02417eb60fb968bc20590c999b0feedcef29c.hex",
+            "+loadmem_addr=0",
+            "+uart-pty",
+            "+permissive-off",
+            "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-htif/builds/native-HTIF-firmware-20261103T132214.897538Z/platform/generic/firmware/fw_payload.elf"
+          ],
+          "kernel_started_at": "2026-11-03T13:23:39.670000+00:00",
+          "recorded_started_at": "2026-11-03T13:23:40.224011+00:00",
+          "uid": 1008,
+          "ppid": 982695
+        },
+        "runner": {
+          "pid": 982695,
+          "argv": [
+            "python3",
+            "firesim/dac2026/scripts/opt4_linux_run.py",
+            "run",
+            "--attempt",
+            "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132309.330455Z"
+          ]
+        }
+      },
+      "automatic_restart": false
+    },
+    "exit": {
+      "returncode": 255,
+      "identity": "b88c102b268ffddb3e93dc57b5c22b170d88ac858c1c7f696825ea104b4658e9",
+      "guest_command_sent": false,
+      "shutdown_sent": false
+    },
+    "valid": false,
+    "simulator_pid_absent": true
+  },
+  "old_stage_c": {
+    "attempt": "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132500.630358Z",
+    "disabled": {
+      "utc": "2026-11-04T08:11:30.700817+00:00",
+      "status": "ACTIVELY_STOPPED_FOR_DIAGNOSED_EXCESSIVE_BOOT_TIME",
+      "valid": false,
+      "reason": "diagnosed finite 16 MiB mem_section root initialization; estimated remaining 43 hours; user authorizes new isolated diagnostic software",
+      "report": "/data1/gzh/EC/Experiment/dac2026/preparation/opt4-linux-v6/native-diagnosis-20261104/REPORT.zh.md",
+      "ownership_checks": {
+        "continuation": {
+          "pid": 1002289,
+          "argv": [
+            "python3",
+            "firesim/dac2026/scripts/continue_opt4_native.py",
+            "--smoke-attempt",
+            "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132309.330455Z",
+            "--test-attempt",
+            "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132500.630358Z"
+          ],
+          "kernel_started_at": "2026-11-03T13:25:34.700000+00:00",
+          "recorded_started_at": "2026-11-03T13:25:35.345126+00:00",
+          "uid": 1008,
+          "ppid": 3631542
+        },
+        "simulator": {
+          "pid": 982710,
+          "argv": [
+            "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T110754.343794Z/verilator/simulator-chipyard-DacLinuxC4",
+            "-s",
+            "1",
+            "+cycle-count",
+            "+verbose",
+            "+permissive",
+            "+dramsim",
+            "+dramsim_ini_dir=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/C4/chipyard/generators/testchipip/src/main/resources/dramsim2_ini",
+            "+uartlog=/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T132309.330455Z/uart",
+            "+max-cycles=200000000",
+            "+loadmem=/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/native-loadmem/08715be3947e0abee205087ca6a02417eb60fb968bc20590c999b0feedcef29c.hex",
+            "+loadmem_addr=0",
+            "+uart-pty",
+            "+permissive-off",
+            "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-htif/builds/native-HTIF-firmware-20261103T132214.897538Z/platform/generic/firmware/fw_payload.elf"
+          ],
+          "kernel_started_at": "2026-11-03T13:23:39.670000+00:00",
+          "recorded_started_at": "2026-11-03T13:23:40.224011+00:00",
+          "uid": 1008,
+          "ppid": 982695
+        },
+        "runner": {
+          "pid": 982695,
+          "argv": [
+            "python3",
+            "firesim/dac2026/scripts/opt4_linux_run.py",
+            "run",
+            "--attempt",
+            "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132309.330455Z"
+          ]
+        }
+      },
+      "automatic_restart": false
+    },
+    "status": {
+      "pid": 1002289,
+      "started_at": "2026-11-03T13:25:35.345126+00:00",
+      "smoke_attempt": "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132309.330455Z",
+      "test_attempt": "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132500.630358Z",
+      "smoke_manifest_sha256": "0e4f0c889e11fbbe204726bf5cbef347814c9f478bee1b5bd1c89fd3d2db063e",
+      "test_manifest_sha256": "ca97e81593282a7673279fa1a5b9e6948af9fece57ad4913f194e3cd3162faa0",
+      "runner_sha256": "f6396ae8104b8c687a6dca807e623f14c04a35fb5963942d13a47e1df768c193",
+      "script_sha256": "8c8e7f3eb586b0a6449395f2a8a61bfc6bd72ed7715b501b5d0c9919321ba41d",
+      "status": "DISABLED_OLD_SMOKE_STOPPED_TEST_NOT_STARTED",
+      "no_fpga_device_access": true,
+      "process_table_polling": false,
+      "utc": "2026-11-04T08:11:30.700817+00:00",
+      "valid": false,
+      "reason": "diagnosed finite 16 MiB mem_section root initialization; estimated remaining 43 hours; user authorizes new isolated diagnostic software",
+      "report": "/data1/gzh/EC/Experiment/dac2026/preparation/opt4-linux-v6/native-diagnosis-20261104/REPORT.zh.md",
+      "ownership_checks": {
+        "continuation": {
+          "pid": 1002289,
+          "argv": [
+            "python3",
+            "firesim/dac2026/scripts/continue_opt4_native.py",
+            "--smoke-attempt",
+            "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132309.330455Z",
+            "--test-attempt",
+            "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132500.630358Z"
+          ],
+          "kernel_started_at": "2026-11-03T13:25:34.700000+00:00",
+          "recorded_started_at": "2026-11-03T13:25:35.345126+00:00",
+          "uid": 1008,
+          "ppid": 3631542
+        },
+        "simulator": {
+          "pid": 982710,
+          "argv": [
+            "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/builds/C4-native-20261102T110754.343794Z/verilator/simulator-chipyard-DacLinuxC4",
+            "-s",
+            "1",
+            "+cycle-count",
+            "+verbose",
+            "+permissive",
+            "+dramsim",
+            "+dramsim_ini_dir=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/C4/chipyard/generators/testchipip/src/main/resources/dramsim2_ini",
+            "+uartlog=/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261103T132309.330455Z/uart",
+            "+max-cycles=200000000",
+            "+loadmem=/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/native-loadmem/08715be3947e0abee205087ca6a02417eb60fb968bc20590c999b0feedcef29c.hex",
+            "+loadmem_addr=0",
+            "+uart-pty",
+            "+permissive-off",
+            "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/native-htif/builds/native-HTIF-firmware-20261103T132214.897538Z/platform/generic/firmware/fw_payload.elf"
+          ],
+          "kernel_started_at": "2026-11-03T13:23:39.670000+00:00",
+          "recorded_started_at": "2026-11-03T13:23:40.224011+00:00",
+          "uid": 1008,
+          "ppid": 982695
+        },
+        "runner": {
+          "pid": 982695,
+          "argv": [
+            "python3",
+            "firesim/dac2026/scripts/opt4_linux_run.py",
+            "run",
+            "--attempt",
+            "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/partial/20261103T132309.330455Z"
+          ]
+        }
+      },
+      "automatic_restart": false
+    },
+    "waiter_pid_absent": true,
+    "actual_test_started": false
+  }
+}

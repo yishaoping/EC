@@ -1,0 +1,171 @@
+{
+  "phase": "kernel",
+  "source_tree": "/data1/gzh/EC/firesim/dac2026/work/software-roi-v4-20261102T082148.459199Z/linux",
+  "source_id": "a5aebec983fb54ba3aa85856b0529be3dc8a1601b4b8b52ee7e94c99dc1b8855",
+  "output_dir": "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T084325.735858Z",
+  "outputs": {
+    "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T084325.735858Z/vmlinux": "453ab9c15aab657a7ae03b64e42d1933efea09c0f0e5ae6d9889d88042b00775",
+    "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T084325.735858Z/arch/riscv/boot/Image": "18e290cbeb3e9a7370104b994ba2cd7c84643e63d5c7c57aba60b505f857812e",
+    "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T084325.735858Z/.config": "26a822cad977b2317ca0057bb8073036206456dde77372449c1a3cf0834501ca"
+  },
+  "returncode": 0,
+  "error": null,
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T084325.735858Z",
+        "ARCH=riscv",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "defconfig"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/software-roi-v4-20261102T082148.459199Z/linux"
+    },
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "/data1/gzh/EC/firesim/dac2026/work/software-roi-v4-20261102T082148.459199Z/linux/scripts/config",
+        "--file",
+        "/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T084325.735858Z/.config",
+        "--disable",
+        "DRM",
+        "--disable",
+        "SOUND",
+        "--disable",
+        "NET",
+        "--disable",
+        "SCSI",
+        "--disable",
+        "ATA",
+        "--disable",
+        "USB_SUPPORT",
+        "--disable",
+        "PCI",
+        "--disable",
+        "VIRTIO",
+        "--disable",
+        "MODULES",
+        "--disable",
+        "BPF_SYSCALL",
+        "--disable",
+        "DEBUG_KERNEL",
+        "--disable",
+        "DEBUG_INFO",
+        "--disable",
+        "KALLSYMS",
+        "--enable",
+        "BLK_DEV_INITRD",
+        "--enable",
+        "DEVTMPFS",
+        "--enable",
+        "DEVTMPFS_MOUNT",
+        "--enable",
+        "PROC_FS",
+        "--enable",
+        "SYSFS",
+        "--enable",
+        "TMPFS",
+        "--enable",
+        "SERIAL_SIFIVE",
+        "--enable",
+        "SERIAL_SIFIVE_CONSOLE",
+        "--enable",
+        "UNIX98_PTYS",
+        "--enable",
+        "FUTEX",
+        "--enable",
+        "MULTIUSER",
+        "--enable",
+        "DEBUG_INFO_NONE",
+        "--disable",
+        "SMP",
+        "--enable",
+        "EC_DAC_ROI",
+        "--set-str",
+        "INITRAMFS_SOURCE",
+        "/data1/gzh/EC/firesim/dac2026/images/software-v3/B-boot-20261102T083720.765499Z/initramfs.cpio"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/software-roi-v4-20261102T082148.459199Z/linux"
+    },
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T084325.735858Z",
+        "ARCH=riscv",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "olddefconfig"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/software-roi-v4-20261102T082148.459199Z/linux"
+    },
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/dac2026/work/software-v3/builds/kernel-20261102T084325.735858Z",
+        "ARCH=riscv",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "Image",
+        "vmlinux"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/dac2026/work/software-roi-v4-20261102T082148.459199Z/linux"
+    }
+  ],
+  "resources": {
+    "available_memory_gib": 221.2218132019043,
+    "free_disk_gib": 332.47043228149414,
+    "load_1min": 91.72216796875,
+    "host_cpus": 256,
+    "jobs": 2,
+    "make_jobs": 1,
+    "niceness": 15
+  },
+  "wall_seconds": 346.17850822396576,
+  "target_execution": "NOT_RUN",
+  "runtime_validation": "NOT_RUN",
+  "status": "BASE_PREREQUISITE_ONLY: no target ROI controller/checker runtime or certified experiment image",
+  "build_script_sha256": "f165f76a8468e145ba872a65ecc2bd96b09a9b90a477f9546f38a1071fd8240a",
+  "busybox_config_sha256": "f168a232098128c405417448e6d746a4eab374967eaeadef29950d85af6ee470",
+  "kernel_result": null,
+  "input_files": {
+    "/data1/gzh/EC/firesim/dac2026/images/software-v3/B-boot-20261102T083720.765499Z/initramfs.cpio": "ad47bc87db90da005e49453e5d2f9e47f4a20941979078f3644ec1f57d612e65"
+  },
+  "content_checks": {
+    "roi_driver": {
+      "compiled_builtin": true,
+      "object_sha256": "0e8715bd4344f6d79b836efd9c99035e0ceba0e93cd21787072ef27ab95c8894",
+      "supported": [
+        "B"
+      ],
+      "target_controller": "NOT_IMPLEMENTED",
+      "runtime_validation": "NOT_RUN"
+    }
+  },
+  "tool_hashes": {
+    "/usr/bin/gcc": "989fde76585d597fbabf73c62541faea7ffe3a28b7e45a2d1461449df9772e7b",
+    "/usr/bin/g++": "3acb6a5165a96e9b55935bf85242f380b850cccfad3e64697f1ec19dd272d4a3",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ld": "10424f5eeafd5806fbca7b88bdae336c202be5a9fa332c1a662a8d0a7ae62fba",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objcopy": "2a38397dae082b022b6370eb9fbfac9c337b95433fc89cb35d384516a0997f1e"
+  },
+  "environment_overrides": {
+    "PATH": "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin:/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin:/usr/local/bin:/usr/bin:/bin",
+    "CONDA_PREFIX": "/data1/gzh/EC/firesim/envs/manager-1.17.1",
+    "CC": "/usr/bin/gcc",
+    "HOSTCC": "/usr/bin/gcc",
+    "HOSTCXX": "/usr/bin/g++",
+    "MAKEFLAGS": "-j2"
+  }
+}

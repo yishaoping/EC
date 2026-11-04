@@ -1,0 +1,41 @@
+{
+  "reason": "ACTIVELY_STOPPED_FOR_DIAGNOSED_EXCESSIVE_BOOT_TIME",
+  "valid": false,
+  "utc": "2026-11-04T09:24:46.947073+00:00",
+  "shutdown": "own scheduler TERM ended its managed execution session; exact bound runner and simulator are absent",
+  "process_identity": {
+    "pid": 1880149,
+    "started_at": "2026-11-04T08:52:45.249316+00:00",
+    "identity": "513ce3409eb4ff5681adecddc432c317d4883f93bcf74ef0e8fee453d00191ec",
+    "runner_pid": 1879980,
+    "profile": "diagnostic36",
+    "argv": [
+      "/usr/bin/stdbuf",
+      "-oL",
+      "-eL",
+      "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36/builds/native-events-20261104T082240.723777Z/simulator-chipyard-DacLinuxC4-events",
+      "-s",
+      "1",
+      "+cycle-count",
+      "+permissive",
+      "+dramsim",
+      "+dramsim_ini_dir=/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/C4/chipyard/generators/testchipip/src/main/resources/dramsim2_ini",
+      "+uartlog=/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261104T082633.251577Z/uart",
+      "+max-cycles=100000000",
+      "+loadmem=/data1/gzh/EC/firesim/dac2026/images/opt4-linux-v6/native-loadmem/12fe97ac4001280fdcbcd25142a6dcfb68bf18d757c26f575e588cb1d8255d02.hex",
+      "+loadmem_addr=0",
+      "+uart-pty",
+      "+permissive-off",
+      "/data1/gzh/EC/firesim/dac2026/work/opt4-linux-v6/diagnostic36/builds/diagnostic36-firmware-20261104T082438.141964Z/platform/generic/firmware/fw_payload.elf"
+    ],
+    "stdin_transport": "unused; command is bound to guest init",
+    "raw_dir": "/data1/gzh/EC/Experiment/dac2026/opt4-linux-v6/linux/raw/20261104T082633.251577Z"
+  },
+  "processes_absent": {
+    "pid": true,
+    "runner_pid": true
+  },
+  "scheduler_disabled": true,
+  "replacement_kernel": "diagnostic36-kernel-20261104T091749.449736Z",
+  "evidence": "Measured 214 cycles/s; old diagnostic still has 256MiB page metadata. New 32MiB/16MiB-section kernel built."
+}
