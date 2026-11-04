@@ -1814,7 +1814,11 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     s2_type === t_lsu && s2_req(0).uop.mem_cmd === M_XWR &&
     s2_req(0).traffic_cacheable && s2_req(0).packet_seq =/= 0.U &&
     s2_req(0).packet_seq > s2_overwrittenKey.contentSeq &&
-    s2_overwrittenKey.valid && !L1Preservation.safe(s2_overwrittenKey, safePacketWatermark) &&
+    // AGGRESSIVE_SAFE_SNAPSHOT: already-verified predecessors also need a
+    // durable copy before overwrite. Buffer their immutable bytes, then
+    // publish in the background instead of freezing L1 through ReleaseAck.
+    // SVB retains such captures across flush/epoch until matching ACK.
+    s2_overwrittenKey.valid &&
     // Both capture and legacy preservation use the single freeze descriptor.
     !crossPackagePending && !svbCapturePending && !svbFastLineValid && !svbEpochBoundary
   val svbEligible = svbEligibleCandidate && svb.io.capture.ready

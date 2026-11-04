@@ -55,6 +55,64 @@ static void expect_payload(unsigned seq, uint64_t line, unsigned gen) {
     check(d.io_promote_bits_data_3[i]==word(seq,i+12),"snapshot row3 bytes");
   }
 }
+static void reset_case() {
+  clear_inputs(); d.reset=1; for(int i=0;i<4;++i)tick(); d.reset=0; tick();
+}
+static void wait_payload(unsigned seq, uint64_t line, unsigned gen) {
+  for(int i=0;i<8 && !d.io_promote_valid;++i)tick();
+  check(d.io_promote_valid,"bounded publication progress");expect_payload(seq,line,gen);
+}
+static void complete(unsigned seq,unsigned gen) {
+  const unsigned entry=d.io_promote_bits_entry;
+  d.io_promote_ready=1;tick();d.io_promote_ready=0;
+  d.io_ack_bits_entry=entry;d.io_ack_bits_key_valid=1;d.io_ack_bits_key_writer=7;
+  d.io_ack_bits_key_generation=gen;d.io_ack_bits_key_contentSeq=seq;
+  d.io_ack_valid=1;d.eval();check(d.io_acked,"exact publication ACK");
+  tick();d.io_ack_valid=0;d.eval();
+}
+static void safe_publication_cases() {
+  // Flush before scheduler selection must retain already-safe bytes. Resetting
+  // epoch/sequence to the same values is also a boundary, not a new owner.
+  for(unsigned seq: {0u,3u}) {
+    reset_case();d.io_safeWatermark=3;capture(seq,0x80001000ull,300+seq);
+    d.io_flush=1;d.io_invalidate_valid=1;d.io_invalidate_bits=0;
+    tick();d.io_flush=0;d.io_invalidate_valid=0;d.io_safeWatermark=0;
+    d.io_currentEpoch=seq?1:0;d.io_releaseLines_0=0x80001000ull;d.eval();
+    check(d.io_occupancy==1 && !d.io_capture_ready,"safe SPEC survives epoch reset; admission drains");
+    wait_payload(seq,0x80001000ull,300+seq);
+    for(int i=0;i<1024;++i) {
+      check(d.io_releaseBlocked_0 && !d.io_capture_ready,"safe owner blocks younger release/capture");
+      expect_payload(seq,0x80001000ull,300+seq);tick();
+    }
+    complete(seq,300+seq);tick();
+    check(d.io_occupancy==0 && d.io_capture_ready && !d.io_releaseBlocked_0,"boundary drains after ACK");
+  }
+  // A safe-at-capture owner can coalesce into a later snapshot that became
+  // safe after capture. The successor inherits the durable obligation.
+  reset_case();d.io_safeWatermark=1;capture(1,0x80002000ull,401);
+  wait_payload(1,0x80002000ull,401); // Keep unrelated WB arbitration blocked.
+  d.io_safeWatermark=2;capture(2,0x80003000ull,402);
+  capture(3,0x80003000ull,403);d.io_safeWatermark=3;d.eval();
+  check(d.io_coalesced==1,"new safe successor coalesces predecessor");tick();
+  check(d.io_occupancy==2,"coalesce retains active owner and one successor");
+  d.io_flush=1;d.io_invalidate_valid=1;d.io_invalidate_bits=0;tick();
+  d.io_flush=0;d.io_invalidate_valid=0;d.io_safeWatermark=0;d.io_currentEpoch=1;
+  check(d.io_occupancy==2,"successor inherits safe publication across FAIL/flush");
+  complete(1,401);wait_payload(3,0x80003000ull,403);complete(3,403);tick();
+  check(d.io_occupancy==0 && d.io_capture_ready,"all inherited publication obligations ACKed");
+  // Coincident flush/coalesce must not lose the safe source to a successor
+  // that is being discarded. Unsafe same-line bytes are never published.
+  reset_case();d.io_safeWatermark=1;capture(1,0x80002000ull,501);
+  wait_payload(1,0x80002000ull,501);
+  d.io_safeWatermark=2;capture(2,0x80003000ull,502);capture(3,0x80003000ull,503);
+  d.io_safeWatermark=3;d.io_flush=1;d.eval();
+  check(d.io_coalesced==0,"flush suppresses unsafe coalescing target");tick();
+  d.io_flush=0;d.io_safeWatermark=0;d.io_currentEpoch=1;
+  check(d.io_occupancy==2,"safe source retained while non-obligated SPEC discarded");
+  complete(1,501);wait_payload(2,0x80003000ull,502);complete(2,502);tick();
+  check(d.io_occupancy==0,"safe source published once");
+  std::puts("PASS safe_SPEC_flush=2048 same_epoch_reset=1 inherited_publication=1 simultaneous_flush_coalesce=1");
+}
 int main(int argc,char**argv) {
   Verilated::commandArgs(argc,argv); clear_inputs(); d.reset=1;
   for(int i=0;i<4;++i)tick(); d.reset=0; tick();
@@ -100,6 +158,7 @@ int main(int argc,char**argv) {
   if(argc>1) { tick(); std::fprintf(stderr,"FAIL: wrong ACK escaped assertion\n");return 2; }
   check(d.io_acked,"matching ACK accepted");tick();d.io_ack_valid=0;d.eval();
   check(d.io_occupancy==0 && !d.io_releaseBlocked_0,"only matching ACK reclaims WB owner");
+  tick(); // boundary admission reopens after the retained owner has drained
   // Multiple versions of one line: rollback removes newer bytes, old payload
   // remains exact and is the one selected after its real safe boundary.
   capture(5,0x80000400ull,205);capture(6,0x80000400ull,206);
@@ -110,5 +169,6 @@ int main(int argc,char**argv) {
   for(int i=0;i<8 && !d.io_promote_valid;++i)tick();
   check(d.io_promote_valid,"rollback predecessor selected");expect_payload(5,0x80000400ull,205);
   std::printf("PASS persistent_full=1024 promote_backpressure=1024 delayed_ack=1024 same_line_rollback=512 checks=%u\n",checks);
+  safe_publication_cases();
   d.final();return 0;
 }

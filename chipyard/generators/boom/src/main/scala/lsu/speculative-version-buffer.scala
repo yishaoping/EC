@@ -36,8 +36,8 @@ class SpeculativeVersionCompletion(entryBits: Int)(implicit p: Parameters) exten
 }
 
 /**
-  * A bounded, global associative buffer for the one case in which the old
-  * L1 image is an unsafe predecessor of a younger same-line store.
+  * A bounded, global associative buffer for immutable predecessors of
+  * younger same-line stores, including already-verified local images.
   *
   * Entries never participate in ordinary L1 load selection.  A watermark
   * classifies them safe; the largest safe package sequence is selected for
@@ -103,11 +103,25 @@ class SpeculativeVersionBuffer(val entries: Int)
   val line = Reg(Vec(entries, UInt(coreMaxAddrBits.W)))
   val key = Reg(Vec(entries, new CacheImageKey))
   val epoch = Reg(Vec(entries, UInt(16.W)))
+  // Safe at capture is an irrevocable publication obligation, independent of
+  // later speculative epochs/watermarks. Its bytes may already have been
+  // overwritten in L1. Never flush this copy before ACK or a newer safe copy.
+  val safeAtCapture = RegInit(VecInit(Seq.fill(entries)(false.B)))
   val param = Reg(Vec(entries, UInt(TLPermissions.cWidth.W)))
   val data = Reg(Vec(entries, Vec(refillCycles, UInt(encRowBits.W))))
   val active = RegInit(false.B)
   val activeIdx = Reg(UInt(log2Ceil(entries).W))
   val sent = RegInit(false.B)
+  // Session reset can reuse epoch/sequence values. Drain retained publication
+  // owners before admitting any new-epoch captures, even if the epoch number
+  // itself was reset to the same value. Normal same-line releases are already
+  // interlocked by releaseBlocked until the final matching ACK.
+  val epochDraining = RegInit(false.B)
+  when (io.flush && valid.asUInt.orR) {
+    epochDraining := true.B
+  }.elsewhen (!valid.asUInt.orR) {
+    epochDraining := false.B
+  }
 
   val freeVec = VecInit((0 until entries).map(i => !valid(i)))
   for (q <- 0 until 4) {
@@ -120,12 +134,13 @@ class SpeculativeVersionBuffer(val entries: Int)
   }
   val freeAny = freeVec.asUInt.orR
   val allocOH = PriorityEncoderOH(freeVec.asUInt)
-  io.capture.ready := freeAny && !io.flush
+  io.capture.ready := freeAny && !io.flush && !epochDraining
 
   val entrySafe = VecInit((0 until entries).map(i =>
-    valid(i) && state(i) === stSpec && epoch(i) === io.currentEpoch &&
-      (!key(i).valid || key(i).contentSeq === 0.U ||
-       key(i).contentSeq <= io.safeWatermark)))
+    valid(i) && state(i) === stSpec && (safeAtCapture(i) ||
+      (epoch(i) === io.currentEpoch &&
+       (!key(i).valid || key(i).contentSeq === 0.U ||
+        key(i).contentSeq <= io.safeWatermark)))))
 
   val entryAge = RegInit(VecInit(Seq.fill(entries)(0.U(32.W))))
   val entryAgeReported = RegInit(VecInit(Seq.fill(entries)(false.B)))
@@ -252,6 +267,9 @@ class SpeculativeVersionBuffer(val entries: Int)
         line(i) := io.capture.bits.line
         key(i) := io.capture.bits.key
         epoch(i) := io.capture.bits.epoch
+        safeAtCapture(i) := !io.capture.bits.key.valid ||
+          io.capture.bits.key.contentSeq === 0.U ||
+          io.capture.bits.key.contentSeq <= io.safeWatermark
         param(i) := io.capture.bits.param
         data(i) := io.capture.bits.data
         printf("SVB_ENTRY_ALLOC cycle=%x entry=%x line=%x seq=%x generation=%x epoch=%x state=SPEC\n",
@@ -264,7 +282,7 @@ class SpeculativeVersionBuffer(val entries: Int)
   when (io.selected) {
     assert(valid(chooseIdx) && state(chooseIdx) === stSpec,
       "SVB scheduler reselected WB_WAIT or invalid entry")
-    assert(epoch(chooseIdx) === io.currentEpoch,
+    assert(safeAtCapture(chooseIdx) || epoch(chooseIdx) === io.currentEpoch,
       "SVB selected a stale-epoch entry")
     active := true.B
     activeIdx := chooseIdx
@@ -278,6 +296,7 @@ class SpeculativeVersionBuffer(val entries: Int)
   // line.  WB entries are deliberately excluded: until their ACK they still
   // own a valid lower-level recovery copy.
   val coalesce = VecInit((0 until entries).map(i => entrySafe(i) &&
+    !io.flush && !io.invalidate.valid &&
     (0 until entries).map(j => entrySafe(j) && line(i) === line(j) &&
       key(i).writer === key(j).writer &&
       (key(i).contentSeq < key(j).contentSeq ||
@@ -285,9 +304,19 @@ class SpeculativeVersionBuffer(val entries: Int)
         key(i).generation < key(j).generation))).reduce(_ || _)))
   io.coalesced := PopCount(coalesce)
   io.discarded := PopCount((0 until entries).map(i => valid(i) && state(i) === stSpec &&
-    !coalesce(i) && (io.flush || (io.invalidate.valid && key(i).valid &&
+    !safeAtCapture(i) && !coalesce(i) && (io.flush || (io.invalidate.valid && key(i).valid &&
       key(i).contentSeq > io.invalidate.bits))))
   for (i <- 0 until entries) {
+    // Transfer an irrevocable obligation to every newer safe successor. This
+    // includes the final survivor if intermediate successors coalesce on the
+    // same edge. Flush/invalidate cannot delete that successor on this edge.
+    val inheritsPublication = (0 until entries).map(j => coalesce(j) &&
+      safeAtCapture(j) && entrySafe(i) && line(j) === line(i) &&
+      key(j).writer === key(i).writer &&
+      (key(j).contentSeq < key(i).contentSeq ||
+       (key(j).contentSeq === key(i).contentSeq &&
+        key(j).generation < key(i).generation))).reduce(_ || _)
+    when (inheritsPublication) { safeAtCapture(i) := true.B }
     when (coalesce(i)) {
       valid(i) := false.B
       state(i) := stFree
@@ -314,7 +343,7 @@ class SpeculativeVersionBuffer(val entries: Int)
   // promotion; a WB entry is retained until its ACK in all cases.
   when (io.invalidate.valid) {
     for (i <- 0 until entries) {
-      when (valid(i) && state(i) === stSpec &&
+      when (valid(i) && state(i) === stSpec && !safeAtCapture(i) &&
         key(i).valid && key(i).contentSeq > io.invalidate.bits) {
         valid(i) := false.B
         state(i) := stFree
@@ -323,7 +352,7 @@ class SpeculativeVersionBuffer(val entries: Int)
   }
   when (io.flush) {
     for (i <- 0 until entries) {
-      when (state(i) === stSpec) {
+      when (state(i) === stSpec && !safeAtCapture(i)) {
         valid(i) := false.B
         state(i) := stFree
       }
@@ -354,7 +383,7 @@ class SpeculativeVersionBuffer(val entries: Int)
     CacheOpportunityObservation.lineHash(data(activeIdx).toSeq, encRowBits),
     CacheOpportunityObservation.lineHash(io.promote.bits.data.toSeq, encRowBits)))
   for (i <- 0 until entries) {
-    val discard = valid(i) && state(i) === stSpec && !coalesce(i) &&
+    val discard = valid(i) && state(i) === stSpec && !safeAtCapture(i) && !coalesce(i) &&
       (io.flush || (io.invalidate.valid && key(i).valid && key(i).contentSeq > io.invalidate.bits))
     val complete = io.acked && activeIdx === i.U
     val terminal = coalesce(i) || discard || complete
