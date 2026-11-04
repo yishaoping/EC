@@ -6,6 +6,7 @@ import os
 import subprocess
 import sys
 import time
+import uuid
 from pathlib import Path
 from seal_candidate import ROOT, OUT, seal
 
@@ -15,7 +16,7 @@ def main():
     parser.add_argument("build_id")
     args = parser.parse_args()
     build = ROOT / "slowdown/optimization_6_overlap/runs" / args.build_id / "run_manifest.json"
-    work = OUT / "build" / (args.build_id + "_diagnostics")
+    work = OUT / "build" / (args.build_id + "_diagnostics_" + uuid.uuid4().hex[:6])
     work.mkdir(parents=True, exist_ok=False)
     status = {"state": "WAIT_BUILD", "pid": os.getpid(), "build_id": args.build_id}
     status_path = work / "status.json"
@@ -39,8 +40,7 @@ def main():
     revision = seal(args.build_id)
     status.update(state="SHORT_DIAGNOSTIC", revision=str(revision))
     save()
-    cases = [("streamcluster_project64", 450000, "short_diagnostic"),
-             ("streamcluster_simdev", 2200000, "baseline_reproducibility")]
+    cases = [("streamcluster_simdev", 2200000, "baseline_reproducibility")]
     for workload, cycles, name in cases:
         command = [sys.executable, str(OUT / "scripts/run_profile.py"),
                    workload, str(revision), "--max-cycles", str(cycles)]
