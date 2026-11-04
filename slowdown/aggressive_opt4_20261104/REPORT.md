@@ -10,7 +10,7 @@ read-only backup remain unchanged.
 
 | Workload | Native | Check | Frozen Correction | C1 | C2 |
 |---|---:|---:|---:|---:|---:|
-| Blackscholes project64 | 5,920,394 | 5,952,831 | 6,165,734 | 6,114,946 | running |
+| Blackscholes project64 | 5,920,394 | 5,952,831 | 6,165,734 | 6,114,946 | 6,114,946 |
 | Streamcluster project64 | 2,281,930 | 2,499,121 | 3,706,513 | 3,547,466 | 3,441,485 |
 | Canneal project400 | 310,942 | 419,398 | 668,878 | 548,437 | 489,737 |
 | BFS 512/8192/source0 | 1,001,675 | N/A | 1,128,052 | 1,125,574 | 1,126,805 |
@@ -20,6 +20,19 @@ No new version can inherit an older version's performance result. Build and
 simulation launches consult the machine-readable experiment index. Successful
 raw results are immutable inputs; new work uses fresh directories. Native,
 Check, frozen Correction and C1/C2 results are reused.
+
+C2 completed naturally, exit0, checker1138 PASS/0 FAIL/0 CANCELLED on
+Blackscholes, software/checker/protocol/integrity/data-ordering PASS and zero
+assertion/failure markers. Blackscholes C2/Native=1.032861326459016,
+C2/Check=1.0272332609476063; no improvement over C1,0.8237137703313135%
+fewer cycles than frozen Correction. Streamcluster C2/Native=1.5081466127357106,
+C2/Check=1.37707818068833; Canneal1.5750107737134256 and1.1677141998769665.
+All three improve over frozen Correction (0.823714%,7.150332%,26.782313%).
+PARSEC geometric means: Check/Native1.1409544124080222,
+frozen Correction/Native1.5381132128814299, C1/Native1.4148218762996656,
+C2/Native1.3487238460653828, C2/Check1.1821014331491617. BFS is excluded.
+Exact source artifacts and validation summaries are retained in
+`reference_results.json`; no simulation was relaunched to obtain them.
 
 ## Measured bottleneck and candidate A: buffer verified predecessors
 
@@ -75,6 +88,10 @@ ownership: it cannot receive final recovery acceptance without an actual
 historical-state restoration test. Component payload/ACK/flush tests are scoped
 separately and will not be described as architectural rollback. Existing
 recovery evidence is preserved in the validation worktree, not repeated.
+The stricter C2 probe (`real_checker_fault_20261104_083111`) completed exit0
+without any `RECOVERY_INJECT` record: its required simultaneous persistent
+unsafe snapshot, positive watermark, WB_WAIT and active ARF comparison was
+not exercised. It is a coverage failure, not a rollback pass.
 
 ## Rejected or deferred directions
 
