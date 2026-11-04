@@ -133,3 +133,22 @@ persistent historical-version recovery tests and a complete flush/epoch
 ownership design. The existing no-fault tests do not establish that broader
 recovery property. No ACK, preservation, flush, epoch or reclamation control
 has been relaxed in candidate 1.
+
+## Baseline complete and capture-host repair
+
+Baseline simdev exactly reproduces 1,452,774 application cycles, 1,094,668
+retired instructions and checksum 5e0eed7ac7af71fb. All 525 packages have
+complete checker-work intervals; protocol, integrity, data ordering, SourceC
+and snapshot ledgers pass. Original capture/analysis remain FAIL because the
+host producer dictionary retained its old 128-identity cap while observer
+identities had been raised to 144. The missing final statistics are only
+optional identities 4:4, 5:3 and 5:4. No missing producer totals are fabricated:
+a separate immutable reanalysis retains their unobserved metadata status,
+checks independent emitted-event footers against the sealed logger/RTL limit,
+and reclassifies only the proved optional-metadata error. Unchanged validators
+then PASS. See baseline/capture_reanalysis_proof.json and the separate analysis
+directory in baseline/profile_reproducibility.json. Original raw evidence is
+untouched. The collector now shares IDENTITY_LIMIT=144 for both dictionaries,
+retains bounded malformed-record diagnostics, and rejects identity 145 in a
+directed host test. The waiting candidate driver was superseded before it
+launched any simulation; its replacement uses the qualified baseline analysis.

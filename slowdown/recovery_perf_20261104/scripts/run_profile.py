@@ -19,6 +19,8 @@ def main():
     p.add_argument("revision", type=Path)
     p.add_argument("--max-cycles", type=int, default=10000000)
     args = p.parse_args()
+    runner_sha = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+    capture_sha = hashlib.sha256(Path(run_pilot.compact_capture.__file__).read_bytes()).hexdigest()
     # A bounded 64 MiB event budget (72 MiB including other streams) retains
     # full-session work counters plus the periodic main-core/cache samples.
     base_router = run_pilot.compact_capture.Router
@@ -44,7 +46,7 @@ def main():
     manifest_path = run / "run_manifest.json"
     manifest = json.loads(manifest_path.read_text())
     manifest["profiling_capture_policy"] = {
-        "runner_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "runner_sha256": runner_sha, "capture_sha256": capture_sha,
         "event_limit_bytes": 64 * 1024 * 1024,
         "mandatory_checker_work_kinds": [11, 12]}
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")

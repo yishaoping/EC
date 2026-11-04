@@ -16,6 +16,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("revision", type=Path)
     args = parser.parse_args()
+    capture_sha = hashlib.sha256(Path(bfs.compact_capture.__file__).read_bytes()).hexdigest()
     base_router = bfs.compact_capture.Router
     class Router(base_router):
         def __init__(self, directory):
@@ -58,6 +59,7 @@ def main():
               "accepted_packages": len(accepted), "closed_counter_intervals": len(closed),
               "checked_instructions": sum(r["nums"][13] for r in closed.values()),
               "scope": "full protected session, not hart0 rdinstret",
+              "capture_sha256": capture_sha,
               "runner_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
     (run / "full_checker_work.json").write_text(json.dumps(result, indent=2) + "\n")
     (run / "stall_profile.json").write_text(json.dumps(report(run), indent=2) + "\n")

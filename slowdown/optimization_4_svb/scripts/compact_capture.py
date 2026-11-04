@@ -16,6 +16,7 @@ EVENT_LIMIT = 48 * 1024 * 1024
 DIAGNOSTIC_LIMIT = 2 * 1024 * 1024  # each of stdout/stderr
 OPPORTUNITY_LIMIT = 4 * 1024 * 1024
 MAX_RECORD = 65536
+IDENTITY_LIMIT = 144
 POLICY = 'priority_reserved_v2'
 RING_EVENT_PREFIXES = (
     b'FASTLINE_', b'WB_', b'PROBE_', b'MSHR_', b'PRESERVATION_', b'PRESERVATION ',
@@ -69,6 +70,7 @@ class Router:
         self.counts, self.sizes = Counter(), Counter()
         self.observers, self.producers = {}, {}
         self.incomplete_reasons = set()
+        self.producer_parse_errors = []
         self.warned = set()
         self.optional_omitted = 0
         self.buffers = {0: b'', 1: b''}
@@ -89,7 +91,7 @@ class Router:
     def observer(self, kind, hart):
         key = f'{kind}:{hart}'
         if key not in self.observers:
-            if len(self.observers) >= 144:
+            if len(self.observers) >= IDENTITY_LIMIT:
                 self.incomplete('too_many_observer_identities')
                 key = 'other'
             self.observers.setdefault(key, dict(seen=0, kept=0, omitted=0, events_seen=0, footers_seen=0))
@@ -190,7 +192,7 @@ class Router:
         try:
             kind, hart = int(p[1]), int(p[2]); key=f'{kind}:{hart}'
             if not 0 <= kind < 256 or not 0 <= hart < 65536:raise ValueError('invalid producer identity')
-            if len(self.producers) >= 128 and key not in self.producers:
+            if len(self.producers) >= IDENTITY_LIMIT and key not in self.producers:
                 raise ValueError('too many producers')
             if p[0] == b'SC_LIMIT' and len(p) == 6:
                 emitted, limit, critical = map(unsigned, p[3:])
@@ -206,8 +208,12 @@ class Router:
                 self.producers.setdefault(key, {}).update(produced=produced, emitted=emitted, omitted=omitted, limit=limit)
                 if omitted and not optional_event(kind, hart):self.incomplete('mandatory_producer_limit')
             else:raise ValueError('malformed producer statistics')
-        except (ValueError, IndexError):
+        except (ValueError, IndexError) as exc:
             self.incomplete('malformed_producer_statistics')
+            self.counts['producer_parse_errors_seen'] += 1
+            if len(self.producer_parse_errors) < 8:
+                self.producer_parse_errors.append(dict(reason=str(exc),
+                    record=line[:1024].decode('utf-8', errors='replace')))
 
     def line(self, line, stream):
         if len(line) > MAX_RECORD:
@@ -295,6 +301,7 @@ class Router:
                 p.get('omitted',0) or p.get('limit_seen') for k,p in self.producers.items()
                 if k!='other' and optional_event(*map(int,k.split(':')))),
             incomplete_reasons=sorted(self.incomplete_reasons),
+            producer_parse_errors=self.producer_parse_errors,
             optional_records_omitted=self.optional_omitted, observers=self.observers, producers=self.producers,
             event_budgets=dict(self.budgets), event_bytes_by_class=dict(self.used),
             sizes=dict(self.sizes), counts=dict(self.counts), event_limit_bytes=self.event_limit,
