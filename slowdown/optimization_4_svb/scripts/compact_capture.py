@@ -89,7 +89,7 @@ class Router:
     def observer(self, kind, hart):
         key = f'{kind}:{hart}'
         if key not in self.observers:
-            if len(self.observers) >= 128:
+            if len(self.observers) >= 144:
                 self.incomplete('too_many_observer_identities')
                 key = 'other'
             self.observers.setdefault(key, dict(seen=0, kept=0, omitted=0, events_seen=0, footers_seen=0))

@@ -4314,6 +4314,38 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   safeChainLog(50, Seq(1.U) ++ overlapCacheCounts.toSeq ++ overlapLsuCounts ++ Seq(0.U),
     0.U, overlapTrafficStop, true.B)
 
+  // RECOVERY_PERF_OBSERVATION_ONLY: physical request blocking exposure.
+  // Reasons may overlap; only core SC52 is a mutually exclusive partition.
+  val recoveryPerfCacheEvents = Seq(
+    true.B, io.lsu.req.valid && !io.lsu.req.ready,
+    io.lsu.req.valid && lsu_clear_freeze_set_conflict,
+    io.lsu.req.valid && !lsu_pipeline_ready,
+    s2_valid(0) && s2_nack(0),
+    s2_valid(0) && isWrite(s2_raw_req(0).uop.mem_cmd) && s2_write_busy,
+    l1CrossPackageBlocked, crossPackagePending, svbCapturePending,
+    mshrs.io.req(0).valid && !mshrs.io.req(0).ready,
+    s2_valid(0) && s2_nack_victim(0),
+    mshrs.io.replay.valid && !mshrs.io.replay.ready,
+    svbFullFallback, wb.io.pending_idx.valid && wb.io.pending_sent,
+    s2_valid(0) && s2_owner_block(0),
+    s2_valid(0) && s2_nack_hit(0), s2_valid(0) && s2_nack_data(0),
+    mshrs.io.refill.fire, crossPackageWbReq.fire, svb.io.capture.fire,
+    svb.io.promote.fire, s3_effect_fire,
+    io.lsu.req.fire, mshrs.io.req(0).fire,
+    mshrs.io.owner_line_valid.asUInt.orR,
+    mshrs.io.install.valid && !mshrs.io.install.ready,
+    tl_out.a.fire, tl_out.c.fire, tl_out.d.fire,
+    svb.io.occupancy === nSVBEntries.U)
+  val recoveryPerfCacheCounts = RegInit(VecInit(Seq.fill(recoveryPerfCacheEvents.size)(0.U(64.W))))
+  when (safeChainRoi) {
+    for ((event, i) <- recoveryPerfCacheEvents.zipWithIndex) {
+      when (event) { recoveryPerfCacheCounts(i) := recoveryPerfCacheCounts(i) + 1.U }
+    }
+  }
+  for (page <- 0 until 2) {
+    safeChainLog(53 + page, Seq(1.U) ++ recoveryPerfCacheCounts.slice(page*15, (page+1)*15),
+      0.U, io.csr_cycle(9,0) === 0.U, true.B)
+  }
   // RETAINED_COPY_OBSERVATION_ONLY: exactly one additional STOP identity,
   // bringing this candidate to the existing 128-identity capture limit.
   val retainedCopyEvents = Seq(true.B, crossPackageWbReq.fire,

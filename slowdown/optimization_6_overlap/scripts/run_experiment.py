@@ -25,6 +25,7 @@ CHIPYARD = ROOT / "chipyard"
 BASE_HEAD = "2ea467ba0"
 SOFTWARE = Path("/data1/gzh/EC/check/software_common_builds/gapbs512_20261023_03")
 REVIEWED = {
+    "chipyard/generators/boom/src/main/scala/exu/core.scala",
     "chipyard/generators/rocket-chip/src/main/scala/rocket/Frontend.scala",
     "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala",
     "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala",

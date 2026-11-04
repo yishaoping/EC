@@ -2113,6 +2113,32 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   val producerSealTargetSeq = ic_master.io.closing_seq
   ic_master.io.close_tail_ready := io.producer_seal_ready
   rob.io.gh_stall := io.gh_stall || rsu_stall.asBool || ic_stall.asBool || io.big_hang
+  // RECOVERY_PERF_OBSERVATION_ONLY: cumulative BOOM-cycle partition.
+  // No counter or logger output participates in control. Samples are clipped
+  // offline to the exact application ROI; boundary uncertainty is explicit.
+  val (recoveryPerfCycle, recoveryPerfEnable) = SafeChainObservation.context()
+  val recoveryPerfNoCommit = !rob.io.commit.valids.asUInt.orR
+  val recoveryPerfReasons = Seq(io.gh_stall, rsu_stall.asBool, ic_stall.asBool,
+    io.big_hang, snapshot_dispatch_block, csr.io.csr_stall, !rob.io.empty)
+  val recoveryPerfPrimary = recoveryPerfReasons.indices.map(i =>
+    recoveryPerfNoCommit && recoveryPerfReasons(i) &&
+      !recoveryPerfReasons.take(i).foldLeft(false.B)(_ || _)) :+
+    (recoveryPerfNoCommit && !recoveryPerfReasons.foldLeft(false.B)(_ || _))
+  val recoveryPerfEvents = Seq(true.B, !recoveryPerfNoCommit) ++ recoveryPerfPrimary ++
+    Seq(io.gh_stall, rsu_stall.asBool, ic_stall.asBool, snapshot_dispatch_block)
+  val recoveryPerfCounts = RegInit(VecInit(Seq.fill(recoveryPerfEvents.size)(0.U(64.W))))
+  when (recoveryPerfEnable) {
+    for ((event, i) <- recoveryPerfEvents.zipWithIndex) {
+      when (event) { recoveryPerfCounts(i) := recoveryPerfCounts(i) + 1.U }
+    }
+  }
+  val recoveryPerfInsts = RegInit(0.U(64.W))
+  when (recoveryPerfEnable) {
+    recoveryPerfInsts := recoveryPerfInsts + PopCount(rob.io.commit.arch_valids)
+  }
+  SafeChainObservation.emit(52, clock, reset.asBool, recoveryPerfCycle,
+    recoveryPerfCycle, 0.U, recoveryPerfEnable, recoveryPerfCycle(9,0) === 0.U,
+    Seq(1.U) ++ recoveryPerfCounts.toSeq ++ Seq(recoveryPerfInsts), 0.U, true.B)
   // SLOWDOWN_TRACE_BEGIN: observation-only; no functional consumers.
   val slowdown_gate_gh = chisel3.WireInit(io.gh_stall)
   chisel3.dontTouch(slowdown_gate_gh)
