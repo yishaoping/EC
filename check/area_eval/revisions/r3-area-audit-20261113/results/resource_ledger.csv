@@ -1,0 +1,15 @@
+resource,classification,R2_treatment,audit_conclusion,possible_credit_not_applied,evidence
+"Native cores, ordinary Cache data/tag/coherence, shared interconnect",REUSED_COMMON,Not charged in R2 increment,No duplication found,,check/source/.../Directory.scala:27; palimpsest.sv:17
+L1/L2 Seq32,POTENTIALLY_DUPLICATED_IF_ADDED_TO_FROZEN_EC,Present once in modeled46-bit sidecar,"Frozen image.contentSeq already exists; keep one copy, but not proof PEEK owns it",Candidate part of 557568 overlap bits,CacheImage.scala:12; Directory.scala:38; dcache.scala:734
+Recovery Epoch4 and CurGen8 and Cur1,NEW_DESIGN_RESOURCE,13 bits per modeled cache line,No demonstrated semantically equivalent frozen fields,,"palimpsest.sv:29,75; CacheImage.scala:12"
+Preserve receipt1 per line,REUSE_OR_MODIFY,Charged once in46-bit sidecar,Existing frozen exact-key receipt; do not stack both,Candidate part of 557568 overlap bits,Directory.scala:42; dcache.scala:736
+L1/L2 selection/store logic,NEW_OR_REPLACES_CONTROL,1347 and9933 GE including sidecar wrapper,Appears once; subtract old controller only with actual evidence,,R2 results/synthesis/seq32/*/result.json
+SW bitmap,REUSE_OR_MODIFY,1168 GE prototype charged in R2,Frozen bitmap256 exists; WINDOW16 recovery behavior is different,0.0008176 proxy only; not applied to PEEK,"dcache.scala:737,1745; palimpsest.sv:285"
+Version preservation and visibility controllers,MODIFY_OR_REPLACE,Two instances each in R2,Existing frozen contracts overlap; keep actual old/new differential unknown,,"dcache.scala:26; CacheImage.scala:25; palimpsest.sv:107,159"
+PEEK snapshot capture/checker CPS/ECP and LSL data,REUSED_COMMON,No second payload in R2 increment,"8 retained contexts are distinct lifetime, not duplicate free checkpoint slots",,R_RSU.scala:60; R_RSUSL.scala:81; R_LSL.scala:63
+Recovery context pool,NEW_CONDITIONAL,40960 RAM +4034.5 GE,8x80x64 sizing assumption retained; no unsupported capacity cut,,palimpsest.sv:357
+LSL reclaim descriptors,NEW_CONDITIONAL_OR_REDUNDANT,22162 GE,FIFO already consumes; evidence does not prove whole new block can be deleted,,R_LSL.scala:119; palimpsest.sv:219
+EVT and rollback controller,NEW_DESIGN_RESOURCE,70647 and499 GE,"Register/logic counted as GE, not SRAM bits",,"palimpsest.sv:29,317"
+Frozen SVB data/key and existing wide image/slot state,EXISTING_EC_NOT_PEEK,Not included as independent extra block in R2,Not a valid PEEK credit; may be omitted actual PAL resource if retained,,"speculative-version-buffer.scala:15,107; CacheImage.scala:12"
+SRAM macro internal periphery/packing,ASSUMED_NOT_MEASURED,25 percent uplift applied once,Could overlap if0.40 was already full effective macro density; no such source established,,"config/scenarios.json:14,17"
+Copy/data adapters and arbitration etc,OMITTED_FROM_PRIMITIVE_MODEL,No area charged,Recognize estimation uncertainty only; no implementation work this round,,R2 reports/rtl_coverage.md

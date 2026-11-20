@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/usr/bin/spike",
+    "-p1",
+    "-m1024",
+    "--isa=rv64gc_zicntr_zihpm",
+    "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/fluidanimate_real_advanceparticles_norelax/native.riscv"
+  ],
+  "created_utc": "2026-11-12T09:04:05.455937+00:00",
+  "functional_only": true,
+  "log": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/fluid-advance-norelax-functional.log",
+  "log_sha256": "ae061e630f05fff3f93d01a5485e00c5db598966ed8e8818d2d872aabd5a1927",
+  "manifest_sha256": "5f09584bf189aed6a3cb289583dd66a4b7fb58e294a674eaf5211d7586e2c5eb",
+  "passed": true,
+  "rows": [
+    "[ROI] hart=0 start=64493 stop=96108 cycles=31615",
+    "[IRQ] policy=main_timer_disabled before=0 after=0 mie=0",
+    "[OUTPUT] benchmark=fluidanimate checksum=7e6601a6fa3f9829 verified=1 particles=64 values=576 phase=AdvanceParticles grid_cells=4725",
+    "[APP] protected=0 start=64493 end=96108 cycles=31615 instret=31613 session_stop=96108",
+    "[END] hart=0 status=PASS"
+  ]
+}

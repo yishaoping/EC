@@ -1,0 +1,784 @@
+{
+  "seq16": {
+    "l1_metadata": {
+      "fingerprint": "b77b771fa461d68feece686797584b085c1ac2f29d33a79d1ffadb112d62062c",
+      "top": "pal_metadata_ram",
+      "parameters": {
+        "SETS": 256,
+        "WAYS": 2,
+        "SEQ_W": 16
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.355,
+      "cell_counts": {
+        "$_AND_": 78,
+        "AREA_RAM_1": 1
+      },
+      "dff_bits": 0,
+      "ge": {
+        "sequential": 0.0,
+        "combinational": 78.0
+      },
+      "total_ge_excluding_ram": 78.0,
+      "memories": [
+        {
+          "cell": "mem",
+          "width": 60,
+          "depth": 256,
+          "bits": 15360,
+          "read_ports": 1,
+          "write_ports": 2
+        }
+      ],
+      "memory_bits": 15360,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "l2_metadata": {
+      "fingerprint": "0003fe4488596ecdf2a63397dc9f2c590033107b44bafd5159a33e891c730e2c",
+      "top": "pal_metadata_ram",
+      "parameters": {
+        "SETS": 1024,
+        "WAYS": 16,
+        "SEQ_W": 16
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 2.735,
+      "cell_counts": {
+        "$_AND_": 656,
+        "AREA_RAM_1": 1
+      },
+      "dff_bits": 0,
+      "ge": {
+        "sequential": 0.0,
+        "combinational": 656.0
+      },
+      "total_ge_excluding_ram": 656.0,
+      "memories": [
+        {
+          "cell": "mem",
+          "width": 480,
+          "depth": 1024,
+          "bits": 491520,
+          "read_ports": 1,
+          "write_ports": 16
+        }
+      ],
+      "memory_bits": 491520,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "selector_l1": {
+      "fingerprint": "ac486dd983d4868a61871727dbee80af8e14c75839380dae68e7f47dc454ecb5",
+      "top": "pal_version_select",
+      "parameters": {
+        "WAYS": 2,
+        "SEQ_W": 16
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.407,
+      "cell_counts": {
+        "$_AND_": 191,
+        "$_OR_": 204,
+        "$_XOR_": 33,
+        "$_NOT_": 83,
+        "$_MUX_": 9
+      },
+      "dff_bits": 0,
+      "ge": {
+        "sequential": 0.0,
+        "combinational": 529.5
+      },
+      "total_ge_excluding_ram": 529.5,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "selector_l2": {
+      "fingerprint": "062f3c77bfc26ee475cdb3a5c9d6c266130a0e4c6fef3b276b8ceda8befe82c2",
+      "top": "pal_version_select",
+      "parameters": {
+        "WAYS": 16,
+        "SEQ_W": 16
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 1.483,
+      "cell_counts": {
+        "$_AND_": 1485,
+        "$_OR_": 1447,
+        "$_XOR_": 315,
+        "$_NOT_": 563,
+        "$_MUX_": 246
+      },
+      "dff_bits": 0,
+      "ge": {
+        "sequential": 0.0,
+        "combinational": 4581.5
+      },
+      "total_ge_excluding_ram": 4581.5,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "store_l1": {
+      "fingerprint": "ac486dd983d4868a61871727dbee80af8e14c75839380dae68e7f47dc454ecb5",
+      "top": "pal_store_policy",
+      "parameters": {
+        "WAYS": 2,
+        "SEQ_W": 16
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.361,
+      "cell_counts": {
+        "$_NOT_": 35,
+        "$_AND_": 58,
+        "$_OR_": 59,
+        "$_XOR_": 6
+      },
+      "dff_bits": 0,
+      "ge": {
+        "sequential": 0.0,
+        "combinational": 146.5
+      },
+      "total_ge_excluding_ram": 146.5,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "store_l2": {
+      "fingerprint": "062f3c77bfc26ee475cdb3a5c9d6c266130a0e4c6fef3b276b8ceda8befe82c2",
+      "top": "pal_store_policy",
+      "parameters": {
+        "WAYS": 16,
+        "SEQ_W": 16
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.398,
+      "cell_counts": {
+        "$_NOT_": 63,
+        "$_AND_": 106,
+        "$_OR_": 106,
+        "$_XOR_": 9,
+        "$_MUX_": 2
+      },
+      "dff_bits": 0,
+      "ge": {
+        "sequential": 0.0,
+        "combinational": 267.5
+      },
+      "total_ge_excluding_ram": 267.5,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "preserve": {
+      "fingerprint": "3b2d7189e01e066fe51101d9d9a3d8a1fd81c7ef5208f1f93ee73e7cfcd07000",
+      "top": "pal_preserve",
+      "parameters": {
+        "SEQ_W": 16
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.41,
+      "cell_counts": {
+        "$_NOT_": 111,
+        "$_AND_": 253,
+        "$_OR_": 176,
+        "$_XOR_": 44,
+        "$_MUX_": 62,
+        "$_DFF_P_": 76
+      },
+      "dff_bits": 76,
+      "ge": {
+        "sequential": 456.0,
+        "combinational": 758.5
+      },
+      "total_ge_excluding_ram": 1214.5,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "visibility": {
+      "fingerprint": "3b2d7189e01e066fe51101d9d9a3d8a1fd81c7ef5208f1f93ee73e7cfcd07000",
+      "top": "pal_visibility",
+      "parameters": {
+        "SEQ_W": 16
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.295,
+      "cell_counts": {
+        "$_NOT_": 36,
+        "$_OR_": 49,
+        "$_AND_": 35,
+        "$_XOR_": 13
+      },
+      "dff_bits": 0,
+      "ge": {
+        "sequential": 0.0,
+        "combinational": 128.0
+      },
+      "total_ge_excluding_ram": 128.0,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "reclaim": {
+      "fingerprint": "d75f93a773fa96589e41fd09ddc6e45d84f196202c16db0caf0f5e1450d77180",
+      "top": "pal_lsl_reclaim",
+      "parameters": {
+        "SLOTS": 8,
+        "SEQ_W": 16
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.671,
+      "cell_counts": {
+        "$_NOT_": 94,
+        "$_OR_": 283,
+        "$_AND_": 395,
+        "$_MUX_": 432,
+        "$_XOR_": 10,
+        "$_DFF_P_": 327
+      },
+      "dff_bits": 327,
+      "ge": {
+        "sequential": 1962.0,
+        "combinational": 2041.0
+      },
+      "total_ge_excluding_ram": 4003.0,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "evt": {
+      "fingerprint": "a8a13f31bc872a1664a445f84037265d01fb20f217ccdd0947932396fb360620",
+      "top": "pal_evt",
+      "parameters": {
+        "QUERIES": 16,
+        "SEQ_W": 16
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 5.266,
+      "cell_counts": {
+        "$_NOT_": 1968,
+        "$_AND_": 5970,
+        "$_OR_": 5710,
+        "$_XOR_": 425,
+        "$_MUX_": 6390,
+        "$_DFF_P_": 532
+      },
+      "dff_bits": 532,
+      "ge": {
+        "sequential": 3192.0,
+        "combinational": 32684.0
+      },
+      "total_ge_excluding_ram": 35876.0,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "sw": {
+      "fingerprint": "3b2d7189e01e066fe51101d9d9a3d8a1fd81c7ef5208f1f93ee73e7cfcd07000",
+      "top": "pal_safe_watermark",
+      "parameters": {
+        "SEQ_W": 16
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.574,
+      "cell_counts": {
+        "$_NOT_": 57,
+        "$_AND_": 212,
+        "$_OR_": 163,
+        "$_MUX_": 21,
+        "$_XOR_": 31,
+        "$_DFF_P_": 36
+      },
+      "dff_bits": 36,
+      "ge": {
+        "sequential": 216.0,
+        "combinational": 528.5
+      },
+      "total_ge_excluding_ram": 744.5,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "rollback": {
+      "fingerprint": "3b2d7189e01e066fe51101d9d9a3d8a1fd81c7ef5208f1f93ee73e7cfcd07000",
+      "top": "pal_rollback",
+      "parameters": {
+        "SEQ_W": 16
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.358,
+      "cell_counts": {
+        "$_NOT_": 16,
+        "$_AND_": 67,
+        "$_OR_": 36,
+        "$_MUX_": 16,
+        "$_XOR_": 1,
+        "$_DFF_P_": 27
+      },
+      "dff_bits": 27,
+      "ge": {
+        "sequential": 162.0,
+        "combinational": 161.0
+      },
+      "total_ge_excluding_ram": 323.0,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "context": {
+      "fingerprint": "9be5b472e157df9131af2aa1ca90a0cb83fa4d0bc4c39a570297fed200e59bca",
+      "top": "pal_context_store",
+      "parameters": {
+        "SLOTS": 8,
+        "WORDS": 80,
+        "SEQ_W": 16
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.664,
+      "cell_counts": {
+        "$_NOT_": 68,
+        "$_OR_": 101,
+        "$_MUX_": 320,
+        "$_AND_": 244,
+        "$_XOR_": 22,
+        "$_DFF_P_": 181,
+        "AREA_RAM_1": 1
+      },
+      "dff_bits": 181,
+      "ge": {
+        "sequential": 1086.0,
+        "combinational": 1383.0
+      },
+      "total_ge_excluding_ram": 2469.0,
+      "memories": [
+        {
+          "cell": "mem",
+          "width": 64,
+          "depth": 640,
+          "bits": 40960,
+          "read_ports": 1,
+          "write_ports": 1
+        }
+      ],
+      "memory_bits": 40960,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    }
+  },
+  "seq32": {
+    "l1_metadata": {
+      "fingerprint": "3fade61a9f350ca39ef0200932a3a5687a5705b5ccb8ffce6a9476f82e53b820",
+      "top": "pal_metadata_ram",
+      "parameters": {
+        "SETS": 256,
+        "WAYS": 2,
+        "SEQ_W": 32
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.358,
+      "cell_counts": {
+        "$_AND_": 110,
+        "AREA_RAM_1": 1
+      },
+      "dff_bits": 0,
+      "ge": {
+        "sequential": 0.0,
+        "combinational": 110.0
+      },
+      "total_ge_excluding_ram": 110.0,
+      "memories": [
+        {
+          "cell": "mem",
+          "width": 92,
+          "depth": 256,
+          "bits": 23552,
+          "read_ports": 1,
+          "write_ports": 2
+        }
+      ],
+      "memory_bits": 23552,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "l2_metadata": {
+      "fingerprint": "4be01cfebcf8c413b9d83186dc7db0ff0aa903b986bee2987672514d7956183d",
+      "top": "pal_metadata_ram",
+      "parameters": {
+        "SETS": 1024,
+        "WAYS": 16,
+        "SEQ_W": 32
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 5.301,
+      "cell_counts": {
+        "$_AND_": 912,
+        "AREA_RAM_1": 1
+      },
+      "dff_bits": 0,
+      "ge": {
+        "sequential": 0.0,
+        "combinational": 912.0
+      },
+      "total_ge_excluding_ram": 912.0,
+      "memories": [
+        {
+          "cell": "mem",
+          "width": 736,
+          "depth": 1024,
+          "bits": 753664,
+          "read_ports": 1,
+          "write_ports": 16
+        }
+      ],
+      "memory_bits": 753664,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "selector_l1": {
+      "fingerprint": "2c1e700e99ed0616ecd48d47bbc27cf66c32f37aed0bdfbeed7e0c23f322a415",
+      "top": "pal_version_select",
+      "parameters": {
+        "WAYS": 2,
+        "SEQ_W": 32
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.509,
+      "cell_counts": {
+        "$_NOT_": 164,
+        "$_OR_": 398,
+        "$_AND_": 354,
+        "$_XOR_": 53,
+        "$_MUX_": 17
+      },
+      "dff_bits": 0,
+      "ge": {
+        "sequential": 0.0,
+        "combinational": 991.0
+      },
+      "total_ge_excluding_ram": 991.0,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "selector_l2": {
+      "fingerprint": "28e84927982c1479b051351df53bc9e8ba28ccc202c407231e23523288626e84",
+      "top": "pal_version_select",
+      "parameters": {
+        "WAYS": 16,
+        "SEQ_W": 32
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 2.554,
+      "cell_counts": {
+        "$_NOT_": 936,
+        "$_OR_": 2669,
+        "$_AND_": 2815,
+        "$_XOR_": 610,
+        "$_MUX_": 481
+      },
+      "dff_bits": 0,
+      "ge": {
+        "sequential": 0.0,
+        "combinational": 8615.0
+      },
+      "total_ge_excluding_ram": 8615.0,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "store_l1": {
+      "fingerprint": "2c1e700e99ed0616ecd48d47bbc27cf66c32f37aed0bdfbeed7e0c23f322a415",
+      "top": "pal_store_policy",
+      "parameters": {
+        "WAYS": 2,
+        "SEQ_W": 32
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.363,
+      "cell_counts": {
+        "$_NOT_": 68,
+        "$_AND_": 95,
+        "$_OR_": 97,
+        "$_XOR_": 10
+      },
+      "dff_bits": 0,
+      "ge": {
+        "sequential": 0.0,
+        "combinational": 246.0
+      },
+      "total_ge_excluding_ram": 246.0,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "store_l2": {
+      "fingerprint": "28e84927982c1479b051351df53bc9e8ba28ccc202c407231e23523288626e84",
+      "top": "pal_store_policy",
+      "parameters": {
+        "WAYS": 16,
+        "SEQ_W": 32
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.46,
+      "cell_counts": {
+        "$_NOT_": 92,
+        "$_AND_": 159,
+        "$_OR_": 166,
+        "$_XOR_": 16,
+        "$_MUX_": 1
+      },
+      "dff_bits": 0,
+      "ge": {
+        "sequential": 0.0,
+        "combinational": 406.0
+      },
+      "total_ge_excluding_ram": 406.0,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "preserve": {
+      "fingerprint": "dfb2a19c9e7b988237b4ba7535de65df42ca217324e5ebab780cd8d6355acb47",
+      "top": "pal_preserve",
+      "parameters": {
+        "SEQ_W": 32
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.51,
+      "cell_counts": {
+        "$_NOT_": 136,
+        "$_AND_": 334,
+        "$_OR_": 239,
+        "$_XOR_": 53,
+        "$_MUX_": 78,
+        "$_DFF_P_": 92
+      },
+      "dff_bits": 92,
+      "ge": {
+        "sequential": 552.0,
+        "combinational": 981.0
+      },
+      "total_ge_excluding_ram": 1533.0,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "visibility": {
+      "fingerprint": "dfb2a19c9e7b988237b4ba7535de65df42ca217324e5ebab780cd8d6355acb47",
+      "top": "pal_visibility",
+      "parameters": {
+        "SEQ_W": 32
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.307,
+      "cell_counts": {
+        "$_NOT_": 56,
+        "$_OR_": 106,
+        "$_AND_": 69,
+        "$_XOR_": 19
+      },
+      "dff_bits": 0,
+      "ge": {
+        "sequential": 0.0,
+        "combinational": 241.0
+      },
+      "total_ge_excluding_ram": 241.0,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "reclaim": {
+      "fingerprint": "edc0ced6aac6aeda1a31a2ea937254245865e4b21a28d0ed94a2a105888c72f2",
+      "top": "pal_lsl_reclaim",
+      "parameters": {
+        "SLOTS": 8,
+        "SEQ_W": 32
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.719,
+      "cell_counts": {
+        "$_NOT_": 135,
+        "$_AND_": 597,
+        "$_OR_": 436,
+        "$_MUX_": 560,
+        "$_XOR_": 15,
+        "$_DFF_P_": 455
+      },
+      "dff_bits": 455,
+      "ge": {
+        "sequential": 2730.0,
+        "combinational": 2810.5
+      },
+      "total_ge_excluding_ram": 5540.5,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "evt": {
+      "fingerprint": "44d62528afe7c6ede3d1b92ddca1ab861301eba601802714d451590e04d74f47",
+      "top": "pal_evt",
+      "parameters": {
+        "QUERIES": 16,
+        "SEQ_W": 32
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 11.299,
+      "cell_counts": {
+        "$_NOT_": 4048,
+        "$_OR_": 11582,
+        "$_MUX_": 12115,
+        "$_AND_": 12256,
+        "$_XOR_": 1088,
+        "$_DFF_P_": 1044
+      },
+      "dff_bits": 1044,
+      "ge": {
+        "sequential": 6264.0,
+        "combinational": 64383.0
+      },
+      "total_ge_excluding_ram": 70647.0,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "sw": {
+      "fingerprint": "dfb2a19c9e7b988237b4ba7535de65df42ca217324e5ebab780cd8d6355acb47",
+      "top": "pal_safe_watermark",
+      "parameters": {
+        "SEQ_W": 32
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.732,
+      "cell_counts": {
+        "$_NOT_": 102,
+        "$_AND_": 367,
+        "$_OR_": 272,
+        "$_MUX_": 18,
+        "$_XOR_": 56,
+        "$_DFF_P_": 52
+      },
+      "dff_bits": 52,
+      "ge": {
+        "sequential": 312.0,
+        "combinational": 856.0
+      },
+      "total_ge_excluding_ram": 1168.0,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "rollback": {
+      "fingerprint": "dfb2a19c9e7b988237b4ba7535de65df42ca217324e5ebab780cd8d6355acb47",
+      "top": "pal_rollback",
+      "parameters": {
+        "SEQ_W": 32
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.354,
+      "cell_counts": {
+        "$_NOT_": 16,
+        "$_OR_": 52,
+        "$_AND_": 83,
+        "$_MUX_": 32,
+        "$_XOR_": 1,
+        "$_DFF_P_": 43
+      },
+      "dff_bits": 43,
+      "ge": {
+        "sequential": 258.0,
+        "combinational": 241.0
+      },
+      "total_ge_excluding_ram": 499.0,
+      "memories": [],
+      "memory_bits": 0,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    },
+    "context": {
+      "fingerprint": "c607cafec754378455f2760bbeb398df4d9ab9f6e9ef55b060f9f30b72e9516b",
+      "top": "pal_context_store",
+      "parameters": {
+        "SLOTS": 8,
+        "WORDS": 80,
+        "SEQ_W": 32
+      },
+      "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+      "seconds": 0.767,
+      "cell_counts": {
+        "$_NOT_": 83,
+        "$_OR_": 128,
+        "$_MUX_": 557,
+        "$_AND_": 274,
+        "$_XOR_": 33,
+        "$_DFF_P_": 309,
+        "AREA_RAM_1": 1
+      },
+      "dff_bits": 309,
+      "ge": {
+        "sequential": 1854.0,
+        "combinational": 2180.5
+      },
+      "total_ge_excluding_ram": 4034.5,
+      "memories": [
+        {
+          "cell": "mem",
+          "width": 64,
+          "depth": 640,
+          "bits": 40960,
+          "read_ports": 1,
+          "write_ports": 1
+        }
+      ],
+      "memory_bits": 40960,
+      "area_mm2": null,
+      "critical_path_ns": null,
+      "evidence_level": "GENERIC_SYNTHESIS_WITH_ASSUMED_GE_WEIGHTS_NO_PDK"
+    }
+  }
+}

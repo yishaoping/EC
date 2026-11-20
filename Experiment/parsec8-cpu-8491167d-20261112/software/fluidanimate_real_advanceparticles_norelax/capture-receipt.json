@@ -1,0 +1,24 @@
+{
+  "after_sha256": "94a15f7483efe1dc10afb68e60b1b2b163e6a22768ef75475e19f3b859f6fad7",
+  "before_sha256": "a4a7e13c2d4349efc4d735d1da696d523bbf6e671d5cdb524d70b1052fee7977",
+  "capture_binary_sha256": "309905a41d49a40cc2127cbac651066e43037bf59c0ced595eb73e13173669e4",
+  "cells": 4725,
+  "command": [
+    "/usr/bin/g++",
+    "-O2",
+    "-ffp-contract=off",
+    "-I/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/fluidanimate_real_advanceparticles_norelax/source",
+    "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/fluidanimate_real_advanceparticles_norelax/source/original-serial-host.cpp",
+    "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/fluidanimate_real_advanceparticles_norelax/source/cellpool.cpp",
+    "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/fluidanimate_real_advanceparticles_norelax/source/capture-main.cpp",
+    "-o",
+    "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/fluidanimate_real_advanceparticles_norelax/capture-host"
+  ],
+  "created_utc": "2026-11-12T09:03:31.208110+00:00",
+  "max_per_cell": 4,
+  "nonempty_cells": 41,
+  "original_phase": "void AdvanceParticles()\n{\n  for(int i = 0; i < numCells; ++i)\n  {\n    Cell *cell = &cells[i];\n    int np = cnumPars[i];\n    for(int j = 0; j < np; ++j)\n    {\n      Vec3 v_half = cell->hv[j % PARTICLES_PER_CELL] + cell->a[j % PARTICLES_PER_CELL]*timeStep;\n#if defined(USE_ImpeneratableWall)\n\t  // N.B. The integration of the position can place the particle\n\t  // outside the domain. Although we could place a test in this loop\n\t  // we would be unnecessarily testing particles on interior cells.\n\t  // Therefore, to reduce the amount of computations we make a later\n\t  // pass on the perimiter cells to account for particle migration\n\t  // beyond domain\n#endif\n      cell->p[j % PARTICLES_PER_CELL] += v_half * timeStep;\n      cell->v[j % PARTICLES_PER_CELL] = cell->hv[j % PARTICLES_PER_CELL] + v_half;\n      cell->v[j % PARTICLES_PER_CELL] *= 0.5;\n      cell->hv[j % PARTICLES_PER_CELL] = v_half;\n\n      //move pointer to next cell in list if end of array is reached\n      if(j % PARTICLES_PER_CELL == PARTICLES_PER_CELL-1) {\n        cell = cell->next;\n      }\n    }\n  }\n}\n",
+  "original_phase_sha256": "b1f946b87a9c5405eb392ff942d959473fa17920d2ad694b6ba70821e5a71f1d",
+  "parent_manifest_sha256": "7c2ef68532bf629c62b82b73c42d7e7b2ad7642339dc4d9ff2c2fb9de1f79a2e",
+  "particles": 64
+}

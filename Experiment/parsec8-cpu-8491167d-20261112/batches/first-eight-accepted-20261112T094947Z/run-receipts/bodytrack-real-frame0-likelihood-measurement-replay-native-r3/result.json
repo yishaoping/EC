@@ -1,0 +1,51 @@
+{
+  "active_host_seconds": 136.82368148001842,
+  "application_rows": [
+    "[ROI] hart=0 start=83335 stop=209264 cycles=125929",
+    "[IRQ] policy=main_timer_disabled before=0 after=0 mie=8",
+    "[OUTPUT] benchmark=bodytrack checksum=21b75907ca97c215 verified=1 cameras=4 frame=0 pose=initial components=edge_inside",
+    "[APP] protected=0 start=83335 end=209264 cycles=125929 instret=81179 session_stop=209264",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "bodytrack",
+  "binding_sha256": "09a89d568fe1078cd0f3b9faf5a1ef63d30f1cbdebb5065d2ce941fb1c70f951",
+  "completed_utc": "2026-11-12T07:02:15.135582+00:00",
+  "drain_cycles": null,
+  "faults": [],
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_seconds": 136.82350259297527,
+  "interrupt_policy": {
+    "check": "[IRQ] before/after timer_flags and mie; no main timer increment inside ROI",
+    "checker_harts": "unchanged frozen firmware",
+    "main_hart_timer": "MTIE cleared before workload_prepare in both modes"
+  },
+  "interrupt_policy_verified": true,
+  "manifest_sha256": "a3b108ab7a327506cc1a285fed49f9d0809b3e2cbdf2fc8ff01d727bb5ef34a2",
+  "method": "CPU_GG_REAL_TRACE_COMPONENT_REPLAY",
+  "mode": "native",
+  "output": [
+    "benchmark=bodytrack checksum=21b75907ca97c215 verified=1 cameras=4 frame=0 pose=initial components=edge_inside"
+  ],
+  "profile": "real-frame0-likelihood-measurement-replay",
+  "raw_log_sha256": "51be779c58bf6adc737368dbd6522c9143571f7f1407a8a3e2992b32a7ca3b96",
+  "repeat": 3,
+  "resource_pressure_paused_seconds": 0,
+  "returncode": 0,
+  "roi_cycles": 125929,
+  "roi_end_csr": 209264,
+  "roi_instructions": 81179,
+  "roi_start_csr": 83335,
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/bodytrack-real-frame0-likelihood-measurement-replay-native-r3",
+  "simulation_slot": "native-aux",
+  "software_correct": true,
+  "status": "PASS",
+  "stop_cause": null,
+  "strict_acceptance": null,
+  "strict_acceptance_error": null,
+  "strict_detection_latency_cycles": null,
+  "svb_events": null,
+  "total_fastest_target_cycles": 320002,
+  "valid": true
+}

@@ -1,0 +1,63 @@
+{
+  "args": [
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-matched-single-boom-gg-r1-20261112/host/VMatchingNative",
+    "+permissive",
+    "+max-cycles=1000000",
+    "+fesvr-step-size=1000",
+    "+mm_readLatency_0=30",
+    "+mm_readMaxReqs_0=4",
+    "+mm_relaxFunctionalModel_0=0",
+    "+mm_writeLatency_0=30",
+    "+mm_writeMaxReqs_0=4",
+    "+heartbeat-polling-interval=1000",
+    "+print-file=/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/blackscholes-project64-one-iteration-no-main-timer-native-r3/rtl-prints-",
+    "+ec-dac-roi-log=/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/blackscholes-project64-one-iteration-no-main-timer-native-r3/roi-raw.jsonl",
+    "+ec-dac-snapshot-seconds=20",
+    "+permissive-off",
+    "+prog0=/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/blackscholes_no_main_timer/native.riscv"
+  ],
+  "binary_sha256": "9b09d88e468078265d0002bcfeea56de5b5513bee912f3a5363a919006b72e40",
+  "cpu_affinity": [
+    201
+  ],
+  "effective_host_timeout_seconds": 14400,
+  "elf": {
+    "path": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/blackscholes_no_main_timer/native.riscv",
+    "sha256": "85e5044382e87bdc95a4aaada99c6473aa4d2ea6b7e2c182fec4a1f7829f89dd"
+  },
+  "execution_policy": {
+    "extra_slot_pressure_guard": {
+      "max_global_busy_fraction": 0.65,
+      "max_sibling_busy_fraction": 0.2,
+      "minimum_available_memory_bytes": 68719476736,
+      "poll_seconds": 10
+    },
+    "host_timeout_floor_seconds": 14400,
+    "max_ec_simulators_after_all_native_first_runs": 4,
+    "native_repeat_prefetch_policy": "Only first-round comparable profiles after all eight first EC dispatches; CPU201 gives every ready EC task priority; CPU locks keep at most four simulator models",
+    "raw_log_limit_bytes": 4294967296,
+    "reason": "Observed EC throughput is about 400-450 target cycles/sec. A 4M-cycle manifest cannot reach its target cap in the original 3600 sec host budget. Extend host scheduling budget only; application, ROI, target-cycle caps, model and memory settings remain bound by the unchanged manifest.",
+    "resident_limit_bytes": 17179869184,
+    "resource_basis": "Read-only /proc/stat samples 2026-11-12: host busy 24.08%, MemAvailable223603652KiB; selected extra logical CPUs202/208 and physical siblings74/80 observed idle. Extra simulators yield by nice19 and pause themselves under sibling/global/memory pressure.; CPU208 retired after sustained sibling80 pressure. CPU204/sibling76 sampled idle for10s in audit/cpu204-relocation-resource-sample.json; fresh attempts use204 under unchanged guard.",
+    "resource_policy_revision": 3,
+    "schema": "parsec8-cpu-execution-policy/1",
+    "simulators_per_cpu": 1,
+    "simulators_total": 4,
+    "slot_assignment": "CPU201 EC, or Native repeat prefetch while all first-round EC work is dispatched and no EC task is ready; CPU200 Native or auxiliary EC; CPU202/204 guarded EC"
+  },
+  "execution_policy_sha256": "2bef9ca451fb1e9a66c931e5c1ab2162e6f76884d3b41017d3ea7c9e804dcd07",
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "manifest": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/blackscholes_no_main_timer/manifest.json",
+  "manifest_sha256": "3cc799d5f0e689791f77147f1401e5f28b91921962385d31e81534e4de68bedc",
+  "memory": [
+    "+mm_readLatency_0=30",
+    "+mm_readMaxReqs_0=4",
+    "+mm_relaxFunctionalModel_0=0",
+    "+mm_writeLatency_0=30",
+    "+mm_writeMaxReqs_0=4"
+  ],
+  "runner_sha256": "04a6c2091b9926662da3ee9422b76cfa8179f3c9bec473a569b9b81a6b9bff56",
+  "simulation_slot": "native-aux",
+  "started_utc": "2026-11-12T06:58:39.152273+00:00"
+}

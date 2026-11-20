@@ -1,0 +1,52 @@
+{
+  "args": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-external-observer-r2-20261111/VFrozenOpt4Observed",
+    "+permissive",
+    "+max-cycles=2000000",
+    "+fesvr-step-size=1000",
+    "+mm_readLatency_0=30",
+    "+mm_readMaxReqs_0=4",
+    "+mm_relaxFunctionalModel_0=0",
+    "+mm_writeLatency_0=30",
+    "+mm_writeMaxReqs_0=4",
+    "+heartbeat-polling-interval=1000",
+    "+print-file=/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/streamcluster-representative-16-points-fp-contract-off-ec-r1-attempt2/rtl-prints-",
+    "+permissive-off",
+    "+prog0=/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/streamcluster_portable/ec.riscv"
+  ],
+  "binary_sha256": "cc2993bd8c6f56893afd9e73cc358684c07c481a52ef8eb50dc7a136134b2867",
+  "cpu_affinity": [
+    200
+  ],
+  "effective_host_timeout_seconds": 14400,
+  "elf": {
+    "path": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/streamcluster_portable/ec.riscv",
+    "sha256": "d101a63049c89515572046651c2cdaaeebad7952dd18b32c0b44862e5f032f4b"
+  },
+  "execution_policy": {
+    "host_timeout_floor_seconds": 14400,
+    "max_ec_simulators_after_all_native_first_runs": 2,
+    "raw_log_limit_bytes": 4294967296,
+    "reason": "Observed EC throughput is about 400-450 target cycles/sec. A 4M-cycle manifest cannot reach its target cap in the original 3600 sec host budget. Extend host scheduling budget only; application, ROI, target-cycle caps, model and memory settings remain bound by the unchanged manifest.",
+    "resident_limit_bytes": 17179869184,
+    "schema": "parsec8-cpu-execution-policy/1",
+    "simulators_per_cpu": 1,
+    "simulators_total": 2,
+    "slot_assignment": "CPU201 EC; CPU200 Native or auxiliary EC, never both"
+  },
+  "execution_policy_sha256": "aa915eaf115c6451b14a17948e33d1884a725a350f9caa7ddd78544ea3cc77d2",
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "manifest": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/streamcluster_portable/manifest.json",
+  "manifest_sha256": "f439efd6554cd636e9b5240172a73f9e7690a2d637cea5823b70b12edd9c019a",
+  "memory": [
+    "+mm_readLatency_0=30",
+    "+mm_readMaxReqs_0=4",
+    "+mm_relaxFunctionalModel_0=0",
+    "+mm_writeLatency_0=30",
+    "+mm_writeMaxReqs_0=4"
+  ],
+  "runner_sha256": "fde2e0053ba8c482332645269548409bcff4df54b16d8a173acc53925936dcd9",
+  "simulation_slot": "ec-aux",
+  "started_utc": "2026-11-12T06:01:39.589317+00:00"
+}

@@ -1,0 +1,254 @@
+{
+  "benchmarks": {
+    "blackscholes": {
+      "benchmark": "blackscholes",
+      "correctness": "EC PASS; output and 1122/1122 checker results accepted",
+      "ec_cycles": 6166433,
+      "evidence": [
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-blackscholes-observed-r1-20261111/result.json",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-blackscholes-observed-r1-20261112"
+      ],
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "instructions_ec": 3562647,
+      "instructions_native": null,
+      "method": "CPU_GOLDENGATE_FULL_APPLICATION",
+      "native_cycles": null,
+      "profile": "project64",
+      "slowdown": null,
+      "status": "WAITING_FOR_MATCHED_CLEAN_NATIVE_FULL_ROI",
+      "threads": 1
+    },
+    "bodytrack": {
+      "benchmark": "bodytrack",
+      "correctness": "not measured",
+      "diagnostic": "Existing ELF built for guest Linux; CPU GG +prog0 path is baremetal HTIF. No Linux userland/syscall/filesystem workload image or tested ROI adapter is bound to this matched model.",
+      "ec_cycles": null,
+      "evidence": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-staged-output-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-staged-resident-apps-build.json"
+      ],
+      "existing_linux_artifact": {
+        "application_threads": 1,
+        "binary": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/bodytrack",
+        "receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-apps-build.json",
+        "reference_sha256": "c88cd13758051c71cce4a8564ef3d884cae86bca1a4c82dac2599f79ba686a3c",
+        "sha256": "bcd5429e62d28c9268c2665f43c3d3951466fb9ec4fb3fe5f3ba93795436d8b2",
+        "status": "PREPARED_FPGA_NOT_RUN"
+      },
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "instructions_ec": null,
+      "instructions_native": null,
+      "native_cycles": null,
+      "profile": "PARSEC simsmall Linux workload not executable by current baremetal CPU GG harness",
+      "slowdown": null,
+      "status": "SKIPPED_UNSUPPORTED_LINUX_ABI",
+      "threads": 1
+    },
+    "dedup": {
+      "benchmark": "dedup",
+      "correctness": "not measured",
+      "diagnostic": "Existing ELF built for guest Linux; CPU GG +prog0 path is baremetal HTIF. No Linux userland/syscall/filesystem workload image or tested ROI adapter is bound to this matched model.",
+      "ec_cycles": null,
+      "evidence": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/dedup-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/dedup-staged-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/dedup-staged-raw-apps-build.json"
+      ],
+      "existing_linux_artifact": {
+        "application_threads": 1,
+        "binary": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-dedup-20261107T051408Z/dedup",
+        "receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/dedup-apps-build.json",
+        "reference_sha256": "a3fb1cc3e92e2f84ce4e07ae4c41ba6b2d9f8ed85b54a5d066aeac97559aa95d",
+        "sha256": "42f370f9b28d6f51f1771fc9c2607d7576cfc35e1ba3c8553a3bc02b345021a3",
+        "status": "PREPARED_FPGA_NOT_RUN"
+      },
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "instructions_ec": null,
+      "instructions_native": null,
+      "native_cycles": null,
+      "profile": "PARSEC simsmall Linux workload not executable by current baremetal CPU GG harness",
+      "slowdown": null,
+      "status": "SKIPPED_UNSUPPORTED_LINUX_ABI",
+      "threads": 1
+    },
+    "ferret": {
+      "benchmark": "ferret",
+      "correctness": "not measured",
+      "diagnostic": "Existing ELF built for guest Linux; CPU GG +prog0 path is baremetal HTIF. No Linux userland/syscall/filesystem workload image or tested ROI adapter is bound to this matched model.",
+      "ec_cycles": null,
+      "evidence": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/ferret-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/ferret-safe-fdt-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/ferret-stable-order-apps-build.json"
+      ],
+      "existing_linux_artifact": {
+        "application_threads": 1,
+        "binary": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-ferret-20261107T055439Z/ferret",
+        "receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/ferret-apps-build.json",
+        "reference_sha256": "def7ced1a85d1b475378576b0dc4a3b90e24d1f263fe2e628d924d7dd9c77807",
+        "sha256": "f6097b159f30333ad0fef96284c9575b6caa3d0d1b12cf92134ae88094e053e3",
+        "status": "PREPARED_FPGA_NOT_RUN"
+      },
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "instructions_ec": null,
+      "instructions_native": null,
+      "native_cycles": null,
+      "profile": "PARSEC simsmall Linux workload not executable by current baremetal CPU GG harness",
+      "slowdown": null,
+      "status": "SKIPPED_UNSUPPORTED_LINUX_ABI",
+      "threads": 1
+    },
+    "fluidanimate": {
+      "benchmark": "fluidanimate",
+      "correctness": "not measured",
+      "diagnostic": "Existing ELF built for guest Linux; CPU GG +prog0 path is baremetal HTIF. No Linux userland/syscall/filesystem workload image or tested ROI adapter is bound to this matched model.",
+      "ec_cycles": null,
+      "evidence": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-diagnostic-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-diagnostic-v2-apps-build.json"
+      ],
+      "existing_linux_artifact": {
+        "application_threads": 1,
+        "binary": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/fluidanimate",
+        "receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-apps-build.json",
+        "reference_sha256": null,
+        "sha256": "9571c88c69be6865d36dfc41178704960b0462aef9a8d09314567616a9df3962",
+        "status": "PREPARED_FPGA_NOT_RUN"
+      },
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "instructions_ec": null,
+      "instructions_native": null,
+      "native_cycles": null,
+      "profile": "PARSEC simsmall Linux workload not executable by current baremetal CPU GG harness",
+      "slowdown": null,
+      "status": "SKIPPED_UNSUPPORTED_LINUX_ABI",
+      "threads": 1
+    },
+    "freqmine": {
+      "benchmark": "freqmine",
+      "correctness": "not measured",
+      "diagnostic": "Existing ELF built for guest Linux; CPU GG +prog0 path is baremetal HTIF. No Linux userland/syscall/filesystem workload image or tested ROI adapter is bound to this matched model.",
+      "ec_cycles": null,
+      "evidence": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-staged-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-staged-resident-apps-build.json"
+      ],
+      "existing_linux_artifact": {
+        "application_threads": 1,
+        "binary": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/freqmine",
+        "receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-apps-build.json",
+        "reference_sha256": "0b53bb92d1019761f9017aea54986dbe80f217344ddd79f1aca205dc04d1da7d",
+        "sha256": "5dffb9864fd92cb9376e464c0782717df7aa1aad24e325bab10ed444ff73a892",
+        "status": "PREPARED_FPGA_NOT_RUN"
+      },
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "instructions_ec": null,
+      "instructions_native": null,
+      "native_cycles": null,
+      "profile": "PARSEC simsmall Linux workload not executable by current baremetal CPU GG harness",
+      "slowdown": null,
+      "status": "SKIPPED_UNSUPPORTED_LINUX_ABI",
+      "threads": 1
+    },
+    "streamcluster": {
+      "benchmark": "streamcluster",
+      "correctness": "not yet validated",
+      "ec_cycles": null,
+      "evidence": [
+        "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/streamcluster_project64/manifest.json",
+        "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/streamcluster-project64-native-r1-attempt2",
+        "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/streamcluster-project64-ec-r1-attempt2"
+      ],
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "instructions_ec": null,
+      "instructions_native": null,
+      "method": "CPU_GOLDENGATE_FULL_APPLICATION",
+      "native_cycles": null,
+      "profile": "project64",
+      "slowdown": null,
+      "status": "RUNNING_PAIRED_CPU_GG",
+      "threads": 1
+    },
+    "swaptions": {
+      "benchmark": "swaptions",
+      "correctness": "not measured",
+      "diagnostic": "Existing ELF built for guest Linux; CPU GG +prog0 path is baremetal HTIF. No Linux userland/syscall/filesystem workload image or tested ROI adapter is bound to this matched model.",
+      "ec_cycles": null,
+      "evidence": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/swaptions-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/swaptions-preallocated-apps-build.json"
+      ],
+      "existing_linux_artifact": {
+        "application_threads": 1,
+        "binary": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/swaptions",
+        "receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/swaptions-apps-build.json",
+        "reference_sha256": "bdd999ec7ab5b55dedfe6f545665400640f5a8e35cf844aaa577d5cd97037a0b",
+        "sha256": "dca887fcf1f0294288e8b06931d09b4332e1ec764a2a7250489523c8db2dd493",
+        "status": "PREPARED_FPGA_NOT_RUN"
+      },
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "instructions_ec": null,
+      "instructions_native": null,
+      "native_cycles": null,
+      "profile": "PARSEC simsmall Linux workload not executable by current baremetal CPU GG harness",
+      "slowdown": null,
+      "status": "SKIPPED_UNSUPPORTED_LINUX_ABI",
+      "threads": 1
+    }
+  },
+  "cad_access": false,
+  "created_utc": "2026-11-12T03:08:14.272894+00:00",
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-canneal-20261111/fresh-event-intervals.json": {
+      "sha256": "a604f903b1725317e655e49b66440e4f045cebef33e1f0ac890be846a28f1be8",
+      "size": 26598
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-canneal-20261111/result.json": {
+      "sha256": "405da344595e4f8b92b8b6d935d8cb2a07a74d58b323e19fd60791239d4a68ce",
+      "size": 687
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-blackscholes-observed-r1-20261111/result.json": {
+      "sha256": "916b73181d33ae9da844dbbd9ef855c72650d3a4b00f6d516cef01dbb8f91cd6",
+      "size": 4961
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-blackscholes-observed-r1-20261111/strict-acceptance.json": {
+      "sha256": "cc27f38f41cb0ea57d16201b8bafa80ea83c3ad1950f98a4ebb14d92cb4f8ca7",
+      "size": 1647
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/paper-matched-source-cpu-comparison-r2-20261112/README.md": {
+      "sha256": "80e5802435010a9a4b0051781f77cb9dfe5740bdb28e89b8d44d1f0d9a8dbf4b",
+      "size": 2324
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/paper-matched-source-cpu-comparison-r2-20261112/canneal_project400/result.json": {
+      "sha256": "b0f567ce8f6d4a884c3ef129750859911c0feef988443c2a167739452ddff3d3",
+      "size": 1881
+    },
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-blackscholes-observed-r1-20261111/plan.json": {
+      "sha256": "37435bc3cb6bdcc368b8bec9c41bf1cacffd95b15237cc78885da8cb284d460d",
+      "size": 46582
+    },
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/matched-single-boom-gg-r1-20261112/plan.json": {
+      "sha256": "b0cbade0bdfd1c625a8cc9c95ee3e2a11401ff406c125aeccc91b4537674184c",
+      "size": 72529
+    },
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/matched-single-boom-gg-r1-20261112/software/blackscholes_project64/protected.riscv": {
+      "file_abi": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/matched-single-boom-gg-r1-20261112/software/blackscholes_project64/protected.riscv: ELF 64-bit LSB executable, UCB RISC-V, version 1 (SYSV), statically linked, with debug_info, not stripped",
+      "sha256": "04333396109de81371d0a37a721533746ac38f1097236c1fc7b4db1c4488ec47"
+    }
+  },
+  "fpga_access": false,
+  "frozen_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "schema": "parsec8-existing-evidence-audit/1",
+  "separation_rules": [
+    "Do not combine old Linux FPGA simmedium, baremetal project64/project400, and CPU GG target cycles.",
+    "Canneal project400 is workflow validation only and excluded from the requested eight.",
+    "Native FPGA results are not CPU target-cycle samples.",
+    "Only valid CPU GoldenGate source-matched per-profile pairs may enter the CPU GG geomean."
+  ],
+  "start_here_copy_sha256": "988894a4645a93d35dcf5a23f455bc32d7e0c8e8394fb81b93a85f971f7c2dc7",
+  "start_here_source": "/data1/gzh/EC/slowdown/final_opt4_freeze_20261106/FIRESIM_START_HERE.md"
+}

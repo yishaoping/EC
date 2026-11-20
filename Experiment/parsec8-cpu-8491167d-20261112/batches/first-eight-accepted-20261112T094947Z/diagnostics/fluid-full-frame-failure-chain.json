@@ -1,0 +1,94 @@
+{
+  "accepted_status_counts": {
+    "0": 84,
+    "2": 1
+  },
+  "allocation_count": 85,
+  "created_utc": "2026-11-12T08:18:53.326861+00:00",
+  "focused_log": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/diagnostics/fluid-full-frame-failure-chain.log",
+  "focused_log_sha256": "1bac6d0661396d3e0fe724740520ba7b9be9fe2212e8a16d77e574e8074408bc",
+  "four_levels": {
+    "blocking_condition": {
+      "certainty": "STRONGLY_SUPPORTED",
+      "finding": "Saved LONG_STALL MSHR line0x809035c0 state2/waiting_resource2 precedes the observed failure; exact cause of that wait requires internal evidence"
+    },
+    "direct_symptom": {
+      "certainty": "PROVEN",
+      "finding": "BOOM accepted seq85 status2 (CANCELLED), followed by saved Pipeline has hung assertion; sample cannot satisfy strict full comparison"
+    },
+    "downstream_amplifier": {
+      "certainty": "PROVEN_FOR_OBSERVATION",
+      "finding": "Missing normal package completion prevents full-frame acceptance and the pipeline later asserts hung"
+    },
+    "upstream_trigger": {
+      "certainty": "UNPROVEN",
+      "finding": "No proven allocator, ownership, cache or replay root cause; software replay scope changes are not hardware repairs"
+    }
+  },
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "nonpass_results": [
+    {
+      "boom_csr_cycle": 2408425,
+      "checker": 1,
+      "fastest_target_cycle": 2410394,
+      "host_time": 7289553500,
+      "kind": "BOOM_RESULT_ACCEPTED",
+      "package_seq": 85,
+      "raw_payload": 25769803861,
+      "record": 170,
+      "status": 2
+    }
+  ],
+  "raw_integrity": {
+    "complete_stream_eof": true,
+    "gzip_sha256": "73310fc2230429eac568fe25ca2f71fbd8454daa89ba126d8a0a1356bec549db",
+    "raw_bytes": 1137551531,
+    "raw_sha256": "bf06d4d41f01cba1bc1413d6c73869af7be7e7f7d69d81d39b90494231e8fd1f"
+  },
+  "replacement": "Separately paired original AdvanceParticles component on real captured preintegration state; excludes other full-frame phases and cannot validate the full failed workload",
+  "result": {
+    "active_host_seconds": 5865.16605944297,
+    "application_rows": [],
+    "benchmark": "fluidanimate",
+    "binding_sha256": "e5c26e72494aa544f981490a80dfc685e1e164469663e1900a4cbd538a418cba",
+    "completed_utc": "2026-11-12T08:16:24.667230+00:00",
+    "drain_cycles": null,
+    "faults": [
+      "Assertion failed: Pipeline has hung.",
+      "[7674298500] %Fatal: FireSim-generated.sv:1782946: Assertion failed in emul.FPGATop.sim.target.FireSim_.lazyModule.system.tile_prci_domain.tile_reset_domain_boom_tile.core",
+      "%Error: /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/FireSim-generated.sv:1782946: Verilog $stop"
+    ],
+    "full_rollback_latency_cycles": null,
+    "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "host_seconds": 5865.165874344995,
+    "interrupt_policy": {
+      "check": "[IRQ] before/after timer_flags and mie; no main timer increment inside ROI",
+      "checker_harts": "unchanged frozen firmware",
+      "main_hart_timer": "MTIE cleared before workload_prepare in both modes"
+    },
+    "interrupt_policy_verified": false,
+    "manifest_sha256": "7c2ef68532bf629c62b82b73c42d7e7b2ad7642339dc4d9ff2c2fb9de1f79a2e",
+    "method": "CPU_GG_TEST_DERIVED_REPRESENTATIVE_ROI",
+    "mode": "ec",
+    "output": [],
+    "profile": "test-derived-64-particles-no-main-timer-heap64",
+    "raw_log_sha256": "bf06d4d41f01cba1bc1413d6c73869af7be7e7f7d69d81d39b90494231e8fd1f",
+    "repeat": 1,
+    "resource_pressure_paused_seconds": 0,
+    "returncode": -9,
+    "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-test-derived-64-particles-no-main-timer-heap64-ec-r1",
+    "simulation_slot": "ec-aux",
+    "software_correct": false,
+    "status": "FAILED_OR_UNVALIDATED",
+    "stop_cause": null,
+    "strict_acceptance": null,
+    "strict_acceptance_error": null,
+    "strict_detection_latency_cycles": null,
+    "svb_events": null,
+    "total_fastest_target_cycles": null,
+    "valid": false
+  },
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-test-derived-64-particles-no-main-timer-heap64-ec-r1",
+  "strict_detection_latency_cycles": null
+}

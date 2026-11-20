@@ -1,0 +1,561 @@
+       PALIMPSEST: Rethinking Heterogeneous Parallel Error
+             Correction from the Cache Perspective
+                                          * Note:   Sub-titles are not captured in Xplore and should not be used
+
+
+
+
+   Abstract—Reliable execution of high-performance out-of-order (OoO)               U Not-yet-safe updates C Checking inputs H Recovery history
+superscalar processors is critical in safety-critical systems. Compared
+with conventional lockstep designs, heterogeneous parallel error cor-                             Private L1     Main-Core Execution
+
+
+
+
+                                                                                (a) ParaMedic
+rection (HPEC) reduces hardware cost by using lightweight checker                                       U                       Stall
+cores to verify a high-performance main core running ahead. However,
+verification lag requires not-yet-safe data updates in the cache to                                    LSL       Checker Execution
+remain isolated to prevent error propagation and recovery history to                               C         H                Waiting
+be retained for rollback, causing both types of state to accumulate.
+Existing approaches rely on memory isolation and logging to ensure                               Recoverable     Main-Core Execution
+
+
+
+
+                                                                                (b) PALIMPSEST
+correct recovery, but these mechanisms can exhaust available storage                               Cache
+resources, depriving both the main core and checker cores of the resources                         U         H
+needed to sustain execution and causing frequent stalls. To address these
+                                                                                                                 Checker Execution
+limitations, we propose PALIMPSEST, a cache-versioning architecture                                    LSL
+that unifies the on-chip cache hierarchy into a recoverable domain. By                                  C
+managing data visibility and recovery history through execution versions,
+PALIMPSEST enables more efficient state storage and reclamation
+while supporting fast rollback. Experimental results demonstrate that           Fig. 1. Data placement and execution progress in ParaMedic and
+PALIMPSEST effectively alleviates storage pressure, reduces main-core           PALIMPSEST. (a) ParaMedic keeps U in private L1 caches and C/H
+stalls, and improves checker utilization.                                       in the LSL, potentially stalling the main core and delaying checking.
+   Index Terms—Fault tolerance, heterogeneous parallel error checking,
+                                                                                (b) PALIMPSEST places U/H in a recoverable cache and retains C
+checkpoint recovery, cache versioning
+                                                                                in the LSL, mitigating both bottlenecks.
+                          I. I NTRODUCTION
+   Safety-critical systems, such as automotive controllers, avionics,
+and spacecraft, rely heavily on processors to perform critical control          tiple lightweight checker cores. The checker cores re-execute earlier
+and computation tasks. However, hardware faults can corrupt proces-             execution segments in parallel, allowing the main core to continue
+sor states, disrupt program execution, and generate erroneous outputs,          execution without waiting for verification. This introduces verification
+potentially compromising system reliability and safety. For example,            lag, requiring unverified memory updates to be isolated from other
+a Texas Instruments study reported erroneous control outputs and                cores and external memory, while preserving the execution state
+system resets caused by hardware faults [1], while Arm research                 needed for rollback. To meet these requirements, ParaMedic [?]
+highlighted the execution interruptions associated with fault diagnosis         employs a private-L1 isolation barrier to prevent unverified updates
+and processor restarts [2]. These examples highlight the importance             from propagating, and combines register checkpoints with a Load-
+of error correction in preventing erroneous outputs from reaching               Store Log (LSL), originally used to buffer checking inputs, to support
+external systems and restoring correct execution without prolonged              recovery, as illustrated in Fig. 1(a). The LSL additionally retains
+interruptions.                                                                  overwritten values for rollback, while register checkpoints provide
+Existing works. Existing processor error-correction techniques pri-             the architectural state needed to restart execution.
+marily rely on software redundancy or replicated hardware. Software-            Challenges. However, ParaMedic’s isolation and recovery mecha-
+based approaches detect errors through redundant computation, can               nisms expose a broader limitation of heterogeneous parallel error
+prevent erroneous outputs by buffering memory updates and delaying              correction: verification lag causes not-yet-safe updates and recovery
+peripheral operations until verification, and support checkpoint-based          history to accumulate, and the resulting storage pressure can stall
+rollback for recovery, but often incur substantial execution overhead.          main-core execution or leave checker cores waiting. In ParaMedic,
+Hardware-based approaches employ replicated processor cores. Dual-              the limited capacity of private L1 caches cannot accommodate large
+Core Lockstep (DCLS) synchronously compares the outputs of two                  amounts of not-yet-safe updates, leading to frequent replacement
+cores, blocking mismatched memory updates and peripheral opera-                 stalls that interrupt main-core execution. Meanwhile, the prolonged
+tions before they become externally visible. However, DCLS cannot               retention of recovery history delays LSL reuse, reducing checker
+identify the faulty replica and typically requires additional recovery          utilization. Both bottlenecks stem from restrictive state storage and
+measures, such as processor reset and restart. In contrast, Triple Mod-         reclamation. As illustrated in Fig. 1(b), the on-chip cache hierarchy
+ular Redundancy (TMR) employs three replicated cores and majority               offers an alternative by accommodating not-yet-safe updates and re-
+voting to mask faults in a single replica, preventing erroneous outputs         covery history within a recoverable cache domain, restoring the LSL
+and allowing execution to continue without interruption. However, the           to its original role as a dedicated checking-input buffer. This alleviates
+additional hardware redundancy incurs substantial area and power                private-L1 storage pressure and enables earlier LSL reclamation.
+overheads.                                                                      Exploiting this opportunity requires changes to conventional cache
+   Heterogeneous parallel error correction reduces hardware redun-              management. As not-yet-safe updates migrate across shared cache
+dancy costs by combining a high-performance main core with mul-                 levels, the system must maintain cache coherence and consistent data
+                   L1 barrier    Other   Total slowdown                      Ordered reclaim   Immediate reclaim   LSL area                                   Recovery-only    Checking    Available
+            1.5                                                             100                                                                         100
+                  Low-pressure           High-pressure
+                                                                                                                    30
+
+
+
+
+                                                          Utilization (%)
+
+
+
+
+                                                                                                                                        Byte-time (%)
+                                                                                                                         LSL area (%)
+            1.4    workloads               workloads
+ Slowdown
+
+
+
+            1.3                                                                                                     20
+                                                                             50                23.1 pp                                                   50
+            1.2
+                                                                                                                    10
+            1.1
+            1.0                                                              0                                      0                                     0
+                  10⁻³    10⁻²    10⁻¹      10⁰                                   4    6 8 10 12 14 16                                                        4      6    8   10   12     14   16
+                   (a) L1→L2 barrier events / kInst                               (b) Number of checker cores                                                     (c) Number of checker cores
+
+Fig. 2. Performance and resource bottlenecks in ParaMedic. (a) Total execution slowdown and its breakdown across L1-to-L2 barrier-event
+frequencies. (b) Checker utilization under ordered and immediate reclamation, and the LSL share of protection-hardware area. (c) Breakdown
+of physical LSL byte-time by lifecycle state.
+
+
+propagation without exposing unsafe state to other main cores or                                    execution slowdown reaches 1.456×, with barrier waiting accounting
+external memory. Meanwhile, retaining historical versions conflicts                                 for 48.2% of the additional execution time.
+with conventional cache replacement, since superseded values may                                       The underlying cause lies in ParaMedic’s isolation mechanism [3],
+still be required for rollback and must be preserved before their                                   which confines unverified updates to private L1 caches until they
+storage can be reused. When an error occurs, these versions must be                                 become safe to propagate. When all candidate victims in a cache set
+reconciled with the restored architectural checkpoint, requiring valid                              remain protected, replacement must wait for verification progress,
+execution history to be identified and in-flight memory operations to                               even if lower-level caches have available capacity. Consequently, the
+be handled to ensure consistent recovery.                                                           performance bottleneck stems from the restricted use of the cache
+Contributions. To address these challenges, we propose                                              hierarchy rather than insufficient total on-chip cache capacity. This
+PALIMPSEST, a cache-versioning architecture for heterogeneous                                       motivates extending the recoverable domain across on-chip caches,
+parallel error correction. PALIMPSEST organizes the on-chip cache                                   allowing unverified updates to migrate between cache levels while
+hierarchy as a unified recoverable domain, allowing unverified                                      preventing unsafe data from propagating to DRAM or becoming vis-
+updates to migrate across cache levels while preventing unsafe                                      ible to other cores through shared caches and coherence transactions.
+propagation to other cores or DRAM. Verification-aware version
+management preserves historical versions required by active                                         B. Recovery-Induced Resource Underutilization
+checkpoints before cache space is reused, enabling recovery state                                      ParaMedic’s LSL suffers from inefficient resource utilization,
+to reside in on-chip caches rather than dedicated old-value logs.                                   as recovery-state retention can delay log reclamation and prevent
+This separation allows checking inputs in the LSL to be reclaimed                                   checker cores from accepting new work. Fig. 2(b) illustrates this limi-
+independently of recovery-history retention. Upon error detection,                                  tation by comparing ordered reclamation with immediate reclamation
+sequence-based rollback identifies valid execution history, discards                                upon checking completion. At 12 checker cores, utilization increases
+erroneous updates, and selects the appropriate historical versions to                               from 38.9% to 62.0%, revealing a gap of 23.1 percentage points.
+restore consistent architectural and memory states without sequential                               Figure 2(c) further shows that recovery-only retention accounts
+undo-log replay or cache-wide scans.                                                                for 23.9–38.1% of physical LSL byte-time across 4–16 checkers.
+                                                                                                    Meanwhile, the LSL occupies 23.4–27.9% of protection-hardware
+                                    II. M OTIVATION
+                                                                                                    area, highlighting its substantial storage overhead.
+   Heterogeneous parallel error correction introduces a fundamental                                    The underlying cause is the coupling of checking inputs and
+challenge in memory-state management: the main core can advance                                     recovery history within the same LSL partitions. Checking inputs
+ahead of verification, while the safety and recoverability of its                                   become unnecessary once their segments are verified, whereas over-
+memory updates depend on checking progress. Unverified updates                                      written values may still be required for rollback until earlier segments
+must be isolated to prevent erroneous state from propagating, while                                 are validated. Since these records are reclaimed together, completed
+historical values must be retained to support checkpoint rollback.                                  checking segments can continue occupying log space solely for
+These requirements impose different constraints on when memory                                      recovery purposes, limiting resource reuse and checker utilization.
+updates can propagate and when stored versions can be overwritten                                   This motivates separating recovery-history storage from checking-
+or reclaimed. In ParaMedic, these constraints are handled through                                   input logging. By retaining historical versions within the on-chip
+private-L1 isolation and load-store logging, respectively. However,                                 cache hierarchy, checking inputs can be reclaimed immediately after
+this method places substantial pressure on cache capacity and log                                   verification, while sequence-based rollback can select the appropriate
+resources, as demonstrated in the following analysis.                                               historical versions to restore checkpoint-consistent memory state
+                                                                                                    without sequential undo-log replay.
+A. Performance Bottleneck of the L1 Isolation Barrier                                                  Together, these results reveal two complementary bottlenecks in
+   ParaMedic’s private-L1 isolation barrier can significantly degrade                               ParaMedic’s data management: unverified updates are confined to pri-
+main-core performance by stalling execution when unverified mem-                                    vate L1 caches, while recovery history remains coupled with checking
+ory updates cannot be safely evicted. Fig. 2(a) quantifies this impact                              inputs in the LSL. These restrictions limit cache replacement and
+through a synthetic workload sweep. As the frequency of L1-to-L2                                    log reclamation, preventing available on-chip storage resources from
+barrier events increases, replacement stalls contribute an increasingly                             being fully utilized. The underlying challenge is therefore not merely
+large share of execution overhead. At the highest event frequency,                                  storage capacity, but how data is organized, preserved, and reclaimed
+                     g                                                                                                   h          Flush                                                                                                         L$
+                                       ARFs              Context                       Rollback                                                      HM-NoC                             CDC
+                                                                                                                                                                                                                    Scalar Core 1
+  Data
+
+                                                          Mem                          Controller                                                       Dest.                                              SR                                     PTW
+                                           PC                                                                                       Error                                                                                   Pipeline
+                                                                                                                                                       Re-                                                                                        D$
+                                       CSRs
+
+
+
+
+                                                                                                                                                                                          ...
+                 Save                                 Restore                       Flush Restart Invalidate(k)                                      ordering                                       CSU                                            I$
+  Ctrl./Sig
+
+
+
+
+                                                                                                                                                                                                                            ...
+
+
+
+
+                                                                                                                                                                                                                                                        ...
+                                                                                                                                                                                                       Flush
+                                                                                                                                                                                                                                                  L$
+                                                                                          Superscalar Core                                  a                                                        Checkpoint
+
+
+
+
+                                                                                                                                                                       DC-Buffer(LSL)
+                                                                                                                                                                                        CDC
+
+
+
+                                                             ...
+                                                                                                                                                                                                     -type Data                                   PTW
+                                      CSRs
+                                                                                                                                                                                                                    Scalar Core n                 D$
+                                                                                                                                                                                                     On-demand
+  Prog. Recov
+
+
+
+
+                                                                                                                                                           ...
+                                                                                  Checkpoint/Demand Data                                                                                 ...    c       Data                                       I$         M-
+                                                             ...
+                                      PRFs                                                                                                                                                                                              ...
+                                                                                                                                                                                                                                                              Bus
+                                                             ...                                                                                                                                Original                 Checker
+                                      LSQ                                       CEC            DEU                                                       Forwarding                                                                               CDC
+                                                                     EN                                                             Sel.                   Fabric b                     Comparator                  Error              Pass
+                                                                                                                                                                                                                             Safe Watermark
+Recoverable
+
+
+
+
+                     f                            Version
+                                                                L1 Cache
+                                                                                              Preserve /
+                                                                                                                        Invalidate(k)            SW             L2 Cache                Barrier                 e    ✓ ✓          ?     ?     ✓     ?
+  Domain
+
+
+
+
+                                                                                               Migrate
+                                                  Metadata
+                                                                                                                                                                                                           Hold                   Bitmap                d
+                         Ctrl.                  Tag0/Seq0 Data0                                                           Ctrl.                      Tag0/Seq0 Data0                     Seq ≤ SW
+                                                Tag1/Seq1 Data1                                 Preserve
+                                                                                                                                                     Tag1/Seq1 Data1
+                                                                                                                                     Reuse enable
+                                                          Reuse enable                            ACK
+                                                                                                                                                                                                                    PreserveACK               DRAM
+
+Fig. 3. EC architecture and its data and control paths. avSuperscalar core for execution and checkpointing; bvforwarding fabric for data
+delivery; cvcomparator for result verification; dvbitmap for verification tracking; evbarrier for version preservation; fvrecoverable cache
+domain for version storage; gvcontext memory for architectural state; and hvrollback controller for checkpoint recovery.
+
+
+  Safe                   Verified          Speculative        Before     →      After
+                                                                                                                              Core                          or becoming visible to other cores. Meanwhile, before a cache
+✓ Pass ✗                 Fail          ?   Pending          Tag Seq       Cur      Data
+                                                                                                                             Seq 8 ≥ 8; Invalidate
+                                                                                          Store A, a8 (Seq 8)
+                                                                                                                                                            location is reused, any historical version still required for rollback
+  8             ? ✗
+                                      L1        B 5 1 b5             A → A 7 → 8 1 → 1 a7→a8                              A        8     1 → 0 a8           must be preserved. Together, these controls allow data to migrate
+                                                                                                                Stall
+
+
+
+
+  7              ?
+                                                        Preserve ACK     Preserve A7                                         On-demand refill               and storage to be reclaimed without compromising error isolation
+  6             ✓
+                                      L2        C 3 1 c3             D → A 6 → 7 1 → 0 d6→a7                              A         7    1 → 0 a7           or recoverability. By retaining recovery history within the cache
+  5             ✓
+                                       ✓     Safe-only writeback                          Victim Way                          Select max(Seq < 8) = 7
+                                                                                                                                                            hierarchy, PALIMPSEST also enables checking inputs in the LSL to
+                ? ✓                    ✗
+                         SW: 3 → 6
+
+
+
+
+  4                                          If 4 fail, WB Blocked        WB ACK               Backpressure                                                 be reclaimed independently upon verification completion. Upon error
+  3             ✓
+                                     DRAM       A: a1 B: b2              D: d6 (after WB)                                Older Safe Version                 detection, the preserved versions are identified by their execution
+      Bitmap
+                     (a) Verification-Aware Version Preservation                                    (b) Sequence-Based Rollback                             sequences to restore checkpoint-consistent data without sequential
+                                                                                                                                                            undo-log replay.
+Fig. 4. Cross-level version preservation and sequence-based rollback.                                                                                          Fig. 3 illustrates the PALIMPSEST architecture, which integrates
+(a) Verification progress releases a blocked victim writeback. (b)                                                                                          parallel checking with cache-based isolation and recovery. The main
+Recovery selects a surviving version on demand.                                                                                                             core (Fig. 3 a ) executes ahead of the lightweight checker cores
+                                                                                                                                                            (Fig. 3 c ), with execution divided into segments identified by se-
+under error-isolation and recovery requirements. This motivates a                                                                                           quence numbers (Seq). Architectural checkpoints are maintained in
+more flexible approach to data management that can sustain main-                                                                                            context memory (Fig. 3 g ), while the forwarding fabric (Fig. 3 b )
+core execution and parallel checking without compromising correc-                                                                                           buffers checking inputs in the LSL and dispatches segments for
+tion guarantees.                                                                                                                                            parallel re-execution. Verification results are recorded in a bitmap
+                                                                                                                                                            (Fig. 3 d ), from which the safe watermark (SW) identifies the largest
+                                                III. F RAMEWORK OVERVIEW                                                                                    contiguous prefix of successfully verified segments. This allows
+   PALIMPSEST extends HPED to HPEC through cache version-                                                                                                   checking inputs to be released upon verification completion, even
+ing, providing error isolation and checkpoint recovery. The key                                                                                             when earlier segments remain pending.
+insight is that these capabilities impose distinct requirements on                                                                                             The recoverable cache domain (Fig. 3 f ) maintains current versions
+data visibility and historical-value preservation, but need not impose                                                                                      for ongoing execution and historical versions required for rollback,
+the same restrictions on data placement and storage reuse. Rather                                                                                           with each version associated with its execution sequence. The ver-
+than confining unverified updates to private L1 caches or retaining                                                                                         ification barrier (Fig. 3 e ) governs data visibility according to SW,
+recovery history in the LSL as in ParaMedic [3], PALIMPSEST                                                                                                 allowing updates to migrate across cache levels without exposing
+reorganizes the on-chip cache hierarchy as a unified recoverable                                                                                            unsafe data. Meanwhile, cache controllers preserve historical versions
+domain spanning L1 and L2. By managing data through execution                                                                                               still needed for potential rollback before reusing their storage. Unlike
+versions, the architecture allows unverified updates to migrate across                                                                                      recovery history, checking inputs in the LSL are needed only until
+cache levels while preserving historical values required for rollback,                                                                                      their corresponding segments complete verification and can therefore
+enabling more efficient storage utilization and reclamation.                                                                                                be reclaimed independently. By managing data visibility, version
+   To realize this unified recoverable domain, PALIMPSEST orga-                                                                                             preservation, and storage reclamation according to their distinct
+nizes current updates and historical values as execution versions,                                                                                          requirements and lifetimes, PALIMPSEST enables more efficient
+allowing them to coexist and migrate across cache levels. This                                                                                              utilization of cache and logging resources while maintaining error
+organization separates two key requirements: controlling when data                                                                                          isolation and recoverability.
+becomes visible and determining when storage can be safely reused.                                                                                             Upon error detection, the rollback controller (Fig. 3 h ) coordinates
+A verification barrier governs system-wide data visibility, preventing                                                                                      architectural-state restoration and cache-version recovery. It restores
+not-yet-safe versions from propagating to DRAM or external devices                                                                                          the corresponding checkpoint from context memory (Fig. 3 g ) and
+excludes the erroneous execution suffix from valid history. Subse-         B. Data Visibility Control
+quent memory accesses retrieve the appropriate historical versions            PALIMPSEST allows cache versions to migrate across levels
+from the recoverable cache domain (Fig. 3 f ), restoring checkpoint-       within the recoverable domain regardless of their verification status.
+consistent execution without sequential undo-log replay or cache-          To prevent error propagation, the verification barrier (Fig. 3 e )
+wide scans.                                                                controls data visibility based on the SW maintained by the verification
+   Through this design, PALIMPSEST unifies error isolation and             bitmap (Fig. 3 d ). A version is eligible for external propagation only
+recovery within the cache hierarchy, allowing data storage and             if it belongs to valid execution history and satisfies Seq ≤ SW.
+reclamation to adapt to verification progress and rollback require-        Since checking segments may complete out of order, SW advances
+ments. The following section details the mechanisms for version            only when all preceding segments have passed. Versions that have
+management, cross-level preservation, and sequence-based rollback.         completed checking but remain beyond SW are therefore retained
+                                                                           within the recoverable domain until they become safe.
+          IV. M ICROARCHITECTURAL I MPLEMENTATION
+                                                                              In multicore systems, each main core maintains an independent
+   PALIMPSEST implements the unified recoverable domain through            SW and recovery context. Memory requests carry the requesting main
+extensions to cache metadata, access paths, and control logic. Cache       core’s ID, while cache versions retain the ID of their producing core.
+version organization enables current and historical versions to coexist    Shared-cache controllers use these identities to distinguish accesses
+while supporting normal read and write operations. Data visibility is      to a core’s own data from accesses to data produced by other cores.
+governed by verification progress, while historical versions needed for    A main core can access its own unsafe versions, whereas cross-
+potential rollback are preserved before their storage is reused. These     core accesses and coherence transfers are permitted only when the
+mechanisms enable flexible data migration across cache levels and          requested data is safe under the producing core’s SW. Otherwise, the
+independent reclamation of checking inputs in the LSL. Upon error          access is stalled to prevent unsafe data exposure. The same visibility
+detection, sequence-based rollback restores checkpoint-consistent ex-      constraint applies to DRAM writebacks. When a writeback is required
+ecution using the retained versions. To ensure reliable operation under    but the corresponding version has not become safe, the verification
+storage pressure, PALIMPSEST also addresses circular dependencies          barrier stalls the affected main core until verification progress permits
+arising from verification and cache preservation.                          the writeback or error recovery resolves the blocked operation. These
+                                                                           controls allow unverified versions to reside across shared cache levels
+A. Cache Version Organization and Access
+                                                                           while preserving system-wide data isolation.
+   PALIMPSEST extends conventional cache entries with version
+metadata to support multiple versions of the same address within           C. Historical Version Preservation and Reclamation
+the recoverable domain (Fig. 3 f ). Each version carries a sequence           PALIMPSEST employs a preserve-before-reuse mechanism to
+number (Seq) identifying its producing checking segment and an             prevent historical values needed for potential rollback from being
+epoch (Epoch) distinguishing different execution histories, including      lost during cache updates and replacements. Before reusing a cache
+those created by re-execution after rollback. Together, they identify      location, the controller determines whether its existing version must
+the execution history to which a version belongs. According to             be retained for recovery. Versions no longer required can be reclaimed
+verification progress, a version is classified as speculative before its   directly, while required versions must be preserved elsewhere in the
+segment completes checking, verified after passing verification but        recoverable domain before their storage is released. This allows cache
+remaining beyond safe watermark (SW), or safe once its segment is          space to be reused according to recovery requirements rather than
+covered by SW. These states determine the version’s eligibility for        requiring all historical versions to remain in their original locations.
+propagation, independently of its physical cache location.                    Cross-level preservation is coordinated by cache controllers
+   For each address, the Current version serves ongoing execution,         through the existing writeback paths. When an update or replacement
+while historical versions retain earlier values that may be needed for     would overwrite a version still required for rollback, the source
+rollback. Multiple versions of the same address can occupy different       cache retains its contents and requests preservation at the next level.
+cache ways. The Cur bit identifies the Current version, while CurGen       Typically, the destination can accommodate the incoming version by
+distinguishes valid Current mappings from those left by previous           selecting a reusable cache way. Only when the selected victim cannot
+execution generations, avoiding the need to update Cur bits across the     be immediately replaced must the destination first preserve or write
+cache upon rollback. Preservation metadata tracks whether required         back its contents, potentially extending the dependency across cache
+historical contents have been secured before their storage is reused.      levels. If inter-cache preservation cannot complete, backpressure may
+   During normal execution, loads access the Current version through       propagate to the requesting main core, stalling its execution until the
+conventional tag and permission checks, together with Current-             dependency is resolved. At the last-level cache, releasing a location
+mapping validation. Historical versions are excluded from normal ac-       may additionally require writing an eligible safe version back to
+cesses, avoiding sequence-based searches on the common read path.          DRAM. Throughout preservation, the source retains its protected
+Cache misses follow the cache hierarchy to retrieve the appropriate        copy, while the pending access waits in the MSHR or replay queue. A
+current data.                                                              Preserve ACK confirms that the destination has secured the historical
+   Stores follow segment-based versioning rules. Multiple writes to        version and authorizes source storage reuse, whereas a WB ACK
+the same address within a segment update the same version. When a          indicates completion of a writeback operation.
+subsequent segment first writes that address, a new version is created,       As verification progresses, multiple versions of the same ad-
+while the preceding version is retained if it may still be required        dress may become safe, but only the latest valid safe version
+for rollback. The new version becomes Current, and its predecessor         is needed as the safe memory baseline. PALIMPSEST therefore
+becomes historical. If an available cache way exists, the new version      allows older safe versions to be reclaimed once they are no longer
+can be installed directly; otherwise, the required historical contents     required for rollback, avoiding unnecessary writebacks. To maintain
+must be secured before the occupied location is reused, as described       a consistent DRAM baseline, the writeback controller enforces per-
+in Section IV-C.                                                           address version ordering by suppressing obsolete unissued transfers
+and serializing outstanding writebacks to the same address through          be recovered independently as they are accessed, avoiding serial
+terminal acknowledgments. This ensures that an older version cannot         recovery dependencies across addresses. This reduces the work on
+overwrite a newer one, even when writeback requests complete                the rollback critical path and enables faster recovery while preserving
+asynchronously. Version and transaction identities further ensure that      correctness.
+delayed acknowledgments affect only their corresponding versions
+and storage reservations.
+                                                                            E. Forward Progress and Deadlock Avoidance
+   Fig. 4(a) illustrates these dependencies. Installing A8 requires
+preserving A7 in the lower cache, whose selected victim D6 cannot              Extending the recoverable domain across shared cache levels
+be written back while SW remains 3. Although segments 5 and 6 have          introduces potential circular dependencies between data isolation,
+passed, D6 remains blocked until segment 4 passes and advances SW           synchronization, and verification progress. PALIMPSEST addresses
+to 6. The resulting WB ACK releases the victim location, allowing           these dependencies to ensure forward progress under multicore exe-
+A7 to be preserved. The subsequent Preserve ACK then permits A8             cution and cache pressure.
+to be installed. This example demonstrates how verification progress           The first scenario arises when cache-line-granularity isolation inter-
+and historical preservation jointly determine when cache storage can        acts with cross-core synchronization. Independent variables accessed
+be safely reused.                                                           by different cores may share the same cache line, causing an
+   By retaining recovery history within the cache hierarchy,                unverified update from one core to block another core’s access to
+PALIMPSEST allows checking inputs in the LSL to be reclaimed                an otherwise unrelated variable. If the blocked access is required
+once their corresponding segments complete verification, indepen-           for verification or execution to progress, this interference can create
+dently of whether historical versions must remain available for             a circular dependency. To avoid such conflicts, synchronization
+rollback. This separates checking-input reclamation from recovery-          variables with potential cross-core dependencies should be isolated at
+history retention, improving the utilization of both cache and logging      cache-line granularity. In our implementation, we apply this approach
+resources.                                                                  by placing each hart’s timer flag in a separate 64-byte-aligned cache
+D. Sequence-Based Rollback and Recovery                                     line, preventing unverified updates from interfering with other harts’
+                                                                            interrupt handling.
+   PALIMPSEST coordinates rollback through the rollback controller
+                                                                               The second scenario occurs when cache preservation or writeback
+(Fig. 3 h ), which restores architectural checkpoints from context
+                                                                            stalls the main core while verification progress depends on its un-
+memory (Fig. 3 g ) and manages valid execution history using an
+                                                                            finished checking segment. Similar to ParaMedic [3], PALIMPSEST
+Epoch Validity Table (EVT). Based on this history, cache controllers
+                                                                            closes and dispatches the current segment early to break this de-
+in the recoverable domain (Fig. 3 f ) select the appropriate historical
+                                                                            pendency. The mechanism is retained but applied to stalls arising
+versions and restore their Current mappings to support resumed
+                                                                            from the extended recoverable cache domain rather than the original
+execution.
+                                                                            private-L1 isolation barrier.
+   When a checker reports an error in segment n, the rollback
+controller halts the affected main core, flushes its speculative pipeline
+state, and restores the architectural context from the checkpoint                                      V. E VALUATION
+at the beginning of segment n. To track the surviving execution
+history, PALIMPSEST maintains an Epoch Validity Table (EVT),                   We implement PALIMPSEST on the open-source Chipyard plat-
+which records the valid Seq interval for each execution epoch. Upon         form, integrating one high-performance OoO SonicBOOM core and
+rollback, the controller truncates the valid history at the recovery        multiple lightweight in-order Rocket checker cores. We evaluate
+boundary and allocates a new epoch for re-execution. Cache versions         the architecture using cycle-accurate simulation with the hardware
+are considered valid only if their Epoch and Seq belong to the              configurations summarized in Table I. We execute PARSEC 3.0
+surviving history, logically invalidating the erroneous execution suffix    benchmarks with the simmedium dataset.
+without scanning cache entries.
+   To restore consistent cache data, PALIMPSEST advances Glob-
+alCurGen upon rollback, invalidating previous Current mappings                     TABLE I. HARDWARE CONFIGURATIONS EVALUATED.
+without modifying their physical Cur bits. When a subsequent access                                      Main Core
+encounters an invalid Current mapping, the cache controllers reuse           Core                        1× 3-wide OoO SonicBOOM
+tag arrays and sequence comparators to select the latest surviving           Frequency                   3.2 GHz
+version with Seq < n across cache levels, falling back to the safe           Pipeline                    42-entry ROB, 72-entry IQ
+DRAM baseline when necessary. The selected version is promoted               Load/Store Queue            16-entry LDQ/STQ
+                                                                             L1 I-Cache                  32 KiB, 8-way, 2-cycle latency
+as Current under the new generation, allowing subsequent accesses
+                                                                             L1 D-Cache                  32 KiB, 2-way, 2-cycle latency
+to follow the normal cache access path. As illustrated in Fig. 4(b),
+                                                                             L1D MSHRs                   6
+rollback at segment 8 invalidates A8 and restores A7 rather than the                                   Checker Cores
+older DRAM value A1, even though segment 7 has not yet completed             Cores                       4× in-order Rocket, 5-stage pipeline
+verification. Meanwhile, in-flight transactions retain their execution       Frequency                   1.6 GHz
+identities to prevent discarded updates from being installed, while          L1 I/D-Cache                4 KiB each, 2-way
+outstanding preservation transfers and matching acknowledgments are          Load-Store Log              4 KiB per checker
+handled to maintain data consistency and release reserved resources.                                  Memory Hierarchy
+   By combining execution-history invalidation with on-demand ver-           Shared L2 Cache             1 MiB, 16-way, 12-cycle latency
+sion reconstruction, PALIMPSEST restores checkpoint-consistent ex-           L2 MSHRs                    4
+ecution without cache-wide scans or sequential undo-log replay.              Cache Line Size             64 B
+Rather than reversing updates one by one, historical versions can            Main Memory                 16 GB DDR3 @ 1066 MHz
+                                                                                                              Execute / verify   Cache stall     LSL stall   Checkpoint       Reclaim wait   Main-stall idle        Supply idle   Other
+           1.30×
+           1.25×          PEEK               PALIMPSEST              ParaMedic                                100
+slowdown
+           1.20×                                                                                               80
+           1.15×                                                                                                                                  67.7%
+                                                                                                                                                              71.3%
+
+
+
+
+                                                                                                 Cycles (%)
+           1.10×                                                                                               60     52.2%                                                                                                   62.0%
+           1.05×                                                                                                                  44.8%
+           1.00×                                                                                               40                                                                39.3%                         42.1%
+                                                          t
+                        les  at
+                                e   ck     e
+                                         in tion
+                                                 s
+                                                       re       up ster           ea
+                                                                                     n
+                    c ho nim ytra qm         p     f er ded
+                                                                    c l u     o m                              20                                                                            22.3%
+                  ks       a      d  fre swa                      m         e
+                ac luid       bo                               ea         G
+             bl       f                                     str
+                                                                                                                0
+                                                                                                                     ParaMedic    L1-only      Late reclaim PALIMPSEST         ParaMedic     L1-only    Late reclaim PALIMPSEST
+                                                                                                                         (a) Main-Core Cycle Breakdown                                (b) Checker Cycle Breakdown
+
+
+Fig. 5. Performance slowdown of PEEK, PALIMPSEST, and                                            Fig. 7. Ablation results of PALIMPSEST and ParaMedic. (a) Main-
+ParaMedic across PARSEC workloads.                                                               core cycle breakdown. (b) Checker-core cycle breakdown.
+
+                    ParaMedic           PEEK / PEEK+Restart               PALIMPSEST
+
+                                                                                                                                                             geomean                blackscholes               fluidanimate
+
+
+
+
+                                                                                                          Slowdown
+                                                                                                                     2.50
+   Density
+
+
+
+
+                                                                                                                                                             bodytrack              freqmine                   swaptions
+                                                                                                                     2.00                                    ferret                 dedup                      streamcluster
+                                                                                                                     1.50
+
+             0             1             2                  −1   0    1     2     3      4   5                       1.00
+                                                       10      10 10 10 10 10 10                                                   2                                      4                                     6
+                 (a) Detection Latency (μs)                 (b) Recovery Latency (μs)                                                                     Number of Checker Cores
+
+Fig. 6. Detection and recovery latency distributions across PARSEC                               Fig. 8. Ablation results of PALIMPSEST and ParaMedic. (a) Main-
+workloads.                                                                                       core cycle breakdown. (b) Checker-core cycle breakdown.
+
+
+A. Performance Overhead                                                                          and store undo, PALIMPSEST logically invalidates erroneous ver-
+   Experiment setup. We execute PARSEC benchmarks and compare                                    sions and reconstructs valid states on demand, substantially reducing
+the performance slowdown of PALIMPSEST against ParaMedic and                                     recovery work.
+PEEK.
+                                                                                                 C. Ablation Study
+   Results. Fig. 5 shows the execution slowdown across different
+workloads. PALIMPSEST achieves a geomean slowdown of approx-                                        Experiment setup. To evaluate the contributions of
+imately 1.056×, compared to 1.97× for ParaMedic. The improve-                                    PALIMPSEST’s key mechanisms, we compare four configurations:
+ments are particularly pronounced in memory-intensive workloads                                  ParaMedic, L1-only, Late reclaim, and PALIMPSEST. L1-only
+such as ferret, dedup, and streamcluster, where ParaMedic suffers                                disables cross-level cache migration, while Late reclaim disables
+from cache isolation stalls and delayed LSL reclamation. By extend-                              early LSL reclamation. We analyze main-core cycle breakdown and
+ing the recoverable domain across cache levels and decoupling recov-                             checker-core utilization using synthetic workload profiles derived
+ery history from checking inputs, PALIMPSEST effectively alleviates                              from eight PARSEC benchmarks.
+these bottlenecks. Although PEEK incurs lower overhead, it provides                                 Results. Fig. 8(a) shows the main-core cycle breakdown.
+error detection without recovery support. Overall, PALIMPSEST                                    PALIMPSEST increases the execution-cycle proportion from 52.18%
+substantially reduces the performance cost of heterogeneous parallel                             in ParaMedic to 71.35%, reducing total main-core cycles by 26.14%.
+error correction.                                                                                In contrast, L1-only suffers from increased cache pressure as histor-
+                                                                                                 ical versions compete for limited L1 capacity. Cross-level versioning
+B. Detection and Recovery Latency                                                                alleviates this bottleneck by allowing versions to migrate into L2.
+                                                                                                    Fig. 8(b) shows the checker-core cycle breakdown. PALIMPSEST
+   Experiment setup. To evaluate detection and recovery latency,
+                                                                                                 increases the verification-phase proportion from 39.28% to 61.98%,
+we use eight PARSEC benchmarks. Detection latency is measured
+                                                                                                 eliminating the reclamation waiting caused by retained LSL en-
+from instruction commit to verification completion, while recovery
+                                                                                                 tries. However, L1-only exhibits substantial checker idleness due
+latency is measured from error detection to the restoration of the
+                                                                                                 to main-core stalls. These modeled results demonstrate that cross-
+execution progress reached immediately before the fault. We compare
+                                                                                                 level versioning and early LSL reclamation complement each other
+PALIMPSEST against ParaMedic and PEEK, with an application-
+                                                                                                 in improving execution progress and checker resource utilization.
+level restart mechanism added to PEEK for recovery comparison. For
+recovery evaluation, we select 19 fault injection points per workload,                           D. Scalability
+ranging from 5% to 95% of application execution.
+                                                                                                 E. Hardware Overheads
+   Results. Fig. 6 shows the modeled latency distributions.
+PALIMPSEST achieves an average detection latency of 0.72 µs,                                                                                           VI. C ONCLUSION
+compared with 0.76 µs for PEEK and 0.93 µs for ParaMedic.                                           EC brings speculative-state containment and checkpoint recovery
+This reduction results from early segment dispatch under cache-                                  into a common cache-versioning framework. Its L1/L2 recoverable
+preservation stalls, limiting the unverified execution distance. For                             domain allows updates that are not yet safe to move beyond
+recovery, PALIMPSEST achieves an average latency of 0.41 µs, re-                                 the private L1 while retaining the final DRAM validation barrier.
+ducing ParaMedic’s 1.09 µs by 62.3%, while PEEK with application                                 Preserve-before-reuse protects required historical contents, enabling
+restart requires 12.33 ms. Unlike ParaMedic’s sequential log scanning                            checker-input storage to be reclaimed independently of recovery-state
+retention. Sequence-based selection and lazy version reconstruction
+supply checkpoint memory state on demand following a checker-
+reported error. Evaluation shows XXX performance improvement
+over XXX, with XXX recovery latency and XXX hardware overhead.
+The design demonstrates that verification-aware versioning can make
+cache capacity a shared resource for isolation and rollback-state
+preservation.
+                     VII. ACKNOWLEDGEMENT
+                             R EFERENCES
+[1] Texas Instruments, “Single-Event Effects (SEE) Radiation Report
+    of the F28377D-SEP Dual-Core Real-Time Microcontroller,” Texas
+    Instruments, Tech. Rep. SPRK066, Oct. 2025. [Online]. Available:
+    https://www.ti.com/lit/rr/sprk066/sprk066.pdf
+[2] E. Ozer, B. Venu, X. Iturbe, S. Das, S. Lyberis, J. Biggs, P. Harrod,
+    and J. Penton, “Error correlation prediction in lockstep processors for
+    safety-critical systems,” in 2018 51st Annual IEEE/ACM International
+    Symposium on Microarchitecture (MICRO), 2018, pp. 737–748.
+[3] S. Ainsworth and T. M. Jones, “ParaMedic: Heterogeneous parallel error
+    correction,” in 2019 49th Annual IEEE/IFIP International Conference on
+    Dependable Systems and Networks (DSN). IEEE, 2019, pp. 201–213.
+

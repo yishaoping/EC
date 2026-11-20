@@ -1,0 +1,453 @@
+{
+  "causal_levels": {
+    "amplifier": "UNQUANTIFIED: short/reduced/changed/component scopes, lower Native CPI, distinct linked addresses/cache state can amplify ratio; no full-workload calibration",
+    "direct_symptom": "PROVEN: same retired-instruction counts require more target cycles; CPI increases",
+    "immediate_blocking": "PROVEN_FOR_LOGGED_EVENTS: retained-version preservation/writeback blocking onsets occur withinROI where counted; these are event counts, not blocking durations or BOOM retirement-stall cycles",
+    "upstream_trigger": "PARTIALLY_SUPPORTED: frozen EC executes checker/package/version-preservation machinery and shares cache/coherence resources; exact per-mechanism causal share is UNPROVEN without matched ablations or retirement-correlated counters"
+  },
+  "created_utc": "2026-11-12T10:49:35.219812+00:00",
+  "evidence": [
+    {
+      "benchmark": "blackscholes",
+      "onset_reason_counts": {
+        "PRESERVATION_BLOCKED:3": 1,
+        "PRESERVATION_WAIT:0": 38
+      },
+      "raw_examples": {
+        "PRESERVATION_BLOCKED": "PRESERVATION_BLOCKED cycle=0000000000015330 line=008040cf80 seq=00000000 generation=000007e0 request_valid=0 request_ready=1 request_fire=0 blocked_fastline=0 fast_line=0000000000 slot_conflict=0 meta_clear_block=1 completion_pending=0 probe_same_set=0 mshr_same_line=00 safe=1 wb_pending=0 wb_pending_svb=0 wb_line=0080003b00 wb_source_busy=0 waiting_reason=3",
+        "PRESERVATION_WAIT": "PRESERVATION_WAIT cycle=000000000001532f line=008040cf80 request_type=01 request_seq=00000001 old_seq=00000000 old_generation=000007e0 watermark=00000000 handoff_valid=1 handoff_ready=1 handoff_fire=1 wb_valid=0 wb_ready=1 wb_fire=0 pending=0 blocked_fastline=0 fast_line=0000000000 fast_seq=00000000 capture_pending=0 slot_reserved=0 nack_hit=0 lookup_epoch=0001 live_epoch=0001 probe_same_set=0 mshr_same_line=00 reason=0"
+      },
+      "raw_integrity": {
+        "complete_stream_eof": true,
+        "gzip_sha256": "ea0db5ec1e38165913c35717b0b2d455a19f62e2d4cc39bac8a35e25740ad31b",
+        "raw_bytes": 228746427,
+        "raw_sha256": "34c6f71d3a08ef63c7e64b065ab9d742e30185da8b10fe6acc0378c20ae0abe3"
+      },
+      "result_sha256": "735ca9ac1bae4721ae16a53771a1ef6c3a890adfc2cb1bbefa8233a6666a37ef",
+      "roi_begin": 86798,
+      "roi_end": 150345,
+      "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/blackscholes-project64-one-iteration-no-main-timer-ec-r1"
+    },
+    {
+      "benchmark": "fluidanimate",
+      "onset_reason_counts": {
+        "PRESERVATION_BLOCKED:3": 2,
+        "PRESERVATION_BLOCKED:7": 14,
+        "PRESERVATION_WAIT:0": 50,
+        "WB_BLOCK:0": 18,
+        "WB_BLOCK:2": 24,
+        "WB_BLOCK:shared_writeback_source": 5
+      },
+      "raw_examples": {
+        "PRESERVATION_BLOCKED": "PRESERVATION_BLOCKED cycle=00000000000a50a0 line=0080096000 seq=00000000 generation=00002657 request_valid=1 request_ready=0 request_fire=0 blocked_fastline=0 fast_line=0000000000 slot_conflict=0 meta_clear_block=0 completion_pending=0 probe_same_set=0 mshr_same_line=00 safe=1 wb_pending=1 wb_pending_svb=0 wb_line=0080416240 wb_source_busy=1 waiting_reason=7",
+        "PRESERVATION_WAIT": "PRESERVATION_WAIT cycle=00000000000a509f line=0080096000 request_type=01 request_seq=00000002 old_seq=00000000 old_generation=00002657 watermark=00000000 handoff_valid=1 handoff_ready=1 handoff_fire=1 wb_valid=0 wb_ready=0 wb_fire=0 pending=0 blocked_fastline=0 fast_line=0000000000 fast_seq=00000000 capture_pending=0 slot_reserved=0 nack_hit=0 lookup_epoch=0001 live_epoch=0001 probe_same_set=0 mshr_same_line=00 reason=0",
+        "WB_BLOCK": "WB_BLOCK cycle=00000000000a3d0d owner_type=1 line=00804150c0 mshr=1 svb=0 probe=0 wb_state=0 wb_pending=1 pending_svb=0 pending_line=0080416980 source_busy=1 waiting_reason=0"
+      },
+      "raw_integrity": {
+        "complete_stream_eof": true,
+        "gzip_sha256": "dea7d04d9a9eda1fa249920c8e7f7eec0d7e536d32f32df5c5351598ea709a93",
+        "raw_bytes": 652328580,
+        "raw_sha256": "97ccbed639db9c73a8c912a47e2d24cc6e40cefc92184641864f36a0fc3b94ba"
+      },
+      "result_sha256": "9fcdf570ebf11537f5a34aabd2190eb81835b99d5cf15bbb3f808169971d5cbf",
+      "roi_begin": 670729,
+      "roi_end": 698806,
+      "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-real-test64-preintegration-AdvanceParticles-4725-cells-norelax-ec-r1"
+    },
+    {
+      "benchmark": "bodytrack",
+      "onset_reason_counts": {
+        "PRESERVATION_WAIT:0": 85,
+        "WB_BLOCK:0": 35,
+        "WB_BLOCK:1": 1,
+        "WB_BLOCK:2": 1,
+        "WB_BLOCK:shared_writeback_source": 13
+      },
+      "raw_examples": {
+        "PRESERVATION_WAIT": "PRESERVATION_WAIT cycle=000000000002dea0 line=008059ff80 request_type=01 request_seq=00000001 old_seq=00000000 old_generation=0000395d watermark=00000000 handoff_valid=1 handoff_ready=1 handoff_fire=1 wb_valid=0 wb_ready=1 wb_fire=0 pending=0 blocked_fastline=0 fast_line=0000000000 fast_seq=00000000 capture_pending=0 slot_reserved=0 nack_hit=0 lookup_epoch=0001 live_epoch=0001 probe_same_set=0 mshr_same_line=00 reason=0",
+        "WB_BLOCK": "WB_BLOCK cycle=000000000002e3ff owner_type=1 line=0080193c80 mshr=1 svb=0 probe=0 wb_state=0 wb_pending=1 pending_svb=0 pending_line=0080193000 source_busy=1 waiting_reason=0"
+      },
+      "raw_integrity": {
+        "complete_stream_eof": true,
+        "gzip_sha256": "1a73d882eba754ea0b21cc359d7383f7594f6ed3f9a2d1a2707d1748c227616c",
+        "raw_bytes": 392828471,
+        "raw_sha256": "582410e88f848be1d40ca8fea32b3a2e3571712b6c4a1c50d4fca54369cbea86"
+      },
+      "result_sha256": "db5678f78474002be7d2bbcee3db0bf0776034bd3d42df890224b9e631675f17",
+      "roi_begin": 188028,
+      "roi_end": 334933,
+      "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/bodytrack-real-frame0-likelihood-measurement-replay-ec-r1-attempt2"
+    },
+    {
+      "benchmark": "freqmine",
+      "onset_reason_counts": {
+        "PRESERVATION_BLOCKED:3": 66,
+        "PRESERVATION_BLOCKED:6": 71,
+        "PRESERVATION_BLOCKED:7": 353,
+        "PRESERVATION_WAIT:0": 2037,
+        "PRESERVATION_WAIT:2": 6088,
+        "WB_BLOCK:0": 317,
+        "WB_BLOCK:1": 4,
+        "WB_BLOCK:2": 181,
+        "WB_BLOCK:shared_writeback_source": 437
+      },
+      "raw_examples": {
+        "PRESERVATION_BLOCKED": "PRESERVATION_BLOCKED cycle=0000000000015a95 line=0080014ec0 seq=00000000 generation=00000b3f request_valid=1 request_ready=0 request_fire=0 blocked_fastline=0 fast_line=0000000000 slot_conflict=0 meta_clear_block=0 completion_pending=0 probe_same_set=0 mshr_same_line=00 safe=1 wb_pending=1 wb_pending_svb=0 wb_line=0080014440 wb_source_busy=0 waiting_reason=7",
+        "PRESERVATION_WAIT": "PRESERVATION_WAIT cycle=0000000000015841 line=008801df80 request_type=01 request_seq=00000001 old_seq=00000000 old_generation=00000b57 watermark=00000000 handoff_valid=1 handoff_ready=1 handoff_fire=1 wb_valid=0 wb_ready=1 wb_fire=0 pending=0 blocked_fastline=0 fast_line=0000000000 fast_seq=00000000 capture_pending=0 slot_reserved=0 nack_hit=0 lookup_epoch=0003 live_epoch=0003 probe_same_set=0 mshr_same_line=00 reason=0",
+        "WB_BLOCK": "WB_BLOCK cycle=0000000000015a95 owner_type=3 line=0080014ec0 mshr=0 svb=0 probe=0 wb_state=3 wb_pending=1 pending_svb=0 pending_line=0080014440 source_busy=0 waiting_reason=2"
+      },
+      "raw_integrity": {
+        "complete_stream_eof": true,
+        "gzip_sha256": "bc6c10939319d0b3c7c3164ddc8be718a65bba12c5986ecaaebd759b9c6cf533",
+        "raw_bytes": 871902768,
+        "raw_sha256": "a518370576f9fb6fd20a86159bb8cace30bf875639dd35e82d7474b5c18adb17"
+      },
+      "result_sha256": "71f269274a91b74a77bbbe2a9eb762d88fd568d1ce60f9bbd56142e24c052755",
+      "roi_begin": 88095,
+      "roi_end": 556024,
+      "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/freqmine-test-input-hot4-lp64-quiet-roi-ec-r1"
+    },
+    {
+      "benchmark": "swaptions",
+      "onset_reason_counts": {
+        "PRESERVATION_BLOCKED:3": 1,
+        "PRESERVATION_BLOCKED:6": 56,
+        "PRESERVATION_BLOCKED:7": 249,
+        "PRESERVATION_WAIT:0": 1544,
+        "PRESERVATION_WAIT:2": 1115,
+        "WB_BLOCK:0": 36,
+        "WB_BLOCK:1": 1,
+        "WB_BLOCK:2": 265,
+        "WB_BLOCK:shared_writeback_source": 326
+      },
+      "raw_examples": {
+        "PRESERVATION_BLOCKED": "PRESERVATION_BLOCKED cycle=000000000002b0fd line=008044df00 seq=00000000 generation=0000393f request_valid=1 request_ready=0 request_fire=0 blocked_fastline=0 fast_line=0000000000 slot_conflict=0 meta_clear_block=0 completion_pending=0 probe_same_set=0 mshr_same_line=00 safe=1 wb_pending=0 wb_pending_svb=0 wb_line=0080042040 wb_source_busy=0 waiting_reason=7",
+        "PRESERVATION_WAIT": "PRESERVATION_WAIT cycle=000000000002b036 line=008044df80 request_type=01 request_seq=00000001 old_seq=00000000 old_generation=00003900 watermark=00000000 handoff_valid=1 handoff_ready=1 handoff_fire=1 wb_valid=0 wb_ready=1 wb_fire=0 pending=0 blocked_fastline=0 fast_line=0000000000 fast_seq=00000000 capture_pending=0 slot_reserved=0 nack_hit=0 lookup_epoch=0002 live_epoch=0002 probe_same_set=0 mshr_same_line=00 reason=0",
+        "WB_BLOCK": "WB_BLOCK cycle=000000000002b0fd owner_type=3 line=008044df00 mshr=0 svb=0 probe=0 wb_state=3 wb_pending=0 pending_svb=0 pending_line=008044df40 source_busy=0 waiting_reason=1"
+      },
+      "raw_integrity": {
+        "complete_stream_eof": true,
+        "gzip_sha256": "f92070eadd8dc569557d017a1211b52a50c5c56ceb4d99a88d651b8914a63096",
+        "raw_bytes": 477219088,
+        "raw_sha256": "7a667d6f6155b5cec2b02a41b302c95fef57d610445941bca6d668ee0e78e742"
+      },
+      "result_sha256": "1fced3fc94a74bc29e24ebe4c445f490174b2635a249ab365f04ab2b6728a609",
+      "roi_begin": 176147,
+      "roi_end": 513780,
+      "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/swaptions-representative-16-trial-no-main-timer-ec-r1"
+    },
+    {
+      "benchmark": "ferret",
+      "onset_reason_counts": {
+        "PRESERVATION_BLOCKED:7": 2,
+        "PRESERVATION_WAIT:0": 8,
+        "WB_BLOCK:0": 3,
+        "WB_BLOCK:2": 5,
+        "WB_BLOCK:shared_writeback_source": 1
+      },
+      "raw_examples": {
+        "PRESERVATION_BLOCKED": "PRESERVATION_BLOCKED cycle=000000000003db05 line=00804a3f40 seq=00000000 generation=00003421 request_valid=1 request_ready=0 request_fire=0 blocked_fastline=0 fast_line=0000000000 slot_conflict=0 meta_clear_block=0 completion_pending=0 probe_same_set=0 mshr_same_line=00 safe=1 wb_pending=1 wb_pending_svb=0 wb_line=0080098680 wb_source_busy=0 waiting_reason=7",
+        "PRESERVATION_WAIT": "PRESERVATION_WAIT cycle=000000000003db04 line=00804a3f40 request_type=01 request_seq=00000001 old_seq=00000000 old_generation=00003421 watermark=00000000 handoff_valid=1 handoff_ready=1 handoff_fire=1 wb_valid=0 wb_ready=0 wb_fire=0 pending=0 blocked_fastline=0 fast_line=0000000000 fast_seq=00000000 capture_pending=0 slot_reserved=0 nack_hit=0 lookup_epoch=0006 live_epoch=0006 probe_same_set=0 mshr_same_line=00 reason=0",
+        "WB_BLOCK": "WB_BLOCK cycle=000000000003db05 owner_type=3 line=00804a3f40 mshr=0 svb=0 probe=0 wb_state=1 wb_pending=1 pending_svb=0 pending_line=0080098680 source_busy=0 waiting_reason=2"
+      },
+      "raw_integrity": {
+        "complete_stream_eof": true,
+        "gzip_sha256": "062b7176ebdf5898f515da97f56995eb8dfac0f19bab569dc20cb7ed336baccf",
+        "raw_bytes": 323974467,
+        "raw_sha256": "0b097cf9e9012563fdef2b68d46dee3ceee9595e3489a935c1b3e065a33859fd"
+      },
+      "result_sha256": "63da95d69d9bd35f01e8e199bad84efc4943cb506afd8c6261f0147957e99d4b",
+      "roi_begin": 252593,
+      "roi_end": 286777,
+      "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/ferret-real-test-emd-distance-matrix-126-pairs-ec-r1"
+    },
+    {
+      "benchmark": "dedup",
+      "onset_reason_counts": {
+        "PRESERVATION_BLOCKED:3": 2,
+        "PRESERVATION_BLOCKED:7": 4,
+        "PRESERVATION_WAIT:0": 182,
+        "PRESERVATION_WAIT:2": 1305,
+        "WB_BLOCK:0": 22,
+        "WB_BLOCK:1": 1,
+        "WB_BLOCK:2": 8,
+        "WB_BLOCK:shared_writeback_source": 9
+      },
+      "raw_examples": {
+        "PRESERVATION_BLOCKED": "PRESERVATION_BLOCKED cycle=00000000000186fd line=00800d0480 seq=00000000 generation=00000012 request_valid=1 request_ready=0 request_fire=0 blocked_fastline=0 fast_line=0000000000 slot_conflict=0 meta_clear_block=0 completion_pending=0 probe_same_set=0 mshr_same_line=00 safe=1 wb_pending=0 wb_pending_svb=0 wb_line=00800d1a40 wb_source_busy=0 waiting_reason=7",
+        "PRESERVATION_WAIT": "PRESERVATION_WAIT cycle=000000000001856a line=00a00daf40 request_type=01 request_seq=00000001 old_seq=00000000 old_generation=00000ab6 watermark=00000000 handoff_valid=1 handoff_ready=1 handoff_fire=1 wb_valid=0 wb_ready=1 wb_fire=0 pending=0 blocked_fastline=0 fast_line=0000000000 fast_seq=00000000 capture_pending=0 slot_reserved=0 nack_hit=0 lookup_epoch=0001 live_epoch=0001 probe_same_set=0 mshr_same_line=00 reason=0",
+        "WB_BLOCK": "WB_BLOCK cycle=00000000000186fd owner_type=3 line=00800d0480 mshr=0 svb=0 probe=0 wb_state=3 wb_pending=0 pending_svb=0 pending_line=00800d2780 source_busy=0 waiting_reason=1"
+      },
+      "raw_integrity": {
+        "complete_stream_eof": true,
+        "gzip_sha256": "3b87c4f8e433b120b6a107891d331a0f4c5b44e869351219de83f1455d3e86bb",
+        "raw_bytes": 560665076,
+        "raw_sha256": "8f3508f84e8d8f3fb747b92a4f8db3c824a665605f8f980500011bc48c02fba9"
+      },
+      "result_sha256": "39a8f7000c7584ec7017de9c5c3aed4952658c409dd36e2467a7efd7e2adfc45",
+      "roi_begin": 99607,
+      "roi_end": 507210,
+      "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/dedup-official-test-gzip-serial-buffer16m-preloaded-table-heap512-ec-r1"
+    },
+    {
+      "benchmark": "streamcluster",
+      "onset_reason_counts": {
+        "PRESERVATION_BLOCKED:3": 1,
+        "PRESERVATION_BLOCKED:6": 278,
+        "PRESERVATION_BLOCKED:7": 59,
+        "PRESERVATION_WAIT:0": 2216,
+        "WB_BLOCK:0": 31,
+        "WB_BLOCK:2": 71,
+        "WB_BLOCK:shared_writeback_source": 337
+      },
+      "raw_examples": {
+        "PRESERVATION_BLOCKED": "PRESERVATION_BLOCKED cycle=000000000002c3ba line=00800483c0 seq=00000003 generation=00003bcf request_valid=0 request_ready=0 request_fire=0 blocked_fastline=0 fast_line=0080048340 slot_conflict=0 meta_clear_block=0 completion_pending=0 probe_same_set=0 mshr_same_line=00 safe=0 wb_pending=0 wb_pending_svb=0 wb_line=0080048340 wb_source_busy=0 waiting_reason=6",
+        "PRESERVATION_WAIT": "PRESERVATION_WAIT cycle=000000000002a4c9 line=008044ef80 request_type=01 request_seq=00000001 old_seq=00000000 old_generation=0000396f watermark=00000000 handoff_valid=1 handoff_ready=1 handoff_fire=1 wb_valid=0 wb_ready=1 wb_fire=0 pending=0 blocked_fastline=0 fast_line=0000000000 fast_seq=00000000 capture_pending=0 slot_reserved=0 nack_hit=0 lookup_epoch=0003 live_epoch=0003 probe_same_set=0 mshr_same_line=00 reason=0",
+        "WB_BLOCK": "WB_BLOCK cycle=000000000002ca9e owner_type=SVB_PROMOTION entry=04 line=008044ee00 seq=00000001 wb_state=0 wb_pending=0 pending_svb=0 pending_line=008044ee40 source_busy=0 waiting_reason=shared_writeback_source"
+      },
+      "raw_integrity": {
+        "complete_stream_eof": true,
+        "gzip_sha256": "d3f51214e6e92ab6824cf7f14830d103c6ff14bc0312c18b3a341012f19d820e",
+        "raw_bytes": 733998574,
+        "raw_sha256": "b4246121cc098ddabb7bb4a7fbf7b509a20283209eeac90ae9e6e76b5c0e8c7e"
+      },
+      "result_sha256": "1429ed66186aa264a3a68c8b80167da07854642ac7115534e7b9293588290949",
+      "roi_begin": 173219,
+      "roi_end": 783047,
+      "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/streamcluster-representative-16-points-fp-contract-off-ec-r1-attempt2"
+    }
+  ],
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "generated_rtl_event_definitions": {
+    "event_examples_bound_to_definition": true,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/FireSim-generated.sv",
+    "sha256": "27362c56925b674288d37039c749ec9fbdd1a2e62141aac6d072022fd4d60885"
+  },
+  "limits": [
+    "No simulator or hardware launched; all evidence read from accepted frozen-run logs",
+    "Do not sum overlapping checker intervals or SVB lifetimes as slowdown overhead",
+    "Blocking onsets are not block cycles; lack ofLONG_STALL does not imply no short stalls",
+    "Shared objects and matching dynamic instruction count do not remove linked-layout/cache-state confounding",
+    "These declared reduced/component profiles do not establish complete PARSEC application slowdown"
+  ],
+  "rows": [
+    {
+      "benchmark": "blackscholes",
+      "boom_hz": 200000000,
+      "checker_acceptance_tail_excluded_from_primary_ratio": 11344,
+      "checker_hz": 100000000,
+      "checker_local_mean_checker_cycles": 9530.818181818182,
+      "ec_cpi": 1.7847774189018397,
+      "ec_cycles": 63547,
+      "extra_cycles_per_instruction": 0.07625333520572954,
+      "extra_roi_cycles": 2715,
+      "fastline_block_other_line_roi_onset_events": 0,
+      "long_stall_roi_onset_events": 0,
+      "mean_completed_svb_capture_to_ack_cycles": 13242.633333333333,
+      "mean_completed_svb_capture_to_promotion_cycles": 13157.766666666666,
+      "mean_completed_svb_promotion_to_ack_cycles": 84.86666666666666,
+      "native_cpi": 1.7085240836961102,
+      "native_cycles": 60832,
+      "preservation_blocked_roi_onset_events": 1,
+      "preservation_wait_roi_onset_events": 38,
+      "probe_blocked_roi_onset_events": 0,
+      "profile": "project64-one-iteration-no-main-timer",
+      "roi_instructions": 35605,
+      "roi_svb_capture_events": 30,
+      "roi_svb_capture_events_per_1000_instructions": 0.8425782895660722,
+      "slowdown": 1.044631115202525,
+      "wb_block_roi_onset_events": 0
+    },
+    {
+      "benchmark": "fluidanimate",
+      "boom_hz": 200000000,
+      "checker_acceptance_tail_excluded_from_primary_ratio": 3915,
+      "checker_hz": 100000000,
+      "checker_local_mean_checker_cycles": 3562.769230769231,
+      "ec_cpi": 0.8881472811817923,
+      "ec_cycles": 28077,
+      "extra_cycles_per_instruction": 0.3520070856925948,
+      "extra_roi_cycles": 11128,
+      "fastline_block_other_line_roi_onset_events": 0,
+      "long_stall_roi_onset_events": 0,
+      "mean_completed_svb_capture_to_ack_cycles": 4788,
+      "mean_completed_svb_capture_to_promotion_cycles": 4654.75,
+      "mean_completed_svb_promotion_to_ack_cycles": 133.25,
+      "native_cpi": 0.5361401954891974,
+      "native_cycles": 16949,
+      "preservation_blocked_roi_onset_events": 16,
+      "preservation_wait_roi_onset_events": 50,
+      "probe_blocked_roi_onset_events": 0,
+      "profile": "real-test64-preintegration-AdvanceParticles-4725-cells-norelax",
+      "roi_instructions": 31613,
+      "roi_svb_capture_events": 8,
+      "roi_svb_capture_events_per_1000_instructions": 0.2530604498149496,
+      "slowdown": 1.6565579090211813,
+      "wb_block_roi_onset_events": 47
+    },
+    {
+      "benchmark": "bodytrack",
+      "boom_hz": 200000000,
+      "checker_acceptance_tail_excluded_from_primary_ratio": 7956,
+      "checker_hz": 100000000,
+      "checker_local_mean_checker_cycles": 7498.857142857143,
+      "ec_cpi": 1.809642887938999,
+      "ec_cycles": 146905,
+      "extra_cycles_per_instruction": 0.2583919486566723,
+      "extra_roi_cycles": 20976,
+      "fastline_block_other_line_roi_onset_events": 0,
+      "long_stall_roi_onset_events": 0,
+      "mean_completed_svb_capture_to_ack_cycles": 9561.197530864198,
+      "mean_completed_svb_capture_to_promotion_cycles": 9470.62962962963,
+      "mean_completed_svb_promotion_to_ack_cycles": 90.5679012345679,
+      "native_cpi": 1.5512509392823266,
+      "native_cycles": 125929,
+      "preservation_blocked_roi_onset_events": 0,
+      "preservation_wait_roi_onset_events": 85,
+      "probe_blocked_roi_onset_events": 0,
+      "profile": "real-frame0-likelihood-measurement-replay",
+      "roi_instructions": 81179,
+      "roi_svb_capture_events": 81,
+      "roi_svb_capture_events_per_1000_instructions": 0.9977949962428707,
+      "slowdown": 1.1665700513781576,
+      "wb_block_roi_onset_events": 50
+    },
+    {
+      "benchmark": "freqmine",
+      "boom_hz": 200000000,
+      "checker_acceptance_tail_excluded_from_primary_ratio": 1413,
+      "checker_hz": 100000000,
+      "checker_local_mean_checker_cycles": 4937.978260869565,
+      "ec_cpi": 1.7083935742971887,
+      "ec_cycles": 467929,
+      "extra_cycles_per_instruction": 1.1009492515516612,
+      "extra_roi_cycles": 301550,
+      "fastline_block_other_line_roi_onset_events": 0,
+      "long_stall_roi_onset_events": 0,
+      "mean_completed_svb_capture_to_ack_cycles": 4801.877041306436,
+      "mean_completed_svb_capture_to_promotion_cycles": 4694.050912584054,
+      "mean_completed_svb_promotion_to_ack_cycles": 107.82612872238232,
+      "native_cpi": 0.6074443227455275,
+      "native_cycles": 166379,
+      "preservation_blocked_roi_onset_events": 490,
+      "preservation_wait_roi_onset_events": 8125,
+      "probe_blocked_roi_onset_events": 0,
+      "profile": "test-input-hot4-lp64-quiet-roi",
+      "roi_instructions": 273900,
+      "roi_svb_capture_events": 1053,
+      "roi_svb_capture_events_per_1000_instructions": 3.8444687842278205,
+      "slowdown": 2.8124282511615046,
+      "wb_block_roi_onset_events": 939
+    },
+    {
+      "benchmark": "swaptions",
+      "boom_hz": 200000000,
+      "checker_acceptance_tail_excluded_from_primary_ratio": 3567,
+      "checker_hz": 100000000,
+      "checker_local_mean_checker_cycles": 6754.923076923077,
+      "ec_cpi": 2.148845172253585,
+      "ec_cycles": 337633,
+      "extra_cycles_per_instruction": 1.0844752200505337,
+      "extra_roi_cycles": 170396,
+      "fastline_block_other_line_roi_onset_events": 0,
+      "long_stall_roi_onset_events": 0,
+      "mean_completed_svb_capture_to_ack_cycles": 6897.643312101911,
+      "mean_completed_svb_capture_to_promotion_cycles": 6791.743630573248,
+      "mean_completed_svb_promotion_to_ack_cycles": 105.89968152866243,
+      "native_cpi": 1.0643699522030512,
+      "native_cycles": 167237,
+      "preservation_blocked_roi_onset_events": 306,
+      "preservation_wait_roi_onset_events": 2659,
+      "probe_blocked_roi_onset_events": 0,
+      "profile": "representative-16-trial-no-main-timer",
+      "roi_instructions": 157123,
+      "roi_svb_capture_events": 629,
+      "roi_svb_capture_events_per_1000_instructions": 4.003233135823527,
+      "slowdown": 2.0188893606079996,
+      "wb_block_roi_onset_events": 628
+    },
+    {
+      "benchmark": "ferret",
+      "boom_hz": 200000000,
+      "checker_acceptance_tail_excluded_from_primary_ratio": 8716,
+      "checker_hz": 100000000,
+      "checker_local_mean_checker_cycles": 7590.666666666667,
+      "ec_cpi": 2.0767922235722964,
+      "ec_cycles": 34184,
+      "extra_cycles_per_instruction": 0.5749696233292831,
+      "extra_roi_cycles": 9464,
+      "fastline_block_other_line_roi_onset_events": 0,
+      "long_stall_roi_onset_events": 0,
+      "mean_completed_svb_capture_to_ack_cycles": 9532.75,
+      "mean_completed_svb_capture_to_promotion_cycles": 9499.75,
+      "mean_completed_svb_promotion_to_ack_cycles": 33,
+      "native_cpi": 1.5018226002430133,
+      "native_cycles": 24720,
+      "preservation_blocked_roi_onset_events": 2,
+      "preservation_wait_roi_onset_events": 8,
+      "probe_blocked_roi_onset_events": 0,
+      "profile": "real-test-emd-distance-matrix-126-pairs",
+      "roi_instructions": 16460,
+      "roi_svb_capture_events": 4,
+      "roi_svb_capture_events_per_1000_instructions": 0.24301336573511545,
+      "slowdown": 1.3828478964401294,
+      "wb_block_roi_onset_events": 9
+    },
+    {
+      "benchmark": "dedup",
+      "boom_hz": 200000000,
+      "checker_acceptance_tail_excluded_from_primary_ratio": 2953,
+      "checker_hz": 100000000,
+      "checker_local_mean_checker_cycles": 4257.26,
+      "ec_cpi": 1.1842590009994653,
+      "ec_cycles": 407603,
+      "extra_cycles_per_instruction": 0.5692768984031797,
+      "extra_roi_cycles": 195936,
+      "fastline_block_other_line_roi_onset_events": 0,
+      "long_stall_roi_onset_events": 0,
+      "mean_completed_svb_capture_to_ack_cycles": 4575.086206896552,
+      "mean_completed_svb_capture_to_promotion_cycles": 4531.810344827586,
+      "mean_completed_svb_promotion_to_ack_cycles": 43.275862068965516,
+      "native_cpi": 0.6149821025962857,
+      "native_cycles": 211667,
+      "preservation_blocked_roi_onset_events": 6,
+      "preservation_wait_roi_onset_events": 1487,
+      "probe_blocked_roi_onset_events": 0,
+      "profile": "official-test-gzip-serial-buffer16m-preloaded-table-heap512",
+      "roi_instructions": 344184,
+      "roi_svb_capture_events": 116,
+      "roi_svb_capture_events_per_1000_instructions": 0.3370290309834275,
+      "slowdown": 1.9256804319993197,
+      "wb_block_roi_onset_events": 40
+    },
+    {
+      "benchmark": "streamcluster",
+      "boom_hz": 200000000,
+      "checker_acceptance_tail_excluded_from_primary_ratio": 4560,
+      "checker_hz": 100000000,
+      "checker_local_mean_checker_cycles": 4995.529801324504,
+      "ec_cpi": 1.5017656880273054,
+      "ec_cycles": 609828,
+      "extra_cycles_per_instruction": 0.7531779921886159,
+      "extra_roi_cycles": 305846,
+      "fastline_block_other_line_roi_onset_events": 0,
+      "long_stall_roi_onset_events": 0,
+      "mean_completed_svb_capture_to_ack_cycles": 5761.671949286846,
+      "mean_completed_svb_capture_to_promotion_cycles": 5673.086634970945,
+      "mean_completed_svb_promotion_to_ack_cycles": 88.58531431590069,
+      "native_cpi": 0.7485876958386894,
+      "native_cycles": 303982,
+      "preservation_blocked_roi_onset_events": 338,
+      "preservation_wait_roi_onset_events": 2216,
+      "probe_blocked_roi_onset_events": 0,
+      "profile": "representative-16-points-fp-contract-off",
+      "roi_instructions": 406074,
+      "roi_svb_capture_events": 1896,
+      "roi_svb_capture_events_per_1000_instructions": 4.6690997207405545,
+      "slowdown": 2.006131942022883,
+      "wb_block_roi_onset_events": 439
+    }
+  ],
+  "script_sha256": "764f538c57c8fec94c395d900567199cbcb66708f40ca75ea33874a9906074f1",
+  "summary_sha256": "abb08d1e1b4ae82f363d900f64160c703c1068453aec2ab6cd924e92ecbbadcb"
+}

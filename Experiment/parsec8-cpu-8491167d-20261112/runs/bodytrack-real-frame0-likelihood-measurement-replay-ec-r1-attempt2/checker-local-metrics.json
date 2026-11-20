@@ -1,0 +1,165 @@
+{
+  "endpoints": [
+    "new_package actual transition",
+    "package_result_queue.io.enq.fire with full_compare=1, status=PASS, cancelled=0"
+  ],
+  "fingerprint": {
+    "parser": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24",
+    "prints": "ff64342bde824b33be2086815f0bf420a0b8effedb4c6b72085879ad6ec1e100",
+    "result": "db5678f78474002be7d2bbcee3db0bf0776034bd3d42df890224b9e631675f17",
+    "script": "e8ba11fc10b84bb059f7b26660ef24bffbfffe2da588e4802699103e6c3a6801",
+    "source": "92c65bd8130abe53db7eb75c830958f8ffdbb2f97aef93ca2074abef02912ac0"
+  },
+  "interval_csv": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/bodytrack-real-frame0-likelihood-measurement-replay-ec-r1-attempt2/checker-local-intervals.csv",
+  "interval_csv_sha256": "4f779dd960b55836e5239849a91941c69f49a79a0194a6b8150b2a00bdd68090",
+  "limitations": [
+    "Local package interval includes service/stalls until result queue enqueue, not strict detection latency",
+    "Two BOOM cycles per checker cycle converts durations only; no absolute epoch alignment inferred",
+    "No same-package BOOM execution-done, architectural rollback begin/end or result transport latency inferred"
+  ],
+  "paper_row": {
+    "benchmark": "bodytrack",
+    "boom_equivalent_mean_duration_cycles": 14997.714285714286,
+    "boom_hz": 200000000,
+    "checker_hz": 100000000,
+    "evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/bodytrack-real-frame0-likelihood-measurement-replay-ec-r1-attempt2/checker-local-metrics.json",
+    "local_max_checker_cycles": 11771,
+    "local_mean_checker_cycles": 7498.857142857143,
+    "local_median_checker_cycles": 7323.0,
+    "local_min_checker_cycles": 2615,
+    "local_p95_checker_cycles": 11574,
+    "packages": 28,
+    "profile": "real-frame0-likelihood-measurement-replay",
+    "repeat": 1
+  },
+  "parser": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py",
+  "per_checker": {
+    "1": {
+      "histogram": {
+        "6722": 1,
+        "7259": 1,
+        "7277": 1,
+        "8055": 1,
+        "8082": 1,
+        "8447": 1,
+        "11771": 1
+      },
+      "maximum": 11771,
+      "mean": 8230.42857142857,
+      "median": 8055,
+      "minimum": 6722,
+      "n": 7,
+      "p95": 11771,
+      "p99": 11771,
+      "percentiles": "nearest rank",
+      "sum": 57613,
+      "units": "checker-domain target cycles"
+    },
+    "2": {
+      "histogram": {
+        "7253": 1,
+        "7305": 1,
+        "7407": 1,
+        "7503": 1,
+        "7605": 1,
+        "8027": 1,
+        "8048": 1
+      },
+      "maximum": 8048,
+      "mean": 7592.571428571428,
+      "median": 7503,
+      "minimum": 7253,
+      "n": 7,
+      "p95": 8048,
+      "p99": 8048,
+      "percentiles": "nearest rank",
+      "sum": 53148,
+      "units": "checker-domain target cycles"
+    },
+    "3": {
+      "histogram": {
+        "6370": 1,
+        "6751": 1,
+        "6984": 1,
+        "7300": 1,
+        "7659": 1,
+        "7774": 1,
+        "11574": 1
+      },
+      "maximum": 11574,
+      "mean": 7773.142857142857,
+      "median": 7300,
+      "minimum": 6370,
+      "n": 7,
+      "p95": 11574,
+      "p99": 11574,
+      "percentiles": "nearest rank",
+      "sum": 54412,
+      "units": "checker-domain target cycles"
+    },
+    "4": {
+      "histogram": {
+        "2615": 1,
+        "6512": 1,
+        "6718": 1,
+        "6879": 1,
+        "6998": 1,
+        "7341": 1,
+        "7732": 1
+      },
+      "maximum": 7732,
+      "mean": 6399.285714285715,
+      "median": 6879,
+      "minimum": 2615,
+      "n": 7,
+      "p95": 7732,
+      "p99": 7732,
+      "percentiles": "nearest rank",
+      "sum": 44795,
+      "units": "checker-domain target cycles"
+    }
+  },
+  "source": "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala",
+  "stats": {
+    "histogram": {
+      "2615": 1,
+      "6370": 1,
+      "6512": 1,
+      "6718": 1,
+      "6722": 1,
+      "6751": 1,
+      "6879": 1,
+      "6984": 1,
+      "6998": 1,
+      "7253": 1,
+      "7259": 1,
+      "7277": 1,
+      "7300": 1,
+      "7305": 1,
+      "7341": 1,
+      "7407": 1,
+      "7503": 1,
+      "7605": 1,
+      "7659": 1,
+      "7732": 1,
+      "7774": 1,
+      "8027": 1,
+      "8048": 1,
+      "8055": 1,
+      "8082": 1,
+      "8447": 1,
+      "11574": 1,
+      "11771": 1
+    },
+    "maximum": 11771,
+    "mean": 7498.857142857143,
+    "median": 7323.0,
+    "minimum": 2615,
+    "n": 28,
+    "p95": 11574,
+    "p99": 11771,
+    "percentiles": "nearest rank",
+    "sum": 209968,
+    "units": "checker-domain target cycles"
+  }
+}

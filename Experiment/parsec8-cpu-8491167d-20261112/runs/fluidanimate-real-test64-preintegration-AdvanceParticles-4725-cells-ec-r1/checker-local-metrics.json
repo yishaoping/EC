@@ -1,0 +1,135 @@
+{
+  "endpoints": [
+    "new_package actual transition",
+    "package_result_queue.io.enq.fire with full_compare=1, status=PASS, cancelled=0"
+  ],
+  "fingerprint": {
+    "parser": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24",
+    "prints": "b56f5f71902164f11ef7fa2fe2d5b29f41ca597d28ca3b9f6d86abd811b67a9a",
+    "result": "fc287e2b9d31f962191fb4dcf6b58a71870dc2cf45b759054e43fc30ab83cad8",
+    "script": "e8ba11fc10b84bb059f7b26660ef24bffbfffe2da588e4802699103e6c3a6801",
+    "source": "92c65bd8130abe53db7eb75c830958f8ffdbb2f97aef93ca2074abef02912ac0"
+  },
+  "interval_csv": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-real-test64-preintegration-AdvanceParticles-4725-cells-ec-r1/checker-local-intervals.csv",
+  "interval_csv_sha256": "229351dd9e01f60e95e6f5ab75441ec26df44690d8ef736bb9abd8f6b1ff010d",
+  "limitations": [
+    "Local package interval includes service/stalls until result queue enqueue, not strict detection latency",
+    "Two BOOM cycles per checker cycle converts durations only; no absolute epoch alignment inferred",
+    "No same-package BOOM execution-done, architectural rollback begin/end or result transport latency inferred"
+  ],
+  "paper_row": {
+    "benchmark": "fluidanimate",
+    "boom_equivalent_mean_duration_cycles": 7198.461538461538,
+    "boom_hz": 200000000,
+    "checker_hz": 100000000,
+    "evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-real-test64-preintegration-AdvanceParticles-4725-cells-ec-r1/checker-local-metrics.json",
+    "local_max_checker_cycles": 4850,
+    "local_mean_checker_cycles": 3599.230769230769,
+    "local_median_checker_cycles": 3697,
+    "local_min_checker_cycles": 737,
+    "local_p95_checker_cycles": 4850,
+    "packages": 13,
+    "profile": "real-test64-preintegration-AdvanceParticles-4725-cells",
+    "repeat": 1
+  },
+  "parser": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py",
+  "per_checker": {
+    "1": {
+      "histogram": {
+        "737": 1,
+        "3392": 1,
+        "3811": 1,
+        "4147": 1
+      },
+      "maximum": 4147,
+      "mean": 3021.75,
+      "median": 3601.5,
+      "minimum": 737,
+      "n": 4,
+      "p95": 4147,
+      "p99": 4147,
+      "percentiles": "nearest rank",
+      "sum": 12087,
+      "units": "checker-domain target cycles"
+    },
+    "2": {
+      "histogram": {
+        "3298": 1,
+        "3447": 1,
+        "4395": 1
+      },
+      "maximum": 4395,
+      "mean": 3713.3333333333335,
+      "median": 3447,
+      "minimum": 3298,
+      "n": 3,
+      "p95": 4395,
+      "p99": 4395,
+      "percentiles": "nearest rank",
+      "sum": 11140,
+      "units": "checker-domain target cycles"
+    },
+    "3": {
+      "histogram": {
+        "3320": 1,
+        "3697": 1,
+        "4113": 1
+      },
+      "maximum": 4113,
+      "mean": 3710,
+      "median": 3697,
+      "minimum": 3320,
+      "n": 3,
+      "p95": 4113,
+      "p99": 4113,
+      "percentiles": "nearest rank",
+      "sum": 11130,
+      "units": "checker-domain target cycles"
+    },
+    "4": {
+      "histogram": {
+        "3421": 1,
+        "4162": 1,
+        "4850": 1
+      },
+      "maximum": 4850,
+      "mean": 4144.333333333333,
+      "median": 4162,
+      "minimum": 3421,
+      "n": 3,
+      "p95": 4850,
+      "p99": 4850,
+      "percentiles": "nearest rank",
+      "sum": 12433,
+      "units": "checker-domain target cycles"
+    }
+  },
+  "source": "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala",
+  "stats": {
+    "histogram": {
+      "737": 1,
+      "3298": 1,
+      "3320": 1,
+      "3392": 1,
+      "3421": 1,
+      "3447": 1,
+      "3697": 1,
+      "3811": 1,
+      "4113": 1,
+      "4147": 1,
+      "4162": 1,
+      "4395": 1,
+      "4850": 1
+    },
+    "maximum": 4850,
+    "mean": 3599.230769230769,
+    "median": 3697,
+    "minimum": 737,
+    "n": 13,
+    "p95": 4850,
+    "p99": 4850,
+    "percentiles": "nearest rank",
+    "sum": 46790,
+    "units": "checker-domain target cycles"
+  }
+}

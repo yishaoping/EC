@@ -1,0 +1,1 @@
+read_verilog -sv /data1/gzh/EC/check/area_eval/rtl/palimpsest.sv; chparam -set SEQ_W 16 pal_safe_watermark; hierarchy -check -top pal_safe_watermark; proc; opt; memory_dff; memory_collect;  opt; check; write_json /data1/gzh/EC/check/area_eval/revisions/r2-20261113/results/synthesis/seq16/sw/memory.json; stat

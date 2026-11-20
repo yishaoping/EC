@@ -1,0 +1,19 @@
+{
+  "baseline": {"l1d_bytes":32768,"l1d_ways":8,"l2_bytes":524288,"l2_ways":8,"line_bytes":64,"checkers":4,"rob":96,"iq":72,"ldq":24,"stq":24,"lsl_records_per_checker":510,"lsl_record_bits":130},
+  "field_scenarios": {
+    "low":{"seq_w":12,"epoch_w":3,"gen_w":4,"owner_w":0,"context_slots":2,"buffer_lines":0},
+    "typical":{"seq_w":16,"epoch_w":4,"gen_w":8,"owner_w":0,"context_slots":8,"buffer_lines":2},
+    "high":{"seq_w":32,"epoch_w":8,"gen_w":16,"owner_w":0,"context_slots":16,"buffer_lines":8}
+  },
+  "context_words":80,
+  "context_word_bits":64,
+  "context_payload_map":{"int":32,"fp":32,"csr":13,"pc":1,"fcsr":1,"privilege_and_mode":1},
+  "assumptions":"All added identity widths, retention slots, buffer lines and physical densities are scenario choices, NOT extracted paper requirements. Epoch/generation/sequence identities may not wrap while referenced. A free-slot/rebase policy is still required for production integration.",
+  "physical_envelopes": {
+    "low":{"sram_um2_per_bit":0.20,"nand2_um2":0.50,"packing_factor":1.0,"interface_margin":0.05},
+    "typical":{"sram_um2_per_bit":0.40,"nand2_um2":0.70,"packing_factor":1.25,"interface_margin":0.15},
+    "high":{"sram_um2_per_bit":0.80,"nand2_um2":1.00,"packing_factor":1.6,"interface_margin":0.30}
+  },
+  "physical_envelope_provenance":"Explicit engineering sensitivity assumptions only. No TSMC 28nm standard cell or SRAM characterization is available to this flow; these numbers are NOT fitted to PEEK and NOT confidence intervals.",
+  "paper_reference":{"protected_boom_mm2":3.96,"protected_rocket_each_mm2":0.27,"checkers":4,"user_only_meek_boom_mm2":3.89,"unprotected_boom_mm2":null,"shared_l2_mm2":null,"peripheral_mm2":null,"macro_inclusion_boundary":"Not fully specified by PEEK Table 3"}
+}

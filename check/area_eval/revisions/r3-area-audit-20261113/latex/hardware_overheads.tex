@@ -1,0 +1,19 @@
+\noindent\textbf{Hardware Overheads.}
+For the 1\,MiB, 16-way L2 configuration with 32-bit sequence numbers,
+our conditional analytical budget is 0.4884\,mm$^2$: 0.4091\,mm$^2$ for
+818,176 abstract SRAM bits and 0.0793\,mm$^2$ for generic logic.
+The model assumes 0.40\,$\mu$m$^2$/bit, a 1.25 packing factor, and
+0.70\,$\mu$m$^2$/GE. The accounting audit found no duplicate charge for
+ordinary tags/coherence state or version-selection/store-control logic.
+No applicable characterized 28\,nm SRAM macro data were available.
+With the factor retained, densities of 0.20--0.40\,$\mu$m$^2$/bit give
+0.2839--0.4884\,mm$^2$; if density already includes macro periphery,
+omitting the factor gives 0.2430--0.4066\,mm$^2$.
+These are sensitivity scenarios, not measured bounds; 0.127\,$\mu$m$^2$/bit
+is only a theoretical bitcell reference.
+The original 9.69\% ratio divides the L2-inclusive budget by PEEK's
+5.04\,mm$^2$ reference core-area sum, whose shared-cache boundary is
+unspecified, and is therefore not a matched core-only or full-SoC overhead.
+Existing frozen-EC sequence fields, receipts, and SW logic are reuse
+candidates, but do not establish a net credit against PEEK.
+The available data do not support a strict matched PALIMPSEST--PEEK percentage.

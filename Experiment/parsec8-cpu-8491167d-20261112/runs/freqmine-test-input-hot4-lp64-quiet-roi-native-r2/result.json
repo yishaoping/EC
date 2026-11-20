@@ -1,0 +1,51 @@
+{
+  "active_host_seconds": 192.55394284398062,
+  "application_rows": [
+    "[ROI] hart=0 start=19645 stop=186024 cycles=166379",
+    "[IRQ] policy=main_timer_disabled before=0 after=0 mie=8",
+    "[OUTPUT] benchmark=freqmine checksum=0d5f4ea4dc4d2ff1 verified=1 transactions=3 threshold=1",
+    "[APP] protected=0 start=19645 end=186024 cycles=166379 instret=273900 session_stop=186024",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "freqmine",
+  "binding_sha256": "a2b971b18f8f206089871f75596931ba9b41f7cdc473ce5103db7f7318bfbccb",
+  "completed_utc": "2026-11-12T06:56:31.720958+00:00",
+  "drain_cycles": null,
+  "faults": [],
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_seconds": 192.55377201200463,
+  "interrupt_policy": {
+    "check": "[IRQ] before/after timer_flags and mie; no main timer increment inside ROI",
+    "checker_harts": "unchanged frozen firmware",
+    "main_hart_timer": "MTIE cleared before workload_prepare in both modes"
+  },
+  "interrupt_policy_verified": true,
+  "manifest_sha256": "37727df9bcafa3ab45cf7689d22053ae1c4fb09c039eadea815d24bec1594625",
+  "method": "CPU_GG_TEST_DERIVED_REPRESENTATIVE_ROI",
+  "mode": "native",
+  "output": [
+    "benchmark=freqmine checksum=0d5f4ea4dc4d2ff1 verified=1 transactions=3 threshold=1"
+  ],
+  "profile": "test-input-hot4-lp64-quiet-roi",
+  "raw_log_sha256": "430528c228acb96118f504cfc13f288ebd4c1fabb7a9389d75bc5b73a6d6d580",
+  "repeat": 2,
+  "resource_pressure_paused_seconds": 0,
+  "returncode": 0,
+  "roi_cycles": 166379,
+  "roi_end_csr": 186024,
+  "roi_instructions": 273900,
+  "roi_start_csr": 19645,
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/freqmine-test-input-hot4-lp64-quiet-roi-native-r2",
+  "simulation_slot": "native-aux",
+  "software_correct": true,
+  "status": "PASS",
+  "stop_cause": null,
+  "strict_acceptance": null,
+  "strict_acceptance_error": null,
+  "strict_detection_latency_cycles": null,
+  "svb_events": null,
+  "total_fastest_target_cycles": 571002,
+  "valid": true
+}

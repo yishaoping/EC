@@ -1,0 +1,330 @@
+{
+  "checks": {
+    "boom_and_bus_200MHz": true,
+    "common_measurement_policy": true,
+    "core_decodeWidth": true,
+    "core_fetchWidth": true,
+    "core_maxBrCount": true,
+    "core_numFetchBufferEntries": true,
+    "core_numFpPhysRegisters": true,
+    "core_numIntPhysRegisters": true,
+    "core_numLdqEntries": true,
+    "core_numRasEntries": true,
+    "core_numRobEntries": true,
+    "core_numStqEntries": true,
+    "dcache_nMSHRs": true,
+    "dcache_nSets": true,
+    "dcache_nTLBWays": true,
+    "dcache_nWays": true,
+    "dcache_rowBits": true,
+    "four_checkers_100MHz": true,
+    "frozen_baseline_receipts": true,
+    "icache_fetchBytes": true,
+    "icache_nSets": true,
+    "icache_nWays": true,
+    "icache_rowBits": true,
+    "issue_queues": true,
+    "l2_shape_latency": true
+  },
+  "clocks": {
+    "ec": {
+      "outputs": [
+        [
+          "subsystem_sbus_0",
+          "200.0",
+          "200.0"
+        ],
+        [
+          "subsystem_sbus_1",
+          "200.0",
+          "200.0"
+        ],
+        [
+          "tileClockGroup_tile_1",
+          "100.0",
+          "100.0"
+        ],
+        [
+          "tileClockGroup_tile_2",
+          "100.0",
+          "100.0"
+        ],
+        [
+          "tileClockGroup_tile_3",
+          "100.0",
+          "100.0"
+        ],
+        [
+          "tileClockGroup_tile_4",
+          "100.0",
+          "100.0"
+        ],
+        [
+          "subsystem_pbus_0",
+          "200.0",
+          "200.0"
+        ],
+        [
+          "subsystem_fbus_0",
+          "200.0",
+          "200.0"
+        ],
+        [
+          "subsystem_mbus_0",
+          "200.0",
+          "200.0"
+        ],
+        [
+          "subsystem_cbus_0",
+          "200.0",
+          "200.0"
+        ],
+        [
+          "subsystem_gbus_0",
+          "100.0",
+          "100.0"
+        ],
+        [
+          "implicit_clock",
+          "200.0",
+          "200.0"
+        ]
+      ],
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-elaborate-20261106T100250.032318Z/firesim.firesim.FireSim.firesimBuildTopClockGenerator.freq-summary",
+      "sha256": "05f2c6ed4449bf6c9afaf9b84dd45a89f159be4d2c5fdb29db3225a809633ddf"
+    },
+    "native": {
+      "outputs": [
+        [
+          "subsystem_sbus_0",
+          "200.0",
+          "200.0"
+        ],
+        [
+          "subsystem_sbus_1",
+          "200.0",
+          "200.0"
+        ],
+        [
+          "subsystem_pbus_0",
+          "200.0",
+          "200.0"
+        ],
+        [
+          "subsystem_fbus_0",
+          "200.0",
+          "200.0"
+        ],
+        [
+          "subsystem_mbus_0",
+          "200.0",
+          "200.0"
+        ],
+        [
+          "subsystem_cbus_0",
+          "200.0",
+          "200.0"
+        ],
+        [
+          "implicit_clock",
+          "200.0",
+          "200.0"
+        ]
+      ],
+      "path": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-elaborate-20261102T092109.491588Z/firesim.firesim.FireSim.firesimBuildTopClockGenerator.freq-summary",
+      "sha256": "829b0eb8110236c489d0d462e088d7b571791558117513b5077425163083c75d"
+    }
+  },
+  "core_parameters": [
+    {
+      "ec": 8,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 8,
+      "parameter": "fetchWidth"
+    },
+    {
+      "ec": 3,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 3,
+      "parameter": "decodeWidth"
+    },
+    {
+      "ec": 42,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 42,
+      "parameter": "numRobEntries"
+    },
+    {
+      "ec": 128,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 128,
+      "parameter": "numIntPhysRegisters"
+    },
+    {
+      "ec": 128,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 128,
+      "parameter": "numFpPhysRegisters"
+    },
+    {
+      "ec": 16,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 16,
+      "parameter": "numLdqEntries"
+    },
+    {
+      "ec": 16,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 16,
+      "parameter": "numStqEntries"
+    },
+    {
+      "ec": 16,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 16,
+      "parameter": "maxBrCount"
+    },
+    {
+      "ec": 24,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 24,
+      "parameter": "numFetchBufferEntries"
+    },
+    {
+      "ec": 16,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 16,
+      "parameter": "numRasEntries"
+    },
+    {
+      "ec": 128,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 128,
+      "parameter": "dcache.rowBits"
+    },
+    {
+      "ec": 256,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 256,
+      "parameter": "dcache.nSets"
+    },
+    {
+      "ec": 2,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 2,
+      "parameter": "dcache.nWays"
+    },
+    {
+      "ec": 6,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 6,
+      "parameter": "dcache.nMSHRs"
+    },
+    {
+      "ec": 16,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 16,
+      "parameter": "dcache.nTLBWays"
+    },
+    {
+      "ec": 128,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 128,
+      "parameter": "icache.rowBits"
+    },
+    {
+      "ec": 64,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 64,
+      "parameter": "icache.nSets"
+    },
+    {
+      "ec": 8,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 8,
+      "parameter": "icache.nWays"
+    },
+    {
+      "ec": 16,
+      "evidence": "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala;/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json",
+      "matched": true,
+      "native": 16,
+      "parameter": "icache.fetchBytes"
+    }
+  ],
+  "created_utc": "2026-11-12T05:51:08.191193+00:00",
+  "evidence": {
+    "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-elaborate-20261102T092109.491588Z/firesim.firesim.FireSim.dts": "b97f7f1d8422f020b697facd6bf95db88d57b70d7add510b3106b5837db83e0f",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/firechip/src/main/scala/DacCommonPolicy.scala": "b3b239fd2d5b497f8c55069126f2854d3c4fd4024a33275724714d6c1fdaca30",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/boom/src/main/scala/common/config-mixins.scala": "a70dd52c431c1a7b986178324676c34c492a818810b49f4dca3deb194494cfb3",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/chipyard/src/main/scala/config/DacBaselineConfig.scala": "ab3b5f4a4f2ef7172ce27e63d917a25208df63d8949accb3890b953eee617b07",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/firechip/src/main/scala/DacCommonPolicy.scala": "b3b239fd2d5b497f8c55069126f2854d3c4fd4024a33275724714d6c1fdaca30",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-elaborate-20261106T100250.032318Z/firesim.firesim.FireSim.dts": "abe88f0748a092c769cdc5c4b402fed7471500f5c93e01d1a90ad42652458ee9",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json": "3fe02b29f3a8ef41ece14fd8e707533f6f1db221b2c30a6d7112d235e34fcc75",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-external-observer-r2-20261111/plan.json": "acb3b47a5d31dc4e1823d9bb9d4e816f11c3d2982ae8e42cdafc1f26b743d9a8",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/matched-single-boom-gg-r1-20261112/plan.json": "b0cbade0bdfd1c625a8cc9c95ee3e2a11401ff406c125aeccc91b4537674184c"
+  },
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "issue_queues_native": [
+    {
+      "dispatchWidth": 3,
+      "iqType": "MEM",
+      "issueWidth": 1,
+      "numEntries": 16
+    },
+    {
+      "dispatchWidth": 3,
+      "iqType": "INT",
+      "issueWidth": 3,
+      "numEntries": 32
+    },
+    {
+      "dispatchWidth": 3,
+      "iqType": "FP",
+      "issueWidth": 1,
+      "numEntries": 24
+    }
+  ],
+  "limitations": [
+    "Read-only comparison of explicit Native core/cache settings with saved frozen EC parameter evaluation and clock summaries; no new elaboration or formal equivalence proof",
+    "EC adds its intended checker/cache protection machinery, while Native uses clean BOOM; this audit does not assert RTL identity",
+    "Distinct linked application addresses/cache initial state remain a confound recorded separately in elf-layout.csv",
+    "No FPGA, CAD or bitstream command executed"
+  ],
+  "memory_runtime_plusargs": [
+    "+mm_readLatency_0=30",
+    "+mm_readMaxReqs_0=4",
+    "+mm_relaxFunctionalModel_0=0",
+    "+mm_writeLatency_0=30",
+    "+mm_writeMaxReqs_0=4"
+  ],
+  "models": {
+    "ec": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-external-observer-r2-20261111/VFrozenOpt4Observed",
+      "sha256": "cc2993bd8c6f56893afd9e73cc358684c07c481a52ef8eb50dc7a136134b2867"
+    },
+    "native": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-matched-single-boom-gg-r1-20261112/host/VMatchingNative",
+      "sha256": "9b09d88e468078265d0002bcfeea56de5b5513bee912f3a5363a919006b72e40"
+    }
+  },
+  "passed": true
+}

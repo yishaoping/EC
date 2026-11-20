@@ -1,0 +1,170 @@
+{
+  "app_sha256": "75b4e2923b0a7b1d096023daa6610f5c622bf04771b4e2966bbdee006e5270ea",
+  "apps_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/formal-apps-build.json",
+  "benchmark": "blackscholes",
+  "case": {
+    "algorithm_unchanged": true,
+    "argv": [
+      "1",
+      "in_16K.txt",
+      "prices.txt"
+    ],
+    "fpga_validation": "NOT_RUN",
+    "input": "simmedium",
+    "input_archives": {
+      "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/inputs/input_simmedium.tar": "cb50267d053cb4bb841125aa5efa4fa915662817fbff3fe336dd092a7dd94147"
+    },
+    "input_files": {
+      "in_16K.txt": "f31b70b2f2c0f702464fcca7ca7fb68e3821530bb2d8132659f50fb6510715dd"
+    },
+    "official_reference_max_absolute_error": 2.7284587281073414e-05,
+    "output_count": 16384,
+    "program": "blackscholes",
+    "reference_outputs": {
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-formal-20261106T123109Z/reference/prices.txt": "0593ad06c392032063c79b1c14337e9daedabe1324e285e069fc277edc72dd43"
+    },
+    "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/parsec/simmedium.runconf",
+    "runconf_sha256": "395ed0429ccd6d2bf638363bfc30a3b7f9a7f9cbd84dedb8da169182ebaf73d6",
+    "software_reference": "QEMU_USER_ONLY",
+    "threads": 1,
+    "warmups": 0
+  },
+  "cross_backend_slowdown_admission": "PENDING_FULL_TARGET_CONFIGURATION_AND_RUNTIME_COUNTER_CHECKS",
+  "fdt": {
+    "bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "command": [
+      "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/dtc",
+      "-I",
+      "dts",
+      "-O",
+      "dtb",
+      "-p",
+      "4096",
+      "-o",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dts"
+    ],
+    "configuration": "C4",
+    "dts": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dts",
+    "dts_sha256": "3551cc6bb2f3dd19fc716bdea11db8db4343080af7e35da921cd99100d271210",
+    "elaboration_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-elaborate-20261106T100250.032318Z/result.json",
+    "elaboration_result_sha256": "4284a54a160a374491cd0050611ba35719df94d896faf8b4667f66691407e3ac",
+    "fdt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb",
+    "firmware_checker_harts": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "isa_normalization": [
+      {
+        "canonical": "rv64imafdc_zicsr_zifencei_zihpm",
+        "original": "rv64imafdcZicsr_Zifencei_Zihpm"
+      },
+      {
+        "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket",
+        "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket"
+      },
+      {
+        "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket",
+        "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket"
+      },
+      {
+        "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket",
+        "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket"
+      },
+      {
+        "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket",
+        "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket"
+      }
+    ],
+    "linux_harts": [
+      0
+    ],
+    "linux_mem_cap": 2147483648,
+    "linux_profile_sha256": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1",
+    "normalizer_sha256": "cdc93d5c3bd0f2f013eb5029a1addb1a0c53a4e72b8f23ebbe814439cbc4a59e",
+    "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-build.json",
+    "parent_receipt_sha256": "a92f79fb153318e3ade9f1531d9ee48ea97f9e1aee8005814ff2f159543782c5",
+    "phase": "fdt",
+    "profile": "matched-guest-mem2g-phys36-canonical-isa",
+    "returncode": 0,
+    "runtime_validation": "NOT_RUN",
+    "schema": "ec-firesim-fdt/1",
+    "sha256": "c712fed367c0b57d9a1ed9f6e53688861a646f3732654b253131ff6e8953dda6",
+    "source_dts": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-elaborate-20261106T100250.032318Z/firesim.firesim.FireSim.dts",
+    "source_dts_sha256": "abe88f0748a092c769cdc5c4b402fed7471500f5c93e01d1a90ad42652458ee9",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": 100000000,
+    "target_memory_base": 2147483648,
+    "target_memory_bytes": 17179869184
+  },
+  "firmware": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/C4-firmware-20261107T030118.611141Z/platform/generic/firmware/fw_payload.elf",
+  "firmware_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/formal-firmware-build.json",
+  "firmware_sha256": "7546b77fd5f039488b604763b952bcacc6cad0792bd109666b61dc2b27987c34",
+  "input": "simmedium",
+  "method": "CPU_GOLDENGATE_FULL_EC_LINUX_SIMMEDIUM",
+  "mode": "ec",
+  "native_archives": [
+    {
+      "contract_checks": {
+        "bootargs": true,
+        "case": true,
+        "elf": true,
+        "frequency": true,
+        "linux_memory": true,
+        "memory_model": true,
+        "rootfs": true,
+        "threads": true
+      },
+      "method": "ARCHIVED_NATIVE_FPGA",
+      "repeat": 1,
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r1-20261106T125841Z/result.json",
+      "result_sha256": "50cdca30c66c0f38c4d86a1ae8b501c90de134bba56053531f48f3257e7fd5c9",
+      "roi_cycles": 829737734,
+      "software_contract_matches": true
+    },
+    {
+      "contract_checks": {
+        "bootargs": true,
+        "case": true,
+        "elf": true,
+        "frequency": true,
+        "linux_memory": true,
+        "memory_model": true,
+        "rootfs": true,
+        "threads": true
+      },
+      "method": "ARCHIVED_NATIVE_FPGA",
+      "repeat": 2,
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r2-20261106T130737Z/result.json",
+      "result_sha256": "9ff0739ae455648d8b6f0a7fdda2bd02cb59093ef9bfa3ededbcac15b5f8922b",
+      "roi_cycles": 828230479,
+      "software_contract_matches": true
+    },
+    {
+      "contract_checks": {
+        "bootargs": true,
+        "case": true,
+        "elf": true,
+        "frequency": true,
+        "linux_memory": true,
+        "memory_model": true,
+        "rootfs": true,
+        "threads": true
+      },
+      "method": "ARCHIVED_NATIVE_FPGA",
+      "repeat": 3,
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r3-20261106T131036Z/result.json",
+      "result_sha256": "00d3599be93270bcc6cd27fd0aa97cbebe82f8f257d6f947a7269e682ce31083",
+      "roi_cycles": 829885720,
+      "software_contract_matches": true
+    }
+  ],
+  "preflight": "PASS_SOFTWARE_INPUT_MEMORY_FREQUENCY_CONTRACT",
+  "profile": "formal",
+  "repeat": 1,
+  "roi_counter": "same hardware marker-to-marker target ticks; no wall-clock proxy",
+  "rootfs_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/formal-rootfs-build.json",
+  "rootfs_sha256": "427d0b923bc2be77b67ba0ff11efd47bb83c7bbf28fd990e10c658dcf7178711"
+}

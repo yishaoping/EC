@@ -1,0 +1,10 @@
+{
+  "evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/fluidanimate-test-derived-64-particles-no-main-timer-spike-native.log",
+  "identity": {
+    "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 2695915,
+    "start_ticks": "26984987"
+  },
+  "reason": "First-pass failure triage: unchanged original grid allocations exceed 4MiB heap; Spike reproduced explicit InitSim posix_memalign assertion. Preserve failed run and let other benchmarks proceed. Heap64 replacement built in a new profile.",
+  "utc": "2026-11-12T04:50:33.453387+00:00"
+}

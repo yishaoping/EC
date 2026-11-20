@@ -1,0 +1,61 @@
+{
+  "benchmark": "dedup",
+  "checks": {
+    "bound_elf": true,
+    "bound_manifest": true,
+    "complete_binding_hash": true,
+    "complete_result_hash": true,
+    "completion_integrity_receipt_hash": true,
+    "functional_baseline": true,
+    "gzip_sha256": true,
+    "model_binary": true,
+    "raw_app_cycles_and_instructions": true,
+    "raw_bytes": true,
+    "raw_output_and_end": true,
+    "raw_roi_csr_and_cycles": true,
+    "raw_sha256": true,
+    "raw_timer_policy": true,
+    "strict_event_evidence_hashes": true,
+    "unique_roi_app_irq_markers": true
+  },
+  "fingerprint": {
+    "binary": "cc2993bd8c6f56893afd9e73cc358684c07c481a52ef8eb50dc7a136134b2867",
+    "binding": "f5fae0e9614355124e9e0a42b1050f63900964c762688df36a7a63d71052b963",
+    "completion": "8c94007f353b86a282b08c438ee7e80fcf28a1ca5b7d8639f129783d90eaf668",
+    "elf": "8ccd5d13bc0b50feba14d33e24b1400e80e109035d0e4839033ad2e63c0ed366",
+    "gzip_sha256": "3b87c4f8e433b120b6a107891d331a0f4c5b44e869351219de83f1455d3e86bb",
+    "integrity": "9c0365504613ab0cbef5642aac60b25c9e78404e04dfcf14650eb020b5f83cb6",
+    "manifest": "ad49c7aa70c2e810fe254a3e68b8f2a081d893905fe30165406a1060f92c0383",
+    "result": "39a8f7000c7584ec7017de9c5c3aed4952658c409dd36e2467a7efd7e2adfc45",
+    "script": "1730e4e3539d718318d3092233953ca75473974f45c59a2fd2e58f264cfc3722",
+    "strict_evidence": {
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/dedup-official-test-gzip-serial-buffer16m-preloaded-table-heap512-ec-r1/external-events.jsonl": "e044a29b4d0286b5582ccf344aa97f8b2492a17f7e8a68fca8913ada47253d86",
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/dedup-official-test-gzip-serial-buffer16m-preloaded-table-heap512-ec-r1/rtl-prints-1": "a4ceae57f73dec6d7858f12961dc89d1f14baac01a2309a2c617d08bcee16a88",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-acceptance-strict-r1-20261111/analyze.py": "78403531ae11adce3d36160df38f50336eef04def839bce92ddf00be41175048",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24"
+    }
+  },
+  "mode": "ec",
+  "passed": true,
+  "raw_bytes": 560665076,
+  "result": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/dedup-official-test-gzip-serial-buffer16m-preloaded-table-heap512-ec-r1/result.json",
+  "result_sha256": "39a8f7000c7584ec7017de9c5c3aed4952658c409dd36e2467a7efd7e2adfc45",
+  "svb_examples": [
+    "SVB_ENTRY_ALLOC cycle=0000000000018ac1 entry=0 line=00800d2780 seq=00000001 generation=00000ef3 epoch=0003 state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=0000000000018f4f entry=1 line=00800d27c0 seq=00000002 generation=00000efc epoch=0003 state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=0000000000019417 entry=2 line=00800d2800 seq=00000003 generation=00000f05 epoch=0003 state=SPEC",
+    "SVB_SAFE cycle=000000000001a15a entry=0 line=00800d2780 seq=00000001 generation=00000ef3 epoch=0003 watermark=00000001",
+    "SVB_PROMOTION_SELECT cycle=000000000001a15a entry=00 line=00800d2780 seq=00000001 generation=00000ef3 state=WB_WAIT safe=1",
+    "SVB_C_FIRE cycle=000000000001a15c first=1 last=0 entry=00 line=0800d2780 seq=00000001 generation=00000ef3 source=6"
+  ],
+  "svb_lifecycle_evidence": null,
+  "svb_limitation": "Raw audit counts labels only; per-key lifecycle analysis is separate",
+  "svb_printed_records": {
+    "SVB_COMPLETION": 116,
+    "SVB_C_FIRE": 232,
+    "SVB_ENTRY_ALLOC": 116,
+    "SVB_PROMOTION_SELECT": 116,
+    "SVB_SAFE": 116,
+    "WB_BLOCK": 9
+  }
+}

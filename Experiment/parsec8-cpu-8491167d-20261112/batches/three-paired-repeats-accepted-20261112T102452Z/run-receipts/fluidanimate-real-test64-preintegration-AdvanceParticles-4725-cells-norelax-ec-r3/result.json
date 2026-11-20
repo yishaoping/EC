@@ -1,0 +1,85 @@
+{
+  "active_host_seconds": 2141.9330282020383,
+  "application_rows": [
+    "[ROI] hart=0 start=670729 stop=698806 cycles=28077",
+    "[IRQ] policy=main_timer_disabled before=0 after=0 mie=8",
+    "[OUTPUT] benchmark=fluidanimate checksum=7e6601a6fa3f9829 verified=1 particles=64 values=576 phase=AdvanceParticles grid_cells=4725",
+    "[APP] protected=1 start=670729 end=698806 cycles=28077 instret=31613 session_stop=698975",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "fluidanimate",
+  "binding_sha256": "5ce8f3f9fab3fb8b88e15d5c2e27c14c4ffad7a37373c10e15ad3eb16aeb7452",
+  "completed_utc": "2026-11-12T10:24:24.525195+00:00",
+  "drain_cycles": 3915,
+  "faults": [],
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_seconds": 2141.932891174045,
+  "interrupt_policy": {
+    "check": "[IRQ] before/after timer_flags and mie; no main timer increment inside ROI",
+    "checker_harts": "unchanged frozen firmware",
+    "main_hart_timer": "MTIE cleared before workload_prepare in both modes"
+  },
+  "interrupt_policy_verified": true,
+  "manifest_sha256": "5f09584bf189aed6a3cb289583dd66a4b7fb58e294a674eaf5211d7586e2c5eb",
+  "method": "CPU_GG_REAL_TRACE_COMPONENT_REPLAY",
+  "mode": "ec",
+  "output": [
+    "benchmark=fluidanimate checksum=7e6601a6fa3f9829 verified=1 particles=64 values=576 phase=AdvanceParticles grid_cells=4725"
+  ],
+  "profile": "real-test64-preintegration-AdvanceParticles-4725-cells-norelax",
+  "raw_log_sha256": "6016354b0312e831f6bb8c3b6d6495a65eb40cc5d19c48819fb9081d0df010d4",
+  "repeat": 3,
+  "resource_pressure_paused_seconds": 0,
+  "returncode": 0,
+  "roi_cycles": 28077,
+  "roi_end_csr": 698806,
+  "roi_instructions": 31613,
+  "roi_start_csr": 670729,
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-real-test64-preintegration-AdvanceParticles-4725-cells-norelax-ec-r3",
+  "simulation_slot": "ec-extra2",
+  "software_correct": true,
+  "status": "PASS",
+  "stop_cause": null,
+  "strict_acceptance": {
+    "allocations": 13,
+    "boom_pass_accepted": 13,
+    "cancel": 0,
+    "completed_utc": "2026-11-12T10:24:24.524535+00:00",
+    "duplicate": 0,
+    "evidence": {
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-real-test64-preintegration-AdvanceParticles-4725-cells-norelax-ec-r3/external-events.jsonl": "c66ff0be7575e2282365c855aec5a35b12c3ba3b55526d12d7df2c0aacf291b6",
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-real-test64-preintegration-AdvanceParticles-4725-cells-norelax-ec-r3/rtl-prints-1": "5a1b236be53a0191b996d4d802488efeb168fb4b5b957fa5df75b3c164dbe505",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-acceptance-strict-r1-20261111/analyze.py": "78403531ae11adce3d36160df38f50336eef04def839bce92ddf00be41175048",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24"
+    },
+    "fail": 0,
+    "fpga_access": false,
+    "full_compare_local_results": 13,
+    "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "limitations": [
+      "Finite observed package protocol; not universal RTL equivalence",
+      "No strict checkerDone minus samepackage BOOMexecutionDone",
+      "SVB lifetime/payload drain evaluated separately",
+      "No architectural rollback/restart claim"
+    ],
+    "local_begins": 13,
+    "passed": true,
+    "pending": 0,
+    "per_checker": {
+      "1": 4,
+      "2": 3,
+      "3": 3,
+      "4": 3
+    },
+    "sample_errors": 0,
+    "schema": "ec-strict-finite-checker-join/1",
+    "status": "PASS_STRICT_COMPLETE_ALLOCATION_BEGIN_FULLCOMPARE_RESULT_BOOM_ACCEPTANCE_JOIN"
+  },
+  "strict_acceptance_error": null,
+  "strict_detection_latency_cycles": null,
+  "svb_events": null,
+  "total_fastest_target_cycles": 987002,
+  "valid": true
+}

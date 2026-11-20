@@ -1,0 +1,77 @@
+{
+  "utc": "2026-11-13T04:08:06.129114+00:00",
+  "rtl_sha256": "e75ffbaff1d5511a983e05e0e491860f1b8e1d480777bdab31d07643dcfdf1ad",
+  "status": "PASS",
+  "runs": [
+    {
+      "command": [
+        "verilator",
+        "--lint-only",
+        "-Wno-MULTITOP",
+        "rtl/palimpsest.sv"
+      ],
+      "returncode": 0,
+      "log": "results/test-0.log"
+    },
+    {
+      "command": [
+        "iverilog",
+        "-g2012",
+        "-s",
+        "tb_stateful",
+        "-o",
+        "results/tb_stateful.vvp",
+        "rtl/palimpsest.sv",
+        "tests/tb_stateful.sv"
+      ],
+      "returncode": 0,
+      "log": "results/test-1.log"
+    },
+    {
+      "command": [
+        "vvp",
+        "results/tb_stateful.vvp"
+      ],
+      "returncode": 0,
+      "log": "results/test-2.log"
+    },
+    {
+      "command": [
+        "iverilog",
+        "-g2012",
+        "-s",
+        "tb_store",
+        "-o",
+        "results/tb_store.vvp",
+        "rtl/palimpsest.sv",
+        "tests/tb_store.sv"
+      ],
+      "returncode": 0,
+      "log": "results/test-3.log"
+    },
+    {
+      "command": [
+        "vvp",
+        "results/tb_store.vvp"
+      ],
+      "returncode": 0,
+      "log": "results/test-4.log"
+    },
+    {
+      "command": [
+        "python3",
+        "tests/test_combinational.py"
+      ],
+      "returncode": 0,
+      "log": "results/test-5.log"
+    },
+    {
+      "command": [
+        "python3",
+        "tests/test_protocol_random.py"
+      ],
+      "returncode": 0,
+      "log": "results/test-6.log"
+    }
+  ]
+}

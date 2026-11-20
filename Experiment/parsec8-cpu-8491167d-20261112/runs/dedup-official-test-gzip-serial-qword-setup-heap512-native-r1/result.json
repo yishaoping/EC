@@ -1,0 +1,48 @@
+{
+  "application_rows": [
+    "[ROI] hart=0 start=512036 stop=727313 cycles=215277",
+    "[IRQ] policy=main_timer_disabled before=0 after=0 mie=8",
+    "[OUTPUT] benchmark=dedup checksum=9a3334e8994e9796 verified=1 input_bytes=6 archive_bytes=23 compression=gzip",
+    "[APP] protected=0 start=512036 end=727313 cycles=215277 instret=344184 session_stop=727313",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "dedup",
+  "binding_sha256": "dbbf22d9ded567850edb5cd8870a877b02536b988d38bfcadf907b61626318af",
+  "completed_utc": "2026-11-12T05:59:31.070824+00:00",
+  "drain_cycles": null,
+  "faults": [],
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_seconds": 291.02113125199685,
+  "interrupt_policy": {
+    "check": "[IRQ] before/after timer_flags and mie; no main timer increment inside ROI",
+    "checker_harts": "unchanged frozen firmware",
+    "main_hart_timer": "MTIE cleared before workload_prepare in both modes"
+  },
+  "interrupt_policy_verified": true,
+  "manifest_sha256": "d4d4cb109123206ec392e193eee07c799580ce539eb98d0fabc67df51117b8f4",
+  "method": "CPU_GG_FULL_OFFICIAL_TEST",
+  "mode": "native",
+  "output": [
+    "benchmark=dedup checksum=9a3334e8994e9796 verified=1 input_bytes=6 archive_bytes=23 compression=gzip"
+  ],
+  "profile": "official-test-gzip-serial-qword-setup-heap512",
+  "raw_log_sha256": "c256e92fe6f54acaf2153fdd91c0f36516aab40c4d7706e87acdac5b482cbfda",
+  "repeat": 1,
+  "returncode": 0,
+  "roi_cycles": 215277,
+  "roi_end_csr": 727313,
+  "roi_instructions": 344184,
+  "roi_start_csr": 512036,
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/dedup-official-test-gzip-serial-qword-setup-heap512-native-r1",
+  "software_correct": true,
+  "status": "PASS",
+  "stop_cause": null,
+  "strict_acceptance": null,
+  "strict_acceptance_error": null,
+  "strict_detection_latency_cycles": null,
+  "svb_events": null,
+  "total_fastest_target_cycles": 838002,
+  "valid": true
+}

@@ -1,0 +1,60 @@
+{
+  "benchmark": "blackscholes",
+  "checks": {
+    "bound_elf": true,
+    "bound_manifest": true,
+    "complete_binding_hash": true,
+    "complete_result_hash": true,
+    "completion_integrity_receipt_hash": true,
+    "functional_baseline": true,
+    "gzip_sha256": true,
+    "model_binary": true,
+    "raw_app_cycles_and_instructions": true,
+    "raw_bytes": true,
+    "raw_output_and_end": true,
+    "raw_roi_csr_and_cycles": true,
+    "raw_sha256": true,
+    "raw_timer_policy": true,
+    "strict_event_evidence_hashes": true,
+    "unique_roi_app_irq_markers": true
+  },
+  "fingerprint": {
+    "binary": "cc2993bd8c6f56893afd9e73cc358684c07c481a52ef8eb50dc7a136134b2867",
+    "binding": "920f1568ca6c0bd9303b3a4e0e3a148ffb74a6ca9c5d702167b457125dd4c98a",
+    "completion": "5db44e64661290bb24651cd768c0b90755ffe49599955964fa597bec58ae313c",
+    "elf": "2e87992422150c13c87fb82407d6d62fa16685ec03d1e19f44aa5a81b3dd6e83",
+    "gzip_sha256": "456dd9412c6a26e61539d67978f6c40c80fe842ad8486acb101bb90df6599f15",
+    "integrity": "cdf06d3d5163331c259cbd153b9284310739b688d823182f71b682f4d11057f8",
+    "manifest": "3cc799d5f0e689791f77147f1401e5f28b91921962385d31e81534e4de68bedc",
+    "result": "7114a0979f91ab65f410ef462728630d33064d9cc220099d788eca0d9e7ea1c0",
+    "script": "1730e4e3539d718318d3092233953ca75473974f45c59a2fd2e58f264cfc3722",
+    "strict_evidence": {
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/blackscholes-project64-one-iteration-no-main-timer-ec-r3/external-events.jsonl": "f60f4d0d1c8ce7747d523f3993bd7f90d1daaa06ce3f5ebbbfc2cd911d575204",
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/blackscholes-project64-one-iteration-no-main-timer-ec-r3/rtl-prints-1": "c9e0ca62ad847b2ed4b0c7b445bab21bc126665730e02466d514708c165d017f",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-acceptance-strict-r1-20261111/analyze.py": "78403531ae11adce3d36160df38f50336eef04def839bce92ddf00be41175048",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24"
+    }
+  },
+  "mode": "ec",
+  "passed": true,
+  "raw_bytes": 228746427,
+  "result": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/blackscholes-project64-one-iteration-no-main-timer-ec-r3/result.json",
+  "result_sha256": "7114a0979f91ab65f410ef462728630d33064d9cc220099d788eca0d9e7ea1c0",
+  "svb_examples": [
+    "SVB_ENTRY_ALLOC cycle=0000000000016eca entry=0 line=008040cf00 seq=00000001 generation=00000b14 epoch=000f state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=0000000000016f40 entry=1 line=008040cec0 seq=00000001 generation=00000b11 epoch=0011 state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=00000000000172db entry=2 line=0080004440 seq=00000001 generation=00000b12 epoch=0011 state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=0000000000018560 entry=3 line=008040cec0 seq=00000002 generation=00000baa epoch=001b state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=00000000000185f1 entry=4 line=0080004440 seq=00000002 generation=00000b94 epoch=001b state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=00000000000185ff entry=5 line=008040cf00 seq=00000002 generation=00000b9c epoch=001b state=SPEC"
+  ],
+  "svb_lifecycle_evidence": null,
+  "svb_limitation": "Raw audit counts labels only; per-key lifecycle analysis is separate",
+  "svb_printed_records": {
+    "SVB_COMPLETION": 30,
+    "SVB_C_FIRE": 60,
+    "SVB_ENTRY_ALLOC": 30,
+    "SVB_PROMOTION_SELECT": 30,
+    "SVB_SAFE": 30
+  }
+}

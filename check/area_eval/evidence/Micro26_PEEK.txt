@@ -1,0 +1,1225 @@
+PEEK: Heterogeneous Parallelism for Privileged Error Detection
+                in Safety-Critical Processors
+    Tinglue Wang2,3 , Zhenghui Guo2,3 , Bing Guo2,3 , Jiapeng Guan2,3 , Renshuang Jiang4 , Jie Zhang2,3 , Jing Li5 , Xin Si2,3 , Sam Ainsworth6 , Zhe Jiang2,1,3
+    2 Southeast
+             University, China; 3 National Center of Technology Innovation for EDA, China; 4 National University of Defense Technology, China; 5 New
+                                             Jersey Institute of Technology, US; 6 University of Edinburgh, UK.
+                                                                            China
+
+Abstract                                                                                                    PRV.Segment                                        Time for Snapshot                  HW for Main                        HW for PRV
+                                                                                                            Check Segment                                      Time for Preamble                  HW for Checker                     Disabled HW
+Heterogeneous parallel error detection architecture has been widely
+studied for safeguarding OoO superscalar processors in safety-                                        RCP                     Privileged protection using prior works                             Privileged protection using our work
+                                                                                                B.Core 0
+critical systems, as it achieves significantly lower hardware over-                                                                 1                 2                      3                    1            2                3
+                                                                                                                     SCP                 Costly preamble                    ECP                   Hardware trap repetition
+head compared to traditional LockStep, by exploiting the parallelism
+
+
+
+
+                                                                                     Software
+                                                                                                L.Core 1                                             1                                                   1                       3
+
+that exists in a secondary execution. However, previous works do                                L.Core 2                                                                2                                              2
+not cover the protection of privileged-mode execution, impeding
+their effectiveness in real-world deployment. Moreover, naive exten-                            L.Core 3                                                                         3           Used for more computations or following segments
+
+
+sion to privileged-mode can cause a litany of issues, from abysmal                                               5             10        15     20         25      30       35        40         5     10     15    20     25       30   35
+                                                                                                                                                                        System Abstraction                     Hardware Status at the time
+performance due to high synchronization costs, to full deadlocks.                               Computing Cluster                                                                                 Data Forwarding
+   Here, we present PEEK, the first privileged parallel error detec-                              B.Core 0                               partial data                                      LSL                     LSL                     LSL
+tion architecture. Based on a deep analysis of privileged execution,                                                                          CEC
+
+
+
+
+                                                                                                                                                          Commit
+                                                                                                                     Decode
+                                                                                     Hardware
+
+                                                                                                    Fetch
+
+
+
+                                                                                                                                 Issue
+we redesign the verification pipeline, addressing all the bottlenecks                                                                     ····
+                                                                                                                                              CSR
+                                                                                                                                                                                  SR
+                                                                                                                                                                                 CSU       CSR           SR
+                                                                                                                                                                                                        CSU        CSR           SR
+                                                                                                                                                                                                                                CSU       CSR
+and bugs identified in privileged-mode protection. Evaluated us-                                                                                                                  L.Core 1                  L.Core 2                L.Core 3
+
+ing various metrics on an RTL-level full system running Linux,                                              I$                                       D$                          I$        D$            I$        D$            I$           D$
+
+PEEK achieves full-privilege protection on Linux with negligible                                                                                                        Shared L2 Cache
+performance slowdown and affordable hardware overhead. PEEK
+has been taped out using a 28nm process, and its source is available                 Figure 1: PEEK enables HPED to cover privileged execu-
+at https://anonymous.4open.science/r/PEEK-3000.                                      tion (new units in pink; RCP: Register Checkpoint; S/ECP:
+                                                                                     Start/End RCP; LSL: Load-Store Log; CEC: CSRs Extraction Con-
+Keywords                                                                             troller; SR: Shadow Registers; CSU: Context Switching Unit).
+                                                                                     PEEK uses partial snapshots that duplicate only CSRs ac-
+Hardware Fault Tolerance, Safety-Critical Systems, Full System
+                                                                                     tually used, rather than the hundreds of CSRs that are not
+                                                                                     used, reducing the back-pressure. Hardware trap repetition
+1    Introduction                                                                    allows efficient state transitions while only duplicating real
+Safety-critical systems, from automated vehicles to industrial con-                  work, avoiding costly preambles. In this example, two little
+trollers, demand extremely reliable processors that can withstand                    cores are sufficient to keep up with the big core in our work,
+harsh conditions [11, 71, 83, 90], such as extreme temperatures                      whereas prior works [2, 49] require a third little core.
+and cosmic radiation. Meanwhile, continued downscaling of semi-
+conductor technology, with increased transistor density and lower
+voltages, has led to a rising incidence of both transient and perma-                    Heterogeneous Parallel Error Detection (HPED) architec-
+nent hardware faults in processors [12, 24, 25, 38, 40, 77, 81]. To                  ture [2–4, 60] has emerged as a promising alternative for safeguard-
+meet stringent safety requirements, today’s safety-critical systems                  ing OoO superscalar processors. HPED divides a software program
+often employ hardware-based LockStep mechanisms [34, 45, 46, 63],                    running on a high-performance OoO core (big core) into multi-
+which duplicate the processor core, execute the same program, and                    ple discrete segments using Register Checkpoints (RCPs) and
+compare outputs of core’s pins at each clock cycle. While LockStep                   re-executes these segments on a set of smaller, energy-efficient
+provides strong assurance by replaying everything on a synchro-                      cores (little cores) for verification (Figure 1: software), later recon-
+nized secondary core and verifying execution at the signal level,                    structing the full run using induction. This approach achieves error
+it incurs substantial costs, more than twice the area and power of                   detection with significantly lower hardware overhead compared
+a single core. These overheads become more pronounced when                           to LockStep. While prior work has demonstrated the conceptual
+safety-critical systems increasingly need Out-of-Order (OoO) su-                     feasibility of HPED, e.g., reporting 1.02× slowdown and 24% area
+perscalar processors [5, 53, 76, 91] to meet growing demands for                     overhead [2], these results were obtained using highly abstracted
+computational throughput and instruction-level parallelism.                          syscall-emulation simulations [2–4, 60] or minimal prototypes with
+                                                                                     idealistic assumptions [49]. Moreover, existing designs lack full
+1 Corresponding   author. Emails: 101013615@seu.edu.cn.                              Operating System (OS) support and can only run the workloads in
+                                                                                     unprivileged mode, without protection of privileged execution.
+MICRO 2026, Athens, Greece
+2026. ACM ISBN 978-X-XXXX-XXXX-X/XX/XX                                               Challenges. In our effort to tape out a real chip using this archi-
+https://doi.org/XXXXXXX.XXXXXXX                                                      tecture with full Linux support, we encountered critical challenges
+                                                                                1
+MICRO 2026, October 31–November 04, 2026, Athens, Greece                                                                                   Wang et al.
+
+
+related to privileged execution. Although privileged execution typ-
+
+
+
+
+                                                                               Coverage
+ically constitutes a small fraction of execution time, absence of
+protection creates a substantial vulnerability in system safety. We
+initially attempted to apply the same methodology [49] for priv-
+ileged protection, but found that naively replaying privileged ex-
+ecution led to severe performance degradation and even system-
+level deadlocks. Deeper analysis revealed that privileged execution
+exhibits fundamentally different characteristics from user-mode
+code: it frequently interacts with hardware state through Control
+and Status Register (CSR) operations, and handles asynchronous                            Figure 2: Measured fault coverage and ASIL region.
+events like interrupts. As a result, synchronizing only generic ar-
+chitectural registers is insufficient to faithfully replicate privileged
+state. On the other hand, capturing the complete privileged context
+drastically expands the snapshot size, which imposes substantial                  Software-based solutions (e.g., instruction redundancy [23, 36,
+back-pressure in realistic transmission units and ultimately leads             65, 93] and software scanners [14, 15, 24, 82]) suffer from limited
+to severe slowdown (Figure 1: B.Core). Additionally, using native              fault coverage, lack of multithreading support and substantial per-
+trap handlers for replaying privileged execution incurs high com-              formance degradation, making them inadequate for stringent safety
+putational overhead on little cores, as they must spend significant            standards. In contrast, LockStep utilizes full hardware redundancy
+time on preparing privileged-mode entry and exit, instead of verifi-           to provide utmost safety protection, and hence is deployed in rel-
+cation (Figure 1: L.Core). Finally, contention between the big core            atively smaller (in-order, microcontroller-sized) commercial pro-
+and little cores over shared OS locks [47, 88, 95] that cannot be              cessors, such as Renesas’s RH850 [78] and ARM’s Cortex-R52 [8].
+load-store logged [2], e.g., page-fault handling, complicates both             However, duplicating OoO superscalar cores is prohibitively expen-
+OS-level resource management and verification scheduling, which                sive [13, 21, 51, 62], as their complex microarchitectures increase
+can lead to system deadlocks (detailed in Section 3.4).                        area and power by orders of magnitude. Moreover, the cycle-by-
+Contributions. By systematically addressing the identified bottle-             cycle, pin-level comparison required by LockStep imposes long,
+necks, we propose PEEK (Privileged-Execution Error-Keeper),                    high-fanout interconnects that complicate physical design and tim-
+the first privileged parallel error detection architecture. Through a          ing closure, reduce achievable clock frequency, and destabilize sili-
+deep analysis of privileged-mode behavior, PEEK efficiently repli-             con bring-up, undermining the advantages of OoO processors.
+cates the big core’s privileged state with minimal bandwidth and
+area overhead. To support lightweight privileged replay on little              2.2          Heterogeneous Parallel Error Detection
+cores, we design a mechanism mimicking standard hardware event                 In contrast to the synchronous re-execution of LockStep, HPED [2]
+handling, thereby avoiding unnecessary computational costs. Ad-                achieves parallel re-execution by dividing the program running
+ditionally, PEEK leverages existing modules to proactively resolve             on a big core into checking segments using register checkpoints
+resource contention, ensuring deadlock-free execution in privileged            (RCPs), i.e., architectural state captured periodically, and replaying
+mode. We implement PEEK on an AMD Alveo U280 FPGA, booting                     them asynchronously and overlapped on multiple slower little cores
+a full Linux kernel (v6.7) to validate its practical feasibility. Ex-          (Figure 1: software). Little cores redirect their memory accesses
+perimental results show that PEEK achieves full privilege-mode                 from the D-Cache to the Load-Store Log (LSL) to re-read and check
+coverage with only a 1.02× performance slowdown, microsecond-                  memory accesses as they were at the time of big-core execution
+level detection latency, and area overhead of 1.8% on the big core             (Figure 1: hardware). Before executing a checking segment, a little
+and 3.8% on the little cores. We have taped out PEEK with a smaller            core initializes its architectural state to the segment’s Start RCP
+configuration (detailed in Section 7.9) and publicly released PEEK’s           (SCP) and compares its final state to the End RCP (ECP) upon
+source code, at https://anonymous.4open.science/r/PEEK-3000.                   completion. If all little cores are busy processing segments, the big
+                                                                               core must stall until a little core becomes available. The program is
+2 Background                                                                   measured correct if all segments’ ECPs and memory data match the
+                                                                               original execution, and ECPs of segment 𝑁 match SCPs of segment
+2.1 Detection is Key                                                           𝑁 + 1, to provide a proof-by-induction of equivalence.
+To mitigate errors caused by hardware faults, protection mecha-                   The recent MEEK [49] presents the first full-RTL HPED design
+nisms, from error detection codes [35, 39] to fault-tolerant architec-         with a complete microarchitecture implementation. MEEK includes
+tures [1, 70], have been developed. Among them, error detection                a non-intrusive Data Extraction Unit in the big core for data collec-
+serves as the foundation [31, 57, 74, 75, 84]: once an error is identi-        tion and a Scheduling Engine to orchestrate little core resources.
+fied, the system can transition to a safe state and initiate corrective        In little cores, a Mode Switch Unit and a LSL enable the replay of
+actions (e.g., fault isolation [22, 33] or state rollback [9, 29]) to          checking segments. It also features a Forwarding Fabric to alleviate
+prevent escalation into hazardous failures. As mandated by indus-              transmission bottlenecks. However, even with its full-RTL imple-
+trial safety standards, e.g., ISO 26262 [44] for automotive and DO-            mentation, MEEK still remains a user-mode prototype and does not
+178C [79] for avionics, mitigation procedures must complete within             provide privileged protection: any privileged code running on big
+a Fault Tolerance Time Interval (on the order of milliseconds [48]).           core is ignored by little cores, restarting checks on return to user.
+                                                                           2
+PEEK: Heterogeneous Parallelism for Privileged Error Detection in Safety-Critical Processors                                               MICRO 2026, October 31–November 04, 2026, Athens, Greece
+
+
+% of PRV 4.3%    3.6%   5.6%    8%     43%    0.7%    25%   0.72% 4.98%                                                    Accessed mscratch mstatus     mepc      mcause mtval              mtvec mie mip
+
+
+
+
+                                                                                 Normalised data volume
+                                                                                                                             CSR
+                                                                                                                               trap1
+                                                                                                                  L.Core 1                        ···                            ···                     ···
+
+
+
+
+                                                                                                              Proportion
+                                                                        a
+Slowdown
+
+
+
+
+                                                                                                                                            segment           Unified ret path
+                                                                                                                                                                                  mret
+                                                                                                                  L.Core 2          ···                 ···                            ···               ···
+                                                                                                                                                                            Unified entry path
+                                                                                                                                                                trap2
+                                                                         b
+                                                                                                                  L.Core 3                ···                   ···                              ···
+
+                                                                                                              Figure 4: Trap-related CSR accesses in two timer-interrupt
+                                                                                                              cases: except for the unified paths, mstatus and mtvec are
+                                                                                                              accessed in trap1, while mie and mip are accessed in trap2.
+Figure 3: a Slowdown and b volume of different coverages.
+(Full protection also includes ARFs, which are omitted here
+for clarity; % of PRV: proportion of privileged execution.)                                                        Insight #1: Missing privileged protection not only causes insuffi-
+                                                                                                                   cient fault coverage but also exposes the entire system to cascading
+                                                                                                                   failures. Error detection must be supported in privileged execution
+                                                                                                                   to ensure end-to-end system safety.
+
+                                                                                                              3.2            Snapshot Explosion Disrupts Verification
+                                                                                                              Achieving privileged protection in HPED requires all 347 (up to
+                                                                                                              4,096 with customization [80]) Control and Status Registers (CSRs)
+3 Motivation                                                                                                  be captured in RCPs, in addition to the 64 architectural registers
+3.1 Privileged Gaps Threaten System Safety                                                                    for user-only verification, leading to a 5.4× increase in snapshot
+Prior HPED architectures [2, 49, 60] focus solely on user-mode                                                size. This snapshot overhead has cascading impacts on processing
+execution, with implementations and evaluations confined to user                                              efficiency across the entire verification pipeline from data extraction
+mode, using gem5 syscall-emulation simulations without a full                                                 on big core, RCP transactions, status deployment (before checking),
+OS [2, 60], or codesigning implementation parts into software pro-                                            to status comparison and restoration (after checking) on little cores.
+cesses and reusing OS functionality without checks [49]. This leaves                                             When applying the same methodology [3, 4, 49] for full system
+a critical blind spot regarding their full-system safety protection.                                          protection, we observe a 1.91× geomean slowdown compared to
+   To quantify this blind spot, we deploy a full Linux on an OoO                                              user-only protection (Figure 3 a ), despite privileged mode account-
+superscalar processor and assess fault coverage across represen-                                              ing for only 4.98% of total computation time. The slowdown peaks
+tative workloads (see Section 7 for the full experimental setup):                                             at 3.7× in freqmine, due to frequent load/store misalignments
+PARSEC [16] for its general-purpose, user-mode-intensive work-                                                that trigger extensive privilege transitions. By analyzing snapshot
+loads adopted in prior work [2–4, 49], and MiBench [32] for its                                               volume across workloads, we find that slowdown is nearly pro-
+safety-critical embedded workloads that stress privileged activities.                                         portional to the volume, meaning that checkpointing overheads
+As shown in Figure 2, even user-mode-intensive PARSEC work-                                                   dominate, motivating a reconsideration of the snapshot mechanism.
+loads fail to achieve the 97% coverage mandated for ASIL-C (the                                                  Unlike architectural registers, which frequently change across
+second-highest ISO 26262 safety level). The deficit is more severe                                            segments, a large subset of CSRs are seldom accessed during execu-
+in MiBench, where nearly all workloads fall below the 90% cover-                                              tion (Figure 3 b ). For instance, over 60% of CSRs are not accessed
+age required for ASIL-B. This means that without privileged-mode                                              in any workload. This suggests that capturing a partial snapshot,
+protection, HPED can only satisfy ASIL-A (the lowest ISO safety                                               targeting only the actively accessed CSRs, could reduce inefficien-
+level), suitable only for non-critical functions (e.g., infotainment).                                        cies. However, Figure 4 shows a real-world example observed in
+   These findings motivated a deeper investigation into the role                                              our prototyping, revealing that the specific CSRs accessed can vary
+of privileged execution from a safety standpoint. Our source-code                                             hugely even for the same trap cases. Therefore, an online approach
+analysis revealed that, beyond managing normal execution, the                                                 is needed to trace the behavior and selectively snapshot accessed
+privileged execution (particularly the OS kernel) implements nu-                                              CSRs. Crucially, it must maintain both behavioral consistency and
+merous critical safety-related functions. These include not only                                              complete verification, while minimizing snapshot size.
+CPU-level but also system-wide mechanisms, e.g., ECC memory
+                                                                                                                   Insight #2: Snapshotting CSRs as architectural registers degrades
+error handlers [43], fault recovery [19], watchdog timers that reset
+                                                                                                                   verification efficiency. A dynamic mechanism is required to selec-
+hung subsystems [27, 52], and resource isolation to prevent fault
+                                                                                                                   tively capture only accessed CSRs in RCPs.
+propagation [42, 86]. Some mechanisms specific to safety-critical
+systems also rely on privileged operations. For example, CiAO [41]
+uses privileged logic to check the CRC32 integrity of all objects                                             3.3            Native Traps Limit Privileged Replay
+when entering kernel, for early memory corruption detection; Vir-                                             Privileged-mode protection demands the little cores to replay frag-
+tuOS [64] employs kernel virtualization to isolate slices of kernel                                           mented checking segments under the same privilege mode as the
+functionality into protected domains, enabling fast recovery with-                                            big core. To do so, a little core must transition into the target mode,
+out reboots. Thus, leaving privileged execution unprotected poses                                             redirect itself to the segment’s starting program counter (PC) be-
+a risk of catastrophic system failure.                                                                        fore replaying, and revert after the check. An intuitive approach is
+                                                                                                          3
+                             MICRO 2026, October 31–November 04, 2026, Athens, Greece                                                                                                                Wang et al.
+%
+    Normalised data volume
+
+
+
+
+a                                                                                                                       Page fault, switch to PFH                   Freq.syscall    Timer.IRQ
+                                                                                                                                                                    IRQ.backlog
+                             Proportion
+
+
+
+                                                                                                                                                                                                     Wait for
+                                                                                                             B.Core 0           1            2        Stall           ····                  Stall    Checker
+                                                                                                                                    Hold
+b                                                                                                            M.Status        Unlocked      Locked                     Unlocked            Locked
+                                                                                                             Page fault at same point Acquire                      Checking
+                                                                                                                                                                              Timer.IRQ
+
+                                                                                                             L.Core 1               1            3    Spin             ····                 Spin      Wait for
+                                                                                                                                                                                                    Lock release
+                                                                                                                          5    10       15       20     25    30     35       40   45      50
+
+                             Figure 5: Comparison of execution time between trap-                                       Figure 6: Examples of circular waiting chains.
+                             handler preambles and a checking segment in PARSEC.
+
+
+                                                                                                            code on little cores can sometimes trigger completely new privi-
+                                                                                                            leged code that cannot be replayed from the LSL1 so must read real
+                                                                                                            data, due to little cores being exposed to some OS abstractions.
+                                                                                                                In one case, if an instruction faults on the little cores (e.g., because
+                             to leverage software-handled traps (e.g., ECALLs or interrupts) that           it overtakes the big core or the instruction is paged out before the
+                             are natively supported by the OS or firmware [17, 73, 87]. However,            little core reaches it), the page-fault handler may touch page-table
+                             a trap invocation incurs a long preamble (saving the full context,             entries locked by the big core. In another case, even in checker mode
+                             decoding the trap cause via the vector table, branching into the               the OS still periodically interrupts the core for synchronization
+                             handling routines, etc.), which consumes more than 2,000 cycles on             and scheduling [85]. If the timer interrupts on the big and little
+                             each trigger, significantly reducing little cores’ utilization and wast-       cores occur in very close temporal proximity (e.g., the big core
+                             ing verification capacity. As quantified in Figure 5, the preamble             delays handling its timer due to frequent syscalls), the interrupt
+                             accounts for 34.6% (peaking at 52.9%) of the little core’s execution           handler on the little core may try to access the timer’s data structure
+                             time in each check. Importantly, most of these trap-handling opera-            already locked by the big core. Again we get divergence between big
+                             tions are unnecessary in the context of runtime verification, where            and little cores, meaning logging in the LSL cannot solve resource
+                             hardware interactions are disallowed inside checking segments.                 sharing and locking. Both cause the circular dependencies depicted
+                                While customizing the trap handler is feasible, most of the stan-           in Figure 6: the big core waits for the finite LSL (held by little cores),
+                             dard trap-handling sequence must remain to preserve architectural              while little cores need to access shared resources (locked by big
+                             compliance, restricting achievable improvements [20, 72, 92]. More-            core) to continue trap-handling before releasing the LSL.
+                             over, software-level customization requires intrusive modifications                This deadlock is intrinsic to the interaction between HPED’s
+                             to the OS and firmware (infeasible if closed-source): (a) adding trap          verification mechanism and OS resource management. Therefore,
+                             identifiers (i.e., exception code) for cross-privilege check tasks; (b)        external intervention is needed to break the dependency chain.
+                             reconfiguring delegation registers (e.g., medeleg or mideleg) to               Observing that little core’s spin-wait for a lock held by the stalled
+                             redirect traps to the correct privilege domain; (c) inserting routines         big core is futile, we break the dependency from the little core side
+                             into trap handlers to manipulate PC and branch to the entry of                 by preempting the spin-lock, switching out the LSL immediately to
+                             a checking segment; and (d) updating the trap vector table when                free space and perform the check to release the big core.
+                             vectored mode is enabled. Such modifications may span hundreds
+                                                                                                             Insight #4: Extending HPED to privileged modes inevitably intro-
+                             of lines of low-level code across OS and firmware, forcing persistent
+                                                                                                             duces deadlock. Active intervention to preempt the little core’s futile
+                             maintenance: any update requires revalidation, risking compatibil-
+                                                                                                             spin-wait is required for deadlock-free privileged re-execution.
+                             ity with existing trap logic and portability across systems.
+
+
+                                  Insight #3: Utilizing OS-native trap handlers for privileged seg-         4    PEEK: At a Glance
+                                  ment replay incurs excessive preamble overhead and OS inva-               Exploiting the bit-level structure and access sparsity of CSRs, we
+                                  sion. Therefore, a hardware-level handler is required to enable           introduce a dynamic snapshot mechanism, which minimizes each
+                                  low-latency, non-invasive re-execution.                                   RCP’s size by eliminating unnecessary bits and CSR synchroniza-
+                                                                                                            tion. On little cores, the privileged checking context switch is com-
+                                                                                                            pleted in hardware, ensuring that the instruction stream bypasses
+                             3.4          Resource Dependency Induces Deadlocks                             the lengthy trap-handling preamble and directly executes checking
+                             Privileged execution often operates on shared OS resources pro-                segments. Finally, a generalized solution is developed to handle
+                             tected by locks, such as memory management (e.g., page tables [30,             the cross-core deadlock stemming from contention across diverse
+                             54]) and system timers (e.g., timekeeper [55, 56]). This introduces a          shared resources, enabling continuous system operation.
+                             critical deadlock risk not present in user-only HPED. User-mode
+                                                                                                            1 Because this is completely new code not run on a big core, it has no redundancy and
+                             and privileged re-execution of big-core work on little cores never ac-
+                                                                                                            is not checked for errors. However, this also means it did not influence the execution
+                             cesses memory (or locks), even in multithreaded scenarios, because             of the big core’s run, and so any errors generated will result in a state mismatch in
+                             values are replayed by the LSL. However, replicating user-mode                 later checked code if it impacts correct execution.
+                                                                                                        4
+PEEK: Heterogeneous Parallelism for Privileged Error Detection in Safety-Critical Processors                                                             MICRO 2026, October 31–November 04, 2026, Athens, Greece
+
+
+           HW                  SW
+                                                                                                                                L2-Cache
+           REG                 SRAM
+                                                                             Interface Ports
+           Data                Ctrl                                                                                                                         a
+                                                                                                                       OoO Superscalar Core                       CDC          CSU
+                                                                                                                                                                                                         L$
+           User                PRV.
+           Thrd.               Thrd.                                   LSQ                     PRFs                            CSRs                                            SR                        D$
+                                                                                                                                                                                     Pipeline
+            Mem.               Handler    d         DEU                                                                               EN             CEC                                                 ptw
+   Big      status    little    state
+                                                                                                                                                                                                         I$
+                                                                                                                                                                         c
+                                         Time
+             Unlock
+
+
+
+
+    1                                                                                          Checkpoint/Demand Data                                             CDC          MSU       PCSU
+                                                                                                                                                                                                         L$
+                        1         00                                                                                                                                           SRScalar                  D$
+                                                                                                                                                                                   Pipeline                    M-
+                                                                                                                                                                                Core 2                   ptw
+    2                                                          DC-Buffer          DC-Buffer                  DC-Buffer                       HM-NoC                                             SD             Bus
+                                                                                                                                                                                                         I$
+                                                  Checkpoint
+             Locked
+
+
+
+
+  Stall                           01              -type Data                                     On-demand
+                      Spin
+                                                                                                 Data                                      Superscalar                         MSU       PCSU
+                                                                                                                                             channel                                                     L$
+    2                             11
+                        2                                                                                                                                                      SRScalar
+
+
+
+
+                                                                                                                           ..
+                                                                                                                                                                                                         D$
+                                                                                                                                                                                   Pipeline
+                                                   Forwarding                                                                                                     CDC           Core n                   ptw
+    3
+
+
+
+
+                                                                                                                  ..
+                                  00                                                                                                             Dest.                                          SD
+                        3                          Fabric (F2)                                      Re-ordering                                             b                                            I$
+
+ Software thread-level risks                    Hardware: High-Frequency Domain                                                                                         Hardware: Low-Frequency Domain
+          Deadlock Handler                                                   Workloads Execution and Data/CPS Forwarding                                                            Correctness Checking
+
+Figure 7: An overview of PEEK (DEU: Data Extraction Unit; LSQ: Load-Store Queue; PRFs: Physical Register Files; CSRs: Control
+and Status Registers; CEC: CSRs Extraction Controller; CSU: Context Switching Unit; SR: Shadow Registers; L$: Load-Store Log).
+The data required for program execution and verification is extracted (DEU) and processed (CEC for CSRs) in the big core a ,
+dispatched to the scheduled little core through the forwarding fabric b , and finally replicated and compared in the little cores
+ c . The deadlock handler d continuously detects and resolves the deadlocks to ensure system liveness.
+
+
+
+    Figure 7 presents PEEK’s overview, highlighting the key com-                                                           In the little cores (Figure 7 c ), we deploy a set of shadow reg-
+ponents guided by our motivations. In the big core (Figure 7 a ),                                                      isters that serves as control and state mirrors for checkpoint-type
+we deploy a non-invasive Data Extraction Unit [49] to extract data                                                     CSRs (Table 1), replacing instruction interaction of original CSRs
+from the core’s Load-Store Queue (LSQ) on-demand (i.e. when a                                                          while avoiding overhead of context saving and restoring. These
+load or store occurs so must be logged), checkpoint-type data from                                                     registers are likewise bit-structured: each mirrors only the effectful
+Physical Register Files (PRFs) (which only changes as a result of                                                      bits, minimizing shadow footprint while preserving semantic equiv-
+repeatable effects, and is collected in checkpoints), and both on-                                                     alence. Moreover, a Context Switching Unit (CSU) is incorporated to
+demand and checkpoint-type data from CSRs. CSR extraction is                                                           assist little cores in context saving and instruction redirection dur-
+guided by a taxonomy (Table 1), which removes static identifiers                                                       ing privileged segment replay. It imitates the standard trap handling
+and non-repeatable hardware counters from RCPs. Further, a CSRs                                                        to manage the hardware state (e.g., elevating privilege level and dis-
+Extraction Controller (CEC) is designed, which consists of a static                                                    abling interrupt enable before checking). Conceptually, PEEK treats
+bit-level filter to selectively extract effective CSR bits, and a dy-                                                  each privileged verification task as a special type of trap, whose
+namic access monitor to determine when a CSR should be included                                                        entry point corresponds to the starting PC of the checking seg-
+in RCPs. The filter follows the ISA-defined formats of CSRs, where                                                     ment—analogous to s/mtvec. When a privileged segment arrives
+only certain bits are defined while others are reserved or fixed-zero,                                                 (i.e., all shadow registers are updated), the CSU directly redirects
+to only observe bits with architectural information. This further                                                      the instruction to this entry PC and updates associated status bits
+reduces RCP’s footprint in bit granularity. The monitor tracks all                                                     through hardware gating. Notably, we disable interrupts in original
+CSR accesses from instructions and hardware, with dirty flags re-                                                      mstatus but use shadows for instruction interaction (Section 5.1),
+flecting the current status of each CSR. When the latest value of a                                                    making software-level interrupt enabling ineffective—segment re-
+CSR has been synchronized across all little cores, it is marked as                                                     play remains uninterrupted2 , minimizing detection latency.
+clean and excluded from subsequent RCPs until it is accessed again.                                                        Finally, to resolve deadlocks, our solution proactively intervenes
+Since some key control registers (e.g., pmpcfg for physical memory                                                     on little-core side by detecting and preempting spin-wait through
+access check) may remain clean throughout execution (i.e., setup at                                                    inter-core synchronization mechanisms, and reassigning the little
+boot and never change), that cannot be verified in ECPs, we employ                                                     core to perform the verification task the core is stalled on. This
+ECC to safeguard the integrity of interaction between these CSRs                                                       intervention releases the little core from the wait, allowing it to free
+(Table 1.C4) and corresponding hardware components.                                                                    the LSL, a key resource required by the big core. Once the LSL is
+    PEEK inherits the Forwarding Fabric (Figure 7 b ) from MEEK,                                                       freed, the big core can fill it and proceed to release the system lock,
+which employs multiple sets of Dual-Channel Buffers to decouple
+the delivery of checkpoint-type and on-demand data to the selected                                                     2 The  little core re-enables interrupts immediately after completing checking, allowing
+little core. This design provides high throughput and stable ordered                                                   it to respond to any potentially pending interrupts. While not all privileged segments
+data transmission even under bursty commit conditions.                                                                 with disabled interrupts will result in pending interrupts, the latency introduced by a
+                                                                                                                       single segment is acceptable for interrupt handling.
+                                                                                                              5
+MICRO 2026, October 31–November 04, 2026, Athens, Greece                                                                                            Wang et al.
+
+
+        Table 1: CSR taxonomy and handling strategy.                              As shown in Table 1, the CSRs are categorized into four types
+                                                                              based on their roles in context establishment and fault observability.
+ Class    Description                     Handling          Examples
+                                                                              Class-1 (Static Identifiers) defines core identity (e.g., mhartid),
+      Static identifiers                                                      which is strictly read-only. Since these registers act solely as a static
+ C1 defining core identity         On-demand extraction.    mhartid
+                                                                              reference for instructions, they are extracted on-demand3 . Class-2
+      and ISA capabilities.                                  misa
+                                                                              (Hardware Counters) includes programmable counters that track
+      Non-repeatable                                         cycle            hardware events. Since these counters are typically updated at cycle
+ C2                                On-demand extraction.
+      Hardware counters                                     instret           level through distinct events in different cores, which cannot be
+       Trap-related setup          Add to RCPs, replace                       captured in checkpoint-type snapshots as they are non-repeatable
+                                                            mstatus
+ C3
+       & handling registers.       inst.interaction.                          for little cores, they are also extracted on-demand. Class-3 (Trap-
+                                                            mcause
+                                                                              related) registers are responsible for the setup and handling of traps.
+       Environmental               Add to RCPs, full        mcounten          They interact most frequently with instructions among the four
+ C4                                                                           classes. On the other hand, for little cores, which enter a trap for ver-
+       control registers.          replacement.             menvcfg
+                                                                              ifying the big core’s handling rather than responding to a standard
+                                                                              hardware event, retaining independent control over these CSRs is
+                                                                              essential to correctly execute and return from verification traps –
+ultimately breaking the circular dependency chain and restoring               and their values must be correct at the end of checkpoints to guar-
+system-wide forward execution. To this end, we extend the CSU,                antee correct future execution by induction principles. Therefore,
+allowing it to also function as a Deadlock Handler (Figure 7 d ).             we add them to RCPs for comparison, but during execution only
+                                                                              their read/write interactions in instructions are reproduced by little
+5     The Microarchitecture                                                   cores to facilitate repetition. Class-4 (Environmental Control)
+                                                                              registers establish the permission boundaries (e.g., mcounteren for
+Even with the principles in Section 4, PEEK requires careful microar-         counter accessibility). While they are typically configured at boot
+chitectural engineering to allow precise inter-core synchronization           and remain stable during execution, any divergence in these set-
+and instruction redirection in little cores with minimal overhead.            tings would cause the same instruction to behave differently on the
+Privileged code is sensitive, and any state inconsistency or instruc-         two cores (e.g., a legal counter read on big core becoming illegal on
+tion misdirection could lead to catastrophic failures. Therefore, the         little cores). Hence, we add them to RCPs, fully replacing registers
+microarchitecture focuses on guaranteed completeness in state syn-            to comprehensively replicate CSR behavior.
+chronization and correctness in instruction re-execution. We build
+PEEK on an open-source heterogeneous SoC (Rocket Chip [10]),
+                                                                              5.2      OoO Superscalar Core (The Big Core)
+featuring both high-performance (BOOM) and energy-efficient
+(Rocket) cores. We use Rocket Chip as a case study to demonstrate             Program replay requires the collection of both checkpoint-type
+the applicability of PEEK to other heterogeneous SoCs, e.g., ARM’s            and on-demand data from big cores. While previous work [49] has
+big.LITTLE [7] and Intel’s P- and E-class cores [28].                         implemented the extraction of checkpoint-type data from PRFs
+                                                                              and on-demand data from LSQs, PEEK must extract both types for
+                                                                              CSRs while minimizing redundancy. To achieve this, we develop
+5.1    CSR Taxonomy
+                                                                              a CSR Extraction Controller (Figure 8), containing a CSR Read
+CSRs differ from architectural registers in that, beyond instruction          controller (CRC) and a Parameterized Bit Filter (PBF). When an RCP
+interaction, they are tasked with control, status tracking, and hard-         is reached, the DEU accesses CRC to selectively read the changed
+ware interaction. In HPED, RCPs must (i) reconstitute big core’s              CSR values from corresponding addresses. These values are then
+architectural context for execution consistency and (ii) make faults          filtered and reconstructed by PBF, retaining only relevant bits, and
+observable for verification. Not all CSRs meet these criteria, as their       finally delivered to little cores. Leveraging CRC’s dynamic tracking
+roles vary significantly—some are irrelevant to architectural con-            and the PBF’s bit-level extraction, this design greatly reduces CSR
+text, while some lack interaction with instruction stream, failing            volume, mitigating bandwidth consumption.
+to reflect faults. Thus, CSRs should be selectively added to RCPs             Dynamic CSR Read Controller. The CRC monitors whether a
+based on their roles. Others can or must be treated like load/store           CSR holds the latest value by maintaining a CSR Access Board
+data, which is extracted and forwarded only during instruction                (Figure 8 a ), which tracks the status of each CSR using a dirty bit.
+interaction to ensure correct instruction replay in little cores. Fur-        A set dirty bit indicates that this CSR has been updated by the big
+thermore, replicating privileged execution does not require fully             core but has not yet been synchronized to all little cores. Board
+replacing (i.e., replacing both the original control functionality            setting is managed by the ROB: we insert an observation channel
+and instruction interaction) checkpoint-type CSRs in little cores. In-        into the ROB (Figure 8 b ). When a CSR instruction is retired, its
+stead, only key control registers that govern execution permissions           address is routed to a Lookup Table to check for a match with
+are required to establish an equivalent execution environment; the            entries in the board. Once a match is found, the corresponding flag
+rest can be effectively simulated just based on their interactions            is set to 1. The board is cleared through a control signal generated
+with instructions reading and writing them. Thus, a systematic
+CSR taxonomy is necessary to guide the extraction in big core (i.e.,          3While  the writable misa controlling ISA extension greatly affects execution con-
+checkpoint-type or on-demand) and the deployment in little cores              sistency, HPED enforces homogeneous ISA, so that all cores can execute the same
+(i.e., replacing fully or instruction interaction only).                      instruction stream [2]. Thus, we classify it as an identifier.
+                                                                          6
+PEEK: Heterogeneous Parallelism for Privileged Error Detection in Safety-Critical Processors                                          MICRO 2026, October 31–November 04, 2026, Athens, Greece
+
+
+from the circuit in the Scheduling Engine (Figure 8 c ). Specifically,                          Big                                              reset                                                                                     Hardware Access
+
+we add a counter to the round-robin scheduler4 . Each time a new                                Core                          value
+                                                                                                                                        Counter           EN
+                                                                                                                                                                 RR.sch
+                                                                                                                         =
+little core is scheduled (i.e., the latest value has been updated to this                                                       max                             busy idle                        Schedule                              DEU
+                                                                                                                                         Ctrl. Clear
+little core), the counter is incremented. After a scheduling cycle,                                        c                                                                                   Engine (SE)                      snap
+the counter reaches the number of little cores, then a clear signal is                                                        CSRs Read Controller                                                     Control and Status Registers (CSRs)
+generated. During this process, if any CSR instruction retirement is                                                            Flag-read                  12 bits            1 bits
+                                                                                                                                                                                                   Dirty
+                                                                                                                                                                                                   Addr
+                                                                                                                                                                                                                    12 bits                64 bits
+
+observed, the counter is reset. It should be noted that, in addition to                                                         Flag-clear
+                                                                                                                                                         CSR_Addr           Dirty Flag             Data
+                                                                                                                                                                                                                    Addr                   Data
+
+CSR instructions, CSRs can be directly modified by hardware. For                                                                                         fflags-0x1               1                                 0x1                      ...
+                                                                                                                                                          frm-0x2                 0                                 0x2                      ...
+instance, on trap entry the hardware writes m/spp in mstatus with                                                                      Flag-set
+                                                                                                                                                      sstatus-0x100               1
+                                                                                                                                                                                                                    0x3                      ...
+the previous privilege mode, so that m/sret can restore that mode.                                                                                       sepc-0x141               0
+                                                                                                                                                                                                                   0x100                     ...
+Such hardware-induced modifications also set the corresponding                                                                                                       ...
+                                                                                                                                                                                                                        ...                  ...
+board entry and reset the scheduling counter.                                                                  Hardware Access Track
+                                                                                                                                                         mie-0x304                1
+                                                                                                                                                                                                                   0x340                     ...
+                                                                                                                                                       mepc-0x341                 1
+Static Parameterized Bit Filter. The PBF (Figure 8 d ) filters                                                        CSRs                                           ...
+                                                                                                                                                                                                                   0x341                     ...
+
+out undefined or fixed-zero bits for each dirty CSR based on ISA-                                                    Lookup
+                                                                                                                                                         CSRs Access Board
+                                                                                                                                                                                                                        ...                  ...
+
+defined formats. For example, only 33 bits (e.g., M/SIE, XS, SUM, etc.)                                                                                                                       a
+                                                                                                                                                                                 Forwarding                                                  d
+in mstatus have been defined to keep track of or control the hart’s                                                                                                                Circuits                                   PBF
+current operating state, while the remaining 31 bits are reserved                                    commit_valid[0-3]
+                                                                                                                                                 csr_addr[0-3]                                                                                  csr
+WPRI (Writes Preserve, Reads Ignore) fields for future use [80]. This                                                                                                      Re-Order Buffer (ROB)                                              commit
+                                                                                                                                                                                                                                                              b
+mechanism can also apply to bits that are defined but not fully
+utilized. A key example is the Exception Code field in the mcause                              Figure 8: Big core microarchitecture, reducing CSRs redun-
+register. Although this field occupies the least significant MXLEN-1                           dancy: a records CSR’s status in an access board; b tracks
+bits (63 bits in RV64), only a small portion is actually used (e.g.,                           instruction retirements to set the board; c generates a clear
+just 5 bits for standard exception code, with maximum code 19                                  signal after all little cores are updated; d filters out invalid
+indicating the hardware error exception). Therefore, we only need                              bits, with parameterization to satisfy specific requirements.
+to extract the bits that contain complete and useful information.
+    To accommodate different field definitions across various pro-
+cessors (e.g., some embedded platforms feature custom interrupt                                                                                                 L2 Cache
+codes), we parameterize the bit filter in hardware. By making it con-                                                                                                                                    Addr                          Data
+                                                                                                                                    data_type
+figurable, we enable customization of the extracted fields based on                             Little Core                                                                CSRs CH.                c
+specific demands, allowing the filter to adapt to diverse use-cases,                                                                                                                                   Data
+
+ensuring the extraction of all relevant bits.                                                                  npc                                   b
+                                                                                                                                                                           Ld/St CH.
+                                                                                                                                                                                                                                    L1$D
+On-demand-type CSRs. Our observation channel in the ROB also                                                   rpc                                                                                 Data
+extracts on-demand-type CSRs, as classified in Table 1. When the                                                               CSU                                         LS-Comp
+                                                                                                   trap/ret
+channel detects the retirement of these CSRs, forwarding circuits                                                            data             Ctrl              L$                                  Addr
+                                                                                                                                                                                      Err to Irq
+
+directly read their values from the corresponding locations and                                                                       Write
+                                                                                                                                                     Normal/Checker
+
+
+transmit them to the on-demand path of the forwarding fabric.                                                                                                                                                                                        Write Back
+
+                                                                                                                                                     Data Forwarding
+                                                                                                                                                                                              a
+                                                                                                                   Mux
+
+
+
+
+                                                                                                                                                                     OP1
+5.3      In-order Scalar Core (The Little Core)                                                            Write             GPR                                     OP2
+                                                                                                                                                                           SCSR
+                                                                                                                                                                                  RSL
+
+                                                                                                                                                                                 Ctrl                                         Mux
+                                                                                                                                                                                                                        Addr
+Precisely replaying every fragmented privileged checking segment
+                                                                                                                                                                                                                                       D-Mux
+                                                                                                                                                                                        csr.addr                                    Data
+                                                                                                                                                                     OP1
+
+
+
+
+                                                                                                                                                                                                                                                      MA|WB
+                                                                                                                                                                                                         EX|MA
+
+
+
+
+in little cores is crucial to the entire verification pipeline, which
+                                                                                                                                                                                  RSL
+                                                                                                                                         ID|EX
+                                                                                                   IF|ID
+
+
+
+
+                                                                                                                                                     DH                    CSR
+                                                                                                                     Read                                            OP2         Ctrl                                         LSU
+requires close hardware coordination of three key operations: priv-
+ileged state replication, execution mode switching and instruction                                                   Decoder
+                                                                                                                                                     DH
+                                                                                                                                                                     OP1
+                                                                                                                                                                     OP2
+                                                                                                                                                                           ALU RSL
+                                                                                                                                                                                                                        Inst_type
+
+
+redirection. To achieve this, we upgrade the little core’s microarchi-                                                                                                                                           JALR
+
+                                                                                                                               PC+4
+tecture (Figure 9, featuring a 5-stage pipeline) with a set of Shadow                                       Next_PC
+                                                                                                     Instruction Decode (ID)                                   Execution (EX)                                    Memory Access (MA)
+CSRs (SCSR, Figure 9 a ) to maintain a replica of the big core’s
+privileged state, and a Context Switching Unit (CSU, Figure 9 b )                              Figure 9: Little core microarchitecture, upgraded with SCSR
+to manage the mode switching and instruction redirection in each                               and CSU: the a SCSR establishes the privileged state mirror
+RCP. During re-execution, the results of Load and on-demand-type                               of big core; the b CSU serves as the control engine to manage
+CSR instructions are fetched from the LSL (Figure 9 c ). As memory                             execution mode and instruction redirection. c Decoupling
+and CSR operations typically occur at different pipeline stages, we                            memory and CSR channels eliminates access conflicts.
+decouple the Load-Store and CSR channels (i.e., dual-way FIFOs)
+in the LSL to eliminate potential pipeline stall caused by access
+conflicts between the two instruction types.                                                   Shadow CSRs. Since the architectural registers are usually initial-
+                                                                                               ized by overwriting, incurring additional costs of context saving
+4 More precise would be to add a counter to each board entry, to avoid interference from
+                                                                                               and restoring, we use shadow mirroring for CSRs (Figure 9 a ) to
+other CSR instructions retiring during scheduling. As seen in Figure 4, CSR accesses
+are typically clustered within a segment or adjacent segments rather than evenly               store checkpoint-type data and replace the original CSR according
+distributed. Fine-grained control incurs high logic overhead for negligible benefit.           to the strategy detailed in Section 5.1. This allows us to employ a
+                                                                                           7
+MICRO 2026, October 31–November 04, 2026, Athens, Greece                                                                                                    Wang et al.
+
+
+simple multiplexer that selects between the original and shadow                                          Table 2: Hardware configurations evaluated.
+CSRs based on execution mode, enabling rapid privileged context
+switching. While shadow mirroring is theoretically applicable to                                                             Big Core
+architectural registers, our synthesis results indicate that the area                            Core            4-Width, OoO superscalar SonicBoom, @3.2GHz
+overhead of copying a complete set of them is enormous, accounting                                               128-entry ROB, 96-entry IQ, 32-entry LDQ/STQ,
+for 15% of a little core, which is unacceptable for HPED. Therefore,                                             128 Int/FP Phy Registers, 2 ALUs, 1 FPU/Mul/Div
+we retain an SRAM structure for architectural registers, which oc-                               Pipeline        ALU, 2 MEM, 1 Jump Unit, 1 CSR Unit
+cupies less than 5% of the area. In contrast, thanks to our reduction                            Branch          TAGE algorithm, 256-entry BTB, 32-entry RAS,
+of CSR redundancy at different granularities (Section 4), the SCSR                               Prediction      6 TAGE table with 2 - 64 bits history
+achieves a complete mirror with only a 2% overhead.
+                                                                                                                       Memory Hierarchy
+   Building on the design of our PBF (Section 5.2), the SCSR is
+also bit-structured, so the data must be reconstructed into standard                             L1 ICache       32 KB, 4-way, 8 MSHRs , 2 cycle hit lat
+formats when they interact with software and hardware. Besides,                                  L1 DCache       32 KB, 4-way, 8 MSHRs , 2 cycle hit lat
+SCSR’s storage structure is tightly coupled with PBF to achieve                                  L2 Cache        512 KB, 8-way, 12 MSHRs, 12 cycle hit lat
+minimal overhead, so we parameterize the SCSR in the same way                                    Memory          16 GB DDR3 @1066MHz, max 32 requests
+to satisfy flexible application requirements.                                                                              Little Cores
+Context Switching Unit. CSU (Figure 9 b ) serves as a control
+engine to manage little core’s operating state and perform hardware-                                             4× In-order Rocket, 5-stage pipeline, @2GHz,
+                                                                                                 Cores
+assisted context switching. Specifically, when a privileged SCP                                                  8-Unroll DIV, 3-stage FPU
+arrives and initiates the replay of a privileged segment in a little core,                       LSL             4 KB, 5000 instruction time-out
+the CSU records and overwrites its architectural register files, and                             L1 Cache        4 KB, 2-way for both I- and D-Cache
+switches the operating mode to checker mode. In addition, similar to
+a standard trap response, the CSU switches the little core’s privilege
+mode to match that of the privileged segment, and records current
+operating state in related CSRs, such as s/mstatus and s/mepc.                                  (Finite State Machine, Figure 7 d ) is added to the SE, which is
+A key difference is that it redirects the entry point from the trap                             controlled by the status flags from little cores and the scheduling
+vector (e.g., s/mtvec) to the starting PC of the segment, bypassing                             signals. The FSM transitions to state 11 when the SE determines
+lengthy preambles. These operations are completed within the same                               that both conditions are satisfied, which flags a deadlock.
+cycle, ensuring that the little core has necessary permissions to                               Preemption & Context Switching. If a deadlock is identified
+fetch the various privileged instructions without causing an access                             by the big core, a preemption signal is generated from the SE and
+exception. After replay, the CSU restores the context from SRAM                                 broadcast to all little cores through the forwarding fabric. This
+and corresponding CSRs, and returns the little core to normal mode.                             signal acts as a non-maskable interrupt that directs the CSU to
+                                                                                                actively switch the little core’s operating state from spin-wait to
+6       Deadlock Handling                                                                       replaying the pending checking segment (the specific process has
+Our handling strategy of the privilege-induced deadlock (outlined                               been described in Section 5.3). Regardless of whether the pending
+in Section 3.4) is achieved by reusing and orchestrating two key                                segment is intact and has not yet begun checking, or was previously
+hardware modules that exist in PEEK: the Scheduling Engine (SE)                                 interrupted by the trap (e.g., a page-fault exception), checking re-
+in big core for deadlock determination, and the CSU in little cores                             sumes on the recovered little core, ensuring that no instruction can
+for spin-wait preemption. Specifically, once a circular dependency                              escape the verification. When the segment is finished and the LSL
+chain is detected in SE, the CSU drives preemption to redirect little                           is cleared, the little core becomes available, allowing the big core
+cores from spin-wait to verification tasks, thereby freeing the LSL,                            to deliver subsequent segments. The big core can then resume its
+unblocking the big core and ultimately restoring normal execution.                              forward execution, freeing the shared resource, which ultimately
+The remainder of this section details this workflow.                                            resolves the deadlock. Following each replay of a checking seg-
+Deadlock Detection. The deadlock is identified when two con-                                    ment, the little cores attempt to re-acquire the lock, ensuring timely
+ditions coincide: (i) all little cores are stuck in spin-wait, and (ii)                         detection of whether the big core has released it.
+the big core is stalled due to unavailable little cores and stops deliv-                        Post-Resolution Recovery. Once the deadlock is resolved by the
+ering new checking segments to them. Accordingly, we deploy a                                   big core releasing the shared resource, the system undergoes a
+commit counter at the write-back stage of each little core to track                             recovery process to resume normal execution. This involves two
+the number of retired lock-checking instruction loops. Once the                                 main steps: (i) the FSM in the SE resets to state 00 and ceases
+count exceeds a preset threshold, a status flag indicating the little                           generating preemption signals; and (ii) the little cores resume their
+core’s spin-wait state is sent to the SE5 . In the big core, a 2-bit FSM                        original trap-handling routines. The recovery is triggered when a
+                                                                                                little core successfully acquires the previously contested lock. The
+5 The threshold is configurable and is set to a low value (e.g., 20) to minimize deadlock
+                                                                                                CSU then restores the architectural context, and the instruction
+detection latency without risk of misidentification, as the final decision rests with the       stream is redirected from the mepc to continue the original trap
+big core. That is, a little core’s spin-wait does not always signal a deadlock; e.g., the       handling. Concurrently, the status flag is cleared, prompting the
+lock is held by another progressing little core, in which case the system can resolve
+it autonomously. Thus, the big core’s SE, which maintains a global view of all cores,           FSM in the big core to reset, which indicates that the system has
+conducts this final decision to eliminate misidentification.                                    returned to a deadlock-free state. Other little cores are similarly
+                                                                                            8
+PEEK: Heterogeneous Parallelism for Privileged Error Detection in Safety-Critical Processors                     MICRO 2026, October 31–November 04, 2026, Athens, Greece
+
+
+restored from the preemptive state and acquire the system resource                         in PARSEC and 1.023× in MiBench, which is slightly higher than
+in turn to complete their respective routines.                                             user-only protection (1.009×, 1.016×, 1.011×, respectively) and sig-
+                                                                                           nificantly lower than full protection (2.02×, 1.96×, 1.99×) 6 . These
+7 Evaluation                                                                               results demonstrate the effectiveness of PEEK’s privilege-aware de-
+                                                                                           sign, which extends protection to privileged modes with negligible
+7.1 Experimental Setup
+                                                                                           performance overhead. In contrast, nZDC introduces substantial
+We develop PEEK on an open-source heterogeneous SoC (Rocket                                geomean slowdown of 1.91×, 1.65× and 2.45× due to in-thread
+Chip [10]), integrating a high-performance (BOOM [94]) core and                            redundant checking instructions. EA-LockStep incurs geomean
+four energy-efficient (Rocket [10]) cores. We implement the mi-                            slowdown of 1.47×, 1.31× and 1.63×, which entails approximately
+croarchitecture with base configurations detailed in Table 2 on                            29×, 11.8× and 27.4× more overhead than PEEK.
+Chipyard platform [6] (v1.13.1), and synthesize the RTL using Vi-
+vado toolchains (v2023.1). The netlist is deployed on an AMD Alveo                         7.3     Detection Capability
+U280 FPGA using FireSim [50] and booted the Linux kernel v6.7.
+                                                                                           Experimental setup. Following the methodology in Section 7.1,
+Baselines. We select five representative comparators for evaluation:
+                                                                                           we inject 50,000 - 100,000 random faults into the target units of
+the user-only HPED uses the RTL-implementation in MEEK [49];
+                                                                                           generated gate-level netlist for each workload, and track their prop-
+the traditional full-protection baseline is achieved by extending
+                                                                                           agation throughout the system (detected by PEEK, masked by hard-
+MEEK with privileged replay capability, which upgrades its MSU
+                                                                                           ware, or lead to crashes). For faults detected by PEEK, we further
+to CSU but snapshots all CSRs, to validate the performance benefits
+                                                                                           measure the detection latency, defined as the interval from fault
+of PEEK; Extended nZDC [23, 58, 59], an LLVM-based instruction
+                                                                                           injection to the moment when divergence is detected in little cores.
+redundancy scheme, is used as it is the only open-source software
+                                                                                           Result. As shown in Figure 12, more than 65% (geomean) of the
+scheme; the standard core-level LockStep [66] with two identi-
+                                                                                           injected faults can be exposed through divergence observed at ARFs,
+cal BOOM cores (Table 2), provides full fault coverage with 100%
+                                                                                           CSRs, and load/store7 . The contribution of CSR divergence is the
+area overhead and negligible slowdown. Finally, we construct an
+                                                                                           smallest, because CSRs exhibit the lowest activity and are less likely
+Equivalent-Area LockStep (EA-LockStep) [49] with two downscaled
+                                                                                           to appear in ECPs for comparison, which is also consistent with
+BOOM cores for an iso-area performance comparison. Under the
+                                                                                           our earlier empirical characterization of CSR behavior. Around 30%
+fixed area budget matching PEEK (standard BOOM with four Rock-
+                                                                                           of the faults are masked by hardware, typically because they occur
+ets), we downscale the microarchitectural parameters of BOOM’s
+                                                                                           in invalid entries, in combinational paths of execution units that
+pipeline, such as decode width, ROB/LSQ/Issue Queue (IQ) depth.
+                                                                                           are not activated by the current instruction, or in registers that
+Fault Injection. To validate PEEK’s detection capability under
+                                                                                           are overwritten before being used. Finally, less than 2% of faults
+fault models that are as realistic as practically possible, we adopt,
+                                                                                           lead to system crashes before being explicitly detected by PEEK.
+to the best of our knowledge, the first post-synthesis gate-level
+                                                                                           This is acceptable from a safety perspective, because crashes are
+fault injection methodology for HPED. We target selected high-
+                                                                                           inherently system-visible and can therefore be properly handled
+impact units for fault injection, including 5 storage structures (i.e.,
+                                                                                           with existing system-level recovery mechanisms [26, 89].
+ROB, LSQ, PRF, IQ and rename map table) and 4 execution units
+                                                                                              Figure 13 shows the density distributions of the detection laten-
+(i.e., Integer ALU, Floating-Point ALU, Integer Multiplier/Divider,
+                                                                                           cies across different workloads, each of which features a long, but
+Floating-Point Multiplier/Divider). As representative core compo-
+                                                                                           very thin, tail extending to the far right. For most workloads, the
+nents in pipeline, these target units account for over 80% of the
+                                                                                           majority of detection latencies are concentrated between 1𝜇s and
+BOOM core area excluding branch predictors (faults in branch
+                                                                                           2𝜇s, while the maximum latency seen in freqmine is 2 to 3 times
+predictors do not cause system failures [61, 69], since branch mis-
+                                                                                           higher, peaking at 4𝜇s. Overall, PEEK maintains a detection latency
+predictions can be directly repaired in hardware through pipeline
+                                                                                           below 4𝜇s in most cases, which is sufficient to cover over 99% of
+flushing) and have been widely investigated in prior fault-injection
+                                                                                           hardware faults and multiple orders of magnitude lower than the
+studies [18, 67–69]. Note that fault injection can in principle be
+                                                                                           millisecond-level FTTI requirement for ASIL-D compliance.
+applied to all structures, but such an exhaustive approach is in-
+feasible for an OoO superscalar core, as the combination of fault
+sites in complex microarchitecture and runtime injection windows
+                                                                                           7.4     Performance-Coverage-Area (PCA)
+leads to an intractable campaign space. With our synthesizable RTL                         Experimental setup. To evaluate PEEK’s efficiency on multiple
+implementation, we generate gate-level netlists and inject single-                         key dimensions, we introduce a unified metric, PCA calculated
+site transient and permanent faults at sampled internal sites (i.e.,                       as (IPC × Coverage ÷ Area). We compare PEEK’s PCA against
+logic-gate and flip-flop outputs) within the target units.                                 our baselines, running privilege-intensive MiBench, as it aligns
+                                                                                           with our privileged protection focus and fully reflects coverage
+7.2     Performance Slowdown                                                               differences. EA-LockStep is excluded as it matches PEEK in both
+                                                                                           area and fault coverage, so a PCA evaluation would only reflect
+Experimental setup. We execute SPECint 2006 [37], PARSEC [16]
+and MiBench [32] on PEEK and compare the performance slow-                                 6 The massive number of RCPs in large-scale workloads like SPECint and PARSEC
+down versus baseline (results are normalized to standard LockStep).                        leads to prohibitive performance overhead in full-protection scheme using traditional
+nZDC fails to compile [59] on some workloads (e.g., gcc).                                  snapshot mechanism, even exceeding that of nZDC.
+                                                                                           7 This does not imply that PEEK covers only 65% of faults. The remaining faults are
+Result. The slowdown is shown in Figure 10 and Figure 11. PEEK                             either hardware-masked or cause system crashes before being detected, and thus do
+incurs a geomean slowdown of only 1.016× in SPECint, 1.026×                                not silently propagate to the final outputs and manifest as system safety threats.
+                                                                                       9
+  MICRO 2026, October 31–November 04, 2026, Athens, Greece                                                                                                                 Wang et al.
+  Slowdown
+
+
+
+
+  Figure 10: Slowdown for PEEK, EA-LockStep, nZDC [59], traditional user- and full-protection [49], running SPEC and PARSEC
+
+
+
+
+                                                                                                                                                                                           Proportion
+
+                                                                                                                                                                                                        Proportion
+  Slowdown
+               Slowdown
+
+
+
+
+                                                                                              PCA
+                                                                                                      PCA
+
+
+                           Figure 11: Slowdown when running MiBench.                                  Figure 14: Performance-Coverage-Area metric on MiBench.
+
+
+                                                                                                                                                                           geomean
+                                                                                                               2.50                                                        blackscholes
+                                                                                                                                                                           bodytrack
+                                                                                                    Slowdown
+  Proportion
+
+
+
+
+                                                                                                                                                                           ferret
+                                                                                                               2.00                                                        fluidanimate
+                                                                                                                                                                           swaptions
+                                                                                                                                                                           freqmine
+                                                                                                                                                                           streamcluster
+                                                                                                               1.50                                                        dedup
+                                                                                                               1.25
+                                                                                                               1.10
+                                                                                                               1.00
+                                                                                                                        2-core                4-core              6-core
+                                                                                                                                             Core Number
+                                                                                                      Figure 15: Slowdown under varying numbers of little cores.
+                          Figure 12: Fault propagation results on PARSEC.
+
+                                                                                                                             Table 3: Area overhead comparison.
+                                                                                             PCA
+
+
+
+
+                                                              geomean
+                                                              geomean value (1348.1 ns)
+                                                              blackshole                                                         User-only              PEEK     Overhead
+                                                              bodytrack
+Density
+
+
+
+
+                                                              dedup
+                                                              ferret                                  Tech.                        28nm                  28nm          —
+                                                              fluidanimate
+                                                              freqmine                                Boom                       3.89mm2               3.96mm2        1.8%
+                                                              streamcluster
+                                                              swaptions                               Rocket                     0.26mm2               0.27mm2        3.8%
+                                                                                                      Overhead                     26.2%                27.3%              —
+               0                2000       4000       6000       8000                10000
+                                             Delay (ns)
+               Figure 13: Detection latency while using 4 little cores.                               results confirm that PEEK provides the best balance of performance,
+                                                                                                      coverage, and area efficiency among all comparators.
+
+  performance differences that have already been evaluated. All PCA                                   7.5             Scalability
+  values are normalized to the standard LockStep baseline.                                            Experimental setup. To evaluate scalability, we measure PEEK’s
+  Result. As shown in Figure 14, PEEK’s PCA significantly outper-                                     slowdown when configured with varying numbers of little cores.
+  forms other comparators in most workloads. Its lead is narrow only                                  Result. Figure 15 shows the slowdown trend against the number
+  in bitcount and blowfish due to their shorter privileged execution                                  of little cores on PARSEC. Using two little cores for verification
+  times, which limits the coverage benefit of PEEK. nZDC requires the                                 introduces a 1.61× slowdown (geomean), still outperforming nZDC.
+  lowest area, yet its high slowdown results in the lowest PCA. These                                 With four little cores, the geomean slowdown is reduced to 1.026×,
+                                                                                              10
+           PEEK: Heterogeneous Parallelism for Privileged Error Detection in Safety-Critical Processors                                               MICRO 2026, October 31–November 04, 2026, Athens, Greece
+
+
+           Table 4: Power consumption analysis and the breakdown of
+
+
+
+
+                                                                                                      Utilization rate
+           components designed for privileged protection.
+Slowdown
+
+
+
+
+             Core (total power) Component Power (mW) Percentage
+                                            SCSR                0.66              2.13%
+             Rocket (31mW)
+                                            CSU                  1.6              5.16%
+                                            CEC                  2.2              0.52%
+             BOOM (422mW)
+                                            DEU                 16.3              3.86%
+             Overhead (4*Rocket/BOOM)                                   29.4%                                                                Figure 17: Little-core utilization comparison.
+
+
+
+                                                                                                      the little cores. Overall, the PBF and CRC deliver a 32.54% perfor-
+
+
+
+
+                                                                                                                         Utilization rate
+                                                                                                      mance improvement, highlighting that focusing on CSR’s unique
+           Slowdown
+
+
+
+
+                                                                                                      characteristics is the key to addressing the snapshot bottleneck.
+
+                                                                                                      7.8                                   Little-Core Utilization
+                                                                                                      Experimental setup. To validate the efficiency of our proposed
+                                                                                                      hardware-assisted method for privileged segment replay, we count
+                                                                                                      the verification cycles of the little cores and compare the little-core
+                Figure 16: Ablation study and back-pressure breakdown.                                utilization rate between the OS-native method and ours. To do so,
+                                                                                                      we inject idle cycles equivalent to the execution duration of the
+                                                                                                      preambles (detailed in Section 3.3) into each privileged segment
+           with only freqmine and dedup reaching 1.05×. Six little cores further                      during simulation to simulate replay using the OS-native method.
+           decrease the geomean slowdown to 1.005×, with all workloads                                Results. As illustrated in Figure 17, our method achieves a utiliza-
+           having less than 1.01×. The observed superlinear trend indicates                           tion of around 60% in little cores, while the remaining 40% is used
+           that PEEK can efficiently scale to more complex workloads and                              for state transitions, handling their own traps, and idleness (i.e.,
+           larger big cores by simply incorporating additional little cores.                          waiting for verification). This makes 4 little cores sufficient to keep
+                                                                                                      up with the big core. In contrast, since it spends significant time on
+           7.6        Hardware Overhead                                                               preambles, the OS-native method utilizes only about 30% of little
+           Experimental setup. We synthesize the physical implementation                              cores, which implies that approximately twice as many little cores
+           of PEEK using TSMC 28nm PDKs and Design Compiler (v2020.12),                               (i.e., 8) would be required to match the big core’s performance.
+           and employ PrimeTime PX (v2019.12) for power analysis. Our area
+           overhead is contrasted against user-mode-only MEEK [49].                                   7.9                                   TinyPEEK Die
+           Result. As shown in Table 3, in PEEK, the BOOM’s area is 3.96mm2                           Due to die area constraints, we tape out a minimal configuration of
+           and each Rocket is 0.27mm2 , introducing 1.8% and 3.8% overhead                            PEEK, which we refer to as TinyPEEK with a 2-width BOOM and
+           compared to the user-only MEEK, respectively. From Table 4, inte-                          two Rockets, using SMIC 28nm process. Figure 18 (a) shows our
+           grating SCSR and CSU into Rocket incurs a 7.29% power overhead,                            chip die, with the TinyPEEK implementation located on the right-
+           while integrating DEU and CEC into BOOM introduces a 4.38% over-                           hand side. Figure 18 (b) shows the area and power breakdown of
+           head. Versus an unsafe baseline, building PEEK with four Rockets                           TinyPEEK. Due to our significant reduction in configurable compo-
+           upon a BOOM needs 1.08mm2 and 124mW, i.e., 27.3% area overhead                             nents of BOOM, the area and power of the two Rockets account for
+           (slightly higher than MEEK) and 29.4% power overhead, which is                             52% and 58% of BOOM respectively, which are approximately twice
+           significantly lower than LockStep (i.e., more than 100% overhead).                         those of standard PEEK, but still occupy 48% less area and consume
+                                                                                                      42% less power than LockStep (i.e., more than 100% overhead).
+           7.7        Improvement of CSR-Specific Snapshot                                                                                                            Component Area(Kμm2) Power(mW)
+           Experimental setup. To demonstrate the improvement of our
+                                                                                                                                                                        2-width       696            78.1
+           proposed snapshot mechanism, we measure slowdown of all four                                                                               Rocket            BOOM        (38.9%)        (36.3%)
+           combinations of the PBF and CRC in the big core, which is broken                                                                 Other                      5-stage        362            45.3
+                                                                                                                                                               SRAM
+
+
+
+
+           down into three key back-pressure-generating components: data                                                                    Logic    BOOM             Rocket ×2     (20.2%)        (21.1%)
+                                                                                                                     PLL
+           collection, data forwarding and little-core unavailability.
+                                                                                                                                                                                      731            91.6
+           Result. As illustrated in Figure 16, the PBF brings limited perfor-                                                                        Rocket          Other Logic
+                                                                                                                                                                                    (40.9%)        (42.6%)
+           mance optimization, because it is static and does not consider the                                            Other IPs
+                                                                                                                                                                        Total 1789 (100%) 215 (100%)
+           runtime characteristics of CSRs. In contrast, the dynamic CRC intro-
+           duces a significantly reduced slowdown and shifts the system from                                                                   (a) Layout                  (b) Area and power breakdown
+           being limited by data forwarding to one that is computation-bound,                         Figure 18: Die with area and power breakdown for TinyPEEK.
+           with performance depending on the combined computing power of
+                                                                                                 11
+MICRO 2026, October 31–November 04, 2026, Athens, Greece                                                                                               Wang et al.
+
+
+8    Conclusion                                                             References
+We have presented PEEK, the first HPED architecture that supports            [1] Hamzeh Ahangari, Yusuf İbrahim Özkök, Asil Yıldırım, Fatih Say, Funda Atik,
+                                                                                 and Ozcan Ozturk. 2023. Architecture for safety–critical transportation systems.
+privileged protection in real-world OoO superscalar processors,                  Microprocessors and Microsystems 98 (2023), 104818.
+and also the first to advance HPED from simulation-only research             [2] Sam Ainsworth and Timothy M Jones. 2018. Parallel error detection using
+                                                                                 heterogeneous cores. In 2018 48th Annual IEEE/IFIP International Conference on
+to full-system implementation and silicon tapeout. Our implemen-                 Dependable Systems and Networks (DSN). IEEE, 338–349.
+tation process uncovers a series of challenges in providing priv-            [3] Sam Ainsworth and Timothy M Jones. 2019. Paramedic: Heterogeneous paral-
+ileged protection, including the slowdown explosion caused by                    lel error correction. In 2019 49th Annual IEEE/IFIP International Conference on
+                                                                                 Dependable Systems and Networks (DSN). IEEE, 201–213.
+full-state synchronization, the privileged segment replay cost, and          [4] Sam Ainsworth, Lionel Zoubritzky, Alan Mycroft, and Timothy M Jones. 2021.
+deadlock. By rethinking the entire verification pipeline through a               Paradox: Eliminating voltage margins via heterogeneous fault tolerance. In
+privilege-aware lens, PEEK achieves full privileged-mode coverage                2021 IEEE International Symposium on High-Performance Computer Architecture
+                                                                                 (HPCA). IEEE, 520–532.
+with negligible performance impact, microsecond-level error detec-           [5] Sergi Alcaide Portet. 2023. Hardware/Software solutions to enable the use of
+tion capabilities and minimal hardware overhead. The tapeout also                high-performance processors in the most stringent safety-critical systems. (2023).
+                                                                             [6] Alon Amid, David Biancolin, Abraham Gonzalez, Daniel Grubb, Sagar Karandikar,
+solved practical physical design challenges, such as clock domain                Harrison Liew, Albert Magyar, Howard Mao, Albert Ou, Nathan Pemberton, Paul
+crossing and timing convergence. This work not only bridges the                  Rigge, Colin Schmidt, John Wright, Jerry Zhao, Yakun S Shao, Krste Asanović,
+gap between HPED theory and real-world deployment but also                       and Borivoje Nikolić. 2020. Chipyard: Integrated Design, Simulation, and Imple-
+                                                                                 mentation Framework for Custom SoCs. IEEE Micro 40 (2020), 10–21.
+delivers valuable lessons for both architectural design and physical         [7] ARM. 2024. big.LITTLE Architecture. In https:// www.arm.com/ technologies/ big-
+implementation of future HPED-based reliable systems.                            little.
+                                                                             [8] ARM. 2024. Cortex-R5 and Cortex-R5F Technical Reference Manual.
+                                                                             [9] J Arm, Z Bradac, and R Stohl. 2016. Increasing safety and reliability of roll-
+                                                                                 back and roll-forward lockstep technique for use in real-time systems. IFAC-
+                                                                                 PapersOnLine 49, 25 (2016), 413–418.
+                                                                            [10] Krste Asanovic, Rimas Avizienis, Jonathan Bachrach, Scott Beamer, David Bian-
+                                                                                 colin, Christopher Celio, Henry Cook, Daniel Dabbelt, John Hauser, Adam Izraele-
+                                                                                 vitz, Sager Karandikar, Ben Keller, Donggyu Kim, and John Koenig. 2016. The
+                                                                                 rocket chip generator. EECS Department, University of California, Berkeley, Tech.
+                                                                                 Rep. UCB/EECS-2016-17 4 (2016), 6–2.
+                                                                            [11] Jyotika Athavale, Riccardo Mariani, and Michael Paulitsch. 2019. Flight safety cer-
+                                                                                 tification implications for complex multi-core processor based avionics systems.
+                                                                                 In 2019 IEEE International Reliability Physics Symposium (IRPS). IEEE, 1–6.
+                                                                            [12] Todd M Austin. 1999. DIVA: A reliable substrate for deep submicron microarchi-
+                                                                                 tecture design. In MICRO-32. Proceedings of the 32nd Annual ACM/IEEE Interna-
+                                                                                 tional Symposium on Microarchitecture. IEEE, 196–207.
+                                                                            [13] Marcello Barbirotta, Francesco Menichelli, Abdallah Cheikh, Antonio Mastran-
+                                                                                 drea, Marco Angioli, and Mauro Olivieri. 2024. Dynamic triple modular re-
+                                                                                 dundancy in interleaved hardware threads: An alternative solution to lockstep
+                                                                                 multi-cores for fault-tolerant systems. IEEE Access (2024).
+                                                                            [14] Ken Batcher and Christos Papachristou. 1999. Instruction randomization self
+                                                                                 test for processor cores. In Proceedings 17th IEEE VLSI Test Symposium (Cat. No.
+                                                                                 PR00146). IEEE, 34–40.
+                                                                            [15] Paolo Bernardi, Riccardo Cantoro, Sergio De Luca, Ernesto Sánchez, and Alessan-
+                                                                                 dro Sansonetti. 2015. Development flow for on-line core self-test of automotive
+                                                                                 microcontrollers. IEEE Trans. Comput. 65, 3 (2015), 744–754.
+                                                                            [16] Christian Bienia, Sanjeev Kumar, Jaswinder Pal Singh, and Kai Li. 2008. The
+                                                                                 PARSEC benchmark suite: Characterization and architectural implications. In
+                                                                                 Proceedings of the 17th international conference on Parallel architectures and com-
+                                                                                 pilation techniques. 72–81.
+                                                                            [17] Luca Cassano, Stefano Di Mascio, Alessandro Palumbo, Alessandra Menicucci,
+                                                                                 Gianluca Furano, Giuseppe Bianchi, and Marco Ottavi. 2022. Is risc-v ready for
+                                                                                 space? a security perspective. In 2022 IEEE International Symposium on Defect
+                                                                                 and Fault Tolerance in VLSI and Nanotechnology Systems (DFT). IEEE, 1–6.
+                                                                            [18] Odysseas Chatzopoulos, Nikos Karystinos, George Papadimitriou, Dimitris Gi-
+                                                                                 zopoulos, Harish D Dixit, and Sriram Sankar. 2025. Veritas–Demystifying silent
+                                                                                 data corruptions: 𝜇 Arch-level modeling and fleet data of modern x86 CPUs. In
+                                                                                 2025 IEEE International Symposium on High Performance Computer Architecture
+                                                                                 (HPCA). IEEE, 1–14.
+                                                                            [19] Lucian Cojocar, Kaveh Razavi, Cristiano Giuffrida, and Herbert Bos. 2019. Exploit-
+                                                                                 ing correcting codes: On the effectiveness of ecc memory against rowhammer
+                                                                                 attacks. In 2019 IEEE Symposium on Security and Privacy (SP). IEEE, 55–71.
+                                                                            [20] Francis M David, Jeffrey C Carlyle, Ellick M Chan, David K Raila, and Roy H
+                                                                                 Campbell. 2006. Exception handling in the choices operating system. In Advanced
+                                                                                 Topics in Exception Handling Techniques. Springer, 42–61.
+                                                                            [21] Ádria Barros de Oliveira, Lucas Antunes Tambara, and Fernanda Lima Kas-
+                                                                                 tensmidt. 2017. Exploring performance overhead versus soft error detection in
+                                                                                 lockstep dual-core ARM cortex-A9 processor embedded into Xilinx Zynq AP-
+                                                                                 SoC. In International Symposium on Applied Reconfigurable Computing. Springer,
+                                                                                 189–201.
+                                                                            [22] Luigi De Simone and Giovanni Mazzeo. 2019. Isolating real-time safety-critical
+                                                                                 embedded systems via sgx-based lightweight virtualization. In 2019 IEEE Interna-
+                                                                                 tional Symposium on Software Reliability Engineering Workshops (ISSREW). IEEE,
+                                                                                 308–313.
+
+
+                                                                       12
+PEEK: Heterogeneous Parallelism for Privileged Error Detection in Safety-Critical Processors                         MICRO 2026, October 31–November 04, 2026, Athens, Greece
+
+
+[23] Moslem Didehban and Aviral Shrivastava. 2016. nZDC: A compiler technique                 [46] Xabier Iturbe, Balaji Venu, Emre Ozer, Jean-Luc Poupat, Gregoire Gimenez, and
+     for near zero silent data corruption. In Proceedings of the 53rd Annual Design                Hans-Ulrich Zurek. 2019. The Arm triple core lock-step (TCLS) processor. ACM
+     Automation Conference. 1–6.                                                                   Transactions on Computer Systems (TOCS) 36, 3 (2019), 1–30.
+[24] Harish Dattatraya Dixit, Laura Boyle, Gautham Vunnam, Sneha Pendharkar, Matt             [47] Preeti Nitin Jain and Sunil K Surve. 2020. A review on shared resource con-
+     Beadon, and Sriram Sankar. 2022. Detecting silent data corruptions in the wild.               tention in multicores and its mitigating techniques. International Journal of High
+     arXiv:2203.08989 [cs.AR] https://arxiv.org/abs/2203.08989                                     Performance Systems Architecture 9, 1 (2020), 20–48.
+[25] Harish Dattatraya Dixit, Sneha Pendharkar, Matt Beadon, Chris Mason, Tejasvi             [48] Zhe Jiang, Neil C Audsley, and Pan Dong. 2018. Bluevisor: A scalable real-time
+     Chakravarthy, Bharath Muthiah, and Sriram Sankar. 2021. Silent Data Corrup-                   hardware hypervisor for many-core embedded systems. In 2018 IEEE Real-Time
+     tions at Scale. arXiv:2102.11245 [cs.AR]                                                      and Embedded Technology and Applications Symposium (RTAS). IEEE, 75–84.
+[26] Harish Dattatraya Dixit, Sneha Pendharkar, Matt Beadon, Chris Mason, Tejasvi             [49] Zhe Jiang, Minli Liao, Sam Ainsworth, Dean You, and Timothy Jones. 2025.
+     Chakravarthy, Bharath Muthiah, and Sriram Sankar. 2021. Silent data corruptions               MEEK: Re-thinking Heterogeneous Parallel Error Detection Architecture for Real-
+     at scale. arXiv preprint arXiv:2102.11245 (2021).                                             World OoO Superscalar Processors. In 2025 62nd ACM/IEEE Design Automation
+[27] Björn Döbel and Hermann Härtig. 2012. Who watches the watchmen? protecting                    Conference (DAC). 1–7. https://doi.org/10.1109/DAC63849.2025.11132986
+     operating system reliability mechanisms. In Eighth Workshop on Hot Topics in             [50] Sagar Karandikar, Howard Mao, Donggyu Kim, David Biancolin, Alon Amid,
+     System Dependability (HotDep 12).                                                             Dayeol Lee, Nathan Pemberton, Emmanuel Amaro, Colin Schmidt, Aditya Chopra,
+[28] Jack Doweck, Wen-Fu Kao, Allen Kuan-yu Lu, Julius Mandelblat, Anirudha                        Qijing Huang, Kyle Kovacs, Borivoje Nikolic, Randy Katz, Jonathan Bachrach, and
+     Rahatekar, Lihu Rappoport, Efraim Rotem, Ahmad Yasin, and Adi Yoaz. 2017.                     Krste Asanovic. 2018. FireSim: FPGA-accelerated cycle-exact scale-out system
+     Inside 6th-generation intel core: New microarchitecture code-named skylake.                   simulation in the public cloud. In 2018 ACM/IEEE 45th Annual International
+     IEEE Micro 37, 2 (2017), 52–62.                                                               Symposium on Computer Architecture (ISCA). IEEE, 29–42.
+[29] Ajit Gajre. 2025. Software-Defined Vehicle Platforms for Safety-Critical Control:        [51] Fabian Kempf, Thomas Hartmann, Steffen Baehr, and Juergen Becker. 2021. An
+     Architecture, Updates, and Validation. Journal of Computer Science and Technology             adaptive lockstep architecture for mixed-criticality systems. In 2021 IEEE Com-
+     Studies 7, 11 (2025), 68–73.                                                                  puter Society Annual Symposium on VLSI (ISVLSI). IEEE, 7–12.
+[30] Balazs Gerofi, Akio Shimada, Atsushi Hori, and Yutaka Ishikawa. 2013. Par-               [52] Michael Kluge and Caroline C Friedel. 2018. Watchdog–a workflow manage-
+     tially separated page tables for efficient operating system assisted hierarchical             ment system for the distributed analysis of large-scale experimental data. BMC
+     memory management on heterogeneous architectures. In 2013 13th IEEE/ACM                       bioinformatics 19, 1 (2018), 97.
+     International Symposium on Cluster, Cloud, and Grid Computing. IEEE, 360–368.            [53] John C Knight. 2002. Safety critical systems: challenges and directions. In Pro-
+[31] Dimitris Gizopoulos, Mihalis Psarakis, Sarita V Adve, Pradeep Ramachandran,                   ceedings of the 24th international conference on software engineering. 547–550.
+     Siva Kumar Sastry Hari, Daniel Sorin, Albert Meixner, Arijit Biswas, and Xavier          [54] Sandeep Kumar, Aravinda Prasad, Smruti R Sarangi, and Sreenivas Subramoney.
+     Vera. 2011. Architectures for online error detection and recovery in multicore                2021. Radiant: efficient page table management for tiered memory systems.
+     processors. In 2011 Design, Automation & Test in Europe. IEEE, 1–6.                           In Proceedings of the 2021 ACM SIGPLAN International Symposium on Memory
+[32] Matthew R Guthaus, Jeffrey S Ringenberg, Dan Ernst, Todd M Austin, Trevor                     Management. 66–79.
+     Mudge, and Richard B Brown. 2001. MiBench: A free, commercially representative           [55] Jereme Lamps, David M Nicol, and Matthew Caesar. 2014. Timekeeper: A light-
+     embedded benchmark suite. In Proceedings of the fourth annual IEEE international              weight virtual time system for linux. In Proceedings of the 2nd ACM SIGSIM
+     workshop on workload characterization. WWC-4 (Cat. No. 01EX538). IEEE, 3–14.                  Conference on Principles of Advanced Discrete Simulation. 179–186.
+[33] William T Hale, Matthew E Wilhelm, Kyle A Palmer, Matthew D Stuber, and                  [56] Jereme Matthew Lamps. 2015. TimeKeeper: a lightweight and scalable virtual
+     George M Bollas. 2019. Semi-infinite programming for global guarantees of robust              time system for the Linux Kernel. Ph. D. Dissertation. University of Illinois at
+     fault detection and isolation in safety-critical systems. Computers & Chemical                Urbana-Champaign.
+     Engineering 126 (2019), 218–230.                                                         [57] Michael Truong Le, Frederik Diehl, Thomas Brunner, and Alois Knoll. 2018.
+[34] Ahmed Hanafi, Mohammed Karim, and Abdelilah El Hammami. 2015. Dual-                           Uncertainty estimation for deep neural object detectors in safety-critical applica-
+     lockstep microblaze-based embedded system for error detection and recovery                    tions. In 2018 21st International Conference on Intelligent Transportation Systems
+     with reconfiguration technique. In 2015 Third World Conference on Complex                     (ITSC). IEEE, 3873–3878.
+     Systems (WCCS). 1–6. https://doi.org/10.1109/ICoCS.2015.7483287                          [58] Minli Liao, Sam Ainsworth, Lev Mukhanov, and Timothy M. Jones. 2025. CC25
+[35] Ivo Häring. 2021. Error Detecting and Correcting Codes. In Technical Safety,                  Artifact Evaluation for Extended nZDC Fault Tolerance. https://doi.org/10.5281/
+     Reliability and Resilience: Methods and Processes. Springer, 287–302.                         zenodo.14678386
+[36] Zhengyang He, Hui Xu, and Guanpeng Li. 2024. A Fast Low-Level Error Detection            [59] Minli Liao, Sam Ainsworth, Lev Mukhanov, and Timothy M Jones. 2025. A
+     Technique. In 2024 54th Annual IEEE/IFIP International Conference on Dependable               Deep Technical Review of nZDC Fault Tolerance. In Proceedings of the 34th ACM
+     Systems and Networks (DSN). IEEE, 90–98.                                                      SIGPLAN International Conference on Compiler Construction. 104–116.
+[37] John L Henning. 2006. SPEC CPU2006 benchmark descriptions. ACM SIGARCH                   [60] Minli Julie Liao, Sam Ainsworth, Lev Mukhanov, Adrian Barredo, Markos Kynigos,
+     Computer Architecture News 34, 4 (2006), 1–17.                                                and Timothy M Jones. 2025. ParaVerser: Harnessing Heterogeneous Parallelism
+[38] Carles Hernandez and Jaume Abella. 2015. Timely error detection for effective                 for Affordable Fault Detection in Data Centers. In 2025 55th Annual IEEE/IFIP
+     recovery in light-lockstep automotive systems. IEEE Transactions on Computer-                 International Conference on Dependable Systems and Networks (DSN). IEEE, 386–
+     Aided Design of Integrated Circuits and Systems 34, 11 (2015), 1718–1729.                     400.
+[39] Caleb Hillier and Vipin Balyan. 2019. Error Detection and Correction On-Board            [61] Ján Mach and Lukáš Kohútka. 2025. Lockstep Replacement: Fault-Tolerant Design.
+     Nanosatellites Using Hamming Codes. Journal of Electrical and Computer Engi-                  IEEE Access (2025).
+     neering 2019, 1 (2019), 3905094.                                                         [62] Ján Mach, Lukáš Kohútka, and Pavel Čičák. 2024. Lockstep Vs Microarchitecture:
+[40] Peter H. Hochschild, Paul Turner, Jeffrey C. Mogul, Rama Govindaraju,                         A Comparison. In 2024 IEEE 37th International System-on-Chip Conference (SOCC).
+     Parthasarathy Ranganathan, David E. Culler, and Amin Vahdat. 2021. Cores                      IEEE, 1–6.
+     that don’t count. In Proceedings of the Workshop on Hot Topics in Operating Sys-         [63] Krzysztof Marcinek and Witold A Pleskacz. 2023. Variable delayed dual-core
+     tems (Ann Arbor, Michigan) (HotOS ’21). Association for Computing Machinery,                  lockstep (vdcls) processor for safety and security applications. Electronics 12, 2
+     New York, NY, USA, 9–16. https://doi.org/10.1145/3458336.3465297                              (2023), 464.
+[41] Martin Hoffmann, Christoph Borchert, Christian Dietrich, Horst Schirmeier,               [64] Ruslan Nikolaev and Godmar Back. 2013. VirtuOS: An operating system with
+     Rüdiger Kapitza, Olaf Spinczyk, and Daniel Lohmann. 2014. Effectiveness of                    kernel virtualization. In Proceedings of the Twenty-Fourth ACM Symposium on
+     fault detection mechanisms in static and dynamic operating system designs. In                 Operating Systems Principles. 116–132.
+     2014 IEEE 17th International Symposium on Object/Component/Service-Oriented              [65] Nahmsuk Oh, Philip P Shirvani, and Edward J McCluskey. 2002. Error detection
+     Real-Time Distributed Computing. IEEE, 230–237.                                               by duplicated instructions in super-scalar processors. IEEE Transactions on
+[42] Tyler Hunt, Zhipeng Jia, Vance Miller, Christopher J Rossbach, and Emmett                     Reliability 51, 1 (2002), 63–75.
+     Witchel. 2019. Isolation and beyond: Challenges for system security. In Proceed-         [66] Emre Ozer, Balaji Venu, Xabier Iturbe, Shidhartha Das, Spyros Lyberis, John
+     ings of the Workshop on Hot Topics in Operating Systems. 96–104.                              Biggs, Peter Harrod, and John Penton. 2018. Error correlation prediction in
+[43] Takumi Iguchi and Hiroshi Yamada. 2022. Graceful ecc-uncorrectable error han-                 lockstep processors for safety-critical systems. In 2018 51st Annual IEEE/ACM
+     dling in the operating system kernel. In 2022 IEEE 33rd International Symposium               International Symposium on Microarchitecture (MICRO). IEEE, 737–748.
+     on Software Reliability Engineering (ISSRE). IEEE, 109–120.                              [67] George Papadimitriou and Dimitris Gizopoulos. 2021. Demystifying the system
+[44] ISO26262 ISO. 2018. 26262: Road vehicles-Functional safety. (2018).                           vulnerability stack: Transient fault effects across the layers. In 2021 ACM/IEEE
+[45] Xabier Iturbe, Balaji Venu, Emre Ozer, and Shidhartha Das. 2016. A Triple Core                48th Annual International Symposium on Computer Architecture (ISCA). IEEE,
+     Lock-Step (TCLS) ARM® Cortex®-R5 Processor for Safety-Critical and Ultra-                     902–915.
+     Reliable Applications. In 2016 46th Annual IEEE/IFIP International Conference on         [68] George Papadimitriou and Dimitris Gizopoulos. 2023. Avgi: Microarchitecture-
+     Dependable Systems and Networks Workshop (DSN-W). 246–249. https://doi.org/                   driven, fast and accurate vulnerability assessment. In 2023 IEEE International
+     10.1109/DSN-W.2016.57                                                                         Symposium on High-Performance Computer Architecture (HPCA). IEEE, 935–948.
+
+                                                                                         13
+MICRO 2026, October 31–November 04, 2026, Athens, Greece                                                                                                                  Wang et al.
+
+
+[69] George Papadimitriou and Dimitris Gizopoulos. 2023. Silent data corruptions:                       and Optimization (Las Vegas, NV, USA) (CGO ’25). Association for Computing Ma-
+     Microarchitectural perspectives. IEEE Trans. Comput. 72, 11 (2023), 3072–3085.                     chinery, New York, NY, USA, 584–599. https://doi.org/10.1145/3696443.3708946
+[70] Sai Dikshit Pasham. 2020. Fault-Tolerant Distributed Computing for Real-Time                  [94] Jerry Zhao, Ben Korpan, Abraham Gonzalez, and Krste Asanovic. 2020. Sonic-
+     Applications in Critical Systems. The Computertech (2020), 1–29.                                   boom: The 3rd generation berkeley out-of-order machine. In Fourth Workshop on
+[71] Jon Perez, David Gonzalez, Salvador Trujillo, and Ton Trapman. 2015. A safety                      Computer Architecture Research with RISC-V, Vol. 5. 1–7.
+     concept for an IEC-61508 compliant fail-safe wind power mixed-criticality system              [95] Sergey Zhuravlev, Sergey Blagodurov, and Alexandra Fedorova. 2010. Addressing
+     based on multicore and partitioning. In Ada-Europe International Conference on                     shared resource contention in multicore processors via scheduling. ACM Sigplan
+     Reliable Software Technologies. Springer, 3–17.                                                    Notices 45, 3 (2010), 129–142.
+[72] Soumyakant Priyadarshan, Huan Nguyen, and R Sekar. 2020. On the impact of
+     exception handling compatibility on binary instrumentation. In Proceedings of the
+     2020 ACM Workshop on Forming an Ecosystem Around Software Transformation.
+     23–28.
+[73] Ralf Ramsauer, Stefan Huber, Konrad Schwarz, Jan Kiszka, and Wolfgang Mauerer.
+     2022. Static hardware partitioning on RISC-V: Shortcomings, limitations, and
+     prospects. In 2022 IEEE 8th World Forum on Internet of Things (WF-IoT). IEEE,
+     1–6.
+[74] Marvin Rausand. 2014. Reliability of safety-critical systems: theory and applications.
+     John Wiley & Sons.
+[75] Arijit Raychowdhury, Jim Tschanz, Keith Bowman, Shih-Lien Lu, Paolo Aseron,
+     Muhammad Khellah, Bibiche Geuskens, Carlos Tokunaga, Chris Wilkerson,
+     Tanay Karnik, and Vivek De. 2011. Error detection and correction in micro-
+     processor core and memory due to fast dynamic voltage droops. IEEE Journal on
+     Emerging and Selected Topics in Circuits and Systems 1, 3 (2011), 208–217.
+[76] Dominik Reinhardt, Udo Dannebaum, Michael Scheffer, and Matthias Traub. 2019.
+     High performance processor architecture for automotive large scaled integrated
+     systems within the european processor initiative research project. Technical Report.
+     SAE Technical Paper.
+[77] Steven K Reinhardt and Shubhendu S Mukherjee. 2000. Transient fault detection
+     via simultaneous multithreading. In Proceedings of the 27th annual international
+     symposium on Computer architecture. 25–36.
+[78] Renesas. 2025. Renesas: RH850 Micro-controller Family. https://www.renesas.
+     com/eu/en/products/microcontrollers-microprocessors/rh850.html.
+[79] Leanna Rierson. 2017. Developing safety-critical software: a practical guide for
+     aviation software and DO-178C compliance. CRC Press.
+[80] RISC-V-2025 2025. The RISC-V Instruction Set Manual, Volume II: Privileged Archi-
+     tecture. https://github.com/riscv/riscv-isa-manual
+[81] Bogdan F Romanescu and Daniel J Sorin. 2008. Core cannibalization architecture:
+     improving lifetime chip performance for multicore processors in the presence
+     of hard faults. In Proceedings of the 17th international conference on Parallel
+     architectures and compilation techniques. 43–51.
+[82] Kostya Serebryany, Maxim Lifantsev, Konstantin Shtoyk, Doug Kwan, and Peter
+     Hochschild. 2021. SiliFuzz: Fuzzing CPUs by proxy. arXiv:2110.11519 [cs.AR]
+     https://arxiv.org/abs/2110.11519
+[83] Mong Tee Sim and Yanyan Zhuang. 2020. A dual lockstep processor system-on-a-
+     chip for fast error recovery in safety-critical applications. In IECON 2020 The 46th
+     Annual Conference of the IEEE Industrial Electronics Society. IEEE, 2231–2238.
+[84] Pooja Singh, Rajshree Patale, and Lalit Kumar Singh. 2025. Fault detection and
+     diagnosis in safety critical systems: A case study of nuclear power plants. Annals
+     of Nuclear Energy (2025), 111642.
+[85] The Linux Kernel Documentation. 2026. Using RCU’s CPU Stall Detector. https:
+     //docs.kernel.org/RCU/stallwarn.html. Accessed: 2026-04-01; version 7.0.0-rc6.
+[86] Meghana Thiyyakat, Subramaniam Kalambur, and Dinkar Sitaram. 2020. Im-
+     proving resource isolation of critical tasks in a workload. In Workshop on Job
+     Scheduling Strategies for Parallel Processing. Springer, 45–67.
+[87] Dmitry Voronetskiy and Tom Spink. 2025. Propagating C++ exceptions across
+     the user/kernel boundary. In Proceedings of the 13th Workshop on Programming
+     Languages and Operating Systems. 101–107.
+[88] Haitong Wang, Neil C Audsley, and Wanli Chang. 2020. Addressing resource
+     contention and timing predictability for multi-core architectures with shared
+     memory interconnects. In Proceedings-2020 IEEE Real-Time and Embedded Tech-
+     nology and Applications Symposium, RTAS 2020. IEEE, 70–81.
+[89] Shaobu Wang, Guangyan Zhang, Junyu Wei, Yang Wang, Jiesheng Wu, and
+     Qingchao Luo. 2023. Understanding silent data corruptions in a large production
+     cpu population. In Proceedings of the 29th Symposium on Operating Systems
+     Principles. 216–230.
+[90] Yuchen Wang, Zuzhen Ji, Yi Cao, and Shuang-Hua Yang. 2023. Safety critical
+     variable analysis for process systems. Industrial & Engineering Chemistry Research
+     62, 50 (2023), 21704–21720.
+[91] Irune Yarza, Irune Agirre, Imanol Mugarza, and Jon Perez Cerrolaza. 2022. Safety
+     and security collaborative analysis framework for high-performance embedded
+     computing devices. Microprocessors and Microsystems 93 (2022), 104572.
+[92] Dong-Hoon You and Bong-Nam Noh. 2011. Android platform based linux kernel
+     rootkit. In 2011 6th International Conference on Malicious and Unwanted Software.
+     IEEE, 79–87.
+[93] Boyue Zhang, Sam Ainsworth, Lev Mukhanov, and Timothy M. Jones. 2025.
+     Parallaft: Runtime-Based CPU Fault Tolerance via Heterogeneous Parallelism. In
+     Proceedings of the 23rd ACM/IEEE International Symposium on Code Generation
+
+                                                                                              14
+

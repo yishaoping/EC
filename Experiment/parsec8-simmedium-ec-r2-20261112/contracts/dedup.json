@@ -1,0 +1,182 @@
+{
+  "app_sha256": "abe779f2a51cfb288572f4ef014ef85608c3462f1c08905e4f26f840739de9c3",
+  "apps_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/dedup-staged-safe-fdt-apps-build.json",
+  "benchmark": "dedup",
+  "case": {
+    "algorithm_unchanged": true,
+    "argv": [
+      "-c",
+      "-p",
+      "-v",
+      "-t",
+      "1",
+      "-i",
+      "media.dat",
+      "-o",
+      "output.dat.ddp"
+    ],
+    "diagnostic_roi_syscalls": [],
+    "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-dedup-staged-20261107T051530Z/diagnostic-simmedium/trace.log",
+    "fpga_validation": "NOT_RUN",
+    "full_decode_matches_input": true,
+    "input": "simmedium",
+    "input_archives": {
+      "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/inputs/input_simmedium.tar": "9daba6f32da1082a4e29a49c4f95dbc819ef999e715bacdcc7ca8a40bf046d1a"
+    },
+    "input_files": {
+      "media.dat": "3af825d1a6a6b7308b9c265e807ace1f13489f3758d35ed9cb3e79d93e876d5b"
+    },
+    "program": "dedup",
+    "reference_outputs": {
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-dedup-staged-20261107T051530Z/reference-simmedium/output.dat.ddp": "6e24ba26d52c6732eccaff5aa665b6acb40621c4e7fc89f84ea55fcc70ef7fd7"
+    },
+    "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/parsec/simmedium.runconf",
+    "runconf_sha256": "607b290bd6027c049d529cb5382b22d0d67b3b4fd3c5bbd2a6e856758cf662e1",
+    "threads": 1,
+    "validation": {
+      "files": {
+        "output.dat.ddp": "6e24ba26d52c6732eccaff5aa665b6acb40621c4e7fc89f84ea55fcc70ef7fd7"
+      },
+      "kind": "files_sha256"
+    },
+    "warmups": 0
+  },
+  "cross_backend_slowdown_admission": "PENDING_FULL_TARGET_CONFIGURATION_AND_RUNTIME_COUNTER_CHECKS",
+  "fdt": {
+    "bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "command": [
+      "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/dtc",
+      "-I",
+      "dts",
+      "-O",
+      "dtb",
+      "-p",
+      "4096",
+      "-o",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dts"
+    ],
+    "configuration": "C4",
+    "dts": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dts",
+    "dts_sha256": "3551cc6bb2f3dd19fc716bdea11db8db4343080af7e35da921cd99100d271210",
+    "elaboration_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-elaborate-20261106T100250.032318Z/result.json",
+    "elaboration_result_sha256": "4284a54a160a374491cd0050611ba35719df94d896faf8b4667f66691407e3ac",
+    "fdt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb",
+    "firmware_checker_harts": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "isa_normalization": [
+      {
+        "canonical": "rv64imafdc_zicsr_zifencei_zihpm",
+        "original": "rv64imafdcZicsr_Zifencei_Zihpm"
+      },
+      {
+        "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket",
+        "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket"
+      },
+      {
+        "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket",
+        "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket"
+      },
+      {
+        "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket",
+        "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket"
+      },
+      {
+        "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket",
+        "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket"
+      }
+    ],
+    "linux_harts": [
+      0
+    ],
+    "linux_mem_cap": 2147483648,
+    "linux_profile_sha256": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1",
+    "normalizer_sha256": "cdc93d5c3bd0f2f013eb5029a1addb1a0c53a4e72b8f23ebbe814439cbc4a59e",
+    "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-build.json",
+    "parent_receipt_sha256": "a92f79fb153318e3ade9f1531d9ee48ea97f9e1aee8005814ff2f159543782c5",
+    "phase": "fdt",
+    "profile": "matched-guest-mem2g-phys36-canonical-isa",
+    "returncode": 0,
+    "runtime_validation": "NOT_RUN",
+    "schema": "ec-firesim-fdt/1",
+    "sha256": "c712fed367c0b57d9a1ed9f6e53688861a646f3732654b253131ff6e8953dda6",
+    "source_dts": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-elaborate-20261106T100250.032318Z/firesim.firesim.FireSim.dts",
+    "source_dts_sha256": "abe88f0748a092c769cdc5c4b402fed7471500f5c93e01d1a90ad42652458ee9",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": 100000000,
+    "target_memory_base": 2147483648,
+    "target_memory_bytes": 17179869184
+  },
+  "firmware": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/C4-firmware-20261107T071332.255451Z/platform/generic/firmware/fw_payload.elf",
+  "firmware_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/dedup-staged-safe-fdt-firmware-build.json",
+  "firmware_sha256": "d565681c412dac67478540f3489695a2c118e4cea28191ce1fa20c0b8104cfe7",
+  "input": "simmedium",
+  "method": "CPU_GOLDENGATE_FULL_EC_LINUX_SIMMEDIUM",
+  "mode": "ec",
+  "native_archives": [
+    {
+      "contract_checks": {
+        "bootargs": true,
+        "case": true,
+        "elf": true,
+        "frequency": true,
+        "linux_memory": true,
+        "memory_model": true,
+        "rootfs": true,
+        "threads": true
+      },
+      "method": "ARCHIVED_NATIVE_FPGA",
+      "repeat": 1,
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simmedium-r1-20261107T120538Z/result.json",
+      "result_sha256": "1114bf2df69da55c1dd25b4cae83093c8604d99022a7fe15d6c3755b6da8ba15",
+      "roi_cycles": 6472778992,
+      "software_contract_matches": true
+    },
+    {
+      "contract_checks": {
+        "bootargs": true,
+        "case": true,
+        "elf": true,
+        "frequency": true,
+        "linux_memory": true,
+        "memory_model": true,
+        "rootfs": true,
+        "threads": true
+      },
+      "method": "ARCHIVED_NATIVE_FPGA",
+      "repeat": 2,
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simmedium-r2-20261107T121655Z/result.json",
+      "result_sha256": "af238ed6bc182e7125d4e257838d0b3c8e4f09166390954cc2b027ecd26b64c2",
+      "roi_cycles": 6464549139,
+      "software_contract_matches": true
+    },
+    {
+      "contract_checks": {
+        "bootargs": true,
+        "case": true,
+        "elf": true,
+        "frequency": true,
+        "linux_memory": true,
+        "memory_model": true,
+        "rootfs": true,
+        "threads": true
+      },
+      "method": "ARCHIVED_NATIVE_FPGA",
+      "repeat": 3,
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simmedium-r3-20261107T122808Z/result.json",
+      "result_sha256": "39501c853c3f8640fc19aaafc340c4fdaa3e56a8d49912536d370bcf7440e50f",
+      "roi_cycles": 6463713978,
+      "software_contract_matches": true
+    }
+  ],
+  "preflight": "PASS_SOFTWARE_INPUT_MEMORY_FREQUENCY_CONTRACT",
+  "profile": "dedup-staged-safe-fdt",
+  "repeat": 1,
+  "roi_counter": "same hardware marker-to-marker target ticks; no wall-clock proxy",
+  "rootfs_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/dedup-staged-safe-fdt-rootfs-build.json",
+  "rootfs_sha256": "7ed974c4b2639c38c101cf34449fda69c8967a56580a570b2ebee2059fe726c5"
+}

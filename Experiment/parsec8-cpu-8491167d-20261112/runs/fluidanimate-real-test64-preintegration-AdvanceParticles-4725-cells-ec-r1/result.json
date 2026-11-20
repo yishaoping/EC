@@ -1,0 +1,85 @@
+{
+  "active_host_seconds": 2255.225338295044,
+  "application_rows": [
+    "[ROI] hart=0 start=667356 stop=698278 cycles=30922",
+    "[IRQ] policy=main_timer_disabled before=0 after=0 mie=8",
+    "[OUTPUT] benchmark=fluidanimate checksum=7e6601a6fa3f9829 verified=1 particles=64 values=576 phase=AdvanceParticles grid_cells=4725",
+    "[APP] protected=1 start=667356 end=698278 cycles=30922 instret=31609 session_stop=698446",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "fluidanimate",
+  "binding_sha256": "f9d149a5b8c6bc5076fea05334493d073af3dd5e062fb51dd0d7d97fd5516a9e",
+  "completed_utc": "2026-11-12T08:59:49.670717+00:00",
+  "drain_cycles": 5115,
+  "faults": [],
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_seconds": 2265.2719550380134,
+  "interrupt_policy": {
+    "check": "[IRQ] before/after timer_flags and mie; no main timer increment inside ROI",
+    "checker_harts": "unchanged frozen firmware",
+    "main_hart_timer": "MTIE cleared before workload_prepare in both modes"
+  },
+  "interrupt_policy_verified": true,
+  "manifest_sha256": "e9f2567ac476c5fee17208a1178a69d116a2c627656135a84cb9f763cef85224",
+  "method": "CPU_GG_REAL_TRACE_COMPONENT_REPLAY",
+  "mode": "ec",
+  "output": [
+    "benchmark=fluidanimate checksum=7e6601a6fa3f9829 verified=1 particles=64 values=576 phase=AdvanceParticles grid_cells=4725"
+  ],
+  "profile": "real-test64-preintegration-AdvanceParticles-4725-cells",
+  "raw_log_sha256": "0f9e302727ad63a07aee6dbc7a62a74af6b21a039bc48361ec2d2d2fb0cb8af2",
+  "repeat": 1,
+  "resource_pressure_paused_seconds": 10.04676145297708,
+  "returncode": 0,
+  "roi_cycles": 30922,
+  "roi_end_csr": 698278,
+  "roi_instructions": 31609,
+  "roi_start_csr": 667356,
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-real-test64-preintegration-AdvanceParticles-4725-cells-ec-r1",
+  "simulation_slot": "ec-extra2",
+  "software_correct": true,
+  "status": "PASS",
+  "stop_cause": null,
+  "strict_acceptance": {
+    "allocations": 13,
+    "boom_pass_accepted": 13,
+    "cancel": 0,
+    "completed_utc": "2026-11-12T08:59:49.670001+00:00",
+    "duplicate": 0,
+    "evidence": {
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-real-test64-preintegration-AdvanceParticles-4725-cells-ec-r1/external-events.jsonl": "704bd656da82683a74d0976aa3ffeb6a5b8c5495b77be24424ef121061ba9a8e",
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-real-test64-preintegration-AdvanceParticles-4725-cells-ec-r1/rtl-prints-1": "b56f5f71902164f11ef7fa2fe2d5b29f41ca597d28ca3b9f6d86abd811b67a9a",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-acceptance-strict-r1-20261111/analyze.py": "78403531ae11adce3d36160df38f50336eef04def839bce92ddf00be41175048",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24"
+    },
+    "fail": 0,
+    "fpga_access": false,
+    "full_compare_local_results": 13,
+    "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "limitations": [
+      "Finite observed package protocol; not universal RTL equivalence",
+      "No strict checkerDone minus samepackage BOOMexecutionDone",
+      "SVB lifetime/payload drain evaluated separately",
+      "No architectural rollback/restart claim"
+    ],
+    "local_begins": 13,
+    "passed": true,
+    "pending": 0,
+    "per_checker": {
+      "1": 4,
+      "2": 3,
+      "3": 3,
+      "4": 3
+    },
+    "sample_errors": 0,
+    "schema": "ec-strict-finite-checker-join/1",
+    "status": "PASS_STRICT_COMPLETE_ALLOCATION_BEGIN_FULLCOMPARE_RESULT_BOOM_ACCEPTANCE_JOIN"
+  },
+  "strict_acceptance_error": null,
+  "strict_detection_latency_cycles": null,
+  "svb_events": null,
+  "total_fastest_target_cycles": 987002,
+  "valid": true
+}

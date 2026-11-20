@@ -1,0 +1,48 @@
+{
+  "application_rows": [
+    "[ROI] hart=0 start=460274 stop=915340 cycles=455066",
+    "[IRQ] policy=main_timer_disabled before=0 after=0 mie=8",
+    "[OUTPUT] benchmark=fluidanimate checksum=91bf685dbc0b66d8 verified=1 particles=64 frames=1 values=576",
+    "[APP] protected=0 start=460274 end=915340 cycles=455066 instret=479156 session_stop=915340",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "fluidanimate",
+  "binding_sha256": "05bec5e3f9f7180bdc89cc7a77a3ac36ae04c8ea4fc6af8c827f30d7f34c9664",
+  "completed_utc": "2026-11-12T05:29:15.126534+00:00",
+  "drain_cycles": null,
+  "faults": [],
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_seconds": 392.10407695401227,
+  "interrupt_policy": {
+    "check": "[IRQ] before/after timer_flags and mie; no main timer increment inside ROI",
+    "checker_harts": "unchanged frozen firmware",
+    "main_hart_timer": "MTIE cleared before workload_prepare in both modes"
+  },
+  "interrupt_policy_verified": true,
+  "manifest_sha256": "7c2ef68532bf629c62b82b73c42d7e7b2ad7642339dc4d9ff2c2fb9de1f79a2e",
+  "method": "CPU_GG_TEST_DERIVED_REPRESENTATIVE_ROI",
+  "mode": "native",
+  "output": [
+    "benchmark=fluidanimate checksum=91bf685dbc0b66d8 verified=1 particles=64 frames=1 values=576"
+  ],
+  "profile": "test-derived-64-particles-no-main-timer-heap64",
+  "raw_log_sha256": "c29a2b88ab8bcfeb5bb4f1d8901c09e12901622bb6561ccfa0a2f6bdb1da6ae9",
+  "repeat": 1,
+  "returncode": 0,
+  "roi_cycles": 455066,
+  "roi_end_csr": 915340,
+  "roi_instructions": 479156,
+  "roi_start_csr": 460274,
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-test-derived-64-particles-no-main-timer-heap64-native-r1",
+  "software_correct": true,
+  "status": "PASS",
+  "stop_cause": null,
+  "strict_acceptance": null,
+  "strict_acceptance_error": null,
+  "strict_detection_latency_cycles": null,
+  "svb_events": null,
+  "total_fastest_target_cycles": 1157002,
+  "valid": true
+}

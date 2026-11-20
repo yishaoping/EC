@@ -1,0 +1,1 @@
+read_verilog -sv /data1/gzh/EC/check/area_eval/rtl/palimpsest.sv; chparam -set SLOTS 8 -set SEQ_W 32 pal_lsl_reclaim; hierarchy -check -top pal_lsl_reclaim; proc; opt; memory_dff; memory_collect; memory_map; opt; check; write_json /data1/gzh/EC/check/area_eval/revisions/r2-20261113/results/synthesis/seq32/reclaim/memory.json; stat

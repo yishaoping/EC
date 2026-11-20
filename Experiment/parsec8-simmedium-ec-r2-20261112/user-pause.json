@@ -1,0 +1,49 @@
+{
+  "schema": "parsec8-simmedium-ec-user-pause/1",
+  "created_utc": "2026-11-12T13:26:18Z",
+  "reason": "User requested immediate stop because simmedium throughput cannot meet the deadline.",
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "input": "simmedium",
+  "native_relaunched": false,
+  "fpga_or_cad_signalled": false,
+  "stopped_campaign_controller": {
+    "pid": 3527056,
+    "initial_state": "SIGSTOP",
+    "final_state": "not running"
+  },
+  "stopped_runs": [
+    {
+      "benchmark": "blackscholes",
+      "worker_pid": 3527081,
+      "simulator_pid": 3527102,
+      "result": "FAILED_OR_INCOMPLETE_SKIP_NEXT",
+      "valid_roi": false,
+      "roi_target_cycles": null,
+      "result_sha256": "72e7ec3a65e24b2acdac322bd4e20b417d138bbb2f2310f5076fd219adda154c",
+      "stream_integrity_sha256": "cd0814df982bf36ee247f03a8e2ab98e706fd76d4f3b3103fc9b834dcee7a1ff",
+      "host_log_sha256": "f439a690247f15a10d8dd2401f0ed43f2d6706f3ffe34e79dc082456d880c006",
+      "rtl_events_0_sha256": "d33a640d4952bd22a3d57da2733ab05829d5e46e20b6d7462819e1d1f5fbe56a",
+      "rtl_events_1_sha256": "deb4797e9c294b267480a01f83461a8d24a352f405e5494f8564309ab09cd3e2",
+      "external_events_sha256": "a15e1c8d096705bc9356e7e494ee36ff8ba718a69cfc2e76580d7ba5d31b3afb"
+    },
+    {
+      "benchmark": "fluidanimate",
+      "worker_pid": 3527082,
+      "simulator_pid": 3527103,
+      "result": "FAILED_OR_INCOMPLETE_SKIP_NEXT",
+      "valid_roi": false,
+      "roi_target_cycles": null,
+      "result_sha256": "5bfcd3087e4168d2bbcb3ec27339c774462cec723e651701ed024501a33df1d1",
+      "stream_integrity_sha256": "8d5d361f55a27c615e499e7b37f5dab8a2fd29f19dd40d97254c81aa06e20fef",
+      "host_log_sha256": "c5ead3c11dfd030216ef18fb93c22b5ab86f056756bbbeef76f5193c1fe154f9",
+      "rtl_events_0_sha256": "d33a640d4952bd22a3d57da2733ab05829d5e46e20b6d7462819e1d1f5fbe56a",
+      "rtl_events_1_sha256": "deb4797e9c294b267480a01f83461a8d24a352f405e5494f8564309ab09cd3e2",
+      "external_events_sha256": "9183759fd6cd978797ef7fce35ae2218b74730c4062f53731cd2e660d960f9a0"
+    }
+  ],
+  "not_started": ["bodytrack", "freqmine", "swaptions", "ferret", "dedup", "streamcluster"],
+  "log_compression_validation": "gzip -t passed for host, RTL event, and external event streams for both stopped runs",
+  "cpu_locks_released": ["cpu201-simulator.lock", "ec-simulator.lock", "cpu200-simulator.lock", "ec-aux-simulator.lock"],
+  "campaign_lock_released": true,
+  "active_simmedium_processes_after_stop": 0
+}

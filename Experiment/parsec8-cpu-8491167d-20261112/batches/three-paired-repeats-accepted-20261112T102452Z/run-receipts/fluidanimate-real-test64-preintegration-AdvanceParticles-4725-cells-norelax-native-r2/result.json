@@ -1,0 +1,51 @@
+{
+  "active_host_seconds": 241.59740073495777,
+  "application_rows": [
+    "[ROI] hart=0 start=238993 stop=255942 cycles=16949",
+    "[IRQ] policy=main_timer_disabled before=0 after=0 mie=8",
+    "[OUTPUT] benchmark=fluidanimate checksum=7e6601a6fa3f9829 verified=1 particles=64 values=576 phase=AdvanceParticles grid_cells=4725",
+    "[APP] protected=0 start=238993 end=255942 cycles=16949 instret=31613 session_stop=255942",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "fluidanimate",
+  "binding_sha256": "a325e4d7b9323bb0b49811da3849e55a8c2614533c70644ac46b2d00f9c1f294",
+  "completed_utc": "2026-11-12T09:28:35.231534+00:00",
+  "drain_cycles": null,
+  "faults": [],
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_seconds": 241.5972472919966,
+  "interrupt_policy": {
+    "check": "[IRQ] before/after timer_flags and mie; no main timer increment inside ROI",
+    "checker_harts": "unchanged frozen firmware",
+    "main_hart_timer": "MTIE cleared before workload_prepare in both modes"
+  },
+  "interrupt_policy_verified": true,
+  "manifest_sha256": "5f09584bf189aed6a3cb289583dd66a4b7fb58e294a674eaf5211d7586e2c5eb",
+  "method": "CPU_GG_REAL_TRACE_COMPONENT_REPLAY",
+  "mode": "native",
+  "output": [
+    "benchmark=fluidanimate checksum=7e6601a6fa3f9829 verified=1 particles=64 values=576 phase=AdvanceParticles grid_cells=4725"
+  ],
+  "profile": "real-test64-preintegration-AdvanceParticles-4725-cells-norelax",
+  "raw_log_sha256": "fee74b96a60e03086b7dbab7c033f232354ccdc6a5c5806716c96ac7e93e30db",
+  "repeat": 2,
+  "resource_pressure_paused_seconds": 0,
+  "returncode": 0,
+  "roi_cycles": 16949,
+  "roi_end_csr": 255942,
+  "roi_instructions": 31613,
+  "roi_start_csr": 238993,
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-real-test64-preintegration-AdvanceParticles-4725-cells-norelax-native-r2",
+  "simulation_slot": "native-extra2",
+  "software_correct": true,
+  "status": "PASS",
+  "stop_cause": null,
+  "strict_acceptance": null,
+  "strict_acceptance_error": null,
+  "strict_detection_latency_cycles": null,
+  "svb_events": null,
+  "total_fastest_target_cycles": 508002,
+  "valid": true
+}

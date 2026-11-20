@@ -1,0 +1,121 @@
+{
+  "endpoints": [
+    "new_package actual transition",
+    "package_result_queue.io.enq.fire with full_compare=1, status=PASS, cancelled=0"
+  ],
+  "fingerprint": {
+    "parser": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24",
+    "prints": "c4e4128c039d99ab434320371fb7b5a31ff144cf7de3294e356f97618fa4007f",
+    "result": "2f9296b94555eebe2d5391d5de6458b9746357af03651de876854e40d65c075f",
+    "script": "e8ba11fc10b84bb059f7b26660ef24bffbfffe2da588e4802699103e6c3a6801",
+    "source": "92c65bd8130abe53db7eb75c830958f8ffdbb2f97aef93ca2074abef02912ac0"
+  },
+  "interval_csv": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/ferret-real-test-emd-distance-matrix-126-pairs-ec-r3/checker-local-intervals.csv",
+  "interval_csv_sha256": "cb8bd240c87535678e87cc5d29509d8d71b098bca74437404fb692240bc15036",
+  "limitations": [
+    "Local package interval includes service/stalls until result queue enqueue, not strict detection latency",
+    "Two BOOM cycles per checker cycle converts durations only; no absolute epoch alignment inferred",
+    "No same-package BOOM execution-done, architectural rollback begin/end or result transport latency inferred"
+  ],
+  "paper_row": {
+    "benchmark": "ferret",
+    "boom_equivalent_mean_duration_cycles": 15181.333333333334,
+    "boom_hz": 200000000,
+    "checker_hz": 100000000,
+    "evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/ferret-real-test-emd-distance-matrix-126-pairs-ec-r3/checker-local-metrics.json",
+    "local_max_checker_cycles": 11874,
+    "local_mean_checker_cycles": 7590.666666666667,
+    "local_median_checker_cycles": 6780.0,
+    "local_min_checker_cycles": 6028,
+    "local_p95_checker_cycles": 11874,
+    "packages": 6,
+    "profile": "real-test-emd-distance-matrix-126-pairs",
+    "repeat": 3
+  },
+  "parser": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py",
+  "per_checker": {
+    "1": {
+      "histogram": {
+        "6764": 1,
+        "7448": 1
+      },
+      "maximum": 7448,
+      "mean": 7106,
+      "median": 7106.0,
+      "minimum": 6764,
+      "n": 2,
+      "p95": 7448,
+      "p99": 7448,
+      "percentiles": "nearest rank",
+      "sum": 14212,
+      "units": "checker-domain target cycles"
+    },
+    "2": {
+      "histogram": {
+        "6028": 1,
+        "11874": 1
+      },
+      "maximum": 11874,
+      "mean": 8951,
+      "median": 8951.0,
+      "minimum": 6028,
+      "n": 2,
+      "p95": 11874,
+      "p99": 11874,
+      "percentiles": "nearest rank",
+      "sum": 17902,
+      "units": "checker-domain target cycles"
+    },
+    "3": {
+      "histogram": {
+        "6796": 1
+      },
+      "maximum": 6796,
+      "mean": 6796,
+      "median": 6796,
+      "minimum": 6796,
+      "n": 1,
+      "p95": 6796,
+      "p99": 6796,
+      "percentiles": "nearest rank",
+      "sum": 6796,
+      "units": "checker-domain target cycles"
+    },
+    "4": {
+      "histogram": {
+        "6634": 1
+      },
+      "maximum": 6634,
+      "mean": 6634,
+      "median": 6634,
+      "minimum": 6634,
+      "n": 1,
+      "p95": 6634,
+      "p99": 6634,
+      "percentiles": "nearest rank",
+      "sum": 6634,
+      "units": "checker-domain target cycles"
+    }
+  },
+  "source": "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala",
+  "stats": {
+    "histogram": {
+      "6028": 1,
+      "6634": 1,
+      "6764": 1,
+      "6796": 1,
+      "7448": 1,
+      "11874": 1
+    },
+    "maximum": 11874,
+    "mean": 7590.666666666667,
+    "median": 6780.0,
+    "minimum": 6028,
+    "n": 6,
+    "p95": 11874,
+    "p99": 11874,
+    "percentiles": "nearest rank",
+    "sum": 45544,
+    "units": "checker-domain target cycles"
+  }
+}

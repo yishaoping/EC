@@ -1,0 +1,57 @@
+{
+  "active_simulators": [
+    {
+      "benchmark": "fluidanimate",
+      "reason": "User requested stop; worker remains alive to drain and finalize logs",
+      "signal": "SIGTERM",
+      "simulator": {
+        "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 3527103,
+        "process_group": 3527103,
+        "start_ticks": "29778194"
+      },
+      "worker": {
+        "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 3527082,
+        "start_ticks": "29778179"
+      }
+    },
+    {
+      "benchmark": "blackscholes",
+      "reason": "User requested stop; worker remains alive to drain and finalize logs",
+      "signal": "SIGTERM",
+      "simulator": {
+        "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 3527102,
+        "process_group": 3527102,
+        "start_ticks": "29778194"
+      },
+      "worker": {
+        "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 3527081,
+        "start_ticks": "29778178"
+      }
+    }
+  ],
+  "audit_service_left_running": true,
+  "created_utc": "2026-11-12T13:17:57.958143+00:00",
+  "dispatcher": {
+    "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 3527056,
+    "signal": "SIGSTOP",
+    "start_ticks": "29778118",
+    "verified_state": "T"
+  },
+  "fpga_or_cad_signalled": false,
+  "native_launched": false,
+  "pending_benchmarks": [
+    "bodytrack",
+    "freqmine",
+    "swaptions",
+    "ferret",
+    "dedup",
+    "streamcluster"
+  ],
+  "schema": "parsec8-simmedium-ec-user-stop/1",
+  "user_instruction": "Stop all eight simmedium CPU Golden Gate long runs; preserve logs; pause six remaining dispatches. Do not restart Native or touch FPGA/CAD."
+}

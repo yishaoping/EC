@@ -1,0 +1,12 @@
+{
+  "algorithm_failure": false,
+  "child": {
+    "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 2751677,
+    "start_ticks": "27321271"
+  },
+  "created_utc": "2026-11-12T05:42:20.278703+00:00",
+  "diagnosis": "Original table memset retires about 3.16M setup instructions. Independently verified identical-size qword table clearing reduces setup to about 309k, preserves all 344184 ROI instructions and exact output. Stop this superseded Native setup to release slot for Freqmine, then run both modes under newly bound qword profile.",
+  "reason": "SUPERSEDED_ROI_EXTERNAL_TABLE_INITIALIZATION",
+  "replacement_manifest": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/dedup_serial_htif_heap512_qword_setup/manifest.json"
+}

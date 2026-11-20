@@ -1,0 +1,29 @@
+{
+  "user_instruction": "Native must not run; EC only",
+  "observed_utc": 1794485361.0711904,
+  "native_stop_actions": [
+    {
+      "identity": {
+        "pid": 3516155,
+        "start_ticks": "29705137",
+        "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "state": "R"
+      },
+      "signal": "SIGTERM",
+      "process_group": true,
+      "command": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-matched-single-boom-gg-r1-20261112/host/VMatchingNative +permissive +max-cycles=16000000 +fesvr-step-size=1000 +mm_readLatency_0=30 +mm_readMaxReqs_0=4 +mm_relaxFunctionalModel_0=0 +mm_writeLatency_0=30 +mm_writeMaxReqs_0=4 +heartbeat-polling-interval=1000 +print-file=/data1/gzh/EC/Experiment/parsec8-performance-extension-r2-20261112/runs/blackscholes-project64-100-iterations-no-main-timer-native-r1/rtl-prints- +ec-dac-roi-log=/data1/gzh/EC/Experiment/parsec8-performance-extension-r2-20261112/runs/blackscholes-project64-100-iterations-no-main-timer-native-r1/roi-raw.jsonl +ec-dac-snapshot-seconds=20 +permissive-off +prog0=/data1/gzh/EC/Experiment/parsec8-performance-extension-20261112/software/blackscholes_project64_100_iterations/native.riscv "
+    },
+    {
+      "identity": {
+        "pid": 3516153,
+        "start_ticks": "29705126",
+        "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "state": "S"
+      },
+      "signal": "SIGTERM",
+      "process_group": false,
+      "command": "/usr/bin/python3 /data1/gzh/EC/Experiment/parsec8-performance-extension-r2-20261112/continue.py --run native "
+    }
+  ],
+  "ec_processes_untouched": true
+}

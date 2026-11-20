@@ -1,0 +1,51 @@
+{
+  "active_host_seconds": 94.7417051109951,
+  "application_rows": [
+    "[ROI] hart=0 start=73572 stop=98292 cycles=24720",
+    "[IRQ] policy=main_timer_disabled before=0 after=0 mie=8",
+    "[OUTPUT] benchmark=ferret checksum=1b4cb0153c75280f verified=1 captured_pairs=126 dimensions=14 phase=emd_distance_matrix",
+    "[APP] protected=0 start=73572 end=98292 cycles=24720 instret=16460 session_stop=98292",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "ferret",
+  "binding_sha256": "174d85b6c4a0718f37432699bc3a61c01d6a7e8803674ce1056ec3dac7aebc0e",
+  "completed_utc": "2026-11-12T08:27:57.019221+00:00",
+  "drain_cycles": null,
+  "faults": [],
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_seconds": 94.7415367810172,
+  "interrupt_policy": {
+    "check": "[IRQ] before/after timer_flags and mie; no main timer increment inside ROI",
+    "checker_harts": "unchanged frozen firmware",
+    "main_hart_timer": "MTIE cleared before workload_prepare in both modes"
+  },
+  "interrupt_policy_verified": true,
+  "manifest_sha256": "405432eeb8961669cd7fe2ac11e9542728db1157278d3c54f86b07ce261c3f86",
+  "method": "CPU_GG_REAL_TRACE_COMPONENT_REPLAY",
+  "mode": "native",
+  "output": [
+    "benchmark=ferret checksum=1b4cb0153c75280f verified=1 captured_pairs=126 dimensions=14 phase=emd_distance_matrix"
+  ],
+  "profile": "real-test-emd-distance-matrix-126-pairs",
+  "raw_log_sha256": "62a7b01bec8a4b18a4a764ba331852bceb815fbacb80662d29c82437a0f8c3bf",
+  "repeat": 3,
+  "resource_pressure_paused_seconds": 0,
+  "returncode": 0,
+  "roi_cycles": 24720,
+  "roi_end_csr": 98292,
+  "roi_instructions": 16460,
+  "roi_start_csr": 73572,
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/ferret-real-test-emd-distance-matrix-126-pairs-native-r3",
+  "simulation_slot": "native",
+  "software_correct": true,
+  "status": "PASS",
+  "stop_cause": null,
+  "strict_acceptance": null,
+  "strict_acceptance_error": null,
+  "strict_detection_latency_cycles": null,
+  "svb_events": null,
+  "total_fastest_target_cycles": 222002,
+  "valid": true
+}

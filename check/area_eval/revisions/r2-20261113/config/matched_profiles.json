@@ -1,0 +1,232 @@
+[
+  {
+    "name": "Unprotected baseline",
+    "status": "DECLARATIVE_NOT_ELABORATED_NOT_SYNTHESIZED",
+    "geometry": {
+      "main_cores": 1,
+      "main_core": "BOOM OoO",
+      "decode_width": 3,
+      "ROB": 42,
+      "IQ_total": 72,
+      "LDQ": 16,
+      "STQ": 16,
+      "main_L1I": {
+        "bytes": 32768,
+        "ways": 8,
+        "sets": 64
+      },
+      "main_L1D": {
+        "bytes": 32768,
+        "ways": 2,
+        "sets": 256,
+        "MSHRs": 6
+      },
+      "checker_cores": 4,
+      "checker_core": "Rocket in-order",
+      "checker_L1I": {
+        "bytes_each": 4096,
+        "ways": 2,
+        "sets": 32
+      },
+      "checker_L1D": {
+        "bytes_each": 4096,
+        "ways": 2,
+        "sets": 32
+      },
+      "L2": {
+        "bytes": 1048576,
+        "ways": 16,
+        "sets": 1024,
+        "MSHRs": 4
+      },
+      "line_bytes": 64,
+      "target_clock_MHz": {
+        "BOOM": 200,
+        "Rocket": 100,
+        "achieved_STA_MHz": null
+      },
+      "memory_address_space_bytes": 17179869184,
+      "simulation_memory": "FASED read/write latency 30, max outstanding 4/4; not DDR3-1066",
+      "evidence": "firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json"
+    },
+    "area_boundary": {
+      "include": [
+        "all 5 cores and native register files",
+        "all L1/L2 data and tag arrays",
+        "SRAM macros, wrappers, decoders, repair/ECC if enabled",
+        "clock-crossing and on-chip interconnect",
+        "same on-chip memory interface/controller if present",
+        "protection logic and storage when enabled"
+      ],
+      "exclude": [
+        "external DRAM chips",
+        "FireSim/Goldengate host logic",
+        "measurement-only observers, traces and counters"
+      ],
+      "stage": "report both mapped standard-cell + SRAM macro area separately; no floorplan whitespace in synthesis total",
+      "SRAM_macro_selection": null,
+      "on_chip_DDR3_controller_implementation": null,
+      "common_data_array_bits": 9175040
+    },
+    "enabled": [],
+    "LSL_payload_bits_per_checker": 0,
+    "area_formula": "C",
+    "area_mm2": null,
+    "note": "Unprotected retains 4 native Rockets; protection-specific LSL/checkpoint removed. PEEK is a clean port, not frozen EC relabeled."
+  },
+  {
+    "name": "PEEK",
+    "status": "DECLARATIVE_NOT_ELABORATED_NOT_SYNTHESIZED",
+    "geometry": {
+      "main_cores": 1,
+      "main_core": "BOOM OoO",
+      "decode_width": 3,
+      "ROB": 42,
+      "IQ_total": 72,
+      "LDQ": 16,
+      "STQ": 16,
+      "main_L1I": {
+        "bytes": 32768,
+        "ways": 8,
+        "sets": 64
+      },
+      "main_L1D": {
+        "bytes": 32768,
+        "ways": 2,
+        "sets": 256,
+        "MSHRs": 6
+      },
+      "checker_cores": 4,
+      "checker_core": "Rocket in-order",
+      "checker_L1I": {
+        "bytes_each": 4096,
+        "ways": 2,
+        "sets": 32
+      },
+      "checker_L1D": {
+        "bytes_each": 4096,
+        "ways": 2,
+        "sets": 32
+      },
+      "L2": {
+        "bytes": 1048576,
+        "ways": 16,
+        "sets": 1024,
+        "MSHRs": 4
+      },
+      "line_bytes": 64,
+      "target_clock_MHz": {
+        "BOOM": 200,
+        "Rocket": 100,
+        "achieved_STA_MHz": null
+      },
+      "memory_address_space_bytes": 17179869184,
+      "simulation_memory": "FASED read/write latency 30, max outstanding 4/4; not DDR3-1066",
+      "evidence": "firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json"
+    },
+    "area_boundary": {
+      "include": [
+        "all 5 cores and native register files",
+        "all L1/L2 data and tag arrays",
+        "SRAM macros, wrappers, decoders, repair/ECC if enabled",
+        "clock-crossing and on-chip interconnect",
+        "same on-chip memory interface/controller if present",
+        "protection logic and storage when enabled"
+      ],
+      "exclude": [
+        "external DRAM chips",
+        "FireSim/Goldengate host logic",
+        "measurement-only observers, traces and counters"
+      ],
+      "stage": "report both mapped standard-cell + SRAM macro area separately; no floorplan whitespace in synthesis total",
+      "SRAM_macro_selection": null,
+      "on_chip_DDR3_controller_implementation": null,
+      "common_data_array_bits": 9175040
+    },
+    "enabled": [
+      "PEEK snapshot/transport/LSL/checker validation"
+    ],
+    "LSL_payload_bits_per_checker": 66300,
+    "area_formula": "C+H_PEEK",
+    "area_mm2": null,
+    "note": "Unprotected retains 4 native Rockets; protection-specific LSL/checkpoint removed. PEEK is a clean port, not frozen EC relabeled."
+  },
+  {
+    "name": "PALIMPSEST",
+    "status": "DECLARATIVE_NOT_ELABORATED_NOT_SYNTHESIZED",
+    "geometry": {
+      "main_cores": 1,
+      "main_core": "BOOM OoO",
+      "decode_width": 3,
+      "ROB": 42,
+      "IQ_total": 72,
+      "LDQ": 16,
+      "STQ": 16,
+      "main_L1I": {
+        "bytes": 32768,
+        "ways": 8,
+        "sets": 64
+      },
+      "main_L1D": {
+        "bytes": 32768,
+        "ways": 2,
+        "sets": 256,
+        "MSHRs": 6
+      },
+      "checker_cores": 4,
+      "checker_core": "Rocket in-order",
+      "checker_L1I": {
+        "bytes_each": 4096,
+        "ways": 2,
+        "sets": 32
+      },
+      "checker_L1D": {
+        "bytes_each": 4096,
+        "ways": 2,
+        "sets": 32
+      },
+      "L2": {
+        "bytes": 1048576,
+        "ways": 16,
+        "sets": 1024,
+        "MSHRs": 4
+      },
+      "line_bytes": 64,
+      "target_clock_MHz": {
+        "BOOM": 200,
+        "Rocket": 100,
+        "achieved_STA_MHz": null
+      },
+      "memory_address_space_bytes": 17179869184,
+      "simulation_memory": "FASED read/write latency 30, max outstanding 4/4; not DDR3-1066",
+      "evidence": "firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z/parameters.json"
+    },
+    "area_boundary": {
+      "include": [
+        "all 5 cores and native register files",
+        "all L1/L2 data and tag arrays",
+        "SRAM macros, wrappers, decoders, repair/ECC if enabled",
+        "clock-crossing and on-chip interconnect",
+        "same on-chip memory interface/controller if present",
+        "protection logic and storage when enabled"
+      ],
+      "exclude": [
+        "external DRAM chips",
+        "FireSim/Goldengate host logic",
+        "measurement-only observers, traces and counters"
+      ],
+      "stage": "report both mapped standard-cell + SRAM macro area separately; no floorplan whitespace in synthesis total",
+      "SRAM_macro_selection": null,
+      "on_chip_DDR3_controller_implementation": null,
+      "common_data_array_bits": 9175040
+    },
+    "enabled": [
+      "PEEK snapshot/transport/LSL/checker validation",
+      "PAL recovery mechanisms"
+    ],
+    "LSL_payload_bits_per_checker": 66300,
+    "area_formula": "C+H_PEEK+delta",
+    "area_mm2": null,
+    "note": "Unprotected retains 4 native Rockets; protection-specific LSL/checkpoint removed. PEEK is a clean port, not frozen EC relabeled."
+  }
+]

@@ -1,0 +1,56 @@
+{
+  "area_status": "NO_MAPPED_28NM_AREA; engineering sensitivity, not confidence intervals",
+  "typical_fields": {
+    "seq_w": 16,
+    "epoch_w": 4,
+    "gen_w": 8,
+    "owner_w": 0,
+    "context_slots": 8,
+    "buffer_lines": 2
+  },
+  "metadata_bits_per_line": 30,
+  "incremental_mm2_sensitivity": {
+    "low": 0.0871965625,
+    "typical": 0.19230150249999997,
+    "high": 0.4537797700000001
+  },
+  "total_memory_bits": 303104,
+  "total_dff_bits": 2236,
+  "total_generic_ge_excluding_ram": 50620.5,
+  "paper_reference_peek_mm2": 5.04,
+  "matched_delta_percentage": null,
+  "unprotected_total_overhead_percentage": null,
+  "formulas": {
+    "A": "100*D/P, P=matched PEEK area, D=integrated PAL-PEEK delta",
+    "B": "100*(P+D-U)/U, U=matched unprotected area",
+    "with_L2": "100*D/(P+L), only if L2 excluded from P; add common peripheral area X to both denominators if desired"
+  },
+  "ff_implementation": {
+    "extra_ram_bits_if_all_RAM_is_DFF": 303104,
+    "additional_DFF_GE_only_lower_bound": 1818624,
+    "note": "Excludes memory port mux/decoder/enable overhead; not a real SRAM implementation and not an upper bound"
+  },
+  "top3_typical": [
+    [
+      "L2 Version Metadata",
+      0.12483685
+    ],
+    [
+      "Checkpoint / Context Storage",
+      0.0222083
+    ],
+    [
+      "EVT",
+      0.0159796
+    ]
+  ],
+  "limitations": [
+    "One lookup/store lane per cache only; BOOM banking/load-port replication is unresolved",
+    "Sidecar SRAM packing/ports not mapped; density scenarios are assumed",
+    "EVT finite capacity, reclamation/rebase missing",
+    "LSL allocator/CDC/TileLink integration and multi-address WB concurrency missing",
+    "Architectural checkpoint payload is provisional (13 shadow CSRs plus full register slots), not full ISA recovery certification",
+    "No system synthesis, timing, power or SRAM macro result",
+    "PEEK Table3 macro/cache inclusion boundary not established; never add L2 twice"
+  ]
+}

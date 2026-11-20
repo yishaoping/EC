@@ -1,0 +1,68 @@
+{
+  "args": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-external-observer-r2-20261111/VFrozenOpt4Observed",
+    "+permissive",
+    "+max-cycles=1500000",
+    "+fesvr-step-size=1000",
+    "+mm_readLatency_0=30",
+    "+mm_readMaxReqs_0=4",
+    "+mm_relaxFunctionalModel_0=0",
+    "+mm_writeLatency_0=30",
+    "+mm_writeMaxReqs_0=4",
+    "+heartbeat-polling-interval=1000",
+    "+print-file=/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-real-test64-preintegration-AdvanceParticles-4725-cells-norelax-ec-r3/rtl-prints-",
+    "+permissive-off",
+    "+prog0=/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/fluidanimate_real_advanceparticles_norelax/ec.riscv"
+  ],
+  "binary_sha256": "cc2993bd8c6f56893afd9e73cc358684c07c481a52ef8eb50dc7a136134b2867",
+  "cpu_affinity": [
+    204
+  ],
+  "effective_host_timeout_seconds": 14400,
+  "elf": {
+    "path": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/fluidanimate_real_advanceparticles_norelax/ec.riscv",
+    "sha256": "cb2d894d754a4ef0a1b8bd52a2650a0eb30cd3a1ae9b4ae8c2382a98d3fede24"
+  },
+  "execution_policy": {
+    "earlier_repeat_prefetch": "Idle guarded extra CPUs may prefetch a missing earlier Native repeat before a later EC repeat. First-round EC has priority; physical CPU locks and pressure guards unchanged; never displace running models.",
+    "extra_slot_pressure_guard": {
+      "max_global_busy_fraction": 0.65,
+      "max_sibling_busy_fraction": 0.2,
+      "minimum_available_memory_bytes": 68719476736,
+      "poll_seconds": 10
+    },
+    "first_native_priority": "Missing first Native samples take an idle physical CPU201/202/204 slot before later EC repeats; existing models never displaced; all four CPU locks unchanged",
+    "first_native_repair_slot": "CPU202 may temporarily run a guarded Native-extra1 first sample for a repaired software profile; shares CPU lock with EC-extra1; at most four models",
+    "host_timeout_floor_seconds": 14400,
+    "max_ec_simulators_after_all_native_first_runs": 4,
+    "native_repeat_prefetch_policy": "Only first-round comparable profiles after all eight first EC dispatches; CPU201 gives every ready EC task priority; CPU locks keep at most four simulator models",
+    "nonpass_policy": "New runners stop on actual EC_OPT4_PACKAGE_RESULT status1/2, preserve raw evidence, and skip unchanged failed software. SIGTERM is followed by SIGKILL only on their own child after15sec.",
+    "pending_native_repeat_prefetch": "After all first EC dispatches, idle CPUs may prepare Native repeats for a Native-passed profile whose first EC is still pending. Rejected/completed noncomparable first contracts remain ineligible. All EC repeats and published ratios require actual first-pair comparability. No running model displaced.",
+    "raw_log_limit_bytes": 4294967296,
+    "reason": "Observed EC throughput is about 400-450 target cycles/sec. A 4M-cycle manifest cannot reach its target cap in the original 3600 sec host budget. Extend host scheduling budget only; application, ROI, target-cycle caps, model and memory settings remain bound by the unchanged manifest.",
+    "repeat_prefetch_policy": "Only first-round comparable profiles, only after all eight first EC dispatches; first-round ready EC tasks retain higher priority and all running models retain their slots; at most four models",
+    "resident_limit_bytes": 17179869184,
+    "resource_basis": "Read-only /proc/stat samples 2026-11-12: host busy 24.08%, MemAvailable223603652KiB; selected extra logical CPUs202/208 and physical siblings74/80 observed idle. Extra simulators yield by nice19 and pause themselves under sibling/global/memory pressure.; CPU208 retired after sustained sibling80 pressure. CPU204/sibling76 sampled idle for10s in audit/cpu204-relocation-resource-sample.json; fresh attempts use204 under unchanged guard.",
+    "resource_policy_revision": 8,
+    "retry_policy": "Earliest successful completed attempt; interrupted attempts only may receive attempt2 for repeats1/2/3",
+    "schema": "parsec8-cpu-execution-policy/1",
+    "simulators_per_cpu": 1,
+    "simulators_total": 4,
+    "slot_assignment": "CPU201 EC, or Native repeat prefetch while all first-round EC work is dispatched and no EC task is ready; CPU200 Native or auxiliary EC; CPU202/204 guarded EC"
+  },
+  "execution_policy_sha256": "756d21742c421fe8df5bf48a92a88ac9fe375525bc7167c889d45339a5e858d0",
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "manifest": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/fluidanimate_real_advanceparticles_norelax/manifest.json",
+  "manifest_sha256": "5f09584bf189aed6a3cb289583dd66a4b7fb58e294a674eaf5211d7586e2c5eb",
+  "memory": [
+    "+mm_readLatency_0=30",
+    "+mm_readMaxReqs_0=4",
+    "+mm_relaxFunctionalModel_0=0",
+    "+mm_writeLatency_0=30",
+    "+mm_writeMaxReqs_0=4"
+  ],
+  "runner_sha256": "3d5c06c6127a1eacaf63b2efdd9d4b29d5981b3acd1f27eb4a3a5da8e3f7a39f",
+  "simulation_slot": "ec-extra2",
+  "started_utc": "2026-11-12T09:48:42.591423+00:00"
+}

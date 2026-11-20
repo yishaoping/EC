@@ -1,0 +1,24 @@
+{
+  "extra_slot_pressure_guard": {
+    "max_global_busy_fraction": 0.65,
+    "max_sibling_busy_fraction": 0.2,
+    "minimum_available_memory_bytes": 68719476736,
+    "poll_seconds": 10
+  },
+  "first_native_repair_slot": "CPU202 may temporarily run a guarded Native-extra1 first sample for a repaired software profile; shares CPU lock with EC-extra1; at most four models",
+  "host_timeout_floor_seconds": 14400,
+  "max_ec_simulators_after_all_native_first_runs": 4,
+  "native_repeat_prefetch_policy": "Only first-round comparable profiles after all eight first EC dispatches; CPU201 gives every ready EC task priority; CPU locks keep at most four simulator models",
+  "nonpass_policy": "New runners stop on actual EC_OPT4_PACKAGE_RESULT status1/2, preserve raw evidence, and skip unchanged failed software. SIGTERM is followed by SIGKILL only on their own child after15sec.",
+  "raw_log_limit_bytes": 4294967296,
+  "reason": "Observed EC throughput is about 400-450 target cycles/sec. A 4M-cycle manifest cannot reach its target cap in the original 3600 sec host budget. Extend host scheduling budget only; application, ROI, target-cycle caps, model and memory settings remain bound by the unchanged manifest.",
+  "repeat_prefetch_policy": "Only first-round comparable profiles, only after all eight first EC dispatches; first-round ready EC tasks retain higher priority and all running models retain their slots; at most four models",
+  "resident_limit_bytes": 17179869184,
+  "resource_basis": "Read-only /proc/stat samples 2026-11-12: host busy 24.08%, MemAvailable223603652KiB; selected extra logical CPUs202/208 and physical siblings74/80 observed idle. Extra simulators yield by nice19 and pause themselves under sibling/global/memory pressure.; CPU208 retired after sustained sibling80 pressure. CPU204/sibling76 sampled idle for10s in audit/cpu204-relocation-resource-sample.json; fresh attempts use204 under unchanged guard.",
+  "resource_policy_revision": 5,
+  "retry_policy": "Earliest successful completed attempt; interrupted attempts only may receive attempt2 for repeats1/2/3",
+  "schema": "parsec8-cpu-execution-policy/1",
+  "simulators_per_cpu": 1,
+  "simulators_total": 4,
+  "slot_assignment": "CPU201 EC, or Native repeat prefetch while all first-round EC work is dispatched and no EC task is ready; CPU200 Native or auxiliary EC; CPU202/204 guarded EC"
+}

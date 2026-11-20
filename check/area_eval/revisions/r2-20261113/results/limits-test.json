@@ -1,0 +1,27 @@
+{
+  "status": "PASS_LIMITS_OBSERVED_NOT_SYSTEM_VERIFICATION",
+  "runs": [
+    {
+      "command": [
+        "iverilog",
+        "-g2012",
+        "-s",
+        "tb_limits",
+        "-o",
+        "/data1/gzh/EC/check/area_eval/revisions/r2-20261113/results/tb_limits.vvp",
+        "/data1/gzh/EC/check/area_eval/rtl/palimpsest.sv",
+        "/data1/gzh/EC/check/area_eval/revisions/r2-20261113/tests/tb_limits.sv"
+      ],
+      "returncode": 0,
+      "log": "results/limits-0.log"
+    },
+    {
+      "command": [
+        "vvp",
+        "/data1/gzh/EC/check/area_eval/revisions/r2-20261113/results/tb_limits.vvp"
+      ],
+      "returncode": 0,
+      "log": "results/limits-1.log"
+    }
+  ]
+}

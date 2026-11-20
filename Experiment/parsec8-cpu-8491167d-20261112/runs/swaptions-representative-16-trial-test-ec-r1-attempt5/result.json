@@ -1,0 +1,75 @@
+{
+  "application_rows": [
+    "[ROI] hart=0 start=176652 stop=688807 cycles=512155",
+    "[OUTPUT] benchmark=swaptions checksum=55492b07f66a17df verified=1 swaptions=1 trials=16 seed=1979",
+    "[APP] protected=1 start=176652 end=688807 cycles=512155 instret=162915 session_stop=689101",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "swaptions",
+  "binding_sha256": "ad90ab2aeb3afa48ae1b68aa7ac8df43a746e4dbae8d9dd20a659613a15a3231",
+  "completed_utc": "2026-11-12T04:12:40.877084+00:00",
+  "drain_cycles": 3714,
+  "faults": [],
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_seconds": 1675.4730117879808,
+  "manifest_sha256": "4a62e00b2930aee8fdfd7054b0ede145d288cf86074318cd3bf21df649444c7a",
+  "method": "CPU_GG_REPRESENTATIVE_TEST_PROFILE",
+  "mode": "ec",
+  "output": [
+    "benchmark=swaptions checksum=55492b07f66a17df verified=1 swaptions=1 trials=16 seed=1979"
+  ],
+  "profile": "representative-16-trial-test",
+  "raw_log_sha256": "0464089bf26d894801f2d31eb627ad79dfa876ae3234b29f982172ac0bdf42de",
+  "repeat": 1,
+  "returncode": 0,
+  "roi_cycles": 512155,
+  "roi_end_csr": 688807,
+  "roi_instructions": 162915,
+  "roi_start_csr": 176652,
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/swaptions-representative-16-trial-test-ec-r1-attempt5",
+  "software_correct": true,
+  "status": "PASS",
+  "stop_cause": null,
+  "strict_acceptance": {
+    "allocations": 136,
+    "boom_pass_accepted": 136,
+    "cancel": 0,
+    "completed_utc": "2026-11-12T04:12:40.875786+00:00",
+    "duplicate": 0,
+    "evidence": {
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/swaptions-representative-16-trial-test-ec-r1-attempt5/external-events.jsonl": "889dacf58870bebeb600aecc2c15172d44d2b911747ad4c151dda09c8094a337",
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/swaptions-representative-16-trial-test-ec-r1-attempt5/rtl-prints-1": "470e5745cab86949b37d962301e6112d4a0c489411775c01b930f7d9073a8e95",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-acceptance-strict-r1-20261111/analyze.py": "78403531ae11adce3d36160df38f50336eef04def839bce92ddf00be41175048",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24"
+    },
+    "fail": 0,
+    "fpga_access": false,
+    "full_compare_local_results": 136,
+    "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "limitations": [
+      "Finite observed package protocol; not universal RTL equivalence",
+      "No strict checkerDone minus samepackage BOOMexecutionDone",
+      "SVB lifetime/payload drain evaluated separately",
+      "No architectural rollback/restart claim"
+    ],
+    "local_begins": 136,
+    "passed": true,
+    "pending": 0,
+    "per_checker": {
+      "1": 35,
+      "2": 35,
+      "3": 32,
+      "4": 34
+    },
+    "sample_errors": 0,
+    "schema": "ec-strict-finite-checker-join/1",
+    "status": "PASS_STRICT_COMPLETE_ALLOCATION_BEGIN_FULLCOMPARE_RESULT_BOOM_ACCEPTANCE_JOIN"
+  },
+  "strict_acceptance_error": null,
+  "strict_detection_latency_cycles": null,
+  "svb_events": null,
+  "total_fastest_target_cycles": 814002,
+  "valid": true
+}

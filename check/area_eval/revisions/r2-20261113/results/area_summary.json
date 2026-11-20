@@ -1,0 +1,88 @@
+{
+  "status": "NO_TECHNOLOGY_MAPPING_NO_INTEGRATED_SOC",
+  "physical_assumptions": {
+    "low": {
+      "sram_um2_per_bit": 0.2,
+      "nand2_um2": 0.5,
+      "packing_factor": 1.0,
+      "interface_margin": 0.05
+    },
+    "typical": {
+      "sram_um2_per_bit": 0.4,
+      "nand2_um2": 0.7,
+      "packing_factor": 1.25,
+      "interface_margin": 0.15
+    },
+    "high": {
+      "sram_um2_per_bit": 0.8,
+      "nand2_um2": 1.0,
+      "packing_factor": 1.6,
+      "interface_margin": 0.3
+    }
+  },
+  "cases": {
+    "seq16": {
+      "RAM_bits": 547840,
+      "DFF_bits": 2236,
+      "GE_excluding_RAM": 64368.5,
+      "primitive_subtotal_mm2_model": {
+        "low": 0.14175225,
+        "typical": 0.31897795,
+        "high": 0.7656037
+      },
+      "old_style_with_2_optional_SRAM_buffers_and_margin_mm2_model": {
+        "low": 0.1435662625,
+        "typical": 0.3262486425,
+        "high": 0.78622497
+      },
+      "without_additional_SW_and_LSL_descriptors_mm2_model": {
+        "low": 0.133374,
+        "typical": 0.3072484,
+        "high": 0.7488472
+      },
+      "additional_FF_cell_area_if_RAM_all_DFF_no_decoders_mm2_model": {
+        "low": 1.64352,
+        "typical": 2.300928,
+        "high": 3.28704
+      }
+    },
+    "seq32": {
+      "RAM_bits": 818176,
+      "DFF_bits": 3452,
+      "GE_excluding_RAM": 113338.5,
+      "primitive_subtotal_mm2_model": {
+        "low": 0.22030445,
+        "typical": 0.48842495,
+        "high": 1.16060378
+      },
+      "old_style_with_2_optional_SRAM_buffers_and_margin_mm2_model": {
+        "low": 0.2233427125,
+        "typical": 0.5008374925,
+        "high": 1.19591605
+      },
+      "without_additional_SW_and_LSL_descriptors_mm2_model": {
+        "low": 0.20863945,
+        "typical": 0.47209395,
+        "high": 1.13727378
+      },
+      "additional_FF_cell_area_if_RAM_all_DFF_no_decoders_mm2_model": {
+        "low": 2.454528,
+        "typical": 3.4363392,
+        "high": 4.909056
+      }
+    }
+  },
+  "actual_PEEK_area_mm2": null,
+  "actual_PALIMPSEST_area_mm2": null,
+  "actual_matched_delta_mm2": null,
+  "actual_matched_delta_percentage": null,
+  "delta_formula": "A_primitive + A_missing_integration + A_macro_implementation_correction - A_reused_or_replaced",
+  "unprotected_formula": "U=C; P=C+H_PEEK; PAL=C+H_PEEK+delta",
+  "limitations": [
+    "SRAM density and GE weights assumed, no PDK",
+    "46-bit metadata is a reduced-identity design choice; frozen CacheImageKey is 81 bits",
+    "16-query EVT requires serialized access between clients; arbitration unimplemented",
+    "8 contexts, 8 descriptors/checker, Epoch4/CurGen8 lack proven workload/admission bounds",
+    "No finite upper bound on missing integration or macro-port overhead established"
+  ]
+}

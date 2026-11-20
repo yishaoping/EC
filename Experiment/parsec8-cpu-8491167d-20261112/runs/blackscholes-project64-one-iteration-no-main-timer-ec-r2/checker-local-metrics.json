@@ -1,0 +1,131 @@
+{
+  "endpoints": [
+    "new_package actual transition",
+    "package_result_queue.io.enq.fire with full_compare=1, status=PASS, cancelled=0"
+  ],
+  "fingerprint": {
+    "parser": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24",
+    "prints": "c9e0ca62ad847b2ed4b0c7b445bab21bc126665730e02466d514708c165d017f",
+    "result": "b5c0ae0454db5a9ca1ee648576c84f1ba09cf506eed9f270f11525f4cbfe589b",
+    "script": "e8ba11fc10b84bb059f7b26660ef24bffbfffe2da588e4802699103e6c3a6801",
+    "source": "92c65bd8130abe53db7eb75c830958f8ffdbb2f97aef93ca2074abef02912ac0"
+  },
+  "interval_csv": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/blackscholes-project64-one-iteration-no-main-timer-ec-r2/checker-local-intervals.csv",
+  "interval_csv_sha256": "607915dd75375eef5607a147da7f9ebcc296a9aa9e8a7e483b8b0eeeddd5611b",
+  "limitations": [
+    "Local package interval includes service/stalls until result queue enqueue, not strict detection latency",
+    "Two BOOM cycles per checker cycle converts durations only; no absolute epoch alignment inferred",
+    "No same-package BOOM execution-done, architectural rollback begin/end or result transport latency inferred"
+  ],
+  "paper_row": {
+    "benchmark": "blackscholes",
+    "boom_equivalent_mean_duration_cycles": 19061.636363636364,
+    "boom_hz": 200000000,
+    "checker_hz": 100000000,
+    "evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/blackscholes-project64-one-iteration-no-main-timer-ec-r2/checker-local-metrics.json",
+    "local_max_checker_cycles": 10537,
+    "local_mean_checker_cycles": 9530.818181818182,
+    "local_median_checker_cycles": 9627,
+    "local_min_checker_cycles": 8042,
+    "local_p95_checker_cycles": 10537,
+    "packages": 11,
+    "profile": "project64-one-iteration-no-main-timer",
+    "repeat": 2
+  },
+  "parser": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py",
+  "per_checker": {
+    "1": {
+      "histogram": {
+        "9706": 1,
+        "9836": 1,
+        "10537": 1
+      },
+      "maximum": 10537,
+      "mean": 10026.333333333334,
+      "median": 9836,
+      "minimum": 9706,
+      "n": 3,
+      "p95": 10537,
+      "p99": 10537,
+      "percentiles": "nearest rank",
+      "sum": 30079,
+      "units": "checker-domain target cycles"
+    },
+    "2": {
+      "histogram": {
+        "9354": 1,
+        "9544": 1,
+        "10243": 1
+      },
+      "maximum": 10243,
+      "mean": 9713.666666666666,
+      "median": 9544,
+      "minimum": 9354,
+      "n": 3,
+      "p95": 10243,
+      "p99": 10243,
+      "percentiles": "nearest rank",
+      "sum": 29141,
+      "units": "checker-domain target cycles"
+    },
+    "3": {
+      "histogram": {
+        "8042": 1,
+        "9627": 1,
+        "9737": 1
+      },
+      "maximum": 9737,
+      "mean": 9135.333333333334,
+      "median": 9627,
+      "minimum": 8042,
+      "n": 3,
+      "p95": 9737,
+      "p99": 9737,
+      "percentiles": "nearest rank",
+      "sum": 27406,
+      "units": "checker-domain target cycles"
+    },
+    "4": {
+      "histogram": {
+        "9085": 1,
+        "9128": 1
+      },
+      "maximum": 9128,
+      "mean": 9106.5,
+      "median": 9106.5,
+      "minimum": 9085,
+      "n": 2,
+      "p95": 9128,
+      "p99": 9128,
+      "percentiles": "nearest rank",
+      "sum": 18213,
+      "units": "checker-domain target cycles"
+    }
+  },
+  "source": "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala",
+  "stats": {
+    "histogram": {
+      "8042": 1,
+      "9085": 1,
+      "9128": 1,
+      "9354": 1,
+      "9544": 1,
+      "9627": 1,
+      "9706": 1,
+      "9737": 1,
+      "9836": 1,
+      "10243": 1,
+      "10537": 1
+    },
+    "maximum": 10537,
+    "mean": 9530.818181818182,
+    "median": 9627,
+    "minimum": 8042,
+    "n": 11,
+    "p95": 10537,
+    "p99": 10537,
+    "percentiles": "nearest rank",
+    "sum": 104839,
+    "units": "checker-domain target cycles"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "active_host_seconds": 283.90367684100056,
+  "application_rows": [
+    "[ROI] hart=0 start=239335 stop=256037 cycles=16702",
+    "[IRQ] policy=main_timer_disabled before=0 after=0 mie=8",
+    "[OUTPUT] benchmark=fluidanimate checksum=7e6601a6fa3f9829 verified=1 particles=64 values=576 phase=AdvanceParticles grid_cells=4725",
+    "[APP] protected=0 start=239335 end=256037 cycles=16702 instret=31610 session_stop=256037",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "fluidanimate",
+  "binding_sha256": "b46cb1c04f7a2ba6133079838de054131bdd74725993530ea9889ead73c44852",
+  "completed_utc": "2026-11-12T08:22:01.761206+00:00",
+  "drain_cycles": null,
+  "faults": [],
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_seconds": 283.90352336794604,
+  "interrupt_policy": {
+    "check": "[IRQ] before/after timer_flags and mie; no main timer increment inside ROI",
+    "checker_harts": "unchanged frozen firmware",
+    "main_hart_timer": "MTIE cleared before workload_prepare in both modes"
+  },
+  "interrupt_policy_verified": true,
+  "manifest_sha256": "e9f2567ac476c5fee17208a1178a69d116a2c627656135a84cb9f763cef85224",
+  "method": "CPU_GG_REAL_TRACE_COMPONENT_REPLAY",
+  "mode": "native",
+  "output": [
+    "benchmark=fluidanimate checksum=7e6601a6fa3f9829 verified=1 particles=64 values=576 phase=AdvanceParticles grid_cells=4725"
+  ],
+  "profile": "real-test64-preintegration-AdvanceParticles-4725-cells",
+  "raw_log_sha256": "0627bee25117624795521e965b3787a31aafb63bdd3a374ab6c710e458c18abd",
+  "repeat": 1,
+  "resource_pressure_paused_seconds": 0,
+  "returncode": 0,
+  "roi_cycles": 16702,
+  "roi_end_csr": 256037,
+  "roi_instructions": 31610,
+  "roi_start_csr": 239335,
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-real-test64-preintegration-AdvanceParticles-4725-cells-native-r1",
+  "simulation_slot": "native",
+  "software_correct": true,
+  "status": "PASS",
+  "stop_cause": null,
+  "strict_acceptance": null,
+  "strict_acceptance_error": null,
+  "strict_detection_latency_cycles": null,
+  "svb_events": null,
+  "total_fastest_target_cycles": 508002,
+  "valid": true
+}

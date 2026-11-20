@@ -1,0 +1,140 @@
+[
+  {
+    "label": "main config",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala",
+    "line": 9,
+    "text": "class v1Config extends Config("
+  },
+  {
+    "label": "BOOM mixin",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/boom/src/main/scala/common/config-mixins.scala",
+    "line": 177,
+    "text": "class WithNLargeBooms(n: Int = 1, overrideIdOffset: Option[Int] = None) extends Config("
+  },
+  {
+    "label": "ROB96",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/boom/src/main/scala/common/config-mixins.scala",
+    "line": 189,
+    "text": "numRobEntries = 96,"
+  },
+  {
+    "label": "ROB96",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/boom/src/main/scala/common/config-mixins.scala",
+    "line": 399,
+    "text": "numRobEntries = 96,               // CS152: Change me (2+)"
+  },
+  {
+    "label": "checker config",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/rocket-chip/src/main/scala/subsystem/Configs.scala",
+    "line": 210,
+    "text": "class WithNGCCheckers(n: Int, overrideIdOffset: Option[Int] = None,crossing: RocketCrossingParams = RocketCrossingParams()) extends Config((site, here, up) => {"
+  },
+  {
+    "label": "LSL instantiation",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala",
+    "line": 817,
+    "text": "val lsl = Module(new R_LSL(R_LSLParams(255, xLen)))"
+  },
+  {
+    "label": "main checkpoint instance",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/boom/src/main/scala/exu/core.scala",
+    "line": 2018,
+    "text": "val rsu_master = Module(new R_RSU(R_RSUParams(xLen, numARFS, 1)))"
+  },
+  {
+    "label": "original snapshot",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/rocket-chip/src/main/scala/r/R_RSU.scala",
+    "line": 61,
+    "text": "val arfs_ss                                     = Reg(Vec(params.numARFS, UInt(params.xLen.W)))"
+  },
+  {
+    "label": "original context arrays",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/rocket-chip/src/main/scala/r/R_RSUSL.scala",
+    "line": 81,
+    "text": "val arfs_ss                                     = SyncReadMem(params.numARFS+1, UInt(params.xLen.W))"
+  },
+  {
+    "label": "comparison",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/rocket-chip/src/main/scala/r/R_RSUSL.scala",
+    "line": 308,
+    "text": "channel_enq_valid                              := do_check.asBool && (checking_counter =/= 0.U) && !if_check_completed.asBool && ((io.core_arfs_in(checking_counter_memdelay) =/= arf_data_ECP) ||  (io.core_farfs_in(checking_counter_memdelay) =/= farf_data_ECP))"
+  },
+  {
+    "label": "CSR shadows",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/rocket-chip/src/main/scala/rocket/CSR.scala",
+    "line": 539,
+    "text": "val reg_shadow = if(tileParams.hartId != 0) Some(Reg(Vec(CSRshadows.CSRsize, UInt(xLen.W)))) else None"
+  },
+  {
+    "label": "CSR payload definitions",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/rocket-chip/src/main/scala/rocket/Instructions.scala",
+    "line": 1567,
+    "text": "object CSRshadows{"
+  },
+  {
+    "label": "LSL record width",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/rocket-chip/src/main/scala/r/R_LSL.scala",
+    "line": 63,
+    "text": "val fifowidth               = 2*params.xLen + 2 // extra two bits added to indicate inst type"
+  },
+  {
+    "label": "LSL bank instance",
+    "path": "/data1/gzh/EC/check/build/b3_20261023_141155_3qge7ayp/generated-src/chipyard.TestHarness.v1Config/gen-collateral/R_LSL.sv",
+    "line": 409,
+    "text": "GH_MemFIFO_1 u_channel_0 (\t// @[R_LSL.scala:64:83]"
+  },
+  {
+    "label": "LSL bank instance",
+    "path": "/data1/gzh/EC/check/build/b3_20261023_141155_3qge7ayp/generated-src/chipyard.TestHarness.v1Config/gen-collateral/R_LSL.sv",
+    "line": 420,
+    "text": "GH_MemFIFO_1 u_channel_1 (\t// @[R_LSL.scala:64:83]"
+  },
+  {
+    "label": "LSL generated storage",
+    "path": "/data1/gzh/EC/check/build/b3_20261023_141155_3qge7ayp/generated-src/chipyard.TestHarness.v1Config/gen-collateral/mem_combMem_0.sv",
+    "line": 87,
+    "text": "reg [129:0] Memory[0:254];\t// @[GH_FIFO.scala:140:46]"
+  },
+  {
+    "label": "L2 generated geometry",
+    "path": "/data1/gzh/EC/check/build/b3_20261023_141155_3qge7ayp/generated-src/chipyard.TestHarness.v1Config/chipyard.TestHarness.v1Config.dts",
+    "line": 186,
+    "text": "cache-size = <524288>;"
+  },
+  {
+    "label": "L2 generated MSHRs",
+    "path": "/data1/gzh/EC/check/build/b3_20261023_141155_3qge7ayp/generated-src/chipyard.TestHarness.v1Config/chipyard.TestHarness.v1Config.dts",
+    "line": 192,
+    "text": "sifive,mshr-count = <7>;"
+  },
+  {
+    "label": "L2 tag storage",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Directory.scala",
+    "line": 27,
+    "text": "class DirectoryEntry(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)"
+  },
+  {
+    "label": "L2 tag RAM",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Directory.scala",
+    "line": 65,
+    "text": "val cc_dir =  DescribedSRAM("
+  },
+  {
+    "label": "zero sequence output",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/rocket-chip/src/main/scala/r/R_IC.scala",
+    "line": 117,
+    "text": "io.checker_segment_id(idx)                  := 0.U"
+  },
+  {
+    "label": "zero sequence output",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/rocket-chip/src/main/scala/r/R_IC.scala",
+    "line": 121,
+    "text": "io.checker_segment_id(i)                    := 0.U"
+  },
+  {
+    "label": "forwarding CDC",
+    "path": "/data1/gzh/EC/check/source/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GHM.scala",
+    "line": 107,
+    "text": "val u_data_cdc                                      = Seq.fill(params.number_of_little_cores) {Module(new AsyncQueue(UInt((params.width_GH_packet*GH_GlobalParams.GH_TOTAL_PACKETS).W), AsyncQueueParams(256,2)))}"
+  }
+]

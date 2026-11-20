@@ -1,0 +1,85 @@
+{
+  "active_host_seconds": 1083.5624013820197,
+  "application_rows": [
+    "[ROI] hart=0 start=188028 stop=334933 cycles=146905",
+    "[IRQ] policy=main_timer_disabled before=0 after=0 mie=8",
+    "[OUTPUT] benchmark=bodytrack checksum=21b75907ca97c215 verified=1 cameras=4 frame=0 pose=initial components=edge_inside",
+    "[APP] protected=1 start=188028 end=334933 cycles=146905 instret=81179 session_stop=335156",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "bodytrack",
+  "binding_sha256": "72bec4d7ed5c047238c5cb80157139486c9658a485d3fc0f7cc21210140e1f01",
+  "completed_utc": "2026-11-12T09:07:39.226821+00:00",
+  "drain_cycles": 7956,
+  "faults": [],
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_seconds": 1083.5622272259789,
+  "interrupt_policy": {
+    "check": "[IRQ] before/after timer_flags and mie; no main timer increment inside ROI",
+    "checker_harts": "unchanged frozen firmware",
+    "main_hart_timer": "MTIE cleared before workload_prepare in both modes"
+  },
+  "interrupt_policy_verified": true,
+  "manifest_sha256": "a3b108ab7a327506cc1a285fed49f9d0809b3e2cbdf2fc8ff01d727bb5ef34a2",
+  "method": "CPU_GG_REAL_TRACE_COMPONENT_REPLAY",
+  "mode": "ec",
+  "output": [
+    "benchmark=bodytrack checksum=21b75907ca97c215 verified=1 cameras=4 frame=0 pose=initial components=edge_inside"
+  ],
+  "profile": "real-frame0-likelihood-measurement-replay",
+  "raw_log_sha256": "a133b13cd78a395fdec61ae147bf529e3b4c34f9a46ee2896e28c1fcad6620dd",
+  "repeat": 3,
+  "resource_pressure_paused_seconds": 0,
+  "returncode": 0,
+  "roi_cycles": 146905,
+  "roi_end_csr": 334933,
+  "roi_instructions": 81179,
+  "roi_start_csr": 188028,
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/bodytrack-real-frame0-likelihood-measurement-replay-ec-r3",
+  "simulation_slot": "ec-extra1",
+  "software_correct": true,
+  "status": "PASS",
+  "stop_cause": null,
+  "strict_acceptance": {
+    "allocations": 28,
+    "boom_pass_accepted": 28,
+    "cancel": 0,
+    "completed_utc": "2026-11-12T09:07:39.226056+00:00",
+    "duplicate": 0,
+    "evidence": {
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/bodytrack-real-frame0-likelihood-measurement-replay-ec-r3/external-events.jsonl": "fb842de64fd60a7340c9f5dfe9ee041e34a37a3060c7d83a5272863218236581",
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/bodytrack-real-frame0-likelihood-measurement-replay-ec-r3/rtl-prints-1": "ff64342bde824b33be2086815f0bf420a0b8effedb4c6b72085879ad6ec1e100",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-acceptance-strict-r1-20261111/analyze.py": "78403531ae11adce3d36160df38f50336eef04def839bce92ddf00be41175048",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24"
+    },
+    "fail": 0,
+    "fpga_access": false,
+    "full_compare_local_results": 28,
+    "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "limitations": [
+      "Finite observed package protocol; not universal RTL equivalence",
+      "No strict checkerDone minus samepackage BOOMexecutionDone",
+      "SVB lifetime/payload drain evaluated separately",
+      "No architectural rollback/restart claim"
+    ],
+    "local_begins": 28,
+    "passed": true,
+    "pending": 0,
+    "per_checker": {
+      "1": 7,
+      "2": 7,
+      "3": 7,
+      "4": 7
+    },
+    "sample_errors": 0,
+    "schema": "ec-strict-finite-checker-join/1",
+    "status": "PASS_STRICT_COMPLETE_ALLOCATION_BEGIN_FULLCOMPARE_RESULT_BOOM_ACCEPTANCE_JOIN"
+  },
+  "strict_acceptance_error": null,
+  "strict_detection_latency_cycles": null,
+  "svb_events": null,
+  "total_fastest_target_cycles": 480002,
+  "valid": true
+}

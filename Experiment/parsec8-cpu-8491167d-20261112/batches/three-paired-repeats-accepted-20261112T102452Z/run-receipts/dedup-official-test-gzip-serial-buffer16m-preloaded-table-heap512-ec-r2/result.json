@@ -1,0 +1,85 @@
+{
+  "active_host_seconds": 1416.8254895490245,
+  "application_rows": [
+    "[ROI] hart=0 start=99607 stop=507210 cycles=407603",
+    "[IRQ] policy=main_timer_disabled before=0 after=0 mie=8",
+    "[OUTPUT] benchmark=dedup checksum=9a3334e8994e9796 verified=1 input_bytes=6 archive_bytes=23 compression=gzip",
+    "[APP] protected=1 start=99607 end=507210 cycles=407603 instret=344184 session_stop=507395",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "dedup",
+  "binding_sha256": "9222b4a728b96b1a38d92f9f0ded95279ebdcd47c1ab58bae2b7be1f1ae7147b",
+  "completed_utc": "2026-11-12T09:01:49.888413+00:00",
+  "drain_cycles": 2953,
+  "faults": [],
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_seconds": 1416.8253230180126,
+  "interrupt_policy": {
+    "check": "[IRQ] before/after timer_flags and mie; no main timer increment inside ROI",
+    "checker_harts": "unchanged frozen firmware",
+    "main_hart_timer": "MTIE cleared before workload_prepare in both modes"
+  },
+  "interrupt_policy_verified": true,
+  "manifest_sha256": "ad49c7aa70c2e810fe254a3e68b8f2a081d893905fe30165406a1060f92c0383",
+  "method": "CPU_GG_TEST_DERIVED_REPRESENTATIVE_ROI",
+  "mode": "ec",
+  "output": [
+    "benchmark=dedup checksum=9a3334e8994e9796 verified=1 input_bytes=6 archive_bytes=23 compression=gzip"
+  ],
+  "profile": "official-test-gzip-serial-buffer16m-preloaded-table-heap512",
+  "raw_log_sha256": "98a076efcfd71a0d9a9ef35865e3960a6a40e9b2265d7694862301310c5108c3",
+  "repeat": 2,
+  "resource_pressure_paused_seconds": 0,
+  "returncode": 0,
+  "roi_cycles": 407603,
+  "roi_end_csr": 507210,
+  "roi_instructions": 344184,
+  "roi_start_csr": 99607,
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/dedup-official-test-gzip-serial-buffer16m-preloaded-table-heap512-ec-r2",
+  "simulation_slot": "ec",
+  "software_correct": true,
+  "status": "PASS",
+  "stop_cause": null,
+  "strict_acceptance": {
+    "allocations": 100,
+    "boom_pass_accepted": 100,
+    "cancel": 0,
+    "completed_utc": "2026-11-12T09:01:49.887198+00:00",
+    "duplicate": 0,
+    "evidence": {
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/dedup-official-test-gzip-serial-buffer16m-preloaded-table-heap512-ec-r2/external-events.jsonl": "e044a29b4d0286b5582ccf344aa97f8b2492a17f7e8a68fca8913ada47253d86",
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/dedup-official-test-gzip-serial-buffer16m-preloaded-table-heap512-ec-r2/rtl-prints-1": "a4ceae57f73dec6d7858f12961dc89d1f14baac01a2309a2c617d08bcee16a88",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-acceptance-strict-r1-20261111/analyze.py": "78403531ae11adce3d36160df38f50336eef04def839bce92ddf00be41175048",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24"
+    },
+    "fail": 0,
+    "fpga_access": false,
+    "full_compare_local_results": 100,
+    "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "limitations": [
+      "Finite observed package protocol; not universal RTL equivalence",
+      "No strict checkerDone minus samepackage BOOMexecutionDone",
+      "SVB lifetime/payload drain evaluated separately",
+      "No architectural rollback/restart claim"
+    ],
+    "local_begins": 100,
+    "passed": true,
+    "pending": 0,
+    "per_checker": {
+      "1": 25,
+      "2": 25,
+      "3": 25,
+      "4": 25
+    },
+    "sample_errors": 0,
+    "schema": "ec-strict-finite-checker-join/1",
+    "status": "PASS_STRICT_COMPLETE_ALLOCATION_BEGIN_FULLCOMPARE_RESULT_BOOM_ACCEPTANCE_JOIN"
+  },
+  "strict_acceptance_error": null,
+  "strict_detection_latency_cycles": null,
+  "svb_events": null,
+  "total_fastest_target_cycles": 657002,
+  "valid": true
+}

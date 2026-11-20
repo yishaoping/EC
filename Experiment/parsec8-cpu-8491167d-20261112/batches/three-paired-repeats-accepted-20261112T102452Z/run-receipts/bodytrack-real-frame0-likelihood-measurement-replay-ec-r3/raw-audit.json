@@ -1,0 +1,61 @@
+{
+  "benchmark": "bodytrack",
+  "checks": {
+    "bound_elf": true,
+    "bound_manifest": true,
+    "complete_binding_hash": true,
+    "complete_result_hash": true,
+    "completion_integrity_receipt_hash": true,
+    "functional_baseline": true,
+    "gzip_sha256": true,
+    "model_binary": true,
+    "raw_app_cycles_and_instructions": true,
+    "raw_bytes": true,
+    "raw_output_and_end": true,
+    "raw_roi_csr_and_cycles": true,
+    "raw_sha256": true,
+    "raw_timer_policy": true,
+    "strict_event_evidence_hashes": true,
+    "unique_roi_app_irq_markers": true
+  },
+  "fingerprint": {
+    "binary": "cc2993bd8c6f56893afd9e73cc358684c07c481a52ef8eb50dc7a136134b2867",
+    "binding": "72bec4d7ed5c047238c5cb80157139486c9658a485d3fc0f7cc21210140e1f01",
+    "completion": "071b2450b1db600035969646210859b5c2b68f82cb9772dbd78521e6383fd2d4",
+    "elf": "749842b51790c15ead34dde4f3d367215b09b11958162e6ff362ae227087dc81",
+    "gzip_sha256": "5528e92dae7b289fc33d680c6fcc362400b839ce081d43d8e2bb087c1673376b",
+    "integrity": "7d1e9816a894e2a4382f15976647cddc619dd3b7e1d3e0dee8dc1c6fe0c1408c",
+    "manifest": "a3b108ab7a327506cc1a285fed49f9d0809b3e2cbdf2fc8ff01d727bb5ef34a2",
+    "result": "4c986393e7bdd4a9552848b202259c66bc290843a87c36a9f6a2badfb7630967",
+    "script": "1730e4e3539d718318d3092233953ca75473974f45c59a2fd2e58f264cfc3722",
+    "strict_evidence": {
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/bodytrack-real-frame0-likelihood-measurement-replay-ec-r3/external-events.jsonl": "fb842de64fd60a7340c9f5dfe9ee041e34a37a3060c7d83a5272863218236581",
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/bodytrack-real-frame0-likelihood-measurement-replay-ec-r3/rtl-prints-1": "ff64342bde824b33be2086815f0bf420a0b8effedb4c6b72085879ad6ec1e100",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-acceptance-strict-r1-20261111/analyze.py": "78403531ae11adce3d36160df38f50336eef04def839bce92ddf00be41175048",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24"
+    }
+  },
+  "mode": "ec",
+  "passed": true,
+  "raw_bytes": 392828462,
+  "result": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/bodytrack-real-frame0-likelihood-measurement-replay-ec-r3/result.json",
+  "result_sha256": "4c986393e7bdd4a9552848b202259c66bc290843a87c36a9f6a2badfb7630967",
+  "svb_examples": [
+    "SVB_ENTRY_ALLOC cycle=000000000002f61b entry=0 line=008059ff40 seq=00000001 generation=0000421d epoch=000f state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=000000000002f6bd entry=1 line=008059ff00 seq=00000001 generation=00004208 epoch=000f state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=000000000002f6d1 entry=2 line=008059fec0 seq=00000001 generation=0000420c epoch=000f state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=00000000000307bd entry=3 line=008059ff40 seq=00000002 generation=0000428a epoch=001b state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=0000000000030801 entry=4 line=008059ff00 seq=00000002 generation=00004277 epoch=001b state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=0000000000030815 entry=5 line=008059fec0 seq=00000002 generation=0000427b epoch=001b state=SPEC"
+  ],
+  "svb_lifecycle_evidence": null,
+  "svb_limitation": "Raw audit counts labels only; per-key lifecycle analysis is separate",
+  "svb_printed_records": {
+    "SVB_COMPLETION": 81,
+    "SVB_C_FIRE": 162,
+    "SVB_ENTRY_ALLOC": 81,
+    "SVB_PROMOTION_SELECT": 81,
+    "SVB_SAFE": 81,
+    "WB_BLOCK": 13
+  }
+}

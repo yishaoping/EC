@@ -1,0 +1,27 @@
+% Requires \usepackage{booktabs}. Areas are analytical estimates.
+\begin{table}[t]
+\centering
+\small
+\caption{Estimated PALIMPSEST hardware area breakdown (Typical analytical model).}
+\label{tab:palimpsest-area}
+\begin{tabular}{lrr}
+\toprule
+Component & Area (mm$^2$) & Share (\%) \\
+\midrule
+L1 Version Metadata & 0.012719 & 2.60 \\
+L2 Version Metadata & 0.383785 & 78.58 \\
+Version Preservation & 0.002146 & 0.44 \\
+Visibility Control & 0.001155 & 0.24 \\
+Early LSL Reclamation & 0.015513 & 3.18 \\
+EVT & 0.049453 & 10.12 \\
+Rollback Controller & 0.000349 & 0.07 \\
+Recovery Context Storage & 0.023304 & 4.77 \\
+\midrule
+Total & 0.488425 & 100.00 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}
+\begin{minipage}{\columnwidth}\footnotesize
+L1/L2 metadata includes selection and store-control logic; visibility control includes the SW bitmap. The estimate is 9.69\% of the 5.04\,mm$^2$ PEEK reference core-area sum, not a matched-configuration, matched-process synthesis result. Values are rounded.
+\end{minipage}
+\end{table}

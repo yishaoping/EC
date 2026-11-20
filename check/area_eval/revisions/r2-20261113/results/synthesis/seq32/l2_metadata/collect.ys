@@ -1,0 +1,1 @@
+read_verilog -sv /data1/gzh/EC/check/area_eval/rtl/palimpsest.sv; chparam -set SETS 1024 -set WAYS 16 -set SEQ_W 32 pal_metadata_ram; hierarchy -check -top pal_metadata_ram; proc; opt; memory_dff; memory_collect;  opt; check; write_json /data1/gzh/EC/check/area_eval/revisions/r2-20261113/results/synthesis/seq32/l2_metadata/memory.json; stat

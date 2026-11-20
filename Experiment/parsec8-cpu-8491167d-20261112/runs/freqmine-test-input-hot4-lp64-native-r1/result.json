@@ -1,0 +1,48 @@
+{
+  "application_rows": [
+    "[ROI] hart=0 start=19574 stop=202850 cycles=183276",
+    "[IRQ] policy=main_timer_disabled before=0 after=0 mie=8",
+    "[OUTPUT] benchmark=freqmine checksum=0d5f4ea4dc4d2ff1 verified=1 transactions=3 threshold=1",
+    "[APP] protected=0 start=19574 end=202850 cycles=183276 instret=289227 session_stop=202850",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "freqmine",
+  "binding_sha256": "6005f57d9924cc3ba4f78b84f0fa1398a32057da49e91df7d4154a94d19e91e6",
+  "completed_utc": "2026-11-12T05:45:46.639246+00:00",
+  "drain_cycles": null,
+  "faults": [],
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_seconds": 203.28506201098207,
+  "interrupt_policy": {
+    "check": "[IRQ] before/after timer_flags and mie; no main timer increment inside ROI",
+    "checker_harts": "unchanged frozen firmware",
+    "main_hart_timer": "MTIE cleared before workload_prepare in both modes"
+  },
+  "interrupt_policy_verified": true,
+  "manifest_sha256": "67fa812c0897ab249c4e0cacdc2e08bb85016bcaa042268513fdeaa019fdf80d",
+  "method": "CPU_GG_TEST_DERIVED_REPRESENTATIVE_ROI",
+  "mode": "native",
+  "output": [
+    "benchmark=freqmine checksum=0d5f4ea4dc4d2ff1 verified=1 transactions=3 threshold=1"
+  ],
+  "profile": "test-input-hot4-lp64",
+  "raw_log_sha256": "42337d7c9a002ca16e32e8896847ea7d71aef261e27cee9daaf401db35f38e2c",
+  "repeat": 1,
+  "returncode": 0,
+  "roi_cycles": 183276,
+  "roi_end_csr": 202850,
+  "roi_instructions": 289227,
+  "roi_start_csr": 19574,
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/freqmine-test-input-hot4-lp64-native-r1",
+  "software_correct": true,
+  "status": "PASS",
+  "stop_cause": null,
+  "strict_acceptance": null,
+  "strict_acceptance_error": null,
+  "strict_detection_latency_cycles": null,
+  "svb_events": null,
+  "total_fastest_target_cycles": 587002,
+  "valid": true
+}

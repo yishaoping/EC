@@ -1,0 +1,48 @@
+{
+  "application_rows": [
+    "[ROI] hart=0 start=613225 stop=825741 cycles=212516",
+    "[IRQ] policy=main_timer_disabled before=0 after=0 mie=8",
+    "[OUTPUT] benchmark=ferret checksum=afa5ad4c8671c2af verified=1 trace_calls=1 dimensions=14",
+    "[APP] protected=0 start=613225 end=825741 cycles=212516 instret=410268 session_stop=825741",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "ferret",
+  "binding_sha256": "cee726b00423996b9ef31d1211972350d20e1d56fa2164e6a40847f88e6633a6",
+  "completed_utc": "2026-11-12T05:51:15.823345+00:00",
+  "drain_cycles": null,
+  "faults": [],
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_seconds": 328.87551446299767,
+  "interrupt_policy": {
+    "check": "[IRQ] before/after timer_flags and mie; no main timer increment inside ROI",
+    "checker_harts": "unchanged frozen firmware",
+    "main_hart_timer": "MTIE cleared before workload_prepare in both modes"
+  },
+  "interrupt_policy_verified": true,
+  "manifest_sha256": "5dee31f1e96b42db5f219fe2a3ec681050ddf69b9748d422093afb5740cffd1e",
+  "method": "CPU_GG_REAL_TRACE_COMPONENT_REPLAY",
+  "mode": "native",
+  "output": [
+    "benchmark=ferret checksum=afa5ad4c8671c2af verified=1 trace_calls=1 dimensions=14"
+  ],
+  "profile": "real-test-first-emd-warm-replay-qword-setup",
+  "raw_log_sha256": "2ae38030b7960fe0490777a1c3951abf0c8f66d0c19847dd63a2f4347d323790",
+  "repeat": 1,
+  "returncode": 0,
+  "roi_cycles": 212516,
+  "roi_end_csr": 825741,
+  "roi_instructions": 410268,
+  "roi_start_csr": 613225,
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/ferret-real-test-first-emd-warm-replay-qword-setup-native-r1",
+  "software_correct": true,
+  "status": "PASS",
+  "stop_cause": null,
+  "strict_acceptance": null,
+  "strict_acceptance_error": null,
+  "strict_detection_latency_cycles": null,
+  "svb_events": null,
+  "total_fastest_target_cycles": 937002,
+  "valid": true
+}

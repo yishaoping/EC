@@ -1,0 +1,1 @@
+read_verilog -sv /data1/gzh/EC/check/area_eval/rtl/palimpsest.sv; chparam -set SLOTS 8 -set WORDS 80 pal_context_store; hierarchy -check -top pal_context_store; proc; opt; memory_dff; memory_collect; memory_map pal_context_store/seq pal_context_store/epoch; opt; check; write_json /data1/gzh/EC/check/area_eval/results/synthesis/context/memory.json; stat

@@ -1,0 +1,82 @@
+{
+  "application_rows": [
+    "[ROI] hart=0 start=86798 stop=150345 cycles=63547",
+    "[IRQ] policy=main_timer_disabled before=0 after=0 mie=8",
+    "[OUTPUT] benchmark=blackscholes checksum=1187d037cad2df6f verified=1 options=64 runs=1",
+    "[APP] protected=1 start=86798 end=150345 cycles=63547 instret=35605 session_stop=150513",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "blackscholes",
+  "binding_sha256": "5997acdfa759cef069209b64cc404bc7df4c24c37751ef7a832fb32b9b765632",
+  "completed_utc": "2026-11-12T05:07:49.019259+00:00",
+  "drain_cycles": 11344,
+  "faults": [],
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_seconds": 705.4791931109503,
+  "interrupt_policy": {
+    "check": "[IRQ] before/after timer_flags and mie; no main timer increment inside ROI",
+    "checker_harts": "unchanged frozen firmware",
+    "main_hart_timer": "MTIE cleared before workload_prepare in both modes"
+  },
+  "interrupt_policy_verified": true,
+  "manifest_sha256": "3cc799d5f0e689791f77147f1401e5f28b91921962385d31e81534e4de68bedc",
+  "method": "CPU_GG_TEST_DERIVED_REPRESENTATIVE_ROI",
+  "mode": "ec",
+  "output": [
+    "benchmark=blackscholes checksum=1187d037cad2df6f verified=1 options=64 runs=1"
+  ],
+  "profile": "project64-one-iteration-no-main-timer",
+  "raw_log_sha256": "34c6f71d3a08ef63c7e64b065ab9d742e30185da8b10fe6acc0378c20ae0abe3",
+  "repeat": 1,
+  "returncode": 0,
+  "roi_cycles": 63547,
+  "roi_end_csr": 150345,
+  "roi_instructions": 35605,
+  "roi_start_csr": 86798,
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/blackscholes-project64-one-iteration-no-main-timer-ec-r1",
+  "software_correct": true,
+  "status": "PASS",
+  "stop_cause": null,
+  "strict_acceptance": {
+    "allocations": 11,
+    "boom_pass_accepted": 11,
+    "cancel": 0,
+    "completed_utc": "2026-11-12T05:07:49.018625+00:00",
+    "duplicate": 0,
+    "evidence": {
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/blackscholes-project64-one-iteration-no-main-timer-ec-r1/external-events.jsonl": "f60f4d0d1c8ce7747d523f3993bd7f90d1daaa06ce3f5ebbbfc2cd911d575204",
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/blackscholes-project64-one-iteration-no-main-timer-ec-r1/rtl-prints-1": "c9e0ca62ad847b2ed4b0c7b445bab21bc126665730e02466d514708c165d017f",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-acceptance-strict-r1-20261111/analyze.py": "78403531ae11adce3d36160df38f50336eef04def839bce92ddf00be41175048",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24"
+    },
+    "fail": 0,
+    "fpga_access": false,
+    "full_compare_local_results": 11,
+    "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "limitations": [
+      "Finite observed package protocol; not universal RTL equivalence",
+      "No strict checkerDone minus samepackage BOOMexecutionDone",
+      "SVB lifetime/payload drain evaluated separately",
+      "No architectural rollback/restart claim"
+    ],
+    "local_begins": 11,
+    "passed": true,
+    "pending": 0,
+    "per_checker": {
+      "1": 3,
+      "2": 3,
+      "3": 3,
+      "4": 2
+    },
+    "sample_errors": 0,
+    "schema": "ec-strict-finite-checker-join/1",
+    "status": "PASS_STRICT_COMPLETE_ALLOCATION_BEGIN_FULLCOMPARE_RESULT_BOOM_ACCEPTANCE_JOIN"
+  },
+  "strict_acceptance_error": null,
+  "strict_detection_latency_cycles": null,
+  "svb_events": null,
+  "total_fastest_target_cycles": 303002,
+  "valid": true
+}

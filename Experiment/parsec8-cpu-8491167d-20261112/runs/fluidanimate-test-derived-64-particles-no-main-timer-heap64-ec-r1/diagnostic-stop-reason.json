@@ -1,0 +1,38 @@
+{
+  "created_utc": "2026-11-12T08:14:56.854915+00:00",
+  "detail": "Actual CANCELLED result seq85 precludes complete strict acceptance. Preserve failed sample and do not retry unchanged profile.",
+  "hard_stop_reason": "Own simulator remains live after SIGTERM; verified recorded PID/start_ticks/boot_id before SIGKILL of own process group",
+  "hard_stop_utc": "2026-11-12T08:16:24.596651+00:00",
+  "observed_nonpass_results": [
+    {
+      "boom_csr_cycle": 2408425,
+      "checker": 1,
+      "fastest_target_cycle": 2410394,
+      "host_time": 7289553500,
+      "kind": "BOOM_RESULT_ACCEPTED",
+      "package_seq": 85,
+      "raw_payload": 25769803861,
+      "record": 170,
+      "status": 2
+    }
+  ],
+  "reason": "OBSERVED_NONPASS_CHECKER_RESULT",
+  "state_before_stop": {
+    "child": {
+      "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 2828155,
+      "start_ticks": "27723993"
+    },
+    "controller": {
+      "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 2828154,
+      "start_ticks": "27723985"
+    },
+    "host_seconds": 5762.416643514996,
+    "paused_for_pressure": false,
+    "pressure_paused_seconds": 0,
+    "raw_bytes": 1137551531,
+    "status": "RUNNING",
+    "updated_utc": "2026-11-12T08:14:41.918001+00:00"
+  }
+}

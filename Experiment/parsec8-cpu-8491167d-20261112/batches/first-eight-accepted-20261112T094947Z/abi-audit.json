@@ -1,0 +1,674 @@
+{
+  "all_abi_matched": true,
+  "created_utc": "2026-11-12T09:49:14.124711+00:00",
+  "limitations": [
+    "Matching ABI and shared objects do not remove ELF address/layout/cache-state differences",
+    "Historical Linux ELF artifacts require a Linux guest/runtime and are not loaded as HTIF applications"
+  ],
+  "profiles": [
+    {
+      "benchmark": "blackscholes",
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "manifest": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/blackscholes_no_main_timer/manifest.json",
+      "manifest_sha256": "3cc799d5f0e689791f77147f1401e5f28b91921962385d31e81534e4de68bedc",
+      "modes": {
+        "ec": {
+          "arch": "\"rv64i2p0_m2p0_a2p0_f2p0_d2p0_c2p0\"",
+          "elf_class": "ELF64",
+          "elf_hash_matches": true,
+          "elf_sha256": "2e87992422150c13c87fb82407d6d62fa16685ec03d1e19f44aa5a81b3dd6e83",
+          "flags": "0x5, RVC, double-float ABI",
+          "interpreter_present": false,
+          "machine": "RISC-V",
+          "readelf_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/blackscholes-ec-readelf.txt",
+          "readelf_sha256": "03d3e91e68f734b2fe97cdb913590dd5cef0e0e858a5c4d773b8f4e934ce6e28",
+          "selected_symbols": {
+            "timer_flags": {
+              "address": "0x80004200",
+              "bytes": 256,
+              "offset_in_64byte_line": 0
+            },
+            "workload_prepare": {
+              "address": "0x8000117c",
+              "bytes": 184,
+              "offset_in_64byte_line": 60
+            },
+            "workload_run": {
+              "address": "0x80001234",
+              "bytes": 32,
+              "offset_in_64byte_line": 52
+            },
+            "workload_verify": {
+              "address": "0x80001254",
+              "bytes": 232,
+              "offset_in_64byte_line": 20
+            }
+          },
+          "symbol_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/blackscholes-ec-symbols.txt",
+          "symbol_evidence_sha256": "1d4b15f8da4876a64267f1a47fdb02cd1952b8e34cdc3c27851d8b13da12df9f"
+        },
+        "native": {
+          "arch": "\"rv64i2p0_m2p0_a2p0_f2p0_d2p0_c2p0\"",
+          "elf_class": "ELF64",
+          "elf_hash_matches": true,
+          "elf_sha256": "85e5044382e87bdc95a4aaada99c6473aa4d2ea6b7e2c182fec4a1f7829f89dd",
+          "flags": "0x5, RVC, double-float ABI",
+          "interpreter_present": false,
+          "machine": "RISC-V",
+          "readelf_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/blackscholes-native-readelf.txt",
+          "readelf_sha256": "1d9233d2827c128852120f64dfcb59271a4bfd3cdc9087ada68bc22e968789e0",
+          "selected_symbols": {
+            "timer_flags": {
+              "address": "0x80003b00",
+              "bytes": 256,
+              "offset_in_64byte_line": 0
+            },
+            "workload_prepare": {
+              "address": "0x80000b88",
+              "bytes": 184,
+              "offset_in_64byte_line": 8
+            },
+            "workload_run": {
+              "address": "0x80000c40",
+              "bytes": 32,
+              "offset_in_64byte_line": 0
+            },
+            "workload_verify": {
+              "address": "0x80000c60",
+              "bytes": 232,
+              "offset_in_64byte_line": 32
+            }
+          },
+          "symbol_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/blackscholes-native-symbols.txt",
+          "symbol_evidence_sha256": "66325f3972c3e2d12e548a23249d6139f4177d19fd94f7f7ee85f68ecb2b097b"
+        }
+      },
+      "pair_abi_match": true,
+      "remaining_layout_confound": true,
+      "same_elf": false,
+      "shared_objects_bound": 8,
+      "shared_objects_hash_match": true
+    },
+    {
+      "benchmark": "bodytrack",
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "manifest": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/bodytrack_serial_htif/manifest.json",
+      "manifest_sha256": "a3b108ab7a327506cc1a285fed49f9d0809b3e2cbdf2fc8ff01d727bb5ef34a2",
+      "modes": {
+        "ec": {
+          "arch": "\"rv64i2p0_m2p0_a2p0_f2p0_d2p0_c2p0\"",
+          "elf_class": "ELF64",
+          "elf_hash_matches": true,
+          "elf_sha256": "749842b51790c15ead34dde4f3d367215b09b11958162e6ff362ae227087dc81",
+          "flags": "0x5, RVC, double-float ABI",
+          "interpreter_present": false,
+          "machine": "RISC-V",
+          "readelf_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/bodytrack-ec-readelf.txt",
+          "readelf_sha256": "53fc438b9cc665fd73e452f4220ea77ab683ce649ab7e9baf265152303f71e5f",
+          "selected_symbols": {
+            "timer_flags": {
+              "address": "0x80193e80",
+              "bytes": 256,
+              "offset_in_64byte_line": 0
+            },
+            "workload_prepare": {
+              "address": "0x800021f8",
+              "bytes": 1340,
+              "offset_in_64byte_line": 56
+            },
+            "workload_run": {
+              "address": "0x80001c78",
+              "bytes": 84,
+              "offset_in_64byte_line": 56
+            },
+            "workload_verify": {
+              "address": "0x80001ccc",
+              "bytes": 252,
+              "offset_in_64byte_line": 12
+            }
+          },
+          "symbol_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/bodytrack-ec-symbols.txt",
+          "symbol_evidence_sha256": "cd865c2c706d45c3626ee1321e7d5e3d5ec31d7eb0d63744fdc6ea53059e120d"
+        },
+        "native": {
+          "arch": "\"rv64i2p0_m2p0_a2p0_f2p0_d2p0_c2p0\"",
+          "elf_class": "ELF64",
+          "elf_hash_matches": true,
+          "elf_sha256": "583e029b0821cbc5e2b2b19c8bd577a5fb470ef2c5568770383bf8bc28f4f954",
+          "flags": "0x5, RVC, double-float ABI",
+          "interpreter_present": false,
+          "machine": "RISC-V",
+          "readelf_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/bodytrack-native-readelf.txt",
+          "readelf_sha256": "1c4dbad5e5f13933bf58fc588d748f41246dd9d168271b14367740dc601a345d",
+          "selected_symbols": {
+            "timer_flags": {
+              "address": "0x80193780",
+              "bytes": 256,
+              "offset_in_64byte_line": 0
+            },
+            "workload_prepare": {
+              "address": "0x80001c00",
+              "bytes": 1340,
+              "offset_in_64byte_line": 0
+            },
+            "workload_run": {
+              "address": "0x80001680",
+              "bytes": 84,
+              "offset_in_64byte_line": 0
+            },
+            "workload_verify": {
+              "address": "0x800016d4",
+              "bytes": 252,
+              "offset_in_64byte_line": 20
+            }
+          },
+          "symbol_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/bodytrack-native-symbols.txt",
+          "symbol_evidence_sha256": "3f4f0a7ab5dded3cd380e21f778c28763a3b5053ab30b3ae84bb4c9b295922f7"
+        }
+      },
+      "pair_abi_match": true,
+      "remaining_layout_confound": true,
+      "same_elf": false,
+      "shared_objects_bound": 10,
+      "shared_objects_hash_match": true
+    },
+    {
+      "benchmark": "streamcluster",
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "manifest": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/streamcluster_portable/manifest.json",
+      "manifest_sha256": "f439efd6554cd636e9b5240172a73f9e7690a2d637cea5823b70b12edd9c019a",
+      "modes": {
+        "ec": {
+          "arch": "\"rv64i2p0_m2p0_a2p0_f2p0_d2p0_c2p0\"",
+          "elf_class": "ELF64",
+          "elf_hash_matches": true,
+          "elf_sha256": "d101a63049c89515572046651c2cdaaeebad7952dd18b32c0b44862e5f032f4b",
+          "flags": "0x5, RVC, double-float ABI",
+          "interpreter_present": false,
+          "machine": "RISC-V",
+          "readelf_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/streamcluster-ec-readelf.txt",
+          "readelf_sha256": "9dc42d2a24ac89fafbf7bac2569f73d670ce14ae0e8384e9e4c1d62df07c96ce",
+          "selected_symbols": {
+            "timer_flags": {
+              "address": "0x800433c0",
+              "bytes": 256,
+              "offset_in_64byte_line": 0
+            },
+            "workload_prepare": {
+              "address": "0x80002f2c",
+              "bytes": 16,
+              "offset_in_64byte_line": 44
+            },
+            "workload_run": {
+              "address": "0x80002f3c",
+              "bytes": 76,
+              "offset_in_64byte_line": 60
+            },
+            "workload_verify": {
+              "address": "0x80002f88",
+              "bytes": 780,
+              "offset_in_64byte_line": 8
+            }
+          },
+          "symbol_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/streamcluster-ec-symbols.txt",
+          "symbol_evidence_sha256": "a4a17a2946aa1b58bdb08e45d39a1bbdef7d4af3fc826b791d22c2651bd0d897"
+        },
+        "native": {
+          "arch": "\"rv64i2p0_m2p0_a2p0_f2p0_d2p0_c2p0\"",
+          "elf_class": "ELF64",
+          "elf_hash_matches": true,
+          "elf_sha256": "6aaea7009aa8437976696faacc0b71ef6c5d6edbb9234fe1243fbfd02de08fe1",
+          "flags": "0x5, RVC, double-float ABI",
+          "interpreter_present": false,
+          "machine": "RISC-V",
+          "readelf_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/streamcluster-native-readelf.txt",
+          "readelf_sha256": "fcc98d8cb008c46e1206ca6dc897a13ddc83091293e84b47eb2c67f073fa975c",
+          "selected_symbols": {
+            "timer_flags": {
+              "address": "0x80042cc0",
+              "bytes": 256,
+              "offset_in_64byte_line": 0
+            },
+            "workload_prepare": {
+              "address": "0x80002930",
+              "bytes": 16,
+              "offset_in_64byte_line": 48
+            },
+            "workload_run": {
+              "address": "0x80002940",
+              "bytes": 76,
+              "offset_in_64byte_line": 0
+            },
+            "workload_verify": {
+              "address": "0x8000298c",
+              "bytes": 780,
+              "offset_in_64byte_line": 12
+            }
+          },
+          "symbol_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/streamcluster-native-symbols.txt",
+          "symbol_evidence_sha256": "15132694b1a0fc996b76a50434d25bb797175f81f5d63949d1e4af067bae5b6e"
+        }
+      },
+      "pair_abi_match": true,
+      "remaining_layout_confound": true,
+      "same_elf": false,
+      "shared_objects_bound": 8,
+      "shared_objects_hash_match": true
+    },
+    {
+      "benchmark": "freqmine",
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "manifest": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/freqmine_serial_htif_hot4_quiet/manifest.json",
+      "manifest_sha256": "37727df9bcafa3ab45cf7689d22053ae1c4fb09c039eadea815d24bec1594625",
+      "modes": {
+        "ec": {
+          "arch": "\"rv64i2p0_m2p0_a2p0_f2p0_d2p0_c2p0\"",
+          "elf_class": "ELF64",
+          "elf_hash_matches": true,
+          "elf_sha256": "2cb476723e23f39efefd22e9f563865b544bab943b944aaddc62ec5d9bef949d",
+          "flags": "0x5, RVC, double-float ABI",
+          "interpreter_present": false,
+          "machine": "RISC-V",
+          "readelf_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/freqmine-ec-readelf.txt",
+          "readelf_sha256": "ac262919e66eec67d21cc27ca99391916ea9e253e88b778c7c7c613fecdeafd3",
+          "selected_symbols": {
+            "timer_flags": {
+              "address": "0x80014fc0",
+              "bytes": 256,
+              "offset_in_64byte_line": 0
+            },
+            "workload_prepare": {
+              "address": "0x80007a68",
+              "bytes": 272,
+              "offset_in_64byte_line": 40
+            },
+            "workload_run": {
+              "address": "0x80007b78",
+              "bytes": 64,
+              "offset_in_64byte_line": 56
+            },
+            "workload_verify": {
+              "address": "0x80007bb8",
+              "bytes": 348,
+              "offset_in_64byte_line": 56
+            }
+          },
+          "symbol_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/freqmine-ec-symbols.txt",
+          "symbol_evidence_sha256": "f9e547da0fc735bccd208dda75135381e2db4f751af1cc17739b6ae87da265d9"
+        },
+        "native": {
+          "arch": "\"rv64i2p0_m2p0_a2p0_f2p0_d2p0_c2p0\"",
+          "elf_class": "ELF64",
+          "elf_hash_matches": true,
+          "elf_sha256": "144eb1b721b8fe91d2d5e91b02a04fc8378cc6a7e982a1204da987d6b862904b",
+          "flags": "0x5, RVC, double-float ABI",
+          "interpreter_present": false,
+          "machine": "RISC-V",
+          "readelf_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/freqmine-native-readelf.txt",
+          "readelf_sha256": "ce10d320060575b65dd25bf19c31dcc25d0c53e260352577185f1af23ba74862",
+          "selected_symbols": {
+            "timer_flags": {
+              "address": "0x800148c0",
+              "bytes": 256,
+              "offset_in_64byte_line": 0
+            },
+            "workload_prepare": {
+              "address": "0x80007470",
+              "bytes": 272,
+              "offset_in_64byte_line": 48
+            },
+            "workload_run": {
+              "address": "0x80007580",
+              "bytes": 64,
+              "offset_in_64byte_line": 0
+            },
+            "workload_verify": {
+              "address": "0x800075c0",
+              "bytes": 348,
+              "offset_in_64byte_line": 0
+            }
+          },
+          "symbol_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/freqmine-native-symbols.txt",
+          "symbol_evidence_sha256": "70038b659ede1f80c653b229817604b03156d8b18143fe422449bff9e4c69efb"
+        }
+      },
+      "pair_abi_match": true,
+      "remaining_layout_confound": true,
+      "same_elf": false,
+      "shared_objects_bound": 15,
+      "shared_objects_hash_match": true
+    },
+    {
+      "benchmark": "ferret",
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "manifest": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/ferret_real_emd_costmatrix/manifest.json",
+      "manifest_sha256": "405432eeb8961669cd7fe2ac11e9542728db1157278d3c54f86b07ce261c3f86",
+      "modes": {
+        "ec": {
+          "arch": "\"rv64i2p0_m2p0_a2p0_f2p0_d2p0_c2p0\"",
+          "elf_class": "ELF64",
+          "elf_hash_matches": true,
+          "elf_sha256": "3f146fa19394860cf025f3f66073ea7ec4a0598b28a05849f5e2e7a8b4e4a71d",
+          "flags": "0x5, RVC, double-float ABI",
+          "interpreter_present": false,
+          "machine": "RISC-V",
+          "readelf_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/ferret-ec-readelf.txt",
+          "readelf_sha256": "456836f5ac9f4fd795d838a92ed09acd17fae71206a5fc5605062abe1cfdece5",
+          "selected_symbols": {
+            "timer_flags": {
+              "address": "0x80084680",
+              "bytes": 256,
+              "offset_in_64byte_line": 0
+            },
+            "workload_prepare": {
+              "address": "0x80000e58",
+              "bytes": 236,
+              "offset_in_64byte_line": 24
+            },
+            "workload_run": {
+              "address": "0x80000f44",
+              "bytes": 360,
+              "offset_in_64byte_line": 4
+            },
+            "workload_verify": {
+              "address": "0x800010ac",
+              "bytes": 404,
+              "offset_in_64byte_line": 44
+            }
+          },
+          "symbol_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/ferret-ec-symbols.txt",
+          "symbol_evidence_sha256": "debcda7cfa5996126fac40b8c592b288abdcc8c2a5e2025888ec75c855a2141b"
+        },
+        "native": {
+          "arch": "\"rv64i2p0_m2p0_a2p0_f2p0_d2p0_c2p0\"",
+          "elf_class": "ELF64",
+          "elf_hash_matches": true,
+          "elf_sha256": "84a96ef033c3a750e79afa2c62e5930540a1564c9c014f48e00ec36d92e3ae7a",
+          "flags": "0x5, RVC, double-float ABI",
+          "interpreter_present": false,
+          "machine": "RISC-V",
+          "readelf_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/ferret-native-readelf.txt",
+          "readelf_sha256": "83aaa9a97ca119d277f640b7bb6feae6fbb054d0758e5bcbe6a312939e6355cc",
+          "selected_symbols": {
+            "timer_flags": {
+              "address": "0x80083f80",
+              "bytes": 256,
+              "offset_in_64byte_line": 0
+            },
+            "workload_prepare": {
+              "address": "0x8000085c",
+              "bytes": 236,
+              "offset_in_64byte_line": 28
+            },
+            "workload_run": {
+              "address": "0x80000948",
+              "bytes": 360,
+              "offset_in_64byte_line": 8
+            },
+            "workload_verify": {
+              "address": "0x80000ab0",
+              "bytes": 404,
+              "offset_in_64byte_line": 48
+            }
+          },
+          "symbol_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/ferret-native-symbols.txt",
+          "symbol_evidence_sha256": "04c6929bd3de52876794a65fca2db65e72ef679b1cef33c6dbae56e2c6ceee41"
+        }
+      },
+      "pair_abi_match": true,
+      "remaining_layout_confound": true,
+      "same_elf": false,
+      "shared_objects_bound": 8,
+      "shared_objects_hash_match": true
+    },
+    {
+      "benchmark": "fluidanimate",
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "manifest": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/fluidanimate_real_advanceparticles_norelax/manifest.json",
+      "manifest_sha256": "5f09584bf189aed6a3cb289583dd66a4b7fb58e294a674eaf5211d7586e2c5eb",
+      "modes": {
+        "ec": {
+          "arch": "\"rv64i2p0_m2p0_a2p0_f2p0_d2p0_c2p0\"",
+          "elf_class": "ELF64",
+          "elf_hash_matches": true,
+          "elf_sha256": "cb2d894d754a4ef0a1b8bd52a2650a0eb30cd3a1ae9b4ae8c2382a98d3fede24",
+          "flags": "0x5, RVC, double-float ABI",
+          "interpreter_present": false,
+          "machine": "RISC-V",
+          "readelf_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/fluidanimate-ec-readelf.txt",
+          "readelf_sha256": "22233316bf0f04a015c67ecb46c52815c0d7b8a68f41472866260a436ecfed47",
+          "selected_symbols": {
+            "timer_flags": {
+              "address": "0x80412b40",
+              "bytes": 256,
+              "offset_in_64byte_line": 0
+            },
+            "workload_prepare": {
+              "address": "0x80001060",
+              "bytes": 272,
+              "offset_in_64byte_line": 32
+            },
+            "workload_run": {
+              "address": "0x80001170",
+              "bytes": 8,
+              "offset_in_64byte_line": 48
+            },
+            "workload_verify": {
+              "address": "0x80001178",
+              "bytes": 740,
+              "offset_in_64byte_line": 56
+            }
+          },
+          "symbol_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/fluidanimate-ec-symbols.txt",
+          "symbol_evidence_sha256": "96cf5fabee5712dfdb64891303fb07c24805b343d3781de534a69cd7665ca1ce"
+        },
+        "native": {
+          "arch": "\"rv64i2p0_m2p0_a2p0_f2p0_d2p0_c2p0\"",
+          "elf_class": "ELF64",
+          "elf_hash_matches": true,
+          "elf_sha256": "81d98bde4be58ab47782cfdd302252d7cc89c732aa2b526c3258b3c5e9ae104a",
+          "flags": "0x5, RVC, double-float ABI",
+          "interpreter_present": false,
+          "machine": "RISC-V",
+          "readelf_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/fluidanimate-native-readelf.txt",
+          "readelf_sha256": "33cfb1ab9a13e5fee965ab7fd379b1a67174081a4b5da6acd1e9e486a218793f",
+          "selected_symbols": {
+            "timer_flags": {
+              "address": "0x80412400",
+              "bytes": 256,
+              "offset_in_64byte_line": 0
+            },
+            "workload_prepare": {
+              "address": "0x80000a40",
+              "bytes": 272,
+              "offset_in_64byte_line": 0
+            },
+            "workload_run": {
+              "address": "0x80000b50",
+              "bytes": 8,
+              "offset_in_64byte_line": 16
+            },
+            "workload_verify": {
+              "address": "0x80000b58",
+              "bytes": 740,
+              "offset_in_64byte_line": 24
+            }
+          },
+          "symbol_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/fluidanimate-native-symbols.txt",
+          "symbol_evidence_sha256": "bd74c934acfaa18aa1d4effa9fa99dfea18bdbc607e61a6c75b08766821aed3f"
+        }
+      },
+      "pair_abi_match": true,
+      "remaining_layout_confound": true,
+      "same_elf": false,
+      "shared_objects_bound": 8,
+      "shared_objects_hash_match": true
+    },
+    {
+      "benchmark": "dedup",
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "manifest": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/dedup_serial_htif_buffer16m_preloaded/manifest.json",
+      "manifest_sha256": "ad49c7aa70c2e810fe254a3e68b8f2a081d893905fe30165406a1060f92c0383",
+      "modes": {
+        "ec": {
+          "arch": "\"rv64i2p0_m2p0_a2p0_f2p0_d2p0_c2p0\"",
+          "elf_class": "ELF64",
+          "elf_hash_matches": true,
+          "elf_sha256": "8ccd5d13bc0b50feba14d33e24b1400e80e109035d0e4839033ad2e63c0ed366",
+          "flags": "0x5, RVC, double-float ABI",
+          "interpreter_present": false,
+          "machine": "RISC-V",
+          "readelf_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/dedup-ec-readelf.txt",
+          "readelf_sha256": "43cc30acbb0dea6f059f708a4ab18427d6def3fbfb883ee358623a69f1f945e2",
+          "selected_symbols": {
+            "timer_flags": {
+              "address": "0x800d0700",
+              "bytes": 256,
+              "offset_in_64byte_line": 0
+            },
+            "workload_prepare": {
+              "address": "0x800017fc",
+              "bytes": 244,
+              "offset_in_64byte_line": 60
+            },
+            "workload_run": {
+              "address": "0x800018f0",
+              "bytes": 8,
+              "offset_in_64byte_line": 48
+            },
+            "workload_verify": {
+              "address": "0x800018f8",
+              "bytes": 156,
+              "offset_in_64byte_line": 56
+            }
+          },
+          "symbol_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/dedup-ec-symbols.txt",
+          "symbol_evidence_sha256": "d9f048fd42eed6301ca28ea7980a175a848d0ac0e026eb0d2319409d2a0a0218"
+        },
+        "native": {
+          "arch": "\"rv64i2p0_m2p0_a2p0_f2p0_d2p0_c2p0\"",
+          "elf_class": "ELF64",
+          "elf_hash_matches": true,
+          "elf_sha256": "a99aa71eb18f2ecf976c0756a20f495ea4d2647b14f4925441c4e3f767c98761",
+          "flags": "0x5, RVC, double-float ABI",
+          "interpreter_present": false,
+          "machine": "RISC-V",
+          "readelf_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/dedup-native-readelf.txt",
+          "readelf_sha256": "c76061b3078601e49889bd3190bd91d29bed05dcac6a181d9e9c120242c25dea",
+          "selected_symbols": {
+            "timer_flags": {
+              "address": "0x800d0000",
+              "bytes": 256,
+              "offset_in_64byte_line": 0
+            },
+            "workload_prepare": {
+              "address": "0x80001208",
+              "bytes": 244,
+              "offset_in_64byte_line": 8
+            },
+            "workload_run": {
+              "address": "0x800012fc",
+              "bytes": 8,
+              "offset_in_64byte_line": 60
+            },
+            "workload_verify": {
+              "address": "0x80001304",
+              "bytes": 156,
+              "offset_in_64byte_line": 4
+            }
+          },
+          "symbol_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/dedup-native-symbols.txt",
+          "symbol_evidence_sha256": "590613e7e585c67ca467b5c8cd603044f4987381b5593d8948de481ffd0136e5"
+        }
+      },
+      "pair_abi_match": true,
+      "remaining_layout_confound": true,
+      "same_elf": false,
+      "shared_objects_bound": 18,
+      "shared_objects_hash_match": true
+    },
+    {
+      "benchmark": "swaptions",
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "manifest": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/swaptions_no_main_timer/manifest.json",
+      "manifest_sha256": "bd2cf6256523cef23985c14d9237ed3397e4b351dd7deb6d8dbee8a4f8d268fa",
+      "modes": {
+        "ec": {
+          "arch": "\"rv64i2p0_m2p0_a2p0_f2p0_d2p0_c2p0\"",
+          "elf_class": "ELF64",
+          "elf_hash_matches": true,
+          "elf_sha256": "fc2d69170b895a30be54cb5c44fdf91a47fcce1673c55a7a710022719803e692",
+          "flags": "0x5, RVC, double-float ABI",
+          "interpreter_present": false,
+          "machine": "RISC-V",
+          "readelf_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/swaptions-ec-readelf.txt",
+          "readelf_sha256": "8d3a34236bf02659c0df4943ab534f58855c2411341895ee3af03f8ab226bc9e",
+          "selected_symbols": {
+            "timer_flags": {
+              "address": "0x80042bc0",
+              "bytes": 256,
+              "offset_in_64byte_line": 0
+            },
+            "workload_prepare": {
+              "address": "0x800027b0",
+              "bytes": 720,
+              "offset_in_64byte_line": 48
+            },
+            "workload_run": {
+              "address": "0x80002a80",
+              "bytes": 32,
+              "offset_in_64byte_line": 0
+            },
+            "workload_verify": {
+              "address": "0x80002aa0",
+              "bytes": 220,
+              "offset_in_64byte_line": 32
+            }
+          },
+          "symbol_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/swaptions-ec-symbols.txt",
+          "symbol_evidence_sha256": "583f65723df3077ef68efb94bff9a673e1fff13fb7425dbe043de92c16e8853a"
+        },
+        "native": {
+          "arch": "\"rv64i2p0_m2p0_a2p0_f2p0_d2p0_c2p0\"",
+          "elf_class": "ELF64",
+          "elf_hash_matches": true,
+          "elf_sha256": "f26eacbab2e98fe4b16f25a72d526a3a901c6cb6f2aa17f80d9bec78d4c1f43c",
+          "flags": "0x5, RVC, double-float ABI",
+          "interpreter_present": false,
+          "machine": "RISC-V",
+          "readelf_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/swaptions-native-readelf.txt",
+          "readelf_sha256": "6bdbc99318d4198ba0a3741787a4b21634fc2439b4b9ddedc7cbc6d803b0c77e",
+          "selected_symbols": {
+            "timer_flags": {
+              "address": "0x800424c0",
+              "bytes": 256,
+              "offset_in_64byte_line": 0
+            },
+            "workload_prepare": {
+              "address": "0x80002190",
+              "bytes": 720,
+              "offset_in_64byte_line": 16
+            },
+            "workload_run": {
+              "address": "0x80002460",
+              "bytes": 32,
+              "offset_in_64byte_line": 32
+            },
+            "workload_verify": {
+              "address": "0x80002480",
+              "bytes": 220,
+              "offset_in_64byte_line": 0
+            }
+          },
+          "symbol_evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/swaptions-native-symbols.txt",
+          "symbol_evidence_sha256": "b61ed4230400908ef569eaa7026ab1ddd8970d10ca1f26c087239cff66fbe1e5"
+        }
+      },
+      "pair_abi_match": true,
+      "remaining_layout_confound": true,
+      "same_elf": false,
+      "shared_objects_bound": 16,
+      "shared_objects_hash_match": true
+    }
+  ]
+}

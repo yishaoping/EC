@@ -1,0 +1,28 @@
+{
+  "baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "command": [
+    "/usr/bin/spike",
+    "-p1",
+    "-m1024",
+    "--isa=rv64gc_zicntr_zihpm",
+    "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/dedup_serial_htif_buffer16m_preloaded/native.riscv"
+  ],
+  "created_utc": "2026-11-12T07:35:51.021733+00:00",
+  "functional_only": true,
+  "host_archive_independent_zlib_validation": {
+    "archive_sha256": "ab9bf7b4774aeb77becf6e7a0e72bb6b361e4a95d671ac832b14e931b75822d6",
+    "input_sha256": "dc122cd797e76d1e0b07efe6262829098581816f1727d9a883bd4052a4e659ef",
+    "method": "Python zlib decoder reconstructs archive payload and compares exact bytes with original official test input",
+    "passed": true
+  },
+  "limitation": "Instruction counts are functional diagnostics; Spike cycles are not timing measurements. Changed buffer/preloaded-table software profile.",
+  "log": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/dedup-buffer16-preloaded-functional.log",
+  "log_sha256": "3d87031e5fc46a436e22309dab634fa87a6ce583f14176ba8d47066cfff046bc",
+  "manifest_sha256": "ad49c7aa70c2e810fe254a3e68b8f2a081d893905fe30165406a1060f92c0383",
+  "passed": true,
+  "performance_sample": false,
+  "roi_instructions": 344184,
+  "table_address": "0x8000fb80",
+  "table_progbits_zero_bytes": 786536,
+  "table_sha256": "b836b9039a76b0df28651f7a35e665f838543659801b1fcc02fa535490d9c1cd"
+}

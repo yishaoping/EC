@@ -1,0 +1,61 @@
+{
+  "benchmark": "ferret",
+  "checks": {
+    "bound_elf": true,
+    "bound_manifest": true,
+    "complete_binding_hash": true,
+    "complete_result_hash": true,
+    "completion_integrity_receipt_hash": true,
+    "functional_baseline": true,
+    "gzip_sha256": true,
+    "model_binary": true,
+    "raw_app_cycles_and_instructions": true,
+    "raw_bytes": true,
+    "raw_output_and_end": true,
+    "raw_roi_csr_and_cycles": true,
+    "raw_sha256": true,
+    "raw_timer_policy": true,
+    "strict_event_evidence_hashes": true,
+    "unique_roi_app_irq_markers": true
+  },
+  "fingerprint": {
+    "binary": "cc2993bd8c6f56893afd9e73cc358684c07c481a52ef8eb50dc7a136134b2867",
+    "binding": "4c47980e4203be0d8aa93ae0692d8f5bd7d5eaf6b0864203d66ed92fd9d8a1ef",
+    "completion": "93c53df5dd2484d3637ba5853d61c48cd9e34ec51ddbf956127b98a58cc3915c",
+    "elf": "3f146fa19394860cf025f3f66073ea7ec4a0598b28a05849f5e2e7a8b4e4a71d",
+    "gzip_sha256": "b753e1de6f3224b2282d03357c58abe44ec15586eea05c7854567a9c05494e05",
+    "integrity": "6bec8cf7962cd90f4534784a19bb2f0e6737a24b8da7cec81ec447fc2c842ff2",
+    "manifest": "405432eeb8961669cd7fe2ac11e9542728db1157278d3c54f86b07ce261c3f86",
+    "result": "2f9296b94555eebe2d5391d5de6458b9746357af03651de876854e40d65c075f",
+    "script": "1730e4e3539d718318d3092233953ca75473974f45c59a2fd2e58f264cfc3722",
+    "strict_evidence": {
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/ferret-real-test-emd-distance-matrix-126-pairs-ec-r3/external-events.jsonl": "f268ecb7fe0059e3657adf59dd052424907b14c8d5142b2d11b51d5efa694cc4",
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/ferret-real-test-emd-distance-matrix-126-pairs-ec-r3/rtl-prints-1": "c4e4128c039d99ab434320371fb7b5a31ff144cf7de3294e356f97618fa4007f",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-acceptance-strict-r1-20261111/analyze.py": "78403531ae11adce3d36160df38f50336eef04def839bce92ddf00be41175048",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24"
+    }
+  },
+  "mode": "ec",
+  "passed": true,
+  "raw_bytes": 323974469,
+  "result": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/ferret-real-test-emd-distance-matrix-126-pairs-ec-r3/result.json",
+  "result_sha256": "2f9296b94555eebe2d5391d5de6458b9746357af03651de876854e40d65c075f",
+  "svb_examples": [
+    "SVB_ENTRY_ALLOC cycle=000000000003eeab entry=0 line=0080003e40 seq=00000001 generation=00003665 epoch=002f state=SPEC",
+    "SVB_SAFE cycle=0000000000041472 entry=0 line=0080003e40 seq=00000001 generation=00003665 epoch=002f watermark=00000001",
+    "SVB_PROMOTION_SELECT cycle=0000000000041472 entry=00 line=0080003e40 seq=00000001 generation=00003665 state=WB_WAIT safe=1",
+    "SVB_C_FIRE cycle=0000000000041474 first=1 last=0 entry=00 line=080003e40 seq=00000001 generation=00003665 source=6",
+    "SVB_C_FIRE cycle=000000000004147a first=0 last=1 entry=00 line=080003e40 seq=00000001 generation=00003665 source=6",
+    "SVB_COMPLETION cycle=0000000000041485 entry=00 line=0080003e40 seq=00000001 generation=00003665 state=FREE"
+  ],
+  "svb_lifecycle_evidence": null,
+  "svb_limitation": "Raw audit counts labels only; per-key lifecycle analysis is separate",
+  "svb_printed_records": {
+    "SVB_COMPLETION": 4,
+    "SVB_C_FIRE": 8,
+    "SVB_ENTRY_ALLOC": 4,
+    "SVB_PROMOTION_SELECT": 4,
+    "SVB_SAFE": 4,
+    "WB_BLOCK": 1
+  }
+}

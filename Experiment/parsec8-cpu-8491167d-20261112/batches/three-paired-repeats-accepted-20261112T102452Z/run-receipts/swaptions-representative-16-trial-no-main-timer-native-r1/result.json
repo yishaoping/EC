@@ -1,0 +1,48 @@
+{
+  "application_rows": [
+    "[ROI] hart=0 start=74982 stop=242219 cycles=167237",
+    "[IRQ] policy=main_timer_disabled before=0 after=0 mie=8",
+    "[OUTPUT] benchmark=swaptions checksum=55492b07f66a17df verified=1 swaptions=1 trials=16 seed=1979",
+    "[APP] protected=0 start=74982 end=242219 cycles=167237 instret=157123 session_stop=242219",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "swaptions",
+  "binding_sha256": "16fc0fccbedb2cc2c1a4530a9704266af7effac72c38e3c92d85d54ae4c41713",
+  "completed_utc": "2026-11-12T04:20:51.263655+00:00",
+  "drain_cycles": null,
+  "faults": [],
+  "full_rollback_latency_cycles": null,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_seconds": 121.95737786497921,
+  "interrupt_policy": {
+    "check": "[IRQ] before/after timer_flags and mie; no main timer increment inside ROI",
+    "checker_harts": "unchanged frozen firmware",
+    "main_hart_timer": "MTIE cleared before workload_prepare in both modes"
+  },
+  "interrupt_policy_verified": true,
+  "manifest_sha256": "bd2cf6256523cef23985c14d9237ed3397e4b351dd7deb6d8dbee8a4f8d268fa",
+  "method": "CPU_GG_REPRESENTATIVE_TEST_PROFILE",
+  "mode": "native",
+  "output": [
+    "benchmark=swaptions checksum=55492b07f66a17df verified=1 swaptions=1 trials=16 seed=1979"
+  ],
+  "profile": "representative-16-trial-no-main-timer",
+  "raw_log_sha256": "3df0295e8aebc43ebf04aa0c56f26b610c0bf1966897686e250044246114b847",
+  "repeat": 1,
+  "returncode": 0,
+  "roi_cycles": 167237,
+  "roi_end_csr": 242219,
+  "roi_instructions": 157123,
+  "roi_start_csr": 74982,
+  "run_dir": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/swaptions-representative-16-trial-no-main-timer-native-r1",
+  "software_correct": true,
+  "status": "PASS",
+  "stop_cause": null,
+  "strict_acceptance": null,
+  "strict_acceptance_error": null,
+  "strict_detection_latency_cycles": null,
+  "svb_events": null,
+  "total_fastest_target_cycles": 354002,
+  "valid": true
+}

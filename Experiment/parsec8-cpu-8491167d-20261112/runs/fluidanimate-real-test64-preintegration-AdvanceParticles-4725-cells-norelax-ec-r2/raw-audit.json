@@ -1,0 +1,61 @@
+{
+  "benchmark": "fluidanimate",
+  "checks": {
+    "bound_elf": true,
+    "bound_manifest": true,
+    "complete_binding_hash": true,
+    "complete_result_hash": true,
+    "completion_integrity_receipt_hash": true,
+    "functional_baseline": true,
+    "gzip_sha256": true,
+    "model_binary": true,
+    "raw_app_cycles_and_instructions": true,
+    "raw_bytes": true,
+    "raw_output_and_end": true,
+    "raw_roi_csr_and_cycles": true,
+    "raw_sha256": true,
+    "raw_timer_policy": true,
+    "strict_event_evidence_hashes": true,
+    "unique_roi_app_irq_markers": true
+  },
+  "fingerprint": {
+    "binary": "cc2993bd8c6f56893afd9e73cc358684c07c481a52ef8eb50dc7a136134b2867",
+    "binding": "80fd14cd0fef70261573033fd3c93cf60a028dbf53def530c741d3cf212bac52",
+    "completion": "75800225997a6a45ed7dd3c630483feb13822650f774edfa5115957d8e462f45",
+    "elf": "cb2d894d754a4ef0a1b8bd52a2650a0eb30cd3a1ae9b4ae8c2382a98d3fede24",
+    "gzip_sha256": "15ca331ecac9028f3e1614b7248e628926600b6403d79d19cab366b780bdad96",
+    "integrity": "656d46ef335e4d9f4268a2c959ce6a4772e73c16bcae611f1a20e91ad2363a2a",
+    "manifest": "5f09584bf189aed6a3cb289583dd66a4b7fb58e294a674eaf5211d7586e2c5eb",
+    "result": "88d37004977c512e025d29c2f12a38a5e51b227f32d12750d47e6065c12552c6",
+    "script": "1730e4e3539d718318d3092233953ca75473974f45c59a2fd2e58f264cfc3722",
+    "strict_evidence": {
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-real-test64-preintegration-AdvanceParticles-4725-cells-norelax-ec-r2/external-events.jsonl": "c66ff0be7575e2282365c855aec5a35b12c3ba3b55526d12d7df2c0aacf291b6",
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-real-test64-preintegration-AdvanceParticles-4725-cells-norelax-ec-r2/rtl-prints-1": "5a1b236be53a0191b996d4d802488efeb168fb4b5b957fa5df75b3c164dbe505",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-acceptance-strict-r1-20261111/analyze.py": "78403531ae11adce3d36160df38f50336eef04def839bce92ddf00be41175048",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24"
+    }
+  },
+  "mode": "ec",
+  "passed": true,
+  "raw_bytes": 652328580,
+  "result": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/fluidanimate-real-test64-preintegration-AdvanceParticles-4725-cells-norelax-ec-r2/result.json",
+  "result_sha256": "88d37004977c512e025d29c2f12a38a5e51b227f32d12750d47e6065c12552c6",
+  "svb_examples": [
+    "SVB_ENTRY_ALLOC cycle=00000000000a6817 entry=0 line=0080161f80 seq=00000004 generation=000039e5 epoch=0003 state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=00000000000a6830 entry=1 line=0080161e00 seq=00000004 generation=000039e3 epoch=0003 state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=00000000000a6fa9 entry=2 line=00801a6e00 seq=00000005 generation=00003a27 epoch=0003 state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=00000000000a6fbd entry=3 line=00801a6d40 seq=00000005 generation=00003a29 epoch=0003 state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=00000000000a6fcf entry=4 line=00801a6c80 seq=00000005 generation=00003a25 epoch=0003 state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=00000000000a762c entry=5 line=00801ebb00 seq=00000006 generation=00003a51 epoch=0003 state=SPEC"
+  ],
+  "svb_lifecycle_evidence": null,
+  "svb_limitation": "Raw audit counts labels only; per-key lifecycle analysis is separate",
+  "svb_printed_records": {
+    "SVB_COMPLETION": 8,
+    "SVB_C_FIRE": 16,
+    "SVB_ENTRY_ALLOC": 8,
+    "SVB_PROMOTION_SELECT": 8,
+    "SVB_SAFE": 8,
+    "WB_BLOCK": 5
+  }
+}

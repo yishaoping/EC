@@ -1,0 +1,61 @@
+{
+  "benchmark": "freqmine",
+  "checks": {
+    "bound_elf": true,
+    "bound_manifest": true,
+    "complete_binding_hash": true,
+    "complete_result_hash": true,
+    "completion_integrity_receipt_hash": true,
+    "functional_baseline": true,
+    "gzip_sha256": true,
+    "model_binary": true,
+    "raw_app_cycles_and_instructions": true,
+    "raw_bytes": true,
+    "raw_output_and_end": true,
+    "raw_roi_csr_and_cycles": true,
+    "raw_sha256": true,
+    "raw_timer_policy": true,
+    "strict_event_evidence_hashes": true,
+    "unique_roi_app_irq_markers": true
+  },
+  "fingerprint": {
+    "binary": "cc2993bd8c6f56893afd9e73cc358684c07c481a52ef8eb50dc7a136134b2867",
+    "binding": "ea2257eeb0b5efea47d7f767a8500b976d19b1e419fd54891c3cd2ac3da69363",
+    "completion": "0a6b74b05939a0fb5772131bce628e0a8b54884dffb57ec6c49cb1227ad3bbc5",
+    "elf": "2cb476723e23f39efefd22e9f563865b544bab943b944aaddc62ec5d9bef949d",
+    "gzip_sha256": "57020c2b4489e59aad2f15ad4118d977b4af3a999b8c84214688a04262073e87",
+    "integrity": "844e4b470ee12bac351f46d2ae12b9ae4f02a954683aa48a955814d13a014d74",
+    "manifest": "37727df9bcafa3ab45cf7689d22053ae1c4fb09c039eadea815d24bec1594625",
+    "result": "e9ac7bf8337e4e5232171d58f32e84745457b13c5c6ac07454b400d1d4a75bb4",
+    "script": "1730e4e3539d718318d3092233953ca75473974f45c59a2fd2e58f264cfc3722",
+    "strict_evidence": {
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/freqmine-test-input-hot4-lp64-quiet-roi-ec-r3/external-events.jsonl": "fba896cc7f95cca98ac44affe3579d2d502f6e40ddbd8a950fda9d3a855588e3",
+      "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/freqmine-test-input-hot4-lp64-quiet-roi-ec-r3/rtl-prints-1": "38b8b3af6cb9825d1d0ccaa23a0ffdb0678a255b98f7667fba922af64030d8d8",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-acceptance-strict-r1-20261111/analyze.py": "78403531ae11adce3d36160df38f50336eef04def839bce92ddf00be41175048",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24"
+    }
+  },
+  "mode": "ec",
+  "passed": true,
+  "raw_bytes": 871902768,
+  "result": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/freqmine-test-input-hot4-lp64-quiet-roi-ec-r3/result.json",
+  "result_sha256": "e9ac7bf8337e4e5232171d58f32e84745457b13c5c6ac07454b400d1d4a75bb4",
+  "svb_examples": [
+    "SVB_ENTRY_ALLOC cycle=0000000000016978 entry=0 line=008187a180 seq=00000001 generation=00000e22 epoch=0003 state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=000000000001763f entry=1 line=008187a480 seq=00000002 generation=0000113a epoch=0003 state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=00000000000178f4 entry=2 line=008801de40 seq=00000001 generation=00000d8c epoch=0003 state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=0000000000017927 entry=3 line=008801de00 seq=00000001 generation=00000d51 epoch=0003 state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=0000000000017944 entry=4 line=0081879e80 seq=00000001 generation=00000bd0 epoch=0003 state=SPEC",
+    "SVB_ENTRY_ALLOC cycle=00000000000179c6 entry=5 line=008187a2c0 seq=00000002 generation=00000f88 epoch=0003 state=SPEC"
+  ],
+  "svb_lifecycle_evidence": null,
+  "svb_limitation": "Raw audit counts labels only; per-key lifecycle analysis is separate",
+  "svb_printed_records": {
+    "SVB_COMPLETION": 1041,
+    "SVB_C_FIRE": 2082,
+    "SVB_ENTRY_ALLOC": 1053,
+    "SVB_PROMOTION_SELECT": 1041,
+    "SVB_SAFE": 1053,
+    "WB_BLOCK": 437
+  }
+}

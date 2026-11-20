@@ -1,0 +1,158 @@
+{
+  "created_utc": "2026-11-12T04:50:43.867035+00:00",
+  "method": "Spike ISA functional smoke only, never a timing model",
+  "rows": [
+    {
+      "benchmark": "swaptions",
+      "command": [
+        "/usr/bin/spike",
+        "-p1",
+        "-m256",
+        "--isa=rv64gc",
+        "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/swaptions_no_main_timer/native.riscv"
+      ],
+      "elf_sha256": "f26eacbab2e98fe4b16f25a72d526a3a901c6cb6f2aa17f80d9bec78d4c1f43c",
+      "functional_only": true,
+      "log": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/swaptions-representative-16-trial-no-main-timer-spike-native.log",
+      "log_sha256": "d962bc90ae8bc1366624be97ffc28462a8722e2ea858d322450d52b48d419b21",
+      "output_pass": false,
+      "performance_sample": false,
+      "profile": "representative-16-trial-no-main-timer",
+      "returncode": null,
+      "timeout": true
+    },
+    {
+      "benchmark": "freqmine",
+      "command": [
+        "/usr/bin/spike",
+        "-p1",
+        "-m256",
+        "--isa=rv64gc",
+        "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/freqmine_serial_htif_heap128/native.riscv"
+      ],
+      "elf_sha256": "c5c73c9f8239f6b64660f2ef285a1219a3c6115eacf0eb45c0f46777f7d800f7",
+      "functional_only": true,
+      "log": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/freqmine-official-test-serial-no-main-timer-heap128-spike-native.log",
+      "log_sha256": "d962bc90ae8bc1366624be97ffc28462a8722e2ea858d322450d52b48d419b21",
+      "output_pass": false,
+      "performance_sample": false,
+      "profile": "official-test-serial-no-main-timer-heap128",
+      "returncode": null,
+      "timeout": true
+    },
+    {
+      "benchmark": "fluidanimate",
+      "command": [
+        "/usr/bin/spike",
+        "-p1",
+        "-m256",
+        "--isa=rv64gc",
+        "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/fluidanimate_serial_htif/native.riscv"
+      ],
+      "elf_sha256": "1428bbdbfdf938719c3f6ac8973d6b3d53b35e3b1b7548491faa862aa7c1a244",
+      "functional_only": true,
+      "log": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/fluidanimate-test-derived-64-particles-no-main-timer-spike-native.log",
+      "log_sha256": "ce04d58ea4a2713507b52606e15d01e106df195fdebcbf7d7dbab41ee5dab157",
+      "output_pass": false,
+      "performance_sample": false,
+      "profile": "test-derived-64-particles-no-main-timer",
+      "returncode": 1,
+      "timeout": false
+    },
+    {
+      "benchmark": "blackscholes",
+      "command": [
+        "/usr/bin/spike",
+        "-p1",
+        "-m256",
+        "--isa=rv64gc",
+        "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/blackscholes_no_main_timer/native.riscv"
+      ],
+      "elf_sha256": "85e5044382e87bdc95a4aaada99c6473aa4d2ea6b7e2c182fec4a1f7829f89dd",
+      "functional_only": true,
+      "log": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/blackscholes-project64-one-iteration-no-main-timer-spike-native.log",
+      "log_sha256": "d962bc90ae8bc1366624be97ffc28462a8722e2ea858d322450d52b48d419b21",
+      "output_pass": false,
+      "performance_sample": false,
+      "profile": "project64-one-iteration-no-main-timer",
+      "returncode": null,
+      "timeout": true
+    },
+    {
+      "benchmark": "streamcluster",
+      "command": [
+        "/usr/bin/spike",
+        "-p1",
+        "-m256",
+        "--isa=rv64gc",
+        "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/streamcluster_representative/native.riscv"
+      ],
+      "elf_sha256": "eb027cc798a27f99fd799a3df5e77e50a6922c63442dc33f002373978eeba25c",
+      "functional_only": true,
+      "log": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/streamcluster-representative-16-points-no-main-timer-spike-native.log",
+      "log_sha256": "d962bc90ae8bc1366624be97ffc28462a8722e2ea858d322450d52b48d419b21",
+      "output_pass": false,
+      "performance_sample": false,
+      "profile": "representative-16-points-no-main-timer",
+      "returncode": null,
+      "timeout": true
+    },
+    {
+      "benchmark": "bodytrack",
+      "command": [
+        "/usr/bin/spike",
+        "-p1",
+        "-m256",
+        "--isa=rv64gc",
+        "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/bodytrack_serial_htif/native.riscv"
+      ],
+      "elf_sha256": "583e029b0821cbc5e2b2b19c8bd577a5fb470ef2c5568770383bf8bc28f4f954",
+      "functional_only": true,
+      "log": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/bodytrack-real-frame0-likelihood-measurement-replay-spike-native.log",
+      "log_sha256": "d962bc90ae8bc1366624be97ffc28462a8722e2ea858d322450d52b48d419b21",
+      "output_pass": false,
+      "performance_sample": false,
+      "profile": "real-frame0-likelihood-measurement-replay",
+      "returncode": null,
+      "timeout": true
+    },
+    {
+      "benchmark": "ferret",
+      "command": [
+        "/usr/bin/spike",
+        "-p1",
+        "-m256",
+        "--isa=rv64gc",
+        "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/ferret_serial_htif/native.riscv"
+      ],
+      "elf_sha256": "f8df81981904075d09cc03b254c10168a78008a2935057f044289490ff00916e",
+      "functional_only": true,
+      "log": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/ferret-real-test-first-emd-warm-replay-spike-native.log",
+      "log_sha256": "d962bc90ae8bc1366624be97ffc28462a8722e2ea858d322450d52b48d419b21",
+      "output_pass": false,
+      "performance_sample": false,
+      "profile": "real-test-first-emd-warm-replay",
+      "returncode": null,
+      "timeout": true
+    },
+    {
+      "benchmark": "dedup",
+      "command": [
+        "/usr/bin/spike",
+        "-p1",
+        "-m256",
+        "--isa=rv64gc",
+        "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/software/dedup_serial_htif/native.riscv"
+      ],
+      "elf_sha256": "3a53dc3a0addd1ad7f88c998648edd827bdb95e811002191a2bc8067f5ba6a9f",
+      "functional_only": true,
+      "log": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/audit/dedup-official-test-gzip-serial-no-main-timer-spike-native.log",
+      "log_sha256": "d962bc90ae8bc1366624be97ffc28462a8722e2ea858d322450d52b48d419b21",
+      "output_pass": false,
+      "performance_sample": false,
+      "profile": "official-test-gzip-serial-no-main-timer",
+      "returncode": null,
+      "timeout": true
+    }
+  ]
+}

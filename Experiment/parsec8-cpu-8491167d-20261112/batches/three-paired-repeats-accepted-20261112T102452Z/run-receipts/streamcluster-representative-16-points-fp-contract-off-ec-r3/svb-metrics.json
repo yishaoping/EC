@@ -1,0 +1,109 @@
+{
+  "benchmark": "streamcluster",
+  "complete_matched_lifetimes": 1893,
+  "errors": [],
+  "event_counts": {
+    "SVB_COMPLETION": 1893,
+    "SVB_C_FIRE": 3786,
+    "SVB_ENTRY_ALLOC": 1896,
+    "SVB_PROMOTION_SELECT": 1893,
+    "SVB_SAFE": 1896
+  },
+  "fingerprint": {
+    "raw_integrity": "b669fb4e338eef9895a41b435e5aff76d988405dec903c06648c476828e23803",
+    "script": "4ba69e86ea08eae2ac5ed77d768a012aeb7e7d5383a833060f0a1233fc32166c",
+    "source": "27362c56925b674288d37039c749ec9fbdd1a2e62141aac6d072022fd4d60885"
+  },
+  "lifetime_csv": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/streamcluster-representative-16-points-fp-contract-off-ec-r3/svb-lifetimes.csv",
+  "lifetime_csv_sha256": "e3c68d40c36a974526e3ab825306d5d57bf2cdd9f37a3cb3dbf9793b3580fb4f",
+  "limitations": [
+    "Per-key matched completed lifetimes only, including pre/post ROI checker software traffic",
+    "Reallocated uncompleted entries may have been safely coalesced; absent coalescing event is not fabricated",
+    "No payload comparison inferred from these labels; not strict checker detection or rollback latency"
+  ],
+  "method": "Observed full-key capture/select/C-first/C-last/matching-ACK event join",
+  "paper_row": {
+    "benchmark": "streamcluster",
+    "complete_matched_lifetimes": 1893,
+    "errors": 0,
+    "evidence": "/data1/gzh/EC/Experiment/parsec8-cpu-8491167d-20261112/runs/streamcluster-representative-16-points-fp-contract-off-ec-r3/svb-metrics.json",
+    "mean_capture_to_ack": 5761.671949286846,
+    "mean_promotion_to_ack": 88.58531431590069,
+    "pending_entries": 0,
+    "profile": "representative-16-points-fp-contract-off",
+    "repeat": 3,
+    "roi_capture_count": 1896,
+    "roi_complete_matched_lifetimes": 1893,
+    "roi_matched_ack_tail": 5799,
+    "roi_mean_capture_to_ack": 5761.671949286846,
+    "roi_superseded_entries": 3,
+    "superseded_entry_reallocations": 3
+  },
+  "passed": true,
+  "raw_log_sha256": "6ab7811c7e3516c85e4b245eb611c5416483ce348e3d8f564c2489e30ed6417c",
+  "roi_capture_count": 1896,
+  "roi_capture_matched_ack_tail": 5799,
+  "roi_capture_stats": {
+    "capture_to_ack": {
+      "maximum": 8636,
+      "mean": 5761.671949286846,
+      "median": 5894,
+      "minimum": 495,
+      "n": 1893,
+      "p95": 6983
+    },
+    "last_c_to_ack": {
+      "maximum": 93,
+      "mean": 75.23137876386687,
+      "median": 76,
+      "minimum": 11,
+      "n": 1893,
+      "p95": 76
+    },
+    "promotion_to_ack": {
+      "maximum": 178,
+      "mean": 88.58531431590069,
+      "median": 84,
+      "minimum": 19,
+      "n": 1893,
+      "p95": 109
+    }
+  },
+  "roi_complete_matched_lifetimes": 1893,
+  "roi_end_csr": 783047,
+  "roi_start_csr": 173219,
+  "roi_superseded_entries": 3,
+  "roi_tail_limitation": "Last matching ACK among captured-and-completed ROI keys only; missing/coalesced keys and payload validation preclude inferring architectural or full SVB drain",
+  "roi_unmatched_current_entries": 0,
+  "source_generated_rtl": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/FireSim-generated.sv",
+  "source_generated_rtl_sha256": "27362c56925b674288d37039c749ec9fbdd1a2e62141aac6d072022fd4d60885",
+  "stats": {
+    "capture_to_ack": {
+      "maximum": 8636,
+      "mean": 5761.671949286846,
+      "median": 5894,
+      "minimum": 495,
+      "n": 1893,
+      "p95": 6983
+    },
+    "last_c_to_ack": {
+      "maximum": 93,
+      "mean": 75.23137876386687,
+      "median": 76,
+      "minimum": 11,
+      "n": 1893,
+      "p95": 76
+    },
+    "promotion_to_ack": {
+      "maximum": 178,
+      "mean": 88.58531431590069,
+      "median": 84,
+      "minimum": 19,
+      "n": 1893,
+      "p95": 109
+    }
+  },
+  "superseded_entry_reallocations": 3,
+  "timebase": "BOOM CSR cycle supplied as io_diagnosticCycle; all endpoints from same generated target logs",
+  "unmatched_current_entries": 0
+}

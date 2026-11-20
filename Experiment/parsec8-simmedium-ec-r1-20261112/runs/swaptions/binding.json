@@ -1,0 +1,208 @@
+{
+  "args": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-external-observer-r2-20261111/VFrozenOpt4Observed",
+    "+permissive",
+    "+max-cycles=1000000000000",
+    "+fesvr-step-size=1000",
+    "+mm_readLatency_0=30",
+    "+mm_readMaxReqs_0=4",
+    "+mm_relaxFunctionalModel_0=0",
+    "+mm_writeLatency_0=30",
+    "+mm_writeMaxReqs_0=4",
+    "+heartbeat-polling-interval=1000",
+    "+uart-in0=/data1/gzh/EC/Experiment/parsec8-simmedium-ec-r1-20261112/runs/swaptions/uart.in",
+    "+uart-out0=/data1/gzh/EC/Experiment/parsec8-simmedium-ec-r1-20261112/runs/swaptions/uart.log",
+    "+print-file=/data1/gzh/EC/Experiment/parsec8-simmedium-ec-r1-20261112/runs/swaptions/rtl-events-",
+    "+permissive-off",
+    "+prog0=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/C4-firmware-20261107T050324.283642Z/platform/generic/firmware/fw_payload.elf"
+  ],
+  "contract": {
+    "app_sha256": "cbc20875411af1c2bd2aa2173f4ad73163df67498594e0e6acbe311430758a52",
+    "apps_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/swaptions-preallocated-apps-build.json",
+    "benchmark": "swaptions",
+    "case": {
+      "algorithm_unchanged": true,
+      "argv": [
+        "-ns",
+        "32",
+        "-sm",
+        "20000",
+        "-nt",
+        "1"
+      ],
+      "diagnostic_roi_syscalls": [],
+      "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-preallocated-20261107T050149Z/diagnostic-simmedium/trace.log",
+      "fpga_validation": "NOT_RUN",
+      "heap_preallocation_bytes": 33554432,
+      "input": "simmedium",
+      "input_archives": {},
+      "input_files": {},
+      "input_generation": "original deterministic seed1979",
+      "program": "swaptions",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-preallocated-20261107T050149Z/reference-simmedium/validation.txt": "0c4033c2965f42b0759d50334032a14bf3d5d254858e598e2b82307228b15b4f"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/swaptions/parsec/simmedium.runconf",
+      "runconf_sha256": "acf18b236d1cff30793514f44cb753c8d43cf7c1256812295d23f13d09933927",
+      "software_reference": "QEMU_RISCV_USER_ONLY",
+      "threads": 1,
+      "validation": {
+        "kind": "stdout_prefix_hash",
+        "prefix": "Swaption ",
+        "reference": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-preallocated-20261107T050149Z/reference-simmedium/validation.txt",
+        "reference_sha256": "0c4033c2965f42b0759d50334032a14bf3d5d254858e598e2b82307228b15b4f"
+      },
+      "warmups": 0
+    },
+    "cross_backend_slowdown_admission": "PENDING_FULL_TARGET_CONFIGURATION_AND_RUNTIME_COUNTER_CHECKS",
+    "fdt": {
+      "bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+      "command": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/dtc",
+        "-I",
+        "dts",
+        "-O",
+        "dtb",
+        "-p",
+        "4096",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dts"
+      ],
+      "configuration": "C4",
+      "dts": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dts",
+      "dts_sha256": "3551cc6bb2f3dd19fc716bdea11db8db4343080af7e35da921cd99100d271210",
+      "elaboration_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-elaborate-20261106T100250.032318Z/result.json",
+      "elaboration_result_sha256": "4284a54a160a374491cd0050611ba35719df94d896faf8b4667f66691407e3ac",
+      "fdt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb",
+      "firmware_checker_harts": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "isa_normalization": [
+        {
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm",
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm"
+        },
+        {
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket",
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket"
+        },
+        {
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket",
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket"
+        },
+        {
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket",
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket"
+        },
+        {
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket",
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket"
+        }
+      ],
+      "linux_harts": [
+        0
+      ],
+      "linux_mem_cap": 2147483648,
+      "linux_profile_sha256": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1",
+      "normalizer_sha256": "cdc93d5c3bd0f2f013eb5029a1addb1a0c53a4e72b8f23ebbe814439cbc4a59e",
+      "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-build.json",
+      "parent_receipt_sha256": "a92f79fb153318e3ade9f1531d9ee48ea97f9e1aee8005814ff2f159543782c5",
+      "phase": "fdt",
+      "profile": "matched-guest-mem2g-phys36-canonical-isa",
+      "returncode": 0,
+      "runtime_validation": "NOT_RUN",
+      "schema": "ec-firesim-fdt/1",
+      "sha256": "c712fed367c0b57d9a1ed9f6e53688861a646f3732654b253131ff6e8953dda6",
+      "source_dts": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-elaborate-20261106T100250.032318Z/firesim.firesim.FireSim.dts",
+      "source_dts_sha256": "abe88f0748a092c769cdc5c4b402fed7471500f5c93e01d1a90ad42652458ee9",
+      "target_boom_hz": 200000000,
+      "target_checker_hz": 100000000,
+      "target_memory_base": 2147483648,
+      "target_memory_bytes": 17179869184
+    },
+    "firmware": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/C4-firmware-20261107T050324.283642Z/platform/generic/firmware/fw_payload.elf",
+    "firmware_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/swaptions-preallocated-firmware-build.json",
+    "firmware_sha256": "1303f3fe79aaced854ece5304430edb6930cf0aa7c8f4b0ab733a4b064694e7d",
+    "input": "simmedium",
+    "method": "CPU_GOLDENGATE_FULL_EC_LINUX_SIMMEDIUM",
+    "mode": "ec",
+    "native_archives": [
+      {
+        "contract_checks": {
+          "bootargs": true,
+          "case": true,
+          "elf": true,
+          "frequency": true,
+          "linux_memory": true,
+          "memory_model": true,
+          "rootfs": true,
+          "threads": true
+        },
+        "method": "ARCHIVED_NATIVE_FPGA",
+        "repeat": 1,
+        "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-swaptions-simmedium-r1-20261107T051114Z/result.json",
+        "result_sha256": "de0847bd072660078dafc77d62f4d81d716d6d5ef0052bf324676f997d15fd5b",
+        "roi_cycles": 4870809991,
+        "software_contract_matches": true
+      },
+      {
+        "contract_checks": {
+          "bootargs": true,
+          "case": true,
+          "elf": true,
+          "frequency": true,
+          "linux_memory": true,
+          "memory_model": true,
+          "rootfs": true,
+          "threads": true
+        },
+        "method": "ARCHIVED_NATIVE_FPGA",
+        "repeat": 2,
+        "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-swaptions-simmedium-r2-20261107T051708Z/result.json",
+        "result_sha256": "fdff31a744aee260656ec7f59713044dd59d7be6fd8933991937a01c9b6f2804",
+        "roi_cycles": 4870171180,
+        "software_contract_matches": true
+      },
+      {
+        "contract_checks": {
+          "bootargs": true,
+          "case": true,
+          "elf": true,
+          "frequency": true,
+          "linux_memory": true,
+          "memory_model": true,
+          "rootfs": true,
+          "threads": true
+        },
+        "method": "ARCHIVED_NATIVE_FPGA",
+        "repeat": 3,
+        "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-swaptions-simmedium-r3-20261107T052301Z/result.json",
+        "result_sha256": "f03db8a82467d9f8d189ca8d2a5d4709821ea6feab6a4f5a374e7a1d8330c35a",
+        "roi_cycles": 4870239106,
+        "software_contract_matches": true
+      }
+    ],
+    "preflight": "PASS_SOFTWARE_INPUT_MEMORY_FREQUENCY_CONTRACT",
+    "profile": "swaptions-preallocated",
+    "repeat": 1,
+    "roi_counter": "same hardware marker-to-marker target ticks; no wall-clock proxy",
+    "rootfs_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/swaptions-preallocated-rootfs-build.json",
+    "rootfs_sha256": "3ad3b2916296e8dbe074998f0249a1c77fc2f45bff3ac60045231830cd1fe70a"
+  },
+  "cpu_affinity": [
+    201
+  ],
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "input": "simmedium",
+  "inputs_sha256": "d9fc85996780deaf4bc0f1691b14a99bd89e47b11968694062e804aadceb96ae",
+  "mode": "ec",
+  "model_sha256": "cc2993bd8c6f56893afd9e73cc358684c07c481a52ef8eb50dc7a136134b2867",
+  "repeat": 1,
+  "runner_sha256": "9d7571a812cc4c36c9df29473e08802f6ad9177b6b3853cc9984bbb966b73dbb",
+  "started_utc": "2026-11-12T12:19:53.114579+00:00"
+}
