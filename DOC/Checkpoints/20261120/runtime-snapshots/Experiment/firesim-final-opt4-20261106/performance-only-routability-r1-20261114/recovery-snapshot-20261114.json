@@ -1,0 +1,76 @@
+{
+  "observed_utc": "2026-11-14T02:15:29.855543+00:00",
+  "profile": "Performance-Only",
+  "frozen_full_ec": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "performance_baseline": "6fada307bb77be90b39720d3f95404fece0e431b",
+  "production_candidate": "6e1e9b966d599c442b3bdf2f3a838aae2ee5c6da",
+  "workflow_commit": "f230cea",
+  "model_requests": false,
+  "fpga_access": false,
+  "units": {
+    "ec-performance-only-routability-r3-20261114.service": "active",
+    "ec-performance-only-routability-targeted-r4-20261114.service": "active",
+    "ec-performance-only-memory-cdc-full-r3-20261114.service": "active"
+  },
+  "physical_state": {
+    "baseline_preserved": true,
+    "candidates": [],
+    "child_pid": 1678629,
+    "child_started_utc": "2026-11-14T01:05:36.495502+00:00",
+    "current_candidate": "muxf-remap-spread-r1",
+    "disk_free_gib": 134.71914291381836,
+    "elapsed_seconds": 4170.2327433719765,
+    "fpga_access": false,
+    "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "hardware_commit": "6fada307bb77be90b39720d3f95404fece0e431b",
+    "model_requests": false,
+    "phase": "Phase 2.5 Global Placement Core",
+    "pid": 1678628,
+    "profile": "EC Performance-Only: data preservation + cache isolation",
+    "schema": "ec-performance-only-routability-campaign/1",
+    "started_utc": "2026-11-14T01:05:36.073414+00:00",
+    "status": "RUNNING_MUXF-REMAP-SPREAD-R1",
+    "tcl_sha256": "d34c9bea16d5759264622ca164b6a21e10b38887fdee6efb865bedc8ead68173",
+    "updated_utc": "2026-11-14T02:15:06.728776+00:00"
+  },
+  "full_memory_state": {
+    "profile": "EC Performance-Only: same-capacity memory-backed GHM data queues",
+    "hardware_commit": "6e1e9b966d599c442b3bdf2f3a838aae2ee5c6da",
+    "functional_baseline": "6fada307bb77be90b39720d3f95404fece0e431b",
+    "full_PALIMPSEST": false,
+    "fpga_access": false,
+    "model_requests": false,
+    "status": "RUNNING_COMPLETE_SHELL_POSTOPT",
+    "utc": "2026-11-14T02:14:57.451915+00:00",
+    "queue_instances": 4,
+    "child_pid": null
+  },
+  "module_formal": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-memory-cdc-r2-20261114/formal-r4/result.json",
+  "module_area": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-memory-cdc-r2-20261114/area-r1/state.json",
+  "new_full_shell_lut": null,
+  "new_route_metrics": null,
+  "bitstream": null,
+  "capacity_part": "xcu280-fsvh2892-2L-e",
+  "capacity_lut": 1303680,
+  "baseline_failure": {
+    "postopt_lut": 1023687,
+    "fully_routed": 741299,
+    "routable": 1790138,
+    "resource_conflicts": 1048839,
+    "overlapping_nodes": 2702263,
+    "wns_ns": -19.489,
+    "tns_ns": -5276071.5
+  },
+  "clock_constraint_findings": {
+    "TIMING-4": "internal primary clock clk_wiz_0/inst/clk_in1 redefines upstream DDR generated clock",
+    "TIMING-27": "same primary created on hierarchical pin",
+    "TIMING-54": "two scoped PCIe async clock-group warnings; preserve actual clock domains and verify corrected scope before certification",
+    "goldengate_clock_contract": "real linked BUFG paths, 19.998ns host period, original setup/hold 1/0 and 2/1; no RTL frequency change"
+  },
+  "next_actions": [
+    "Complete existing placement; skip route if actual Level8 recurs; finite SLR and hotspot remap alternatives",
+    "Complete equivalent memory-backed full host, new DUT synthesis and real full-shell postopt using frozen shell IPs",
+    "Enter physical implementation only on actual resource gate; strict route, setup/hold, DRC and clock gates before bitstream"
+  ],
+  "full_memory_cad_status": "RUNNING_DUT_SYNTH"
+}

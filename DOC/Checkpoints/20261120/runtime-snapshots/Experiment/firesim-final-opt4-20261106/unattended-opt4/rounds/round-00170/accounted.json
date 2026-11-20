@@ -1,0 +1,50 @@
+{
+  "result": {
+    "changed_files": [
+      "area-sprint-20261112/round-00170.json",
+      "area-sprint-20261112/latest.json",
+      "area-sprint-20261112/LATEST.md"
+    ],
+    "evidence": [
+      "Query-bank PASS: 8,192 cycles, 23,584 unchanged next-state bit cones, 88 queries bound to SAT proof.",
+      "Production target PASS: 6,144 cycles; invalid-payload mutation rejected.",
+      "Delta CSA rejected: 304,755 \u2192 312,163 LUTs.",
+      "Mixed-host compiler regression PASS: 261 valid circuits and five negative loops."
+    ],
+    "launched_jobs": [
+      "common-query-bank-closure-r1",
+      "address-banked-production-host-r2",
+      "address-banked-production-area-pair-r2",
+      "common-stats-host-r5"
+    ],
+    "next_action": "Consume production and mixed-host token/area receipts, plus original DSP and DCache maps. Preserve exact source bindings and certification gates.",
+    "outcome": "PROGRESS",
+    "retry_after_seconds": 300,
+    "summary": "Completed query-bank validation and launched diagnosed host recoveries. No FIT: latest complete shell uses 2,478,437 LUTs, exceeding capacity by 1,174,757. No certified complete-EC bitstream."
+  },
+  "utc": "2026-11-12T20:45:30.567468+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 114510,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "32676494"
+    },
+    "cpu_ticks": 3,
+    "ended_utc": "2026-11-12T20:45:15.478216+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 114509,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00170",
+    "rss_bytes": 13570048,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "32676490",
+    "started_utc": "2026-11-12T20:24:04.510250+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-12T20:45:15.476280+00:00"
+  }
+}

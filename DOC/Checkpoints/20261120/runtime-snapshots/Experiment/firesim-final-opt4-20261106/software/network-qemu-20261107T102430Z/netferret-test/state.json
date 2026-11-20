@@ -1,0 +1,108 @@
+{
+  "binaries": {
+    "client/client": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/client/client",
+      "sha256": "49fbb065693669423f9504e1621f32aa54bf2f3fd81454130b1ca8b058a6aa7e"
+    },
+    "server/parsec/bin/ferret-pthreads": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server/parsec/bin/ferret-pthreads",
+      "sha256": "5dcb5d7d64c3d27e04bf0d25df016078f38df2df001e3b31fb7d23f57f9917ad"
+    }
+  },
+  "children": {
+    "client": {
+      "cmdline": "nice -n 15 /usr/bin/qemu-riscv64 -strace /data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/client/client queries 1 output.txt ",
+      "pid": 2267479,
+      "process_state": "R",
+      "start_ticks": "1522899"
+    },
+    "server": {
+      "cmdline": "nice -n 15 /usr/bin/qemu-riscv64 -strace /data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server/parsec/bin/ferret-pthreads corel lsh 5 5 1 ",
+      "pid": 2267481,
+      "process_state": "R",
+      "start_ticks": "1522899"
+    }
+  },
+  "client_argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/client/client",
+    "queries",
+    "1",
+    "output.txt"
+  ],
+  "correctness": {
+    "method": "all input query names returned; numerical reference comparison remains pending",
+    "passed": false,
+    "queries": 1,
+    "results": 1
+  },
+  "ended_utc": "2026-11-07T10:24:31.826387+00:00",
+  "exit_codes": {
+    "client": 0,
+    "server": 0
+  },
+  "formal_eligible": false,
+  "fpga_run": false,
+  "host_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "input": "test",
+  "input_archive": {
+    "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inputs/input_test.tar",
+    "sha256": "197f8146b1abd0eb2165a1c91764780f947a20c536724f384314e2f006af65f4"
+  },
+  "mapping_note": "simmedium invokes original simlarge for netstreamcluster; netdedup candidate separates server/client flags and uses unchanged formal archive",
+  "namespaces": {
+    "ipc": "ipc:[4026535478]",
+    "mnt": "mnt:[4026534855]",
+    "net": "net:[4026535481]"
+  },
+  "output": {
+    "bytes": 164,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102430Z/netferret-test/work/output.txt",
+    "sha256": "7b36706f34542ca98e7c83c379224336809b3e293e96df83a4616c533a0ff8cc"
+  },
+  "pid": 2267450,
+  "private_ipc_namespace": true,
+  "private_mount_namespace": true,
+  "private_network_namespace": true,
+  "program": "netferret",
+  "roi": "Original application hook sites; diagnostic writes only, no checker claim",
+  "roi_diagnostic": {
+    "begin_seen": true,
+    "end_seen": true,
+    "source": "server.log; diagnostic marker writes remain visible",
+    "syscall_counts": {
+      "brk": 8,
+      "clock_gettime": 1321,
+      "clock_nanosleep": 7790,
+      "clone": 10,
+      "close": 3,
+      "exit": 5,
+      "futex": 80,
+      "madvise": 5,
+      "mmap": 27,
+      "mprotect": 27,
+      "munmap": 25,
+      "newfstatat": 2,
+      "openat": 4,
+      "read": 1,
+      "rt_sigprocmask": 36,
+      "sched_setaffinity": 10,
+      "shmat": 2,
+      "shmget": 2,
+      "write": 4
+    },
+    "time_base": "host QEMU trace order only; no target cycles or checker latency"
+  },
+  "schema": "ec-network-qemu-case/1",
+  "server_argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server/parsec/bin/ferret-pthreads",
+    "corel",
+    "lsh",
+    "5",
+    "5",
+    "1"
+  ],
+  "source_receipt_sha256": "410cc47a1e165729e3f0616841d2104560fc6a68c642b9daaf07e71a32abf0d3",
+  "start_ticks": "1522892",
+  "status": "PROTOCOL_COMPLETED_REFERENCE_PENDING",
+  "wall_seconds": 0.5910614429994894
+}

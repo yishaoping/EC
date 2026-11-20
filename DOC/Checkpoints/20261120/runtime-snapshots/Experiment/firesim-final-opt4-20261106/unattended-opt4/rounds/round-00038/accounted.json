@@ -1,0 +1,50 @@
+{
+  "result": {
+    "changed_files": [
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mt-channel-audit-round38-v1-20261111/controller.py",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-mcrams-parity-round38-v1-20261111/controller.py",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/seal-round38-v1-20261111.py",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-round38-two-route-evidence-v1-20261111/REPORT.md",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-round38-two-route-evidence-v1-20261111/changed-files.json"
+    ],
+    "evidence": [
+      "Clock audit PASS: all 24 conflicting channel pairs have identical payloads and wire-identical clocks; independently checked 218 Clock-port references. Six unsafe cases rejected. No repair applied.",
+      "Full frozen MCRams compilation completed; same-ELF Canneal comparison started with verified controller and child identities.",
+      "9ae remains NOT FIT: 2,847,382 LUT, excess 1,543,702. Existing e0 synthesis, module maps and component CAD/follower preserved.",
+      "Full Opt4 deadline risk remains HIGH; approximately 20.92 hours remained at sealing. No new FPGA sample."
+    ],
+    "launched_jobs": [
+      "ec-opt4-auto-mt-channel-audit-r38-v2-8491167d.service: COMPLETE, exit 0",
+      "ec-opt4-auto-full-mcrams-parity-r38-v1-8491167d.service: RUNNING"
+    ],
+    "next_action": "Adopt the running MCRams comparison after 300 seconds and inspect exact captured events, ROI, total target cycles and host resources. Prepare isolated clock-metadata repair using the saved proof while preserving live CAD.",
+    "outcome": "PROGRESS",
+    "retry_after_seconds": 300,
+    "summary": "Completed the clock-alias audit and launched frozen MCRams Canneal comparison. Both routes continue; Native remains paused."
+  },
+  "utc": "2026-11-11T11:57:56.260388+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 4184749,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "20755536"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-11T11:57:44.175620+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 4184748,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00038",
+    "rss_bytes": 13471744,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "20755533",
+    "started_utc": "2026-11-11T11:17:14.931461+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-11T11:57:44.173528+00:00"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "result": {
+    "changed_files": [
+      "Experiment/firesim-final-opt4-20261106/status-audits/round126-r5-authoritative-status-20261112/receipt.json",
+      "Experiment/firesim-final-opt4-20261106/status-audits/round126-r5-authoritative-status-20261112/r5-E-vivado.log",
+      "Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00126/final.json"
+    ],
+    "evidence": [
+      "Immutable round126 receipt SHA256: 286208679df988becf8c9ec42befe15adbf47d5dc93d296b89b5af708def13f8.",
+      "All three r5 services match live boot_id, start_ticks 26961211, and exact service cgroups; all are active/running.",
+      "E log SHA256: 2446a7bc4137b26a6244ab4f20593c3313a982c74892634f5e620010246f7903. Private unroute succeeded; 4 nets and 52 cells were replicated; Vivado remains in Phase 4.1 with no final result.",
+      "No FPGA I/O, duplicate CAD, whole CAD, or bound input/source mutation occurred."
+    ],
+    "launched_jobs": [],
+    "next_action": "After at least 300 seconds, re-read all three r5 states first and revalidate identities/cgroups. Let E finish; on failure allow conditional F, or on success continue certification then 21-only directed and same-bit replay.",
+    "outcome": "WAITING_ACTIVE_JOB",
+    "retry_after_seconds": 300,
+    "summary": "Captured authoritative round126 evidence while the existing r5 E route remains active."
+  },
+  "utc": "2026-11-12T05:27:42.410426+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 2733073,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "27211425"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-12T05:27:36.608954+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 2733072,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00126",
+    "rss_bytes": 13574144,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "27211422",
+    "started_utc": "2026-11-12T05:13:13.819592+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-12T05:27:36.607213+00:00"
+  }
+}

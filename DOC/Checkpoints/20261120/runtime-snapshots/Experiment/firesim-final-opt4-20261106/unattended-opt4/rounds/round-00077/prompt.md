@@ -1,0 +1,3676 @@
+# Current two-route override 2026-11-11T09:55:39.235693+00:00
+
+9ae wholepostopt2847382LUT/90740CARRY8/195DSP NOTFIT gap1543702, originalfulltarget CannealPASS136packages; RAM and originalSVB GGcycletracePASS; adopt followr3 and componentFPGAprep-r2.
+Read campaign-policy.json latest_postopt_capacity, foreground_request_for_next_worker and latest_execution_report. Earlier claims below that9ae is still running or postoptunknown are historical. Preserve livee0/modulejobs. Native paused, no newtargetfeatures,21-only. Full MCRams transform/localtests are not completeOpt4 equivalence/FIT. Adopt all existing state-bound routeA jobs instead of duplicates.
+
+# Sole objective: frozen-equivalent Opt4 area implementation and real FPGA experiments
+
+The latest explicit user instruction supersedes ALL earlier architectural recovery
+approvals, contracts and prompts. Read U/campaign-policy.json before every action.
+The ONLY functional baseline is final Opt4 commit
+8491167d84b6d9521b151a743673c1516926a1f8, v1Config, C4, SVB32,
+L2 report-permission repair. Preserve every existing EC, checker, fault handling,
+rollback, drain, instrumentation and cycle-semantic behavior of that exact version.
+All RTL changes must be functionally AND cycle-equivalent area optimizations.
+No new architecture, new recovery, changed experiment parameters or reduced checks.
+
+W=/data1/gzh/EC/firesim/final-opt4-20261106
+D=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106
+U=D/unattended-opt4
+Artifacts, logs, candidate commits, failures and raw results are immutable evidence.
+Do not modify frozen tag/source, other sessions, or live task inputs.
+
+## Stop the revoked functional branch
+
+Independent architectural-recovery a4477d72, e4a9d517, 24633f1a and descendants
+are preserved ONLY. Do not develop, validate, merge, synthesize, deploy or make
+them an admission/success prerequisite. No PackageRecoveryController/State/Memory
+or other new feature may enter the area branch. All old recovery decision files
+are historical and revoked; lack of a new full architectural rollback interface
+must not block original-scheme bitstream or experiments. Validate only behavior
+already present in frozen Opt4; document limits honestly without extending it.
+
+## Actual current implementation and capacity evidence
+
+KEEP 9ae9a7fcf231a75259e23973b12a93896a443cbb whole DUT synthesis alive.
+W/Opt4-fit-address-bucket-tag-r3-20261111; source ID
+3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561.
+State D/Opt4-fit-bucket-tag-cad-state.json, service
+ec-opt4-auto-bucket-tag-cad-r1-9ae9a7fc.service. Do not duplicate or restart.
+It is still DUT synthesis: latest complete whole resource report is predecessor
+8da24a26 post-opt: 3,215,683 LUT / 92,789 CARRY8 / 195 DSP,
+U280 limits 1,303,680 / 162,960 / 9,024. NOT FIT, LUT excess 1,912,003.
+This predecessor completed and naturally stopped before placement; preserve it.
+Do not call 9ae FIT until its actual report exists. Even eliminating predecessor
+address stats completely still leaves about646,512 LUT excess: optimize MSHRFile,
+BOOM/L2 memories/dynamic indexing and repeated wide mux/reduction logic as well.
+
+The live build already reuses11 shell IP DCPs, skips irrelevant functional
+netlist export, does real top link/zero blackbox/opt capacity gate and then
+place/route/timing/DRC/bitstream. FIT -> advance immediately, no extra area work.
+NOT FIT -> preserve actual reports, rank inclusive hierarchy without double
+counting and integrate largest VERIFIED gains on an independent next commit.
+Module/composed equivalence, real-size reset/overflow and frozen full-module
+cycle comparisons are required before expensive whole admission. A proof timeout
+or one failed candidate never stops the iteration. Do not repeat no-gain whole
+syntheses or stack candidates without composed verification. One whole DUT
+synthesis at a time; do not interrupt effective CAD for log silence alone.
+
+## Current useful area-only candidates and evidence
+
+9ae complete address module measured990,905 LUT. Newly completed00847dc2
+(address-update-share-r2) is VERIFIED_AND_MAPPED_MODULE_ONLY:872,880 LUT,
+30,842 CARRY8,384,373 FF,216 BRAM,0 DSP. That is118,025 LUT (11.91%)
+less than9ae address, not a measured whole-system saving. Prior990,230 candidate
+is now superseded in ranking. Inspect exact source-bound proof and full-module
+comparison receipts; prepare a composition with proven f2 SVB on a separate
+commit, perform combined verification and early RTL/runtime preparation while
+current9ae synthesis continues. After9ae actual NOT FIT, use real reports and
+verified composed candidates for the next whole build; continue substantial
+MSHRFile/BOOM/L2 storage optimization to close the remaining million-LUT gap.
+Read latest actual module rankings and states, never estimated local savings.
+The f2d2ca3e SVB selector composition is an AREA-ONLY child of9ae, not the revoked
+recovery extension: source-bound combined proof, full127-output/4096-cycle actual
+SVB comparison, frozen parameter/class-origin checks and GoldenGate passed.
+D/Opt4-fit-svb-system-r2-state.json; W/candidates/svb-tree-cad-r1-20261111/build.py.
+Do not launch another whole solely for its small selector gain against a large
+gap; combine only with materially larger verified equivalent candidates.
+51a2bd25 result-memory storage proof uses actual256 sets x2 ways,512 entries,
+2R1W async storage: proof-r4 passed local SAT/mutation/8192-cycle and DCache
+typecheck. Full frozen DCache comparison is still required; no whole admission.
+Adopt latest mapping continuation receipts, do not resurrect superseded jobs.
+27f7e7d6 replicated sequence and c4b5820d barrier event-read candidates need
+actual complete-module/map evidence. Existing controller/child identity wins;
+never launch a duplicate because a summary says a job is not running.
+
+## Persistent CPU broker and recovery
+
+This round is one worker of the existing SSH-independent systemd supervisor.
+Do not spawn other AI agents or nested Codex sessions. Do useful RTL/proof/map/
+composed-build preparation each round, not just a status plan.
+Normal queries >=300 seconds, whole builds >=600 where practical. Use existing
+snapshot/state/exit receipts and incremental log tails; do not rescan /proc or
+recompute large hashes repeatedly. Continuous logging is done by controllers.
+Adopt live PID+start_ticks+boot_id (including child). Resume exact successful
+stage outputs after confirmed exit only. Preserve failure evidence and use a
+versioned recovery controller; never blind-retry or overwrite a partial stage.
+Bound input hashes and retain source/config/generated RTL/software/result IDs.
+
+Write versioned controllers under W and submit atomic U/requests/<unique>.json:
+{"action":"cpu_job","spec":{"name":"unique-lowercase-version",
+"kind":"proof|module|rtl|cad|analysis","cwd":"absolute path under W",
+"argv":["/usr/bin/python3","/absolute/versioned/controller.py"],
+"inputs":{"/absolute/controller.py":"sha256","actual source/config":"sha256"},
+"outputs":["absolute final receipt"],"checkpoints":["absolute state"]}}
+Use ONE kind. CPU jobs are independent enabled systemd services. Check request
+receipt STARTED/ADOPTED and actual PID; DEFERRED is only queued. Eight ordinary
+jobs; up to two light proof/analysis/RTL auxiliaries only with >=256GiB available
+and load<96. Whole >=96GiB memory/150GiB disk; module >=48GiB/40GiB. Retain single
+whole synthesis rule. Do not lower guards or oversubscribe. Preserve live scripts,
+supervisor, launcher, driver safety and other sessions. Safe tool fixes use new
+versioned scripts and verified checkpoints. A new scope policy must be obeyed.
+
+## Certification and real experiments
+
+Native and unrelated software remain PAUSED. 13 ordinary PARSEC exact-paired
+software already prepared in runtime/Opt4-fit-9ae9a7fc/software-suite.json.
+Use the same Native ELF/input/thread/ROI, including fluidanimate-stable-formal.
+Do not rebuild or replace valid software unnecessarily or lower output/checker
+requirements. Formal r1 coverage first, then r2/r3; skip app-specific failure.
+
+Only 0000:21:00.0 / 21770433G02LA. Never touch e2, global driver/reload/reset/
+rescan, enumeratefpgas, reboot or firmware. No FPGA I/O from the AI worker.
+Only existing certified runtime services started through the broker may deploy,
+at a safe boundary without another task on21. Source/ABI/timing/DRC/capacity and
+bitstream binding must actually pass. Existing native service must stay paused.
+
+W/runtime-candidates/<commit-prefix>.json pins commit, source_id, profile,
+worktree, cad_state, rtl_state, state_prefix, BDF and serial. Submit existing
+prepare_runtime then start_runtime requests; latter remains DEFERRED until true
+certification. Reuse driver ONLY if all7 real generated ABI files match exactly;
+otherwise rebuild driver and make a separate source-bound receipt. Never alter
+receipts to fake compatibility. Equivalent original-scheme smoke/checker/drain/
+correct output first, then13 ordinary PARSEC r1. Atomic results with complete
+version/hash binding. No new functional recovery implementation gate.
+
+Runtime unavailability, NOT FIT, failed proof, physical implementation failure,
+software limit or transport outage NEVER stop the area iteration. Save evidence,
+try another equivalent approach, continue. On certified FIT stop unnecessary
+optimization and prioritize implementation/deployment. Only a real valid formal
+Opt4 FPGA sample satisfies success; services/submitted jobs are not results.
+
+Preserve original stdout/stderr, checkpoint manifests and candidate versions.
+Do not inspect or print credentials. The configured provider transport is owned
+by the existing launcher; report external outages and keep independent CAD jobs
+running. Finish each round with schema-compliant JSON and actual changed files,
+proof/map evidence, launched jobs and a concrete next safe action.
+
+## 2026-11-11 deadline parallel routes update
+
+The user now requires route A (cycle-precise host time-multiplexing/metasim/real trace evidence) in parallel with route B (full Opt4-fit). Same8491167d target function/cycle baseline; no extensions. Read campaign-policy parallel_evidence_routes and adopt all live route jobs; no duplicates or modifications. Foreground owns routes/cycleprecise-r2-20261111 and its services. Ten coreRF MemModel annotations DO exist; address/DCache extra arrays are not annotated. Do not repeat incorrect "no annotations" claim. Existing plain host config disables MCRams. MTModels only shares exact same emitted module; four specialized Rocket variants require proof before sharing. Actual512x64 4R2W GoldenGate library boundary maps97851->352LUT/1BRAM;8192cycles pluswritecollision/reset/backpressure/negative PASS,FMR6.86755. NOT completeDCache/whole. 512x81 35R1W model actual map ongoing. Preserve exactobservations/targetclocks/collision semantics. RouteA must produce independent evidence even if routeB notFIT. Native formal remains paused. Existing45NativeFPGA results audited separate; historicalprotectiondisabled checker-retaining Verilator baseline is not true singleBOOM Native, never mix. Report24h resource/risks using opt4-sprint-24h state. Significant structural optimizations only, no endless smallcandidate count.9ae/e0 originalwholes and d9/e211/fullpair modules remain untouched, no thirdwhole. FIT immediatecertified21only deployment, never e2/globaldriver operations.
+
+
+Latest two-route instruction 20261111T092117Z (original8491167d functional/cycle baseline only):
+Continue two routes independently, never duplicate active PID/start/boot_id-bound jobs. Actual completed route-A results: GoldenGate RAM library512x64 4R2W97851->352LUT,512x81 35R1W388931->3289LUT, both8192targetcycles/conflicts/resets/backpressure+negativePASS; local boundary only, no whole gain inference. Same exact targetFIR metasim Plain vs MCRams:2240full81bit valuesPASS each,free10000targetcycles FMR1.5016/38.0014 and59887.5/1604.79targetcycles/s (CPU,notFPGA). Adopt frozen-MCRams GG, freshfrozenCanneal fulltarget RTL replay, fullfrozenFireSim metasim compile (2CPU64G), exactoriginalSVB simulation16cases333cycles+area and SVB-GG wrapper/metasim services. Each has state/receipt in parallel_evidence_routes; do not restart/modify liveinputs. SVBr2 stale test falsely required SPEC flush discard; frozen source retains SPEC. r3 corrects test to verify retained immutable payload, later PASS promotion and exactACK/drain; no RTL changes. Preserve all priorfailure evidence. No architectural restart claim or implementation. Once SVB-GG metasim passes, independently compare every required original output/cycle, measure actual host resource and shell ABI. Prepare standalone component shell using only matching11IP DCPs, capacity/timing/DRC/cert guards and21-only existing deployment service; label component synthetic/real-trace stimuli honestly. Existing SC32/37/38 logs hash payload only: need a complete real payload trace before claiming real-trace replay; use observer/testharness capture without modifying original target function/cycles. Do not directly operate FPGA from worker or override fullOpt4 admission. No new target function. Continue fullDCache3656 actualmap (reviewed module-only2CPU64G exception),d9/e211/maps and unique8d successor; no third expensive whole. Real9aeDUT physical2767600LUT/89672CARRY8/192DSP, gap1463920DUTalone,toppostoptpending; do not use LUT1-6 sum as packed count. 9ae phaseopt_design MIG/debug cores, e0 TimingOptimization. Reuse measured proofs/resources; target memory annotations10coreRF exist but majoraddress/DCache arrays unannotated, MT5annotatedtilevariants are not automatically shareable. Historic Native45valid FPGA samples/15programs are evidence-only, not resume. Three original fulltargetRTL event analyses have exact histograms, means/percentiles; strictcheckerDone-minusBOOMDone cannot be claimed from incompatible timebases or admission. At24h deadline issue measured FIT/highrisk finding plus separatelylabeled simulator evidence, continue both routes. Do not wait for a bitstream before producing routeA validated raw data.
+
+
+## P0 real EC data continuation 20261111T1305Z
+
+Read campaign-policy direct_p0_system_units and all latest route_a entries. Foreground now hands these services to existing persistent optimization rounds for monitoring and versioned failure recovery; original source/target/driver profiles remain frozen. Do not edit active input or launch duplicate CAD/metasim/board flows. Original SVB P0 route is active; independent spread from sealed opt DCP also active (2CPU254-255/64G), matching independent 21-only certificate/replay follower r2 installed, idle predecessor handoff guarded by both21locks, never signalCAD/liveFPGA. DCache real35R1W81+writtenmask and capture same target Plain/MC2,569cycles/178,857defined comparisons+mutationPASS; area2 directCPU250-251/64G active. Its legacy parse bug missesCLBLUTs* then readsSLR0: use mainCLBtable and independent analysis when complete, never claim0LUT or edit activeparser. Full GG Canneal completed536456ROIcycles/392248inst,131localenqPASS but BOOMaccept/drain stillunobserved; independent acceptedobserverr3 actualrun. FullMCRams sameELF/memory parity active. Original targetRTL485329ROIcycles/136PASS uses different DRAMsim; no cycleequivalence claim. r5 originalmodel/OFF/ON10kstartupPASS includes fixedfullSVBbinary62ports/101words,structure/mutationPASS; installedsystemtimer afterr3validcompletion submits singlefullsuccessor. Do not createusertimer(Linger=no), do not parallelsecondCanneal. CaptureoriginalcompleteSVBinput/outputstream and compareoriginalSVBRTL beforematchingFPGAreplay. P0 finalgoal realSVBFPGAdata independentfromfullOpt4; notfullPARSEC. P1 majoraddress/DCacheMCRamsneedsannotatedDefMemorytargettransitionequivalence and realarea; support fullOpt4e0 continues. Normalchecks>=300s and whole>=600s. Save raw data/hashes/failures and continue safeversionedCPUrecoveries. No e2,globalPCIe/XDMA,Native or newtargetfeatures.
+
+
+## P0 evidence continuation 20261111T1320Z
+
+Real paired DCache host-entry area DONE: authoritative corrected analysis (route_a.mcrams_real_entry_corrected_area) Plain405706LUT/65886FF/250CARRY8/0BRAM versus MC24192LUT/32721FF/250CARRY8/1.5BRAM;381514LUT94.037percent saved,not completeDCache/wholeFIT. Legacyarea0LUT invalid parser; preserve evidence/use correctedresult. First real complete-source ownerImageMemory-only fullGG annotation candidate being prepared by existing mcrams_audit; adopt its unique request/outputs, no duplicate candidate or fullCAD. OriginalSVB startup10krealGGtargetedges standaloneoriginalRTL replayPASS109989definedwordchecks,zero mismatch; directed512bitmutationrejected; zeroactualapplicationSVBevent in startup. Independent ec-opt4-original-svb-replay-r1-dispatch.timer actually installed/enabled, waits validfullr5trace withrealcapture/promotion then one fullCPUreplay. Do not rerunprepare. Areaanalysis systemtimer also installed,read-only total/hierarchy/primitive validation. CurrentSVBspreadphysical placecomplete setup+0.392hold-0.554ns is NOT timingPASS,physoptDCPsaved,routerunning; keep originalroute too. Both independent21onlyfollowers wait actualbit/cert. r3realBOOMacceptedobserver stillrunning, incomplete counts are notdrain. Aftercomplete validate allseq/hart/status then r5fulltrace automatic; fullr5then standaloneoriginalSVBreplay/realpayloadmutation, then hardware replay separately. ExistingfullMCRams parity stillrunning. Keep exacttarget/source hashes, nativepaused/no e2/globaldeviceactions. Runtime errors continue versioned recovery, not newtargetfeatures.
+
+
+## Immutable area and real owner GG 20261111T1329Z
+
+Area r1 finite timer disabled because it rewrote completed UTC/resultSHA. Use immutable area analysisr2 result/complete, stableSHA34fc766d60d2aa577050e88f9fa125ab04096ac3df91494ad8e308f047598e4c; repeatedcallrevalidates originalreceipts/reports/hostRTL/DCP and onlymonitorstatechanges. ec-opt4-mcrams-entry-area-analysis-r2.timer enabled. Owner-only full-systemGG actualSTARTED ec-opt4-auto-mcrams-owner-system-r1-3656aec4.service(controller950067,Java951341);adoptstate Opt4-mcrams-dcache-owner-system-r1-state.json, no duplicatefullGG. Source/targetFIRunaltered,all7450oldannotationspreserved+oneownerImageMemoryannotation,keep35/518/4/4readsandallreset/writebehavior. CompletepostbridgeDCachehashmustmatch beforehoststructurePASS;fulltargetparity/actualwholearea stillrequired.
+
+
+## P0/P1 actual handoff, 2026-11-11 22:08 CST (supersedes older running-r3 statements)
+
+Canneal r3 is COMPLETE, exact same ELF/model/FASED environment and original printf streams match: ROI536456cycles/392248inst,total1759002;131allocation/BEGIN/fullcompareRESULT/BOOMacceptedPASS exact joined,pending0,fail/cancel/errors0,ROI-after-acceptance tail332cycles. Read strict-acceptance-analysis-r1.json and acceptance-analysis.json. NOT FPGA; no samepackage BOOMexecutionDone so no strict checkerlatency or architectural restart claim. Different DRAMsim originaltargetRTL ROI485329 cannot be called cycle-equivalent.
+
+Real full SVB payload observer r5 is already RUNNING, preserve input/PID. Complete r5 -> standalone originalSVB full binary replay+mutation -> GG force-all stream r3 full replay+mutation -> board-admission-ready -> existing application-onboard-r1 systemservice. All prerequisite timers actually installed. Stream r1 badheader/r2 tokencache failures preserved; cache mode INVALID, +svb-force-all-inputs MANDATORY. Reuse existing compiled r2 guarded driver/model with r3 controller; no recompile of DUT or prepare rerun. Verify admission required_driver_args and measured-full-budget per_run_timeout_seconds. App follower never programs a card: waits already certified and directed-tested original component, matches exact latest-deployment bit/source/BDF, holds both21locks and reuses samebit. No authentic bitstream or FPGA sample exists yet. After real full application FPGA PASS, produce separately labelled exact-replay validated event metrics from bound original full payload stream; never relabel CPU-only observations before real hardware PASS.
+
+Blackscholes complete original project64 64options*100rounds CPU GG metasim is actually STARTED, service ec-opt4-auto-full-gg-blackscholes-observed-r1-8491167d; adopt existingstate/PID. Same original archive/acceptanceobserver and FASED30/max4; no recompile/shortenedROI. Preserve full gzipstdout+rawsha, actual checker join and proper correctness expected. It shares CPU0-1 with r5; host efficiency is separate, do not migrate/stop activeprocesses. Future newly-started jobs select nonconflicting CPU before launch. No more workloads until P0 critical traces are complete.
+
+Owner-only fullGG is now COMPLETE, original targetFIR+all annotations retained. Wrapper audit r2 failed because original GG rawSV hash precedes expected blackbox append; independent r3 has PASSED rawprefix+exactblackboxsuffix/finalhash binding and all35reads/singlewrite/518debug/reset targetstatements. Original failure preserved; do not rerun GG. Use mcrams-dcache-owner-audit-r3 result, not failedr2. Area remains entry-only405706->24192LUT, not fullDCache/whole. Adopt UNIQUE round43 owner-pair-compile request, not withdrawn duplicate owner-pair-metasim-r1. Runtime follower may start only with exact two valid compiled binary receipts. Generated ownerImageMemory_flattened OOC request already queued; honor resource gates. Neither is already PASS.
+
+SVB original and spread physical implementations both remain live, preserve inputs. Spread has75138overlaps after149114 (not timingPASS); existing original/spreadfollowers cover certified bitstream/21-only directedreplay. New independent post-route failure recovery/activeIdx forced physical replication being prepared by svb_physical; no third active route and no timing relaxation/RTLchanges. If either produces actual timed/DRC bitstream immediately use existing matching safe follower; no duplicate deployment. e0 fullOpt4 continues DUT TimingOptimization,no newcapacity. 9ae already NOTFIT2847382LUT/90740CARRY8/195DSP, gap1543702. Native paused,8491167d only,no e2/globaloperations or newtargetfeatures. Durable audit: /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/ec-real-data-20261111T140811Z/REPORT.md
+
+
+## 22:22 CST actual continuation update
+Frozen Plain vs existing10RF MCRams Canneal r38 COMPLETE PASS finitecapturedparity: ROI536456/392248inst, both targetprintstream SHAexact;262localchecker event values/cycles match; mutationchecks changedvalue/clockheader/missingrow/cycleshift rejected. Host8416.889s,FMR26.18 are host efficiency, not slowdown. No observedBOOMreleaseinthismodel, no fullformal/FPGAFIT. Newowner-only3656pair stillrequired.
+Unique compile is now mcrams-owner-pair-compile-r43-v2-3656aec4 (kindrtl; exactoriginalcontroller/inputs/outputpaths unchanged). v1notstarted hasbeen withdrawn withracechecks. Adopt singletonrecord, do notrecreatev1 orduplicatecompiles. v2DEFERREDauxiliarymemorymargin currently201.69GiB vs256gate, no guardlowering. Generatedwrapperarea stillordinaryqueue. ec-opt4-owner-runtime-r1-dispatch.timer is actuallyinstalled/enabled/triggered exit0, no compile; boundtimerlaunches runtimeonlyaftertwoexactbinariesandoldr38exit.
+Original SVB deterministic boundedphysicalrecoveries and certificatefollower nowinstalled, bothliveproducer checks reject correctly; no newCAD launched. Recovery onlytakesfailed/exitedproducersealedDCPafteremptycgroup, source/timeconstraint gates; no thirdcomponentroute. Recoveredcomponentapplicationfollower independentlyinstalled ec-opt4-original-svb-application-onboard-recovered-r1.service(PID1616391), onlyrecognizesrecoveredcomponentreceipt; existingappfollower recognizesoriginal/spread only, so no duplication. Both neverreflash. Do noteditactivesources/pins. Rootwillhandoffstrenghtenedcgroup guardindependentversion if needed; preserve allphysicaltasks.
+
+
+## 22:25 CST final deterministic recovery service handoff
+Strict SVB physical recovery r2 is actuallyinstalled: ec-opt4-svb-physical-recovery-r2-dispatch.timer activewaiting. Only purelightweight r1timer disabled after doublechecking all4oldworkersinactive/MainPID0 anddispatcherexited; no CAD/FPGA task stopped. r1sourcecapsule and alreadylive rootcertificate/applicationfollowers untouched. r2guardexplicitly checks/system.slice/<exactunit>/allcgroup.procs even ifsystemdControlGroupempty,neveruses UNKNOWNTasksCurrent as proof. Explicitfailed/exitedproducer -> sealedroutedDCPsetupholdrepair or sealedphysoptDCPforcedactiveIdxreplication. Uniqueoutputpervariant,1activerecovery/max2componentroutes,no newRTL/frequencychange. All4liveproducer checks currentlyrejectedandnoCADstarted. RecoveredboardfollowerPID1567664 and applicationreusefollowerPID1616391 are actualwaiting rootservices. Standard original/spread followers remainalive. Do notreinstall/restart them. Appfolloweridentificationsetsdisjoint,so winnerreusesbitwithoutduplicatedappreplay. Read strict-r2-installation.json/strict-r2-preflight.json and application-follower-preflight.json undercycleprecise-svb-postroute-recovery-r1. Continue P0livephysicalroute and r5trace; safeversionedrepairs onlyafter truefailure.
+
+
+This is round 77. Latest durable snapshot:
+{
+  "available_memory_gib": 381.18,
+  "board_allowlist": [
+    "0000:21:00.0"
+  ],
+  "free_disk_gib": 305.42,
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "loadavg": "20.04 22.15 25.07 19/19080 2277377",
+  "schema": "ec-opt4-unattended-snapshot/1",
+  "states": {
+    "Opt4-architectural-recovery-control-r3-state.json": {
+      "controller": {},
+      "hardware_commit": "24633f1a0333e9515a5b38dcfb38d4b23ca09082",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "RECOVERY_CONTROL_COMPONENT_PASS positive_transactions=64 negative_cases=10 accepted_command_is_not_completion=1 frozen_checkpoint_tokens=1 real_response_event_order=1 not_architectural_recovery=1\n",
+      "pid": 2089395,
+      "source_id": "c2cb9e37c8252c87e3f3d0252f093ddf88171fd7be4c205af25cd837d7ae7904",
+      "stage_log": {
+        "bytes": 196,
+        "mtime_ns": 1794363663693763189,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-control-r3-20261111/test.log"
+      },
+      "start_ticks": "17537522",
+      "status": "PASS_INITIAL_CONTROL_COMPONENT_NOT_FULL_ARCHITECTURAL_RECOVERY",
+      "updated_utc": "2026-11-11T02:21:03.730547+00:00",
+      "worker_processes": []
+    },
+    "Opt4-architectural-recovery-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "a4477d7241d80826f5d47a679fa05a2571d413c7",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "RECOVERY_CONTROL_COMPONENT_PASS positive_transactions=64 negative_cases=10 accepted_command_is_not_completion=1 frozen_checkpoint_tokens=1 real_response_event_order=1 not_architectural_recovery=1\n",
+      "pid": 2034045,
+      "source_id": "0078dfc1a5e18f456ebb820c68ca1cbbc7bd7b36a4a3fe850b91b9118b978c4e",
+      "stage_log": {
+        "bytes": 196,
+        "mtime_ns": 1794362066035642085,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-r1-20261111/test.log"
+      },
+      "start_ticks": "17377725",
+      "status": "PASS_INITIAL_CONTROL_COMPONENT_NOT_FULL_ARCHITECTURAL_RECOVERY",
+      "updated_utc": "2026-11-11T01:54:26.068949+00:00",
+      "worker_processes": []
+    },
+    "Opt4-architectural-recovery-state-r2-state.json": {
+      "controller": {},
+      "hardware_commit": "e4a9d5177673f097ed07adf7579c59b6d75fda88",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "RECOVERY_MEMORY_PASS reverse_transactions=16 records_per_transaction=64 masked_overlap=1 cursor_ring_wrap=1 ownership_until_ack=1 negative_cases=24 real_cache_integration=0\n",
+      "pid": 2073290,
+      "source_id": "e19f50ac36ce1dad6b88f7379e710422cb530492e50ed8b28dbdeac71a918679",
+      "stage_log": {
+        "bytes": 173,
+        "mtime_ns": 1794363262642690256,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/test-memory.log"
+      },
+      "start_ticks": "17496572",
+      "status": "PASS_RECOVERY_BACKEND_COMPONENTS_NOT_DUT_INTEGRATED",
+      "updated_utc": "2026-11-11T02:14:22.674162+00:00",
+      "worker_processes": []
+    },
+    "Opt4-architectural-recovery-state-r3-state.json": {
+      "controller": {},
+      "hardware_commit": "24633f1a0333e9515a5b38dcfb38d4b23ca09082",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "RECOVERY_MEMORY_PASS reverse_transactions=16 records_per_transaction=64 masked_overlap=1 cursor_ring_wrap=1 ownership_until_ack=1 negative_cases=27 real_cache_integration=0\n",
+      "pid": 2080618,
+      "source_id": "c2cb9e37c8252c87e3f3d0252f093ddf88171fd7be4c205af25cd837d7ae7904",
+      "stage_log": {
+        "bytes": 173,
+        "mtime_ns": 1794363459694487545,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r3-20261111/test-memory.log"
+      },
+      "start_ticks": "17516293",
+      "status": "PASS_RECOVERY_BACKEND_COMPONENTS_NOT_DUT_INTEGRATED",
+      "updated_utc": "2026-11-11T02:17:39.727945+00:00",
+      "worker_processes": []
+    },
+    "Opt4-blackscholes-result-audit-round52-v2-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2143285,
+      "start_ticks": "23094539",
+      "status": "PASS_BOUND_FULL_BLACKSCHOLES_CPU_GG_RAW_STREAM_AND_1122_PACKAGE_JOIN",
+      "updated_utc": "2026-11-11T17:47:12.552610+00:00",
+      "worker_processes": []
+    },
+    "Opt4-dcache-memmodel-prep-round41-v2-state.json": {
+      "controller": {},
+      "error": "AssertionError(('resolve', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-dcache-memmodel-prep-round41-v2-20261111/resolve.log'))",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 913061,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "21525815",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T13:26:28.585557+00:00",
+      "worker_processes": []
+    },
+    "Opt4-dcache-memmodel-prep-round41-v3-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 1103373,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "21586477",
+      "status": "PASS_EXACT_TARGET_FOUR_MEMORY_ANNOTATIONS_RESOLVED_NOT_TRANSFORMED_OR_ADMITTED",
+      "updated_utc": "2026-11-11T13:36:18.590457+00:00",
+      "worker_processes": []
+    },
+    "Opt4-field-read-address-rtl-prep-round34-v2-state.json": {
+      "controller": {},
+      "hardware_commit": "da8b51a691cc104a5b32e13d2532ed9c836eb639",
+      "identity_live": false,
+      "source_id": "4be542018125c2ba698f210e2bc769a789ba77a4e55432466552f14fceb11a9a",
+      "status": "PASS_STAGED_AUTHENTICATED_DA8_CLASSES_SOURCES_AND_RTL_COMMANDS_NOT_SELECTED_OR_GENERATED"
+    },
+    "Opt4-fit-address-async-current-r1-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-current-r1-20261111/map-full-module/module.dcp",
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-current-r1-20261111/map-full-module/utilization.rpt",
+        "report_sha256": "b1e425a0f7b43489e225d82f5e19c99c2b0fffef515a5f29560438fae6d77c25",
+        "resources": {
+          "Block RAM Tile": 216.0,
+          "CARRY8": 55418.0,
+          "CLB LUTs": 935433.0,
+          "CLB Registers": 256273.0,
+          "DSPs": 0.0
+        },
+        "rtl_sha256": "1497cc2d726b2583a4da95d43d3309cdecb2ef8999b182ba31a8b07e1bfe8735",
+        "scope": "OOC only; not whole-DUT FIT",
+        "tcl_sha256": "0526b411f413391eb19b0a3300fc320edf7ec3cd2406d06102668932d132e615"
+      },
+      "hardware_commit": "c61d0b2a431451ca70093dcf6eeaed5945fc2ec1",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "ee virtual = 349333\nINFO: [Netlist 29-17] Analyzing 215305 Unisim elements for replacement\nINFO: [Netlist 29-28] Unisim Transformation completed in 4 CPU seconds\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.27 ; elapsed = 00:00:00.28 . Memory (MB): peak = 10876.367 ; gain = 0.000 ; free physical = 81332 ; free virtual = 342372\nINFO: [Project 1-111] Unisim Transformation Summary:\n  A total of 512 instances were transformed.\n  RAM256X1D => RAM256X1D (MUXF7(x4), MUXF8(x2), RAMD64E(x8)): 512 instances\n\nSynth Design complete, checksum: e55b59f0\nINFO: [Common 17-83] Releasing license: Synthesis\n483 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 01:52:09 ; elapsed = 01:55:47 . Memory (MB): peak = 10876.367 ; gain = 8378.926 ; free physical = 80376 ; free virtual = 341485\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-current-r1-20261111/map-full-module/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 10876.367 ; gain = 0.000 ; free physical = 83832 ; free virtual = 343774\n# report_utilization -hierarchical -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-current-r1-20261111/map-full-module/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:10 ; elapsed = 00:00:10 . Memory (MB): peak = 10876.367 ; gain = 0.000 ; free physical = 86217 ; free virtual = 346162\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-current-r1-20261111/map-full-module/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-current-r1-20261111/map-full-module/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:04:20 ; elapsed = 00:03:07 . Memory (MB): peak = 10948.402 ; gain = 72.035 ; free physical = 79690 ; free virtual = 340118\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 10:35:39 2026...\n",
+      "pid": 1893386,
+      "source_id": "10e7dc799c504012de1f3f5adf1e34dd494ae1de6e40751cf37dac56991a860c",
+      "stage_log": {
+        "bytes": 235409,
+        "mtime_ns": 1794364539636243244,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-current-r1-20261111/map-full-module/map-full-module-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "16878859",
+      "status": "VERIFIED_AND_MAPPED_MODULE_ONLY",
+      "updated_utc": "2026-11-11T02:35:44.890989+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-async-sequence-r1-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-sequence-r1-20261111/map-full-module/module.dcp",
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-sequence-r1-20261111/map-full-module/utilization.rpt",
+        "report_sha256": "fc8a1a7f6fdc8f3906900c8b8bcefdb2be72275a9bbd6fb1d89efcfc7cb14400",
+        "resources": {
+          "Block RAM Tile": 216.0,
+          "CARRY8": 55418.0,
+          "CLB LUTs": 977167.0,
+          "CLB Registers": 386244.0,
+          "DSPs": 0.0
+        },
+        "rtl_sha256": "edfedd8fdaf366047c91cdef37e5ec9e4aa594a3ddb4dba37765605213d433b8",
+        "scope": "OOC only; not whole-DUT FIT",
+        "tcl_sha256": "15c012c2b0d4fa33183df8c2b7540e5f59135c97867166320adcfc1b5b83503b"
+      },
+      "hardware_commit": "94b749cf20b50487d82c7378071250fa9bd5eb3b",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "0:22 . Memory (MB): peak = 10677.219 ; gain = 0.000 ; free physical = 69091 ; free virtual = 323780\nINFO: [Netlist 29-17] Analyzing 267009 Unisim elements for replacement\nINFO: [Netlist 29-28] Unisim Transformation completed in 4 CPU seconds\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.34 ; elapsed = 00:00:00.34 . Memory (MB): peak = 10689.316 ; gain = 0.000 ; free physical = 39158 ; free virtual = 297241\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: 902cf02e\nINFO: [Common 17-83] Releasing license: Synthesis\n485 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 02:01:33 ; elapsed = 02:05:34 . Memory (MB): peak = 10689.316 ; gain = 8187.879 ; free physical = 39384 ; free virtual = 297468\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-sequence-r1-20261111/map-full-module/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:09 ; elapsed = 00:00:09 . Memory (MB): peak = 10689.316 ; gain = 0.000 ; free physical = 37754 ; free virtual = 295838\n# report_utilization -hierarchical -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-sequence-r1-20261111/map-full-module/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 10689.316 ; gain = 0.000 ; free physical = 35593 ; free virtual = 293679\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-sequence-r1-20261111/map-full-module/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-sequence-r1-20261111/map-full-module/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:05:04 ; elapsed = 00:03:38 . Memory (MB): peak = 10761.352 ; gain = 72.035 ; free physical = 51722 ; free virtual = 310000\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 11:17:17 2026...\n",
+      "pid": 1945040,
+      "source_id": "a22e245c0631d0aabb52cbddf1d254a735541dc51279ca9638e841695851da94",
+      "stage_log": {
+        "bytes": 233226,
+        "mtime_ns": 1794367037012391974,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-sequence-r1-20261111/map-full-module/map-full-module-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "17042597",
+      "status": "VERIFIED_AND_MAPPED_MODULE_ONLY",
+      "updated_utc": "2026-11-11T03:17:22.600803+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-bucket-tag-r2-state.json": {
+      "controller": {},
+      "error": "AssertionError(('sat-slot-tag', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-bucket-tag-r2-20261111/proof/sat-slot-tag-attempt-1.log'))",
+      "hardware_commit": "2bfa6047b10de351db1934e9cd58da1d3e921096",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "E pass (reducing word size of cells).\n\n2.10. Executing OPT_CLEAN pass (remove unused cells and wires).\nFinding unused cells or wires in module \\BucketTagProof..\n\n2.11. Executing MEMORY_COLLECT pass (generating $mem cells).\n\n2.12. Executing OPT pass (performing simple optimizations).\n\n2.12.1. Executing OPT_EXPR pass (perform const folding).\nOptimizing module BucketTagProof.\n\n2.12.2. Executing OPT_MERGE pass (detect identical cells).\nFinding identical cells in module `\\BucketTagProof'.\nRemoved a total of 0 cells.\n\n2.12.3. Executing OPT_CLEAN pass (remove unused cells and wires).\nFinding unused cells or wires in module \\BucketTagProof..\n\n2.12.4. Finished fast OPT passes.\n\n2.13. Printing statistics.\n\n=== BucketTagProof ===\n\n        +----------Local Count, excluding submodules.\n        | \n       11 wires\n       73 wire bits\n        7 public wires\n       69 public wire bits\n        4 ports\n       66 port bits\n        8 cells\n        4   $eq\n        2   $logic_not\n        2   $logic_or\n\n2.14. Executing CHECK pass (checking for obvious problems).\nChecking module BucketTagProof...\nFound and reported 0 problems.\n\n3. Executing SAT pass (solving SAT problems in the circuit).\n\nSetting up SAT problem:\nFinal constraint equation: { } = { }\nImported 8 cells to SAT database.\nImport proof-constraint: \\io_equivalent = 1'1\nFinal proof equation: \\io_equivalent = 1'1\n\nSolving problem with 205 variables and 460 clauses..\nSAT proof finished - model found: FAIL!\n\n   ______                   ___       ___       _ _            _ _ \n  (_____ \\                 / __)     / __)     (_) |          | | |\n   _____) )___ ___   ___ _| |__    _| |__ _____ _| | _____  __| | |\n  |  ____/ ___) _ \\ / _ (_   __)  (_   __|____ | | || ___ |/ _  |_|\n  | |   | |  | |_| | |_| || |       | |  / ___ | | || ____( (_| |_ \n  |_|   |_|   \\___/ \\___/ |_|       |_|  \\_____|_|\\_)_____)\\____|_|\n\n\n  Signal Name                 Dec       Hex                                 Bin\n  ------------------- ----------- --------- -----------------------------------\n  \\io_equivalent                0         0                                   0\n  \\seq                        128        80    00000000000000000000000010000000\n  \\stored                       0         0    00000000000000000000000000000000\n  \\valid                        0         0                                   0\n\nERROR: Called with -verify and proof did fail!\n",
+      "pid": 1529364,
+      "source_id": "3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561",
+      "stage_log": {
+        "bytes": 6228,
+        "mtime_ns": 1794346900643159185,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-bucket-tag-r2-20261111/proof/sat-slot-tag-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "15861945",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-10T21:41:40.652874+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-bucket-tag-r3-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-bucket-tag-r3-20261111/map-full-module/module.dcp",
+        "checkpoint_sha256": "61df118f25d7be250a6bf197d8e268bea6e9f5cb04442debb73720905fe8cc6a",
+        "hierarchy": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-bucket-tag-r3-20261111/map-full-module/hierarchical.rpt",
+        "hierarchy_sha256": "906876cae6019c476604a516b395c1420695c546efc4d66f073414697bcb5eef",
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-bucket-tag-r3-20261111/map-full-module/map-full-module-attempt-1.log",
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-bucket-tag-r3-20261111/map-full-module/utilization.rpt",
+        "report_sha256": "c748787ebf31c7cabdf789be2c7287ad11cbd9c82fa9f7d36af366513bd0b5b0",
+        "resources": {
+          "Block RAM Tile": 216.0,
+          "CARRY8": 55418.0,
+          "CLB LUTs": 990905.0,
+          "CLB Registers": 386202.0,
+          "DSPs": 0.0
+        },
+        "scope": "Complete PackageAddressStats OOC only; not whole-DUT capacity or FIT",
+        "tcl_sha256": "9221e1a04ff3c11fd8531cb86e339c9c46c5e2ace1ba3ba5ff7039c8ad5e2d0f"
+      },
+      "hardware_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "seconds\nWARNING: [Netlist 29-101] Netlist 'PackageAddressStats' is not ideal for floorplanning, since the cellview 'PackageAddressStats' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.37 ; elapsed = 00:00:00.36 . Memory (MB): peak = 11581.230 ; gain = 0.000 ; free physical = 92312 ; free virtual = 357138\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: 22ce2fc2\nINFO: [Common 17-83] Releasing license: Synthesis\n481 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 01:44:59 ; elapsed = 01:49:06 . Memory (MB): peak = 11581.230 ; gain = 9081.793 ; free physical = 94262 ; free virtual = 359080\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-bucket-tag-r3-20261111/map-full-module/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:09 ; elapsed = 00:00:09 . Memory (MB): peak = 11581.230 ; gain = 0.000 ; free physical = 92896 ; free virtual = 357801\n# report_utilization -hierarchical -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-bucket-tag-r3-20261111/map-full-module/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 11581.230 ; gain = 0.000 ; free physical = 89782 ; free virtual = 354827\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-bucket-tag-r3-20261111/map-full-module/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-bucket-tag-r3-20261111/map-full-module/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:04:47 ; elapsed = 00:03:27 . Memory (MB): peak = 11653.266 ; gain = 72.035 ; free physical = 98766 ; free virtual = 364474\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 07:49:14 2026...\n",
+      "pid": 1549363,
+      "source_id": "3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561",
+      "stage_log": {
+        "bytes": 231730,
+        "mtime_ns": 1794354554450364190,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-bucket-tag-r3-20261111/map-full-module/map-full-module-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "15911708",
+      "status": "VERIFIED_AND_MAPPED_CANDIDATE_NOT_PROMOTED",
+      "updated_utc": "2026-11-10T23:49:21.195562+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-decode-r1-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r1-aeabe5ab-20261111/map-full-module/module.dcp",
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r1-aeabe5ab-20261111/map-full-module/utilization.rpt",
+        "report_sha256": "152fbf1896580b114a418e3df516c1ccf36c089f114d0eecaa5b786da7c47bbf",
+        "resources": {
+          "Block RAM Tile": 0.0,
+          "CARRY8": 0.0,
+          "CLB LUTs": 0.0,
+          "CLB Registers": 0.0,
+          "DSPs": 0.0
+        },
+        "rtl_sha256": "2ef55433f3c429218f249d894acadc8d09a94f6da916b08354afc15530eeab77",
+        "scope": "OOC only; not whole-DUT FIT",
+        "tcl_sha256": "f28a3e0a8ab0b4fd7113a8c870e82d994d605b9f71d6d713aec4115d19b714a0"
+      },
+      "hardware_commit": "aeabe5abe9f0ece2e024b5c8aa91a2c24fdfa4cb",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "list 29-101] Netlist 'PackageAddressStats' is not ideal for floorplanning, since the cellview 'PackageAddressStats' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.43 ; elapsed = 00:00:00.43 . Memory (MB): peak = 16232.363 ; gain = 0.000 ; free physical = 48325 ; free virtual = 333165\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: e99f9739\nINFO: [Common 17-83] Releasing license: Synthesis\n481 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 03:31:51 ; elapsed = 03:37:57 . Memory (MB): peak = 16232.363 ; gain = 13722.926 ; free physical = 50072 ; free virtual = 335206\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r1-aeabe5ab-20261111/map-full-module/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 16232.363 ; gain = 0.000 ; free physical = 49885 ; free virtual = 335289\n# report_utilization -hierarchical -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r1-aeabe5ab-20261111/map-full-module/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 16232.363 ; gain = 0.000 ; free physical = 46386 ; free virtual = 331802\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r1-aeabe5ab-20261111/map-full-module/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r1-aeabe5ab-20261111/map-full-module/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:05:44 ; elapsed = 00:04:02 . Memory (MB): peak = 16304.398 ; gain = 72.035 ; free physical = 41956 ; free virtual = 328095\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 04:16:25 2026...\n",
+      "pid": 833677,
+      "source_id": "c1d8e0c2da48e82aba099638e2a910d8c358341c44aba59229098cf83cc29404",
+      "stage_log": {
+        "bytes": 232158,
+        "mtime_ns": 1794341785767857068,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r1-aeabe5ab-20261111/map-full-module/map-full-module-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "13960271",
+      "status": "VERIFIED_AND_MAPPED_MODULE_ONLY",
+      "updated_utc": "2026-11-10T20:16:32.329450+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-decode-r2-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r2-20261111/map-full-module/module.dcp",
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r2-20261111/map-full-module/utilization.rpt",
+        "report_sha256": "9376d91c7ca4d310cd3cbc4f1745ba017179b48043a0f4dd053e154fd89fe190",
+        "resources": {
+          "Block RAM Tile": 0.0,
+          "CARRY8": 0.0,
+          "CLB LUTs": 0.0,
+          "CLB Registers": 0.0,
+          "DSPs": 0.0
+        },
+        "rtl_sha256": "436fb8056edba112c589e9de0aaa1c7a76b3687243ae1c980c7817d933e87cbe",
+        "scope": "OOC only; not whole-DUT FIT",
+        "tcl_sha256": "5c9e55ba86187c461f1bc2988b42edcfa353a6df7df17e4e70cae1285241a1a0"
+      },
+      "hardware_commit": "579904b258213630cf00c13e65fde5ea9512bb03",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "pleted in 5 CPU seconds\nWARNING: [Netlist 29-101] Netlist 'PackageAddressStats' is not ideal for floorplanning, since the cellview 'PackageAddressStats' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.41 ; elapsed = 00:00:00.41 . Memory (MB): peak = 15890.641 ; gain = 0.000 ; free physical = 57676 ; free virtual = 340404\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: d05b78b\nINFO: [Common 17-83] Releasing license: Synthesis\n481 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 01:48:27 ; elapsed = 01:53:04 . Memory (MB): peak = 15890.641 ; gain = 13391.207 ; free physical = 59016 ; free virtual = 341747\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r2-20261111/map-full-module/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 15890.641 ; gain = 0.000 ; free physical = 58656 ; free virtual = 341390\n# report_utilization -hierarchical -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r2-20261111/map-full-module/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:14 ; elapsed = 00:00:15 . Memory (MB): peak = 15890.641 ; gain = 0.000 ; free physical = 58295 ; free virtual = 341029\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r2-20261111/map-full-module/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r2-20261111/map-full-module/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:05:27 ; elapsed = 00:03:54 . Memory (MB): peak = 15962.676 ; gain = 72.035 ; free physical = 59271 ; free virtual = 342699\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 03:17:01 2026...\n",
+      "pid": 1057994,
+      "source_id": "9bbb8feb5244affd7d7288a1a3024a6c53b9cf5248cf4077aad3959e00cf088c",
+      "stage_log": {
+        "bytes": 232020,
+        "mtime_ns": 1794338221053418581,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r2-20261111/map-full-module/map-full-module-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "14234872",
+      "status": "VERIFIED_AND_MAPPED_MODULE_ONLY",
+      "updated_utc": "2026-11-10T19:17:08.299860+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-delta-r3-state.json": {
+      "controller": {},
+      "error": "AssertionError(('map-full-module', 7, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-delta-r3-56711a00-20261111/map-full-module/map-full-module-attempt-1.log'))",
+      "hardware_commit": "56711a0057bb2822f5bf00754a2b3e13cde11e8f",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "     \n\t                8 Bit    Registers := 1     \n\t                2 Bit    Registers := 257   \n\t                1 Bit    Registers := 579   \n+---RAMs : \n\t              89K Bit\t(1024 X 89 bit)          RAMs := 48    \n\t              64K Bit\t(1024 X 64 bit)          RAMs := 24    \n\t              34K Bit\t(1024 X 34 bit)          RAMs := 24    \n\t              32K Bit\t(1024 X 32 bit)          RAMs := 24    \n+---Muxes : \n\t   2 Input   89 Bit        Muxes := 320   \n\t   2 Input   64 Bit        Muxes := 7232  \n\t  65 Input   64 Bit        Muxes := 1     \n\t   2 Input   40 Bit        Muxes := 1024  \n\t   2 Input   34 Bit        Muxes := 24    \n\t   2 Input   33 Bit        Muxes := 512   \n\t   2 Input   32 Bit        Muxes := 1049  \n\t  18 Input   16 Bit        Muxes := 1     \n\t  17 Input   16 Bit        Muxes := 1     \n\t   2 Input   10 Bit        Muxes := 12336 \n\t   2 Input    9 Bit        Muxes := 4176  \n\t   2 Input    8 Bit        Muxes := 28954 \n\t   9 Input    8 Bit        Muxes := 2     \n\t  10 Input    8 Bit        Muxes := 1     \n\t   2 Input    7 Bit        Muxes := 23844 \n\t   2 Input    6 Bit        Muxes := 10042 \n\t   2 Input    5 Bit        Muxes := 9293  \n\t   2 Input    4 Bit        Muxes := 9385  \n\t   2 Input    3 Bit        Muxes := 3348  \n\t   2 Input    2 Bit        Muxes := 7838  \n\t   2 Input    1 Bit        Muxes := 10156 \n---------------------------------------------------------------------------------\nFinished RTL Component Statistics \n---------------------------------------------------------------------------------\n---------------------------------------------------------------------------------\nStart Part Resource Summary\n---------------------------------------------------------------------------------\nPart Resources:\nDSPs: 9024 (col length:94)\nBRAMs: 4032 (col length: RAMB18 288 RAMB36 144)\n---------------------------------------------------------------------------------\nFinished Part Resource Summary\n---------------------------------------------------------------------------------\nNo constraint files found.\n---------------------------------------------------------------------------------\nStart Cross Boundary and Area Optimization\n---------------------------------------------------------------------------------\ntcmalloc: large alloc 18446744073607741440 bytes == (nil) @  0x7f4f58438e7f 0x7f4f57c07fa2\n\nout of memory allocating 18446744073607735856 bytes\n",
+      "pid": 1142797,
+      "source_id": "e5f327505b504fa55c75b29500a915d2f32db6e28766f9444c62e3989a384ada",
+      "stage_log": {
+        "bytes": 40504,
+        "mtime_ns": 1794336102227946867,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-delta-r3-56711a00-20261111/map-full-module/map-full-module-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "14386952",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-10T18:41:46.756653+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-dsp-counter-bank-r1-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "3159.801 ; gain = 660.230 ; free physical = 56166 ; free virtual = 311271\nSynthesis Optimization Complete : Time (s): cpu = 00:00:13 ; elapsed = 00:00:16 . Memory (MB): peak = 3159.809 ; gain = 660.230 ; free physical = 56165 ; free virtual = 311270\nINFO: [Project 1-571] Translating synthesized netlist\nNetlist sorting complete. Time (s): cpu = 00:00:00.05 ; elapsed = 00:00:00.06 . Memory (MB): peak = 3159.809 ; gain = 0.000 ; free physical = 56119 ; free virtual = 311224\nINFO: [Netlist 29-17] Analyzing 256 Unisim elements for replacement\nINFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3274.395 ; gain = 0.000 ; free physical = 55769 ; free virtual = 310874\nINFO: [Project 1-111] Unisim Transformation Summary:\n  A total of 64 instances were transformed.\n  DSP48E2 => DSP48E2 (DSP_ALU, DSP_A_B_DATA, DSP_C_DATA, DSP_MULTIPLIER, DSP_M_DATA, DSP_OUTPUT, DSP_PREADD, DSP_PREADD_DATA): 64 instances\n\nSynth Design complete, checksum: 8ff6b78e\nINFO: [Common 17-83] Releasing license: Synthesis\n17 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 00:00:20 ; elapsed = 00:00:20 . Memory (MB): peak = 3274.395 ; gain = 774.957 ; free physical = 55900 ; free virtual = 311005\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-dsp-counter-bank-r1-20261111/candidate/utilization.rpt}\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-dsp-counter-bank-r1-20261111/candidate/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-dsp-counter-bank-r1-20261111/candidate/module.dcp' has been generated.\n# write_verilog -force -mode funcsim {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-dsp-counter-bank-r1-20261111/candidate/mapped.v}\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 11:19:39 2026...\n",
+      "pid": 2243917,
+      "stage_log": {
+        "bytes": 37716,
+        "mtime_ns": 1794367179094621346,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-dsp-counter-bank-r1-20261111/map-candidate.log"
+      },
+      "start_ticks": "17883254",
+      "status": "PROVEN_AND_PAIRED_MAPPED_LOCAL_ARITHMETIC_NOT_INTEGRATED",
+      "updated_utc": "2026-11-11T03:19:43.593955+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-epoch-clear-r2-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-epoch-clear-r2-20261111/map-full-module/module.dcp",
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-epoch-clear-r2-20261111/map-full-module/utilization.rpt",
+        "report_sha256": "695eb8dbf427ab2489b33974d55c4e7160ff4bda810b68b42c193f553acbe32d",
+        "resources": {
+          "Block RAM Tile": 216.0,
+          "CARRY8": 32861.0,
+          "CLB LUTs": 1262145.0,
+          "CLB Registers": 388409.0,
+          "DSPs": 0.0
+        },
+        "rtl_sha256": "2deacf1e61c306d1762ea819d19c1837bde08419249ad7386d0fe9ed8c1c218f",
+        "scope": "Complete module OOC; not whole-DUT FIT",
+        "tcl_sha256": "57ddcb5133d87bfa12eb97fdd03251e0fb9d25d925848044ac7189bdf26b6d20"
+      },
+      "hardware_commit": "64421513f29420498e128b78d82121ab11f52286",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "nds\nWARNING: [Netlist 29-101] Netlist 'PackageAddressStats' is not ideal for floorplanning, since the cellview 'PackageAddressStats' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.40 ; elapsed = 00:00:00.41 . Memory (MB): peak = 12070.012 ; gain = 0.000 ; free physical = 78612 ; free virtual = 346220\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: c5f67827\nINFO: [Common 17-83] Releasing license: Synthesis\n482 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 01:59:02 ; elapsed = 02:03:18 . Memory (MB): peak = 12070.012 ; gain = 9577.574 ; free physical = 77985 ; free virtual = 345593\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-epoch-clear-r2-20261111/map-full-module/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 12070.012 ; gain = 0.000 ; free physical = 76343 ; free virtual = 343036\n# report_utilization -hierarchical -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-epoch-clear-r2-20261111/map-full-module/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:16 ; elapsed = 00:00:17 . Memory (MB): peak = 12070.012 ; gain = 0.000 ; free physical = 68677 ; free virtual = 336337\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-epoch-clear-r2-20261111/map-full-module/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-epoch-clear-r2-20261111/map-full-module/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:05:32 ; elapsed = 00:04:04 . Memory (MB): peak = 12142.047 ; gain = 72.035 ; free physical = 72460 ; free virtual = 339501\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 06:29:57 2026...\n",
+      "pid": 1438186,
+      "source_id": "ed5aed4e7968b932e844f3bc0c4be78f08e46c83837aea2903c887ba80b3527c",
+      "stage_log": {
+        "bytes": 231858,
+        "mtime_ns": 1794349797002603822,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-epoch-clear-r2-20261111/map-full-module/map-full-module-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "15351861",
+      "status": "VERIFIED_AND_MAPPED_MODULE_ONLY",
+      "updated_utc": "2026-11-10T22:30:03.729438+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-group4-r1-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-group4-r1-20261111/map-full-module/module.dcp",
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-group4-r1-20261111/map-full-module/utilization.rpt",
+        "report_sha256": "3f5ae2e6a9a5b168493ff4e4a530cdfbd15f3c52b2cdafb290604b7bdeb3cb7a",
+        "resources": {
+          "Block RAM Tile": 216.0,
+          "CARRY8": 55499.0,
+          "CLB LUTs": 1030558.0,
+          "CLB Registers": 389477.0,
+          "DSPs": 0.0
+        },
+        "rtl_sha256": "bd846e3a6e0ba7bd967d2d3e3c332a3b815fe0ec0cc63cc65938e4c840e1c4b0",
+        "scope": "Complete module OOC; not whole-DUT FIT",
+        "tcl_sha256": "5804504d630d72a586c8ff5e8cf1cc8b25416724bf299b087f64c0207f09d7e9"
+      },
+      "hardware_commit": "981b890d870130f99ec24a0c5e37acb39362318a",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "pleted in 4 CPU seconds\nWARNING: [Netlist 29-101] Netlist 'PackageAddressStats' is not ideal for floorplanning, since the cellview 'PackageAddressStats' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.35 ; elapsed = 00:00:00.36 . Memory (MB): peak = 11448.562 ; gain = 0.000 ; free physical = 62743 ; free virtual = 347622\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: ec91b48e\nINFO: [Common 17-83] Releasing license: Synthesis\n481 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 01:34:31 ; elapsed = 01:38:21 . Memory (MB): peak = 11448.562 ; gain = 8942.129 ; free physical = 70581 ; free virtual = 355459\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-group4-r1-20261111/map-full-module/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 11448.562 ; gain = 0.000 ; free physical = 70162 ; free virtual = 355038\n# report_utilization -hierarchical -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-group4-r1-20261111/map-full-module/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 11448.562 ; gain = 0.000 ; free physical = 69896 ; free virtual = 354774\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-group4-r1-20261111/map-full-module/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-group4-r1-20261111/map-full-module/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:05:01 ; elapsed = 00:03:33 . Memory (MB): peak = 11520.598 ; gain = 72.035 ; free physical = 65331 ; free virtual = 350728\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 05:06:06 2026...\n",
+      "pid": 1373338,
+      "source_id": "632c20a179a83d030793d1d0f24add9c3f2acd99f84e8ddfe4a4a61da4a66e0d",
+      "stage_log": {
+        "bytes": 231327,
+        "mtime_ns": 1794344766936188379,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-group4-r1-20261111/map-full-module/map-full-module-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "14995851",
+      "status": "VERIFIED_AND_MAPPED_MODULE_ONLY",
+      "updated_utc": "2026-11-10T21:06:12.445365+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-group8-cec-r1-state.json": {
+      "controller": {
+        "cpu_ticks": 4949,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 1635055,
+        "process_state": "S",
+        "rss_bytes": 19226624,
+        "start_ticks": "16366140"
+      },
+      "hardware_commit": "32837b0b1987091eb86e4157ec0c6360f5bde58b",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": true,
+      "log_tail": "",
+      "pid": 1635055,
+      "source_id": "ac8e2b03492d7de78ab5ad94d2383827498f530ee3daf40ef4d2184cc3081706",
+      "stage_log": {
+        "bytes": 0,
+        "mtime_ns": 1794420608835482267,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-group8-cec-r1-20261111/cec/cec-g3-attempt-1.log"
+      },
+      "stage_process": {
+        "cpu_ticks": 1352286,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2160241,
+        "process_state": "R",
+        "rss_bytes": 143593472,
+        "start_ticks": "23232927"
+      },
+      "start_ticks": "16366140",
+      "status": "RUNNING_CEC-G3",
+      "updated_utc": "2026-11-11T21:55:32.375645+00:00",
+      "worker_processes": [
+        {
+          "comm": "yosys-abc",
+          "cpu_ticks": 1352286,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "io": {
+            "cancelled_write_bytes": 0,
+            "rchar": 194528,
+            "read_bytes": 0,
+            "syscr": 31,
+            "syscw": 0,
+            "wchar": 0,
+            "write_bytes": 0
+          },
+          "pid": 2160241,
+          "process_state": "R",
+          "rss_bytes": 143593472,
+          "start_ticks": "23232927"
+        }
+      ]
+    },
+    "Opt4-fit-address-group8-proofsplit-r1-state.json": {
+      "controller": {},
+      "error": "AssertionError(('sat-equivalent-g0', 1, PosixPath('/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-group8-proofsplit-r1-20261111/proof/sat-equivalent-g0-attempt-1.log')))",
+      "hardware_commit": "32837b0b1987091eb86e4157ec0c6360f5bde58b",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "._ref_T_2.\nRemoved top 60 bits (of 64) from wire Group8EqProof0._ref_T_20.\nRemoved top 60 bits (of 64) from wire Group8EqProof0._ref_T_23.\nRemoved top 59 bits (of 64) from wire Group8EqProof0._ref_T_25.\nRemoved top 58 bits (of 64) from wire Group8EqProof0._ref_T_27.\nRemoved top 57 bits (of 64) from wire Group8EqProof0._ref_T_29.\nRemoved top 63 bits (of 64) from wire Group8EqProof0._ref_T_31.\nRemoved top 60 bits (of 64) from wire Group8EqProof0._ref_T_5.\nRemoved top 63 bits (of 64) from wire Group8EqProof0._ref_T_8.\n\n2.10. Executing OPT_CLEAN pass (remove unused cells and wires).\nFinding unused cells or wires in module \\Group8EqProof0..\nRemoved 0 unused cells and 23 unused wires.\n<suppressed ~1 debug messages>\n\n2.11. Executing MEMORY_COLLECT pass (generating $mem cells).\n\n2.12. Executing OPT pass (performing simple optimizations).\n\n2.12.1. Executing OPT_EXPR pass (perform const folding).\nOptimizing module Group8EqProof0.\n\n2.12.2. Executing OPT_MERGE pass (detect identical cells).\nFinding identical cells in module `\\Group8EqProof0'.\nRemoved a total of 0 cells.\n\n2.12.3. Executing OPT_CLEAN pass (remove unused cells and wires).\nFinding unused cells or wires in module \\Group8EqProof0..\n\n2.12.4. Finished fast OPT passes.\n\n2.13. Printing statistics.\n\n=== Group8EqProof0 ===\n\n        +----------Local Count, excluding submodules.\n        | \n      263 wires\n     1972 wire bits\n      239 public wires\n     1822 public wire bits\n       18 ports\n      105 port bits\n      219 cells\n       14   $add\n       14   $and\n       24   $eq\n        6   $ge\n       26   $le\n      119   $mux\n        7   $ne\n        1   $not\n        8   $or\n\n2.14. Executing CHECK pass (checking for obvious problems).\nChecking module Group8EqProof0...\nFound and reported 0 problems.\n\n3. Executing SAT pass (solving SAT problems in the circuit).\n\nSetting up SAT problem:\nFinal constraint equation: { } = { }\nImported 219 cells to SAT database.\nImport proof-constraint: \\io_equivalent = 1'1\nFinal proof equation: \\io_equivalent = 1'1\n\nSolving problem with 8879 variables and 24648 clauses..\nInterrupted SAT solver: TIMEOUT!\n\n        _____  _  _      _____ ____  _     _____\n       /__ __\\/ \\/ \\__/|/  __//  _ \\/ \\ /\\/__ __\\\n         / \\  | || |\\/|||  \\  | / \\|| | ||  / \\\n         | |  | || |  |||  /_ | \\_/|| \\_/|  | |\n         \\_/  \\_/\\_/  \\|\\____\\\\____/\\____/  \\_/\n\nERROR: Called with -verify and proof did time out!\n",
+      "pid": 1617649,
+      "source_id": "ac8e2b03492d7de78ab5ad94d2383827498f530ee3daf40ef4d2184cc3081706",
+      "stage_log": {
+        "bytes": 21879,
+        "mtime_ns": 1794351318813517689,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-group8-proofsplit-r1-20261111/proof/sat-equivalent-g0-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "16272789",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-10T22:55:18.828523+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-group8-r1-state.json": {
+      "controller": {},
+      "error": "AssertionError(('sat-equivalent', 1, PosixPath('/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-group8-r1-20261111/proof/sat-equivalent-attempt-1.log')))",
+      "hardware_commit": "32837b0b1987091eb86e4157ec0c6360f5bde58b",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Proof._equivalent_ref_T_99.\nRemoved top 2 bits (of 7) from wire Group8Proof._io_mutantEquivalent_T_33.\nRemoved top 1 bits (of 7) from wire Group8Proof._io_mutantEquivalent_T_34.\nRemoved top 1 bits (of 7) from wire Group8Proof._io_mutantEquivalent_T_35.\nRemoved top 1 bits (of 7) from wire Group8Proof._io_mutantEquivalent_T_36.\nRemoved top 1 bits (of 7) from wire Group8Proof._io_mutantEquivalent_T_37.\nRemoved top 53 bits (of 64) from wire Group8Proof.equivalent_ref.\nRemoved top 53 bits (of 64) from wire Group8Proof.equivalent_ref_1.\n\n2.10. Executing OPT_CLEAN pass (remove unused cells and wires).\nFinding unused cells or wires in module \\Group8Proof..\nRemoved 0 unused cells and 107 unused wires.\n<suppressed ~1 debug messages>\n\n2.11. Executing MEMORY_COLLECT pass (generating $mem cells).\n\n2.12. Executing OPT pass (performing simple optimizations).\n\n2.12.1. Executing OPT_EXPR pass (perform const folding).\nOptimizing module Group8Proof.\n\n2.12.2. Executing OPT_MERGE pass (detect identical cells).\nFinding identical cells in module `\\Group8Proof'.\nRemoved a total of 0 cells.\n\n2.12.3. Executing OPT_CLEAN pass (remove unused cells and wires).\nFinding unused cells or wires in module \\Group8Proof..\n\n2.12.4. Finished fast OPT passes.\n\n2.13. Printing statistics.\n\n=== Group8Proof ===\n\n        +----------Local Count, excluding submodules.\n        | \n      732 wires\n     5007 wire bits\n      632 public wires\n     4844 public wire bits\n       45 ports\n      204 port bits\n      591 cells\n       63   $add\n       53   $and\n       28   $eq\n        6   $ge\n       64   $le\n      332   $mux\n        7   $ne\n        1   $not\n       37   $or\n\n2.14. Executing CHECK pass (checking for obvious problems).\nChecking module Group8Proof...\nFound and reported 0 problems.\n\n3. Executing SAT pass (solving SAT problems in the circuit).\n\nSetting up SAT problem:\nFinal constraint equation: { } = { }\nImported 591 cells to SAT database.\nImport proof-constraint: \\io_equivalent = 1'1\nFinal proof equation: \\io_equivalent = 1'1\n\nSolving problem with 17045 variables and 46986 clauses..\nInterrupted SAT solver: TIMEOUT!\n\n        _____  _  _      _____ ____  _     _____\n       /__ __\\/ \\/ \\__/|/  __//  _ \\/ \\ /\\/__ __\\\n         / \\  | || |\\/|||  \\  | / \\|| | ||  / \\\n         | |  | || |  |||  /_ | \\_/|| \\_/|  | |\n         \\_/  \\_/\\_/  \\|\\____\\\\____/\\____/  \\_/\n\nERROR: Called with -verify and proof did time out!\n",
+      "pid": 1599756,
+      "source_id": "ac8e2b03492d7de78ab5ad94d2383827498f530ee3daf40ef4d2184cc3081706",
+      "stage_log": {
+        "bytes": 74718,
+        "mtime_ns": 1794350250136776426,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-group8-r1-20261111/proof/sat-equivalent-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "16165917",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-10T22:37:30.176449+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-heap-candidate-state.json": {
+      "controller": {},
+      "hardware_commit": "c41d42f61aa79d8249125c9e911438b797d007ce",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-heap-candidate-c41d42f-20261110/map/full-module-map-attempt-1.log",
+      "log_tail": "[Project 1-571] Translating synthesized netlist\nNetlist sorting complete. Time (s): cpu = 00:00:26 ; elapsed = 00:00:26 . Memory (MB): peak = 15603.688 ; gain = 0.000 ; free physical = 81016 ; free virtual = 339356\nINFO: [Netlist 29-17] Analyzing 302843 Unisim elements for replacement\nINFO: [Netlist 29-28] Unisim Transformation completed in 5 CPU seconds\nWARNING: [Netlist 29-101] Netlist 'PackageAddressStats' is not ideal for floorplanning, since the cellview 'PackageAddressStats' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.38 ; elapsed = 00:00:00.39 . Memory (MB): peak = 15615.785 ; gain = 0.000 ; free physical = 81361 ; free virtual = 339768\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: 85725cf4\nINFO: [Common 17-83] Releasing license: Synthesis\n481 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 03:32:50 ; elapsed = 03:39:36 . Memory (MB): peak = 15615.785 ; gain = 13128.348 ; free physical = 82449 ; free virtual = 340896\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-heap-candidate-c41d42f-20261110/map/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 15615.785 ; gain = 0.000 ; free physical = 81694 ; free virtual = 340193\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-heap-candidate-c41d42f-20261110/map/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-heap-candidate-c41d42f-20261110/map/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:05:23 ; elapsed = 00:03:54 . Memory (MB): peak = 15687.820 ; gain = 72.035 ; free physical = 79581 ; free virtual = 342418\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 00:28:15 2026...\n",
+      "pid": 3393575,
+      "resources": {
+        "Block RAM Tile": 216.0,
+        "CARRY8": 54885.0,
+        "CLB LUTs": 1183979.0,
+        "CLB Registers": 390109.0,
+        "DSPs": 0.0
+      },
+      "source_id": "6fcb790b0d19e832582166c1940f485a00940f95437b38d297d9533f446721d2",
+      "stage_log": {
+        "bytes": 230711,
+        "mtime_ns": 1794328095684291743,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-heap-candidate-c41d42f-20261110/map/full-module-map-attempt-1.log"
+      },
+      "start_ticks": "12566129",
+      "status": "VERIFIED_AND_MAPPED_CANDIDATE_NOT_PROMOTED",
+      "updated_utc": "2026-11-10T16:28:20.740980+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-index-share-r1-bind2-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-index-share-r1-bind2-20261111/map-full-module/module.dcp",
+        "checkpoint_sha256": "5c4b1503e7dd055df89eb3759337037ec00f2273dfcf8bb13b230b9948401760",
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-index-share-r1-bind2-20261111/map-full-module/utilization.rpt",
+        "report_sha256": "fc8ab53383ac6a0f3b527bb3a90efdde4659fe5f3bd667694f999a36c473f53a",
+        "resources": {
+          "Block RAM Tile": 216.0,
+          "CARRY8": 57429.0,
+          "CLB LUTs": 1559184.0,
+          "CLB Registers": 391106.0,
+          "DSPs": 0.0
+        },
+        "rtl_sha256": "95c592f84723d724a5134f194c38087c224eb5bc5d2b36b8ab585cfb6e1a0e47",
+        "scope": "OOC module only; not whole-DUT FIT",
+        "tcl_sha256": "efd73b09bc2e6f0e8ddede929dd7eced8b1697b5b8cfb628ae1954f413a5d330"
+      },
+      "hardware_commit": "470f1291d01608e80be6cd8d42b29fc5fc28d395",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "-101] Netlist 'PackageAddressStats' is not ideal for floorplanning, since the cellview 'PackageAddressStats' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.47 ; elapsed = 00:00:00.47 . Memory (MB): peak = 12264.180 ; gain = 0.000 ; free physical = 80710 ; free virtual = 342775\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: 7c322c5f\nINFO: [Common 17-83] Releasing license: Synthesis\n481 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 02:11:38 ; elapsed = 02:16:10 . Memory (MB): peak = 12264.180 ; gain = 9764.746 ; free physical = 84811 ; free virtual = 346877\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-index-share-r1-bind2-20261111/map-full-module/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 12264.180 ; gain = 0.000 ; free physical = 88877 ; free virtual = 350945\n# report_utilization -hierarchical -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-index-share-r1-bind2-20261111/map-full-module/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:16 ; elapsed = 00:00:17 . Memory (MB): peak = 12264.180 ; gain = 0.000 ; free physical = 88402 ; free virtual = 350468\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-index-share-r1-bind2-20261111/map-full-module/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-index-share-r1-bind2-20261111/map-full-module/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:06:23 ; elapsed = 00:04:37 . Memory (MB): peak = 12336.215 ; gain = 72.035 ; free physical = 87916 ; free virtual = 351025\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 07:08:02 2026...\n",
+      "pid": 1467003,
+      "source_id": "4eb296ef53358af362644177a450a3bdfd6488f0d98f0e5d8d5c1b49cb2e010e",
+      "stage_log": {
+        "bytes": 231462,
+        "mtime_ns": 1794352082300906578,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-index-share-r1-bind2-20261111/map-full-module/map-full-module-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "15499432",
+      "status": "VERIFIED_AND_MAPPED_MODULE_ONLY",
+      "updated_utc": "2026-11-10T23:08:09.764648+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-packed-reduction-r1-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": ": peak = 3160.801 ; gain = 676.230 ; free physical = 17406 ; free virtual = 277986\nSynthesis Optimization Complete : Time (s): cpu = 00:00:12 ; elapsed = 00:00:15 . Memory (MB): peak = 3160.809 ; gain = 676.230 ; free physical = 17400 ; free virtual = 277980\nINFO: [Project 1-571] Translating synthesized netlist\nNetlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3160.809 ; gain = 0.000 ; free physical = 17472 ; free virtual = 278052\nINFO: [Netlist 29-17] Analyzing 46 Unisim elements for replacement\nINFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3250.523 ; gain = 0.000 ; free physical = 17444 ; free virtual = 278024\nINFO: [Project 1-111] Unisim Transformation Summary:\n  A total of 1 instances were transformed.\n  DSP48E2 => DSP48E2 (DSP_ALU, DSP_A_B_DATA, DSP_C_DATA, DSP_MULTIPLIER, DSP_M_DATA, DSP_OUTPUT, DSP_PREADD, DSP_PREADD_DATA): 1 instance \n\nSynth Design complete, checksum: 4dd2abad\nINFO: [Common 17-83] Releasing license: Synthesis\n15 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 00:00:19 ; elapsed = 00:00:18 . Memory (MB): peak = 3250.523 ; gain = 766.086 ; free physical = 17580 ; free virtual = 278159\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-packed-reduction-r1-20261111/candidate/utilization.rpt}\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-packed-reduction-r1-20261111/candidate/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-packed-reduction-r1-20261111/candidate/module.dcp' has been generated.\n# write_verilog -force -mode funcsim {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-packed-reduction-r1-20261111/candidate/mapped.v}\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 11:28:48 2026...\n",
+      "pid": 2274392,
+      "stage_log": {
+        "bytes": 15321,
+        "mtime_ns": 1794367728931856879,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-packed-reduction-r1-20261111/map-candidate.log"
+      },
+      "start_ticks": "17937651",
+      "status": "PROVEN_AND_PAIRED_MAPPED_LOCAL_ARITHMETIC_NOT_INTEGRATED",
+      "updated_utc": "2026-11-11T03:28:53.235477+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-round3-state.json": {
+      "controller": {},
+      "full_address_map": {
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-round3-20261110/full-address-map/utilization.rpt",
+        "report_sha256": "ebed46013236e9910f5202e9149795496389d9835397521da50e851c21307b66",
+        "resources": {
+          "Block RAM Tile": 216.0,
+          "CARRY8": 55392.0,
+          "CLB LUTs": 1153226.0,
+          "CLB Registers": 390181.0,
+          "DSPs": 0.0
+        },
+        "rtl_sha256": "a9f6976ade4bd02282b755cc25b203caf153728775d35ff8238aa0c956460a52",
+        "scope": "OOC probe only; not full-system capacity",
+        "tcl_sha256": "0e0e37e92486315a62af5342494b1a41c44c4e13d111eb66a54535684eabcdfa"
+      },
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2872322,
+      "source_id": "d5ca949536b50c2d6bf2f9ef1c2748282f88bac0fa5f2d4cc7ffa5b6c94feb28",
+      "start_ticks": "12071140",
+      "status": "VERIFIED_AND_MAPPED_MODULE_ONLY",
+      "updated_utc": "2026-11-10T15:12:09.106271+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-sequence-replicated-map-r1-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/map-full-module/module.dcp",
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/map-full-module/utilization.rpt",
+        "report_sha256": "42621ec362e313e1aa1853f16aa9b9bed64ad30eb81da7724df6adc440ca8e8c",
+        "resources": {
+          "Block RAM Tile": 216.0,
+          "CARRY8": 55418.0,
+          "CLB LUTs": 841782.0,
+          "CLB Registers": 376217.0,
+          "DSPs": 0.0
+        },
+        "rtl_sha256": "a23a8c90b09b44d77d4743111d625bd1745790f3acd974cccb4b961a9d06544e",
+        "scope": "OOC only; not whole-DUT FIT",
+        "tcl_sha256": "0e49c81a64552a574f9acae3f35b7055161d0ae54a836b10b1a58b068740ccdc"
+      },
+      "hardware_commit": "27f7e7d6d043d2c5e3dff7551fdb0487e5775580",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "or replacement\nINFO: [Netlist 29-28] Unisim Transformation completed in 5 CPU seconds\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.28 ; elapsed = 00:00:00.28 . Memory (MB): peak = 10479.766 ; gain = 0.000 ; free physical = 96487 ; free virtual = 359430\nINFO: [Project 1-111] Unisim Transformation Summary:\n  A total of 1432 instances were transformed.\n  RAM256X1D => RAM256X1D (MUXF7(x4), MUXF8(x2), RAMD64E(x8)): 24 instances\n  RAM64M8 => RAM64M8 (RAMD64E(x8)): 1408 instances\n\nSynth Design complete, checksum: 726b3642\nINFO: [Common 17-83] Releasing license: Synthesis\n485 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 01:37:18 ; elapsed = 01:40:53 . Memory (MB): peak = 10479.766 ; gain = 7983.355 ; free physical = 96513 ; free virtual = 359478\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/map-full-module/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 10479.766 ; gain = 0.000 ; free physical = 96306 ; free virtual = 359286\n# report_utilization -hierarchical -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/map-full-module/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:11 ; elapsed = 00:00:12 . Memory (MB): peak = 10479.766 ; gain = 0.000 ; free physical = 95769 ; free virtual = 358779\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/map-full-module/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/map-full-module/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:04:38 ; elapsed = 00:03:17 . Memory (MB): peak = 10551.801 ; gain = 72.035 ; free physical = 117426 ; free virtual = 377022\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 11:48:59 2026...\n",
+      "pid": 2040627,
+      "source_id": "96369486ff5e2c163787b4ce71f5e3d0344346f2b7fb1077d37176ff230bbcdf",
+      "stage_log": {
+        "bytes": 249932,
+        "mtime_ns": 1794368939052778423,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/map-full-module/map-full-module-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "17407846",
+      "status": "VERIFIED_AND_MAPPED_MODULE_ONLY",
+      "updated_utc": "2026-11-11T03:49:04.471521+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-sequence-replicated-proof-r2-state.json": {
+      "controller": {},
+      "hardware_commit": "27f7e7d6d043d2c5e3dff7551fdb0487e5775580",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "SEQUENCE_ACTUAL_SIZE_PASS vectors=8192 slots=256 bits=32 readers=90 same=107857 reset_write=55 disabled=1984 clockless=8192\n",
+      "pid": 2001848,
+      "source_id": "96369486ff5e2c163787b4ce71f5e3d0344346f2b7fb1077d37176ff230bbcdf",
+      "stage_log": {
+        "bytes": 124,
+        "mtime_ns": 1794361000279782180,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/boundary/boundary-run-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "17271836",
+      "status": "VERIFIED_LOCAL_REPLICATED_TOPOLOGY_AND_BOUNDARY_FULL_MODULE_COMPARISON_PENDING",
+      "updated_utc": "2026-11-11T01:36:40.295123+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-sequence-replicated-r1-state.json": {
+      "controller": {},
+      "error": "KeyError('reset')",
+      "hardware_commit": "27f7e7d6d043d2c5e3dff7551fdb0487e5775580",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "gister for signal `\\AddressBucketSequenceReplica.$memwr$\\payload$/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/memory/AddressBucketSequenceMemory.v:39$1_ADDR' using process `\\AddressBucketSequenceReplica.$proc$/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/memory/AddressBucketSequenceMemory.v:37$4'.\n  created $dff cell `$procdff$21' with positive edge clock.\nCreating register for signal `\\AddressBucketSequenceReplica.$memwr$\\payload$/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/memory/AddressBucketSequenceMemory.v:39$1_DATA' using process `\\AddressBucketSequenceReplica.$proc$/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/memory/AddressBucketSequenceMemory.v:37$4'.\n  created $dff cell `$procdff$22' with positive edge clock.\nCreating register for signal `\\AddressBucketSequenceReplica.$memwr$\\payload$/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/memory/AddressBucketSequenceMemory.v:39$1_EN' using process `\\AddressBucketSequenceReplica.$proc$/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/memory/AddressBucketSequenceMemory.v:37$4'.\n  created $dff cell `$procdff$23' with positive edge clock.\n\n3.10. Executing PROC_MEMWR pass (convert process memory writes to cells).\n\n3.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).\nFound and cleaned up 1 empty switch in `\\AddressBucketSequenceReplica.$proc$/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/memory/AddressBucketSequenceMemory.v:37$4'.\nRemoving empty process `AddressBucketSequenceReplica.$proc$/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/memory/AddressBucketSequenceMemory.v:37$4'.\nCleaned up 1 empty switch.\n\n3.12. Executing OPT_EXPR pass (perform const folding).\nOptimizing module AddressBucketSequenceMemory.\nOptimizing module AddressBucketSequenceReplica.\n<suppressed ~1 debug messages>\n\n4. Executing MEMORY_COLLECT pass (generating $mem cells).\n\n5. Executing JSON backend.\n",
+      "pid": 1991646,
+      "source_id": "96369486ff5e2c163787b4ce71f5e3d0344346f2b7fb1077d37176ff230bbcdf",
+      "stage_log": {
+        "bytes": 5818,
+        "mtime_ns": 1794360695525781294,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sequence-replicated-r1-20261111/memory/memory-topology-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "17240394",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T01:31:35.570145+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-sort-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/full-address/map/utilization.rpt",
+        "report_sha256": "7dc8790896f26c628ae47453d4fbc60a06bd8ad6d23834fe54664cf3e873642d",
+        "resources": {
+          "Block RAM Tile": 216.0,
+          "CARRY8": 56065.0,
+          "CLB LUTs": 1197215.0,
+          "CLB Registers": 389479.0,
+          "DSPs": 0.0
+        }
+      },
+      "hardware_commit": "11edd71981aa30ff3a26aab1f2f7327ac0266ee1",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 199432,
+      "source_id": "f8a4239fe5a4818e15d98791f76d9d877172f342cdc0bc036ac6811e68de3cec",
+      "start_ticks": "13241527",
+      "status": "VERIFIED_AND_MAPPED_CANDIDATE_NOT_PROMOTED",
+      "updated_utc": "2026-11-10T16:43:12.080511+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-static-retire-r1-state.json": {
+      "controller": {},
+      "error": "AssertionError(('sat-clear', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-static-retire-r1-20261111/sat-clear.log'))",
+      "hardware_commit": "1a5717752b2efd28d99b7b0b5cccb97e9ff6215c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "-20261111/proof/RetireClearProof.v:4219$7622 ($eq).\nRemoved top 1 bits (of 8) from port B of cell RetireClearProof.$eq$/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-static-retire-r1-20261111/proof/RetireClearProof.v:4224$7642 ($eq).\nRemoved top 1 bits (of 8) from port B of cell RetireClearProof.$eq$/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-static-retire-r1-20261111/proof/RetireClearProof.v:4229$7662 ($eq).\nRemoved top 255 bits (of 256) from wire RetireClearProof._T.\n\n2.10. Executing OPT_CLEAN pass (remove unused cells and wires).\nFinding unused cells or wires in module \\RetireClearProof..\nRemoved 0 unused cells and 1 unused wires.\n<suppressed ~1 debug messages>\n\n2.11. Executing MEMORY_COLLECT pass (generating $mem cells).\n\n2.12. Executing OPT pass (performing simple optimizations).\n\n2.12.1. Executing OPT_EXPR pass (perform const folding).\nOptimizing module RetireClearProof.\n\n2.12.2. Executing OPT_MERGE pass (detect identical cells).\nFinding identical cells in module `\\RetireClearProof'.\nRemoved a total of 0 cells.\n\n2.12.3. Executing OPT_CLEAN pass (remove unused cells and wires).\nFinding unused cells or wires in module \\RetireClearProof..\n\n2.12.4. Finished fast OPT passes.\n\n2.13. Printing statistics.\n\n=== RetireClearProof ===\n\n        +----------Local Count, excluding submodules.\n        | \n     8276 wires\n   986639 wire bits\n     7250 public wires\n   985613 public wire bits\n     1030 ports\n    65804 port bits\n     6918 cells\n      514   $and\n      513   $eq\n        1   $logic_not\n     5888   $mux\n        1   $not\n        1   $shr\n\n2.14. Executing CHECK pass (checking for obvious problems).\nChecking module RetireClearProof...\nFound and reported 0 problems.\n\n3. Executing SAT pass (solving SAT problems in the circuit).\n\nSetting up SAT problem:\nFinal constraint equation: { } = { }\nImported 6918 cells to SAT database.\nImport proof-constraint: \\io_equivalent = 1'1\nFinal proof equation: \\io_equivalent = 1'1\n\nSolving problem with 2312012 variables and 6212020 clauses..\nInterrupted SAT solver: TIMEOUT!\n\n        _____  _  _      _____ ____  _     _____\n       /__ __\\/ \\/ \\__/|/  __//  _ \\/ \\ /\\/__ __\\\n         / \\  | || |\\/|||  \\  | / \\|| | ||  / \\\n         | |  | || |  |||  /_ | \\_/|| \\_/|  | |\n         \\_/  \\_/\\_/  \\|\\____\\\\____/\\____/  \\_/\n\nERROR: Called with -verify and proof did time out!\n",
+      "pid": 2295670,
+      "source_id": "6b2b0cd36757eb600c4470c1489ba61469a1b81f92a7a766ce0c5ed51006f0e5",
+      "stage_log": {
+        "bytes": 61876,
+        "mtime_ns": 1794368344620273329,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-static-retire-r1-20261111/sat-clear.log"
+      },
+      "start_ticks": "17983094",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T03:39:04.807977+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-static-retire-r2-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-static-retire-r2-20261111/map-full-module/module.dcp",
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-static-retire-r2-20261111/map-full-module/utilization.rpt",
+        "report_sha256": "764868d187449bc59686e8ce4555edc52cb314fbe1da7db7bbe6c4c5bf511285",
+        "resources": {
+          "Block RAM Tile": 216.0,
+          "CARRY8": 46485.0,
+          "CLB LUTs": 878033.0,
+          "CLB Registers": 384355.0,
+          "DSPs": 0.0
+        },
+        "rtl_sha256": "8faac42e08fb5e7364a3c2e9931b879d8c282e1b1d1c69cca651072db984709b"
+      },
+      "hardware_commit": "1a5717752b2efd28d99b7b0b5cccb97e9ff6215c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "ING: [Netlist 29-101] Netlist 'PackageAddressStats' is not ideal for floorplanning, since the cellview 'PackageAddressStats' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.29 ; elapsed = 00:00:00.30 . Memory (MB): peak = 11251.625 ; gain = 0.000 ; free physical = 27756 ; free virtual = 298803\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: 6a55818d\nINFO: [Common 17-83] Releasing license: Synthesis\n481 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 02:18:21 ; elapsed = 02:24:04 . Memory (MB): peak = 11251.625 ; gain = 8748.184 ; free physical = 37087 ; free virtual = 307980\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-static-retire-r2-20261111/map-full-module/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:08 ; elapsed = 00:00:08 . Memory (MB): peak = 11251.625 ; gain = 0.000 ; free physical = 35898 ; free virtual = 306735\n# report_utilization -hierarchical -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-static-retire-r2-20261111/map-full-module/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:13 ; elapsed = 00:00:13 . Memory (MB): peak = 11251.625 ; gain = 0.000 ; free physical = 39126 ; free virtual = 310065\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-static-retire-r2-20261111/map-full-module/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-static-retire-r2-20261111/map-full-module/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:04:20 ; elapsed = 00:03:09 . Memory (MB): peak = 11323.660 ; gain = 72.035 ; free physical = 21727 ; free virtual = 293412\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 14:14:59 2026...\n",
+      "pid": 2315842,
+      "source_id": "6b2b0cd36757eb600c4470c1489ba61469a1b81f92a7a766ce0c5ed51006f0e5",
+      "stage_log": {
+        "bytes": 232265,
+        "mtime_ns": 1794377699665737748,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-static-retire-r2-20261111/map-full-module.log"
+      },
+      "start_ticks": "18022744",
+      "status": "VERIFIED_AND_MAPPED_COMPLETE_ADDRESS_MODULE_NOT_WHOLE_DUT",
+      "updated_utc": "2026-11-11T06:15:05.594681+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-tag-read-r1-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tag-read-r1-20261111/map-full-module/module.dcp",
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tag-read-r1-20261111/map-full-module/utilization.rpt",
+        "report_sha256": "088781fecabebd84fd3c825417fafa403cf43ce246fb202fcc5a43318ab098cc",
+        "resources": {
+          "Block RAM Tile": 0.0,
+          "CARRY8": 0.0,
+          "CLB LUTs": 0.0,
+          "CLB Registers": 0.0,
+          "DSPs": 0.0
+        },
+        "rtl_sha256": "d8ff9b45d44abce15d28ceb8ea66e805359bb7ec49f3d11d44e1c7c4648a4785",
+        "scope": "OOC only; not whole-DUT FIT",
+        "tcl_sha256": "f054e3440499d3f278ab2ec31ccb4c5eb4063441cfaf32483e5eeceec778ad57"
+      },
+      "hardware_commit": "67e6fa3c3fd700ab749e5e5ee71d653b53c0a429",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "n 5 CPU seconds\nWARNING: [Netlist 29-101] Netlist 'PackageAddressStats' is not ideal for floorplanning, since the cellview 'PackageAddressStats' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.41 ; elapsed = 00:00:00.41 . Memory (MB): peak = 11652.301 ; gain = 0.000 ; free physical = 56795 ; free virtual = 341582\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: a1606b6e\nINFO: [Common 17-83] Releasing license: Synthesis\n481 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 01:40:04 ; elapsed = 01:45:08 . Memory (MB): peak = 11652.301 ; gain = 9149.863 ; free physical = 57315 ; free virtual = 342100\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tag-read-r1-20261111/map-full-module/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:10 ; elapsed = 00:00:10 . Memory (MB): peak = 11652.301 ; gain = 0.000 ; free physical = 56532 ; free virtual = 341320\n# report_utilization -hierarchical -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tag-read-r1-20261111/map-full-module/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:15 ; elapsed = 00:00:15 . Memory (MB): peak = 11652.301 ; gain = 0.000 ; free physical = 62129 ; free virtual = 346917\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tag-read-r1-20261111/map-full-module/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tag-read-r1-20261111/map-full-module/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:05:32 ; elapsed = 00:04:02 . Memory (MB): peak = 11724.336 ; gain = 72.035 ; free physical = 49601 ; free virtual = 335827\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 04:45:25 2026...\n",
+      "pid": 1286520,
+      "source_id": "61f96a2321c1339c37a416a762f47bd9a8e25ee8562b7ec2fea14819614820a9",
+      "stage_log": {
+        "bytes": 231415,
+        "mtime_ns": 1794343525954602552,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tag-read-r1-20261111/map-full-module/map-full-module-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "14802177",
+      "status": "VERIFIED_AND_MAPPED_MODULE_ONLY",
+      "updated_utc": "2026-11-10T20:45:33.572165+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-tagcompress-cachefix-r3-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tagcompress-cachefix-r3-20261111/map-full-module/module.dcp",
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tagcompress-cachefix-r3-20261111/map-full-module/utilization.rpt",
+        "report_sha256": "0c6d62536302524b517ad279c49eec61241650a0b0450b617b6a7417d00e25fe",
+        "resources": {
+          "Block RAM Tile": 216.0,
+          "CARRY8": 55413.0,
+          "CLB LUTs": 990230.0,
+          "CLB Registers": 386142.0,
+          "DSPs": 0.0
+        },
+        "rtl_sha256": "5e061d818bff7be4878d6eab82b2343f760e7ce1a54db3ae2641a21b4f4db039",
+        "scope": "Complete module OOC; not whole-DUT FIT",
+        "tcl_sha256": "62ba0718366eb45c35850100b805f35c216675c44b1352966133434f3f9f71fa"
+      },
+      "hardware_commit": "3fb8a7f7d7e65b5076aaebbc8aa93101f00041ce",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "t 'PackageAddressStats' is not ideal for floorplanning, since the cellview 'PackageAddressStats' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.35 ; elapsed = 00:00:00.34 . Memory (MB): peak = 11073.617 ; gain = 0.000 ; free physical = 59060 ; free virtual = 319042\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: 33df6aaf\nINFO: [Common 17-83] Releasing license: Synthesis\n482 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 01:41:47 ; elapsed = 01:45:42 . Memory (MB): peak = 11073.617 ; gain = 8567.207 ; free physical = 60363 ; free virtual = 320354\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tagcompress-cachefix-r3-20261111/map-full-module/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:08 ; elapsed = 00:00:09 . Memory (MB): peak = 11073.617 ; gain = 0.000 ; free physical = 61762 ; free virtual = 321764\n# report_utilization -hierarchical -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tagcompress-cachefix-r3-20261111/map-full-module/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:12 ; elapsed = 00:00:13 . Memory (MB): peak = 11073.617 ; gain = 0.000 ; free physical = 60745 ; free virtual = 321386\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tagcompress-cachefix-r3-20261111/map-full-module/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tagcompress-cachefix-r3-20261111/map-full-module/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:04:49 ; elapsed = 00:03:27 . Memory (MB): peak = 11145.652 ; gain = 72.035 ; free physical = 58089 ; free virtual = 317547\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 09:59:03 2026...\n",
+      "pid": 1715176,
+      "source_id": "9a2882d23afaeada238076322cceb267d0c7ed5d74e00b0d6e532e04c13c03e3",
+      "stage_log": {
+        "bytes": 232076,
+        "mtime_ns": 1794362343100064161,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tagcompress-cachefix-r3-20261111/map-full-module/map-full-module-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "16712610",
+      "status": "VERIFIED_AND_MAPPED_MODULE_ONLY",
+      "updated_utc": "2026-11-11T01:59:08.543628+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-tagcompress-r1-state.json": {
+      "controller": {},
+      "error": "AssertionError(('boundary-compile', 2, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tagcompress-r1-20261111/histogram/boundary-compile-attempt-1.log'))",
+      "hardware_commit": "3fb8a7f7d7e65b5076aaebbc8aa93101f00041ce",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "n -Wno-c++11-narrowing -Wno-constant-logical-operand -Wno-non-pod-varargs -Wno-parentheses-equality -Wno-shadow -Wno-sign-compare -Wno-tautological-bitwise-compare -Wno-tautological-compare -Wno-uninitialized -Wno-unused-parameter -Wno-unused-variable    -O0   -x c++-header VHistogramProbe__pch.h -o VHistogramProbe__pch.h.slow.gch\necho \"\" > VHistogramProbe__ALL.verilator_deplist.tmp\nccache: error: Failed to write to /home/guozh/.ccache/0/stats.tmp.devjz-ubt20-s01.1695581.SwRXtv\nmake: *** [/usr/local/share/verilator/include/verilated.mk:275: verilated_threads.o] Error 1\nmake: *** Waiting for unfinished jobs....\nccache: error: Failed to write to /home/guozh/.ccache/8/stats.tmp.devjz-ubt20-s01.1695580.VCivDd\nmake: *** [/usr/local/share/verilator/include/verilated.mk:275: verilated.o] Error 1\nccache: error: Failed to write to /home/guozh/.ccache/4/stats.tmp.devjz-ubt20-s01.1695582.EApW48\nmake: *** [/usr/local/share/verilator/include/verilated.mk:281: VHistogramProbe__pch.h.fast.gch] Error 1\nccache: error: Failed to write to /home/guozh/.ccache/f/stats.tmp.devjz-ubt20-s01.1695579.KQvixa\nmake: *** [VHistogramProbe.mk:64: boundary.o] Error 1\nccache: error: Failed to write to /home/guozh/.ccache/4/stats.tmp.devjz-ubt20-s01.1695584.hllBHJ\nmake: *** [/usr/local/share/verilator/include/verilated.mk:283: VHistogramProbe__pch.h.slow.gch] Error 1\nrm VHistogramProbe__ALL.verilator_deplist.tmp\nmake: Leaving directory '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tagcompress-r1-20261111/histogram/obj'\n%Error: make -C /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tagcompress-r1-20261111/histogram/obj -f VHistogramProbe.mk -j 8 OPT_FAST=-O0 OPT_SLOW=-O0 exited with 2\n%Error: Command Failed ulimit -s unlimited 2>/dev/null; exec /usr/local/share/verilator/bin/verilator_bin --cc --exe --build --top-module HistogramProbe --Mdir /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tagcompress-r1-20261111/histogram/obj -j 8 --output-split 10000 --output-split-cfuncs 200 -Wno-fatal -CFLAGS -O0 -MAKEFLAGS OPT_FAST=-O0\\ OPT_SLOW=-O0 /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tagcompress-r1-20261111/histogram/HistogramProbe.v /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tagcompress-r1-20261111/histogram/boundary.cpp\n",
+      "pid": 1693582,
+      "source_id": "9a2882d23afaeada238076322cceb267d0c7ed5d74e00b0d6e532e04c13c03e3",
+      "stage_log": {
+        "bytes": 5413,
+        "mtime_ns": 1794354571885461617,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-tagcompress-r1-20261111/histogram/boundary-compile-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "16621863",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-10T23:49:31.904361+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-update-sequence-r1-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-sequence-r1-20261111/map-full-module/module.dcp",
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-sequence-r1-20261111/map-full-module/utilization.rpt",
+        "report_sha256": "dcb5e115c1ac4e8ad8a91cbdea0202cd965e17da7c9639097eca820249d47c90",
+        "resources": {
+          "Block RAM Tile": 216.0,
+          "CARRY8": 47797.0,
+          "CLB LUTs": 761398.0,
+          "CLB Registers": 374783.0,
+          "DSPs": 0.0
+        },
+        "rtl_sha256": "cbc5b5454a333251bc6f61cb9bb71ae84584f73248ab03ca5eb2ceee4b7fceda"
+      },
+      "hardware_commit": "e21194b24e3f9bf94c57dff009ed0c3d7d7eab7e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "m elements for replacement\nINFO: [Netlist 29-28] Unisim Transformation completed in 5 CPU seconds\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.26 ; elapsed = 00:00:00.26 . Memory (MB): peak = 10263.918 ; gain = 0.000 ; free physical = 102003 ; free virtual = 348079\nINFO: [Project 1-111] Unisim Transformation Summary:\n  A total of 1432 instances were transformed.\n  RAM256X1D => RAM256X1D (MUXF7(x4), MUXF8(x2), RAMD64E(x8)): 24 instances\n  RAM64M8 => RAM64M8 (RAMD64E(x8)): 1408 instances\n\nSynth Design complete, checksum: 3d195e25\nINFO: [Common 17-83] Releasing license: Synthesis\n485 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 06:35:04 ; elapsed = 06:42:36 . Memory (MB): peak = 10263.918 ; gain = 7773.480 ; free physical = 104242 ; free virtual = 350342\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-sequence-r1-20261111/map-full-module/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 10263.918 ; gain = 0.000 ; free physical = 109324 ; free virtual = 355426\n# report_utilization -hierarchical -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-sequence-r1-20261111/map-full-module/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:11 ; elapsed = 00:00:12 . Memory (MB): peak = 10263.918 ; gain = 0.000 ; free physical = 108746 ; free virtual = 354847\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-sequence-r1-20261111/map-full-module/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-sequence-r1-20261111/map-full-module/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:04:16 ; elapsed = 00:03:05 . Memory (MB): peak = 10335.953 ; gain = 72.035 ; free physical = 104737 ; free virtual = 352171\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 19:15:53 2026...\n",
+      "pid": 2438660,
+      "source_id": "6bd845f54a3e213f29c6faa462d8599dbf7ae6b9749363bff147a33a4bb60b30",
+      "stage_log": {
+        "bytes": 255991,
+        "mtime_ns": 1794395753229992518,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-sequence-r1-20261111/map-full-module.log"
+      },
+      "start_ticks": "18278280",
+      "status": "VERIFIED_AND_MAPPED_COMPLETE_ADDRESS_MODULE_NOT_WHOLE_DUT",
+      "updated_utc": "2026-11-11T11:15:58.948287+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-update-share-r1-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-share-r1-20261111/map-full-module/module.dcp",
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-share-r1-20261111/map-full-module/utilization.rpt",
+        "report_sha256": "887c8c94789959539513a8e94c87480a0510c4f1fee25b306492c3c5545008df",
+        "resources": {
+          "Block RAM Tile": 216.0,
+          "CARRY8": 30840.0,
+          "CLB LUTs": 749673.0,
+          "CLB Registers": 384311.0,
+          "DSPs": 0.0
+        },
+        "rtl_sha256": "4edf1038beee95bd74e2d05bff2d0fc0d0cff2cd3841e6a82d4dd7a9816cb659",
+        "scope": "Complete module OOC; not whole-DUT FIT",
+        "tcl_sha256": "f1376b18f91490478e58dfad0553d44640dcb50c1f66f8fe16d82497a71fafd2"
+      },
+      "hardware_commit": "eada7948b15146fd33bbc91aad7bac4ab9ec44b7",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "\nWARNING: [Netlist 29-101] Netlist 'PackageAddressStats' is not ideal for floorplanning, since the cellview 'PackageAddressStats' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.28 ; elapsed = 00:00:00.27 . Memory (MB): peak = 11073.141 ; gain = 0.000 ; free physical = 59826 ; free virtual = 319817\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: a9fbe37\nINFO: [Common 17-83] Releasing license: Synthesis\n481 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 01:43:18 ; elapsed = 01:48:06 . Memory (MB): peak = 11073.141 ; gain = 8570.699 ; free physical = 61714 ; free virtual = 321715\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-share-r1-20261111/map-full-module/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 11073.141 ; gain = 0.000 ; free physical = 61854 ; free virtual = 321945\n# report_utilization -hierarchical -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-share-r1-20261111/map-full-module/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:11 ; elapsed = 00:00:12 . Memory (MB): peak = 11073.141 ; gain = 0.000 ; free physical = 60350 ; free virtual = 321189\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-share-r1-20261111/map-full-module/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-share-r1-20261111/map-full-module/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:03:53 ; elapsed = 00:02:48 . Memory (MB): peak = 11145.176 ; gain = 72.035 ; free physical = 52153 ; free virtual = 314992\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 09:58:26 2026...\n",
+      "pid": 1712770,
+      "source_id": "89a95f25bc2b2413464e4cd94c5ed5b3a69673f16f0ebf18521baf1cc1cb8a29",
+      "stage_log": {
+        "bytes": 231381,
+        "mtime_ns": 1794362306963996404,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-share-r1-20261111/map-full-module/map-full-module-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "16704932",
+      "status": "VERIFIED_AND_MAPPED_MODULE_ONLY",
+      "updated_utc": "2026-11-11T01:58:32.202829+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-address-update-share-r2-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-share-r2-20261111/map-full-module/module.dcp",
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-share-r2-20261111/map-full-module/utilization.rpt",
+        "report_sha256": "fe5e4eb32e4c8e9a8438c9ec15fabe0b95acc3d2eca300de8919455765f009dd",
+        "resources": {
+          "Block RAM Tile": 216.0,
+          "CARRY8": 30842.0,
+          "CLB LUTs": 872880.0,
+          "CLB Registers": 384373.0,
+          "DSPs": 0.0
+        },
+        "rtl_sha256": "88f390bb71c01d3b8ddd90b4660cc20a81f44faa14b64e7578aab273d0c599d6",
+        "scope": "Complete module OOC; not whole-DUT FIT",
+        "tcl_sha256": "363d4d2ecad05c4ca315e528574bda7c1637d8537cb20146320ba8b48b12925d"
+      },
+      "hardware_commit": "00847dc2b8f6be3f1e1ff0639c1104d33334ddc9",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "WARNING: [Netlist 29-101] Netlist 'PackageAddressStats' is not ideal for floorplanning, since the cellview 'PackageAddressStats' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.33 ; elapsed = 00:00:00.34 . Memory (MB): peak = 11124.805 ; gain = 0.000 ; free physical = 76310 ; free virtual = 335797\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: 3dec0e6d\nINFO: [Common 17-83] Releasing license: Synthesis\n481 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 01:55:39 ; elapsed = 01:58:49 . Memory (MB): peak = 11124.805 ; gain = 8625.363 ; free physical = 77443 ; free virtual = 336929\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-share-r2-20261111/map-full-module/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:08 ; elapsed = 00:00:09 . Memory (MB): peak = 11124.805 ; gain = 0.000 ; free physical = 77387 ; free virtual = 336874\n# report_utilization -hierarchical -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-share-r2-20261111/map-full-module/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:12 ; elapsed = 00:00:13 . Memory (MB): peak = 11124.805 ; gain = 0.000 ; free physical = 76754 ; free virtual = 336241\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-share-r2-20261111/map-full-module/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-share-r2-20261111/map-full-module/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:04:19 ; elapsed = 00:03:08 . Memory (MB): peak = 11196.840 ; gain = 72.035 ; free physical = 68728 ; free virtual = 330300\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 10:21:38 2026...\n",
+      "pid": 1737896,
+      "source_id": "6b0de8636ec9d88f7d9702769c03325df78ab43c3c1fe527fff9dc1a3aafbbdb",
+      "stage_log": {
+        "bytes": 231875,
+        "mtime_ns": 1794363698626274141,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-share-r2-20261111/map-full-module/map-full-module-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "16778236",
+      "status": "VERIFIED_AND_MAPPED_MODULE_ONLY",
+      "updated_utc": "2026-11-11T02:21:43.982754+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-barrier-event-read-map-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "c4b5820da837b2296a3362d3f60dae50580de2fb",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2049250,
+      "source_id": "4eab5d120a9dbe5a93141fa3af6ecba6e886016c200ff931426b2f571905f345",
+      "stage_process": {},
+      "start_ticks": "17436077",
+      "status": "VERIFIED_AND_PAIRED_MAPPED_MODULE_ONLY_NOT_SELECTED",
+      "updated_utc": "2026-11-11T02:11:26.495002+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-barrier-event-read-proof-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "c4b5820da837b2296a3362d3f60dae50580de2fb",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "BARRIER_COMPLETE_FROZEN_PARENT_CANDIDATE_PASS cycles=8192 observations=16384 outputs=7 bucket_fields=1024 collisions=256 immediate=86 reset_events=10 overflow_seeds=2\n",
+      "pid": 2033434,
+      "source_id": "4eab5d120a9dbe5a93141fa3af6ecba6e886016c200ff931426b2f571905f345",
+      "stage_log": {
+        "bytes": 167,
+        "mtime_ns": 1794362131263718857,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-barrier-event-read-r1-20261111/comparison/complete-comparison-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "17374458",
+      "status": "PASS_LOCAL_SAT_AND_COMPLETE_FROZEN_8192_CYCLES_MAPPING_PENDING",
+      "updated_utc": "2026-11-11T01:55:31.310342+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-bucket-tag-cad-state.json": {
+      "certified_bitstream": false,
+      "controller": {},
+      "current_stage": "implementation",
+      "dut_resources": {
+        "Block RAM Tile": {
+          "available": 2016.0,
+          "percent": 44.39484126984127,
+          "used": 895.0
+        },
+        "CARRY8": {
+          "available": 162960.0,
+          "percent": 55.02700049091802,
+          "used": 89672.0
+        },
+        "CLB LUTs": {
+          "available": 1303680.0,
+          "percent": 212.29135984290625,
+          "used": 2767600.0
+        },
+        "CLB Registers": {
+          "available": 2607360.0,
+          "percent": 65.35150497054492,
+          "used": 1703949.0
+        },
+        "DSPs": {
+          "available": 9024.0,
+          "percent": 2.127659574468085,
+          "used": 192.0
+        },
+        "URAM": {
+          "available": 960.0,
+          "percent": 0.0,
+          "used": 0.0
+        }
+      },
+      "error": "('implementation', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-bucket-tag-cad-9ae9a7fc/implementation-attempt-1.log')",
+      "hardware_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-bucket-tag-cad-9ae9a7fc",
+      "log_tail": "final-opt4-20261106/build-logs/Opt4-fit-bucket-tag-cad-9ae9a7fc/top-postopt-hierarchical.rpt}\n##   report_drc -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-bucket-tag-cad-9ae9a7fc/top-postopt-drc.rpt}\n##   set f [open {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-bucket-tag-cad-9ae9a7fc/top-postopt-utilization.rpt} r]\n##   set text [read $f]; close $f\n##   set exceeded {}; set seen {}\n##   foreach line [split $text \\n] {\n##     set a [split $line |]\n##     if {[llength $a] < 7} {continue}\n##     set kind [string trimright [string trim [lindex $a 1]] *]\n##     if {$kind ni {\"CLB LUTs\" \"CLB Registers\" \"CARRY8\" \"DSPs\" \"Block RAM Tile\" \"URAM\"} || [dict exists $seen $kind]} {continue}\n##     set used [string map {, {}} [string trim [lindex $a 2]]]\n##     set avail [string map {, {}} [string trim [lindex $a 5]]]\n##     if {![string is double -strict $used] || ![string is double -strict $avail] || $avail <= 0} {continue}\n##     dict set seen $kind 1\n##     puts \"EC_FIT_CAPACITY kind=$kind used=$used available=$avail\"\n##     if {$used > $avail} {lappend exceeded $kind}\n##   }\n##   if {[dict size $seen] < 5} {error \"capacity report parse incomplete\"}\n##   set f [open {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-bucket-tag-cad-9ae9a7fc/capacity.complete} w]\n##   if {[llength $exceeded]} {puts $f \"NOT_FIT_POSTOPT $exceeded\";close $f;error \"NOT FIT; saved optimized checkpoint, no place/route: $exceeded\"}\n##   puts $f \"CAPACITY_FITS_POSTOPT_TIMING_PENDING\";close $f\n## \n##   create_report \"impl_1_opt_report_drc_0\" \"report_drc -file design_1_wrapper_drc_opted.rpt -pb design_1_wrapper_drc_opted.pb -rpx design_1_wrapper_drc_opted.rpx\"\n## OPTRACE \"opt_design reports\" END { }\n##   close_msg_db -file opt_design.pb\n## } RESULT]\n## if {$rc} {\n##   step_failed opt_design\n##   return -code error $RESULT\n## } else {\n##   end_step opt_design\n##   unset ACTIVE_STEP \n## }\nNOT FIT; saved optimized checkpoint, no place/route: {CLB LUTs}\n\n    while executing\n\"source {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-bucket-tag-cad-9ae9a7fc/implementation-bound.tcl}\"\n    (file \"/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-bucket-tag-cad-9ae9a7fc/implementation-attempt-1.tcl\" line 1)\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 17:43:34 2026...\n",
+      "pid": 1737960,
+      "profile": "Opt4-fit-C4-SVB32-bucket-tag-20261111",
+      "source_id": "3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561",
+      "stage_log": {
+        "bytes": 84075,
+        "mtime_ns": 1794390214424697113,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-bucket-tag-cad-9ae9a7fc/implementation-attempt-1.log"
+      },
+      "start_ticks": "16778336",
+      "status": "NOT_FIT_POSTOPT",
+      "top_postopt_resources": {
+        "Block RAM Tile": {
+          "available": 2016.0,
+          "percent": 51.01686507936508,
+          "used": 1028.5
+        },
+        "CARRY8": {
+          "available": 162960.0,
+          "percent": 55.68237604320078,
+          "used": 90740.0
+        },
+        "CLB LUTs": {
+          "available": 1303680.0,
+          "percent": 218.41111315660285,
+          "used": 2847382.0
+        },
+        "CLB Registers": {
+          "available": 2607360.0,
+          "percent": 68.84948760432007,
+          "used": 1795154.0
+        },
+        "DSPs": {
+          "available": 9024.0,
+          "percent": 2.160904255319149,
+          "used": 195.0
+        },
+        "URAM": {
+          "available": 960.0,
+          "percent": 0.0,
+          "used": 0.0
+        }
+      },
+      "updated_utc": "2026-11-11T09:43:45.287162+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-bucket-tag-rtl-state.json": {
+      "controller": {},
+      "hardware_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+      "identity_live": false,
+      "source_id": "3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561",
+      "status": "GOLDENGATE_COMPLETE_NOT_SYNTHESIZED"
+    },
+    "Opt4-fit-bucket-tag-software-prep-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 1945119,
+      "source_id": "3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561",
+      "start_ticks": "17042704",
+      "status": "13_ORDINARY_PROGRAMS_EXACT_PAIRED_SOFTWARE_READY_NOT_FPGA_ADMITTED",
+      "updated_utc": "2026-11-11T00:58:28.048195+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-bucket-tag-system-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": " full_compare=%d cancelled=%d\\n), PrintPort(synthesizedPrintf_lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_core_printf_1_wire,List((enable,UInt<1>), (args_0,UInt<3>), (args_1,UInt<32>), (args_2,UInt<2>), (args_3,UInt<1>), (args_4,UInt<1>)),EC_OPT4_PACKAGE_RESULT hart=%d seq=%x status=%d full_compare=%d cancelled=%d\\n)))\nGenerating a Midas Memory Model\n  Max Read Requests: 6\n  Max Write Requests: 6\n  Max Read Length: 8\n  Max Write Length: 8\n  Max Read ID Reuse: 1\n  Max Write ID Reuse: 1\n\nTiming Model Parameters\n  Timing Model Class: Latency Bandwidth Pipe\n  No LLC Model Instantiated\n\n\nDefault Settings\n  +mm_relaxFunctionalModel_0=0\n  +mm_writeMaxReqs_0=6\n  +mm_readMaxReqs_0=6\n  +mm_writeLatency_0=30\n  +mm_readLatency_0=30\n\nBridge Streams To CPU:\n  Name: TRACERVBRIDGEMODULE_0_to_cpu_stream, Idx: 0, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_1_to_cpu_stream, Idx: 1, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_2_to_cpu_stream, Idx: 2, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_3_to_cpu_stream, Idx: 3, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_4_to_cpu_stream, Idx: 4, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: PRINTBRIDGEMODULE_0_to_cpu_stream, Idx: 5, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: PRINTBRIDGEMODULE_1_to_cpu_stream, Idx: 6, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\nBridge Streams From CPU:\n  None\nSimulator Memory Map:\n  [   0,   7f]: FASEDMemoryTimingModel_0\n  [  80,   ff]: BlockDevBridgeModule_0\n  [ 100,  13f]: TSIBridgeModule_0\n  [ 140,  17f]: TracerVBridgeModule_0\n  [ 180,  1bf]: TracerVBridgeModule_1\n  [ 1c0,  1ff]: TracerVBridgeModule_2\n  [ 200,  23f]: TracerVBridgeModule_3\n  [ 240,  27f]: TracerVBridgeModule_4\n  [ 280,  2bf]: LoadMemWidget_0\n  [ 2c0,  2df]: PeekPokeBridgeModule_0\n  [ 2e0,  2ff]: UARTBridgeModule_0\n  [ 300,  31f]: ClockBridgeModule_0\n  [ 320,  33f]: PrintBridgeModule_0\n  [ 340,  35f]: PrintBridgeModule_1\n  [ 360,  37f]: CPUManagedStreamEngine_0\n  [ 380,  38f]: SimulationMaster_0\n  [ 390,  397]: ResetPulseBridgeModule_0\nTotal Host-FPGA DRAM Allocated: 16.000 GiB of 16.000 GiB available.\nHost-FPGA DRAM Allocation Map:\n  MainMemory_0 -> [0x0, 0x3FFFFFFFF]\n    Associated bridges: FASEDMemoryTimingModel_0\nAuto ILA: p(EnableAutoILA) unset. Skipping AutoILATransform\n",
+      "pid": 1721924,
+      "source_id": "3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561",
+      "stage_log": {
+        "bytes": 7576,
+        "mtime_ns": 1794356513665890268,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-bucket-tag-system-r1-20261111/goldengate-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "16732278",
+      "status": "RTL_READY_REAL_ABI_CHECKED",
+      "updated_utc": "2026-11-11T00:24:35.512361+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-cad-state.json": {
+      "certified_bitstream": false,
+      "controller": {},
+      "current_stage": "implementation",
+      "dut_resources": {
+        "Block RAM Tile": {
+          "available": 2016.0,
+          "percent": 44.39484126984127,
+          "used": 895.0
+        },
+        "CARRY8": {
+          "available": 162960.0,
+          "percent": 56.284364261168385,
+          "used": 91721.0
+        },
+        "CLB LUTs": {
+          "available": 1303680.0,
+          "percent": 240.23303264604812,
+          "used": 3131870.0
+        },
+        "CLB Registers": {
+          "available": 2607360.0,
+          "percent": 65.41371348797252,
+          "used": 1705571.0
+        },
+        "DSPs": {
+          "available": 9024.0,
+          "percent": 2.127659574468085,
+          "used": 192.0
+        },
+        "URAM": {
+          "available": 960.0,
+          "percent": 0.0,
+          "used": 0.0
+        }
+      },
+      "error": "('implementation', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-cad-8da24a26/implementation-attempt-1.log')",
+      "hardware_commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-cad-8da24a26",
+      "log_tail": "al -hierarchical_depth 30 -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-cad-8da24a26/top-postopt-hierarchical.rpt}\n##   report_drc -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-cad-8da24a26/top-postopt-drc.rpt}\n##   set f [open {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-cad-8da24a26/top-postopt-utilization.rpt} r]\n##   set text [read $f]; close $f\n##   set exceeded {}; set seen {}\n##   foreach line [split $text \\n] {\n##     set a [split $line |]\n##     if {[llength $a] < 7} {continue}\n##     set kind [string trimright [string trim [lindex $a 1]] *]\n##     if {$kind ni {\"CLB LUTs\" \"CLB Registers\" \"CARRY8\" \"DSPs\" \"Block RAM Tile\" \"URAM\"} || [dict exists $seen $kind]} {continue}\n##     set used [string map {, {}} [string trim [lindex $a 2]]]\n##     set avail [string map {, {}} [string trim [lindex $a 5]]]\n##     if {![string is double -strict $used] || ![string is double -strict $avail] || $avail <= 0} {continue}\n##     dict set seen $kind 1\n##     puts \"EC_FIT_CAPACITY kind=$kind used=$used available=$avail\"\n##     if {$used > $avail} {lappend exceeded $kind}\n##   }\n##   if {[dict size $seen] < 5} {error \"capacity report parse incomplete\"}\n##   set f [open {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-cad-8da24a26/capacity.complete} w]\n##   if {[llength $exceeded]} {puts $f \"NOT_FIT_POSTOPT $exceeded\";close $f;error \"NOT FIT; saved optimized checkpoint, no place/route: $exceeded\"}\n##   puts $f \"CAPACITY_FITS_POSTOPT_TIMING_PENDING\";close $f\n## \n##   create_report \"impl_1_opt_report_drc_0\" \"report_drc -file design_1_wrapper_drc_opted.rpt -pb design_1_wrapper_drc_opted.pb -rpx design_1_wrapper_drc_opted.rpx\"\n## OPTRACE \"opt_design reports\" END { }\n##   close_msg_db -file opt_design.pb\n## } RESULT]\n## if {$rc} {\n##   step_failed opt_design\n##   return -code error $RESULT\n## } else {\n##   end_step opt_design\n##   unset ACTIVE_STEP \n## }\nNOT FIT; saved optimized checkpoint, no place/route: {CLB LUTs}\n\n    while executing\n\"source {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-cad-8da24a26/implementation-bound.tcl}\"\n    (file \"/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-cad-8da24a26/implementation-attempt-1.tcl\" line 1)\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 08:46:44 2026...\n",
+      "pid": 2790677,
+      "profile": "Opt4-fit-C4-SVB32-20261110",
+      "source_id": "7e77ddda28298ac88be13c28dbe98771982bc6ca9587f810adf875bffd580cc1",
+      "stage_log": {
+        "bytes": 80893,
+        "mtime_ns": 1794358004660371076,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-cad-8da24a26/implementation-attempt-1.log"
+      },
+      "start_ticks": "11895255",
+      "status": "NOT_FIT_POSTOPT",
+      "top_postopt_resources": {
+        "Block RAM Tile": {
+          "available": 2016.0,
+          "percent": 51.01686507936508,
+          "used": 1028.5
+        },
+        "CARRY8": {
+          "available": 162960.0,
+          "percent": 56.939739813451155,
+          "used": 92789.0
+        },
+        "CLB LUTs": {
+          "available": 1303680.0,
+          "percent": 246.66198760432007,
+          "used": 3215683.0
+        },
+        "CLB Registers": {
+          "available": 2607360.0,
+          "percent": 68.91173447471772,
+          "used": 1796777.0
+        },
+        "DSPs": {
+          "available": 9024.0,
+          "percent": 2.160904255319149,
+          "used": 195.0
+        },
+        "URAM": {
+          "available": 960.0,
+          "percent": 0.0,
+          "used": 0.0
+        }
+      },
+      "updated_utc": "2026-11-11T00:46:57.255440+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-field-read-cone-audit-r3-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3613571,
+      "resources": null,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "19653773",
+      "status": "ANALYZING_FAILED_SYMBOLIC_CONES",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-field-read-exact-identity-round30-v1-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3646835,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "19724024",
+      "status": "UNPROVEN_GENERATED_IDENTITY_MISMATCH_REQUIRES_REVIEW_NO_ADMISSION",
+      "updated_utc": "2026-11-11T08:25:38.841166+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-field-read-exact-identity-round31-v1-state.json": {
+      "controller": {},
+      "error": "AssertionError()",
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3689379,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "19810840",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T08:39:48.010069+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-field-read-exact-identity-round31-v2-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3696519,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "19820092",
+      "status": "UNPROVEN_GENERATED_IDENTITY_MISMATCH_REQUIRES_REVIEW_NO_ADMISSION",
+      "updated_utc": "2026-11-11T08:41:40.636201+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-field-read-exact-identity-round31-v3-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3705733,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "19841613",
+      "status": "UNPROVEN_GENERATED_IDENTITY_MISMATCH_REQUIRES_REVIEW_NO_ADMISSION",
+      "updated_utc": "2026-11-11T08:45:16.174555+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-field-read-exact-identity-round31-v4-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3711610,
+      "resources": null,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "19854036",
+      "status": "PASS_COMPLETE_GENERATED_DCACHE_RESTRICTED_PREDICATE_IDENTITY_ALL_STATE_OUTPUTS_OBSERVATIONS_AND_STATEMENTS_NOT_WHOLE_DUT",
+      "updated_utc": "2026-11-11T08:47:28.080505+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-field-read-full-map-r2-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3726979,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "19885459",
+      "status": "COMPLETE_REAL_FULL_DCACHE_FIELD_OBSERVED_PAIR_NOT_WHOLE_FIT_NOT_CYCLE_ADMITTED",
+      "updated_utc": "2026-11-11T16:15:34.298417+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-field-read-generated-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3542198,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "19452863",
+      "status": "UNPROVEN_GENERATED_IDENTITY_MISMATCH_REQUIRES_REVIEW_NO_ADMISSION",
+      "updated_utc": "2026-11-11T07:45:23.711090+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-field-read-generated-r2-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3641121,
+      "resources": null,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "19711598",
+      "status": "PASS_COMPLETE_GENERATED_DCACHE_SYMBOLIC_IDENTITY_ALL_STATE_OUTPUTS_OBSERVATIONS_AND_STATEMENTS_NOT_WHOLE_DUT",
+      "updated_utc": "2026-11-11T08:24:50.320458+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-field-read-prune-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Picked up JAVA_TOOL_OPTIONS: \n",
+      "pid": 3511693,
+      "resources": null,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "stage_log": {
+        "bytes": 30,
+        "mtime_ns": 1794381829843840866,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-field-read-prune-r1-20261111/frozen-parameters.log"
+      },
+      "start_ticks": "19353260",
+      "status": "PASS_SOURCE_BOUND_SELECTED_FIELD_READS_TYPECHECK_FROZEN_PARAMETERS_NOT_GENERATED_OR_AREA_ADMITTED",
+      "updated_utc": "2026-11-11T07:23:50.512873+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-field-read-rtl-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "identity_live": false,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "status": "GOLDENGATE_COMPLETE_NOT_SYNTHESIZED"
+    },
+    "Opt4-fit-dcache-field-read-system-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": " full_compare=%d cancelled=%d\\n), PrintPort(synthesizedPrintf_lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_core_printf_1_wire,List((enable,UInt<1>), (args_0,UInt<3>), (args_1,UInt<32>), (args_2,UInt<2>), (args_3,UInt<1>), (args_4,UInt<1>)),EC_OPT4_PACKAGE_RESULT hart=%d seq=%x status=%d full_compare=%d cancelled=%d\\n)))\nGenerating a Midas Memory Model\n  Max Read Requests: 6\n  Max Write Requests: 6\n  Max Read Length: 8\n  Max Write Length: 8\n  Max Read ID Reuse: 1\n  Max Write ID Reuse: 1\n\nTiming Model Parameters\n  Timing Model Class: Latency Bandwidth Pipe\n  No LLC Model Instantiated\n\n\nDefault Settings\n  +mm_relaxFunctionalModel_0=0\n  +mm_writeMaxReqs_0=6\n  +mm_readMaxReqs_0=6\n  +mm_writeLatency_0=30\n  +mm_readLatency_0=30\n\nBridge Streams To CPU:\n  Name: TRACERVBRIDGEMODULE_0_to_cpu_stream, Idx: 0, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_1_to_cpu_stream, Idx: 1, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_2_to_cpu_stream, Idx: 2, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_3_to_cpu_stream, Idx: 3, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_4_to_cpu_stream, Idx: 4, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: PRINTBRIDGEMODULE_0_to_cpu_stream, Idx: 5, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: PRINTBRIDGEMODULE_1_to_cpu_stream, Idx: 6, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\nBridge Streams From CPU:\n  None\nSimulator Memory Map:\n  [   0,   7f]: FASEDMemoryTimingModel_0\n  [  80,   ff]: BlockDevBridgeModule_0\n  [ 100,  13f]: TSIBridgeModule_0\n  [ 140,  17f]: TracerVBridgeModule_0\n  [ 180,  1bf]: TracerVBridgeModule_1\n  [ 1c0,  1ff]: TracerVBridgeModule_2\n  [ 200,  23f]: TracerVBridgeModule_3\n  [ 240,  27f]: TracerVBridgeModule_4\n  [ 280,  2bf]: LoadMemWidget_0\n  [ 2c0,  2df]: PeekPokeBridgeModule_0\n  [ 2e0,  2ff]: UARTBridgeModule_0\n  [ 300,  31f]: ClockBridgeModule_0\n  [ 320,  33f]: PrintBridgeModule_0\n  [ 340,  35f]: PrintBridgeModule_1\n  [ 360,  37f]: CPUManagedStreamEngine_0\n  [ 380,  38f]: SimulationMaster_0\n  [ 390,  397]: ResetPulseBridgeModule_0\nTotal Host-FPGA DRAM Allocated: 16.000 GiB of 16.000 GiB available.\nHost-FPGA DRAM Allocation Map:\n  MainMemory_0 -> [0x0, 0x3FFFFFFFF]\n    Associated bridges: FASEDMemoryTimingModel_0\nAuto ILA: p(EnableAutoILA) unset. Skipping AutoILATransform\n",
+      "pid": 3516165,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "stage_log": {
+        "bytes": 7576,
+        "mtime_ns": 1794382831891696198,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-field-read-system-r1-20261111/goldengate-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "19364426",
+      "status": "RTL_READY_REAL_ABI_CHECKED",
+      "updated_utc": "2026-11-11T07:43:15.358327+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-fieldbank-extraction-r3-state.json": {
+      "controller": {},
+      "error": "AssertionError(('ownerImageMemory', 'no asynchronous read'))",
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3280067,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "start_ticks": "19006151",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T06:25:41.114345+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-fieldbank-extraction-r4-state.json": {
+      "controller": {},
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3286203,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "start_ticks": "19013857",
+      "status": "EXTRACTED_SOURCE_BOUND_GENERATED_FIELD_TRANSITIONS_AND_TAPS_NOT_YET_PROVED",
+      "updated_utc": "2026-11-11T06:27:04.455569+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-fieldbank-full-map-r2-state.json": {
+      "controller": {},
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3270882,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "start_ticks": "18992256",
+      "status": "DEPENDENCY_FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T06:28:22.251802+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-fieldbank-full-map-r3-state.json": {
+      "controller": {},
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3297265,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "start_ticks": "19027589",
+      "status": "DEPENDENCY_FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T06:49:15.898570+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-fieldbank-full-map-r4-state.json": {
+      "controller": {},
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3416482,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "start_ticks": "19179499",
+      "status": "COMPLETE_REAL_FULL_DCACHE_FIELD_OBSERVED_PAIR_NOT_WHOLE_FIT_NOT_CYCLE_ADMITTED",
+      "updated_utc": "2026-11-11T16:17:42.610605+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-fieldbank-generated-proof-r2-state.json": {
+      "controller": {},
+      "error": "AssertionError()",
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Traceback (most recent call last):\n  File \"/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-fieldbank-generated-proof-r2-20261111/extract.py\", line 163, in <module>\n    try:main()\n  File \"/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-fieldbank-generated-proof-r2-20261111/extract.py\", line 24, in main\n    O.mkdir(exist_ok=True);lock=(O/'instance.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)\nBlockingIOError: [Errno 11] Resource temporarily unavailable\n",
+      "pid": 3270950,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "stage_log": {
+        "bytes": 496,
+        "mtime_ns": 1794378203498232915,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-fieldbank-generated-proof-r2-20261111/extract.log"
+      },
+      "start_ticks": "18992386",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T06:23:23.536118+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-fieldbank-generated-proof-r3-state.json": {
+      "controller": {},
+      "error": "AssertionError()",
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Traceback (most recent call last):\n  File \"/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-fieldbank-generated-proof-r3-20261111/extract.py\", line 163, in <module>\n    try:main()\n  File \"/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-fieldbank-generated-proof-r3-20261111/extract.py\", line 94, in main\n    assert accesses,(memory,'no asynchronous read')\nAssertionError: ('ownerImageMemory', 'no asynchronous read')\n",
+      "pid": 3280063,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "stage_log": {
+        "bytes": 440,
+        "mtime_ns": 1794378345546577451,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-fieldbank-generated-proof-r3-20261111/extract.log"
+      },
+      "start_ticks": "19006147",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T06:25:45.623420+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-fieldbank-generated-proof-r4-state.json": {
+      "controller": {},
+      "error": "AssertionError('mutation must corrupt the actual generated field write data')",
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "form const folding).\nOptimizing module GeneratedOwnerTransition.\n\n4.23. Finished fast OPT passes. (There is nothing left to do.)\n\n5. Executing OPT_CLEAN pass (remove unused cells and wires).\nFinding unused cells or wires in module \\GeneratedOwnerTransition..\nRemoved 0 unused cells and 4081 unused wires.\n<suppressed ~4081 debug messages>\n\n6. Executing SAT pass (solving SAT problems in the circuit).\n\nSetting up SAT problem:\nImport set-constraint: \\legal_interface = 1'1\nFinal constraint equation: \\legal_interface = 1'1\nImported 494 cells to SAT database.\nImport proof-constraint: \\equivalent = 1'1\nFinal proof equation: \\equivalent = 1'1\nImport show expression: \\dataWriteArb_io_in_0_valid\nImport show expression: \\dataWriteArb_io_in_1_ready\nImport show expression: \\dataWriteArb_io_in_1_valid\nImport show expression: \\debug_new_image_generation\nImport show expression: \\generation_raw\nImport show expression: \\mshrs_io_refill_bits_image_contentSeq\nImport show expression: \\mshrs_io_refill_bits_image_generation\nImport show expression: \\mshrs_io_refill_bits_image_valid\nImport show expression: \\mshrs_io_refill_bits_image_writer\nImport show expression: \\previous_raw\nImport show expression: \\refillLastBeat\nImport show expression: \\refillOwnerMatch\nImport show expression: \\refillReqSet\nImport show expression: \\refillReqWay\nImport show expression: \\reset\nImport show expression: \\s3_req_addr\nImport show expression: \\s3_req_packet_seq\nImport show expression: \\s3_way\nImport show expression: \\selectedRefillSlotReserved\nImport show expression: \\written\n\nSolving problem with 66409 variables and 179677 clauses..\nSAT proof finished - no model found: SUCCESS!\n\n                  /$$$$$$      /$$$$$$$$     /$$$$$$$    \n                 /$$__  $$    | $$_____/    | $$__  $$   \n                | $$  \\ $$    | $$          | $$  \\ $$   \n                | $$  | $$    | $$$$$       | $$  | $$   \n                | $$  | $$    | $$__/       | $$  | $$   \n                | $$/$$ $$    | $$          | $$  | $$   \n                |  $$$$$$/ /$$| $$$$$$$$ /$$| $$$$$$$//$$\n                 \\____ $$$|__/|________/|__/|_______/|__/\n                       \\__/                              \n\nEnd of script. Logfile hash: 0ef2fab64a, CPU: user 18.94s system 1.48s, MEM: 1002.79 MB peak\nYosys 0.60+70 (git sha1 8101c87fa, g++ 12.3.0 -fPIC -O3)\nTime spent: 25% 1x sat (5 sec), 19% 2x read_verilog (3 sec), ...\n",
+      "pid": 3286188,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "stage_log": {
+        "bytes": 5780698,
+        "mtime_ns": 1794379707558777450,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-fieldbank-generated-proof-r4-20261111/slots-504-511.log"
+      },
+      "start_ticks": "19013853",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T06:48:27.991160+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-fieldbank-mutation-r5-state.json": {
+      "controller": {},
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3412592,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "start_ticks": "19173136",
+      "status": "PASS_ACTUAL_GENERATED_FOUR_FIELD_WRITERS_512WORD_TRANSITIONS_TAPS_AND_FOUR_DATA_MUTATIONS_NOT_FULL_DCACHE",
+      "updated_utc": "2026-11-11T06:54:32.824364+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-fieldbank-rtl-state.json": {
+      "controller": {},
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "identity_live": false,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "status": "GOLDENGATE_COMPLETE_NOT_SYNTHESIZED"
+    },
+    "Opt4-fit-dcache-fieldbank-system-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": " full_compare=%d cancelled=%d\\n), PrintPort(synthesizedPrintf_lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_core_printf_1_wire,List((enable,UInt<1>), (args_0,UInt<3>), (args_1,UInt<32>), (args_2,UInt<2>), (args_3,UInt<1>), (args_4,UInt<1>)),EC_OPT4_PACKAGE_RESULT hart=%d seq=%x status=%d full_compare=%d cancelled=%d\\n)))\nGenerating a Midas Memory Model\n  Max Read Requests: 6\n  Max Write Requests: 6\n  Max Read Length: 8\n  Max Write Length: 8\n  Max Read ID Reuse: 1\n  Max Write ID Reuse: 1\n\nTiming Model Parameters\n  Timing Model Class: Latency Bandwidth Pipe\n  No LLC Model Instantiated\n\n\nDefault Settings\n  +mm_relaxFunctionalModel_0=0\n  +mm_writeMaxReqs_0=6\n  +mm_readMaxReqs_0=6\n  +mm_writeLatency_0=30\n  +mm_readLatency_0=30\n\nBridge Streams To CPU:\n  Name: TRACERVBRIDGEMODULE_0_to_cpu_stream, Idx: 0, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_1_to_cpu_stream, Idx: 1, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_2_to_cpu_stream, Idx: 2, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_3_to_cpu_stream, Idx: 3, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_4_to_cpu_stream, Idx: 4, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: PRINTBRIDGEMODULE_0_to_cpu_stream, Idx: 5, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: PRINTBRIDGEMODULE_1_to_cpu_stream, Idx: 6, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\nBridge Streams From CPU:\n  None\nSimulator Memory Map:\n  [   0,   7f]: FASEDMemoryTimingModel_0\n  [  80,   ff]: BlockDevBridgeModule_0\n  [ 100,  13f]: TSIBridgeModule_0\n  [ 140,  17f]: TracerVBridgeModule_0\n  [ 180,  1bf]: TracerVBridgeModule_1\n  [ 1c0,  1ff]: TracerVBridgeModule_2\n  [ 200,  23f]: TracerVBridgeModule_3\n  [ 240,  27f]: TracerVBridgeModule_4\n  [ 280,  2bf]: LoadMemWidget_0\n  [ 2c0,  2df]: PeekPokeBridgeModule_0\n  [ 2e0,  2ff]: UARTBridgeModule_0\n  [ 300,  31f]: ClockBridgeModule_0\n  [ 320,  33f]: PrintBridgeModule_0\n  [ 340,  35f]: PrintBridgeModule_1\n  [ 360,  37f]: CPUManagedStreamEngine_0\n  [ 380,  38f]: SimulationMaster_0\n  [ 390,  397]: ResetPulseBridgeModule_0\nTotal Host-FPGA DRAM Allocated: 16.000 GiB of 16.000 GiB available.\nHost-FPGA DRAM Allocation Map:\n  MainMemory_0 -> [0x0, 0x3FFFFFFFF]\n    Associated bridges: FASEDMemoryTimingModel_0\nAuto ILA: p(EnableAutoILA) unset. Skipping AutoILATransform\n",
+      "pid": 3154196,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "stage_log": {
+        "bytes": 7576,
+        "mtime_ns": 1794378038321920453,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-fieldbank-system-r1-20261111/goldengate-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "18882892",
+      "status": "RTL_READY_REAL_ABI_CHECKED",
+      "updated_utc": "2026-11-11T06:23:15.954349+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-frozen-cycle-domain-r5-state.json": {
+      "controller": {},
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3514413,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "start_ticks": "19361224",
+      "status": "PASS_COMPLETE_FROZEN_DCACHE_8192_CYCLE_OBSERVATION_REGRESSION_NOT_FULL_FORMAL_NOT_WHOLE_ADMITTED",
+      "updated_utc": "2026-11-11T07:28:17.029265+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-frozen-cycle-prep-r1-state.json": {
+      "controller": {},
+      "error": "AssertionError(('do not drop frozen observations', 'frozen', ['io.csr_cycle', 'io.traffic_start', 'io.traffic_stop', 'slowdown_opt1_pending_live_key']))",
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3392306,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "start_ticks": "19150351",
+      "status": "FAILED_WITH_EVIDENCE",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-frozen-cycle-prep-r2-state.json": {
+      "controller": {},
+      "error": "AssertionError('debug observations differ')",
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3412848,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "start_ticks": "19173342",
+      "status": "FAILED_WITH_EVIDENCE",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-frozen-cycle-prep-r3-state.json": {
+      "controller": {},
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3422901,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "start_ticks": "19188907",
+      "status": "COMPLETE_AUTHENTICATED_FROZEN_AND_CANDIDATE_MODULE_CLOSURES_NOT_YET_COMPILED",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-frozen-cycle-r3-state.json": {
+      "controller": {},
+      "error": "AssertionError(('compile', 2, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-frozen-cycle-r3-20261111/compile-attempt-1.log'))",
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3438677,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "start_ticks": "19213362",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T07:02:33.195637+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-frozen-cycle-r4-state.json": {
+      "controller": {},
+      "error": "AssertionError(('comparison', -6, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-frozen-cycle-r4-20261111/comparison-attempt-1.log'))",
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3461809,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "start_ticks": "19261990",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T07:19:57.848827+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-frozen-cycle-r5-state.json": {
+      "controller": {},
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3513133,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "start_ticks": "19358062",
+      "status": "PASS_COMPLETE_FROZEN_DCACHE_8192_CYCLE_OBSERVATION_REGRESSION_NOT_FULL_FORMAL_NOT_WHOLE_ADMITTED",
+      "updated_utc": "2026-11-11T07:27:51.442995+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-full-pair-r1-state.json": {
+      "controller": {},
+      "error": "AssertionError(('candidate', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-full-pair-r1-20261111/candidate/attempt-1.log'))",
+      "hardware_commit": "2210930f510eccf5518c444dadca4a51bcf6f851",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-full-pair-r1-20261111/candidate/attempt-1.log",
+      "log_tail": "] done synthesizing module 'PackageAddressStats' (38#1) [/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-full-pair-r1-20261111/candidate/full-dcache-observed.sv:290917]\nINFO: [Synth 8-6157] synthesizing module 'AMOALU' [/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-full-pair-r1-20261111/candidate/full-dcache-observed.sv:983789]\nINFO: [Synth 8-6155] done synthesizing module 'AMOALU' (39#1) [/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-full-pair-r1-20261111/candidate/full-dcache-observed.sv:983789]\nINFO: [Synth 8-6157] synthesizing module 'GHBarrierLatencyStats' [/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-full-pair-r1-20261111/candidate/full-dcache-observed.sv:142527]\nINFO: [Synth 8-6155] done synthesizing module 'GHBarrierLatencyStats' (40#1) [/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-full-pair-r1-20261111/candidate/full-dcache-observed.sv:142527]\nReason is one or more of the following :\n\t1: RAM has too many ports (16). Maximum supported = 16. \n\t2: No valid read/write found for RAM. \nERROR: [Synth 8-3391] Unable to infer a block/distributed RAM for 'ownerMemory_flattened_reg' because the memory pattern used is not supported. Failed to dissolve the memory into bits because the number of bits (74752) is too large. Use 'set_param synth.elaboration.rodinMoreOptions {rt::set_parameter dissolveMemorySizeLimit 74752}' to allow the memory to be dissolved into individual bits\nERROR: [Synth 8-6156] failed synthesizing module 'BoomNonBlockingDCache' [/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-full-pair-r1-20261111/candidate/full-dcache-observed.sv:983841]\n---------------------------------------------------------------------------------\nFinished Synthesize : Time (s): cpu = 00:40:09 ; elapsed = 00:42:05 . Memory (MB): peak = 12858.836 ; gain = 10367.160 ; free physical = 39409 ; free virtual = 305260\n---------------------------------------------------------------------------------\nsynthesize failed\nINFO: [Common 17-83] Releasing license: Synthesis\n86 Infos, 0 Warnings, 0 Critical Warnings and 3 Errors encountered.\nsynth_design failed\nERROR: [Common 17-69] Command failed: Vivado Synthesis failed\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 13:51:14 2026...\n",
+      "pid": 2489163,
+      "source_id": "548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c",
+      "stage_log": {
+        "bytes": 19588,
+        "mtime_ns": 1794376274682064390,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-full-pair-r1-20261111/candidate/attempt-1.log"
+      },
+      "start_ticks": "18423848",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T05:51:18.035516+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-full-pair-r2-state.json": {
+      "controller": {},
+      "hardware_commit": "2210930f510eccf5518c444dadca4a51bcf6f851",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-full-pair-r2-20261111/reference/attempt-1.log",
+      "log_tail": ".\nNetlist sorting complete. Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 16548.520 ; gain = 0.000 ; free physical = 46557 ; free virtual = 222770\nINFO: [Project 1-111] Unisim Transformation Summary:\n  A total of 401 instances were transformed.\n  DSP48E2 => DSP48E2 (DSP_ALU, DSP_A_B_DATA, DSP_C_DATA, DSP_MULTIPLIER, DSP_M_DATA, DSP_OUTPUT, DSP_PREADD, DSP_PREADD_DATA): 48 instances\n  RAM32M16 => RAM32M16 (RAMD32(x14), RAMS32(x2)): 351 instances\n  RAM32X1D => RAM32X1D (RAMD32(x2)): 2 instances\n\nSynth Design complete, checksum: ca6381a2\nINFO: [Common 17-83] Releasing license: Synthesis\n542 Infos, 100 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 05:26:38 ; elapsed = 05:34:03 . Memory (MB): peak = 16548.520 ; gain = 14062.086 ; free physical = 53432 ; free virtual = 230410\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# set bb [get_cells -hier -quiet -filter {IS_BLACKBOX == 1}]\n# if {[llength $bb]} {error \"unresolved DCache dependencies: $bb\"}\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-full-pair-r2-20261111/reference/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:14 ; elapsed = 00:00:16 . Memory (MB): peak = 16548.520 ; gain = 0.000 ; free physical = 49202 ; free virtual = 227269\n# report_utilization -hierarchical -hierarchical_depth 25 -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-full-pair-r2-20261111/reference/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:24 ; elapsed = 00:00:25 . Memory (MB): peak = 16548.520 ; gain = 0.000 ; free physical = 47713 ; free virtual = 225825\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-full-pair-r2-20261111/reference/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-full-pair-r2-20261111/reference/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:07:49 ; elapsed = 00:07:02 . Memory (MB): peak = 16600.637 ; gain = 52.117 ; free physical = 51333 ; free virtual = 225446\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Thu Nov 12 00:15:20 2026...\n",
+      "pid": 3079676,
+      "source_id": "548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c",
+      "stage_log": {
+        "bytes": 165676,
+        "mtime_ns": 1794413720428669630,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-full-pair-r2-20261111/reference/attempt-1.log"
+      },
+      "start_ticks": "18832064",
+      "status": "COMPLETE_REAL_FULL_DCACHE_OBSERVED_PAIR_NOT_WHOLE_DUT_FIT",
+      "updated_utc": "2026-11-11T16:15:26.191380+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-generated-owner-proof-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "2210930f510eccf5518c444dadca4a51bcf6f851",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2756953,
+      "source_id": "548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c",
+      "start_ticks": "18670624",
+      "status": "EXTRACTING_ACTUAL_GENERATED_RTL",
+      "updated_utc": "2026-11-11T05:29:45.837446+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-generated-owner-proof-r2-state.json": {
+      "controller": {},
+      "error": "AssertionError(('sat-transition', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-generated-owner-proof-r2-20261111/sat-transition.log'))",
+      "hardware_commit": "2210930f510eccf5518c444dadca4a51bcf6f851",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "\n /----------------------------------------------------------------------------\\\n |  yosys -- Yosys Open SYnthesis Suite                                       |\n |  Copyright (C) 2012 - 2025  Claire Xenia Wolf <claire@yosyshq.com>         |\n |  Distributed under an ISC-like license, type \"license\" to see terms        |\n \\----------------------------------------------------------------------------/\n Yosys 0.60+70 (git sha1 8101c87fa, g++ 12.3.0 -fPIC -O3)\n\n-- Executing script file `/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-generated-owner-proof-r2-20261111/sat-transition.ys' --\n\n1. Executing RTLIL frontend.\nInput filename: /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-generated-owner-proof-r2-20261111/prepared.il\n\n2. Executing SAT pass (solving SAT problems in the circuit).\n\nSetting up SAT problem:\nImport set-constraint: \\legal_interface = 1'1\nFinal constraint equation: \\legal_interface = 1'1\nImported 27685 cells to SAT database.\nImport proof-constraint: \\equivalent = 1'1\nFinal proof equation: \\equivalent = 1'1\nImport show expression: \\dataWriteArb_io_in_0_valid\nImport show expression: \\dataWriteArb_io_in_1_ready\nImport show expression: \\dataWriteArb_io_in_1_valid\nImport show expression: \\debug_new_image_generation\nImport show expression: \\mshrs_io_refill_bits_image_contentSeq\nImport show expression: \\mshrs_io_refill_bits_image_generation\nImport show expression: \\mshrs_io_refill_bits_image_valid\nImport show expression: \\mshrs_io_refill_bits_image_writer\nImport show expression: \\previous_raw\nImport show expression: \\refillLastBeat\nImport show expression: \\refillOwnerMatch\nImport show expression: \\refillReqSet\nImport show expression: \\refillReqWay\nImport show expression: \\reset\nImport show expression: \\s3_req_addr\nImport show expression: \\s3_req_packet_seq\nImport show expression: \\s3_way\nImport show expression: \\selectedRefillSlotReserved\nImport show expression: \\written\n\nSolving problem with 4034401 variables and 10975959 clauses..\nInterrupted SAT solver: TIMEOUT!\n\n        _____  _  _      _____ ____  _     _____\n       /__ __\\/ \\/ \\__/|/  __//  _ \\/ \\ /\\/__ __\\\n         / \\  | || |\\/|||  \\  | / \\|| | ||  / \\\n         | |  | || |  |||  /_ | \\_/|| \\_/|  | |\n         \\_/  \\_/\\_/  \\|\\____\\\\____/\\____/  \\_/\n\nERROR: Called with -verify and proof did time out!\n",
+      "pid": 2767611,
+      "source_id": "548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c",
+      "stage_log": {
+        "bytes": 2365,
+        "mtime_ns": 1794375673493449278,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-generated-owner-proof-r2-20261111/sat-transition.log"
+      },
+      "start_ticks": "18675286",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T05:41:13.751878+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-generated-owner-proof-r3-state.json": {
+      "controller": {},
+      "hardware_commit": "2210930f510eccf5518c444dadca4a51bcf6f851",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2933050,
+      "source_id": "548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c",
+      "start_ticks": "18754611",
+      "status": "PASS_ACTUAL_GENERATED_512WORD_TRANSITION_AND_TAPS_WITH_REAL_WRITE_MUTATION_NOT_FULL_DCACHE_FORMAL",
+      "updated_utc": "2026-11-11T06:03:16.812145+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-owner-arbiter-proof-r1-state.json": {
+      "controller": {},
+      "error": "AssertionError(('compile', 1))",
+      "hardware_commit": "2210930f510eccf5518c444dadca4a51bcf6f851",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Picked up JAVA_TOOL_OPTIONS: \n/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-owner-arbiter-proof-r1-20261111/Emit.scala:34: error: value :=! is not a member of chisel3.Bool\ndid you mean ===?\n io.neverBoth:=!(localWrite && refillWrite)\n             ^\n1 error\n",
+      "pid": 2423898,
+      "source_id": "548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c",
+      "stage_log": {
+        "bytes": 271,
+        "mtime_ns": 1794370588522587049,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-arbiter-proof-r1-20261111/compile.log"
+      },
+      "start_ticks": "18230652",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T04:16:28.604392+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-owner-arbiter-proof-r2-state.json": {
+      "controller": {},
+      "error": "AssertionError(('compile', 1))",
+      "hardware_commit": "2210930f510eccf5518c444dadca4a51bcf6f851",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Picked up JAVA_TOOL_OPTIONS: \n/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-owner-arbiter-proof-r2-20261111/Emit.scala:34: error: value :=! is not a member of chisel3.Bool\ndid you mean ===?\n io.neverBoth:=!(localWrite && refillWrite)\n             ^\n1 error\n",
+      "pid": 2429876,
+      "source_id": "548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c",
+      "stage_log": {
+        "bytes": 271,
+        "mtime_ns": 1794370757095933604,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-arbiter-proof-r2-20261111/compile.log"
+      },
+      "start_ticks": "18247535",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T04:19:17.189258+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-owner-arbiter-proof-r3-state.json": {
+      "controller": {},
+      "hardware_commit": "2210930f510eccf5518c444dadca4a51bcf6f851",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "                                                                              0\n  \\io_synchronousReset                  0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   0\n  \\io_valid_0                           1         1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   1\n  \\io_valid_1                           0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   0\n  \\io_written                          --        --    00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n\nERROR: Called with -verify and proof did fail!\n",
+      "pid": 2430619,
+      "source_id": "548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c",
+      "stage_log": {
+        "bytes": 188414,
+        "mtime_ns": 1794370798636099854,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-arbiter-proof-r3-20261111/sat-mutationEquivalent.log"
+      },
+      "start_ticks": "18250680",
+      "status": "PASS_ACTUAL_ARBITER2_512WORD_WRITE_COALESCING_AND_RESET_INDUCTION_LIFT_TO146_NOT_FULL_DUT_FORMAL",
+      "updated_utc": "2026-11-11T04:19:58.669536+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-owner-fieldbanks-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "d9d732622601ed792a2647546006b5aae986ab8e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Picked up JAVA_TOOL_OPTIONS: \n",
+      "pid": 3127740,
+      "resources": null,
+      "source_id": "1639f464d8675806abb5d7dd04adc5dfd1fcf0e351e016ef6a20adcbea1b6e4e",
+      "stage_log": {
+        "bytes": 30,
+        "mtime_ns": 1794376925379119787,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-fieldbanks-r1-20261111/frozen-parameters.log"
+      },
+      "start_ticks": "18862744",
+      "status": "PASS_SOURCE_BOUND_FIELD_STORAGE_RELATION_TYPECHECK_FROZEN_PARAMETERS_NOT_GENERATED_OR_AREA_ADMITTED",
+      "updated_utc": "2026-11-11T06:02:05.999678+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-owner-memory-screen-r2-state.json": {
+      "controller": {},
+      "error": "AssertionError(('compile-boundary', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-memory-screen-r2-20261111/compile-boundary.log'))",
+      "hardware_commit": "e0c3737f989c563f99a00f3fd26c1cbd27421775",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "%Error: Invalid Option: --build\n",
+      "pid": 2370543,
+      "stage_log": {
+        "bytes": 32,
+        "mtime_ns": 1794369337548589589,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-memory-screen-r2-20261111/compile-boundary.log"
+      },
+      "start_ticks": "18103096",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T03:55:37.604141+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-owner-memory-screen-r3-state.json": {
+      "controller": {},
+      "hardware_commit": "e0c3737f989c563f99a00f3fd26c1cbd27421775",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "emory (MB): peak = 3276.500 ; gain = 742.918 ; free physical = 121040 ; free virtual = 378432\nINFO: [Project 1-571] Translating synthesized netlist\nNetlist sorting complete. Time (s): cpu = 00:00:00.13 ; elapsed = 00:00:00.13 . Memory (MB): peak = 3276.500 ; gain = 0.000 ; free physical = 121023 ; free virtual = 378415\nINFO: [Netlist 29-17] Analyzing 2144 Unisim elements for replacement\nINFO: [Netlist 29-28] Unisim Transformation completed in 1 CPU seconds\nWARNING: [Netlist 29-101] Netlist 'AsyncCandidate' is not ideal for floorplanning, since the cellview 'AsyncCandidate' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3341.816 ; gain = 0.000 ; free physical = 120988 ; free virtual = 378394\nINFO: [Project 1-111] Unisim Transformation Summary:\n  A total of 1344 instances were transformed.\n  RAM64M8 => RAM64M8 (RAMD64E(x8)): 1344 instances\n\nSynth Design complete, checksum: 2c11c0e2\nINFO: [Common 17-83] Releasing license: Synthesis\n15 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 00:00:43 ; elapsed = 00:00:40 . Memory (MB): peak = 3341.816 ; gain = 808.375 ; free physical = 121172 ; free virtual = 378566\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-memory-screen-r3-20261111/candidate/utilization.rpt}\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-memory-screen-r3-20261111/candidate/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-memory-screen-r3-20261111/candidate/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 3516.594 ; gain = 174.777 ; free physical = 121005 ; free virtual = 378394\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 12:10:22 2026...\n",
+      "pid": 2376944,
+      "stage_log": {
+        "bytes": 16455,
+        "mtime_ns": 1794370222759160489,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-memory-screen-r3-20261111/map-candidate.log"
+      },
+      "start_ticks": "18115312",
+      "status": "COMPLETE_SOURCE_BOUND_INDUCTIVE_STORAGE_SCREEN_NOT_FULL_DCACHE_OR_WHOLE_ADMITTED",
+      "updated_utc": "2026-11-11T04:10:27.101805+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-owner-memory-validation-r3-state.json": {
+      "controller": {},
+      "hardware_commit": "2210930f510eccf5518c444dadca4a51bcf6f851",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2404189,
+      "source_id": "548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c",
+      "start_ticks": "18171522",
+      "status": "PASS_SOURCE_BOUND_COMPOSITIONAL_STORAGE_RELATION_AND_DCACHE_TYPECHECK_NOT_AREA_ADMITTED",
+      "updated_utc": "2026-11-11T04:06:48.758516+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-owner-observed-map-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "2210930f510eccf5518c444dadca4a51bcf6f851",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": " ; free virtual = 319898\nINFO: [Project 1-571] Translating synthesized netlist\nNetlist sorting complete. Time (s): cpu = 00:00:01 ; elapsed = 00:00:01 . Memory (MB): peak = 4636.141 ; gain = 0.000 ; free physical = 54764 ; free virtual = 318387\nINFO: [Netlist 29-17] Analyzing 42032 Unisim elements for replacement\nINFO: [Netlist 29-28] Unisim Transformation completed in 1 CPU seconds\nWARNING: [Netlist 29-101] Netlist 'AsyncCandidate' is not ideal for floorplanning, since the cellview 'AsyncCandidate' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.02 ; elapsed = 00:00:00.01 . Memory (MB): peak = 4636.141 ; gain = 0.000 ; free physical = 52336 ; free virtual = 315960\nINFO: [Project 1-111] Unisim Transformation Summary:\n  A total of 1680 instances were transformed.\n  RAM256X1D => RAM256X1D (MUXF7(x4), MUXF8(x2), RAMD64E(x8)): 48 instances\n  RAM64M8 => RAM64M8 (RAMD64E(x8)): 1632 instances\n\nSynth Design complete, checksum: 403eb60e\nINFO: [Common 17-83] Releasing license: Synthesis\n19 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 00:02:34 ; elapsed = 00:03:11 . Memory (MB): peak = 4636.141 ; gain = 2136.703 ; free physical = 52390 ; free virtual = 316014\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-observed-map-r1-20261111/candidate/utilization.rpt}\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-observed-map-r1-20261111/candidate/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-observed-map-r1-20261111/candidate/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:00:24 ; elapsed = 00:00:23 . Memory (MB): peak = 4688.258 ; gain = 52.117 ; free physical = 49650 ; free virtual = 313318\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 12:30:31 2026...\n",
+      "pid": 2417453,
+      "stage_log": {
+        "bytes": 19123,
+        "mtime_ns": 1794371431063736731,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-observed-map-r1-20261111/map-candidate.log"
+      },
+      "start_ticks": "18207883",
+      "status": "COMPLETE_SOURCE_BOUND_OBSERVED_OWNER_STORAGE_MAP_NOT_COMPLETE_DCACHE_OR_WHOLE_ADMITTED",
+      "updated_utc": "2026-11-11T04:30:35.437773+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-owner-rtl-state.json": {
+      "controller": {},
+      "hardware_commit": "2210930f510eccf5518c444dadca4a51bcf6f851",
+      "identity_live": false,
+      "source_id": "548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c",
+      "status": "GOLDENGATE_COMPLETE_NOT_SYNTHESIZED"
+    },
+    "Opt4-fit-dcache-owner-system-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "2210930f510eccf5518c444dadca4a51bcf6f851",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2428395,
+      "source_id": "548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c",
+      "start_ticks": "18242894",
+      "status": "DEPENDENCY_FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T04:18:29.373999+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-owner-system-r2-state.json": {
+      "controller": {},
+      "error": "AssertionError(('verify-combination', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-system-r2-20261111/verify-combination-attempt-1.log', ['/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-system-r2-20261111/combined-equivalence.json']))",
+      "hardware_commit": "2210930f510eccf5518c444dadca4a51bcf6f851",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Traceback (most recent call last):\n  File \"/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-owner-system-r2-20261111/verify_combination.py\", line 19, in <module>\n    path=D/name;j=json.loads(path.read_text());assert j['hardware_commit']==b['hardware_commit'] and j['source_id']==b['source_id'];assert j['status'].startswith(('PASS_','COMPLETE_'));receipts[name]={'path':str(path),'sha256':sha(path),'status':j['status']}\nKeyError: 'source_id'\n",
+      "pid": 2430716,
+      "source_id": "548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c",
+      "stage_log": {
+        "bytes": 454,
+        "mtime_ns": 1794371689145554455,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-system-r2-20261111/verify-combination-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "18250836",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T04:34:49.212864+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-owner-system-r4-state.json": {
+      "controller": {},
+      "hardware_commit": "2210930f510eccf5518c444dadca4a51bcf6f851",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": " full_compare=%d cancelled=%d\\n), PrintPort(synthesizedPrintf_lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_core_printf_1_wire,List((enable,UInt<1>), (args_0,UInt<3>), (args_1,UInt<32>), (args_2,UInt<2>), (args_3,UInt<1>), (args_4,UInt<1>)),EC_OPT4_PACKAGE_RESULT hart=%d seq=%x status=%d full_compare=%d cancelled=%d\\n)))\nGenerating a Midas Memory Model\n  Max Read Requests: 6\n  Max Write Requests: 6\n  Max Read Length: 8\n  Max Write Length: 8\n  Max Read ID Reuse: 1\n  Max Write ID Reuse: 1\n\nTiming Model Parameters\n  Timing Model Class: Latency Bandwidth Pipe\n  No LLC Model Instantiated\n\n\nDefault Settings\n  +mm_relaxFunctionalModel_0=0\n  +mm_writeMaxReqs_0=6\n  +mm_readMaxReqs_0=6\n  +mm_writeLatency_0=30\n  +mm_readLatency_0=30\n\nBridge Streams To CPU:\n  Name: TRACERVBRIDGEMODULE_0_to_cpu_stream, Idx: 0, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_1_to_cpu_stream, Idx: 1, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_2_to_cpu_stream, Idx: 2, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_3_to_cpu_stream, Idx: 3, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_4_to_cpu_stream, Idx: 4, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: PRINTBRIDGEMODULE_0_to_cpu_stream, Idx: 5, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: PRINTBRIDGEMODULE_1_to_cpu_stream, Idx: 6, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\nBridge Streams From CPU:\n  None\nSimulator Memory Map:\n  [   0,   7f]: FASEDMemoryTimingModel_0\n  [  80,   ff]: BlockDevBridgeModule_0\n  [ 100,  13f]: TSIBridgeModule_0\n  [ 140,  17f]: TracerVBridgeModule_0\n  [ 180,  1bf]: TracerVBridgeModule_1\n  [ 1c0,  1ff]: TracerVBridgeModule_2\n  [ 200,  23f]: TracerVBridgeModule_3\n  [ 240,  27f]: TracerVBridgeModule_4\n  [ 280,  2bf]: LoadMemWidget_0\n  [ 2c0,  2df]: PeekPokeBridgeModule_0\n  [ 2e0,  2ff]: UARTBridgeModule_0\n  [ 300,  31f]: ClockBridgeModule_0\n  [ 320,  33f]: PrintBridgeModule_0\n  [ 340,  35f]: PrintBridgeModule_1\n  [ 360,  37f]: CPUManagedStreamEngine_0\n  [ 380,  38f]: SimulationMaster_0\n  [ 390,  397]: ResetPulseBridgeModule_0\nTotal Host-FPGA DRAM Allocated: 16.000 GiB of 16.000 GiB available.\nHost-FPGA DRAM Allocation Map:\n  MainMemory_0 -> [0x0, 0x3FFFFFFFF]\n    Associated bridges: FASEDMemoryTimingModel_0\nAuto ILA: p(EnableAutoILA) unset. Skipping AutoILATransform\n",
+      "pid": 2483455,
+      "source_id": "548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c",
+      "stage_log": {
+        "bytes": 7576,
+        "mtime_ns": 1794373379573010882,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-owner-system-r4-20261111/goldengate-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "18401113",
+      "status": "RTL_READY_REAL_ABI_CHECKED",
+      "updated_utc": "2026-11-11T05:06:14.127241+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-result-memory-mapping-r3-state.json": {
+      "controller": {},
+      "hardware_commit": "51a2bd2588fe09ded84c3d9911d9b8481da929ca",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "-----------\nSynthesis finished with 0 errors, 0 critical warnings and 0 warnings.\nSynthesis Optimization Runtime : Time (s): cpu = 00:00:12 ; elapsed = 00:00:15 . Memory (MB): peak = 3174.781 ; gain = 683.238 ; free physical = 54628 ; free virtual = 310587\nSynthesis Optimization Complete : Time (s): cpu = 00:00:12 ; elapsed = 00:00:15 . Memory (MB): peak = 3174.789 ; gain = 683.238 ; free physical = 54641 ; free virtual = 310600\nINFO: [Project 1-571] Translating synthesized netlist\nNetlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3174.789 ; gain = 0.000 ; free physical = 54893 ; free virtual = 310852\nINFO: [Netlist 29-17] Analyzing 288 Unisim elements for replacement\nINFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3247.375 ; gain = 0.000 ; free physical = 54550 ; free virtual = 310514\nINFO: [Project 1-111] Unisim Transformation Summary:\n  A total of 160 instances were transformed.\n  RAM64M8 => RAM64M8 (RAMD64E(x8)): 144 instances\n  RAM64X1D => RAM64X1D (RAMD64E(x2)): 16 instances\n\nSynth Design complete, checksum: 179c31e\nINFO: [Common 17-83] Releasing license: Synthesis\n15 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 00:00:19 ; elapsed = 00:00:18 . Memory (MB): peak = 3247.375 ; gain = 755.965 ; free physical = 54635 ; free virtual = 310599\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-mapping-r3-20261111/map-candidate/utilization.rpt}\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-mapping-r3-20261111/map-candidate/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-mapping-r3-20261111/map-candidate/module.dcp' has been generated.\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 10:01:38 2026...\n",
+      "pid": 2039705,
+      "source_id": "fadfd22293afed9177e282eaf0a82e7750b0e20d51284bc6d89f592b24ca0e47",
+      "stage_log": {
+        "bytes": 15535,
+        "mtime_ns": 1794362498464388100,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-mapping-r3-20261111/map-candidate/map-candidate-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "17404595",
+      "status": "LOCAL_STORAGE_VERIFIED_AND_MAPPED_COMPLETE_DCACHE_PENDING_NOT_ADMITTED",
+      "updated_utc": "2026-11-11T02:01:40.528956+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-result-memory-proofonly-r1-state.json": {
+      "controller": {},
+      "error": "AssertionError(('compile', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-proofonly-r1-20261111/compile-attempt-1.log'))",
+      "hardware_commit": "51a2bd2588fe09ded84c3d9911d9b8481da929ca",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Picked up JAVA_TOOL_OPTIONS: \n/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-result-memory-r1-20261111/Emit.scala:66: error: object firesim is not a member of package firesim\n  val base=new firesim.firesim.DacOpt4C4().toInstance\n                       ^\n1 error\n",
+      "pid": 1991009,
+      "source_id": "fadfd22293afed9177e282eaf0a82e7750b0e20d51284bc6d89f592b24ca0e47",
+      "stage_log": {
+        "bytes": 275,
+        "mtime_ns": 1794360637855449414,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-proofonly-r1-20261111/compile-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "17235579",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T01:30:37.901896+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-result-memory-proofonly-r2-state.json": {
+      "controller": {},
+      "error": "AssertionError(('emit-proof', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-proofonly-r2-20261111/proof/emit-proof-attempt-1.log'))",
+      "hardware_commit": "51a2bd2588fe09ded84c3d9911d9b8481da929ca",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Picked up JAVA_TOOL_OPTIONS: \nException in thread \"main\" java.lang.IllegalArgumentException: requirement failed\n\tat scala.Predef$.require(Predef.scala:324)\n\tat opt4dcacheresult.Emit$.delayedEndpoint$opt4dcacheresult$Emit$1(Emit.scala:70)\n\tat opt4dcacheresult.Emit$delayedInit$body.apply(Emit.scala:64)\n\tat scala.Function0.apply$mcV$sp(Function0.scala:42)\n\tat scala.Function0.apply$mcV$sp$(Function0.scala:42)\n\tat scala.runtime.AbstractFunction0.apply$mcV$sp(AbstractFunction0.scala:17)\n\tat scala.App.$anonfun$main$1(App.scala:98)\n\tat scala.App.$anonfun$main$1$adapted(App.scala:98)\n\tat scala.collection.IterableOnceOps.foreach(IterableOnce.scala:575)\n\tat scala.collection.IterableOnceOps.foreach$(IterableOnce.scala:573)\n\tat scala.collection.AbstractIterable.foreach(Iterable.scala:933)\n\tat scala.App.main(App.scala:98)\n\tat scala.App.main$(App.scala:96)\n\tat opt4dcacheresult.Emit$.main(Emit.scala:64)\n\tat opt4dcacheresult.Emit.main(Emit.scala)\n",
+      "pid": 1992909,
+      "source_id": "fadfd22293afed9177e282eaf0a82e7750b0e20d51284bc6d89f592b24ca0e47",
+      "stage_log": {
+        "bytes": 944,
+        "mtime_ns": 1794360720313126164,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-proofonly-r2-20261111/proof/emit-proof-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "17243605",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T01:32:00.367161+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-result-memory-proofonly-r3-state.json": {
+      "controller": {},
+      "error": "AssertionError(('typecheck-dcache', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-proofonly-r3-20261111/typecheck-dcache-attempt-1.log'))",
+      "hardware_commit": "51a2bd2588fe09ded84c3d9911d9b8481da929ca",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Picked up JAVA_TOOL_OPTIONS: \n/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-dcache-result-memory-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/dcache.scala:2704: error: not found: type SafePrefixScanner\n  val safePrefix = Module(new SafePrefixScanner(statsWindow,\n                              ^\n1 error\n",
+      "pid": 1999006,
+      "source_id": "fadfd22293afed9177e282eaf0a82e7750b0e20d51284bc6d89f592b24ca0e47",
+      "stage_log": {
+        "bytes": 319,
+        "mtime_ns": 1794360881509641703,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-proofonly-r3-20261111/typecheck-dcache-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "17257675",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T01:34:41.574475+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-dcache-result-memory-proofonly-r4-state.json": {
+      "controller": {},
+      "hardware_commit": "51a2bd2588fe09ded84c3d9911d9b8481da929ca",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Picked up JAVA_TOOL_OPTIONS: \nwarning: 1 deprecation (since 2.13.2)\nwarning: 3 deprecations (since 2.13.3)\nwarning: 4 deprecations in total; re-run with -deprecation for details\nwarning: 968 feature warnings; re-run with -feature for details\n4 warnings\n",
+      "pid": 2002556,
+      "source_id": "fadfd22293afed9177e282eaf0a82e7750b0e20d51284bc6d89f592b24ca0e47",
+      "stage_log": {
+        "bytes": 253,
+        "mtime_ns": 1794361028275415111,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-proofonly-r4-20261111/typecheck-dcache-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "17273488",
+      "status": "PASS_GENERATED_STORAGE_PROOF_TOPOLOGY_8192_CYCLES_AND_DCACHE_TYPECHECK_NOT_ADMITTED",
+      "updated_utc": "2026-11-11T01:37:08.420577+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-field-address-cycle-consumer-r3-state.json": {
+      "controller": {},
+      "hardware_commit": "8d50489af3af9e4c766509284ba3d9d7c99cfec9",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": " full_compare=%d cancelled=%d\\n), PrintPort(synthesizedPrintf_lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_core_printf_1_wire,List((enable,UInt<1>), (args_0,UInt<3>), (args_1,UInt<32>), (args_2,UInt<2>), (args_3,UInt<1>), (args_4,UInt<1>)),EC_OPT4_PACKAGE_RESULT hart=%d seq=%x status=%d full_compare=%d cancelled=%d\\n)))\nGenerating a Midas Memory Model\n  Max Read Requests: 6\n  Max Write Requests: 6\n  Max Read Length: 8\n  Max Write Length: 8\n  Max Read ID Reuse: 1\n  Max Write ID Reuse: 1\n\nTiming Model Parameters\n  Timing Model Class: Latency Bandwidth Pipe\n  No LLC Model Instantiated\n\n\nDefault Settings\n  +mm_relaxFunctionalModel_0=0\n  +mm_writeMaxReqs_0=6\n  +mm_readMaxReqs_0=6\n  +mm_writeLatency_0=30\n  +mm_readLatency_0=30\n\nBridge Streams To CPU:\n  Name: TRACERVBRIDGEMODULE_0_to_cpu_stream, Idx: 0, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_1_to_cpu_stream, Idx: 1, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_2_to_cpu_stream, Idx: 2, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_3_to_cpu_stream, Idx: 3, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_4_to_cpu_stream, Idx: 4, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: PRINTBRIDGEMODULE_0_to_cpu_stream, Idx: 5, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: PRINTBRIDGEMODULE_1_to_cpu_stream, Idx: 6, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\nBridge Streams From CPU:\n  None\nSimulator Memory Map:\n  [   0,   7f]: FASEDMemoryTimingModel_0\n  [  80,   ff]: BlockDevBridgeModule_0\n  [ 100,  13f]: TSIBridgeModule_0\n  [ 140,  17f]: TracerVBridgeModule_0\n  [ 180,  1bf]: TracerVBridgeModule_1\n  [ 1c0,  1ff]: TracerVBridgeModule_2\n  [ 200,  23f]: TracerVBridgeModule_3\n  [ 240,  27f]: TracerVBridgeModule_4\n  [ 280,  2bf]: LoadMemWidget_0\n  [ 2c0,  2df]: PeekPokeBridgeModule_0\n  [ 2e0,  2ff]: UARTBridgeModule_0\n  [ 300,  31f]: ClockBridgeModule_0\n  [ 320,  33f]: PrintBridgeModule_0\n  [ 340,  35f]: PrintBridgeModule_1\n  [ 360,  37f]: CPUManagedStreamEngine_0\n  [ 380,  38f]: SimulationMaster_0\n  [ 390,  397]: ResetPulseBridgeModule_0\nTotal Host-FPGA DRAM Allocated: 16.000 GiB of 16.000 GiB available.\nHost-FPGA DRAM Allocation Map:\n  MainMemory_0 -> [0x0, 0x3FFFFFFFF]\n    Associated bridges: FASEDMemoryTimingModel_0\nAuto ILA: p(EnableAutoILA) unset. Skipping AutoILATransform\n",
+      "pid": 3523837,
+      "source_id": "9bfb0710adc7650940c3edd5005f578cc1295038b34282ece46b87f2ec55ac6a",
+      "stage_log": {
+        "bytes": 7576,
+        "mtime_ns": 1794414991226443447,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-field-address-cycle-consumer-r3-20261111/goldengate-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "19387410",
+      "status": "RTL_READY_REAL_ABI_CHECKED",
+      "updated_utc": "2026-11-11T16:39:18.366053+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-field-address-precheck-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "8d50489af3af9e4c766509284ba3d9d7c99cfec9",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Picked up JAVA_TOOL_OPTIONS: \n",
+      "pid": 3420235,
+      "source_id": "9bfb0710adc7650940c3edd5005f578cc1295038b34282ece46b87f2ec55ac6a",
+      "stage_log": {
+        "bytes": 30,
+        "mtime_ns": 1794380154518863947,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-field-address-precheck-r1-20261111/emit-address.log"
+      },
+      "start_ticks": "19185677",
+      "status": "PASS_EXACT_DISJOINT_COMPOSITION_FULL_CHANGED_SOURCE_TYPECHECK_FROZEN_PARAMETERS_AND_EMITTED_ADDRESS_RTL_NOT_AREA_ADMITTED",
+      "updated_utc": "2026-11-11T06:57:21.519693+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-field-address-rtl-state.json": {
+      "controller": {},
+      "hardware_commit": "8d50489af3af9e4c766509284ba3d9d7c99cfec9",
+      "identity_live": false,
+      "source_id": "9bfb0710adc7650940c3edd5005f578cc1295038b34282ece46b87f2ec55ac6a",
+      "status": "GOLDENGATE_COMPLETE_NOT_SYNTHESIZED"
+    },
+    "Opt4-fit-field-address-system-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "8d50489af3af9e4c766509284ba3d9d7c99cfec9",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3440879,
+      "source_id": "9bfb0710adc7650940c3edd5005f578cc1295038b34282ece46b87f2ec55ac6a",
+      "start_ticks": "19219546",
+      "status": "DEPENDENCY_FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T07:06:15.896865+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-field-address-system-r2-state.json": {
+      "controller": {},
+      "hardware_commit": "8d50489af3af9e4c766509284ba3d9d7c99cfec9",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3464982,
+      "source_id": "9bfb0710adc7650940c3edd5005f578cc1295038b34282ece46b87f2ec55ac6a",
+      "start_ticks": "19266693",
+      "status": "DEPENDENCY_FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T07:24:07.557758+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-field-address-system-r3-state.json": {
+      "controller": {},
+      "hardware_commit": "8d50489af3af9e4c766509284ba3d9d7c99cfec9",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3524310,
+      "source_id": "9bfb0710adc7650940c3edd5005f578cc1295038b34282ece46b87f2ec55ac6a",
+      "start_ticks": "19389081",
+      "status": "SUPERSEDED_BY_EXISTING_IDENTICAL_CONSUMER",
+      "updated_utc": "2026-11-11T07:39:31.334799+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-field-read-address-compose-round32-v1-state.json": {
+      "controller": {},
+      "error": "AssertionError()",
+      "hardware_commit": "da8b51a691cc104a5b32e13d2532ed9c836eb639",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3764137,
+      "source_id": "4be542018125c2ba698f210e2bc769a789ba77a4e55432466552f14fceb11a9a",
+      "start_ticks": "19969590",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T09:06:15.510659+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-field-read-address-compose-round32-v3-state.json": {
+      "controller": {},
+      "error": "KeyError('assertions_disabled')",
+      "hardware_commit": "da8b51a691cc104a5b32e13d2532ed9c836eb639",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3779163,
+      "source_id": "4be542018125c2ba698f210e2bc769a789ba77a4e55432466552f14fceb11a9a",
+      "start_ticks": "19989628",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T09:09:35.885338+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-field-read-address-compose-round33-v2-state.json": {
+      "controller": {},
+      "hardware_commit": "da8b51a691cc104a5b32e13d2532ed9c836eb639",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3886779,
+      "source_id": "4be542018125c2ba698f210e2bc769a789ba77a4e55432466552f14fceb11a9a",
+      "start_ticks": "20139992",
+      "status": "PASS_EXACT_FIELD_READ_ADDRESS_COMPOSITION_TYPECHECK_FROZEN_PARAMETERS_EMITTED_ADDRESS_NOT_AREA_ADMITTED",
+      "updated_utc": "2026-11-11T09:36:49.641608+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-field-read-checker-audit-round30-v1-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3641670,
+      "resources": null,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "19713259",
+      "status": "PASS_CHECKER_REVIEW_WITH_SAT_WIDTH_COUNTEREXAMPLE_AND_RESTRICTED_PREDICATE_VALIDATION_NOT_CANDIDATE_ADMISSION",
+      "worker_processes": []
+    },
+    "Opt4-fit-field-read-residual-round31-v1-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3700627,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "19827816",
+      "status": "COMPLETE_RESIDUAL_DIAGNOSIS_NO_ADMISSION",
+      "worker_processes": []
+    },
+    "Opt4-fit-field-read-residual-round31-v2-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3708381,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "19847817",
+      "status": "COMPLETE_RESIDUAL_DIAGNOSIS_NO_ADMISSION",
+      "worker_processes": []
+    },
+    "Opt4-fit-hierarchy-analysis-r5-state.json": {
+      "controller": {},
+      "hardware_commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "identity_live": false,
+      "status": "PASS_NONOVERLAPPING_POSTOPT_HIERARCHY_RANKING"
+    },
+    "Opt4-fit-hierarchy-analysis-r6-state.json": {
+      "controller": {},
+      "hardware_commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "identity_live": false,
+      "status": "PASS_NONOVERLAPPING_POSTOPT_HIERARCHY_RANKING"
+    },
+    "Opt4-fit-installed-image-map-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "a5ca9940e35ba34b5ef65b62ce624bec31facd17",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "n Runtime : Time (s): cpu = 00:00:13 ; elapsed = 00:00:15 . Memory (MB): peak = 3157.801 ; gain = 648.230 ; free physical = 38130 ; free virtual = 307005\nSynthesis Optimization Complete : Time (s): cpu = 00:00:13 ; elapsed = 00:00:15 . Memory (MB): peak = 3157.809 ; gain = 648.230 ; free physical = 38129 ; free virtual = 307004\nINFO: [Project 1-571] Translating synthesized netlist\nNetlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3157.809 ; gain = 0.000 ; free physical = 38091 ; free virtual = 306981\nINFO: [Netlist 29-17] Analyzing 178 Unisim elements for replacement\nINFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3245.488 ; gain = 0.000 ; free physical = 37801 ; free virtual = 306690\nINFO: [Project 1-111] Unisim Transformation Summary:\n  A total of 98 instances were transformed.\n  RAM256X1D => RAM256X1D (MUXF7(x4), MUXF8(x2), RAMD64E(x8)): 2 instances\n  RAM64M8 => RAM64M8 (RAMD64E(x8)): 96 instances\n\nSynth Design complete, checksum: 44db4670\nINFO: [Common 17-83] Releasing license: Synthesis\n15 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 00:00:20 ; elapsed = 00:00:19 . Memory (MB): peak = 3245.488 ; gain = 736.051 ; free physical = 37925 ; free virtual = 306815\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# set bb [get_cells -hier -quiet -filter {IS_BLACKBOX == 1}]\n# if {[llength $bb]} {error \"unresolved storage blackbox\"}\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-installed-image-map-r1-20261111/candidate/utilization.rpt}\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-installed-image-map-r1-20261111/candidate/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-installed-image-map-r1-20261111/candidate/module.dcp' has been generated.\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 14:05:50 2026...\n",
+      "pid": 3138618,
+      "source_id": "8ab2d8c8a244bd3ed6ab0afb22582dda1394bb4d0e1320712eda3436811ac238",
+      "stage_log": {
+        "bytes": 16841,
+        "mtime_ns": 1794377150600155805,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-installed-image-map-r1-20261111/map-candidate.log"
+      },
+      "start_ticks": "18872003",
+      "status": "COMPLETE_PAIRED_INSTALLED_IMAGE_STORAGE_MAP_NOT_FULL_DCACHE_NOT_ADMITTED",
+      "updated_utc": "2026-11-11T06:05:54.896765+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-installed-image-proof-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "a5ca9940e35ba34b5ef65b62ce624bec31facd17",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "INSTALLED_IMAGE_BOUNDARY_PASS cycles=8192 entries=512 bits=81 observations=32018 reset_writes=67 collisions=2571 clockless=8192 all_words=512\n",
+      "pid": 3095987,
+      "source_id": "8ab2d8c8a244bd3ed6ab0afb22582dda1394bb4d0e1320712eda3436811ac238",
+      "stage_log": {
+        "bytes": 142,
+        "mtime_ns": 1794376735962871682,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-installed-image-proof-r1-20261111/boundary.log"
+      },
+      "start_ticks": "18841431",
+      "status": "PASS_SOURCE_BOUND_ARBITRARY_STATE_BITWISE_STORAGE_RELATION_ACTUAL_TOPOLOGY_AND_8192_CYCLES_FULL_DCACHE_PENDING",
+      "updated_utc": "2026-11-11T05:58:55.978846+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-owner-sequence-precheck-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "99c25302ab9139907416e4673bfa39e07e2dc38e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Picked up JAVA_TOOL_OPTIONS: \n",
+      "pid": 2796965,
+      "source_id": "692f804534a9c73890d6d86b348aa6470f8d1d9a222b3e05975766ec33f8cd63",
+      "stage_log": {
+        "bytes": 30,
+        "mtime_ns": 1794375174216683063,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-owner-sequence-precheck-r1-20261111/emit-address.log"
+      },
+      "start_ticks": "18687512",
+      "status": "PASS_EXACT_DISJOINT_COMPOSITION_FULL_CHANGED_SOURCE_TYPECHECK_FROZEN_PARAMETERS_AND_EMITTED_ADDRESS_RTL_NOT_AREA_ADMITTED",
+      "updated_utc": "2026-11-11T05:34:41.774132+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-owner-update-sequence-system-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "99c25302ab9139907416e4673bfa39e07e2dc38e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2503709,
+      "source_id": "692f804534a9c73890d6d86b348aa6470f8d1d9a222b3e05975766ec33f8cd63",
+      "start_ticks": "18451157",
+      "status": "WAITING_REAL_FULL_DCACHE_AND_ADDRESS_AREA_GATES",
+      "updated_utc": "2026-11-11T04:53:11.889080+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-owner-update-sequence-system-r2-state.json": {
+      "controller": {},
+      "hardware_commit": "99c25302ab9139907416e4673bfa39e07e2dc38e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2512227,
+      "source_id": "692f804534a9c73890d6d86b348aa6470f8d1d9a222b3e05975766ec33f8cd63",
+      "start_ticks": "18472429",
+      "status": "DEPENDENCY_FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T05:51:45.634538+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-owner-update-sequence-system-r3-state.json": {
+      "controller": {},
+      "hardware_commit": "99c25302ab9139907416e4673bfa39e07e2dc38e",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3079907,
+      "source_id": "692f804534a9c73890d6d86b348aa6470f8d1d9a222b3e05975766ec33f8cd63",
+      "start_ticks": "18832243",
+      "status": "NOT_SELECTED_NO_SIGNIFICANT_COMBINED_MODULE_GAIN",
+      "updated_utc": "2026-11-11T16:16:53.999446+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-reservation-map-r3-state.json": {
+      "controller": {},
+      "hardware_commit": "b746cf0d3d169c3d0116eaaa958182dfdc765282",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "cal = 100630 ; free virtual = 345940\nINFO: [Project 1-571] Translating synthesized netlist\nNetlist sorting complete. Time (s): cpu = 00:00:00.03 ; elapsed = 00:00:00.04 . Memory (MB): peak = 3204.824 ; gain = 0.000 ; free physical = 100609 ; free virtual = 345932\nINFO: [Netlist 29-17] Analyzing 885 Unisim elements for replacement\nINFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds\nWARNING: [Netlist 29-101] Netlist 'ReservationCandidate' is not ideal for floorplanning, since the cellview 'ReservationCandidate' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3262.074 ; gain = 0.000 ; free physical = 100293 ; free virtual = 345742\nINFO: [Project 1-111] Unisim Transformation Summary:\n  A total of 490 instances were transformed.\n  RAM256X1D => RAM256X1D (MUXF7(x4), MUXF8(x2), RAMD64E(x8)): 10 instances\n  RAM64M => RAM64M (RAMD64E(x4)): 40 instances\n  RAM64M8 => RAM64M8 (RAMD64E(x8)): 440 instances\n\nSynth Design complete, checksum: 9aaed3e9\nINFO: [Common 17-83] Releasing license: Synthesis\n15 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 00:00:23 ; elapsed = 00:00:21 . Memory (MB): peak = 3262.074 ; gain = 775.637 ; free physical = 100418 ; free virtual = 345874\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# set bb [get_cells -hier -quiet -filter {IS_BLACKBOX == 1}]\n# if {[llength $bb]} {error \"unresolved storage blackbox\"}\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/candidate/utilization.rpt}\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/candidate/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/candidate/module.dcp' has been generated.\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 19:21:39 2026...\n",
+      "pid": 4182157,
+      "source_id": "6a7a2a204c03c3195d552123fe5557aaea93a038692cac3094613a245b6120f8",
+      "stage_log": {
+        "bytes": 17156,
+        "mtime_ns": 1794396099439370684,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/map-candidate.log"
+      },
+      "start_ticks": "20749484",
+      "status": "COMPLETE_PAIRED_RESERVATION_STORAGE_MAP_NOT_FULL_DCACHE_NOT_ADMITTED",
+      "updated_utc": "2026-11-11T11:21:43.580232+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-reservation-proof-r1-state.json": {
+      "controller": {},
+      "error": "AssertionError(('compile-boundary', 2, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-proof-r1-20261111/compile-boundary.log'))",
+      "hardware_commit": "b746cf0d3d169c3d0116eaaa958182dfdc765282",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": ");\n                                                                                                             ~ ^\n/data1/gzh/EC/firesim/final-opt4-20261106/candidates/reservation-memory-r1-20261111/boundary.cpp:21:32: error: no member named 'io_readIndex' in 'VReservationPair'\n    for(unsigned r=0;r<5;r++)d.io_readIndex[r]=c<512?c:(r<2?d.io_index:randomWord()%512);\n                             ~ ^\n/data1/gzh/EC/firesim/final-opt4-20261106/candidates/reservation-memory-r1-20261111/boundary.cpp:25:53: error: no member named 'io_readIndex' in 'VReservationPair'\n    d.eval();check();if(d.io_write && d.io_index==d.io_readIndex[0])++collisions;\n                                                  ~ ^\n/data1/gzh/EC/firesim/final-opt4-20261106/candidates/reservation-memory-r1-20261111/boundary.cpp:26:32: error: no member named 'io_readIndex' in 'VReservationPair'\n    for(unsigned r=0;r<5;r++)d.io_readIndex[r]=randomWord()%512;d.eval();check();++clockless;\n                             ~ ^\n/data1/gzh/EC/firesim/final-opt4-20261106/candidates/reservation-memory-r1-20261111/boundary.cpp:33:80: error: no member named 'io_readIndex' in 'VReservationPair'\n  for(unsigned i=0;i<512;i++){if(!known[i])return 2;for(unsigned r=0;r<5;r++)d.io_readIndex[r]=i;d.eval();check();}\n                                                                             ~ ^\n9 errors generated.\nmake: *** [VReservationPair.mk:64: boundary.o] Error 1\nmake: *** Waiting for unfinished jobs....\nmake: Leaving directory '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-proof-r1-20261111/obj'\n%Error: make -C /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-proof-r1-20261111/obj -f VReservationPair.mk -j 2 OPT_FAST=-O0 OPT_SLOW=-O0 exited with 2\n%Error: Command Failed ulimit -s unlimited 2>/dev/null; exec /usr/local/share/verilator/bin/verilator_bin --cc --exe --build -j 2 -Wno-fatal --top-module ReservationPair --Mdir /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-proof-r1-20261111/obj --output-split 10000 --output-split-cfuncs 200 -CFLAGS -O0 -MAKEFLAGS OPT_FAST=-O0\\ OPT_SLOW=-O0 /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-proof-r1-20261111/pair/ReservationPair.v /data1/gzh/EC/firesim/final-opt4-20261106/candidates/reservation-memory-r1-20261111/boundary.cpp\n",
+      "pid": 3502043,
+      "source_id": "6a7a2a204c03c3195d552123fe5557aaea93a038692cac3094613a245b6120f8",
+      "stage_log": {
+        "bytes": 5594,
+        "mtime_ns": 1794381643905399472,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-proof-r1-20261111/compile-boundary.log"
+      },
+      "start_ticks": "19331935",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T07:20:43.932718+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-reservation-proof-r3-state.json": {
+      "controller": {},
+      "hardware_commit": "b746cf0d3d169c3d0116eaaa958182dfdc765282",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 3521759,
+      "source_id": "6a7a2a204c03c3195d552123fe5557aaea93a038692cac3094613a245b6120f8",
+      "start_ticks": "19379685",
+      "status": "PASS_SOURCE_BOUND_ARBITRARY_STATE_BITWISE_STORAGE_RELATION_ACTUAL_TOPOLOGY_AND_8192_CYCLES_FULL_DCACHE_PENDING",
+      "updated_utc": "2026-11-11T07:28:12.239768+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-retire-read-r1-state.json": {
+      "controller": {},
+      "full_module_map": {
+        "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-retire-read-r1-20261111/map-full-module/module.dcp",
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-retire-read-r1-20261111/map-full-module/utilization.rpt",
+        "report_sha256": "4b842e86b974aaffdc74ce27a15ca2749071480f0f64bba76fe84e4d29ce3280",
+        "resources": {
+          "Block RAM Tile": 216.0,
+          "CARRY8": 55414.0,
+          "CLB LUTs": 1072174.0,
+          "CLB Registers": 386111.0,
+          "DSPs": 0.0
+        },
+        "rtl_sha256": "e867fa05c2d1ce4e6d81d61ed8df1aec9e60dc6b8f4b7da4609d0a9648a2d6b7",
+        "scope": "Complete module OOC; not whole-DUT FIT",
+        "tcl_sha256": "fcccbdb657a837e41ee9d0a8ca99dc975f49570265ec2fa28ed4fc9a0b7f52fb"
+      },
+      "hardware_commit": "7e68d3df224fd37fd3f462b9deff376566ed9a79",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "rmation completed in 4 CPU seconds\nWARNING: [Netlist 29-101] Netlist 'PackageAddressStats' is not ideal for floorplanning, since the cellview 'PackageAddressStats' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.35 ; elapsed = 00:00:00.37 . Memory (MB): peak = 11674.941 ; gain = 0.000 ; free physical = 59630 ; free virtual = 321761\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: 52ccfa88\nINFO: [Common 17-83] Releasing license: Synthesis\n481 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 02:59:20 ; elapsed = 03:03:32 . Memory (MB): peak = 11674.941 ; gain = 9175.473 ; free physical = 92045 ; free virtual = 354177\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-retire-read-r1-20261111/map-full-module/utilization.rpt}\nreport_utilization: Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 11674.941 ; gain = 0.000 ; free physical = 90583 ; free virtual = 352716\n# report_utilization -hierarchical -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-retire-read-r1-20261111/map-full-module/hierarchical.rpt}\nreport_utilization: Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 11674.941 ; gain = 0.000 ; free physical = 94766 ; free virtual = 356904\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-retire-read-r1-20261111/map-full-module/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-retire-read-r1-20261111/map-full-module/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:04:59 ; elapsed = 00:03:32 . Memory (MB): peak = 11746.977 ; gain = 72.035 ; free physical = 107184 ; free virtual = 371009\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 11:46:59 2026...\n",
+      "pid": 1896443,
+      "source_id": "4c8636670eb9f78b3df716d02c5690dd50b163582fa370c323b5b4fe4dd3cea5",
+      "stage_log": {
+        "bytes": 231756,
+        "mtime_ns": 1794368819125594156,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-retire-read-r1-20261111/map-full-module/map-full-module-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "16895677",
+      "status": "VERIFIED_AND_MAPPED_MODULE_ONLY",
+      "updated_utc": "2026-11-11T03:47:04.773531+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-runtime-state.json": {
+      "certified_bitstream": false,
+      "controller": {
+        "cpu_ticks": 53,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 3135212,
+        "process_state": "S",
+        "rss_bytes": 16195584,
+        "start_ticks": "12439082"
+      },
+      "hardware_commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": true,
+      "pid": 3135212,
+      "source_id": "7e77ddda28298ac88be13c28dbe98771982bc6ca9587f810adf875bffd580cc1",
+      "start_ticks": "12439082",
+      "status": "WAITING_FOR_DERIVED_BITSTREAM",
+      "updated_utc": "2026-11-11T21:51:45.881786+00:00",
+      "worker_processes": [
+        {
+          "comm": "python3",
+          "cpu_ticks": 53,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "io": {
+            "cancelled_write_bytes": 0,
+            "rchar": 5212008,
+            "read_bytes": 12288,
+            "syscr": 980,
+            "syscw": 408,
+            "wchar": 419894,
+            "write_bytes": 1683456
+          },
+          "pid": 3135212,
+          "process_state": "S",
+          "rss_bytes": 16195584,
+          "start_ticks": "12439082"
+        }
+      ]
+    },
+    "Opt4-fit-slot-epoch-arithmetic-proof-r2-state.json": {
+      "controller": {},
+      "hardware_commit": "3d29eff9baf4f8b0c086940321524d403d8ab8aa",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2868689,
+      "source_id": "b8bb592592e62d4a37fef57674d0800559f01eda2ed45852c289420f3a73d9bf",
+      "start_ticks": "18724096",
+      "status": "PASS_SOURCE_BOUND_FULL16BIT_ARITHMETIC_RESET_PRIORITY_WRAP_AND_NEGATIVE_MUTATION_NOT_FULL_DCACHE",
+      "updated_utc": "2026-11-11T05:38:46.528968+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-slot-epoch-static-r5-state.json": {
+      "controller": {},
+      "error": "AssertionError(('compile-boundary', 2, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-static-r5-20261111/compile-boundary.log'))",
+      "hardware_commit": "3d29eff9baf4f8b0c086940321524d403d8ab8aa",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "disjoint++;}\n                                                             ~ ^\n/data1/gzh/EC/firesim/final-opt4-20261106/candidates/slot-epoch-static-r2-20261111/boundary.cpp:24:43: error: no member named 'io_index' in 'VEpochPair'\n    if(c%31==0){d.io_enable=4;seedIndex=d.io_index[2];overflowSeeds++;}\n                                        ~ ^\n/data1/gzh/EC/firesim/final-opt4-20261106/candidates/slot-epoch-static-r2-20261111/boundary.cpp:25:19: error: no member named 'io_index' in 'VEpochPair'\n    if(c%31==1){d.io_index[0]=seedIndex;d.io_enable=1;}\n                ~ ^\n/data1/gzh/EC/firesim/final-opt4-20261106/candidates/slot-epoch-static-r2-20261111/boundary.cpp:26:28: error: no member named 'io_readIndex' in 'VEpochPair'\n    for(int r=0;r<12;r++)d.io_readIndex[r]=(r<3)?d.io_index[r]:next()&511;\n                         ~ ^\n/data1/gzh/EC/firesim/final-opt4-20261106/candidates/slot-epoch-static-r2-20261111/boundary.cpp:26:52: error: no member named 'io_index' in 'VEpochPair'\n    for(int r=0;r<12;r++)d.io_readIndex[r]=(r<3)?d.io_index[r]:next()&511;\n                                                 ~ ^\n/data1/gzh/EC/firesim/final-opt4-20261106/candidates/slot-epoch-static-r2-20261111/boundary.cpp:29:38: error: no member named 'io_readIndex' in 'VEpochPair'\n    d.clock=0;for(int r=0;r<12;r++)d.io_readIndex[r]=next()&511;\n                                   ~ ^\n16 errors generated.\nmake: *** [VEpochPair.mk:64: boundary.o] Error 1\nmake: *** Waiting for unfinished jobs....\nmake: Leaving directory '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-static-r5-20261111/obj'\n%Error: make -C /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-static-r5-20261111/obj -f VEpochPair.mk -j 2 OPT_FAST=-O0 OPT_SLOW=-O0 exited with 2\n%Error: Command Failed ulimit -s unlimited 2>/dev/null; exec /usr/local/share/verilator/bin/verilator_bin --cc --exe --build -j 2 -Wno-fatal --top-module EpochPair --Mdir /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-static-r5-20261111/obj --output-split 10000 --output-split-cfuncs 200 -CFLAGS -O0 -MAKEFLAGS OPT_FAST=-O0\\ OPT_SLOW=-O0 /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-static-r5-20261111/pair/EpochPair.v /data1/gzh/EC/firesim/final-opt4-20261106/candidates/slot-epoch-static-r2-20261111/boundary.cpp\n",
+      "pid": 3022650,
+      "source_id": "b8bb592592e62d4a37fef57674d0800559f01eda2ed45852c289420f3a73d9bf",
+      "stage_log": {
+        "bytes": 6740,
+        "mtime_ns": 1794376369403126992,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-static-r5-20261111/compile-boundary.log"
+      },
+      "start_ticks": "18800194",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T05:52:49.443604+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-slot-epoch-static-r7-state.json": {
+      "controller": {},
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "hardware_commit": "3d29eff9baf4f8b0c086940321524d403d8ab8aa",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "SLOT_EPOCH_BOUNDARY_PASS cycles=8192 entries=512 bits=16 writes=3 readers=12 snapshot=512 collisions=2731 disjoint=5461 reset_write=11 overflow_seeds=265 clockless=8192\n",
+      "pid": 3139109,
+      "source_id": "b8bb592592e62d4a37fef57674d0800559f01eda2ed45852c289420f3a73d9bf",
+      "stage_log": {
+        "bytes": 169,
+        "mtime_ns": 1794377023005625519,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-static-r7-20261111/boundary.log"
+      },
+      "start_ticks": "18872135",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T06:03:43.063797+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-slot-epoch-static-r8-state.json": {
+      "controller": {},
+      "hardware_commit": "3d29eff9baf4f8b0c086940321524d403d8ab8aa",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "me (s): cpu = 00:07:47 ; elapsed = 00:07:59 . Memory (MB): peak = 3528.480 ; gain = 1025.914 ; free physical = 57317 ; free virtual = 327327\nSynthesis Optimization Complete : Time (s): cpu = 00:07:47 ; elapsed = 00:07:59 . Memory (MB): peak = 3528.480 ; gain = 1025.914 ; free physical = 57324 ; free virtual = 327323\nINFO: [Project 1-571] Translating synthesized netlist\nNetlist sorting complete. Time (s): cpu = 00:00:00.63 ; elapsed = 00:00:00.64 . Memory (MB): peak = 3528.480 ; gain = 0.000 ; free physical = 56432 ; free virtual = 326452\nWARNING: [Netlist 29-101] Netlist 'EpochCandidate' is not ideal for floorplanning, since the cellview 'EpochCandidate' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3544.383 ; gain = 0.000 ; free physical = 54709 ; free virtual = 324742\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: 250623f8\nINFO: [Common 17-83] Releasing license: Synthesis\n13 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 00:07:58 ; elapsed = 00:08:10 . Memory (MB): peak = 3544.383 ; gain = 1041.949 ; free physical = 54839 ; free virtual = 324872\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-static-r8-20261111/candidate/utilization.rpt}\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-static-r8-20261111/candidate/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-static-r8-20261111/candidate/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:00:16 ; elapsed = 00:00:16 . Memory (MB): peak = 3712.223 ; gain = 167.840 ; free physical = 52081 ; free virtual = 322085\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 14:28:37 2026...\n",
+      "pid": 3218949,
+      "source_id": "b8bb592592e62d4a37fef57674d0800559f01eda2ed45852c289420f3a73d9bf",
+      "stage_log": {
+        "bytes": 13327,
+        "mtime_ns": 1794378517115062038,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-static-r8-20261111/map-candidate.log"
+      },
+      "start_ticks": "18943761",
+      "status": "COMPLETE_VERIFIED_PAIRED_STORAGE_MAP_FULL_DCACHE_COMPARISON_PENDING_NOT_ADMITTED",
+      "updated_utc": "2026-11-11T06:28:41.468236+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-sort-system-continuation-state.json": {
+      "controller": {},
+      "hardware_commit": "11edd71981aa30ff3a26aab1f2f7327ac0266ee1",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "measured_module_resources": {
+        "Block RAM Tile": 216.0,
+        "CARRY8": 56065.0,
+        "CLB LUTs": 1197215.0,
+        "CLB Registers": 389479.0,
+        "DSPs": 0.0
+      },
+      "pid": 258082,
+      "source_id": "f8a4239fe5a4818e15d98791f76d9d877172f342cdc0bc036ac6811e68de3cec",
+      "start_ticks": "13300541",
+      "status": "REJECTED_INSUFFICIENT_MEASURED_AREA_GAIN",
+      "updated_utc": "2026-11-10T16:39:47.300143+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-svb-reference-map-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2040739,
+      "start_ticks": "17407983",
+      "status": "COMPLETE_IDENTICAL_HARNESS_FULL_SVB_AREA_COMPARISON_NOT_WHOLE_DUT",
+      "updated_utc": "2026-11-11T02:03:53.997380+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-svb-software-prep-r1-state.json": {
+      "controller": {},
+      "hardware_commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+      "identity_live": false,
+      "source_id": "f678ac806ea4b0f801596b26ec8bf9ef914a3161b39f92564ac25452abd8eafc",
+      "status": "PREPARED_REAL_ABI_AND_PAIRED_SOFTWARE_NOT_FPGA_VALIDATED"
+    },
+    "Opt4-fit-svb-system-r1-state.json": {
+      "controller": {},
+      "error": "AssertionError(('compile-svb-emitter', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-system-r1-20261111/compile-svb-emitter-attempt-1.log', ['/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-svb-tree-r1-20261111/builds/system-f2d2ca3e-r1/svb-comparison/emit-classes/opt4svbtree/Emit.class']))",
+      "hardware_commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Picked up JAVA_TOOL_OPTIONS: \n/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-system-r1-20261111/Emit.scala:54: error: object firesim is not a member of package firesim\n      val base = new firesim.firesim.DacOpt4C4().toInstance\n                             ^\n1 error\n",
+      "pid": 1976889,
+      "source_id": "f678ac806ea4b0f801596b26ec8bf9ef914a3161b39f92564ac25452abd8eafc",
+      "stage_log": {
+        "bytes": 277,
+        "mtime_ns": 1794359894453466078,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-system-r1-20261111/compile-svb-emitter-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "17159456",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T01:18:14.515799+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-svb-system-r2-state.json": {
+      "controller": {},
+      "hardware_commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": " full_compare=%d cancelled=%d\\n), PrintPort(synthesizedPrintf_lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_core_printf_1_wire,List((enable,UInt<1>), (args_0,UInt<3>), (args_1,UInt<32>), (args_2,UInt<2>), (args_3,UInt<1>), (args_4,UInt<1>)),EC_OPT4_PACKAGE_RESULT hart=%d seq=%x status=%d full_compare=%d cancelled=%d\\n)))\nGenerating a Midas Memory Model\n  Max Read Requests: 6\n  Max Write Requests: 6\n  Max Read Length: 8\n  Max Write Length: 8\n  Max Read ID Reuse: 1\n  Max Write ID Reuse: 1\n\nTiming Model Parameters\n  Timing Model Class: Latency Bandwidth Pipe\n  No LLC Model Instantiated\n\n\nDefault Settings\n  +mm_relaxFunctionalModel_0=0\n  +mm_writeMaxReqs_0=6\n  +mm_readMaxReqs_0=6\n  +mm_writeLatency_0=30\n  +mm_readLatency_0=30\n\nBridge Streams To CPU:\n  Name: TRACERVBRIDGEMODULE_0_to_cpu_stream, Idx: 0, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_1_to_cpu_stream, Idx: 1, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_2_to_cpu_stream, Idx: 2, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_3_to_cpu_stream, Idx: 3, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_4_to_cpu_stream, Idx: 4, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: PRINTBRIDGEMODULE_0_to_cpu_stream, Idx: 5, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: PRINTBRIDGEMODULE_1_to_cpu_stream, Idx: 6, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\nBridge Streams From CPU:\n  None\nSimulator Memory Map:\n  [   0,   7f]: FASEDMemoryTimingModel_0\n  [  80,   ff]: BlockDevBridgeModule_0\n  [ 100,  13f]: TSIBridgeModule_0\n  [ 140,  17f]: TracerVBridgeModule_0\n  [ 180,  1bf]: TracerVBridgeModule_1\n  [ 1c0,  1ff]: TracerVBridgeModule_2\n  [ 200,  23f]: TracerVBridgeModule_3\n  [ 240,  27f]: TracerVBridgeModule_4\n  [ 280,  2bf]: LoadMemWidget_0\n  [ 2c0,  2df]: PeekPokeBridgeModule_0\n  [ 2e0,  2ff]: UARTBridgeModule_0\n  [ 300,  31f]: ClockBridgeModule_0\n  [ 320,  33f]: PrintBridgeModule_0\n  [ 340,  35f]: PrintBridgeModule_1\n  [ 360,  37f]: CPUManagedStreamEngine_0\n  [ 380,  38f]: SimulationMaster_0\n  [ 390,  397]: ResetPulseBridgeModule_0\nTotal Host-FPGA DRAM Allocated: 16.000 GiB of 16.000 GiB available.\nHost-FPGA DRAM Allocation Map:\n  MainMemory_0 -> [0x0, 0x3FFFFFFFF]\n    Associated bridges: FASEDMemoryTimingModel_0\nAuto ILA: p(EnableAutoILA) unset. Skipping AutoILATransform\n",
+      "pid": 1978586,
+      "source_id": "f678ac806ea4b0f801596b26ec8bf9ef914a3161b39f92564ac25452abd8eafc",
+      "stage_log": {
+        "bytes": 7576,
+        "mtime_ns": 1794360896133383977,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-system-r2-20261111/goldengate-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "17168869",
+      "status": "RTL_READY_REAL_ABI_CHECKED",
+      "updated_utc": "2026-11-11T01:37:40.297207+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-svb-tree-r1-state.json": {
+      "controller": {},
+      "error": "AssertionError(('compile', 1, PosixPath('/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r1-20261111/compile-attempt-1.log')))",
+      "hardware_commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Picked up JAVA_TOOL_OPTIONS: \n/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-tree-r1-20261111/Emit.scala:59: error: object UnlocatableSourceInfo is not a member of package chisel3.experimental\n      implicit val edge: TLEdgeOut = new TLEdgeOut(client, manager, p, chisel3.experimental.UnlocatableSourceInfo)\n                                                                                            ^\n1 error\n",
+      "pid": 1883243,
+      "source_id": "f678ac806ea4b0f801596b26ec8bf9ef914a3161b39f92564ac25452abd8eafc",
+      "stage_log": {
+        "bytes": 420,
+        "mtime_ns": 1794356627612305011,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r1-20261111/compile-attempt-1.log"
+      },
+      "start_ticks": "16834411",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T00:23:47.692668+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-svb-tree-r2-state.json": {
+      "controller": {},
+      "error": "AssertionError(('emit-svb', 1, PosixPath('/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r2-20261111/emit-svb-attempt-1.log')))",
+      "hardware_commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Picked up JAVA_TOOL_OPTIONS: \nException in thread \"main\" java.lang.IllegalArgumentException: requirement failed: Key TileVisibilityNodeKey is not defined in Parameters\n\tat ... ()\n\tat chipsalliance.rocketchip.config$View.apply(Config.scala:28)\n\tat chipsalliance.rocketchip.config$View.apply(Config.scala:25)\n\tat freechips.rocketchip.tile.HasTileParameters.tlBundleParams(BaseTile.scala:179)\n\tat freechips.rocketchip.tile.HasTileParameters.tlBundleParams$(BaseTile.scala:179)\n\tat freechips.rocketchip.rocket.L1HellaCacheModule.tlBundleParams(HellaCache.scala:97)\n\tat freechips.rocketchip.tile.HasL1CacheParameters.cacheDataBits(L1Cache.scala:36)\n\tat freechips.rocketchip.tile.HasL1CacheParameters.cacheDataBits$(L1Cache.scala:36)\n\tat freechips.rocketchip.rocket.L1HellaCacheModule.cacheDataBits(HellaCache.scala:97)\n\tat freechips.rocketchip.rocket.HasL1HellaCacheParameters.$init$(HellaCache.scala:92)\n\tat freechips.rocketchip.rocket.L1HellaCacheModule.<init>(HellaCache.scala:97)\n\tat boom.lsu.SpeculativeVersionBuffer.<init>(speculative-version-buffer.scala:48)\n\tat opt4svbtree.Emit$.$anonfun$new$23(Emit.scala:60)\n\tat ... ()\n\tat ... (Stack trace trimmed to user code only. Rerun with --full-stacktrace to see the full stack trace)\n",
+      "pid": 1885091,
+      "source_id": "f678ac806ea4b0f801596b26ec8bf9ef914a3161b39f92564ac25452abd8eafc",
+      "stage_log": {
+        "bytes": 1231,
+        "mtime_ns": 1794356706333785983,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r2-20261111/emit-svb-attempt-1.log"
+      },
+      "start_ticks": "16840668",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T00:25:06.395233+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-svb-tree-r3-state.json": {
+      "controller": {},
+      "error": "AssertionError(('emit-svb', 1, PosixPath('/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r3-20261111/emit-svb-attempt-1.log')))",
+      "hardware_commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "Picked up JAVA_TOOL_OPTIONS: \nException in thread \"main\" java.lang.IllegalArgumentException: requirement failed: rowBits(128) != cacheDataBits(64)\n\tat ... ()\n\tat freechips.rocketchip.rocket.HasL1HellaCacheParameters.$init$(HellaCache.scala:92)\n\tat freechips.rocketchip.rocket.L1HellaCacheModule.<init>(HellaCache.scala:97)\n\tat boom.lsu.SpeculativeVersionBuffer.<init>(speculative-version-buffer.scala:48)\n\tat opt4svbtree.Emit$$anon$2$$anon$3.$anonfun$dut$2(Emit.scala:67)\n\tat chisel3.Module$.do_apply(Module.scala:53)\n\tat opt4svbtree.Emit$$anon$2$$anon$3.$anonfun$dut$1(Emit.scala:67)\n\tat chisel3.internal.plugin.package$.autoNameRecursively(package.scala:33)\n\tat opt4svbtree.Emit$$anon$2$$anon$3.<init>(Emit.scala:67)\n\tat opt4svbtree.Emit$$anon$2.$anonfun$module$1(Emit.scala:64)\n\tat chisel3.internal.plugin.package$.autoNameRecursively(package.scala:33)\n\tat opt4svbtree.Emit$$anon$2.module$lzycompute(Emit.scala:64)\n\tat opt4svbtree.Emit$$anon$2.module(Emit.scala:64)\n\tat opt4svbtree.Emit$$anon$2.module(Emit.scala:59)\n\tat opt4svbtree.Emit$.$anonfun$new$24(Emit.scala:72)\n\tat ... ()\n\tat ... (Stack trace trimmed to user code only. Rerun with --full-stacktrace to see the full stack trace)\n",
+      "pid": 1888600,
+      "source_id": "f678ac806ea4b0f801596b26ec8bf9ef914a3161b39f92564ac25452abd8eafc",
+      "stage_log": {
+        "bytes": 1190,
+        "mtime_ns": 1794356858108295713,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r3-20261111/emit-svb-attempt-1.log"
+      },
+      "start_ticks": "16855853",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T00:27:38.147582+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-svb-tree-r4-state.json": {
+      "controller": {},
+      "error": "AssertionError(('emit-svb', 1, PosixPath('/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r4-20261111/emit-svb-attempt-1.log')))",
+      "hardware_commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "le.vpnBits(types.scala:21)\n\tat freechips.rocketchip.tile.HasTileParameters.vpnBitsExtended(BaseTile.scala:197)\n\tat freechips.rocketchip.tile.HasTileParameters.vpnBitsExtended$(BaseTile.scala:197)\n\tat boom.common.BoomBundle.vpnBitsExtended(types.scala:21)\n\tat freechips.rocketchip.tile.HasTileParameters.vaddrBitsExtended(BaseTile.scala:198)\n\tat freechips.rocketchip.tile.HasTileParameters.vaddrBitsExtended$(BaseTile.scala:198)\n\tat boom.common.BoomBundle.vaddrBitsExtended(types.scala:21)\n\tat freechips.rocketchip.tile.HasCoreParameters.coreMaxAddrBits(Core.scala:107)\n\tat freechips.rocketchip.tile.HasCoreParameters.coreMaxAddrBits$(Core.scala:107)\n\tat boom.common.BoomBundle.coreMaxAddrBits(types.scala:21)\n\tat boom.lsu.SpeculativeVersionSnapshot.$anonfun$line$1(speculative-version-buffer.scala:20)\n\tat chisel3.internal.plugin.package$.autoNameRecursively(package.scala:33)\n\tat boom.lsu.SpeculativeVersionSnapshot.<init>(speculative-version-buffer.scala:20)\n\tat boom.lsu.SpeculativeVersionBuffer$$anon$1.$anonfun$capture$1(speculative-version-buffer.scala:53)\n\tat chisel3.internal.plugin.package$.autoNameRecursively(package.scala:33)\n\tat boom.lsu.SpeculativeVersionBuffer$$anon$1.<init>(speculative-version-buffer.scala:53)\n\tat boom.lsu.SpeculativeVersionBuffer.$anonfun$io$2(speculative-version-buffer.scala:52)\n\tat chisel3.internal.prefix$.apply(prefix.scala:48)\n\tat boom.lsu.SpeculativeVersionBuffer.$anonfun$io$1(speculative-version-buffer.scala:52)\n\tat chisel3.internal.plugin.package$.autoNameRecursively(package.scala:33)\n\tat boom.lsu.SpeculativeVersionBuffer.<init>(speculative-version-buffer.scala:52)\n\tat opt4svbtree.Emit$$anon$2$$anon$3.$anonfun$dut$2(Emit.scala:67)\n\tat chisel3.Module$.do_apply(Module.scala:53)\n\tat opt4svbtree.Emit$$anon$2$$anon$3.$anonfun$dut$1(Emit.scala:67)\n\tat chisel3.internal.plugin.package$.autoNameRecursively(package.scala:33)\n\tat opt4svbtree.Emit$$anon$2$$anon$3.<init>(Emit.scala:67)\n\tat opt4svbtree.Emit$$anon$2.$anonfun$module$1(Emit.scala:64)\n\tat chisel3.internal.plugin.package$.autoNameRecursively(package.scala:33)\n\tat opt4svbtree.Emit$$anon$2.module$lzycompute(Emit.scala:64)\n\tat opt4svbtree.Emit$$anon$2.module(Emit.scala:64)\n\tat opt4svbtree.Emit$$anon$2.module(Emit.scala:59)\n\tat opt4svbtree.Emit$.$anonfun$new$24(Emit.scala:72)\n\tat ... ()\n\tat ... (Stack trace trimmed to user code only. Rerun with --full-stacktrace to see the full stack trace)\n",
+      "pid": 1890546,
+      "source_id": "f678ac806ea4b0f801596b26ec8bf9ef914a3161b39f92564ac25452abd8eafc",
+      "stage_log": {
+        "bytes": 2910,
+        "mtime_ns": 1794356934473417564,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r4-20261111/emit-svb-attempt-1.log"
+      },
+      "start_ticks": "16863514",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T00:28:54.520817+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-svb-tree-r5-state.json": {
+      "controller": {},
+      "error": "AssertionError(('sat32', 1, PosixPath('/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r5-20261111/sat32-attempt-1.log')))",
+      "hardware_commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "_15\nImport show expression: \\io_seq_16\nImport show expression: \\io_seq_17\nImport show expression: \\io_seq_18\nImport show expression: \\io_seq_19\nImport show expression: \\io_seq_2\nImport show expression: \\io_seq_20\nImport show expression: \\io_seq_21\nImport show expression: \\io_seq_22\nImport show expression: \\io_seq_23\nImport show expression: \\io_seq_24\nImport show expression: \\io_seq_25\nImport show expression: \\io_seq_26\nImport show expression: \\io_seq_27\nImport show expression: \\io_seq_28\nImport show expression: \\io_seq_29\nImport show expression: \\io_seq_3\nImport show expression: \\io_seq_30\nImport show expression: \\io_seq_31\nImport show expression: \\io_seq_4\nImport show expression: \\io_seq_5\nImport show expression: \\io_seq_6\nImport show expression: \\io_seq_7\nImport show expression: \\io_seq_8\nImport show expression: \\io_seq_9\nImport show expression: \\io_valid_0\nImport show expression: \\io_valid_1\nImport show expression: \\io_valid_10\nImport show expression: \\io_valid_11\nImport show expression: \\io_valid_12\nImport show expression: \\io_valid_13\nImport show expression: \\io_valid_14\nImport show expression: \\io_valid_15\nImport show expression: \\io_valid_16\nImport show expression: \\io_valid_17\nImport show expression: \\io_valid_18\nImport show expression: \\io_valid_19\nImport show expression: \\io_valid_2\nImport show expression: \\io_valid_20\nImport show expression: \\io_valid_21\nImport show expression: \\io_valid_22\nImport show expression: \\io_valid_23\nImport show expression: \\io_valid_24\nImport show expression: \\io_valid_25\nImport show expression: \\io_valid_26\nImport show expression: \\io_valid_27\nImport show expression: \\io_valid_28\nImport show expression: \\io_valid_29\nImport show expression: \\io_valid_3\nImport show expression: \\io_valid_30\nImport show expression: \\io_valid_31\nImport show expression: \\io_valid_4\nImport show expression: \\io_valid_5\nImport show expression: \\io_valid_6\nImport show expression: \\io_valid_7\nImport show expression: \\io_valid_8\nImport show expression: \\io_valid_9\n\nSolving problem with 732241 variables and 2197485 clauses..\nInterrupted SAT solver: TIMEOUT!\n\n        _____  _  _      _____ ____  _     _____\n       /__ __\\/ \\/ \\__/|/  __//  _ \\/ \\ /\\/__ __\\\n         / \\  | || |\\/|||  \\  | / \\|| | ||  / \\\n         | |  | || |  |||  /_ | \\_/|| \\_/|  | |\n         \\_/  \\_/\\_/  \\|\\____\\\\____/\\____/  \\_/\n\nERROR: Called with -verify and proof did time out!\n",
+      "pid": 1892804,
+      "source_id": "f678ac806ea4b0f801596b26ec8bf9ef914a3161b39f92564ac25452abd8eafc",
+      "stage_log": {
+        "bytes": 23609,
+        "mtime_ns": 1794357971108093720,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r5-20261111/sat32-attempt-1.log"
+      },
+      "start_ticks": "16875697",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T00:46:11.198425+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-svb-tree-r6-state.json": {
+      "controller": {},
+      "error": "AssertionError(('compile-vectors', 2, PosixPath('/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r6-20261111/compile-vectors-attempt-1.log')))",
+      "hardware_commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "rguments -Wno-bool-operation -Wno-c++11-narrowing -Wno-constant-logical-operand -Wno-non-pod-varargs -Wno-parentheses-equality -Wno-shadow -Wno-sign-compare -Wno-tautological-bitwise-compare -Wno-tautological-compare -Wno-uninitialized -Wno-unused-parameter -Wno-unused-variable      -x c++-header VSelectionProbe__pch.h -o VSelectionProbe__pch.h.slow.gch\necho \"\" > VSelectionProbe__ALL.verilator_deplist.tmp\n/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r6-20261111/vectors.cpp:10:111: error: expected ')'\nif(valid[i]&&(!found||seq[i]>seq[best]||(seq[i]==seq[best]&&(gen[i]>gen[best]||(gen[i]==gen[best]&&i>best)))) {best=i;found=true;}}\n                                                                                                              ^\n/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r6-20261111/vectors.cpp:10:3: note: to match this '('\nif(valid[i]&&(!found||seq[i]>seq[best]||(seq[i]==seq[best]&&(gen[i]>gen[best]||(gen[i]==gen[best]&&i>best)))) {best=i;found=true;}}\n  ^\n/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r6-20261111/vectors.cpp:10:131: error: expected statement\nif(valid[i]&&(!found||seq[i]>seq[best]||(seq[i]==seq[best]&&(gen[i]>gen[best]||(gen[i]==gen[best]&&i>best)))) {best=i;found=true;}}\n                                                                                                                                  ^\n2 errors generated.\nmake: *** [VSelectionProbe.mk:63: vectors.o] Error 1\nmake: *** Waiting for unfinished jobs....\nrm VSelectionProbe__ALL.verilator_deplist.tmp\nmake: Leaving directory '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r6-20261111/obj'\n%Error: make -C /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r6-20261111/obj -f VSelectionProbe.mk -j 8 exited with 2\n%Error: Command Failed ulimit -s unlimited 2>/dev/null; exec /usr/local/share/verilator/bin/verilator_bin --cc --exe --build -j 8 -Wno-fatal --top-module SelectionProbe --Mdir /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r6-20261111/obj /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r6-20261111/proof/SelectionProbe.v /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r6-20261111/vectors.cpp\n",
+      "pid": 1914143,
+      "source_id": "f678ac806ea4b0f801596b26ec8bf9ef914a3161b39f92564ac25452abd8eafc",
+      "stage_log": {
+        "bytes": 5323,
+        "mtime_ns": 1794358036120629470,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r6-20261111/compile-vectors-attempt-1.log"
+      },
+      "start_ticks": "16972523",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T00:47:16.130809+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-svb-tree-r7-state.json": {
+      "controller": {},
+      "hardware_commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": "elapsed = 00:02:53 . Memory (MB): peak = 3792.387 ; gain = 1285.820 ; free physical = 70006 ; free virtual = 331435\nSynthesis Optimization Complete : Time (s): cpu = 00:02:51 ; elapsed = 00:02:53 . Memory (MB): peak = 3792.387 ; gain = 1285.820 ; free physical = 70013 ; free virtual = 331431\nINFO: [Project 1-571] Translating synthesized netlist\nNetlist sorting complete. Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 3792.387 ; gain = 0.000 ; free physical = 67945 ; free virtual = 329343\nINFO: [Netlist 29-17] Analyzing 29356 Unisim elements for replacement\nINFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds\nWARNING: [Netlist 29-101] Netlist 'SVBModuleHarness' is not ideal for floorplanning, since the cellview 'SpeculativeVersionBuffer' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00.02 ; elapsed = 00:00:00.02 . Memory (MB): peak = 3971.508 ; gain = 0.000 ; free physical = 66210 ; free virtual = 327549\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: 653a41d5\nINFO: [Common 17-83] Releasing license: Synthesis\n94 Infos, 68 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 00:03:21 ; elapsed = 00:03:24 . Memory (MB): peak = 3971.508 ; gain = 1465.074 ; free physical = 67336 ; free virtual = 328675\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r7-20261111/map-svb/utilization.rpt}\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r7-20261111/map-svb/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r7-20261111/map-svb/module.dcp' has been generated.\nwrite_checkpoint: Time (s): cpu = 00:00:49 ; elapsed = 00:00:31 . Memory (MB): peak = 4312.863 ; gain = 341.355 ; free physical = 63753 ; free virtual = 326660\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Wed Nov 11 08:58:09 2026...\n",
+      "pid": 1922848,
+      "source_id": "f678ac806ea4b0f801596b26ec8bf9ef914a3161b39f92564ac25452abd8eafc",
+      "stage_log": {
+        "bytes": 43863,
+        "mtime_ns": 1794358689761686661,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r7-20261111/map-svb-attempt-1.log"
+      },
+      "start_ticks": "16998349",
+      "status": "VERIFIED_SELECTION_SUBSTITUTION_AND_MAPPED_NOT_WHOLE_DUT_ADMITTED",
+      "updated_utc": "2026-11-11T00:58:14.412682+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-update-share-svb-cad-state.json": {
+      "certified_bitstream": false,
+      "child": {
+        "cpu_ticks": 2,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2484227,
+        "process_state": "S",
+        "rss_bytes": 3952640,
+        "start_ticks": "18404280"
+      },
+      "child_pid": 2484227,
+      "child_start_ticks": "18404280",
+      "controller": {
+        "cpu_ticks": 3150,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2484108,
+        "process_state": "S",
+        "rss_bytes": 184111104,
+        "start_ticks": "18403856"
+      },
+      "current_stage": "dut_synth",
+      "hardware_commit": "e0c3737f989c563f99a00f3fd26c1cbd27421775",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": true,
+      "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-update-share-svb-cad-e0c3737f",
+      "log_tail": "                 | PCIN+A*B           | 18     | 18     | -      | -      | 48     | 0    | 0    | -    | -    | -     | 0    | 0    | \n|MulAddRecFNPipe_2            | A*B                | 25     | 18     | -      | -      | 48     | 0    | 0    | -    | -    | -     | 0    | 0    | \n|MulAddRecFNPipe_2            | (PCIN>>17)+A*B     | 25     | 8      | -      | -      | 31     | 0    | 0    | -    | -    | -     | 0    | 0    | \n|MulDiv_1                     | A2*B2              | 18     | 9      | -      | -      | 48     | 1    | 1    | -    | -    | -     | 0    | 0    | \n|MulDiv_1                     | (PCIN>>17)+A2*B2   | 14     | 9      | -      | -      | 48     | 1    | 1    | -    | -    | -     | 0    | 0    | \n|MulDiv_1                     | A2*B2              | 18     | 9      | -      | -      | 48     | 1    | 1    | -    | -    | -     | 0    | 0    | \n|MulDiv_1                     | (PCIN>>17)+A2*B2   | 18     | 9      | -      | -      | 48     | 1    | 1    | -    | -    | -     | 0    | 0    | \n+-----------------------------+--------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+\n\nNote: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.\n---------------------------------------------------------------------------------\nFinished ROM, RAM, DSP, Shift Register and Retiming Reporting\n---------------------------------------------------------------------------------\n---------------------------------------------------------------------------------\nStart Applying XDC Timing Constraints\n---------------------------------------------------------------------------------\n---------------------------------------------------------------------------------\nFinished Applying XDC Timing Constraints : Time (s): cpu = 04:13:04 ; elapsed = 04:17:07 . Memory (MB): peak = 27386.980 ; gain = 24413.180 ; free physical = 45533 ; free virtual = 280853\n---------------------------------------------------------------------------------\n---------------------------------------------------------------------------------\nStart Timing Optimization\n---------------------------------------------------------------------------------\n",
+      "pid": 2484108,
+      "profile": "Opt4-fit-C4-SVB32-update-share-svb-compose-r2",
+      "source_id": "b058237185f3c6f1c730e4a128e4c3670299eb45a250627fa61aeb3eb631d235",
+      "stage_log": {
+        "bytes": 430534,
+        "mtime_ns": 1794387767825620720,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-update-share-svb-cad-e0c3737f/dut_synth-attempt-1.log"
+      },
+      "start_ticks": "18403856",
+      "status": "RUNNING_DUT_SYNTH",
+      "updated_utc": "2026-11-11T21:55:28.071846+00:00",
+      "worker_processes": [
+        {
+          "comm": "vivado",
+          "cpu_ticks": 2,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "io": {
+            "cancelled_write_bytes": 0,
+            "rchar": 66522,
+            "read_bytes": 0,
+            "syscr": 169,
+            "syscw": 16,
+            "wchar": 384,
+            "write_bytes": 0
+          },
+          "pid": 2484227,
+          "process_state": "S",
+          "rss_bytes": 3952640,
+          "start_ticks": "18404280"
+        },
+        {
+          "comm": "loader",
+          "cpu_ticks": 0,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "io": {
+            "cancelled_write_bytes": 0,
+            "rchar": 1499877,
+            "read_bytes": 0,
+            "syscr": 450,
+            "syscw": 16,
+            "wchar": 232,
+            "write_bytes": 0
+          },
+          "pid": 2484243,
+          "process_state": "S",
+          "rss_bytes": 3850240,
+          "start_ticks": "18404284"
+        },
+        {
+          "comm": "vivado",
+          "cpu_ticks": 6204673,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "io": {
+            "cancelled_write_bytes": 2290860032,
+            "rchar": 20774976955,
+            "read_bytes": 10084352,
+            "syscr": 3140719,
+            "syscw": 5476624,
+            "wchar": 25603264379,
+            "write_bytes": 25612050432
+          },
+          "pid": 2484262,
+          "process_state": "S",
+          "rss_bytes": 15587340288,
+          "start_ticks": "18404293"
+        }
+      ]
+    },
+    "Opt4-fit-update-share-svb-r2-state.json": {
+      "controller": {},
+      "hardware_commit": "e0c3737f989c563f99a00f3fd26c1cbd27421775",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2218872,
+      "source_id": "b058237185f3c6f1c730e4a128e4c3670299eb45a250627fa61aeb3eb631d235",
+      "start_ticks": "17843829",
+      "status": "PASS_COMPOSED_SOURCE_BOUND_MODULE_EQUIVALENCE_TYPECHECKED_NOT_FULL_DUT_FORMAL_OR_CAD",
+      "updated_utc": "2026-11-11T03:14:14.932051+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-update-share-svb-rtl-state.json": {
+      "controller": {},
+      "hardware_commit": "e0c3737f989c563f99a00f3fd26c1cbd27421775",
+      "identity_live": false,
+      "source_id": "b058237185f3c6f1c730e4a128e4c3670299eb45a250627fa61aeb3eb631d235",
+      "status": "GOLDENGATE_COMPLETE_NOT_SYNTHESIZED"
+    },
+    "Opt4-fit-update-share-svb-software-prep-r3-state.json": {
+      "controller": {},
+      "error": "PermissionError(13, 'Permission denied')",
+      "hardware_commit": "e0c3737f989c563f99a00f3fd26c1cbd27421775",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2299140,
+      "source_id": "b058237185f3c6f1c730e4a128e4c3670299eb45a250627fa61aeb3eb631d235",
+      "start_ticks": "17989233",
+      "status": "FAILED_WITH_EVIDENCE",
+      "worker_processes": []
+    },
+    "Opt4-fit-update-share-svb-software-prep-r4-state.json": {
+      "controller": {},
+      "hardware_commit": "e0c3737f989c563f99a00f3fd26c1cbd27421775",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2308129,
+      "source_id": "b058237185f3c6f1c730e4a128e4c3670299eb45a250627fa61aeb3eb631d235",
+      "start_ticks": "18007475",
+      "status": "13_ORDINARY_PROGRAMS_EXACT_PAIRED_SOFTWARE_READY_NOT_FPGA_ADMITTED",
+      "updated_utc": "2026-11-11T03:39:15.964896+00:00",
+      "worker_processes": []
+    },
+    "Opt4-fit-update-share-svb-system-r3-state.json": {
+      "controller": {},
+      "hardware_commit": "e0c3737f989c563f99a00f3fd26c1cbd27421775",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log_tail": " full_compare=%d cancelled=%d\\n), PrintPort(synthesizedPrintf_lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_core_printf_1_wire,List((enable,UInt<1>), (args_0,UInt<3>), (args_1,UInt<32>), (args_2,UInt<2>), (args_3,UInt<1>), (args_4,UInt<1>)),EC_OPT4_PACKAGE_RESULT hart=%d seq=%x status=%d full_compare=%d cancelled=%d\\n)))\nGenerating a Midas Memory Model\n  Max Read Requests: 6\n  Max Write Requests: 6\n  Max Read Length: 8\n  Max Write Length: 8\n  Max Read ID Reuse: 1\n  Max Write ID Reuse: 1\n\nTiming Model Parameters\n  Timing Model Class: Latency Bandwidth Pipe\n  No LLC Model Instantiated\n\n\nDefault Settings\n  +mm_relaxFunctionalModel_0=0\n  +mm_writeMaxReqs_0=6\n  +mm_readMaxReqs_0=6\n  +mm_writeLatency_0=30\n  +mm_readLatency_0=30\n\nBridge Streams To CPU:\n  Name: TRACERVBRIDGEMODULE_0_to_cpu_stream, Idx: 0, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_1_to_cpu_stream, Idx: 1, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_2_to_cpu_stream, Idx: 2, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_3_to_cpu_stream, Idx: 3, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: TRACERVBRIDGEMODULE_4_to_cpu_stream, Idx: 4, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: PRINTBRIDGEMODULE_0_to_cpu_stream, Idx: 5, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\n  Name: PRINTBRIDGEMODULE_1_to_cpu_stream, Idx: 6, FPGA Buffer Depth: 6144, FPGA Buffer Width: 64\nBridge Streams From CPU:\n  None\nSimulator Memory Map:\n  [   0,   7f]: FASEDMemoryTimingModel_0\n  [  80,   ff]: BlockDevBridgeModule_0\n  [ 100,  13f]: TSIBridgeModule_0\n  [ 140,  17f]: TracerVBridgeModule_0\n  [ 180,  1bf]: TracerVBridgeModule_1\n  [ 1c0,  1ff]: TracerVBridgeModule_2\n  [ 200,  23f]: TracerVBridgeModule_3\n  [ 240,  27f]: TracerVBridgeModule_4\n  [ 280,  2bf]: LoadMemWidget_0\n  [ 2c0,  2df]: PeekPokeBridgeModule_0\n  [ 2e0,  2ff]: UARTBridgeModule_0\n  [ 300,  31f]: ClockBridgeModule_0\n  [ 320,  33f]: PrintBridgeModule_0\n  [ 340,  35f]: PrintBridgeModule_1\n  [ 360,  37f]: CPUManagedStreamEngine_0\n  [ 380,  38f]: SimulationMaster_0\n  [ 390,  397]: ResetPulseBridgeModule_0\nTotal Host-FPGA DRAM Allocated: 16.000 GiB of 16.000 GiB available.\nHost-FPGA DRAM Allocation Map:\n  MainMemory_0 -> [0x0, 0x3FFFFFFFF]\n    Associated bridges: FASEDMemoryTimingModel_0\nAuto ILA: p(EnableAutoILA) unset. Skipping AutoILATransform\n",
+      "pid": 2237267,
+      "source_id": "b058237185f3c6f1c730e4a128e4c3670299eb45a250627fa61aeb3eb631d235",
+      "stage_log": {
+        "bytes": 7576,
+        "mtime_ns": 1794367967399774114,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-update-share-svb-system-r3-20261111/goldengate-attempt-1.log"
+      },
+      "stage_process": {},
+      "start_ticks": "17874132",
+      "status": "RTL_READY_REAL_ABI_CHECKED",
+      "updated_utc": "2026-11-11T03:35:52.412846+00:00",
+      "worker_processes": []
+    },
+    "Opt4-full-gg-blackscholes-observed-r1-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 1439564,
+      "start_ticks": "21765173",
+      "status": "PASS_COMPLETE_APPLICATION_AND_STRICT_CHECKER_DRAIN",
+      "updated_utc": "2026-11-11T17:42:06.998588+00:00",
+      "worker_processes": []
+    },
+    "Opt4-full-gg-external-observer-r1-state.json": {
+      "controller": {},
+      "error": "KeyError('sample_errors')",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 247354,
+      "start_ticks": "21203075",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T12:33:13.157731+00:00",
+      "worker_processes": []
+    },
+    "Opt4-full-gg-external-observer-r2-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 255577,
+      "start_ticks": "21220155",
+      "status": "PROBE_FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T12:36:00.462656+00:00",
+      "worker_processes": []
+    },
+    "Opt4-full-gg-external-observer-r3-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 260694,
+      "start_ticks": "21241818",
+      "status": "PASS_SAME_ELF_CAPTURED_PARITY_AND_FINITE_BOOM_ACCEPTANCE",
+      "updated_utc": "2026-11-11T13:35:29.836610+00:00",
+      "worker_processes": []
+    },
+    "Opt4-full-gg-external-observer-r4-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 282560,
+      "start_ticks": "21297051",
+      "status": "PREPARED_AND_PROBE_PASSED_FULL_CANNEAL_DEFERRED",
+      "updated_utc": "2026-11-11T12:49:24.271059+00:00",
+      "worker_processes": []
+    },
+    "Opt4-full-gg-external-observer-r5-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 1114105,
+      "start_ticks": "21591140",
+      "status": "PASS_SAME_ELF_CAPTURED_PARITY_AND_FINITE_BOOM_ACCEPTANCE",
+      "updated_utc": "2026-11-11T14:39:53.298825+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mcrams-dcache-entry-r1-state.json": {
+      "controller": {},
+      "error": "AssertionError(('run-PlainConfig', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-r1-20261111/run-PlainConfig.log'))",
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 199612,
+      "stage": "run-PlainConfig",
+      "start_ticks": "21118613",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T12:19:13.007361+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mcrams-dcache-entry-r2-state.json": {
+      "controller": {},
+      "error": "AssertionError(('run-PlainConfig', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-r2-20261111/run-PlainConfig.log'))",
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 236128,
+      "stage": "run-PlainConfig",
+      "start_ticks": "21169272",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T12:27:42.348870+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mcrams-dcache-entry-r3-state.json": {
+      "controller": {},
+      "error": "AssertionError(('reference-rtl', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-r3-20261111/reference-rtl.log'))",
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 253316,
+      "stage": "reference-rtl",
+      "start_ticks": "21212448",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T12:33:33.919564+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mcrams-dcache-entry-r4-state.json": {
+      "controller": {},
+      "error": "AssertionError(('reference-compile', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-r4-20261111/reference-compile.log'))",
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 257945,
+      "stage": "reference-compile",
+      "start_ticks": "21229536",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T12:36:29.764195+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mcrams-dcache-entry-r5-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 262105,
+      "stage": "negative-MCConfig",
+      "start_ticks": "21246616",
+      "status": "PASS_REAL_DCACHE_MEMORY_INTERFACE_SAME_TARGET_GG_PLAIN_AND_MCRAMS_NOT_FULL_DCACHE",
+      "updated_utc": "2026-11-11T12:44:07.995446+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mcrams-dcache-owner-system-r1-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 950067,
+      "stage": "complete",
+      "start_ticks": "21535106",
+      "status": "HOST_RTL_GENERATED_REQUIRES_FULL_TARGET_PARITY_AND_AREA",
+      "updated_utc": "2026-11-11T13:47:07.932718+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mcrams-owner-generated-area-r1-state.json": {
+      "controller": {},
+      "error": "AssertionError('CARRY8 primitive mismatch')",
+      "identity_live": false,
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-owner-generated-area-r1-20261111/map.log",
+      "log_tail": "= 3182.809 ; gain = 661.230 ; free physical = 50608 ; free virtual = 227242\nINFO: [Project 1-571] Translating synthesized netlist\nNetlist sorting complete. Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.03 . Memory (MB): peak = 3193.770 ; gain = 0.000 ; free physical = 50618 ; free virtual = 227258\nWARNING: [Netlist 29-101] Netlist 'ownerImageMemory_flattened' is not ideal for floorplanning, since the cellview 'RamModel' contains a large number of primitives.  Please consider enabling hierarchy in synthesis if you want to do floorplanning.\nINFO: [Project 1-570] Preparing netlist for logic optimization\nINFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).\nNetlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3287.031 ; gain = 0.000 ; free physical = 50245 ; free virtual = 227147\nINFO: [Project 1-111] Unisim Transformation Summary:\nNo Unisim elements were transformed.\n\nSynth Design complete, checksum: 3c68bbfa\nINFO: [Common 17-83] Releasing license: Synthesis\n17 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.\nsynth_design completed successfully\nsynth_design: Time (s): cpu = 00:00:25 ; elapsed = 00:00:28 . Memory (MB): peak = 3287.031 ; gain = 765.594 ; free physical = 50432 ; free virtual = 227334\nINFO: [Common 17-600] The following parameters have non-default value.\ngeneral.maxThreads\n# set bb [get_cells -hier -quiet -filter {IS_BLACKBOX == 1}]\n# if {[llength $bb]} {error \"Unresolved RAM host dependencies: $bb\"}\n# report_utilization -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-owner-generated-area-r1-20261111/utilization.rpt}\n# report_utilization -hierarchical -hierarchical_depth 12 -file {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-owner-generated-area-r1-20261111/hierarchical.rpt}\n# write_checkpoint -force {/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-owner-generated-area-r1-20261111/module.dcp}\nINFO: [Timing 38-35] Done setting XDC timing constraints.\nINFO: [Common 17-1381] The checkpoint '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-owner-generated-area-r1-20261111/module.dcp' has been generated.\n# puts \"OWNER_ACTUAL_HOST_AREA_ZERO_BLACKBOX_PASS\"\nOWNER_ACTUAL_HOST_AREA_ZERO_BLACKBOX_PASS\n# exit 0\nINFO: [Common 17-206] Exiting Vivado at Thu Nov 12 00:16:24 2026...\n",
+      "pid": 2025223,
+      "stage_log": {
+        "bytes": 18300,
+        "mtime_ns": 1794413784893498764,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-owner-generated-area-r1-20261111/map.log"
+      },
+      "start_ticks": "22545901",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T16:16:29.081355+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mcrams-owner-model-reuse-round44-v2-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 1687638,
+      "start_ticks": "22063739",
+      "status": "PASS_IDENTICAL_STATEFUL_MODEL_AND_COMPLETE_ADAPTER_UNDER_EXPLICIT_PORT_BIJECTION",
+      "updated_utc": "2026-11-11T14:55:17.068326+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mcrams-owner-pair-compile-round43-v1-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/Plain/compile-attempt-1.log",
+      "log_tail": "ir-compile-round43-v1-20261111/external-libs -Wl,-rpath,/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/external-libs /data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/lib/libfesvr.a /data1/gzh/EC/firesim/envs/manager-1.17.1/lib/libdromajo_cosim.a -lstdc++ -lpthread -lgmp -l:libdwarf.so -l:libelf.so -lz -L/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/Plain/host -lstdc++ -lpthread -lgmp    testchip_tsi.o blockdev.o dromajo.o groundtest.o simplenic.o tracerv.o trace_tracker.o tracerv_dwarf.o tracerv_elf.o tracerv_processing.o tsibridge.o uart.o firesim_tsi.o autocounter.o clock.o cpu_managed_stream.o fased_memory_timing_model.o fpga_managed_stream.o heartbeat.o loadmem.o master.o peek_poke.o plusargs.o reset_pulse.o synthesized_assertions.o synthesized_prints.o termination.o address_map.o bridge_driver.o simif.o simulation.o stream_engine.o systematic_scheduler.o timing.o widget.o widget_registry.o dpi.o mm.o mmio.o simif_emul.o entry.o simif_emul_all.o firesim_top.o verilated.o verilated_dpi.o verilated_vpi.o verilated_timing.o verilated_threads.o Vemul__ALL.a   -L/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/external-libs -Wl,-rpath,/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/external-libs /data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/lib/libfesvr.a /data1/gzh/EC/firesim/envs/manager-1.17.1/lib/libdromajo_cosim.a -lstdc++ -lpthread -lgmp -l:libdwarf.so -l:libelf.so -lz -L/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/Plain/host -lstdc++ -lpthread -lgmp /data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/lib/libfesvr.a /data1/gzh/EC/firesim/envs/manager-1.17.1/lib/libdromajo_cosim.a  -pthread -lpthread -latomic   -o /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/Plain/host/VOwnerPlain3656\nrm Vemul__ALL.verilator_deplist.tmp\nmake[1]: Leaving directory '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/Plain/host/VOwnerPlain3656.csrc'\nmake: Leaving directory '/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/src/main/cc'\n",
+      "pid": 1687739,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "stage_log": {
+        "bytes": 4199898,
+        "mtime_ns": 1794411570696170348,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/Plain/compile-attempt-1.log"
+      },
+      "start_ticks": "22064113",
+      "status": "BUILT_BOTH_SAME_TARGET_HOST_MODELS_FULL_PARITY_AND_AREA_PENDING",
+      "updated_utc": "2026-11-11T15:39:30.802552+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mcrams-owner-pair-runtime-r1-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-runtime-r1-20261111/run-MCRams.log",
+      "log_tail": "0000 req=000000000006cecf effect=0000000000000000 pc=0080026a1a cmd=00 admission=7\nSTAGE1_TX ISSUE source=LSU cmd=00 stq=8 ldq=9 req=000000000006cec2 effect=0000000000000000 seq=00000000 addr=0080451bf8 cycle=00000000000fe15c\nSTAGE1_TX LOAD_REQ source=BOOM token=000000000006cec2 addr=0080451bf8 pc=0080027090 ldq=9 cacheable=1 cycle=00000000000fe15c\nSTAGE1_TX LOAD_RESP source=BOOM token=000000000006cecf addr=0080451c68 pc=0080026a1a ldq=6 cacheable=1 data=000000008001482e cycle=00000000000fe15c\nSTAGE1_TX S1 source=DCACHE cycle=00000000000fe15d line=0080451bc0 set=6f way=0 epoch=0013 gen=00000000 mshr=00 txn=00000000 req=000000000006cec2 effect=0000000000000000 pc=0080027090 cmd=00\nSTAGE1_TX S2 source=DCACHE cycle=00000000000fe15d line=0080451c40 set=71 way=0 epoch=0017 gen=0001f89a mshr=00 txn=00000000 req=000000000006ced0 effect=0000000000000000 pc=0080026a1c cmd=00 admission=7\nSTAGE1_TX ISSUE source=LSU cmd=01 stq=d ldq=c req=000000000006ceaa effect=000000000006ceaa seq=00000000 addr=0080451bd0 cycle=00000000000fe15d\nSTAGE1_TX LOAD_RESP source=BOOM token=000000000006ced0 addr=0080451c60 pc=0080026a1c ldq=7 cacheable=1 data=0000000080451c98 cycle=00000000000fe15d\nC1: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]\nC2:     520340 [1] pc=[0000000080001444] W[r 0=0000000000000000][0] R[r10=0000000000000000] R[r15=0000000000000002] inst=[fef518e3] DASM(fef518e3)\nC2: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]\nC3:     520323 [1] pc=[0000000080001434] W[r10=0000000000000000][1] R[r 0=0000000000000000] R[r 0=0000000000000000] inst=[c200452b] DASM(c200452b)\nC3: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]\nC4: ibuf_cnt:[                   0] mispred:[                   0] imiss:[                   0]\nSTAGE1_TX S1 source=DCACHE cycle=00000000000fe15e line=0080451bc0 set=6f way=0 epoch=0013 gen=00000000 mshr=00 txn=00000000 req=000000000006ceaa effect=000000000006ceaa pc=0080026f54 cmd=01\nSTAGE1_TX S2 source=DCACHE cycle=00000000000fe15e line=0080451bc0 set=6f way=0 epoch=0013 gen=0001f8a5 mshr=00 txn=00000000 req=000000000006cec2 effect=0000000000000000 pc=0080027090 cmd=00 admission=7\nSTAGE1_TX LOAD_RESP source=BOOM token=000000000006cec2 addr=0080451bf8 pc=0080027090 ldq=9 cacheable=1 data=0000000080038178 cycle=00000000000fe15e\n",
+      "pid": 2025367,
+      "stage": "run-MCRams",
+      "stage_log": {
+        "bytes": 848232449,
+        "mtime_ns": 1794426897691485895,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-runtime-r1-20261111/run-MCRams.log"
+      },
+      "start_ticks": "22546057",
+      "status": "FAILED_FINITE_CAPTURED_PARITY_PRESERVED",
+      "updated_utc": "2026-11-11T19:55:15.542739+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mt-channel-audit-round38-v1-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 75171,
+      "start_ticks": "20946585",
+      "status": "PASS_ALL_CONFLICT_CLOCKS_WIRE_IDENTICAL_NO_REPAIR_APPLIED",
+      "updated_utc": "2026-11-11T11:49:16.561658+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mt-clock-repair-round39-v1-state.json": {
+      "controller": {},
+      "error": "AssertionError()",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 177424,
+      "start_ticks": "21077212",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T12:11:03.030850+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mt-clock-repair-round39-v2-state.json": {
+      "controller": {},
+      "error": "AssertionError(('original-pass-check', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mt-clock-repair-round39-v2-20261111/original-pass-check.log'))",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 182268,
+      "start_ticks": "21086466",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T12:13:58.164057+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mt-clock-repair-round39-v3-state.json": {
+      "controller": {},
+      "error": "AssertionError(('original-pass-check', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mt-clock-repair-round39-v3-20261111/original-pass-check.log'))",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 215382,
+      "start_ticks": "21140143",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T12:23:00.831005+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mt-clock-repair-round39-v4-state.json": {
+      "controller": {},
+      "error": "AssertionError(('original-pass-check', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mt-clock-repair-round39-v4-20261111/original-pass-check.log'))",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 229736,
+      "start_ticks": "21159998",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T12:26:23.372389+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mt-clock-repair-round39-v5-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 241258,
+      "start_ticks": "21181646",
+      "status": "PASS_ORIGINAL_INFER_AND_FAME_WITH_PROVEN_METADATA_AND_GATED_WIRE_ALIASES_NOT_FULL_HOST_OR_MT_SHARING",
+      "updated_utc": "2026-11-11T12:30:01.802724+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mt-clock-residual-round39-v1-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 207571,
+      "start_ticks": "21127815",
+      "status": "DIAGNOSED_SIX_PRE_EXCISION_CLOCKS_NO_REPAIR_OR_ADMISSION",
+      "updated_utc": "2026-11-11T12:19:28.499018+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mt-host-continue-round40-v1-state.json": {
+      "controller": {},
+      "error": "AssertionError(('compile', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mt-host-continue-round40-v1-20261111/compile.log'))",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 290388,
+      "start_ticks": "21318542",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T12:51:07.360788+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mt-host-continue-round40-v2-state.json": {
+      "controller": {},
+      "error": "AssertionError(('continue', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mt-host-continue-round40-v2-20261111/continue.log'))",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 294594,
+      "start_ticks": "21324786",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T12:53:24.450698+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mt-host-continue-round40-v3-state.json": {
+      "controller": {},
+      "error": "AssertionError(('continue', 1, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mt-host-continue-round40-v3-20261111/continue.log'))",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 308269,
+      "start_ticks": "21346538",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T12:56:45.497892+00:00",
+      "worker_processes": []
+    },
+    "Opt4-mt-host-continue-round40-v4-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 316052,
+      "start_ticks": "21361900",
+      "status": "HOST_RTL_EMITTED_FROM_VERIFIED_CLOCK_CHECKPOINT_RUNTIME_PARITY_REQUIRED",
+      "updated_utc": "2026-11-11T13:19:27.509011+00:00",
+      "worker_processes": []
+    },
+    "Opt4-original-svb-binary-replay-r1-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 1687567,
+      "start_ticks": "22063584",
+      "status": "PASS_FULL_REAL_APPLICATION_ORIGINAL_SVB_TARGET_REPLAY_AND_DATA_MUTATION",
+      "updated_utc": "2026-11-11T14:56:54.583382+00:00",
+      "worker_processes": []
+    },
+    "Opt4-original-svb-gg-stream-replay-r3-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2025116,
+      "start_ticks": "22545747",
+      "status": "PASS_COMPLETE_REAL_APPLICATION_GG_STREAM_REPLAY",
+      "updated_utc": "2026-11-11T19:48:20.444358+00:00",
+      "worker_processes": []
+    },
+    "Opt4-owner-channel-composition-round50-v3-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2099249,
+      "start_ticks": "22838093",
+      "status": "PASS_EXACT_OWNER_CHANNEL_WIRING_NOT_FULL_EQUIVALENCE",
+      "updated_utc": "2026-11-11T17:05:02.080222+00:00",
+      "worker_processes": []
+    },
+    "Opt4-owner-fame-ram-cycle-round58-v1-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2230668,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "23867870",
+      "status": "PASS_COMPOSED_EMITTED_FAME_OWNER_CONTROLS_WITH_CONNECTED_109_QUEUES_AND_512X81_RAM",
+      "updated_utc": "2026-11-11T20:11:27.677724+00:00",
+      "worker_processes": []
+    },
+    "Opt4-owner-joined-ram-queue-round57-v1-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2211543,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "23653152",
+      "status": "PASS_CONNECTED_109QUEUES_ADAPTER_AND_35R1W_RAM_SNAPSHOTS_WITH_QUEUE_LEMMA",
+      "updated_utc": "2026-11-11T19:34:31.821672+00:00",
+      "worker_processes": []
+    },
+    "Opt4-owner-memory-proof-ledger-round53-v1-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2171693,
+      "start_ticks": "23313075",
+      "status": "PASS_SEPARATE_SOURCE_BOUND_OWNER_MEMORY_LEMMAS_NOT_END_TO_END_EQUIVALENCE",
+      "updated_utc": "2026-11-11T18:23:30.420984+00:00",
+      "worker_processes": []
+    },
+    "Opt4-owner-queue-adapter-round56-v1-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2198669,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "23560060",
+      "status": "PASS_ALL109_OWNER_QUEUES_AND_ATOMIC_ADAPTER_JOINS_WITH_RAM_ENDPOINT_CUT",
+      "updated_utc": "2026-11-11T19:06:47.133723+00:00",
+      "worker_processes": []
+    },
+    "Opt4-owner-queue-induction-round52-v1-state.json": {
+      "controller": {},
+      "error": "AssertionError()",
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2134998,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "23021042",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T17:34:50.018779+00:00",
+      "worker_processes": []
+    },
+    "Opt4-owner-queue-induction-round52-v2-state.json": {
+      "controller": {},
+      "error": "TypeError(\"dict() got multiple values for keyword argument 'status'\")",
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2136969,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "23030317",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T17:36:24.183109+00:00",
+      "worker_processes": []
+    },
+    "Opt4-owner-queue-induction-round52-v3-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2139200,
+      "start_ticks": "23053278",
+      "status": "PASS_ACTUAL_OWNER_CHANNEL_FIFO_RELATIONAL_INDUCTION_NOT_FULL_RAM_OR_SYSTEM",
+      "updated_utc": "2026-11-11T17:40:12.402115+00:00",
+      "worker_processes": []
+    },
+    "Opt4-owner-ram-controller-round53-v1-state.json": {
+      "controller": {},
+      "error": "AssertionError({'label': 'step', 'returncode': 1, 'seconds': 122.89874181998312, 'source_sha256': '16901ece5aa95e733f376b2ce608dd0aa24b3dd3c6f05ee40b707fa8e8ffe57c', 'script_sha256': 'caea9fcb5a2764a9595b874bbc80b994680d9375486eedbf7f33c40db23c03a2', 'log_sha256': '7bc13256aad86f7acf50cbe7286edf73e12229bbf0fcc774b15516a688ec566b'})",
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2154067,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "23179972",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T18:03:25.010093+00:00",
+      "worker_processes": []
+    },
+    "Opt4-owner-ram-controller-round53-v2-state.json": {
+      "controller": {},
+      "error": "AssertionError({'label': 'observations', 'returncode': 1, 'seconds': 122.45299761899514, 'source_sha256': 'b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f', 'script_sha256': 'ecb0b8a0bca00a572fecde791f17fe51f967861888cce1c2cbc8ee9540b2565e', 'log_sha256': 'b796a9644612a1d9e88e2504648bd71ae31d989590109fe15c51e37347b9884a'})",
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2159384,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "23224378",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T18:12:20.465808+00:00",
+      "worker_processes": []
+    },
+    "Opt4-owner-ram-controller-round53-v3-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2164897,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "23273379",
+      "status": "PASS_ACTUAL_35R1W_RAM_CONTROLLER_AND_PAYLOAD_RELATIONAL_INDUCTION_WITH_SYMBOLIC_READ_CUT",
+      "updated_utc": "2026-11-11T18:18:25.201014+00:00",
+      "worker_processes": []
+    },
+    "Opt4-owner-ram-read-snapshot-round53-v1-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2161042,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "23238213",
+      "status": "PASS_ACTUAL_512X81_HOST_RAM_READ_SNAPSHOT_AND_SAME_EDGE_OLD_WORD_RELATION",
+      "updated_utc": "2026-11-11T18:13:47.163786+00:00",
+      "worker_processes": []
+    },
+    "Opt4-owner-ram-storage-round53-v1-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2156563,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "23196856",
+      "status": "PASS_ACTUAL_512X81_HOST_RAM_ARBITRARY_ADDRESS_STORAGE_STEP_INDUCTION",
+      "updated_utc": "2026-11-11T18:05:41.663253+00:00",
+      "worker_processes": []
+    },
+    "Opt4-owner-ram-transaction-round55-v1-state.json": {
+      "controller": {},
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2185936,
+      "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+      "start_ticks": "23467014",
+      "status": "PASS_ACTUAL_35R1W_RAM_TRANSACTION_SNAPSHOTS_NO_READ_CUT",
+      "updated_utc": "2026-11-11T19:00:23.429263+00:00",
+      "worker_processes": []
+    },
+    "Opt4-owner-runtime-timeout-round58-v1-state.json": {
+      "controller": {},
+      "error": "AssertionError({'status': 'FAIL_LOG_PREFIX_MISMATCH_NO_RUNTIME', 'mc_log': '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-runtime-r1-20261111/run-MCRams.log', 'plain_log': '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-runtime-r1-20261111/run-Plain.log', 'mc_sha256': '58267d853c22f821e4f3b43f1f704ff63044d5fb79f7b10899a02c1bf4d3f057', 'plain_sha256': '4a5759de06925e98eb8da1d3e1b503b086bd85961ddedc28f447230e6daa0ae9', 'complete_prefix_bytes': 848232449, 'discarded_partial_tail_bytes': 0, 'first_mismatch': {'offset': 78400097, 'mc': '0000000081e7 addr=0080040bc8 pc=0080035ab2 ldq=c scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001c158\\n[INIT] checker_mask=0xf status=ready\\nSTAGE1_TX S1 source=DCACHE cycle=000000000001c159 line=0080040bc0 set=2f way=0 epoc', 'plain': '0000000081e7 addr=0080040bc8 pc=0080035ab2 ldq=c scope=1 cacheable=1 path=1 seq=00000000 check=0 cycle=000000000001c158\\nSTAGE1_TX S1 source=DCACHE cycle=000000000001c159 line=0080040bc0 set=2f way=0 epoch=0002 gen=00000000 mshr=00 txn=00000'}, 'full_target_equivalence': False, 'roi_complete': False})",
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2233099,
+      "start_ticks": "23899971",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T20:01:21.367483+00:00",
+      "worker_processes": []
+    },
+    "Opt4-owner-runtime-timeout-round58-v2-state.json": {
+      "controller": {},
+      "error": "AssertionError({'status': 'FAIL_LOG_PREFIX_MISMATCH_NO_RUNTIME', 'mc_log': '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-runtime-r1-20261111/run-MCRams.log', 'plain_log': '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-runtime-r1-20261111/run-Plain.log', 'mc_sha256': '58267d853c22f821e4f3b43f1f704ff63044d5fb79f7b10899a02c1bf4d3f057', 'plain_sha256': '4a5759de06925e98eb8da1d3e1b503b086bd85961ddedc28f447230e6daa0ae9', 'complete_prefix_bytes': 848232449, 'discarded_partial_tail_bytes': 0, 'first_mismatch': {'channel': 'all_non_uart_lines', 'line': 824197, 'mc': '[RUN] hart=0 status=started\\n', 'plain': 'STAGE1_TX S1 source=DCACHE cycle=0000000000024df9 line=0080040bc0 set=2f way=1 epoch=0008 gen=00000000 mshr=00 txn=00000000 req=000000000000c547 effect=0000000000000000 pc=0080035ab2 cmd=00\\n'}, 'counts': {'mc_raw_lines': 6033635, 'plain_raw_lines': 9902202, 'compared_non_uart_lines': 6033633}, 'mc_uart_lines': ['[INIT] checker_mask=0xf status=ready\\n', '[INIT] software_interrupt=pass\\n'], 'uart_prefix_match': True, 'all_other_lines_prefix_match': False, 'partition': 'Only exact bracketed INIT/ROI/OUTPUT/APP/COMPUTATION/END application lines are separate; all remaining bytes retained in other stream.', 'prior_combined_order_failure_sha256': '52d9494aee012a08de64fa908a70c1facf5d00f564408d3ca3494634f33e1a3a', 'full_target_equivalence': False, 'roi_complete': False})",
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2234371,
+      "start_ticks": "23919910",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-11T20:04:49.713710+00:00",
+      "worker_processes": []
+    },
+    "Opt4-postopt-rank-round34-v1-state.json": {
+      "controller": {},
+      "hardware_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+      "identity_live": false,
+      "source_id": "3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561",
+      "status": "PASS_COMPLETED_9AE_EXACT_NONOVERLAPPING_LUT_PARTITION_NOT_FIT"
+    },
+    "Opt4-postopt-rank-round34-v3-state.json": {
+      "controller": {},
+      "hardware_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+      "identity_live": false,
+      "status": "PASS_9AE_INCLUSIVE_AND_RECONCILED_HIERARCHY_RANKING_NOT_FIT"
+    },
+    "Opt4-route-a-full-mcrams-metasim-round36-v2-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-mcrams-metasim-round36-v2-20261111/compile-attempt-1.log",
+      "log_tail": "nal-libs -Wl,-rpath,/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-mcrams-metasim-round36-v2-20261111/external-libs /data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/lib/libfesvr.a /data1/gzh/EC/firesim/envs/manager-1.17.1/lib/libdromajo_cosim.a -lstdc++ -lpthread -lgmp -l:libdwarf.so -l:libelf.so -lz -L/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-mcrams-metasim-round36-v2-20261111/host -lstdc++ -lpthread -lgmp    testchip_tsi.o blockdev.o dromajo.o groundtest.o simplenic.o tracerv.o trace_tracker.o tracerv_dwarf.o tracerv_elf.o tracerv_processing.o tsibridge.o uart.o firesim_tsi.o autocounter.o clock.o cpu_managed_stream.o fased_memory_timing_model.o fpga_managed_stream.o heartbeat.o loadmem.o master.o peek_poke.o plusargs.o reset_pulse.o synthesized_assertions.o synthesized_prints.o termination.o address_map.o bridge_driver.o simif.o simulation.o stream_engine.o systematic_scheduler.o timing.o widget.o widget_registry.o dpi.o mm.o mmio.o simif_emul.o entry.o simif_emul_all.o firesim_top.o verilated.o verilated_dpi.o verilated_vpi.o verilated_timing.o verilated_threads.o Vemul__ALL.a   -L/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-mcrams-metasim-round36-v2-20261111/external-libs -Wl,-rpath,/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-mcrams-metasim-round36-v2-20261111/external-libs /data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/lib/libfesvr.a /data1/gzh/EC/firesim/envs/manager-1.17.1/lib/libdromajo_cosim.a -lstdc++ -lpthread -lgmp -l:libdwarf.so -l:libelf.so -lz -L/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-mcrams-metasim-round36-v2-20261111/host -lstdc++ -lpthread -lgmp /data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/lib/libfesvr.a /data1/gzh/EC/firesim/envs/manager-1.17.1/lib/libdromajo_cosim.a  -pthread -lpthread -latomic   -o /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-mcrams-metasim-round36-v2-20261111/host/VFrozenOpt4MCRams\nrm Vemul__ALL.verilator_deplist.tmp\nmake[1]: Leaving directory '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-mcrams-metasim-round36-v2-20261111/host/VFrozenOpt4MCRams.csrc'\nmake: Leaving directory '/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/src/main/cc'\n",
+      "pid": 4182106,
+      "stage_log": {
+        "bytes": 5148589,
+        "mtime_ns": 1794397254899462262,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-mcrams-metasim-round36-v2-20261111/compile-attempt-1.log"
+      },
+      "start_ticks": "20749378",
+      "status": "BUILT_FULL_FROZEN_MCRAMS_PARITY_AND_RUNTIME_PENDING",
+      "updated_utc": "2026-11-11T11:40:55.014775+00:00",
+      "worker_processes": []
+    },
+    "Opt4-route-a-full-mcrams-parity-round38-v1-state.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 93824,
+      "start_ticks": "20969395",
+      "status": "PASS_SAME_ELF_FINITE_CAPTURED_TARGET_CYCLE_OBSERVATIONS_NOT_FULL_EQUIVALENCE",
+      "updated_utc": "2026-11-11T14:13:42.290229+00:00",
+      "worker_processes": []
+    },
+    "Opt4-svb-invalidation-validation-r1-state.json": {
+      "controller": {},
+      "error": "AssertionError('compile failed')",
+      "hardware_commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 1913610,
+      "source_id": "f678ac806ea4b0f801596b26ec8bf9ef914a3161b39f92564ac25452abd8eafc",
+      "start_ticks": "16970839",
+      "status": "FAILED_WITH_EVIDENCE",
+      "worker_processes": []
+    },
+    "Opt4-svb-invalidation-validation-r2-state.json": {
+      "controller": {},
+      "hardware_commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 1966395,
+      "source_id": "f678ac806ea4b0f801596b26ec8bf9ef914a3161b39f92564ac25452abd8eafc",
+      "start_ticks": "17127125",
+      "status": "PASS_REAL_RTL_SVB_INVALIDATION_OWNER_DATA_AND_NEGATIVE_ACK_NOT_ARCHITECTURAL_ROLLBACK",
+      "updated_utc": "2026-11-11T01:12:35.948202+00:00",
+      "worker_processes": []
+    },
+    "Opt4-svb-physical-resource-recovery-round51-v1-state.json": {
+      "controller": {
+        "cpu_ticks": 301,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2118833,
+        "process_state": "S",
+        "rss_bytes": 16244736,
+        "start_ticks": "22940221"
+      },
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": true,
+      "pid": 2118833,
+      "resources": {
+        "disk_bytes": 328331038720,
+        "eligible": true,
+        "load1": 45.41,
+        "memory_kib": 303115480,
+        "reasons": [],
+        "thresholds": {
+          "disk_gib": 96,
+          "load_exclusive": 48,
+          "memory_gib": 128
+        }
+      },
+      "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+      "start_ticks": "22940221",
+      "status": "ADMITTED_COMPONENT_REPAIR_UNCHANGED_GUARDS",
+      "updated_utc": "2026-11-11T20:46:30.536360+00:00",
+      "worker_processes": [
+        {
+          "comm": "python3",
+          "cpu_ticks": 301,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "io": {
+            "cancelled_write_bytes": 0,
+            "rchar": 763674648,
+            "read_bytes": 33542144,
+            "syscr": 13512,
+            "syscw": 402,
+            "wchar": 167169239,
+            "write_bytes": 167301120
+          },
+          "pid": 2118833,
+          "process_state": "S",
+          "rss_bytes": 16244736,
+          "start_ticks": "22940221"
+        },
+        {
+          "comm": "vivado",
+          "cpu_ticks": 0,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "io": {
+            "cancelled_write_bytes": 0,
+            "rchar": 62314,
+            "read_bytes": 0,
+            "syscr": 159,
+            "syscw": 16,
+            "wchar": 351,
+            "write_bytes": 0
+          },
+          "pid": 2251209,
+          "process_state": "S",
+          "rss_bytes": 3784704,
+          "start_ticks": "24171204"
+        },
+        {
+          "comm": "loader",
+          "cpu_ticks": 0,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "io": {
+            "cancelled_write_bytes": 0,
+            "rchar": 1499877,
+            "read_bytes": 4096,
+            "syscr": 450,
+            "syscw": 16,
+            "wchar": 232,
+            "write_bytes": 0
+          },
+          "pid": 2251225,
+          "process_state": "S",
+          "rss_bytes": 3878912,
+          "start_ticks": "24171206"
+        },
+        {
+          "comm": "vivado",
+          "cpu_ticks": 465115,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "io": {
+            "cancelled_write_bytes": 36745216,
+            "rchar": 3270881310,
+            "read_bytes": 47665152,
+            "syscr": 739393,
+            "syscw": 181584,
+            "wchar": 987772442,
+            "write_bytes": 987099136
+          },
+          "pid": 2251264,
+          "process_state": "S",
+          "rss_bytes": 8144494592,
+          "start_ticks": "24171214"
+        }
+      ]
+    },
+    "active-0000_21_00.0.json": {
+      "controller": {},
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "identity_live": false,
+      "pid": 2853651,
+      "start_ticks": "12041108",
+      "status": "COMPLETE",
+      "updated_utc": "2026-11-10T12:47:55.884321+00:00",
+      "worker_processes": []
+    }
+  },
+  "utc": "2026-11-11T21:55:42.792970+00:00"
+}
+
+Previous round directories: /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds

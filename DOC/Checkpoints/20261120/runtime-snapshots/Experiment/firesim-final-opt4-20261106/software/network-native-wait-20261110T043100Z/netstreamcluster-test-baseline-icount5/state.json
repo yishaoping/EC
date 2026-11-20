@@ -1,0 +1,53 @@
+{
+  "argv": [
+    "/data1/gzh/EC/chipyard/.conda-env/bin/qemu-system-riscv64",
+    "-machine",
+    "virt",
+    "-cpu",
+    "rv64",
+    "-m",
+    "2G",
+    "-smp",
+    "1",
+    "-nographic",
+    "-no-reboot",
+    "-bios",
+    "default",
+    "-kernel",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T083406Z/arch/riscv/boot/Image",
+    "-initrd",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-native-wait-20261110T043100Z/netstreamcluster-test-baseline-icount5/initramfs.cpio",
+    "-append",
+    "console=ttyS0 earlycon=sbi rdinit=/init panic=-1 mem=2G",
+    "-icount",
+    "shift=5,align=off,sleep=off"
+  ],
+  "diagnostic_hooks": true,
+  "ended_utc": "2026-11-10T04:31:07.304932+00:00",
+  "formal_eligible": false,
+  "fpga_execution": false,
+  "gates": {
+    "exact_output": true,
+    "no_failure": true,
+    "original_roi": true,
+    "peers_zero": true,
+    "wrapper_zero": true
+  },
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "host_wall_seconds": 3.3746220610046294,
+  "input": "test",
+  "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-native-wait-20261110T043100Z/netstreamcluster-test-baseline-icount5/console.log",
+  "log_sha256": "b7d671bd9ace98c6050f6821077e347f99c0956074ba1f58e224732637c8cb86",
+  "pid": 1182253,
+  "program": "netstreamcluster",
+  "returncode": 0,
+  "rootfs_sha256": "750760d888628fea1afdd0d2a177252a11f2006dcba903086f110a80d55d7f62",
+  "server_elf": {
+    "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netstreamcluster/server/server",
+    "sha256": "73d0e2231584b58b8d95bd61abbb78819f62239e79fdde312640aaa5c9c0d82a"
+  },
+  "start_ticks": "9678436",
+  "status": "OFFLINE_PASSED",
+  "variant": "baseline",
+  "wrapper_sha256": "5d74b4b3e6d80656e3c782bdedd8be619ce5f572d97f17dbed295fa578d0574f"
+}

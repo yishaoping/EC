@@ -1,0 +1,95 @@
+{
+  "no_fpga_access": true,
+  "phases": [
+    {
+      "argv": [
+        "/data1/gzh/EC/chipyard/.conda-env/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_hw.py",
+        "C4",
+        "parameters"
+      ],
+      "ended_utc": "2026-11-06T10:02:49.987999+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/C4-parameters-supervisor.log",
+      "pgid": 3430199,
+      "phase": "parameters",
+      "pid": 3430199,
+      "result_path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-parameters-20261106T100204.040607Z/result.json",
+      "result_sha256": "814bbea9df068ec3f86bf95e8e71866ce84849d66933fd6661c63d98a3785a12",
+      "returncode": 0,
+      "start_ticks": "1372551244",
+      "started_utc": "2026-11-06T10:02:03.998238+00:00",
+      "status": "PASSED",
+      "wall_seconds": 45.991330973804
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/chipyard/.conda-env/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_hw.py",
+        "C4",
+        "elaborate"
+      ],
+      "ended_utc": "2026-11-06T10:04:36.177606+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/C4-elaborate-supervisor.log",
+      "pgid": 3432251,
+      "phase": "elaborate",
+      "pid": 3432251,
+      "result_path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-elaborate-20261106T100250.032318Z/result.json",
+      "result_sha256": "4284a54a160a374491cd0050611ba35719df94d896faf8b4667f66691407e3ac",
+      "returncode": 0,
+      "start_ticks": "1372555844",
+      "started_utc": "2026-11-06T10:02:49.994012+00:00",
+      "status": "PASSED",
+      "wall_seconds": 106.18508397042751
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/chipyard/.conda-env/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_hw.py",
+        "C4",
+        "goldengate",
+        "--input-result",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-elaborate-20261106T100250.032318Z/result.json"
+      ],
+      "ended_utc": "2026-11-06T10:40:28.604025+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/C4-goldengate-supervisor.log",
+      "pgid": 3436681,
+      "phase": "goldengate",
+      "pid": 3436681,
+      "result_path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-goldengate-20261106T100436.256198Z/result.json",
+      "result_sha256": "8e2ccd55e2fb83b2174dd21cd258f6ae4a6b48820bc9f618a8153c91b0632356",
+      "returncode": 0,
+      "start_ticks": "1372566465",
+      "started_utc": "2026-11-06T10:04:36.213629+00:00",
+      "status": "PASSED",
+      "wall_seconds": 2152.392284354195
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/chipyard/.conda-env/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_hw.py",
+        "C4",
+        "driver",
+        "--input-result",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-goldengate-20261106T100436.256198Z/result.json"
+      ],
+      "ended_utc": "2026-11-06T10:41:16.695349+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/C4-driver-supervisor.log",
+      "pgid": 3834658,
+      "phase": "driver",
+      "pid": 3834658,
+      "result_path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-driver-20261106T104028.658367Z/result.json",
+      "result_sha256": "2b8af8e3766fb3c907a94297bd0ac735bb4917e5a40272d2471d247bbd432996",
+      "returncode": 0,
+      "start_ticks": "1372781706",
+      "started_utc": "2026-11-06T10:40:28.614664+00:00",
+      "status": "PASSED",
+      "wall_seconds": 48.0820771548897
+    }
+  ],
+  "pid": 3430198,
+  "run_id": "firesim-final-opt4-20261106",
+  "schema": "ec-firesim-build-state/1",
+  "script_sha256": "07bd46f57ef30adb23eab5ffc1f5aba26b337fd9b49753911b0c61f51c1faf05",
+  "start_ticks": "1372551236",
+  "status": "PASSED"
+}

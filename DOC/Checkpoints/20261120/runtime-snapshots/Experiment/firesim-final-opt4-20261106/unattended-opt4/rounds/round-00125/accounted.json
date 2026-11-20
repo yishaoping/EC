@@ -1,0 +1,44 @@
+{
+  "result": {
+    "changed_files": [
+      "Experiment/firesim-final-opt4-20261106/unattended-opt4/WORKER_PROMPT.md",
+      "Experiment/firesim-final-opt4-20261106/status-audits/round125-r5-authoritative-status-20261112/receipt.json"
+    ],
+    "evidence": [
+      "Immutable round125 receipt SHA256: ed579059c6bb40e645166ecccd2cd75222055ebf8a6c3d1bb17c48840d461722.",
+      "All three r5 service identities and exact cgroups match; all input manifests pass. Physical controller retains the shared slot lock, CPUs224-225 and 64GiB limit.",
+      "Saved E log SHA256: f0a92b5712720a27786f81d47cc23061111bbe62961e500d93e96b8991f8bae7. Forced replication completed: 4 nets,52 added cells. Routing remains at Phase4.1; no final result.",
+      "Verified selected r4 C checkpoint SHA256: 51b6ac50f4fd672b6bb118df117a26b62fe478fc857244a81e861c28b5a6dc8c. Bound r5 and supervisor sources unchanged."
+    ],
+    "launched_jobs": [],
+    "next_action": "Recheck r5 after >=300s. E failure automatically advances to F; physical success advances through independent certification and 21-only directed/samebit replay gates. If r5 exhausts, preserve evidence and independently version minimal recovery through the authorized administrator. Whole CAD checks remain >=600s.",
+    "outcome": "WAITING_ACTIVE_JOB",
+    "retry_after_seconds": 300,
+    "summary": "Corrected future-worker guidance because the legacy snapshot omits r5. Running: E routing. Queued: conditional F, certification/directed tests and application replay. No certified bitstream."
+  },
+  "utc": "2026-11-12T05:08:09.378880+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 2719447,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "27132163"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-12T05:08:04.562684+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 2719446,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00125",
+    "rss_bytes": 13557760,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "27132160",
+    "started_utc": "2026-11-12T05:00:01.195253+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-12T05:08:04.525996+00:00"
+  }
+}

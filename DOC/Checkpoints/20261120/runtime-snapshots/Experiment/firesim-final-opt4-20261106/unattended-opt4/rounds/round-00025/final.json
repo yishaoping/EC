@@ -1,0 +1,24 @@
+{
+  "changed_files": [
+    "firesim/final-opt4-20261106/Opt4-fit-installed-image-memory-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "firesim/final-opt4-20261106/candidates/installed-image-memory-r1-20261111/",
+    "firesim/final-opt4-20261106/candidates/slot-epoch-static-r2-20261111/controller-r8.py",
+    "Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00025/area-artifacts-r3.json"
+  ],
+  "evidence": [
+    "Candidate a5ca9940: source-bound storage SAT, mutation rejection, actual 512×81 asynchronous-memory topology and 8192-cycle comparison passed.",
+    "Paired storage map: 22415 → 955 LUT; 41472 → 0 FF. Measured local saving: 21460 LUT. Complete DCache comparison and mapping remain required.",
+    "Slot-epoch 8192-cycle comparison passed, including reset collisions and overflow. Versioned r8 mapping continuation reuses authenticated checkpoints; latest broker receipt is DEFERRED.",
+    "Preserved live 9ae/e0 synthesis and foreground DCache recovery. No new whole synthesis, FIT certification or FPGA sample.",
+    "area-artifacts-r3.json records all 67 created files and hashes."
+  ],
+  "launched_jobs": [
+    "installed-image-proof-r1-a5ca9940: COMPLETE",
+    "installed-image-map-r1-a5ca9940: COMPLETE",
+    "slot-epoch-static-r5/r7: exited; successful proof/boundary checkpoints and failure evidence preserved"
+  ],
+  "next_action": "After 300 seconds, inspect slot-epoch r8 admission and adopt its exact controller/child identity if started. Continue larger equivalent structural candidates; require complete DCache evidence before admission. Preserve live whole builds and check capacity reports at 600-second intervals.",
+  "outcome": "PROGRESS",
+  "retry_after_seconds": 300,
+  "summary": "Proved and mapped an independent installed-image storage optimization saving 21460 local LUT. No whole-system FIT or real FPGA result yet."
+}

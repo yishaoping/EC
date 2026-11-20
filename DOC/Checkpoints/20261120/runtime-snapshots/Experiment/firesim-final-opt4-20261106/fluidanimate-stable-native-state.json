@@ -1,0 +1,86 @@
+{
+  "bound": {
+    "apps_manifest_sha256": "bc25fb95b171933b65f5f13a944b5888d01d7740b017d4ae0ff7ffae7981cd44",
+    "board_bdf": "0000:e2:00.0",
+    "configuration": "Native",
+    "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+    "elf_sha256": "41f5a050564f052d6ead9033fa8ff8bb6c5e9ab99ed3db8571aa0d1a2bc0e2d5",
+    "firmware_receipt_sha256": "54d42c05e90e74686f042d102e5919f8f096c5d3ad93bffe2e0094151b5ea2a1",
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "program": "fluidanimate",
+    "rootfs_sha256": "a6cff2a023de0da30e47d4db95f1f361b578a5c26b2febaaa99704b751055973"
+  },
+  "command": [
+    "python3",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_repetitions.py",
+    "Native",
+    "--program",
+    "fluidanimate",
+    "--input",
+    "simmedium",
+    "--repetitions",
+    "3",
+    "--timeout",
+    "14400",
+    "--bdf",
+    "0000:e2:00.0",
+    "--apps-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-formal-apps-build.json",
+    "--rootfs-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-formal-rootfs-build.json",
+    "--firmware-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fluidanimate-stable-formal-firmware-build.json",
+    "--driver-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json"
+  ],
+  "completed_commands": [
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/idle-repair-logs/fluidanimate-stable-test-20261107T124533Z.log",
+      "returncode": 0,
+      "stage": "test"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/idle-repair-logs/fluidanimate-stable-simsmall-20261107T124650Z.log",
+      "returncode": 0,
+      "stage": "simsmall"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/idle-repair-logs/fluidanimate-stable-formal3-20261107T124944Z.log",
+      "returncode": 0,
+      "stage": "formal3"
+    }
+  ],
+  "completed_utc": "2026-11-07T13:04:16.297834+00:00",
+  "formal_results": [
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simmedium-r3-20261107T125927Z/result.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simmedium-r1-20261107T124945Z/result.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simmedium-r2-20261107T125435Z/result.json"
+  ],
+  "host_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "idle_boundary": {
+    "adoption_sha256": "58ac6a3baf703da72e28f9a2372458a9e43b1c9f60ebc438420e996a4cf27d33",
+    "deployment_sha256": "4432764d92c5a91e1decf2b43e93ec44a59f2da4312e9b9de82ecd399c910100",
+    "idle_repairs_status": "TARGETED_REPAIRS_FINISHED_REVIEW_EVIDENCE",
+    "last_run": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simsmall-r1-20261107T123922Z",
+    "queue_pid": 93647,
+    "queue_start_ticks": "105049"
+  },
+  "no_deployment": true,
+  "no_live_job_input_changes": true,
+  "original_failure_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-native-queue-state.json",
+  "persistent_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/idle-repair-logs/fluidanimate-stable-formal3-20261107T124944Z.log",
+  "pid": 1507359,
+  "profile": "fluidanimate-stable-formal",
+  "receipts": {
+    "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-formal-apps-build.json",
+    "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+    "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fluidanimate-stable-formal-firmware-build.json",
+    "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-formal-rootfs-build.json"
+  },
+  "schema": "ec-authorized-fluidanimate-native-repair/1",
+  "stage": "formal3",
+  "start_ticks": "1018697",
+  "started_utc": "2026-11-07T09:00:29.259121+00:00",
+  "status": "COMPLETE",
+  "updated_utc": "2026-11-07T13:04:16.293877+00:00"
+}

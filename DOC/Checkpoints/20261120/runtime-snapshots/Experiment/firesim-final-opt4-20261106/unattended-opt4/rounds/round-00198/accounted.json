@@ -1,0 +1,46 @@
+{
+  "result": {
+    "changed_files": [
+      "candidates/performance-only-physical-postflight-r1-20261113/postflight.py",
+      "candidates/performance-only-certificate-analysis-bind-r1-20261113/certify.py",
+      "performance-only-20261113/ACTIVE_OWNER.json",
+      "area-sprint-20261112/round-00198.json"
+    ],
+    "evidence": [
+      "Complete-shell capacity FIT: 1,023,687 LUTs; 279,993 headroom. Same R6 implementation preserved in placement.",
+      "Authenticated existing foreground checker analysis: 131 allocations/full comparisons/BOOM acceptances; four checkers; pending=0.",
+      "39 STA-tool checks and eight certificate-admission rejection checks passed.",
+      "Physical closure, bitstream and runtime certification remain pending. Existing runtime lock preserved; no FPGA IO."
+    ],
+    "launched_jobs": [],
+    "next_action": "Preserve R6 through route; after completion and cgroup release, execute staged final-checkpoint STA/DRC checks, bind the exact certificate, then perform the existing-owner card21 handoff.",
+    "outcome": "WAITING_ACTIVE_JOB",
+    "retry_after_seconds": 600,
+    "summary": "Capacity FIT and finite whole-checker PASS adopted. Physical certification tools staged. EC Performance-Only; not full PALIMPSEST."
+  },
+  "utc": "2026-11-13T06:03:09.122747+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 515776,
+      "process_state": "R",
+      "rss_bytes": 421888,
+      "start_ticks": "36019322"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-13T06:03:01.220339+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 515775,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00198",
+    "rss_bytes": 13651968,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "36019319",
+    "started_utc": "2026-11-13T05:41:12.789986+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-13T06:03:01.218835+00:00"
+  }
+}

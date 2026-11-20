@@ -1,0 +1,33 @@
+{
+  "changed_files": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-update-share-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-update-share-r2-20261111/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-update-share-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/AddressBucketUpdate.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-update-share-r1-20261111/controller.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-update-share-r2-20261111/controller.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-tagcompress-cachefix-r3-20261111/controller.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/bucket-tag-system-r1-20261111/controller.py",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00012/changed-files.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00012/handoff.json"
+  ],
+  "evidence": [
+    "00847dc2b8f6be3f1e1ff0639c1104d33334ddc9, source 6b0de8636ec9d88f7d9702769c03325df78ab43c3c1fe527fff9dc1a3aafbbdb: generated unconditional 64-bit allocation/update/reset and 256-slot qualification SAT passed; negative mutation rejected; 8192-vector stale-payload boundary passed. Complete-module global-reset comparison is compiling; map pending.",
+    "eada7948b15146fd33bbc91aad7bac4ab9ec44b7, source 89a95f25bc2b2413464e4cd94c5ed5b3a69673f16f0ebf18521baf1cc1cb8a29: local proof, boundary and 6144-cycle/52-output comparison passed under the tested reset sequence. Independent global-reset invariant gap is recorded in admission-hold-reset.json; do not promote. Its live map was preserved.",
+    "3fb8a7f7d7e65b5076aaebbc8aa93101f00041ce, source 9a2882d23afaeada238076322cceb267d0c7ed5d74e00b0d6e532e04c13c03e3: recovered controller passed tag-invariant SAT, negative mutation, both 8192-vector actual-size cuts, and 6144-cycle/52-output frozen-module comparison; complete module map running.",
+    "Best measured complete module remains 9ae9a7fcf231a75259e23973b12a93896a443cbb, source 3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561: 990905 LUT / 55418 CARRY8. Its integration compiled, frozen parameters matched, modified class origins were verified, and GoldenGate is running. Actual seven-file ABI audit remains pending.",
+    "Sort full-module result collected: 1197215 LUT / 56065 CARRY8. Completed module ranking and current 8da DUT synthesis attribution are saved under round-00012. OOC and preopt reports do not establish FIT.",
+    "8da whole CAD controller and child identities matched; implementation progressed into MIG/IP processing. No real postopt capacity verdict or certified bitstream was observed. Existing rollback audit still lacks a supported injection plus architectural restart witness.",
+    "All newly started services have recorded PID/start_ticks/boot_id checks. Last resource observation: 379.14 GiB available memory, 389.72 GiB free disk. No hardware I/O, live-input edits, task termination, broker/supervisor edits or agent delegation occurred."
+  ],
+  "launched_jobs": [
+    "ec-opt4-auto-address-update-share-r1-eada7948.service \u2014 module map running; admission hold applies.",
+    "ec-opt4-auto-address-update-share-r2-00847dc2.service \u2014 started after broker deferral; controller 1737896/start_ticks 16778236, child 1836285/start_ticks 16789278 verified on boot d6c6e410-10ad-4326-86ba-79b657eabd96.",
+    "ec-opt4-auto-address-tagcompress-cachefix-r3-3fb8a7f7.service \u2014 validation passed, complete module map running.",
+    "ec-opt4-auto-bucket-tag-system-r1-9ae9a7fc.service \u2014 GoldenGate and actual ABI audit; no CAD stage.",
+    "ec-opt4-auto-address-tagcompress-cachefix-r2-3fb8a7f7.service \u2014 failed before compilation due to evidence allowlist mismatch; preserved and corrected in r3."
+  ],
+  "next_action": "After 300 seconds, adopt live identities and collect the successor global-reset comparison, module maps and GoldenGate/real ABI audit. Keep eada7948 on admission hold. Use the actual 8da postopt verdict and hierarchy before selecting another whole CAD; require genuine rollback/restart evidence before FPGA experiments.",
+  "outcome": "PROGRESS",
+  "retry_after_seconds": 300,
+  "summary": "Started structural counter-update candidates, recovered tag-compression mapping, and launched verified bucket-tag GoldenGate. Found and isolated a reset-proof gap; the reset-safe successor passed generated SAT and boundary checks. No FIT, deployment or FPGA sample is claimed."
+}

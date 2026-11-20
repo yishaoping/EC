@@ -1,0 +1,53 @@
+{
+  "result": {
+    "changed_files": [
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/reports/Opt4-rollback-path-detail-r2-20261111.md",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00010/final.json"
+    ],
+    "evidence": [
+      "Index-share commit 470f1291d01608e80be6cd8d42b29fc5fc28d395, source ID 4eb296ef53358af362644177a450a3bdfd6488f0d98f0e5d8d5c1b49cb2e010e: local SAT passed (7,535 variables, 24,597 clauses), negative mutation was rejected, 4,096 actual-size vectors passed at 256 buckets/88 entries/32-bit sequence, and complete frozen-module comparison passed 6,144 cycles with 52 outputs. Its OOC map is still running; no full-DUT equivalence is claimed.",
+      "Group4 commit 981b890d870130f99ec24a0c5e37acb39362318a, source ID 632c20a179a83d030793d1d0f24add9c3f2acd99f84e8ddfe4a4a61da4a66e0d: topology/bounds SAT checks, 8,192-vector 80-input/1,024-output boundary test including 256 buckets and 64-bit overflow/reset, and full-module comparison passed; OOC map is running.",
+      "Epoch-clear-r2 commit 64421513f29420498e128b78d82121ab11f52286, source ID ed5aed4e7968b932e844f3bc0c4be78f08e46c83837aea2903c887ba80b3527c: step-invariant SAT and full-module comparison passed, but the receipt has no actual-size boundary result; keep it out of any full-DUT/formal build pending that evidence. OOC map is running.",
+      "Tag-read commit 67e6fa3c3fd700ab749e5e5ee71d653b53c0a429, source ID 61f96a2321c1339c37a416a762f47bd9a8e25ee8562b7ec2fea14819614820a9: boundary and full-module comparison passed; the actual utilization report hash matches the receipt and measures 1,181,317 LUT / 55,394 CARRY8 / 390,121 FF / 216 BRAM / 0 DSP. Its state resource fields are incorrectly zero, so the report was used as the evidence.",
+      "OOC ranking remains separate from whole-system FIT: round3 measured 1,153,226 LUT / 55,392 CARRY8; tag-read 1,181,317 / 55,394; heap 1,183,979 / 54,885; sort 1,197,215 / 56,065; decode-r2 1,326,431 / 56,070; decode-r1 1,602,717 / 56,064. Round3 remains the lowest-LUT measured candidate; no module report predicts system FIT.",
+      "Whole-DUT CAD commit 8da24a269b98a0d6a8f57b030353a310812c4344 remains RUNNING_DUT_SYNTH with matching saved PID/start-tick/boot identities. Its Vivado CPU ticks increased, while the latest log tail remains at timing optimization and no postopt capacity gate, bitstream, or FIT result is present. The CAD was left untouched.",
+      "Rollback audit is bound to 8da source ID 7e77ddda28298ac88be13c28dbe98771982bc6ca9587f810adf875bffd580cc1. Legacy use_fi_mode logic has no source driver or software register and is absent from the generated RTL; checker FAIL feeds result/memory-version handling, while ROB rollback is driven by a separate committing exception path. No fault-triggered architectural restart evidence exists.",
+      "Three module maps plus the existing whole-DUT CAD are active. Available memory was 399.36 GiB and free disk 389 GiB; the new maps each cap Vivado synthesis at four processes. No hardware I/O occurred."
+    ],
+    "launched_jobs": [
+      "No jobs launched by this worker in round 10. Adopted existing broker job ec-opt4-auto-address-index-share-r1-bind2-470f1291.service, commit 470f1291d01608e80be6cd8d42b29fc5fc28d395, source ID 4eb296ef53358af362644177a450a3bdfd6488f0d98f0e5d8d5c1b49cb2e010e, RUNNING_MAP-FULL-MODULE.",
+      "Adopted existing broker job ec-opt4-auto-address-group4-r1-bind2-981b890d.service, commit 981b890d870130f99ec24a0c5e37acb39362318a, source ID 632c20a179a83d030793d1d0f24add9c3f2acd99f84e8ddfe4a4a61da4a66e0d, RUNNING_MAP-FULL-MODULE.",
+      "Adopted existing broker job ec-opt4-auto-address-epoch-clear-r2b-64421513.service, commit 64421513f29420498e128b78d82121ab11f52286, source ID ed5aed4e7968b932e844f3bc0c4be78f08e46c83837aea2903c887ba80b3527c, RUNNING_MAP-FULL-MODULE.",
+      "Preserved existing ec-parsec-opt4-fit-cad.service for commit 8da24a269b98a0d6a8f57b030353a310812c4344, still RUNNING_DUT_SYNTH."
+    ],
+    "next_action": "After at least 300 seconds, inspect only current receipts and log tails for the four active CAD/map jobs. Adopt completed reports, validate the epoch-clear boundary requirement before considering promotion, and use the actual 8da postopt capacity gate to decide whether to advance the best verified candidate. Do not start another CPU job until a slot and its memory/disk budget are clear.",
+    "outcome": "WAITING_ACTIVE_JOB",
+    "retry_after_seconds": 300,
+    "summary": "Recorded concrete rollback-interface evidence and the current candidate comparison. Index-share, group4, and epoch-clear-r2 module maps remain active; the whole-DUT 8da synthesis is still active, so no FIT, bitstream, deployment, rollback sample, or FPGA result is claimed."
+  },
+  "utc": "2026-11-10T21:07:46.973989+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 1443249,
+      "process_state": "R",
+      "rss_bytes": 413696,
+      "start_ticks": "15377395"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-10T21:07:42.611583+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 1443243,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00010",
+    "rss_bytes": 13643776,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "15377392",
+    "started_utc": "2026-11-10T20:20:53.516546+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-10T21:07:42.609909+00:00"
+  }
+}

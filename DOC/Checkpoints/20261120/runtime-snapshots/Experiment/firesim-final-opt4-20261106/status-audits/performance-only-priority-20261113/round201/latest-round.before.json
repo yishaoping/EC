@@ -1,0 +1,9 @@
+{
+  "round": 200,
+  "utc": "2026-11-13T06:37:21.233541+00:00",
+  "summary": "EC Performance-Only6fada307: same R6 advanced into physical synthesis in the placer (phase2.5.1); 921s since prior durable observation, +500 log bytes, +1658.3 process CPU-seconds. Authenticated922 pinned artifacts, including644 protected checker artifacts; actual whole-checker PASS131/131/131 and complete-shell capacity FIT1023687/1303680LUT remain valid. Physical timing/bitstream/certificate and card21 runtime remain pending.",
+  "next_action": "Preserve the same R6 through place/route/setup-hold/bitstream; no cuts, restart, duplicate CAD, checker run or driver rebuild. After actual physical output and exact R6 cgroup release, allocate two idle campaign CPUs and run /data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-physical-postflight-r1-20261113/candidates/performance-only-physical-postflight-r1-20261113/postflight.py --run --cpus CPU0 CPU1 for report-only all-STA/pulse/skew/clock/IO/internal-unconstrained/route/DRC checks under the existing CAD lease. Then run /data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-certificate-analysis-bind-r1-20261113/candidates/performance-only-certificate-analysis-bind-r1-20261113/certify.py --write to bind the existing foreground strict checker analysis and exact physical/ABI/software evidence. Only then hand off the existing runtime owner at a safe boundary without bypassing any21lock. Require integrated card21 boot/checker/LSL-SVB/isolation/drain before the requested eight first simmedium samples. Unknown failures require immutable diagnosed corrections after exact predecessor release; do not repeat completed validation.",
+  "outcome": "WAITING_ACTIVE_JOB",
+  "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/area-sprint-20261112/round-00200.json",
+  "receipt_sha256": "8be5598561a076343c9de9ba2f87416278b6dbeaac9034f8300073b8d8d6ff61"
+}

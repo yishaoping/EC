@@ -1,0 +1,91 @@
+{
+  "actual_size_comparison_status": "QUEUED_NOT_RUN",
+  "complete_frozen_dcache_comparison": "PENDING_BLOCKS_WHOLE_DUT_ADMISSION",
+  "first_preparation_failure": {
+    "cause": "Ambiguous source match: s2_write_grant occurs at the selected result block and an AMO data assignment. Assertion fired before any tracked source was written.",
+    "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00015/dcache-prepare.log",
+    "recovery": "Required unused worktree at exact parent and zero git changes, then matched full result-block context; no live or submitted inputs edited.",
+    "recovery_script": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-result-memory-r1-20261111/prepare-r2.py"
+  },
+  "generated_rtl_proof_status": "QUEUED_NOT_RUN",
+  "hardware_commit": "51a2bd2588fe09ded84c3d9911d9b8481da929ca",
+  "local_preflight": {
+    "checks": [
+      {
+        "argv": [
+          "/usr/local/bin/yosys",
+          "-Q",
+          "-T",
+          "-p",
+          "read_verilog /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-preflight-r1-20261111/IndexWord.v; prep -top IndexWord -flatten; sat -verify -prove indexEquivalent 1 -timeout 10"
+        ],
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-preflight-r1-20261111/indexEquivalent.log",
+        "negative": false,
+        "property": "indexEquivalent",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "/usr/local/bin/yosys",
+          "-Q",
+          "-T",
+          "-p",
+          "read_verilog /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-preflight-r1-20261111/IndexWord.v; prep -top IndexWord -flatten; sat -verify -prove nextEquivalent 1 -timeout 10"
+        ],
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-preflight-r1-20261111/nextEquivalent.log",
+        "negative": false,
+        "property": "nextEquivalent",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "/usr/local/bin/yosys",
+          "-Q",
+          "-T",
+          "-p",
+          "read_verilog /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-preflight-r1-20261111/IndexWord.v; prep -top IndexWord -flatten; sat -verify -prove mutantEquivalent 1 -timeout 10"
+        ],
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-preflight-r1-20261111/mutantEquivalent.log",
+        "negative": true,
+        "property": "mutantEquivalent",
+        "returncode": 1
+      }
+    ],
+    "complete_frozen_dcache_comparison": false,
+    "fpga_access": false,
+    "hardware_commit": "51a2bd2588fe09ded84c3d9911d9b8481da929ca",
+    "index_bijection": "PASS_ALL_64_SETS_8_WAYS_512_ENTRIES",
+    "proof": "PASS_ARBITRARY_64BIT_WORD_UPDATE_AND_INDEX_NEGATIVE_MUTATION_REJECTED",
+    "proof_scope": "Handwritten local SAT cut checked against literal source expressions; generated Chisel RTL proof and topology are separate pending broker stages. Equality is a relation on uninitialized payload; no independent initial-state equality claim.",
+    "schema": "ec-opt4-dcache-result-source-cut-preflight/1",
+    "source": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-dcache-result-memory-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/AppliedEffectResultMemory.scala",
+    "source_id": "fadfd22293afed9177e282eaf0a82e7750b0e20d51284bc6d89f592b24ca0e47",
+    "source_sha256": "b3d14723def6d7eaf4a00e849dcd46c7ecc355fe953a92086e12ab93f29a5c7a",
+    "utc": "2026-11-11T01:16:58.023957+00:00",
+    "whole_dut_admitted": false
+  },
+  "no_area_claim": true,
+  "no_fpga_access": true,
+  "parent_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+  "schema": "ec-opt4-round15-candidate-review/1",
+  "source_contract": {
+    "all_other_source_byte_equal": true,
+    "complete_frozen_dcache_comparison": "PENDING",
+    "fpga_access": false,
+    "frozen_sha256": "04c45d705ba647ce4dcee24445623b5cfa4fa30fe3fb045f81082d3b987797f8",
+    "hardware_commit": "51a2bd2588fe09ded84c3d9911d9b8481da929ca",
+    "no_debug_or_checker_reduction": true,
+    "parent_equals_frozen": false,
+    "parent_sha256": "0fb9e4b3931827120aed8311dbbc87a2d25e697c76505717af7162a0a9f1663d",
+    "schema": "ec-opt4-result-storage-source-contract/1",
+    "scope": "Exact source structural substitution; does not prove full-DCache generated-RTL output equivalence.",
+    "source": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-dcache-result-memory-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "source_id": "fadfd22293afed9177e282eaf0a82e7750b0e20d51284bc6d89f592b24ca0e47",
+    "source_sha256": "e752f46d280f97f81c1239fdf0a2eee224dc8fb6b985acf578ff289e73fa5c13",
+    "status": "PASS_EXACT_PARENT_REVERSAL",
+    "substitution_count": 6,
+    "write_guards_unchanged": true
+  },
+  "source_id": "fadfd22293afed9177e282eaf0a82e7750b0e20d51284bc6d89f592b24ca0e47",
+  "storage_map_status": "QUEUED_NOT_RUN"
+}

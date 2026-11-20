@@ -1,0 +1,20 @@
+{
+  "outcome": "PROGRESS",
+  "summary": "Adopted active foreground r6 after verifying 95 bound inputs and three exact service identities. Replaced stale install instructions; no final r6 timing, certification or bitstream yet.",
+  "changed_files": [
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/campaign-policy.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/round134-r6-installer-scope-repair-20261112/receipt.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/round134-r6-installer-scope-repair-20261112/adoption.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r6-installer-r2-20261112/install.py"
+  ],
+  "evidence": [
+    "RUNNING: existing r6 G Vivado PID3109996/start28471000; foreground-launched, adopted unchanged.",
+    "WAITING: existing certification/application followers; no new requests.",
+    "R5 E final WNS -0.029 ns/WHS +0.001 ns; F failed unsupported pre-route routing_opt.",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/round134-r6-installer-scope-repair-20261112/receipt.json sha256=1195fa03b443fafd39bc4e5583dac05b441112659e41d1c675aa6bcd18c43c15",
+    "Superseded installer: five sandbox cases PASS; actual validation refused existing r6 state before writes."
+  ],
+  "launched_jobs": [],
+  "next_action": "Existing r6 automatically continues G→H→I→J, then strict certification and 21-only directed/same-bit application replay if all gates pass. Preserve live MCrams and other routes; normal checks ≥300s, whole CAD ≥600s.",
+  "retry_after_seconds": 600
+}

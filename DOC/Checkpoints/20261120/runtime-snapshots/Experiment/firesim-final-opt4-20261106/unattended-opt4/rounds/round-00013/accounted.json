@@ -1,0 +1,54 @@
+{
+  "result": {
+    "changed_files": [
+      "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-async-current-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-async-current-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/AddressCurrentBucketMemory.scala",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-async-current-r1-20261111/controller.py",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/bucket-tag-runtime-bind-r2-20261111/controller.py",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00013/changed-files.json",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00013/handoff.json"
+    ],
+    "evidence": [
+      "Candidate c61d0b2a431451ca70093dcf6eeaed5945fc2ec1; source 10e7dc799c504012de1f3f5adf1e34dd494ae1de6e40751cf37dac56991a860c.",
+      "Generated arithmetic/reset SAT, negative mutation, actual 256-slot memory topology and 8192 vectors passed.",
+      "Frozen complete-module comparison passed 6144 cycles across all 52 outputs, including independent global reset. This is not full-DUT formal equivalence.",
+      "Memory-only map: 4096 LUT, zero FF and CARRY8. Complete-module mapping is running; overall savings remain unknown.",
+      "Existing CAD/module identities verified and preserved. No postopt FIT verdict or certified bitstream observed.",
+      "Seven actual ABI files match. Early driver binding failed on directory permissions; isolated recovery is DEFERRED at the eight-job limit.",
+      "Architectural rollback/restart remains unvalidated; fault flags and drain success are insufficient."
+    ],
+    "launched_jobs": [
+      "ec-opt4-auto-address-async-current-r1-c61d0b2a.service \u2014 full-module map running",
+      "ec-opt4-auto-bucket-tag-runtime-bind-r1-9ae9a7fc.service \u2014 failed before driver copy; evidence preserved"
+    ],
+    "next_action": "After 300 seconds, adopt live identities and collect postopt/module receipts. Rank completed maps, retain the r1 reset admission hold, and complete staged runtime binding when a broker slot opens.",
+    "outcome": "PROGRESS",
+    "retry_after_seconds": 300,
+    "summary": "Implemented and locally verified asynchronous counter storage; complete-module mapping started. No hardware I/O, deployment or FPGA sample occurred."
+  },
+  "utc": "2026-11-11T00:41:50.587059+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 1882958,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "16834392"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-11T00:41:44.136095+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 1882957,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00013",
+    "rss_bytes": 13578240,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "16834389",
+    "started_utc": "2026-11-11T00:23:43.487061+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-11T00:41:44.134763+00:00"
+  }
+}

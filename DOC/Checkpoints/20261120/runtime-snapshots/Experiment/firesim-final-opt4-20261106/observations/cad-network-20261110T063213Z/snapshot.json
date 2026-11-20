@@ -1,0 +1,126 @@
+{
+  "observed_utc": "2026-11-10T06:32:13.534793+00:00",
+  "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "read_only_process_check": true,
+  "processes": {
+    "11088": {
+      "state": "S",
+      "start_ticks": "10629",
+      "cpu_seconds": 104347.37,
+      "rss_bytes": 33726423040,
+      "io": "rchar: 80647403686\nwchar: 81128325571\nsyscr: 9600095\nsyscw: 17070562\nread_bytes: 11263037440\nwrite_bytes: 81145892864\ncancelled_write_bytes: 4885233664\n"
+    },
+    "11091": {
+      "state": "R",
+      "start_ticks": "10701",
+      "cpu_seconds": 104347.37,
+      "rss_bytes": 33726423040,
+      "io": "rchar: 80647403686\nwchar: 81128325571\nsyscr: 9600095\nsyscw: 17070562\nread_bytes: 11263037440\nwrite_bytes: 81145892864\ncancelled_write_bytes: 4885233664\n"
+    },
+    "5526": {
+      "state": "T",
+      "start_ticks": "2644",
+      "cpu_seconds": 38.78,
+      "rss_bytes": 17309696,
+      "io": "permission denied; not proof of idleness"
+    },
+    "5893": {
+      "state": "S",
+      "start_ticks": "2900",
+      "cpu_seconds": 0.0,
+      "rss_bytes": 3219456,
+      "io": "permission denied; not proof of idleness"
+    },
+    "328019": {
+      "state": "S",
+      "start_ticks": "8246797",
+      "cpu_seconds": 3.77,
+      "rss_bytes": 24399872,
+      "io": "permission denied; not proof of idleness"
+    },
+    "325066": {
+      "state": "S",
+      "start_ticks": "8213689",
+      "cpu_seconds": 0.21,
+      "rss_bytes": 15839232,
+      "io": "permission denied; not proof of idleness"
+    }
+  },
+  "artifacts": {
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z/vivado_proj/firesim.runs/design_1_firesim_wrapper_0_0_synth_1/design_1_firesim_wrapper_0_0.dcp": {
+      "bytes": 3339470089,
+      "mtime_utc": "2026-11-10T00:14:44.037245+00:00"
+    },
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z/vivado_proj/firesim.runs/design_1_firesim_wrapper_0_0_synth_1/design_1_firesim_wrapper_0_0_sim_netlist.vhdl": {
+      "bytes": 3518722048,
+      "mtime_utc": "2026-11-10T04:45:01.805509+00:00"
+    },
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z/vivado_proj/firesim.runs/design_1_firesim_wrapper_0_0_synth_1/runme.log": {
+      "bytes": 5892533,
+      "mtime_utc": "2026-11-10T00:24:44.291856+00:00"
+    },
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z/vivado_proj/firesim.runs/design_1_firesim_wrapper_0_0_synth_1/.vivado.end.rst": {
+      "exists": false
+    },
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z/vivado_proj/firesim.runs/synth_1/.vivado.begin.rst": {
+      "exists": false
+    },
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z/vivado_proj/firesim.runs/impl_1": {
+      "exists": false
+    },
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z/vivado_proj/firesim.bit": {
+      "exists": false
+    }
+  },
+  "services": {
+    "coverage-first-state.json": {
+      "status": "RUNNING",
+      "updated_utc": "2026-11-10T06:32:02.543668+00:00",
+      "pid": 328019,
+      "start_ticks": "8246797",
+      "next_sample": {
+        "configuration": "Native",
+        "input": "test",
+        "program": "netferret",
+        "repetition": 1
+      }
+    },
+    "fpga-continuation-state.json": {
+      "status": "WAITING_FOR_EXACT_C4_BITSTREAM",
+      "heartbeat_utc": "2026-11-10T06:32:03.360284+00:00",
+      "pid": 325066,
+      "start_ticks": "8213689",
+      "deployment_count": 0,
+      "target_bdf": "0000:21:00.0"
+    },
+    "cad-wall-limit-guard-state.json": {
+      "status": "VIVADO_CONTINUES_WRAPPER_LIMIT_SUSPENDED",
+      "updated_utc": "2026-11-10T06:27:34.087676+00:00",
+      "pid": 328014,
+      "start_ticks": "8246794"
+    },
+    "active-0000_21_00.0.json": {
+      "status": "RUNNING",
+      "updated_utc": "2026-11-10T06:32:04.574357+00:00",
+      "pid": 1852282,
+      "start_ticks": "10368474",
+      "program": "netferret",
+      "input": "test",
+      "run_id": "native-netferret-test-r1-20261110T062604Z"
+    }
+  },
+  "interpretation": {
+    "dut_synth": "completed successfully; DCP written",
+    "vhdl_export": "incomplete; file tail truncated, no new bytes since 04:45 UTC",
+    "top_synth": "not started",
+    "implementation": "not started",
+    "bitstream": "not generated",
+    "progress_limit": "Vivado CPU growth alone does not prove export forward progress",
+    "fpga_limit": "21 only; no e2/global operations"
+  },
+  "vhdl_last_write_age_seconds": 6431.729284,
+  "free_gib": {
+    "cad": 301.2461357116699,
+    "data1": 441.6559295654297
+  }
+}

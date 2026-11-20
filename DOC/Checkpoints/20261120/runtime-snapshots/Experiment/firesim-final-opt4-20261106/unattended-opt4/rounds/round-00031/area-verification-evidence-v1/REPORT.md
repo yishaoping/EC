@@ -1,0 +1,15 @@
+# Round 31 evidence
+
+9ae9a7fc completed actual DUT synthesis and advanced to top synthesis. The completed DUT report is 2,767,600 LUT / 89,672 CARRY8 / 192 DSP / 1,703,949 FF / 895 BRAM tiles. Its DUT LUT count exceeds the U280 limit by 1,463,920. This is not the linked optimized top capacity result. The 8da24a26 post-opt report remains the latest completed whole report: 3,215,683 LUT and NOT FIT. Preserve the existing controller through top link, zero-blackbox validation and post-opt gate.
+
+The existing e0 whole, e211 address map, 221 full DCache pair/reference producer and d9 fieldbank map continue. No new synthesis, FPGA I/O, software rebuild, architecture change or runtime admission was performed this round. Existing field-read-full-map-r2 remains the single queued map for 3656aec4.
+
+Independent verification of 3656aec4 against d9d73262 now passes with the restricted round31-v4 checker. All 2,529 outputs/original observations and 28,142 register/memory objects match. Every sequential statement, assertion/printf condition and submodule connection is checked. Actual generated ownerGenerationMemory write-data mutation is rejected. All other generated modules are identical. The parent frozen DCache 8,192-cycle receipt is authenticated and retained. This is complete generated DCache symbolic identity to the parent, not whole-DUT formal or an FPGA experiment.
+
+The generic earlier r2 checker has a SAT-confirmed complement-width false positive. This round uses only exact unsigned three-bit equality factoring, explicitly one-bit AND factoring in ternary/if selectors, and the exact three-operand one-bit AND/OR expression. SAT validates the selector equivalences, and semantic mutations plus unsupported-width/context cases are rejected. No functional statement or observation is omitted. Only 60 assertion diagnostic source-line locations are mapped using identical git source lines, with original and mapped metadata preserved.
+
+Recovery evidence is immutable: v1 failed because its self-test used unsupported combined declaration syntax; corrected v2 matched every output/observation but left statements unproven; v3 covered the AND/OR alias and retained the sequential-condition mismatch; focused diagnostics exposed the remaining one-bit if-selector alias; v4 passes. All old scripts, states, logs and results remain intact.
+
+Use proof-adoption.json and verified-job.json to authenticate the stronger verification before any eventual composition/admission. Actual complete DCache mapping and paired significant area gain remain pending; no area gain is inferred from this proof. Continue structural MSHRFile/DCache/L2 investigation based on actual reports. Do not restart or duplicate live builds, modify campaign policy or enter the revoked recovery branches.
+
+Next safe action: at the normal 600-second whole-build interval, read 9ae linked post-opt resources and component-map receipts. Preserve NOT FIT evidence and compose only measured, verified substantial gains. If certified FIT occurs, prioritize implementation/timing/DRC/bitstream and broker-controlled 21-only smoke/formal PARSEC r1. No real FPGA sample exists from this round.

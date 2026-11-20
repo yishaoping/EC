@@ -1,0 +1,25 @@
+{
+  "outcome": "PROGRESS",
+  "summary": "Pinned 521 shell collateral files and validated BD/IP loading: native host clock 19.998 ns, named host_clock absent in shell-only diagnostic. Conditional r4b repair observer is running; active r3 and CAD inputs unchanged. R5 final timing and MCRams LUT/FIT remain pending.",
+  "changed_files": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-shell-ipcollateral-r4b-20261112/prepare.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-shell-ipcollateral-r4b-20261112/physical.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-shell-ipcollateral-r4b-20261112/observe.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-shell-ipcollateral-r4b-20261112/inputs.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/mcrams-ipcollateral-recovery-observer-r4b-3656aec4.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/round128-shell-collateral-20261112/REPORT.md",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/round128-shell-collateral-20261112/completion.json"
+  ],
+  "evidence": [
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/round128-shell-collateral-20261112/receipt.json sha256=730a49c057a50e35d88c5549c13267c34a84d827fe3d2ee6bfaa8f80a4000198",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/round128-shell-collateral-20261112/observer-admission-r4b.json sha256=738c32800088dc1b184b00bbbd4bd0773f9f241eaca43dd1c8f408fbfcd87ee4",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/round128-shell-collateral-20261112/offline-validation.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/round128-shell-collateral-20261112/controller-validation.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/round128-shell-collateral-20261112/continuity.json"
+  ],
+  "launched_jobs": [
+    "ec-opt4-auto-mcrams-ipcollateral-recovery-observer-r4b-3656aec4.service (analysis observer; no physical CAD)"
+  ],
+  "next_action": "Preserve active r5 routing, MCRams synthesis and owner parity. Existing r3 handles FIT+parity; r4b observer automatically submits checkpoint-only BD/IP repair after actual matching r3 clock failure and exact cgroup release. No host resynthesis.",
+  "retry_after_seconds": 600
+}

@@ -1,0 +1,46 @@
+{
+  "result": {
+    "changed_files": [
+      "firesim/final-opt4-20261106/candidates/mcrams-preplace-exception-contract-r1-20261112/",
+      "Experiment/firesim-final-opt4-20261106/status-audits/round130-preplace-exception-contract-20261112/",
+      "Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round130-result.json"
+    ],
+    "evidence": [
+      "Round130 receipt: status-audits/round130-preplace-exception-contract-20261112/receipt.json sha256=3e2e5b45f403f48a2ca6e80edfd820b0efbb468c866002bb0f6fac078678c908",
+      "Validation: 9 Vivado fixture cases and 5 export mutations passed; sha256=29eeac8d12750d1a1a893b6413ca2b2d9ac49aa4a82e167a457b56a28ed1d31d",
+      "Owner-MC finite parity PASS: result sha256=02025ffe79f679d0e37dc007d940d9c61eea3d8095acc1f6f234e5fa5a6eb29b"
+    ],
+    "launched_jobs": [
+      "Completed bounded primitive-netlist timing diagnostics; no production CAD or device operations."
+    ],
+    "next_action": "Preserve E hold_fix/reroute, conditional F and certification/replay gates. Existing r3 awaits capacity FIT; r4b awaits matching r3 failure and exact cgroup release. Integrate the prepared verifier only through an independent version; preserve bound sources and existing observers.",
+    "outcome": "PROGRESS",
+    "retry_after_seconds": 600,
+    "summary": "Prepared a separate preplace exception verifier; tests passed, installation and fullshell validation remain pending. R5 E remains routing: latest intermediate WNS \u22120.357 ns, hold unavailable\u2014not final. MCrams LUT/FIT remain pending. The original metrics request was naturally admitted and is running; no duplicate submitted."
+  },
+  "utc": "2026-11-12T07:10:25.248859+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 2837839,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "27766775"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-12T07:10:10.364031+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 2837838,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00130",
+    "rss_bytes": 13586432,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "27766772",
+    "started_utc": "2026-11-12T06:45:47.323142+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-12T07:10:10.361075+00:00"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "changed_files": [
+    "Opt4-common-physical-postflight-r1-20261113/area-experiments/common-physical-postflight-r1-20261113/postflight.py",
+    "Opt4-common-physical-postflight-r1-20261113/area-experiments/common-physical-postflight-r1-20261113/full-sta.tcl",
+    "Opt4-common-physical-postflight-r1-20261113/area-experiments/common-physical-postflight-r1-20261113/validate.py",
+    "Opt4-common-physical-postflight-r1-20261113/area-experiments/common-physical-postflight-r1-20261113/README.md",
+    "area-sprint-20261112/round-00182.json"
+  ],
+  "evidence": [
+    "Commit 8be0e97 prepares source-bound report-only full STA checks; 14 Tcl fixtures and 13 admission-rejection checks passed offline.",
+    "Production r5, common r6 and caller closure remain unresolved. Existing owners preserved; no duplicate CAD, restart or FPGA I/O.",
+    "Latest actual complete shell remains NOT FIT: 2,478,437 LUT; gap 1,174,757.",
+    "Independent latest.json and LATEST.md now include round 182."
+  ],
+  "launched_jobs": [],
+  "next_action": "Consume existing production/common/caller results, then let exact composition validation release the sole installed shell successor. On actual FIT, run prepared full STA checks and complete new-image software/runtime certification before card21 I/O.",
+  "outcome": "PROGRESS",
+  "retry_after_seconds": 300,
+  "summary": "Prepared missing physical-certification checks without changing live jobs. New composition area remains pending; no complete EC FIT or certified bitstream."
+}

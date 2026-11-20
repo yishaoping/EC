@@ -1,0 +1,47 @@
+{
+  "argv": [
+    "/data1/gzh/EC/chipyard/.conda-env/bin/qemu-system-riscv64",
+    "-machine",
+    "virt",
+    "-cpu",
+    "rv64",
+    "-m",
+    "2G",
+    "-smp",
+    "1",
+    "-nographic",
+    "-no-reboot",
+    "-bios",
+    "default",
+    "-kernel",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T083406Z/arch/riscv/boot/Image",
+    "-initrd",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-linger-linux-20261107T105925Z/netdedup-simsmall/initramfs.cpio",
+    "-append",
+    "console=ttyS0 earlycon=sbi rdinit=/init panic=-1 mem=2G"
+  ],
+  "both_peers_exit_zero": true,
+  "candidate_receipt_sha256": "8f8e1bcd19d684c657192b6806584b3e3784fb08f90fbbdcc2de90056c5bc718",
+  "ended_utc": "2026-11-07T11:22:47.313428+00:00",
+  "exact_qemu_user_output": false,
+  "formal_eligible": false,
+  "fpga_execution": false,
+  "host_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "input": "simsmall",
+  "observed_output_hashes": [
+    "0a75fd6a5ad4646e0463c071fd59ac8d4f821064f4cb63f8052879b1d484e3ff"
+  ],
+  "original_roi_markers_complete": true,
+  "pid": 2772328,
+  "program": "netdedup",
+  "reference": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netdedup-simsmall-riscv64/result.json",
+  "returncode": 0,
+  "rootfs": {
+    "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-linger-linux-20261107T105925Z/netdedup-simsmall/initramfs.cpio",
+    "sha256": "697580acca5dd9d72ef8421cde3af3f1e6af105690230cc1af97accf1774fce6"
+  },
+  "start_ticks": "1762318",
+  "status": "FAILED_WITH_EVIDENCE",
+  "timeout_seconds": 1800,
+  "wall_seconds": 1101.8845429760004
+}

@@ -1,0 +1,44 @@
+{
+  "result": {
+    "changed_files": [
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/area-sprint-20261112/round-00172.json"
+    ],
+    "evidence": [
+      "Recorded round 172 and validated its JSON; SHA-256: 43ab4af90720ae065ed1e3e1d052b2e40e93ca852c6278bfa9b4aabd1c796885.",
+      "Packed AddressStats measured 912,502 to 885,154 LUTs, a 27,348-LUT module gain; this is not a whole-EC result.",
+      "DCache report recovery measured 1,629,524 to 1,492,945 LUTs, a 136,579-LUT module gain, with 8,192 cycles and 24,575 observations retained; this is not additive to host results.",
+      "Production host r2, mixed common-stat host r5, and the original DSP pair remain active under their existing owners.",
+      "The prepared barrier safe-product candidate requires CPUs 206/207, currently owned by common-stat host r5; it was not started."
+    ],
+    "launched_jobs": [],
+    "next_action": "After the existing owners finish, consume their real validation and area receipts. Start the prepared barrier candidate only after CPUs 206/207 and its predecessor cgroups are released, then select the next source-bound experiment from measured gains. No FIT or certified bitstream is claimed.",
+    "outcome": "WAITING_ACTIVE_JOB",
+    "retry_after_seconds": 300,
+    "summary": "No FIT this round. Completed module receipts were recorded without mixing their savings into host totals; active owners and their inputs remain untouched."
+  },
+  "utc": "2026-11-12T21:30:08.261140+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 137271,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "33025910"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-12T21:29:57.783242+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 137270,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00172",
+    "rss_bytes": 13590528,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "33025907",
+    "started_utc": "2026-11-12T21:22:18.670935+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-12T21:29:57.781345+00:00"
+  }
+}

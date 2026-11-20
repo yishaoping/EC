@@ -1,0 +1,208 @@
+{
+  "cases": {
+    "simmedium": {
+      "captured_output": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-linux-20261109T050018Z/netferret-simmedium/captured-output.txt",
+      "exact_repaired_user_output": true,
+      "frames": [],
+      "queries": 64,
+      "ranks": [],
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-linux-20261109T050018Z/netferret-simmedium/result.json",
+      "same_query_results": true,
+      "user_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/user-simmedium/result.json"
+    },
+    "simsmall": {
+      "captured_output": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-linux-20261109T050018Z/netferret-simsmall/captured-output.txt",
+      "exact_repaired_user_output": true,
+      "frames": [],
+      "queries": 16,
+      "ranks": [],
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-linux-20261109T050018Z/netferret-simsmall/result.json",
+      "same_query_results": true,
+      "user_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/user-simsmall/result.json"
+    },
+    "test": {
+      "captured_output": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-linux-20261109T050018Z/netferret-test/captured-output.txt",
+      "exact_repaired_user_output": true,
+      "frames": [],
+      "queries": 1,
+      "ranks": [],
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-linux-20261109T050018Z/netferret-test/result.json",
+      "same_query_results": true,
+      "user_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/user-test/result.json"
+    }
+  },
+  "client_patch": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/client-stable-order.patch",
+    "sha256": "460aa3709fae6894b68cca838efce02442f07095bdd45f05c06f73abc4838636"
+  },
+  "commands": [
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/include",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include",
+        "-c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/server.c",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/server.o"
+      ],
+      "label": "build-object",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/build-object.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-static",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/server.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/diagnostic-hooks.o",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/parsec/lib",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-Wl,--start-group",
+        "-lcass",
+        "-lcassimage",
+        "-lgsl",
+        "-lgslcblas",
+        "-ljpeg",
+        "-luptcp",
+        "-Wl,--end-group",
+        "-pthread",
+        "-lrt",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/netferret/server/parsec/bin/ferret-pthreads"
+      ],
+      "label": "build-link",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/build-link.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/include",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/client",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/client.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/client/tpool.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/src/queue.c",
+        "-static",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-luptcp.client",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/netferret/client/client"
+      ],
+      "label": "build-client",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/build-client.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "unshare",
+        "--ipc",
+        "--mount",
+        "--net",
+        "--fork",
+        "/usr/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/user.py",
+        "--case",
+        "netferret",
+        "--size",
+        "test",
+        "--out",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/user-test"
+      ],
+      "label": "user-test",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/user-test.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "unshare",
+        "--ipc",
+        "--mount",
+        "--net",
+        "--fork",
+        "/usr/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/user.py",
+        "--case",
+        "netferret",
+        "--size",
+        "simsmall",
+        "--out",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/user-simsmall"
+      ],
+      "label": "user-simsmall",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/user-simsmall.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "unshare",
+        "--ipc",
+        "--mount",
+        "--net",
+        "--fork",
+        "/usr/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/user.py",
+        "--case",
+        "netferret",
+        "--size",
+        "simmedium",
+        "--out",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/user-simmedium"
+      ],
+      "label": "user-simmedium",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/user-simmedium.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/linux.py"
+      ],
+      "label": "linux",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/linux.log",
+      "returncode": 0
+    }
+  ],
+  "ended_utc": "2026-11-09T05:01:36.111554+00:00",
+  "formal_eligible": false,
+  "fpga_execution": false,
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z",
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z",
+  "patch": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/diagnostic.patch",
+    "sha256": "2dc46701497d8cf9ce38ce7044212c952d5575993516086a4297a6633d725a8b"
+  },
+  "pid": 1493900,
+  "receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/receipt.json",
+  "stage": "linux",
+  "start_ticks": "1212714",
+  "status": "COMPLETE_REVIEW_EVIDENCE"
+}

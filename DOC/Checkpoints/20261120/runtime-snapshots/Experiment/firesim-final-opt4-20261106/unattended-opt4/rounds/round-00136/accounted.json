@@ -1,0 +1,44 @@
+{
+  "result": {
+    "changed_files": [
+      "Experiment/firesim-final-opt4-20261106/unattended-opt4/campaign-policy.json",
+      "Experiment/firesim-final-opt4-20261106/status-audits/round136-e0-postopt-capacity-20261112/",
+      "Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round136-result.json"
+    ],
+    "evidence": [
+      "Immutable receipt: status-audits/round136-e0-postopt-capacity-20261112/receipt.json sha256=628e3f6f5bf94355faa8f3b26cb8e9d0d847fdb1f7f30bca81c03f16b8c414be",
+      "E0 reports, hierarchy and state agree: 2,789,012 LUTs; excess 1,485,332; zero blackboxes. Service inactive; capacity gate stopped before placement.",
+      "R6 H and original MCrams capacity identities matched. Metrics singleton is STARTED, waiting receipts. No new requests queued."
+    ],
+    "launched_jobs": [],
+    "next_action": "Preserve existing r6 H\u2192I\u2192J and certification/21-only replay gates. Await authoritative MCrams post-opt; retain existing continuation, observer, metrics singleton and resource guards.",
+    "outcome": "PROGRESS",
+    "retry_after_seconds": 600,
+    "summary": "Pinned completed e0 NOT FIT result and corrected stale live status. Original MCrams post-opt remains pending. No new jobs or FPGA operations."
+  },
+  "utc": "2026-11-12T09:25:54.588456+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 3187789,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "28689495"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-12T09:25:39.577619+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 3187788,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00136",
+    "rss_bytes": 13688832,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "28689492",
+    "started_utc": "2026-11-12T09:19:34.517052+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-12T09:25:39.576073+00:00"
+  }
+}

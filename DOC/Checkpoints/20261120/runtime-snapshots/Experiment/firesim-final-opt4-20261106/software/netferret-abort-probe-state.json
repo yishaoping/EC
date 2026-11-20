@@ -1,0 +1,84 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/include",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include",
+        "-c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-abort-probe-20261109T045648Z/server.c",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-abort-probe-20261109T045648Z/server.o"
+      ],
+      "label": "build-object",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-abort-probe-20261109T045648Z/build-object.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-Wl,--wrap=abort",
+        "-static",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-abort-probe-20261109T045648Z/server.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/diagnostic-hooks.o",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/parsec/lib",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-Wl,--start-group",
+        "-lcass",
+        "-lcassimage",
+        "-lgsl",
+        "-lgslcblas",
+        "-ljpeg",
+        "-luptcp",
+        "-Wl,--end-group",
+        "-pthread",
+        "-lrt",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-abort-probe-20261109T045648Z/netferret/server/parsec/bin/ferret-pthreads"
+      ],
+      "label": "build-link",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-abort-probe-20261109T045648Z/build-link.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-abort-probe-20261109T045648Z/linux.py"
+      ],
+      "label": "linux-test",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-abort-probe-20261109T045648Z/linux-test.log",
+      "returncode": 0
+    }
+  ],
+  "ended_utc": "2026-11-09T04:56:52.158695+00:00",
+  "formal_eligible": false,
+  "fpga_execution": false,
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-abort-probe-20261109T045648Z",
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-abort-probe-20261109T045648Z",
+  "patch": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-abort-probe-20261109T045648Z/abort-probe.patch",
+    "sha256": "cf73e872da8452716f97d76cb40cb6fac8a0ce56a2f055df41c3c6f8d27d0ad8"
+  },
+  "pid": 1488569,
+  "receipt": {
+    "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-abort-probe-20261109T045648Z/receipt.json",
+    "sha256": "cf336e51c7353f785d5b794f453cb92efbb696107102383e277fd53a51a5827f"
+  },
+  "stage": "linux-test",
+  "start_ticks": "1192913",
+  "status": "COMPLETE_REVIEW_EVIDENCE"
+}

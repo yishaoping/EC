@@ -1,0 +1,84 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/include",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include",
+        "-c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-join-probe-20261109T045906Z/server.c",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-join-probe-20261109T045906Z/server.o"
+      ],
+      "label": "build-object",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-join-probe-20261109T045906Z/build-object.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-Wl,--wrap=abort",
+        "-static",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-join-probe-20261109T045906Z/server.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/diagnostic-hooks.o",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/parsec/lib",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-Wl,--start-group",
+        "-lcass",
+        "-lcassimage",
+        "-lgsl",
+        "-lgslcblas",
+        "-ljpeg",
+        "-luptcp",
+        "-Wl,--end-group",
+        "-pthread",
+        "-lrt",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-join-probe-20261109T045906Z/netferret/server/parsec/bin/ferret-pthreads"
+      ],
+      "label": "build-link",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-join-probe-20261109T045906Z/build-link.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-join-probe-20261109T045906Z/linux.py"
+      ],
+      "label": "linux-test",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-join-probe-20261109T045906Z/linux-test.log",
+      "returncode": 0
+    }
+  ],
+  "ended_utc": "2026-11-09T04:59:10.091008+00:00",
+  "formal_eligible": false,
+  "fpga_execution": false,
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-join-probe-20261109T045906Z",
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-join-probe-20261109T045906Z",
+  "patch": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-join-probe-20261109T045906Z/abort-probe.patch",
+    "sha256": "e9cd10ccf911ad3eb7d1e5188d41f17b0e70ccf22c7a19557ea4013c5abfacb8"
+  },
+  "pid": 1492429,
+  "receipt": {
+    "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-join-probe-20261109T045906Z/receipt.json",
+    "sha256": "d809c6d1e138a7548665c011b3de8ba3487c70b8fc3e4bba46e732c02192bbb6"
+  },
+  "stage": "linux-test",
+  "start_ticks": "1206706",
+  "status": "COMPLETE_REVIEW_EVIDENCE"
+}

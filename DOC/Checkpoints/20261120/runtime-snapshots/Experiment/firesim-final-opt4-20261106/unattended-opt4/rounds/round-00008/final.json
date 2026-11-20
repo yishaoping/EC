@@ -1,0 +1,43 @@
+{
+  "changed_files": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-epoch-clear-r2-20261111/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-epoch-clear-r2-20261111/EmitEpoch.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-epoch-clear-r2-20261111/controller.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-epoch-clear-r2-20261111/prepare.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-epoch-clear-r2-20261111/prepare-r2b.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-epoch-clear-r2-20261111/config.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-epoch-clear-r2-20261111/input-hashes.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-epoch-clear-r2-20261111/candidate.patch",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-epoch-clear-r2-20261111/candidate-binding.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-epoch-clear-r2-20261111/source-inventory.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/runtime-candidates/64421513.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Opt4-fit-64421513/bundle.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r2-map-recovery-r1/parse_completed_map.py",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-epoch-clear-r2-20261111/candidate-preflight.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r2-20261111/map-full-module/recovered-utilization.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/address-epoch-clear-r2-64421513.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/address-epoch-clear-r2b-64421513.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/request-results/address-epoch-clear-r2-64421513.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/request-results/address-epoch-clear-r2b-64421513.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/request-results/64421513-prepare-runtime.json"
+  ],
+  "evidence": [
+    "Committed RTL candidate 64421513f29420498e128b78d82121ab11f52286, parent 8da24a269b98a0d6a8f57b030353a310812c4344; source_id ed5aed4e7968b932e844f3bc0c4be78f08e46c83837aea2903c887ba80b3527c; input-manifest SHA-256 a59ec2902713d6191b77cacea4be1daaf3c0e3dd1b2e0c9096bac19fcd44eb9b.",
+    "The candidate removes reset and retirement writes to bucket payloads and tags while retaining bucketValid, all 64-bit counter widths, and the full 256-entry packet window. Source inspection found payload and tag reads qualified by bucketValid; proof, full-module comparison, and OOC map have not run.",
+    "The first broker request was rejected because tool paths resolved outside W. A separate r2b request now lists 104 W-contained inputs and binds the complete 107-entry manifest, including tool hashes. Broker result is DEFERRED at its four-job limit; candidate state does not exist, so no proof or synthesis started.",
+    "Runtime template preparation completed with TEMPLATES_PREPARED_NO_FPGA_ACCESS. No bitstream or runtime binding is certified.",
+    "Recovered completed decode-r2 OOC utilization from the exact report SHA-256 9376d91c7ca4d310cd3cbc4f1745ba017179b48043a0f4dd053e154fd89fe190: 1,326,431 LUT, 56,070 CARRY8, 390,359 registers, 216 BRAM, 0 DSP. This is module-only, not whole-DUT FIT. The original state recorded zeros because later report rows overwrote the first totals.",
+    "Decode-r2 CPU job state is COMPLETE with returncode 0, but its service wrapper then failed appending CPU_JOB_EXITED: unattended-opt4/ledger.jsonl is root:root mode 0644. No ownership or broker files were changed.",
+    "Whole-DUT 8da CAD remains RUNNING_DUT_SYNTH with no certified bitstream. The existing rollback audit still finds no supported software injection plus architectural restart/completion interface; no rollback experiment is claimed.",
+    "Python controller and preparation scripts passed py_compile. The RTL proof and simulation controller has not been executed."
+  ],
+  "launched_jobs": [
+    "Submitted address-epoch-clear-r2b-64421513; broker returned DEFERRED because four campaign CPU jobs were already running. It has not started.",
+    "Prepared runtime templates for 64421513; no hardware I/O.",
+    "Preserved the live ec-parsec-opt4-fit-cad.service and existing module jobs."
+  ],
+  "next_action": "After the broker has a CPU slot, verify the r2b service, controller, and child identities by PID, start_ticks, and boot_id; then run its invariant SAT, 6,144-cycle/52-output comparison, and complete-module OOC map. Keep the 8da whole-DUT CAD untouched and rank candidates only from measured reports.",
+  "outcome": "WAITING_ACTIVE_JOB",
+  "retry_after_seconds": 300,
+  "summary": "Created and immutably bound a bucket-payload epoch candidate, recovered decode-r2 module resources from its completed map, and queued candidate verification behind active CPU work."
+}

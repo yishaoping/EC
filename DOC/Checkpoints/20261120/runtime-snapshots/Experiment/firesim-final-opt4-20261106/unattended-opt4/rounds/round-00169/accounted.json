@@ -1,0 +1,49 @@
+{
+  "result": {
+    "changed_files": [
+      "candidates/common-stats-host-r4-20261113/",
+      "area-sprint-20261112/round-00169.json",
+      "area-sprint-20261112/LATEST.md",
+      "area-sprint-20261112/latest.json"
+    ],
+    "evidence": [
+      "Banked AddressStats: 6144 cycles/5684 outputs PASS; invalid-payload mutation rejected.",
+      "Query plane: 219170 \u2192 154059 LUTs; local saving 65111, not whole-system savings.",
+      "Compiler recovery committed as 525fc22a; 260 valid circuits and five loop-rejection checks passed.",
+      "Recovery observed for 336 seconds; complete transform/token/area results pending.",
+      "Complete shell remains NOT FIT: 2478437 LUTs, gap 1174757. No certified complete-EC bitstream."
+    ],
+    "launched_jobs": [
+      "ec-opt4-common-stats-host-r4-20261113.service"
+    ],
+    "next_action": "Consume recovered host transform/token/area receipts and original DSP, DCache, delta and production results; diagnose failures through immutable successors while preserving existing owners and certification gates.",
+    "outcome": "PROGRESS",
+    "retry_after_seconds": 300,
+    "summary": "Implemented and validated a versioned recovery for the mixed-host compiler OOM. Published round 169 evidence; no FIT or board operations."
+  },
+  "utc": "2026-11-12T20:19:02.142574+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 102129,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "32543353"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-12T20:18:52.280411+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 102128,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00169",
+    "rss_bytes": 13582336,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "32543350",
+    "started_utc": "2026-11-12T20:01:53.103753+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-12T20:18:52.278715+00:00"
+  }
+}

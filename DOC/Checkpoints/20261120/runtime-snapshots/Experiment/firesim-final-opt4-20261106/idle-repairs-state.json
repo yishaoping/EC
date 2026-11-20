@@ -1,0 +1,79 @@
+{
+  "argv": [
+    "python3",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/publish_live.py"
+  ],
+  "commands": [
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/idle-repair-logs/dedup-test-20261107T115611Z.log",
+      "returncode": 0,
+      "stage": "dedup-test"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/idle-repair-logs/dedup-simsmall-20261107T115937Z.log",
+      "returncode": 0,
+      "stage": "dedup-simsmall"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/idle-repair-logs/dedup-formal3-20261107T120537Z.log",
+      "returncode": 0,
+      "stage": "dedup-formal3"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/idle-repair-logs/fluidanimate-simsmall-capture-20261107T123921Z.log",
+      "returncode": 2,
+      "stage": "fluidanimate-simsmall-capture"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/idle-repair-logs/summarize-20261107T124322Z.log",
+      "returncode": 0,
+      "stage": "summarize"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/idle-repair-logs/publish-20261107T124322Z.log",
+      "returncode": 0,
+      "stage": "publish"
+    }
+  ],
+  "ended_utc": "2026-11-07T12:43:23.116210+00:00",
+  "host_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "idle_boundary": {
+    "last_active_run": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-freqmine-simmedium-r3-20261107T101944Z",
+    "plan_sha256": "8e03e094bdcb29dc1b6df6ce01fe5bf6f1ebdeaace3de529176c4a6ca6ca278a",
+    "queue_pid": 93647,
+    "queue_start_ticks": "105049"
+  },
+  "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/idle-repair-logs/publish-20261107T124322Z.log",
+  "no_active_inputs_modified": true,
+  "no_deployment": true,
+  "no_instruction_checkpoint": true,
+  "pid": 633950,
+  "schema": "ec-targeted-idle-repairs/1",
+  "stage": "publish",
+  "start_ticks": "482464",
+  "started_utc": "2026-11-07T07:31:06.928519+00:00",
+  "status": "TARGETED_REPAIRS_FINISHED_REVIEW_EVIDENCE",
+  "tasks": {
+    "dedup": {
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/dedup-staged-safe-fdt-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/dedup-staged-safe-fdt-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/dedup-staged-safe-fdt-rootfs-build.json"
+      },
+      "status": "COMPLETE"
+    },
+    "fluidanimate-capture": {
+      "formal_eligible": false,
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-diagnostic-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fluidanimate-diagnostic-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-diagnostic-rootfs-build.json"
+      },
+      "returncode": 2,
+      "status": "CAPTURE_ATTEMPTED_REVIEW_OUTPUT"
+    }
+  },
+  "updated_utc": "2026-11-07T11:51:11.746235+00:00"
+}

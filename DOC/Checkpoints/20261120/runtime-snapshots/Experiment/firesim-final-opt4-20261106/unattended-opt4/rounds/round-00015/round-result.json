@@ -1,0 +1,43 @@
+{
+  "changed_files": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-dcache-result-memory-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-dcache-result-memory-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/AppliedEffectResultMemory.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-dcache-result-memory-r1-20261111/lineage.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-dcache-result-memory-r1-20261111/candidate-binding.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-dcache-result-memory-r1-20261111/bindings/51a2bd2588fe09ded84c3d9911d9b8481da929ca.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-result-memory-r1-20261111/AppliedEffectResultMemory.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-result-memory-r1-20261111/Emit.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-result-memory-r1-20261111/binding.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-result-memory-r1-20261111/boundary.cpp",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-result-memory-r1-20261111/config.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-result-memory-r1-20261111/controller.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-result-memory-r1-20261111/frozen-dcache.scala.txt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-result-memory-r1-20261111/input-hashes.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-result-memory-r1-20261111/parent-dcache.scala.txt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-result-memory-r1-20261111/prepare-r2.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-result-memory-r1-20261111/prepare.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-result-memory-r1-20261111/source_contract.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-result-memory-preflight-r1-20261111/preflight.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/runtime-candidates/51a2bd25.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/dcache-result-memory-r1-51a2bd25.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/51a2bd25-prepare-runtime.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00015/live-adoption.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00015/dcache-submission.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00015/candidate-review.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00015/runtime-and-recovery-review.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00015/sequence-completed-evidence.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00015/handoff.json"
+  ],
+  "evidence": [
+    "Commit 51a2bd2588fe09ded84c3d9911d9b8481da929ca; source fadfd22293afed9177e282eaf0a82e7750b0e20d51284bc6d89f592b24ca0e47. Six exact source substitutions preserve all other parent DCache source, writer guards, widths, instrumentation and cycle contracts.",
+    "Short handwritten local SAT cut passed all 512 set/way indices and arbitrary 64-bit word update equivalence; payload mutation rejected. Generated-RTL proof, 8192-cycle actual-size regression, and maps are queued; complete frozen-DCache comparison remains required.",
+    "94b749cf frozen complete address-module comparison passed 6144 cycles and all 52 outputs. Its complete map remains live; isolated 90-read memory measured 196113 LUT and 8192 FF, and Vivado reported excess ports dissolved the memory into registers.",
+    "9ae CAD was last observed RUNNING_DUT_SYNTH at 01:17 UTC. 8da remains NOT_FIT_POSTOPT at 3215683/1303680 LUT, with no placement. No replacement CAD was started.",
+    "9ae seven ABI files were independently rechecked byte-equal. New 51a2bd25 has templates only; no ABI or driver reuse result was transferred to it. No supported architectural rollback/restart witness, certified bitstream, FPGA access, or sample was established."
+  ],
+  "launched_jobs": [],
+  "next_action": "Adopt live 9ae CAD and existing complete module maps at >=300-second cadence. Let broker start dcache-result-memory-r1 only when a synthesis slot opens. Collect generated storage proof, 8192-cycle regression, DCache source typecheck, and matched storage maps. Keep whole-DUT admission false until complete frozen DCache output comparison. Consider a separate low-port-replicated sequence successor using actual port-limit evidence.",
+  "outcome": "PROGRESS",
+  "retry_after_seconds": 300,
+  "summary": "Committed independent DCache result-storage candidate 51a2bd25, passed exact source reversal and short local SAT preflight, and queued generated proof/regression/maps. Broker deferred the module job for synthesis capacity; runtime templates are prepared. Existing 9ae CAD and module jobs were preserved."
+}

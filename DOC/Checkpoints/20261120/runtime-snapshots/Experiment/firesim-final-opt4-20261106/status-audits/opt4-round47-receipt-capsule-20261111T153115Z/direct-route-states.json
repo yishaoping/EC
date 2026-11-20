@@ -1,0 +1,156 @@
+{
+  "full_svb_stream_replay_r3_dispatch": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-original-svb-gg-stream-replay-r3-dispatch-state.json",
+    "state": {
+      "fpga_access": false,
+      "request": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/full-svb-gg-stream-replay-r3-full-8491167d.json",
+      "request_sha256": "7adcb8bb90d6ac1dd41707ab5f931cd538614f82de612995c80ab1c73077e191",
+      "status": "ALREADY_SUBMITTED_ADOPT_EXISTING",
+      "updated_utc": "2026-11-11T15:30:44.551125+00:00"
+    }
+  },
+  "full_svb_stream_replay_r3_state": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-original-svb-gg-stream-replay-r3-state.json",
+    "state": {
+      "child": {},
+      "fpga_access": false,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 1220185,
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-gg-stream-replay-r3-20261111/result.json",
+      "start_ticks": "21648903",
+      "status": "PASS_FORCE_ALL_STREAM_STARTUP_AND_DIRECTED_POSITIVE_PAYLOAD_NEGATIVE",
+      "updated_utc": "2026-11-11T13:46:10.804063+00:00"
+    }
+  },
+  "original_svb_application_fpga_follower": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-application-onboard-r1-20261111/state.json",
+    "state": {
+      "board_bdf": "0000:21:00.0",
+      "board_serial": "21770433G02LA",
+      "complete_opt4": false,
+      "cpu_ticks": 4,
+      "deployment_operations": [],
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "native_paused": true,
+      "pid": 1254639,
+      "process_state": "R",
+      "profile": "OriginalSVB32-component-trace",
+      "rss_bytes": 15695872,
+      "schema": "ec-original-svb-application-onboard/1",
+      "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+      "start_ticks": "21665231",
+      "status": "WAITING_CERTIFIED_COMPONENT_AND_REAL_APPLICATION_CPU_REPLAY",
+      "updated_utc": "2026-11-11T15:28:53.994387+00:00"
+    }
+  },
+  "original_svb_component_fpga_preparation": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/state.json",
+    "state": {
+      "argv": [
+        "/usr/bin/python3",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/component_cad.py"
+      ],
+      "child": {
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 3947766,
+        "start_ticks": "20242622"
+      },
+      "complete_opt4": false,
+      "component_cad_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-state.json",
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "last_receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/receipts/hardware-driver.json",
+      "pid": 3941816,
+      "schema": "ec-original-svb-fpga-preparation/1",
+      "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+      "stage": "component-cad",
+      "start_ticks": "20234127",
+      "started_utc": "2026-11-11T09:50:20.890203+00:00",
+      "status": "RUNNING",
+      "updated_utc": "2026-11-11T09:51:45.795334+00:00"
+    }
+  },
+  "original_svb_independent_spread_state": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-spread-implementation-r1-20261111/state.json",
+    "state": {
+      "argv": [
+        "/tools/Xilinx/Vivado/2021.1/bin/vivado",
+        "-mode",
+        "batch",
+        "-nojournal",
+        "-log",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-spread-implementation-r1-20261111/vivado.log",
+        "-source",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-spread-implementation-r1-20261111/implement.tcl"
+      ],
+      "checkpoint_sha256": "17aab576708314e7aa43d84d330f85ab8b73037260ec6a8deea0cb58bf5be5bd",
+      "child": {
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 279128,
+        "start_ticks": "21287457"
+      },
+      "complete_opt4": false,
+      "cpus": [
+        254,
+        255
+      ],
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "memory_limit_gib": 64,
+      "pid": 279123,
+      "producer_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-state.json",
+      "schema": "ec-original-svb-independent-physical-implementation/1",
+      "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+      "stage": "physical-implementation",
+      "start_ticks": "21287446",
+      "started_utc": "2026-11-11T12:45:54.133729+00:00",
+      "status": "RUNNING",
+      "target_changed": false,
+      "updated_utc": "2026-11-11T12:45:54.137989+00:00"
+    }
+  },
+  "original_svb_recovered_application": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-application-onboard-recovered-r1-20261111/state.json",
+    "state": {
+      "board_bdf": "0000:21:00.0",
+      "board_serial": "21770433G02LA",
+      "complete_opt4": false,
+      "cpu_ticks": 4,
+      "deployment_operations": [],
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "native_paused": true,
+      "pid": 1616391,
+      "process_state": "R",
+      "profile": "OriginalSVB32-component-trace",
+      "rss_bytes": 15716352,
+      "schema": "ec-original-svb-application-onboard/1",
+      "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+      "start_ticks": "21865115",
+      "status": "WAITING_CERTIFIED_COMPONENT_AND_REAL_APPLICATION_CPU_REPLAY",
+      "updated_utc": "2026-11-11T15:27:11.936864+00:00"
+    }
+  },
+  "original_svb_recovered_board": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-recovered-onboard-r1-20261111/state.json",
+    "state": {
+      "board_bdf": "0000:21:00.0",
+      "board_serial": "21770433G02LA",
+      "complete_opt4": false,
+      "configuration": "OriginalSVB32-component-trace",
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 1567664,
+      "schema": "ec-original-svb-onboard/1",
+      "start_ticks": "21846525",
+      "status": "WAITING_RECOVERY_RESULT_NO_FPGA_IO",
+      "updated_utc": "2026-11-11T15:29:06.247578+00:00"
+    }
+  }
+}

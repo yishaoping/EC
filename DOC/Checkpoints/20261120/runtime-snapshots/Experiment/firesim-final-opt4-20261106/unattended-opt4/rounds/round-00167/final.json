@@ -1,0 +1,20 @@
+{
+  "changed_files": [
+    "ecstatscommon/AddressBucketGrouped.scala",
+    "ecstatscommon/WeightedCarrySave.scala",
+    "area-sprint-20261112/round-00167.json"
+  ],
+  "evidence": [
+    "Commit cc72aff1: production bank compile passed; compressor SAT and negative check passed.",
+    "Actual reducer passed 8,192 cases across four width configurations.",
+    "Full 256-slot/96-source geometry verified; observed 384 seconds. Paired area pending.",
+    "Independent LATEST.md/latest.json adopted round 167."
+  ],
+  "launched_jobs": [
+    "ec-opt4-common-delta-csa-r1-20261113.service"
+  ],
+  "next_action": "Consume paired area results and existing DSP, DCache, mixed-host, and production validation receipts; diagnose/version failures and require material measured gains plus complete validation before whole CAD.",
+  "outcome": "PROGRESS",
+  "retry_after_seconds": 300,
+  "summary": "Implemented and locally validated carry-save reduction. No FIT: latest complete shell uses 2,478,437 LUTs, exceeding capacity by 1,174,757. No certified complete-EC bitstream; board gates remain closed."
+}

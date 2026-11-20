@@ -1,0 +1,55 @@
+{
+  "result": {
+    "changed_files": [
+      "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-update-share-r2-20261111/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-update-share-r2-20261111/controller.py",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-tagcompress-cachefix-r3-20261111/controller.py",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/bucket-tag-system-r1-20261111/controller.py",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00012/changed-files.json",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00012/handoff.json"
+    ],
+    "evidence": [
+      "Reset-safe commit 00847dc2b8f6be3f1e1ff0639c1104d33334ddc9, source 6b0de8636ec9d88f7d9702769c03325df78ab43c3c1fe527fff9dc1a3aafbbdb: generated unconditional 64-bit SAT and 8,192-vector boundary checks passed. Complete-module comparison with independent global reset is compiling; mapping remains pending.",
+      "Earlier eada7948 passed its tested comparison but has an independent-reset proof gap. Recorded an admission hold and preserved its live map.",
+      "Recovered 3fb8a7f7 passed tag-invariant SAT, both actual-size boundary tests and the 6,144-cycle/52-output frozen-module comparison. Full module mapping is running.",
+      "Best measured module remains bucket-tag: 990,905 LUT / 55,418 CARRY8. Its GoldenGate job is running; actual seven-file ABI comparison remains pending. Sort completed at 1,197,215 LUT / 56,065 CARRY8.",
+      "8da CAD identities matched and implementation progressed into MIG/IP processing. No postopt FIT verdict or certified bitstream was observed. No hardware I/O occurred; genuine rollback/restart validation remains unresolved."
+    ],
+    "launched_jobs": [
+      "ec-opt4-auto-address-update-share-r1-eada7948.service \u2014 mapping; admission hold applies",
+      "ec-opt4-auto-address-update-share-r2-00847dc2.service \u2014 running; controller and child identities verified",
+      "ec-opt4-auto-address-tagcompress-cachefix-r3-3fb8a7f7.service \u2014 mapping",
+      "ec-opt4-auto-bucket-tag-system-r1-9ae9a7fc.service \u2014 GoldenGate and ABI audit",
+      "ec-opt4-auto-address-tagcompress-cachefix-r2-3fb8a7f7.service \u2014 failed before compilation; evidence preserved and corrected in r3"
+    ],
+    "next_action": "Collect the successor comparison, module maps and GoldenGate ABI audit after 300 seconds. Keep eada7948 on admission hold. Await the actual 8da postopt verdict before advancing whole CAD.",
+    "outcome": "PROGRESS",
+    "retry_after_seconds": 300,
+    "summary": "Implemented and started a reset-safe structural successor, recovered tag-compression mapping, and launched verified bucket-tag GoldenGate. No FIT, deployment or FPGA sample is claimed."
+  },
+  "utc": "2026-11-11T00:18:53.778527+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 1702020,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "16662428"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-11T00:18:50.826677+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 1702019,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00012",
+    "rss_bytes": 13680640,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "16662425",
+    "started_utc": "2026-11-10T23:55:03.847687+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-11T00:18:50.825128+00:00"
+  }
+}

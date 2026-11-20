@@ -1,0 +1,156 @@
+{
+  "candidate_sequence_refs": [
+    {
+      "line": 256,
+      "source": "private val bucketSequenceReaders = packageWays + strictWays + strictOverflowEntries + 2"
+    },
+    {
+      "line": 257,
+      "source": "val bucketSequenceMemory = Module(new AddressBucketSequenceMemory("
+    },
+    {
+      "line": 258,
+      "source": "packetWindow, bucketSequenceReaders, GH_GlobalParams.GH_PACKET_SEQ_BITS))"
+    },
+    {
+      "line": 259,
+      "source": "private var bucketSequenceReadPort = 0"
+    },
+    {
+      "line": 268,
+      "source": "private def bucketSequenceMatches(index: UInt, sequence: UInt): Bool = {"
+    },
+    {
+      "line": 269,
+      "source": "val port = bucketSequenceReadPort"
+    },
+    {
+      "line": 270,
+      "source": "bucketSequenceReadPort += 1"
+    },
+    {
+      "line": 271,
+      "source": "bucketSequenceMemory.io.readIndex(port) := index"
+    },
+    {
+      "line": 273,
+      "source": "bucketSequenceMemory.io.readData(port), sequence, packetIndexBits)"
+    },
+    {
+      "line": 508,
+      "source": "!bucketSequenceMatches(currentBucketIdx, processEvent.packetSeq)"
+    },
+    {
+      "line": 513,
+      "source": "mask.orR && (!bucketValid(idx) || !bucketSequenceMatches(idx, seq))"
+    },
+    {
+      "line": 519,
+      "source": "mask.orR && (!bucketValid(idx) || !bucketSequenceMatches(idx, seq))"
+    },
+    {
+      "line": 526,
+      "source": "mask.orR && (!bucketValid(idx) || !bucketSequenceMatches(idx, seq))"
+    },
+    {
+      "line": 596,
+      "source": "bucketSequenceMemory.io.writeEnable := processCommit && !io.resetStats"
+    },
+    {
+      "line": 597,
+      "source": "bucketSequenceMemory.io.writeIndex := currentBucketIdx"
+    },
+    {
+      "line": 598,
+      "source": "bucketSequenceMemory.io.writeData := processEvent.packetSeq"
+    },
+    {
+      "line": 609,
+      "source": "!bucketSequenceMatches(retiringIdx, retiringSeq)"
+    },
+    {
+      "line": 619,
+      "source": "require(bucketSequenceReadPort == bucketSequenceReaders,"
+    }
+  ],
+  "fpga_access": false,
+  "full_dut_build": false,
+  "hardware_commit": "94b749cf20b50487d82c7378071250fa9bd5eb3b",
+  "induction_obligation": "When bucketValid is true, old/new full32 payloads agree. resetStats/global reset clear validity; event writes the same full sequence before any allocated valid read. retire only invalidates and leaves sequence unobserved. Existing high-only comparison relies on inherited exact low-slot invariant, whose proof is bound separately.",
+  "limits": "Static source checks do not prove a mapped memory topology, functional equivalence or area reduction. SAT, actual-size boundary, frozen cycle comparison and physical complete-module map are queued separately.",
+  "parent_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+  "parent_sequence_refs": [
+    {
+      "line": 254,
+      "source": "val bucketSeq = Reg(Vec(packetWindow,"
+    },
+    {
+      "line": 264,
+      "source": "private def bucketSequenceMatches(index: UInt, sequence: UInt): Bool ="
+    },
+    {
+      "line": 265,
+      "source": "bucketSeq(index)(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, packetIndexBits) ==="
+    },
+    {
+      "line": 500,
+      "source": "!bucketSequenceMatches(currentBucketIdx, processEvent.packetSeq)"
+    },
+    {
+      "line": 505,
+      "source": "mask.orR && (!bucketValid(idx) || !bucketSequenceMatches(idx, seq))"
+    },
+    {
+      "line": 511,
+      "source": "mask.orR && (!bucketValid(idx) || !bucketSequenceMatches(idx, seq))"
+    },
+    {
+      "line": 518,
+      "source": "mask.orR && (!bucketValid(idx) || !bucketSequenceMatches(idx, seq))"
+    },
+    {
+      "line": 595,
+      "source": "!bucketSequenceMatches(retiringIdx, retiringSeq)"
+    },
+    {
+      "line": 732,
+      "source": "bucketSeq(i) := processEvent.packetSeq"
+    },
+    {
+      "line": 866,
+      "source": "bucketSeq(i) := 0.U"
+    }
+  ],
+  "proof_status": "PENDING_BROKER_JOB_NOT_PROVEN",
+  "reader_count": {
+    "current": 1,
+    "ordinary_ways": 8,
+    "retiring": 1,
+    "strict_spill_entries": 64,
+    "strict_ways": 16,
+    "total": 90
+  },
+  "schema": "ec-opt4-async-sequence-source-boundary-review/1",
+  "source": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-async-sequence-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala",
+  "source_checks": {
+    "comparison_high_bits_preserved": true,
+    "no_instrumentation_or_other_file_change": true,
+    "no_legacy_sequence_access": true,
+    "one_current_writer": true,
+    "parallel_counter_state_unchanged": true,
+    "reader_cardinality_elaboration_asserted": true,
+    "retire_excludes_process": true,
+    "valid_allocation_unchanged": true,
+    "validity_register_unchanged": true
+  },
+  "source_id": "a22e245c0631d0aabb52cbddf1d254a735541dc51279ca9638e841695851da94",
+  "source_sha256": "7f67774f8dff97e33cf932f664fe7501afa4b5b4d8e65e83896e41698fd0dd3b",
+  "storage": {
+    "async_read": true,
+    "read_ports": 90,
+    "sequence_bits": 32,
+    "slots": 256,
+    "sync_write_ports": 1
+  },
+  "utc": "2026-11-11T00:55:58.557781+00:00"
+}

@@ -1,0 +1,541 @@
+{
+  "created_utc": "2026-11-12T02:12:59.583944+00:00",
+  "fpga_io_by_root_this_turn": false,
+  "schema": "fpga-paper-sprint-actual-start/1",
+  "states": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-matched-single-boom-gg-r1-state.json": {
+      "sha256": "72b90c33f7862a451995743584486cb19192dc1cf8869ce0e2738a4838b62469",
+      "state": {
+        "argv": [
+          "/usr/bin/make",
+          "-C",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/src/main/cc",
+          "-j8",
+          "verilator",
+          "PLATFORM=xilinx_alveo",
+          "DRIVER_NAME=MatchingNative",
+          "GEN_DIR=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-matched-single-boom-gg-r1-20261112/host",
+          "GEN_FILE_BASENAME=FireSim-generated",
+          "DRIVER=/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/src/main/cc/firesim/firesim_top.cc /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/src/main/cc/bridges/blockdev.cc /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/src/main/cc/bridges/dromajo.cc /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/src/main/cc/bridges/groundtest.cc /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/src/main/cc/bridges/simplenic.cc /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/src/main/cc/bridges/tracerv.cc /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/src/main/cc/bridges/tsibridge.cc /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/src/main/cc/bridges/uart.cc /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/src/main/cc/fesvr/firesim_tsi.cc /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/src/main/cc/bridges/tracerv/trace_tracker.cc /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/src/main/cc/bridges/tracerv/tracerv_dwarf.cc /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/src/main/cc/bridges/tracerv/tracerv_elf.cc /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/src/main/cc/bridges/tracerv/tracerv_processing.cc /data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/lib/libfesvr.a /data1/gzh/EC/firesim/envs/manager-1.17.1/lib/libdromajo_cosim.a /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/testchipip/src/main/resources/testchipip/csrc/testchip_tsi.cc",
+          "VERILATOR_FLAGS=--compiler clang -Wno-fatal -Wno-MULTIDRIVEN",
+          "CXX=/nix/store/zxw41nfy4gjlzd31ly7q6mkv4vkybx15-clang-wrapper-16.0.6/bin/clang++"
+        ],
+        "child": {
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2429276,
+          "start_ticks": "26106863"
+        },
+        "fpga_access": false,
+        "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-matched-single-boom-gg-r1-20261112/model-compile.log",
+        "native_fpga_paused": true,
+        "native_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "pid": 2428607,
+        "schema": "ec-clean-single-boom-matching-gg/1",
+        "start_ticks": "26106451",
+        "status": "RUNNING_OWNED_CPU_STAGE",
+        "updated_utc": "2026-11-12T02:09:08.203223+00:00"
+      }
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-mcrams-address-bucket-area-r2-state.json": {
+      "sha256": "f36cc55dfdaa4b5aa2430eb1f9a78ad8b3cd0900295fcb19faa2a932d6a2084b",
+      "state": {
+        "child": {
+          "cpu_ticks": 0,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2432728,
+          "process_state": "R",
+          "rss_bytes": 4096,
+          "start_ticks": "26111033"
+        },
+        "cpu_ticks": 7,
+        "cpus": [
+          220,
+          221
+        ],
+        "current_model": "MemMC",
+        "fpga_access": false,
+        "full_address_module": false,
+        "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "host_wall_seconds": 180.0077142700029,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-area-r2-20261112/MemMC/run.log",
+        "memory_limit_gib": 24,
+        "models": {},
+        "no_large_CAD": true,
+        "pid": 2432698,
+        "process_state": "R",
+        "proof_sha256": "aa11d2ed807c552b87c18e472f57610e15e2e69734eb4c20adc45404cc824372",
+        "rss_bytes": 14893056,
+        "schema": "ec-two-core-address-bank-area/2",
+        "start_ticks": "26111022",
+        "started_utc": "2026-11-12T02:09:49.871376+00:00",
+        "status": "RUNNING_LOCAL_MemMC",
+        "threads": 2,
+        "updated_utc": "2026-11-12T02:12:49.907344+00:00",
+        "whole_fit": false
+      }
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-mcrams-full-host-capacity-r1-state.json": {
+      "sha256": "07e29f245138f0c29b526e1fcf4bda62b1739f9b45e25f209c0934dd80bf730a",
+      "state": {
+        "area_scope": "Complete generated FPGATop host simulator with owner-only MCRams; U280 shell not included, no parity/FPGA claim",
+        "child": {
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2379621,
+          "start_ticks": "25825441"
+        },
+        "cpus": [
+          240,
+          241,
+          242,
+          243,
+          244,
+          245,
+          246,
+          247
+        ],
+        "derived_hardware": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+        "fpga_access": false,
+        "full_generated_host": true,
+        "full_physical_system": false,
+        "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "host_rtl_sha256": "9d5380252ec779da8844b1ff632af84330fd2d0dff63912dd4c08180ae2ff3e1",
+        "host_wall_seconds": 3000.105040604016,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-full-host-capacity-r1-20261112/run.log",
+        "memory_limit_gib": 128,
+        "pid": 2379596,
+        "production_admission": false,
+        "schema": "ec-mcrams-full-host-capacity/1",
+        "start_ticks": "25825420",
+        "started_utc": "2026-11-12T01:22:13.975945+00:00",
+        "status": "RUNNING_FULL_HOST_SYNTH_DESIGN",
+        "threads": 8,
+        "updated_utc": "2026-11-12T02:12:14.081410+00:00",
+        "whole_dut_target_parity": false
+      }
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-mcrams-full-host-continuation-r2-state.json": {
+      "sha256": "6106499031cc05700fe2e146da63e00b7cee3a0cb55664be8d1a907b555c3b87",
+      "state": {
+        "MC_live": true,
+        "MC_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-mc-runtime-r2-20261112/result.json",
+        "MC_status": "RUNNING_RUN_MCRAMS",
+        "address_area_request": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/address-bucket-mcrams-area-r1-8491167d.json",
+        "area_live": true,
+        "area_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-full-host-capacity-r1-20261112/result.json",
+        "area_status": "RUNNING_FULL_HOST_SYNTH_DESIGN",
+        "derived_target_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+        "fpga_access": false,
+        "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "no_target_resynthesis": true,
+        "pid": 2403708,
+        "process_state": "R",
+        "schema": "ec-owner-mcrams-persistent-continuation/1",
+        "start_ticks": "25996277",
+        "started_utc": "2026-11-12T01:50:42.384212+00:00",
+        "status": "ADOPTING_EXISTING_CAPACITY_AND_PARITY_NO_DUPLICATES",
+        "updated_utc": "2026-11-12T02:10:42.839685+00:00",
+        "whole_physical_fit": false
+      }
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-mcrams-owner-mc-runtime-r2-state.json": {
+      "sha256": "5a36a776c12fe8eb7cbdf13220db857a9a0d33b8d05faec571e4933d7c923206",
+      "state": {
+        "child": {
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2378807,
+          "start_ticks": "25817536"
+        },
+        "derived_hardware": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+        "fpga_access": false,
+        "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "host_wall_seconds": 3120.7554624640034,
+        "instruction_checkpoint_restored": false,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-mc-runtime-r2-20261112/run-MCRams.log",
+        "pid": 2378806,
+        "production_admission": false,
+        "rerun_from_reset": true,
+        "reused_Plain": true,
+        "schema": "ec-owner-MC-rerun-from-reset-existing-Plain/2",
+        "stage": "run-MCRams",
+        "start_ticks": "25817526",
+        "started_utc": "2026-11-12T01:20:54.929469+00:00",
+        "status": "RUNNING_RUN_MCRAMS",
+        "stop_cause": null,
+        "updated_utc": "2026-11-12T02:12:55.687568+00:00",
+        "whole_fit": false
+      }
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-host40-shell-application-onboard-r2-20261112/state.json": {
+      "sha256": "26bf764c7f2e6de96b7007416de64edc0ab3e401480b3b819297979905afdaac",
+      "state": {
+        "board_bdf": "0000:21:00.0",
+        "board_serial": "21770433G02LA",
+        "complete_opt4": false,
+        "cpu_ticks": 4,
+        "deployment_operations": [],
+        "fpga_access": false,
+        "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "native_paused": true,
+        "pid": 2429070,
+        "process_state": "R",
+        "profile": "OriginalSVB32-component-trace-host40",
+        "rss_bytes": 15794176,
+        "schema": "ec-original-svb-application-onboard/1",
+        "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+        "start_ticks": "26106654",
+        "status": "WAITING_CERTIFIED_COMPONENT_AND_REAL_APPLICATION_CPU_REPLAY",
+        "updated_utc": "2026-11-12T02:09:06.156790+00:00"
+      }
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-host40-shell-onboard-r2-20261112/state.json": {
+      "sha256": "9aed09a53876c155733a1bc56a23023a9d6d0a6704ed1d246984bfc4e1bb788a",
+      "state": {
+        "board_bdf": "0000:21:00.0",
+        "board_serial": "21770433G02LA",
+        "complete_opt4": false,
+        "configuration": "OriginalSVB32-component-trace-host40",
+        "fpga_access": false,
+        "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2429071,
+        "schema": "ec-original-svb-onboard/1",
+        "start_ticks": "26106654",
+        "status": "WAITING_INDEPENDENT_HOST40_PHYSICAL_RESULT_NO_FPGA_IO",
+        "updated_utc": "2026-11-12T02:09:06.162514+00:00"
+      }
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r2-20261112/state.json": {
+      "sha256": "c1450c518e4a0c2f4b796b32ab7eb2854b95af0c59f1ca0ab2c3b16d0467b1cc",
+      "state": {
+        "admission": {
+          "disk_bytes": 322404188160,
+          "load1": 12.44,
+          "memory_kib": 412716600,
+          "workers": [
+            {
+              "argv": [
+                "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado",
+                "-mode",
+                "batch",
+                "-nojournal",
+                "-log",
+                "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/round51-v1/original-postroute/vivado.log",
+                "-source",
+                "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/round51-v1/original-postroute/recover.tcl"
+              ],
+              "cpu_ticks": 886076,
+              "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+              "pid": 2323399,
+              "process_state": "S",
+              "rss_bytes": 8198619136,
+              "start_ticks": "25276450",
+              "unit": "ec-opt4-auto-svb-physical-resource-recovery-r51-v1.service"
+            },
+            {
+              "argv": [
+                "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado",
+                "-mode",
+                "batch",
+                "-nojournal",
+                "-log",
+                "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/resume-r3-spread-physical1/vivado.log",
+                "-source",
+                "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/resume-r3-spread-physical1/resume.tcl"
+              ],
+              "cpu_ticks": 367178,
+              "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+              "pid": 2377613,
+              "process_state": "S",
+              "rss_bytes": 9049313280,
+              "start_ticks": "25815969",
+              "unit": "ec-opt4-auto-svb-physical-resume-r3-v1-8491167d.service"
+            }
+          ]
+        },
+        "argv": [
+          "/tools/Xilinx/Vivado/2021.1/bin/vivado",
+          "-mode",
+          "batch",
+          "-nojournal",
+          "-log",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r2-20261112/A-shell-routing-placement/vivado.log",
+          "-source",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r2-20261112/A-shell-routing-placement/recover.tcl"
+        ],
+        "child": {
+          "cpu_ticks": 0,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2429130,
+          "process_state": "R",
+          "rss_bytes": 4096,
+          "start_ticks": "26106747"
+        },
+        "complete_opt4": false,
+        "cpu_ticks": 3,
+        "cpus": [
+          224,
+          225
+        ],
+        "fpga_access": false,
+        "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "mode": "A-shell-routing-placement",
+        "pid": 2429073,
+        "process_state": "R",
+        "profile": "OriginalSVB32-component-trace-host40",
+        "resource_admission_sha256": "5f7164261a76a0c0735f98b687a0fe95fed83c2a0fcd99bfe375928b3f9651df",
+        "rss_bytes": 15454208,
+        "schema": "ec-original-svb-host40-shell-recovery/2",
+        "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+        "start_ticks": "26106655",
+        "started_utc": "2026-11-12T02:09:06.160365+00:00",
+        "status": "RUNNING_ADMITTED_HOST40_SHELL_RECOVERY",
+        "target_rtl_changed": false,
+        "updated_utc": "2026-11-12T02:09:07.039175+00:00"
+      }
+    }
+  },
+  "units": [
+    {
+      "processes": [
+        {
+          "argv": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r2-20261112/controller.py ",
+          "cpu_ticks": 101,
+          "cpus_allowed": "224-225",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2429073,
+          "rss_bytes": 16572416,
+          "start_ticks": "26106655"
+        },
+        {
+          "argv": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r2-20261112/A-shell-routing-placement/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r2-20261112/A-shell-routing-placement/recover.tcl ",
+          "cpu_ticks": 0,
+          "cpus_allowed": "224-225",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2429130,
+          "rss_bytes": 3977216,
+          "start_ticks": "26106747"
+        },
+        {
+          "argv": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/loader -exec vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r2-20261112/A-shell-routing-placement/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r2-20261112/A-shell-routing-placement/recover.tcl ",
+          "cpu_ticks": 0,
+          "cpus_allowed": "224-225",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2429147,
+          "rss_bytes": 3899392,
+          "start_ticks": "26106748"
+        },
+        {
+          "argv": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r2-20261112/A-shell-routing-placement/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r2-20261112/A-shell-routing-placement/recover.tcl ",
+          "cpu_ticks": 31102,
+          "cpus_allowed": "224-225",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2429168,
+          "rss_bytes": 6657728512,
+          "start_ticks": "26106756"
+        }
+      ],
+      "properties": {
+        "ActiveState": "active",
+        "ControlGroup": "/system.slice/ec-opt4-svb-host40-shell-physical-r2.service",
+        "MainPID": "2429073",
+        "SubState": "running"
+      },
+      "unit": "ec-opt4-svb-host40-shell-physical-r2.service"
+    },
+    {
+      "processes": [
+        {
+          "argv": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r2-20261112/runtime.py ",
+          "cpu_ticks": 4,
+          "cpus_allowed": "0-255",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2429071,
+          "rss_bytes": 16625664,
+          "start_ticks": "26106654"
+        }
+      ],
+      "properties": {
+        "ActiveState": "active",
+        "ControlGroup": "/system.slice/ec-opt4-svb-host40-shell-follow-r2.service",
+        "MainPID": "2429071",
+        "SubState": "running"
+      },
+      "unit": "ec-opt4-svb-host40-shell-follow-r2.service"
+    },
+    {
+      "processes": [
+        {
+          "argv": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r2-20261112/application.py ",
+          "cpu_ticks": 4,
+          "cpus_allowed": "0-255",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2429070,
+          "rss_bytes": 15794176,
+          "start_ticks": "26106654"
+        }
+      ],
+      "properties": {
+        "ActiveState": "active",
+        "ControlGroup": "/system.slice/ec-opt4-svb-host40-shell-application-follow-r2.service",
+        "MainPID": "2429070",
+        "SubState": "running"
+      },
+      "unit": "ec-opt4-svb-host40-shell-application-follow-r2.service"
+    },
+    {
+      "processes": [
+        {
+          "argv": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/opt4_unattended_cpu_job.py /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/jobs/address-bucket-mcrams-area-r2-8491167d/spec.json ",
+          "cpu_ticks": 14,
+          "cpus_allowed": "0-255",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2432686,
+          "rss_bytes": 14217216,
+          "start_ticks": "26111014"
+        },
+        {
+          "argv": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-address-bucket-area-r2-20261112/controller.py ",
+          "cpu_ticks": 20,
+          "cpus_allowed": "220-221",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2432698,
+          "rss_bytes": 15036416,
+          "start_ticks": "26111022"
+        },
+        {
+          "argv": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/vivado -mode batch -nojournal -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-area-r2-20261112/MemMC/map.tcl ",
+          "cpu_ticks": 0,
+          "cpus_allowed": "220-221",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2432728,
+          "rss_bytes": 3911680,
+          "start_ticks": "26111033"
+        },
+        {
+          "argv": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/loader -exec vivado -mode batch -nojournal -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-area-r2-20261112/MemMC/map.tcl ",
+          "cpu_ticks": 0,
+          "cpus_allowed": "220-221",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2432748,
+          "rss_bytes": 3919872,
+          "start_ticks": "26111035"
+        },
+        {
+          "argv": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -mode batch -nojournal -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-area-r2-20261112/MemMC/map.tcl ",
+          "cpu_ticks": 18138,
+          "cpus_allowed": "220-221",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2432788,
+          "rss_bytes": 2555113472,
+          "start_ticks": "26111043"
+        },
+        {
+          "argv": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/vivado -exec parallel_synth_helper --key LaunchHelperProcessKey_2432788_1794449400 --partid xcu280-fsvh2892-2L-e --parent_pid 2432788 ",
+          "cpu_ticks": 1,
+          "cpus_allowed": "220-221",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2434753,
+          "rss_bytes": 3555328,
+          "start_ticks": "26112108"
+        },
+        {
+          "argv": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/loader -exec vivado -exec parallel_synth_helper --key LaunchHelperProcessKey_2432788_1794449400 --partid xcu280-fsvh2892-2L-e --parent_pid 2432788 ",
+          "cpu_ticks": 0,
+          "cpus_allowed": "220-221",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2434771,
+          "rss_bytes": 3678208,
+          "start_ticks": "26112110"
+        },
+        {
+          "argv": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/parallel_synth_helper --key LaunchHelperProcessKey_2432788_1794449400 --partid xcu280-fsvh2892-2L-e --parent_pid 2432788 ",
+          "cpu_ticks": 479,
+          "cpus_allowed": "220-221",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2434795,
+          "rss_bytes": 368488448,
+          "start_ticks": "26112119"
+        },
+        {
+          "argv": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/vivado -notrace -mode batch -source /tools/Xilinx/Vivado/2021.1/scripts/rt/data/task_worker.tcl -nolog -nojournal -tclargs SYNTH_DESIGN_PARENT2432788_0_1794449468_cfg SYNTH_DESIGN_PARENT2432788_0_1794449468_buf SYNTH_DESIGN_PARENT2432788_1794449468 xcu280-fsvh2892-2L-e ",
+          "cpu_ticks": 0,
+          "cpus_allowed": "220-221",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2440602,
+          "rss_bytes": 3612672,
+          "start_ticks": "26118940"
+        },
+        {
+          "argv": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/loader -exec vivado -notrace -mode batch -source /tools/Xilinx/Vivado/2021.1/scripts/rt/data/task_worker.tcl -nolog -nojournal -tclargs SYNTH_DESIGN_PARENT2432788_0_1794449468_cfg SYNTH_DESIGN_PARENT2432788_0_1794449468_buf SYNTH_DESIGN_PARENT2432788_1794449468 xcu280-fsvh2892-2L-e ",
+          "cpu_ticks": 0,
+          "cpus_allowed": "220-221",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2440619,
+          "rss_bytes": 3649536,
+          "start_ticks": "26118942"
+        },
+        {
+          "argv": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -notrace -mode batch -source /tools/Xilinx/Vivado/2021.1/scripts/rt/data/task_worker.tcl -nolog -nojournal -tclargs SYNTH_DESIGN_PARENT2432788_0_1794449468_cfg SYNTH_DESIGN_PARENT2432788_0_1794449468_buf SYNTH_DESIGN_PARENT2432788_1794449468 xcu280-fsvh2892-2L-e ",
+          "cpu_ticks": 2139,
+          "cpus_allowed": "220-221",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2440641,
+          "rss_bytes": 2213134336,
+          "start_ticks": "26118953"
+        },
+        {
+          "argv": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/vivado -notrace -mode batch -source /tools/Xilinx/Vivado/2021.1/scripts/rt/data/task_worker.tcl -nolog -nojournal -tclargs SYNTH_DESIGN_PARENT2432788_1_1794449470_cfg SYNTH_DESIGN_PARENT2432788_1_1794449470_buf SYNTH_DESIGN_PARENT2432788_1794449468 xcu280-fsvh2892-2L-e ",
+          "cpu_ticks": 0,
+          "cpus_allowed": "220-221",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2441256,
+          "rss_bytes": 3436544,
+          "start_ticks": "26119140"
+        },
+        {
+          "argv": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/loader -exec vivado -notrace -mode batch -source /tools/Xilinx/Vivado/2021.1/scripts/rt/data/task_worker.tcl -nolog -nojournal -tclargs SYNTH_DESIGN_PARENT2432788_1_1794449470_cfg SYNTH_DESIGN_PARENT2432788_1_1794449470_buf SYNTH_DESIGN_PARENT2432788_1794449468 xcu280-fsvh2892-2L-e ",
+          "cpu_ticks": 0,
+          "cpus_allowed": "220-221",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2441282,
+          "rss_bytes": 3665920,
+          "start_ticks": "26119163"
+        },
+        {
+          "argv": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -notrace -mode batch -source /tools/Xilinx/Vivado/2021.1/scripts/rt/data/task_worker.tcl -nolog -nojournal -tclargs SYNTH_DESIGN_PARENT2432788_1_1794449470_cfg SYNTH_DESIGN_PARENT2432788_1_1794449470_buf SYNTH_DESIGN_PARENT2432788_1794449468 xcu280-fsvh2892-2L-e ",
+          "cpu_ticks": 2128,
+          "cpus_allowed": "220-221",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2441315,
+          "rss_bytes": 2213105664,
+          "start_ticks": "26119192"
+        }
+      ],
+      "properties": {
+        "ActiveState": "active",
+        "ControlGroup": "/system.slice/ec-opt4-auto-address-bucket-mcrams-area-r2-8491167d.service",
+        "MainPID": "2432686",
+        "SubState": "running"
+      },
+      "unit": "ec-opt4-auto-address-bucket-mcrams-area-r2-8491167d.service"
+    },
+    {
+      "processes": [],
+      "properties": {
+        "ActiveState": "inactive",
+        "ControlGroup": "",
+        "MainPID": "0",
+        "SubState": "dead"
+      },
+      "unit": "ec-opt4-auto-matched-single-boom-gg-r1-8491167d.service"
+    }
+  ]
+}

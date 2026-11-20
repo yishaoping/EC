@@ -1,0 +1,65 @@
+{
+  "utc": "2026-11-14T03:04:43.602906+00:00",
+  "profile": "EC Performance-Only",
+  "hardware_commit": "6e1e9b966d599c442b3bdf2f3a838aae2ee5c6da",
+  "implementation_branch_commit": "415cef8fbea49c213cffb5397cf7f389c51058a1",
+  "actual_host_clock_probe": {
+    "period_ns": 66.64,
+    "mhz": 15.006002400960384,
+    "nominal_mhz": 15,
+    "physical_mmcm_divider": 80,
+    "reference_scope": "Existing complete U280 shell checkpoint; Mem-shell implementation repeats the gate",
+    "clock_contract": [
+      "buildtop_reference_clock master=lopt nominal_MHz=15 actual_period_ns=66.640 actual_MHz=15.006002400960384 mmcm_divide=80.0 setup=1 hold=0",
+      "tileClockGroup_tile_1 master=lopt nominal_MHz=15 actual_period_ns=66.640 actual_MHz=15.006002400960384 mmcm_divide=80.0 setup=2 hold=1"
+    ]
+  },
+  "cdc_mem_synthesis": {
+    "status": "RUNNING_DUT_SYNTH",
+    "actual_four_queue_bram_inference": [
+      "|ghm_u_data_cdc_3                                                           | source/mem_reg                                                                                                           | 256 x 305(NO_CHANGE)   | W |   | 256 x 305(WRITE_FIRST) |   | R | Port A and B     | 1      | 4      |                               |",
+      "|ghm_u_data_cdc_2                                                           | source/mem_reg                                                                                                           | 256 x 305(NO_CHANGE)   | W |   | 256 x 305(WRITE_FIRST) |   | R | Port A and B     | 1      | 4      |                               |",
+      "|ghm_u_data_cdc_1                                                           | source/mem_reg                                                                                                           | 256 x 305(NO_CHANGE)   | W |   | 256 x 305(WRITE_FIRST) |   | R | Port A and B     | 1      | 4      |                               |",
+      "|ghm_u_data_cdc_0                                                           | source/mem_reg                                                                                                           | 256 x 305(NO_CHANGE)   | W |   | 256 x 305(WRITE_FIRST) |   | R | Port A and B     | 1      | 4      |                               |"
+    ],
+    "whole_shell_resources": null
+  },
+  "slr_new_comparison": null,
+  "new_legal_routing": null,
+  "new_wns_tns_whs_ths": null,
+  "bitstream_generated": false,
+  "services": {
+    "ec-performance-only-memory-cdc-full-r3-20261114.service": "active",
+    "ec-performance-only-cdc-lowfreq-r1-20261114.service": "active",
+    "ec-performance-only-lowfreq-clock-probe-r2-20261114.service": "active",
+    "ec-performance-only-cdc-lowfreq-followthrough-r1-20261114.service": "active"
+  },
+  "healthy_tasks_restarted": false,
+  "new_parallel_full_implementation_started": false,
+  "changed_rtl_this_turn": false,
+  "new_background_model_requests": false,
+  "fpga_access": false,
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-memory-cdc-r2-20261114/complete-shell-r3/dut_synth-attempt-1.log": {
+      "bytes": 458213,
+      "mtime_ns": 1794624849640202278
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/clock-probe/vivado.log": {
+      "bytes": 46467,
+      "mtime_ns": 1794625353809377134
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-routability-r1-20261114/candidates/muxf-remap-spread-r1/vivado.log": {
+      "bytes": 53375,
+      "mtime_ns": 1794625222291141988
+    }
+  },
+  "driver_interface_audit": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/driver-interface-audit.json",
+    "sha256": "a5d66c3052a9d8c591dae892c9c977741b235d36aa2c5d82082b4478a292ed79"
+  },
+  "script_validation": [
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/deferred-flow-validation.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/followthrough-validation.json"
+  ],
+  "next_action": "Existing Mem DUT synth -> top synth -> real shell post-opt -> wait existing physical owner ->15MHz congestion-aware implementation -> strict legal-route/all-STA/DRC ->bitstream;10MHz distinct or legal-checkpoint reuse fallback"
+}

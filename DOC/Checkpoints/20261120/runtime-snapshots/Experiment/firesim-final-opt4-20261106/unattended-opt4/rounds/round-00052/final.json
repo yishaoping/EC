@@ -1,0 +1,28 @@
+{
+  "changed_files": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-memmodel-host-round52-v1-20261112/controller.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-memmodel-host-round52-v1-20261112/submit.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-memmodel-host-round52-v1-20261112/gate-preflight.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-queue-induction-round52-v3-20261112/result.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-blackscholes-result-audit-round52-v2-20261112/result.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/opt4-round52-queue-proof-and-host-continuation-20261111T174920Z/REPORT.md",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/opt4-round52-queue-proof-and-host-continuation-20261111T174920Z/changed-files.json"
+  ],
+  "evidence": [
+    "Actual owner-channel queues: nine universal SAT obligations passed; nine mutations rejected. Queue transport evidence only.",
+    "Blackscholes CPU GoldenGate completed: 6,166,433 ROI cycles, correct checksum, 1,122 joined full-compare PASS/BOOM acceptances, pending zero.",
+    "Independent audit verified all 3,193,978,964 raw stdout/stderr bytes and rejected four event mutations.",
+    "Corrected four-memory continuation passed 12 admission checks; remains unsubmitted pending both P0 completion receipts.",
+    "Full Opt4 remains NOT FIT: 2,847,382 LUT, excess 1,543,702. No certified bitstream or FPGA sample. Existing jobs and guards preserved."
+  ],
+  "launched_jobs": [
+    "owner-queue-induction-r52-v1-3656aec4: pre-proof rejection preserved",
+    "owner-queue-induction-r52-v2-3656aec4: SAT stages completed; packaging failure preserved",
+    "owner-queue-induction-r52-v3-3656aec4: finalized saved proofs successfully without rerunning",
+    "blackscholes-result-audit-r52-v2-8491167d: completed successfully"
+  ],
+  "next_action": "After at least 300 seconds, adopt SVB replay and owner-pair receipts, then run the prepared submit.py --check. Submit the singleton host transform only after both exact PASS receipts and producer exit. Preserve physical recovery guards; check e0 at intervals of at least 600 seconds.",
+  "outcome": "PROGRESS",
+  "retry_after_seconds": 300,
+  "summary": "Round 52 sealed queue proofs, audited new Blackscholes simulator data, and prepared a corrected host continuation. FPGA success remains outstanding."
+}

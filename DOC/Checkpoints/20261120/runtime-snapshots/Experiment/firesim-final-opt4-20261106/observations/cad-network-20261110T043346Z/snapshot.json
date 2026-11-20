@@ -1,0 +1,202 @@
+{
+  "observed_utc": "2026-11-10T04:33:46.239548+00:00",
+  "read_only_cad_and_fpga": true,
+  "runs": {
+    "design_1_firesim_wrapper_0_0_synth_1": {
+      "exists": true,
+      "files": {
+        ".vivado.begin.rst": {
+          "bytes": 210,
+          "mtime_utc": "2026-11-09T01:39:45.765448+00:00"
+        },
+        "runme.log": {
+          "bytes": 5892533,
+          "mtime_utc": "2026-11-10T00:24:44.291856+00:00"
+        },
+        "design_1_firesim_wrapper_0_0_sim_netlist.v": {
+          "bytes": 4538579247,
+          "mtime_utc": "2026-11-10T00:24:44.079851+00:00"
+        },
+        "design_1_firesim_wrapper_0_0.dcp": {
+          "bytes": 3339470089,
+          "mtime_utc": "2026-11-10T00:14:44.037245+00:00"
+        },
+        "design_1_firesim_wrapper_0_0_stub.vhdl": {
+          "bytes": 8509,
+          "mtime_utc": "2026-11-10T00:15:06.789406+00:00"
+        },
+        "__synthesis_is_running__": {
+          "bytes": 0,
+          "mtime_utc": "2026-11-09T01:39:54.231967+00:00"
+        },
+        "design_1_firesim_wrapper_0_0_sim_netlist.vhdl": {
+          "bytes": 2778746880,
+          "mtime_utc": "2026-11-10T04:33:30.374420+00:00"
+        },
+        "design_1_firesim_wrapper_0_0_stub.v": {
+          "bytes": 8153,
+          "mtime_utc": "2026-11-10T00:14:56.305332+00:00"
+        }
+      }
+    },
+    "synth_1": {
+      "exists": true,
+      "files": {}
+    },
+    "impl_1": {
+      "exists": false,
+      "files": {}
+    }
+  },
+  "processes": {
+    "11088": {
+      "state": "S",
+      "start_ticks": "10629",
+      "cpu_seconds": 97245.59,
+      "rss_bytes": 33775095808
+    },
+    "5526": {
+      "state": "T",
+      "start_ticks": "2644",
+      "cpu_seconds": 38.78,
+      "rss_bytes": 17309696
+    },
+    "5893": {
+      "state": "S",
+      "start_ticks": "2900",
+      "cpu_seconds": 0.0,
+      "rss_bytes": 3223552
+    }
+  },
+  "cad-wall-limit-guard-state.json": {
+    "cad_child": {
+      "cmdline": "runuser -u guozh -- nice -n 15 /tools/Xilinx/Vivado/2021.1/bin/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261109T013827Z/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261109T013827Z/resume_cad.tcl -tclargs /var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z resume ",
+      "pid": 5893,
+      "ppid": 5526,
+      "start_ticks": "2900",
+      "state": "S"
+    },
+    "disk_free_gib": 303.48827743530273,
+    "events": [
+      {
+        "action": "PAUSE_ONLY_PYTHON_WRAPPER",
+        "pid": 5526,
+        "resume_elapsed_seconds": 83019.59569732203,
+        "utc": "2026-11-10T00:42:27.657668+00:00"
+      }
+    ],
+    "fpga_access": false,
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "no_project_input_changes": true,
+    "no_vivado_signals": true,
+    "pause_at_resume_elapsed_seconds": 82800,
+    "pid": 328014,
+    "reason": "24h total wall limit would kill active CAD after completed 22h synthesis; preserve the exact CAD process and final certification",
+    "resume_elapsed_seconds": 96823.743325231,
+    "schema": "ec-cad-wall-limit-guard/1",
+    "start_ticks": "8246794",
+    "started_utc": "2026-11-10T00:32:27.546029+00:00",
+    "status": "VIVADO_CONTINUES_WRAPPER_LIMIT_SUSPENDED",
+    "updated_utc": "2026-11-10T04:32:31.805304+00:00",
+    "wrapper": {
+      "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_bitstream.py ",
+      "pid": 5526,
+      "ppid": 5514,
+      "start_ticks": "2644",
+      "state": "S"
+    },
+    "wrapper_paused": true
+  },
+  "cad-runtime-progress-latest.json": {
+    "cad_status": "RUNNING",
+    "observed_utc": "2026-11-10T04:29:02.349962+00:00",
+    "rows": [
+      {
+        "children": [
+          "11067"
+        ],
+        "cpu_seconds": 0.0,
+        "pid": 11048,
+        "rss_kib": "3096",
+        "run": "design_1_firesim_wrapper_0_0_synth_1",
+        "start_ticks": "10614",
+        "state": "S"
+      },
+      {
+        "children": [
+          "11088"
+        ],
+        "cpu_seconds": 0.01,
+        "pid": 11067,
+        "rss_kib": "3120",
+        "run": "design_1_firesim_wrapper_0_0_synth_1",
+        "start_ticks": "10618",
+        "state": "S"
+      },
+      {
+        "children": [],
+        "cpu_seconds": 96961.9,
+        "pid": 11088,
+        "rss_kib": "33046568",
+        "run": "design_1_firesim_wrapper_0_0_synth_1",
+        "start_ticks": "10629",
+        "state": "S"
+      }
+    ]
+  },
+  "fpga-continuation-state.json": {
+    "apps_manifest_sha256": "0ccb15ae6db46dd4f3c3c098823e33596012d8f6cab7dddcdcf04f90d498ea4a",
+    "cad_elapsed_seconds": 120019.21654489601,
+    "cad_status": "RUNNING",
+    "cad_updated_utc": "2026-11-10T00:42:08.082434+00:00",
+    "deployment_count": 0,
+    "firmware_sha256": "7546b77fd5f039488b604763b952bcacc6cad0792bd109666b61dc2b27987c34",
+    "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "heartbeat_utc": "2026-11-10T04:32:01.147220+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 325066,
+    "rootfs_sha256": "427d0b923bc2be77b67ba0ff11efd47bb83c7bbf28fd990e10c658dcf7178711",
+    "samples": [],
+    "schema": "ec-final-c4-continuation/2",
+    "software_receipts": {
+      "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/formal-apps-build.json",
+      "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+      "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/formal-firmware-build.json",
+      "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/formal-rootfs-build.json"
+    },
+    "stage": "CAD",
+    "start_ticks": "8213689",
+    "started_utc": "2026-11-10T00:26:56.497414+00:00",
+    "status": "WAITING_FOR_EXACT_C4_BITSTREAM",
+    "target_bdf": "0000:21:00.0",
+    "target_serial": "21770433G02LA"
+  },
+  "active-0000_21_00.0.json": {
+    "board_bdf": "0000:21:00.0",
+    "board_serial": "21770433G02LA",
+    "configuration": "Native",
+    "elapsed_seconds": 6213.416278186996,
+    "ended_utc": "2026-11-09T23:49:50.044459+00:00",
+    "guest_command_ended": false,
+    "guest_ready": true,
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "identity_sha256": "a781ff4d2e7b8af622575963b62b5ddc7473c078643d3c52f03bc0b5003b4a3b",
+    "input": "simmedium",
+    "issues": [],
+    "log_bytes": 146292,
+    "max_log_gib": 4,
+    "pgid": 176956,
+    "pid": 176956,
+    "program": "netdedup",
+    "repetition": 3,
+    "run_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-netdedup-simmedium-r3-20261109T220613Z",
+    "run_id": "native-netdedup-simmedium-r3-20261109T220613Z",
+    "schema": "ec-isolated-fpga-sample-state/1",
+    "sequence": 208,
+    "start_ticks": "7369400",
+    "started_utc": "2026-11-09T22:06:13.573021+00:00",
+    "status": "COMPLETE",
+    "uart_bytes": 10941,
+    "updated_utc": "2026-11-09T23:49:46.989633+00:00"
+  }
+}

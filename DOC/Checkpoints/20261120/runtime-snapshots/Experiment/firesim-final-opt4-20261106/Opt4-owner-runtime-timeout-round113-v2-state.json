@@ -1,0 +1,110 @@
+{
+  "cpu_ticks": 14,
+  "cpus": [
+    250,
+    251
+  ],
+  "error": "AssertionError({'passed': False, 'first_mismatch': {'channel': 'all_other_complete_lines', 'index': 1436322, 'mc_offset': 197894394, 'plain_offset': 197894394, 'mc': 'locs created\\n', 'plain': 'STAGE1_TX S1 source=DCACHE cycle=0000000000040b48 line=0080040bc0 set=2f way=0 epoch=0006 gen=00000000 mshr=00 txn=00000000 req=000000000001466b effect=0000000000000000 pc=0080035ab2 cmd=00\\n'}, 'counts': {'mc': {'raw_bytes': 848232449, 'raw_lines': 6033635, 'uart_bytes': 162, 'other_bytes': 848232287, 'other_lines': 6033631, 'partial_bytes': 0, 'uart_rows': ['[INIT] checker_mask=0xf status=ready\\n', '[INIT] software_interrupt=pass\\n', '[RUN] hart=0 status=started\\n', '[CONFIG] common_abi=1 harts=5 timer_stride=64 legacy_readback=off\\n'], 'raw_sha256': '58267d853c22f821e4f3b43f1f704ff63044d5fb79f7b10899a02c1bf4d3f057', 'uart_sha256': '2583389fa171a2214f7c3b5b2a2154655df5b965be4284fa21f9931895083327', 'other_sha256': '035899b3a579ce1764d47ef4667a235dd91b55833f556045740e682cca510af6'}, 'plain': {'raw_bytes': 1370938735, 'raw_lines': 9902202, 'uart_bytes': 162, 'other_bytes': 1370938573, 'other_lines': 9902198, 'partial_bytes': 0, 'uart_rows': ['[INIT] checker_mask=0xf status=ready\\n', '[INIT] software_interrupt=pass\\n', '[RUN] hart=0 status=started\\n', '[CONFIG] common_abi=1 harts=5 timer_stride=64 legacy_readback=off\\n'], 'raw_sha256': '4a5759de06925e98eb8da1d3e1b503b086bd85961ddedc28f447230e6daa0ae9', 'uart_sha256': '2583389fa171a2214f7c3b5b2a2154655df5b965be4284fa21f9931895083327', 'other_sha256': '94c01a0cc3678678fe1d1fb9b81d94504e0c94788839b2afa63a7db84a29050b'}}, 'compared_other_lines': 6033631, 'plain_other_prefix_sha256': 'dc01ae78f39d05a4c6ed0140a47052cd79c0a8ec9da3036f0e50fcbe4d308700', 'uart_match': True, 'normalized_bytes': 0, 'dropped_complete_lines': 0, 'complete_target_cycle_equivalence': False, 'roi_complete': False, 'scope': 'Exact finite stdout prefix within UART and all-other transports; no UART/RTL interleaving equivalence claim.', 'status': 'FAIL_LOG_PREFIX_MISMATCH_NO_RUNTIME', 'mc_log': '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-runtime-r1-20261111/run-MCRams.log', 'plain_log': '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-runtime-r1-20261111/run-Plain.log', 'elf_sha256': 'd0d0e9ae99bd963aeed84a8b395e7096f54985d117d11542d553a38680b8397b', 'mutation_receipt_sha256': '18f429affe4801f1354145b73409fa3d04bf28ef8c6dded37eafbba3365afc69', 'prior_r113_failure_sha256': '0f0fcfc11bcff55906c38d1b1e7c0d03a6b09d93c201ef8123a0822660c94a2a', 'prior_v1_failure_sha256': '52d9494aee012a08de64fa908a70c1facf5d00f564408d3ca3494634f33e1a3a', 'prior_v2_failure_sha256': '3b1d4f79d057ec811a46c14603bf8526d35599921fe9897b1d8313059673e051', 'original_target_timestamps_unchanged': True, 'full_target_equivalence': False})",
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "no_compile": true,
+  "pid": 2381181,
+  "predecessor_exit_guard": {
+    "original": {
+      "exact_cgroups": [
+        {
+          "exists": false,
+          "path": "/sys/fs/cgroup/system.slice/ec-opt4-auto-owner-pair-runtime-r1-3656aec4.service",
+          "process_files": 0
+        },
+        {
+          "exists": false,
+          "path": "/sys/fs/cgroup/systemd/system.slice/ec-opt4-auto-owner-pair-runtime-r1-3656aec4.service",
+          "process_files": 0
+        }
+      ],
+      "unit": {
+        "ActiveState": "inactive",
+        "ControlGroup": "",
+        "MainPID": "0",
+        "SubState": "dead"
+      },
+      "unit_name": "ec-opt4-auto-owner-pair-runtime-r1-3656aec4.service"
+    },
+    "v1": {
+      "exact_cgroups": [
+        {
+          "exists": false,
+          "path": "/sys/fs/cgroup/system.slice/ec-opt4-auto-owner-runtime-timeout-r58-v1-3656aec4.service",
+          "process_files": 0
+        },
+        {
+          "exists": false,
+          "path": "/sys/fs/cgroup/systemd/system.slice/ec-opt4-auto-owner-runtime-timeout-r58-v1-3656aec4.service",
+          "process_files": 0
+        }
+      ],
+      "unit": {
+        "ActiveState": "inactive",
+        "ControlGroup": "",
+        "MainPID": "0",
+        "SubState": "dead"
+      },
+      "unit_name": "ec-opt4-auto-owner-runtime-timeout-r58-v1-3656aec4.service"
+    },
+    "v113": {
+      "exact_cgroups": [
+        {
+          "exists": false,
+          "path": "/sys/fs/cgroup/system.slice/ec-opt4-auto-owner-runtime-timeout-r113-v1-3656aec4.service",
+          "process_files": 0
+        },
+        {
+          "exists": false,
+          "path": "/sys/fs/cgroup/systemd/system.slice/ec-opt4-auto-owner-runtime-timeout-r113-v1-3656aec4.service",
+          "process_files": 0
+        }
+      ],
+      "unit": {
+        "ActiveState": "inactive",
+        "ControlGroup": "",
+        "MainPID": "0",
+        "SubState": "dead"
+      },
+      "unit_name": "ec-opt4-auto-owner-runtime-timeout-r113-v1-3656aec4.service"
+    },
+    "v2": {
+      "exact_cgroups": [
+        {
+          "exists": false,
+          "path": "/sys/fs/cgroup/system.slice/ec-opt4-auto-owner-runtime-timeout-r58-v2-3656aec4.service",
+          "process_files": 0
+        },
+        {
+          "exists": false,
+          "path": "/sys/fs/cgroup/systemd/system.slice/ec-opt4-auto-owner-runtime-timeout-r58-v2-3656aec4.service",
+          "process_files": 0
+        }
+      ],
+      "unit": {
+        "ActiveState": "inactive",
+        "ControlGroup": "",
+        "MainPID": "0",
+        "SubState": "dead"
+      },
+      "unit_name": "ec-opt4-auto-owner-runtime-timeout-r58-v2-3656aec4.service"
+    }
+  },
+  "process_state": "R",
+  "production_admission": false,
+  "rss_bytes": 17461248,
+  "schema": "ec-owner-timeout-recovery/2",
+  "start_ticks": "25836214",
+  "started_utc": "2026-11-12T01:24:01.901629+00:00",
+  "status": "FAILED_WITH_EVIDENCE",
+  "target_changed": false,
+  "updated_utc": "2026-11-12T01:24:17.695112+00:00",
+  "whole_fit": false
+}

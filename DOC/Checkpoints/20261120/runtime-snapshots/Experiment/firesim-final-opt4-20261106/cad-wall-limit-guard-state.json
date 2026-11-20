@@ -1,0 +1,39 @@
+{
+  "cad_child": {
+    "cmdline": "runuser -u guozh -- nice -n 15 /tools/Xilinx/Vivado/2021.1/bin/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261109T013827Z/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261109T013827Z/resume_cad.tcl -tclargs /var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z resume ",
+    "pid": 5893,
+    "ppid": 5526,
+    "start_ticks": "2900",
+    "state": "S"
+  },
+  "disk_free_gib": 300.32018280029297,
+  "events": [
+    {
+      "action": "PAUSE_ONLY_PYTHON_WRAPPER",
+      "pid": 5526,
+      "resume_elapsed_seconds": 83019.59569732203,
+      "utc": "2026-11-10T00:42:27.657668+00:00"
+    }
+  ],
+  "fpga_access": false,
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "no_project_input_changes": true,
+  "no_vivado_signals": true,
+  "pause_at_resume_elapsed_seconds": 82800,
+  "pid": 328014,
+  "reason": "24h total wall limit would kill active CAD after completed 22h synthesis; preserve the exact CAD process and final certification",
+  "resume_elapsed_seconds": 117530.287702488,
+  "schema": "ec-cad-wall-limit-guard/1",
+  "start_ticks": "8246794",
+  "started_utc": "2026-11-10T00:32:27.546029+00:00",
+  "status": "VIVADO_CONTINUES_WRAPPER_LIMIT_SUSPENDED",
+  "updated_utc": "2026-11-10T10:17:38.349672+00:00",
+  "wrapper": {
+    "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_bitstream.py ",
+    "pid": 5526,
+    "ppid": 5514,
+    "start_ticks": "2644",
+    "state": "S"
+  },
+  "wrapper_paused": true
+}

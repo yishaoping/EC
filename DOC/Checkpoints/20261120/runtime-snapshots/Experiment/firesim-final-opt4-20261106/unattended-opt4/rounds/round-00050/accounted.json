@@ -1,0 +1,49 @@
+{
+  "result": {
+    "changed_files": [
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-channel-composition-round50-v3-20261111/audit.py",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-channel-composition-round50-v3-20261111/controller.py",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/owner-channel-composition-r50-v3-3656aec4.json",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/opt4-round50-channel-composition-20261111T170530Z/REPORT.md",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/opt4-round50-channel-composition-20261111T170530Z/changed-files.json"
+    ],
+    "evidence": [
+      "Broker audit completed successfully: 109 channels checked; nine mutations rejected. Connectivity evidence only, not full equivalence or FIT.",
+      "Immutable result SHA256: 45111dc0049ebb33622992ed4229bd6a2e0d5066c362955a4519cf546d7d738f.",
+      "Both SVB physical routes failed timing. Spread recovery attempts stopped before CAD at the unchanged load<48 guard.",
+      "Full Opt4 remains NOT FIT: 2,847,382 LUT, excess 1,543,702. Existing e0 and runtime jobs preserved; no FPGA sample."
+    ],
+    "launched_jobs": [
+      "ec-opt4-auto-owner-channel-composition-r50-v3-3656aec4.service \u2014 completed successfully"
+    ],
+    "next_action": "Adopt live replay/runtime jobs at >=300-second cadence and e0 at >=600 seconds. Validate replay completion; prepare versioned physical recovery that defers until existing resource guards pass.",
+    "outcome": "PROGRESS",
+    "retry_after_seconds": 300,
+    "summary": "Completed and sealed the owner-memory wiring audit. Preserved failed versions and physical evidence; no RTL or FPGA changes."
+  },
+  "utc": "2026-11-11T17:08:39.087954+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 2069574,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "22722252"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-11T17:08:25.286192+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 2069573,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00050",
+    "rss_bytes": 13574144,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "22722249",
+    "started_utc": "2026-11-11T16:45:02.088737+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-11T17:08:25.283906+00:00"
+  }
+}

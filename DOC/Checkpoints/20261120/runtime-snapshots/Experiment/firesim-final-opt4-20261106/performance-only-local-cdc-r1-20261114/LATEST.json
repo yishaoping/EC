@@ -1,0 +1,47 @@
+{
+  "utc": "2026-11-14T01:28:59.387736+00:00",
+  "status": "RUNNING_EQUIVALENCE_WITH_AREA_AND_HOST_CONTINUATIONS",
+  "hardware_commit": "b4fc2cf1f96b05c257de7a6c4e2d39ab4d344e32",
+  "finite_target_validation": {
+    "status": "PASS_ACTUAL_QUEUE_FINITE_CYCLES_NOT_FULL_HOST_EQUIVALENCE",
+    "utc": "2026-11-14T01:15:53.436714+00:00",
+    "functional_baseline": "6fada307",
+    "fpga_access": false,
+    "full_system_equivalence": false,
+    "receipt": "LOCAL_CDC_PAIR_PASS ticks=200000 writes=20942 reads=19928 full=24005 backpressure=13327 peak=256 reset_checks=244 invalid_payload_compared=1",
+    "source_sha256": "1b60ea813d565c0891a9a4ee317519619d34cca7d97514fe0ed33a0f4e5b323a",
+    "capacity": 256,
+    "payload_bits": 305,
+    "sync_stages": 2,
+    "safety_unchanged": true,
+    "scope": "Actual production AsyncQueue class, narrow false versus true; every output including invalid payload, independent clocks/resets. Full Golden Gate host and whole system equivalence pending."
+  },
+  "services": {
+    "ec-performance-only-local-cdc-validation-r2-20261114.service": [
+      "MainPID=0",
+      "ExecMainStatus=0",
+      "ActiveState=inactive"
+    ],
+    "ec-performance-only-local-cdc-formal-r2-20261114.service": [
+      "MainPID=1685167",
+      "ExecMainStatus=0",
+      "ActiveState=active"
+    ],
+    "ec-performance-only-local-cdc-area-r1-20261114.service": [
+      "MainPID=1685619",
+      "ExecMainStatus=0",
+      "ActiveState=active"
+    ],
+    "ec-performance-only-local-cdc-host-r1-20261114.service": [
+      "MainPID=1688877",
+      "ExecMainStatus=0",
+      "ActiveState=active"
+    ]
+  },
+  "formal_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-local-cdc-r1-20261114/formal-r2/proof.log",
+  "area_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-local-cdc-r1-20261114/area-r1/state.json",
+  "host_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-local-cdc-r1-20261114/host-r1/state.json",
+  "fpga_access": false,
+  "model_requests": false,
+  "full_system_equivalence": false
+}

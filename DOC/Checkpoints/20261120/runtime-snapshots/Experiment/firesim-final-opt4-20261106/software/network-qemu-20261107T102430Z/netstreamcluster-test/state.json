@@ -1,0 +1,106 @@
+{
+  "binaries": {
+    "client/client": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netstreamcluster/client/client",
+      "sha256": "784d47e5e59f4132d067af3a6322bae8765fc2d6ff0c6e7a2cf2a2867085da28"
+    },
+    "server/server": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netstreamcluster/server/server",
+      "sha256": "49620ddf67269afd1c649c9f6cd014731be1b3e5701896afdc6fafeec0fcfb8a"
+    }
+  },
+  "children": {
+    "client": {
+      "cmdline": "nice -n 15 /usr/bin/qemu-riscv64 -strace /data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netstreamcluster/client/client 1 10 10 1 ",
+      "pid": 2267393,
+      "process_state": "R",
+      "start_ticks": "1522857"
+    },
+    "server": {
+      "cmdline": "nice -n 15 /usr/bin/qemu-riscv64 -strace /data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netstreamcluster/server/server 2 5 1 10 10 5 none output.txt 1 ",
+      "pid": 2267394,
+      "process_state": "R",
+      "start_ticks": "1522857"
+    }
+  },
+  "client_argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netstreamcluster/client/client",
+    "1",
+    "10",
+    "10",
+    "1"
+  ],
+  "correctness": {
+    "method": "complete clustering output produced; cross-reference comparison remains pending",
+    "passed": false
+  },
+  "ended_utc": "2026-11-07T10:24:31.142407+00:00",
+  "exit_codes": {
+    "client": 0,
+    "server": 0
+  },
+  "formal_eligible": false,
+  "fpga_run": false,
+  "host_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "input": "test",
+  "input_archive": null,
+  "mapping_note": "simmedium invokes original simlarge for netstreamcluster; netdedup candidate separates server/client flags and uses unchanged formal archive",
+  "namespaces": {
+    "ipc": "ipc:[4026536205]",
+    "mnt": "mnt:[4026534855]",
+    "net": "net:[4026536206]"
+  },
+  "output": {
+    "bytes": 44,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102430Z/netstreamcluster-test/work/output.txt",
+    "sha256": "df19d532b26216389f8f6f12139376aa48e81a12ffad0fb25b3685d92ef2e804"
+  },
+  "pid": 2267385,
+  "private_ipc_namespace": true,
+  "private_mount_namespace": true,
+  "private_network_namespace": true,
+  "program": "netstreamcluster",
+  "roi": "Original application hook sites; diagnostic writes only, no checker claim",
+  "roi_diagnostic": {
+    "begin_seen": true,
+    "end_seen": true,
+    "source": "server.log; diagnostic marker writes remain visible",
+    "syscall_counts": {
+      "brk": 9,
+      "clock_gettime": 284,
+      "clock_nanosleep": 1010,
+      "clone": 5,
+      "close": 4,
+      "futex": 40,
+      "mmap": 12,
+      "mprotect": 9,
+      "munmap": 10,
+      "newfstatat": 4,
+      "openat": 5,
+      "read": 1,
+      "rt_sigprocmask": 17,
+      "sched_setaffinity": 5,
+      "shmat": 2,
+      "shmget": 2,
+      "write": 4
+    },
+    "time_base": "host QEMU trace order only; no target cycles or checker latency"
+  },
+  "schema": "ec-network-qemu-case/1",
+  "server_argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netstreamcluster/server/server",
+    "2",
+    "5",
+    "1",
+    "10",
+    "10",
+    "5",
+    "none",
+    "output.txt",
+    "1"
+  ],
+  "source_receipt_sha256": "410cc47a1e165729e3f0616841d2104560fc6a68c642b9daaf07e71a32abf0d3",
+  "start_ticks": "1522851",
+  "status": "PROTOCOL_COMPLETED_REFERENCE_PENDING",
+  "wall_seconds": 0.32389272099862865
+}

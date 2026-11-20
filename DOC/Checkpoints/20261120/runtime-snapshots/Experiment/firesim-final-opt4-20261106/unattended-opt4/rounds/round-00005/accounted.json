@@ -1,0 +1,49 @@
+{
+  "result": {
+    "changed_files": [
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/reports/Opt4-rollback-injection-audit-20261111.md"
+    ],
+    "evidence": [
+      "Static audit is bound to 8da24a269b98a0d6a8f57b030353a310812c4344 / source ID 7e77ddda28298ac88be13c28dbe98771982bc6ca9587f810adf875bffd580cc1. The ROI request/peripheral expose no supported fault injector; the runtime verifier rejects FAIL/CANCELLED and records no rollback/restart observation. No simulation or hardware I/O was performed.",
+      "Best measured OOC module map remains round3: 1,153,226 LUT / 55,392 CARRY8 / 390,181 FF / 216 BRAM / 0 DSP. Heap maps 1,183,979 LUT / 54,885 CARRY8; 11edd sort maps 1,197,215 LUT / 56,065 CARRY8. These are module-only results, not whole-DUT FIT or full-DUT formal equivalence.",
+      "8da whole-DUT CAD remains RUNNING_DUT_SYNTH at dut_synth. Controller and child PID/start_ticks match the current boot ID. Four broker jobs were identity-verified live: address-decode-r1-aeabe5ab, address-decode-r2-579904b2, address-delta-r3-56711a00, and address-resource-collection-r1.",
+      "11edd runtime templates are prepared with the authorized board descriptor; start_runtime is DEFERRED pending a certifiable bitstream. No bitstream, deployment, or FPGA sample is claimed."
+    ],
+    "launched_jobs": [
+      "adopted-live: ec-parsec-opt4-fit-cad.service (8da DUT synthesis)",
+      "adopted-live: ec-opt4-auto-address-decode-r1-aeabe5ab.service",
+      "adopted-live: ec-opt4-auto-address-decode-r2-579904b2.service",
+      "adopted-live: ec-opt4-auto-address-delta-r3-56711a00.service",
+      "adopted-live: ec-opt4-auto-address-resource-collection-r1.service"
+    ],
+    "next_action": "After the next broker completion event, collect candidate proof/map receipts and rank verified module results; keep the 8da CAD untouched until its real postopt capacity gate completes. Resume normal status checks no sooner than 300 seconds apart.",
+    "outcome": "WAITING_ACTIVE_JOB",
+    "retry_after_seconds": 300,
+    "summary": "Recorded the rollback/fault-injection interface gap with source hashes and a separate simulation-only validation path. Preserved the live whole-DUT CAD and adopted the four verified candidate jobs; no RTL was promoted."
+  },
+  "utc": "2026-11-10T18:21:40.654869+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 1191801,
+      "process_state": "R",
+      "rss_bytes": 421888,
+      "start_ticks": "14567311"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-10T18:21:36.276912+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 1191800,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00005",
+    "rss_bytes": 13840384,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "14567308",
+    "started_utc": "2026-11-10T18:05:52.679129+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-10T18:21:36.275805+00:00"
+  }
+}

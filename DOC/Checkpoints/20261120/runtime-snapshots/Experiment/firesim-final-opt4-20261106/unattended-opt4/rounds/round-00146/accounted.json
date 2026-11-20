@@ -1,0 +1,41 @@
+{
+  "result": {
+    "changed_files": [],
+    "evidence": [
+      "The existing PARSEC audit reports 8 first-round pairs, 24 matched CPU repeat pairs, 48 raw logs verified (12,725,037,573 bytes), and 24 historical Native FPGA receipts checked. It started no simulations and made no FPGA access; full-application and full-EC-FPGA slowdown fields remain null.",
+      "The published CPU slowdown ratios are blackscholes 1.044631x, fluidanimate 1.656558x, bodytrack 1.166570x, freqmine 2.812428x, swaptions 2.018889x, ferret 1.382848x, dedup 1.925680x, and streamcluster 2.006132x. The declared phase/reduced-input scopes do not establish full-application or simmedium performance.",
+      "The audit status is PARTIAL_WITH_EVIDENCE because historical Native FPGA Linux simmedium runs are not comparable to the current HTIF CPU profiles; all three historical blackscholes receipts are also invalid. The publication manifest's 15 listed artifact hashes match, and its summary hash is 3552162447b313f8e9aae79ff09c2448008178110926e25540280133d9e0cc54.",
+      "The existing packed full-module r1 owner remains RUNNING_MAP-REFERENCE: controller PID 3332996, start_ticks 29246727, boot_id d6c6e410-10ad-4326-86ba-79b657eabd96, in its existing user-service cgroup. Vivado PID 3368055 is still present. No owner or inputs were changed."
+    ],
+    "launched_jobs": [],
+    "next_action": "Recheck the existing packed full-module r1 owner after 300 seconds; preserve its current cgroup and inputs, and let its controller determine whether to proceed to candidate mapping. Do not duplicate CPU work, parity, area, CAD, or FPGA operations.",
+    "outcome": "WAITING_ACTIVE_JOB",
+    "retry_after_seconds": 300,
+    "summary": "Revalidated and reported the existing eight-profile Native/EC CPU results before any rerun. The CPU campaign is complete and its audit artifacts are intact; the partial label reflects historical FPGA comparison limits, not missing current CPU pairs. The existing full-module area owner is still active, so the next step is to wait for its result."
+  },
+  "utc": "2026-11-12T12:06:58.683742+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 3504998,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "29654358"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-12T12:06:50.851182+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 3504997,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00146",
+    "rss_bytes": 13656064,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "29654355",
+    "started_utc": "2026-11-12T12:00:23.153887+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-12T12:06:50.849056+00:00"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "changed_files": [
+    "Experiment/firesim-final-opt4-20261106/status-audits/round122-r4-failure-closure-20261112/collect.py",
+    "Experiment/firesim-final-opt4-20261106/status-audits/round122-r4-failure-closure-20261112/closure.json",
+    "Experiment/firesim-final-opt4-20261106/status-audits/round122-r4-failure-closure-20261112/repair-plan.json",
+    "Experiment/firesim-final-opt4-20261106/status-audits/round122-r4-failure-closure-20261112/recover-preroute-replication.tcl.in",
+    "Experiment/firesim-final-opt4-20261106/status-audits/round122-r4-failure-closure-20261112/REPORT.md",
+    "Experiment/firesim-final-opt4-20261106/status-audits/round122-r4-failure-closure-20261112/complete.json"
+  ],
+  "evidence": [
+    "r4 C result SHA256 c005f7e3edbaf4bf539e6758128f4868e59bb1777bca6ee580b09e863c93afe6: WNS -0.411ns, TNS -292.970ns, 2130 setup failures.",
+    "r4 D result SHA256 a2de13a30bd04ad69798b58f38fc77f490bd91f9c902f9368461a209659ba5b1: WNS -0.503ns, TNS -343.017ns, 2299 setup failures; zero route errors.",
+    "Evidence seal complete.json SHA256 12426c3958c04fd724c0e00dad79958aa18cb527382f09bd963e287b51916a1c: five artifact hashes verified; repair preserves all gate checks; actual Vivado execution untested."
+  ],
+  "launched_jobs": [],
+  "next_action": "Existing r51/r3 routes and MCRams capacity/parity continuations proceed automatically. Certification and21-only replay remain gated. Staged replication repair requires independent binding and installation by the existing authorized administrator.",
+  "outcome": "RECOVERABLE_FAILURE",
+  "retry_after_seconds": 600,
+  "summary": "r4 exhausted B/C/D without a certified bitstream. Preserved failures and prepared an unlaunched repair. Running: original r51/r3 routes, MCRams synthesis and owner-MC parity. No service reinstallation or FPGA access."
+}

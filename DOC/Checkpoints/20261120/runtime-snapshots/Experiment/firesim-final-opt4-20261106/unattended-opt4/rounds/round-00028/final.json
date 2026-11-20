@@ -1,0 +1,32 @@
+{
+  "changed_files": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-reservation-memory-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-reservation-memory-r1-20261111/lineage.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/reservation-memory-r1-20261111/Emit.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/reservation-memory-r1-20261111/binding-r2.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/reservation-memory-proof-r3-20261111/controller.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/reservation-memory-proof-r3-20261111/map-controller-r3.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-frozen-cycle-domain-r5-20261111/stimulus.cpp",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-frozen-cycle-domain-r5-20261111/controller.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/field-address-cycle-consumer-r3-20261111/controller.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/field-address-cycle-cad-r3-20261111/build.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/reservation-memory-proof-r3-20261111/round28-final-evidence-r1.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/reservation-memory-proof-r3-20261111/round28-report-r1.md"
+  ],
+  "evidence": [
+    "Frozen-DCache regression passed 8192 cycles, comparing 2534 signals/71589 bits, all 185 outputs and 512 generation taps with assertions enabled. Stimulus exercised no C-channel beats; this is not full formal proof.",
+    "Reservation candidate b746cf0d passed source reversal, typecheck, arbitrary-state SAT, mutation rejection, topology and 8192-cycle local storage comparison. Full-DCache verification and mapped gain remain pending.",
+    "reservation-map-r3-b746cf0d is DEFERRED by the broker's ten-job limit; it is queued, not running.",
+    "At the 07:30 UTC checkpoint, 9ae/e0 whole syntheses remained live without new capacity reports. No new FIT or FPGA sample established.",
+    "Complete 54-file hash manifest, source bindings, receipts and preserved failures: /data1/gzh/EC/firesim/final-opt4-20261106/candidates/reservation-memory-proof-r3-20261111/round28-final-evidence-r1.json"
+  ],
+  "launched_jobs": [
+    "dcache-frozen-cycle-domain-r5b-d9d73262: COMPLETE, return code 0",
+    "reservation-proof-r3-b746cf0d: COMPLETE, return code 0",
+    "field-address-cycle-consumer-r3-8d50489a: STARTED; waiting for actual component maps"
+  ],
+  "next_action": "Adopt reservation mapping when the existing broker admits it; consume actual d9/e211 map reports and verify composition gates. Preserve both live whole builds and launch no third. Prioritize implementation and certified runtime immediately upon actual FIT.",
+  "outcome": "PROGRESS",
+  "retry_after_seconds": 600,
+  "summary": "Frozen-DCache cycle regression and local reservation-memory verification passed. Composition continuation started; mapping remains queued. No measured reservation gain, new FIT or real FPGA result claimed."
+}

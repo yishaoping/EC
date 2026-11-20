@@ -1,0 +1,43 @@
+{
+  "schema": "ec-opt4-rollback-interface-audit/1",
+  "scope": "Static source audit only; no fault injected, no hardware I/O, no rollback/restart experiment claimed.",
+  "revision_boundary": {
+    "frozen_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "frozen_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+    "comparison_candidate": "aeabe5abe9f0ece2e024b5c8aa91a2c24fdfa4cb",
+    "identical_source_files": {
+      "C4/chipyard/generators/chipyard/src/main/scala/example/DacRoiPeripheral.scala": "28b4bae58b07125369b09a784dae4775f3949a748d7f9f7749474d491d0936a2",
+      "C4/chipyard/generators/rocket-chip/src/main/scala/util/DacRoi.scala": "e41828d04b47ad2a209defc28c700113e3a74e53451e00a846c0ab63df9c4ed2",
+      "C4/chipyard/generators/boom/src/main/scala/exu/rob.scala": "81406711678554e6fa40354b8f169bc3ebff4c3868d645c2df479572ff703b38"
+    }
+  },
+  "findings": [
+    {
+      "source": "C4/chipyard/generators/chipyard/src/main/scala/example/DacRoiPeripheral.scala:64-83",
+      "evidence": "The ROI register map writes command/epoch/satp/hart fields. Response state, counts, and faults (offset 0x90) are read-only. The peripheral has no fault-injection register or rollback-completion register.",
+      "status": "direct_source_observation"
+    },
+    {
+      "source": "C4/chipyard/generators/rocket-chip/src/main/scala/util/DacRoi.scala:34-48,76-80,100-136",
+      "evidence": "DacRoiController consumes ROI requests, retire markers, counters, busy, and trap. Request operations are arm=1, end=2, drain=3, abort=4. A trap while running or draining sets faults bit 8; count failures set bit 16. End/drain require faults==0. Abort requires !busy and generated==completed and reports idle; it does not report architectural rollback or restarted execution.",
+      "status": "direct_source_observation"
+    },
+    {
+      "source": "C4/chipyard/generators/boom/src/main/scala/exu/rob.scala:971-1029",
+      "evidence": "The ROB has an internal rollback FSM entered from exception_thrown in the normal non-commit-map-table configuration and emits commit.rollback internally. No ROI MMIO/request signal is connected as an injection input, and this interface exposes no rollback-completion counter.",
+      "status": "direct_source_observation"
+    },
+    {
+      "source": "software/apps-formal-20261106T123109Z/src/hooks/ec_dac_roi_uapi.h:8-12 and software/apps-formal-20261106T123109Z/src/hooks/dac_roi.c:43-77",
+      "evidence": "The software UAPI issues begin, end, drain, and checker query operations and emits ROI marker instructions. It contains no rollback/fault injection operation.",
+      "status": "direct_source_observation"
+    }
+  ],
+  "conclusion": "No supported ROI firmware/software injection plus architectural rollback/restart completion observation interface was found in the audited source path. An ROI fault bit, abort, cancelled request, ordinary drain, or checker completion alone cannot establish rollback and restart.",
+  "next_safe_verification": "Use a separate simulation-only harness that injects a fault at an existing functional checker/error source, observes exception_thrown and ROB rollback state through completion, then runs the identical application after recovery and checks its full output. First identify and bind that exact injection source in the generated RTL. Keep this harness outside frozen/live hardware and do not admit any result as an FPGA rollback sample.",
+  "proof_limits": [
+    "This is a bounded source audit, not proof that no unrelated test-only injection port exists anywhere in the repository.",
+    "No RTL, firmware, host driver, live systemd unit, or hardware input was changed.",
+    "No simulation or full-DUT formal equivalence was run for rollback/restart."
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "result": {
+    "changed_files": [
+      "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-group4-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/AddressBucketGrouped.scala",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-group4-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-group4-r1-20261111/controller.py",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-group4-r1-20261111/EmitGroup.scala",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-group4-r1-20261111/prepare.py",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-group4-r1-20261111/submit_bind2.py",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-group4-r1-20261111/input-hashes.json",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/runtime-candidates/981b890d.json",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-group4-r1-20261111/topology-preflight.json",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-group4-r1-20261111/inventory-delta.json",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00007/broker-binding-recovery.json",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00007/final.json"
+    ],
+    "evidence": [
+      "Committed group4 candidate 981b890d870130f99ec24a0c5e37acb39362318a on round3. Source ID: 632c20a179a83d030793d1d0f24add9c3f2acd99f84e8ddfe4a4a61da4a66e0d. Input-manifest SHA-256: af053acfbe12d3bc1cf5eb26970fb04ff5bd1846ae9686ae9f44e265c5704a44.",
+      "Only the histogram replacement and new helper differ among 6,611 source inventory entries. Source outside the histogram remains byte-identical to round3; architectural state and counter widths are unchanged.",
+      "Parsed sorting/scatter topology passed 256 ordinal key vectors and 1,024 query cases with symbolic payload membership. Deleting the last comparator produced a counterexample. This is a Python preflight; generated RTL SAT and arithmetic verification remain pending.",
+      "The controller gates module synthesis on generated RTL SAT, mutation rejection, 8,192 actual-size vectors with overflow/reset checks, and frozen complete-module comparison for 6,144 cycles across all 52 outputs. None has completed for group4 yet.",
+      "Recovered the rejected broker specification through a separate request version. Both D evidence hashes remain bound through the immutable W manifest and verified by the controller. Broker policy and original inputs were preserved. The corrected request is DEFERRED because four CPU jobs are active.",
+      "Runtime template preparation succeeded for 981b890d. Actual seven-file ABI compatibility awaits candidate GoldenGate output; no compatible driver or certified bitstream is claimed.",
+      "Verified live controller/child identities for 8da CAD, decode r1/r2, tag-read r1 and resource collection. Preserved every live job. Whole-DUT CAD remains in synthesis without a postopt capacity result.",
+      "Completed OOC module ranking remains round3: 1,153,226 LUT / 55,392 CARRY8; heap: 1,183,979 / 54,885; sort: 1,197,215 / 56,065. These results do not establish whole-system FIT.",
+      "Submission resources were 380.53 GiB MemAvailable and 391.54 GiB free disk. No hardware I/O, deployment or FPGA sample occurred."
+    ],
+    "launched_jobs": [
+      "Queued, not started: address-group4-r1-bind2-981b890d; broker DEFERRED at the four-job limit.",
+      "Completed preparation: 981b890d-prepare-runtime; templates only, no FPGA access.",
+      "Adopted: ec-parsec-opt4-fit-cad.service, address-decode-r1-aeabe5ab, address-decode-r2-579904b2, address-tag-read-r1-67e6fa3c, address-resource-collection-r1."
+    ],
+    "next_action": "After 300 seconds, collect new receipts and bounded log tails. Verify service/controller/child identities when group4 starts. Collect decode/tag-read full-module maps using the corrected parser. Continue 8da through its real postopt capacity gate; advance verified measured candidates after NOT FIT without imposing the old 25% heuristic.",
+    "outcome": "WAITING_ACTIVE_JOB",
+    "retry_after_seconds": 300,
+    "summary": "Committed a separate structural histogram candidate, checked its topology, prepared runtime templates and recovered its broker request. Proof and mapping are queued behind four preserved live jobs."
+  },
+  "utc": "2026-11-10T19:08:52.353785+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 1329013,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "14863787"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-10T19:08:41.429349+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 1329012,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00007",
+    "rss_bytes": 13664256,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "14863784",
+    "started_utc": "2026-11-10T18:55:17.435691+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-10T19:08:41.427704+00:00"
+  }
+}

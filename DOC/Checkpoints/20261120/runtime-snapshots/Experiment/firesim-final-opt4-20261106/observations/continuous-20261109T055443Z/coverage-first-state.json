@@ -1,0 +1,1427 @@
+{
+  "active_key": "2c30e0caa7d07816ed6bca699a5b73a250d803b5a5ee8b83db7bea523ca12fad:simmedium:2",
+  "argv": [
+    "python3",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_isolated_sample.py",
+    "Native",
+    "facesim",
+    "simmedium",
+    "--bdf",
+    "0000:21:00.0",
+    "--repetition",
+    "2",
+    "--timeout",
+    "14400",
+    "--apps-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/facesim-staged-resident-safe-fdt-apps-build.json",
+    "--rootfs-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/facesim-staged-resident-safe-fdt-rootfs-build.json",
+    "--firmware-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/facesim-staged-resident-safe-fdt-firmware-build.json",
+    "--driver-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+    "--formal"
+  ],
+  "boundaries": {
+    "C4": {
+      "ready": false,
+      "reason": "WAITING_C4_FIRST_DEPLOYMENT_AND_GATES"
+    },
+    "Native": {
+      "ready": true,
+      "reason": "SAFE_TASK_BOUNDARY"
+    }
+  },
+  "catalog": [
+    {
+      "accepted_driver_bindings": [
+        {
+          "driver_receipt_sha256": "d5a615cc0928ebce6c285d04003dab39e10123f8a144ba30775485965eb9bcea",
+          "driver_sha256": "9cfeb80105d39d9cd9e0bc86979f298893aea154bb6a5f28587ae29722bd68c6"
+        },
+        {
+          "driver_receipt_sha256": "17d95a4a949397a5c3e731b21359fdba44cf5eccfa4d08b932beac0c7e5b1ea0",
+          "driver_sha256": "80b192807a20fdf4713ea698b32451e37ad99f54c77ca795a4310f4d05e5d5bc"
+        }
+      ],
+      "bound": {
+        "apps_manifest_sha256": "0ccb15ae6db46dd4f3c3c098823e33596012d8f6cab7dddcdcf04f90d498ea4a",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "75b4e2923b0a7b1d096023daa6610f5c622bf04771b4e2966bbdee006e5270ea",
+        "firmware_receipt_sha256": "08895ba4bc337d331e670a1890d133bde0b542f7e4b402cf377ae092e0ec0737",
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "blackscholes",
+        "rootfs_sha256": "427d0b923bc2be77b67ba0ff11efd47bb83c7bbf28fd990e10c658dcf7178711"
+      },
+      "configuration": "Native",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "formal",
+      "program": "blackscholes",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/formal-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/formal-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/formal-rootfs-build.json"
+      },
+      "signature": "6ba82465ee02cfe6a387ef673e1a77e7ccc496b57009f35192298d20273e3352",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "0ccb15ae6db46dd4f3c3c098823e33596012d8f6cab7dddcdcf04f90d498ea4a",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "C4",
+        "driver_receipt_sha256": "c3bd29d92ea767beb66b624412848b43265cbbfabedc09195ff380a146ea1239",
+        "driver_sha256": "3b1132a361938bc2403a43e8edf8b0d5d59599faeb0e6428d29f0ad49d7861a6",
+        "elf_sha256": "75b4e2923b0a7b1d096023daa6610f5c622bf04771b4e2966bbdee006e5270ea",
+        "firmware_receipt_sha256": "50c1ca145b559c1efb1e7a6f00566c4c1b5a87e8d3ec5aeba7cd05b4f032e196",
+        "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "hardware_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "blackscholes",
+        "rootfs_sha256": "427d0b923bc2be77b67ba0ff11efd47bb83c7bbf28fd990e10c658dcf7178711"
+      },
+      "configuration": "C4",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "formal",
+      "program": "blackscholes",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/formal-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/formal-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/formal-rootfs-build.json"
+      },
+      "signature": "359fe319181b043dd1c6ccf1e124ab9c8190d16764e15b4d575497808f247be5",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "4b1c3ff7c608bbe423b0670e5f39bef5aada145df0c5956ceb62a71fe310ff1e",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "07cb43662f5cb38e9497bea005217c22d7c1d54be18ee31c4a6ba21fe04aeb91",
+        "firmware_receipt_sha256": "831fb08c2357457762e5a4dc55a23f1dfbc98b0162d842e1dcf22b1b0eeb9d82",
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "canneal",
+        "rootfs_sha256": "67f83857977d77d164139d5b89a407326dd2f5db44873c65cf12bcd9bafec577"
+      },
+      "configuration": "Native",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "canneal-formal",
+      "program": "canneal",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/canneal-formal-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/canneal-formal-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/canneal-formal-rootfs-build.json"
+      },
+      "signature": "f98ef781d5d8d2ef84cd5c35200ec72d372acfe0bca571e6b7859e287663f89f",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "4b1c3ff7c608bbe423b0670e5f39bef5aada145df0c5956ceb62a71fe310ff1e",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "C4",
+        "driver_receipt_sha256": "c3bd29d92ea767beb66b624412848b43265cbbfabedc09195ff380a146ea1239",
+        "driver_sha256": "3b1132a361938bc2403a43e8edf8b0d5d59599faeb0e6428d29f0ad49d7861a6",
+        "elf_sha256": "07cb43662f5cb38e9497bea005217c22d7c1d54be18ee31c4a6ba21fe04aeb91",
+        "firmware_receipt_sha256": "877717a500863e8f07fcda87450d6390a56db830905173d5ec7a8c49de58f064",
+        "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "hardware_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "canneal",
+        "rootfs_sha256": "67f83857977d77d164139d5b89a407326dd2f5db44873c65cf12bcd9bafec577"
+      },
+      "configuration": "C4",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "canneal-formal",
+      "program": "canneal",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/canneal-formal-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/canneal-formal-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/canneal-formal-rootfs-build.json"
+      },
+      "signature": "f7e52ec19d7dc91c3e72c26bbbecf088457e7f8c8f020f6f2d9eb33f8b4f2a68",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "0ba5ec33bebb078524f9e3f5291a2cfbccf69062d5b0c9462cc5bd2ec03856cc",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "f7c5140c53fa0d43d08c9977f26e9cad12310a628b49298e94fcc4c6c33e971b",
+        "firmware_receipt_sha256": "cc6f292af05beecc5299c9ec2e19c54d4057e0285376071d7de979dc9cdd258d",
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "streamcluster",
+        "rootfs_sha256": "283411ab78b216bec84254f0f77123f813c4dcb34547b530b72677d9dfc045dd"
+      },
+      "configuration": "Native",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "streamcluster-staged-formal",
+      "program": "streamcluster",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-formal-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/streamcluster-staged-formal-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-formal-rootfs-build.json"
+      },
+      "signature": "ce0c3d972bff566fa08817bf04b144a8db0b9c607c0748a9aa60fbd133c58384",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "0ba5ec33bebb078524f9e3f5291a2cfbccf69062d5b0c9462cc5bd2ec03856cc",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "C4",
+        "driver_receipt_sha256": "c3bd29d92ea767beb66b624412848b43265cbbfabedc09195ff380a146ea1239",
+        "driver_sha256": "3b1132a361938bc2403a43e8edf8b0d5d59599faeb0e6428d29f0ad49d7861a6",
+        "elf_sha256": "f7c5140c53fa0d43d08c9977f26e9cad12310a628b49298e94fcc4c6c33e971b",
+        "firmware_receipt_sha256": "62cc6887728470357cf3b3fe12041e48a7fa6c20de70c107926d308189e7990a",
+        "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "hardware_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "streamcluster",
+        "rootfs_sha256": "283411ab78b216bec84254f0f77123f813c4dcb34547b530b72677d9dfc045dd"
+      },
+      "configuration": "C4",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "streamcluster-staged-formal",
+      "program": "streamcluster",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-formal-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/streamcluster-staged-formal-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-formal-rootfs-build.json"
+      },
+      "signature": "d13f2854557f631ffdf48a8a6830fc3ec58c8edd0497b57fe1b1add5ec9eca4f",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "2841eb68be82b7029fe5baa7c3f827e704423e7a4241c8e8d33a29fea824c007",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "cbc20875411af1c2bd2aa2173f4ad73163df67498594e0e6acbe311430758a52",
+        "firmware_receipt_sha256": "71b1fe3e12afe78cc85ef10fd529ab000fa6a047bef2e9eac49ed41442442563",
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "swaptions",
+        "rootfs_sha256": "3ad3b2916296e8dbe074998f0249a1c77fc2f45bff3ac60045231830cd1fe70a"
+      },
+      "configuration": "Native",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "swaptions-preallocated",
+      "program": "swaptions",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/swaptions-preallocated-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/swaptions-preallocated-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/swaptions-preallocated-rootfs-build.json"
+      },
+      "signature": "1192cfb109619905edacd3f5b12d27f942f3b057717119706264082d21f6c1bb",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "2841eb68be82b7029fe5baa7c3f827e704423e7a4241c8e8d33a29fea824c007",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "C4",
+        "driver_receipt_sha256": "c3bd29d92ea767beb66b624412848b43265cbbfabedc09195ff380a146ea1239",
+        "driver_sha256": "3b1132a361938bc2403a43e8edf8b0d5d59599faeb0e6428d29f0ad49d7861a6",
+        "elf_sha256": "cbc20875411af1c2bd2aa2173f4ad73163df67498594e0e6acbe311430758a52",
+        "firmware_receipt_sha256": "88e8701f3ccd7a50a205e3589de20c102927e35af896b8bc92a89c8f1f391c6d",
+        "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "hardware_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "swaptions",
+        "rootfs_sha256": "3ad3b2916296e8dbe074998f0249a1c77fc2f45bff3ac60045231830cd1fe70a"
+      },
+      "configuration": "C4",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "swaptions-preallocated",
+      "program": "swaptions",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/swaptions-preallocated-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/swaptions-preallocated-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/swaptions-preallocated-rootfs-build.json"
+      },
+      "signature": "648fc565b30df39cc209684dadf22d154e6f9c74ed3d7aaffa2d69c42e6bede2",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "bc25fb95b171933b65f5f13a944b5888d01d7740b017d4ae0ff7ffae7981cd44",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "41f5a050564f052d6ead9033fa8ff8bb6c5e9ab99ed3db8571aa0d1a2bc0e2d5",
+        "firmware_receipt_sha256": "54d42c05e90e74686f042d102e5919f8f096c5d3ad93bffe2e0094151b5ea2a1",
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "fluidanimate",
+        "rootfs_sha256": "a6cff2a023de0da30e47d4db95f1f361b578a5c26b2febaaa99704b751055973"
+      },
+      "configuration": "Native",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "fluidanimate-stable-formal",
+      "program": "fluidanimate",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-formal-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fluidanimate-stable-formal-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-formal-rootfs-build.json"
+      },
+      "signature": "9f9054a9cab9364b39adb681355f8d8a61bc0a9adf2d1b57ef5c0c0c5aa5fd4e",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "bc25fb95b171933b65f5f13a944b5888d01d7740b017d4ae0ff7ffae7981cd44",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "C4",
+        "driver_receipt_sha256": "c3bd29d92ea767beb66b624412848b43265cbbfabedc09195ff380a146ea1239",
+        "driver_sha256": "3b1132a361938bc2403a43e8edf8b0d5d59599faeb0e6428d29f0ad49d7861a6",
+        "elf_sha256": "41f5a050564f052d6ead9033fa8ff8bb6c5e9ab99ed3db8571aa0d1a2bc0e2d5",
+        "firmware_receipt_sha256": "c60ed6204d029dcf48b0b9869e2cee0f0d1ebd827334fab16fbf1eb49c9ed5f9",
+        "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "hardware_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "fluidanimate",
+        "rootfs_sha256": "a6cff2a023de0da30e47d4db95f1f361b578a5c26b2febaaa99704b751055973"
+      },
+      "configuration": "C4",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "fluidanimate-stable-formal",
+      "program": "fluidanimate",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-formal-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fluidanimate-stable-formal-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-formal-rootfs-build.json"
+      },
+      "signature": "fedf342e4b85dca12ddb557af0404f10a933e08c3590fac04a2fbbba00cda7ce",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "e0eab7f3f251ba700cb42ff67e447ae900a5d33848caf3565608d70452a1bd8f",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "7df5fad1b0c7ad3f8eb1d52a9bf58964211d685a13f2042b4afe52e3a053131e",
+        "firmware_receipt_sha256": "5ead7ca9952ac36e2c84314df11b1e184d9583960ccdf1a25e2809bbc0b56c27",
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "bodytrack",
+        "rootfs_sha256": "1de7f64b4d3ff1e7a3b3fa90410b6634bdf0033e8ab2e64354d2a03e245e771c"
+      },
+      "configuration": "Native",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "bodytrack-staged-output",
+      "program": "bodytrack",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-staged-output-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/bodytrack-staged-output-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-staged-output-rootfs-build.json"
+      },
+      "signature": "86ecba21f3437d8a6ff320d32a18384f1ab69d33b82abf180d22a7537d49558c",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "e0eab7f3f251ba700cb42ff67e447ae900a5d33848caf3565608d70452a1bd8f",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "C4",
+        "driver_receipt_sha256": "c3bd29d92ea767beb66b624412848b43265cbbfabedc09195ff380a146ea1239",
+        "driver_sha256": "3b1132a361938bc2403a43e8edf8b0d5d59599faeb0e6428d29f0ad49d7861a6",
+        "elf_sha256": "7df5fad1b0c7ad3f8eb1d52a9bf58964211d685a13f2042b4afe52e3a053131e",
+        "firmware_receipt_sha256": "6af82568f7d4607191a306d4c15f8d059cce638118b8d13f87f9bfee46682410",
+        "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "hardware_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "bodytrack",
+        "rootfs_sha256": "1de7f64b4d3ff1e7a3b3fa90410b6634bdf0033e8ab2e64354d2a03e245e771c"
+      },
+      "configuration": "C4",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "bodytrack-staged-output",
+      "program": "bodytrack",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-staged-output-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/bodytrack-staged-output-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-staged-output-rootfs-build.json"
+      },
+      "signature": "998f7a03cb148fc98a7dab7a80525821e9644e62e34c7c890868e1a643d2203e",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "e00659e7ca83e528b1b71d1d09936cfae0e86cec879dc6659d01f24a186b3fb5",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "abe779f2a51cfb288572f4ef014ef85608c3462f1c08905e4f26f840739de9c3",
+        "firmware_receipt_sha256": "c7a845f6837d96a7d12ff837d559d3f5a3200ef2704c5b0b0bb9b3666adf6787",
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "dedup",
+        "rootfs_sha256": "7ed974c4b2639c38c101cf34449fda69c8967a56580a570b2ebee2059fe726c5"
+      },
+      "configuration": "Native",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "dedup-staged-safe-fdt",
+      "program": "dedup",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/dedup-staged-safe-fdt-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/dedup-staged-safe-fdt-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/dedup-staged-safe-fdt-rootfs-build.json"
+      },
+      "signature": "4b4bd11a56eec8404309d01dc54f7c86cc888bc4a04b05aa2386d6543a34bcc7",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "e00659e7ca83e528b1b71d1d09936cfae0e86cec879dc6659d01f24a186b3fb5",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "C4",
+        "driver_receipt_sha256": "c3bd29d92ea767beb66b624412848b43265cbbfabedc09195ff380a146ea1239",
+        "driver_sha256": "3b1132a361938bc2403a43e8edf8b0d5d59599faeb0e6428d29f0ad49d7861a6",
+        "elf_sha256": "abe779f2a51cfb288572f4ef014ef85608c3462f1c08905e4f26f840739de9c3",
+        "firmware_receipt_sha256": "67bccadc27982d4e3484c6536cca4d2659f7d6ed9f80bd63d9ae86f077865e56",
+        "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "hardware_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "dedup",
+        "rootfs_sha256": "7ed974c4b2639c38c101cf34449fda69c8967a56580a570b2ebee2059fe726c5"
+      },
+      "configuration": "C4",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "dedup-staged-safe-fdt",
+      "program": "dedup",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/dedup-staged-safe-fdt-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/dedup-staged-safe-fdt-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/dedup-staged-safe-fdt-rootfs-build.json"
+      },
+      "signature": "5c58b3da0e1f470757370b170fc3788d96214405c3ab98332e315ca3212e8ed1",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "3908222d8774de0de52f76b7fc12dbd0ec1f06ced04b69522a379507ec0e29dd",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "9738afd02fba6464dceb21bc6d1713eae5c7f881c09aaa3df5282f058ca6d2fc",
+        "firmware_receipt_sha256": "2edc482ec8b059c03dea87ed3be2a3a01d2a993ae5b1e6d739e78dc31c1ce217",
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "freqmine",
+        "rootfs_sha256": "c5a7bfacfd78594ff1b93503ad3bc8ec5edfd012535e4b06a94380a417cd457e"
+      },
+      "configuration": "Native",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "freqmine-staged-resident",
+      "program": "freqmine",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-staged-resident-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/freqmine-staged-resident-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-staged-resident-rootfs-build.json"
+      },
+      "signature": "f568cb3046338992992b3fecd79517f2ba5e47d3426c2f8c4a3ba383ac3f06c2",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "3908222d8774de0de52f76b7fc12dbd0ec1f06ced04b69522a379507ec0e29dd",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "C4",
+        "driver_receipt_sha256": "c3bd29d92ea767beb66b624412848b43265cbbfabedc09195ff380a146ea1239",
+        "driver_sha256": "3b1132a361938bc2403a43e8edf8b0d5d59599faeb0e6428d29f0ad49d7861a6",
+        "elf_sha256": "9738afd02fba6464dceb21bc6d1713eae5c7f881c09aaa3df5282f058ca6d2fc",
+        "firmware_receipt_sha256": "08f434e8e6eac30dee7fda58dba62a810bd3705534c36d169422db1f018994ba",
+        "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "hardware_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "freqmine",
+        "rootfs_sha256": "c5a7bfacfd78594ff1b93503ad3bc8ec5edfd012535e4b06a94380a417cd457e"
+      },
+      "configuration": "C4",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "freqmine-staged-resident",
+      "program": "freqmine",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-staged-resident-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/freqmine-staged-resident-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-staged-resident-rootfs-build.json"
+      },
+      "signature": "58437023b049f36df37f5dc90ff079bf45c1d984bb74449a185baa96db24b11c",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "2bd6fc661b4599aae8cd4cc502c83f156f9ef2c04eef4cb022db8227e2c67acb",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "d3e5abca6814ebac4b759bdb8f60adcc100cdf0a4238196eb4166dd0cfd6efb3",
+        "firmware_receipt_sha256": "0e009891e587bbe9d8e9cfef57e830d626e15f2837ec5bd356c2b1c181299f88",
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "facesim",
+        "rootfs_sha256": "1f06b99dc3c6a90e44ea444f29ffc723ac1f6048622b2d3ab63980cc9478ae5e"
+      },
+      "configuration": "Native",
+      "formal_eligible": true,
+      "inputs": [
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "facesim-staged-resident-safe-fdt",
+      "program": "facesim",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/facesim-staged-resident-safe-fdt-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/facesim-staged-resident-safe-fdt-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/facesim-staged-resident-safe-fdt-rootfs-build.json"
+      },
+      "signature": "2c30e0caa7d07816ed6bca699a5b73a250d803b5a5ee8b83db7bea523ca12fad",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "2bd6fc661b4599aae8cd4cc502c83f156f9ef2c04eef4cb022db8227e2c67acb",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "C4",
+        "driver_receipt_sha256": "c3bd29d92ea767beb66b624412848b43265cbbfabedc09195ff380a146ea1239",
+        "driver_sha256": "3b1132a361938bc2403a43e8edf8b0d5d59599faeb0e6428d29f0ad49d7861a6",
+        "elf_sha256": "d3e5abca6814ebac4b759bdb8f60adcc100cdf0a4238196eb4166dd0cfd6efb3",
+        "firmware_receipt_sha256": "a5603b0a162111eec61a49508cb17b67d9a7fc062a201e8045f6bd9d1a735224",
+        "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "hardware_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "facesim",
+        "rootfs_sha256": "1f06b99dc3c6a90e44ea444f29ffc723ac1f6048622b2d3ab63980cc9478ae5e"
+      },
+      "configuration": "C4",
+      "formal_eligible": true,
+      "inputs": [
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "facesim-staged-resident-safe-fdt",
+      "program": "facesim",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/facesim-staged-resident-safe-fdt-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/facesim-staged-resident-safe-fdt-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/facesim-staged-resident-safe-fdt-rootfs-build.json"
+      },
+      "signature": "f61f223893aaf2912dfbb06d55425f4d8d7089e73529c6c9e1c3bbe5cbd78b9f",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "e4cbffb6b5c4a81ebb01b8765df5e491d0452a2eacfdb996583547ff05880581",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "f6097b159f30333ad0fef96284c9575b6caa3d0d1b12cf92134ae88094e053e3",
+        "firmware_receipt_sha256": "9bceb83c5005da74c461e54fa7fb47badf855e7c527f69c2a7563898c5b1bc2e",
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "ferret",
+        "rootfs_sha256": "13527eb26caa6ba0af790f3f286dbb91fc75ce5dd65c663712edb672410f9d7c"
+      },
+      "configuration": "Native",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "ferret-safe-fdt",
+      "program": "ferret",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/ferret-safe-fdt-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/ferret-safe-fdt-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/ferret-safe-fdt-rootfs-build.json"
+      },
+      "signature": "e7e2e47d4efcb3cc31ae60ae670fb38833c9527315d8a232ca6db02abc0c6e16",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "e4cbffb6b5c4a81ebb01b8765df5e491d0452a2eacfdb996583547ff05880581",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "C4",
+        "driver_receipt_sha256": "c3bd29d92ea767beb66b624412848b43265cbbfabedc09195ff380a146ea1239",
+        "driver_sha256": "3b1132a361938bc2403a43e8edf8b0d5d59599faeb0e6428d29f0ad49d7861a6",
+        "elf_sha256": "f6097b159f30333ad0fef96284c9575b6caa3d0d1b12cf92134ae88094e053e3",
+        "firmware_receipt_sha256": "20075682acb754c364b5e48942b9d33d3da059c3d92c85f4309af97e101c47c5",
+        "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "hardware_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "ferret",
+        "rootfs_sha256": "13527eb26caa6ba0af790f3f286dbb91fc75ce5dd65c663712edb672410f9d7c"
+      },
+      "configuration": "C4",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "ferret-safe-fdt",
+      "program": "ferret",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/ferret-safe-fdt-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/ferret-safe-fdt-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/ferret-safe-fdt-rootfs-build.json"
+      },
+      "signature": "503d2b7e879186cc6bf1afdc03281c039c6d1635f8779bb688fe86b0eab49353",
+      "status": "READY"
+    },
+    {
+      "configuration": "Native",
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/netdedup-firmware-build.json"
+      ],
+      "profile": "netdedup",
+      "program": "netdedup",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/netdedup-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-rootfs-build.json"
+      },
+      "status": "BLOCKED_SOFTWARE"
+    },
+    {
+      "configuration": "C4",
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/netdedup-firmware-build.json"
+      ],
+      "profile": "netdedup",
+      "program": "netdedup",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/netdedup-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-rootfs-build.json"
+      },
+      "status": "BLOCKED_SOFTWARE"
+    },
+    {
+      "configuration": "Native",
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/netferret-firmware-build.json"
+      ],
+      "profile": "netferret",
+      "program": "netferret",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/netferret-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-rootfs-build.json"
+      },
+      "status": "BLOCKED_SOFTWARE"
+    },
+    {
+      "configuration": "C4",
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/netferret-firmware-build.json"
+      ],
+      "profile": "netferret",
+      "program": "netferret",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/netferret-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-rootfs-build.json"
+      },
+      "status": "BLOCKED_SOFTWARE"
+    },
+    {
+      "configuration": "Native",
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netstreamcluster-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netstreamcluster-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/netstreamcluster-firmware-build.json"
+      ],
+      "profile": "netstreamcluster",
+      "program": "netstreamcluster",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netstreamcluster-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/netstreamcluster-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netstreamcluster-rootfs-build.json"
+      },
+      "status": "BLOCKED_SOFTWARE"
+    },
+    {
+      "configuration": "C4",
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netstreamcluster-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netstreamcluster-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/netstreamcluster-firmware-build.json"
+      ],
+      "profile": "netstreamcluster",
+      "program": "netstreamcluster",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netstreamcluster-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/netstreamcluster-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netstreamcluster-rootfs-build.json"
+      },
+      "status": "BLOCKED_SOFTWARE"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "abfd662d67706cbd878b41f615a1691c59b720cb6f67786a86ac8988599d3d62",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "239f1c81fec1a4ec3c541d46669e9d2a67dc1fe922387956c328661acac2d8ca",
+        "firmware_receipt_sha256": "7c7dc7b3cac8a39bee6945f08096633d91457aa30e33e22def6341cb94b0f611",
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "raytrace",
+        "rootfs_sha256": "a6cc0639ad0c3b2ca297628ae5159c9af28c970df3e277e5466623a8fa006417"
+      },
+      "configuration": "Native",
+      "formal_eligible": true,
+      "inputs": [
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "raytrace-headless-safe-fdt",
+      "program": "raytrace",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/raytrace-headless-safe-fdt-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/raytrace-headless-safe-fdt-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/raytrace-headless-safe-fdt-rootfs-build.json"
+      },
+      "signature": "3078fd2d684f1048f156a9bbe4d60814d456d1399556077126e9ae4361a1b0d5",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "abfd662d67706cbd878b41f615a1691c59b720cb6f67786a86ac8988599d3d62",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "C4",
+        "driver_receipt_sha256": "c3bd29d92ea767beb66b624412848b43265cbbfabedc09195ff380a146ea1239",
+        "driver_sha256": "3b1132a361938bc2403a43e8edf8b0d5d59599faeb0e6428d29f0ad49d7861a6",
+        "elf_sha256": "239f1c81fec1a4ec3c541d46669e9d2a67dc1fe922387956c328661acac2d8ca",
+        "firmware_receipt_sha256": "53900be4804a79e66108631beb5d1904864c43ab43f5db5480ebf8859a7cd04a",
+        "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "hardware_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "raytrace",
+        "rootfs_sha256": "a6cc0639ad0c3b2ca297628ae5159c9af28c970df3e277e5466623a8fa006417"
+      },
+      "configuration": "C4",
+      "formal_eligible": true,
+      "inputs": [
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "raytrace-headless-safe-fdt",
+      "program": "raytrace",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/raytrace-headless-safe-fdt-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/raytrace-headless-safe-fdt-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/raytrace-headless-safe-fdt-rootfs-build.json"
+      },
+      "signature": "a3e2c8be4a5b8e03308473ea469cdce642517993fbff40f2a7c73dd824fac984",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "e21abb326a873e686b04b5d44a11f3fac5e9b4e7d5a0cc04ed8d864e420bba1f",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "339e1ed66c1ea9ec4d1434cbfd0df9aaa7374c440acabd19bedf155009a1e3dc",
+        "firmware_receipt_sha256": "4ec0521e9826a5e9c75d1b17163c7b59d03d0c58599dde000d4a3ddfa614b693",
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "vips",
+        "rootfs_sha256": "0c72f68e2dc48fdf20910a6fdef231fe920fdd7d3909e0e2b17ba4e8c7bf002f"
+      },
+      "configuration": "Native",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "vips",
+      "program": "vips",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/vips-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/vips-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/vips-rootfs-build.json"
+      },
+      "signature": "47a762e63316197dd8489fddaba9396a257fb3017ddb3a08fc1fddf8e3dfc96f",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "e21abb326a873e686b04b5d44a11f3fac5e9b4e7d5a0cc04ed8d864e420bba1f",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "C4",
+        "driver_receipt_sha256": "c3bd29d92ea767beb66b624412848b43265cbbfabedc09195ff380a146ea1239",
+        "driver_sha256": "3b1132a361938bc2403a43e8edf8b0d5d59599faeb0e6428d29f0ad49d7861a6",
+        "elf_sha256": "339e1ed66c1ea9ec4d1434cbfd0df9aaa7374c440acabd19bedf155009a1e3dc",
+        "firmware_receipt_sha256": "1969c105186aace2bc31f33c567bf9c563bc131cfd019cb316380301540722d4",
+        "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "hardware_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "vips",
+        "rootfs_sha256": "0c72f68e2dc48fdf20910a6fdef231fe920fdd7d3909e0e2b17ba4e8c7bf002f"
+      },
+      "configuration": "C4",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "vips",
+      "program": "vips",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/vips-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/vips-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/vips-rootfs-build.json"
+      },
+      "signature": "0da65c20129309b523b9d2607dcac9453f4e6c5756bc8dee3a7f94bee8bdffc4",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "afcdcfdc9004edf70627d657180b506894bcc0e4d5c1ddaf30428dc9763566fa",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "326fc96009dc58f7a4cd215be411153c0b8d3eb98e4ca1d857dee1b9cb8796ac",
+        "firmware_receipt_sha256": "fd0f3c79e19d63794d991c63c4f2c0fff580a908f6961dc957f24ed059192b86",
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "x264",
+        "rootfs_sha256": "b5c0dad860e7767da7c0ebba0faa04533c0f75ab27c866c4815fac903841f30b"
+      },
+      "configuration": "Native",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "x264-no-progress",
+      "program": "x264",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/x264-no-progress-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/x264-no-progress-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/x264-no-progress-rootfs-build.json"
+      },
+      "signature": "38d3ec6f43a4f4eb487295a3b1ff9350907f031b7cfb619f0043b8b52d3d556b",
+      "status": "READY"
+    },
+    {
+      "accepted_driver_bindings": [],
+      "bound": {
+        "apps_manifest_sha256": "afcdcfdc9004edf70627d657180b506894bcc0e4d5c1ddaf30428dc9763566fa",
+        "board_bdf": "0000:21:00.0",
+        "configuration": "C4",
+        "driver_receipt_sha256": "c3bd29d92ea767beb66b624412848b43265cbbfabedc09195ff380a146ea1239",
+        "driver_sha256": "3b1132a361938bc2403a43e8edf8b0d5d59599faeb0e6428d29f0ad49d7861a6",
+        "elf_sha256": "326fc96009dc58f7a4cd215be411153c0b8d3eb98e4ca1d857dee1b9cb8796ac",
+        "firmware_receipt_sha256": "661f7ea22fb3c4e7a5d6f13565d9b324313b8593560ea98a7646e53b864deff7",
+        "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "hardware_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "program": "x264",
+        "rootfs_sha256": "b5c0dad860e7767da7c0ebba0faa04533c0f75ab27c866c4815fac903841f30b"
+      },
+      "configuration": "C4",
+      "formal_eligible": true,
+      "inputs": [
+        "test",
+        "simsmall",
+        "simmedium"
+      ],
+      "profile": "x264-no-progress",
+      "program": "x264",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/x264-no-progress-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/C4-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/x264-no-progress-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/x264-no-progress-rootfs-build.json"
+      },
+      "signature": "796b8d2ed711a8af155d6fc2d1bc65a13ef3be5e58e69fb53be16d96fca17b48",
+      "status": "READY"
+    }
+  ],
+  "child_pid": 1534912,
+  "child_start_ticks": "1280394",
+  "commands": [
+    {
+      "ended_utc": "2026-11-09T02:27:53.347103+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T014325.999455Z-Native-facesim-simsmall-r1.log",
+      "returncode": 0,
+      "stage": "Native-facesim-simsmall-r1"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:53.437131+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022753.364055Z-summarize_results.log",
+      "returncode": 0,
+      "stage": "summarize_results"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:53.762759+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022753.439482Z-publish_live.log",
+      "returncode": 0,
+      "stage": "publish_live"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:53.869524+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022753.797344Z-Native-facesim-simmedium-r1.log",
+      "returncode": 2,
+      "stage": "Native-facesim-simmedium-r1"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:53.958680+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022753.886464Z-summarize_results.log",
+      "returncode": 0,
+      "stage": "summarize_results"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:54.234215+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022753.962012Z-publish_live.log",
+      "returncode": 0,
+      "stage": "publish_live"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:54.343528+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022754.270824Z-Native-ferret-test-r1.log",
+      "returncode": 2,
+      "stage": "Native-ferret-test-r1"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:54.433786+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022754.362100Z-summarize_results.log",
+      "returncode": 0,
+      "stage": "summarize_results"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:54.709358+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022754.436073Z-publish_live.log",
+      "returncode": 0,
+      "stage": "publish_live"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:54.827961+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022754.753217Z-Native-raytrace-simsmall-r1.log",
+      "returncode": 2,
+      "stage": "Native-raytrace-simsmall-r1"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:54.923697+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022754.848529Z-summarize_results.log",
+      "returncode": 0,
+      "stage": "summarize_results"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:55.251071+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022754.926975Z-publish_live.log",
+      "returncode": 0,
+      "stage": "publish_live"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:55.362543+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022755.288600Z-Native-vips-test-r1.log",
+      "returncode": 2,
+      "stage": "Native-vips-test-r1"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:55.506608+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022755.382391Z-summarize_results.log",
+      "returncode": 0,
+      "stage": "summarize_results"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:55.833472+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022755.508672Z-publish_live.log",
+      "returncode": 0,
+      "stage": "publish_live"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:55.943414+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022755.869233Z-Native-x264-test-r1.log",
+      "returncode": 2,
+      "stage": "Native-x264-test-r1"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:56.035934+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022755.962884Z-summarize_results.log",
+      "returncode": 0,
+      "stage": "summarize_results"
+    },
+    {
+      "ended_utc": "2026-11-09T02:27:56.363388+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022756.038916Z-publish_live.log",
+      "returncode": 0,
+      "stage": "publish_live"
+    },
+    {
+      "ended_utc": "2026-11-09T03:18:20.306000+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T023352.750495Z-Native-facesim-simmedium-r1.log",
+      "returncode": 0,
+      "stage": "Native-facesim-simmedium-r1"
+    },
+    {
+      "ended_utc": "2026-11-09T03:18:20.397690+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T031820.323681Z-summarize_results.log",
+      "returncode": 0,
+      "stage": "summarize_results"
+    },
+    {
+      "ended_utc": "2026-11-09T03:18:20.727107+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T031820.400247Z-publish_live.log",
+      "returncode": 0,
+      "stage": "publish_live"
+    },
+    {
+      "ended_utc": "2026-11-09T03:21:29.633630+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T031820.766610Z-Native-ferret-test-r1.log",
+      "returncode": 0,
+      "stage": "Native-ferret-test-r1"
+    },
+    {
+      "ended_utc": "2026-11-09T03:21:29.804396+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T032129.656736Z-summarize_results.log",
+      "returncode": 0,
+      "stage": "summarize_results"
+    },
+    {
+      "ended_utc": "2026-11-09T03:21:30.131465+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T032129.808024Z-publish_live.log",
+      "returncode": 0,
+      "stage": "publish_live"
+    },
+    {
+      "ended_utc": "2026-11-09T03:26:35.660502+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T032130.170487Z-Native-ferret-simsmall-r1.log",
+      "returncode": 2,
+      "stage": "Native-ferret-simsmall-r1"
+    },
+    {
+      "ended_utc": "2026-11-09T03:26:35.809457+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T032635.684197Z-summarize_results.log",
+      "returncode": 0,
+      "stage": "summarize_results"
+    },
+    {
+      "ended_utc": "2026-11-09T03:26:36.138389+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T032635.813953Z-publish_live.log",
+      "returncode": 0,
+      "stage": "publish_live"
+    },
+    {
+      "ended_utc": "2026-11-09T03:53:57.647583+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T032636.176651Z-Native-raytrace-simsmall-r1.log",
+      "returncode": 0,
+      "stage": "Native-raytrace-simsmall-r1"
+    },
+    {
+      "ended_utc": "2026-11-09T03:53:57.788074+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T035357.665475Z-summarize_results.log",
+      "returncode": 0,
+      "stage": "summarize_results"
+    },
+    {
+      "ended_utc": "2026-11-09T03:53:58.113583+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T035357.790202Z-publish_live.log",
+      "returncode": 0,
+      "stage": "publish_live"
+    },
+    {
+      "ended_utc": "2026-11-09T04:23:02.972653+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T035358.150802Z-Native-raytrace-simmedium-r1.log",
+      "returncode": 0,
+      "stage": "Native-raytrace-simmedium-r1"
+    },
+    {
+      "ended_utc": "2026-11-09T04:23:03.116276+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T042302.992166Z-summarize_results.log",
+      "returncode": 0,
+      "stage": "summarize_results"
+    },
+    {
+      "ended_utc": "2026-11-09T04:23:03.442966+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T042303.118832Z-publish_live.log",
+      "returncode": 0,
+      "stage": "publish_live"
+    },
+    {
+      "ended_utc": "2026-11-09T04:24:25.242366+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T042303.481203Z-Native-vips-test-r1.log",
+      "returncode": 2,
+      "stage": "Native-vips-test-r1"
+    },
+    {
+      "ended_utc": "2026-11-09T04:24:25.386257+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T042425.262673Z-summarize_results.log",
+      "returncode": 0,
+      "stage": "summarize_results"
+    },
+    {
+      "ended_utc": "2026-11-09T04:24:25.713075+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T042425.388733Z-publish_live.log",
+      "returncode": 0,
+      "stage": "publish_live"
+    },
+    {
+      "ended_utc": "2026-11-09T04:27:32.760387+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T042425.751284Z-Native-x264-test-r1.log",
+      "returncode": 0,
+      "stage": "Native-x264-test-r1"
+    },
+    {
+      "ended_utc": "2026-11-09T04:27:32.904666+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T042732.780557Z-summarize_results.log",
+      "returncode": 0,
+      "stage": "summarize_results"
+    },
+    {
+      "ended_utc": "2026-11-09T04:27:33.232340+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T042732.907445Z-publish_live.log",
+      "returncode": 0,
+      "stage": "publish_live"
+    },
+    {
+      "ended_utc": "2026-11-09T04:33:27.139003+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T042733.271067Z-Native-x264-simsmall-r1.log",
+      "returncode": 0,
+      "stage": "Native-x264-simsmall-r1"
+    },
+    {
+      "ended_utc": "2026-11-09T04:33:27.281156+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T043327.158012Z-summarize_results.log",
+      "returncode": 0,
+      "stage": "summarize_results"
+    },
+    {
+      "ended_utc": "2026-11-09T04:33:27.608441+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T043327.283854Z-publish_live.log",
+      "returncode": 0,
+      "stage": "publish_live"
+    },
+    {
+      "ended_utc": "2026-11-09T05:11:22.996560+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T043327.648945Z-Native-x264-simmedium-r1.log",
+      "returncode": 0,
+      "stage": "Native-x264-simmedium-r1"
+    },
+    {
+      "ended_utc": "2026-11-09T05:11:23.143713+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T051123.018204Z-summarize_results.log",
+      "returncode": 0,
+      "stage": "summarize_results"
+    },
+    {
+      "ended_utc": "2026-11-09T05:11:23.471270+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T051123.146336Z-publish_live.log",
+      "returncode": 0,
+      "stage": "publish_live"
+    }
+  ],
+  "failures": {
+    "3b86aca3cad03372b1791a044aa67d47a2a0bd55d5f717cc0ef01597290a578e:test:1": {
+      "configuration": "Native",
+      "ended_utc": "2026-11-09T02:27:54.343528+00:00",
+      "input": "test",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022754.270824Z-Native-ferret-test-r1.log",
+      "profile": "ferret-safe-fdt",
+      "program": "ferret",
+      "reason": "nonzero runner exit or missing exact atomic completion",
+      "repetition": 1,
+      "returncode": 2,
+      "run_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-facesim-simsmall-r1-20261109T014326Z",
+      "stage": "Native-ferret-test-r1"
+    },
+    "4136fc864973c0c634af9d7d259c910db838f2926ed909ba9731b412aea2b353:test:1": {
+      "configuration": "Native",
+      "ended_utc": "2026-11-09T02:27:55.362543+00:00",
+      "input": "test",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022755.288600Z-Native-vips-test-r1.log",
+      "profile": "vips",
+      "program": "vips",
+      "reason": "nonzero runner exit or missing exact atomic completion",
+      "repetition": 1,
+      "returncode": 2,
+      "run_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-facesim-simsmall-r1-20261109T014326Z",
+      "stage": "Native-vips-test-r1"
+    },
+    "47a762e63316197dd8489fddaba9396a257fb3017ddb3a08fc1fddf8e3dfc96f:test:1": {
+      "configuration": "Native",
+      "ended_utc": "2026-11-09T04:24:25.242366+00:00",
+      "input": "test",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T042303.481203Z-Native-vips-test-r1.log",
+      "profile": "vips",
+      "program": "vips",
+      "reason": "nonzero runner exit or missing exact atomic completion",
+      "repetition": 1,
+      "returncode": 2,
+      "run_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-vips-test-r1-20261109T042304Z",
+      "stage": "Native-vips-test-r1"
+    },
+    "60949cf7d6b56521d7874c210be992c26c2b70dbbf09e91fd80971de30dd5106:test:1": {
+      "configuration": "Native",
+      "ended_utc": "2026-11-09T02:27:55.943414+00:00",
+      "input": "test",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022755.869233Z-Native-x264-test-r1.log",
+      "profile": "x264-no-progress",
+      "program": "x264",
+      "reason": "nonzero runner exit or missing exact atomic completion",
+      "repetition": 1,
+      "returncode": 2,
+      "run_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-facesim-simsmall-r1-20261109T014326Z",
+      "stage": "Native-x264-test-r1"
+    },
+    "c251c1c25be7e1ab98d1909d0ff834470c14baa6981a730dd09c7548ede01c02:simsmall:1": {
+      "configuration": "Native",
+      "ended_utc": "2026-11-09T02:27:54.827961+00:00",
+      "input": "simsmall",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022754.753217Z-Native-raytrace-simsmall-r1.log",
+      "profile": "raytrace-headless-safe-fdt",
+      "program": "raytrace",
+      "reason": "nonzero runner exit or missing exact atomic completion",
+      "repetition": 1,
+      "returncode": 2,
+      "run_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-facesim-simsmall-r1-20261109T014326Z",
+      "stage": "Native-raytrace-simsmall-r1"
+    },
+    "d9150528c7834ebce385618f2848ab415f204bfdc844afb1829f5b5c86a32ba2:simmedium:1": {
+      "configuration": "Native",
+      "ended_utc": "2026-11-09T02:27:53.869524+00:00",
+      "input": "simmedium",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T022753.797344Z-Native-facesim-simmedium-r1.log",
+      "profile": "facesim-staged-resident-safe-fdt",
+      "program": "facesim",
+      "reason": "nonzero runner exit or missing exact atomic completion",
+      "repetition": 1,
+      "returncode": 2,
+      "run_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-facesim-simsmall-r1-20261109T014326Z",
+      "stage": "Native-facesim-simmedium-r1"
+    },
+    "e7e2e47d4efcb3cc31ae60ae670fb38833c9527315d8a232ca6db02abc0c6e16:simsmall:1": {
+      "configuration": "Native",
+      "ended_utc": "2026-11-09T03:26:35.660502+00:00",
+      "input": "simsmall",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T032130.170487Z-Native-ferret-simsmall-r1.log",
+      "profile": "ferret-safe-fdt",
+      "program": "ferret",
+      "reason": "nonzero runner exit or missing exact atomic completion",
+      "repetition": 1,
+      "returncode": 2,
+      "run_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-ferret-simsmall-r1-20261109T032131Z",
+      "stage": "Native-ferret-simsmall-r1"
+    }
+  },
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-logs/20261109T051123.511538Z-Native-facesim-simmedium-r2.log",
+  "next_sample": {
+    "configuration": "Native",
+    "input": "simmedium",
+    "program": "facesim",
+    "repetition": 2
+  },
+  "no_hardware_build": true,
+  "no_live_sample_changes": true,
+  "pid": 80044,
+  "plan_sha256": "8e03e094bdcb29dc1b6df6ce01fe5bf6f1ebdeaace3de529176c4a6ca6ca278a",
+  "scheduling": "all eligible first repetitions before second/third; failures remain explicit",
+  "schema": "ec-coverage-first/1",
+  "stage": "Native-facesim-simmedium-r2",
+  "start_ticks": "335308",
+  "started_utc": "2026-11-09T02:33:52.694021+00:00",
+  "status": "RUNNING",
+  "updated_utc": "2026-11-09T05:54:23.865560+00:00"
+}

@@ -1,0 +1,23 @@
+{
+  "changed_files": [
+    "area-sprint-20261112/round-00170.json",
+    "area-sprint-20261112/latest.json",
+    "area-sprint-20261112/LATEST.md"
+  ],
+  "evidence": [
+    "Query-bank PASS: 8,192 cycles, 23,584 unchanged next-state bit cones, 88 queries bound to SAT proof.",
+    "Production target PASS: 6,144 cycles; invalid-payload mutation rejected.",
+    "Delta CSA rejected: 304,755 → 312,163 LUTs.",
+    "Mixed-host compiler regression PASS: 261 valid circuits and five negative loops."
+  ],
+  "launched_jobs": [
+    "common-query-bank-closure-r1",
+    "address-banked-production-host-r2",
+    "address-banked-production-area-pair-r2",
+    "common-stats-host-r5"
+  ],
+  "next_action": "Consume production and mixed-host token/area receipts, plus original DSP and DCache maps. Preserve exact source bindings and certification gates.",
+  "outcome": "PROGRESS",
+  "retry_after_seconds": 300,
+  "summary": "Completed query-bank validation and launched diagnosed host recoveries. No FIT: latest complete shell uses 2,478,437 LUTs, exceeding capacity by 1,174,757. No certified complete-EC bitstream."
+}

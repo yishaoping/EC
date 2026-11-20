@@ -1,0 +1,369 @@
+{
+  "schema": "ec-fpga-critical-unblock-evidence/1",
+  "captured_utc": "2026-11-12T06:05:28.337716+00:00",
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "board_allowlist": [
+    "0000:21:00.0"
+  ],
+  "states": {
+    "Opt4-mcrams-full-host-capacity-r1-state.json": {
+      "area_scope": "Complete generated FPGATop host simulator with owner-only MCRams; U280 shell not included, no parity/FPGA claim",
+      "child": {
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2379621,
+        "start_ticks": "25825441"
+      },
+      "cpus": [
+        240,
+        241,
+        242,
+        243,
+        244,
+        245,
+        246,
+        247
+      ],
+      "derived_hardware": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "fpga_access": false,
+      "full_generated_host": true,
+      "full_physical_system": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "host_rtl_sha256": "9d5380252ec779da8844b1ff632af84330fd2d0dff63912dd4c08180ae2ff3e1",
+      "host_wall_seconds": 16981.376466013986,
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-full-host-capacity-r1-20261112/run.log",
+      "memory_limit_gib": 128,
+      "pid": 2379596,
+      "production_admission": false,
+      "schema": "ec-mcrams-full-host-capacity/1",
+      "start_ticks": "25825420",
+      "started_utc": "2026-11-12T01:22:13.975945+00:00",
+      "status": "RUNNING_FULL_HOST_SYNTH_DESIGN",
+      "threads": 8,
+      "updated_utc": "2026-11-12T06:05:15.352832+00:00",
+      "whole_dut_target_parity": false
+    },
+    "Opt4-mcrams-full-host-continuation-r2-state.json": {
+      "MC_live": true,
+      "MC_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-mc-runtime-r2-20261112/result.json",
+      "MC_status": "RUNNING_RUN_MCRAMS",
+      "address_area_request": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/address-bucket-mcrams-area-r1-8491167d.json",
+      "area_live": true,
+      "area_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-full-host-capacity-r1-20261112/result.json",
+      "area_status": "RUNNING_FULL_HOST_SYNTH_DESIGN",
+      "continuation_revision": "r3-generated-clock-contract",
+      "continuation_sha256": "f9b2cabfebc4a319d6d1bc25913325be7262c9c4fbb7ad630718dee5c062d61e",
+      "continuation_source": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-host-clock-contract-r3-20261112/continue.py",
+      "derived_target_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "existing_capacity_and_parity_producers_preserved": true,
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "no_target_resynthesis": true,
+      "pid": 2759828,
+      "process_state": "R",
+      "schema": "ec-owner-mcrams-persistent-continuation/1",
+      "start_ticks": "27368804",
+      "started_utc": "2026-11-12T05:39:27.650884+00:00",
+      "status": "ADOPTING_EXISTING_CAPACITY_AND_PARITY_NO_DUPLICATES",
+      "updated_utc": "2026-11-12T06:04:28.159136+00:00",
+      "whole_physical_fit": false
+    },
+    "Opt4-mcrams-owner-mc-runtime-r2-state.json": {
+      "child": {
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2378807,
+        "start_ticks": "25817536"
+      },
+      "derived_hardware": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "host_wall_seconds": 17073.312619665026,
+      "instruction_checkpoint_restored": false,
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-mc-runtime-r2-20261112/run-MCRams.log",
+      "pid": 2378806,
+      "production_admission": false,
+      "rerun_from_reset": true,
+      "reused_Plain": true,
+      "schema": "ec-owner-MC-rerun-from-reset-existing-Plain/2",
+      "stage": "run-MCRams",
+      "start_ticks": "25817526",
+      "started_utc": "2026-11-12T01:20:54.929469+00:00",
+      "status": "RUNNING_RUN_MCRAMS",
+      "stop_cause": null,
+      "updated_utc": "2026-11-12T06:05:28.244146+00:00",
+      "whole_fit": false
+    },
+    "cycleprecise-svb-host40-shell-recovery-r5-20261112/state.json": {
+      "admission": {
+        "disk_bytes": 311854878720,
+        "load1": 56.77,
+        "memory_kib": 234884140,
+        "workers": [
+          {
+            "argv": [
+              "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado",
+              "-mode",
+              "batch",
+              "-nojournal",
+              "-log",
+              "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/resume-r3-spread-physical1/vivado.log",
+              "-source",
+              "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/resume-r3-spread-physical1/resume.tcl"
+            ],
+            "cpu_ticks": 1303562,
+            "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+            "pid": 2377613,
+            "process_state": "S",
+            "rss_bytes": 8197734400,
+            "start_ticks": "25815969",
+            "unit": "ec-opt4-auto-svb-physical-resume-r3-v1-8491167d.service"
+          },
+          {
+            "argv": [
+              "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado",
+              "-mode",
+              "batch",
+              "-nojournal",
+              "-log",
+              "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/round51-v1/original-postroute/vivado.log",
+              "-source",
+              "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/round51-v1/original-postroute/recover.tcl"
+            ],
+            "cpu_ticks": 1763324,
+            "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+            "pid": 2323399,
+            "process_state": "S",
+            "rss_bytes": 8170446848,
+            "start_ticks": "25276450",
+            "unit": "ec-opt4-auto-svb-physical-resource-recovery-r51-v1.service"
+          }
+        ]
+      },
+      "argv": [
+        "/tools/Xilinx/Vivado/2021.1/bin/vivado",
+        "-mode",
+        "batch",
+        "-nojournal",
+        "-log",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r5-20261112/E-preroute-shell-replication/vivado.log",
+        "-source",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r5-20261112/E-preroute-shell-replication/recover.tcl"
+      ],
+      "child": {
+        "cpu_ticks": 0,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2692668,
+        "process_state": "R",
+        "rss_bytes": 4096,
+        "start_ticks": "26961367"
+      },
+      "complete_opt4": false,
+      "cpu_ticks": 18,
+      "cpus": [
+        224,
+        225
+      ],
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "host_wall_seconds": 5400.137435767974,
+      "log_bytes": 39038,
+      "mode": "E-preroute-shell-replication",
+      "pid": 2692645,
+      "process_state": "R",
+      "profile": "OriginalSVB32-component-trace-host40",
+      "resource_admission_sha256": "3b4c46ee3c126741d50e12e1f68a58f99c84c0e249304429c1c66961f293f78b",
+      "rss_bytes": 15675392,
+      "schema": "ec-original-svb-host40-shell-recovery/5",
+      "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+      "start_ticks": "26961211",
+      "started_utc": "2026-11-12T04:31:31.879201+00:00",
+      "status": "RUNNING_ADMITTED_HOST40_SHELL_RECOVERY",
+      "target_rtl_changed": false,
+      "updated_utc": "2026-11-12T06:01:33.379987+00:00"
+    },
+    "cycleprecise-original-svb-host40-shell-onboard-r5-20261112/state.json": {
+      "board_bdf": "0000:21:00.0",
+      "board_serial": "21770433G02LA",
+      "complete_opt4": false,
+      "configuration": "OriginalSVB32-component-trace-host40",
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 2692644,
+      "schema": "ec-original-svb-onboard/1",
+      "start_ticks": "26961211",
+      "status": "WAITING_INDEPENDENT_HOST40_PHYSICAL_RESULT_NO_FPGA_IO",
+      "updated_utc": "2026-11-12T06:01:33.672341+00:00"
+    },
+    "cycleprecise-original-svb-host40-shell-application-onboard-r5-20261112/state.json": {
+      "board_bdf": "0000:21:00.0",
+      "board_serial": "21770433G02LA",
+      "complete_opt4": false,
+      "cpu_ticks": 18,
+      "deployment_operations": [],
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "native_paused": true,
+      "pid": 2692643,
+      "process_state": "R",
+      "profile": "OriginalSVB32-component-trace-host40",
+      "rss_bytes": 15859712,
+      "schema": "ec-original-svb-application-onboard/1",
+      "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+      "start_ticks": "26961211",
+      "status": "WAITING_CERTIFIED_COMPONENT_AND_REAL_APPLICATION_CPU_REPLAY",
+      "updated_utc": "2026-11-12T06:01:33.546754+00:00"
+    },
+    "fpga-priority-handoff-r1-20261112/state.json": {
+      "board_bdf": "0000:21:00.0",
+      "cpu_ticks": 3,
+      "fpga_io": false,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "no_cad_launch": true,
+      "physical_status": null,
+      "pid": 2551972,
+      "process_state": "R",
+      "rss_bytes": 14417920,
+      "schema": "ec-fpga-priority-handoff/1",
+      "start_ticks": "26486048",
+      "started_utc": "2026-11-12T03:12:20.095324+00:00",
+      "status": "WAITING_REAL_FULL_PHYSICAL_CERTIFICATION",
+      "updated_utc": "2026-11-12T06:02:23.237410+00:00"
+    }
+  },
+  "services": {
+    "ec-opt4-svb-host40-shell-physical-r5.service": "MainPID=2692645\nControlGroup=/system.slice/ec-opt4-svb-host40-shell-physical-r5.service\nActiveState=active\n",
+    "ec-opt4-svb-host40-shell-follow-r5.service": "MainPID=2692644\nControlGroup=/system.slice/ec-opt4-svb-host40-shell-follow-r5.service\nActiveState=active\n",
+    "ec-opt4-svb-host40-shell-application-follow-r5.service": "MainPID=2692643\nControlGroup=/system.slice/ec-opt4-svb-host40-shell-application-follow-r5.service\nActiveState=active\n",
+    "ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service": "MainPID=2379594\nControlGroup=/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\nActiveState=active\n",
+    "ec-opt4-mcrams-host-continuation-r3-clock-3656aec4.service": "MainPID=2759828\nControlGroup=/system.slice/ec-opt4-mcrams-host-continuation-r3-clock-3656aec4.service\nActiveState=active\n",
+    "ec-opt4-fpga-priority-handoff-r1.service": "MainPID=2551972\nControlGroup=/system.slice/ec-opt4-fpga-priority-handoff-r1.service\nActiveState=active\n"
+  },
+  "processes": {
+    "2379594": {
+      "pid": 2379594,
+      "start_ticks": "25825415",
+      "state": "S",
+      "cpu_ticks": 1242,
+      "rss_bytes": 14168064,
+      "cgroup": "13:devices:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n9:memory:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n1:name=systemd:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n0::/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n"
+    },
+    "2379596": {
+      "pid": 2379596,
+      "start_ticks": "25825420",
+      "state": "S",
+      "cpu_ticks": 1035,
+      "rss_bytes": 15634432,
+      "cgroup": "13:devices:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n9:memory:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n1:name=systemd:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n0::/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n"
+    },
+    "2379656": {
+      "pid": 2379656,
+      "start_ticks": "25825451",
+      "state": "S",
+      "cpu_ticks": 1698154,
+      "rss_bytes": 13757431808,
+      "cgroup": "13:devices:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n9:memory:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n1:name=systemd:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n0::/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n"
+    },
+    "2378806": {
+      "pid": 2378806,
+      "start_ticks": "25817526",
+      "state": "S",
+      "cpu_ticks": 916,
+      "rss_bytes": 15597568,
+      "cgroup": "13:devices:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service\n9:memory:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service\n1:name=systemd:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service\n0::/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service\n"
+    },
+    "2378807": {
+      "pid": 2378807,
+      "start_ticks": "25817536",
+      "state": "R",
+      "cpu_ticks": 1696060,
+      "rss_bytes": 40620032,
+      "cgroup": "13:devices:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service\n9:memory:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service\n1:name=systemd:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service\n0::/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service\n"
+    },
+    "2692645": {
+      "pid": 2692645,
+      "start_ticks": "26961211",
+      "state": "S",
+      "cpu_ticks": 592,
+      "rss_bytes": 15884288,
+      "cgroup": "13:devices:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service\n9:memory:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service\n1:name=systemd:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service\n0::/system.slice/ec-opt4-svb-host40-shell-physical-r5.service\n"
+    },
+    "2692703": {
+      "pid": 2692703,
+      "start_ticks": "26961377",
+      "state": "S",
+      "cpu_ticks": 912120,
+      "rss_bytes": 7551827968,
+      "cgroup": "13:devices:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service\n9:memory:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service\n1:name=systemd:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service\n0::/system.slice/ec-opt4-svb-host40-shell-physical-r5.service\n"
+    },
+    "2759828": {
+      "pid": 2759828,
+      "start_ticks": "27368804",
+      "state": "S",
+      "cpu_ticks": 5,
+      "rss_bytes": 15802368,
+      "cgroup": "13:devices:/system.slice/ec-opt4-mcrams-host-continuation-r3-clock-3656aec4.service\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/system.slice/ec-opt4-mcrams-host-continuation-r3-clock-3656aec4.service\n9:memory:/system.slice/ec-opt4-mcrams-host-continuation-r3-clock-3656aec4.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/system.slice/ec-opt4-mcrams-host-continuation-r3-clock-3656aec4.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/system.slice/ec-opt4-mcrams-host-continuation-r3-clock-3656aec4.service\n1:name=systemd:/system.slice/ec-opt4-mcrams-host-continuation-r3-clock-3656aec4.service\n0::/system.slice/ec-opt4-mcrams-host-continuation-r3-clock-3656aec4.service\n"
+    }
+  },
+  "svb": {
+    "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r5-20261112/E-preroute-shell-replication/vivado.log",
+    "log_sha256": "7592c5e9ddaee4068ed103a6b822d62a1bc2e5873f98e6479fadbf20f810cf48",
+    "log_mtime_utc": "2026-11-12T05:58:14.855384+00:00",
+    "intermediate_timing": [
+      "Intermediate Timing Summary | WNS=0.198  | TNS=0.000  | WHS=-0.471 | THS=-1528.898|",
+      "Intermediate Timing Summary | WNS=0.198  | TNS=0.000  | WHS=N/A    | THS=N/A    |"
+    ],
+    "overlaps": [
+      0,
+      349206,
+      144668,
+      73331,
+      37605,
+      17760,
+      8629,
+      4738
+    ],
+    "snapshots": [
+      "EC_HOST40_SHELL_SNAPSHOT tag=physical WNS=-0.029 WHS=-0.554"
+    ],
+    "result": {},
+    "chosen": {},
+    "bitstreams": []
+  },
+  "mcrams": {
+    "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-full-host-capacity-r1-20261112/vivado.log",
+    "log_sha256": "1d159e5f3a2f98277b1719999f31fce832b0f2eb01c4f52871459c770f676706",
+    "phase": "synth_design",
+    "last_log_lines": [
+      "+----------------------------+--------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+",
+      "",
+      "Note: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.",
+      "---------------------------------------------------------------------------------",
+      "Finished ROM, RAM, DSP, Shift Register and Retiming Reporting",
+      "---------------------------------------------------------------------------------",
+      "No constraint files found.",
+      "---------------------------------------------------------------------------------",
+      "Start Timing Optimization",
+      "---------------------------------------------------------------------------------"
+    ],
+    "result": {},
+    "actual_reports": {},
+    "checkpoints": [],
+    "early_reports": {
+      "synth": {},
+      "postopt": {}
+    }
+  },
+  "parity": {
+    "last_observed_target_cycle": 1648005,
+    "log_bytes": 1266376983,
+    "result": {},
+    "finite_target_parity_complete": false
+  },
+  "fpga_operations_this_turn": [],
+  "cpu_comparison_control_operations": []
+}

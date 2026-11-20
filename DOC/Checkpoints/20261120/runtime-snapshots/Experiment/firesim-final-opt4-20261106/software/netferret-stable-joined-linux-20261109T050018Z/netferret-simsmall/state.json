@@ -1,0 +1,47 @@
+{
+  "argv": [
+    "/data1/gzh/EC/chipyard/.conda-env/bin/qemu-system-riscv64",
+    "-machine",
+    "virt",
+    "-cpu",
+    "rv64",
+    "-m",
+    "2G",
+    "-smp",
+    "1",
+    "-nographic",
+    "-no-reboot",
+    "-bios",
+    "default",
+    "-kernel",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T083406Z/arch/riscv/boot/Image",
+    "-initrd",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-linux-20261109T050018Z/netferret-simsmall/initramfs.cpio",
+    "-append",
+    "console=ttyS0 earlycon=sbi rdinit=/init panic=-1 mem=2G"
+  ],
+  "both_peers_exit_zero": true,
+  "candidate_receipt_sha256": "8c64571f74293c6437881d4f3f4b059c534524fb8dd23ae1d2c3fba9b9ec4c31",
+  "ended_utc": "2026-11-09T05:00:40.780411+00:00",
+  "exact_qemu_user_output": false,
+  "formal_eligible": false,
+  "fpga_execution": false,
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "input": "simsmall",
+  "observed_output_hashes": [
+    "7e5346f70cfb376526399f589532e5af9b2c11bd5f4f36fc989d781e0a131331"
+  ],
+  "original_roi_markers_complete": true,
+  "pid": 1494381,
+  "program": "netferret",
+  "reference": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-followup-20261107T103840Z/netferret-simsmall-riscv64/result.json",
+  "returncode": 0,
+  "rootfs": {
+    "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-linux-20261109T050018Z/netferret-simsmall/initramfs.cpio",
+    "sha256": "1ae4fe8f42d6e5c85db5b3b2bf8f5b03dfe38cd7333a3ec7d4826a2f1ad2d0f6"
+  },
+  "start_ticks": "1214127",
+  "status": "FAILED_WITH_EVIDENCE",
+  "timeout_seconds": 1800,
+  "wall_seconds": 19.935777677999795
+}

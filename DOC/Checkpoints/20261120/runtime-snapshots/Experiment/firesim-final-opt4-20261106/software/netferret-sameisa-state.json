@@ -1,0 +1,137 @@
+{
+  "active_case": "simmedium",
+  "candidate_receipt_sha256": "eb8c7b23b020f54a34d12e73904bb7a741655c2242144f83a10213bcebd662e4",
+  "cases": [
+    {
+      "input": "test",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sameisa-20261107T104210Z/test/result.json",
+      "returncode": 0
+    },
+    {
+      "input": "simsmall",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sameisa-20261107T104210Z/simsmall/result.json",
+      "returncode": 0
+    },
+    {
+      "input": "simmedium",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sameisa-20261107T104210Z/simmedium/result.json",
+      "returncode": 0
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-I/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netferret/src/server/include",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include",
+        "-c",
+        "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netferret/src/server/src/tpool.c",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-kernel-reference-20261107T104210Z/tpool.o"
+      ],
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sameisa-20261107T104210Z/tpool.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-I/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netferret/src/server/include",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include",
+        "-c",
+        "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netferret/src/server/benchmark/ferret-pthreads.c",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-kernel-reference-20261107T104210Z/benchmark.o"
+      ],
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sameisa-20261107T104210Z/benchmark.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-static",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-kernel-reference-20261107T104210Z/tpool.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-kernel-reference-20261107T104210Z/benchmark.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/diagnostic-hooks.o",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/parsec/lib",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib",
+        "-Wl,--start-group",
+        "-lcass",
+        "-lcassimage",
+        "-lgsl",
+        "-lgslcblas",
+        "-ljpeg",
+        "-Wl,--end-group",
+        "-pthread",
+        "-lrt",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-kernel-reference-20261107T104210Z/netferret/server/parsec/bin/ferret-pthreads"
+      ],
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sameisa-20261107T104210Z/server.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-I/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netferret/src/server/include",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include",
+        "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netferret/src/client/client.c",
+        "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netferret/src/client/tpool.c",
+        "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netferret/src/server/src/queue.c",
+        "-static",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-kernel-reference-20261107T104210Z/netferret/client/client"
+      ],
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sameisa-20261107T104210Z/client.log",
+      "returncode": 0
+    }
+  ],
+  "ended_utc": "2026-11-07T10:42:20.175257+00:00",
+  "formal_eligible": false,
+  "fpga_execution": false,
+  "host_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sameisa-20261107T104210Z",
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-kernel-reference-20261107T104210Z",
+  "pid": 2531893,
+  "reused_dependencies": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib/libgsl.a": "eb9abfc55b7be107daf4b01c2ef638ff29ec4c8776f2e6b48aff883708661c43",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib/libgslcblas.a": "6402c38eb8b5d86cfb753098b14ddac3995db6fc6f16005c68612f60f1ce9879",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib/libjpeg.a": "cd05297b7a989a523a8322f0afda3317515beb03c2fa87bf3e0799522a85164c",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/diagnostic-hooks.o": "82174ade3b32861b548f0e85b61c4d01deec15993b7e2ac33836cce9c60d6e94",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/parsec/lib/libcass.a": "c434da4f9d420a7f9e5d92d4b3cd272c95a22310a383acb58c21b7b0958b62a6",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/parsec/lib/libcassimage.a": "8d10b7fdb6257a4abe9de3a85e516263694b434f2301629aa27efb8f917f0d2f"
+  },
+  "schema": "ec-netferret-sameisa/1",
+  "start_ticks": "1628811",
+  "started_utc": "2026-11-07T10:42:10.400252+00:00",
+  "status": "COMPLETE_REVIEW_EVIDENCE"
+}

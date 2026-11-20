@@ -1,0 +1,41 @@
+{
+  "result": {
+    "changed_files": [],
+    "evidence": [
+      "The active policy requires one EC-only simmedium attempt for each of the eight benchmarks and forbids Native launches: campaign-policy.json, foreground_parsec_performance_priority.",
+      "The existing campaign is alive in its user-session cgroup. Controller PID 3527056 and workers 3527081/3527082 match their recorded start ticks; simulators 3527102/3527103 are active in the same campaign cgroup. It is running blackscholes and fluidanimate, with six benchmarks pending and repetitions=1.",
+      "The campaign inputs pin functional baseline 8491167d84b6d9521b151a743673c1516926a1f8 and the full EC model SHA-256 cc2993bd8c6f56893afd9e73cc358684c07c481a52ef8eb50dc7a136134b2867.",
+      "The existing performance audit verified 48 raw CPU logs and 24 paired repeats, checked 24 historical Native FPGA runs, and reports no full-application slowdown. The simmedium publisher keeps slowdown null pending comparability review."
+    ],
+    "launched_jobs": [],
+    "next_action": "Leave the current campaign and audit follower running. Recheck after 600 seconds; let the owner advance through the six queued benchmarks, recording failures and skipping each without retry. Keep slowdown unpublished until runtime-counter and cross-backend contract checks pass.",
+    "outcome": "WAITING_ACTIVE_JOB",
+    "retry_after_seconds": 600,
+    "summary": "Verified the existing full-application EC simmedium campaign is active and within the one-attempt scope. No duplicate run or other job was started; live CAD and the independent CPU campaign were left untouched."
+  },
+  "utc": "2026-11-12T13:16:51.071387+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 3861471,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "30085750"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-12T13:16:48.354076+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 3861470,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00151",
+    "rss_bytes": 13533184,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "30085746",
+    "started_utc": "2026-11-12T13:12:17.067922+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-12T13:16:48.352286+00:00"
+  }
+}

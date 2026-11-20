@@ -1,0 +1,23 @@
+{
+  "changed_files": [
+    "firesim/final-opt4-20261106/candidates/mcrams-host-area-boundary-round45-v1-20261111/prepare.py",
+    "firesim/final-opt4-20261106/candidates/mcrams-host-area-boundary-round45-v1-20261111/area-boundary.json",
+    "firesim/final-opt4-20261106/routes/svb-postfpga-metrics-round45-v1-20261111/analyze.py",
+    "firesim/final-opt4-20261106/routes/svb-postfpga-metrics-round45-v1-20261111/plan.json",
+    "Experiment/firesim-final-opt4-20261106/status-audits/opt4-round45-host-boundary-and-p0-20261111T145641Z/REPORT.md",
+    "Experiment/firesim-final-opt4-20261106/status-audits/opt4-round45-host-boundary-and-p0-20261111T145641Z/changed-files.json"
+  ],
+  "evidence": [
+    "Canneal r5 completed PASS: 1,759,001 captured target edges, 659 capture/promotion/ACK handshakes each, 131 BOOM-accepted PASS results.",
+    "Area preparation preserved all 362 original DCache ports. The excised RAM shares enclosing root FAMETop; DCache-only mapping would omit it.",
+    "Post-FPGA metrics preflight passed histogram checks and rejected CPU-only evidence as hardware evidence.",
+    "Full SVB replay remains DEFERRED by the memory guard. Live e0, module maps, physical routes and followers were preserved.",
+    "9ae remains NOT FIT: 2,847,382 LUT, excess 1,543,702. No new FPGA sample.",
+    "changed-files.json records all 24 created files, including 15 exact RTL module copies."
+  ],
+  "launched_jobs": [],
+  "next_action": "Adopt existing replay admission after 300 seconds; require original RTL replay and mutation PASS before force-all GG replay. Check whole CAD after at least 600 seconds. Preserve resource guards.",
+  "outcome": "PROGRESS",
+  "retry_after_seconds": 300,
+  "summary": "Completed source-bound area preparation and a gated post-FPGA metrics consumer; adopted the completed r5 capture. Hardware validation remains pending."
+}

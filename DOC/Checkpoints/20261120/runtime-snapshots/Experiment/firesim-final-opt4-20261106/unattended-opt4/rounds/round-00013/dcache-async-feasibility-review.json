@@ -1,0 +1,410 @@
+{
+  "schema": "ec-opt4-dcache-async-feasibility-source-review/1",
+  "utc": "2026-11-11T00:36:08.227209+00:00",
+  "hardware_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+  "source": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-bucket-tag-r3-20261111/chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+  "source_sha256": "0fb9e4b3931827120aed8311dbbc87a2d25e697c76505717af7162a0a9f1663d",
+  "findings": {
+    "appliedEffectResult": {
+      "references": [
+        {
+          "line": 733,
+          "source": "val appliedEffectResult = Reg(Vec(nSets, Vec(nWays, UInt(xLen.W))))"
+        },
+        {
+          "line": 3061,
+          "source": "s3_result := Mux(duplicate, appliedEffectResult(set)(way),"
+        },
+        {
+          "line": 3236,
+          "source": "s3_result := appliedEffectResult(s3_set)(s3_way_idx)"
+        },
+        {
+          "line": 3487,
+          "source": "appliedEffectResult(set)(way) := s3_result"
+        }
+      ],
+      "limitations": "Read/write port count and arbitration must be proved against all referenced uses; no RTL change or area reduction established."
+    },
+    "appliedEffectToken": {
+      "references": [
+        {
+          "line": 731,
+          "source": "val appliedEffectToken = RegInit(VecInit(Seq.fill(nSets)(VecInit("
+        },
+        {
+          "line": 2572,
+          "source": "appliedEffectToken(crossPackagePendingSet)(crossPackagePendingWay),"
+        },
+        {
+          "line": 3052,
+          "source": "appliedEffectToken(set)(way) === s2_req(0).effect_token"
+        },
+        {
+          "line": 3182,
+          "source": "appliedEffectToken(s3_set)(s3_way_idx) === s3_req.effect_token"
+        },
+        {
+          "line": 3486,
+          "source": "appliedEffectToken(set)(way) := s3_req.effect_token"
+        },
+        {
+          "line": 3800,
+          "source": "(0 until nWays).map(w => appliedEffectToken(s)(w))))"
+        }
+      ],
+      "limitations": "Full-set/way debug flattening is retained and prevents hiding state behind limited read ports."
+    },
+    "lineGeneration": {
+      "references": [
+        {
+          "line": 727,
+          "source": "val lineGeneration = RegInit(VecInit(Seq.fill(nSets)(VecInit("
+        },
+        {
+          "line": 1215,
+          "source": "s2_lookup(w).line_generation := lineGeneration(set)(way)"
+        },
+        {
+          "line": 1239,
+          "source": "s2_effective_req(w).line_generation := lineGeneration(set)(way)"
+        },
+        {
+          "line": 1250,
+          "source": "s2_effective_req(w).line_generation := lineGeneration(set)(way)"
+        },
+        {
+          "line": 1609,
+          "source": "wb.io.image_generation := lineGeneration(wbReqSet)(wbReqWay)"
+        },
+        {
+          "line": 2569,
+          "source": "lineGeneration(crossPackagePendingSet)(crossPackagePendingWay),"
+        },
+        {
+          "line": 3184,
+          "source": "(!s3_req.image_valid || s3_req.line_generation === lineGeneration(s3_set)(s3_way_idx))"
+        },
+        {
+          "line": 3439,
+          "source": "lineGeneration(set)(way) := mshrs.io.refill.bits.image.generation"
+        },
+        {
+          "line": 3467,
+          "source": "lineGeneration(set)(way) := imageSerial"
+        },
+        {
+          "line": 3796,
+          "source": "(0 until nWays).map(w => lineGeneration(s)(w))))"
+        }
+      ],
+      "limitations": "Full-set/way debug flattening is retained and prevents hiding state behind limited read ports."
+    },
+    "imageKey": {
+      "references": [
+        {
+          "line": 734,
+          "source": "val imageKey = RegInit(VecInit(Seq.fill(nSets)(VecInit("
+        },
+        {
+          "line": 1473,
+          "source": "imageValid(installSet)(installWay), imageKey(installSet)(installWay),"
+        },
+        {
+          "line": 1521,
+          "source": "imageKey(refillReqSet)(refillReqWay), lowerPreserved(refillReqSet)(refillReqWay),"
+        },
+        {
+          "line": 1611,
+          "source": "wb.io.image_key := imageKey(wbReqSet)(wbReqWay)"
+        },
+        {
+          "line": 1774,
+          "source": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).asUInt === crossPackagePendingKey.asUInt)"
+        },
+        {
+          "line": 1783,
+          "source": "crossPackageWbPacketSeq := imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq"
+        },
+        {
+          "line": 1792,
+          "source": "val s2_overwrittenKey = imageKey(s2_store_set)(s2_store_way)"
+        },
+        {
+          "line": 1801,
+          "source": "imageKey(svbFastSet)(svbFastWay).asUInt === svbFastKey.asUInt"
+        },
+        {
+          "line": 1903,
+          "source": "imageKey(crossPackagePendingSet)(crossPackagePendingWay), s2_overwrittenKey)"
+        },
+        {
+          "line": 2006,
+          "source": "!L1Preservation.safe(imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)"
+        },
+        {
+          "line": 2025,
+          "source": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).valid &&"
+        },
+        {
+          "line": 2026,
+          "source": "crossPackageRescueSeq > imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq &&"
+        },
+        {
+          "line": 2027,
+          "source": "!L1Preservation.safe(imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)"
+        },
+        {
+          "line": 2052,
+          "source": "L1Preservation.safe(imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)"
+        },
+        {
+          "line": 2481,
+          "source": "crossPackagePendingSeq := imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq"
+        },
+        {
+          "line": 2489,
+          "source": "crossPackagePendingKey := imageKey(crossPackagePendingSet)(crossPackagePendingWay)"
+        },
+        {
+          "line": 2492,
+          "source": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).generation,"
+        },
+        {
+          "line": 2493,
+          "source": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq,"
+        },
+        {
+          "line": 2494,
+          "source": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).writer,"
+        },
+        {
+          "line": 2495,
+          "source": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).valid)"
+        },
+        {
+          "line": 2498,
+          "source": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq,"
+        },
+        {
+          "line": 2499,
+          "source": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).generation,"
+        },
+        {
+          "line": 2544,
+          "source": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).asUInt === retainedReceiptKey.asUInt,"
+        },
+        {
+          "line": 3193,
+          "source": "imageKey(s3_set)(s3_way_idx), lowerPreserved(s3_set)(s3_way_idx),"
+        },
+        {
+          "line": 3440,
+          "source": "imageKey(set)(way) := mshrs.io.refill.bits.image"
+        },
+        {
+          "line": 3472,
+          "source": "imageKey(set)(way).generation, imageKey(set)(way).contentSeq,"
+        },
+        {
+          "line": 3473,
+          "source": "imageKey(set)(way).writer, imageKey(set)(way).valid, lowerPreserved(set)(way),"
+        },
+        {
+          "line": 3474,
+          "source": "L1Preservation.safe(imageKey(set)(way), safePacketWatermark),"
+        },
+        {
+          "line": 3477,
+          "source": "imageKey(set)(way).valid := true.B"
+        },
+        {
+          "line": 3478,
+          "source": "imageKey(set)(way).writer := outer.staticImageWriter.U"
+        },
+        {
+          "line": 3479,
+          "source": "imageKey(set)(way).generation := imageSerial"
+        },
+        {
+          "line": 3480,
+          "source": "imageKey(set)(way).contentSeq := s3_req.packet_seq"
+        },
+        {
+          "line": 4301,
+          "source": "val slowdown_opt1_pending_live_key = chisel3.WireInit(imageKey(crossPackagePendingSet)(crossPackagePendingWay))"
+        },
+        {
+          "line": 4304,
+          "source": "imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark))"
+        },
+        {
+          "line": 4419,
+          "source": "imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)"
+        },
+        {
+          "line": 4505,
+          "source": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq,"
+        },
+        {
+          "line": 4506,
+          "source": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).generation,"
+        },
+        {
+          "line": 4532,
+          "source": "val opt2bWriteKey = imageKey(opt2bWriteSet)(opt2bWriteWay)"
+        },
+        {
+          "line": 4610,
+          "source": "val safeChainLiveKey = imageKey(crossPackagePendingSet)(crossPackagePendingWay)"
+        }
+      ],
+      "limitations": "Read/write port count and arbitration must be proved against all referenced uses; no RTL change or area reduction established."
+    },
+    "reservedEpoch": {
+      "references": [
+        {
+          "line": 742,
+          "source": "val reservedEpoch = Reg(Vec(nSets, Vec(nWays, UInt(16.W))))"
+        },
+        {
+          "line": 1397,
+          "source": "reservedEpoch(set)(way) := r.slot_epoch"
+        },
+        {
+          "line": 1453,
+          "source": "reservedEpoch(installSet)(installWay) === installReq.slot_epoch &&"
+        },
+        {
+          "line": 1504,
+          "source": "selectedRefillReservedEpoch := reservedEpoch(refillReqSet)(refillReqWay)"
+        },
+        {
+          "line": 3435,
+          "source": "slotEpoch(set)(way) := reservedEpoch(set)(way)"
+        },
+        {
+          "line": 3442,
+          "source": "mshrs.io.refill.bits.line_addr, reservedEpoch(set)(way),"
+        }
+      ],
+      "limitations": "Read/write port count and arbitration must be proved against all referenced uses; no RTL change or area reduction established."
+    },
+    "reservedTransaction": {
+      "references": [
+        {
+          "line": 743,
+          "source": "val reservedTransaction = Reg(Vec(nSets, Vec(nWays, UInt(32.W))))"
+        },
+        {
+          "line": 1398,
+          "source": "reservedTransaction(set)(way) := r.transaction_token"
+        },
+        {
+          "line": 1454,
+          "source": "reservedTransaction(installSet)(installWay) === installReq.transaction_token &&"
+        },
+        {
+          "line": 1513,
+          "source": "mshrs.io.refill.bits.transaction_token === reservedTransaction(refillReqSet)(refillReqWay) &&"
+        },
+        {
+          "line": 2571,
+          "source": "reservedTransaction(crossPackagePendingSet)(crossPackagePendingWay),"
+        },
+        {
+          "line": 3109,
+          "source": "reservedTransaction(s3_set)(s3_way_idx) === s3_req.transaction_token &&"
+        }
+      ],
+      "limitations": "Read/write port count and arbitration must be proved against all referenced uses; no RTL change or area reduction established."
+    },
+    "reservedMshr": {
+      "references": [
+        {
+          "line": 744,
+          "source": "val reservedMshr = Reg(Vec(nSets, Vec(nWays, UInt(8.W))))"
+        },
+        {
+          "line": 1399,
+          "source": "reservedMshr(set)(way) := r.replay_mshr_id"
+        },
+        {
+          "line": 1455,
+          "source": "reservedMshr(installSet)(installWay) === installReq.replay_mshr_id &&"
+        },
+        {
+          "line": 1514,
+          "source": "mshrs.io.refill.bits.mshr_id === reservedMshr(refillReqSet)(refillReqWay) &&"
+        },
+        {
+          "line": 2570,
+          "source": "reservedMshr(crossPackagePendingSet)(crossPackagePendingWay),"
+        },
+        {
+          "line": 3110,
+          "source": "reservedMshr(s3_set)(s3_way_idx) === s3_req.replay_mshr_id &&"
+        }
+      ],
+      "limitations": "Read/write port count and arbitration must be proved against all referenced uses; no RTL change or area reduction established."
+    },
+    "residentTag": {
+      "references": [
+        {
+          "line": 724,
+          "source": "val residentTag = Reg(Vec(nSets, Vec(nWays, UInt(tagBits.W))))"
+        },
+        {
+          "line": 806,
+          "source": "when (r.data.coh.isValid()) { residentTag(r.idx)(way) := r.data.tag }"
+        },
+        {
+          "line": 1771,
+          "source": "residentTag(crossPackagePendingSet)(crossPackagePendingWay) === crossPackagePendingTag &&"
+        },
+        {
+          "line": 1799,
+          "source": "residentTag(svbFastSet)(svbFastWay) === svbFastTag &&"
+        },
+        {
+          "line": 3112,
+          "source": "residentValid(s3_set)(s3_way_idx) && residentTag(s3_set)(s3_way_idx) === (s3_req.addr >> untagBits))"
+        }
+      ],
+      "limitations": "Read/write port count and arbitration must be proved against all referenced uses; no RTL change or area reduction established."
+    }
+  },
+  "next_promising_cut": "appliedEffectResult: full-width payload has one lexical dataWriteArb.in(0).fire write and dynamic reads at s2 duplicate recognition and s3 completion. Keep arbitrary stale payload semantics; prove write clock/read-before-edge behavior and caller conditions before converting any storage. imageKey requires more read ports and a proof that local/refill writes are mutually exclusive.",
+  "non_candidate": "appliedEffectToken and lineGeneration feed full-set/way named debug arrays; replacing them by limited-port RAM while dropping those reads would reduce instrumentation and is forbidden.",
+  "no_name_attribution_inference": true,
+  "area_claim": null,
+  "rtl_changed": false,
+  "fpga_access": false,
+  "parent_attribution_repeated": false,
+  "preserved_parallel_instrumentation": [
+    {
+      "line": 3793,
+      "source": "val debug_slot_epoch = VecInit((0 until nSets).flatMap(s =>"
+    },
+    {
+      "line": 3795,
+      "source": "val debug_line_generation = VecInit((0 until nSets).flatMap(s =>"
+    },
+    {
+      "line": 3799,
+      "source": "val debug_applied_effect_token = VecInit((0 until nSets).flatMap(s =>"
+    },
+    {
+      "line": 3950,
+      "source": "dontTouch(debug_slot_epoch)"
+    },
+    {
+      "line": 3951,
+      "source": "dontTouch(debug_line_generation)"
+    },
+    {
+      "line": 3953,
+      "source": "dontTouch(debug_applied_effect_token)"
+    }
+  ]
+}

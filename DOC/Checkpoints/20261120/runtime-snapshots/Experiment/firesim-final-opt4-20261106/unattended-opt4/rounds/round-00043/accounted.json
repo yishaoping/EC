@@ -1,0 +1,49 @@
+{
+  "result": {
+    "changed_files": [
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-dcache-owner-audit-round43-r3-20261111/audit.py",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-owner-pair-compile-round43-v1-20261111/controller.py",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/boom-accepted-evidence-round43-v1-20261111/analyze.py",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/campaign-policy.json",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-round43-progress-20261111/REPORT.md"
+    ],
+    "evidence": [
+      "Owner audit PASS: complete pre-host target unchanged; 35 image reads, 518 generation observations and reset/write gates preserved. Three assembly mutations rejected; full host parity remains pending.",
+      "Independently matched 131 unique allocations to 131 accepted full-compare PASS results; zero unmatched packages. Five mutation checks rejected.",
+      "Paired Plain/MCRams compilation prepared with 280 bound inputs and 22 staged files. Broker receipt DEFERRED at CPU-job limit; compilation has not started.",
+      "9ae remains NOT FIT: 2,847,382 LUT, excess 1,543,702. Existing e0, module maps, SVB routing and payload capture preserved."
+    ],
+    "launched_jobs": [
+      "ec-opt4-auto-mcrams-owner-audit-r43-r3-3656aec4.service \u2014 completed PASS, exit 0"
+    ],
+    "next_action": "Adopt r5 trace completion and automatic frozen-SVB replay; allow queued paired compilation when an ordinary slot opens. Continue existing CAD without duplicate jobs or worker FPGA I/O.",
+    "outcome": "PROGRESS",
+    "retry_after_seconds": 600,
+    "summary": "Recovered the owner-memory audit and validated all 131 BOOM package results. Paired compilation is queued. No new FPGA sample."
+  },
+  "utc": "2026-11-11T14:13:13.972887+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 1333215,
+      "process_state": "R",
+      "rss_bytes": 421888,
+      "start_ticks": "21707987"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-11T14:13:07.854873+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 1333214,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00043",
+    "rss_bytes": 13701120,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "21707984",
+    "started_utc": "2026-11-11T13:55:59.436725+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-11T14:13:07.853463+00:00"
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "algorithm_sources_modified": false,
+  "auxiliary_wallclock_report": "Disabled with original LOG::Initialize_Logging(true,true,0); FPGA ROI cycles authoritative, no fake times",
+  "candidate_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/facesim-candidate-build.json",
+  "candidate_receipt_sha256": "1ea0ff4fde64df7c0a5ad922f14342925469a9aed416f80b47ec820a5e60d9a3",
+  "cases": [],
+  "child_pid": 2473453,
+  "commands": [
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/diagnostic-hooks.c",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/diagnostic-hooks.o"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-c",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-fpermissive",
+        "-fexceptions",
+        "-DNEW_SERIAL_IMPLEMENTATIOM",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/TaskQ/include",
+        "-DUSE_ALAMERE_TASKQ",
+        "-w",
+        "-DNDEBUG",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/real/main.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Benchmarks/facesim/main-ec-staged.cpp",
+        "-DENABLE_PARSEC_HOOKS",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Benchmarks/facesim"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-c",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-fpermissive",
+        "-fexceptions",
+        "-DNEW_SERIAL_IMPLEMENTATIOM",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/TaskQ/include",
+        "-DUSE_ALAMERE_TASKQ",
+        "-w",
+        "-DNDEBUG",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/real/SOLIDS_FLUIDS_DRIVER.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Public_Library/Solids_And_Fluids/SOLIDS_FLUIDS_DRIVER-ec-staged.cpp",
+        "-DENABLE_PARSEC_HOOKS",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Public_Library"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ar",
+        "r",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/real/libPhysBAM.a",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/real/SOLIDS_FLUIDS_DRIVER.o"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/facesim",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/real/main.o",
+        "obj/FACE_DRIVER.o",
+        "obj/FACE_LANDMARK_OPTIMIZATION_GOAL.o",
+        "obj/FACE_OPTIMIZATION.o",
+        "obj/LANDMARK_PROXIMITY_OPTIMIZATION.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/real/libPhysBAM.a",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/TaskQ/lib/taskQ.o",
+        "-lm",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/lib",
+        "-static",
+        "-lpthread",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/hooks.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/dac_roi.o"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Benchmarks/facesim"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-c",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-fpermissive",
+        "-fexceptions",
+        "-DNEW_SERIAL_IMPLEMENTATIOM",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/TaskQ/include",
+        "-DUSE_ALAMERE_TASKQ",
+        "-w",
+        "-DNDEBUG",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/diagnostic/main.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Benchmarks/facesim/main-ec-staged.cpp",
+        "-DENABLE_PARSEC_HOOKS",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Benchmarks/facesim"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-c",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-fpermissive",
+        "-fexceptions",
+        "-DNEW_SERIAL_IMPLEMENTATIOM",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/TaskQ/include",
+        "-DUSE_ALAMERE_TASKQ",
+        "-w",
+        "-DNDEBUG",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/diagnostic/SOLIDS_FLUIDS_DRIVER.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Public_Library/Solids_And_Fluids/SOLIDS_FLUIDS_DRIVER-ec-staged.cpp",
+        "-DENABLE_PARSEC_HOOKS",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Public_Library"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ar",
+        "r",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/diagnostic/libPhysBAM.a",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/diagnostic/SOLIDS_FLUIDS_DRIVER.o"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/facesim-diagnostic",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/diagnostic/main.o",
+        "obj/FACE_DRIVER.o",
+        "obj/FACE_LANDMARK_OPTIMIZATION_GOAL.o",
+        "obj/FACE_OPTIMIZATION.o",
+        "obj/LANDMARK_PROXIMITY_OPTIMIZATION.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/diagnostic/libPhysBAM.a",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/TaskQ/lib/taskQ.o",
+        "-lm",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/lib",
+        "-static",
+        "-lpthread",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/diagnostic-hooks.o"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Benchmarks/facesim"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Benchmarks/facesim/facesim",
+        "-timing",
+        "-threads",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/reference"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "-strace",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/facesim-diagnostic",
+        "-timing",
+        "-threads",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/diagnostic"
+    }
+  ],
+  "formal_eligible": true,
+  "fpga_validation": "NOT_RUN",
+  "host_log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z",
+  "integration_patch": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z/software-integration.patch",
+  "integration_patch_sha256": "4755bf5a984b55a398d03ac2269e3b81963adc1468769ea85a28cf3ca24be3df",
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-facesim-staged-20261107T060504Z",
+  "parsec_commit": "a06d35960951c9bfad61eb4826bca8d167f98c19",
+  "pid": 2471690,
+  "reused_physbam_library_sha256": "1dee56f08d47083ceee8ccccdd94bd7f931c444fae4fd3aa00a0a4f831db5b68",
+  "software_profile": "facesim-staged-serial",
+  "status": "QEMU_DIAGNOSTIC_RUNNING"
+}

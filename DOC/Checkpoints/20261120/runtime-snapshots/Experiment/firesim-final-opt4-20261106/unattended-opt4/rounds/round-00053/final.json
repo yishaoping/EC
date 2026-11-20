@@ -1,0 +1,26 @@
+{
+  "changed_files": [
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/opt4-round53-owner-memory-proofs-20261112/REPORT.md",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/opt4-round53-owner-memory-proofs-20261112/changed-files.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00053/final.json"
+  ],
+  "evidence": [
+    "Owner RAM proofs passed 100 obligations and rejected 12 mutations; independent source/script/log audit passed.",
+    "Controller proof retains an explicit symbolic read cut. Storage and collision proofs use uncut memory. Complete FAME/DCache/Opt4 equivalence remains open.",
+    "Preserved both proof timeouts and reused 38 verified successful checkpoints.",
+    "SVB replay remains incomplete: 1,691,648 cycles, 18,957,787 defined-word checks, zero mismatches.",
+    "e0 and owner runtime preserved. Full Opt4 remains NOT FIT: 2,847,382 LUT, excess 1,543,702. No new FPGA sample."
+  ],
+  "launched_jobs": [
+    "owner-ram-controller-r53-v1-3656aec4: timeout preserved",
+    "owner-ram-controller-r53-v2-3656aec4: timeout preserved",
+    "owner-ram-controller-r53-v3-3656aec4: PASS",
+    "owner-ram-storage-r53-v1-3656aec4: PASS",
+    "owner-ram-read-snapshot-r53-v1-3656aec4: PASS",
+    "owner-memory-proof-ledger-r53-v1-3656aec4: PASS"
+  ],
+  "next_action": "After 300 seconds, adopt existing replay/runtime receipts. Submit the prepared four-memory singleton only after both exact PASS receipts and producer exit. Continue FAME composition verification; preserve e0, physical recovery guards and certified 21-only followers.",
+  "outcome": "PROGRESS",
+  "retry_after_seconds": 300,
+  "summary": "Round 53 sealed RAM proof evidence and actual module rankings. FPGA success remains outstanding."
+}

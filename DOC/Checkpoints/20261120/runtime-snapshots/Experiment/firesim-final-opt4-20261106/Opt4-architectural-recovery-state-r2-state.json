@@ -1,0 +1,115 @@
+{
+  "active_stage": "test-memory",
+  "architectural_recovery_validated": false,
+  "child": {},
+  "completed_utc": "2026-11-11T02:14:22.677088+00:00",
+  "component_tests": {
+    "memory": {
+      "executable_sha256": "39fb0a5f742cfbc0c72331683b13b08d18e84bb4ce0e93f399fdf2b18635e38a",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/test-memory.log",
+      "rtl_sha256": "d419a335976f78252b99c89a28e02845fdd943a4eb6d61aff212c4cf13ad967e",
+      "summary": "RECOVERY_MEMORY_PASS reverse_transactions=16 records_per_transaction=64 masked_overlap=1 cursor_ring_wrap=1 ownership_until_ack=1 negative_cases=24 real_cache_integration=0"
+    },
+    "state": {
+      "executable_sha256": "7cb7a4b3267817a5835f2e77e5bdb3c85b9c8154764e3e2728dc46d2b671bc3b",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/test-state.log",
+      "rtl_sha256": "8cf7f3ad787494c4759c91dba2bcdd4192b353ae4345056cc8c98528603aee81",
+      "summary": "RECOVERY_STATE_PASS restore_transactions=16 words_per_snapshot=96 negative_cases=22 contiguous_prefix=1 full_backpressure=1 incomplete_snapshot_rejected=1 real_dut_integration=0"
+    }
+  },
+  "cpu_ticks": 19,
+  "fpga_access": false,
+  "full_dut_synthesis": false,
+  "hardware_commit": "e4a9d5177673f097ed07adf7579c59b6d75fda88",
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "limitation": "Actual generated backend RTL with modeled external state/memory devices. Real BOOM rename/register/CSR, coherent cache/SVB, CDC, checker firmware and fault-injected whole-DUT integration still required.",
+  "pid": 2073290,
+  "process_state": "R",
+  "production_selected": false,
+  "rss_bytes": 14168064,
+  "schema": "ec-opt4-recovery-backend-component-validation/1",
+  "source_id": "e19f50ac36ce1dad6b88f7379e710422cb530492e50ed8b28dbdeac71a918679",
+  "stages": {
+    "compile": {
+      "ended_utc": "2026-11-11T02:14:11.254429+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/compile.log",
+      "outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/classes/opt4recovery/Emit.class": "662b8c0c735c09e7020fbdaad3f92e8e160b3a1d0ab9c2261e09980d5063e060"
+      },
+      "returncode": 0,
+      "source_id": "e19f50ac36ce1dad6b88f7379e710422cb530492e50ed8b28dbdeac71a918679"
+    },
+    "emit-memory": {
+      "ended_utc": "2026-11-11T02:14:19.874358+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/emit-memory.log",
+      "outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/memory/PackageRecoveryMemory.v": "d419a335976f78252b99c89a28e02845fdd943a4eb6d61aff212c4cf13ad967e"
+      },
+      "returncode": 0,
+      "source_id": "e19f50ac36ce1dad6b88f7379e710422cb530492e50ed8b28dbdeac71a918679"
+    },
+    "emit-state": {
+      "ended_utc": "2026-11-11T02:14:14.290725+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/emit-state.log",
+      "outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/state/PackageRecoveryState.v": "8cf7f3ad787494c4759c91dba2bcdd4192b353ae4345056cc8c98528603aee81"
+      },
+      "returncode": 0,
+      "source_id": "e19f50ac36ce1dad6b88f7379e710422cb530492e50ed8b28dbdeac71a918679"
+    },
+    "generate-memory": {
+      "ended_utc": "2026-11-11T02:14:19.914384+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/generate-memory.log",
+      "outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/memory-test.cpp": "c02ea5960e2a6b87a13d819aed89691d4468f3e011c21ee667b6aa8cc1ce549c"
+      },
+      "returncode": 0,
+      "source_id": "e19f50ac36ce1dad6b88f7379e710422cb530492e50ed8b28dbdeac71a918679"
+    },
+    "generate-state": {
+      "ended_utc": "2026-11-11T02:14:14.328161+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/generate-state.log",
+      "outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/state-test.cpp": "54f88739ca041c33c82d767ca62e866823136338232b2bc0963b79c98a0d9e23"
+      },
+      "returncode": 0,
+      "source_id": "e19f50ac36ce1dad6b88f7379e710422cb530492e50ed8b28dbdeac71a918679"
+    },
+    "test-memory": {
+      "ended_utc": "2026-11-11T02:14:22.673292+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/test-memory.log",
+      "outputs": {},
+      "returncode": 0,
+      "source_id": "e19f50ac36ce1dad6b88f7379e710422cb530492e50ed8b28dbdeac71a918679"
+    },
+    "test-state": {
+      "ended_utc": "2026-11-11T02:14:17.136190+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/test-state.log",
+      "outputs": {},
+      "returncode": 0,
+      "source_id": "e19f50ac36ce1dad6b88f7379e710422cb530492e50ed8b28dbdeac71a918679"
+    },
+    "verilate-memory": {
+      "ended_utc": "2026-11-11T02:14:22.600433+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/verilate-memory.log",
+      "outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/memory-obj/VPackageRecoveryMemory": "39fb0a5f742cfbc0c72331683b13b08d18e84bb4ce0e93f399fdf2b18635e38a"
+      },
+      "returncode": 0,
+      "source_id": "e19f50ac36ce1dad6b88f7379e710422cb530492e50ed8b28dbdeac71a918679"
+    },
+    "verilate-state": {
+      "ended_utc": "2026-11-11T02:14:17.014020+00:00",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/verilate-state.log",
+      "outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-state-r2-20261111/state-obj/VPackageRecoveryState": "7cb7a4b3267817a5835f2e77e5bdb3c85b9c8154764e3e2728dc46d2b671bc3b"
+      },
+      "returncode": 0,
+      "source_id": "e19f50ac36ce1dad6b88f7379e710422cb530492e50ed8b28dbdeac71a918679"
+    }
+  },
+  "start_ticks": "17496572",
+  "started_utc": "2026-11-11T02:14:05.504370+00:00",
+  "status": "PASS_RECOVERY_BACKEND_COMPONENTS_NOT_DUT_INTEGRATED",
+  "updated_utc": "2026-11-11T02:14:22.674162+00:00"
+}

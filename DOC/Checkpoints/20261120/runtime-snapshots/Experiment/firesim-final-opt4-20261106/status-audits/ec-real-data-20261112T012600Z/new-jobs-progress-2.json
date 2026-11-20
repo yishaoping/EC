@@ -1,0 +1,194 @@
+{
+  "states": {
+    "Opt4-mcrams-address-bucket-r1-state.json": {
+      "actual_size": [
+        256,
+        64
+      ],
+      "area_scope": "One exact storage-update interface; arithmetic and full address module are not replaced",
+      "child": {},
+      "ended_utc": "2026-11-12T01:33:26.899963+00:00",
+      "error": "AssertionError(('compile-Reg', 2))",
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "host_wall_seconds": 13.841196891007712,
+      "last_receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-r1-20261112/receipts/compile-Reg.json",
+      "pid": 2390865,
+      "ports": {
+        "read": 258,
+        "write": 256
+      },
+      "production_admission": false,
+      "schema": "ec-address-bucket-regvec-mcrams-prototype/1",
+      "stage": "compile-Reg",
+      "start_ticks": "25884082",
+      "started_utc": "2026-11-12T01:32:00.430090+00:00",
+      "status": "FAILED_WITH_EVIDENCE",
+      "updated_utc": "2026-11-12T01:33:26.899973+00:00",
+      "whole_dut_equivalence": false
+    },
+    "Opt4-mcrams-full-host-capacity-r1-state.json": {
+      "area_scope": "Complete generated FPGATop host simulator with owner-only MCRams; U280 shell not included, no parity/FPGA claim",
+      "child": {
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2379621,
+        "start_ticks": "25825441"
+      },
+      "cpus": [
+        240,
+        241,
+        242,
+        243,
+        244,
+        245,
+        246,
+        247
+      ],
+      "derived_hardware": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "fpga_access": false,
+      "full_generated_host": true,
+      "full_physical_system": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "host_rtl_sha256": "9d5380252ec779da8844b1ff632af84330fd2d0dff63912dd4c08180ae2ff3e1",
+      "host_wall_seconds": 1200.0362593430036,
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-full-host-capacity-r1-20261112/run.log",
+      "memory_limit_gib": 128,
+      "pid": 2379596,
+      "production_admission": false,
+      "schema": "ec-mcrams-full-host-capacity/1",
+      "start_ticks": "25825420",
+      "started_utc": "2026-11-12T01:22:13.975945+00:00",
+      "status": "RUNNING_FULL_HOST_SYNTH_DESIGN",
+      "threads": 8,
+      "updated_utc": "2026-11-12T01:42:14.012633+00:00",
+      "whole_dut_target_parity": false
+    },
+    "Opt4-mcrams-owner-mc-runtime-r2-state.json": {
+      "child": {
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2378807,
+        "start_ticks": "25817536"
+      },
+      "derived_hardware": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "host_wall_seconds": 1290.347880079993,
+      "instruction_checkpoint_restored": false,
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-mc-runtime-r2-20261112/run-MCRams.log",
+      "pid": 2378806,
+      "production_admission": false,
+      "rerun_from_reset": true,
+      "reused_Plain": true,
+      "schema": "ec-owner-MC-rerun-from-reset-existing-Plain/2",
+      "stage": "run-MCRams",
+      "start_ticks": "25817526",
+      "started_utc": "2026-11-12T01:20:54.929469+00:00",
+      "status": "RUNNING_RUN_MCRAMS",
+      "stop_cause": null,
+      "updated_utc": "2026-11-12T01:42:25.301786+00:00",
+      "whole_fit": false
+    },
+    "Opt4-svb-physical-resource-recovery-round51-v1-state.json": {
+      "complete_opt4": false,
+      "cpu_ticks": 596,
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "mode": "postroute",
+      "pid": 2118833,
+      "process_state": "R",
+      "producer": "original",
+      "resources": {
+        "disk_bytes": 327740682240,
+        "eligible": true,
+        "load1": 3.85,
+        "memory_kib": 467581016,
+        "reasons": [],
+        "thresholds": {
+          "disk_gib": 96,
+          "load_exclusive": 48,
+          "memory_gib": 128
+        }
+      },
+      "rss_bytes": 16408576,
+      "schema": "ec-svb-component-resource-recovery/1",
+      "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+      "start_ticks": "22940221",
+      "status": "ADMITTED_COMPONENT_REPAIR_UNCHANGED_GUARDS",
+      "target_changed": false,
+      "updated_utc": "2026-11-11T23:50:43.054364+00:00"
+    },
+    "Opt4-svb-physical-resume-r3-state.json": {
+      "admission": {
+        "disk_bytes": 328031309824,
+        "existing_component_workers": [
+          {
+            "argv": [
+              "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado",
+              "-mode",
+              "batch",
+              "-nojournal",
+              "-log",
+              "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/round51-v1/original-postroute/vivado.log",
+              "-source",
+              "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/round51-v1/original-postroute/recover.tcl"
+            ],
+            "cpu_ticks": 589142,
+            "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+            "pid": 2323399,
+            "process_state": "S",
+            "rss_bytes": 8177373184,
+            "start_ticks": "25276450",
+            "unit": "ec-opt4-auto-svb-physical-resource-recovery-r51-v1.service"
+          }
+        ],
+        "load1": 5.66,
+        "memory_kib": 455884632
+      },
+      "argv": [
+        "/tools/Xilinx/Vivado/2021.1/bin/vivado",
+        "-mode",
+        "batch",
+        "-nojournal",
+        "-log",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/resume-r3-spread-physical1/vivado.log",
+        "-source",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/resume-r3-spread-physical1/resume.tcl"
+      ],
+      "child": {
+        "cpu_ticks": 0,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2377557,
+        "process_state": "R",
+        "rss_bytes": 4096,
+        "start_ticks": "25815959"
+      },
+      "complete_opt4": false,
+      "cpu_ticks": 28,
+      "cpus": [
+        252,
+        253
+      ],
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "host_wall_seconds": 1200.038228891004,
+      "log_bytes": 20775,
+      "native_paused": true,
+      "pid": 2377491,
+      "process_state": "R",
+      "rss_bytes": 15380480,
+      "schema": "ec-original-svb-physical-resume/3",
+      "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+      "start_ticks": "25815868",
+      "started_utc": "2026-11-12T01:20:38.544777+00:00",
+      "status": "RUNNING_RESUMED_SPREAD_PHYSICAL1_ROUTE",
+      "target_changed": false,
+      "updated_utc": "2026-11-12T01:40:39.197585+00:00"
+    }
+  },
+  "utc": "2026-11-12T01:42:50.326627+00:00"
+}

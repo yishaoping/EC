@@ -1,0 +1,44 @@
+{
+  "result": {
+    "changed_files": [
+      "firesim/final-opt4-20261106/candidates/mcrams-preplace-contract-runner-r1-20261112/",
+      "Experiment/firesim-final-opt4-20261106/status-audits/round131-preplace-runner-20261112/",
+      "Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round131-result.json"
+    ],
+    "evidence": [
+      "Round131 receipt: status-audits/round131-preplace-runner-20261112/receipt.json sha256=5c84eeec5f346613c691ef974fbb1a32406ec2ba64bf7753c1b1ae28ac9648f6",
+      "13 offline checks passed: validation.json sha256=0d6a42250e83517bea345b3619fe13aac0ca80564fc2a3f8982a952c1872ae2d",
+      "Continuity capture: continuity.json sha256=0542dde545cf18754a887e85b741031e90854ee8a46505052056b520fa3efd0c"
+    ],
+    "launched_jobs": [],
+    "next_action": "Preserve E hold_fix/reroute, conditional F and certification/replay gates. Existing r3 awaits capacity FIT; retain the sole r4b observer. Recheck whole CAD after 600 seconds.",
+    "outcome": "PROGRESS",
+    "retry_after_seconds": 600,
+    "summary": "Prepared an independent exception-contract runner; 13 offline checks passed. It remains uninstalled and unqueued. R5 E is routing: 55 overlaps, intermediate WNS -0.190 ns, hold unavailable. MCrams entered final netlist cleanup; LUT/FIT remain pending. Existing metrics consumer is running and waiting for certified replay. Observed identities and bound sources match."
+  },
+  "utc": "2026-11-12T07:37:20.295813+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 2911533,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "27975474"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-12T07:37:12.422481+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 2911532,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00131",
+    "rss_bytes": 13701120,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "27975471",
+    "started_utc": "2026-11-12T07:20:34.310183+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-12T07:37:12.420926+00:00"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "changed_files": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-async-sequence-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-async-sequence-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/AddressBucketSequenceMemory.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-async-sequence-r1-20261111/lineage.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-async-sequence-r1-20261111/bindings/94b749cf20b50487d82c7378071250fa9bd5eb3b.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-async-sequence-r1-20261111/controller.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-async-sequence-r1-20261111/prepare.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-async-sequence-r1-20261111/EmitSequence.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-async-sequence-r1-20261111/boundary.cpp",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-async-sequence-r1-20261111/input-hashes.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/runtime-candidates/94b749cf.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/address-async-sequence-r1-94b749cf.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/94b749cf-prepare-runtime.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/94b749cf-prepare-runtime-r2.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00014/handoff.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00014/completed-module-ranking.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00014/postopt-disjoint-branches.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00014/dcache-result-port-contract.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00014/sequence-local-evidence.json"
+  ],
+  "evidence": [
+    "Candidate 94b749cf20b50487d82c7378071250fa9bd5eb3b, source a22e245c0631d0aabb52cbddf1d254a735541dc51279ca9638e841695851da94: generated RTL passed local sequence-state SAT, rejected the mutation, and passed 8,192 vectors on the actual 256x32 memory with 90 asynchronous reads and one synchronous write.",
+    "The 94b749cf service and its controller and Vivado child were verified live by PID, start ticks and boot ID. The isolated memory map was running; the 6,144-cycle frozen-module comparison and complete address map remain pending.",
+    "8da exited NOT_FIT_POSTOPT before placement: 3,215,683 of 1,303,680 LUTs. Its observed hierarchy used 1,950,192 LUTs outside the address branch. The 9ae whole-DUT synthesis remains live.",
+    "Completed address maps rank 9ae first at 990,905 LUTs, heap at 1,183,979 and sort at 1,197,215. Three earlier zero-LUT summaries were corrected from the original utilization reports. These are module results.",
+    "SVB r7 mapped the selector at 3,230 LUTs versus 43,898 for its matched reference and the complete candidate SVB at 130,912 LUTs. The local compositional proof and 8,192 vectors passed; direct 32-slot SAT did not pass and complete frozen-module comparison remains open.",
+    "9ae staged a matching host binary after seven real ABI byte comparisons. The 94b749cf runtime templates were prepared after fixing the missing commit binding. Architectural rollback and restart remain unvalidated. No FPGA access, certified bitstream or valid sample was observed."
+  ],
+  "launched_jobs": [
+    "ec-opt4-auto-address-async-sequence-r1-94b749cf.service"
+  ],
+  "next_action": "Collect the 94b749cf frozen-module comparison and complete map, and adopt the 9ae CAD until its actual post-opt verdict. Compare completed reset-safe candidates and pursue the DCache result-storage cut. Keep formal experiment admission gated on observable fault-triggered architectural restore and restart.",
+  "outcome": "PROGRESS",
+  "retry_after_seconds": 300,
+  "summary": "Started and locally verified a full-width asynchronous bucket sequence candidate. The best measured address candidate, 9ae, is already in whole-DUT synthesis. The 8da capacity failure confirms that savings are also required outside the address module."
+}

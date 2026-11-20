@@ -1,0 +1,41 @@
+{
+  "result": {
+    "changed_files": [],
+    "evidence": [
+      "Current policy and execution report confirm frozen baseline 8491167d and 9ae NOT FIT: 2,847,382 LUT, 1,543,702 over capacity; placement was skipped by the capacity gate.",
+      "The verified 00847dc2 address module maps to 872,880 LUT, 30,842 CARRY8, 384,373 FF, and 216 BRAM. This is module-only evidence, not a whole-system saving or FIT result.",
+      "The adopted SVB component build reached routing but failed timing: WNS -10.999 ns, TNS -42,953.152 ns, and worst hold slack -0.084 ns. Its exact routed checkpoint is marked eligible for recovery; the installed recovery dispatcher is waiting after the load<48 guard rejected an attempt at load 56.",
+      "The e0 DUT synthesis remains RUNNING_DUT_SYNTH; the owner MCRams runtime remains RUNNING_RUN_MCRAMS; and the full SVB stream replay remains in application-payload-negative. The existing full SVB binary replay passed, but no certified component bitstream or FPGA sample exists."
+    ],
+    "launched_jobs": [],
+    "next_action": "Preserve the e0 synthesis, MCRams runtime, and SVB replay owners. Let the installed physical-recovery timer retry only when its load guard passes; after timing/DRC certification, rely on the existing source-bound 21-only follower. Reassess area candidates after e0 produces its actual report. Retry status review after 300 seconds.",
+    "outcome": "WAITING_ACTIVE_JOB",
+    "retry_after_seconds": 300,
+    "summary": "Adopted current route and capacity evidence. No files changed and no jobs launched. The active synthesis and route-A work continue; SVB component recovery is waiting on its unchanged resource guard."
+  },
+  "utc": "2026-11-11T18:37:27.790604+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 2176695,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "23360225"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-11T18:37:26.855936+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 2176694,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00054",
+    "rss_bytes": 13578240,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "23360221",
+    "started_utc": "2026-11-11T18:31:21.811315+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-11T18:37:26.854655+00:00"
+  }
+}

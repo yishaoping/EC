@@ -1,0 +1,219 @@
+{
+  "algorithm_sources_modified": false,
+  "cases": [],
+  "commands": [
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-static",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/hooks",
+        "-c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/diagnostic-hooks.c",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/diagnostic-hooks.o"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-D_GNU_SOURCE",
+        "-std=gnu++17",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack",
+        "-DHAVE_STDINT_H=1",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/FlexImageLib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark",
+        "-DENABLE_PARSEC_HOOKS",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/AnnealingFactor.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/BodyGeometry.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/BodyPose.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/CameraModel.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/CovarianceMatrix.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/ImageMeasurements.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/ImageProjection.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/RandomGenerator.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/TrackingModel.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/main.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/FlexImageLib/FlexImage.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/FlexImageLib/FlexIO.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/hooks.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/dac_roi.o",
+        "-lm",
+        "-pthread",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/bodytrack"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-D_GNU_SOURCE",
+        "-std=gnu++17",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack",
+        "-DHAVE_STDINT_H=1",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/FlexImageLib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/AnnealingFactor.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/BodyGeometry.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/BodyPose.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/CameraModel.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/CovarianceMatrix.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/ImageMeasurements.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/ImageProjection.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/RandomGenerator.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/TrackingModel.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/main.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/FlexImageLib/FlexImage.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/FlexImageLib/FlexIO.cpp",
+        "-lm",
+        "-pthread",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/bodytrack-reference"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-D_GNU_SOURCE",
+        "-std=gnu++17",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack",
+        "-DHAVE_STDINT_H=1",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/FlexImageLib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark",
+        "-DENABLE_PARSEC_HOOKS",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/AnnealingFactor.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/BodyGeometry.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/BodyPose.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/CameraModel.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/CovarianceMatrix.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/ImageMeasurements.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/ImageProjection.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/RandomGenerator.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/TrackingModel.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/TrackingBenchmark/main.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/FlexImageLib/FlexImage.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/src/bodytrack/FlexImageLib/FlexIO.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/diagnostic-hooks.o",
+        "-lm",
+        "-pthread",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/bodytrack-diagnostic"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/bodytrack-reference",
+        "sequenceB_1",
+        "4",
+        "1",
+        "5",
+        "1",
+        "0",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/reference-test"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "-strace",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/bodytrack-diagnostic",
+        "sequenceB_1",
+        "4",
+        "1",
+        "5",
+        "1",
+        "0",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/diagnostic-test"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/bodytrack-reference",
+        "sequenceB_1",
+        "4",
+        "1",
+        "1000",
+        "5",
+        "0",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/reference-simsmall"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "-strace",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/bodytrack-diagnostic",
+        "sequenceB_1",
+        "4",
+        "1",
+        "1000",
+        "5",
+        "0",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/diagnostic-simsmall"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/bodytrack-reference",
+        "sequenceB_2",
+        "4",
+        "2",
+        "2000",
+        "5",
+        "0",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/reference-simmedium"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "-strace",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/bodytrack-diagnostic",
+        "sequenceB_2",
+        "4",
+        "2",
+        "2000",
+        "5",
+        "0",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-bodytrack-20261107T051041Z/diagnostic-simmedium"
+    }
+  ],
+  "formal_eligible": true,
+  "fpga_validation": "NOT_RUN",
+  "host_log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-bodytrack-20261107T051041Z",
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-20261107T051041Z",
+  "parsec_commit": "a06d35960951c9bfad61eb4826bca8d167f98c19",
+  "pid": 1518430,
+  "software_profile": "original-bodytrack-serial",
+  "status": "BUILDING"
+}

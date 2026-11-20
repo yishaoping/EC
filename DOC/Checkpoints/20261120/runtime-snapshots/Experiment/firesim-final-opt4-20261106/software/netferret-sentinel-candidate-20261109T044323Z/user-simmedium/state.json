@@ -1,0 +1,90 @@
+{
+  "architecture": "riscv64",
+  "binaries": {
+    "client/client": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-sentinel-candidate-20261109T044323Z/netferret/client/client",
+      "sha256": "9b2a359427a2c2d01606b2c95cedd51eee801e264bc3cbb05111d54f6413c3a8"
+    },
+    "server/parsec/bin/ferret-pthreads": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-sentinel-candidate-20261109T044323Z/netferret/server/parsec/bin/ferret-pthreads",
+      "sha256": "1589ffa3b00ddb44e2420054f55f6c0f8c9cd4fee8ef0b94587faf94ca9567b9"
+    }
+  },
+  "children": {
+    "client": {
+      "cmdline": "nice -n 15 /usr/bin/qemu-riscv64 /data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-sentinel-candidate-20261109T044323Z/netferret/client/client queries 1 output.txt ",
+      "pid": 1318204,
+      "process_state": "R",
+      "start_ticks": "1112850"
+    },
+    "server": {
+      "cmdline": "nice -n 15 /usr/bin/qemu-riscv64 /data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-sentinel-candidate-20261109T044323Z/netferret/server/parsec/bin/ferret-pthreads corel lsh 10 20 1 ",
+      "pid": 1318205,
+      "process_state": "R",
+      "start_ticks": "1112850"
+    }
+  },
+  "client_argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-sentinel-candidate-20261109T044323Z/netferret/client/client",
+    "queries",
+    "1",
+    "output.txt"
+  ],
+  "correctness": {
+    "method": "all input query names returned; numerical reference comparison remains pending",
+    "passed": false,
+    "queries": 64,
+    "results": 64
+  },
+  "ended_utc": "2026-11-09T04:43:34.674132+00:00",
+  "exit_codes": {
+    "client": 0,
+    "server": 0
+  },
+  "formal_eligible": false,
+  "fpga_run": false,
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "input": "simmedium",
+  "input_archive": {
+    "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inputs/input_simmedium.tar",
+    "sha256": "91ee10d3f47afdaf36d016f422ea0c217f5f4f93359e87a276ad5eccf61fd759"
+  },
+  "mapping_note": "simmedium invokes original simlarge for netstreamcluster; netdedup candidate separates server/client flags and uses unchanged formal archive",
+  "namespaces": {
+    "ipc": "ipc:[4026535639]",
+    "mnt": "mnt:[4026535637]",
+    "net": "net:[4026535641]"
+  },
+  "output": {
+    "bytes": 18070,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sentinel-candidate-20261109T044323Z/user-simmedium/work/output.txt",
+    "sha256": "d9a93c21883253158626f73f9e2a361e1be31e6e4d734808575d50d90a84f97b"
+  },
+  "pid": 1318195,
+  "private_ipc_namespace": true,
+  "private_mount_namespace": true,
+  "private_network_namespace": true,
+  "program": "netferret",
+  "roi": "Original application hook sites; diagnostic writes only, no checker claim",
+  "roi_diagnostic": {
+    "begin_seen": true,
+    "end_seen": true,
+    "source": "server.log; diagnostic marker writes remain visible",
+    "syscall_counts": {},
+    "time_base": "host QEMU trace order only; no target cycles or checker latency"
+  },
+  "schema": "ec-network-qemu-case/1",
+  "server_argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-sentinel-candidate-20261109T044323Z/netferret/server/parsec/bin/ferret-pthreads",
+    "corel",
+    "lsh",
+    "10",
+    "20",
+    "1"
+  ],
+  "source_receipt_sha256": "c460ac5a39eb8b6bbaf31c2a14fb66baab4de3d27c6db26e02b309b114bd49e2",
+  "start_ticks": "1112826",
+  "status": "PROTOCOL_COMPLETED_REFERENCE_PENDING",
+  "trace_enabled": false,
+  "wall_seconds": 6.603980790001515
+}

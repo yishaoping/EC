@@ -1,0 +1,501 @@
+{
+  "active": {
+    "board_bdf": "0000:21:00.0",
+    "board_serial": "21770433G02LA",
+    "configuration": "Native",
+    "elapsed_seconds": 480.8267136470022,
+    "guest_command_ended": false,
+    "guest_ready": true,
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "identity_sha256": "fc00498b49df1c27fe0413e73e3844674848097716e75ceb7d16610be03486d6",
+    "input": "simmedium",
+    "log_bytes": 68474,
+    "max_log_gib": 4,
+    "pgid": 3022290,
+    "pid": 3022290,
+    "program": "ferret",
+    "repetition": 1,
+    "run_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-ferret-simmedium-r1-20261109T124827Z",
+    "run_id": "native-ferret-simmedium-r1-20261109T124827Z",
+    "schema": "ec-isolated-fpga-sample-state/1",
+    "sequence": 17,
+    "start_ticks": "4022796",
+    "started_utc": "2026-11-09T12:48:27.531155+00:00",
+    "status": "RUNNING",
+    "uart_bytes": 8598,
+    "updated_utc": "2026-11-09T12:56:28.358287+00:00"
+  },
+  "active_process_identity": {
+    "cmdline": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-efficiency-driver-20261106T135905Z/FireSim-xilinx_alveo_u280 +permissive +domain=0000 +bus=21 +device=00 +function=0 +bar=0 +pci-vendor=10ee +pci-device=903f +uart-in0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-ferret-simmedium-r1-20261109T124827Z/uart.in +uart-out0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-ferret-simmedium-r1-20261109T124827Z/uart.log +fesvr-step-size=2004765 +mm_readLatency_0=30 +mm_readMaxReqs_0=4 +mm_relaxFunctionalModel_0=0 +mm_writeLatency_0=30 +mm_writeMaxReqs_0=4 +ec-dac-roi-log=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-ferret-simmedium-r1-20261109T124827Z/roi-raw.jsonl +ec-dac-snapshot-seconds=30 +permissive-off +prog0=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-firmware-20261109T123811.141147Z/platform/generic/firmware/fw_payload.elf ",
+    "pid": 3022290,
+    "process_state": "R",
+    "start_ticks": "4022796"
+  },
+  "active_profile_failures_for_ready_incomplete_native": 0,
+  "controller": {
+    "modified": false,
+    "pid": 80044,
+    "source_sha256": "845cac00a427e5f131bee11671ae98209dbf7b2c6a799bc45bf1eb255e70bbe4",
+    "stage": "Native-ferret-simmedium-r1",
+    "status": "RUNNING"
+  },
+  "matrix": [
+    {
+      "active_profile_failures": {},
+      "configuration": "Native",
+      "formal_passed": [
+        1,
+        2,
+        3
+      ],
+      "missing": [],
+      "profile": "formal",
+      "program": "blackscholes",
+      "simsmall_passed": false,
+      "software_status": "READY",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "C4",
+      "formal_passed": [],
+      "missing": [],
+      "profile": "formal",
+      "program": "blackscholes",
+      "simsmall_passed": false,
+      "software_status": "READY",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "Native",
+      "formal_passed": [
+        1,
+        2,
+        3
+      ],
+      "missing": [],
+      "profile": "canneal-formal",
+      "program": "canneal",
+      "simsmall_passed": true,
+      "software_status": "READY",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "C4",
+      "formal_passed": [],
+      "missing": [],
+      "profile": "canneal-formal",
+      "program": "canneal",
+      "simsmall_passed": false,
+      "software_status": "READY",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "Native",
+      "formal_passed": [
+        1,
+        2,
+        3
+      ],
+      "missing": [],
+      "profile": "streamcluster-staged-formal",
+      "program": "streamcluster",
+      "simsmall_passed": true,
+      "software_status": "READY",
+      "test_passed": true
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "C4",
+      "formal_passed": [],
+      "missing": [],
+      "profile": "streamcluster-staged-formal",
+      "program": "streamcluster",
+      "simsmall_passed": false,
+      "software_status": "READY",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "Native",
+      "formal_passed": [
+        1,
+        2,
+        3
+      ],
+      "missing": [],
+      "profile": "swaptions-preallocated",
+      "program": "swaptions",
+      "simsmall_passed": true,
+      "software_status": "READY",
+      "test_passed": true
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "C4",
+      "formal_passed": [],
+      "missing": [],
+      "profile": "swaptions-preallocated",
+      "program": "swaptions",
+      "simsmall_passed": false,
+      "software_status": "READY",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "Native",
+      "formal_passed": [
+        1,
+        2,
+        3
+      ],
+      "missing": [],
+      "profile": "fluidanimate-stable-formal",
+      "program": "fluidanimate",
+      "simsmall_passed": true,
+      "software_status": "READY",
+      "test_passed": true
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "C4",
+      "formal_passed": [],
+      "missing": [],
+      "profile": "fluidanimate-stable-formal",
+      "program": "fluidanimate",
+      "simsmall_passed": false,
+      "software_status": "READY",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "Native",
+      "formal_passed": [
+        1,
+        2,
+        3
+      ],
+      "missing": [],
+      "profile": "bodytrack-staged-output",
+      "program": "bodytrack",
+      "simsmall_passed": true,
+      "software_status": "READY",
+      "test_passed": true
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "C4",
+      "formal_passed": [],
+      "missing": [],
+      "profile": "bodytrack-staged-output",
+      "program": "bodytrack",
+      "simsmall_passed": false,
+      "software_status": "READY",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "Native",
+      "formal_passed": [
+        1,
+        2,
+        3
+      ],
+      "missing": [],
+      "profile": "dedup-staged-safe-fdt",
+      "program": "dedup",
+      "simsmall_passed": true,
+      "software_status": "READY",
+      "test_passed": true
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "C4",
+      "formal_passed": [],
+      "missing": [],
+      "profile": "dedup-staged-safe-fdt",
+      "program": "dedup",
+      "simsmall_passed": false,
+      "software_status": "READY",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "Native",
+      "formal_passed": [
+        1,
+        2,
+        3
+      ],
+      "missing": [],
+      "profile": "freqmine-staged-resident",
+      "program": "freqmine",
+      "simsmall_passed": true,
+      "software_status": "READY",
+      "test_passed": true
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "C4",
+      "formal_passed": [],
+      "missing": [],
+      "profile": "freqmine-staged-resident",
+      "program": "freqmine",
+      "simsmall_passed": false,
+      "software_status": "READY",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "Native",
+      "formal_passed": [
+        1,
+        2,
+        3
+      ],
+      "missing": [],
+      "profile": "facesim-staged-resident-safe-fdt",
+      "program": "facesim",
+      "simsmall_passed": true,
+      "software_status": "READY",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "C4",
+      "formal_passed": [],
+      "missing": [],
+      "profile": "facesim-staged-resident-safe-fdt",
+      "program": "facesim",
+      "simsmall_passed": false,
+      "software_status": "READY",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "Native",
+      "formal_passed": [],
+      "missing": [],
+      "profile": "ferret-stable-order-safe-fdt",
+      "program": "ferret",
+      "simsmall_passed": true,
+      "software_status": "READY",
+      "test_passed": true
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "C4",
+      "formal_passed": [],
+      "missing": [],
+      "profile": "ferret-stable-order-safe-fdt",
+      "program": "ferret",
+      "simsmall_passed": false,
+      "software_status": "READY",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "Native",
+      "formal_passed": [],
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/netdedup-firmware-build.json"
+      ],
+      "profile": "netdedup",
+      "program": "netdedup",
+      "simsmall_passed": false,
+      "software_status": "BLOCKED_SOFTWARE",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "C4",
+      "formal_passed": [],
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/netdedup-firmware-build.json"
+      ],
+      "profile": "netdedup",
+      "program": "netdedup",
+      "simsmall_passed": false,
+      "software_status": "BLOCKED_SOFTWARE",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "Native",
+      "formal_passed": [],
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/netferret-firmware-build.json"
+      ],
+      "profile": "netferret",
+      "program": "netferret",
+      "simsmall_passed": false,
+      "software_status": "BLOCKED_SOFTWARE",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "C4",
+      "formal_passed": [],
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/netferret-firmware-build.json"
+      ],
+      "profile": "netferret",
+      "program": "netferret",
+      "simsmall_passed": false,
+      "software_status": "BLOCKED_SOFTWARE",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "Native",
+      "formal_passed": [],
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netstreamcluster-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netstreamcluster-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/netstreamcluster-firmware-build.json"
+      ],
+      "profile": "netstreamcluster",
+      "program": "netstreamcluster",
+      "simsmall_passed": false,
+      "software_status": "BLOCKED_SOFTWARE",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "C4",
+      "formal_passed": [],
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netstreamcluster-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netstreamcluster-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/netstreamcluster-firmware-build.json"
+      ],
+      "profile": "netstreamcluster",
+      "program": "netstreamcluster",
+      "simsmall_passed": false,
+      "software_status": "BLOCKED_SOFTWARE",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "Native",
+      "formal_passed": [
+        1,
+        2,
+        3
+      ],
+      "missing": [],
+      "profile": "raytrace-headless-safe-fdt",
+      "program": "raytrace",
+      "simsmall_passed": true,
+      "software_status": "READY",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "C4",
+      "formal_passed": [],
+      "missing": [],
+      "profile": "raytrace-headless-safe-fdt",
+      "program": "raytrace",
+      "simsmall_passed": false,
+      "software_status": "READY",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "Native",
+      "formal_passed": [],
+      "missing": [],
+      "profile": "vips-safe-fdt",
+      "program": "vips",
+      "simsmall_passed": true,
+      "software_status": "READY",
+      "test_passed": true
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "C4",
+      "formal_passed": [],
+      "missing": [],
+      "profile": "vips-safe-fdt",
+      "program": "vips",
+      "simsmall_passed": false,
+      "software_status": "READY",
+      "test_passed": false
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "Native",
+      "formal_passed": [
+        1,
+        2,
+        3
+      ],
+      "missing": [],
+      "profile": "x264-no-progress",
+      "program": "x264",
+      "simsmall_passed": true,
+      "software_status": "READY",
+      "test_passed": true
+    },
+    {
+      "active_profile_failures": {},
+      "configuration": "C4",
+      "formal_passed": [],
+      "missing": [],
+      "profile": "x264-no-progress",
+      "program": "x264",
+      "simsmall_passed": false,
+      "software_status": "READY",
+      "test_passed": false
+    }
+  ],
+  "new_fpga_process_started": false,
+  "next_formal_order": "Current Ferret r1 -> Vips r1 -> missing r2/r3 after successful first rounds; C4 readiness may supersede at sample boundary",
+  "observed_utc": "2026-11-09T12:56:28.498853+00:00",
+  "offline_failure_isolation_probe": {
+    "fpga_execution": false,
+    "next_jobs": [
+      [
+        "vips",
+        "simmedium",
+        1
+      ]
+    ],
+    "real_sample_affected": false,
+    "simulated_failed_program": "ferret"
+  },
+  "plan": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-execution-plan.json",
+    "program_count": 16,
+    "sha256": "5e1459eda4e2e427b7a73e3aaad90ecc5c80c3f0a665cb782c935910bede88c5",
+    "unique_program_count": 16
+  },
+  "policy": [
+    "runnable incomplete formal tasks take priority; cover first repetitions before repeats",
+    "record concrete per-profile failures, continue other runnable benchmarks; repair offline and admit a new version",
+    "only use idle21 for required diagnostic work when no higher-priority formal sample is runnable",
+    "certified final C4 has priority at safe sample boundary; keep existing first validation gates",
+    "21-only; no interruption, duplicate active task or overwrite of accepted samples"
+  ],
+  "queue_mutation": false,
+  "ready_incomplete_native": [
+    "ferret",
+    "vips"
+  ],
+  "schema": "ec-runnable-coverage-priority-policy/1",
+  "services_restarted": false,
+  "skipped_by_old_failure_signatures": false,
+  "software_followup": "network complete original ROI trace/output completed offline; Native dual-process guest binding remains to prepare, C4 context/trap protocol is unresolved"
+}

@@ -1,0 +1,48 @@
+{
+  "result": {
+    "changed_files": [
+      "Experiment/firesim-final-opt4-20261106/status-audits/round147-parsec-existing-pairs-acceptance-20261112/reconcile.py",
+      "Experiment/firesim-final-opt4-20261106/status-audits/round147-parsec-existing-pairs-acceptance-20261112/README.md",
+      "Experiment/firesim-final-opt4-20261106/status-audits/round147-parsec-existing-pairs-acceptance-20261112/result.json",
+      "Experiment/firesim-final-opt4-20261106/status-audits/round147-parsec-existing-pairs-acceptance-20261112/complete.json",
+      "Experiment/firesim-final-opt4-20261106/status-audits/round147-parsec-existing-pairs-acceptance-20261112/validation.json"
+    ],
+    "evidence": [
+      "Accepted 24 existing CPU pairs with 48 unchanged raw-log bindings; original publication preserved.",
+      "Declared ROI slowdown: blackscholes 1.044631\u00d7; fluidanimate 1.656558\u00d7; bodytrack 1.166570\u00d7; freqmine 2.812428\u00d7; swaptions 2.018889\u00d7; ferret 1.382848\u00d7; dedup 1.925680\u00d7; streamcluster 2.006132\u00d7.",
+      "Three historical Blackscholes FPGA state hashes mismatch; retained as exclusions. Historical evidence passes 21/24 and supplies no CPU denominator.",
+      "Acceptance result SHA256: 5d6e27d82da562da894c757b9e3040b1cb6fc5d3a6bb1c2a878d7e67f6d3c6c6",
+      "Existing packed r1 map-Reference and field-address CAD identities matched PID/start_ticks/boot_id/cgroups; preserved."
+    ],
+    "launched_jobs": [],
+    "next_action": "CPU campaign remains complete. Preserve existing CAD owners and consume their results at the next scheduled check; no new replay, programming, PARSEC rerun, or auxiliary experiment.",
+    "outcome": "PROGRESS",
+    "retry_after_seconds": 600,
+    "summary": "Accepted all eight existing scoped CPU ROI results independently of historical FPGA exceptions. Phase/reduced inputs only: full-application, simmedium, and FPGA slowdown remain unestablished. No experiments restarted."
+  },
+  "utc": "2026-11-12T12:17:21.775754+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 3520545,
+      "process_state": "R",
+      "rss_bytes": 417792,
+      "start_ticks": "29724255"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-12T12:17:15.413501+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 3520544,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00147",
+    "rss_bytes": 13557760,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "29724252",
+    "started_utc": "2026-11-12T12:12:02.123444+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-12T12:17:15.410696+00:00"
+  }
+}

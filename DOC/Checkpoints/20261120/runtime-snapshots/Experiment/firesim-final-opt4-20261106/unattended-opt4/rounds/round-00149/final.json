@@ -1,0 +1,20 @@
+{
+  "changed_files": [
+    "Experiment/firesim-final-opt4-20261106/status-audits/round149-simmedium-admission-20261112/audit.py",
+    "Experiment/firesim-final-opt4-20261106/status-audits/round149-simmedium-admission-20261112/README.md",
+    "Experiment/firesim-final-opt4-20261106/status-audits/round149-simmedium-admission-20261112/result.json",
+    "Experiment/firesim-final-opt4-20261106/status-audits/round149-simmedium-admission-20261112/result.sha256",
+    "Experiment/firesim-final-opt4-20261106/status-audits/round149-simmedium-admission-20261112/complete.json"
+  ],
+  "evidence": [
+    "Blackscholes/Fluidanimate 身份核对通过，采样期间 target heartbeat 分别增加9355/9354周期；均仍在guest-ready之前，六项排队。",
+    "三份历史Blackscholes Native哈希异常仅涉及终态记录；原snapshot及其他绑定证据全部匹配。原异常保留。",
+    "49项来源哈希验证通过；有效simmedium EC结果0，准入slowdown 0。",
+    "result.json SHA256：b90650381719b80fdddf561c203f0b3576e05be6df4f12115c9021bf79fa376a"
+  ],
+  "launched_jobs": [],
+  "next_action": "由既有队列在guest-ready后逐项执行一次simmedium；失败或超时记录后继续下一项。600秒后复查，保留CAD和独立CPU任务；配置及跨后端计数契约通过前不发布slowdown。",
+  "outcome": "PROGRESS",
+  "retry_after_seconds": 600,
+  "summary": "完成只读准入审计并解释三份历史Native状态哈希差异。两项EC仍在启动、六项排队；未重复实验或修改生产任务。"
+}

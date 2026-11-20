@@ -1,0 +1,22 @@
+{
+  "changed_files": [
+    "candidates/common-stats-host-r4-20261113/",
+    "area-sprint-20261112/round-00169.json",
+    "area-sprint-20261112/LATEST.md",
+    "area-sprint-20261112/latest.json"
+  ],
+  "evidence": [
+    "Banked AddressStats: 6144 cycles/5684 outputs PASS; invalid-payload mutation rejected.",
+    "Query plane: 219170 → 154059 LUTs; local saving 65111, not whole-system savings.",
+    "Compiler recovery committed as 525fc22a; 260 valid circuits and five loop-rejection checks passed.",
+    "Recovery observed for 336 seconds; complete transform/token/area results pending.",
+    "Complete shell remains NOT FIT: 2478437 LUTs, gap 1174757. No certified complete-EC bitstream."
+  ],
+  "launched_jobs": [
+    "ec-opt4-common-stats-host-r4-20261113.service"
+  ],
+  "next_action": "Consume recovered host transform/token/area receipts and original DSP, DCache, delta and production results; diagnose failures through immutable successors while preserving existing owners and certification gates.",
+  "outcome": "PROGRESS",
+  "retry_after_seconds": 300,
+  "summary": "Implemented and validated a versioned recovery for the mixed-host compiler OOM. Published round 169 evidence; no FIT or board operations."
+}

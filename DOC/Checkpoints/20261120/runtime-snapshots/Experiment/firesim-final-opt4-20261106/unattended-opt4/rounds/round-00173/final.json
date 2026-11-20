@@ -1,0 +1,25 @@
+{
+  "changed_files": [
+    "Opt4-area-common-bank-geometry-r1-20261113: commit 1a71b11",
+    "Opt4-area-common-bank-geometry-r2-20261113: commit 19584c0",
+    "area-sprint-20261112/round-00173.json",
+    "area-sprint-20261112/latest.json",
+    "area-sprint-20261112/LATEST.md"
+  ],
+  "evidence": [
+    "Implemented 8/16/32-lane common banks preserving 256 production slots per role.",
+    "Preserved r1 compilation failure; r2 removes duplicate proof types with hardware bytes unchanged.",
+    "R2 passed compilation, exact 16-lane state/output identity, 8-lane query SAT, and 8192-cycle local state parity with mutation rejection.",
+    "Complete caller elaboration, 32-lane checks, host validation and area remain pending.",
+    "Latest authenticated complete shell: 2478437 LUTs, 1174757 over capacity. No FIT or certified bitstream.",
+    "Existing owners preserved; independent morning collector adopted round 173."
+  ],
+  "launched_jobs": [
+    "ec-opt4-common-bank-geometry-r1-20261113.service — failed, evidence retained",
+    "ec-opt4-common-bank-geometry-r2-20261113.service — deterministic validation"
+  ],
+  "next_action": "Consume geometry r2 after the observation interval and original production/mixed/DSP receipts. Diagnose failures and version corrections after cgroup release; require measured gains before complete-host/shell builds.",
+  "outcome": "PROGRESS",
+  "retry_after_seconds": 300,
+  "summary": "Advanced bank geometry implementation and validation. No complete EC FIT, certified bitstream, FPGA operations or new PARSEC samples."
+}

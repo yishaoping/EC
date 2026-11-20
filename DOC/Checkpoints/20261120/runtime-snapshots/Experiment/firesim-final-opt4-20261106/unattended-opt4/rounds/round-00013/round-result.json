@@ -1,0 +1,31 @@
+{
+  "outcome": "PROGRESS",
+  "summary": "Implemented and locally verified async counter storage candidate c61d0b2a; complete-module mapping is running. Existing CAD and module jobs were preserved; no FIT, deployment or FPGA sample is claimed.",
+  "changed_files": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-async-current-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-async-current-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/AddressCurrentBucketMemory.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-async-current-r1-20261111/prepare.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-async-current-r1-20261111/controller.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-async-current-r1-20261111/EmitAsync.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-async-current-r1-20261111/boundary.cpp",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/bucket-tag-runtime-bind-r1-20261111/controller.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/bucket-tag-runtime-bind-r2-20261111/controller.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/runtime-candidates/c61d0b2a.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/reports/Opt4-address-async-current-r1-review-20261111.md",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00013/changed-files.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00013/handoff.json"
+  ],
+  "evidence": [
+    "Commit c61d0b2a431451ca70093dcf6eeaed5945fc2ec1; source 10e7dc799c504012de1f3f5adf1e34dd494ae1de6e40751cf37dac56991a860c. Generated 64-bit reset/allocation/overflow SAT and negative mutation passed; actual 256x512 2R1W topology and 8192 vectors passed.",
+    "Frozen complete-module comparison passed 6144 cycles across all 52 outputs, including independent global reset; not full-DUT formal equivalence. Memory-only map: 4096 LUT / 0 FF / 0 CARRY8; complete-module resources pending.",
+    "Update-share r2 global-reset comparison passed; its live map and other existing maps were adopted. Sort full-module result remains 1197215 LUT / 56065 CARRY8.",
+    "9ae GoldenGate finished with all seven actual ABI files byte-equal. Early driver binding failed on root-owned output; isolated staged recovery is DEFERRED at eight jobs, not running.",
+    "8da opt_design completed; at 00:40:36Z its implementation controller and child were live without a capacity verdict. Parent 9ae DUT synthesis was live. Recovery/restart remains unvalidated."
+  ],
+  "launched_jobs": [
+    "ec-opt4-auto-address-async-current-r1-c61d0b2a.service \u2014 verified local gates; full-module map running.",
+    "ec-opt4-auto-bucket-tag-runtime-bind-r1-9ae9a7fc.service \u2014 failed before driver copy; first-failure evidence preserved."
+  ],
+  "next_action": "After 300 seconds, adopt identities and collect actual postopt and module receipts. Preserve r1 admission hold; rank completed full-module maps before promotion. Let the staged runtime-binding recovery start when a broker slot opens; require real architectural rollback/restart evidence before formal experiments.",
+  "retry_after_seconds": 300
+}

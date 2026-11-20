@@ -1,0 +1,24 @@
+{
+  "changed_files": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-queue-adapter-round56-v1-20261112/controller.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-queue-adapter-round56-v1-20261112/README.md",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-queue-adapter-round56-v1-20261112/plan.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/owner-queue-adapter-r56-v1-3656aec4.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-queue-adapter-round56-v1-20261112/result.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/opt4-round56-queue-adapter-20261112T0306/COMPLETED.md",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/opt4-round56-queue-adapter-20261112T0306/changed-files-complete.json"
+  ],
+  "evidence": [
+    "All 109 queues plus owner adapter: reset, induction and observations PASS; five source mutations rejected. RAM endpoint remains explicitly cut.",
+    "Independently verified round-55 RAM proof: 19 positive obligations and four mutations PASS, retaining the actual 512×81 memory without a read-data cut.",
+    "e0 synthesis remains live. 9ae remains NOT FIT: 2,847,382 LUT, excess 1,543,702.",
+    "Full FAME/DCache equivalence and certified FPGA samples remain outstanding. Existing jobs and inputs preserved."
+  ],
+  "launched_jobs": [
+    "ec-opt4-auto-owner-queue-adapter-r56-v1-3656aec4.service — broker STARTED, proof completed PASS"
+  ],
+  "next_action": "Compose the RAM and queue/adapter proofs with actual FAME clock/reset/target-advance semantics. Adopt existing P0 receipts after 300 seconds; preserve e0 and physical recovery guards.",
+  "outcome": "PROGRESS",
+  "retry_after_seconds": 300,
+  "summary": "Completed and audited the 109-queue adapter proof and adopted the completed RAM transaction proof. No target RTL changes or FPGA success claimed."
+}

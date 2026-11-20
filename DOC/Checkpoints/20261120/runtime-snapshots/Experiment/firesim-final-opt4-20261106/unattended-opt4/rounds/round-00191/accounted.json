@@ -1,0 +1,48 @@
+{
+  "result": {
+    "changed_files": [
+      "candidates/performance-only-support-r5-20261113/",
+      "candidates/performance-only-support-r6-20261113/",
+      "performance-only-20261113/ACTIVE_OWNER.json",
+      "performance-only-20261113/CONTINUATION.md"
+    ],
+    "evidence": [
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/area-sprint-20261112/round-00191.json",
+      "Functional regression PASS: 8192 cycles, 24575 observations, assertions enabled.",
+      "Recovery commits: c4dc2a0 and cef2d0b. Full-EC shell ledger unchanged."
+    ],
+    "launched_jobs": [
+      "ec-performance-only-support-r5-20261113.service",
+      "ec-performance-only-support-r6-20261113.service"
+    ],
+    "next_action": "Preserve running R5 MCRams generation. R6 waits for the exact missing-engine failure and cgroup release, then reuses the completed host for complete-shell CAD. Diagnose unknown failures; iterate after NOTFIT or continue physical/certification after FIT.",
+    "outcome": "REAL_EXPERIMENT_STARTED",
+    "retry_after_seconds": 600,
+    "summary": "Adopted performance-only ownership and recovered the Verilator header failure. Finite functional regression passed; MCRams is running. Healthy old CAD preserved. No prototype shell area, FIT, bitstream, certification, or FPGA IO yet."
+  },
+  "utc": "2026-11-13T03:35:21.501390+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 340429,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "35182453"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-13T03:35:16.945998+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 340428,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00191",
+    "rss_bytes": 13590528,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "35182450",
+    "started_utc": "2026-11-13T03:21:44.101451+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-13T03:35:16.944221+00:00"
+  }
+}

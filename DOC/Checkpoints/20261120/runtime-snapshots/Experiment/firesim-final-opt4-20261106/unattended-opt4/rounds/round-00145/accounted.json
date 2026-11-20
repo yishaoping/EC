@@ -1,0 +1,43 @@
+{
+  "result": {
+    "changed_files": [
+      "Experiment/firesim-final-opt4-20261106/status-audits/round145-packed-owner-progress-20261112/",
+      "Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round145-result.json"
+    ],
+    "evidence": [
+      "status-audits/round145-packed-owner-progress-20261112/receipt.json sha256=9dd05f88f8682f6e944ee384f3acf236e0711230a21277e9d35114cd10143b3b",
+      "Exact PID/start_ticks/boot/cgroup matched; CPU advanced 652.25 seconds over 652.52 wall seconds.",
+      "Acceptance reader: source binding PASS; paired result pending. Round schema and artifact hashes PASS."
+    ],
+    "launched_jobs": [],
+    "next_action": "Existing r1 completes Reference, then Candidate under its resource gate. Verify the paired result and measured gain before composition/GoldenGate/ABI/target-cycle validation or new whole-host capacity work.",
+    "outcome": "WAITING_ACTIVE_JOB",
+    "retry_after_seconds": 300,
+    "summary": "Packed r1 Reference map remains active with verified computation progress. Candidate has not started; gain remains unknown. No FPGA replay, programming, CPU controls, or duplicate jobs."
+  },
+  "utc": "2026-11-12T11:55:19.774266+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 3475406,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "29601154"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-12T11:55:12.685852+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 3475405,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00145",
+    "rss_bytes": 13586432,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "29601151",
+    "started_utc": "2026-11-12T11:51:31.111200+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-12T11:55:12.683839+00:00"
+  }
+}

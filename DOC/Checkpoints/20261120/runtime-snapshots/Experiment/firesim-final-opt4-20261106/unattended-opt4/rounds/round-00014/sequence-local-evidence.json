@@ -1,0 +1,45 @@
+{
+  "actual_size_boundary": "PASS_8192_VECTORS_256X32_90_ASYNC_READS_SAME_ADDRESS_ALL_SEQUENCE_BITS_SLOT255_DISABLED_WRITE_GLOBAL_RESET",
+  "binding": {
+    "candidate_change": "Only bucketSeq register-vector storage becomes 256x32 asynchronous 90R1W memory; no sequence width, state validity, bucket count, cycle, error or instrumentation change.",
+    "frozen_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "full_dut_formal": false,
+    "hardware_commit": "94b749cf20b50487d82c7378071250fa9bd5eb3b",
+    "parent_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+    "patch_sha256": "f3f97a3adc89f55ac8d01c7c40b6357ccb91d981164a379431be047c7169b26b",
+    "production_selected": false,
+    "profile": "Opt4-fit-address-async-sequence-r1-candidate",
+    "schema": "ec-opt4-async-sequence-binding/1",
+    "source_id": "a22e245c0631d0aabb52cbddf1d254a735541dc51279ca9638e841695851da94"
+  },
+  "fpga_access": false,
+  "local_evidence": [
+    {
+      "label": "sat-equivalent",
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-sequence-r1-20261111/proof/sat-equivalent-attempt-1.log",
+      "sha256": "3e3ac82075eb34a75b30d03d1962975265370710d3eb2168d61875be5c948b11"
+    },
+    {
+      "label": "sat-nextEquivalent",
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-sequence-r1-20261111/proof/sat-nextEquivalent-attempt-1.log",
+      "sha256": "0bff23cfaf4bbca1484f00203a69c896bd24ecc0f4aec139f37a505501f4051e"
+    },
+    {
+      "label": "sat-negative-data-mutation",
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-sequence-r1-20261111/proof/sat-negative-data-mutation-attempt-1.log",
+      "sha256": "9cbb1e4db10ea9cc302f0e10783d308c3142343aa251324b84e204a1d9a0d103"
+    },
+    {
+      "label": "boundary-run",
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-sequence-r1-20261111/boundary/boundary-run-attempt-1.log",
+      "sha256": "0df19776f71d7d4ecdd4e2c192c6b2d53272e8eec9484a62d25ed367278ff7cb"
+    },
+    {
+      "label": "memory topology",
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-async-sequence-r1-20261111/memory/topology-receipt.json",
+      "sha256": "ac12da3c459aef9f3f535b18553ebc837ff8121b90ebc6750fb849015a1d9395"
+    }
+  ],
+  "local_formal": "PASS_FULL32_VALID_PAYLOAD_INDUCTION_MATCHES_RESET_RETIRE_SINGLE_WRITER",
+  "scope": "Local generated-RTL one-word valid-payload induction, inherited low slot tag invariant, actual 256x32 90R1W topology, 8192 Verilator vectors. Complete frozen cycle comparison and physical full-module map pending at last permitted observation."
+}

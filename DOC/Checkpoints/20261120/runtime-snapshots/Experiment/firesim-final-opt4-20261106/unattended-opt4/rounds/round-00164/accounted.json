@@ -1,0 +1,53 @@
+{
+  "result": {
+    "changed_files": [
+      "candidates/common-stats-host-r2-20261113/controller.py",
+      "candidates/common-stats-host-r2-20261113/source-binding.json",
+      "candidates/sprint-continuation-r3-20261113/controller.py",
+      "area-sprint-20261112/fullshell-adoptions.json",
+      "area-sprint-20261112/round-00164.json",
+      "area-sprint-20261112/latest.json",
+      "area-sprint-20261112/LATEST.md"
+    ],
+    "evidence": [
+      "Authenticated 8d50489a complete-shell postopt: 2,478,437 LUT, zero black boxes; NOT FIT by 1,174,757 LUT.",
+      "Packed pair saves 27,348 LUT; MSHR pair saves 355 LUT. Neither justifies a standalone whole build.",
+      "Isolated 256-entry Barrier pairs save 62,606 and 61,967 LUT; no additive whole-host claim.",
+      "DSP candidate completed at 813,315 LUT and 6,144 DSP; compatible reference remains pending.",
+      "Recovery commit 87fa092 reuses authenticated compile/elaboration after predecessor cgroup release. Mixed 64-bank GoldenGate observed active after 338 seconds; tokens and area remain pending."
+    ],
+    "launched_jobs": [
+      "ec-opt4-common-stats-host-r1-20261113.service: retained controller assertion failure",
+      "ec-opt4-common-stats-host-r2-20261113.service: immutable recovery active"
+    ],
+    "next_action": "Consume mixed-host transformation/token/area receipts and original DSP, DCache, and production-host results. Diagnose and version failures; admit a whole build only after material measured gains and exact validation.",
+    "outcome": "REAL_EXPERIMENT_STARTED",
+    "retry_after_seconds": 300,
+    "summary": "Started the mixed 64-bank host recovery and updated independent evidence collection. No complete EC FIT, certified bitstream, or FPGA PARSEC samples."
+  },
+  "utc": "2026-11-12T18:25:33.952518+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 47672,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "31824734"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-12T18:25:22.190403+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 47671,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00164",
+    "rss_bytes": 13574144,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "31824731",
+    "started_utc": "2026-11-12T18:02:06.910127+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-12T18:25:22.188415+00:00"
+  }
+}

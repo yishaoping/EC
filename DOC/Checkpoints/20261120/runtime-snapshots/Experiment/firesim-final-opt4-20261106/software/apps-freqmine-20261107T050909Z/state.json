@@ -1,0 +1,165 @@
+{
+  "algorithm_sources_modified": false,
+  "cases": [],
+  "commands": [
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-static",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/hooks",
+        "-c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/diagnostic-hooks.c",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/diagnostic-hooks.o"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-D_GNU_SOURCE",
+        "-std=gnu++17",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine",
+        "-DENABLE_PARSEC_HOOKS",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/fpmax.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/data.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/fp_tree.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/buffer.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/fsout.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/fp_node.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/wtime.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/hooks.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/dac_roi.o",
+        "-lm",
+        "-pthread",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/freqmine"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-D_GNU_SOURCE",
+        "-std=gnu++17",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/fpmax.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/data.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/fp_tree.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/buffer.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/fsout.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/fp_node.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/wtime.cpp",
+        "-lm",
+        "-pthread",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/freqmine-reference"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-D_GNU_SOURCE",
+        "-std=gnu++17",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine",
+        "-DENABLE_PARSEC_HOOKS",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/fpmax.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/data.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/fp_tree.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/buffer.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/fsout.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/fp_node.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/src/freqmine/wtime.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/diagnostic-hooks.o",
+        "-lm",
+        "-pthread",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/freqmine-diagnostic"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/freqmine-reference",
+        "T10I4D100K_3.dat",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-20261107T050909Z/reference-test"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "-strace",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/freqmine-diagnostic",
+        "T10I4D100K_3.dat",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-20261107T050909Z/diagnostic-test"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/freqmine-reference",
+        "kosarak_250k.dat",
+        "220"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-20261107T050909Z/reference-simsmall"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "-strace",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/freqmine-diagnostic",
+        "kosarak_250k.dat",
+        "220"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-20261107T050909Z/diagnostic-simsmall"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/freqmine-reference",
+        "kosarak_500k.dat",
+        "410"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-20261107T050909Z/reference-simmedium"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "-strace",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z/freqmine-diagnostic",
+        "kosarak_500k.dat",
+        "410"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-20261107T050909Z/diagnostic-simmedium"
+    }
+  ],
+  "formal_eligible": true,
+  "fpga_validation": "NOT_RUN",
+  "host_log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-20261107T050909Z",
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-20261107T050909Z",
+  "parsec_commit": "a06d35960951c9bfad61eb4826bca8d167f98c19",
+  "pid": 1511269,
+  "software_profile": "original-freqmine-serial",
+  "status": "BUILDING"
+}

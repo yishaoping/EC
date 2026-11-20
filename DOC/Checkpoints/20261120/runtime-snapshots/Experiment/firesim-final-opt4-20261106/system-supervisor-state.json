@@ -1,0 +1,81 @@
+{
+  "schema": "ec-system-supervisor/1",
+  "status": "BUILT_NOT_RUN",
+  "pid": 3685978,
+  "start_ticks": "1372684955",
+  "phases": [
+    {
+      "configuration": "C4",
+      "phase": "kernel",
+      "started_utc": "2026-11-06T10:24:21.277587+00:00",
+      "argv": [
+        "/data1/gzh/EC/chipyard/.conda-env/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_system.py",
+        "C4",
+        "kernel"
+      ],
+      "status": "BUILT_NOT_RUN",
+      "pid": 3685984,
+      "returncode": 0,
+      "ended_utc": "2026-11-06T10:29:44.575705+00:00",
+      "receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/kernel-build.json"
+    },
+    {
+      "configuration": "Native",
+      "phase": "kernel",
+      "started_utc": "2026-11-06T10:29:44.578779+00:00",
+      "argv": [
+        "/data1/gzh/EC/chipyard/.conda-env/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_system.py",
+        "Native",
+        "kernel"
+      ],
+      "status": "BUILT_NOT_RUN",
+      "pid": 3731594,
+      "returncode": 0,
+      "ended_utc": "2026-11-06T10:35:10.717710+00:00",
+      "receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/kernel-build.json"
+    },
+    {
+      "configuration": "C4",
+      "phase": "firmware",
+      "started_utc": "2026-11-06T10:35:10.718915+00:00",
+      "argv": [
+        "/data1/gzh/EC/chipyard/.conda-env/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_system.py",
+        "C4",
+        "firmware",
+        "--kernel-result",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/kernel-build.json",
+        "--fdt-result",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-build.json"
+      ],
+      "status": "BUILT_NOT_RUN",
+      "pid": 3795930,
+      "returncode": 0,
+      "ended_utc": "2026-11-06T10:35:15.400153+00:00",
+      "receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/firmware-build.json"
+    },
+    {
+      "configuration": "Native",
+      "phase": "firmware",
+      "started_utc": "2026-11-06T10:35:15.401428+00:00",
+      "argv": [
+        "/data1/gzh/EC/chipyard/.conda-env/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_system.py",
+        "Native",
+        "firmware",
+        "--kernel-result",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/kernel-build.json",
+        "--fdt-result",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-build.json"
+      ],
+      "status": "BUILT_NOT_RUN",
+      "pid": 3799278,
+      "returncode": 0,
+      "ended_utc": "2026-11-06T10:35:20.135702+00:00",
+      "receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/firmware-build.json"
+    }
+  ],
+  "no_fpga_access": true
+}

@@ -1,0 +1,42 @@
+{
+  "result": {
+    "changed_files": [],
+    "evidence": [
+      "Verified the existing e0 composition receipt: 00847 address RTL and f2 SVB RTL match their validated emitted RTL; composed typecheck passed, with the address module\u2019s 6,144-cycle/52-output comparison and SVB\u2019s 4,096-cycle/127-output comparison. No whole-DUT formal result is claimed.",
+      "00847 maps to 872,880 LUTs versus 990,905 for its 9ae address parent, a measured 118,025-LUT module-only reduction. Its full-module frozen comparison passed; this is not a whole-system saving.",
+      "e0 runtime templates are prepared and its 13 paired programs are ready. Its start-runtime request remains DEFERRED pending a certifiable bitstream.",
+      "9ae and e0 whole syntheses remain active without complete resource reports. e211 address composition and the 221 and d9 DCache candidate syntheses/maps also remain active; no candidate was restarted or duplicated.",
+      "The 8da hierarchy report attributes about 139 owned LUTs to BoomMSHRFile itself; the larger MSHR-attributed structures trace to DCache arrays and repeated checks, so the hierarchy name alone does not justify MSHRFile RTL changes."
+    ],
+    "launched_jobs": [],
+    "next_action": "Preserve all active builds. When a complete report appears, read its source-bound resource and hierarchy data; if NOT FIT, promote only the largest fully verified mapped candidate and prepare its composed runtime path. If FIT, proceed directly through implementation, timing, DRC, bitstream certification, then existing safe-boundary runtime experiments.",
+    "outcome": "WAITING_ACTIVE_JOB",
+    "retry_after_seconds": 600,
+    "summary": "The requested 00847 plus f2 composition and early runtime preparation already exist as e0, and their source-bound module checks pass. No certifiable bitstream or valid FPGA sample is available yet; active CAD work continues."
+  },
+  "utc": "2026-11-11T07:58:08.119051+00:00",
+  "verified_hardware_success": false,
+  "worker": {
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 3551127,
+      "process_state": "R",
+      "rss_bytes": 4096,
+      "start_ticks": "19474093"
+    },
+    "cpu_ticks": 2,
+    "ended_utc": "2026-11-11T07:57:54.694437+00:00",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 3551126,
+    "process_state": "R",
+    "returncode": 0,
+    "round_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/rounds/round-00029",
+    "rss_bytes": 13701120,
+    "schema": "ec-opt4-headless-round/1",
+    "start_ticks": "19474090",
+    "started_utc": "2026-11-11T07:43:40.497981+00:00",
+    "status": "EXITED",
+    "updated_utc": "2026-11-11T07:57:54.692958+00:00"
+  }
+}
