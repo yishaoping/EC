@@ -1,0 +1,31 @@
+{
+  "changed_files": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-token-audit-round49-v1-20261111/audit.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-token-audit-round49-v2-20261111/audit.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-token-audit-round49-v3-20261111/audit.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-generated-area-analysis-round49-r2-20261111/controller.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-generated-area-analysis-round49-r3-20261111/controller.py",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/owner-generated-area-analysis-r49-r2-3656aec4.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/owner-generated-area-analysis-r49-r3-3656aec4.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-generated-area-analysis-round49-r3-20261111/result.json",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-token-audit-round49-v3-20261111/result.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/opt4-round49-owner-token-and-p0-20261111T161500Z/REPORT.md",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/opt4-round49-owner-token-and-p0-20261111T161500Z/changed-files.json"
+  ],
+  "evidence": [
+    "9ae whole post-opt NOT FIT: 2,847,382 LUT; excess 1,543,702. e0 remains live; no new whole or FPGA sample.",
+    "Complete DCache OOC reference 1,770,518 LUT; 3656=1,629,524 (140,994 saved), d9=1,634,951, 2210=1,698,302. Alternatives are not additive.",
+    "Owner token/clock audit PASS: 3,210 scalar valuations and five rejected mutations; result SHA256 44488671a2f22ca9861dc2251c8a7846c20e79e20d670824959d78efcc9fcddd.",
+    "Read-only owner-wrapper area recovery PASS: 3,245 LUT / 2,906 FF / 1.5 BRAM; 294 ports preserved; main/hierarchy/primitive checks and negative tests passed. Result SHA256 7d09040b3f35d85e5377ff0b7dfba3a0528559ef332cb2c2da6da289934676a3.",
+    "Existing SVB coverage audit PASS: 1,759,001 edges, 659 captures/promotions/ACKs, 19,698,670 defined word checks. Full GG replay and owner Plain→MC runtime remain active.",
+    "Initial analysis request rejected for input-root mismatch; sealed W input capsule successor STARTED and COMPLETE exit0. Original failure and rejection preserved.",
+    "Full created-file inventory and hashes: /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/opt4-round49-owner-token-and-p0-20261111T161500Z/changed-files.json"
+  ],
+  "launched_jobs": [
+    "owner-generated-area-analysis-r49-r3-3656aec4: STARTED → COMPLETE exit0; broker PID2048581/start22634258, child PID2048582/start22634262; read-only analysis"
+  ],
+  "next_action": "≥300秒后接管 SVB force-all GG 回放和 owner Plain→MC 的完成收据；e0 按≥600秒检查。让唯一8d继续GG/ABI门；保留两条物理路线，由现有21-only认证服务处理真实合格产物。",
+  "outcome": "PROGRESS",
+  "retry_after_seconds": 300,
+  "summary": "Round 49完成token控制审计及owner面积恢复；完整DCache最好实测节省140,994 LUT（模块范围）。完整Opt4仍NOT FIT，无新FPGA样本；所有活任务保持。"
+}

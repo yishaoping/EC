@@ -1,0 +1,113 @@
+{
+  "active_stage": "map-candidate",
+  "bits": 80,
+  "child": {},
+  "dcache_sha256": "3ed06cddd33bb26a0ee0f9d03a287af31f0c5bfb06b7bbc9c1ef719f8dbe7bff",
+  "ended_utc": "2026-11-11T11:21:43.580212+00:00",
+  "exact_source_reversal": true,
+  "fields": {
+    "epoch": 16,
+    "mshr": 8,
+    "newOwner": 1,
+    "tag": 23,
+    "transaction": 32
+  },
+  "fpga_access": false,
+  "frozen_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "full_dut_formal": false,
+  "geometry_correction": "Initial unpublished binding used a guessed tag width26. Actual frozen generated reg [22:0] establishes23. Original receipt preserved. No source modification required: source uses unchanged tagBits.",
+  "hardware_commit": "b746cf0d3d169c3d0116eaaa958182dfdc765282",
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "inherited_scanner_only_frozen_difference": true,
+  "local_luts_saved": 103743.0,
+  "maps": {
+    "candidate": {
+      "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/candidate/module.dcp",
+      "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/candidate/utilization.rpt",
+      "report_sha256": "542f0f2b46dfed15b239ca7f03cc44ee34465fb85b4de03ecdab688cab413a68",
+      "resources": {
+        "Block RAM Tile": 0.0,
+        "CARRY8": 0.0,
+        "CLB LUTs": 4565.0,
+        "CLB Registers": 0.0,
+        "DSPs": 0.0
+      },
+      "rtl_sha256": "9007527e39c86c77ee1ad758d1fe955802c52c529630a61423407152fd5de46d"
+    },
+    "reference": {
+      "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/reference/module.dcp",
+      "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/reference/utilization.rpt",
+      "report_sha256": "a8678751f891adc32e8d026f4b0983f9fb57f973c729c1f00706aa6c79af3ccf",
+      "resources": {
+        "Block RAM Tile": 0.0,
+        "CARRY8": 0.0,
+        "CLB LUTs": 108308.0,
+        "CLB Registers": 40960.0,
+        "DSPs": 0.0
+      },
+      "rtl_sha256": "08bb5687a26de7524f3b23c4385698ea725c64ddb9783d037e57278dcf4f8498"
+    }
+  },
+  "parent_commit": "e0c3737f989c563f99a00f3fd26c1cbd27421775",
+  "pid": 4182157,
+  "process_state": "R",
+  "production_selected": false,
+  "proof_receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-proof-r3-20261111/result.json",
+  "proof_receipt_sha256": "a1b43ca2ecb43a763294c250b45109134341c48df3e9f2a8b16d7863a3ee92fc",
+  "read_ports": 5,
+  "schema": "ec-opt4-reservation-map/1",
+  "scope": "512x80 uninitialized five-field reservation storage, five independent async readers. Local screen only; actual field aliases and generated fullmodule mapping remain required. Complete frozen DCache cycle comparison and complete-module area remain required.",
+  "sets": 256,
+  "source_id": "6a7a2a204c03c3195d552123fe5557aaea93a038692cac3094613a245b6120f8",
+  "stages": {
+    "map-candidate": {
+      "accepted": true,
+      "argv": [
+        "/tools/Xilinx/Vivado/2021.1/bin/vivado",
+        "-mode",
+        "batch",
+        "-nojournal",
+        "-log",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/candidate/vivado.log",
+        "-source",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/candidate/map.tcl"
+      ],
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/map-candidate.log",
+      "outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/candidate/module.dcp": "28857c7fe048a449929b374e4e965d0cc628bc7a6a8a43374b4fef878f99fcec",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/candidate/utilization.rpt": "542f0f2b46dfed15b239ca7f03cc44ee34465fb85b4de03ecdab688cab413a68"
+      },
+      "returncode": 0,
+      "sha256": "dd4d861b06a7541d2074f686ea7650d96969fd89e2cb0b16654991e5bcdcd644"
+    },
+    "map-reference": {
+      "accepted": true,
+      "argv": [
+        "/tools/Xilinx/Vivado/2021.1/bin/vivado",
+        "-mode",
+        "batch",
+        "-nojournal",
+        "-log",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/reference/vivado.log",
+        "-source",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/reference/map.tcl"
+      ],
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/map-reference.log",
+      "outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/reference/module.dcp": "662e560d90df15413046fbbb652d43712754031d2f3436f3ad3181ab1452d922",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-reservation-map-r3-20261111/reference/utilization.rpt": "a8678751f891adc32e8d026f4b0983f9fb57f973c729c1f00706aa6c79af3ccf"
+      },
+      "returncode": 0,
+      "sha256": "171a39a69d94636a90d958ff7261a543cb7a387c52aa3409c01b56222615eb7c"
+    }
+  },
+  "start_ticks": "20749484",
+  "started_utc": "2026-11-11T11:16:14.711970+00:00",
+  "status": "COMPLETE_PAIRED_RESERVATION_STORAGE_MAP_NOT_FULL_DCACHE_NOT_ADMITTED",
+  "uninitialized": true,
+  "updated_utc": "2026-11-11T11:21:43.580232+00:00",
+  "ways": 2,
+  "whole_dut_admission": false,
+  "worktree": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-reservation-memory-r1-20261111",
+  "write_ports": 1
+}

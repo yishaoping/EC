@@ -1,0 +1,301 @@
+{
+  "FIT": true,
+  "actual_checker_execution_tested": true,
+  "actual_whole_shell_LUT": 1023687,
+  "adopted_handoff_sha256": "7e8db9fd54ff97c95bfca4332c9345df5c2a7dc24cc03e037ea79712a11fe3bb",
+  "board_allowlist": [
+    "0000:21:00.0"
+  ],
+  "comparisons_unchanged": true,
+  "controller": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-support-r6-20261113/candidates/performance-only-support-r6-20261113/controller.py",
+  "controller_identity": {
+    "pid": 355419,
+    "state": "S",
+    "start_ticks": "35248517",
+    "cpu_ticks": 1127,
+    "nice": 10,
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "cgroup": "13:devices:/user.slice\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/user.slice\n9:memory:/user.slice/user-1008.slice/user@1008.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/user.slice/user-1008.slice/user@1008.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/user.slice\n1:name=systemd:/user.slice/user-1008.slice/user@1008.service/ec-performance-only-support-r6-20261113.service\n0::/user.slice/user-1008.slice/user@1008.service/ec-performance-only-support-r6-20261113.service\n",
+    "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-support-r6-20261113/candidates/performance-only-support-r6-20261113/controller.py ",
+    "children": [
+      461645
+    ]
+  },
+  "current_stage": "phys_opt_design_critical_cell_optimization",
+  "earlier_recovery_release": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-performance-only-support-r5-20261113/predecessor-release.json",
+    "sha256": "846a31778592ad64cfd7b91fb242cfb4d6861a91479285fabc36d8f5d2846086"
+  },
+  "exact_scope_report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round192/EXACT_SCOPE.md",
+  "exact_scope_report_sha256": "c304c5f6f9612332d338de2bcc358c069da485c8d91b7cb4ae7bc0327d82e6b9",
+  "exclude_from_full_EC_PALIMPSEST_ledger": true,
+  "experiment_commit": "cef2d0bd09ec1480db0f29034c2b0a29a28b949f",
+  "foreground_completion": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-20261113/foreground-completion-r1.json",
+  "foreground_completion_sha256": "926f9ca653bb3f8505b83118a2157c235c473de7c17a6e41e59cac587e083962",
+  "foreground_validation_owned_elsewhere_no_duplicate": true,
+  "fpga_access": false,
+  "full_PALIMPSEST": false,
+  "fullshell_ledger": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-20261113/",
+  "functional_coverage": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-20261113/functional-coverage-r1.json",
+  "functional_coverage_sha256": "b01657316a416d8c02d50a03b522a4daaca6103d7bb0a2b6291542c44062da38",
+  "functional_regression": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round191/functional-regression.json",
+  "functional_regression_sha256": "b79bb7e5378fb1f91f3a6df30fe940424cae139cf35248637c048078a2ad8813",
+  "hardware_commit": "6fada307bb77be90b39720d3f95404fece0e431b",
+  "hardware_unchanged": true,
+  "intelligent_owner": "Existing unattended supervisor only",
+  "known_shell_engine_successor": {
+    "admission": "Exact R5 missing cad_engine.py failure + cgroup release + authenticated successful regression/host only",
+    "controller": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-support-r6-20261113/candidates/performance-only-support-r6-20261113/controller.py",
+    "experiment_commit": "cef2d0bd09ec1480db0f29034c2b0a29a28b949f",
+    "identity": {
+      "cpu_ticks": 20,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 355419,
+      "process_state": "S",
+      "rss_bytes": 15216640,
+      "start_ticks": "35248517"
+    },
+    "no_FPGA_IO": true,
+    "no_healthy_restart": true,
+    "no_waiting_CPU_pins": true,
+    "service": "ec-performance-only-support-r6-20261113.service",
+    "source_binding": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-support-r6-20261113/candidates/performance-only-support-r6-20261113/source-binding.json",
+    "source_binding_sha256": "1b339db692dc0376bb6798a93b479f452485507b825e7102496e7b7db74bf54e",
+    "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-performance-only-support-r6-20261113/state.json",
+    "status": "ACTIVE_RUNNING_COMPLETE_SHELL_CAD"
+  },
+  "latest_round": {
+    "round": 208,
+    "utc": "2026-11-13T08:44:43.419599+00:00",
+    "summary": "EC Performance-Only 6fada307: same R6 emitted outcomes for 21/30 critical-cell candidates (11 replicated,10 declined); critical-cell optimization remains active. 831s since prior durable observation, +6432 log bytes, +4272.6 process CPU-seconds. Authenticated 922 pinned artifacts including 644 protected checker artifacts; existing actual whole-checker PASS131/131/131 and complete-shell postopt capacity FIT1023687/1303680LUT remain valid. Intermediate estimated WNS=-2.831ns; final timing, bitstream, certification and card21 runtime pending.",
+    "next_action": "Preserve the same R6 through place/route/setup-hold/bitstream; no cuts, restart, duplicate CAD, checker run or driver rebuild. After actual physical output and exact R6 cgroup release, allocate two idle campaign CPUs and run /data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-physical-postflight-r1-20261113/candidates/performance-only-physical-postflight-r1-20261113/postflight.py --run --cpus CPU0 CPU1 for report-only all-STA/pulse/skew/clock/IO/internal-unconstrained/route/DRC checks under the existing CAD lease. Then run /data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-certificate-analysis-bind-r1-20261113/candidates/performance-only-certificate-analysis-bind-r1-20261113/certify.py --write to bind the existing foreground strict checker analysis and exact physical/ABI/software evidence. Only then hand off the existing runtime owner at a safe boundary without bypassing any21lock. Require integrated card21 boot/checker/LSL-SVB/isolation/drain before the requested eight first simmedium samples. Unknown failures require immutable diagnosed corrections after exact predecessor release; do not repeat completed validation.",
+    "outcome": "WAITING_ACTIVE_JOB",
+    "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/area-sprint-20261112/round-00208.json",
+    "receipt_sha256": "fa7ca59ee66d4de7eaccc79a03333203e4eb19c75f337e2dbb7115ffd1e44c72"
+  },
+  "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-performance-only-support-r6-20261113",
+  "next_action": "Preserve the same R6 through place/route/setup-hold/bitstream; no cuts, restart, duplicate CAD, checker run or driver rebuild. After actual physical output and exact R6 cgroup release, allocate two idle campaign CPUs and run /data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-physical-postflight-r1-20261113/candidates/performance-only-physical-postflight-r1-20261113/postflight.py --run --cpus CPU0 CPU1 for report-only all-STA/pulse/skew/clock/IO/internal-unconstrained/route/DRC checks under the existing CAD lease. Then run /data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-certificate-analysis-bind-r1-20261113/candidates/performance-only-certificate-analysis-bind-r1-20261113/certify.py --write to bind the existing foreground strict checker analysis and exact physical/ABI/software evidence. Only then hand off the existing runtime owner at a safe boundary without bypassing any21lock. Require integrated card21 boot/checker/LSL-SVB/isolation/drain before the requested eight first simmedium samples. Unknown failures require immutable diagnosed corrections after exact predecessor release; do not repeat completed validation.",
+  "no_healthy_restart": true,
+  "no_new_cuts_before_actual_complete_shell_postopt": true,
+  "no_new_intelligent_supervisor": true,
+  "no_subagents": true,
+  "offline_runtime_rebind": {
+    "FPGA_IO": false,
+    "bundle": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Opt4-performance-only-6fada307-bound-r1/bundle.json",
+    "bundle_sha256": "9dc215a90664c7e85125ffc198c826d91ec7bb16caeb411f1f96cef6c5eec064",
+    "driver_rebuilt_here": false,
+    "existing_runtime_lock_preserved": true,
+    "experiment_commit": "6115b44948c922c33a465090fbeb973843602e21",
+    "handoff": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round193/runtime-handoff.json",
+    "handoff_sha256": "05dfa9b26e7bc1c463d2e4445ba216faed75cd9ffa5b19a4ed8686219df353dc",
+    "offline_verification": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round193/runtime-bind-verification.json",
+    "offline_verification_sha256": "1bbabe1624caacfae15e13cca977e4ab44cb0ca457da0660157f9d765f2adec1",
+    "runtime_certified": false,
+    "service_installed": false,
+    "source_binding": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round193/runtime-source-binding.json",
+    "source_binding_sha256": "bdfc080d9cd42a1e062168e98e1343a0847dcdcaa31c83348aa9284a70d756c2"
+  },
+  "owner_observation": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round208/owner-end.json",
+  "owner_observation_sha256": "4f1401658620fd9b2397054cb38875f295970d672a8304819506ca0d6170195e",
+  "predecessor_release": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-performance-only-support-r6-20261113/predecessor-release.json",
+  "predecessor_release_sha256": "0dbbc3e5b533c37a4ce33693c47373dc63dee83d33562bb5d1a0b1fb744e95ad",
+  "profile": "EC Performance-Only: data preservation + cache isolation",
+  "recovered_failure": "R5 FileNotFoundError: omitted cad_engine.py after actual successful MCRams host generation; R6 reused authenticated host and exact released predecessors",
+  "round194_lineage_audit": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round194/lineage-audit.json",
+    "sha256": "b1906e03d85dd83e2edbe2fb4c28b02e45459d0e6e0bbe4ba95b785d6eeb2006"
+  },
+  "runtime_certified": false,
+  "schema": "ec-performance-only-active-owner/1",
+  "serial": "21770433G02LA",
+  "service": "ec-performance-only-support-r6-20261113.service",
+  "source_binding": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-support-r6-20261113/candidates/performance-only-support-r6-20261113/source-binding.json",
+  "source_binding_sha256": "1b339db692dc0376bb6798a93b479f452485507b825e7102496e7b7db74bf54e",
+  "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-performance-only-support-r6-20261113/state.json",
+  "status": "CAPACITY_FIT_PHYSICAL_IMPLEMENTATION_RUNNING",
+  "target_RTL_and_preparation_reused": true,
+  "utc": "2026-11-13T08:44:43.419599+00:00",
+  "dut_synthesis": {
+    "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-performance-only-support-r6-20261113/dut_synth-result.json",
+    "receipt_sha256": "900fde2bbf7d5bcc6ff34c38667d32344a33225bf5db3075c95a68fccf610a95",
+    "resources": {
+      "Block RAM Tile": {
+        "available": 2016.0,
+        "percent": 27.033730158730158,
+        "used": 545.0
+      },
+      "CARRY8": {
+        "available": 162960.0,
+        "percent": 8.981958762886597,
+        "used": 14637.0
+      },
+      "CLB LUTs": {
+        "available": 1303680.0,
+        "percent": 72.09207781050564,
+        "used": 939850.0
+      },
+      "CLB Registers": {
+        "available": 2607360.0,
+        "percent": 35.59032891507118,
+        "used": 927968.0
+      },
+      "DSPs": {
+        "available": 9024.0,
+        "percent": 1.2411347517730495,
+        "used": 112.0
+      },
+      "URAM": {
+        "available": 960.0,
+        "percent": 0.0,
+        "used": 0.0
+      }
+    },
+    "complete_shell_postopt": false
+  },
+  "foreground_checker_whole_link_validation": {
+    "current_status": "PASS_REAL_COMPLETE_HOST_CHECKER_LINK",
+    "adoption": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round198/checker-finished-analysis-adoption.json",
+      "sha256": "3d38c43279c72102cdd6bf7aa99be1ae50f6eaf717e87dddcfb0889446ef57cf"
+    },
+    "actual_integrated_checker_execution_passed": true,
+    "original_R3_failure_preserved": true
+  },
+  "shell_link": {
+    "zero_unresolved_functional_blackboxes": true,
+    "opt_design_completed": true,
+    "complete_shell_postopt_capacity_pending": false,
+    "capacity": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round198/capacity-adoption.json",
+      "sha256": "357f31818b4280764f771b1c44e7b937cb6a851d03768295ea1f21e6d2eab34c"
+    }
+  },
+  "capacity_FIT": true,
+  "LUT_headroom": 279993,
+  "physical_timing_passed": false,
+  "actual_integrated_checker_execution_passed": true,
+  "actual_complete_shell_postopt": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round198/complete-shell-result.json",
+    "sha256": "b7d9b11bd212a2e66e692823d136289020c60d748b6dfc6d871ba44e51815b59"
+  },
+  "actual_complete_checker_link_validation": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round198/checker-finished-analysis-adoption.json",
+    "sha256": "3d38c43279c72102cdd6bf7aa99be1ae50f6eaf717e87dddcfb0889446ef57cf"
+  },
+  "preserve_same_healthy_implementation_through_route": true,
+  "no_new_cuts": true,
+  "final_checkpoint_checks": {
+    "entry": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-physical-postflight-r1-20261113/candidates/performance-only-physical-postflight-r1-20261113/postflight.py",
+    "source_binding": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round198/postflight-source-binding.json",
+      "sha256": "ef3f37a375137c152836d535a74bb276364983321b60b357305d04d8750157d0"
+    },
+    "readiness": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round198/postflight-readiness.json",
+      "sha256": "19f965603354ee49078529776ac50e2d973f56748dfa1809d16a53d087d5ac54"
+    },
+    "service_installed": false
+  },
+  "exact_certificate_binding": {
+    "entry": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-certificate-analysis-bind-r1-20261113/candidates/performance-only-certificate-analysis-bind-r1-20261113/certify.py",
+    "source_binding": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round198/certificate-analysis-source-binding.json",
+      "sha256": "a5caa11a05ca99fd1bdd28ffb82ade1d40a5e72a7930c827eb388d9f006cf720"
+    },
+    "readiness": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round198/certificate-analysis-readiness.json",
+      "sha256": "5c556826798af5dff69a2422bb871ff3db71e9f0c90ec1a5fc5d74aff1457d1c"
+    },
+    "requires_actual_physical": true
+  },
+  "latest_evidence_readiness": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round208/evidence-readiness.json",
+    "sha256": "750050df3d9c278572780ae4d599bf238e99236ea577245fa2bb16fe0d7e0d5f"
+  },
+  "placement_phase": "Phase 7 Critical Cell Optimization",
+  "actual_placed_checkpoint": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round204/followthrough-audit.json",
+    "sha256": "2e74dca6d13d7eb7b598c12891b3893e82585e6f2ebe8a92d5043c3fe01d1756"
+  },
+  "placed_resources": {
+    "CLB LUTs": 1015701.0,
+    "CLB Registers": 1019298.0,
+    "CARRY8": 15706.0,
+    "Block RAM Tile": 678.5,
+    "URAM": 0.0,
+    "DSPs": 115.0
+  },
+  "placed_LUT_headroom": 287979,
+  "intermediate_estimated_WNS_ns": -2.831,
+  "high_congestion_warning": true,
+  "actual_physical_progress": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round208/followthrough-audit.json",
+    "sha256": "7d8e7500cab1ac11806d8daf07d8cd4e64c3a40a46531229e5fe9a3d5f6a822b"
+  },
+  "intermediate_estimated_TNS_ns": -86065.324,
+  "critical_cell_progress": {
+    "identified_candidates": 30,
+    "replicated_nets": [
+      {
+        "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_5/rpq/s2_tag_match_way_0_reg[1]_rep__2_11",
+        "replications": 1
+      },
+      {
+        "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/replayResultQ_3/_GEN_379844",
+        "replications": 1
+      },
+      {
+        "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/rob_debug_wdata[12][6]_i_40_n_0",
+        "replications": 1
+      },
+      {
+        "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/core_/csr_exe_unit/ifpu/ifpu/D[1]",
+        "replications": 1
+      },
+      {
+        "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/fregfile_io_write_ports_0_REG_bits_data[63]_i_4_9",
+        "replications": 1
+      },
+      {
+        "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/rob_debug_wdata[12][2]_i_21_n_0",
+        "replications": 1
+      },
+      {
+        "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/lsu/fregfile_io_write_ports_0_REG_bits_data[64]_i_4_1",
+        "replications": 1
+      },
+      {
+        "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/mshrs_io_req_0_valid",
+        "replications": 1
+      },
+      {
+        "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_5/rpq/ram_flattened_reg_0_15_350_363_i_129_0",
+        "replications": 1
+      },
+      {
+        "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/lsu/fregfile_io_write_ports_0_REG_bits_data[64]_i_4_7",
+        "replications": 1
+      },
+      {
+        "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_1/debug_killed_store_replay_valid_reg_2",
+        "replications": 2
+      }
+    ],
+    "declined_nets": [
+      "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/core_/alu_exe_unit/alu/r_data_2_reg[2]_29",
+      "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/wb_forward_valid_0_reg_7",
+      "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/fregfile_io_write_ports_0_REG_bits_data[40]_i_4_n_0",
+      "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/rpq/s2_valid_REG_reg",
+      "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/s3_req_effect_token[63]_i_2_n_0",
+      "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/req_uop_mem_cmd[4]_i_4_n_0",
+      "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/fregfile_io_write_ports_0_REG_bits_data[34]_i_3_n_0",
+      "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/rob_debug_wdata[12][4]_i_32_n_0",
+      "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mmios_0/mshrs_io_req_0_ready",
+      "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/lsu/p_1881_in"
+    ],
+    "processed_unique_nets": 21,
+    "replication_outcome_lines": 11,
+    "nonreplication_outcome_lines": 10,
+    "phase_completed": false
+  }
+}

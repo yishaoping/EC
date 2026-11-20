@@ -1,0 +1,164 @@
+{
+  "checker_latency": null,
+  "counts": null,
+  "drain_cycles": 0,
+  "driver_returncode": 0,
+  "driver_stop_after_guest_powerdown": false,
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-raytrace-simsmall-r1-20261109T032637Z/heartbeat.csv": "093c9e0fed006ab8b30630a5429ed545d28952223342e998b83af84bd42ab374",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-raytrace-simsmall-r1-20261109T032637Z/host.log": "306eac10f56788600f03ded9ac1a7acbf7880f697ed3975ff83d22b4d1391963",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-raytrace-simsmall-r1-20261109T032637Z/latency_histogram.csv": "7348bacc4d184cc676cfcf89f8d0ec40dd28eeaa86ae0f6fefa797b43dc6d210",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-raytrace-simsmall-r1-20261109T032637Z/manifest.json": "1c33f97a858ddb6bf3a005502601c06f3f1b667ce0544d1e0819f0819b90447d",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-raytrace-simsmall-r1-20261109T032637Z/memory_stats0.csv": "6679c5006d14d8413ec36ba18171c1f179c0196e04b362e4af778b06baad416e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-raytrace-simsmall-r1-20261109T032637Z/roi-parser-source.py": "e55944240285ee0197b1b8bd3bedbe10a4a72305511ac72018fe668578d5f8c1",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-raytrace-simsmall-r1-20261109T032637Z/roi-raw.jsonl": "d1d51c510bdaf2bb06f598c5ea5b22402e2387c5ccbafa9f23dc98f5a15bfef2",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-raytrace-simsmall-r1-20261109T032637Z/runner-source.py": "0b6e6b4bbe242f7df873c8b5ff131a421e8fd2fa140bb8facfc652747b64b42f",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-raytrace-simsmall-r1-20261109T032637Z/snapshot.json": "db281f90db8196dac7d56ccd09a145ba6348fe14df6471aed26f4f1295a5a2ac",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-raytrace-simsmall-r1-20261109T032637Z/state.json": "23570f3a537d01ae2fd7a51801cd86e452a711b2532e756851f038e681ff923e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-raytrace-simsmall-r1-20261109T032637Z/uart.in": "c65e3665005fc41b8b81b34cde9f58b1a796c7f7b7ec865d5881c8cc82240263",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-raytrace-simsmall-r1-20261109T032637Z/uart.log": "bbaf8dc37b1ee1c6b2508be90f5655c84f634e44df4fe4a3d3e82003a1c20aee"
+  },
+  "fased_readback": {
+    "readLatency": 30,
+    "readMaxReqs": 4,
+    "relaxFunctionalModel": 0,
+    "writeLatency": 30,
+    "writeMaxReqs": 4
+  },
+  "formal": false,
+  "fpga_execution": true,
+  "guest_power_down_observed": true,
+  "host_efficiency": {
+    "host_delta": 81996001180,
+    "host_simulation_wall_seconds": 1639.963327,
+    "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+    "simulation_throughput_cycles_per_second": 16637472.941,
+    "target_delta": 27284845478,
+    "target_end": 79697427812,
+    "target_start": 52412582334
+  },
+  "host_wall_seconds": 1640.0230449789997,
+  "identity": {
+    "apps_manifest_sha256": "abfd662d67706cbd878b41f615a1691c59b720cb6f67786a86ac8988599d3d62",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:21:00.0",
+    "board_serial": "21770433G02LA",
+    "case": {
+      "algorithm_unchanged": true,
+      "argv": [
+        "happy_buddha.obj",
+        "-automove",
+        "-nthreads",
+        "1",
+        "-frames",
+        "3",
+        "-res",
+        "480",
+        "270"
+      ],
+      "diagnostic_roi_syscalls": [],
+      "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-raytrace-headless-20261107T065042Z/diagnostic-simsmall/trace.log",
+      "fpga_validation": "NOT_RUN",
+      "input": "simsmall",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/apps/raytrace/inputs/input_simsmall.tar": "267a8e9a1a66c49727c6d473a8d0d0d2cfacf8b0f5051fc5d6faca06588ef16d"
+      },
+      "input_files": {
+        "happy_buddha.obj": "5dd570b1d5a8d9437f4b26982a7d318ad13f20c811519506cea6178810a025dc"
+      },
+      "program": "raytrace",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-raytrace-headless-20261107T065042Z/reference-simsmall/frames.rgba": "596d0c7128c8a69dc74b78f296970e421b7b9976bf98c578def41413ba5c4f18",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-raytrace-headless-20261107T065042Z/reference-simsmall/frames.shape": "7109b510982f17d9b0793464c556730b82c423a5f165d2b87ffbeb1c21ffd034"
+      },
+      "roi": "original complete multi-frame render and automove loop, plus identical per-frame output copy observation",
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/raytrace/parsec/simsmall.runconf",
+      "runconf_sha256": "2ef87c74708e70f9f2cfc8bc5084fa1a9327bd6a45b9bcdf887a9dcb0f9fe287",
+      "threads": 1,
+      "validation": {
+        "files": {
+          "frames.rgba": "596d0c7128c8a69dc74b78f296970e421b7b9976bf98c578def41413ba5c4f18",
+          "frames.shape": "7109b510982f17d9b0793464c556730b82c423a5f165d2b87ffbeb1c21ffd034"
+        },
+        "kind": "files_sha256"
+      },
+      "warmups": 0
+    },
+    "configuration": "Native",
+    "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+    "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+    "elf_sha256": "239f1c81fec1a4ec3c541d46669e9d2a67dc1fe922387956c328661acac2d8ca",
+    "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+    "firmware_receipt_sha256": "7c7dc7b3cac8a39bee6945f08096633d91457aa30e33e22def6341cb94b0f611",
+    "firmware_sha256": "80169874e12f592b36e0586b9fd9d6106d72c3e7dc8c0abddada35ad32bb3518",
+    "formal": false,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "host_bridge_restart": true,
+    "input": "simsmall",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "previous_run_id": null,
+    "program": "raytrace",
+    "repetition": 1,
+    "rootfs_sha256": "a6cc0639ad0c3b2ca297628ae5159c9af28c970df3e277e5466623a8fa006417",
+    "run_id": "native-raytrace-simsmall-r1-20261109T032637Z",
+    "software_diagnostic": false,
+    "software_profile": "raytrace-original-headless-memory-framebuffer",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "target_reset_probe": false,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "b0296a0650cac359b3898446708ed633797912d7090cf5aef207b60f231ff8fe",
+  "issues": [],
+  "participation": null,
+  "post_drain_traffic_counters": {},
+  "raw": {
+    "epochs": [
+      {
+        "aborted": false,
+        "begin_tick": 26273158716,
+        "end_tick": 27132315713,
+        "epoch": 1,
+        "faults": 0,
+        "formal_sample_eligible": false,
+        "reset_seen": false,
+        "roi_cycles": 859156997,
+        "source_boundaries_complete": true,
+        "states": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    ],
+    "excluded_pre_reset_records": 1,
+    "file_sha256": "fa7f8295966f07aa53330c3ab7bb03628326689d013e72d5be78f58d4cf10a9f",
+    "formal_sample_eligible": false,
+    "last_sequence": 60,
+    "original_journal_sha256": "d1d51c510bdaf2bb06f598c5ea5b22402e2387c5ccbafa9f23dc98f5a15bfef2",
+    "parsed_records": 61,
+    "partial_tail_bytes": 0,
+    "protocol_issues": [],
+    "runtime_validation": "NOT_ESTABLISHED_BY_RAW_LOG",
+    "schema": "ec-dac-b-raw-roi/1",
+    "warning": "Raw ROI boundaries only. Output/job identity, runtime timebase checks and the formal host collector are still required."
+  },
+  "roi_cycles": 859156997,
+  "schema": "ec-isolated-fpga-result/1",
+  "timedout": false,
+  "valid": true
+}

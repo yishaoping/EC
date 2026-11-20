@@ -1,0 +1,20 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-full-pair-r1-20261111/controller.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-full-pair-r2-20261111/controller.py
+@@ -6,7 +6,7 @@
+ from pathlib import Path
+ import datetime,fcntl,hashlib,json,os,re,shutil,subprocess,time
+ W=Path('/data1/gzh/EC/firesim/final-opt4-20261106');D=Path('/data1/gzh/EC/Experiment/firesim-final-opt4-20261106');C=Path(__file__).resolve().parent
+-L=D/'build-logs/Opt4-fit-dcache-full-pair-r1-20261111';S=D/'Opt4-fit-dcache-full-pair-r1-state.json';TOP='BoomNonBlockingDCache';BASE='e0c3737f989c563f99a00f3fd26c1cbd27421775';COMMIT='2210930f510eccf5518c444dadca4a51bcf6f851';SID='548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c'
++L=D/'build-logs/Opt4-fit-dcache-full-pair-r2-20261111';S=D/'Opt4-fit-dcache-full-pair-r2-state.json';TOP='BoomNonBlockingDCache';BASE='e0c3737f989c563f99a00f3fd26c1cbd27421775';COMMIT='2210930f510eccf5518c444dadca4a51bcf6f851';SID='548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c'
+ def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+ def read(p):return json.loads(Path(p).read_text()) if Path(p).is_file() else {}
+ def now():return datetime.datetime.now(datetime.timezone.utc).isoformat()
+@@ -68,7 +68,7 @@
+    mem=int(next(l.split()[1] for l in Path('/proc/meminfo').read_text().splitlines() if l.startswith('MemAvailable:')))
+    if mem>=192*2**20 and shutil.disk_usage(W).free>=180*2**30:break
+    update(status='WAITING_FULL_MODULE_MEMORY_DISK_GATE',next_map=label);time.sleep(300)
+-  tcl=sub/'map.tcl';tcl.write_text(f'set_param general.maxThreads 2\nread_verilog -sv {{{rtls[label]}}}\nsynth_design -mode out_of_context -top {TOP} -part xcu280-fsvh2892-2L-e\nset bb [get_cells -hier -quiet -filter {{IS_BLACKBOX == 1}}]\nif {{[llength $bb]}} {{error "unresolved DCache dependencies: $bb"}}\nreport_utilization -file {{{report}}}\nreport_utilization -hierarchical -hierarchical_depth 25 -file {{{sub/"hierarchical.rpt"}}}\nwrite_checkpoint -force {{{dcp}}}\nexit 0\n')
++  tcl=sub/'map.tcl';tcl.write_text(f'set_param general.maxThreads 2\nset_param synth.elaboration.rodinMoreOptions {{rt::set_parameter dissolveMemorySizeLimit 74752}}\nread_verilog -sv {{{rtls[label]}}}\nsynth_design -mode out_of_context -top {TOP} -part xcu280-fsvh2892-2L-e\nset bb [get_cells -hier -quiet -filter {{IS_BLACKBOX == 1}}]\nif {{[llength $bb]}} {{error "unresolved DCache dependencies: $bb"}}\nreport_utilization -file {{{report}}}\nreport_utilization -hierarchical -hierarchical_depth 25 -file {{{sub/"hierarchical.rpt"}}}\nwrite_checkpoint -force {{{dcp}}}\nexit 0\n')
+   attempt=1+len(list(sub.glob('attempt-*.log')));log=sub/f'attempt-{attempt}.log';env={**os.environ,'LD_LIBRARY_PATH':'','OMP_NUM_THREADS':'2','TMPDIR':str(sub)}
+   with log.open('xb',buffering=0) as f:
+    p=subprocess.Popen(['nice','-n','15','/tools/Xilinx/Vivado/2021.1/bin/vivado','-mode','batch','-nojournal','-log',str(sub/f'vivado-{attempt}.log'),'-source',str(tcl)],cwd=sub,env=env,stdin=subprocess.DEVNULL,stdout=f,stderr=subprocess.STDOUT)

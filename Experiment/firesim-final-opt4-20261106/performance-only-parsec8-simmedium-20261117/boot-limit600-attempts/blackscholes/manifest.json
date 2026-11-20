@@ -1,0 +1,94 @@
+{
+  "argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Opt4-performance-only-6fada307-r1/FireSim-xilinx_alveo_u280",
+    "+permissive",
+    "+domain=0000",
+    "+bus=21",
+    "+device=00",
+    "+function=0",
+    "+bar=0",
+    "+pci-vendor=10ee",
+    "+pci-device=903f",
+    "+uart-in0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-parsec8-simmedium-20261117/runs/blackscholes/uart.in",
+    "+uart-out0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-parsec8-simmedium-20261117/runs/blackscholes/uart.log",
+    "+fesvr-step-size=2004765",
+    "+mm_readLatency_0=30",
+    "+mm_readMaxReqs_0=4",
+    "+mm_relaxFunctionalModel_0=0",
+    "+mm_writeLatency_0=30",
+    "+mm_writeMaxReqs_0=4",
+    "+print-file=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-parsec8-simmedium-20261117/runs/blackscholes/rtl-events-",
+    "+permissive-off",
+    "+prog0=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/C4-firmware-20261107T030118.611141Z/platform/generic/firmware/fw_payload.elf"
+  ],
+  "identity": {
+    "apps_manifest_sha256": "0ccb15ae6db46dd4f3c3c098823e33596012d8f6cab7dddcdcf04f90d498ea4a",
+    "bitstream_sha256": "1617d53ae39b5c4d700dc24de04a055391d163678d6ac7f989d3ba52b1cd1154",
+    "board_bdf": "0000:21:00.0",
+    "board_serial": "21770433G02LA",
+    "case": {
+      "algorithm_unchanged": true,
+      "argv": [
+        "1",
+        "in_16K.txt",
+        "prices.txt"
+      ],
+      "fpga_validation": "NOT_RUN",
+      "input": "simmedium",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/inputs/input_simmedium.tar": "cb50267d053cb4bb841125aa5efa4fa915662817fbff3fe336dd092a7dd94147"
+      },
+      "input_files": {
+        "in_16K.txt": "f31b70b2f2c0f702464fcca7ca7fb68e3821530bb2d8132659f50fb6510715dd"
+      },
+      "official_reference_max_absolute_error": 2.7284587281073414e-05,
+      "output_count": 16384,
+      "program": "blackscholes",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-formal-20261106T123109Z/reference/prices.txt": "0593ad06c392032063c79b1c14337e9daedabe1324e285e069fc277edc72dd43"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/parsec/simmedium.runconf",
+      "runconf_sha256": "395ed0429ccd6d2bf638363bfc30a3b7f9a7f9cbd84dedb8da169182ebaf73d6",
+      "software_reference": "QEMU_USER_ONLY",
+      "threads": 1,
+      "warmups": 0
+    },
+    "configuration": "ECPerformanceOnly",
+    "driver_sha256": "cf3d4be8954330d99e62580ba2e8e8ad71f0041f0573a0b8d2b4c67b110ccb0a",
+    "elf_sha256": "75b4e2923b0a7b1d096023daa6610f5c622bf04771b4e2966bbdee006e5270ea",
+    "fdt_sha256": "c712fed367c0b57d9a1ed9f6e53688861a646f3732654b253131ff6e8953dda6",
+    "firmware_sha256": "7546b77fd5f039488b604763b952bcacc6cad0792bd109666b61dc2b27987c34",
+    "formal": true,
+    "full_PALIMPSEST": false,
+    "hardware_commit": "4915b82c138d63cfb7b74f2fe5249ab96c765d34",
+    "hardware_profile": "EC Performance-Only: BJL + four result CDC Mem",
+    "hardware_source_id": "3702128e000dbfa981961bde5c8a6ad004eca0ffc2f01eb33fe7c19a9f9a7d19",
+    "input": "simmedium",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "performance_only": true,
+    "program": "blackscholes",
+    "repetition": 1,
+    "rootfs_sha256": "427d0b923bc2be77b67ba0ff11efd47bb83c7bbf28fd990e10c658dcf7178711",
+    "run_id": "blackscholes",
+    "software_profile": "formal",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": 100000000,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "6b6ec030018ae64c43b9ca1f48a1315d328eaae6d0b7455291b933eafb7089f1",
+  "plan_sha256": "960bd5cd53c9e72bca75de347c48a88bad7f7cc12844339bc2ffdd32188a46ab",
+  "runner_sha256": "bc882ecfe5df4e803d5b3929895c62fce9878feded7695f2d034a894767cece6",
+  "verification_sha256": "5f195f8854bff4f3f43e87db5c0a25227c6a43ca6d9368efdbff64ff04298bac"
+}

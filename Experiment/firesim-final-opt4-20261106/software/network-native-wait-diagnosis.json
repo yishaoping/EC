@@ -1,0 +1,160 @@
+{
+  "builds": {
+    "diagnostic": {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-pthread",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-native-wait-20261110T043100Z/streamcluster-receivers-joined.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/diagnostic-hooks.o",
+        "-static",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-luptcp",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-native-wait-20261110T043100Z/netstreamcluster-diagnostic"
+      ],
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-native-wait-20261110T043100Z/build-diagnostic.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-native-wait-20261110T043100Z/netstreamcluster-diagnostic",
+      "sha256": "962c15a0975b7fffcb0592464f963d49e8a8820b1c7d047e9a3a743d283c719b"
+    },
+    "real-hooks": {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-pthread",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-native-wait-20261110T043100Z/streamcluster-receivers-joined.cpp",
+        "-static",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-luptcp",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-native-wait-20261110T043100Z/netstreamcluster-real-hooks",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/hooks.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/dac_roi.o"
+      ],
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-native-wait-20261110T043100Z/build-real-hooks.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-native-wait-20261110T043100Z/netstreamcluster-real-hooks",
+      "sha256": "2dc7f5d3d8f03e00b7cd70c2ef2ad03292b8ddb42f2ffb41adfaedc7f2c991c3"
+    }
+  },
+  "cad_modified": false,
+  "candidate_patch": {
+    "candidate_source_sha256": "a9fc9b227440211797bd9bd2ce17beef64e29b5b75ed6caafef29bbc8c915fe2",
+    "hypothesis": "Server can return before unjoined receiver finishes ACK/close; FPGA root cause not yet proved",
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-native-wait-20261110T043100Z/netstreamcluster-receive-lifetime.patch",
+    "roi": "Original outer hook sites; full receive/compute work retained; added required receive join inside them",
+    "sha256": "ccc887402ce911e29c467aad0ceff34924ee60accc07b9c5431bee85d5f87d19",
+    "source_sha256": "d02dd3d58916fd5d81a8580aeae1c632caad7bed058ca19e2e651e3179dc74ff"
+  },
+  "cases": {
+    "netferret-simmedium-baseline-icountNone": {
+      "gates": {
+        "exact_output": true,
+        "no_failure": true,
+        "original_roi": true,
+        "peers_zero": true,
+        "wrapper_zero": true
+      },
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-native-wait-20261110T043100Z/netferret-simmedium-baseline-icountNone/console.log",
+      "status": "OFFLINE_PASSED"
+    },
+    "netferret-simsmall-baseline-icountNone": {
+      "gates": {
+        "exact_output": true,
+        "no_failure": true,
+        "original_roi": true,
+        "peers_zero": true,
+        "wrapper_zero": true
+      },
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-native-wait-20261110T043100Z/netferret-simsmall-baseline-icountNone/console.log",
+      "status": "OFFLINE_PASSED"
+    },
+    "netstreamcluster-simmedium-joined-icountNone": {
+      "gates": {
+        "exact_output": true,
+        "no_failure": true,
+        "original_roi": true,
+        "peers_zero": true,
+        "wrapper_zero": true
+      },
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-native-wait-20261110T043100Z/netstreamcluster-simmedium-joined-icountNone/console.log",
+      "status": "OFFLINE_PASSED"
+    },
+    "netstreamcluster-simsmall-joined-icountNone": {
+      "gates": {
+        "exact_output": true,
+        "no_failure": true,
+        "original_roi": true,
+        "peers_zero": true,
+        "wrapper_zero": true
+      },
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-native-wait-20261110T043100Z/netstreamcluster-simsmall-joined-icountNone/console.log",
+      "status": "OFFLINE_PASSED"
+    },
+    "netstreamcluster-test-baseline-icount5": {
+      "gates": {
+        "exact_output": true,
+        "no_failure": true,
+        "original_roi": true,
+        "peers_zero": true,
+        "wrapper_zero": true
+      },
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-native-wait-20261110T043100Z/netstreamcluster-test-baseline-icount5/console.log",
+      "status": "OFFLINE_PASSED"
+    },
+    "netstreamcluster-test-joined-icount5": {
+      "gates": {
+        "exact_output": true,
+        "no_failure": true,
+        "original_roi": true,
+        "peers_zero": true,
+        "wrapper_zero": true
+      },
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-native-wait-20261110T043100Z/netstreamcluster-test-joined-icount5/console.log",
+      "status": "OFFLINE_PASSED"
+    }
+  },
+  "ended_utc": "2026-11-10T04:38:56.800636+00:00",
+  "failure_capture": {
+    "parent_sha256": "a82382f9a66efd8d3e807b70931acdc283641a5a12478ece7375a48be9729c29",
+    "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-native-wait-20261110T043100Z/run-network",
+    "sha256": "5d74b4b3e6d80656e3c782bdedd8be619ce5f572d97f17dbed295fa578d0574f",
+    "unchanged_timeouts": true
+  },
+  "formal_eligible": false,
+  "fpga_execution": false,
+  "hardware_modified": false,
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-native-wait-20261110T043100Z",
+  "next_action": "Review immutable candidate evidence, then real-hook 21-only FPGA validation at safe boundary; never count diagnostic runs as formal",
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-native-wait-20261110T043100Z",
+  "pid": 1182080,
+  "scheduler_modified": false,
+  "start_ticks": "9678097",
+  "status": "COMPLETE_OFFLINE_REVIEW_REQUIRED"
+}

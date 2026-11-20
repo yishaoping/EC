@@ -1,0 +1,1735 @@
+From c88288e06fcd609c8414b6b218f392ea0ae90ee4 Mon Sep 17 00:00:00 2001
+From: EC experiment <ec-experiment@localhost>
+Date: Sun, 15 Nov 2026 11:10:12 +0800
+Subject: [PATCH] Reduce BJL queue reset and mux routing with equivalent masked
+ memory
+
+---
+ candidates/rtl-timing-r1/Emit.scala           |  36 +++
+ candidates/rtl-timing-r1/Host.scala           |  59 ++++
+ candidates/rtl-timing-r1/README.md            | 171 ++++++++++++
+ candidates/rtl-timing-r1/Reference.scala      |  75 +++++
+ candidates/rtl-timing-r1/TestQueue.cc         |  38 +++
+ candidates/rtl-timing-r1/analyze.py           | 101 +++++++
+ .../clock-group-replay-no-concat.tcl          |  22 ++
+ candidates/rtl-timing-r1/compare.cpp          |  38 +++
+ candidates/rtl-timing-r1/constraint_syntax.py |  59 ++++
+ candidates/rtl-timing-r1/ddr-path-probe.tcl   |  24 ++
+ candidates/rtl-timing-r1/formal.py            | 258 ++++++++++++++++++
+ .../rtl-timing-r1/host-clock-no-concat.tcl    | 134 +++++++++
+ candidates/rtl-timing-r1/host.py              |  70 +++++
+ candidates/rtl-timing-r1/module_cad.py        |  81 ++++++
+ candidates/rtl-timing-r1/module_paths.py      |  41 +++
+ .../rtl-timing-r1/prepare_constraints.py      |  89 ++++++
+ candidates/rtl-timing-r1/results.json         | 114 ++++++++
+ candidates/rtl-timing-r1/run.py               |  54 ++++
+ candidates/rtl-timing-r1/synth.py             |  66 +++++
+ .../main/scala/guardiancouncil/GH_FIFO.scala  |  15 +-
+ 20 files changed, 1542 insertions(+), 3 deletions(-)
+ create mode 100644 candidates/rtl-timing-r1/Emit.scala
+ create mode 100644 candidates/rtl-timing-r1/Host.scala
+ create mode 100644 candidates/rtl-timing-r1/README.md
+ create mode 100644 candidates/rtl-timing-r1/Reference.scala
+ create mode 100644 candidates/rtl-timing-r1/TestQueue.cc
+ create mode 100644 candidates/rtl-timing-r1/analyze.py
+ create mode 100644 candidates/rtl-timing-r1/clock-group-replay-no-concat.tcl
+ create mode 100644 candidates/rtl-timing-r1/compare.cpp
+ create mode 100644 candidates/rtl-timing-r1/constraint_syntax.py
+ create mode 100644 candidates/rtl-timing-r1/ddr-path-probe.tcl
+ create mode 100644 candidates/rtl-timing-r1/formal.py
+ create mode 100644 candidates/rtl-timing-r1/host-clock-no-concat.tcl
+ create mode 100644 candidates/rtl-timing-r1/host.py
+ create mode 100644 candidates/rtl-timing-r1/module_cad.py
+ create mode 100644 candidates/rtl-timing-r1/module_paths.py
+ create mode 100644 candidates/rtl-timing-r1/prepare_constraints.py
+ create mode 100644 candidates/rtl-timing-r1/results.json
+ create mode 100644 candidates/rtl-timing-r1/run.py
+ create mode 100644 candidates/rtl-timing-r1/synth.py
+
+diff --git a/candidates/rtl-timing-r1/Emit.scala b/candidates/rtl-timing-r1/Emit.scala
+new file mode 100644
+index 0000000..fa3c614
+--- /dev/null
++++ b/candidates/rtl-timing-r1/Emit.scala
+@@ -0,0 +1,36 @@
++package ectiming
++import chisel3._
++import freechips.rocketchip.guardiancouncil._
++
++class QueuePair extends Module {
++  val io = IO(new Bundle {
++    val enq_valid = Input(Bool())
++    val enq_bits = Input(UInt(82.W))
++    val reserve = Input(Bool())
++    val commit = Input(Bool())
++    val rollback = Input(Bool())
++    val replay = Input(Bool())
++    val equivalent = Output(Bool())
++    val full = Output(Bool())
++    val valid = Output(Bool())
++    val can_commit = Output(Bool())
++    val occupancy = Output(UInt(8.W))
++  })
++  val reference = Module(new GH_FIFO_SC_Reference(FIFOParams(82,256)))
++  val candidate = Module(new GH_FIFO_SC(FIFOParams(82,256)))
++  for (q <- Seq(reference.io,candidate.io)) {
++    q.enq_valid := io.enq_valid; q.enq_bits := io.enq_bits
++    q.reserve := io.reserve; q.commit := io.commit
++    q.rollback := io.rollback; q.need_replay_1 := io.replay
++  }
++  def outputs(q: FIFO_SC_IO): UInt =
++    chisel3.util.Cat(q.full,q.peek_valid,q.peek_bits,q.can_commit,
++      q.num_content,q.status_twoslots,q.status_threeslots,q.high_watermark)
++  io.equivalent := outputs(reference.io) === outputs(candidate.io)
++  io.full := reference.io.full; io.valid := reference.io.peek_valid
++  io.can_commit := reference.io.can_commit; io.occupancy := reference.io.num_content
++}
++
++object Emit extends App {
++  (new chisel3.stage.ChiselStage).emitVerilog(new QueuePair,Array("--target-dir",args(0)))
++}
+diff --git a/candidates/rtl-timing-r1/Host.scala b/candidates/rtl-timing-r1/Host.scala
+new file mode 100644
+index 0000000..4adcda0
+--- /dev/null
++++ b/candidates/rtl-timing-r1/Host.scala
+@@ -0,0 +1,59 @@
++package ectiming
++import chisel3._
++import midas.widgets.{PeekPokeBridge, RationalClock, RationalClockBridge}
++import org.chipsalliance.cde.config.{Config, Parameters}
++
++class HostIO extends Bundle {
++  val clear = Input(Bool())
++  val enqValid = Input(Bool())
++  val enqBits = Input(UInt(82.W))
++  val reserve = Input(Bool())
++  val commit = Input(Bool())
++  val rollback = Input(Bool())
++  val replay = Input(Bool())
++  // One comparison token covers every output, including invalid peek_bits.
++  val equivalent = Output(Bool())
++  val full = Output(Bool())
++  val valid = Output(Bool())
++  val canCommit = Output(Bool())
++}
++
++class QueuePairHost(implicit p: Parameters) extends RawModule {
++  val clock = RationalClockBridge().io.clocks.head
++  val reset = WireInit(false.B)
++  val io = Wire(new HostIO)
++  val pair = withClockAndReset(clock, reset || io.clear) { Module(new QueuePair) }
++  pair.io.enq_valid := io.enqValid
++  pair.io.enq_bits := io.enqBits
++  pair.io.reserve := io.reserve
++  pair.io.commit := io.commit
++  pair.io.rollback := io.rollback
++  pair.io.replay := io.replay
++  io.equivalent := pair.io.equivalent
++  io.full := pair.io.full
++  io.valid := pair.io.valid
++  io.canCommit := pair.io.can_commit
++  // Verification-only edge snapshot and one atomic input token: independently
++  // poked fields must not become different target input cycles. No extra
++  // register is inserted into either DUT or into its real interface.
++  val inputs = Wire(Input(UInt(88.W)))
++  io.clear := inputs(0); io.enqValid := inputs(1)
++  io.reserve := inputs(2); io.commit := inputs(3)
++  io.rollback := inputs(4); io.replay := inputs(5)
++  io.enqBits := inputs(87,6)
++  val outputs = Wire(Output(UInt(4.W)))
++  outputs := withClockAndReset(clock,reset) {
++    RegNext(chisel3.util.Cat(io.equivalent,io.full,io.valid,io.canCommit),0.U)
++  }
++  PeekPokeBridge(clock,reset,"inputs" -> inputs,"outputs" -> outputs)
++}
++
++class PlainConfig extends Config(new Config((site,here,up) => {
++  case midas.GenerateMultiCycleRamModels => true
++  case midas.EnableModelMultiThreading => false
++}) ++ new firesim.configs.DacXilinxAlveoConfig)
++
++object EmitHost extends App {
++  implicit val p: Parameters = new PlainConfig
++  (new chisel3.stage.ChiselStage).emitVerilog(new QueuePairHost,Array("--target-dir",args(0)))
++}
+diff --git a/candidates/rtl-timing-r1/README.md b/candidates/rtl-timing-r1/README.md
+new file mode 100644
+index 0000000..a54a29a
+--- /dev/null
++++ b/candidates/rtl-timing-r1/README.md
+@@ -0,0 +1,171 @@
++# Performance-Only RTL timing candidate r1
++
++Independent branch `ec-performance-only-rtl-timing-r1-20261115`, based on
++`42c9409c1abb275564c0b2f97a99f529a064a01f`. Functional lineage is the frozen
++`8491167d` snapshot followed by the explicitly authorized Performance-Only
++profile and existing CDC/DCache/SVB storage changes. This repository stores
++the frozen source snapshot as `0390a80`; it does not contain the original
++`8491167d` git object. BJL/Frontend/GH_FIFO sources were unchanged between
++`0390a80` and this candidate's parent.
++
++No full-shell implementation, FPGA operation, Native modification, controller
++change or signal to the other session's processes was performed. Small module
++jobs used CPUs 248–249, two Vivado threads and nice 19. They have finished.
++
++## Evidence and technical conclusion
++
++The historical failing 15 MHz report's worst setup path is inside **Xilinx DDR4
++calibration**, on `mmcm_clkout0` (3.332 ns):
++
++```
++design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/
++  u_ddr_cal/u_ddr_cal_addr_decode/ub_ready_reg/C
++    -> address initialization/calibration selection -> parity reduction ->
++  mcal_PAR_dly_reg[0][6]/D
++```
++
++Slack −3.457 ns; four LUT levels; data delay 6.657 ns = logic 0.492 ns + routing
++6.165 ns (92.609%). Two nets alone contribute 2.644 ns (`cal_ADR[23]`, fanout 5)
++and 2.372 ns (`cal_PAR_int6_i_4_n_0`, fanout 8); `ub_ready` has fanout 72 and
++0.962 ns routing. Physical sites are X118–123/Y66–76, all **SLR0, clock region
++X4Y1**, verified against the U280 device database. This is not a cross-SLR data
++path or a CDC path. The report came from an illegally routed implementation;
++its timing is diagnostic evidence, not a signoff result.
++
++RTL ownership chain in generated DDR IP:
++
++- `ddr4_v2_2_cal_addr_decode.sv:1179`: `ub_ready` write; :949–963 and :1975:
++  address generation.
++- `ddr4_v2_2_cal.sv:1522`: `ub_ready` selects microcontroller versus initialization
++  address. Synthesized hierarchy names are rebuilt and do not delimit the
++  original RTL module boundaries.
++- `ddr4_v2_2_cal_top.sv:814`: parity input transposition; :839–848: parity XOR;
++  :889–907: controller/calibration parity selection and first delay register.
++
++Native and current DDR IP have identical hashes for the three initially checked
++calibration source files and **all 138 configurable XCI parameters match**.
++Early C4 checkpoint source hashes match as well. Native routed DDR WNS/WHS is
+++0.052/+0.010 ns; certified SVB component +0.023/+0.006 ns, both at 3.332 ns.
++There is no evidence that an EC Chisel edit inserted this DDR logic or changed
++its protocol. Density-induced detours are consistent with the evidence; an
++exact causal attribution to any individual EC edit has not been established.
++Do not change DDR RTL or relax its clock based on this failed route.
++
++The active other-session structure candidate's **post-place estimates** have
++DDR WNS +0.281 ns and WHS −0.145 ns. Its worst global setup is PCIe +0.114 ns;
++worst hold −0.725 ns is XDMA IRQ-to-PCIe MSI, under the existing setup-2/hold-1
++exception. These are not routed results. CLB occupancy is 97.78/94.93/99.13%;
++SLR links are only 10.26/12.36% used in aggregate. Level-5 congestion windows are
++dominated by DCache/SVB; BJL occupies part of the same neighborhood. Local
++CLB/routing pressure, not exhausted total SLL capacity, is the immediate issue.
++
++## Implemented RTL
++
++`chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_FIFO.scala`
++changes only `GH_FIFO_SC` payload storage:
++
++```
++RegInit(Vec(256, UInt(82.W)))
++    -> Mem(256, UInt(82.W)) + 256 resettable written bits
++```
++
++The read remains asynchronous in the same target cycle. Reset masks stale
++payloads, including invalid `peek_bits`; reset dominates a simultaneous write.
++Enqueue/full, commit, reserve, rollback/replay priority, empty bypass and every
++public output are retained. No new DUT register stage or target cycle is added.
++
++Netlist/source connection: physical `frontend/BJL/u_channel_bj_[0-1]/sptr_reg`
++and `sync_0_reg_BUFG` nets -> `rocket/Frontend.scala:109` ->
++`r/R_BJL.scala:146` -> `GH_FIFO.scala:275` resettable payload and :319 dynamic
++read. Full emitted target FIRRTL contains eight 82×256 queues. Current full
++physical fanout reports show 41,571–41,591 loads on the BJL reset nets and
++about 5,223 loads per low read-pointer bit. The BJL paths themselves have ample
++setup slack; they are a measured source of FF, MUX and control-routing pressure.
++
++Existing DCache/SVB/PacketSequenceBank changes were inspected but not modified
++again. The GHM LocalMemAsyncQueue change retains frozen Gray pointers,
++synchronizers, source/sink clocks and reset handshakes, with source-local data
++selection equivalent to the original narrow queue. The examined timing paths
++do not identify an EC pipeline/CDC wiring defect. This audit is not a new
++whole-checker equivalence certificate.
++
++## Real paired Vivado module measurements
++
++Vivado 2021.1, xcu280-fsvh2892-2L-e, actual complete 82×256 modules, same
++out-of-context synthesis/options and 100 ns comparison clock. These are target
++module measurements, not a threaded Golden Gate host/full-shell estimate.
++
++| Metric | Reference | Candidate |
++|---|---:|---:|
++| post-opt LUT | 6,033 | 963 |
++| post-opt FF | 21,016 | 286 |
++| post-opt LUTRAM (included in LUT) | 0 | 384 |
++| post-opt F7/F8 MUX | 2,788 / 1,312 | 8 / 4 |
++| BRAM / DSP / URAM | 0 / 0 / 0 | 0 / 0 / 0 |
++| routed LUT | 6,029 | 957 |
++| maximum reset fanout | 21,016 | 290 |
++| maximum read-pointer fanout | 5,264 | 410 |
++| internal reg-to-reg max data delay | 7.905 ns | 4.872 ns |
++| internal max path logic / routing | 0.742 / 7.163 ns | 0.631 / 4.241 ns |
++| internal max path levels | 6 | 5 |
++| internal minimum hold slack | +0.070 ns | +0.044 ns |
++| fully routed / routable nets | 22,907 / 22,907 | 854 / 854 |
++| routing errors | 0 | 0 |
++
++The module's external ports lack top-level partition-pin locations. Vivado
++reports RTSTAT-10/no-routable-loads warnings on external outputs, and I/O hold
++numbers are not signoff-quality. The timing comparison above deliberately uses
++**internal register/memory endpoints only**, extracted from the routed module
++checkpoints. It does not certify the full target or DDR/PCIe timing.
++
++The earlier Yosys screen differs substantially (including BRAM inference), so
++its estimates must not substitute for the Vivado numbers above. Do not add a
++per-module delta to the full shell, or assume an eight-queue/threading multiplier.
++
++## Validation
++
++- Scala/Chisel compile and actual generated RTL: passed.
++- All public outputs, including invalid payload, 131,073-cycle comparison:
++  passed. Coverage includes 21,307 full cycles, 16,632 empty, 3,607 rollback,
++  6,536 replay, 21 reset/write collisions and 32,652 simultaneous commit/enqueue.
++- Inductive refinement on the actual 82×256 emitted netlists: passed.
++  Relation `reference[i] == (written[i] ? memory[i] : 0)`; pointers identical.
++  All full-width payload cones are checked for lane independence and symmetry;
++  SAT proves every control/output/next-state equation. Separate arbitrary-state
++  reset-base proof establishes the relation. Removing one next-state mask fails.
++- Actual Golden Gate MCRAM host: 4,096 token comparisons passed, including
++  full/empty/commit/rollback/replay/reset. A deliberate mismatch fails at token
++  100. The test uses atomic input tokens and a verification-only output snapshot;
++  no register is added to DUT interfaces. The initial split-port harness exposed
++  unstable peeks; that failed harness is retained separately and is not a DUT
++  failure. Model multithreading is disabled in this module test; the actual full
++  system/threaded-host integration remains a required gate.
++
++## Constraint candidate and integration
++
++Current recovery `clock-normalized.xdc` uses `concat` in eight replayed PCIe
++clock-group commands. Vivado 2021.1 logs unsupported-XDC Critical Warnings.
++`host-clock-no-concat.tcl` preserves the exact existing groups but emits one
++`get_clocks -filter` union per group. It changes no period, CDC synchronizer,
++false-path membership or setup/hold exception. Eight exact original group pairs,
++literal brackets, unions and empty-group behavior pass offline Tcl checks.
++The two-FF Vivado 2021.1 experiment confirms the old `concat` command creates
++**no valid timing exceptions**, while the replacement creates both intended
++clock-group directions with unchanged periods. Inspecting `report_exceptions`
++is essential: an explicit `get_timing_paths -from/-to` query still returns a
++diagnostic path under a clock-group exception and is not an admission test.
++Full checkpoint replay must wait for the main CAD resource to be free. This is
++an independently prepared constraint candidate, not an edit to the controller.
++
++The highest-value next integration candidate is **existing CDC/DCache/SVB
++structural base + this BJL storage change**, with proper clock-group replay.
++It attacks actual FF/MUX/control-network pressure without modifying DDR IP or
++target latency. New full generated-host elaboration, threaded-token/system
++validation, DUT/full-shell area, placement and routing must be measured before
++claiming a shell resource delta, legal route, timing closure or usable bitstream.
++No full implementation was queued into the other session's controller.
++
++`run.py`, `formal.py`, `host.py`, `module_cad.py`, `module_paths.py`, `analyze.py`,
++`prepare_constraints.py` and `constraint_syntax.py` reproduce the bounded checks.
++Their input/output paths and source hashes are preserved in `results.json` and
++the sealed artifact directory. Do not rerun into an existing output directory.
+diff --git a/candidates/rtl-timing-r1/Reference.scala b/candidates/rtl-timing-r1/Reference.scala
+new file mode 100644
+index 0000000..ce39788
+--- /dev/null
++++ b/candidates/rtl-timing-r1/Reference.scala
+@@ -0,0 +1,75 @@
++package freechips.rocketchip.guardiancouncil
++import chisel3._
++import chisel3.util._
++class GH_FIFO_SC_Reference(val params: FIFOParams) extends Module with HasFIFO_SC_IO {
++
++  private def inc(ptr: UInt): UInt =
++    Mux(ptr === (params.depth - 1).U, 0.U, ptr + 1.U)
++
++  private def dec(ptr: UInt): UInt = Mux(ptr === 0.U, (params.depth-1).U, ptr - 1.U)
++
++  private def dist(a: UInt, b: UInt): UInt = {
++    // distance from b to a in ring [0, depth)
++    val d = Wire(UInt((log2Ceil(params.depth) + 1).W))
++    d := Mux(a >= b, a - b, a + params.depth.U - b)
++    d(log2Ceil(params.depth)-1, 0) // max is depth-1 (we keep one slot empty)
++  }
++
++  val mem = RegInit(VecInit(Seq.fill(params.depth)(0.U(params.width.W))))
++
++  val wptr = RegInit(0.U(log2Ceil(params.depth).W))
++  val sptr = RegInit(0.U(log2Ceil(params.depth).W))
++  val cptr = RegInit(0.U(log2Ceil(params.depth).W))
++
++  // can_commit: there exists reserved entries (cptr != sptr)
++  io.can_commit := (cptr =/= sptr)
++
++  // full depends on committed pointer (so we never overwrite uncommitted region)
++  val cptr_after_commit = Mux(io.commit && io.can_commit, inc(cptr), cptr)
++  val wptr_next = inc(wptr)
++  io.full := (wptr_next === cptr_after_commit)
++
++  // allow enqueue if not full (considering same-cycle commit freeing space)
++  val do_enq = io.enq_valid && !io.full
++  when (do_enq) {
++    mem(wptr) := io.enq_bits
++    wptr := wptr_next
++  }
++
++  // rollback has highest priority for speculative pointer
++  when (io.rollback) {
++    sptr := cptr_after_commit // if commit also asserted, use the updated committed point
++  }.elsewhen(io.need_replay_1){
++    sptr := dec(sptr)
++  }
++  .otherwise {
++    // reserve (advance sptr) if peek_valid
++    when (io.reserve && ((sptr =/= wptr) || (do_enq && (sptr === wptr)))) {
++      sptr := inc(sptr)
++    }
++  }
++
++  // commit advances cptr
++  when (io.commit && io.can_commit) {
++    cptr := inc(cptr)
++  }
++
++  // peek_valid: there is data between sptr and wptr
++  val empty_spec = (sptr === wptr)
++  io.peek_valid := !empty_spec
++
++  // bypass: if empty_spec but we enqueue into the same slot this cycle, peek the incoming
++  val peek_raw = mem(sptr)
++  io.peek_bits := Mux(empty_spec && do_enq && (wptr === sptr), io.enq_bits, peek_raw)
++
++  // occupancy measured between cptr and wptr
++  val occ = dist(wptr, cptr)
++  io.num_content := occ
++
++  io.status_twoslots   := Mux(occ >= (params.depth.U - 2.U), 1.U, 0.U)
++  io.status_threeslots := Mux(occ >= (params.depth.U - 3.U), 1.U, 0.U)
++  io.high_watermark    := Mux(
++    if (params.depth > 100) (occ >= (params.depth.U - 20.U)) else false.B,
++    1.U, 0.U
++  )
++}
+diff --git a/candidates/rtl-timing-r1/TestQueue.cc b/candidates/rtl-timing-r1/TestQueue.cc
+new file mode 100644
+index 0000000..adbc587
+--- /dev/null
++++ b/candidates/rtl-timing-r1/TestQueue.cc
+@@ -0,0 +1,38 @@
++#include "TestHarness.h"
++#include <iostream>
++class TestQueue final : public TestHarness {
++  bool negative=false;
++public:
++  TestQueue(widget_registry_t &r,const std::vector<std::string>&a,std::string_view n)
++    :TestHarness(r,a,n){for(auto &x:a)if(x=="+negative")negative=true;}
++  void run_test() override {
++    log=false;
++    mpz_t payload;mpz_init(payload);
++    poke("inputs",payload);target_reset(16);
++    unsigned full=0,empty=0,commits=0,rollback=0,replay=0;
++    for(unsigned t=0;t<4096;++t){
++      unsigned r=random(),phase=t%1024;
++      bool ev=phase<800 || (r&1), reserve=phase>=300&&(phase<800||((r>>1)&1));
++      bool commit=phase>=600&&(phase<800||((r>>2)&1));
++      bool rb=phase>=800&&r%31==0,rp=phase>=800&&r%17==0;
++      mpz_set_ui(payload,random());mpz_mul_2exp(payload,payload,64);
++      mpz_add_ui(payload,payload,random());mpz_fdiv_r_2exp(payload,payload,82);
++      mpz_mul_2exp(payload,payload,6);
++      mpz_add_ui(payload,payload,(t==2048)|(ev<<1)|(reserve<<2)|(commit<<3)|(rb<<4)|(rp<<5));
++      poke("inputs",payload);step(1);
++      unsigned snapshot=peek("outputs");
++      bool eq=(snapshot>>3)&1;
++      if(negative&&t==100)eq=!eq;
++      if(!expect(eq&&!peek_poke.timeout()&&!peek_poke.unstable(),"BJL exact token outputs")){
++        std::cerr<<"BJL_HOST_TOKEN_MISMATCH token="<<t<<"\n";return;
++      }
++      full+=(snapshot>>2)&1;empty+=!((snapshot>>1)&1);
++      commits+=commit&&(snapshot&1);rollback+=rb;replay+=rp;
++    }
++    if(!expect(full>100&&empty>0&&commits>0&&rollback>0&&replay>0,"BJL boundary coverage"))return;
++    std::cout<<"BJL_HOST_TOKEN_PASS tokens=4096 full="<<full<<" empty="<<empty
++      <<" commits="<<commits<<" rollback="<<rollback<<" replay="<<replay<<"\n";
++    mpz_clear(payload);
++  }
++};
++TEST_MAIN(TestQueue)
+diff --git a/candidates/rtl-timing-r1/analyze.py b/candidates/rtl-timing-r1/analyze.py
+new file mode 100644
+index 0000000..4e55ae7
+--- /dev/null
++++ b/candidates/rtl-timing-r1/analyze.py
+@@ -0,0 +1,101 @@
++#!/usr/bin/env python3
++"""Read-only evidence extraction; never opens Vivado or modifies source reports."""
++import hashlib
++import json
++from pathlib import Path
++import re
++import subprocess
++import sys
++import xml.etree.ElementTree as ET
++
++B=Path('/data1/gzh/EC')
++R=B/'Experiment/firesim-final-opt4-20261106'
++S=Path('/var/tmp/guozh-ec-rtl-structure-r1-20261114')
++T=Path(__file__).resolve().parents[2]
++O=Path(sys.argv[1]).resolve()
++P=S/'cad-r1/followthrough-r2/physical/candidates/structure-10mhz-ssi_spreadslls-r2'
++def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
++
++def timing(p,stage):
++    text=p.read_text(); rows=[]
++    for block in re.split(r'(?=Slack \()',text):
++        found=re.search(r'^Slack .*?:\s*([-+\d.]+)ns',block)
++        if not found:continue
++        d=dict(slack_ns=float(found[1]))
++        for label,key in [('Source','source'),('Destination','destination'),('Path Group','group'),
++                          ('Path Type','type'),('Requirement','requirement'),
++                          ('Data Path Delay','data_path_delay'),('Logic Levels','logic_levels')]:
++            m=re.search(r'^\s*'+label+r':\s*(.+)$',block,re.M)
++            d[key]=m[1].strip() if m else None
++        rows.append((d,block))
++    result=dict(file=str(p),sha256=sha(p),stage=stage)
++    for kind in ['Setup','Hold']:
++        paths=sorted([(d,b) for d,b in rows if d['type'] and d['type'].startswith(kind)],key=lambda x:x[0]['slack_ns'])
++        if paths:
++            result['worst_'+kind.lower()]=paths[0][0]
++            (O/(p.parent.name+'-'+kind.lower()+'.txt')).write_text(paths[0][1])
++    for i,line in enumerate(text.splitlines()):
++        if 'WNS(ns)' in line and 'TNS(ns)' in line:
++            lines=text.splitlines()
++            if i+2<len(lines):result['summary_header']=line.strip();result['summary_row']=lines[i+2].strip()
++            break
++    result['ddr_clock_rows']=[l.strip() for l in text.splitlines() if re.match(r'^\s*mmcm_clkout0\s+[-+\d]',l)]
++    return result
++
++def params(p):
++    r={}
++    for e in ET.parse(p).iter():
++        if e.tag.endswith('configurableElementValue'):
++            k=next(iter(e.attrib.values()))
++            if k.startswith('PARAM_VALUE.'):r[k]=e.text
++    return r
++
++def main():
++    O.mkdir(exist_ok=False)
++    native=B/'firesim/dac2026/work/opt4-roi-v5/builds/B-bitstream-20261102T095746.955739Z/vivado_proj'
++    current=S/'cad-r1/project/builds/cad-6c374c8a/vivado_proj'
++    early=B/'firesim/final-opt4-20261106/dcp-work/C4-dcp-20261110T071734Z/vivado_proj'
++    ip='sources_1/bd/design_1/ip/design_1_ddr4_0_0'
++    inventories={}
++    for name,root in [('Native',native),('Current',current),('Early',early)]:
++        inventories[name]={}
++        for n in ['ddr4_v2_2_cal_top.sv','ddr4_v2_2_cal_addr_decode.sv','ddr4_v2_2_cal_cplx.sv']:
++            p=root/('firesim.gen/'+ip+'/rtl/cal/'+n)
++            inventories[name][n]=dict(file=str(p),sha256=sha(p))
++    xci=[root/('firesim.srcs/'+ip+'/design_1_ddr4_0_0.xci') for root in [native,current]]
++    a,b=map(params,xci)
++    delta={k:[a.get(k),b.get(k)] for k in a.keys()|b.keys() if a.get(k)!=b.get(k)}
++    assert len(a)==len(b)==138 and not delta
++    for n in inventories['Native']:
++        assert len({v[n]['sha256'] for v in inventories.values()})==1
++    result=dict(profile='EC Performance-Only independent RTL timing candidate',
++        ddr_sources=inventories,ddr_xci=[dict(file=str(p),sha256=sha(p)) for p in xci],
++        ddr_xci_functional_parameters_equal=True,ddr_xci_parameter_count=138,
++        timing={
++            'Old15FailedRoute':timing(R/'performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-15mhz-altspreadlogic_high/timing.rpt','failed/illegal routing; not a usable bitstream'),
++            'Current10PostPlace':timing(P/'timing-after-physopt.rpt','postPlace phys_opt estimates; not postRoute'),
++            'NativeRouted':timing(R/'paper-area-power/raw/native-B/impl_1/design_1_wrapper_timing_summary_routed.rpt','Native routed report; source bound by context_manifest.json'),
++            'SVBRouted':timing(R/'cycleprecise-svb-host40-shell-recovery-r7-20261112/K-postroute-aggressive-explore/final-timing.rpt','SVB component routed; full EC absent')})
++    fan=(P/'fanout-placed.rpt').read_text()
++    result['BJL_physical_fanout_rows']=[l.strip() for l in fan.splitlines() if 'BJL/u_channel_bj' in l]
++    result['per_slr']=dict(file=str(P/'per-slr-after-physopt.rpt'),sha256=sha(P/'per-slr-after-physopt.rpt'),
++        clb_occupancy_percent=[97.78,94.93,99.13],sll_usage_percent=[10.26,12.36],
++        conclusion='CLB occupancy/local routing pressure is severe; SLL aggregate capacity is not saturated.')
++    result['source_lineage']={}
++    for rel in ['chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_FIFO.scala',
++                'chipyard/generators/rocket-chip/src/main/scala/r/R_BJL.scala',
++                'chipyard/generators/rocket-chip/src/main/scala/rocket/Frontend.scala']:
++        frozen=subprocess.check_output(['git','show','0390a80:'+rel],cwd=T)
++        base=subprocess.check_output(['git','show','42c9409:'+rel],cwd=T)
++        result['source_lineage'][rel]=dict(frozen_snapshot_sha256=hashlib.sha256(frozen).hexdigest(),
++            pre_candidate_sha256=hashlib.sha256(base).hexdigest(),unchanged_since_frozen_snapshot=frozen==base,
++            candidate_sha256=sha(T/rel))
++    result['clock_warnings']=[l.strip() for l in (P/'vivado.log').read_text().splitlines() if l.startswith('CRITICAL WARNING:')]
++    result['clock_replay_issue']=dict(
++        file=str(P/'clock-normalized.xdc'),sha256=sha(P/'clock-normalized.xdc'),
++        finding='concat in read_xdc raises unsupported-command Critical Warnings; do not assume root clock groups were applied solely because TIMING-54 reports zero.',
++        scope='Existing PCIe scoped clock groups; not evidence of wrong DDR frequency or an EC RTL CDC bug.',
++        candidate='clock-group-replay-no-concat.tcl; offline mocked object-set test; full checkpoint replay must wait for CAD availability.')
++    (O/'evidence.json').write_text(json.dumps(result,indent=2)+'\n')
++
++if __name__=='__main__':main()
+diff --git a/candidates/rtl-timing-r1/clock-group-replay-no-concat.tcl b/candidates/rtl-timing-r1/clock-group-replay-no-concat.tcl
+new file mode 100644
+index 0000000..ae04b7c
+--- /dev/null
++++ b/candidates/rtl-timing-r1/clock-group-replay-no-concat.tcl
+@@ -0,0 +1,22 @@
++# Candidate helper for the existing host-clock.tcl normalizer. Not sourced into
++# active CAD. Replays precisely the previously resolved clock sets; no new
++# exceptions, no relaxation of DDR/PCIe/target periods or setup/hold requirements.
++# Replace only ec_record_groups's "queries/concat" emission with this function.
++proc ec_exact_clock_query {names} {
++    if {![llength $names]} {error "empty clock set must not produce a new exception"}
++    set clauses {}
++    foreach name $names {
++        if {[regexp {["\\\n\r]} $name]} {error "unsupported clock name quoting"}
++        lappend clauses [format {NAME == "%s"} $name]
++    }
++    return "\[get_clocks -quiet -filter [list [join $clauses { || }]]\]"
++}
++proc ec_exact_clock_groups {groups} {
++    if {[llength $groups] != 2} {error "expected the two original resolved clock sets"}
++    foreach names $groups {
++        if {![llength $names]} {return "# Original empty scoped group; preserve no exception."}
++    }
++    set command {set_clock_groups -asynchronous}
++    foreach names $groups {append command " -group [ec_exact_clock_query $names]"}
++    return $command
++}
+diff --git a/candidates/rtl-timing-r1/compare.cpp b/candidates/rtl-timing-r1/compare.cpp
+new file mode 100644
+index 0000000..94dd773
+--- /dev/null
++++ b/candidates/rtl-timing-r1/compare.cpp
+@@ -0,0 +1,38 @@
++#include "VQueuePair.h"
++#include "verilated.h"
++#include <cstdint>
++#include <cstdio>
++#include <cstdlib>
++static uint64_t rng=0x8491167d6fada307ULL;
++static uint32_t next32(){rng^=rng<<13;rng^=rng>>7;rng^=rng<<17;return uint32_t(rng);}
++int main(int argc,char**argv){
++  Verilated::commandArgs(argc,argv); VQueuePair d;
++  unsigned full=0,empty=0,rb=0,replay=0,reset_write=0,commit_enq=0,cycles=0;
++  auto tick=[&](){
++    d.clock=0;d.eval();
++    if(cycles>0 && !d.io_equivalent){std::printf("MISMATCH before cycle=%u\n",cycles);std::exit(1);}
++    full+=d.io_full;empty+=!d.io_valid;rb+=d.io_rollback;
++    replay+=d.io_replay;reset_write+=d.reset&&d.io_enq_valid;
++    commit_enq+=d.io_commit&&d.io_can_commit&&d.io_enq_valid;
++    d.clock=1;d.eval();
++    if(!d.io_equivalent){std::printf("MISMATCH after cycle=%u\n",cycles);std::exit(1);}
++    ++cycles;
++  };
++  d.reset=1;d.io_enq_valid=0;d.io_reserve=0;d.io_commit=0;d.io_rollback=0;d.io_replay=0;tick();
++  for(unsigned episode=0;episode<16;++episode){
++    for(unsigned t=0;t<8192;++t){
++      d.reset=(t==0||t==4096);d.io_enq_valid=1;
++      for(unsigned i=0;i<3;++i)d.io_enq_bits[i]=next32(); d.io_enq_bits[2]&=0x3ffff;
++      d.io_rollback=0;d.io_replay=0;d.io_reserve=0;d.io_commit=0;
++      if(t>=300 && t<600)d.io_reserve=1;
++      if(t>=600 && t<1200){d.io_reserve=1;d.io_commit=1;}
++      if(t>=1200){
++        auto r=next32();d.io_enq_valid=r&1;d.io_reserve=(r>>1)&1;
++        d.io_commit=(r>>2)&1;d.io_rollback=(r%31)==0;d.io_replay=(r%17)==0;
++      }
++      tick();
++    }
++  }
++  if(!full||!empty||!rb||!replay||!reset_write||!commit_enq)return 2;
++  std::printf("BJL_FIFO_ALL_OUTPUTS_CYCLE_PASS cycles=%u full=%u empty=%u rollback=%u replay=%u reset_write=%u commit_enq=%u\n",cycles,full,empty,rb,replay,reset_write,commit_enq);
++}
+diff --git a/candidates/rtl-timing-r1/constraint_syntax.py b/candidates/rtl-timing-r1/constraint_syntax.py
+new file mode 100644
+index 0000000..c0b1f8c
+--- /dev/null
++++ b/candidates/rtl-timing-r1/constraint_syntax.py
+@@ -0,0 +1,59 @@
++#!/usr/bin/env python3
++"""Small two-FF Vivado experiment for read_xdc syntax, no shell checkpoint."""
++import os
++from pathlib import Path
++import subprocess
++import sys
++
++C=Path(__file__).resolve().parent
++O=Path(sys.argv[1]).resolve()
++def main():
++    os.sched_setaffinity(0,{248,249});os.nice(19)
++    d=O/'constraint-syntax-r2';d.mkdir(exist_ok=False)
++    (d/'tiny.v').write_text('module Tiny(input ca,cb,d,output reg q); reg a; always @(posedge ca) a<=d; always @(posedge cb) q<=a; endmodule\n')
++    (d/'old.xdc').write_text('set_clock_groups -asynchronous -group [concat [get_clocks -quiet -filter {NAME == "pcie_refclk_clk_p"}]] -group [concat [get_clocks -quiet -filter {NAME == "GTYE4_CHANNEL_TXOUTCLK[3]_3"}]]\n')
++    (d/'run.tcl').write_text('''set_param general.maxThreads 2
++read_verilog tiny.v
++synth_design -top Tiny -part xcu280-fsvh2892-2L-e -mode out_of_context
++create_clock -name pcie_refclk_clk_p -period 10 [get_ports ca]
++create_clock -name {GTYE4_CHANNEL_TXOUTCLK[3]_3} -period 2 [get_ports cb]
++set from [get_clocks -filter {NAME == "pcie_refclk_clk_p"}]
++set to [get_clocks -filter {NAME == "GTYE4_CHANNEL_TXOUTCLK[3]_3"}]
++set pre [llength [get_timing_paths -from $from -to $to -max_paths 1]]
++if {$pre != 1} {error "negative control lacks a timed CDC path"}
++write_checkpoint -force original.dcp
++read_xdc old.xdc
++set old_count [llength [get_timing_paths -from $from -to $to -max_paths 1]]
++write_xdc -force old-effective.xdc
++report_exceptions -file old-exceptions.rpt
++close_design
++open_checkpoint original.dcp
++source {%s}
++set cmd [ec_exact_clock_groups {{pcie_refclk_clk_p} {{GTYE4_CHANNEL_TXOUTCLK[3]_3}}}]
++set f [open new.xdc w];puts $f $cmd;close $f
++read_xdc new.xdc
++set from [get_clocks -filter {NAME == "pcie_refclk_clk_p"}]
++set to [get_clocks -filter {NAME == "GTYE4_CHANNEL_TXOUTCLK[3]_3"}]
++set new_count [llength [get_timing_paths -from $from -to $to -max_paths 1]]
++if {[get_property PERIOD $from] != 10 || [get_property PERIOD $to] != 2} {error "clock periods changed"}
++write_xdc -force new-effective.xdc
++report_exceptions -file new-exceptions.rpt
++set f [open old-exceptions.rpt r];set old_exceptions [read $f];close $f
++set f [open new-exceptions.rpt r];set new_exceptions [read $f];close $f
++if {[string first {No valid timing exceptions found} $old_exceptions] < 0} {error "old concat negative control unexpectedly applied"}
++if {[regexp -all {clock_group\s+clock_group} $new_exceptions] != 2} {error "new exact clock groups not present in exception database"}
++set f [open result.txt w]
++puts $f "CONSTRAINT_READ_XDC_SYNTAX_PASS old_concat_valid_exceptions=0 new_exact_filter_clock_group_directions=2 clock_periods_unchanged=true"
++puts $f "Explicit-from/to path query counts (not a false-path admission test): before=$pre old=$old_count new=$new_count"
++close $f
++puts EC_CONSTRAINT_TINY_EXPERIMENT_COMPLETE
++exit 0
++'''%(C/'clock-group-replay-no-concat.tcl'))
++    env={k:v for k,v in os.environ.items() if k not in ['PYTHONHOME','PYTHONPATH','LD_LIBRARY_PATH','LD_PRELOAD']}
++    with (d/'stdout.log').open('xb') as f:
++        p=subprocess.run(['/tools/Xilinx/Vivado/2021.1/bin/vivado','-mode','batch','-nojournal','-log','vivado.log','-source','run.tcl'],
++            cwd=d,stdin=subprocess.DEVNULL,stdout=f,stderr=subprocess.STDOUT,env=env,timeout=300)
++    assert p.returncode==0
++    assert 'EC_CONSTRAINT_TINY_EXPERIMENT_COMPLETE' in (d/'vivado.log').read_text()
++
++if __name__=='__main__':main()
+diff --git a/candidates/rtl-timing-r1/ddr-path-probe.tcl b/candidates/rtl-timing-r1/ddr-path-probe.tcl
+new file mode 100644
+index 0000000..73c6b90
+--- /dev/null
++++ b/candidates/rtl-timing-r1/ddr-path-probe.tcl
+@@ -0,0 +1,24 @@
++# Read-only probe for a FUTURE idle CAD window. Caller must open a checkpoint
++# and provide ec_probe_out as a new output directory. No implementation action.
++if {![info exists ec_probe_out] || [file exists $ec_probe_out]} {error "new explicit probe output directory required"}
++file mkdir $ec_probe_out
++set ec_src {design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_cal/u_ddr_cal_addr_decode/ub_ready_reg/C}
++set ec_dst {design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/mcal_PAR_dly_reg[0][6]/D}
++set ec_start [get_pins -hier -quiet -filter [format {NAME == "%s"} $ec_src]]
++set ec_end [get_pins -hier -quiet -filter [format {NAME == "%s"} $ec_dst]]
++if {[llength $ec_start] != 1 || [llength $ec_end] != 1} {error "exact historical DDR endpoints absent/ambiguous; do not guess"}
++report_timing -from $ec_start -to $ec_end -delay_type max -max_paths 10 -input_pins -nets -file "$ec_probe_out/ddr-exact-setup.rpt"
++report_timing -from $ec_start -to $ec_end -delay_type min -max_paths 10 -input_pins -nets -file "$ec_probe_out/ddr-exact-hold.rpt"
++set f [open "$ec_probe_out/ddr-cell-ownership.txt" w]
++foreach pin [concat $ec_start $ec_end] {
++    set cell [get_cells -of_objects $pin]
++    set site [get_sites -quiet -of_objects $cell]
++    puts $f "pin=$pin cell=$cell REF_NAME=[get_property REF_NAME $cell] LOC=[get_property LOC $cell] site=$site SLR=[get_slrs -quiet -of_objects $site]"
++    foreach prop {FILE_NAME LINE_NUMBER ORIG_REF_NAME} {
++        puts $f "$prop=[get_property -quiet $prop $cell]"
++    }
++}
++close $f
++report_clocks -file "$ec_probe_out/clocks.rpt"
++check_timing -verbose -file "$ec_probe_out/check-timing.rpt"
++# No create_clock, false_path, placement, routing, register or IP edits.
+diff --git a/candidates/rtl-timing-r1/formal.py b/candidates/rtl-timing-r1/formal.py
+new file mode 100644
+index 0000000..2140768
+--- /dev/null
++++ b/candidates/rtl-timing-r1/formal.py
+@@ -0,0 +1,258 @@
++#!/usr/bin/env python3
++"""Inductive reset-mask refinement of the actual 82x256 emitted queues.
++
++No bounded-reachability assumptions: all pointer/mask/data states are arbitrary.
++The relation is reference[i] == (written[i] ? memory[i] : 0).
++Payload projection is permitted only after checking every full-width output
++and next-state cone for lane independence and identical lane functions.
++"""
++import copy
++import hashlib
++import json
++import os
++from pathlib import Path
++import re
++import subprocess
++import sys
++
++O = Path(sys.argv[1]).resolve()
++WIDTH, DEPTH = 82, 256
++
++def sha(p):
++    return hashlib.sha256(p.read_bytes()).hexdigest()
++
++def cut(m):
++    m = copy.deepcopy(m)
++    states = {}
++    for cn, c in list(m['cells'].items()):
++        if c['type'] != '$dff':
++            assert not any(x in c['type'] for x in ['dff', 'latch']), c['type']
++            continue
++        aliases = [(n, v) for n, v in m['netnames'].items()
++                   if v['bits'] == c['connections']['Q'] and not n.startswith('$')]
++        canonical = [(n,v) for n,v in aliases if n in ['wptr','sptr','cptr']
++                     or re.fullmatch(r'(mem_\d+|mem\[\d+\]|written_\d+)', n)]
++        assert len(canonical) == 1, aliases
++        n, v = canonical[0]
++        n = re.sub(r'^mem\[(\d+)\]$', r'mem_\1', n)
++        states[n] = dict(width=len(c['connections']['Q']),
++                         init=v.get('attributes', {}).get('init'),
++                         parameters=c['parameters'])
++        assert int(c['parameters']['CLK_POLARITY'], 2) == 1
++        assert set(c['connections']) == {'CLK', 'Q', 'D'}
++        del m['cells'][cn]
++        for pin, bits in c['connections'].items():
++            port = pin + '__' + n
++            m['ports'][port] = dict(direction='input' if pin == 'Q' else 'output', bits=bits)
++            m['netnames'][port] = dict(hide_name=0, bits=bits, attributes={})
++    return m, states
++
++def lane_check(m):
++    leaves = {}
++    for n, p in m['ports'].items():
++        if p['direction'] == 'input' and len(p['bits']) == WIDTH:
++            assert n == 'io_enq_bits' or n.startswith('Q__mem_'), n
++            for lane, bit in enumerate(p['bits']):
++                leaves[bit] = n, lane
++    drivers = {}
++    for c in m['cells'].values():
++        for p, bits in c['connections'].items():
++            if c['port_directions'][p] == 'output':
++                for i, b in enumerate(bits):
++                    assert b not in drivers
++                    drivers[b] = c, p, i
++    dep, busy, signatures, controls = {}, set(), {}, {}
++    def dependent(b):
++        if b in leaves:
++            return True
++        if b in dep:
++            return dep[b]
++        assert b not in busy, 'combinational loop'
++        busy.add(b)
++        val = b in drivers and any(dependent(x)
++            for p, xs in drivers[b][0]['connections'].items()
++            if drivers[b][0]['port_directions'][p] == 'input' for x in xs)
++        busy.remove(b)
++        dep[b] = val
++        return val
++    def control(b):
++        if b in controls:
++            return controls[b]
++        assert not dependent(b)
++        if b not in drivers:
++            val = ('control_input', b)
++        else:
++            c, pin, i = drivers[b]
++            kind = c['type']
++            def component(p):
++                assert i < len(c['connections'][p])
++                return control(c['connections'][p][i])
++            if kind in ['$and','$or','$xor']:
++                expr = kind, sorted([repr(component('A')),repr(component('B'))])
++            elif kind == '$not':
++                expr = kind, component('A')
++            elif kind == '$mux':
++                expr = kind, component('A'), component('B'), control(c['connections']['S'][0])
++            else:
++                expr = (kind,pin,i,sorted(c['parameters'].items()),
++                    [(p,[control(x) for x in xs]) for p,xs in sorted(c['connections'].items())
++                     if c['port_directions'][p] == 'input'])
++            val = hashlib.sha256(repr(expr).encode()).hexdigest()
++        controls[b] = val
++        return val
++    def signature(b):
++        if b in signatures:
++            return signatures[b]
++        if b in leaves:
++            n, lane = leaves[b]
++            val = lane, ('input', n)
++        elif not dependent(b):
++            val = None, control(b)
++        else:
++            c, pin, i = drivers[b]
++            assert pin == 'Y'
++            kind = c['type']
++            def component(p):
++                assert i < len(c['connections'][p]), (kind, p, i)
++                return signature(c['connections'][p][i])
++            if kind == '$mux':
++                sel = c['connections']['S']
++                assert len(sel) == 1 and not dependent(sel[0])
++                children = [component('A'), component('B')]
++                op = kind, control(sel[0])
++            elif kind in ['$and', '$or', '$xor']:
++                children = [component('A'), component('B')]
++                op = (kind,)
++            elif kind == '$not':
++                children = [component('A')]
++                op = (kind,)
++            else:
++                raise AssertionError(('unsupported payload operation', kind))
++            lanes = {i for i, _ in children if i is not None}
++            assert len(lanes) <= 1, ('cross-lane mixing', c)
++            hs = [repr(x) for _, x in children]
++            if kind in ['$and', '$or', '$xor']:
++                hs.sort()
++            val = next(iter(lanes), None), hashlib.sha256(repr((op, hs)).encode()).hexdigest()
++        signatures[b] = val
++        return val
++    checked = []
++    for n, p in m['ports'].items():
++        if p['direction'] != 'output':
++            continue
++        if len(p['bits']) == WIDTH:
++            s = [signature(b) for b in p['bits']]
++            assert all(lane == i for i, (lane, _) in enumerate(s)), n
++            assert all(h == s[0][1] for _, h in s), n
++            checked.append(n)
++        else:
++            assert not any(dependent(b) for b in p['bits']), ('payload-dependent control', n)
++    assert len(checked) == DEPTH + 1
++    return dict(width=WIDTH, depth=DEPTH, checked_outputs=checked,
++                independent_identical_payload_lanes=True, controls_payload_independent=True)
++
++def main():
++    os.sched_setaffinity(0, {248})
++    os.nice(10)
++    raw = json.loads((O/'flattened.json').read_text())
++    modules, states, symmetry = {}, {}, {}
++    for orig, name in [('GH_FIFO_SC_Reference', 'RefCut'), ('GH_FIFO_SC', 'MemCut')]:
++        m, s = cut(raw['modules'][orig])
++        assert set(s) == ({'wptr', 'sptr', 'cptr'} |
++            {'mem_%d'%i for i in range(DEPTH)} |
++            ({'written_%d'%i for i in range(DEPTH)} if name == 'MemCut' else set()))
++        for n, st in s.items():
++            assert st['width'] == (WIDTH if n.startswith('mem_') else 1 if n.startswith('written_') else 8)
++            # RegInit is a synchronous reset equation, not necessarily an FPGA
++            # power-up initializer. The separate reset-base SAT proves entry.
++            if st['init'] is not None:
++                assert int(st['init'], 2) == 0, (n, st)
++        symmetry[name] = lane_check(m)
++        for n, p in m['ports'].items():
++            if len(p['bits']) == WIDTH:
++                p['bits'] = p['bits'][:1]
++                m['netnames'][n]['bits'] = p['bits']
++        modules[name], states[name] = m, s
++    (O/'lane-symmetry.json').write_text(json.dumps(symmetry, indent=2)+'\n')
++    (O/'state-mapping.json').write_text(json.dumps(states, indent=2)+'\n')
++    (O/'projected-cut.json').write_text(json.dumps(dict(modules=modules))+'\n')
++    lines = ['module Relation(', 'input clock, reset, io_enq_valid, io_reserve, io_commit, io_rollback, io_need_replay_1,',
++             'input io_enq_bits, input [7:0] wptr, sptr, cptr,',
++             'input [255:0] payload, written, output ok);']
++    checks = []
++    for name, m in modules.items():
++        prefix = 'r' if name == 'RefCut' else 't'
++        args = []
++        for n, p in m['ports'].items():
++            width = len(p['bits'])
++            if p['direction'] == 'output':
++                wire = prefix+'_'+n
++                lines.append('wire [%d:0] %s;'%(width-1, wire))
++                val = wire
++                if name == 'RefCut':
++                    if n.startswith('D__mem_'):
++                        i = n[len('D__mem_'):]
++                        checks.append('(%s == (t_D__written_%s & t_%s))'%(wire, i, n))
++                    else:
++                        checks.append('(%s == t_%s)'%(wire, n))
++            elif n.startswith('Q__mem_'):
++                i = n[len('Q__mem_'):]
++                val = 'payload[%s]'%i
++                if name == 'RefCut':
++                    val = '('+val+' & written[%s])'%i
++            elif n.startswith('Q__written_'):
++                val = 'written[%s]'%n[len('Q__written_'):]
++            else:
++                val = n.removeprefix('Q__')
++            args.append('.%s(%s)'%(n, val))
++        lines.append('%s %s(%s);'%(name, prefix, ','.join(args)))
++    lines.extend(['assign ok = '+' & '.join(checks)+';', 'endmodule'])
++    text = '\n'.join(lines)+'\n'
++    (O/'relation.v').write_text(text)
++    script = '''read_json projected-cut.json
++read_verilog relation.v
++hierarchy -top Relation
++flatten
++techmap
++opt -full
++check -assert
++sat -verify -prove ok 1 -set-def-inputs -show-inputs -show ok
++'''
++    base = text.replace('input [255:0] payload, written, output ok);',
++        'input [255:0] payload, written, ref_payload, input [7:0] ref_wptr, ref_sptr, ref_cptr, output ok);')
++    old_inst = next(l for l in base.splitlines() if l.startswith('RefCut r('))
++    new_inst = old_inst
++    for i in range(DEPTH):
++        new_inst = new_inst.replace('(payload[%d] & written[%d])'%(i,i), 'ref_payload[%d]'%i)
++    for p in ['wptr','sptr','cptr']:
++        new_inst = new_inst.replace('.Q__%s(%s)'%(p,p), '.Q__%s(ref_%s)'%(p,p))
++    base = base.replace(old_inst, new_inst)
++    base_checks = ['(r_D__mem_%d == 0)'%i for i in range(DEPTH)]
++    base_checks += ['(t_D__written_%d == 0)'%i for i in range(DEPTH)]
++    base_checks += ['(%s_D__%s == 0)'%(side,p) for side in ['r','t'] for p in ['wptr','sptr','cptr']]
++    base = re.sub(r'assign ok = .*;', 'assign ok = !reset | ('+' & '.join(base_checks)+');', base)
++    for label, v in [('proof', text), ('reset-base', base), ('negative', text.replace('(t_D__written_0 & t_D__mem_0)', 't_D__mem_0'))]:
++        assert label != 'negative' or v != text
++        (O/'relation.v').write_text(v)
++        (O/(label+'.ys')).write_text(script)
++        with (O/(label+'-service.log')).open('wb') as f:
++            p = subprocess.run(['/usr/local/bin/yosys','-Q','-T','-l',label+'.log','-s',label+'.ys'],
++                cwd=O, stdout=f, stderr=subprocess.STDOUT, timeout=900)
++        log = (O/(label+'.log')).read_text()
++        if label != 'negative':
++            assert p.returncode == 0 and 'no model found: SUCCESS!' in log
++        else:
++            assert p.returncode != 0 and 'proof did fail' in log
++    (O/'relation.v').write_text(text)
++    (O/'result.json').write_text(json.dumps(dict(
++        status='PASS_INDUCTIVE_RESET_MASK_REFINEMENT', width=WIDTH, depth=DEPTH,
++        rtl_sha256=sha(O.parent/'target/QueuePair.v'),
++        flattened_sha256=sha(O/'flattened.json'),
++        relation='reference[i] == (written[i] ? memory[i] : 0), identical pointers',
++        initialization='Separate SAT with unrelated reference/candidate current states proves reset sets reference payload, written bits and both sets of pointers to zero; candidate payload arbitrary.',
++        method='All full-width payload next-state/public-output cones checked for lane independence/symmetry. SAT proves every control/output/clock and projected data next-state relation for arbitrary state and inputs; induction extends to all cycles/all 82 lanes.',
++        negative_control='Removing word-zero next-state masking produces a counterexample.',
++        full_system_equivalence=False), indent=2)+'\n')
++
++if __name__ == '__main__':
++    main()
+diff --git a/candidates/rtl-timing-r1/host-clock-no-concat.tcl b/candidates/rtl-timing-r1/host-clock-no-concat.tcl
+new file mode 100644
+index 0000000..2b85beb
+--- /dev/null
++++ b/candidates/rtl-timing-r1/host-clock-no-concat.tcl
+@@ -0,0 +1,134 @@
++# Candidate helper for the existing host-clock.tcl normalizer. Not sourced into
++# active CAD. Replays precisely the previously resolved clock sets; no new
++# exceptions, no relaxation of DDR/PCIe/target periods or setup/hold requirements.
++# Replace only ec_record_groups's "queries/concat" emission with this function.
++proc ec_exact_clock_query {names} {
++    if {![llength $names]} {error "empty clock set must not produce a new exception"}
++    set clauses {}
++    foreach name $names {
++        if {[regexp {["\\\n\r]} $name]} {error "unsupported clock name quoting"}
++        lappend clauses [format {NAME == "%s"} $name]
++    }
++    return "\[get_clocks -quiet -filter [list [join $clauses { || }]]\]"
++}
++proc ec_exact_clock_groups {groups} {
++    if {[llength $groups] != 2} {error "expected the two original resolved clock sets"}
++    foreach names $groups {
++        if {![llength $names]} {return "# Original empty scoped group; preserve no exception."}
++    }
++    set command {set_clock_groups -asynchronous}
++    foreach names $groups {append command " -group [ec_exact_clock_query $names]"}
++    return $command
++}
++
++set ec_resume_checkpoint {}
++proc ec_record_groups {args} {
++    global ec_groups
++    set groups {}
++    for {set i 0} {$i < [llength $args]} {incr i} {
++        set a [lindex $args $i]
++        if {$a eq "-group"} {incr i; lappend groups [lsort [lindex $args $i]]} elseif {$a ne "-asynchronous"} {error "unexpected scoped group option $a"}
++    }
++    if {[llength $groups] != 2} {error "expected two original clock groups"}
++    lappend ec_groups $groups
++    if {![llength [lindex $groups 0]] || ![llength [lindex $groups 1]]} {
++        return "# Original empty scoped clock-group query; no exception applied."
++    }
++    return [ec_exact_clock_groups $groups]
++}
++
++set mmcm [get_cells -hier -quiet -filter {NAME =~ */clk_wiz_0/inst/mmcme4_adv_inst && REF_NAME == MMCME4_ADV}]
++if {[llength $mmcm] != 1} {error "one exact host MMCM required"}
++if {[get_property CLKFBOUT_MULT_F $mmcm] != 4 || [get_property DIVCLK_DIVIDE $mmcm] != 1} {
++    error "unrecognized MMCM VCO configuration"
++}
++if {$ec_frequency ni {15 10}} {error "unapproved host frequency"}
++set divide [expr {$ec_frequency == 15 ? 80.0 : 120.0}]
++set_property CLKOUT0_DIVIDE_F $divide $mmcm
++report_property -all $mmcm -file "$out/host-mmcm.txt"
++
++# Remove the identified invalid clk_wiz OOC primary-clock override. Lift only
++# the existing scoped asynchronous clock groups to the root with exactly the
++# clock sets resolved by their original queries. All other XDC is unchanged.
++write_xdc -force "$out/clock-input.xdc"
++set f [open "$out/clock-input.xdc" r]; set original [read $f]; close $f
++set normalized {}; set removed 0; set lifted 0; set ec_groups {}
++set in_wizard 0; set in_pcie 0
++foreach line [split $original \n] {
++    set trim [string trim $line]
++    if {[string match "current_instance*" $trim]} {
++        set in_wizard [expr {$trim eq "current_instance design_1_i/clk_wiz_0/inst"}]
++        set in_pcie [expr {$trim eq "current_instance design_1_i/xdma_0/inst/pcie4c_ip_i/inst"}]
++    }
++    if {$in_wizard && ([string match "create_clock *" $trim] || [string match "set_input_jitter *" $trim])} {
++        incr removed
++        lappend normalized "# Removed invalid OOC-only clock override: $trim"
++        continue
++    }
++    if {$in_pcie && [string match "set_clock_groups *" $trim]} {
++        current_instance design_1_i/xdma_0/inst/pcie4c_ip_i/inst
++        set replacement [eval [string map {set_clock_groups ec_record_groups} $trim]]
++        current_instance -quiet
++        lappend normalized {current_instance -quiet} $replacement $line
++        # Keep an auditable copy as a comment, not a duplicate scoped constraint.
++        set normalized [lreplace $normalized end end "# Original scoped command: $line"]
++        lappend normalized {current_instance design_1_i/xdma_0/inst/pcie4c_ip_i/inst}
++        incr lifted
++        continue
++    }
++    lappend normalized $line
++}
++current_instance -quiet
++set existing_targets [get_clocks -quiet {buildtop_reference_clock tileClockGroup_tile_1}]
++set validated_reuse [expr {$removed == 0 && $lifted == 0 && [llength $existing_targets] == 2 && ![llength [get_clocks -quiet design_1_i/clk_wiz_0/inst/clk_in1]]}]
++if {!$validated_reuse && ($removed != 2 || $lifted != 8)} {error "unknown constraint recipe removed=$removed lifted=$lifted"}
++set f [open "$out/normalized-clock-groups.txt" w];puts $f $ec_groups;close $f
++set f [open "$out/clock-normalized.xdc" w];puts $f [join $normalized \n];close $f
++if {!$validated_reuse} {
++    reset_timing -invalid
++    read_xdc "$out/clock-normalized.xdc"
++    set input_clock [get_clocks -quiet sysclk0_clk_p]
++    if {[llength $input_clock] != 1 || [get_property IS_GENERATED $input_clock]} {error "DDR reference must have one real primary clock"}
++    # Keep the removed OOC jitter allowance as a conservative requirement on
++    # the real upstream primary instead of inventing an internal primary.
++    set_input_jitter $input_clock 0.033
++} else {
++    puts "EC_REUSE_VALIDATED_TOP_LEVEL_CLOCK_CONSTRAINTS"
++}
++current_instance -quiet
++update_timing
++foreach groups $ec_groups {
++    foreach names $groups {
++        foreach name $names {
++            set clocks [get_clocks -quiet -filter [format {NAME == "%s"} $name]]
++            if {[llength $clocks] != 1 || [get_property NAME $clocks] ne $name} {error "clock-group replay lost or renamed original clock $name"}
++        }
++    }
++}
++
++set record [open "$out/clock-contract.txt" w]
++foreach index {0 1} name {buildtop_reference_clock tileClockGroup_tile_1} cycles {1 2} {
++    set source [get_pins -hier -quiet -filter "NAME =~ */clockBridge_clocks_${index}_buffer/I"]
++    set sink [get_pins -hier -quiet -filter "NAME =~ */clockBridge_clocks_${index}_buffer/O"]
++    if {[llength $source] != 1 || [llength $sink] != 1} {error "clock bridge $index is not unique"}
++    set master [get_clocks -quiet -of_objects $source]
++    if {[llength $master] != 1} {error "host master is not unique"}
++    set period [get_property PERIOD $master]
++    if {abs($period - 1000.0/$ec_frequency) > 0.1} {error "real MMCM clock period $period disagrees with requested $ec_frequency MHz"}
++    if {[llength [get_clocks -quiet $name]]} {
++        if {!$validated_reuse || [lsearch -exact [get_clocks -of_objects $sink] $name] < 0} {error "unexpected existing target generated clock"}
++        if {abs([get_property PERIOD [get_clocks $name]]-$period)>0.001} {error "reused generated clock did not follow physical MMCM change"}
++    } else {
++        create_generated_clock -name $name -source $source -divide_by 1 $sink
++    }
++    set_multicycle_path $cycles -setup -from [get_clocks $name] -to [get_clocks $name]
++    set_multicycle_path [expr {$cycles-1}] -hold -from [get_clocks $name] -to [get_clocks $name]
++    puts $record "$name master=$master nominal_MHz=$ec_frequency actual_period_ns=$period actual_MHz=[expr {1000.0/$period}] mmcm_divide=$divide setup=$cycles hold=[expr {$cycles-1}]"
++}
++close $record
++report_clocks -file "$out/repaired-clocks.rpt"
++report_clock_interaction -file "$out/repaired-clock-interaction.rpt"
++write_xdc -force "$out/repaired-effective.xdc"
++report_methodology -checks {TIMING-4 TIMING-27 TIMING-54} -file "$out/clock-methodology.rpt"
++set f [open "$out/clock-methodology.rpt" r]; set clock_report [read $f]; close $f
++if {[regexp {\|\s*(Error|Critical Warning)\s*\|} $clock_report]} {error "clock/scope methodology remains unresolved; refuse physical implementation"}
+diff --git a/candidates/rtl-timing-r1/host.py b/candidates/rtl-timing-r1/host.py
+new file mode 100644
+index 0000000..cb3808d
+--- /dev/null
++++ b/candidates/rtl-timing-r1/host.py
+@@ -0,0 +1,70 @@
++#!/usr/bin/env python3
++"""Actual Golden Gate MCRAM token comparison; bounded independent module."""
++import json
++import os
++from pathlib import Path
++import subprocess
++import sys
++
++C=Path(__file__).resolve().parent
++T=C.parent.parent
++R=Path('/data1/gzh/EC/Experiment/firesim-final-opt4-20261106')
++O=Path(sys.argv[1]).resolve()
++H=O/'host'
++
++def run(name,args,env,marker=None,negative=False,timeout=1200):
++    with (H/(name+'.log')).open('xb') as f:
++        p=subprocess.run(list(map(str,args)),cwd=H,stdin=subprocess.DEVNULL,
++            stdout=f,stderr=subprocess.STDOUT,env=env,timeout=timeout)
++    text=(H/(name+'.log')).read_text(errors='replace')
++    assert (p.returncode==0)!=negative,(name,p.returncode)
++    assert marker is None or marker in text,(name,'missing marker')
++    return text
++
++def main():
++    os.sched_setaffinity(0,{248,249});os.nice(19)
++    resume=len(sys.argv)>2 and sys.argv[2]=='--resume-build'
++    H.mkdir(exist_ok=resume)
++    env={k:v for k,v in os.environ.items() if k not in ['PYTHONHOME','PYTHONPATH',
++        'LD_LIBRARY_PATH','LD_PRELOAD','JAVA_TOOL_OPTIONS']}
++    cfg=json.loads((T.parent/'candidates/common-composed-source-r2-20261113/config.json').read_text())
++    base=R/'build-logs/Opt4-performance-only-fpga-r1-20261113/classes'
++    cp=':'.join([str(O/'classes'),str(base),cfg['firechip'],*cfg['classpath']])
++    classes=H/'classes';classes.mkdir(exist_ok=resume);target=H/'target';target.mkdir(exist_ok=resume)
++    java=[cfg['java'],'-Xmx8G','-Xss16M','-XX:ActiveProcessorCount=2','-Dec.dac.firesim=true']
++    if not resume:
++        run('compile',java+['-cp',':'.join(cfg['compiler']),'scala.tools.nsc.Main','-classpath',cp,
++            '-Xplugin:'+cfg['plugin'],'-d',classes,C/'Host.scala'],env)
++    cp=str(classes)+':'+cp
++    if not resume:
++        run('emit',java+['-cp',cp,'ectiming.EmitHost',target],env)
++    generated=H/'generated';generated.mkdir(exist_ok=resume)
++    if not resume:
++        run('goldengate',java+['-cp',cp,'midas.stage.GoldenGateMain','-i',target/'QueuePairHost.fir',
++            '-td',generated,'-faf',target/'QueuePairHost.anno.json','-ggcp','ectiming','-ggcs','PlainConfig',
++            '--output-filename-base','FireSim-generated'],env)
++    listing=generated/'firrtl_black_box_resource_files.f'
++    simulation=generated/'simulation.sv'
++    simulation.write_text((generated/'FireSim-generated.sv').read_text()+
++        ''.join(Path(p).read_text() for p in (listing.read_text().splitlines() if listing.exists() else []) if p.strip()))
++    clang='/nix/store/zxw41nfy4gjlzd31ly7q6mkv4vkybx15-clang-wrapper-16.0.6/bin/clang++'
++    verilator='/nix/store/bj3wbpawbk71c082cvrnqkfyix7ipx0g-verilator-5.048/bin/verilator'
++    fs=T.parent/'C4/chipyard/sims/firesim/sim'
++    deps=R/'build-logs/Opt4-mcrams-address-bucket-r2-20261112'
++    env.update(CCACHE_DISABLE='1',LD_LIBRARY_PATH='',OMP_NUM_THREADS='2',
++        PATH=str(Path(clang).parent)+':'+str(Path(verilator).parent)+':/usr/local/bin:/usr/bin:/bin',
++        CXX=clang,CXXFLAGS='-O1 -I'+str(deps/'headers')+' -I'+str(fs/'src/main/cc/midasexamples'),
++        LDFLAGS='-L'+str(deps/'libs')+' -Wl,-rpath,'+str(deps/'libs'))
++    run('build-host',['make','-C',fs/'midas/src/main/cc','-j2','verilator','PLATFORM=xilinx_alveo',
++        'DRIVER_NAME=QueuePairHost','GEN_DIR='+str(generated),'GEN_FILE_BASENAME=FireSim-generated',
++        'DESIGN_V='+str(simulation),'DRIVER='+str(fs/'src/main/cc/midasexamples/TestHarness.cc')+' '+str(C/'TestQueue.cc'),
++        'VERILATOR_FLAGS=-Wno-fatal -Wno-MULTIDRIVEN','CXX='+clang],env,timeout=1800)
++    args=[generated/'VQueuePairHost','+seed=8491167','+max-cycles=10000000']
++    passing=run('tokens',args,env,marker='BJL_HOST_TOKEN_PASS tokens=4096')
++    run('negative',args+['+negative'],env,negative=True,marker='BJL_HOST_TOKEN_MISMATCH token=100')
++    (H/'result.json').write_text(json.dumps(dict(status='PASS_ACTUAL_GOLDENGATE_MCRAM_TOKENS',
++        tokens=4096,receipt=[l for l in passing.splitlines() if 'BJL_HOST_TOKEN_PASS' in l],
++        model_multithreading=False,generate_multi_cycle_ram_models=True,
++        full_system_equivalence=False,full_shell_implementation=False),indent=2)+'\n')
++
++if __name__=='__main__':main()
+diff --git a/candidates/rtl-timing-r1/module_cad.py b/candidates/rtl-timing-r1/module_cad.py
+new file mode 100644
+index 0000000..2a46319
+--- /dev/null
++++ b/candidates/rtl-timing-r1/module_cad.py
+@@ -0,0 +1,81 @@
++#!/usr/bin/env python3
++"""Bounded paired *module* Vivado measurements, two CPUs, nice 19.
++
++Does not read/write/implement any full-shell project or touch FPGA devices.
++Both actual 82x256 queues use identical part, constraints and commands.
++"""
++import datetime as dt
++import hashlib
++import json
++import os
++from pathlib import Path
++import subprocess
++import sys
++
++O = Path(sys.argv[1]).resolve()
++A = O/'module-vivado'
++
++def resources(p):
++    result = {}
++    for line in p.read_text().splitlines():
++        c = [x.strip().rstrip('*') for x in line.split('|')]
++        if len(c)>6 and c[1] in ['CLB LUTs','CLB Registers','LUT as Logic','LUT as Memory',
++                'F7 Muxes','F8 Muxes','F9 Muxes','CARRY8','Block RAM Tile','DSPs','URAM']:
++            result.setdefault(c[1],float(c[2].replace(',','')))
++    return result
++
++def main():
++    os.sched_setaffinity(0,{248,249})
++    os.nice(19)
++    assert json.loads((O/'formal/result.json').read_text())['status']=='PASS_INDUCTIVE_RESET_MASK_REFINEMENT'
++    assert 'PASS' in json.loads((O/'state.json').read_text())['status']
++    A.mkdir(exist_ok=False)
++    rtl=O/'target/QueuePair.v'
++    digest=hashlib.sha256(rtl.read_bytes()).hexdigest()
++    result=dict(profile='EC Performance-Only BJL storage candidate', full_shell=False,
++        host_transform_included=False, fpga_access=False, max_threads=2, nice=19,
++        cpus=[248,249],part='xcu280-fsvh2892-2L-e',period_ns=100,
++        rtl_sha256=digest,modules={})
++    for top in ['GH_FIFO_SC_Reference','GH_FIFO_SC']:
++        d=A/top; d.mkdir()
++        (d/'run.tcl').write_text('''set_param general.maxThreads 2
++read_verilog {%s}
++synth_design -top %s -part xcu280-fsvh2892-2L-e -mode out_of_context -flatten_hierarchy rebuilt
++create_clock -name queue -period 100.0 [get_ports clock]
++set_input_delay -clock queue 0 [get_ports -filter {DIRECTION == IN && NAME != clock}]
++set_output_delay -clock queue 0 [all_outputs]
++opt_design
++write_checkpoint -force postopt.dcp
++report_utilization -file postopt-utilization.rpt
++place_design
++phys_opt_design -fanout_opt
++route_design
++write_checkpoint -force routed.dcp
++report_utilization -file utilization.rpt
++report_timing_summary -report_unconstrained -file timing.rpt
++report_timing -delay_type max -max_paths 20 -input_pins -nets -file setup.rpt
++report_timing -delay_type min -max_paths 20 -input_pins -nets -file hold.rpt
++report_high_fanout_nets -max_nets 20 -file fanout.rpt
++report_route_status -file route-status.rpt
++report_drc -file drc.rpt
++puts EC_BJL_PAIRED_MODULE_MEASUREMENT_COMPLETE
++exit 0
++'''%(rtl,top))
++        result.update(status='RUNNING_MODULE_ONLY_'+top,utc=dt.datetime.now(dt.timezone.utc).isoformat())
++        (A/'result.json').write_text(json.dumps(result,indent=2)+'\n')
++        env={k:v for k,v in os.environ.items() if k not in ['PYTHONHOME','PYTHONPATH',
++            'LD_LIBRARY_PATH','LD_PRELOAD','JAVA_TOOL_OPTIONS']}
++        env['OMP_NUM_THREADS']='2'
++        with (d/'stdout.log').open('wb') as f:
++            p=subprocess.run(['/tools/Xilinx/Vivado/2021.1/bin/vivado','-mode','batch','-nojournal',
++                '-log','vivado.log','-source','run.tcl'],cwd=d,stdin=subprocess.DEVNULL,
++                stdout=f,stderr=subprocess.STDOUT,env=env,timeout=1800)
++        assert p.returncode==0,(top,p.returncode)
++        assert 'EC_BJL_PAIRED_MODULE_MEASUREMENT_COMPLETE' in (d/'vivado.log').read_text()
++        result['modules'][top]=dict(postopt=resources(d/'postopt-utilization.rpt'),
++            routed=resources(d/'utilization.rpt'), reports=str(d))
++        assert digest==hashlib.sha256(rtl.read_bytes()).hexdigest()
++    result.update(status='COMPLETE_PAIRED_MODULE_VIVADO',utc=dt.datetime.now(dt.timezone.utc).isoformat())
++    (A/'result.json').write_text(json.dumps(result,indent=2)+'\n')
++
++if __name__=='__main__':main()
+diff --git a/candidates/rtl-timing-r1/module_paths.py b/candidates/rtl-timing-r1/module_paths.py
+new file mode 100644
+index 0000000..eb6f76d
+--- /dev/null
++++ b/candidates/rtl-timing-r1/module_paths.py
+@@ -0,0 +1,41 @@
++#!/usr/bin/env python3
++"""Read the two completed small-module checkpoints; no CAD implementation."""
++import json
++import os
++from pathlib import Path
++import subprocess
++import sys
++
++O=Path(sys.argv[1]).resolve()
++def main():
++    os.sched_setaffinity(0,{248,249});os.nice(19)
++    assert json.loads((O/'module-vivado/result.json').read_text())['status']=='COMPLETE_PAIRED_MODULE_VIVADO'
++    d=O/'module-paths';d.mkdir(exist_ok=False)
++    tcl='set_param general.maxThreads 2\n'
++    for top in ['GH_FIFO_SC_Reference','GH_FIFO_SC']:
++        tcl+='''open_checkpoint {%s}
++set sources [all_registers -output_pins]
++set sinks [all_registers -data_pins]
++report_timing -from $sources -to $sinks -delay_type max -max_paths 20 -input_pins -nets -file {%s}
++report_timing -from $sources -to $sinks -delay_type min -max_paths 20 -input_pins -nets -file {%s}
++'''%(O/'module-vivado'/top/'routed.dcp',d/(top+'-reg2reg-setup.rpt'),d/(top+'-reg2reg-hold.rpt'))
++        if top=='GH_FIFO_SC_Reference':
++            tcl+='''set f [open {%s} w]
++foreach name {SLICE_X121Y66 SLICE_X122Y76 SLICE_X118Y74 SLICE_X119Y72 SLICE_X123Y67} {
++    set site [get_sites -quiet $name]
++    if {[llength $site] != 1} {error "historical DDR data-path site absent"}
++    puts $f "$name SLR=[get_slrs -quiet -of_objects $site] CLOCK_REGION=[get_clock_regions -quiet -of_objects $site]"
++}
++close $f
++'''%(d/'ddr-site-geometry.txt')
++        tcl+='close_design\n'
++    tcl+='puts EC_MODULE_INTERNAL_PATH_EXTRACTION_COMPLETE\nexit 0\n'
++    (d/'run.tcl').write_text(tcl)
++    env={k:v for k,v in os.environ.items() if k not in ['PYTHONHOME','PYTHONPATH','LD_LIBRARY_PATH','LD_PRELOAD']}
++    with (d/'stdout.log').open('xb') as f:
++        p=subprocess.run(['/tools/Xilinx/Vivado/2021.1/bin/vivado','-mode','batch','-nojournal','-log','vivado.log','-source','run.tcl'],
++            cwd=d,stdin=subprocess.DEVNULL,stdout=f,stderr=subprocess.STDOUT,env=env,timeout=600)
++    assert p.returncode==0
++    assert 'EC_MODULE_INTERNAL_PATH_EXTRACTION_COMPLETE' in (d/'vivado.log').read_text()
++
++if __name__=='__main__':main()
+diff --git a/candidates/rtl-timing-r1/prepare_constraints.py b/candidates/rtl-timing-r1/prepare_constraints.py
+new file mode 100644
+index 0000000..a607af8
+--- /dev/null
++++ b/candidates/rtl-timing-r1/prepare_constraints.py
+@@ -0,0 +1,89 @@
++#!/usr/bin/env python3
++"""Prepare an isolated constraint replay fix; mock-check the exact eight sets.
++
++Never sources the result into any Vivado process/checkpoint. No clock rates,
++exceptions, object memberships or setup/hold numbers are invented here.
++"""
++import hashlib
++import json
++from pathlib import Path
++import subprocess
++import sys
++
++C=Path(__file__).resolve().parent
++O=Path(sys.argv[1]).resolve()
++P=Path('/var/tmp/guozh-ec-rtl-structure-r1-20261114/cad-r1/followthrough-r2')
++
++original='''    set result {set_clock_groups -asynchronous}
++    foreach names $groups {
++        set queries {}
++        foreach name $names {
++            # Clock names may contain literal [3]; pattern queries interpret
++            # those brackets. Equality filters preserve the exact clock name.
++            set filter [format {NAME == "%s"} $name]
++            lappend queries "\\[get_clocks -quiet -filter [list $filter]\\]"
++        }
++        append result " -group \\[concat [join $queries { }]\\]"
++    }
++    return $result'''
++
++def main():
++    source=P/'host-clock.tcl'
++    text=source.read_text()
++    assert text.count(original)==1, 'upstream recipe changed; refuse to guess'
++    helper=(C/'clock-group-replay-no-concat.tcl').read_text()
++    patched=helper+'\n'+text.replace(original,'    return [ec_exact_clock_groups $groups]')
++    assert '[concat ' not in patched
++    output=C/'host-clock-no-concat.tcl'
++    output.write_text(patched)
++    groups=P/'physical/candidates/structure-10mhz-ssi_spreadslls-r2/normalized-clock-groups.txt'
++    fixture='''source {%s}
++set f [open {%s} r]; set groups [read $f]; close $f
++set observed {}
++proc get_clocks {args} {
++    if {[lrange $args 0 1] ne {-quiet -filter}} {error "unknown query"}
++    set filter [lindex $args 2]
++    set names {}
++    foreach {unused name} [regexp -all -inline {NAME == "([^"]+)"} $filter] {lappend names $name}
++    if {![llength $names]} {error "empty mocked lookup"}
++    return $names
++}
++proc set_clock_groups {args} {
++    global observed
++    if {[lindex $args 0] ne "-asynchronous"} {error "changed group kind"}
++    set sets {}
++    for {set i 1} {$i < [llength $args]} {incr i 2} {
++        if {[lindex $args $i] ne "-group"} {error "unexpected group syntax"}
++        lappend sets [lsort [lindex $args [expr {$i+1}]]]
++    }
++    lappend observed $sets
++}
++if {[llength $groups] != 8} {error "expected eight original group pairs"}
++foreach pair $groups {
++    set command [ec_exact_clock_groups $pair]
++    if {[string first concat $command] >= 0} {error "unsupported command remains"}
++    eval $command
++}
++set expected {}
++foreach pair $groups {
++    set sets {}; foreach names $pair {lappend sets [lsort $names]};lappend expected $sets
++}
++if {$observed ne $expected} {error "clock-set membership changed"}
++set command [ec_exact_clock_groups {{{literal[3]} clkB} {clkC}}]
++eval $command
++if {[lindex $observed end] ne {{clkB {literal[3]}} clkC}} {error "literal bracket/union check failed"}
++if {[string index [ec_exact_clock_groups {{} {clkB}}] 0] ne "#"} {error "empty group changed"}
++puts CLOCK_GROUP_REPLAY_OFFLINE_PASS_original_pairs_8_literal_brackets_union_and_empty
++'''%(C/'clock-group-replay-no-concat.tcl',groups)
++    test=O/'clock-group-replay-test.tcl';test.write_text(fixture)
++    r=subprocess.run(['/usr/bin/tclsh',str(test)],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
++    (O/'clock-group-replay-test.log').write_text(r.stdout)
++    assert r.returncode==0,r.stdout
++    (O/'constraint-candidate.json').write_text(json.dumps(dict(
++        status='PASS_OFFLINE_EXACT_CLOCK_SET_TEST_NOT_VIVADO_REPLAYED',
++        upstream=str(source),upstream_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
++        candidate=str(output),candidate_sha256=hashlib.sha256(output.read_bytes()).hexdigest(),
++        existing_resolved_groups=str(groups),actual_checkpoint_test_pending=True,
++        active_CAD_modified=False,new_false_paths_added=False),indent=2)+'\n')
++
++if __name__=='__main__':main()
+diff --git a/candidates/rtl-timing-r1/results.json b/candidates/rtl-timing-r1/results.json
+new file mode 100644
+index 0000000..09c647d
+--- /dev/null
++++ b/candidates/rtl-timing-r1/results.json
+@@ -0,0 +1,114 @@
++{
++  "profile": "EC Performance-Only",
++  "branch": "ec-performance-only-rtl-timing-r1-20261115",
++  "parent": "42c9409c1abb275564c0b2f97a99f529a064a01f",
++  "artifacts": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-rtl-timing-r1-20261115",
++  "artifact_manifest_sha256": "1d4c1551d8e41173279717027713417897ba5bdba1a210e6e6ffd01ba163d639",
++  "changed_RTL": "GH_FIFO_SC payload only: reset-masked asynchronous memory; no target pipeline stage.",
++  "cycles": "BJL_FIFO_ALL_OUTPUTS_CYCLE_PASS cycles=131073 full=21307 empty=16632 rollback=3607 replay=6536 reset_write=21 commit_enq=32652",
++  "formal": {
++    "status": "PASS_INDUCTIVE_RESET_MASK_REFINEMENT",
++    "width": 82,
++    "depth": 256,
++    "rtl_sha256": "e6b93ed7e7d36d7ccea8201f0f4210e1e85a57fff5c1c448b5ff374cb90fa577",
++    "flattened_sha256": "91944e1ee9af8163b54578614c5dbd72f6b6f9f0a7f967674c4f8bbb96f159c9",
++    "relation": "reference[i] == (written[i] ? memory[i] : 0), identical pointers",
++    "initialization": "Separate SAT with unrelated reference/candidate current states proves reset sets reference payload, written bits and both sets of pointers to zero; candidate payload arbitrary.",
++    "method": "All full-width payload next-state/public-output cones checked for lane independence/symmetry. SAT proves every control/output/clock and projected data next-state relation for arbitrary state and inputs; induction extends to all cycles/all 82 lanes.",
++    "negative_control": "Removing word-zero next-state masking produces a counterexample.",
++    "full_system_equivalence": false
++  },
++  "host": {
++    "status": "PASS_ACTUAL_GOLDENGATE_MCRAM_TOKENS",
++    "tokens": 4096,
++    "receipt": [
++      "BJL_HOST_TOKEN_PASS tokens=4096 full=2060 empty=1631 commits=1164 rollback=36 replay=55"
++    ],
++    "model_multithreading": false,
++    "generate_multi_cycle_ram_models": true,
++    "full_system_equivalence": false,
++    "full_shell_implementation": false
++  },
++  "vivado": {
++    "profile": "EC Performance-Only BJL storage candidate",
++    "full_shell": false,
++    "host_transform_included": false,
++    "fpga_access": false,
++    "max_threads": 2,
++    "nice": 19,
++    "cpus": [
++      248,
++      249
++    ],
++    "part": "xcu280-fsvh2892-2L-e",
++    "period_ns": 100,
++    "rtl_sha256": "e6b93ed7e7d36d7ccea8201f0f4210e1e85a57fff5c1c448b5ff374cb90fa577",
++    "modules": {
++      "GH_FIFO_SC_Reference": {
++        "postopt": {
++          "CLB LUTs": 6033.0,
++          "LUT as Logic": 6033.0,
++          "LUT as Memory": 0.0,
++          "CLB Registers": 21016.0,
++          "CARRY8": 0.0,
++          "F7 Muxes": 2788.0,
++          "F8 Muxes": 1312.0,
++          "F9 Muxes": 0.0,
++          "Block RAM Tile": 0.0,
++          "URAM": 0.0,
++          "DSPs": 0.0
++        },
++        "routed": {
++          "CLB LUTs": 6029.0,
++          "LUT as Logic": 6029.0,
++          "LUT as Memory": 0.0,
++          "CLB Registers": 21016.0,
++          "CARRY8": 0.0,
++          "F7 Muxes": 2788.0,
++          "F8 Muxes": 1312.0,
++          "F9 Muxes": 0.0,
++          "Block RAM Tile": 0.0,
++          "URAM": 0.0,
++          "DSPs": 0.0
++        },
++        "reports": "/var/tmp/guozh-ec-rtl-timing-r1-20261115/module-vivado/GH_FIFO_SC_Reference"
++      },
++      "GH_FIFO_SC": {
++        "postopt": {
++          "CLB LUTs": 963.0,
++          "LUT as Logic": 579.0,
++          "LUT as Memory": 384.0,
++          "CLB Registers": 286.0,
++          "CARRY8": 0.0,
++          "F7 Muxes": 8.0,
++          "F8 Muxes": 4.0,
++          "F9 Muxes": 0.0,
++          "Block RAM Tile": 0.0,
++          "URAM": 0.0,
++          "DSPs": 0.0
++        },
++        "routed": {
++          "CLB LUTs": 957.0,
++          "LUT as Logic": 573.0,
++          "LUT as Memory": 384.0,
++          "CLB Registers": 286.0,
++          "CARRY8": 0.0,
++          "F7 Muxes": 8.0,
++          "F8 Muxes": 4.0,
++          "F9 Muxes": 0.0,
++          "Block RAM Tile": 0.0,
++          "URAM": 0.0,
++          "DSPs": 0.0
++        },
++        "reports": "/var/tmp/guozh-ec-rtl-timing-r1-20261115/module-vivado/GH_FIFO_SC"
++      }
++    },
++    "status": "COMPLETE_PAIRED_MODULE_VIVADO",
++    "utc": "2026-11-15T02:57:48.734394+00:00"
++  },
++  "constraint_syntax": "CONSTRAINT_READ_XDC_SYNTAX_PASS old_concat_valid_exceptions=0 new_exact_filter_clock_group_directions=2 clock_periods_unchanged=true\nExplicit-from/to path query counts (not a false-path admission test): before=1 old=1 new=1\n",
++  "full_shell_result": null,
++  "bitstream_generated": false,
++  "fpga_access": false,
++  "integration_status": "Independent validated module candidate; threaded full host/system and full-shell CAD pending resource availability."
++}
+diff --git a/candidates/rtl-timing-r1/run.py b/candidates/rtl-timing-r1/run.py
+new file mode 100644
+index 0000000..51f84d8
+--- /dev/null
++++ b/candidates/rtl-timing-r1/run.py
+@@ -0,0 +1,54 @@
++#!/usr/bin/env python3
++"""Bounded independent two-CPU source/cycle checks; never launches full CAD."""
++import datetime as dt
++import hashlib
++import json
++import os
++from pathlib import Path
++import subprocess
++import sys
++
++C=Path(__file__).resolve().parent
++T=C.parent.parent
++R=Path('/data1/gzh/EC/Experiment/firesim-final-opt4-20261106')
++O=Path('/var/tmp/guozh-ec-rtl-timing-r1-20261115')
++REL='chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_FIFO.scala'
++
++def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
++def save(status,**kw):
++    s=dict(status=status,utc=dt.datetime.now(dt.timezone.utc).isoformat(),
++       profile='EC Performance-Only',full_shell_CAD=False,fpga_access=False,**kw)
++    (O/'state.json').write_text(json.dumps(s,indent=2)+'\n')
++def run(name,args,timeout=1200):
++    with (O/(name+'.log')).open('xb') as log:
++        r=subprocess.run(list(map(str,args)),cwd=O,stdout=log,stderr=subprocess.STDOUT,
++            stdin=subprocess.DEVNULL,timeout=timeout,
++            env={k:v for k,v in os.environ.items() if k not in ['PYTHONHOME','PYTHONPATH','LD_LIBRARY_PATH','LD_PRELOAD','JAVA_TOOL_OPTIONS']})
++    assert r.returncode==0,(name,r.returncode)
++    return O/(name+'.log')
++
++def main():
++    os.sched_setaffinity(0,{248,249});os.nice(10)
++    O.mkdir(exist_ok=False)
++    cfg=json.loads((T.parent/'candidates/common-composed-source-r2-20261113/config.json').read_text())
++    base=R/'build-logs/Opt4-performance-only-fpga-r1-20261113/classes'
++    cp=':'.join([str(base),cfg['firechip'],*cfg['classpath']])
++    classes=O/'classes';classes.mkdir();target=O/'target';target.mkdir()
++    java=[cfg['java'],'-Xmx8G','-Xss16M','-XX:ActiveProcessorCount=2','-Dec.dac.firesim=true']
++    save('COMPILING',source_sha256=sha(T/REL))
++    run('compile',java+['-cp',':'.join(cfg['compiler']),'scala.tools.nsc.Main','-classpath',cp,
++        '-Xplugin:'+cfg['plugin'],'-d',classes,T/REL,C/'Reference.scala',C/'Emit.scala'])
++    run('emit',java+['-cp',str(classes)+':'+cp,'ectiming.Emit',target])
++    save('CHECKING_ALL_OUTPUTS_TARGET_CYCLES',source_sha256=sha(T/REL))
++    run('verilate',['/usr/local/bin/verilator','--cc','--exe','--build','-j','2','-Wno-fatal',
++        '--top-module','QueuePair','--Mdir',O/'obj',target/'QueuePair.v',C/'compare.cpp'])
++    log=run('cycle',[O/'obj/VQueuePair'])
++    assert 'BJL_FIFO_ALL_OUTPUTS_CYCLE_PASS' in log.read_text()
++    save('PASS_CYCLE_COMPARISON_FORMAL_AND_SYNTH_PENDING',source_sha256=sha(T/REL),
++         rtl_sha256=sha(target/'QueuePair.v'),cycle=log.read_text().strip())
++
++if __name__=='__main__':
++    try:main()
++    except Exception as exc:
++        if O.exists():save('FAILED_WITH_EVIDENCE',error=repr(exc))
++        raise
+diff --git a/candidates/rtl-timing-r1/synth.py b/candidates/rtl-timing-r1/synth.py
+new file mode 100644
+index 0000000..eeb5deb
+--- /dev/null
++++ b/candidates/rtl-timing-r1/synth.py
+@@ -0,0 +1,66 @@
++#!/usr/bin/env python3
++"""Two sequential one-CPU Yosys module screens, never full-shell CAD.
++
++These are Xilinx UltraScale+ mapped estimates, NOT Vivado routed timing/area.
++"""
++import collections
++import hashlib
++import json
++import os
++from pathlib import Path
++import subprocess
++import sys
++
++O = Path(sys.argv[1]).resolve()
++def main():
++    os.sched_setaffinity(0, {249})
++    os.nice(10)
++    result = dict(tool='Yosys synth_xilinx -family xcu',
++                  vivado=False, physical_timing_measured=False, full_shell=False,
++                  width=82, depth=256, rtl_sha256=hashlib.sha256((O/'target/QueuePair.v').read_bytes()).hexdigest(), modules={})
++    for top in ['GH_FIFO_SC_Reference', 'GH_FIFO_SC']:
++        d = O/('synth-'+top)
++        d.mkdir(exist_ok=False)
++        script = '''read_verilog -sv ../target/QueuePair.v
++synth_xilinx -family xcu -top %s -noiopad -noclkbuf
++tee -o stat.json stat -json
++write_json mapped.json
++'''%top
++        (d/'synth.ys').write_text(script)
++        with (d/'service.log').open('wb') as f:
++            p = subprocess.run(['/usr/local/bin/yosys','-Q','-T','-l','synth.log','-s','synth.ys'],
++                cwd=d, stdout=f, stderr=subprocess.STDOUT, timeout=1800)
++        assert p.returncode == 0, (top, p.returncode)
++        mapped = json.loads((d/'mapped.json').read_text())['modules'][top]
++        counts = collections.Counter(c['type'] for c in mapped['cells'].values())
++        loads = collections.defaultdict(list)
++        for cn,c in mapped['cells'].items():
++            for pin,bits in c['connections'].items():
++                if c['port_directions'][pin] == 'input' and pin not in ['C','CLK','WCLK']:
++                    for b in bits:
++                        if isinstance(b,int): loads[b].append(cn+'/'+pin)
++        fanout={n:max([len(loads[b]) for b in p['bits']],default=0)
++                for n,p in mapped['ports'].items() if p['direction']=='input'}
++        ram_luts = 0
++        for k,v in counts.items():
++            # Physical LUT equivalents of distributed RAM primitives in this
++            # family. Preserve raw primitive counts for independent auditing.
++            if k in ['RAM64X1S','RAM32X1S','RAM32X1D','RAM64X1D']: ram_luts += v*(2 if k.endswith('D') else 1)
++            elif k == 'RAM256X1S': ram_luts += 4*v
++            elif k == 'RAM128X1S': ram_luts += 2*v
++            elif k == 'RAM32M': ram_luts += 4*v
++            elif k == 'RAM64M': ram_luts += 4*v
++            elif k.startswith('RAM') and not k.startswith('RAMB'):
++                raise AssertionError(('unaccounted distributed RAM',k))
++        result['modules'][top]=dict(cells=dict(counts),
++            ff=sum(v for k,v in counts.items() if k.startswith('FD')),
++            logic_lut=sum(v for k,v in counts.items() if k.startswith('LUT')),
++            distributed_ram_lut=ram_luts,
++            input_max_data_pin_fanout=fanout,
++            max_nonclock_net_fanout=max(map(len,loads.values())),
++            mapped_json_sha256=hashlib.sha256((d/'mapped.json').read_bytes()).hexdigest())
++        (O/'synth-results.json').write_text(json.dumps(result,indent=2)+'\n')
++    result['status']='PASS_PAIRED_MODULE_MAPPING'
++    (O/'synth-results.json').write_text(json.dumps(result,indent=2)+'\n')
++
++if __name__=='__main__':main()
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_FIFO.scala b/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_FIFO.scala
+index 74ffe83..2a5cbc2 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_FIFO.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_FIFO.scala
+@@ -272,7 +272,12 @@ class GH_FIFO_SC(val params: FIFOParams) extends Module with HasFIFO_SC_IO {
+     d(log2Ceil(params.depth)-1, 0) // max is depth-1 (we keep one slot empty)
+   }
+ 
+-  val mem = RegInit(VecInit(Seq.fill(params.depth)(0.U(params.width.W))))
++  // Keep the asynchronous, same-cycle peek and all speculative/committed
++  // pointer rules. Reset only one validity bit per word rather than the entire
++  // payload; even invalid peek_bits retain the frozen reset-zero observation.
++  // There is no new target pipeline stage and no extra read/write port.
++  val mem = Mem(params.depth, UInt(params.width.W))
++  val written = RegInit(VecInit(Seq.fill(params.depth)(false.B)))
+ 
+   val wptr = RegInit(0.U(log2Ceil(params.depth).W))
+   val sptr = RegInit(0.U(log2Ceil(params.depth).W))
+@@ -289,7 +294,11 @@ class GH_FIFO_SC(val params: FIFOParams) extends Module with HasFIFO_SC_IO {
+   // allow enqueue if not full (considering same-cycle commit freeing space)
+   val do_enq = io.enq_valid && !io.full
+   when (do_enq) {
+-    mem(wptr) := io.enq_bits
++    // RegInit reset used to dominate a simultaneous payload write.
++    when (!reset.asBool) {
++      mem(wptr) := io.enq_bits
++      written(wptr) := true.B
++    }
+     wptr := wptr_next
+   }
+ 
+@@ -316,7 +325,7 @@ class GH_FIFO_SC(val params: FIFOParams) extends Module with HasFIFO_SC_IO {
+   io.peek_valid := !empty_spec
+ 
+   // bypass: if empty_spec but we enqueue into the same slot this cycle, peek the incoming
+-  val peek_raw = mem(sptr)
++  val peek_raw = Mux(written(sptr), mem(sptr), 0.U(params.width.W))
+   io.peek_bits := Mux(empty_spec && do_enq && (wptr === sptr), io.enq_bits, peek_raw)
+ 
+   // occupancy measured between cptr and wptr
+-- 
+2.40.0
+

@@ -1,0 +1,57 @@
+{
+  "arbitrary_access_cut_input_bits": 16714,
+  "arithmetic_width": 64,
+  "buckets": 256,
+  "changed_tracked_files": [
+    "chipyard/generators/boom/src/main/scala/lsu/AddressBucketAccess.scala",
+    "chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala"
+  ],
+  "commit": "aeabe5abe9f0ece2e024b5c8aa91a2c24fdfa4cb",
+  "fpga_access": false,
+  "full_dut_formal": false,
+  "io_declarations_identical": true,
+  "limits": [
+    "Generated local combinational proof and static-clear next-state cut are universal; the complete stateful module comparison is finite regression.",
+    "The 4096-vector reset/overflow test exercises the actual access cut; the frozen complete-module test is the separately recorded 6144-cycle workload.",
+    "No area reduction inferred from local proof, regression, or a submodule map. Full-module map is still pending."
+  ],
+  "parent": "11edd71981aa30ff3a26aab1f2f7327ac0266ee1",
+  "proofs": {
+    "boundary-run": {
+      "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r1-aeabe5ab-20261111/proof/boundary-run-result.json",
+      "receipt_sha256": "e6032b555c3acb8d2310d89cb99fb8a43491c383affe4af2179701af0fd58ff9",
+      "returncode": 0
+    },
+    "full-module-regression": {
+      "cycles": 6144,
+      "full_module_formal": false,
+      "outputs_per_cycle": 52,
+      "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r1-aeabe5ab-20261111/compare/compare-result.json",
+      "receipt_sha256": "18a402518ba6bc58acdda3efb6be47e8890d9ee509a695b9d8e26abc8bbb36d6"
+    },
+    "sat-arithmeticOk": {
+      "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r1-aeabe5ab-20261111/proof/sat-arithmeticOk-result.json",
+      "receipt_sha256": "9008901b7828543f95252a9a703077cee1d74919ddd4d7d714b4aa42c31eb398",
+      "returncode": 0
+    },
+    "sat-clearOk": {
+      "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r1-aeabe5ab-20261111/proof/sat-clearOk-result.json",
+      "receipt_sha256": "9ee3b73c142deb1159aac6022c086b8d40ac002b9228fd21158ec4b29a94935e",
+      "returncode": 0
+    },
+    "sat-negative": {
+      "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r1-aeabe5ab-20261111/proof/sat-negative-result.json",
+      "receipt_sha256": "a0e96754e2ace9e0a851c3b770e8b660e5f5f4e1cfe6e354ec4d15a723c0e8ea",
+      "returncode": 1
+    },
+    "sat-readOk": {
+      "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r1-aeabe5ab-20261111/proof/sat-readOk-result.json",
+      "receipt_sha256": "347bcd5069192b735d5ef77ce334728041db477895002f537e92f456ace04e26",
+      "returncode": 0
+    }
+  },
+  "schema": "ec-opt4-r1-equivalence-scope/1",
+  "state_register_declaration_lines_identical": true,
+  "unverified_into_full_dut": false,
+  "utc": "2026-11-10T16:38:01.228387+00:00"
+}

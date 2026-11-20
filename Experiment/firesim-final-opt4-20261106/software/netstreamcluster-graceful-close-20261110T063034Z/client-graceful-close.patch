@@ -1,0 +1,23 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netstreamcluster/client/client.cpp
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/netstreamcluster-graceful-close-20261110T063034Z/client-graceful-close.cpp
+@@ -145,6 +145,20 @@
+       printf("Receive Ack from Server\n");
+   }
+   
++#ifdef ENABLE_PARSEC_UPTCPIP
++  /* Unlike a kernel TCP socket, this TCP stack dies with the process.
++   * Keep its ACK/FIN workers alive until the server has closed the stream.
++   * No further application payload is expected after its original ACK. */
++  {
++    char unexpected;
++    int ec_eof = uptcp_recv(sd, &unexpected, sizeof(unexpected), 0);
++    if (ec_eof != 0) {
++      fprintf(stderr, "EC_NETSTREAM_CLOSE_FAILED recv=%d errno=%d\n", ec_eof, errno);
++      exit(1);
++    }
++    fprintf(stderr, "EC_NETSTREAM_SERVER_EOF tid=%d\n", tid);
++  }
++#endif
+   pthread_barrier_wait(&thread_barrier);
+ 
+ out:	

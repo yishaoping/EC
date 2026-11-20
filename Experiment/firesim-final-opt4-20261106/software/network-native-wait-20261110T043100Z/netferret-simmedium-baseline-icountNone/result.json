@@ -1,0 +1,51 @@
+{
+  "argv": [
+    "/data1/gzh/EC/chipyard/.conda-env/bin/qemu-system-riscv64",
+    "-machine",
+    "virt",
+    "-cpu",
+    "rv64",
+    "-m",
+    "2G",
+    "-smp",
+    "1",
+    "-nographic",
+    "-no-reboot",
+    "-bios",
+    "default",
+    "-kernel",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T083406Z/arch/riscv/boot/Image",
+    "-initrd",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-native-wait-20261110T043100Z/netferret-simmedium-baseline-icountNone/initramfs.cpio",
+    "-append",
+    "console=ttyS0 earlycon=sbi rdinit=/init panic=-1 mem=2G"
+  ],
+  "diagnostic_hooks": true,
+  "ended_utc": "2026-11-10T04:32:54.427372+00:00",
+  "formal_eligible": false,
+  "fpga_execution": false,
+  "gates": {
+    "exact_output": true,
+    "no_failure": true,
+    "original_roi": true,
+    "peers_zero": true,
+    "wrapper_zero": true
+  },
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "host_wall_seconds": 57.159203641000204,
+  "input": "simmedium",
+  "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-native-wait-20261110T043100Z/netferret-simmedium-baseline-icountNone/console.log",
+  "log_sha256": "26194c9b3995baea3736063c3cdfed021edf8bee9adf10b21be9cc685a88c890",
+  "pid": 1185267,
+  "program": "netferret",
+  "returncode": 0,
+  "rootfs_sha256": "6126bcb66e49b5c817f99a277ec2651535a0f0bd71eb2aaad5a109ef476812bd",
+  "server_elf": {
+    "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/netferret/server/parsec/bin/ferret-pthreads",
+    "sha256": "6855047813ba2e099f904cbd9c468cf4bc31ddfcadba234e4cc0f4a58d3b4b03"
+  },
+  "start_ticks": "9683770",
+  "status": "OFFLINE_PASSED",
+  "variant": "baseline",
+  "wrapper_sha256": "5d74b4b3e6d80656e3c782bdedd8be619ce5f572d97f17dbed295fa578d0574f"
+}

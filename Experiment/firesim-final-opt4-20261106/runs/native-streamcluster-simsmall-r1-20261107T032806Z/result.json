@@ -1,0 +1,148 @@
+{
+  "checker_latency": null,
+  "counts": null,
+  "drain_cycles": 0,
+  "driver_returncode": 0,
+  "driver_stop_after_guest_powerdown": false,
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-streamcluster-simsmall-r1-20261107T032806Z/heartbeat.csv": "ce2f6dae468e04f2ce17749fbaff25f2a3eaf5804fee3926cdbb680699235f84",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-streamcluster-simsmall-r1-20261107T032806Z/host.log": "f6efcb12ad7e1fc100e1acc48f5d3af9bcbaaef9d3d3e7392052c19b3391eb38",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-streamcluster-simsmall-r1-20261107T032806Z/latency_histogram.csv": "7348bacc4d184cc676cfcf89f8d0ec40dd28eeaa86ae0f6fefa797b43dc6d210",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-streamcluster-simsmall-r1-20261107T032806Z/manifest.json": "ceb0b4f4abf38676bf0178637cec1d64d13205f9d5f44ca1b4ead16a09f7618e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-streamcluster-simsmall-r1-20261107T032806Z/memory_stats0.csv": "6679c5006d14d8413ec36ba18171c1f179c0196e04b362e4af778b06baad416e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-streamcluster-simsmall-r1-20261107T032806Z/roi-raw.jsonl": "265bd9b2b30f5814ae5cdbdd9478059b7c3d892245b975b8f35157dbf05deebe",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-streamcluster-simsmall-r1-20261107T032806Z/snapshot.json": "de955f22fa51b1329658bbddcdd8aed215a6225f74c5187342e3dc00da31d38d",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-streamcluster-simsmall-r1-20261107T032806Z/state.json": "de955f22fa51b1329658bbddcdd8aed215a6225f74c5187342e3dc00da31d38d",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-streamcluster-simsmall-r1-20261107T032806Z/uart.in": "848527ef9c99382b31dd98f72e1a7b762ddc459d05414921df8dadd59c7006b7",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-streamcluster-simsmall-r1-20261107T032806Z/uart.log": "49727ea67b83a9ecc53e023c679e13cbf18a6dc987f33886c75b83cadcae0d15"
+  },
+  "fased_readback": {
+    "readLatency": 30,
+    "readMaxReqs": 4,
+    "relaxFunctionalModel": 0,
+    "writeLatency": 30,
+    "writeMaxReqs": 4
+  },
+  "formal": false,
+  "fpga_execution": true,
+  "guest_power_down_observed": true,
+  "host_efficiency": {
+    "host_delta": 9421721639,
+    "host_simulation_wall_seconds": 188.44127,
+    "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+    "simulation_throughput_cycles_per_second": 16532471.815,
+    "target_delta": 3115399985,
+    "target_end": 8073188657,
+    "target_start": 4957788672
+  },
+  "host_wall_seconds": 188.46718583599431,
+  "identity": {
+    "apps_manifest_sha256": "628754960ec2f74628d89565b5a2aa14d95e2afe729493d6a3addd64c7ded99a",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:e2:00.0",
+    "board_serial": "21770433G001A",
+    "case": {
+      "argv": [
+        "10",
+        "20",
+        "32",
+        "4096",
+        "4096",
+        "1000",
+        "none",
+        "output.txt",
+        "1"
+      ],
+      "fpga_validation": "NOT_RUN",
+      "input": "simsmall",
+      "input_archives": {},
+      "input_files": {},
+      "program": "streamcluster",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-20261106T095914Z/references/streamcluster-simsmall/output.txt": "c6d42ff4e3a8b64c9240f425bfeeca2a381b8bdbce8e09d4237b6487847e9c67"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/streamcluster/parsec/simsmall.runconf",
+      "runconf_sha256": "64bcac1dbe19ad1579fd0b084d04505c47945dc432a8b31e008b95d4d5a6bff5",
+      "software_profile": "streamcluster-staged-io-synthetic-serial",
+      "software_reference": "QEMU_RISCV_USER_ONLY; not FPGA evidence",
+      "threads": 1,
+      "warmups": 0
+    },
+    "configuration": "Native",
+    "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+    "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+    "elf_sha256": "f7c5140c53fa0d43d08c9977f26e9cad12310a628b49298e94fcc4c6c33e971b",
+    "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+    "firmware_receipt_sha256": "03b83407408ee9d7ad8153de63b71eeade49f315e67d9f061c1bb5b63113c03a",
+    "firmware_sha256": "0f91a5404d346b119e922483770fadbf7ddeddbac155e462bcefe1d7d7a2f37e",
+    "formal": false,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "host_bridge_restart": true,
+    "input": "simsmall",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "previous_run_id": null,
+    "program": "streamcluster",
+    "repetition": 1,
+    "rootfs_sha256": "d80d143071efa0b511fc06b0467fc2bfc6d45b99e7b08a6ebff18b05b7e33388",
+    "run_id": "native-streamcluster-simsmall-r1-20261107T032806Z",
+    "software_diagnostic": false,
+    "software_profile": "streamcluster-staged-io-synthetic-serial",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "target_reset_probe": false,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "3823bc94f5e2c36690ced53c973e27f1601700c98eb2383ccccb33bcaa382494",
+  "issues": [],
+  "participation": null,
+  "post_drain_traffic_counters": {},
+  "raw": {
+    "epochs": [
+      {
+        "aborted": false,
+        "begin_tick": 1645570984,
+        "end_tick": 3082439835,
+        "epoch": 1,
+        "faults": 0,
+        "formal_sample_eligible": false,
+        "reset_seen": false,
+        "roi_cycles": 1436868851,
+        "source_boundaries_complete": true,
+        "states": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    ],
+    "excluded_pre_reset_records": 1,
+    "file_sha256": "b993bf8675e350840a7e6ad41082a5519dc03e9e94bf1620201e4fe898838bc8",
+    "formal_sample_eligible": false,
+    "last_sequence": 12,
+    "original_journal_sha256": "265bd9b2b30f5814ae5cdbdd9478059b7c3d892245b975b8f35157dbf05deebe",
+    "parsed_records": 13,
+    "partial_tail_bytes": 0,
+    "protocol_issues": [],
+    "runtime_validation": "NOT_ESTABLISHED_BY_RAW_LOG",
+    "schema": "ec-dac-b-raw-roi/1",
+    "warning": "Raw ROI boundaries only. Output/job identity, runtime timebase checks and the formal host collector are still required."
+  },
+  "roi_cycles": 1436868851,
+  "schema": "ec-isolated-fpga-result/1",
+  "timedout": false,
+  "valid": true
+}

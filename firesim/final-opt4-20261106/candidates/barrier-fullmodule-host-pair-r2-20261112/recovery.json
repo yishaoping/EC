@@ -1,0 +1,9 @@
+{
+  "utc": "2026-11-12T13:28:08.097836+00:00",
+  "prior_unit": "ec-opt4-barrier-fullmodule-host-pair-r1-20261112.service",
+  "prior_properties": "MainPID=0\nControlGroup=\nActiveState=failed\n",
+  "cause": "Proof emitVerilog outputs Barrier.v but .fir/.anno retain Chisel desiredName. Only reference proof artifact expectation failed after successful Scala compile/elaboration; no simulation or area ran.",
+  "fix": "Require actual Verilog proof artifact; preserve Generator-produced full harness FIR/annotation requirement for production. No hardware logic or test changes.",
+  "prior_evidence_retained": true,
+  "prior_live_job_signalled": false
+}

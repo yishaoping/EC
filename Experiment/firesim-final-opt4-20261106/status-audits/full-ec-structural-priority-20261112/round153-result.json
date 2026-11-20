@@ -1,0 +1,27 @@
+{
+  "outcome": "REAL_EXPERIMENT_STARTED",
+  "summary": "Implemented256slot 16x16 banked read-compute-write state sharing; r1 launched, existing corrected r3 adopted. Exact3656DCache storage composition/typecheckPASS. Barrier rejected; no new area gain or FIT. Current validated NOTFIT route cannot meetNov18.",
+  "changed_files": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-banked-state-fame5-r1-20261112/BankedState.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-banked-state-fame5-r1-20261112/TestBankedState.cc",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-banked-state-fame5-r1-20261112/controller.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-banked-state-fame5-r1-20261112/install.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-reservation-image-compose-r1-20261112/prepare.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/dcache-reservation-image-compose-r1-20261112/dcache.scala",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/campaign-policy.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/full-ec-structural-priority-20261112/round153-REPORT.md"
+  ],
+  "evidence": [
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/full-ec-structural-priority-20261112/round153-banked-state-reservation.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/full-ec-structural-priority-20261112/round153-structural-adoption.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-dcache-reservation-image-compose-r1-20261112/result.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/full-ec-structural-priority-20261112/round153-dcache-cdc-ranking.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/full-ec-structural-priority-20261112/barrier-pair-rejection.json"
+  ],
+  "launched_jobs": [
+    "ec-opt4-address-banked-state-fame5-r1-20261112.service: actually started; failed compile; evidence preserved",
+    "DCache composition compile: actually completed PASS; no CAD"
+  ],
+  "next_action": "Adopt live banked r3 (not launched again):2/4bank tokens then256slot pairedhost area; consume existing packed/DSP pairs. Preserve r6/CAD. No savings/FIT/EC throughput claim.",
+  "retry_after_seconds": 300
+}

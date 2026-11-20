@@ -1,0 +1,2771 @@
+[
+  {
+    "bridgeChannels": [
+      {
+        "class": "midas.widgets.ClockBridgeChannel",
+        "clockMFMRs": [
+          1
+        ],
+        "clocks": [
+          {
+            "divisor": 1,
+            "multiplier": 1,
+            "name": "BaseClock"
+          }
+        ],
+        "name": "clocks",
+        "sinks": [
+          "~SVBProbe|RationalClockBridge>clocks[0]"
+        ]
+      }
+    ],
+    "class": "midas.widgets.BridgeAnnotation",
+    "target": "~SVBProbe|RationalClockBridge",
+    "widgetClass": "midas.widgets.ClockBridgeModule",
+    "widgetConstructorKey": {
+      "class": "midas.widgets.ClockParameters",
+      "clocks": [
+        {
+          "divisor": 1,
+          "multiplier": 1,
+          "name": "BaseClock"
+        }
+      ]
+    }
+  },
+  {
+    "bridgeChannels": [
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "reset",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>reset"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_capture_ready",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.capture.ready"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_capture_valid",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.capture.valid"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_capture_bits_line",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.capture.bits.line"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_capture_bits_key_valid",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.capture.bits.key.valid"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_capture_bits_key_writer",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.capture.bits.key.writer"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_capture_bits_key_generation",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.capture.bits.key.generation"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_capture_bits_key_contentSeq",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.capture.bits.key.contentSeq"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_capture_bits_epoch",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.capture.bits.epoch"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_capture_bits_param",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.capture.bits.param"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_capture_bits_data_0",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.capture.bits.data[0]"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_capture_bits_data_1",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.capture.bits.data[1]"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_capture_bits_data_2",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.capture.bits.data[2]"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_capture_bits_data_3",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.capture.bits.data[3]"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_safeWatermark",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.safeWatermark"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_currentEpoch",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.currentEpoch"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_diagnosticDump",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.diagnosticDump"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_diagnosticCycle",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.diagnosticCycle"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_resetStats",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.resetStats"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_countStats",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.countStats"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_invalidate_valid",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.invalidate.valid"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_invalidate_bits",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.invalidate.bits"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_flush",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.flush"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_promote_ready",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.promote.ready"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_promote_valid",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.promote.valid"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_promote_bits_line",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.promote.bits.line"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_promote_bits_key_valid",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.promote.bits.key.valid"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_promote_bits_key_writer",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.promote.bits.key.writer"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_promote_bits_key_generation",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.promote.bits.key.generation"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_promote_bits_key_contentSeq",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.promote.bits.key.contentSeq"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_promote_bits_epoch",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.promote.bits.epoch"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_promote_bits_param",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.promote.bits.param"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_promote_bits_data_0",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.promote.bits.data[0]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_promote_bits_data_1",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.promote.bits.data[1]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_promote_bits_data_2",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.promote.bits.data[2]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_promote_bits_data_3",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.promote.bits.data[3]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_promote_bits_entry",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.promote.bits.entry"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_selected",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.selected"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_activeEntry",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.activeEntry"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_activeLine",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.activeLine"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_activeKey_valid",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.activeKey.valid"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_activeKey_writer",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.activeKey.writer"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_activeKey_generation",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.activeKey.generation"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_activeKey_contentSeq",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.activeKey.contentSeq"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_activeEpoch",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.activeEpoch"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_queued",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.queued"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_coalesced",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.coalesced"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_discarded",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.discarded"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseLines_0",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.releaseLines[0]"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseLines_1",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.releaseLines[1]"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseLines_2",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.releaseLines[2]"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseLines_3",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.releaseLines[3]"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlocked_0",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlocked[0]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlocked_1",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlocked[1]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlocked_2",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlocked[2]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlocked_3",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlocked[3]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlockingEntry_0",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlockingEntry[0]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlockingEntry_1",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlockingEntry[1]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlockingEntry_2",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlockingEntry[2]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlockingEntry_3",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlockingEntry[3]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlockingLine_0",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlockingLine[0]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlockingLine_1",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlockingLine[1]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlockingLine_2",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlockingLine[2]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlockingLine_3",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlockingLine[3]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlockingSeq_0",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlockingSeq[0]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlockingSeq_1",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlockingSeq[1]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlockingSeq_2",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlockingSeq[2]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlockingSeq_3",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlockingSeq[3]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlockingGeneration_0",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlockingGeneration[0]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlockingGeneration_1",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlockingGeneration[1]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlockingGeneration_2",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlockingGeneration[2]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_releaseBlockingGeneration_3",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.releaseBlockingGeneration[3]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_ack_valid",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.ack.valid"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_ack_bits_entry",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.ack.bits.entry"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_ack_bits_key_valid",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.ack.bits.key.valid"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_ack_bits_key_writer",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.ack.bits.key.writer"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_ack_bits_key_generation",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.ack.bits.key.generation"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_ack_bits_key_contentSeq",
+        "sinks": [
+          "~SVBProbe|PeekPokeBridge>io.ack.bits.key.contentSeq"
+        ],
+        "sources": []
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancy",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancy"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_maxOccupancy",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.maxOccupancy"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_maxDepth",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.maxDepth"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depth",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depth"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_0",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[0]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_1",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[1]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_2",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[2]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_3",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[3]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_4",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[4]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_5",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[5]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_6",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[6]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_7",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[7]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_8",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[8]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_9",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[9]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_10",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[10]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_11",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[11]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_12",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[12]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_13",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[13]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_14",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[14]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_15",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[15]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_16",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[16]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_17",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[17]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_18",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[18]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_19",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[19]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_20",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[20]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_21",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[21]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_22",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[22]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_23",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[23]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_24",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[24]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_25",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[25]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_26",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[26]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_27",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[27]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_28",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[28]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_29",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[29]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_30",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[30]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_31",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[31]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_occupancyHistogram_32",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.occupancyHistogram[32]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_0",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[0]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_1",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[1]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_2",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[2]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_3",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[3]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_4",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[4]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_5",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[5]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_6",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[6]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_7",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[7]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_8",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[8]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_9",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[9]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_10",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[10]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_11",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[11]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_12",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[12]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_13",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[13]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_14",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[14]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_15",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[15]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_16",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[16]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_17",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[17]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_18",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[18]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_19",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[19]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_20",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[20]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_21",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[21]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_22",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[22]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_23",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[23]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_24",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[24]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_25",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[25]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_26",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[26]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_27",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[27]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_28",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[28]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_29",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[29]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_30",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[30]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_31",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[31]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_depthHistogram_32",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.depthHistogram[32]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_observationSerial",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.observationSerial"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_allocation",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.allocation"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_allocatedEntry",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.allocatedEntry"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_entryAccounting_0",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.entryAccounting[0]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_entryAccounting_1",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.entryAccounting[1]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_entryAccounting_2",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.entryAccounting[2]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_entryAccounting_3",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.entryAccounting[3]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_entryAccounting_4",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.entryAccounting[4]"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_fullFallback",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.fullFallback"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_promotion",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.promotion"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_acked",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.acked"
+        ]
+      },
+      {
+        "class": "midas.widgets.PipeBridgeChannel",
+        "clock": "~SVBProbe|PeekPokeBridge>clock",
+        "latency": 0,
+        "name": "io_recoveryFromSvb",
+        "sinks": [],
+        "sources": [
+          "~SVBProbe|PeekPokeBridge>io.recoveryFromSvb"
+        ]
+      }
+    ],
+    "class": "midas.widgets.BridgeAnnotation",
+    "target": "~SVBProbe|PeekPokeBridge",
+    "widgetClass": "midas.widgets.PeekPokeBridgeModule",
+    "widgetConstructorKey": {
+      "class": "midas.widgets.PeekPokeKey",
+      "maxChannelDecoupling": 2,
+      "peeks": [
+        {
+          "fieldWidth": 1,
+          "name": "io_capture_ready",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_promote_valid",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 40,
+          "name": "io_promote_bits_line",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_promote_bits_key_valid",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 16,
+          "name": "io_promote_bits_key_writer",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_promote_bits_key_generation",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_promote_bits_key_contentSeq",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 16,
+          "name": "io_promote_bits_epoch",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 3,
+          "name": "io_promote_bits_param",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 128,
+          "name": "io_promote_bits_data_0",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 128,
+          "name": "io_promote_bits_data_1",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 128,
+          "name": "io_promote_bits_data_2",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 128,
+          "name": "io_promote_bits_data_3",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 5,
+          "name": "io_promote_bits_entry",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_selected",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 5,
+          "name": "io_activeEntry",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 40,
+          "name": "io_activeLine",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_activeKey_valid",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 16,
+          "name": "io_activeKey_writer",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_activeKey_generation",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_activeKey_contentSeq",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 16,
+          "name": "io_activeEpoch",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 6,
+          "name": "io_queued",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 6,
+          "name": "io_coalesced",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 6,
+          "name": "io_discarded",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_releaseBlocked_0",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_releaseBlocked_1",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_releaseBlocked_2",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_releaseBlocked_3",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 5,
+          "name": "io_releaseBlockingEntry_0",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 5,
+          "name": "io_releaseBlockingEntry_1",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 5,
+          "name": "io_releaseBlockingEntry_2",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 5,
+          "name": "io_releaseBlockingEntry_3",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 40,
+          "name": "io_releaseBlockingLine_0",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 40,
+          "name": "io_releaseBlockingLine_1",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 40,
+          "name": "io_releaseBlockingLine_2",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 40,
+          "name": "io_releaseBlockingLine_3",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_releaseBlockingSeq_0",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_releaseBlockingSeq_1",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_releaseBlockingSeq_2",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_releaseBlockingSeq_3",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_releaseBlockingGeneration_0",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_releaseBlockingGeneration_1",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_releaseBlockingGeneration_2",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_releaseBlockingGeneration_3",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 6,
+          "name": "io_occupancy",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 6,
+          "name": "io_maxOccupancy",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 6,
+          "name": "io_maxDepth",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 6,
+          "name": "io_depth",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_0",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_1",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_2",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_3",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_4",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_5",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_6",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_7",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_8",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_9",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_10",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_11",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_12",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_13",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_14",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_15",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_16",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_17",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_18",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_19",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_20",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_21",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_22",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_23",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_24",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_25",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_26",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_27",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_28",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_29",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_30",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_31",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_occupancyHistogram_32",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_0",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_1",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_2",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_3",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_4",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_5",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_6",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_7",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_8",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_9",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_10",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_11",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_12",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_13",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_14",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_15",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_16",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_17",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_18",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_19",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_20",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_21",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_22",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_23",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_24",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_25",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_26",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_27",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_28",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_29",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_30",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_31",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_depthHistogram_32",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_observationSerial",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_allocation",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 5,
+          "name": "io_allocatedEntry",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_entryAccounting_0",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_entryAccounting_1",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_entryAccounting_2",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_entryAccounting_3",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_entryAccounting_4",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_fullFallback",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_promotion",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_acked",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_recoveryFromSvb",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        }
+      ],
+      "pokes": [
+        {
+          "fieldWidth": 1,
+          "name": "reset",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_capture_valid",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 40,
+          "name": "io_capture_bits_line",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_capture_bits_key_valid",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 16,
+          "name": "io_capture_bits_key_writer",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_capture_bits_key_generation",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_capture_bits_key_contentSeq",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 16,
+          "name": "io_capture_bits_epoch",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 3,
+          "name": "io_capture_bits_param",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 128,
+          "name": "io_capture_bits_data_0",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 128,
+          "name": "io_capture_bits_data_1",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 128,
+          "name": "io_capture_bits_data_2",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 128,
+          "name": "io_capture_bits_data_3",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_safeWatermark",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 16,
+          "name": "io_currentEpoch",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_diagnosticDump",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 64,
+          "name": "io_diagnosticCycle",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_resetStats",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_countStats",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_invalidate_valid",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_invalidate_bits",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_flush",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_promote_ready",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 40,
+          "name": "io_releaseLines_0",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 40,
+          "name": "io_releaseLines_1",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 40,
+          "name": "io_releaseLines_2",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 40,
+          "name": "io_releaseLines_3",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_ack_valid",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 5,
+          "name": "io_ack_bits_entry",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 1,
+          "name": "io_ack_bits_key_valid",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 16,
+          "name": "io_ack_bits_key_writer",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_ack_bits_key_generation",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        },
+        {
+          "fieldWidth": 32,
+          "name": "io_ack_bits_key_contentSeq",
+          "tpe": {
+            "typeString": "UInt"
+          }
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "failures": {
+    "address-banked-production-host-r4": {
+      "active_stage": "token-oracle-Threaded",
+      "failure": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-banked-production-host-r4-20261113/failure.json",
+      "failure_sha256": "0d18dc1dc9c65fb7f322f50e79974699fc24a734ecba461ea775f7dd0cdc19c1",
+      "hardware_inequivalence_proven": false,
+      "reason": "Precise post-step PeekPoke gate failed at cycle1 before output comparison; bounded diagnosis isolated a precise pre-step horizon.",
+      "status": "FAILED_WITH_EVIDENCE_VERSIONED_RECOVERY_REQUIRED"
+    },
+    "address-production-token-boundary-diagnostic-r1": {
+      "active_stage": null,
+      "failure": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-production-token-boundary-diagnostic-r1-20261113/failure.json",
+      "failure_sha256": "676c740d9d99139061a09cfc974b19d86c5009fbe9dfd0d3261d9dd21f8a0701",
+      "hardware_inequivalence_proven": false,
+      "reason": "Driver-only dry-run assertion rejected rebuilding five cached runtime objects; no compilation or RTL generation started.",
+      "status": "FAILED_WITH_EVIDENCE_VERSIONED_CORRECTION_REQUIRED"
+    },
+    "common-stats-host-r5": {
+      "active_stage": "goldengate-Threaded",
+      "failure": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-common-stats-host-r5-20261113/failure.json",
+      "failure_sha256": "822efdc4f1a2f7eb4825ebee2a8758875ad02f4fa50da802f8dead28b8faf20d",
+      "hardware_inequivalence_proven": false,
+      "reason": "48GiB Java heap exhausted propagating dense CombinationalPath annotations at SimulationMapping; no hardware inequivalence or area result.",
+      "status": "FAILED_WITH_EVIDENCE_VERSIONED_CORRECTION_REQUIRED"
+    }
+  },
+  "no_unchanged_retry": true,
+  "source_successors": {
+    "diagnostic_build": "b70e54188f0d1fb71b636d505d94abf678a8c87a",
+    "mixed_host_compiler": "26554222fceed33ebd05c9e2d90bd00bc31b33af",
+    "production_validator": "c1a39d537baa035f9e67cf6d5f2df848ed213901"
+  },
+  "utc": "2026-11-12T23:05:50.965772+00:00"
+}

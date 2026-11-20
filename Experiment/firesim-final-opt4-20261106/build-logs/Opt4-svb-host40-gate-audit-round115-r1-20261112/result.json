@@ -1,0 +1,499 @@
+{
+  "audit_script_sha256": "1c8884d31a7449dbad7585433fbd57915b1380ace5ee83dfd545a82961beee41",
+  "case_count": 46,
+  "cases": [
+    {
+      "copied_template_sha256": "d7069af98c366203b0886bda982bf543df282014f587a645629f2c2eb1eb7e29",
+      "effective_gate_accepted": true,
+      "expected_rejection": null,
+      "mock_log_sha256": "3b900743a3904fee7cbfa8f27ca04f26b25925822e961f46ea49570a995911f7",
+      "mock_tcl_returncode": 0,
+      "passed": true,
+      "scenario": "valid",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "ce9b0ad428d959ec0410a09f628df9cc20ea742a812bb5260802326986e0066c",
+      "effective_gate_accepted": false,
+      "expected_rejection": "wrong device",
+      "mock_log_sha256": "fbbd944e27e645143bced68090567666f2c1808dd53562d16cd9b62c1769ff57",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "wrong_part",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "3e0698a3e567f52d341624b909f573cc4186e074827deef9d625b05269623953",
+      "effective_gate_accepted": false,
+      "expected_rejection": "unresolved IP",
+      "mock_log_sha256": "5ae6d8f2d9ab99444a01b34e439265735e304cb8248e37df860239bef577d318",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "blackbox",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "e86f18783f5fa43e47e5c62023ff09af2efc171f2e1fa41bdf29d4294922b181",
+      "effective_gate_accepted": false,
+      "expected_rejection": "host40 MMCM changed",
+      "mock_log_sha256": "c01d100b97fd406e2b893f54fbdd8d070ad1ca6370b68761565e0232f37f73e6",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "wrong_divider",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "70f44b2cd76d3d96c858192b9f183e463b2369ff338dd29a40a72ce8ffa584b4",
+      "effective_gate_accepted": false,
+      "expected_rejection": "host40 MMCM changed",
+      "mock_log_sha256": "c01d100b97fd406e2b893f54fbdd8d070ad1ca6370b68761565e0232f37f73e6",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "wrong_multiplier",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "7ce43973667a396acb904206177507c0b472ecb8efd6783b124c303d5747dfbe",
+      "effective_gate_accepted": false,
+      "expected_rejection": "host40 MMCM changed",
+      "mock_log_sha256": "c01d100b97fd406e2b893f54fbdd8d070ad1ca6370b68761565e0232f37f73e6",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "wrong_input_divider",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "3a492a8e26d7c274647233a878acb4ec7bf65ecef820d734ad73d89ac821affb",
+      "effective_gate_accepted": false,
+      "expected_rejection": "target clock buffer absent/ambiguous",
+      "mock_log_sha256": "a3799c828b341de7e8066bb100db9834356b425d27dd479042fdc17b6cfeac02",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "missing_target",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "860146ae42a7e5c278ebacea373fe196b9fe3936e3ad12e9148519b543cf5ea8",
+      "effective_gate_accepted": false,
+      "expected_rejection": "host40 target coverage invalid",
+      "mock_log_sha256": "9656031c9c5150ec81eac94a182a113ff63e15954ad004612341f28fca954649",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "ambiguous_target",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "a70cffae1e0e4b5f0e14f51847edbabcbf4d54015cdaa4a98eb2a12ef69eb231",
+      "effective_gate_accepted": false,
+      "expected_rejection": "clock set changed",
+      "mock_log_sha256": "06f9dbcb43ad79e4753cf6bc77c1601c0e56ed89f4f9e1e0077bc121f0865ef9",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "missing_clock",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "6a0e3086d3a7d836d338677e30fad29de74821476ad5f1326edb96a15bf38d17",
+      "effective_gate_accepted": false,
+      "expected_rejection": "clock period changed",
+      "mock_log_sha256": "565c87f8550818369d6d98a7c4990700968bb8242cf361a96fe4c07197137fcc",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "wrong_host_period",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "800d316fc848636e2f6f6b786217efd6e5e66024fed922e0a300bf42085c2155",
+      "effective_gate_accepted": false,
+      "expected_rejection": "clock period changed",
+      "mock_log_sha256": "4ca10c92463fc6c0e7bf1c38e5ae8cf8dc9b7ec53a983ffae39bc94ddbebc65a",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "wrong_shell_period",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "70541303dc8407351bd0c128d69f2c7655c8fee73f37a4a2abeb18ba10297b35",
+      "effective_gate_accepted": false,
+      "expected_rejection": "host40 target coverage invalid",
+      "mock_log_sha256": "9656031c9c5150ec81eac94a182a113ff63e15954ad004612341f28fca954649",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "missing_register_coverage",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "26f227c1bb087ba029c27c88fce3cf2481671e046f4a67086611218b97104f85",
+      "effective_gate_accepted": false,
+      "expected_rejection": "missing timing paths",
+      "mock_log_sha256": "63b012c234e47c26d3c1dfea706444ec2b58bac730b4f05f97b4924bd50be75a",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "missing_setup",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "1515421cd0a50535b6cf367153bfd5367222f9946b70e9eb266d31fa40cab9cf",
+      "effective_gate_accepted": false,
+      "expected_rejection": "missing timing paths",
+      "mock_log_sha256": "63b012c234e47c26d3c1dfea706444ec2b58bac730b4f05f97b4924bd50be75a",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "missing_hold",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "acfae43cd44e80d371c1060fef1eb7df6c8665745866f5b50a2e2e75ae861e94",
+      "effective_gate_accepted": false,
+      "expected_rejection": "setup/hold gate failed",
+      "mock_log_sha256": "efa185610f5c1e0f3248adb93c7417804715a6c0971b41b609a2473305e297d3",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "negative_setup",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "e5fb749e758467e7e18ad35cc6d781c750a60156dc8ed677e704473a85b0f620",
+      "effective_gate_accepted": false,
+      "expected_rejection": "setup/hold gate failed",
+      "mock_log_sha256": "eeb49e9b1fc7b8813f6d501e7b3d0901eb1d6f74163407acd98dea4265eea6e8",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "negative_hold",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "a850e26bf949c5730e34bb602cca94741f73749e0c4eef66b23fbdd13127f0b0",
+      "effective_gate_accepted": false,
+      "expected_rejection": "route coverage failed",
+      "mock_log_sha256": "67b6ce62cb528f8331edcfa2defe715648a98edde85d060ea66f7e1cd9313073",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "bad_route",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "006519cf12d2d90f1a314e97410b0f73dfb0a2d62678fa701371b4b2bea691bc",
+      "effective_gate_accepted": false,
+      "expected_rejection": "DRC errors",
+      "mock_log_sha256": "937de73b50efc646f6186f35840bf7b52248b888a8601c22a6ac682eda8787b4",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "bad_drc",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "aab8e91d7cbb376234fbdfa3929cb9491dc25386cfe06c0cd85d9876fb668085",
+      "effective_gate_accepted": false,
+      "expected_rejection": "pulse width failed",
+      "mock_log_sha256": "fb4b135fd0a45217ef13529b3f35c30c375aaba3e50bcd61c2507b2d7d757311",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "pulse_violated",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "e9d8f982f10d599d5aa67b9954dc884f50dbf054ce042a9e131f8ca2b42ba9a3",
+      "effective_gate_accepted": false,
+      "expected_rejection": "pulse width failed",
+      "mock_log_sha256": "fb4b135fd0a45217ef13529b3f35c30c375aaba3e50bcd61c2507b2d7d757311",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "pulse_negative",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "a62f2387d78595b91deab0be062cefb1f1e4dc7f27c292cb05942e4351934f20",
+      "effective_gate_accepted": false,
+      "expected_rejection": "bus skew failed",
+      "mock_log_sha256": "d7c8f66b5e76d0c05d94e1bd981b6a021a53ba8e3cb47ea583e9d51a30dda912",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "skew_violated",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "35e4ef78404c249d3e68037332b3d1742b878b885216f18c90e56b09c58d571b",
+      "effective_gate_accepted": false,
+      "expected_rejection": "clock coverage failed",
+      "mock_log_sha256": "24ffdf1c55a4df66a9d43215e35a4fbcf3b2732a80a3630afc43461037c45704",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "no_clock",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "77eb52735427a04a10fafeef740128a33dcd19bf31e164d8c126e9446aacde51",
+      "effective_gate_accepted": false,
+      "expected_rejection": "clock coverage failed",
+      "mock_log_sha256": "24ffdf1c55a4df66a9d43215e35a4fbcf3b2732a80a3630afc43461037c45704",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "unconstrained_endpoint",
+      "template": "recover.tcl.in"
+    },
+    {
+      "copied_template_sha256": "97fdb796ba572ee605ad82217c1ce15aac3368094720e52805a4021b54724534",
+      "effective_gate_accepted": true,
+      "expected_rejection": null,
+      "mock_log_sha256": "a9cb68e82a115b9758658529dd48694fbf52a0d5df8d209fcd94a65fce037c34",
+      "mock_tcl_returncode": 0,
+      "passed": true,
+      "scenario": "valid",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "d6a7cfb0f6adb84ec46ceebdcb08059320784aed6480aeb9cb3aea53545eda23",
+      "effective_gate_accepted": false,
+      "expected_rejection": "wrong part",
+      "mock_log_sha256": "ccb3011722699164d54800af15ccced462e0a2ec977325b46097d255e664351e",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "wrong_part",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "ad9554df168a1942268d1e830a3e2830189a3f46e48a54846c6c5ead607b97b2",
+      "effective_gate_accepted": false,
+      "expected_rejection": "unresolved cells",
+      "mock_log_sha256": "cce931b0ae6ad99dfc039bbc6b6a32d0bd891f816424011874df60730348e593",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "blackbox",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "8ecde45e1b5905f1642af17eaeebe8c4d40c4d3b543eb7a34364d13410c93737",
+      "effective_gate_accepted": false,
+      "expected_rejection": "actual physical host40 MMCM mismatch",
+      "mock_log_sha256": "37e36d161bae1b042984322db857e20950ab497d72b1ec4c4f991cc8394fdc33",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "wrong_divider",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "18e1eeefd6bade936b9d330e0b05e9b06b936379b65d3276ec7c395be3b606df",
+      "effective_gate_accepted": false,
+      "expected_rejection": "actual physical host40 MMCM mismatch",
+      "mock_log_sha256": "37e36d161bae1b042984322db857e20950ab497d72b1ec4c4f991cc8394fdc33",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "wrong_multiplier",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "90d08cd48839afa3ee6ce5571451917f9d853136ee7da3cbedd1f3bb1d4e9029",
+      "effective_gate_accepted": false,
+      "expected_rejection": "actual physical host40 MMCM mismatch",
+      "mock_log_sha256": "37e36d161bae1b042984322db857e20950ab497d72b1ec4c4f991cc8394fdc33",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "wrong_input_divider",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "6013ad69c6aaeaa3c224e627dbbfac2687b6ff3c99850e01b0f274a6ed813c3b",
+      "effective_gate_accepted": false,
+      "expected_rejection": "target buffer ambiguous",
+      "mock_log_sha256": "3fa1d925ddba4348bf7946553e5fbeb4bee30ab3014aa91cd9bf3d2633841602",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "missing_target",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "470eb2007aa1c3087ebf056df873185b8d5096acfc98988842945fba2512990b",
+      "effective_gate_accepted": false,
+      "expected_rejection": "target clock ambiguous",
+      "mock_log_sha256": "e0fb15c5c7886ab281a38a641ce6ee22690ba9cd4639d35017ae79f2e6daed8a",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "ambiguous_target",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "16a519532712695d906f2ee1f5cd96a4b6811cc7dae41f878aa14445c3749f32",
+      "effective_gate_accepted": false,
+      "expected_rejection": "clock set changed",
+      "mock_log_sha256": "06f9dbcb43ad79e4753cf6bc77c1601c0e56ed89f4f9e1e0077bc121f0865ef9",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "missing_clock",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "bb74899b28299de85b9538ec2230eca7c621e49025c5ca35be36316b74a542d9",
+      "effective_gate_accepted": false,
+      "expected_rejection": "host40 clock/coverage failed",
+      "mock_log_sha256": "2750b578390a32b2302a2889844d259d9eee7f3b52eb4c10419e075f60517bda",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "wrong_host_period",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "3055b1c3394b2c77409e8a953bcf3bb09efd12aac1cfd5c40f8ce8ee5078c8a5",
+      "effective_gate_accepted": false,
+      "expected_rejection": "clock period changed",
+      "mock_log_sha256": "4ca10c92463fc6c0e7bf1c38e5ae8cf8dc9b7ec53a983ffae39bc94ddbebc65a",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "wrong_shell_period",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "00fb8c735605076966e550b2325d81bab494706a9833c5c4c5fe0f4d7a0d0af7",
+      "effective_gate_accepted": false,
+      "expected_rejection": "host40 clock/coverage failed",
+      "mock_log_sha256": "2750b578390a32b2302a2889844d259d9eee7f3b52eb4c10419e075f60517bda",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "missing_register_coverage",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "f0e158f49997105dbdb269c760359efe115a1c8a935cf67ad329137cae39db38",
+      "effective_gate_accepted": false,
+      "expected_rejection": "missing timing",
+      "mock_log_sha256": "d8c67771b3eb7b77556825ba505770facd946464c3f25983d13cd30f5d1cb8e0",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "missing_setup",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "648606dc54b1edc7c05d906e88b4e98388e27dd4a4efb7203a5f88fd8dad0590",
+      "effective_gate_accepted": false,
+      "expected_rejection": "missing timing",
+      "mock_log_sha256": "d8c67771b3eb7b77556825ba505770facd946464c3f25983d13cd30f5d1cb8e0",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "missing_hold",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "8e7bddd009d7fc2065459cb4884460b74b67bd9e891ff1096314860761137892",
+      "effective_gate_accepted": false,
+      "expected_rejection": "setup/hold failed",
+      "mock_log_sha256": "15e7dfe681cdc34996da4dc0f89d6c6653ef4fbc9ea20f616f9170366bc862df",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "negative_setup",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "a88bd54b33503b1a9902688250319a39419833573a25f7a9621039b8c83adfa4",
+      "effective_gate_accepted": false,
+      "expected_rejection": "setup/hold failed",
+      "mock_log_sha256": "15e7dfe681cdc34996da4dc0f89d6c6653ef4fbc9ea20f616f9170366bc862df",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "negative_hold",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "f623e5738073862a35222cab12dfe10cf16e5e66e9ac747358aacc27f911b6cd",
+      "effective_gate_accepted": false,
+      "expected_rejection": "route coverage failed",
+      "mock_log_sha256": "a08dbad9fd15325ef017a11937ed3870c178f20dcde8e456f54d44a10e3bc237",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "bad_route",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "3a09b8d5523e9f7f1410f66e6a43b4f458eda40942c49a6b88a008b99ba6a649",
+      "effective_gate_accepted": false,
+      "expected_rejection": "DRC failed",
+      "mock_log_sha256": "8401eaeae4ec85101a6cd74e09b1a5ed7e0d78645ff03a7a51c0c3ba57dbd889",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "bad_drc",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "2ab5cd60ee109cae07acf9dad82cb378204e2dd596c780ad81df767a3d506f29",
+      "effective_gate_accepted": false,
+      "expected_rejection": "pulse width failed",
+      "mock_log_sha256": "b8a49439b81fcd1ae4313af94a75f5f05c01134d6d8c660cafb24103ee34397a",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "pulse_violated",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "bf7a6fb9eca91548d25fdce884ea566b1b3cbc8e0dfdde81ef4b2e82c1d82661",
+      "effective_gate_accepted": false,
+      "expected_rejection": "pulse width failed",
+      "mock_log_sha256": "b8a49439b81fcd1ae4313af94a75f5f05c01134d6d8c660cafb24103ee34397a",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "pulse_negative",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "83db7cae1630e5454000d832bd388d8bf70a7efb7c5514fd860ee38ab7aa339d",
+      "effective_gate_accepted": false,
+      "expected_rejection": "bus skew failed",
+      "mock_log_sha256": "59a01c17ad43bd7505ee5015ff86fe30d68cabe132014c37e7c7ab5e2918fab6",
+      "mock_tcl_returncode": 1,
+      "passed": true,
+      "scenario": "skew_violated",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "3811cdeaf39b7b53b7623329cbc2b5d2951438a435b7d9a578a47863357ecfd6",
+      "effective_gate_accepted": false,
+      "expected_rejection": "PYTHON_COVERAGE_REJECTED",
+      "mock_log_sha256": "f297cfe68cf34036fe01e3980e223f7282a70e86976217c10a9514ad9877435d",
+      "mock_tcl_returncode": 0,
+      "passed": true,
+      "scenario": "no_clock",
+      "template": "audit.tcl.in"
+    },
+    {
+      "copied_template_sha256": "0a0f3952b346425f2f9bb556f1a707b7c3b79590c1e800da5b93534e0aff3b15",
+      "effective_gate_accepted": false,
+      "expected_rejection": "PYTHON_COVERAGE_REJECTED",
+      "mock_log_sha256": "f297cfe68cf34036fe01e3980e223f7282a70e86976217c10a9514ad9877435d",
+      "mock_tcl_returncode": 0,
+      "passed": true,
+      "scenario": "unconstrained_endpoint",
+      "template": "audit.tcl.in"
+    }
+  ],
+  "certificate_sha256": "4de4d5bca59df344eaf8e8fd98b82ecade56d2bb9b9fbb8ba55c13a6b96dfa1c",
+  "clock_contract_sha256": "1a52165b57e61a5079780d905ab41f58652cab5b6f06e5d3233f4028de25f6c4",
+  "clock_count": 66,
+  "completed_utc": "2026-11-12T02:19:28.535710+00:00",
+  "exact_python_clock_coverage_regexes": [
+    "checking no_clock \\(0\\)",
+    "checking unconstrained_internal_endpoints \\(0\\)"
+  ],
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "installation_manifest_checks": {
+    "application-inputs.json": "719a0b32b16e11e2b0ba4cb94afc58b905f94584d440524edf3f0d468dd5b16d",
+    "inputs.json": "86deb41e9e28c5993a3df92190d1b2f30f3e05e8152cc7e15621271dc57aa500",
+    "runtime-inputs.json": "719a0b32b16e11e2b0ba4cb94afc58b905f94584d440524edf3f0d468dd5b16d"
+  },
+  "limitations": [
+    "Vendor APIs and timing/report values are mocked.",
+    "Does not validate Vivado command availability, actual routing or timing.",
+    "Does not certify full Python artifact/hash transport or measured hardware.",
+    "Installed/live source capsules and inputs were not edited."
+  ],
+  "negative_cases": 44,
+  "no_bitstream_generated": true,
+  "no_vivado_executed": true,
+  "physical_timing_pass": false,
+  "positive_cases": 2,
+  "schema": "ec-host40-gate-control-flow-audit/1",
+  "source_capsule": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r2-20261112",
+  "status": "PASS_MOCKED_TCL_GATE_REJECTIONS_NOT_PHYSICAL_CERTIFICATION",
+  "templates_sha256": {
+    "audit.tcl.in": "93f1dd6c8d4e57ce4b053f36ce83741228b630a9b308dc4076a534d29a266f5b",
+    "recover.tcl.in": "ff9f490cb91438c8460a0c23327732865f6c47e46eb2009eff6f1d67ef9fe576"
+  }
+}

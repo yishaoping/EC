@@ -1,0 +1,21 @@
+--- a/client/dedup_client.c
++++ b/client/dedup_client.c
+@@ -165,7 +165,17 @@
+ 	free(preloading_buffer);
+ 	close(fd);
+ #ifdef ENABLE_PARSEC_UPTCPIP
+-	uptcp_close(sd);
++	/* UpTCP owns the TX/FIN worker threads in this process. BSD socket
++	 * option numbers are used by uptcp_setsockopt without Linux translation.
++	 * Keep the process alive until graceful close finishes, rather than
++	 * terminating its workers with outstanding data/FIN on a single CPU. */
++	struct linger ec_linger = { 1, 30 };
++	if (uptcp_setsockopt(sd, 0xffff /* BSD SOL_SOCKET */,
++	                    0x0080 /* BSD SO_LINGER */,
++	                    &ec_linger, sizeof(ec_linger)) != 0)
++		EXIT_TRACE("Socket error: graceful linger option failed\n");
++	if (uptcp_close(sd) != 0)
++		EXIT_TRACE("Socket error: graceful close failed\n");
+ #else
+ 	close(sd);
+ #endif

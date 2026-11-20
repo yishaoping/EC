@@ -1,0 +1,13 @@
+{
+  "schema": "ec-shell-successor-offline-receipt-format-audit/1",
+  "diagnosis": "Known deterministic future receipt-format mismatch, no live source or CAD changed",
+  "upstream": "common-composed-validate-r2-20261113",
+  "upstream_code": "m.stage full-dcache-cycle writes generic receipt, then custom full-dcache-cycle-receipt.json replaces it with source/cycles/observations/log/assertions fields",
+  "downstream": "common-composed-shell-cad-r1-20261113 upstream_binding calls upstream.accepted(full-dcache-cycle-receipt.json), which requires returncode and missing_outputs keys absent in custom receipt",
+  "expected_failure": "KeyError('returncode') before prepare_host or any CAD stage",
+  "existing_r1_state": "WAITING_EXACT_COMPOSED_VALIDATION_AND_CAD_LEASE",
+  "no_current_failure": true,
+  "no_healthy_task_restart": true,
+  "repair": "Prepare immutable shellR2 that waits terminal R1/cgroup release and accepts the existing exact custom fullcycle receipt using explicit8192/24575/assertion/source/log fields. Keep generic validation for other stage receipts. Do not rerun elaboration, fullcycles, host generation or CAD.",
+  "foreground_reserved_path": "candidates/common-composed-shell-cad-r2-20261113"
+}

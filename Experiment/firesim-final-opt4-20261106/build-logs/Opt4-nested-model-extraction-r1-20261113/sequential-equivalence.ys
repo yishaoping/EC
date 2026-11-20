@@ -1,0 +1,22 @@
+read_verilog /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-nested-model-extraction-r1-20261113/reference.v
+hierarchy -top FAMETop
+proc
+flatten
+opt_clean
+rename FAMETop reference
+design -stash reference
+read_verilog /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-nested-model-extraction-r1-20261113/candidate.v
+hierarchy -top FAMETop
+proc
+flatten
+opt_clean
+rename FAMETop candidate
+design -stash candidate
+design -copy-from reference -as reference reference
+design -copy-from candidate -as candidate candidate
+equiv_make reference candidate equiv
+hierarchy -top equiv
+equiv_struct
+equiv_simple -seq 2
+equiv_induct -seq 4
+equiv_status -assert

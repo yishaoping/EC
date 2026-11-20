@@ -1,0 +1,69 @@
+{
+  "schema": "ec-firesim-fdt/1",
+  "phase": "fdt",
+  "configuration": "C4",
+  "returncode": 0,
+  "elaboration_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-elaborate-20261106T100250.032318Z/result.json",
+  "elaboration_result_sha256": "4284a54a160a374491cd0050611ba35719df94d896faf8b4667f66691407e3ac",
+  "source_dts": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-elaborate-20261106T100250.032318Z/firesim.firesim.FireSim.dts",
+  "source_dts_sha256": "abe88f0748a092c769cdc5c4b402fed7471500f5c93e01d1a90ad42652458ee9",
+  "dts": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dts",
+  "dts_sha256": "3551cc6bb2f3dd19fc716bdea11db8db4343080af7e35da921cd99100d271210",
+  "fdt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb",
+  "sha256": "c712fed367c0b57d9a1ed9f6e53688861a646f3732654b253131ff6e8953dda6",
+  "command": [
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/dtc",
+    "-I",
+    "dts",
+    "-O",
+    "dtb",
+    "-p",
+    "4096",
+    "-o",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dts"
+  ],
+  "bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+  "linux_harts": [
+    0
+  ],
+  "firmware_checker_harts": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "target_memory_base": 2147483648,
+  "target_memory_bytes": 17179869184,
+  "linux_mem_cap": 2147483648,
+  "linux_profile_sha256": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1",
+  "target_boom_hz": 200000000,
+  "target_checker_hz": 100000000,
+  "runtime_validation": "NOT_RUN",
+  "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-build.json",
+  "parent_receipt_sha256": "a92f79fb153318e3ade9f1531d9ee48ea97f9e1aee8005814ff2f159543782c5",
+  "profile": "matched-guest-mem2g-phys36-canonical-isa",
+  "isa_normalization": [
+    {
+      "original": "rv64imafdcZicsr_Zifencei_Zihpm",
+      "canonical": "rv64imafdc_zicsr_zifencei_zihpm"
+    },
+    {
+      "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket",
+      "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket"
+    },
+    {
+      "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket",
+      "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket"
+    },
+    {
+      "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket",
+      "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket"
+    },
+    {
+      "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket",
+      "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket"
+    }
+  ],
+  "normalizer_sha256": "cdc93d5c3bd0f2f013eb5029a1addb1a0c53a4e72b8f23ebbe814439cbc4a59e"
+}

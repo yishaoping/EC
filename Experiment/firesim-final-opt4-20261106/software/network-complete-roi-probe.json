@@ -1,0 +1,440 @@
+{
+  "cases": {
+    "netdedup": {
+      "diagnostic_only": true,
+      "diagnostic_receipt": {
+        "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/diagnostic-netdedup/receipt.json",
+        "sha256": "6911316ac913ca2a9592ef0217bb6b7fd3b3638fb9a0cc46b18deb5e967680d1"
+      },
+      "exact_output_or_full_decode": true,
+      "first_syscall_examples": {
+        "clock_gettime": {
+          "example": "clock_gettime(0,275056458672,4093,1141,272,0) = 0",
+          "tid": "2973850"
+        },
+        "clock_nanosleep": {
+          "example": "clock_nanosleep(0,0,275056458704,0,10,0) = 0",
+          "tid": "2973850"
+        },
+        "futex": {
+          "example": "futex(0x000000000013be40,FUTEX_PRIVATE_FLAG|FUTEX_WAKE,1,NULL,0x0000000000000002,2) = 0",
+          "tid": "2973850"
+        },
+        "mmap": {
+          "example": "mmap(NULL,134221824,PROT_READ2973850 clock_nanosleep(0,0,275048065664,0,10,0)|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS,-1,0) = 0",
+          "tid": "2973850"
+        },
+        "mprotect": {
+          "example": "mprotect(0x0000004020000000,143360,PROT_READ|PROT_WRITE) = 0",
+          "tid": "2973850"
+        },
+        "mremap": {
+          "example": "mremap(275492687872,134221824,4096,1,4103,275492687872)2973850 clock_gettime(0,275056458672,4093,1141,272,0) = 0",
+          "tid": "2973850"
+        },
+        "munmap": {
+          "example": "munmap(0x000000401ca4c000,56311808) = 0",
+          "tid": "2973850"
+        },
+        "openat": {
+          "example": "openat(AT_FDCWD,\"out.ddp\",O_WRONLY = 0",
+          "tid": "2973850"
+        },
+        "write": {
+          "example": "write(4,0x8006dc,4) = 0",
+          "tid": "2973850"
+        }
+      },
+      "formal_eligible": false,
+      "original_roi_complete": true,
+      "qemu_trace_prefix_ids": [
+        "2973850"
+      ],
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-complete-roi-20261109T124132Z/netdedup/result.json",
+      "result_sha256": "afd7bccbfcd287dcfdc1ddaf6cccf600732cb08c5637a4fb9aad4d84d2716b1c",
+      "roi_syscall_counts": {
+        "clock_gettime": 249,
+        "clock_nanosleep": 427,
+        "futex": 4,
+        "mmap": 1,
+        "mprotect": 1,
+        "mremap": 1,
+        "munmap": 2,
+        "openat": 1,
+        "write": 2
+      },
+      "status": "OFFLINE_PROTOCOL_OUTPUT_AND_TRACE_PASSED",
+      "trace_precision": "Observed parsed calls only: multithread QEMU text interleaves; counts may undercount and prefix IDs are not guest TIDs.",
+      "validator_sha256": "2b6bc59a73639422600d2f673e0dc01f3f9c3fb14168f1980e7c2e92ee12ac48"
+    },
+    "netferret": {
+      "diagnostic_only": true,
+      "diagnostic_receipt": {
+        "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/diagnostic-netferret/receipt.json",
+        "sha256": "fb26071c227f980ddfa7fd25a9b4b4f0483f6daf3b4f94e2c66647354e11affe"
+      },
+      "exact_output_or_full_decode": true,
+      "first_syscall_examples": {
+        "brk": {
+          "example": "brk(0x000000000015f000) = 0x000000000015f000",
+          "tid": "2973894"
+        },
+        "clock_gettime": {
+          "example": "clock_gettime(5,274886297104,0,-101,934968,0) = 0",
+          "tid": "2973894"
+        },
+        "clock_nanosleep": {
+          "example": "clock_nanosleep(0,0,275055668160,0,10,0) = 2973903",
+          "tid": "2973894"
+        },
+        "clone": {
+          "example": "clone(CLONE_VM|CLONE_FS|CLONE_FILES|CLONE_SIGHAND|CLONE_THREAD|CLONE_SYSVSEM|CLONE_SETTLS|CLONE_PARENT_SETTID|CLONE_CHILD_CLEARTID,child_stack=0x0000004001183d20,parent_tidptr=0x0000004001184590,tls=0x0000004001184c60,child_tidptr=0x0000004001184590) = 297",
+          "tid": "2973894"
+        },
+        "close": {
+          "example": "close(3) = 0",
+          "tid": "2973894"
+        },
+        "exit": {
+          "example": "exit(0)",
+          "tid": "2973894"
+        },
+        "futex": {
+          "example": "futex(0x0000000000216598,FUTEX_PRIVATE_FLAG|FUTEX_CLOCK_REALTIME|FUTEX_WAIT_BITSET,0,NULL,NULL,0)2973894 shmget(27852803,16781312,896,0,16711680,16777216)2973894 shmget(27852802,16781312,896,0,16711680,16777216) = 1",
+          "tid": "2973894"
+        },
+        "madvise": {
+          "example": "madvise(275374456832,8368128,4,8392704,-4096,8384512) = 0",
+          "tid": "2973894"
+        },
+        "mmap": {
+          "example": "mmap(NULL,528384,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS,-1,0) = 0x0000004000801000",
+          "tid": "2973894"
+        },
+        "mprotect": {
+          "example": "mprotect(0x0000004000985000,8388608,PROT_READ|PROT_WRITE) = 0",
+          "tid": "2973894"
+        },
+        "munmap": {
+          "example": "munmap(0x0000004001986000,40345600) = 0",
+          "tid": "2973894"
+        },
+        "newfstatat": {
+          "example": "newfstatat(AT_FDCWD,\"/tmp/uptcp_hif_tx_buf.dat\",0x0000004001984a40,0) = 0",
+          "tid": "2973894"
+        },
+        "openat": {
+          "example": "openat(AT_FDCWD,\"/sys/devices/system/cpu/online\",O_RDONLY|O_CLOEXEC) = 3",
+          "tid": "2973894"
+        },
+        "read": {
+          "example": "read(3,0x7fe5f0,8192) = 6",
+          "tid": "2973894"
+        },
+        "rt_sigprocmask": {
+          "example": "rt_sigprocmask(SIG_BLOCK,0x00000000000e01b0,0x0000004000800610) = 0",
+          "tid": "2973894"
+        },
+        "sched_setaffinity": {
+          "example": "sched_setaffinity(2973899,128,274886297152,0,274886297176,-9223372036854775808) = 0",
+          "tid": "2973894"
+        },
+        "write": {
+          "example": "write(1,0x11cf50,900)",
+          "tid": "2973894"
+        }
+      },
+      "formal_eligible": false,
+      "original_roi_complete": true,
+      "qemu_trace_prefix_ids": [
+        "2973894"
+      ],
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-complete-roi-20261109T124132Z/netferret/result.json",
+      "result_sha256": "a8aad8b15175f3f237b740575d82803c289d21fe66bc2c2ca88e2e78e39d1dc6",
+      "roi_syscall_counts": {
+        "brk": 8,
+        "clock_gettime": 1697,
+        "clock_nanosleep": 3752,
+        "clone": 9,
+        "close": 1,
+        "exit": 6,
+        "futex": 48,
+        "madvise": 2,
+        "mmap": 14,
+        "mprotect": 20,
+        "munmap": 18,
+        "newfstatat": 1,
+        "openat": 2,
+        "read": 1,
+        "rt_sigprocmask": 26,
+        "sched_setaffinity": 9,
+        "write": 2
+      },
+      "status": "OFFLINE_PROTOCOL_OUTPUT_AND_TRACE_PASSED",
+      "trace_precision": "Observed parsed calls only: multithread QEMU text interleaves; counts may undercount and prefix IDs are not guest TIDs.",
+      "validator_sha256": "1e07b514e280a51b86929e8ca671d5d310b82a9fd20a2fa7557afa0348eaf3bd"
+    },
+    "netstreamcluster": {
+      "diagnostic_only": true,
+      "diagnostic_receipt": {
+        "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/diagnostic-netstreamcluster/receipt.json",
+        "sha256": "867613a820c94858847e7c788941d72c43fb9634199880fb0bc2a11ac4378f7d"
+      },
+      "exact_output_or_full_decode": true,
+      "first_syscall_examples": {
+        "brk": {
+          "example": "brk(0x00000000001c9000) = 0x00000000001c9000",
+          "tid": "2973928"
+        },
+        "clock_gettime": {
+          "example": "clock_gettime(5,274886296688,0,-101,1189888,0) = 0",
+          "tid": "2973928"
+        },
+        "clock_nanosleep": {
+          "example": "clock_nanosleep(0,0,275072449392,0,10,0) = 0",
+          "tid": "2973928"
+        },
+        "clone": {
+          "example": "clone(CLONE_VM|CLONE_FS|CLONE_FILES|CLONE_SIGHAND|CLONE_THREAD|CLONE_SYSVSEM|CLONE_SETTLS|CLONE_PARENT_SETTID|CLONE_CHILD_CLEARTID,child_stack=0x0000004001183cd0,parent_tidptr=0x0000004001184540,tls=0x0000004001184c10,child_tidptr=0x0000004001184540) = 297",
+          "tid": "2973928"
+        },
+        "close": {
+          "example": "close(3) = 0",
+          "tid": "2973928"
+        },
+        "futex": {
+          "example": "futex(0x0000000000280938,FUTEX_PRIVATE_FLAG|FUTEX_CLOCK_REALTIME|FUTEX_WAIT_BITSET,0,NULL,NULL,0)2973928 futex(0x0000000000280ad8,FUTEX_PRIVATE_FLAG|FUTEX_CLOCK_REALTIME|FUTEX_WAIT_BITSET,0,NULL,NULL,0)2973928 clock_gettime(5,274886296864,84746,-101,118988",
+          "tid": "2973928"
+        },
+        "mmap": {
+          "example": "mmap(NULL,528384,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS,-1,0) = 0x0000004000801000",
+          "tid": "2973928"
+        },
+        "mprotect": {
+          "example": "mprotect(0x0000004000985000,8388608,PROT_READ|PROT_WRITE) = 0",
+          "tid": "2973928"
+        },
+        "munmap": {
+          "example": "munmap(0x0000004001986000,40345600)2973928 rt_sigprocmask(SIG_BLOCK,0x0000000000118658,0x0000004000800470) = 0",
+          "tid": "2973928"
+        },
+        "newfstatat": {
+          "example": "newfstatat(AT_FDCWD,\"/tmp/uptcp_hif_tx_buf.dat\",0x00000040019849f0,0) = 0",
+          "tid": "2973928"
+        },
+        "openat": {
+          "example": "openat(AT_FDCWD,\"/sys/devices/system/cpu/online\",O_RDONLY|O_CLOEXEC) = 3",
+          "tid": "2973928"
+        },
+        "read": {
+          "example": "read(3,0x7fe450,8192) = 6",
+          "tid": "2973928"
+        },
+        "rt_sigprocmask": {
+          "example": "rt_sigprocmask(SIG_BLOCK,0x0000000000118658,0x0000004000800470) = 0",
+          "tid": "2973928"
+        },
+        "sched_setaffinity": {
+          "example": "sched_setaffinity(2973955,128,274886296736,0,274886296760,2305843009213693952) = 0",
+          "tid": "2973928"
+        },
+        "shmat": {
+          "example": "shmat(0,0,0,0,16711680,-4096) = 0x000000400a187000",
+          "tid": "2973928"
+        },
+        "shmget": {
+          "example": "shmget(26476546,16781312,896,0,16711680,16777216) = 0",
+          "tid": "2973928"
+        },
+        "write": {
+          "example": "write(1,0x18000b60,182)",
+          "tid": "2973928"
+        }
+      },
+      "formal_eligible": false,
+      "original_roi_complete": true,
+      "qemu_trace_prefix_ids": [
+        "2973928"
+      ],
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-complete-roi-20261109T124132Z/netstreamcluster/result.json",
+      "result_sha256": "b88d3c01d35de6afae14ad1ed80bb9291dbc72219cd5ae9cf250ddcc30c65f8f",
+      "roi_syscall_counts": {
+        "brk": 9,
+        "clock_gettime": 207,
+        "clock_nanosleep": 6382,
+        "clone": 5,
+        "close": 3,
+        "futex": 13,
+        "mmap": 9,
+        "mprotect": 9,
+        "munmap": 9,
+        "newfstatat": 2,
+        "openat": 3,
+        "read": 1,
+        "rt_sigprocmask": 12,
+        "sched_setaffinity": 3,
+        "shmat": 2,
+        "shmget": 1,
+        "write": 1
+      },
+      "status": "OFFLINE_PROTOCOL_OUTPUT_AND_TRACE_PASSED",
+      "trace_precision": "Observed parsed calls only: multithread QEMU text interleaves; counts may undercount and prefix IDs are not guest TIDs.",
+      "validator_sha256": "d883997814b65656e0a75cebec1ab014a9abad714ed5332e9430ee93e467f21b"
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-static",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/server.o",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/parsec/lib",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-Wl,--start-group",
+        "-lcass",
+        "-lcassimage",
+        "-lgsl",
+        "-lgslcblas",
+        "-ljpeg",
+        "-luptcp",
+        "-Wl,--end-group",
+        "-pthread",
+        "-lrt",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/netferret-runtime/server/parsec/bin/ferret-pthreads",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/hooks.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/dac_roi.o"
+      ],
+      "label": "netferret-real-hooks-link",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-complete-roi-20261109T124132Z/netferret-real-hooks-link.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "unshare",
+        "--ipc",
+        "--mount",
+        "--net",
+        "--fork",
+        "/usr/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/diagnostic-netdedup/probe.py",
+        "--case",
+        "netdedup",
+        "--size",
+        "test",
+        "--out",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-complete-roi-20261109T124132Z/netdedup"
+      ],
+      "label": "netdedup-full-original-roi-test",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-complete-roi-20261109T124132Z/netdedup-full-original-roi-test.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "unshare",
+        "--ipc",
+        "--mount",
+        "--net",
+        "--fork",
+        "/usr/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/diagnostic-netferret/probe.py",
+        "--case",
+        "netferret",
+        "--size",
+        "test",
+        "--out",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-complete-roi-20261109T124132Z/netferret"
+      ],
+      "label": "netferret-full-original-roi-test",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-complete-roi-20261109T124132Z/netferret-full-original-roi-test.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "unshare",
+        "--ipc",
+        "--mount",
+        "--net",
+        "--fork",
+        "/usr/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/diagnostic-netstreamcluster/probe.py",
+        "--case",
+        "netstreamcluster",
+        "--size",
+        "test",
+        "--out",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-complete-roi-20261109T124132Z/netstreamcluster"
+      ],
+      "label": "netstreamcluster-full-original-roi-test",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-complete-roi-20261109T124132Z/netstreamcluster-full-original-roi-test.log",
+      "returncode": 0
+    }
+  ],
+  "ended_utc": "2026-11-09T12:42:46.130736+00:00",
+  "formal_eligible": false,
+  "fpga_admission": "BLOCKED_COMPLETE_ORIGINAL_ROI_CONTEXT_PROTOCOL",
+  "fpga_execution": false,
+  "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "hardware_modified": false,
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-complete-roi-20261109T124132Z",
+  "netferret_real_hooks": {
+    "algorithm_objects_unchanged": true,
+    "binaries": {
+      "client/client": {
+        "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/netferret/client/client",
+        "sha256": "0592caf89a940d3798a6c3b3ce45393e8b5b055225b146cee39aa0c875beb373"
+      },
+      "server/parsec/bin/ferret-pthreads": {
+        "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/netferret-runtime/server/parsec/bin/ferret-pthreads",
+        "sha256": "149f41d3f340bdc2928e3289d79f42d9a96a265366a2f9a24136b38174a58fb7"
+      }
+    },
+    "formal_eligible": false,
+    "offline_reference": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-recovery-20261109T043612Z/netferret-stable-joined-candidate-offline-review.json",
+      "sha256": "5c93783b4e36562ef9c3ad80a22b999b6fc2810ed6cb7379e826f2e31ac1552b"
+    },
+    "original_roi_preserved": true,
+    "profile": "netferret-stable-joined-real-hooks/1",
+    "real_checker_validated": false,
+    "roi_objects": {
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/dac_roi.o": "c48cad04fd5a065b3fabe177ef63ae30eed5393d8eb5facf2d1379f00c6d4661",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/hooks.o": "7ddc0541c7c8c574eb59b060894d36f0a47817f5f44d67b0bdcbb7973d56d355"
+    },
+    "runtime_validation": "NOT_RUN",
+    "source_receipt": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/receipt.json",
+      "sha256": "8c64571f74293c6437881d4f3f4b059c534524fb8dd23ae1d2c3fba9b9ec4c31"
+    }
+  },
+  "pid": 2980850,
+  "protocol_source_bindings": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/main/scala/util/DacRoi.scala": "e41828d04b47ad2a209defc28c700113e3a74e53451e00a846c0ab63df9c4ed2",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/linux/drivers/misc/ec_dac_roi.c": "4caff1f1ba2b4b30d2ee155ace94b78975baabb15daec32a7d57bfaf0a6c81a9",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/opensbi/lib/sbi/ec_opt4.c": "b94345d9966d8134db069b22e2b37f33a3b56e7913210efe5c5bb8a598c99783",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/opensbi/lib/sbi/ec_opt4_entry.S": "090f4b75bf0f73eb84199497d166b7bded97385987097bc246a7010099d84587"
+  },
+  "resolution": "No existing software-only pause/re-arm path can preserve full original ROI under this monitor. A complete supported context/trap protocol requires a separately versioned integration/observer design and bitstream validation, or a proven entirely user-mode cooperative implementation retaining all network semantics. Neither is claimed implemented.",
+  "resolved_attempt_errors": [
+    "StopIteration()"
+  ],
+  "scheduler_modified": false,
+  "software_only_auxiliary_options": [
+    "preallocate resident buffers before ROI",
+    "replace auxiliary time queries with a defined common clock outside ROI"
+  ],
+  "source_proven_limits": [
+    "dac_begin rejects multithread process and any second context per boot",
+    "DacRoiController records fault8 on traps/non-U privilege/satp changes across complete ROI",
+    "OpenSBI accepts only first context; unknown op is ENOTSUPP, no pause/resume epoch operation",
+    "Checker service unexpected trap is fault+park, not Linux syscall dispatch"
+  ],
+  "stage": "netstreamcluster-full-original-roi-test",
+  "start_ticks": "3988632",
+  "status": "COMPLETE_OFFLINE_WITH_PROTOCOL_BLOCKERS",
+  "unresolved_essential_operations": "User TCP receive workers, pthread synchronization/scheduling and original network computation remain in ROI; moving them out or excluding syscall gaps would change required workload/measurement.",
+  "work_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z"
+}

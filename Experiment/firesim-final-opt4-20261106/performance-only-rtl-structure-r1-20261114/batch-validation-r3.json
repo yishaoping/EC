@@ -1,0 +1,66 @@
+{
+  "status": "PASS_BATCH_SOURCE_AND_CYCLE_GATES_WAITING_EXCLUSIVE_CAD",
+  "utc": "2026-11-14T12:50:02.442182+00:00",
+  "branch": "ec-performance-only-rtl-structure-r1-20261114",
+  "workflow_commit": "19665537c97ab921e794c945fec3653d7187171c",
+  "hardware_source_id": "83e4fa85348644f664574e47a7da202df289e9d1bb187ff050ccb61b37207cde",
+  "sources": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-rtl-structure-r1-20261114/candidates/rtl-structure-r1/baseline-svb.scala": "67a98cf80e0198a14754b2f0efd3eb3512e176d486247763401f4cdf51cc8921",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-rtl-structure-r1-20261114/chipyard/generators/boom/src/main/scala/lsu/speculative-version-buffer.scala": "77d30042a72cbd1863f764770832d0d634cce8ba59489062dedcba91feca7ea6",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-rtl-structure-r1-20261114/candidates/rtl-structure-r1/Emit.scala": "47d819b9918bfb63e60892de38453af83264ac81f893d38265f5e2e15de41739",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-rtl-structure-r1-20261114/chipyard/generators/boom/src/main/scala/lsu/BankedAsyncMemory.scala": "2a84f4f8f7e5032a8ecd307dea45128ff5d0dafcb4d3b386d95d91ff40fd8b99",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-rtl-structure-r1-20261114/chipyard/generators/boom/src/main/scala/lsu/PacketSequenceBank.scala": "8900eaa026b7edb571373685f11723a16610be16eb17b774258e9e6bdcb3336c",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-rtl-structure-r1-20261114/chipyard/generators/boom/src/main/scala/lsu/AppliedEffectResultMemory.scala": "8e6fb7c5609f7b2057b7bb7e58e03268403c0151a5ecde3584891b6f09a3f4fe",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-rtl-structure-r1-20261114/chipyard/generators/boom/src/main/scala/lsu/mshrs.scala": "5aa07294b05b7da4d532d510bb3cb8db5e02ef2bf05712a6c0fb98358f801ed4",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-rtl-structure-r1-20261114/chipyard/generators/boom/src/main/scala/lsu/dcache.scala": "2c7f8c35e6a239e3926e9bad86597b1041d4c25cd6a9c4e8ea9eb31ed1478898"
+  },
+  "evidence": {
+    "/var/tmp/guozh-ec-rtl-structure-r1-20261114/module-r4/COMPILE_candidate.log": "052eabf35f8f62592b0e3f427b6c2370380cf063daa1975777aabb5f4e30930e",
+    "/var/tmp/guozh-ec-rtl-structure-r1-20261114/module-r4/COMPARE_BATCH_STORAGE.log": "06de2209f03c762392b4e5579a81763cba6f3ae960b05aad091179effd6e5120",
+    "/var/tmp/guozh-ec-rtl-structure-r1-20261114/module-r4/CYCLE_COMPARE.log": "a509294208ee95318c80f3f715cdb7d2a83a2690d8721d4b05abc32982f06384",
+    "/var/tmp/guozh-ec-rtl-structure-r1-20261114/host-r3/state.json": "47da50b446135b1e71656e71d9dfa0e1d392262424e15699478692082091b0f4",
+    "/var/tmp/guozh-ec-rtl-structure-r1-20261114/host-r3/TOKENS.log": "a2377b994276f44fcf2c838ab026881d20ade2605a376fbfc66d570a03d3282f",
+    "/var/tmp/guozh-ec-rtl-structure-r1-20261114/host-r3/NEGATIVE_CONTROL.log": "8065b8698d587bd412ada7365f9af14b1b65dedf39766e7ee1c5ea9ab4e28e44",
+    "/var/tmp/guozh-ec-rtl-structure-r1-20261114/full-r3/GOLDENGATE.log": "f9d2b81ba0543276e92bcc6149b80af24a90f09bfcb7bf18cd3382a6e090752c",
+    "/var/tmp/guozh-ec-rtl-structure-r1-20261114/full-r3/COMPARE_COMPLETE_DCACHE_CYCLE_RAMPORTS_R3.log": "b307ac3b2dc749ce1c2b8efe1b23c74d326807caaaeeab0ae9305329d1574d58",
+    "/var/tmp/guozh-ec-rtl-structure-r1-20261114/full-r3/dcache-cycle-ramports-r3/preparation.json": "1e1be0f22906c3338060e6751b637f81478121bb80ac0ca87b40908ac9fa0789",
+    "/var/tmp/guozh-ec-rtl-structure-r1-20261114/full-r3/rtl-state.json": "96f0aa4b583da115ecf4af08b7563eb645be9f13657e6fee5287e3bc72753745"
+  },
+  "checks": {
+    "storage_cycles": 32768,
+    "svb_random_cycles": 16384,
+    "dcache_cycles": 8192,
+    "dcache_observations": 24575,
+    "dcache_public_outputs": 109,
+    "dcache_common_observations": 1241,
+    "goldengate_svb_promotions": 128,
+    "goldengate_exact_acks": 128,
+    "goldengate_negative_control": true,
+    "goldengate_complete_target_extracted_ram_models": 14
+  },
+  "limitations": {
+    "full_dut_formal": false,
+    "dcache_release_beats_in_stimulus": 0,
+    "svb_release_and_exact_ack_covered_by_module_and_host_tests": true
+  },
+  "cad_services": [
+    "ec-performance-only-rtl-structure-batch-module-r4-20261114.service",
+    "ec-performance-only-rtl-structure-batch-full-r8-20261114.service"
+  ],
+  "measured_candidate_resources": null,
+  "complete_shell_resources": null,
+  "legal_routing": null,
+  "bitstream": null,
+  "fpga_access": false,
+  "pci": "0000:21:00.0",
+  "serial": "21770433G02LA",
+  "baseline_complete_shell": {
+    "lut": 936815,
+    "ff": 707725,
+    "bram": 696.5,
+    "f7": 71630,
+    "f8": 20924,
+    "f9": 0
+  },
+  "preserved_running_cad_pid": 2264477
+}

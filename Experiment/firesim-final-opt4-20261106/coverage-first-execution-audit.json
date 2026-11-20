@@ -1,0 +1,152 @@
+{
+  "cad_worker": {
+    "cmdline": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -log design_1_firesim_wrapper_0_0.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source design_1_firesim_wrapper_0_0.tcl ",
+    "pid": 186517,
+    "process_state": "S",
+    "start_ticks": "200120"
+  },
+  "cad_worker_cpu_ticks": 1108296,
+  "cad_worker_rss_pages": 4716154,
+  "final_bitstream_exists": false,
+  "fpga_run": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-freqmine-simmedium-r2-20261107T084705Z",
+  "hardware_changes": false,
+  "host_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "known_processes": {
+    "C4-runtime-cad-state.json": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/C4-runtime-cad-state.json",
+      "processes": [
+        {
+          "expected_start_ticks": "192528",
+          "field": "pid",
+          "identity_live": true,
+          "identity_uncertain": false,
+          "observed": {
+            "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_bitstream.py ",
+            "pid": 175581,
+            "process_state": "S",
+            "start_ticks": "192528"
+          },
+          "old_boot": false
+        },
+        {
+          "expected_start_ticks": "192624",
+          "field": "child_pid",
+          "identity_live": true,
+          "identity_uncertain": false,
+          "observed": {
+            "cmdline": "runuser -u guozh -- nice -n 15 /tools/Xilinx/Vivado/2021.1/bin/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261107T064248Z/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261107T064248Z/resume_cad.tcl -tclargs /var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z resume ",
+            "pid": 175632,
+            "process_state": "S",
+            "start_ticks": "192624"
+          },
+          "old_boot": false
+        }
+      ],
+      "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+      "status": "RUNNING"
+    },
+    "active-0000_e2_00.0.json": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/active-0000_e2_00.0.json",
+      "processes": [
+        {
+          "expected_start_ticks": "938338",
+          "field": "pid",
+          "identity_live": true,
+          "identity_uncertain": false,
+          "observed": {
+            "cmdline": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-efficiency-driver-20261106T135905Z/FireSim-xilinx_alveo_u280 +permissive +domain=0000 +bus=e2 +device=00 +function=0 +bar=0 +pci-vendor=10ee +pci-device=903f +uart-in0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-freqmine-simmedium-r2-20261107T084705Z/uart.in +uart-out0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-freqmine-simmedium-r2-20261107T084705Z/uart.log +fesvr-step-size=2004765 +mm_readLatency_0=30 +mm_readMaxReqs_0=4 +mm_relaxFunctionalModel_0=0 +mm_writeLatency_0=30 +mm_writeMaxReqs_0=4 +ec-dac-roi-log=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-freqmine-simmedium-r2-20261107T084705Z/roi-raw.jsonl +ec-dac-snapshot-seconds=30 +permissive-off +prog0=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-firmware-20261107T052427.688503Z/platform/generic/firmware/fw_payload.elf ",
+            "pid": 1385408,
+            "process_state": "R",
+            "start_ticks": "938338"
+          },
+          "old_boot": false
+        }
+      ],
+      "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+      "status": "RUNNING"
+    },
+    "coverage-first-state.json": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-state.json",
+      "processes": [
+        {
+          "expected_start_ticks": "1273294",
+          "field": "pid",
+          "identity_live": true,
+          "identity_uncertain": false,
+          "observed": {
+            "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/coverage_first.py ",
+            "pid": 1942550,
+            "process_state": "S",
+            "start_ticks": "1273294"
+          },
+          "old_boot": false
+        }
+      ],
+      "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+      "status": "WAITING_DEPENDENCY_OR_COMPLETE"
+    },
+    "suite-c4-queue-state.json": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-c4-queue-state.json",
+      "processes": [
+        {
+          "expected_start_ticks": "253764",
+          "field": "pid",
+          "identity_live": true,
+          "identity_uncertain": false,
+          "observed": {
+            "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/suite_queue.py C4 ",
+            "pid": 291376,
+            "process_state": "S",
+            "start_ticks": "253764"
+          },
+          "old_boot": false
+        }
+      ],
+      "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+      "status": "WAITING_EXISTING_PRIORITY_QUEUE"
+    },
+    "suite-native-queue-state.json": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-native-queue-state.json",
+      "processes": [
+        {
+          "expected_start_ticks": "105049",
+          "field": "pid",
+          "identity_live": true,
+          "identity_uncertain": false,
+          "observed": {
+            "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/suite_queue.py Native ",
+            "pid": 93647,
+            "process_state": "S",
+            "start_ticks": "105049"
+          },
+          "old_boot": false
+        },
+        {
+          "expected_start_ticks": null,
+          "field": "child_pid",
+          "identity_live": false,
+          "identity_uncertain": true,
+          "observed": {
+            "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_repetitions.py Native --program freqmine --input simmedium --repetitions 3 --timeout 14400 --bdf 0000:e2:00.0 --apps-receipt /data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-staged-resident-apps-build.json --rootfs-receipt /data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-staged-resident-rootfs-build.json --firmware-receipt /data1/gzh/EC/firesim/final-opt4-20261106/software/Native/freqmine-staged-resident-firmware-build.json --driver-receipt /data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json ",
+            "pid": 515520,
+            "process_state": "S",
+            "start_ticks": "383233"
+          },
+          "old_boot": false
+        }
+      ],
+      "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+      "status": "RUNNING"
+    }
+  },
+  "native_driver_identity_preserved": true,
+  "observed_utc": "2026-11-07T09:48:52.258226+00:00",
+  "original_tasks_stopped": false,
+  "scheduling_code_sha256": {
+    "activate_coverage_first.py": "0684d60497ecb0a6a53f92b7dd31bf67824b1888ec9e75eddfd1a56eb020660f",
+    "coverage_first.py": "e8fef22d7914be19cfd0c285fc767eaed22fe83abdf38a46d1316376252454d8",
+    "coverage_status.py": "acde90caacf633f9206f25978b00611f7abfb61b09fc0c7161dc24c361d5671f",
+    "job_service.py": "c4517edd97d43da2df7a9066915130f90ce4b8eac3c4cf3cc6e33bdfd2b7f2b7"
+  },
+  "signals_to_original_tasks": false
+}

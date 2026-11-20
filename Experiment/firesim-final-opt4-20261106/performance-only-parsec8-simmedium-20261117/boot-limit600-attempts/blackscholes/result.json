@@ -1,0 +1,153 @@
+{
+  "checker_latency": null,
+  "counts": null,
+  "drain_cycles": null,
+  "driver_returncode": 0,
+  "driver_stop_after_guest_powerdown": false,
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-parsec8-simmedium-20261117/runs/blackscholes/deployment-command.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-parsec8-simmedium-20261117/runs/blackscholes/deployment-handoff.json": "889abcc4d01df711b0e2cdfb20ff77736fd983756963e28df53983cb3916020f",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-parsec8-simmedium-20261117/runs/blackscholes/deployment.json": "604c5c9b1a11052d130c3eff8f763dc54f5ab8c21737c435fbc436dac0e712a0",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-parsec8-simmedium-20261117/runs/blackscholes/heartbeat.csv": "c99827084e0efa37e954953f7bd66026180c4184fb2c86b6b04f532654b7d49b",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-parsec8-simmedium-20261117/runs/blackscholes/host.log": "903a2457ea72734a71087e0cd52d9a9d032772f6fe0fec02a6a7dd559c4eae44",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-parsec8-simmedium-20261117/runs/blackscholes/latency_histogram.csv": "7348bacc4d184cc676cfcf89f8d0ec40dd28eeaa86ae0f6fefa797b43dc6d210",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-parsec8-simmedium-20261117/runs/blackscholes/manifest.json": "7df011426f327fa70847dde409a1d99c6dfa0bd42cc15220f6a17142be78c816",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-parsec8-simmedium-20261117/runs/blackscholes/memory_stats0.csv": "6679c5006d14d8413ec36ba18171c1f179c0196e04b362e4af778b06baad416e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-parsec8-simmedium-20261117/runs/blackscholes/pre-run.json": "f7f5a975782ff2587ba834cf7d8baa5495b8462522cf0a4f4b944765dda24568",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-parsec8-simmedium-20261117/runs/blackscholes/rtl-events-0": "1f47891a01656018a51cd2c40487d3340f0879c129bb55e1058578500d71de93",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-parsec8-simmedium-20261117/runs/blackscholes/state.json": "3d1aa9d638b737bb71ccb6f412d01d4760d137c6ebc17b2542901243f3ecc2ea",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-parsec8-simmedium-20261117/runs/blackscholes/uart.in": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-parsec8-simmedium-20261117/runs/blackscholes/uart.log": "63b15535267bc177a63281bf2ed97e77c5481a4a20047f43a091f45ad6ad14c3"
+  },
+  "fased_readback": {
+    "readLatency": 30,
+    "readMaxReqs": 4,
+    "relaxFunctionalModel": 0,
+    "writeLatency": 30,
+    "writeMaxReqs": 4
+  },
+  "formal": true,
+  "fpga_execution": true,
+  "full_PALIMPSEST": false,
+  "guest_power_down_observed": false,
+  "host_efficiency": {
+    "host_delta": 6081547843,
+    "host_simulation_wall_seconds": 608.181406,
+    "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+    "simulation_throughput_cycles_per_second": 659265.473,
+    "target_delta": 400953002,
+    "target_end": 400953002,
+    "target_start": 0
+  },
+  "host_wall_seconds": 608.2212266819552,
+  "identity": {
+    "apps_manifest_sha256": "0ccb15ae6db46dd4f3c3c098823e33596012d8f6cab7dddcdcf04f90d498ea4a",
+    "bitstream_sha256": "1617d53ae39b5c4d700dc24de04a055391d163678d6ac7f989d3ba52b1cd1154",
+    "board_bdf": "0000:21:00.0",
+    "board_serial": "21770433G02LA",
+    "case": {
+      "algorithm_unchanged": true,
+      "argv": [
+        "1",
+        "in_16K.txt",
+        "prices.txt"
+      ],
+      "fpga_validation": "NOT_RUN",
+      "input": "simmedium",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/inputs/input_simmedium.tar": "cb50267d053cb4bb841125aa5efa4fa915662817fbff3fe336dd092a7dd94147"
+      },
+      "input_files": {
+        "in_16K.txt": "f31b70b2f2c0f702464fcca7ca7fb68e3821530bb2d8132659f50fb6510715dd"
+      },
+      "official_reference_max_absolute_error": 2.7284587281073414e-05,
+      "output_count": 16384,
+      "program": "blackscholes",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-formal-20261106T123109Z/reference/prices.txt": "0593ad06c392032063c79b1c14337e9daedabe1324e285e069fc277edc72dd43"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/parsec/simmedium.runconf",
+      "runconf_sha256": "395ed0429ccd6d2bf638363bfc30a3b7f9a7f9cbd84dedb8da169182ebaf73d6",
+      "software_reference": "QEMU_USER_ONLY",
+      "threads": 1,
+      "warmups": 0
+    },
+    "configuration": "ECPerformanceOnly",
+    "driver_sha256": "cf3d4be8954330d99e62580ba2e8e8ad71f0041f0573a0b8d2b4c67b110ccb0a",
+    "elf_sha256": "75b4e2923b0a7b1d096023daa6610f5c622bf04771b4e2966bbdee006e5270ea",
+    "fdt_sha256": "c712fed367c0b57d9a1ed9f6e53688861a646f3732654b253131ff6e8953dda6",
+    "firmware_sha256": "7546b77fd5f039488b604763b952bcacc6cad0792bd109666b61dc2b27987c34",
+    "formal": true,
+    "full_PALIMPSEST": false,
+    "hardware_commit": "4915b82c138d63cfb7b74f2fe5249ab96c765d34",
+    "hardware_profile": "EC Performance-Only: BJL + four result CDC Mem",
+    "hardware_source_id": "3702128e000dbfa981961bde5c8a6ad004eca0ffc2f01eb33fe7c19a9f9a7d19",
+    "input": "simmedium",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "performance_only": true,
+    "program": "blackscholes",
+    "repetition": 1,
+    "rootfs_sha256": "427d0b923bc2be77b67ba0ff11efd47bb83c7bbf28fd990e10c658dcf7178711",
+    "run_id": "blackscholes",
+    "software_profile": "formal",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": 100000000,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "6b6ec030018ae64c43b9ca1f48a1315d328eaae6d0b7455291b933eafb7089f1",
+  "issues": [
+    "host timeout",
+    "incomplete real task event coverage",
+    "invalid/missing positive checker accounting and drain",
+    "missing matching installed/parked checker context",
+    "missing successful application command exit",
+    "missing unique successful output validation"
+  ],
+  "native_median_roi_cycles": 829737734,
+  "native_samples": [
+    {
+      "host_wall_seconds": 177.37044068984687,
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r1-20261106T125841Z/result.json",
+      "roi_cycles": 829737734,
+      "sha256": "50cdca30c66c0f38c4d86a1ae8b501c90de134bba56053531f48f3257e7fd5c9"
+    },
+    {
+      "host_wall_seconds": 176.5797529090196,
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r2-20261106T130737Z/result.json",
+      "roi_cycles": 828230479,
+      "sha256": "9ff0739ae455648d8b6f0a7fdda2bd02cb59093ef9bfa3ededbcac15b5f8922b"
+    },
+    {
+      "host_wall_seconds": 176.93765668198466,
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r3-20261106T131036Z/result.json",
+      "roi_cycles": 829885720,
+      "sha256": "00d3599be93270bcc6cd27fd0aa97cbebe82f8f257d6f947a7269e682ce31083"
+    }
+  ],
+  "participation": {
+    "begins": 0,
+    "matched_pairs": 0,
+    "results": 0,
+    "strict_latency": null,
+    "unfinished": 0
+  },
+  "post_drain_traffic_counters": {},
+  "raw": null,
+  "roi_cycles": null,
+  "schema": "ec-performance-only-fpga-result/1",
+  "slowdown": null,
+  "timedout": true,
+  "valid": false
+}

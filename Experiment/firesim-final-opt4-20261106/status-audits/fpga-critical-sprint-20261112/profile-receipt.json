@@ -1,0 +1,66 @@
+{
+  "after": {
+    "2379656": {
+      "cpu_ticks": 1331711,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 2379656,
+      "process_state": "S",
+      "rss_bytes": 13378002944,
+      "start_ticks": "25825451"
+    },
+    "2442537": {
+      "cpu_ticks": 775052,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 2442537,
+      "process_state": "S",
+      "rss_bytes": 4083548160,
+      "start_ticks": "26124720"
+    }
+  },
+  "argv": [
+    "/usr/bin/perf",
+    "record",
+    "-e",
+    "cpu-clock",
+    "-F",
+    "49",
+    "--call-graph",
+    "fp",
+    "-p",
+    "2379656,2442537",
+    "-o",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/fpga-critical-sprint-20261112/capacity.perf.data",
+    "--",
+    "/usr/bin/sleep",
+    "12"
+  ],
+  "before": {
+    "2379656": {
+      "cgroup": "13:devices:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n9:memory:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n1:name=systemd:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n0::/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n",
+      "identity": {
+        "cpu_ticks": 1330152,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2379656,
+        "process_state": "S",
+        "rss_bytes": 13378002944,
+        "start_ticks": "25825451"
+      }
+    },
+    "2442537": {
+      "cgroup": "13:devices:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n9:memory:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n1:name=systemd:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n0::/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service\n",
+      "identity": {
+        "cpu_ticks": 773494,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2442537,
+        "process_state": "S",
+        "rss_bytes": 4083138560,
+        "start_ticks": "26124720"
+      }
+    }
+  },
+  "cad_inputs_modified": false,
+  "fpga_access": false,
+  "returncode": 0,
+  "signals_sent_to_cad": [],
+  "updated_utc": "2026-11-12T05:04:21.059882+00:00"
+}

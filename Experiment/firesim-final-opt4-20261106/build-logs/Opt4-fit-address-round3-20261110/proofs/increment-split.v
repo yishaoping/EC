@@ -1,0 +1,7 @@
+module Candidate(input [63:0] state_in, input [9:0] delta, output [64:0] result);
+wire [63:0] a0=state_in[63:0];
+wire [9:0] d0=delta[9:0];
+wire [10:0] low0={1'b0,a0[9:0]}+d0;
+wire [53:0] hi0=a0[63:10]+low0[10];
+assign result[64:0]={(low0[10] && (&a0[63:10])),hi0,low0[9:0]};
+endmodule

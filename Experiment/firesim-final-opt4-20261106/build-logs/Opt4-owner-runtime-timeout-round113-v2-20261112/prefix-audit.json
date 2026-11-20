@@ -1,0 +1,65 @@
+{
+  "compared_other_lines": 6033631,
+  "complete_target_cycle_equivalence": false,
+  "counts": {
+    "mc": {
+      "other_bytes": 848232287,
+      "other_lines": 6033631,
+      "other_sha256": "035899b3a579ce1764d47ef4667a235dd91b55833f556045740e682cca510af6",
+      "partial_bytes": 0,
+      "raw_bytes": 848232449,
+      "raw_lines": 6033635,
+      "raw_sha256": "58267d853c22f821e4f3b43f1f704ff63044d5fb79f7b10899a02c1bf4d3f057",
+      "uart_bytes": 162,
+      "uart_rows": [
+        "[INIT] checker_mask=0xf status=ready\n",
+        "[INIT] software_interrupt=pass\n",
+        "[RUN] hart=0 status=started\n",
+        "[CONFIG] common_abi=1 harts=5 timer_stride=64 legacy_readback=off\n"
+      ],
+      "uart_sha256": "2583389fa171a2214f7c3b5b2a2154655df5b965be4284fa21f9931895083327"
+    },
+    "plain": {
+      "other_bytes": 1370938573,
+      "other_lines": 9902198,
+      "other_sha256": "94c01a0cc3678678fe1d1fb9b81d94504e0c94788839b2afa63a7db84a29050b",
+      "partial_bytes": 0,
+      "raw_bytes": 1370938735,
+      "raw_lines": 9902202,
+      "raw_sha256": "4a5759de06925e98eb8da1d3e1b503b086bd85961ddedc28f447230e6daa0ae9",
+      "uart_bytes": 162,
+      "uart_rows": [
+        "[INIT] checker_mask=0xf status=ready\n",
+        "[INIT] software_interrupt=pass\n",
+        "[RUN] hart=0 status=started\n",
+        "[CONFIG] common_abi=1 harts=5 timer_stride=64 legacy_readback=off\n"
+      ],
+      "uart_sha256": "2583389fa171a2214f7c3b5b2a2154655df5b965be4284fa21f9931895083327"
+    }
+  },
+  "dropped_complete_lines": 0,
+  "elf_sha256": "d0d0e9ae99bd963aeed84a8b395e7096f54985d117d11542d553a38680b8397b",
+  "first_mismatch": {
+    "channel": "all_other_complete_lines",
+    "index": 1436322,
+    "mc": "locs created\n",
+    "mc_offset": 197894394,
+    "plain": "STAGE1_TX S1 source=DCACHE cycle=0000000000040b48 line=0080040bc0 set=2f way=0 epoch=0006 gen=00000000 mshr=00 txn=00000000 req=000000000001466b effect=0000000000000000 pc=0080035ab2 cmd=00\n",
+    "plain_offset": 197894394
+  },
+  "full_target_equivalence": false,
+  "mc_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-runtime-r1-20261111/run-MCRams.log",
+  "mutation_receipt_sha256": "18f429affe4801f1354145b73409fa3d04bf28ef8c6dded37eafbba3365afc69",
+  "normalized_bytes": 0,
+  "original_target_timestamps_unchanged": true,
+  "passed": false,
+  "plain_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-runtime-r1-20261111/run-Plain.log",
+  "plain_other_prefix_sha256": "dc01ae78f39d05a4c6ed0140a47052cd79c0a8ec9da3036f0e50fcbe4d308700",
+  "prior_r113_failure_sha256": "0f0fcfc11bcff55906c38d1b1e7c0d03a6b09d93c201ef8123a0822660c94a2a",
+  "prior_v1_failure_sha256": "52d9494aee012a08de64fa908a70c1facf5d00f564408d3ca3494634f33e1a3a",
+  "prior_v2_failure_sha256": "3b1d4f79d057ec811a46c14603bf8526d35599921fe9897b1d8313059673e051",
+  "roi_complete": false,
+  "scope": "Exact finite stdout prefix within UART and all-other transports; no UART/RTL interleaving equivalence claim.",
+  "status": "FAIL_LOG_PREFIX_MISMATCH_NO_RUNTIME",
+  "uart_match": true
+}

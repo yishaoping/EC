@@ -1,0 +1,9 @@
+EC Performance-Only: data preservation + cache isolation; hardware 6fada307.
+
+R6 remains the sole complete-shell CAD owner. The actual link completed with zero unresolved functional blackboxes, and opt_design completed successfully. The optimized checkpoint is being written; capacity.complete and a complete-shell utilization receipt do not exist in the ending observation. The 939,850 LUT / 927,968 FF / 545 BRAM / 112 DSP report is DUT synthesis only. No complete-shell FIT, physical completion, bitstream or runtime certification is established.
+
+R3 is adopted as the existing real whole-host checker validation owner. R1 compiled the exact host successfully; R2 compiled the corrected read-only observer and failed its link-command parser. R3 successfully linked that observer before Vemul__ALL.a, whose default main remains archived. All 644 protected predecessor artifacts match their hashes. R2 observer source/object and oracle are byte unchanged. The host RTL matches the CAD input. No model rebuild or RTL change occurred.
+
+The actual R3 workload is active. No result.json exists, so integrated checker acceptance remains pending. The strict oracle still requires allocation/local BEGIN/full_compare result/actual BOOM accepted sequence equality, all four checkers, no duplicate or missing sequence, no cancellation, no sampling errors, verified Canneal output and clean exit. Partial workload output, generated identity, and boundary-injected module tests do not establish this result. This finite Canneal project400 test is not PARSEC simmedium, FPGA execution, or universal equivalence.
+
+No new job, supervisor, subagent, software build, validation run, CAD restart, hardware edit, FPGA IO, CPU-session control or SVB-session control was performed. The full-EC/PALIMPSEST shell ledger is unchanged. No new structural cut is authorized before this hardware's actual complete-shell postopt result.

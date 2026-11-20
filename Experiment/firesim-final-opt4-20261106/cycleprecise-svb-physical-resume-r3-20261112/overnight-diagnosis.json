@@ -1,0 +1,63 @@
+{
+  "completed_utc": "2026-11-12T01:21:52.428490+00:00",
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-logs/timing_bitstream-attempt-1.log": "2da3f7f1b1daef46f25f1bda4f23b93969070028e6fe695238041a5400228048",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-state.json": "5c973bd4d39fee8bfb04b3548e2aad05d212f46a87be252e947013dbe73dfc8b",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/round51-v1/spread-postroute/physical-1-timing.rpt": "aec25dbc3a805e11929b86629615e2fbd888209200fc8dd9a785c4a37e386341",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/round51-v1/spread-postroute/recovery.log": "d93d68ff7184e174a5f760a5ebf3bab75989ff3412cf50ee5a9fff14e2fa8fff",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/round51-v1/spread-postroute/result.json": "5f20b07db0f8156d71c2aff3980c0b9c47ba0f1f50b48c97ff9a9efc2ce931a7",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/round51-v1/spread-replicate/recovery.log": "46e93cebb9e5acb4989b18014dddad7f6fbe4f36c490c6af893250eab58b9f75",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/round51-v1/spread-replicate/result.json": "70cf1f37c78355a1380c7c258588ba949a5e0106301fffe24946dbee2cbb4b37",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-spread-implementation-r1-20261111/route-status.rpt": "c832a7c178007ed7e81a29662f4a9628e97b551e81469c52c1841554b9f5728b",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-spread-implementation-r1-20261111/timing-routed.rpt": "66ee9e66fd03128dc490caa9214e582004c6d14ee6b3c1a0ea7039ac3a9288c6"
+  },
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "new_resume": {
+    "cpus": [
+      252,
+      253
+    ],
+    "does_not_repeat_physopt": true,
+    "no_clock_changes": true,
+    "request": "svb-physical-resume-r3-v1-8491167d",
+    "reuses": "spread-postroute physical-1 DCP",
+    "status": "STARTED"
+  },
+  "old_four_recovery_failure": "load<48 before any Vivado",
+  "original": {
+    "routed": true,
+    "whs_ns": -0.084,
+    "wns_ns": -10.999
+  },
+  "r51_current_actual": "original-postroute phys_opt hold-fix active; no intervention",
+  "r51_spread_postroute": {
+    "checkpoint_preserved": true,
+    "failed_on": "route_design incompatible -preserve with -directive Explore",
+    "initial_wns_ns": -2.01,
+    "physical1_wns_ns": -1.373,
+    "whs_ns": 0.001
+  },
+  "r51_spread_replicate": {
+    "failed_on": "query expected exact two activeIdx nets before physical replication",
+    "physical_replication_ran": false
+  },
+  "schema": "ec-svb-physical-overnight-root-cause/1",
+  "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+  "spread": {
+    "main_path": {
+      "delay_ns": 21.753,
+      "destination": "depthHistogramReg_1_reg[32]/CE",
+      "levels": 64,
+      "logic_ns": 6.481,
+      "route_ns": 15.272,
+      "source": "line_1_reg[14]"
+    },
+    "routed": true,
+    "routing_errors": 0,
+    "setup_failing_endpoints": 10203,
+    "tns_ns": -7812.321,
+    "whs_ns": 0.001,
+    "wns_ns": -2.01
+  }
+}

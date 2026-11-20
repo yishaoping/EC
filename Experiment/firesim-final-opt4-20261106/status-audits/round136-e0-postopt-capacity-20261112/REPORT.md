@@ -1,0 +1,5 @@
+Round136 pinned the completed e0 fullshell optimized result: 2,789,012 LUTs (213.93%), 1,792,097 FFs, 81,248 CARRY8s, 1,028.5 BRAM tiles and 195 DSPs. The LUT excess is 1,485,332. This is NOT FIT; the existing capacity gate stopped before placement. The final report, hierarchy and state agree; the primitive CARRY8 total agrees and no blackboxes remain.
+
+The e0 service is inactive with MainPID 0 and absent exact cgroups. The optimized checkpoint is retained and hashed in receipt.json. Its input commit is e0c3737f, distinct from the still pending original owner-MCrams postopt result. The measured LUT difference from completed 9ae is -58,370; this comparison supplies no correctness or timing admission.
+
+R6 H and both followers, original MCrams capacity, r3 continuation, r4b observer and the original metrics singleton were preserved. No jobs, requests, process signals, bound-source changes, CPU comparison controls or FPGA operations were issued. Next: existing H->I->J and strict certification/21-only replay; original MCrams authoritative postopt, then existing FIT/parity gates.

@@ -1,0 +1,3 @@
+Versioned recovery of the production host token oracle after r2 stopped at token 12. The actual host read MMIO outputs before requiring a precise shared output boundary. This recovery adds the same PeekPokeBridge precise/timeout/unstable gate used by other complete-host validators, reuses the exact production target proof and generated threaded host, then validates threaded and plain host tokens. Hardware, target stimulus, cycle semantics and public outputs are unchanged. No area or FIT claim.
+
+R4 also fixes the r3 preflight identity comparison: the experiment commit and hardware commit are recorded and checked separately. The r3 systemd unit failed before admitting a validation stage; its cgroup was released before this version was prepared.

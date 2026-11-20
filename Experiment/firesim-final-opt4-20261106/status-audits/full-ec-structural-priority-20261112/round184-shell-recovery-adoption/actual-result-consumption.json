@@ -1,0 +1,95 @@
+{
+  "authoritative_fullshell": {
+    "hardware_commit": "8d50489af3af9e4c766509284ba3d9d7c99cfec9",
+    "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/full-ec-structural-priority-20261112/round164-mixed-stats-host/fullshell-8d50489a-result.json",
+    "result_sha256": "3a3182f20d1a2734dc849672a7a7bc6f9596dee52cc8027abdc09cc40dbc7726",
+    "scope": "complete_u280_shell_postopt",
+    "source_binding": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/full-ec-structural-priority-20261112/round164-mixed-stats-host/fullshell-8d50489a-source-binding.json",
+    "source_binding_sha256": "5abe0ca3d4996284446f2df824a2e9259c47c1a2193c94c19f651664bec238b1",
+    "utilization": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-field-address-cad-8d50489a/top-postopt-utilization.rpt",
+    "utilization_sha256": "1634577d6ceaa9e68e5ed49b0e4cfab1918a11d74bf6fd607df36aabc56e5fd8"
+  },
+  "authoritative_fullshell_LUT": 2478437.0,
+  "capacity": 1303680,
+  "completed": {
+    "address-banked-production-host-r6": {
+      "hardware_commit": "4b0ca01ee8704fe1db70e35c08ab3bd4c00e9ec0",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-banked-production-host-r6-20261113/result.json",
+      "result_sha256": "d6551768333c94fb35c64e4fe5e940b228c41c061f27623c4689b3fd1f2f7735",
+      "scope": "Directory-only Plain generation recovery; full threaded3003-token positive/negative receipts reused, complete Plain oracle unchanged. No area or FIT claim.",
+      "status": "PASS_PRODUCTION_HOST_PRECISE_3003_TOKEN_ORACLE_AND_PLAIN_THREADED_PARITY_NO_AREA",
+      "target_cycles": 6144,
+      "tokens": {
+        "Plain": {
+          "checked_outputs": 156000,
+          "digest": "19aa6e6283f2cb27",
+          "host_cycles_including_bridge_io": 954962,
+          "target_tokens": 3003
+        },
+        "Threaded": {
+          "checked_outputs": 156000,
+          "digest": "19aa6e6283f2cb27",
+          "host_cycles_including_bridge_io": 954962,
+          "target_tokens": 3003
+        }
+      }
+    },
+    "address-dsp-fullmodule-pair-r1": {
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-dsp-fullmodule-pair-r1-20261112/result.json",
+      "result_sha256": "68fa7e4133cebdbe8418908c3198cbc133b350b4dfdc3669db2b0da436bdb566",
+      "savings": {
+        "Block RAM Tile": 0.0,
+        "CARRY8": 43360.0,
+        "CLB LUTs": 82814.0,
+        "CLB Registers": -18.0,
+        "DSPs": -6144.0,
+        "URAM": 0.0
+      },
+      "scope": "Complete generated address module extracted from actual owner-MCRams host, renamed FPGATop for strict area parsing. Two identical OOC maps differing only3072 USE_DSP synthesis attributes. No host/shell FIT claim.",
+      "status": "COMPLETE_ACTUAL_FULL_ADDRESS_DSP_AREA_PAIR_NOT_WHOLE_FIT"
+    },
+    "address-packed-full-module-r1": {
+      "complete_module_lut_saving": 27348.0,
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/result.json",
+      "result_sha256": "158282f72b09ba3600704ca0ae4281f11fdc42d144d9572f7893baa2bb0e19a2",
+      "scope": "Complete actual PackageAddressStats target: unchanged state/update priorities and public interface. Private proof observes all5120 bucketwords plus valid/sequence, including invalid payload. Paired area excludes proof-only ports.",
+      "status": "COMPLETE_PRIVATE_MODULE_PARITY_AND_PAIRED_AREA_NOT_WHOLE_FIT"
+    },
+    "dcache-storage-compose-report-r4": {
+      "candidate_resources": {
+        "Block RAM Tile": 221.0,
+        "CARRY8": 66607.0,
+        "CLB LUTs": 1492945.0,
+        "CLB Registers": 647597.0,
+        "DSPs": 48.0,
+        "URAM": 0.0
+      },
+      "module_lut_saved": 136579.0,
+      "observations": 24575,
+      "reference_resources": {
+        "Block RAM Tile": 221.0,
+        "CARRY8": 66607.0,
+        "CLB LUTs": 1629524.0,
+        "CLB Registers": 760995.0,
+        "DSPs": 48.0,
+        "URAM": 0.0
+      },
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-dcache-storage-compose-report-r4-20261113/result.json",
+      "result_sha256": "72fec93215bb5e42f1b13fecc5882f5bb500428ddebebb043058f0dc962b354c",
+      "scope": "Full frozen DCache finite regression and completed same-harness OOC synthesis pair; parser-only recovery. No generated host or shell FIT claim.",
+      "source_variant": "5542ec134e5a90657a1f733555a74302e58a50e5dafed99e1affdb47a761efd2",
+      "status": "COMPLETE_FULL_DCACHE_CYCLE_AND_PAIRED_MODULE_AREA_REPORT_RECOVERY_NOT_WHOLE_FIT",
+      "target_cycles": 8192
+    }
+  },
+  "full_system_fit": false,
+  "gap": 1174757.0,
+  "no_independent_delta_subtraction": true,
+  "production_actual_complete_pair": false,
+  "production_paired_progress": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-banked-production-area-pair-r5-20261113/paired-progress.json",
+  "production_paired_progress_sha256": "7f991f87c55d61a1330af3bdb3b91b01bb6615b80a86862da2d42bc420ad3e88",
+  "production_plain_LUT": 1247953,
+  "production_threaded_result": null,
+  "schema": "ec-round184-actual-scope-result-consumption/1",
+  "utc": "2026-11-13T01:57:27.611143+00:00"
+}

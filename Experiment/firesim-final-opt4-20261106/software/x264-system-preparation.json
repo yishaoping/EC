@@ -1,0 +1,96 @@
+{
+  "apps_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/x264-apps-build.json",
+  "child_pid": 134994,
+  "commands": [
+    [
+      "python3",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/prepare_rootfs.py",
+      "--apps-receipt",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/x264-apps-build.json",
+      "--output-receipt",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/x264-rootfs-build.json"
+    ],
+    [
+      "python3",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_earlyconsole.py",
+      "Native",
+      "--parent-receipt",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/canneal-formal-kernel-build.json",
+      "--rootfs-receipt",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/x264-rootfs-build.json",
+      "--output-receipt",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/x264-kernel-build.json",
+      "--build-root",
+      "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds"
+    ],
+    [
+      "python3",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_system.py",
+      "Native",
+      "firmware",
+      "--kernel-result",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/x264-kernel-build.json",
+      "--fdt-result",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-build.json",
+      "--output-receipt",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/x264-firmware-build.json",
+      "--build-root",
+      "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds",
+      "--jobs",
+      "8"
+    ],
+    [
+      "python3",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_earlyconsole.py",
+      "C4",
+      "--parent-receipt",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/canneal-formal-kernel-build.json",
+      "--rootfs-receipt",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/x264-rootfs-build.json",
+      "--output-receipt",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/x264-kernel-build.json",
+      "--build-root",
+      "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds"
+    ],
+    [
+      "python3",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_system.py",
+      "C4",
+      "firmware",
+      "--kernel-result",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/x264-kernel-build.json",
+      "--fdt-result",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-build.json",
+      "--output-receipt",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/x264-firmware-build.json",
+      "--build-root",
+      "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds",
+      "--jobs",
+      "8"
+    ]
+  ],
+  "ended_utc": "2026-11-07T06:34:08.477722+00:00",
+  "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/x264-C4-firmware-build.log",
+  "pid": 121092,
+  "profile": "x264",
+  "reuse": [
+    {
+      "config_equal_except_initramfs": true,
+      "configuration": "Native",
+      "kernel_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/x264-kernel-build.json",
+      "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/canneal-formal-kernel-build.json",
+      "roi_driver_object_sha256": "0e8715bd4344f6d79b836efd9c99035e0ceba0e93cd21787072ef27ab95c8894"
+    },
+    {
+      "config_equal_except_initramfs": true,
+      "configuration": "C4",
+      "kernel_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/x264-kernel-build.json",
+      "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/canneal-formal-kernel-build.json",
+      "roi_driver_object_sha256": "4985634486e3dc90cf4bfa44feb6fdf6b90c4ec134ddc3b191cb9ca704f5e5fc"
+    }
+  ],
+  "rootfs_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/x264-rootfs-build.json",
+  "stage": "C4-firmware",
+  "started_utc": "2026-11-07T06:33:31.920855+00:00",
+  "status": "READY_FOR_FPGA_NOT_RUN"
+}

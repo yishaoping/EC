@@ -1,0 +1,114 @@
+{
+  "schema": "ec-address-combinational-width-census/1",
+  "utc": "2026-11-10T11:18:00.289411+00:00",
+  "scope": "Generated Verilog structural operator result widths; not Vivado physical area. Counts are direct expressions, no hierarchy/ancestor addition.",
+  "variants": {
+    "current_whole_system_address_source": {
+      "rtl": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-modules-20261110/fit-address/PackageAddressStats.v",
+      "rtl_bytes": 53063012,
+      "groups": {
+        "load_8term_bucket_reduction": {
+          "add_nodes": 7168,
+          "result_width_sum": 51968,
+          "width_histogram": {
+            "10": 1792,
+            "8": 1792,
+            "7": 1792,
+            "4": 1792
+          }
+        },
+        "store_8term_bucket_reduction": {
+          "add_nodes": 7168,
+          "result_width_sum": 51968,
+          "width_histogram": {
+            "10": 1792,
+            "8": 1792,
+            "7": 1792,
+            "4": 1792
+          }
+        },
+        "strict_80term_bucket_reduction": {
+          "add_nodes": 80896,
+          "result_width_sum": 829184,
+          "width_histogram": {
+            "13": 20224,
+            "11": 20224,
+            "10": 20224,
+            "7": 20224
+          }
+        },
+        "3072_parallel_bucket_update_and_overflow": {
+          "add_nodes": 3072,
+          "result_width_sum": 199680,
+          "width_histogram": {
+            "65": 3072
+          }
+        }
+      },
+      "one_assignment_example": {
+        "load_8term_bucket_reduction": "wire [9:0] _bucketLoadFirstDelta_0_0_T_9 = loadTerms_0[9:0] + loadTerms_1[9:0];",
+        "store_8term_bucket_reduction": "wire [9:0] _bucketStoreFirstDelta_0_0_T_9 = storeTerms_0[9:0] + storeTerms_1[9:0];",
+        "strict_80term_bucket_reduction": "wire [12:0] _bucketStrictWriteReadDelta_0_0_T_81 = strictTerms_0[12:0] + strictTerms_1[12:0];",
+        "3072_parallel_bucket_update_and_overflow": "wire [64:0] loadFirstNextWide_0_0 = bucketLoadFirst_0_0 + bucketLoadFirstDelta_0_0;"
+      }
+    },
+    "round3_candidate": {
+      "rtl": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-round3-20261110/PackageAddressStats.v",
+      "rtl_bytes": 80015220,
+      "groups": {
+        "load_8term_bucket_reduction": {
+          "add_nodes": 7168,
+          "result_width_sum": 27392,
+          "width_histogram": {
+            "5": 1536,
+            "6": 512,
+            "7": 256,
+            "3": 2560,
+            "4": 1280,
+            "2": 1024
+          }
+        },
+        "store_8term_bucket_reduction": {
+          "add_nodes": 7168,
+          "result_width_sum": 27392,
+          "width_histogram": {
+            "5": 1536,
+            "6": 512,
+            "7": 256,
+            "3": 2560,
+            "4": 1280,
+            "2": 1024
+          }
+        },
+        "strict_80term_bucket_reduction": {
+          "add_nodes": 80896,
+          "result_width_sum": 337664,
+          "width_histogram": {
+            "5": 16640,
+            "6": 8192,
+            "7": 4096,
+            "8": 2304,
+            "9": 512,
+            "10": 512,
+            "3": 25600,
+            "4": 12800,
+            "2": 10240
+          }
+        },
+        "3072_parallel_bucket_update_and_overflow": {
+          "add_nodes": 3072,
+          "result_width_sum": 199680,
+          "width_histogram": {
+            "65": 3072
+          }
+        }
+      },
+      "one_assignment_example": {
+        "load_8term_bucket_reduction": "wire [4:0] _bucketLoadFirstDelta_0_0_T_11 = _bucketLoadFirstDelta_0_0_T_8 + _bucketLoadFirstDelta_0_0_T_9;",
+        "store_8term_bucket_reduction": "wire [4:0] _bucketStoreFirstDelta_0_0_T_11 = _bucketStoreFirstDelta_0_0_T_8 + _bucketStoreFirstDelta_0_0_T_9;",
+        "strict_80term_bucket_reduction": "wire [4:0] _bucketStrictWriteReadDelta_0_0_T_83 = _bucketStrictWriteReadDelta_0_0_T_80 +\n    _bucketStrictWriteReadDelta_0_0_T_81;",
+        "3072_parallel_bucket_update_and_overflow": "wire [64:0] loadFirstNextWide_0_0 = bucketLoadFirst_0_0 + bucketLoadFirstDelta_0_0;"
+      }
+    }
+  }
+}

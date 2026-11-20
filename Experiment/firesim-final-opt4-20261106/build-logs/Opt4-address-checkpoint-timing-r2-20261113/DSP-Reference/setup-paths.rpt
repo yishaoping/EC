@@ -1,0 +1,1677 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version      : Vivado v.2021.1 (lin64) Build 3247384 Thu Jun 10 19:36:07 MDT 2021
+| Date              : Fri Nov 13 09:59:09 2026
+| Host              : devjz-ubt20-s01 running 64-bit Ubuntu 20.04.6 LTS
+| Command           : report_timing -delay_type max -path_type full_clock_expanded -max_paths 10 -file /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-checkpoint-timing-r2-20261113/DSP-Reference/setup-paths.rpt
+| Design            : FPGATop
+| Device            : xcu280-fsvh2892
+| Speed File        : -2L  PRODUCTION 1.29 11-17-2020
+| Temperature Grade : E
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (VIOLATED) :        -3.458ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[0]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        13.362ns  (logic 4.098ns (30.669%)  route 9.264ns (69.331%))
+  Logic Levels:           54  (CARRY8=14 LUT2=5 LUT3=9 LUT4=3 LUT5=10 LUT6=13)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  bucketStrictWriteRead_229_2[63]_i_264/O
+                         net (fo=1, unplaced)         0.242     1.599    bucketStrictWriteRead_229_2[63]_i_264_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  bucketStrictWriteRead_229_2_reg[63]_i_125/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  bucketStrictWriteRead_93_3[63]_i_250/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  bucketStrictWriteRead_78_3[63]_i_350/O
+                         net (fo=1, unplaced)         0.233     2.489    bucketStrictWriteRead_78_3[63]_i_350_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  bucketStrictWriteRead_78_3_reg[63]_i_167/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  bucketStrictWriteRead_78_3[63]_i_495/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  bucketStrictWriteRead_11_1[1]_i_161/O
+                         net (fo=1, unplaced)         0.242     3.427    bucketStrictWriteRead_11_1[1]_i_161_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  bucketStrictWriteRead_11_1_reg[1]_i_112/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  bucketStrictWriteRead_173_3[63]_i_937/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  bucketStrictWriteRead_78_3[63]_i_590/O
+                         net (fo=1, unplaced)         0.185     4.309    bucketStrictWriteRead_78_3[63]_i_590_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  bucketStrictWriteRead_78_3[63]_i_529/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  bucketStrictWriteRead_78_3[63]_i_383/O
+                         net (fo=7, unplaced)         0.210     4.780    bucketStrictWriteRead_78_3[63]_i_383_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  bucketStrictWriteRead_78_3[63]_i_178/O
+                         net (fo=26, unplaced)        0.240     5.090    bucketStrictWriteRead_78_3[63]_i_178_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  bucketStrictWriteRead_68_3[63]_i_205/O
+                         net (fo=3, unplaced)         0.191     5.351    bucketStrictWriteRead_68_3[63]_i_205_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  bucketStrictWriteRead_64_3[63]_i_217/O
+                         net (fo=4, unplaced)         0.197     5.586    bucketStrictWriteRead_64_3[63]_i_217_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  bucketStrictWriteRead_65_3[63]_i_98/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  bucketStrictWriteRead_65_1[0]_i_25/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.038     6.113 r  bucketStrictWriteRead_65_1[0]_i_10/O
+                         net (fo=4, unplaced)         0.197     6.310    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.348 r  bucketStrictWriteRead_65_1[0]_i_3/O
+                         net (fo=3, unplaced)         0.191     6.539    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.577 r  bucketStrictWriteRead_65_1[3]_i_26/O
+                         net (fo=2, unplaced)         0.185     6.762    bucketStrictWriteRead_65_1[3]_i_26_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.800 r  bucketStrictWriteRead_65_1[3]_i_18/O
+                         net (fo=2, unplaced)         0.185     6.985    bucketStrictWriteRead_65_1[3]_i_18_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.070     7.055 r  bucketStrictWriteRead_65_1[4]_i_18/O
+                         net (fo=2, unplaced)         0.185     7.240    bucketStrictWriteRead_65_1[4]_i_18_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.278 r  bucketStrictWriteRead_65_1[4]_i_9/O
+                         net (fo=2, unplaced)         0.185     7.463    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.501 r  bucketStrictWriteRead_65_1[3]_i_3/O
+                         net (fo=4, unplaced)         0.197     7.698    bucketStrictWriteRead_65_1[3]_i_3_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.768 r  bucketStrictWriteRead_65_1[4]_i_2/O
+                         net (fo=4, unplaced)         0.197     7.965    bucketStrictWriteRead_65_1[4]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.035 r  bucketStrictWriteRead_65_1[5]_i_2/O
+                         net (fo=4, unplaced)         0.197     8.232    bucketStrictWriteRead_65_1[5]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.302 r  bucketStrictWriteRead_65_1[63]_i_13/O
+                         net (fo=2, unplaced)         0.185     8.487    bucketStrictWriteRead_65_1[63]_i_13_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.525 r  bucketStrictWriteRead_65_1[63]_i_5/O
+                         net (fo=3, unplaced)         0.191     8.716    bucketStrictWriteReadDelta_65_1[7]
+                         LUT2 (Prop_LUT2_I1_O)        0.039     8.755 r  bucketStrictWriteRead_65_1[7]_i_3/O
+                         net (fo=1, unplaced)         0.022     8.777    bucketStrictWriteRead_65_1[7]_i_3_n_0
+                         CARRY8 (Prop_CARRY8_S[7]_CO[7])
+                                                      0.124     8.901 f  bucketStrictWriteRead_65_1_reg[7]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.906    bucketStrictWriteRead_65_1_reg[7]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.928 f  bucketStrictWriteRead_65_1_reg[15]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.933    bucketStrictWriteRead_65_1_reg[15]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.955 f  bucketStrictWriteRead_65_1_reg[23]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.960    bucketStrictWriteRead_65_1_reg[23]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.982 f  bucketStrictWriteRead_65_1_reg[31]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.987    bucketStrictWriteRead_65_1_reg[31]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.009 f  bucketStrictWriteRead_65_1_reg[39]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.014    bucketStrictWriteRead_65_1_reg[39]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.036 f  bucketStrictWriteRead_65_1_reg[47]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.041    bucketStrictWriteRead_65_1_reg[47]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.063 f  bucketStrictWriteRead_65_1_reg[55]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.068    bucketStrictWriteRead_65_1_reg[55]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.090 f  bucketStrictWriteRead_65_1_reg[63]_i_7/CO[7]
+                         net (fo=1, unplaced)         0.005     9.095    bucketStrictWriteRead_65_1_reg[63]_i_7_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     9.147 f  io_error[5]_INST_0_i_7662/CO[0]
+                         net (fo=1, unplaced)         0.185     9.332    strictWriteReadNextWide_65_1[64]
+                         LUT4 (Prop_LUT4_I2_O)        0.038     9.370 f  io_error[5]_INST_0_i_3538/O
+                         net (fo=1, unplaced)         0.185     9.555    io_error[5]_INST_0_i_3538_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     9.593 f  io_error[5]_INST_0_i_1297/O
+                         net (fo=1, unplaced)         0.185     9.778    io_error[5]_INST_0_i_1297_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     9.816 f  io_error[5]_INST_0_i_392/O
+                         net (fo=1, unplaced)         0.185    10.001    io_error[5]_INST_0_i_392_n_0
+                         LUT5 (Prop_LUT5_I0_O)        0.038    10.039 f  io_error[5]_INST_0_i_100/O
+                         net (fo=1, unplaced)         0.105    10.144    io_error[5]_INST_0_i_100_n_0
+                         LUT6 (Prop_LUT6_I1_O)        0.150    10.294 f  io_error[5]_INST_0_i_11/O
+                         net (fo=1, unplaced)         0.137    10.431    io_error[5]_INST_0_i_11_n_0
+                         LUT6 (Prop_LUT6_I2_O)        0.053    10.484 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    10.675    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    10.713 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.005    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.043 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    11.256    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    11.328 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    11.546    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    11.673 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    11.678    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    11.730 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    11.921    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    11.959 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    12.216    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    12.254 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    12.576    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    12.614 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    12.874    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    12.912 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.097    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.135 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    13.362    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[0]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[0]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[0]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -13.362    
+  -------------------------------------------------------------------
+                         slack                                 -3.458    
+
+Slack (VIOLATED) :        -3.458ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[10]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        13.362ns  (logic 4.098ns (30.669%)  route 9.264ns (69.331%))
+  Logic Levels:           54  (CARRY8=14 LUT2=5 LUT3=9 LUT4=3 LUT5=10 LUT6=13)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  bucketStrictWriteRead_229_2[63]_i_264/O
+                         net (fo=1, unplaced)         0.242     1.599    bucketStrictWriteRead_229_2[63]_i_264_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  bucketStrictWriteRead_229_2_reg[63]_i_125/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  bucketStrictWriteRead_93_3[63]_i_250/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  bucketStrictWriteRead_78_3[63]_i_350/O
+                         net (fo=1, unplaced)         0.233     2.489    bucketStrictWriteRead_78_3[63]_i_350_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  bucketStrictWriteRead_78_3_reg[63]_i_167/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  bucketStrictWriteRead_78_3[63]_i_495/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  bucketStrictWriteRead_11_1[1]_i_161/O
+                         net (fo=1, unplaced)         0.242     3.427    bucketStrictWriteRead_11_1[1]_i_161_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  bucketStrictWriteRead_11_1_reg[1]_i_112/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  bucketStrictWriteRead_173_3[63]_i_937/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  bucketStrictWriteRead_78_3[63]_i_590/O
+                         net (fo=1, unplaced)         0.185     4.309    bucketStrictWriteRead_78_3[63]_i_590_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  bucketStrictWriteRead_78_3[63]_i_529/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  bucketStrictWriteRead_78_3[63]_i_383/O
+                         net (fo=7, unplaced)         0.210     4.780    bucketStrictWriteRead_78_3[63]_i_383_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  bucketStrictWriteRead_78_3[63]_i_178/O
+                         net (fo=26, unplaced)        0.240     5.090    bucketStrictWriteRead_78_3[63]_i_178_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  bucketStrictWriteRead_68_3[63]_i_205/O
+                         net (fo=3, unplaced)         0.191     5.351    bucketStrictWriteRead_68_3[63]_i_205_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  bucketStrictWriteRead_64_3[63]_i_217/O
+                         net (fo=4, unplaced)         0.197     5.586    bucketStrictWriteRead_64_3[63]_i_217_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  bucketStrictWriteRead_65_3[63]_i_98/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  bucketStrictWriteRead_65_1[0]_i_25/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.038     6.113 r  bucketStrictWriteRead_65_1[0]_i_10/O
+                         net (fo=4, unplaced)         0.197     6.310    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.348 r  bucketStrictWriteRead_65_1[0]_i_3/O
+                         net (fo=3, unplaced)         0.191     6.539    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.577 r  bucketStrictWriteRead_65_1[3]_i_26/O
+                         net (fo=2, unplaced)         0.185     6.762    bucketStrictWriteRead_65_1[3]_i_26_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.800 r  bucketStrictWriteRead_65_1[3]_i_18/O
+                         net (fo=2, unplaced)         0.185     6.985    bucketStrictWriteRead_65_1[3]_i_18_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.070     7.055 r  bucketStrictWriteRead_65_1[4]_i_18/O
+                         net (fo=2, unplaced)         0.185     7.240    bucketStrictWriteRead_65_1[4]_i_18_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.278 r  bucketStrictWriteRead_65_1[4]_i_9/O
+                         net (fo=2, unplaced)         0.185     7.463    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.501 r  bucketStrictWriteRead_65_1[3]_i_3/O
+                         net (fo=4, unplaced)         0.197     7.698    bucketStrictWriteRead_65_1[3]_i_3_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.768 r  bucketStrictWriteRead_65_1[4]_i_2/O
+                         net (fo=4, unplaced)         0.197     7.965    bucketStrictWriteRead_65_1[4]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.035 r  bucketStrictWriteRead_65_1[5]_i_2/O
+                         net (fo=4, unplaced)         0.197     8.232    bucketStrictWriteRead_65_1[5]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.302 r  bucketStrictWriteRead_65_1[63]_i_13/O
+                         net (fo=2, unplaced)         0.185     8.487    bucketStrictWriteRead_65_1[63]_i_13_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.525 r  bucketStrictWriteRead_65_1[63]_i_5/O
+                         net (fo=3, unplaced)         0.191     8.716    bucketStrictWriteReadDelta_65_1[7]
+                         LUT2 (Prop_LUT2_I1_O)        0.039     8.755 r  bucketStrictWriteRead_65_1[7]_i_3/O
+                         net (fo=1, unplaced)         0.022     8.777    bucketStrictWriteRead_65_1[7]_i_3_n_0
+                         CARRY8 (Prop_CARRY8_S[7]_CO[7])
+                                                      0.124     8.901 f  bucketStrictWriteRead_65_1_reg[7]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.906    bucketStrictWriteRead_65_1_reg[7]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.928 f  bucketStrictWriteRead_65_1_reg[15]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.933    bucketStrictWriteRead_65_1_reg[15]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.955 f  bucketStrictWriteRead_65_1_reg[23]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.960    bucketStrictWriteRead_65_1_reg[23]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.982 f  bucketStrictWriteRead_65_1_reg[31]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.987    bucketStrictWriteRead_65_1_reg[31]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.009 f  bucketStrictWriteRead_65_1_reg[39]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.014    bucketStrictWriteRead_65_1_reg[39]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.036 f  bucketStrictWriteRead_65_1_reg[47]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.041    bucketStrictWriteRead_65_1_reg[47]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.063 f  bucketStrictWriteRead_65_1_reg[55]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.068    bucketStrictWriteRead_65_1_reg[55]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.090 f  bucketStrictWriteRead_65_1_reg[63]_i_7/CO[7]
+                         net (fo=1, unplaced)         0.005     9.095    bucketStrictWriteRead_65_1_reg[63]_i_7_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     9.147 f  io_error[5]_INST_0_i_7662/CO[0]
+                         net (fo=1, unplaced)         0.185     9.332    strictWriteReadNextWide_65_1[64]
+                         LUT4 (Prop_LUT4_I2_O)        0.038     9.370 f  io_error[5]_INST_0_i_3538/O
+                         net (fo=1, unplaced)         0.185     9.555    io_error[5]_INST_0_i_3538_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     9.593 f  io_error[5]_INST_0_i_1297/O
+                         net (fo=1, unplaced)         0.185     9.778    io_error[5]_INST_0_i_1297_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     9.816 f  io_error[5]_INST_0_i_392/O
+                         net (fo=1, unplaced)         0.185    10.001    io_error[5]_INST_0_i_392_n_0
+                         LUT5 (Prop_LUT5_I0_O)        0.038    10.039 f  io_error[5]_INST_0_i_100/O
+                         net (fo=1, unplaced)         0.105    10.144    io_error[5]_INST_0_i_100_n_0
+                         LUT6 (Prop_LUT6_I1_O)        0.150    10.294 f  io_error[5]_INST_0_i_11/O
+                         net (fo=1, unplaced)         0.137    10.431    io_error[5]_INST_0_i_11_n_0
+                         LUT6 (Prop_LUT6_I2_O)        0.053    10.484 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    10.675    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    10.713 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.005    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.043 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    11.256    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    11.328 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    11.546    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    11.673 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    11.678    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    11.730 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    11.921    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    11.959 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    12.216    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    12.254 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    12.576    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    12.614 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    12.874    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    12.912 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.097    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.135 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    13.362    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[10]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[10]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[10]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -13.362    
+  -------------------------------------------------------------------
+                         slack                                 -3.458    
+
+Slack (VIOLATED) :        -3.458ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[11]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        13.362ns  (logic 4.098ns (30.669%)  route 9.264ns (69.331%))
+  Logic Levels:           54  (CARRY8=14 LUT2=5 LUT3=9 LUT4=3 LUT5=10 LUT6=13)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  bucketStrictWriteRead_229_2[63]_i_264/O
+                         net (fo=1, unplaced)         0.242     1.599    bucketStrictWriteRead_229_2[63]_i_264_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  bucketStrictWriteRead_229_2_reg[63]_i_125/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  bucketStrictWriteRead_93_3[63]_i_250/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  bucketStrictWriteRead_78_3[63]_i_350/O
+                         net (fo=1, unplaced)         0.233     2.489    bucketStrictWriteRead_78_3[63]_i_350_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  bucketStrictWriteRead_78_3_reg[63]_i_167/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  bucketStrictWriteRead_78_3[63]_i_495/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  bucketStrictWriteRead_11_1[1]_i_161/O
+                         net (fo=1, unplaced)         0.242     3.427    bucketStrictWriteRead_11_1[1]_i_161_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  bucketStrictWriteRead_11_1_reg[1]_i_112/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  bucketStrictWriteRead_173_3[63]_i_937/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  bucketStrictWriteRead_78_3[63]_i_590/O
+                         net (fo=1, unplaced)         0.185     4.309    bucketStrictWriteRead_78_3[63]_i_590_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  bucketStrictWriteRead_78_3[63]_i_529/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  bucketStrictWriteRead_78_3[63]_i_383/O
+                         net (fo=7, unplaced)         0.210     4.780    bucketStrictWriteRead_78_3[63]_i_383_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  bucketStrictWriteRead_78_3[63]_i_178/O
+                         net (fo=26, unplaced)        0.240     5.090    bucketStrictWriteRead_78_3[63]_i_178_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  bucketStrictWriteRead_68_3[63]_i_205/O
+                         net (fo=3, unplaced)         0.191     5.351    bucketStrictWriteRead_68_3[63]_i_205_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  bucketStrictWriteRead_64_3[63]_i_217/O
+                         net (fo=4, unplaced)         0.197     5.586    bucketStrictWriteRead_64_3[63]_i_217_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  bucketStrictWriteRead_65_3[63]_i_98/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  bucketStrictWriteRead_65_1[0]_i_25/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.038     6.113 r  bucketStrictWriteRead_65_1[0]_i_10/O
+                         net (fo=4, unplaced)         0.197     6.310    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.348 r  bucketStrictWriteRead_65_1[0]_i_3/O
+                         net (fo=3, unplaced)         0.191     6.539    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.577 r  bucketStrictWriteRead_65_1[3]_i_26/O
+                         net (fo=2, unplaced)         0.185     6.762    bucketStrictWriteRead_65_1[3]_i_26_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.800 r  bucketStrictWriteRead_65_1[3]_i_18/O
+                         net (fo=2, unplaced)         0.185     6.985    bucketStrictWriteRead_65_1[3]_i_18_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.070     7.055 r  bucketStrictWriteRead_65_1[4]_i_18/O
+                         net (fo=2, unplaced)         0.185     7.240    bucketStrictWriteRead_65_1[4]_i_18_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.278 r  bucketStrictWriteRead_65_1[4]_i_9/O
+                         net (fo=2, unplaced)         0.185     7.463    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.501 r  bucketStrictWriteRead_65_1[3]_i_3/O
+                         net (fo=4, unplaced)         0.197     7.698    bucketStrictWriteRead_65_1[3]_i_3_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.768 r  bucketStrictWriteRead_65_1[4]_i_2/O
+                         net (fo=4, unplaced)         0.197     7.965    bucketStrictWriteRead_65_1[4]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.035 r  bucketStrictWriteRead_65_1[5]_i_2/O
+                         net (fo=4, unplaced)         0.197     8.232    bucketStrictWriteRead_65_1[5]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.302 r  bucketStrictWriteRead_65_1[63]_i_13/O
+                         net (fo=2, unplaced)         0.185     8.487    bucketStrictWriteRead_65_1[63]_i_13_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.525 r  bucketStrictWriteRead_65_1[63]_i_5/O
+                         net (fo=3, unplaced)         0.191     8.716    bucketStrictWriteReadDelta_65_1[7]
+                         LUT2 (Prop_LUT2_I1_O)        0.039     8.755 r  bucketStrictWriteRead_65_1[7]_i_3/O
+                         net (fo=1, unplaced)         0.022     8.777    bucketStrictWriteRead_65_1[7]_i_3_n_0
+                         CARRY8 (Prop_CARRY8_S[7]_CO[7])
+                                                      0.124     8.901 f  bucketStrictWriteRead_65_1_reg[7]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.906    bucketStrictWriteRead_65_1_reg[7]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.928 f  bucketStrictWriteRead_65_1_reg[15]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.933    bucketStrictWriteRead_65_1_reg[15]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.955 f  bucketStrictWriteRead_65_1_reg[23]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.960    bucketStrictWriteRead_65_1_reg[23]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.982 f  bucketStrictWriteRead_65_1_reg[31]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.987    bucketStrictWriteRead_65_1_reg[31]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.009 f  bucketStrictWriteRead_65_1_reg[39]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.014    bucketStrictWriteRead_65_1_reg[39]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.036 f  bucketStrictWriteRead_65_1_reg[47]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.041    bucketStrictWriteRead_65_1_reg[47]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.063 f  bucketStrictWriteRead_65_1_reg[55]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.068    bucketStrictWriteRead_65_1_reg[55]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.090 f  bucketStrictWriteRead_65_1_reg[63]_i_7/CO[7]
+                         net (fo=1, unplaced)         0.005     9.095    bucketStrictWriteRead_65_1_reg[63]_i_7_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     9.147 f  io_error[5]_INST_0_i_7662/CO[0]
+                         net (fo=1, unplaced)         0.185     9.332    strictWriteReadNextWide_65_1[64]
+                         LUT4 (Prop_LUT4_I2_O)        0.038     9.370 f  io_error[5]_INST_0_i_3538/O
+                         net (fo=1, unplaced)         0.185     9.555    io_error[5]_INST_0_i_3538_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     9.593 f  io_error[5]_INST_0_i_1297/O
+                         net (fo=1, unplaced)         0.185     9.778    io_error[5]_INST_0_i_1297_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     9.816 f  io_error[5]_INST_0_i_392/O
+                         net (fo=1, unplaced)         0.185    10.001    io_error[5]_INST_0_i_392_n_0
+                         LUT5 (Prop_LUT5_I0_O)        0.038    10.039 f  io_error[5]_INST_0_i_100/O
+                         net (fo=1, unplaced)         0.105    10.144    io_error[5]_INST_0_i_100_n_0
+                         LUT6 (Prop_LUT6_I1_O)        0.150    10.294 f  io_error[5]_INST_0_i_11/O
+                         net (fo=1, unplaced)         0.137    10.431    io_error[5]_INST_0_i_11_n_0
+                         LUT6 (Prop_LUT6_I2_O)        0.053    10.484 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    10.675    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    10.713 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.005    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.043 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    11.256    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    11.328 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    11.546    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    11.673 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    11.678    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    11.730 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    11.921    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    11.959 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    12.216    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    12.254 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    12.576    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    12.614 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    12.874    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    12.912 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.097    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.135 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    13.362    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[11]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[11]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[11]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -13.362    
+  -------------------------------------------------------------------
+                         slack                                 -3.458    
+
+Slack (VIOLATED) :        -3.458ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[12]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        13.362ns  (logic 4.098ns (30.669%)  route 9.264ns (69.331%))
+  Logic Levels:           54  (CARRY8=14 LUT2=5 LUT3=9 LUT4=3 LUT5=10 LUT6=13)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  bucketStrictWriteRead_229_2[63]_i_264/O
+                         net (fo=1, unplaced)         0.242     1.599    bucketStrictWriteRead_229_2[63]_i_264_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  bucketStrictWriteRead_229_2_reg[63]_i_125/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  bucketStrictWriteRead_93_3[63]_i_250/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  bucketStrictWriteRead_78_3[63]_i_350/O
+                         net (fo=1, unplaced)         0.233     2.489    bucketStrictWriteRead_78_3[63]_i_350_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  bucketStrictWriteRead_78_3_reg[63]_i_167/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  bucketStrictWriteRead_78_3[63]_i_495/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  bucketStrictWriteRead_11_1[1]_i_161/O
+                         net (fo=1, unplaced)         0.242     3.427    bucketStrictWriteRead_11_1[1]_i_161_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  bucketStrictWriteRead_11_1_reg[1]_i_112/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  bucketStrictWriteRead_173_3[63]_i_937/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  bucketStrictWriteRead_78_3[63]_i_590/O
+                         net (fo=1, unplaced)         0.185     4.309    bucketStrictWriteRead_78_3[63]_i_590_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  bucketStrictWriteRead_78_3[63]_i_529/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  bucketStrictWriteRead_78_3[63]_i_383/O
+                         net (fo=7, unplaced)         0.210     4.780    bucketStrictWriteRead_78_3[63]_i_383_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  bucketStrictWriteRead_78_3[63]_i_178/O
+                         net (fo=26, unplaced)        0.240     5.090    bucketStrictWriteRead_78_3[63]_i_178_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  bucketStrictWriteRead_68_3[63]_i_205/O
+                         net (fo=3, unplaced)         0.191     5.351    bucketStrictWriteRead_68_3[63]_i_205_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  bucketStrictWriteRead_64_3[63]_i_217/O
+                         net (fo=4, unplaced)         0.197     5.586    bucketStrictWriteRead_64_3[63]_i_217_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  bucketStrictWriteRead_65_3[63]_i_98/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  bucketStrictWriteRead_65_1[0]_i_25/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.038     6.113 r  bucketStrictWriteRead_65_1[0]_i_10/O
+                         net (fo=4, unplaced)         0.197     6.310    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.348 r  bucketStrictWriteRead_65_1[0]_i_3/O
+                         net (fo=3, unplaced)         0.191     6.539    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.577 r  bucketStrictWriteRead_65_1[3]_i_26/O
+                         net (fo=2, unplaced)         0.185     6.762    bucketStrictWriteRead_65_1[3]_i_26_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.800 r  bucketStrictWriteRead_65_1[3]_i_18/O
+                         net (fo=2, unplaced)         0.185     6.985    bucketStrictWriteRead_65_1[3]_i_18_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.070     7.055 r  bucketStrictWriteRead_65_1[4]_i_18/O
+                         net (fo=2, unplaced)         0.185     7.240    bucketStrictWriteRead_65_1[4]_i_18_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.278 r  bucketStrictWriteRead_65_1[4]_i_9/O
+                         net (fo=2, unplaced)         0.185     7.463    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.501 r  bucketStrictWriteRead_65_1[3]_i_3/O
+                         net (fo=4, unplaced)         0.197     7.698    bucketStrictWriteRead_65_1[3]_i_3_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.768 r  bucketStrictWriteRead_65_1[4]_i_2/O
+                         net (fo=4, unplaced)         0.197     7.965    bucketStrictWriteRead_65_1[4]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.035 r  bucketStrictWriteRead_65_1[5]_i_2/O
+                         net (fo=4, unplaced)         0.197     8.232    bucketStrictWriteRead_65_1[5]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.302 r  bucketStrictWriteRead_65_1[63]_i_13/O
+                         net (fo=2, unplaced)         0.185     8.487    bucketStrictWriteRead_65_1[63]_i_13_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.525 r  bucketStrictWriteRead_65_1[63]_i_5/O
+                         net (fo=3, unplaced)         0.191     8.716    bucketStrictWriteReadDelta_65_1[7]
+                         LUT2 (Prop_LUT2_I1_O)        0.039     8.755 r  bucketStrictWriteRead_65_1[7]_i_3/O
+                         net (fo=1, unplaced)         0.022     8.777    bucketStrictWriteRead_65_1[7]_i_3_n_0
+                         CARRY8 (Prop_CARRY8_S[7]_CO[7])
+                                                      0.124     8.901 f  bucketStrictWriteRead_65_1_reg[7]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.906    bucketStrictWriteRead_65_1_reg[7]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.928 f  bucketStrictWriteRead_65_1_reg[15]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.933    bucketStrictWriteRead_65_1_reg[15]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.955 f  bucketStrictWriteRead_65_1_reg[23]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.960    bucketStrictWriteRead_65_1_reg[23]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.982 f  bucketStrictWriteRead_65_1_reg[31]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.987    bucketStrictWriteRead_65_1_reg[31]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.009 f  bucketStrictWriteRead_65_1_reg[39]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.014    bucketStrictWriteRead_65_1_reg[39]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.036 f  bucketStrictWriteRead_65_1_reg[47]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.041    bucketStrictWriteRead_65_1_reg[47]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.063 f  bucketStrictWriteRead_65_1_reg[55]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.068    bucketStrictWriteRead_65_1_reg[55]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.090 f  bucketStrictWriteRead_65_1_reg[63]_i_7/CO[7]
+                         net (fo=1, unplaced)         0.005     9.095    bucketStrictWriteRead_65_1_reg[63]_i_7_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     9.147 f  io_error[5]_INST_0_i_7662/CO[0]
+                         net (fo=1, unplaced)         0.185     9.332    strictWriteReadNextWide_65_1[64]
+                         LUT4 (Prop_LUT4_I2_O)        0.038     9.370 f  io_error[5]_INST_0_i_3538/O
+                         net (fo=1, unplaced)         0.185     9.555    io_error[5]_INST_0_i_3538_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     9.593 f  io_error[5]_INST_0_i_1297/O
+                         net (fo=1, unplaced)         0.185     9.778    io_error[5]_INST_0_i_1297_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     9.816 f  io_error[5]_INST_0_i_392/O
+                         net (fo=1, unplaced)         0.185    10.001    io_error[5]_INST_0_i_392_n_0
+                         LUT5 (Prop_LUT5_I0_O)        0.038    10.039 f  io_error[5]_INST_0_i_100/O
+                         net (fo=1, unplaced)         0.105    10.144    io_error[5]_INST_0_i_100_n_0
+                         LUT6 (Prop_LUT6_I1_O)        0.150    10.294 f  io_error[5]_INST_0_i_11/O
+                         net (fo=1, unplaced)         0.137    10.431    io_error[5]_INST_0_i_11_n_0
+                         LUT6 (Prop_LUT6_I2_O)        0.053    10.484 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    10.675    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    10.713 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.005    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.043 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    11.256    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    11.328 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    11.546    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    11.673 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    11.678    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    11.730 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    11.921    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    11.959 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    12.216    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    12.254 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    12.576    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    12.614 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    12.874    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    12.912 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.097    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.135 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    13.362    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[12]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[12]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[12]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -13.362    
+  -------------------------------------------------------------------
+                         slack                                 -3.458    
+
+Slack (VIOLATED) :        -3.458ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[13]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        13.362ns  (logic 4.098ns (30.669%)  route 9.264ns (69.331%))
+  Logic Levels:           54  (CARRY8=14 LUT2=5 LUT3=9 LUT4=3 LUT5=10 LUT6=13)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  bucketStrictWriteRead_229_2[63]_i_264/O
+                         net (fo=1, unplaced)         0.242     1.599    bucketStrictWriteRead_229_2[63]_i_264_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  bucketStrictWriteRead_229_2_reg[63]_i_125/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  bucketStrictWriteRead_93_3[63]_i_250/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  bucketStrictWriteRead_78_3[63]_i_350/O
+                         net (fo=1, unplaced)         0.233     2.489    bucketStrictWriteRead_78_3[63]_i_350_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  bucketStrictWriteRead_78_3_reg[63]_i_167/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  bucketStrictWriteRead_78_3[63]_i_495/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  bucketStrictWriteRead_11_1[1]_i_161/O
+                         net (fo=1, unplaced)         0.242     3.427    bucketStrictWriteRead_11_1[1]_i_161_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  bucketStrictWriteRead_11_1_reg[1]_i_112/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  bucketStrictWriteRead_173_3[63]_i_937/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  bucketStrictWriteRead_78_3[63]_i_590/O
+                         net (fo=1, unplaced)         0.185     4.309    bucketStrictWriteRead_78_3[63]_i_590_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  bucketStrictWriteRead_78_3[63]_i_529/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  bucketStrictWriteRead_78_3[63]_i_383/O
+                         net (fo=7, unplaced)         0.210     4.780    bucketStrictWriteRead_78_3[63]_i_383_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  bucketStrictWriteRead_78_3[63]_i_178/O
+                         net (fo=26, unplaced)        0.240     5.090    bucketStrictWriteRead_78_3[63]_i_178_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  bucketStrictWriteRead_68_3[63]_i_205/O
+                         net (fo=3, unplaced)         0.191     5.351    bucketStrictWriteRead_68_3[63]_i_205_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  bucketStrictWriteRead_64_3[63]_i_217/O
+                         net (fo=4, unplaced)         0.197     5.586    bucketStrictWriteRead_64_3[63]_i_217_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  bucketStrictWriteRead_65_3[63]_i_98/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  bucketStrictWriteRead_65_1[0]_i_25/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.038     6.113 r  bucketStrictWriteRead_65_1[0]_i_10/O
+                         net (fo=4, unplaced)         0.197     6.310    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.348 r  bucketStrictWriteRead_65_1[0]_i_3/O
+                         net (fo=3, unplaced)         0.191     6.539    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.577 r  bucketStrictWriteRead_65_1[3]_i_26/O
+                         net (fo=2, unplaced)         0.185     6.762    bucketStrictWriteRead_65_1[3]_i_26_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.800 r  bucketStrictWriteRead_65_1[3]_i_18/O
+                         net (fo=2, unplaced)         0.185     6.985    bucketStrictWriteRead_65_1[3]_i_18_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.070     7.055 r  bucketStrictWriteRead_65_1[4]_i_18/O
+                         net (fo=2, unplaced)         0.185     7.240    bucketStrictWriteRead_65_1[4]_i_18_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.278 r  bucketStrictWriteRead_65_1[4]_i_9/O
+                         net (fo=2, unplaced)         0.185     7.463    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.501 r  bucketStrictWriteRead_65_1[3]_i_3/O
+                         net (fo=4, unplaced)         0.197     7.698    bucketStrictWriteRead_65_1[3]_i_3_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.768 r  bucketStrictWriteRead_65_1[4]_i_2/O
+                         net (fo=4, unplaced)         0.197     7.965    bucketStrictWriteRead_65_1[4]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.035 r  bucketStrictWriteRead_65_1[5]_i_2/O
+                         net (fo=4, unplaced)         0.197     8.232    bucketStrictWriteRead_65_1[5]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.302 r  bucketStrictWriteRead_65_1[63]_i_13/O
+                         net (fo=2, unplaced)         0.185     8.487    bucketStrictWriteRead_65_1[63]_i_13_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.525 r  bucketStrictWriteRead_65_1[63]_i_5/O
+                         net (fo=3, unplaced)         0.191     8.716    bucketStrictWriteReadDelta_65_1[7]
+                         LUT2 (Prop_LUT2_I1_O)        0.039     8.755 r  bucketStrictWriteRead_65_1[7]_i_3/O
+                         net (fo=1, unplaced)         0.022     8.777    bucketStrictWriteRead_65_1[7]_i_3_n_0
+                         CARRY8 (Prop_CARRY8_S[7]_CO[7])
+                                                      0.124     8.901 f  bucketStrictWriteRead_65_1_reg[7]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.906    bucketStrictWriteRead_65_1_reg[7]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.928 f  bucketStrictWriteRead_65_1_reg[15]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.933    bucketStrictWriteRead_65_1_reg[15]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.955 f  bucketStrictWriteRead_65_1_reg[23]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.960    bucketStrictWriteRead_65_1_reg[23]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.982 f  bucketStrictWriteRead_65_1_reg[31]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.987    bucketStrictWriteRead_65_1_reg[31]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.009 f  bucketStrictWriteRead_65_1_reg[39]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.014    bucketStrictWriteRead_65_1_reg[39]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.036 f  bucketStrictWriteRead_65_1_reg[47]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.041    bucketStrictWriteRead_65_1_reg[47]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.063 f  bucketStrictWriteRead_65_1_reg[55]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.068    bucketStrictWriteRead_65_1_reg[55]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.090 f  bucketStrictWriteRead_65_1_reg[63]_i_7/CO[7]
+                         net (fo=1, unplaced)         0.005     9.095    bucketStrictWriteRead_65_1_reg[63]_i_7_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     9.147 f  io_error[5]_INST_0_i_7662/CO[0]
+                         net (fo=1, unplaced)         0.185     9.332    strictWriteReadNextWide_65_1[64]
+                         LUT4 (Prop_LUT4_I2_O)        0.038     9.370 f  io_error[5]_INST_0_i_3538/O
+                         net (fo=1, unplaced)         0.185     9.555    io_error[5]_INST_0_i_3538_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     9.593 f  io_error[5]_INST_0_i_1297/O
+                         net (fo=1, unplaced)         0.185     9.778    io_error[5]_INST_0_i_1297_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     9.816 f  io_error[5]_INST_0_i_392/O
+                         net (fo=1, unplaced)         0.185    10.001    io_error[5]_INST_0_i_392_n_0
+                         LUT5 (Prop_LUT5_I0_O)        0.038    10.039 f  io_error[5]_INST_0_i_100/O
+                         net (fo=1, unplaced)         0.105    10.144    io_error[5]_INST_0_i_100_n_0
+                         LUT6 (Prop_LUT6_I1_O)        0.150    10.294 f  io_error[5]_INST_0_i_11/O
+                         net (fo=1, unplaced)         0.137    10.431    io_error[5]_INST_0_i_11_n_0
+                         LUT6 (Prop_LUT6_I2_O)        0.053    10.484 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    10.675    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    10.713 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.005    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.043 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    11.256    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    11.328 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    11.546    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    11.673 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    11.678    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    11.730 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    11.921    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    11.959 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    12.216    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    12.254 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    12.576    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    12.614 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    12.874    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    12.912 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.097    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.135 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    13.362    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[13]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[13]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[13]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -13.362    
+  -------------------------------------------------------------------
+                         slack                                 -3.458    
+
+Slack (VIOLATED) :        -3.458ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[14]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        13.362ns  (logic 4.098ns (30.669%)  route 9.264ns (69.331%))
+  Logic Levels:           54  (CARRY8=14 LUT2=5 LUT3=9 LUT4=3 LUT5=10 LUT6=13)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  bucketStrictWriteRead_229_2[63]_i_264/O
+                         net (fo=1, unplaced)         0.242     1.599    bucketStrictWriteRead_229_2[63]_i_264_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  bucketStrictWriteRead_229_2_reg[63]_i_125/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  bucketStrictWriteRead_93_3[63]_i_250/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  bucketStrictWriteRead_78_3[63]_i_350/O
+                         net (fo=1, unplaced)         0.233     2.489    bucketStrictWriteRead_78_3[63]_i_350_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  bucketStrictWriteRead_78_3_reg[63]_i_167/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  bucketStrictWriteRead_78_3[63]_i_495/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  bucketStrictWriteRead_11_1[1]_i_161/O
+                         net (fo=1, unplaced)         0.242     3.427    bucketStrictWriteRead_11_1[1]_i_161_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  bucketStrictWriteRead_11_1_reg[1]_i_112/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  bucketStrictWriteRead_173_3[63]_i_937/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  bucketStrictWriteRead_78_3[63]_i_590/O
+                         net (fo=1, unplaced)         0.185     4.309    bucketStrictWriteRead_78_3[63]_i_590_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  bucketStrictWriteRead_78_3[63]_i_529/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  bucketStrictWriteRead_78_3[63]_i_383/O
+                         net (fo=7, unplaced)         0.210     4.780    bucketStrictWriteRead_78_3[63]_i_383_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  bucketStrictWriteRead_78_3[63]_i_178/O
+                         net (fo=26, unplaced)        0.240     5.090    bucketStrictWriteRead_78_3[63]_i_178_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  bucketStrictWriteRead_68_3[63]_i_205/O
+                         net (fo=3, unplaced)         0.191     5.351    bucketStrictWriteRead_68_3[63]_i_205_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  bucketStrictWriteRead_64_3[63]_i_217/O
+                         net (fo=4, unplaced)         0.197     5.586    bucketStrictWriteRead_64_3[63]_i_217_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  bucketStrictWriteRead_65_3[63]_i_98/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  bucketStrictWriteRead_65_1[0]_i_25/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.038     6.113 r  bucketStrictWriteRead_65_1[0]_i_10/O
+                         net (fo=4, unplaced)         0.197     6.310    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.348 r  bucketStrictWriteRead_65_1[0]_i_3/O
+                         net (fo=3, unplaced)         0.191     6.539    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.577 r  bucketStrictWriteRead_65_1[3]_i_26/O
+                         net (fo=2, unplaced)         0.185     6.762    bucketStrictWriteRead_65_1[3]_i_26_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.800 r  bucketStrictWriteRead_65_1[3]_i_18/O
+                         net (fo=2, unplaced)         0.185     6.985    bucketStrictWriteRead_65_1[3]_i_18_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.070     7.055 r  bucketStrictWriteRead_65_1[4]_i_18/O
+                         net (fo=2, unplaced)         0.185     7.240    bucketStrictWriteRead_65_1[4]_i_18_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.278 r  bucketStrictWriteRead_65_1[4]_i_9/O
+                         net (fo=2, unplaced)         0.185     7.463    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.501 r  bucketStrictWriteRead_65_1[3]_i_3/O
+                         net (fo=4, unplaced)         0.197     7.698    bucketStrictWriteRead_65_1[3]_i_3_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.768 r  bucketStrictWriteRead_65_1[4]_i_2/O
+                         net (fo=4, unplaced)         0.197     7.965    bucketStrictWriteRead_65_1[4]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.035 r  bucketStrictWriteRead_65_1[5]_i_2/O
+                         net (fo=4, unplaced)         0.197     8.232    bucketStrictWriteRead_65_1[5]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.302 r  bucketStrictWriteRead_65_1[63]_i_13/O
+                         net (fo=2, unplaced)         0.185     8.487    bucketStrictWriteRead_65_1[63]_i_13_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.525 r  bucketStrictWriteRead_65_1[63]_i_5/O
+                         net (fo=3, unplaced)         0.191     8.716    bucketStrictWriteReadDelta_65_1[7]
+                         LUT2 (Prop_LUT2_I1_O)        0.039     8.755 r  bucketStrictWriteRead_65_1[7]_i_3/O
+                         net (fo=1, unplaced)         0.022     8.777    bucketStrictWriteRead_65_1[7]_i_3_n_0
+                         CARRY8 (Prop_CARRY8_S[7]_CO[7])
+                                                      0.124     8.901 f  bucketStrictWriteRead_65_1_reg[7]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.906    bucketStrictWriteRead_65_1_reg[7]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.928 f  bucketStrictWriteRead_65_1_reg[15]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.933    bucketStrictWriteRead_65_1_reg[15]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.955 f  bucketStrictWriteRead_65_1_reg[23]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.960    bucketStrictWriteRead_65_1_reg[23]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.982 f  bucketStrictWriteRead_65_1_reg[31]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.987    bucketStrictWriteRead_65_1_reg[31]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.009 f  bucketStrictWriteRead_65_1_reg[39]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.014    bucketStrictWriteRead_65_1_reg[39]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.036 f  bucketStrictWriteRead_65_1_reg[47]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.041    bucketStrictWriteRead_65_1_reg[47]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.063 f  bucketStrictWriteRead_65_1_reg[55]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.068    bucketStrictWriteRead_65_1_reg[55]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.090 f  bucketStrictWriteRead_65_1_reg[63]_i_7/CO[7]
+                         net (fo=1, unplaced)         0.005     9.095    bucketStrictWriteRead_65_1_reg[63]_i_7_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     9.147 f  io_error[5]_INST_0_i_7662/CO[0]
+                         net (fo=1, unplaced)         0.185     9.332    strictWriteReadNextWide_65_1[64]
+                         LUT4 (Prop_LUT4_I2_O)        0.038     9.370 f  io_error[5]_INST_0_i_3538/O
+                         net (fo=1, unplaced)         0.185     9.555    io_error[5]_INST_0_i_3538_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     9.593 f  io_error[5]_INST_0_i_1297/O
+                         net (fo=1, unplaced)         0.185     9.778    io_error[5]_INST_0_i_1297_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     9.816 f  io_error[5]_INST_0_i_392/O
+                         net (fo=1, unplaced)         0.185    10.001    io_error[5]_INST_0_i_392_n_0
+                         LUT5 (Prop_LUT5_I0_O)        0.038    10.039 f  io_error[5]_INST_0_i_100/O
+                         net (fo=1, unplaced)         0.105    10.144    io_error[5]_INST_0_i_100_n_0
+                         LUT6 (Prop_LUT6_I1_O)        0.150    10.294 f  io_error[5]_INST_0_i_11/O
+                         net (fo=1, unplaced)         0.137    10.431    io_error[5]_INST_0_i_11_n_0
+                         LUT6 (Prop_LUT6_I2_O)        0.053    10.484 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    10.675    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    10.713 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.005    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.043 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    11.256    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    11.328 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    11.546    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    11.673 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    11.678    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    11.730 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    11.921    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    11.959 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    12.216    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    12.254 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    12.576    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    12.614 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    12.874    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    12.912 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.097    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.135 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    13.362    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[14]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[14]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[14]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -13.362    
+  -------------------------------------------------------------------
+                         slack                                 -3.458    
+
+Slack (VIOLATED) :        -3.458ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[15]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        13.362ns  (logic 4.098ns (30.669%)  route 9.264ns (69.331%))
+  Logic Levels:           54  (CARRY8=14 LUT2=5 LUT3=9 LUT4=3 LUT5=10 LUT6=13)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  bucketStrictWriteRead_229_2[63]_i_264/O
+                         net (fo=1, unplaced)         0.242     1.599    bucketStrictWriteRead_229_2[63]_i_264_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  bucketStrictWriteRead_229_2_reg[63]_i_125/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  bucketStrictWriteRead_93_3[63]_i_250/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  bucketStrictWriteRead_78_3[63]_i_350/O
+                         net (fo=1, unplaced)         0.233     2.489    bucketStrictWriteRead_78_3[63]_i_350_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  bucketStrictWriteRead_78_3_reg[63]_i_167/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  bucketStrictWriteRead_78_3[63]_i_495/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  bucketStrictWriteRead_11_1[1]_i_161/O
+                         net (fo=1, unplaced)         0.242     3.427    bucketStrictWriteRead_11_1[1]_i_161_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  bucketStrictWriteRead_11_1_reg[1]_i_112/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  bucketStrictWriteRead_173_3[63]_i_937/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  bucketStrictWriteRead_78_3[63]_i_590/O
+                         net (fo=1, unplaced)         0.185     4.309    bucketStrictWriteRead_78_3[63]_i_590_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  bucketStrictWriteRead_78_3[63]_i_529/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  bucketStrictWriteRead_78_3[63]_i_383/O
+                         net (fo=7, unplaced)         0.210     4.780    bucketStrictWriteRead_78_3[63]_i_383_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  bucketStrictWriteRead_78_3[63]_i_178/O
+                         net (fo=26, unplaced)        0.240     5.090    bucketStrictWriteRead_78_3[63]_i_178_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  bucketStrictWriteRead_68_3[63]_i_205/O
+                         net (fo=3, unplaced)         0.191     5.351    bucketStrictWriteRead_68_3[63]_i_205_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  bucketStrictWriteRead_64_3[63]_i_217/O
+                         net (fo=4, unplaced)         0.197     5.586    bucketStrictWriteRead_64_3[63]_i_217_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  bucketStrictWriteRead_65_3[63]_i_98/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  bucketStrictWriteRead_65_1[0]_i_25/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.038     6.113 r  bucketStrictWriteRead_65_1[0]_i_10/O
+                         net (fo=4, unplaced)         0.197     6.310    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.348 r  bucketStrictWriteRead_65_1[0]_i_3/O
+                         net (fo=3, unplaced)         0.191     6.539    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.577 r  bucketStrictWriteRead_65_1[3]_i_26/O
+                         net (fo=2, unplaced)         0.185     6.762    bucketStrictWriteRead_65_1[3]_i_26_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.800 r  bucketStrictWriteRead_65_1[3]_i_18/O
+                         net (fo=2, unplaced)         0.185     6.985    bucketStrictWriteRead_65_1[3]_i_18_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.070     7.055 r  bucketStrictWriteRead_65_1[4]_i_18/O
+                         net (fo=2, unplaced)         0.185     7.240    bucketStrictWriteRead_65_1[4]_i_18_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.278 r  bucketStrictWriteRead_65_1[4]_i_9/O
+                         net (fo=2, unplaced)         0.185     7.463    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.501 r  bucketStrictWriteRead_65_1[3]_i_3/O
+                         net (fo=4, unplaced)         0.197     7.698    bucketStrictWriteRead_65_1[3]_i_3_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.768 r  bucketStrictWriteRead_65_1[4]_i_2/O
+                         net (fo=4, unplaced)         0.197     7.965    bucketStrictWriteRead_65_1[4]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.035 r  bucketStrictWriteRead_65_1[5]_i_2/O
+                         net (fo=4, unplaced)         0.197     8.232    bucketStrictWriteRead_65_1[5]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.302 r  bucketStrictWriteRead_65_1[63]_i_13/O
+                         net (fo=2, unplaced)         0.185     8.487    bucketStrictWriteRead_65_1[63]_i_13_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.525 r  bucketStrictWriteRead_65_1[63]_i_5/O
+                         net (fo=3, unplaced)         0.191     8.716    bucketStrictWriteReadDelta_65_1[7]
+                         LUT2 (Prop_LUT2_I1_O)        0.039     8.755 r  bucketStrictWriteRead_65_1[7]_i_3/O
+                         net (fo=1, unplaced)         0.022     8.777    bucketStrictWriteRead_65_1[7]_i_3_n_0
+                         CARRY8 (Prop_CARRY8_S[7]_CO[7])
+                                                      0.124     8.901 f  bucketStrictWriteRead_65_1_reg[7]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.906    bucketStrictWriteRead_65_1_reg[7]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.928 f  bucketStrictWriteRead_65_1_reg[15]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.933    bucketStrictWriteRead_65_1_reg[15]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.955 f  bucketStrictWriteRead_65_1_reg[23]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.960    bucketStrictWriteRead_65_1_reg[23]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.982 f  bucketStrictWriteRead_65_1_reg[31]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.987    bucketStrictWriteRead_65_1_reg[31]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.009 f  bucketStrictWriteRead_65_1_reg[39]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.014    bucketStrictWriteRead_65_1_reg[39]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.036 f  bucketStrictWriteRead_65_1_reg[47]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.041    bucketStrictWriteRead_65_1_reg[47]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.063 f  bucketStrictWriteRead_65_1_reg[55]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.068    bucketStrictWriteRead_65_1_reg[55]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.090 f  bucketStrictWriteRead_65_1_reg[63]_i_7/CO[7]
+                         net (fo=1, unplaced)         0.005     9.095    bucketStrictWriteRead_65_1_reg[63]_i_7_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     9.147 f  io_error[5]_INST_0_i_7662/CO[0]
+                         net (fo=1, unplaced)         0.185     9.332    strictWriteReadNextWide_65_1[64]
+                         LUT4 (Prop_LUT4_I2_O)        0.038     9.370 f  io_error[5]_INST_0_i_3538/O
+                         net (fo=1, unplaced)         0.185     9.555    io_error[5]_INST_0_i_3538_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     9.593 f  io_error[5]_INST_0_i_1297/O
+                         net (fo=1, unplaced)         0.185     9.778    io_error[5]_INST_0_i_1297_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     9.816 f  io_error[5]_INST_0_i_392/O
+                         net (fo=1, unplaced)         0.185    10.001    io_error[5]_INST_0_i_392_n_0
+                         LUT5 (Prop_LUT5_I0_O)        0.038    10.039 f  io_error[5]_INST_0_i_100/O
+                         net (fo=1, unplaced)         0.105    10.144    io_error[5]_INST_0_i_100_n_0
+                         LUT6 (Prop_LUT6_I1_O)        0.150    10.294 f  io_error[5]_INST_0_i_11/O
+                         net (fo=1, unplaced)         0.137    10.431    io_error[5]_INST_0_i_11_n_0
+                         LUT6 (Prop_LUT6_I2_O)        0.053    10.484 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    10.675    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    10.713 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.005    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.043 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    11.256    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    11.328 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    11.546    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    11.673 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    11.678    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    11.730 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    11.921    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    11.959 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    12.216    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    12.254 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    12.576    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    12.614 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    12.874    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    12.912 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.097    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.135 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    13.362    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[15]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[15]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[15]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -13.362    
+  -------------------------------------------------------------------
+                         slack                                 -3.458    
+
+Slack (VIOLATED) :        -3.458ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[16]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        13.362ns  (logic 4.098ns (30.669%)  route 9.264ns (69.331%))
+  Logic Levels:           54  (CARRY8=14 LUT2=5 LUT3=9 LUT4=3 LUT5=10 LUT6=13)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  bucketStrictWriteRead_229_2[63]_i_264/O
+                         net (fo=1, unplaced)         0.242     1.599    bucketStrictWriteRead_229_2[63]_i_264_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  bucketStrictWriteRead_229_2_reg[63]_i_125/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  bucketStrictWriteRead_93_3[63]_i_250/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  bucketStrictWriteRead_78_3[63]_i_350/O
+                         net (fo=1, unplaced)         0.233     2.489    bucketStrictWriteRead_78_3[63]_i_350_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  bucketStrictWriteRead_78_3_reg[63]_i_167/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  bucketStrictWriteRead_78_3[63]_i_495/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  bucketStrictWriteRead_11_1[1]_i_161/O
+                         net (fo=1, unplaced)         0.242     3.427    bucketStrictWriteRead_11_1[1]_i_161_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  bucketStrictWriteRead_11_1_reg[1]_i_112/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  bucketStrictWriteRead_173_3[63]_i_937/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  bucketStrictWriteRead_78_3[63]_i_590/O
+                         net (fo=1, unplaced)         0.185     4.309    bucketStrictWriteRead_78_3[63]_i_590_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  bucketStrictWriteRead_78_3[63]_i_529/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  bucketStrictWriteRead_78_3[63]_i_383/O
+                         net (fo=7, unplaced)         0.210     4.780    bucketStrictWriteRead_78_3[63]_i_383_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  bucketStrictWriteRead_78_3[63]_i_178/O
+                         net (fo=26, unplaced)        0.240     5.090    bucketStrictWriteRead_78_3[63]_i_178_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  bucketStrictWriteRead_68_3[63]_i_205/O
+                         net (fo=3, unplaced)         0.191     5.351    bucketStrictWriteRead_68_3[63]_i_205_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  bucketStrictWriteRead_64_3[63]_i_217/O
+                         net (fo=4, unplaced)         0.197     5.586    bucketStrictWriteRead_64_3[63]_i_217_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  bucketStrictWriteRead_65_3[63]_i_98/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  bucketStrictWriteRead_65_1[0]_i_25/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.038     6.113 r  bucketStrictWriteRead_65_1[0]_i_10/O
+                         net (fo=4, unplaced)         0.197     6.310    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.348 r  bucketStrictWriteRead_65_1[0]_i_3/O
+                         net (fo=3, unplaced)         0.191     6.539    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.577 r  bucketStrictWriteRead_65_1[3]_i_26/O
+                         net (fo=2, unplaced)         0.185     6.762    bucketStrictWriteRead_65_1[3]_i_26_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.800 r  bucketStrictWriteRead_65_1[3]_i_18/O
+                         net (fo=2, unplaced)         0.185     6.985    bucketStrictWriteRead_65_1[3]_i_18_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.070     7.055 r  bucketStrictWriteRead_65_1[4]_i_18/O
+                         net (fo=2, unplaced)         0.185     7.240    bucketStrictWriteRead_65_1[4]_i_18_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.278 r  bucketStrictWriteRead_65_1[4]_i_9/O
+                         net (fo=2, unplaced)         0.185     7.463    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.501 r  bucketStrictWriteRead_65_1[3]_i_3/O
+                         net (fo=4, unplaced)         0.197     7.698    bucketStrictWriteRead_65_1[3]_i_3_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.768 r  bucketStrictWriteRead_65_1[4]_i_2/O
+                         net (fo=4, unplaced)         0.197     7.965    bucketStrictWriteRead_65_1[4]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.035 r  bucketStrictWriteRead_65_1[5]_i_2/O
+                         net (fo=4, unplaced)         0.197     8.232    bucketStrictWriteRead_65_1[5]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.302 r  bucketStrictWriteRead_65_1[63]_i_13/O
+                         net (fo=2, unplaced)         0.185     8.487    bucketStrictWriteRead_65_1[63]_i_13_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.525 r  bucketStrictWriteRead_65_1[63]_i_5/O
+                         net (fo=3, unplaced)         0.191     8.716    bucketStrictWriteReadDelta_65_1[7]
+                         LUT2 (Prop_LUT2_I1_O)        0.039     8.755 r  bucketStrictWriteRead_65_1[7]_i_3/O
+                         net (fo=1, unplaced)         0.022     8.777    bucketStrictWriteRead_65_1[7]_i_3_n_0
+                         CARRY8 (Prop_CARRY8_S[7]_CO[7])
+                                                      0.124     8.901 f  bucketStrictWriteRead_65_1_reg[7]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.906    bucketStrictWriteRead_65_1_reg[7]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.928 f  bucketStrictWriteRead_65_1_reg[15]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.933    bucketStrictWriteRead_65_1_reg[15]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.955 f  bucketStrictWriteRead_65_1_reg[23]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.960    bucketStrictWriteRead_65_1_reg[23]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.982 f  bucketStrictWriteRead_65_1_reg[31]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.987    bucketStrictWriteRead_65_1_reg[31]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.009 f  bucketStrictWriteRead_65_1_reg[39]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.014    bucketStrictWriteRead_65_1_reg[39]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.036 f  bucketStrictWriteRead_65_1_reg[47]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.041    bucketStrictWriteRead_65_1_reg[47]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.063 f  bucketStrictWriteRead_65_1_reg[55]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.068    bucketStrictWriteRead_65_1_reg[55]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.090 f  bucketStrictWriteRead_65_1_reg[63]_i_7/CO[7]
+                         net (fo=1, unplaced)         0.005     9.095    bucketStrictWriteRead_65_1_reg[63]_i_7_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     9.147 f  io_error[5]_INST_0_i_7662/CO[0]
+                         net (fo=1, unplaced)         0.185     9.332    strictWriteReadNextWide_65_1[64]
+                         LUT4 (Prop_LUT4_I2_O)        0.038     9.370 f  io_error[5]_INST_0_i_3538/O
+                         net (fo=1, unplaced)         0.185     9.555    io_error[5]_INST_0_i_3538_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     9.593 f  io_error[5]_INST_0_i_1297/O
+                         net (fo=1, unplaced)         0.185     9.778    io_error[5]_INST_0_i_1297_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     9.816 f  io_error[5]_INST_0_i_392/O
+                         net (fo=1, unplaced)         0.185    10.001    io_error[5]_INST_0_i_392_n_0
+                         LUT5 (Prop_LUT5_I0_O)        0.038    10.039 f  io_error[5]_INST_0_i_100/O
+                         net (fo=1, unplaced)         0.105    10.144    io_error[5]_INST_0_i_100_n_0
+                         LUT6 (Prop_LUT6_I1_O)        0.150    10.294 f  io_error[5]_INST_0_i_11/O
+                         net (fo=1, unplaced)         0.137    10.431    io_error[5]_INST_0_i_11_n_0
+                         LUT6 (Prop_LUT6_I2_O)        0.053    10.484 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    10.675    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    10.713 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.005    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.043 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    11.256    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    11.328 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    11.546    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    11.673 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    11.678    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    11.730 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    11.921    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    11.959 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    12.216    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    12.254 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    12.576    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    12.614 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    12.874    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    12.912 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.097    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.135 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    13.362    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[16]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[16]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[16]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -13.362    
+  -------------------------------------------------------------------
+                         slack                                 -3.458    
+
+Slack (VIOLATED) :        -3.458ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[17]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        13.362ns  (logic 4.098ns (30.669%)  route 9.264ns (69.331%))
+  Logic Levels:           54  (CARRY8=14 LUT2=5 LUT3=9 LUT4=3 LUT5=10 LUT6=13)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  bucketStrictWriteRead_229_2[63]_i_264/O
+                         net (fo=1, unplaced)         0.242     1.599    bucketStrictWriteRead_229_2[63]_i_264_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  bucketStrictWriteRead_229_2_reg[63]_i_125/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  bucketStrictWriteRead_93_3[63]_i_250/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  bucketStrictWriteRead_78_3[63]_i_350/O
+                         net (fo=1, unplaced)         0.233     2.489    bucketStrictWriteRead_78_3[63]_i_350_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  bucketStrictWriteRead_78_3_reg[63]_i_167/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  bucketStrictWriteRead_78_3[63]_i_495/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  bucketStrictWriteRead_11_1[1]_i_161/O
+                         net (fo=1, unplaced)         0.242     3.427    bucketStrictWriteRead_11_1[1]_i_161_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  bucketStrictWriteRead_11_1_reg[1]_i_112/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  bucketStrictWriteRead_173_3[63]_i_937/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  bucketStrictWriteRead_78_3[63]_i_590/O
+                         net (fo=1, unplaced)         0.185     4.309    bucketStrictWriteRead_78_3[63]_i_590_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  bucketStrictWriteRead_78_3[63]_i_529/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  bucketStrictWriteRead_78_3[63]_i_383/O
+                         net (fo=7, unplaced)         0.210     4.780    bucketStrictWriteRead_78_3[63]_i_383_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  bucketStrictWriteRead_78_3[63]_i_178/O
+                         net (fo=26, unplaced)        0.240     5.090    bucketStrictWriteRead_78_3[63]_i_178_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  bucketStrictWriteRead_68_3[63]_i_205/O
+                         net (fo=3, unplaced)         0.191     5.351    bucketStrictWriteRead_68_3[63]_i_205_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  bucketStrictWriteRead_64_3[63]_i_217/O
+                         net (fo=4, unplaced)         0.197     5.586    bucketStrictWriteRead_64_3[63]_i_217_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  bucketStrictWriteRead_65_3[63]_i_98/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  bucketStrictWriteRead_65_1[0]_i_25/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.038     6.113 r  bucketStrictWriteRead_65_1[0]_i_10/O
+                         net (fo=4, unplaced)         0.197     6.310    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.348 r  bucketStrictWriteRead_65_1[0]_i_3/O
+                         net (fo=3, unplaced)         0.191     6.539    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.577 r  bucketStrictWriteRead_65_1[3]_i_26/O
+                         net (fo=2, unplaced)         0.185     6.762    bucketStrictWriteRead_65_1[3]_i_26_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.800 r  bucketStrictWriteRead_65_1[3]_i_18/O
+                         net (fo=2, unplaced)         0.185     6.985    bucketStrictWriteRead_65_1[3]_i_18_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.070     7.055 r  bucketStrictWriteRead_65_1[4]_i_18/O
+                         net (fo=2, unplaced)         0.185     7.240    bucketStrictWriteRead_65_1[4]_i_18_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.278 r  bucketStrictWriteRead_65_1[4]_i_9/O
+                         net (fo=2, unplaced)         0.185     7.463    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.501 r  bucketStrictWriteRead_65_1[3]_i_3/O
+                         net (fo=4, unplaced)         0.197     7.698    bucketStrictWriteRead_65_1[3]_i_3_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.768 r  bucketStrictWriteRead_65_1[4]_i_2/O
+                         net (fo=4, unplaced)         0.197     7.965    bucketStrictWriteRead_65_1[4]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.035 r  bucketStrictWriteRead_65_1[5]_i_2/O
+                         net (fo=4, unplaced)         0.197     8.232    bucketStrictWriteRead_65_1[5]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.302 r  bucketStrictWriteRead_65_1[63]_i_13/O
+                         net (fo=2, unplaced)         0.185     8.487    bucketStrictWriteRead_65_1[63]_i_13_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.525 r  bucketStrictWriteRead_65_1[63]_i_5/O
+                         net (fo=3, unplaced)         0.191     8.716    bucketStrictWriteReadDelta_65_1[7]
+                         LUT2 (Prop_LUT2_I1_O)        0.039     8.755 r  bucketStrictWriteRead_65_1[7]_i_3/O
+                         net (fo=1, unplaced)         0.022     8.777    bucketStrictWriteRead_65_1[7]_i_3_n_0
+                         CARRY8 (Prop_CARRY8_S[7]_CO[7])
+                                                      0.124     8.901 f  bucketStrictWriteRead_65_1_reg[7]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.906    bucketStrictWriteRead_65_1_reg[7]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.928 f  bucketStrictWriteRead_65_1_reg[15]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.933    bucketStrictWriteRead_65_1_reg[15]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.955 f  bucketStrictWriteRead_65_1_reg[23]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.960    bucketStrictWriteRead_65_1_reg[23]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.982 f  bucketStrictWriteRead_65_1_reg[31]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.987    bucketStrictWriteRead_65_1_reg[31]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.009 f  bucketStrictWriteRead_65_1_reg[39]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.014    bucketStrictWriteRead_65_1_reg[39]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.036 f  bucketStrictWriteRead_65_1_reg[47]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.041    bucketStrictWriteRead_65_1_reg[47]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.063 f  bucketStrictWriteRead_65_1_reg[55]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.068    bucketStrictWriteRead_65_1_reg[55]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.090 f  bucketStrictWriteRead_65_1_reg[63]_i_7/CO[7]
+                         net (fo=1, unplaced)         0.005     9.095    bucketStrictWriteRead_65_1_reg[63]_i_7_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     9.147 f  io_error[5]_INST_0_i_7662/CO[0]
+                         net (fo=1, unplaced)         0.185     9.332    strictWriteReadNextWide_65_1[64]
+                         LUT4 (Prop_LUT4_I2_O)        0.038     9.370 f  io_error[5]_INST_0_i_3538/O
+                         net (fo=1, unplaced)         0.185     9.555    io_error[5]_INST_0_i_3538_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     9.593 f  io_error[5]_INST_0_i_1297/O
+                         net (fo=1, unplaced)         0.185     9.778    io_error[5]_INST_0_i_1297_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     9.816 f  io_error[5]_INST_0_i_392/O
+                         net (fo=1, unplaced)         0.185    10.001    io_error[5]_INST_0_i_392_n_0
+                         LUT5 (Prop_LUT5_I0_O)        0.038    10.039 f  io_error[5]_INST_0_i_100/O
+                         net (fo=1, unplaced)         0.105    10.144    io_error[5]_INST_0_i_100_n_0
+                         LUT6 (Prop_LUT6_I1_O)        0.150    10.294 f  io_error[5]_INST_0_i_11/O
+                         net (fo=1, unplaced)         0.137    10.431    io_error[5]_INST_0_i_11_n_0
+                         LUT6 (Prop_LUT6_I2_O)        0.053    10.484 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    10.675    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    10.713 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.005    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.043 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    11.256    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    11.328 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    11.546    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    11.673 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    11.678    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    11.730 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    11.921    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    11.959 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    12.216    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    12.254 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    12.576    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    12.614 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    12.874    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    12.912 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.097    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.135 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    13.362    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[17]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[17]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[17]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -13.362    
+  -------------------------------------------------------------------
+                         slack                                 -3.458    
+
+Slack (VIOLATED) :        -3.458ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[18]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        13.362ns  (logic 4.098ns (30.669%)  route 9.264ns (69.331%))
+  Logic Levels:           54  (CARRY8=14 LUT2=5 LUT3=9 LUT4=3 LUT5=10 LUT6=13)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  bucketStrictWriteRead_229_2[63]_i_264/O
+                         net (fo=1, unplaced)         0.242     1.599    bucketStrictWriteRead_229_2[63]_i_264_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  bucketStrictWriteRead_229_2_reg[63]_i_125/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  bucketStrictWriteRead_93_3[63]_i_250/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  bucketStrictWriteRead_78_3[63]_i_350/O
+                         net (fo=1, unplaced)         0.233     2.489    bucketStrictWriteRead_78_3[63]_i_350_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  bucketStrictWriteRead_78_3_reg[63]_i_167/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  bucketStrictWriteRead_78_3[63]_i_495/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  bucketStrictWriteRead_11_1[1]_i_161/O
+                         net (fo=1, unplaced)         0.242     3.427    bucketStrictWriteRead_11_1[1]_i_161_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  bucketStrictWriteRead_11_1_reg[1]_i_112/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  bucketStrictWriteRead_173_3[63]_i_937/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  bucketStrictWriteRead_78_3[63]_i_590/O
+                         net (fo=1, unplaced)         0.185     4.309    bucketStrictWriteRead_78_3[63]_i_590_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  bucketStrictWriteRead_78_3[63]_i_529/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  bucketStrictWriteRead_78_3[63]_i_383/O
+                         net (fo=7, unplaced)         0.210     4.780    bucketStrictWriteRead_78_3[63]_i_383_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  bucketStrictWriteRead_78_3[63]_i_178/O
+                         net (fo=26, unplaced)        0.240     5.090    bucketStrictWriteRead_78_3[63]_i_178_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  bucketStrictWriteRead_68_3[63]_i_205/O
+                         net (fo=3, unplaced)         0.191     5.351    bucketStrictWriteRead_68_3[63]_i_205_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  bucketStrictWriteRead_64_3[63]_i_217/O
+                         net (fo=4, unplaced)         0.197     5.586    bucketStrictWriteRead_64_3[63]_i_217_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  bucketStrictWriteRead_65_3[63]_i_98/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  bucketStrictWriteRead_65_1[0]_i_25/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.038     6.113 r  bucketStrictWriteRead_65_1[0]_i_10/O
+                         net (fo=4, unplaced)         0.197     6.310    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.348 r  bucketStrictWriteRead_65_1[0]_i_3/O
+                         net (fo=3, unplaced)         0.191     6.539    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.577 r  bucketStrictWriteRead_65_1[3]_i_26/O
+                         net (fo=2, unplaced)         0.185     6.762    bucketStrictWriteRead_65_1[3]_i_26_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.800 r  bucketStrictWriteRead_65_1[3]_i_18/O
+                         net (fo=2, unplaced)         0.185     6.985    bucketStrictWriteRead_65_1[3]_i_18_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.070     7.055 r  bucketStrictWriteRead_65_1[4]_i_18/O
+                         net (fo=2, unplaced)         0.185     7.240    bucketStrictWriteRead_65_1[4]_i_18_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.278 r  bucketStrictWriteRead_65_1[4]_i_9/O
+                         net (fo=2, unplaced)         0.185     7.463    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.038     7.501 r  bucketStrictWriteRead_65_1[3]_i_3/O
+                         net (fo=4, unplaced)         0.197     7.698    bucketStrictWriteRead_65_1[3]_i_3_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.768 r  bucketStrictWriteRead_65_1[4]_i_2/O
+                         net (fo=4, unplaced)         0.197     7.965    bucketStrictWriteRead_65_1[4]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.035 r  bucketStrictWriteRead_65_1[5]_i_2/O
+                         net (fo=4, unplaced)         0.197     8.232    bucketStrictWriteRead_65_1[5]_i_2_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.302 r  bucketStrictWriteRead_65_1[63]_i_13/O
+                         net (fo=2, unplaced)         0.185     8.487    bucketStrictWriteRead_65_1[63]_i_13_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.525 r  bucketStrictWriteRead_65_1[63]_i_5/O
+                         net (fo=3, unplaced)         0.191     8.716    bucketStrictWriteReadDelta_65_1[7]
+                         LUT2 (Prop_LUT2_I1_O)        0.039     8.755 r  bucketStrictWriteRead_65_1[7]_i_3/O
+                         net (fo=1, unplaced)         0.022     8.777    bucketStrictWriteRead_65_1[7]_i_3_n_0
+                         CARRY8 (Prop_CARRY8_S[7]_CO[7])
+                                                      0.124     8.901 f  bucketStrictWriteRead_65_1_reg[7]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.906    bucketStrictWriteRead_65_1_reg[7]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.928 f  bucketStrictWriteRead_65_1_reg[15]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.933    bucketStrictWriteRead_65_1_reg[15]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.955 f  bucketStrictWriteRead_65_1_reg[23]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.960    bucketStrictWriteRead_65_1_reg[23]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     8.982 f  bucketStrictWriteRead_65_1_reg[31]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     8.987    bucketStrictWriteRead_65_1_reg[31]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.009 f  bucketStrictWriteRead_65_1_reg[39]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.014    bucketStrictWriteRead_65_1_reg[39]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.036 f  bucketStrictWriteRead_65_1_reg[47]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.041    bucketStrictWriteRead_65_1_reg[47]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.063 f  bucketStrictWriteRead_65_1_reg[55]_i_2/CO[7]
+                         net (fo=1, unplaced)         0.005     9.068    bucketStrictWriteRead_65_1_reg[55]_i_2_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[7])
+                                                      0.022     9.090 f  bucketStrictWriteRead_65_1_reg[63]_i_7/CO[7]
+                         net (fo=1, unplaced)         0.005     9.095    bucketStrictWriteRead_65_1_reg[63]_i_7_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052     9.147 f  io_error[5]_INST_0_i_7662/CO[0]
+                         net (fo=1, unplaced)         0.185     9.332    strictWriteReadNextWide_65_1[64]
+                         LUT4 (Prop_LUT4_I2_O)        0.038     9.370 f  io_error[5]_INST_0_i_3538/O
+                         net (fo=1, unplaced)         0.185     9.555    io_error[5]_INST_0_i_3538_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     9.593 f  io_error[5]_INST_0_i_1297/O
+                         net (fo=1, unplaced)         0.185     9.778    io_error[5]_INST_0_i_1297_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     9.816 f  io_error[5]_INST_0_i_392/O
+                         net (fo=1, unplaced)         0.185    10.001    io_error[5]_INST_0_i_392_n_0
+                         LUT5 (Prop_LUT5_I0_O)        0.038    10.039 f  io_error[5]_INST_0_i_100/O
+                         net (fo=1, unplaced)         0.105    10.144    io_error[5]_INST_0_i_100_n_0
+                         LUT6 (Prop_LUT6_I1_O)        0.150    10.294 f  io_error[5]_INST_0_i_11/O
+                         net (fo=1, unplaced)         0.137    10.431    io_error[5]_INST_0_i_11_n_0
+                         LUT6 (Prop_LUT6_I2_O)        0.053    10.484 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    10.675    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    10.713 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.005    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.043 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    11.256    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    11.328 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    11.546    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    11.673 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    11.678    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    11.730 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    11.921    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    11.959 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    12.216    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    12.254 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    12.576    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    12.614 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    12.874    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    12.912 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.097    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.135 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    13.362    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[18]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[18]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[18]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -13.362    
+  -------------------------------------------------------------------
+                         slack                                 -3.458    
+
+
+
+

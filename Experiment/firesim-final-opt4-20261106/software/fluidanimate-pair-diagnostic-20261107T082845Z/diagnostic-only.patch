@@ -1,0 +1,56 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/src/fluidanimate/serial.cpp
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-pair-diagnostic-20261107T082845Z/src/serial.cpp
+@@ -458,8 +458,12 @@
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+ 
++
++static unsigned long long ec_pair_seen[2],ec_cross_rejected[2],ec_cross_in_radius[2],ec_pair_selected[2];
++static unsigned ec_force_frame;
+ void ComputeForces()
+ {
++  for(int ep=0;ep<2;ep++)ec_pair_seen[ep]=ec_cross_rejected[ep]=ec_cross_in_radius[ep]=ec_pair_selected[ep]=0;
+   for(int i = 0; i < numCells; ++i)
+   {
+     Cell *cell = &cells[i];
+@@ -499,6 +503,14 @@
+             for(int iparNeigh = 0; iparNeigh < numNeighPars; ++iparNeigh)
+             {
+               //Check address to make sure densities are computed only once per pair
++              
++              ++ec_pair_seen[0];
++              if(&neigh->p[iparNeigh % PARTICLES_PER_CELL] < &cell->p[ipar % PARTICLES_PER_CELL]) ++ec_pair_selected[0];
++              else if(cindexNeigh < cindex) {
++                ++ec_cross_rejected[0];
++                if((cell->p[ipar % PARTICLES_PER_CELL]-neigh->p[iparNeigh % PARTICLES_PER_CELL]).GetLengthSq()<hSq)
++                  ++ec_cross_in_radius[0];
++              }
+               if(&neigh->p[iparNeigh % PARTICLES_PER_CELL] < &cell->p[ipar % PARTICLES_PER_CELL])
+               {
+                 fptype distSq = (cell->p[ipar % PARTICLES_PER_CELL] - neigh->p[iparNeigh % PARTICLES_PER_CELL]).GetLengthSq();
+@@ -561,6 +573,14 @@
+             for(int iparNeigh = 0; iparNeigh < numNeighPars; ++iparNeigh)
+             {
+               //Check address to make sure forces are computed only once per pair
++              
++              ++ec_pair_seen[1];
++              if(&neigh->p[iparNeigh % PARTICLES_PER_CELL] < &cell->p[ipar % PARTICLES_PER_CELL]) ++ec_pair_selected[1];
++              else if(cindexNeigh < cindex) {
++                ++ec_cross_rejected[1];
++                if((cell->p[ipar % PARTICLES_PER_CELL]-neigh->p[iparNeigh % PARTICLES_PER_CELL]).GetLengthSq()<hSq)
++                  ++ec_cross_in_radius[1];
++              }
+               if(&neigh->p[iparNeigh % PARTICLES_PER_CELL] < &cell->p[ipar % PARTICLES_PER_CELL])
+               {
+                 Vec3 disp = cell->p[ipar % PARTICLES_PER_CELL] - neigh->p[iparNeigh % PARTICLES_PER_CELL];
+@@ -594,6 +614,10 @@
+           }
+         }
+       }
++  for(int ep=0;ep<2;ep++) fprintf(stderr,"EC_PAIR frame=%u phase=%d seen=%llu selected=%llu cross_rejected=%llu cross_rejected_in_radius=%llu cells=%p pool=%p\n",
++    ec_force_frame,ep,ec_pair_seen[ep],ec_pair_selected[ep],ec_cross_rejected[ep],ec_cross_in_radius[ep],(void*)cells,(void*)pool.datablocks);
++  ++ec_force_frame;
++
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////////

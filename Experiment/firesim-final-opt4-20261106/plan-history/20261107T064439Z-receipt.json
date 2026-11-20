@@ -1,0 +1,41 @@
+{
+  "active_argv_unchanged": [
+    "python3",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_repetitions.py",
+    "Native",
+    "--program",
+    "bodytrack",
+    "--input",
+    "simmedium",
+    "--repetitions",
+    "3",
+    "--timeout",
+    "14400",
+    "--bdf",
+    "0000:e2:00.0",
+    "--apps-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-staged-output-apps-build.json",
+    "--rootfs-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-staged-output-rootfs-build.json",
+    "--firmware-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/bodytrack-staged-output-firmware-build.json",
+    "--driver-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json"
+  ],
+  "active_stage_unchanged": "bodytrack-formal3",
+  "changes": [
+    {
+      "after": "facesim-staged-resident",
+      "before": "facesim",
+      "program": "facesim"
+    },
+    {
+      "after": "x264-no-progress",
+      "before": "x264",
+      "program": "x264"
+    }
+  ],
+  "new_sha256": "b01370029827a4a90e9910e0699fbee4d4e8f348d365fcf8041bf1292d736716",
+  "old_sha256": "c430ff14ee7d7956ebd60c0ae88833ccb03d5670a7cf37b4062d3201a95a3778",
+  "policy": "future program entries only; active sample ELF/input/rootfs/command unchanged"
+}

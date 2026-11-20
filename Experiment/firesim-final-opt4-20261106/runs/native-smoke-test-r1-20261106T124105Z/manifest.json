@@ -1,0 +1,159 @@
+{
+  "argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-observed-driver-20261106T114520Z/FireSim-xilinx_alveo_u280",
+    "+permissive",
+    "+domain=0000",
+    "+bus=e2",
+    "+device=00",
+    "+function=0",
+    "+bar=0",
+    "+pci-vendor=10ee",
+    "+pci-device=903f",
+    "+uart-in0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T124105Z/uart.in",
+    "+uart-out0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T124105Z/uart.log",
+    "+fesvr-step-size=2004765",
+    "+mm_readLatency_0=30",
+    "+mm_readMaxReqs_0=4",
+    "+mm_relaxFunctionalModel_0=0",
+    "+mm_writeLatency_0=30",
+    "+mm_writeMaxReqs_0=4",
+    "+ec-dac-roi-log=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T124105Z/roi-raw.jsonl",
+    "+ec-dac-snapshot-seconds=30",
+    "+permissive-off",
+    "+prog0=/tmp/guozh-firesim-final-opt4-20261106/system-builds/Native-firmware-20261106T123855.937401Z/platform/generic/firmware/fw_payload.elf"
+  ],
+  "deployment": {
+    "bdfs": [
+      "0000:e2:00.0",
+      "0000:21:00.0"
+    ],
+    "bitstream": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-bitstream-20261102T095746.955739Z/vivado_proj/firesim.bit",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_flash_firmware_updated": false,
+    "completed_cards": [
+      {
+        "bdf": "0000:e2:00.0",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "serial": "21770433G001A"
+      },
+      {
+        "bdf": "0000:21:00.0",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "serial": "21770433G02LA"
+      }
+    ],
+    "configuration": "Native",
+    "deployment_tools": {
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/firesim.py": "517b5b6f43beaeaf5f955cb66825f12e7aa51ce4328e0c920ee6bd69a837a42f",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/fpga-util.py": "5ea9d9326a1683e9b1646c42572edf86e8633dc6feae9ae214b66b99841370a1",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/pcielib.py": "8bf0f20af16957a981cb34e64031deeccde370837e4d1615cee328313498a4ef",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/probe_targets.tcl": "c6ff49bd199588dcdcab1e00dfb47cb56d15043fb1ef15974ea5fdfec0daca3b",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/probe_targets_3122.tcl": "9bfc21406f433d45b0753b5ec3f1365a9999cf610339ededa47835e481da0e52",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/program_fpga.tcl": "a303e69e7df101ed3ae25215ca7373d9675f2b79a793b71ece6fd5dfcaa0621a",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/provenance.json": "3f4dcc11685b2005e585679927d2c25ea608526b30bf7a5f8e7672862cbf8c9f",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/start_owned_hw_server.py": "8072a1ca79140fb871136a624b3903e0ac2d722142c8d1fd7eeabb2ad3242ece",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/util.py": "99c369f5383bca276e3722fcef45f8bb3e8f18a7d476750dc3cb5644181568f8"
+    },
+    "ended_utc": "2026-11-06T12:40:34.789005+00:00",
+    "existing_module_sha256": "3c6181237df79a2394bee005f2fd615ac67a5ccd9ea01bdfb710b63e22cbdfe0",
+    "global_operations": [
+      "rmmod existing xdma",
+      "program each volatile FPGA bitstream with PCIe remove/rescan",
+      "insmod existing xdma"
+    ],
+    "host_reboot": false,
+    "pid": 209553,
+    "postcheck": {
+      "cleanup_users": [],
+      "mapping": [
+        {
+          "bdf": "0000:e2:00.0",
+          "driver": "xdma",
+          "serial": "21770433G001A"
+        },
+        {
+          "bdf": "0000:21:00.0",
+          "driver": "xdma",
+          "serial": "21770433G02LA"
+        }
+      ],
+      "observed_utc": "2026-11-06T12:40:36.565275+00:00",
+      "open_devices": [],
+      "permission_denied": 0,
+      "simulation_processes": [],
+      "user_confirms_boards_available": true
+    },
+    "schema": "ec-dual-fpga-deployment/1",
+    "serials": [
+      "21770433G001A",
+      "21770433G02LA"
+    ],
+    "source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "started_utc": "2026-11-06T12:39:00.444928+00:00",
+    "status": "DEPLOYED_NOT_RUN",
+    "system_driver_updated": false,
+    "user_authorization": "2026-11-06 explicit both-board availability and direct deployment"
+  },
+  "identity": {
+    "apps_manifest_sha256": "9c59fd0424f57c2d2387e61c8a30703c044d497b10620f4c15c67f147e8406bf",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:e2:00.0",
+    "board_serial": "21770433G001A",
+    "case": null,
+    "configuration": "Native",
+    "driver_receipt_sha256": "d5a615cc0928ebce6c285d04003dab39e10123f8a144ba30775485965eb9bcea",
+    "driver_sha256": "9cfeb80105d39d9cd9e0bc86979f298893aea154bb6a5f28587ae29722bd68c6",
+    "elf_sha256": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8",
+    "fdt_sha256": "fae79acb1713f9249a35e89961f3be014e526820a0713644531abf7b5eaae6ac",
+    "firmware_receipt_sha256": "acbbe2d177bc046cf56fcbafeda2d3639496b58575afa95a0afd50fa41448edd",
+    "firmware_sha256": "a8c8c2d6b9842a34a6e4b79131e7f2d3962436075dc5f7abf9b9ce22c64eec04",
+    "formal": false,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "input": "test",
+    "linux_bootargs": "console=ttySIF0,115200 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "program": "smoke",
+    "repetition": 1,
+    "rootfs_sha256": "a33e7b7d5a6ae0810b69c91b9b256fa8c2a5a6376cd76ac865b26048dfb5aff1",
+    "run_id": "native-smoke-test-r1-20261106T124105Z",
+    "software_diagnostic": false,
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "92d17a85ca5b8495798a9027be20171c5782411261b6833713d913eea37592d7",
+  "precheck": {
+    "cleanup_users": [],
+    "mapping": [
+      {
+        "bdf": "0000:e2:00.0",
+        "driver": "xdma",
+        "serial": "21770433G001A"
+      },
+      {
+        "bdf": "0000:21:00.0",
+        "driver": "xdma",
+        "serial": "21770433G02LA"
+      }
+    ],
+    "observed_utc": "2026-11-06T12:41:05.199755+00:00",
+    "open_devices": [],
+    "permission_denied": 0,
+    "simulation_processes": [],
+    "user_confirms_boards_available": true
+  },
+  "runner_sha256": "07a1b0dc3dc405a973a1d4b1b6661f4cae5d7cbf1a75a625339c112abc42d7ea",
+  "schema": "ec-isolated-fpga-sample/1"
+}

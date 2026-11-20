@@ -1,0 +1,72 @@
+{
+  "build_script_sha256": "cf36b112a62bfc72a5f00ad208e2192a5dd13ef5ef5e68e09e27d017c7b636f2",
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j8",
+        "O=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-firmware-20261107T050706.391026Z",
+        "PLATFORM=generic",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "FW_PAYLOAD_PATH=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T050653Z/arch/riscv/boot/Image",
+        "FW_PAYLOAD_FDT_PATH=/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T124737Z/Native.dtb"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/opensbi"
+    }
+  ],
+  "configuration": "Native",
+  "content_checks": {
+    "fdt": {
+      "bytes": 7996,
+      "exact_bytes_present": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T124737Z/Native.dtb",
+      "payload_offset": 1712,
+      "sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5"
+    },
+    "kernel": {
+      "bytes": 21816320,
+      "exact_bytes_present": true,
+      "path": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T050653Z/arch/riscv/boot/Image",
+      "payload_offset": 2097152,
+      "sha256": "4ef082645f5ed6ea4a759a5c9c549c92829b8d1bf3f9e9fbcc791393078b11e4"
+    }
+  },
+  "error": null,
+  "fpga_execution": "NOT_RUN",
+  "input_files": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/system-builds/Native-firmware-20261107T050706.391026Z/bound-fdt-receipt.json": "2f80c89415f79b91a23da1f0e43b39499dd588b41a1962a424703ab442d92dcd",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/system-builds/Native-firmware-20261107T050706.391026Z/bound-kernel-receipt.json": "66f2760cec3e6bcc52a642a33bbd7286b8374c4ad41950020fe2e7bd0a0a1ac7",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T124737Z/Native.dtb": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/linux-profile.json": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T050653Z/arch/riscv/boot/Image": "4ef082645f5ed6ea4a759a5c9c549c92829b8d1bf3f9e9fbcc791393078b11e4"
+  },
+  "output_dir": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-firmware-20261107T050706.391026Z",
+  "outputs": {
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-firmware-20261107T050706.391026Z/platform/generic/firmware/fw_payload.bin": "a556be6605f2fb7532ed41756c60b4e84cd07d6f86aea7a86b10c1cfa58fe950",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-firmware-20261107T050706.391026Z/platform/generic/firmware/fw_payload.elf": "700f59806a2a39ae3bc3d3aff69921268e44e4c5404b071136ab64f29f3025ce"
+  },
+  "phase": "firmware",
+  "resources": {
+    "actual_build_root": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds",
+    "available_memory_gib": 442.96195220947266,
+    "free_disk_gib": 357.88347244262695,
+    "host_cpus": 256,
+    "jobs": 8,
+    "load_1min": 42.94970703125,
+    "log_free_disk_gib": 35.564186096191406
+  },
+  "returncode": 0,
+  "runtime_validation": "NOT_RUN",
+  "schema": "ec-firesim-system-build/1",
+  "source_id": "ba806bac1c35a13384eb18ea30f828503a7469f67b14abe4318215ec4b542ad4",
+  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/opensbi",
+  "tool_hashes": {
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ld": "10424f5eeafd5806fbca7b88bdae336c202be5a9fa332c1a662a8d0a7ae62fba",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objcopy": "2a38397dae082b022b6370eb9fbfac9c337b95433fc89cb35d384516a0997f1e"
+  },
+  "wall_seconds": 2.8520030970003063
+}

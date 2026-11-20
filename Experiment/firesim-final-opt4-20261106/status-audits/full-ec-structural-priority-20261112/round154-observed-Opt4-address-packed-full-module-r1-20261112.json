@@ -1,0 +1,450 @@
+{
+  "child_identity": {
+    "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "cgroup": "13:devices:/user.slice\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/user.slice\n9:memory:/user.slice/user-1008.slice/user@1008.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/user.slice/user-1008.slice/user@1008.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/user.slice\n1:name=systemd:/user.slice/user-1008.slice/user@1008.service/ec-opt4-address-packed-full-module-r1-20261112.service\n0::/user.slice/user-1008.slice/user@1008.service/ec-opt4-address-packed-full-module-r1-20261112.service",
+    "live": true,
+    "pid": 3963268,
+    "process_state": "S",
+    "start_ticks": "30389443"
+  },
+  "completed_receipts": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/compile-Module-receipt.json": {
+      "content": {
+        "accepted": true,
+        "argv": [
+          "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/java",
+          "-Xmx20G",
+          "-Xss8M",
+          "-XX:ActiveProcessorCount=2",
+          "-cp",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/2cd4a964ea48-scala-compiler-2.13.10.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/e6ca607c3fce-scala-library-2.13.10.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/62bd7a719819-scala-reflect-2.13.10.jar",
+          "scala.tools.nsc.Main",
+          "-classpath",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/firechip/target/scala-2.13/firechip_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/target/scala-2.13/firesim_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/target/scala-2.13/rocketchip_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/hardfloat/target/scala-2.13/hardfloat_2.13-1.5-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/targetutils/target/scala-2.13/midas-targetutils_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/macros/target/scala-2.13/rocketmacros_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/api-config-chipsalliance/build-rules/sbt/target/scala-2.13/rocketconfig_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/target/scala-2.13/midas_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/target/scala-2.13/firesimlib_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/icenet/target/scala-2.13/icenet_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/testchipip/target/scala-2.13/testchipip_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sifive-blocks/target/scala-2.13/sifive_blocks_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/chipyard/target/scala-2.13/chipyard_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/boom/target/scala-2.13/boom_2.13-3.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/hwacha/target/scala-2.13/hwacha_2.13-1.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sifive-cache/target/scala-2.13/sifive_cache_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/barstools/src/target/scala-2.13/iocell_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sha3/target/scala-2.13/sha3_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/dsptools/src/target/scala-2.13/dsptools_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/rocket-dsp-utils/src/target/scala-2.13/rocket-dsp-utils_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/api-config-chipsalliance/src/target/scala-2.13/api-config-chipsalliance_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/gemmini/target/scala-2.13/gemmini_2.13-3.1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/tracegen/target/scala-2.13/tracegen_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/cva6/target/scala-2.13/cva6_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/nvdla/target/scala-2.13/nvdla_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/riscv-sodor/target/scala-2.13/sodor_2.13-2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/ibex/target/scala-2.13/ibex_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/fft-generator/target/scala-2.13/fft_generator_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/constellation/target/scala-2.13/constellation_2.13-0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/mempress/target/scala-2.13/mempress_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/e6ca607c3fce-scala-library-2.13.10.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/2cd3689610b7-json4s-native_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/62bd7a719819-scala-reflect-2.13.10.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/42166ad9285f-chisel3_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d919d904486c-commons-lang3-3.12.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/0812f284ac5d-commons-text-1.9.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/c4cc39a8d7e6-json4s-jackson_2.13-3.6.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/1fb226e4f297-json4s-core_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/705b9e6e8432-chisel3-macros_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/03ca8dceacdf-chisel3-core_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a1522891ba5a-os-lib_2.13-0.8.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/68f266c4fa37-scala-parallel-collections_2.13-1.0.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/2351c3eba73a-jackson-databind-2.9.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/0b8e0c16de6e-chisel-iotesters_2.13-2.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8cb3d6bc67cb-spire_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a4de4fb8308f-breeze_2.13-1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/82f43c11d8ff-json4s-ast_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5667cb95fb5b-json4s-scalap_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/688cb118a602-paranamer-2.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/b86ad2e630a5-firrtl_2.13-1.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8bcd76c0142e-geny_2.13-0.7.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/45d32ac61ef8-jackson-annotations-2.9.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d934dab0bd48-jackson-core-2.9.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8f9edb08a516-firrtl-interpreter_2.13-1.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/e7d31fe2c806-treadle_2.13-1.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/4b8532f63bdc-junit-4.13.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/60ec21864741-scalatest_2.13-3.1.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/46ffc843852b-scalacheck-1-14_2.13-3.1.1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/11c0319e419d-scalacheck_2.13-1.14.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6592cd15368f-scopt_2.13-3.7.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d0f3e264c31e-spire-macros_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7f3d2d7b259b-spire-platform_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/797719d4d8a9-spire-util_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7f601d3a6d69-scala-collection-compat_2.13-2.2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/787f4e5c9fd0-algebra_2.13-2.0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d252646631ad-breeze-macros_2.13-1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5ffaddee0a3f-core-1.1.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9964fb948ef2-arpack_combined_all-0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/dc0ba5bff614-opencsv-2.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d9dffa3e2779-JTransforms-3.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/dcf9768726b8-commons-math3-3.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/1569de6437d7-shapeless_2.13-2.3.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/fe30825245d2-slf4j-api-1.7.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/131a6594969b-antlr4-runtime-4.9.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5314602fe3eb-protobuf-java-3.18.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a304da2389f7-moultingyaml_2.13-0.4.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/debdf4eca343-data-class_2.13-0.2.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9ba62c66c899-scala-jline-2.12.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/66fdef91e973-hamcrest-core-1.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/be6859e48eca-scalactic_2.13-3.1.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/213d2b7840be-scala-xml_2.13-1.2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/15f70b38bb95-test-interface-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a1fbf7673e10-cats-kernel_2.13-2.1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6dca5ab23e1f-JLargeArrays-1.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7fcdf6948298-nscala-time_2.13-2.22.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d87d607e5008-snakeyaml-1.26.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9e82163ed2fc-jansi-1.11.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d26967165676-joda-time-2.10.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6d9c8050943d-joda-convert-2.2.0.jar",
+          "-Xplugin:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/248eb82fc7c9-chisel3-plugin_2.13.10-3.5.5.jar",
+          "-d",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/classes-Module",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-packed-full-module-r1-20261112/AddressBucketUpdate.scala",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-packed-full-module-r1-20261112/ReferenceHelper.scala",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-packed-full-module-r1-20261112/ReferenceModule.scala",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-packed-full-module-r1-20261112/CandidateHelper.scala",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-packed-full-module-r1-20261112/CandidateModule.scala",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-packed-full-module-r1-20261112/Emit.scala"
+        ],
+        "host_wall_seconds": 10.683464240981266,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/compile-Module.log",
+        "log_sha256": "5efa4b5daf28c2f477662ea69986ec5c36e4bdec20d2b1401e5d73c75e08015a",
+        "missing_outputs": [],
+        "negative": false,
+        "outputs": {
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/classes-Module/opt4packedfull/Emit$.class": "9bde51cb2bcfd537d9ce09b9d1addd7fc1fb81beab6b8ddade158c8a4362d1ac"
+        },
+        "returncode": 0
+      },
+      "sha256": "26c6729aa2193236514a72140fb5c625081f566cc2f9a639720e34499cb6a47b"
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/compile-Proof-receipt.json": {
+      "content": {
+        "accepted": true,
+        "argv": [
+          "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/java",
+          "-Xmx20G",
+          "-Xss8M",
+          "-XX:ActiveProcessorCount=2",
+          "-cp",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/2cd4a964ea48-scala-compiler-2.13.10.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/e6ca607c3fce-scala-library-2.13.10.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/62bd7a719819-scala-reflect-2.13.10.jar",
+          "scala.tools.nsc.Main",
+          "-classpath",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/firechip/target/scala-2.13/firechip_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/target/scala-2.13/firesim_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/target/scala-2.13/rocketchip_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/hardfloat/target/scala-2.13/hardfloat_2.13-1.5-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/targetutils/target/scala-2.13/midas-targetutils_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/macros/target/scala-2.13/rocketmacros_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/api-config-chipsalliance/build-rules/sbt/target/scala-2.13/rocketconfig_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/target/scala-2.13/midas_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/target/scala-2.13/firesimlib_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/icenet/target/scala-2.13/icenet_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/testchipip/target/scala-2.13/testchipip_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sifive-blocks/target/scala-2.13/sifive_blocks_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/chipyard/target/scala-2.13/chipyard_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/boom/target/scala-2.13/boom_2.13-3.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/hwacha/target/scala-2.13/hwacha_2.13-1.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sifive-cache/target/scala-2.13/sifive_cache_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/barstools/src/target/scala-2.13/iocell_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sha3/target/scala-2.13/sha3_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/dsptools/src/target/scala-2.13/dsptools_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/rocket-dsp-utils/src/target/scala-2.13/rocket-dsp-utils_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/api-config-chipsalliance/src/target/scala-2.13/api-config-chipsalliance_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/gemmini/target/scala-2.13/gemmini_2.13-3.1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/tracegen/target/scala-2.13/tracegen_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/cva6/target/scala-2.13/cva6_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/nvdla/target/scala-2.13/nvdla_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/riscv-sodor/target/scala-2.13/sodor_2.13-2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/ibex/target/scala-2.13/ibex_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/fft-generator/target/scala-2.13/fft_generator_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/constellation/target/scala-2.13/constellation_2.13-0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/mempress/target/scala-2.13/mempress_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/e6ca607c3fce-scala-library-2.13.10.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/2cd3689610b7-json4s-native_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/62bd7a719819-scala-reflect-2.13.10.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/42166ad9285f-chisel3_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d919d904486c-commons-lang3-3.12.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/0812f284ac5d-commons-text-1.9.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/c4cc39a8d7e6-json4s-jackson_2.13-3.6.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/1fb226e4f297-json4s-core_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/705b9e6e8432-chisel3-macros_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/03ca8dceacdf-chisel3-core_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a1522891ba5a-os-lib_2.13-0.8.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/68f266c4fa37-scala-parallel-collections_2.13-1.0.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/2351c3eba73a-jackson-databind-2.9.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/0b8e0c16de6e-chisel-iotesters_2.13-2.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8cb3d6bc67cb-spire_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a4de4fb8308f-breeze_2.13-1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/82f43c11d8ff-json4s-ast_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5667cb95fb5b-json4s-scalap_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/688cb118a602-paranamer-2.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/b86ad2e630a5-firrtl_2.13-1.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8bcd76c0142e-geny_2.13-0.7.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/45d32ac61ef8-jackson-annotations-2.9.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d934dab0bd48-jackson-core-2.9.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8f9edb08a516-firrtl-interpreter_2.13-1.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/e7d31fe2c806-treadle_2.13-1.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/4b8532f63bdc-junit-4.13.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/60ec21864741-scalatest_2.13-3.1.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/46ffc843852b-scalacheck-1-14_2.13-3.1.1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/11c0319e419d-scalacheck_2.13-1.14.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6592cd15368f-scopt_2.13-3.7.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d0f3e264c31e-spire-macros_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7f3d2d7b259b-spire-platform_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/797719d4d8a9-spire-util_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7f601d3a6d69-scala-collection-compat_2.13-2.2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/787f4e5c9fd0-algebra_2.13-2.0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d252646631ad-breeze-macros_2.13-1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5ffaddee0a3f-core-1.1.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9964fb948ef2-arpack_combined_all-0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/dc0ba5bff614-opencsv-2.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d9dffa3e2779-JTransforms-3.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/dcf9768726b8-commons-math3-3.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/1569de6437d7-shapeless_2.13-2.3.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/fe30825245d2-slf4j-api-1.7.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/131a6594969b-antlr4-runtime-4.9.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5314602fe3eb-protobuf-java-3.18.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a304da2389f7-moultingyaml_2.13-0.4.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/debdf4eca343-data-class_2.13-0.2.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9ba62c66c899-scala-jline-2.12.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/66fdef91e973-hamcrest-core-1.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/be6859e48eca-scalactic_2.13-3.1.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/213d2b7840be-scala-xml_2.13-1.2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/15f70b38bb95-test-interface-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a1fbf7673e10-cats-kernel_2.13-2.1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6dca5ab23e1f-JLargeArrays-1.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7fcdf6948298-nscala-time_2.13-2.22.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d87d607e5008-snakeyaml-1.26.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9e82163ed2fc-jansi-1.11.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d26967165676-joda-time-2.10.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6d9c8050943d-joda-convert-2.2.0.jar",
+          "-Xplugin:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/248eb82fc7c9-chisel3-plugin_2.13.10-3.5.5.jar",
+          "-d",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/classes-Proof",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-packed-full-module-r1-20261112/AddressBucketUpdate.scala",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-packed-full-module-r1-20261112/ReferenceHelper.scala",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-packed-full-module-r1-20261112/ReferenceProof.scala",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-packed-full-module-r1-20261112/CandidateHelper.scala",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-packed-full-module-r1-20261112/CandidateProof.scala",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-packed-full-module-r1-20261112/Emit.scala"
+        ],
+        "host_wall_seconds": 10.940911987971049,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/compile-Proof.log",
+        "log_sha256": "1302a8d7981f6d275e986ba80b546f4f18210fcfb3fc57c2be46fc0dc183ce58",
+        "missing_outputs": [],
+        "negative": false,
+        "outputs": {
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/classes-Proof/opt4packedfull/Emit$.class": "9bde51cb2bcfd537d9ce09b9d1addd7fc1fb81beab6b8ddade158c8a4362d1ac"
+        },
+        "returncode": 0
+      },
+      "sha256": "4a64f8553abdc9d8b93c2c2ae919a3a94b8d9c12c9e964e4ef6c937b68226597"
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/elaborate-Candidate-Module-receipt.json": {
+      "content": {
+        "accepted": true,
+        "argv": [
+          "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/java",
+          "-Xmx20G",
+          "-Xss8M",
+          "-XX:ActiveProcessorCount=2",
+          "-cp",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/classes-Module:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/firechip/target/scala-2.13/firechip_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/target/scala-2.13/firesim_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/target/scala-2.13/rocketchip_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/hardfloat/target/scala-2.13/hardfloat_2.13-1.5-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/targetutils/target/scala-2.13/midas-targetutils_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/macros/target/scala-2.13/rocketmacros_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/api-config-chipsalliance/build-rules/sbt/target/scala-2.13/rocketconfig_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/target/scala-2.13/midas_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/target/scala-2.13/firesimlib_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/icenet/target/scala-2.13/icenet_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/testchipip/target/scala-2.13/testchipip_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sifive-blocks/target/scala-2.13/sifive_blocks_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/chipyard/target/scala-2.13/chipyard_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/boom/target/scala-2.13/boom_2.13-3.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/hwacha/target/scala-2.13/hwacha_2.13-1.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sifive-cache/target/scala-2.13/sifive_cache_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/barstools/src/target/scala-2.13/iocell_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sha3/target/scala-2.13/sha3_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/dsptools/src/target/scala-2.13/dsptools_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/rocket-dsp-utils/src/target/scala-2.13/rocket-dsp-utils_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/api-config-chipsalliance/src/target/scala-2.13/api-config-chipsalliance_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/gemmini/target/scala-2.13/gemmini_2.13-3.1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/tracegen/target/scala-2.13/tracegen_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/cva6/target/scala-2.13/cva6_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/nvdla/target/scala-2.13/nvdla_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/riscv-sodor/target/scala-2.13/sodor_2.13-2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/ibex/target/scala-2.13/ibex_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/fft-generator/target/scala-2.13/fft_generator_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/constellation/target/scala-2.13/constellation_2.13-0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/mempress/target/scala-2.13/mempress_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/e6ca607c3fce-scala-library-2.13.10.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/2cd3689610b7-json4s-native_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/62bd7a719819-scala-reflect-2.13.10.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/42166ad9285f-chisel3_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d919d904486c-commons-lang3-3.12.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/0812f284ac5d-commons-text-1.9.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/c4cc39a8d7e6-json4s-jackson_2.13-3.6.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/1fb226e4f297-json4s-core_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/705b9e6e8432-chisel3-macros_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/03ca8dceacdf-chisel3-core_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a1522891ba5a-os-lib_2.13-0.8.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/68f266c4fa37-scala-parallel-collections_2.13-1.0.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/2351c3eba73a-jackson-databind-2.9.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/0b8e0c16de6e-chisel-iotesters_2.13-2.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8cb3d6bc67cb-spire_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a4de4fb8308f-breeze_2.13-1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/82f43c11d8ff-json4s-ast_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5667cb95fb5b-json4s-scalap_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/688cb118a602-paranamer-2.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/b86ad2e630a5-firrtl_2.13-1.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8bcd76c0142e-geny_2.13-0.7.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/45d32ac61ef8-jackson-annotations-2.9.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d934dab0bd48-jackson-core-2.9.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8f9edb08a516-firrtl-interpreter_2.13-1.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/e7d31fe2c806-treadle_2.13-1.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/4b8532f63bdc-junit-4.13.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/60ec21864741-scalatest_2.13-3.1.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/46ffc843852b-scalacheck-1-14_2.13-3.1.1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/11c0319e419d-scalacheck_2.13-1.14.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6592cd15368f-scopt_2.13-3.7.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d0f3e264c31e-spire-macros_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7f3d2d7b259b-spire-platform_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/797719d4d8a9-spire-util_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7f601d3a6d69-scala-collection-compat_2.13-2.2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/787f4e5c9fd0-algebra_2.13-2.0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d252646631ad-breeze-macros_2.13-1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5ffaddee0a3f-core-1.1.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9964fb948ef2-arpack_combined_all-0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/dc0ba5bff614-opencsv-2.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d9dffa3e2779-JTransforms-3.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/dcf9768726b8-commons-math3-3.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/1569de6437d7-shapeless_2.13-2.3.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/fe30825245d2-slf4j-api-1.7.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/131a6594969b-antlr4-runtime-4.9.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5314602fe3eb-protobuf-java-3.18.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a304da2389f7-moultingyaml_2.13-0.4.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/debdf4eca343-data-class_2.13-0.2.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9ba62c66c899-scala-jline-2.12.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/66fdef91e973-hamcrest-core-1.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/be6859e48eca-scalactic_2.13-3.1.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/213d2b7840be-scala-xml_2.13-1.2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/15f70b38bb95-test-interface-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a1fbf7673e10-cats-kernel_2.13-2.1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6dca5ab23e1f-JLargeArrays-1.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7fcdf6948298-nscala-time_2.13-2.22.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d87d607e5008-snakeyaml-1.26.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9e82163ed2fc-jansi-1.11.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d26967165676-joda-time-2.10.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6d9c8050943d-joda-convert-2.2.0.jar",
+          "opt4packedfull.Emit",
+          "Candidate",
+          "Module",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/Candidate-Module"
+        ],
+        "host_wall_seconds": 198.0266451719799,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/elaborate-Candidate-Module.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "missing_outputs": [],
+        "negative": false,
+        "outputs": {
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/Candidate-Module/FPGATop.v": "6cd5c8ae674cf36728f03d05f02b961a5cf16fbe3c224f55e5280388fee9d335"
+        },
+        "returncode": 0
+      },
+      "sha256": "76dd59cdd59fe4a8a62adff2a38e0365bc9baaed30354f85ba80c846191998a0"
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/elaborate-Candidate-Proof-receipt.json": {
+      "content": {
+        "accepted": true,
+        "argv": [
+          "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/java",
+          "-Xmx20G",
+          "-Xss8M",
+          "-XX:ActiveProcessorCount=2",
+          "-cp",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/classes-Proof:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/firechip/target/scala-2.13/firechip_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/target/scala-2.13/firesim_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/target/scala-2.13/rocketchip_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/hardfloat/target/scala-2.13/hardfloat_2.13-1.5-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/targetutils/target/scala-2.13/midas-targetutils_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/macros/target/scala-2.13/rocketmacros_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/api-config-chipsalliance/build-rules/sbt/target/scala-2.13/rocketconfig_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/target/scala-2.13/midas_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/target/scala-2.13/firesimlib_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/icenet/target/scala-2.13/icenet_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/testchipip/target/scala-2.13/testchipip_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sifive-blocks/target/scala-2.13/sifive_blocks_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/chipyard/target/scala-2.13/chipyard_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/boom/target/scala-2.13/boom_2.13-3.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/hwacha/target/scala-2.13/hwacha_2.13-1.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sifive-cache/target/scala-2.13/sifive_cache_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/barstools/src/target/scala-2.13/iocell_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sha3/target/scala-2.13/sha3_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/dsptools/src/target/scala-2.13/dsptools_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/rocket-dsp-utils/src/target/scala-2.13/rocket-dsp-utils_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/api-config-chipsalliance/src/target/scala-2.13/api-config-chipsalliance_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/gemmini/target/scala-2.13/gemmini_2.13-3.1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/tracegen/target/scala-2.13/tracegen_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/cva6/target/scala-2.13/cva6_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/nvdla/target/scala-2.13/nvdla_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/riscv-sodor/target/scala-2.13/sodor_2.13-2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/ibex/target/scala-2.13/ibex_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/fft-generator/target/scala-2.13/fft_generator_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/constellation/target/scala-2.13/constellation_2.13-0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/mempress/target/scala-2.13/mempress_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/e6ca607c3fce-scala-library-2.13.10.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/2cd3689610b7-json4s-native_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/62bd7a719819-scala-reflect-2.13.10.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/42166ad9285f-chisel3_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d919d904486c-commons-lang3-3.12.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/0812f284ac5d-commons-text-1.9.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/c4cc39a8d7e6-json4s-jackson_2.13-3.6.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/1fb226e4f297-json4s-core_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/705b9e6e8432-chisel3-macros_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/03ca8dceacdf-chisel3-core_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a1522891ba5a-os-lib_2.13-0.8.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/68f266c4fa37-scala-parallel-collections_2.13-1.0.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/2351c3eba73a-jackson-databind-2.9.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/0b8e0c16de6e-chisel-iotesters_2.13-2.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8cb3d6bc67cb-spire_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a4de4fb8308f-breeze_2.13-1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/82f43c11d8ff-json4s-ast_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5667cb95fb5b-json4s-scalap_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/688cb118a602-paranamer-2.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/b86ad2e630a5-firrtl_2.13-1.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8bcd76c0142e-geny_2.13-0.7.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/45d32ac61ef8-jackson-annotations-2.9.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d934dab0bd48-jackson-core-2.9.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8f9edb08a516-firrtl-interpreter_2.13-1.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/e7d31fe2c806-treadle_2.13-1.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/4b8532f63bdc-junit-4.13.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/60ec21864741-scalatest_2.13-3.1.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/46ffc843852b-scalacheck-1-14_2.13-3.1.1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/11c0319e419d-scalacheck_2.13-1.14.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6592cd15368f-scopt_2.13-3.7.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d0f3e264c31e-spire-macros_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7f3d2d7b259b-spire-platform_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/797719d4d8a9-spire-util_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7f601d3a6d69-scala-collection-compat_2.13-2.2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/787f4e5c9fd0-algebra_2.13-2.0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d252646631ad-breeze-macros_2.13-1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5ffaddee0a3f-core-1.1.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9964fb948ef2-arpack_combined_all-0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/dc0ba5bff614-opencsv-2.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d9dffa3e2779-JTransforms-3.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/dcf9768726b8-commons-math3-3.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/1569de6437d7-shapeless_2.13-2.3.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/fe30825245d2-slf4j-api-1.7.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/131a6594969b-antlr4-runtime-4.9.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5314602fe3eb-protobuf-java-3.18.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a304da2389f7-moultingyaml_2.13-0.4.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/debdf4eca343-data-class_2.13-0.2.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9ba62c66c899-scala-jline-2.12.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/66fdef91e973-hamcrest-core-1.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/be6859e48eca-scalactic_2.13-3.1.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/213d2b7840be-scala-xml_2.13-1.2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/15f70b38bb95-test-interface-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a1fbf7673e10-cats-kernel_2.13-2.1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6dca5ab23e1f-JLargeArrays-1.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7fcdf6948298-nscala-time_2.13-2.22.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d87d607e5008-snakeyaml-1.26.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9e82163ed2fc-jansi-1.11.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d26967165676-joda-time-2.10.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6d9c8050943d-joda-convert-2.2.0.jar",
+          "opt4packedfull.Emit",
+          "Candidate",
+          "Proof",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/Candidate-Proof"
+        ],
+        "host_wall_seconds": 96.82400135695934,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/elaborate-Candidate-Proof.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "missing_outputs": [],
+        "negative": false,
+        "outputs": {
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/Candidate-Proof/PackedProofCandidate.v": "a484ef187c8612f472b76cfbc1e08cdf236ee3db4e56407f2be81713504e53fd"
+        },
+        "returncode": 0
+      },
+      "sha256": "771a03730c6a629ad0c2d2eeb46627e9202c5c14944bb37c4a0ac60daac81437"
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/elaborate-Reference-Module-receipt.json": {
+      "content": {
+        "accepted": true,
+        "argv": [
+          "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/java",
+          "-Xmx20G",
+          "-Xss8M",
+          "-XX:ActiveProcessorCount=2",
+          "-cp",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/classes-Module:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/firechip/target/scala-2.13/firechip_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/target/scala-2.13/firesim_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/target/scala-2.13/rocketchip_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/hardfloat/target/scala-2.13/hardfloat_2.13-1.5-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/targetutils/target/scala-2.13/midas-targetutils_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/macros/target/scala-2.13/rocketmacros_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/api-config-chipsalliance/build-rules/sbt/target/scala-2.13/rocketconfig_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/target/scala-2.13/midas_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/target/scala-2.13/firesimlib_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/icenet/target/scala-2.13/icenet_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/testchipip/target/scala-2.13/testchipip_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sifive-blocks/target/scala-2.13/sifive_blocks_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/chipyard/target/scala-2.13/chipyard_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/boom/target/scala-2.13/boom_2.13-3.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/hwacha/target/scala-2.13/hwacha_2.13-1.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sifive-cache/target/scala-2.13/sifive_cache_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/barstools/src/target/scala-2.13/iocell_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sha3/target/scala-2.13/sha3_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/dsptools/src/target/scala-2.13/dsptools_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/rocket-dsp-utils/src/target/scala-2.13/rocket-dsp-utils_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/api-config-chipsalliance/src/target/scala-2.13/api-config-chipsalliance_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/gemmini/target/scala-2.13/gemmini_2.13-3.1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/tracegen/target/scala-2.13/tracegen_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/cva6/target/scala-2.13/cva6_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/nvdla/target/scala-2.13/nvdla_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/riscv-sodor/target/scala-2.13/sodor_2.13-2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/ibex/target/scala-2.13/ibex_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/fft-generator/target/scala-2.13/fft_generator_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/constellation/target/scala-2.13/constellation_2.13-0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/mempress/target/scala-2.13/mempress_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/e6ca607c3fce-scala-library-2.13.10.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/2cd3689610b7-json4s-native_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/62bd7a719819-scala-reflect-2.13.10.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/42166ad9285f-chisel3_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d919d904486c-commons-lang3-3.12.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/0812f284ac5d-commons-text-1.9.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/c4cc39a8d7e6-json4s-jackson_2.13-3.6.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/1fb226e4f297-json4s-core_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/705b9e6e8432-chisel3-macros_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/03ca8dceacdf-chisel3-core_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a1522891ba5a-os-lib_2.13-0.8.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/68f266c4fa37-scala-parallel-collections_2.13-1.0.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/2351c3eba73a-jackson-databind-2.9.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/0b8e0c16de6e-chisel-iotesters_2.13-2.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8cb3d6bc67cb-spire_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a4de4fb8308f-breeze_2.13-1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/82f43c11d8ff-json4s-ast_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5667cb95fb5b-json4s-scalap_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/688cb118a602-paranamer-2.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/b86ad2e630a5-firrtl_2.13-1.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8bcd76c0142e-geny_2.13-0.7.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/45d32ac61ef8-jackson-annotations-2.9.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d934dab0bd48-jackson-core-2.9.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8f9edb08a516-firrtl-interpreter_2.13-1.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/e7d31fe2c806-treadle_2.13-1.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/4b8532f63bdc-junit-4.13.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/60ec21864741-scalatest_2.13-3.1.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/46ffc843852b-scalacheck-1-14_2.13-3.1.1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/11c0319e419d-scalacheck_2.13-1.14.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6592cd15368f-scopt_2.13-3.7.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d0f3e264c31e-spire-macros_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7f3d2d7b259b-spire-platform_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/797719d4d8a9-spire-util_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7f601d3a6d69-scala-collection-compat_2.13-2.2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/787f4e5c9fd0-algebra_2.13-2.0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d252646631ad-breeze-macros_2.13-1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5ffaddee0a3f-core-1.1.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9964fb948ef2-arpack_combined_all-0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/dc0ba5bff614-opencsv-2.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d9dffa3e2779-JTransforms-3.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/dcf9768726b8-commons-math3-3.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/1569de6437d7-shapeless_2.13-2.3.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/fe30825245d2-slf4j-api-1.7.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/131a6594969b-antlr4-runtime-4.9.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5314602fe3eb-protobuf-java-3.18.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a304da2389f7-moultingyaml_2.13-0.4.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/debdf4eca343-data-class_2.13-0.2.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9ba62c66c899-scala-jline-2.12.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/66fdef91e973-hamcrest-core-1.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/be6859e48eca-scalactic_2.13-3.1.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/213d2b7840be-scala-xml_2.13-1.2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/15f70b38bb95-test-interface-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a1fbf7673e10-cats-kernel_2.13-2.1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6dca5ab23e1f-JLargeArrays-1.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7fcdf6948298-nscala-time_2.13-2.22.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d87d607e5008-snakeyaml-1.26.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9e82163ed2fc-jansi-1.11.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d26967165676-joda-time-2.10.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6d9c8050943d-joda-convert-2.2.0.jar",
+          "opt4packedfull.Emit",
+          "Reference",
+          "Module",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/Reference-Module"
+        ],
+        "host_wall_seconds": 91.29308914300054,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/elaborate-Reference-Module.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "missing_outputs": [],
+        "negative": false,
+        "outputs": {
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/Reference-Module/FPGATop.v": "2dc2042828329cd9cbc8df995c209ac977a2f7b315f17d5299ca8dbb0f93de78"
+        },
+        "returncode": 0
+      },
+      "sha256": "2c25e79945d3e153c21e9af100d7e88ab564545a12d9ffd22da2ed8a66d283dd"
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/elaborate-Reference-Proof-receipt.json": {
+      "content": {
+        "accepted": true,
+        "argv": [
+          "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/java",
+          "-Xmx20G",
+          "-Xss8M",
+          "-XX:ActiveProcessorCount=2",
+          "-cp",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/classes-Proof:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/firechip/target/scala-2.13/firechip_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/target/scala-2.13/firesim_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/target/scala-2.13/rocketchip_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/hardfloat/target/scala-2.13/hardfloat_2.13-1.5-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/targetutils/target/scala-2.13/midas-targetutils_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/macros/target/scala-2.13/rocketmacros_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/api-config-chipsalliance/build-rules/sbt/target/scala-2.13/rocketconfig_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/target/scala-2.13/midas_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/target/scala-2.13/firesimlib_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/icenet/target/scala-2.13/icenet_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/testchipip/target/scala-2.13/testchipip_2.13-1.0-SNAPSHOT.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sifive-blocks/target/scala-2.13/sifive_blocks_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/chipyard/target/scala-2.13/chipyard_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/boom/target/scala-2.13/boom_2.13-3.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/hwacha/target/scala-2.13/hwacha_2.13-1.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sifive-cache/target/scala-2.13/sifive_cache_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/barstools/src/target/scala-2.13/iocell_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/sha3/target/scala-2.13/sha3_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/dsptools/src/target/scala-2.13/dsptools_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/rocket-dsp-utils/src/target/scala-2.13/rocket-dsp-utils_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/tools/api-config-chipsalliance/src/target/scala-2.13/api-config-chipsalliance_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/gemmini/target/scala-2.13/gemmini_2.13-3.1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/tracegen/target/scala-2.13/tracegen_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/cva6/target/scala-2.13/cva6_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/nvdla/target/scala-2.13/nvdla_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/riscv-sodor/target/scala-2.13/sodor_2.13-2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/ibex/target/scala-2.13/ibex_2.13-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/fft-generator/target/scala-2.13/fft_generator_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/constellation/target/scala-2.13/constellation_2.13-0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/mempress/target/scala-2.13/mempress_2.13-1.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/e6ca607c3fce-scala-library-2.13.10.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/2cd3689610b7-json4s-native_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/62bd7a719819-scala-reflect-2.13.10.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/42166ad9285f-chisel3_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d919d904486c-commons-lang3-3.12.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/0812f284ac5d-commons-text-1.9.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/c4cc39a8d7e6-json4s-jackson_2.13-3.6.6.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/1fb226e4f297-json4s-core_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/705b9e6e8432-chisel3-macros_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/03ca8dceacdf-chisel3-core_2.13-3.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a1522891ba5a-os-lib_2.13-0.8.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/68f266c4fa37-scala-parallel-collections_2.13-1.0.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/2351c3eba73a-jackson-databind-2.9.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/0b8e0c16de6e-chisel-iotesters_2.13-2.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8cb3d6bc67cb-spire_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a4de4fb8308f-breeze_2.13-1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/82f43c11d8ff-json4s-ast_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5667cb95fb5b-json4s-scalap_2.13-3.6.12.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/688cb118a602-paranamer-2.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/b86ad2e630a5-firrtl_2.13-1.5.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8bcd76c0142e-geny_2.13-0.7.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/45d32ac61ef8-jackson-annotations-2.9.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d934dab0bd48-jackson-core-2.9.8.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/8f9edb08a516-firrtl-interpreter_2.13-1.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/e7d31fe2c806-treadle_2.13-1.5.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/4b8532f63bdc-junit-4.13.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/60ec21864741-scalatest_2.13-3.1.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/46ffc843852b-scalacheck-1-14_2.13-3.1.1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/11c0319e419d-scalacheck_2.13-1.14.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6592cd15368f-scopt_2.13-3.7.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d0f3e264c31e-spire-macros_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7f3d2d7b259b-spire-platform_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/797719d4d8a9-spire-util_2.13-0.17.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7f601d3a6d69-scala-collection-compat_2.13-2.2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/787f4e5c9fd0-algebra_2.13-2.0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d252646631ad-breeze-macros_2.13-1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5ffaddee0a3f-core-1.1.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9964fb948ef2-arpack_combined_all-0.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/dc0ba5bff614-opencsv-2.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d9dffa3e2779-JTransforms-3.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/dcf9768726b8-commons-math3-3.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/1569de6437d7-shapeless_2.13-2.3.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/fe30825245d2-slf4j-api-1.7.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/131a6594969b-antlr4-runtime-4.9.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/5314602fe3eb-protobuf-java-3.18.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a304da2389f7-moultingyaml_2.13-0.4.2.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/debdf4eca343-data-class_2.13-0.2.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9ba62c66c899-scala-jline-2.12.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/66fdef91e973-hamcrest-core-1.3.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/be6859e48eca-scalactic_2.13-3.1.4.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/213d2b7840be-scala-xml_2.13-1.2.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/15f70b38bb95-test-interface-1.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/a1fbf7673e10-cats-kernel_2.13-2.1.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6dca5ab23e1f-JLargeArrays-1.5.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/7fcdf6948298-nscala-time_2.13-2.22.0.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d87d607e5008-snakeyaml-1.26.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/9e82163ed2fc-jansi-1.11.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/d26967165676-joda-time-2.10.1.jar:/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/deps/6d9c8050943d-joda-convert-2.2.0.jar",
+          "opt4packedfull.Emit",
+          "Reference",
+          "Proof",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/Reference-Proof"
+        ],
+        "host_wall_seconds": 94.74254413199378,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/elaborate-Reference-Proof.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "missing_outputs": [],
+        "negative": false,
+        "outputs": {
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/Reference-Proof/PackedProofReference.v": "bdb255f1daa4f9c672f3cfe4c5b8a55aa3e70d2d3f3e91047c960f01b228238f"
+        },
+        "returncode": 0
+      },
+      "sha256": "ab8f7bd0f5969486e0de2bfac5802c554a2fe723784536e97a427b79ca0afe78"
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/map-Reference-receipt.json": {
+      "content": {
+        "accepted": true,
+        "argv": [
+          "/tools/Xilinx/Vivado/2021.1/bin/vivado",
+          "-mode",
+          "batch",
+          "-nojournal",
+          "-log",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/Reference-area/vivado.log",
+          "-source",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/Reference-area/map.tcl"
+        ],
+        "host_wall_seconds": 10403.12611490098,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/map-Reference.log",
+        "log_sha256": "bf296dc1b116205402cd0cfa703f8ee90521c64b1502d4db099255021291930e",
+        "missing_outputs": [],
+        "negative": false,
+        "outputs": {
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/Reference-area/hierarchical.rpt": "0ceaa9902657d867072cf23f9ca7446812e7156bd215f2d4ba750b5c5b4ab38c",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/Reference-area/module.dcp": "7bdcf491eca029c9dcd7e44936928f713a13c4117d0fd6e2a2a3e5ed11b32bf0",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/Reference-area/utilization.rpt": "741f6e6bfaeb15852cdce231fe1f5501789150a94e970e83d5a6cbab64f726e9"
+        },
+        "returncode": 0
+      },
+      "sha256": "b1412230600e4cee7ec9982c271d38cb6d5cf015d71beadf286b7d0a1233ca84"
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/paired-map-progress.json": {
+      "content": {
+        "Reference": {
+          "checkpoint_sha256": "7bdcf491eca029c9dcd7e44936928f713a13c4117d0fd6e2a2a3e5ed11b32bf0",
+          "hierarchical_sha256": "0ceaa9902657d867072cf23f9ca7446812e7156bd215f2d4ba750b5c5b4ab38c",
+          "resources": {
+            "Block RAM Tile": {
+              "available": 2016.0,
+              "percent_computed": 10.714285714285714,
+              "reported_label": "Block RAM Tile",
+              "section": "2. BLOCKRAM",
+              "source_row": {
+                "Available": "2016",
+                "Fixed": "0",
+                "Prohibited": "0",
+                "Site Type": "Block RAM Tile",
+                "Used": "216",
+                "Util%": "10.71"
+              },
+              "used": 216.0
+            },
+            "CARRY8": {
+              "available": 162960.0,
+              "percent_computed": 29.88708885616102,
+              "reported_label": "CARRY8",
+              "section": "1. CLB Logic",
+              "source_row": {
+                "Available": "162960",
+                "Fixed": "0",
+                "Prohibited": "0",
+                "Site Type": "CARRY8",
+                "Used": "48704",
+                "Util%": "29.89"
+              },
+              "used": 48704.0
+            },
+            "CLB LUTs": {
+              "available": 1303680.0,
+              "percent_computed": 69.99432376043201,
+              "reported_label": "CLB LUTs*",
+              "section": "1. CLB Logic",
+              "source_row": {
+                "Available": "1303680",
+                "Fixed": "0",
+                "Prohibited": "0",
+                "Site Type": "CLB LUTs*",
+                "Used": "912502",
+                "Util%": "69.99"
+              },
+              "used": 912502.0
+            },
+            "CLB Registers": {
+              "available": 2607360.0,
+              "percent_computed": 14.776325478645067,
+              "reported_label": "CLB Registers",
+              "section": "1. CLB Logic",
+              "source_row": {
+                "Available": "2607360",
+                "Fixed": "0",
+                "Prohibited": "0",
+                "Site Type": "CLB Registers",
+                "Used": "385272",
+                "Util%": "14.78"
+              },
+              "used": 385272.0
+            },
+            "DSPs": {
+              "available": 9024.0,
+              "percent_computed": 0.0,
+              "reported_label": "DSPs",
+              "section": "3. ARITHMETIC",
+              "source_row": {
+                "Available": "9024",
+                "Fixed": "0",
+                "Prohibited": "0",
+                "Site Type": "DSPs",
+                "Used": "0",
+                "Util%": "0.00"
+              },
+              "used": 0.0
+            },
+            "URAM": {
+              "available": 960.0,
+              "percent_computed": 0.0,
+              "reported_label": "URAM",
+              "section": "2. BLOCKRAM",
+              "source_row": {
+                "Available": "960",
+                "Fixed": "0",
+                "Prohibited": "0",
+                "Site Type": "URAM",
+                "Used": "0",
+                "Util%": "0.00"
+              },
+              "used": 0.0
+            }
+          },
+          "rtl_sha256": "2dc2042828329cd9cbc8df995c209ac977a2f7b315f17d5299ca8dbb0f93de78",
+          "scope": "Complete target module OOC, not GoldenGate host",
+          "utilization_sha256": "741f6e6bfaeb15852cdce231fe1f5501789150a94e970e83d5a6cbab64f726e9"
+        }
+      },
+      "sha256": "6ff480ffaa3101354e89b6543feafadcc930d6f9ea62a99b0b2cf46bc2abddc2"
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/parity-compile-receipt.json": {
+      "content": {
+        "accepted": true,
+        "argv": [
+          "/usr/local/bin/verilator",
+          "--binary",
+          "--timing",
+          "--top-module",
+          "tb",
+          "--Mdir",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/obj",
+          "-j",
+          "2",
+          "--output-split",
+          "10000",
+          "--output-split-cfuncs",
+          "200",
+          "--x-initial",
+          "0",
+          "--x-assign",
+          "0",
+          "-Wno-fatal",
+          "-DRANDOMIZE_REG_INIT",
+          "-DRANDOMIZE_MEM_INIT",
+          "-DRANDOM=32'h0",
+          "-CFLAGS",
+          "-O0",
+          "-MAKEFLAGS",
+          "OPT_FAST=-O0 OPT_SLOW=-O0",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/Reference-Proof/PackedProofReference.v",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/Candidate-Proof/PackedProofCandidate.v",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/tb.v"
+        ],
+        "host_wall_seconds": 405.87237625103444,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/parity-compile.log",
+        "log_sha256": "b674526be818d845698c8d936c72be567a7b6e20f2e7ee2ce5fb711faec3aba0",
+        "missing_outputs": [],
+        "negative": false,
+        "outputs": {
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/obj/Vtb": "0bf9a5226ade6de565a80133ee3178ed34e883a83dc8cab025b4c949ebc97bb0"
+        },
+        "returncode": 0
+      },
+      "sha256": "b96ab90ddb167d574601b127e89af93e82c6f50800cec59a760e15a9d1aea718"
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/parity-invalid-register-mutation-receipt.json": {
+      "content": {
+        "accepted": true,
+        "argv": [
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/obj/Vtb",
+          "+EC_MUTATE"
+        ],
+        "host_wall_seconds": 16.06193454802269,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/parity-invalid-register-mutation.log",
+        "log_sha256": "9d0b33e3cc998ea07e076a7328b31ee40b464e8e85e1c9fc1dd4a597dd068e67",
+        "missing_outputs": [],
+        "negative": true,
+        "outputs": {},
+        "returncode": -6
+      },
+      "sha256": "c0c7aa60fa7f643172b3191491f9187214babbdf2b62cc389683293f7de77fe6"
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/parity-positive-receipt.json": {
+      "content": {
+        "accepted": true,
+        "argv": [
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/obj/Vtb"
+        ],
+        "host_wall_seconds": 95.28964737401111,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/parity-positive.log",
+        "log_sha256": "a00f534652f5971b618fa3622c6e4dbbbe9f2374b9c004a5e97e757190714bf8",
+        "missing_outputs": [],
+        "negative": false,
+        "outputs": {},
+        "returncode": 0
+      },
+      "sha256": "8745cee8283ff0c9dfa31f633b39e2ea8ece5161c8a9d93405ac19d221457602"
+    }
+  },
+  "identity": {
+    "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "cgroup": "13:devices:/user.slice\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/user.slice\n9:memory:/user.slice/user-1008.slice/user@1008.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/user.slice/user-1008.slice/user@1008.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/user.slice\n1:name=systemd:/user.slice/user-1008.slice/user@1008.service/ec-opt4-address-packed-full-module-r1-20261112.service\n0::/user.slice/user-1008.slice/user@1008.service/ec-opt4-address-packed-full-module-r1-20261112.service",
+    "live": true,
+    "pid": 3332996,
+    "process_state": "S",
+    "start_ticks": "29246727"
+  },
+  "inputs_sha256": "044a7547393c12be496875f70e1357a756b412ee3cd720026dd3c6858ec3affa",
+  "pin_mismatches": [],
+  "state": {
+    "active_stage": "map-Candidate",
+    "child": {
+      "cpu_ticks": 0,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 3963268,
+      "process_state": "S",
+      "rss_bytes": 3956736,
+      "start_ticks": "30389443"
+    },
+    "complete_formal_equivalence": false,
+    "cpu_ticks": 34,
+    "cpus": [
+      214,
+      215
+    ],
+    "derived_parent": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+    "finite_parity_pass": true,
+    "fpga_access": false,
+    "full_host_synthesis": false,
+    "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "inputs_sha256": "044a7547393c12be496875f70e1357a756b412ee3cd720026dd3c6858ec3affa",
+    "log_bytes": 38823,
+    "memory_limit_gib": 64,
+    "monitor_outputs": 5684,
+    "pid": 3332996,
+    "process_state": "R",
+    "production_admission": false,
+    "proof_only_ports_excluded_from_area": true,
+    "rss_bytes": 16089088,
+    "schema": "ec-private-packed-complete-module/1",
+    "scope": "Complete actual PackageAddressStats target: unchanged state/update priorities and public interface. Private proof observes all5120 bucketwords plus valid/sequence, including invalid payload. Paired area excludes proof-only ports.",
+    "stage_wall_seconds": 3180.3796230570297,
+    "start_ticks": "29246727",
+    "started_utc": "2026-11-12T10:52:27.185274+00:00",
+    "status": "RUNNING_MAP-CANDIDATE",
+    "updated_utc": "2026-11-12T14:55:54.377908+00:00"
+  },
+  "state_path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/state.json",
+  "state_sha256": "cbd51ac6ce6fd3b460bc1dd5d2c59ea36b883a15c8b916fecfe06b464ea5e4e9"
+}

@@ -1,0 +1,56 @@
+{
+  "driver_sha256": "bbf2fc76760b5fd651d116c788d619a413688b55717697ade6edb830cf511165",
+  "hardware_access": false,
+  "instrumentation_diff_sha256": "3a2a5415c270dbc0403bc4e61c3f92fc052dab22031335db8a738ad44dc3d5a0",
+  "parent_source_sha256": "a87f7141049a9ad32284989f0c2ff885f3bf54eff342d81f50dba9d547ce50fc",
+  "passed": true,
+  "plan_sha256": "fd22ea4c152a8f45c46eda016f8db8190e321097703f54b9ae1af22b476bccfc",
+  "real_application_admission_preserved": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-gg-stream-replay-r3-20261111/board-admission-ready.json",
+  "source_sha256": "48682a163ecc6e6fdc1900f8b28e633e552b9191fd3204a7d699b098841ff0a3",
+  "target_or_model_modified": false,
+  "tests": {
+    "directed-payload-negative": {
+      "argv": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-clock-measurement-r1-20261112/VSVBStreamingReplay",
+        "+svb-trace=/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-svb-gg-stream-replay-r2-20261111/directed-original-svb.bin",
+        "+svb-force-all-inputs",
+        "+svb-clock-events=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/svb-clock-measurement-build-r1-20261112/directed-payload-negative-events.csv",
+        "+seed=8491167",
+        "+svb-mutate-data"
+      ],
+      "log_sha256": "0bd9ed14c59b4dd00b0a7db6fe9643c6595aa4c19d19c8d504d298da3aec1bb9",
+      "returncode": 1,
+      "summary": {},
+      "wall_seconds": 0.26511328300694004
+    },
+    "directed-positive": {
+      "argv": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-clock-measurement-r1-20261112/VSVBStreamingReplay",
+        "+svb-trace=/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-svb-gg-stream-replay-r2-20261111/directed-original-svb.bin",
+        "+svb-force-all-inputs",
+        "+svb-clock-events=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/svb-clock-measurement-build-r1-20261112/directed-positive-events.csv",
+        "+seed=8491167"
+      ],
+      "log_sha256": "dd2981ecb3089b7a162375597760772bd29839da6aeca03267af5824bf092a76",
+      "returncode": 0,
+      "summary": {
+        "acked": 16,
+        "capture_accepted": 62,
+        "defined_output_fields": 5585,
+        "defined_output_word_checks": 6821,
+        "first_source_tick": 1,
+        "host_wall_seconds": 1.826597165,
+        "input_cache_enabled": 0,
+        "input_word_writes": 17856,
+        "last_source_tick": 372,
+        "mismatches": 0,
+        "mutation_applied": 0,
+        "promote_accepted": 16,
+        "records": 372,
+        "reset_edges": 34,
+        "target_cycles": 372
+      },
+      "wall_seconds": 1.8674851800315082
+    }
+  }
+}

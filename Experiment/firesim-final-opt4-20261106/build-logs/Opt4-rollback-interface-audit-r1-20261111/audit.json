@@ -1,0 +1,352 @@
+{
+  "certified_bitstream": false,
+  "conclusion": "No supported software-controlled injection plus architectural restart/completion interface was established in the audited C4/8da path. Legacy injection logic is absent from the generated DUT. FAIL propagation, invalidation, cleanup, and promotion ACKs do not prove restoration of the BOOM architectural state or successful re-execution.",
+  "findings": [
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 205,
+          "text": "val incr_fi_counters                          = Mux(io.use_fi_mode.asBool && (inst_index_reg =/= 0.U), 1.U, 0.U)"
+        }
+      ],
+      "finding": "Legacy GHT has a use_fi_mode-gated packet corruption generator.",
+      "needle": "val incr_fi_counters",
+      "role": "legacy_injector"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 293,
+          "text": "if (outer.tileParams.hartId == 0) {"
+        }
+      ],
+      "finding": "Legacy GHT is created only in Rocket hart0; the running configuration has BOOM as hart0.",
+      "needle": "if (outer.tileParams.hartId == 0)",
+      "role": "rocket_tile"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 49,
+          "text": "// val use_fi_mode                               = Input(UInt(1.W))"
+        }
+      ],
+      "finding": "BOOM GH_BUF comments out the legacy injection input.",
+      "needle": "// val use_fi_mode",
+      "role": "boom_packet_producer"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 1527,
+          "text": "val package_result_status = Mux(package_cancelled,"
+        }
+      ],
+      "finding": "Checker result status is derived from actual full comparison or cancellation.",
+      "needle": "val package_result_status =",
+      "role": "checker_result"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 1530,
+          "text": "GH_GlobalParams.GH_CHECKER_STATUS_FAIL.U,"
+        }
+      ],
+      "finding": "A compare error produces FAIL; cancellation has a distinct status.",
+      "needle": "GH_CHECKER_STATUS_FAIL.U",
+      "role": "checker_result"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 566,
+          "text": "val result_deq_fire = u_result_cdc(i).io.deq.fire"
+        }
+      ],
+      "finding": "Result dequeue and checker release are CDC events, distinct from architectural restore.",
+      "needle": "u_result_cdc(i).io.deq.fire",
+      "role": "result_cdc"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 2669,
+          "text": "val barrierFailureSeq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))"
+        }
+      ],
+      "finding": "The first failed/cancelled sequence is latched for the L2 validation barrier.",
+      "needle": "val barrierFailureSeq = RegInit",
+      "role": "dcache_fail"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 2684,
+          "text": "svbInvalidate.valid := barrierFailureAny"
+        }
+      ],
+      "finding": "Failure invalidates unsafe SVB images; this is not an architectural replay witness.",
+      "needle": "svbInvalidate.valid := barrierFailureAny",
+      "role": "dcache_fail"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 2856,
+          "text": "addressStatsFatal := allocationCollision || invalidResultsThisCycle =/= 0.U ||"
+        }
+      ],
+      "finding": "Failed/cancelled results invalidate address-statistics evidence.",
+      "needle": "addressStatsFatal :=",
+      "role": "dcache_fail"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 250,
+          "text": "io.recoveryFromSvb := io.acked"
+        }
+      ],
+      "finding": "The recoveryFromSvb signal counts a matched promotion ACK; a positive count cannot certify fault recovery.",
+      "needle": "io.recoveryFromSvb := io.acked",
+      "role": "svb"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 302,
+          "text": "val barrierErrorDetected = barrierTimedOut || barrierFailed"
+        }
+      ],
+      "finding": "L2 handles a failed active barrier as a barrier error.",
+      "needle": "val barrierErrorDetected =",
+      "role": "l2_barrier"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 21,
+          "text": "val arfs_in = Input(Vec(params.numARFS, UInt(params.xLen.W)))"
+        }
+      ],
+      "finding": "R_RSU reads main-core architectural state for snapshots; its audited ports contain no restore-state input.",
+      "needle": "val arfs_in = Input",
+      "role": "main_snapshot"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 2401,
+          "text": "rsu_master.io.arfs_in(i)                      := arfs(i)"
+        }
+      ],
+      "finding": "Main BOOM exports its ARF to R_RSU. This direction is not a restore path.",
+      "needle": "rsu_master.io.arfs_in(i)",
+      "role": "main_core"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 44,
+          "text": "if (fn != 1) return SBI_ENOTSUPP;"
+        }
+      ],
+      "finding": "OpenSBI exposes version, one-time context installation, returned/fault masks, and installed-satp queries; no injection/restart function.",
+      "needle": "if (fn != 1) return SBI_ENOTSUPP",
+      "role": "firmware_api"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 47,
+          "text": "if (generation || !args[0] || (args[0] >> 60) != 8 || !args[1] ||"
+        }
+      ],
+      "finding": "Firmware rejects a second checker context in the same boot.",
+      "needle": "if (generation ||",
+      "role": "firmware_api"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 39,
+          "text": "sd t2, 88(t1)                 /* fault[hart-1], never treated as PASS */"
+        }
+      ],
+      "finding": "Firmware fault publication is an error report, not recovery.",
+      "needle": "fault[hart-1], never treated as PASS",
+      "role": "firmware_trap"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 50,
+          "text": "3:  wfi"
+        }
+      ],
+      "finding": "After context teardown the trap path parks; it does not retry the failed application.",
+      "needle": "wfi",
+      "role": "firmware_trap"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 302,
+          "text": "if (cmd != EC_DAC_BEGIN && cmd != EC_DAC_END && cmd != EC_DAC_DRAIN)"
+        }
+      ],
+      "finding": "Linux ioctl whitelist contains BEGIN/END/DRAIN and checker-count query; no supported injection/restart ioctl.",
+      "needle": "if (cmd != EC_DAC_BEGIN",
+      "role": "linux_api"
+    },
+    {
+      "confidence": "proven_source_observation",
+      "evidence": [
+        {
+          "line": 43,
+          "text": "assert not any(counts[k] for k in ['outstanding','faults','failed','cancelled','dropped'])"
+        }
+      ],
+      "finding": "Ordinary runtime success explicitly requires zero failure and cancellation counts.",
+      "needle": "['outstanding','faults','failed','cancelled','dropped']",
+      "role": "normal_validator"
+    }
+  ],
+  "fpga_access": false,
+  "generated_rtl": {
+    "bytes": 137210873,
+    "huge_artifact_rehashed": false,
+    "module_line_numbers": {
+      "BoomCore": [
+        1529448
+      ],
+      "GHT": [],
+      "GHT_FILTER_PRFS": [],
+      "GH_BUF": [
+        1652240
+      ],
+      "R_RSU": [
+        1526400
+      ],
+      "Rocket": [
+        1716271
+      ]
+    },
+    "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/builds/system-8da24a26/goldengate-attempt-1/FireSim-generated.sv",
+    "source_receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-fit-rtl-state.json",
+    "use_fi_mode_occurrences": []
+  },
+  "hardware_commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+  "limits": [
+    "Source/interface audit only; no fault injection or waveform experiment was run.",
+    "No claim that every possible software/RTL path in the repository has been formally excluded.",
+    "No certified bitstream exists at this audit; a runnable bitstream-bound hardware diagnostic cannot yet be certified."
+  ],
+  "normal_strict_success_is_rollback_evidence": false,
+  "rollback_runtime_validated": false,
+  "safest_next_verification": [
+    "Use a separate simulation harness at existing checker-result interfaces to trace an actual full-compare FAIL through CDC, L1, SVB and L2; retain exact sequence and pre/post architectural state.",
+    "Require an independently identified architectural checkpoint restore, memory-version selection, restart-PC retirement, and correct final output. Existing fault/cancel counters and SVB ACK observations are insufficient.",
+    "If no existing restore/restart interface can be demonstrated, keep hardware rollback validation unestablished. Any new diagnostic tap/control must be a separate immutable candidate with inactive-cycle equivalence proof, active-injection tests and its own CAD/runtime binding; never patch live/frozen hardware."
+  ],
+  "schema": "ec-opt4-rollback-interface-audit/1",
+  "source_id": "7e77ddda28298ac88be13c28dbe98771982bc6ca9587f810adf875bffd580cc1",
+  "sources": {
+    "boom_packet_producer": {
+      "commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/chipyard/generators/boom/src/main/scala/trans/GH_BUF.scala",
+      "sha256": "e437ac0b2dd1a16639c287c41e76b35ab16e2cc81dbd3dac77c3155b9d27b10d"
+    },
+    "checker_result": {
+      "commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala",
+      "sha256": "92c65bd8130abe53db7eb75c830958f8ffdbb2f97aef93ca2074abef02912ac0"
+    },
+    "dcache_fail": {
+      "commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+      "sha256": "0fb9e4b3931827120aed8311dbbc87a2d25e697c76505717af7162a0a9f1663d"
+    },
+    "firmware_api": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/opensbi/lib/sbi/ec_opt4.c",
+      "scope": "current preserved software source; not a new firmware build",
+      "sha256": "b94345d9966d8134db069b22e2b37f33a3b56e7913210efe5c5bb8a598c99783"
+    },
+    "firmware_trap": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/opensbi/lib/sbi/ec_opt4_entry.S",
+      "scope": "current preserved software source; not a new firmware build",
+      "sha256": "090f4b75bf0f73eb84199497d166b7bded97385987097bc246a7010099d84587"
+    },
+    "l2_barrier": {
+      "commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/InclusiveCache.scala",
+      "sha256": "c612fb7eb0767c8d7f09f797f96f23b17b2d4bd2915ecc3a2aabe4eb6de34d82"
+    },
+    "legacy_ght": {
+      "commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GHT.scala",
+      "sha256": "c3d778b7044d67a406c4b5b8ed302f552552fd2ae036deff33ec07229e219e19"
+    },
+    "legacy_injector": {
+      "commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/ght_filter_prfs.scala",
+      "sha256": "130f7f6908cc5b89de6b125b974dfee70e703a5c02712147e07e42680cad1d6d"
+    },
+    "linux_api": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/linux/drivers/misc/ec_dac_roi.c",
+      "scope": "current preserved software source; not a new firmware build",
+      "sha256": "4caff1f1ba2b4b30d2ee155ace94b78975baabb15daec32a7d57bfaf0a6c81a9"
+    },
+    "main_core": {
+      "commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/chipyard/generators/boom/src/main/scala/exu/core.scala",
+      "sha256": "1883cef9fa9c24cb5f39715a132d0b89aa104e8b2aefa594bc812ad5e03c74c8"
+    },
+    "main_snapshot": {
+      "commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/chipyard/generators/rocket-chip/src/main/scala/r/R_RSU.scala",
+      "sha256": "05d61838bf7a1dd053da324183c41882d7c9885a0b904efd99c98ee96dd9a9b9"
+    },
+    "normal_validator": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_isolated_sample.py",
+      "scope": "current preserved software source; not a new firmware build",
+      "sha256": "c6ecfce4e206e1e9f2cdaee7decfd24d4322c8366f47b3d96fa1f574e393e2ce"
+    },
+    "result_cdc": {
+      "commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GHM.scala",
+      "sha256": "35f24f6aee15686ad36a5ef15328486eaf4f184186b352498470d240cd749322"
+    },
+    "rocket_tile": {
+      "commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/chipyard/generators/rocket-chip/src/main/scala/tile/RocketTile.scala",
+      "sha256": "d7ca08cd4604f44e83f0d9d3c3425bb303ad8ca1626aa0cc49c46bfb7fc872f4"
+    },
+    "svb": {
+      "commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/chipyard/generators/boom/src/main/scala/lsu/speculative-version-buffer.scala",
+      "sha256": "83f781c00f01f0188fc34d84c9efa1f6efdfe95f1aa412c897e90a404a629e8a"
+    }
+  },
+  "status": "SUPPORTED_ARCHITECTURAL_ROLLBACK_DIAGNOSTIC_INTERFACE_NOT_ESTABLISHED",
+  "utc": "2026-11-10T16:32:40.918229+00:00"
+}

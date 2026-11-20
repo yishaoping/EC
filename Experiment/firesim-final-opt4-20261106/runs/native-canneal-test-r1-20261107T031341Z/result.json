@@ -1,0 +1,147 @@
+{
+  "checker_latency": null,
+  "counts": null,
+  "drain_cycles": 0,
+  "driver_returncode": 0,
+  "driver_stop_after_guest_powerdown": false,
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-test-r1-20261107T031341Z/heartbeat.csv": "012229ed95a2848a2d12882c3e837af3d9197c56af460204a86bfc942ed81805",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-test-r1-20261107T031341Z/host.log": "0d50ca3972849ec6b10005d0cf90eb627afb46c00b2e634575cf27392785c9ed",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-test-r1-20261107T031341Z/latency_histogram.csv": "7348bacc4d184cc676cfcf89f8d0ec40dd28eeaa86ae0f6fefa797b43dc6d210",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-test-r1-20261107T031341Z/manifest.json": "1b9be768bc91c7f4715d970cbf4fb1c60fb9f59ad83c59a9dc8c683a99496e56",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-test-r1-20261107T031341Z/memory_stats0.csv": "6679c5006d14d8413ec36ba18171c1f179c0196e04b362e4af778b06baad416e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-test-r1-20261107T031341Z/roi-raw.jsonl": "b1b79f59da1bebd173f986677d4e5410a2d096e562b9f10c92c8f56b2fbb4b22",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-test-r1-20261107T031341Z/snapshot.json": "702a8a92ea197f07722efdaeaa8f59329adbcbcffffea41499b8f90bd9b99853",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-test-r1-20261107T031341Z/state.json": "702a8a92ea197f07722efdaeaa8f59329adbcbcffffea41499b8f90bd9b99853",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-test-r1-20261107T031341Z/uart.in": "57b88510cf9c6da45a3cb252a8d26f262a2656a819b4fa173e2d6a54fc0542c5",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-test-r1-20261107T031341Z/uart.log": "e6f9a110f2e12c03dade7c74004324036af7430aac00adf48bb12d8b9fdc96f0"
+  },
+  "fased_readback": {
+    "readLatency": 30,
+    "readMaxReqs": 4,
+    "relaxFunctionalModel": 0,
+    "writeLatency": 30,
+    "writeMaxReqs": 4
+  },
+  "formal": false,
+  "fpga_execution": true,
+  "guest_power_down_observed": true,
+  "host_efficiency": {
+    "host_delta": 4990104003,
+    "host_simulation_wall_seconds": 99.80491,
+    "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+    "simulation_throughput_cycles_per_second": 16410894.935,
+    "target_delta": 1637887892,
+    "target_end": 3275786012,
+    "target_start": 1637898120
+  },
+  "host_wall_seconds": 99.8394139230004,
+  "identity": {
+    "apps_manifest_sha256": "0ccb15ae6db46dd4f3c3c098823e33596012d8f6cab7dddcdcf04f90d498ea4a",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:e2:00.0",
+    "board_serial": "21770433G001A",
+    "case": {
+      "argv": [
+        "1",
+        "5",
+        "100",
+        "10.nets",
+        "1"
+      ],
+      "expected_final_routing": "132",
+      "fpga_validation": "NOT_RUN",
+      "input": "test",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/inputs/input_test.tar": "1205d96ba9381135245f455bf7100a2ba99b16903d664681793eb37ea28d66a4"
+      },
+      "input_files": {
+        "10.nets": "f7a0cf5b56e72a2a7b3f59f10f61667505c0c658e613a034f839151c8555f635"
+      },
+      "program": "canneal",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-20261106T095914Z/references/canneal-test/stdout.log": "ae48fdd312edaa6edd192135ced63059641247cd082e7b99b201ad9b4b2cffde"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/parsec/test.runconf",
+      "runconf_sha256": "19e5857f8109dfcc88c9974720524ae7f4b6aaa9cb1d705476b73c01158c1713",
+      "software_reference": "QEMU_RISCV_USER_ONLY; not FPGA evidence",
+      "threads": 1,
+      "warmups": 0
+    },
+    "configuration": "Native",
+    "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+    "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+    "elf_sha256": "07cb43662f5cb38e9497bea005217c22d7c1d54be18ee31c4a6ba21fe04aeb91",
+    "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+    "firmware_receipt_sha256": "d1bd3e550e62ef99b1395a065dfd24ffde9e5694ae1bd75eb38409df7a3194bd",
+    "firmware_sha256": "0970afbb4477277101849ff54d729b6adc9feb04e6206a2ba49d6d5100b7302e",
+    "formal": false,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "host_bridge_restart": true,
+    "input": "test",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "previous_run_id": null,
+    "program": "canneal",
+    "repetition": 1,
+    "rootfs_sha256": "427d0b923bc2be77b67ba0ff11efd47bb83c7bbf28fd990e10c658dcf7178711",
+    "run_id": "native-canneal-test-r1-20261107T031341Z",
+    "software_diagnostic": false,
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "target_reset_probe": false,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "8b40b3e672d0331105e33d781a29b468a78549bcf41806e6af6e8b7756ef8776",
+  "issues": [],
+  "participation": null,
+  "post_drain_traffic_counters": {},
+  "raw": {
+    "epochs": [
+      {
+        "aborted": false,
+        "begin_tick": 1613176197,
+        "end_tick": 1613200071,
+        "epoch": 1,
+        "faults": 0,
+        "formal_sample_eligible": false,
+        "reset_seen": false,
+        "roi_cycles": 23874,
+        "source_boundaries_complete": true,
+        "states": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    ],
+    "excluded_pre_reset_records": 1,
+    "file_sha256": "98515198c685dc8fb71be413aa3bebe6d865bc434fe4e2e6a30160d12ca3002f",
+    "formal_sample_eligible": false,
+    "last_sequence": 9,
+    "original_journal_sha256": "b1b79f59da1bebd173f986677d4e5410a2d096e562b9f10c92c8f56b2fbb4b22",
+    "parsed_records": 10,
+    "partial_tail_bytes": 0,
+    "protocol_issues": [],
+    "runtime_validation": "NOT_ESTABLISHED_BY_RAW_LOG",
+    "schema": "ec-dac-b-raw-roi/1",
+    "warning": "Raw ROI boundaries only. Output/job identity, runtime timebase checks and the formal host collector are still required."
+  },
+  "roi_cycles": 23874,
+  "schema": "ec-isolated-fpga-result/1",
+  "timedout": false,
+  "valid": true
+}

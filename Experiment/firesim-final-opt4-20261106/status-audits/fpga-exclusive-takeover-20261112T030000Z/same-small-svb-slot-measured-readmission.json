@@ -1,0 +1,131 @@
+{
+  "basis": "Completed identical200kLUT host40A peaked9303.922MB<10GiB. Keep64GiB hard cap and2CPUs224225,max3componentworkers,no newwhole. 192GiB available reserves3times64GiB; load128 on256logicalCPUs remains50percent. This is explicit versioned resource assessment, not lowering physical or target correctness gates.",
+  "cpu_count": 256,
+  "created_utc": "2026-11-12T03:18:19.449257+00:00",
+  "decision": "READMIT_EXISTING_SMALL_SVB_SLOT_FROM_MEASURED_A_PEAK",
+  "free_disk_gib": 302.83542251586914,
+  "limits": {
+    "cpus": [
+      224,
+      225
+    ],
+    "max_component_vivado": 3,
+    "max_load1": 128,
+    "memory_limit_gib": 64,
+    "min_available_gib": 192,
+    "min_disk_gib": 150,
+    "new_component_slots": 1
+  },
+  "load1": 12.65,
+  "measured_A_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r2-20261112/A-shell-routing-placement/result.json",
+  "measured_A_result_sha256": "1786242ac67e2819b0c4525cd0ca108216623588c94e324e4823e60fe06091b3",
+  "mem_available_gib": 396.40554428100586,
+  "no_fpga_io": true,
+  "prior_admission": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/fpga-paper-sprint-20261112T020000Z/third-small-component-slot-admission.json",
+  "prior_admission_sha256": "5f7164261a76a0c0735f98b687a0fe95fed83c2a0fcd99bfe375928b3f9651df",
+  "rationale": "User now prioritizes measured shell timing and permits parallel strategies. Two existing component CAD RSS total<24GiB, 400GiB free memory, CPU load<32 of256. This is a sealed200kLUT component postroute job, not thirdlargeOpt4synthesis. Existing producer inputs/affinity untouched.",
+  "schema": "ec-measured-svb-same-slot-readmission/1",
+  "units": [
+    {
+      "unit": "ec-opt4-auto-svb-physical-resource-recovery-r51-v1.service",
+      "workers": [
+        {
+          "argv": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/round51-v1/original-postroute/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/round51-v1/original-postroute/recover.tcl ",
+          "cpu_ticks": 834963,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2323399,
+          "process_state": "S",
+          "rss_bytes": 8168263680,
+          "start_ticks": "25276450"
+        }
+      ]
+    },
+    {
+      "unit": "ec-opt4-auto-svb-physical-resume-r3-v1-8491167d.service",
+      "workers": [
+        {
+          "argv": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/resume-r3-spread-physical1/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/resume-r3-spread-physical1/resume.tcl ",
+          "cpu_ticks": 317208,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2377613,
+          "process_state": "S",
+          "rss_bytes": 10757050368,
+          "start_ticks": "25815969"
+        }
+      ]
+    },
+    {
+      "unit": "ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service",
+      "workers": [
+        {
+          "argv": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-full-host-capacity-r1-20261112/vivado.log -source /data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-full-host-capacity-r1-20261112/capacity.tcl ",
+          "cpu_ticks": 229903,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2379656,
+          "process_state": "S",
+          "rss_bytes": 11575054336,
+          "start_ticks": "25825451"
+        }
+      ]
+    },
+    {
+      "unit": "ec-opt4-auto-e0-safe-overlap-cad-r4-e0c3737f.service",
+      "workers": [
+        {
+          "argv": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-update-share-svb-cad-e0c3737f/dut_synth-attempt-1.vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-update-share-svb-cad-e0c3737f/dut_synth-attempt-1.tcl ",
+          "cpu_ticks": 7673835,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2484262,
+          "process_state": "S",
+          "rss_bytes": 15586557952,
+          "start_ticks": "18404293"
+        },
+        {
+          "argv": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -notrace -mode batch -source /tools/Xilinx/Vivado/2021.1/scripts/rt/data/task_worker.tcl -nolog -nojournal -tclargs SYNTH_DESIGN_PARENT2484262_0_1794379796_cfg SYNTH_DESIGN_PARENT2484262_0_1794379796_buf SYNTH_DESIGN_PARENT2484262_1794379796 xcu280-fsvh2892-2L-e ",
+          "cpu_ticks": 399963,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 3393592,
+          "process_state": "S",
+          "rss_bytes": 3088678912,
+          "start_ticks": "19151684"
+        },
+        {
+          "argv": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -notrace -mode batch -source /tools/Xilinx/Vivado/2021.1/scripts/rt/data/task_worker.tcl -nolog -nojournal -tclargs SYNTH_DESIGN_PARENT2484262_1_1794379798_cfg SYNTH_DESIGN_PARENT2484262_1_1794379798_buf SYNTH_DESIGN_PARENT2484262_1794379796 xcu280-fsvh2892-2L-e ",
+          "cpu_ticks": 529541,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 3394174,
+          "process_state": "S",
+          "rss_bytes": 2800652288,
+          "start_ticks": "19151885"
+        },
+        {
+          "argv": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -notrace -mode batch -source /tools/Xilinx/Vivado/2021.1/scripts/rt/data/task_worker.tcl -nolog -nojournal -tclargs SYNTH_DESIGN_PARENT2484262_2_1794379800_cfg SYNTH_DESIGN_PARENT2484262_2_1794379800_buf SYNTH_DESIGN_PARENT2484262_1794379796 xcu280-fsvh2892-2L-e ",
+          "cpu_ticks": 399399,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 3394267,
+          "process_state": "S",
+          "rss_bytes": 1742483456,
+          "start_ticks": "19152084"
+        },
+        {
+          "argv": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -notrace -mode batch -source /tools/Xilinx/Vivado/2021.1/scripts/rt/data/task_worker.tcl -nolog -nojournal -tclargs SYNTH_DESIGN_PARENT2484262_3_1794379802_cfg SYNTH_DESIGN_PARENT2484262_3_1794379802_buf SYNTH_DESIGN_PARENT2484262_1794379796 xcu280-fsvh2892-2L-e ",
+          "cpu_ticks": 399559,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 3394556,
+          "process_state": "S",
+          "rss_bytes": 1950334976,
+          "start_ticks": "19152284"
+        }
+      ]
+    },
+    {
+      "unit": "ec-opt4-svb-host40-physical-r1.service",
+      "workers": []
+    },
+    {
+      "unit": "ec-opt4-auto-svb-physical-pinreplicate-r4-v1-8491167d.service",
+      "workers": []
+    }
+  ],
+  "utc": "2026-11-12T02:00:48.679872+00:00"
+}

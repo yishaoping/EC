@@ -1,0 +1,99 @@
+{
+  "schema": "ec-performance-only-round206-physical-progress/1",
+  "utc": "2026-11-13T08:14:55.044239+00:00",
+  "hardware_commit": "6fada307bb77be90b39720d3f95404fece0e431b",
+  "source_id": "461e1b98833d1a78a8bd27c0eed2d3353c648dfbf29ae5588db31bbce0f77369",
+  "scope": "actual_complete_shell_ongoing_phys_opt_not_final_routed_timing",
+  "stage": "phys_opt_design",
+  "current_phase": "Phase 6 Rewire",
+  "completed_physical_optimization_phases": [
+    {
+      "phase": "SLR Crossing Optimization",
+      "optimized_nets_or_cells": 228,
+      "created_cells": 212,
+      "moved_existing_cells": 18
+    },
+    {
+      "phase": "Fanout Optimization",
+      "optimized_nets_or_cells": 6,
+      "created_cells": 0,
+      "moved_existing_cells": 0
+    },
+    {
+      "phase": "Single Cell Placement Optimization",
+      "optimized_nets_or_cells": 127,
+      "created_cells": 0,
+      "moved_existing_cells": 127
+    },
+    {
+      "phase": "Multi Cell Placement Optimization",
+      "optimized_nets_or_cells": 43,
+      "created_cells": 0,
+      "moved_existing_cells": 93
+    }
+  ],
+  "current_log_errors": [],
+  "prior_physical_progress": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round205/followthrough-audit.json",
+    "sha256": "975128f68a2065e821163db88336a1bfbd37e4f969fc8cc9ea86df176de1666d"
+  },
+  "adopted_placed_checkpoint": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round204/followthrough-audit.json",
+    "sha256": "2e74dca6d13d7eb7b598c12891b3893e82585e6f2ebe8a92d5043c3fe01d1756"
+  },
+  "resources": {
+    "CLB LUTs": 1015701.0,
+    "CLB Registers": 1019298.0,
+    "CARRY8": 15706.0,
+    "Block RAM Tile": 678.5,
+    "URAM": 0.0,
+    "DSPs": 115.0
+  },
+  "LUT_headroom": 287979,
+  "intermediate_estimated_WNS_ns": -2.966,
+  "intermediate_estimated_TNS_ns": -150106.265,
+  "intermediate_timing_estimates": [
+    {
+      "WNS_ns": -4.654,
+      "TNS_ns": -597569.859
+    },
+    {
+      "WNS_ns": -3.154,
+      "TNS_ns": -262471.032
+    },
+    {
+      "WNS_ns": -3.154,
+      "TNS_ns": -262577.843
+    },
+    {
+      "WNS_ns": -3.154,
+      "TNS_ns": -262577.843
+    },
+    {
+      "WNS_ns": -3.072,
+      "TNS_ns": -262001.791
+    },
+    {
+      "WNS_ns": -3.009,
+      "TNS_ns": -160458.541
+    },
+    {
+      "WNS_ns": -2.966,
+      "TNS_ns": -150106.265
+    }
+  ],
+  "high_congestion_warning": true,
+  "timing_scope": "Intermediate estimate; final route/setup/hold/pulse/skew/coverage/DRC pending",
+  "artifacts": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round206/implementation-log-snapshot.log": "8b661b877c982de95d27cb18b851301632ea8396aed17a18191bd1ac5608f300"
+  },
+  "receipts": {
+    "implementation-result.json": false,
+    "timing_bitstream-result.json": false,
+    "postopt-result.json": false
+  },
+  "physical_timing_passed": false,
+  "no_new_jobs": true,
+  "no_live_inputs_modified": true,
+  "no_FPGA_IO": true
+}

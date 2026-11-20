@@ -1,0 +1,151 @@
+{
+  "checker_latency": null,
+  "counts": null,
+  "drain_cycles": 0,
+  "driver_returncode": 0,
+  "driver_stop_after_guest_powerdown": false,
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r3-20261107T041517Z/heartbeat.csv": "22c24a655f0e380d28f96b2c201100b54c0bbd989ddd498629a6d0418da13e41",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r3-20261107T041517Z/host.log": "13cd33100918405354e50ca5e95ff4ed75f1d39a2a9b3cd741465c1834bbfb70",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r3-20261107T041517Z/latency_histogram.csv": "7348bacc4d184cc676cfcf89f8d0ec40dd28eeaa86ae0f6fefa797b43dc6d210",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r3-20261107T041517Z/manifest.json": "440e120caecb261009ba1c81c7fc0959fe58f9c437e67311cddcbea3532d3048",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r3-20261107T041517Z/memory_stats0.csv": "6679c5006d14d8413ec36ba18171c1f179c0196e04b362e4af778b06baad416e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r3-20261107T041517Z/roi-parser-source.py": "e55944240285ee0197b1b8bd3bedbe10a4a72305511ac72018fe668578d5f8c1",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r3-20261107T041517Z/roi-raw.jsonl": "f48145d26c28dc06cf0d412f33c34477aaa3b7e0ae9b3c197ea0b48420be2f71",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r3-20261107T041517Z/runner-source.py": "e0fa439580a89de2d3197b36b77de6540c2e2796f7bb913aa552d2f7f61d4d6a",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r3-20261107T041517Z/snapshot.json": "b9e4e1748673c9cd0819e94c69152bb1c3c90197bfddf35d26628d29337a176a",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r3-20261107T041517Z/state.json": "4e157b14f4a96c9bdcb1a6ba3b78f0bce3d630bb12ef5e56d2d684489a842031",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r3-20261107T041517Z/uart.in": "3a678b4e0bb8f16e66a82448fccce94f6e9363ffa0c83d4c636e662ddcd6ddc7",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r3-20261107T041517Z/uart.log": "c69da0eba440998df81905830a6ff593a6f5f2a113d689d05c360d87a1469163"
+  },
+  "fased_readback": {
+    "readLatency": 30,
+    "readMaxReqs": 4,
+    "relaxFunctionalModel": 0,
+    "writeLatency": 30,
+    "writeMaxReqs": 4
+  },
+  "formal": true,
+  "fpga_execution": true,
+  "guest_power_down_observed": true,
+  "host_efficiency": {
+    "host_delta": 21792489282,
+    "host_simulation_wall_seconds": 435.861959,
+    "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+    "simulation_throughput_cycles_per_second": 16608933.89,
+    "target_delta": 7239202462,
+    "target_end": 29756726897,
+    "target_start": 22517524435
+  },
+  "host_wall_seconds": 435.890937874,
+  "identity": {
+    "apps_manifest_sha256": "4b1c3ff7c608bbe423b0670e5f39bef5aada145df0c5956ceb62a71fe310ff1e",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:e2:00.0",
+    "board_serial": "21770433G001A",
+    "case": {
+      "algorithm_unchanged": true,
+      "argv": [
+        "1",
+        "15000",
+        "2000",
+        "200000.nets",
+        "64"
+      ],
+      "expected_final_routing": "2.49424e+08",
+      "fpga_validation": "NOT_RUN",
+      "input": "simmedium",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/inputs/input_simmedium.tar": "90e184af6f8357c37e5fb797fa6d26519660bbb7dff545d7bc9c369d989f817b"
+      },
+      "input_files": {
+        "200000.nets": "ce5c1edaac17180fd71728f8774d009429f7d6c910b3ecba3563a6ee0639f036"
+      },
+      "program": "canneal",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-canneal-formal-20261107T035216Z/reference/stdout.log": "4c65e9194ea07f5a067568971eeaaa19bb6bca285efe1bae8b472398166509e1"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/parsec/simmedium.runconf",
+      "runconf_sha256": "92bf6703c3faaba5d8b29c12011470c089f672903b9da9ec1d0c07cdfee9e9c9",
+      "software_reference": "QEMU_RISCV_USER_ONLY",
+      "threads": 1,
+      "warmups": 0
+    },
+    "configuration": "Native",
+    "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+    "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+    "elf_sha256": "07cb43662f5cb38e9497bea005217c22d7c1d54be18ee31c4a6ba21fe04aeb91",
+    "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+    "firmware_receipt_sha256": "831fb08c2357457762e5a4dc55a23f1dfbc98b0162d842e1dcf22b1b0eeb9d82",
+    "firmware_sha256": "05597944f57df04424e8a870322e295495b17ab70708f653878bedba1e5337be",
+    "formal": true,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "host_bridge_restart": true,
+    "input": "simmedium",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "previous_run_id": null,
+    "program": "canneal",
+    "repetition": 3,
+    "rootfs_sha256": "67f83857977d77d164139d5b89a407326dd2f5db44873c65cf12bcd9bafec577",
+    "run_id": "native-canneal-simmedium-r3-20261107T041517Z",
+    "software_diagnostic": false,
+    "software_profile": "original-canneal-serial",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "target_reset_probe": false,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "e57d435a8b2b94c8c47da3ffd32b6cc92d13043416db590b6febd57909dd3b12",
+  "issues": [],
+  "participation": null,
+  "post_drain_traffic_counters": {},
+  "raw": {
+    "epochs": [
+      {
+        "aborted": false,
+        "begin_tick": 5227259720,
+        "end_tick": 6650663203,
+        "epoch": 1,
+        "faults": 0,
+        "formal_sample_eligible": false,
+        "reset_seen": false,
+        "roi_cycles": 1423403483,
+        "source_boundaries_complete": true,
+        "states": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    ],
+    "excluded_pre_reset_records": 1,
+    "file_sha256": "141e17330eb9bbff7cc3da970448b0439f92fd9eddcabac61afc56fbc670ea2e",
+    "formal_sample_eligible": false,
+    "last_sequence": 20,
+    "original_journal_sha256": "f48145d26c28dc06cf0d412f33c34477aaa3b7e0ae9b3c197ea0b48420be2f71",
+    "parsed_records": 21,
+    "partial_tail_bytes": 0,
+    "protocol_issues": [],
+    "runtime_validation": "NOT_ESTABLISHED_BY_RAW_LOG",
+    "schema": "ec-dac-b-raw-roi/1",
+    "warning": "Raw ROI boundaries only. Output/job identity, runtime timebase checks and the formal host collector are still required."
+  },
+  "roi_cycles": 1423403483,
+  "schema": "ec-isolated-fpga-result/1",
+  "timedout": false,
+  "valid": true
+}

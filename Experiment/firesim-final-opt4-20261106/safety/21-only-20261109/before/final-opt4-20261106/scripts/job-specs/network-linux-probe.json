@@ -1,0 +1,8 @@
+{
+  "schema": "ec-service-job-spec/1",
+  "name": "network-linux-probe",
+  "argv": ["python3", "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/probe_network_linux.py"],
+  "inputs": ["/data1/gzh/EC/firesim/final-opt4-20261106/scripts/probe_network_linux.py"],
+  "legacy_states": ["/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-linux-probe.json"],
+  "checkpoint_policy": "Software-only 60-second UART diagnosis after original Linux timeout, preserve failure; no FPGA, CAD or scheduler changes"
+}

@@ -1,0 +1,19 @@
+# Round17: verified latency read candidate and recovered storage measurements
+
+UTC 2026-11-11T02:03:27.408314+00:00.
+
+Candidate `c4b5820da837b2296a3362d3f60dae50580de2fb`, source ID `4eab5d120a9dbe5a93141fa3af6ecba6e886016c200ff931426b2f571905f345`, independent parent9ae. The only hardware change replaces five unqualified event-bucket reads with a shared one-hot decoder. All256 bucket registers, full64-bit counts, write/reset priorities, reductions, overflow handling, instrumentation and ports remain. No frozen/live tree was changed.
+
+Generated actual256x64 SAT passed for arbitrary data/index; reversed-decoder mutation produced a real counterexample. Complete frozen/9ae-parent/candidate latency comparison passed8192 cycles,16384 pre/post-edge observations, all7 outputs and1024 bucket-state fields. Coverage includes256 collision attempts,86 immediate events,10 reset/event overlaps and two explicitly seeded full64-bit overflow states. This bounded regression is not full-DUT formal or a reachable-state proof for the seeded overflow states.
+
+Proof receipt: `/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-barrier-event-read-r1-20261111/proof-result.json`. Its controller exited. Paired current-parent/candidate full-module OOC mapping is requested separately as `barrier-event-read-map-r1-c4b5820d`; latest broker receipt is DEFERRED for eight occupied ordinary synthesis slots. No latency area gain is claimed.
+
+DCache result-storage mapping-r3 completed naturally and its controller/service exited. Actual target256sets x2ways gives512x64 payload entries: reference34766 LUT/32768FF, candidate1448 LUT/0FF, both0BRAM/0DSP, measured storage-only saving33318LUT. Reports and exact RTL hashes: `/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-mapping-r3-20261111/result.json`. This is distributed asynchronous storage, not removal of payload bits. Complete frozen-DCache comparison remains NOT_RUN_NOT_ADMITTED; do not promote it or resurrect r1/map-r2 requests.
+
+The replicated-sequence continuation27f7e7d6 started and its controller/child PID/start_ticks/boot identities match; it is compiling the complete frozen-module comparison. Adoption evidence: `/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-barrier-event-read-r1-20261111/new-job-adoption-round17.json`.
+
+Twelve completed address maps are compared in `/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-actual-module-ranking-r3-20261111/result.json`. New update-share-r1 is749673LUT/30840CARRY8 but is explicitly excluded because its reset/invalid-payload invariant remains unresolved. Only the independent unconditional update-share-r2 may be considered after its own map. New tag-compression is990230LUT,675 below live9ae990905LUT, and is now the smallest *admissible completed* address map. This small difference does not warrant another whole synthesis. Old reports and misleading-zero corrections are retained unchanged.
+
+Current9ae whole synthesis was last observed RUNNING_DUT_SYNTH at01:59:28UTC; its live inputs and controller were preserved. The most recent complete whole post-opt remains8da NOT_FIT3215683/1303680LUT; even zero old address leaves646512 excess. No new wholeCAD, place/route restart, bitstream, deployment or FPGA sample was claimed or executed.
+
+Next: collect r2/other real complete-module maps and latency paired maps; retain the exact DCache33k storage evidence while completing full-DCache comparison. If9ae is NOT_FIT, choose significant unconditional verified gains, compose them with f2 on an independent commit and prove the composition. Bind selection to9ae's actual predecessor report, then submit exactly one adapted CAD. FIT has implementation/timing/DRC/bitstream priority. The architectural restart contract gap remains independent of these RTL iterations.

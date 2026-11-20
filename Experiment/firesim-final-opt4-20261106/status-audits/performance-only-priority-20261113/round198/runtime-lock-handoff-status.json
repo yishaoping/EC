@@ -1,0 +1,43 @@
+{
+  "schema": "ec-performance-only-existing-runtime-lock-status/1",
+  "utc": "2026-11-13T05:52:41.123532+00:00",
+  "existing_owner": {
+    "board_bdf": "0000:21:00.0",
+    "board_serial": "21770433G02LA",
+    "cad_stage": "implementation",
+    "cad_status": "NOT_FIT_POSTOPT",
+    "certified_bitstream": false,
+    "checkpoint_policy": "complete samples and stage receipts; no instruction checkpoint",
+    "commands": [],
+    "failures": {},
+    "hardware_commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+    "hardware_profile": "Opt4-fit-C4-SVB32-20261110",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 3135212,
+    "scheduling": "Opt4-fit priority; formal r1 coverage before r2/r3; app failure skips; exact complete hashes reused",
+    "schema": "ec-opt4-fit-runtime/1",
+    "software_suite_sha256": "9b2a5dbcdb4e22bf5fee8f4c4066d2a0bed75b20e5256950eae0d43c7d9c7470",
+    "source_id": "7e77ddda28298ac88be13c28dbe98771982bc6ca9587f810adf875bffd580cc1",
+    "start_ticks": "12439082",
+    "started_utc": "2026-11-10T12:11:10.435769+00:00",
+    "status": "WAITING_FOR_DERIVED_BITSTREAM",
+    "updated_utc": "2026-11-13T05:52:20.222428+00:00"
+  },
+  "actual_start_ticks": "12439082",
+  "actual_state": "S",
+  "children": [],
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "cgroup": "13:devices:/system.slice/ec-parsec-opt4-fit-runtime.service\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/system.slice/ec-parsec-opt4-fit-runtime.service\n9:memory:/system.slice/ec-parsec-opt4-fit-runtime.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/system.slice/ec-parsec-opt4-fit-runtime.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/system.slice/ec-parsec-opt4-fit-runtime.service\n1:name=systemd:/system.slice/ec-parsec-opt4-fit-runtime.service\n0::/system.slice/ec-parsec-opt4-fit-runtime.service\n",
+  "lock": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/locks/opt4-fit-runtime.lock",
+  "lock_inode": 3824000,
+  "lock_entries": [
+    "162: FLOCK  ADVISORY  WRITE 3135212 08:11:3824000 0 EOF"
+  ],
+  "existing_runtime_lock_held": true,
+  "runtime_service_or_lock_changed": false,
+  "FPGA_IO": false,
+  "handoff_performed": false,
+  "physical_certificate_still_pending": true,
+  "postflight_entry": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-physical-postflight-r1-20261113/candidates/performance-only-physical-postflight-r1-20261113/postflight.py",
+  "certificate_entry": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-physical-postflight-r1-20261113/candidates/performance-only-physical-postflight-r1-20261113/certify.py"
+}

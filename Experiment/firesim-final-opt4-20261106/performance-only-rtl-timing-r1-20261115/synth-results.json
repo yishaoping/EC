@@ -1,0 +1,75 @@
+{
+  "tool": "Yosys synth_xilinx -family xcu",
+  "vivado": false,
+  "physical_timing_measured": false,
+  "full_shell": false,
+  "width": 82,
+  "depth": 256,
+  "rtl_sha256": "e6b93ed7e7d36d7ccea8201f0f4210e1e85a57fff5c1c448b5ff374cb90fa577",
+  "modules": {
+    "GH_FIFO_SC_Reference": {
+      "cells": {
+        "LUT2": 5342,
+        "LUT4": 4795,
+        "LUT6": 687,
+        "LUT3": 644,
+        "LUT5": 411,
+        "MUXF7": 22348,
+        "MUXF8": 11174,
+        "MUXF9": 5586,
+        "LUT1": 16355,
+        "INV": 17,
+        "CARRY4": 13,
+        "FDRE": 21016
+      },
+      "ff": 21016,
+      "logic_lut": 28234,
+      "distributed_ram_lut": 0,
+      "input_max_data_pin_fanout": {
+        "clock": 0,
+        "reset": 21016,
+        "io_enq_valid": 1,
+        "io_enq_bits": 257,
+        "io_reserve": 1,
+        "io_commit": 1,
+        "io_rollback": 9,
+        "io_need_replay_1": 9
+      },
+      "max_nonclock_net_fanout": 21016,
+      "mapped_json_sha256": "76e2dda4aed50d0a048664325b1880a95a1c88a122b67e2c2cb1d4fba5d8b370"
+    },
+    "GH_FIFO_SC": {
+      "cells": {
+        "LUT2": 503,
+        "LUT6": 125,
+        "LUT4": 133,
+        "LUT5": 277,
+        "LUT3": 124,
+        "LUT1": 233,
+        "MUXF7": 397,
+        "MUXF8": 198,
+        "MUXF9": 58,
+        "INV": 17,
+        "CARRY4": 13,
+        "FDRE": 363,
+        "RAMB18E2": 3
+      },
+      "ff": 363,
+      "logic_lut": 1395,
+      "distributed_ram_lut": 0,
+      "input_max_data_pin_fanout": {
+        "clock": 6,
+        "reset": 289,
+        "io_enq_valid": 257,
+        "io_enq_bits": 3,
+        "io_reserve": 1,
+        "io_commit": 1,
+        "io_rollback": 9,
+        "io_need_replay_1": 9
+      },
+      "max_nonclock_net_fanout": 289,
+      "mapped_json_sha256": "9fd0b0d1f946bfca1836d8dab2f79dac33139fde42a525b44a107b3bccf05727"
+    }
+  },
+  "status": "PASS_PAIRED_MODULE_MAPPING"
+}

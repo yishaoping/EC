@@ -1,0 +1,108 @@
+{
+  "schema": "ec-opt4-unattended-round/1",
+  "round": 133,
+  "utc": "2026-11-12T08:31:08Z",
+  "status": "R6_OFFLINE_VALIDATED_ADMIN_INSTALL_PENDING",
+  "scope": {
+    "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+    "profile": "OriginalSVB32-component-trace-host40",
+    "board_allowlist": ["0000:21:00.0"],
+    "target_rtl_changed": false,
+    "physical_gates_changed": false,
+    "complete_opt4": false,
+    "fpga_access": false
+  },
+  "r5": {
+    "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r5-20261112/state.json",
+    "state_sha256": "999f290eaec4c66ea52dd6c0aa6ff37e6543aa9adf476428073c3fcdc2d6b5ea",
+    "status": "BOUNDED_SHELL_STRATEGIES_FAILED_WITH_ALL_CHECKPOINTS_RETAINED",
+    "E_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r5-20261112/E-preroute-shell-replication/result.json",
+    "E_result_sha256": "f9d97aa4a4c049218586756c75495d90e02bc7bb61cf73ee8e62e85542d8129b",
+    "E_final_timing_report_sha256": "a845571ea0f8588d34853851cdcc2a05e80af150b67676129844545d40b1c5ce",
+    "E_final_wns_ns": -0.029,
+    "E_final_whs_ns": 0.001,
+    "E_status": "FAILED_WITH_EVIDENCE_SETUP_HOLD_GATE",
+    "F_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r5-20261112/F-preroute-fanout-placement-routing/result.json",
+    "F_result_sha256": "5d70926d42f2ddba2168615e218279ec85ae8cc91080386dc9cf8d2db2e54792",
+    "F_vivado_log_sha256": "7a37303a0fa1ad9a976d861c6a9a88adad6de901f218b8aa56972be118715f9b",
+    "F_failure": "Vivado 2021.1 rejects -routing_opt in pre-route phys_opt_design",
+    "sealed_source_checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r5-20261112/F-preroute-fanout-placement-routing/sealed-source.dcp",
+    "sealed_source_checkpoint_sha256": "17b05879a2837d73809dfb50e2173d79acb260e9fc5f6f2acfedbb09b6e5fa8c",
+    "physical_unit": {
+      "name": "ec-opt4-svb-host40-shell-physical-r5.service",
+      "active_state": "inactive",
+      "main_pid": 0,
+      "cgroup_empty": true
+    }
+  },
+  "r6": {
+    "candidate": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r6-20261112",
+    "inputs_sha256": "cc4db5224d03814315e83274b5b0252e7ab548fbb1c2e006cb39ad2707956d77",
+    "repair": "phys_opt_design -fanout_opt -placement_opt followed by the existing route_design and strict Tcl gates",
+    "source_hashes": {
+      "controller.py": "f8a97603abd67198006872fd85f24fd2f6036701ef06bfd4108ef50fff5a6c99",
+      "install.py": "d8530f34788e1687a513dfe5adf4cee0a0aaabd827cb4af95ce5fb33c77d0a4b",
+      "runtime.py": "a4cf70fbfe9960e4649778b5d53de1812111b9b349370fba5a62cde3a757f4b1",
+      "application.py": "69917386c4efdaa5b71aca26e2416e1a46a27b08e5b1c9bd2f687c5491b5e7c7",
+      "certificate.py": "4de4d5bca59df344eaf8e8fd98b82ecade56d2bb9b9fbb8ba55c13a6b96dfa1c",
+      "recover.tcl.in": "ff9f490cb91438c8460a0c23327732865f6c47e46eb2009eff6f1d67ef9fe576",
+      "physical-clock-contract.json": "1a52165b57e61a5079780d905ab41f58652cab5b6f06e5d3233f4028de25f6c4",
+      "runtime-inputs.json": "5dc86bbfc192fb0d7fa357135ee5e32f4a18dfd1897970fb4e7ef7033b037543",
+      "application-inputs.json": "c656f30b4d51ab6324443f71f99af47c9639411c9e4c749efcd2cb2690bf0718",
+      "rebind_inputs.py": "21a2ef987190962d47e1b6ed7e2f4f36b21c3fbec703a096e34a78e4c024e52a"
+    },
+    "validation": {
+      "python_syntax": "PASS",
+      "install_validate_only": "PASS_INPUT_BINDING_NO_CAD",
+      "runtime_offline": "PASS_NO_DEVICE_ACCESS",
+      "application_offline": "PASS_NO_DEVICE_ACCESS",
+      "fpga_io": false
+    }
+  },
+  "resource_guard": {
+    "admission_met_at_snapshot": true,
+    "limits": {
+      "cpus": [224, 225],
+      "max_component_vivado": 3,
+      "min_available_gib": 192,
+      "min_disk_gib": 150,
+      "max_load1": 128,
+      "memory_limit_gib": 64
+    },
+    "measured": {
+      "memory_available_kib": 329705716,
+      "disk_free_bytes": 285807058944,
+      "load1": 36.72,
+      "existing_vivado_workers": 2,
+      "workers": [
+        {
+          "pid": 2323399,
+          "start_ticks": "25276450",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "cgroup": "/system.slice/ec-opt4-auto-svb-physical-resource-recovery-r51-v1.service"
+        },
+        {
+          "pid": 2377613,
+          "start_ticks": "25815969",
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "cgroup": "/system.slice/ec-opt4-auto-svb-physical-resume-r3-v1-8491167d.service"
+        }
+      ]
+    },
+    "shared_slot_lock": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/extra-component-slot.lock"
+  },
+  "metrics_consumer": {
+    "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/svb-application-fpga-metrics-r1-20261112/state.json",
+    "status": "WAITING_EXACT_CERTIFIED_APPLICATION_FPGA_REPLAY_NO_DEVICE_IO",
+    "request_duplicated": false,
+    "cpu_comparison_controlled": false
+  },
+  "admin_install": {
+    "attempted_command": "sudo -n /usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r6-20261112/install.py",
+    "result": "NOT_RUN_SUDO_REQUIRES_PASSWORD",
+    "r6_physical_service_installed": false,
+    "r6_jobs_started": false,
+    "next_action": "Run the validated installer once from the existing authorized administrator context; do not write credentials into files."
+  }
+}

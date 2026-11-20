@@ -1,0 +1,242 @@
+{
+  "child": {},
+  "complete_dcache_equivalence": false,
+  "complete_fame_equivalence": false,
+  "completed_utc": "2026-11-11T19:34:31.819602+00:00",
+  "cpu": 249,
+  "cpu_ticks": 6,
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "inputs": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-joined-ram-queue-round57-v1-20261112/README.md": "428a2b5ef3935d3d3c197e04f31c1c2a5c125a537f780822bc3c2b13f8b36e03",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-joined-ram-queue-round57-v1-20261112/controller.py": "2cb8ac2816e804c998b472e151cd558a8228746a8ee9a1a95c7a3f55169c78e3",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-joined-ram-queue-round57-v1-20261112/evidence/PipeChannel.sv": "20946471678c3ad0d6189f85d69530f1bf5e9b6c7202f6c3babb4c2d1e65e531",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-joined-ram-queue-round57-v1-20261112/evidence/PipeChannel_10.sv": "d4aa4b1457cc5253c3aa41676e10840d237c8b470d03338b8c99c8fca8f9d3bc",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-joined-ram-queue-round57-v1-20261112/evidence/PipeChannel_56.sv": "67adaf945704099fbfd575a70be098bfb3f945f7deeac9c9c4ff3cca4c68f9c2",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-joined-ram-queue-round57-v1-20261112/evidence/RamModel.sv": "46428dc8d9868145ee7636f7da186ea61906da0bb3e0fad3dc756ffd95c135a4",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-joined-ram-queue-round57-v1-20261112/evidence/ShiftQueue_30.sv": "7cd71687134378a1faeba8d0a69ca0b53fba16ad9cd000746232efcc357294e7",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-joined-ram-queue-round57-v1-20261112/evidence/ShiftQueue_40.sv": "749254b5ecfa9233991f665086356437764d331504c0d95330ee81a8b2bc26bc",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-joined-ram-queue-round57-v1-20261112/evidence/ShiftQueue_86.sv": "5bd8fff0ac0745b5e836e64c395319be5d75df32d19d024635bce47f3f879369",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-joined-ram-queue-round57-v1-20261112/evidence/ownerImageMemory_flattened.sv": "fd25768d62854d0752adaf8607844bed86db6bfd06bed9399fc82b5efd9d45ab",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-joined-ram-queue-round57-v1-20261112/evidence/queue-complete.json": "06bdf76589f660a479bc2b97820d393dcaa68bef983d7d375588f204b1f6d90c",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-joined-ram-queue-round57-v1-20261112/evidence/queue-result.json": "173239b031c90853dfa19f34a1a53591bbb1b941f1af4c6f32c5771d20a93673",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-joined-ram-queue-round57-v1-20261112/evidence/transaction-complete.json": "ebd8b81db979a0bc47bb2a59e994ddee797aca6500310105831f1292247ad313",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-joined-ram-queue-round57-v1-20261112/evidence/transaction-result.json": "b6208388ff7a75cfdf699b21b87bfd554f15a585a6bb282e72dcf14f87ce92e2",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-joined-ram-queue-round57-v1-20261112/preflight.json": "673287c53a1099d304a8ca0adcb4bab6d51a2c1513f064de67358eae088fb2f1",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-queue-adapter-round56-v1-20261112/controller.py": "3a543c2f9e4e9021b57ced86b2368b34d3918614b61fe4470dae6e6b2fa0feea",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-transaction-round55-v1-20261112/controller.py": "7a925663fd9983021f354e615a20a12047ae602646882f2188bf69b25c05a2c9",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/opt4_unattended_common.py": "ac709cdf3dc514f987fbb77593cb441e2f47ee2cab2efc46c3d2de3839998e2e"
+  },
+  "limitations": [
+    "FIFO invariants/atomic joins are assumed from the exact bound round56 universal proof.",
+    "RAM endpoints are physically connected; no arbitrary RAM ready/valid/data endpoint remains.",
+    "Conditional related arbitrary-memory base; no reset-defined target-memory contents.",
+    "FAME target advance, clock/reset tokens and complete target transition equivalence remain unproved.",
+    "No full DCache/Opt4 equivalence, liveness, measured area/FIT, bitstream or FPGA admission."
+  ],
+  "memory_read_cut": false,
+  "memory_words": 512,
+  "mutation_receipts": [
+    {
+      "label": "negative-read-address",
+      "log_sha256": "49425968f592ff56f5779875b171bede14f423a75ea2e31b027c08196a5cca9d",
+      "returncode": 1,
+      "script_sha256": "5e00567499d14955e52b165c83974bd2dca8173f5f79ece705b7f7a2d8c28395",
+      "seconds": 30.471613293979317,
+      "source_sha256": "91fee3b5adc4b64b24b2b09fd7c7ac5385b42fcb732fe600da32b26ed0361823"
+    },
+    {
+      "label": "negative-write-high-bit",
+      "log_sha256": "aa0beab309f1057ece52883a318420a6335e14804681afc190424e158d04ff6e",
+      "returncode": 1,
+      "script_sha256": "378b9d35b34d1b2dc80843f7e35b2597baa494d8c59f621d6e5e9821939fe49a",
+      "seconds": 42.7038219649985,
+      "source_sha256": "80d463c425524980fce22a516ea11e81c1260a20b6b874c49522ba6826a177c5"
+    },
+    {
+      "label": "negative-held-response",
+      "log_sha256": "1d7fb1d661d092a5b3da14330579a4bdbf5eeec6bcb3d8cff85410ba1923bf97",
+      "returncode": 1,
+      "script_sha256": "65bbb737e19492f8e102693671cd6227a62724110de61b0f20c4608356ebc51c",
+      "seconds": 36.166968133999035,
+      "source_sha256": "99dec5f7208aaddb12c8e8f62de573496bb6ce8bf89845b29f3a078d84426e17"
+    }
+  ],
+  "payload_bits": 81,
+  "payload_reset_initialization_assumed": false,
+  "pid": 2211543,
+  "plan_sha256": "61e47f6c3ad5af8f06faff1e232651541cc7f547a96b8d88a3119dbff6b09998",
+  "process_state": "R",
+  "proof_receipts": [
+    {
+      "label": "bits-0-8-reset",
+      "log_sha256": "ae8ada600ec018e9755052afb543989cb522a1569a0daab1def8d737a839d724",
+      "returncode": 0,
+      "script_sha256": "2956aa3491d450c98707b425a053872fad1a920dd5e3365eeff884e64fda6aa5",
+      "seconds": 23.380352618987672,
+      "source_sha256": "00582d7a0d5c601d7f92fe2a52354e7a22fa0b1801ae040e2ce77f7fb2d5c492"
+    },
+    {
+      "label": "bits-0-8-step",
+      "log_sha256": "7e1c40d1b9e49914863eb82cd6c35ae0cb727fbc92387273aa6e3335708f9d48",
+      "returncode": 0,
+      "script_sha256": "c09f3f6c671e809dc4f3471973d68da5ce8cd7555c28fdb5ea82d25075bf825d",
+      "seconds": 54.99457144297776,
+      "source_sha256": "00582d7a0d5c601d7f92fe2a52354e7a22fa0b1801ae040e2ce77f7fb2d5c492"
+    },
+    {
+      "label": "bits-9-17-reset",
+      "log_sha256": "3fc720c2c2b2d3fa4c986b04e15f621355249ab5cd5aaf8e421688e9ed62640d",
+      "returncode": 0,
+      "script_sha256": "f2af218c27606652bae95e6835162d0eafd39aeb331724a4dfbd1c6755d7d79c",
+      "seconds": 23.80777688199305,
+      "source_sha256": "94d5b18760256fa4e199cce2efdd3432daa854b034c16e2650f2f0ecc855d47c"
+    },
+    {
+      "label": "bits-9-17-step",
+      "log_sha256": "76293ed72a5443c6aa30fc01bb9d5cf2f980382c5bce69659f21a654290d1be1",
+      "returncode": 0,
+      "script_sha256": "88db1501104ce19697e5fd335531a790ee40d96a8c2edad8a3dd8427a8ddaaf3",
+      "seconds": 59.58791001501959,
+      "source_sha256": "94d5b18760256fa4e199cce2efdd3432daa854b034c16e2650f2f0ecc855d47c"
+    },
+    {
+      "label": "bits-18-26-reset",
+      "log_sha256": "85592216cbf69f8e66e5ab58b480eaaedee3139e83924ac99ec01f8cd326a4cf",
+      "returncode": 0,
+      "script_sha256": "974770e4ff10bba6c5bb5f56d6738cda5303c645e09bea2950d814fb01761fd8",
+      "seconds": 23.70413434499642,
+      "source_sha256": "f57bd55a5a4b2093b8a7399257060baa6c7a000166fe2f01a967bbf8903b502f"
+    },
+    {
+      "label": "bits-18-26-step",
+      "log_sha256": "7a02f41b2787a8a5246ef39e9ea1ddcc511630e67acda06aebf739bd7f3cac75",
+      "returncode": 0,
+      "script_sha256": "e765612ad3d7bd997081649aa96bd5234e72314de09e595179fe195e51c4b2ae",
+      "seconds": 58.67492460599169,
+      "source_sha256": "f57bd55a5a4b2093b8a7399257060baa6c7a000166fe2f01a967bbf8903b502f"
+    },
+    {
+      "label": "bits-27-35-reset",
+      "log_sha256": "d592737dadbcf99e66f6b66798e97f53f42dbbf452a615920102e02c0977716c",
+      "returncode": 0,
+      "script_sha256": "1c49d48dc3c40686b09bd67a1a7137fa765f182d94354d96617720fadefc8910",
+      "seconds": 23.817464837018633,
+      "source_sha256": "4aa3cf0e810a1fc93a65a8704898956dc526709565e1d305a2a036e414d2cca8"
+    },
+    {
+      "label": "bits-27-35-step",
+      "log_sha256": "c1b3d8295207854c6c0873d66f7a38190f8fdacc3f27f7edd6b4b8eb65e534eb",
+      "returncode": 0,
+      "script_sha256": "1c85375c099e08cf1ee1a131b41b4d2d43df9709ff06fc704435759d7112d6ea",
+      "seconds": 58.42887430198607,
+      "source_sha256": "4aa3cf0e810a1fc93a65a8704898956dc526709565e1d305a2a036e414d2cca8"
+    },
+    {
+      "label": "bits-36-44-reset",
+      "log_sha256": "b972564af38b355c2f3fc64e279b6b3517b1aa689060a91574b8b3caab98064f",
+      "returncode": 0,
+      "script_sha256": "b2eb13d90f76b3d41bfb0bc733c16c5b58188a3b21527326174d39891f428840",
+      "seconds": 23.72269496897934,
+      "source_sha256": "3f0138a4efac02fd92d256ebd73b6ce71affb7d4a54e50abc80bc0532cfcd541"
+    },
+    {
+      "label": "bits-36-44-step",
+      "log_sha256": "c89770cc8a2114d9ce98e3318aa0f6876b61262eaaa98f6c7f6ca0d06e299475",
+      "returncode": 0,
+      "script_sha256": "480aede0d71ace31de22349e8bf8e35ca05332ba6dba80a24f8e7fce6aaccef9",
+      "seconds": 56.88774281099904,
+      "source_sha256": "3f0138a4efac02fd92d256ebd73b6ce71affb7d4a54e50abc80bc0532cfcd541"
+    },
+    {
+      "label": "bits-45-53-reset",
+      "log_sha256": "d53fc134dbf7cc7c9e387aa263aced064947fa240b002b3869e8221321d260b7",
+      "returncode": 0,
+      "script_sha256": "43aa443439a60d7cdfc124655c948575e6963d3446c92dc51c17b55005f30ea0",
+      "seconds": 23.88903526199283,
+      "source_sha256": "7f7d7d2089827e9b9d0233c56bb82cf442592481ef5b2a2d597394e8fc48e74a"
+    },
+    {
+      "label": "bits-45-53-step",
+      "log_sha256": "a79dc8b2f21f0eb3f71a717eadd64d08844a1c7817e97995020afb757921b73d",
+      "returncode": 0,
+      "script_sha256": "308c81bcf822b7c4dd3ef654968b960b34bff6a63fa272c38acdd3a65ea40268",
+      "seconds": 58.41750992499874,
+      "source_sha256": "7f7d7d2089827e9b9d0233c56bb82cf442592481ef5b2a2d597394e8fc48e74a"
+    },
+    {
+      "label": "bits-54-62-reset",
+      "log_sha256": "011609fb6d370d0fe5f7a9c1862412df3cef1d0d22259207008f195bf88647a4",
+      "returncode": 0,
+      "script_sha256": "c500533a5db9c078d1f17270c2c67ae1039ec3d2a91cc746f5f6e713108e2676",
+      "seconds": 24.047270844021114,
+      "source_sha256": "9b7b7ecda8db08567fefb226048fb062a411581948f9f534052fbe14c63cf655"
+    },
+    {
+      "label": "bits-54-62-step",
+      "log_sha256": "2789840361a5d03af53d77f747b8ca66ccfa6dd01e93150e84ebbd245e9691c8",
+      "returncode": 0,
+      "script_sha256": "d3db813cf87d947eb4e510ce360072f72773c3baacc0cc1cb42aef6f788fde0b",
+      "seconds": 59.78327154801809,
+      "source_sha256": "9b7b7ecda8db08567fefb226048fb062a411581948f9f534052fbe14c63cf655"
+    },
+    {
+      "label": "bits-63-71-reset",
+      "log_sha256": "3b52cbc0e66a271505ff857434ec639937d2ac617ca44762916f99e7ec089881",
+      "returncode": 0,
+      "script_sha256": "4d46b8db944a92d0b6353729784e7ef7c95650d0f7cf4a8335da0cd8820865a3",
+      "seconds": 23.61431153101148,
+      "source_sha256": "42f7961d2236ff4fb1266e75ce837a88ac11b5d724c599aa31a6c49c319ad294"
+    },
+    {
+      "label": "bits-63-71-step",
+      "log_sha256": "b2b0e082d7002c5560adbfe09de4133692a398349bdc7eace6ef8b7423dc24b1",
+      "returncode": 0,
+      "script_sha256": "ea371426ea3174eb70ba219766c6775a510ebc805eb89be87cd6f199f88a3dd6",
+      "seconds": 57.18699157499941,
+      "source_sha256": "42f7961d2236ff4fb1266e75ce837a88ac11b5d724c599aa31a6c49c319ad294"
+    },
+    {
+      "label": "bits-72-80-reset",
+      "log_sha256": "5ca2e63a1cc12ea63778115d50bd11803265d6558f0fe9c75c833b6faa421572",
+      "returncode": 0,
+      "script_sha256": "b832c79eef810c769478d9b3d6334b0ab2bb468ade99c0a576b010e8ecece619",
+      "seconds": 24.292931814008625,
+      "source_sha256": "4dd9877df81abb4db8ec749f781c5f44437eb999da4477abedf8d32ed8522e2b"
+    },
+    {
+      "label": "bits-72-80-step",
+      "log_sha256": "3ab7fbb84f1d4179b5f6b79d34f5bb417ce8cb682e3fb8d497487e0430122734",
+      "returncode": 0,
+      "script_sha256": "7caf31e494c3f18faeb8a7fc1a0f970c50e222676723cfc351d98a610b8c1803",
+      "seconds": 57.083581885002786,
+      "source_sha256": "4dd9877df81abb4db8ec749f781c5f44437eb999da4477abedf8d32ed8522e2b"
+    },
+    {
+      "label": "delivered-and-write-order",
+      "log_sha256": "f03d612b3bb13ccf60a346e11038e1efd1d61c4d5f64d84e7d53f3d122331cbe",
+      "returncode": 0,
+      "script_sha256": "22a8c430a31faaf52657a385ab96ca42a6e1f2a2c722d99666920ba9dee3e665",
+      "seconds": 15.647095390013419,
+      "source_sha256": "00582d7a0d5c601d7f92fe2a52354e7a22fa0b1801ae040e2ce77f7fb2d5c492"
+    }
+  ],
+  "queue_count": 109,
+  "queue_lemma_assumed": true,
+  "queue_lemma_result_sha256": "173239b031c90853dfa19f34a1a53591bbb1b941f1af4c6f32c5771d20a93673",
+  "ram_endpoint_cut": false,
+  "readers": 35,
+  "rss_bytes": 17068032,
+  "schema": "ec-owner-joined-ram-queue-proof/1",
+  "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+  "stage_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-joined-ram-queue-round57-v1-20261112/negative-held-response.log",
+  "start_ticks": "23653152",
+  "started_utc": "2026-11-11T19:20:11.151087+00:00",
+  "status": "PASS_CONNECTED_109QUEUES_ADAPTER_AND_35R1W_RAM_SNAPSHOTS_WITH_QUEUE_LEMMA",
+  "target_changed": false,
+  "updated_utc": "2026-11-11T19:33:55.653949+00:00",
+  "watched_address_and_reader_arbitrary": true,
+  "whole_fit": false
+}

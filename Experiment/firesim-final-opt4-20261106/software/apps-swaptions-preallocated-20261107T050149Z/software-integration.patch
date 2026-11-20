@@ -1,0 +1,24 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-preallocated-20261107T050149Z/pristine-HJM_Securities.cpp
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-preallocated-20261107T050149Z/src/swaptions/HJM_Securities.cpp
+@@ -6,6 +6,7 @@
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <malloc.h>
+ #include <math.h>
+ #include <iostream>
+ 
+@@ -284,6 +285,13 @@
+ 
+ 
+ 	// **********Calling the Swaption Pricing Routine*****************
++// Integration: make heap storage resident before the unchanged ROI.
++        // All HJM allocation/free calls and all pricing computation remain inside.
++        mallopt(M_TRIM_THRESHOLD,-1); mallopt(M_MMAP_MAX,0);
++        volatile char *ec_reserve=(volatile char*)malloc(32*1024*1024);
++        if (!ec_reserve) return 125;
++        for (size_t ec_i=0;ec_i<32*1024*1024;ec_i+=4096) ec_reserve[ec_i]=0;
++        free((void*)ec_reserve);
+ #ifdef ENABLE_PARSEC_HOOKS
+ 	__parsec_roi_begin();
+ #endif

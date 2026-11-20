@@ -1,0 +1,102 @@
+{
+  "board_bdf": "0000:21:00.0",
+  "board_serial": "21770433G02LA",
+  "conclusion": "All audited checker/CDC/SVB/L2/firmware interfaces are byte-identical. Normal checker+drain validation is prepared. No supported real architecture restore/restart interface is established; fault flag, cancel, promotion ACK and host reboot remain insufficient evidence. Keep fault-injection validation pending, do not report it passed.",
+  "fpga_execution": false,
+  "generated_legacy_injector_absent": true,
+  "hardware_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+  "inherited_audit": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-rollback-interface-audit-r1-20261111/audit.json",
+  "inherited_audit_sha256": "c52c811f3c565c82fd4dfa898b93d580948c5f2a66742697a248e62bb58df2fa",
+  "new_generated_rtl": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-bucket-tag-r3-20261111/builds/system-9ae9a7fc-r1/goldengate/FireSim-generated.sv",
+  "new_generated_rtl_sha256": "cc115bdc6626dd90be59aef2ceda8dc8d4bc5a87627eeeee1dbe5c5ac51a7e9b",
+  "offline_collector_verification": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-checker-collector-validation-r2-20261111/result.json",
+  "required_witnesses": [
+    "actual full-compare FAIL and its sequence",
+    "architectural checkpoint restoration",
+    "restart PC and retired replay",
+    "memory recovery with correct final output",
+    "checker cleanup and complete drain"
+  ],
+  "rollback_runtime_validated": false,
+  "schema": "ec-opt4-derived-diagnostic-readiness/1",
+  "source_binding": {
+    "boom_packet_producer": {
+      "byte_equal_to_previous_audit": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-bucket-tag-r3-20261111/chipyard/generators/boom/src/main/scala/trans/GH_BUF.scala",
+      "sha256": "e437ac0b2dd1a16639c287c41e76b35ab16e2cc81dbd3dac77c3155b9d27b10d"
+    },
+    "checker_result": {
+      "byte_equal_to_previous_audit": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-bucket-tag-r3-20261111/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala",
+      "sha256": "92c65bd8130abe53db7eb75c830958f8ffdbb2f97aef93ca2074abef02912ac0"
+    },
+    "dcache_fail": {
+      "byte_equal_to_previous_audit": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-bucket-tag-r3-20261111/chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+      "sha256": "0fb9e4b3931827120aed8311dbbc87a2d25e697c76505717af7162a0a9f1663d"
+    },
+    "firmware_api": {
+      "byte_equal_to_previous_audit": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/opensbi/lib/sbi/ec_opt4.c",
+      "sha256": "b94345d9966d8134db069b22e2b37f33a3b56e7913210efe5c5bb8a598c99783"
+    },
+    "firmware_trap": {
+      "byte_equal_to_previous_audit": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/opensbi/lib/sbi/ec_opt4_entry.S",
+      "sha256": "090f4b75bf0f73eb84199497d166b7bded97385987097bc246a7010099d84587"
+    },
+    "l2_barrier": {
+      "byte_equal_to_previous_audit": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-bucket-tag-r3-20261111/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/InclusiveCache.scala",
+      "sha256": "c612fb7eb0767c8d7f09f797f96f23b17b2d4bd2915ecc3a2aabe4eb6de34d82"
+    },
+    "legacy_ght": {
+      "byte_equal_to_previous_audit": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-bucket-tag-r3-20261111/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GHT.scala",
+      "sha256": "c3d778b7044d67a406c4b5b8ed302f552552fd2ae036deff33ec07229e219e19"
+    },
+    "legacy_injector": {
+      "byte_equal_to_previous_audit": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-bucket-tag-r3-20261111/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/ght_filter_prfs.scala",
+      "sha256": "130f7f6908cc5b89de6b125b974dfee70e703a5c02712147e07e42680cad1d6d"
+    },
+    "linux_api": {
+      "byte_equal_to_previous_audit": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/linux/drivers/misc/ec_dac_roi.c",
+      "sha256": "4caff1f1ba2b4b30d2ee155ace94b78975baabb15daec32a7d57bfaf0a6c81a9"
+    },
+    "main_core": {
+      "byte_equal_to_previous_audit": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-bucket-tag-r3-20261111/chipyard/generators/boom/src/main/scala/exu/core.scala",
+      "sha256": "1883cef9fa9c24cb5f39715a132d0b89aa104e8b2aefa594bc812ad5e03c74c8"
+    },
+    "main_snapshot": {
+      "byte_equal_to_previous_audit": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-bucket-tag-r3-20261111/chipyard/generators/rocket-chip/src/main/scala/r/R_RSU.scala",
+      "sha256": "05d61838bf7a1dd053da324183c41882d7c9885a0b904efd99c98ee96dd9a9b9"
+    },
+    "normal_validator": {
+      "byte_equal_to_previous_audit": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_isolated_sample.py",
+      "sha256": "c6ecfce4e206e1e9f2cdaee7decfd24d4322c8366f47b3d96fa1f574e393e2ce"
+    },
+    "result_cdc": {
+      "byte_equal_to_previous_audit": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-bucket-tag-r3-20261111/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GHM.scala",
+      "sha256": "35f24f6aee15686ad36a5ef15328486eaf4f184186b352498470d240cd749322"
+    },
+    "rocket_tile": {
+      "byte_equal_to_previous_audit": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-bucket-tag-r3-20261111/chipyard/generators/rocket-chip/src/main/scala/tile/RocketTile.scala",
+      "sha256": "d7ca08cd4604f44e83f0d9d3c3425bb303ad8ca1626aa0cc49c46bfb7fc872f4"
+    },
+    "svb": {
+      "byte_equal_to_previous_audit": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-bucket-tag-r3-20261111/chipyard/generators/boom/src/main/scala/lsu/speculative-version-buffer.scala",
+      "sha256": "83f781c00f01f0188fc34d84c9efa1f6efdfe95f1aa412c897e90a404a629e8a"
+    }
+  },
+  "source_id": "3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561",
+  "status": "NORMAL_STRICT_COLLECTOR_READY_ARCHITECTURAL_INJECTION_RESTART_INTERFACE_UNESTABLISHED",
+  "utc": "2026-11-11T00:38:32.833016+00:00"
+}

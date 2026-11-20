@@ -1,0 +1,29 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-protocol-20261107T110127Z/server.c
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/server.c
+@@ -233,6 +233,8 @@
+ 		return (void*)-1;
+ 	}
+ 
++	fprintf(stderr, "EC_NET_LISTEN_READY\n");
++	fflush(stderr);
+ 	/* 4. accept and enqueue */
+ 	while(1){
+ #ifdef ENABLE_PARSEC_UPTCPIP
+@@ -495,7 +497,7 @@
+ 		ARRAY_BEGIN_FOREACH(rank->result.u.list, cass_list_entry_t p)
+ 		{
+ 			char *obj = NULL;
+-			if (p.dist == HUGE_VAL) continue;
++			if (p.dist == HUGE_VAL || p.dist == CASS_DIST_MAX) continue;
+ 			cass_map_id_to_dataobj(query_table->map, p.id, &obj);
+ 			assert(obj != NULL);
+ 
+@@ -688,6 +690,8 @@
+ #endif
+ 
+ 	tpool_cancel(p_acceptor);
++	/* Cancellation is asynchronous; join before freeing pool/application state. */
++	for (int ec_i=0; ec_i<p_acceptor->nthreads; ++ec_i) { int ec_rc=pthread_join(p_acceptor->threads[ec_i], NULL); assert(ec_rc==0); }
+ 
+ 	tpool_destroy(p_acceptor);
+ 	tpool_destroy(p_load);

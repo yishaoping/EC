@@ -1,0 +1,16 @@
+{
+  "schema": "ec-service-job-spec/1",
+  "name": "network-streamcluster-linux",
+  "argv": [
+    "python3",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/validate_netstreamcluster_linux.py"
+  ],
+  "inputs": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/validate_netstreamcluster_linux.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/network_binding.py"
+  ],
+  "legacy_states": [
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netstreamcluster-linux-validation.json"
+  ],
+  "checkpoint_policy": "Targeted software-only Linux small/formal validation while other independent failed-protocol investigations retain their evidence; no FPGA or queue changes"
+}

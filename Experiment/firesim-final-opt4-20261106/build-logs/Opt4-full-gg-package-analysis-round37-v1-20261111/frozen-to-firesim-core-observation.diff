@@ -1,0 +1,33 @@
+--- /data1/gzh/EC-backups/opt4-final-performance-20261106/source/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala
++++ /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala
+@@ -1539,6 +1539,16 @@
+     Mux(package_result_waiting, package_result_status_waiting, package_result_status),
+     Mux(package_result_waiting, package_result_seq_waiting, package_seq_reg))
+   val package_result_fire = package_result_queue.io.enq.fire
++  if (p(freechips.rocketchip.util.DacRoiEnabled)) {
++    when (new_package) {
++      midas.targetutils.SynthesizePrintf(printf("EC_OPT4_PACKAGE_BEGIN hart=%d seq=%x satp=%x prv=%d\n",
++        io.hartid, new_package_seq, Cat(csr.io.ptbr.mode, csr.io.ptbr.asid, csr.io.ptbr.ppn), csr.io.status.prv))
++    }
++    when (package_result_fire) {
++      midas.targetutils.SynthesizePrintf(printf("EC_OPT4_PACKAGE_RESULT hart=%d seq=%x status=%d full_compare=%d cancelled=%d\n",
++        io.hartid, package_seq_reg, package_result_status, full_check_complete, package_cancelled))
++    }
++  }
+   // Result capture and RSUSL cleanup are separate state transitions. Delaying
+   // cleanup breaks the result-fire -> package-clear -> frame-start feedback;
+   // result handoff remains blocked by checker_cleanup_done until RSUSL is idle.
+@@ -1557,6 +1567,13 @@
+   package_result_queue.io.deq.ready := io.package_result_ready &&
+     package_result_handoff_allowed
+   val package_result_handoff_fire = package_result_queue.io.deq.fire
++  // Service FINISH is not architectural/package completion. U-mode firmware
++  // management may tear down satp only after this real cleanup witness.
++  val ec_service_safe = checker_cleanup_done && !package_owned &&
++    !pending_package_seq_valid && no_result_pending &&
++    !package_result_queue.io.deq.valid && io.cdc_empty
++  csr.io.ec_service_idle := ec_service_safe && RegNext(ec_service_safe, false.B)
++
+   io.package_result_valid := package_result_queue.io.deq.valid &&
+     package_result_handoff_allowed
+   io.package_result_seq := package_result_queue.io.deq.bits(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0)

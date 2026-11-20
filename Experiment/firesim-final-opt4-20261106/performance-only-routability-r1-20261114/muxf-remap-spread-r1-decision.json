@@ -1,0 +1,14 @@
+{
+  "candidate": "muxf-remap-spread-r1",
+  "constraints": "repair only the exact original Golden Gate generated clocks and 1/0,2/1 multicycle constraints at real linked-shell paths; no frequency or RTL change",
+  "netlist_transform": "opt_design -muxf_remap, equivalent MUXF to LUT decomposition",
+  "placement": "AltSpreadLogic_high",
+  "reason": "All three SLRs have 99.82/99.93/100% CLB site occupancy; SLR2 has 65300 F7 and 25770 F8 muxes; trade spare LUT capacity for packing and routing freedom",
+  "route": "AlternateCLBRouting",
+  "source_checkpoint": {
+    "bytes": 540394765,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-performance-only-support-r6-20261113/project/builds/cad-6fada307/vivado_proj/firesim.runs/impl_1/design_1_wrapper_placed.dcp",
+    "sha256": "465f0c44fd66f800e5dcab038c5ff68fbc4c2965debca28bed2d688644e965a9"
+  },
+  "utc": "2026-11-14T01:05:36.491919+00:00"
+}

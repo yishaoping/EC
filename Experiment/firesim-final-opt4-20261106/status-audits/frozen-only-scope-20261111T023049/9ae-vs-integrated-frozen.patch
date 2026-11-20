@@ -1,0 +1,483 @@
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/AddressBucketGrouped.scala b/chipyard/generators/boom/src/main/scala/lsu/AddressBucketGrouped.scala
+new file mode 100644
+index 0000000..fc1a59b
+--- /dev/null
++++ b/chipyard/generators/boom/src/main/scala/lsu/AddressBucketGrouped.scala
+@@ -0,0 +1,73 @@
++package boom.lsu
++
++import chisel3._
++import chisel3.util._
++
++/** Exact combinational histogram. All architectural registers stay outside.
++  * Compact equal keys in groups of four before the 256-way scatter, sharing
++  * local additions across destinations instead of repeating them per bucket.
++  */
++object AddressBucketGrouped {
++  case class Entry(key: UInt, counts: Seq[UInt], last: Bool)
++
++  def compact4(keys: Seq[UInt], counts: Seq[Seq[UInt]], bounds: Seq[Int]): Seq[Entry] = {
++    require(keys.size == 4 && counts.size == 4 && bounds.forall(_ > 0))
++    require(counts.forall(_.size == bounds.size))
++    var records = keys.indices.map(i => (keys(i), bounds.indices.map(g =>
++      counts(i)(g)(log2Ceil(bounds(g) + 1) - 1, 0))))
++    // Five-comparator sorting network for four unsigned keys. Equal-key
++    // payload order is immaterial because all equal-key counts are added.
++    for ((a, b) <- Seq((0, 1), (2, 3), (0, 2), (1, 3), (1, 2))) {
++      val x = records(a); val y = records(b); val ordered = x._1 <= y._1
++      val lo = (Mux(ordered, x._1, y._1), bounds.indices.map(g =>
++        Mux(ordered, x._2(g), y._2(g))))
++      val hi = (Mux(ordered, y._1, x._1), bounds.indices.map(g =>
++        Mux(ordered, y._2(g), x._2(g))))
++      records = records.updated(a, lo).updated(b, hi)
++    }
++    var prefix = records.head._2
++    records.indices.map { i =>
++      if (i > 0) {
++        val same = records(i - 1)._1 === records(i)._1
++        prefix = bounds.indices.map { g =>
++          val width = log2Ceil((i + 1) * bounds(g) + 1)
++          Mux(same, prefix(g).pad(width) + records(i)._2(g).pad(width),
++            records(i)._2(g).pad(width))
++        }
++      }
++      Entry(records(i)._1, prefix,
++        if (i == 3) true.B else records(i)._1 =/= records(i + 1)._1)
++    }
++  }
++
++  def scatter(group: Seq[Entry], key: UInt, granule: Int, bound: Int): UInt = {
++    val width = log2Ceil(4 * bound + 1)
++    Mux1H(group.map(e => (e.last && e.key === key, e.counts(granule).pad(width))))
++  }
++
++  private def sum(xs: Seq[(UInt, Int)]): UInt = {
++    require(xs.nonEmpty)
++    if (xs.size == 1) xs.head._1
++    else sum(xs.grouped(2).map {
++      case Seq((a, aMax), (b, bMax)) =>
++        val bound = aMax + bMax
++        val width = log2Ceil(bound + 1)
++        (a.pad(width) + b.pad(width), bound)
++      case Seq(a) => a
++    }.toSeq)
++  }
++
++  def histogram(keys: Seq[UInt], counts: Seq[Seq[UInt]], bounds: Seq[Int], slots: Int): Vec[Vec[UInt]] = {
++    require(keys.nonEmpty && keys.size % 4 == 0 && keys.size == counts.size)
++    require(isPow2(slots) && keys.forall(_.getWidth == log2Ceil(slots)))
++    val groups = keys.indices.grouped(4).map { ids =>
++      compact4(ids.map(keys(_)), ids.map(counts(_)), bounds)
++    }.toSeq
++    VecInit((0 until slots).map { i =>
++      VecInit(bounds.indices.map { g =>
++        sum(groups.map(group => (scatter(group, i.U(log2Ceil(slots).W), g, bounds(g)),
++          4 * bounds(g)))).pad(64)
++      })
++    })
++  }
++}
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala b/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
+index 2290bcb..cd38e25 100644
+--- a/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
+@@ -130,8 +130,31 @@ class PackageAddressStats(
+     PopCount(mask(word8Hi, word8Lo)),
+     mask(lineBit).asUInt))
+ 
++  // The carry is exactly delta!=0 && value>(2^64-1-delta), including delta=0.
++  // Express it as the carry of the same addition used by the counter update.
+   private def addOverflows(value: UInt, delta: UInt): Bool =
+-    delta.orR && value > (~0.U(64.W) - delta.pad(64))
++    (value +& delta.pad(64))(64)
++
++  // Each term is a population count, bounded by the source mask's size.
++  // Keep all state/output widths at 64; only the combinational reduction is
++  // bounded and balanced. No intermediate can overflow this exact width.
++  private def exactHitSum(terms: Seq[UInt], maxTerm: Int): UInt = {
++    require(terms.nonEmpty && maxTerm > 0)
++    // Bound every subtree by its own number of leaves. Padding every leaf
++    // to the final sum width recreates wide arithmetic at all 79 nodes.
++    def balanced(xs: Seq[(UInt, Int)]): (UInt, Int) = {
++      if (xs.size == 1) xs.head
++      else balanced(xs.grouped(2).map {
++        case Seq((a, aMax), (b, bMax)) =>
++          val bound = aMax + bMax
++          val width = log2Ceil(bound + 1)
++          (a.pad(width) + b.pad(width), bound)
++        case Seq(a) => a
++      }.toSeq)
++    }
++    val leafWidth = log2Ceil(maxTerm + 1)
++    balanced(terms.map(t => (t(leafWidth - 1, 0), maxTerm)))._1.pad(64)
++  }
+ 
+   private def touchedMask(event: QueuedAddressAccessEvent): UInt = {
+     // AddressAccessEvent.size is the architectural 2-bit log2(size) encoding
+@@ -236,6 +259,12 @@ class PackageAddressStats(
+   val bucketStrictWriteRead = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))
+   val bucketFirstStore = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))
+ 
++  // A valid bucket's low sequence bits equal its fixed slot index. The high
++  // bits therefore distinguish the complete sequence without a low-bit mux.
++  private def bucketSequenceMatches(index: UInt, sequence: UInt): Bool =
++    bucketSeq(index)(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, packetIndexBits) ===
++      sequence(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, packetIndexBits)
++
+ 
+   val processLineTag = processEvent.addr(addrBits - 1, blockOffBits)
+   val processPackageSet = packageSetOf(processLineTag)
+@@ -404,43 +433,27 @@ class PackageAddressStats(
+   val unsafeStrictOverflowWriteReadHitCounts =
+     unsafeStrictOverflowWriteReadHit.map(splitCounts)
+ 
+-  // Multiple package-table/strict-table ways can qualify on one store/load
+-  // event (for example, the same line left candidates in several packages).
+-  // Aggregate each hit by its owning packet slot before updating the bucket;
+-  // assigning a bucket once avoids last-connect loss in Chisel registers.
+-  val bucketLoadFirstDelta = Wire(Vec(packetWindow, Vec(4, UInt(64.W))))
+-  val bucketStoreFirstDelta = Wire(Vec(packetWindow, Vec(4, UInt(64.W))))
+-  val bucketStrictWriteReadDelta = Wire(Vec(packetWindow, Vec(4, UInt(64.W))))
+-  for (i <- 0 until packetWindow) {
+-    for (g <- 0 until 4) {
+-      val loadTerms = (0 until packageWays).map { w =>
+-        val seq = packageReadData(w).packetSeq
+-        val idx = seq(packetIndexBits - 1, 0)
+-        Mux(unsafeLoadFirstHit(w).orR && idx === i.U,
+-          unsafeLoadFirstHitCounts(w)(g).pad(64), 0.U(64.W))
+-      }
+-      val storeTerms = (0 until packageWays).map { w =>
+-        val seq = packageReadData(w).packetSeq
+-        val idx = seq(packetIndexBits - 1, 0)
+-        Mux(unsafeStoreFirstHit(w).orR && idx === i.U,
+-          unsafeStoreFirstHitCounts(w)(g).pad(64), 0.U(64.W))
+-      }
+-      val strictTerms = (0 until strictWays).map { w =>
+-        val seq = strictReadData(w).packetSeq
+-        val idx = seq(packetIndexBits - 1, 0)
+-        Mux(unsafeStrictWriteReadHit(w).orR && idx === i.U,
+-          unsafeStrictWriteReadHitCounts(w)(g).pad(64), 0.U(64.W))
+-      } ++ (0 until strictOverflowEntries).map { j =>
+-        val seq = strictOverflowData(j).packetSeq
+-        val idx = seq(packetIndexBits - 1, 0)
+-        Mux(unsafeStrictOverflowWriteReadHit(j).orR && idx === i.U,
+-          unsafeStrictOverflowWriteReadHitCounts(j)(g).pad(64), 0.U(64.W))
+-      }
+-      bucketLoadFirstDelta(i)(g) := loadTerms.reduce(_ + _)
+-      bucketStoreFirstDelta(i)(g) := storeTerms.reduce(_ + _)
+-      bucketStrictWriteReadDelta(i)(g) := strictTerms.reduce(_ + _)
+-    }
++  // Compact four source keys locally, then scatter one subtotal per group.
++  // This changes only the exact combinational bucket-delta histogram.
++  private val hitBounds = Seq(8 min lineBytes, 3 min word4Count,
++    2 min word8Count, 1)
++  private def bucketHistogram(keys: Seq[UInt], counts: Seq[Seq[UInt]],
++    bounds: Seq[Int], slots: Int): Vec[Vec[UInt]] = {
++    if (keys.size % 4 == 0) AddressBucketGrouped.histogram(keys, counts, bounds, slots)
++    else VecInit((0 until slots).map(i => VecInit(bounds.indices.map(g =>
++      exactHitSum(keys.indices.map(j => Mux(keys(j) === i.U,
++        counts(j)(g).pad(64), 0.U(64.W))), bounds(g))))))
+   }
++  val packageBucketKeys = packageReadData.map(_.packetSeq(packetIndexBits - 1, 0))
++  val strictBucketKeys = strictReadData.map(_.packetSeq(packetIndexBits - 1, 0)) ++
++    strictOverflowData.map(_.packetSeq(packetIndexBits - 1, 0))
++  val bucketLoadFirstDelta = bucketHistogram(
++    packageBucketKeys, unsafeLoadFirstHitCounts.map(_.toSeq), hitBounds, packetWindow)
++  val bucketStoreFirstDelta = bucketHistogram(
++    packageBucketKeys, unsafeStoreFirstHitCounts.map(_.toSeq), hitBounds, packetWindow)
++  val bucketStrictWriteReadDelta = bucketHistogram(
++    strictBucketKeys, (unsafeStrictWriteReadHitCounts ++
++      unsafeStrictOverflowWriteReadHitCounts).map(_.toSeq), hitBounds, packetWindow)
+   val evictedLoadFirst = Wire(Vec(packageWays, UInt(maskBits.W)))
+   val evictedStoreFirst = Wire(Vec(packageWays, UInt(maskBits.W)))
+   for (w <- 0 until packageWays) {
+@@ -484,25 +497,25 @@ class PackageAddressStats(
+ 
+   val currentBucketIdx = processEvent.packetSeq(packetIndexBits - 1, 0)
+   val currentBucketCollision = bucketValid(currentBucketIdx) &&
+-    bucketSeq(currentBucketIdx) =/= processEvent.packetSeq
++    !bucketSequenceMatches(currentBucketIdx, processEvent.packetSeq)
+   val qualifiedPackageBucketError = packageReadData.indices.map { w =>
+     val mask = unsafeLoadFirstHit(w) | unsafeStoreFirstHit(w)
+     val seq = packageReadData(w).packetSeq
+     val idx = seq(packetIndexBits - 1, 0)
+-    mask.orR && (!bucketValid(idx) || bucketSeq(idx) =/= seq)
++    mask.orR && (!bucketValid(idx) || !bucketSequenceMatches(idx, seq))
+   }.reduce(_ || _)
+   val qualifiedStrictBucketError = strictReadData.indices.map { w =>
+     val mask = unsafeStrictWriteReadHit(w)
+     val seq = strictReadData(w).packetSeq
+     val idx = seq(packetIndexBits - 1, 0)
+-    mask.orR && (!bucketValid(idx) || bucketSeq(idx) =/= seq)
++    mask.orR && (!bucketValid(idx) || !bucketSequenceMatches(idx, seq))
+   }.reduce(_ || _)
+   val qualifiedStrictOverflowBucketError =
+     strictOverflowData.indices.map { i =>
+       val mask = unsafeStrictOverflowWriteReadHit(i)
+       val seq = strictOverflowData(i).packetSeq
+       val idx = seq(packetIndexBits - 1, 0)
+-      mask.orR && (!bucketValid(idx) || bucketSeq(idx) =/= seq)
++      mask.orR && (!bucketValid(idx) || !bucketSequenceMatches(idx, seq))
+     }.reduce(_ || _)
+   val qualifiedBucketError = qualifiedPackageBucketError ||
+     qualifiedStrictBucketError || qualifiedStrictOverflowBucketError
+@@ -511,6 +524,27 @@ class PackageAddressStats(
+     processMalformed || !packageAvailable || !strictAvailable ||
+       currentBucketCollision || qualifiedBucketError)
+ 
++  // Multi-bucket hits still update in parallel. Reuse each exact 65-bit sum
++  // for its carry check and its low-64-bit counter update.
++  val loadFirstNextWide = Wire(Vec(packetWindow, Vec(4, UInt(65.W))))
++  val storeFirstNextWide = Wire(Vec(packetWindow, Vec(4, UInt(65.W))))
++  val strictWriteReadNextWide = Wire(Vec(packetWindow, Vec(4, UInt(65.W))))
++  for (i <- 0 until packetWindow; g <- 0 until 4) {
++    loadFirstNextWide(i)(g) := bucketLoadFirst(i)(g) +& bucketLoadFirstDelta(i)(g)
++    storeFirstNextWide(i)(g) := bucketStoreFirst(i)(g) +& bucketStoreFirstDelta(i)(g)
++    strictWriteReadNextWide(i)(g) := bucketStrictWriteRead(i)(g) +& bucketStrictWriteReadDelta(i)(g)
++  }
++  // Exactly one current bucket receives these two kinds of increments.
++  // Read/mux once and share four adders instead of 256 copies of each.
++  val currentStoreNextWide = Wire(Vec(4, UInt(65.W)))
++  val currentFirstStoreNextWide = Wire(Vec(4, UInt(65.W)))
++  for (g <- 0 until 4) {
++    currentStoreNextWide(g) := Mux(bucketValid(currentBucketIdx),
++      bucketStore(currentBucketIdx)(g), 0.U(64.W)) +& newStoreCounts(g).pad(64)
++    currentFirstStoreNextWide(g) := Mux(bucketValid(currentBucketIdx),
++      bucketFirstStore(currentBucketIdx)(g), 0.U(64.W)) +& newFirstStoreCounts(g).pad(64)
++  }
++
+   val processArithmeticErrorParts = collection.mutable.ArrayBuffer[Bool]()
+   for (g <- 0 until 4) {
+     val storeDelta = newStoreCounts(g).pad(64)
+@@ -535,18 +569,13 @@ class PackageAddressStats(
+       addOverflows(onlineLoadFirst(g), loadFirstLowerDelta),
+       addOverflows(onlineStoreFirst(g), storeFirstLowerDelta),
+       addOverflows(onlineStrictWriteRead(g), strictOnlineDelta),
+-      addOverflows(Mux(bucketValid(currentBucketIdx),
+-        bucketStore(currentBucketIdx)(g), 0.U), storeDelta))
+-    processArithmeticErrorParts += addOverflows(
+-      Mux(bucketValid(currentBucketIdx),
+-        bucketFirstStore(currentBucketIdx)(g), 0.U),
+-      newFirstStoreCounts(g).pad(64))
++      currentStoreNextWide(g)(64))
++    processArithmeticErrorParts += currentFirstStoreNextWide(g)(64)
+     for (i <- 0 until packetWindow) {
+       processArithmeticErrorParts ++= Seq(
+-        addOverflows(bucketLoadFirst(i)(g), bucketLoadFirstDelta(i)(g)),
+-        addOverflows(bucketStoreFirst(i)(g), bucketStoreFirstDelta(i)(g)),
+-        addOverflows(bucketStrictWriteRead(i)(g),
+-          bucketStrictWriteReadDelta(i)(g)))
++        loadFirstNextWide(i)(g)(64),
++        storeFirstNextWide(i)(g)(64),
++        strictWriteReadNextWide(i)(g)(64))
+     }
+   }
+   val processArithmeticError = processValid &&
+@@ -563,7 +592,7 @@ class PackageAddressStats(
+   val retiringSeq = processedSafeWatermark + 1.U
+   val retiringIdx = retiringSeq(packetIndexBits - 1, 0)
+   val retiringSlotCollision = safeAdvance && bucketValid(retiringIdx) &&
+-    bucketSeq(retiringIdx) =/= retiringSeq
++    !bucketSequenceMatches(retiringIdx, retiringSeq)
+   val retiringUnderflow = safeAdvance && bucketValid(retiringIdx) &&
+     (0 until 4).map { g =>
+       bucketStore(retiringIdx)(g) > onlineStore(g) ||
+@@ -704,30 +733,23 @@ class PackageAddressStats(
+       }
+       for (g <- 0 until 4) {
+         when (isCurrent) {
+-          val baseStore = Mux(bucketValid(i), bucketStore(i)(g), 0.U)
+-          val baseFirstStore = Mux(bucketValid(i), bucketFirstStore(i)(g), 0.U)
+-          val baseLoadFirst = Mux(bucketValid(i), bucketLoadFirst(i)(g), 0.U)
+-          val baseStoreFirst = Mux(bucketValid(i), bucketStoreFirst(i)(g), 0.U)
+-          val baseStrict = Mux(bucketValid(i),
+-            bucketStrictWriteRead(i)(g), 0.U)
+-          bucketStore(i)(g) := baseStore + newStoreCounts(g)
+-          bucketFirstStore(i)(g) := baseFirstStore + newFirstStoreCounts(g)
+-          bucketLoadFirst(i)(g) := baseLoadFirst + bucketLoadFirstDelta(i)(g)
+-          bucketStoreFirst(i)(g) := baseStoreFirst + bucketStoreFirstDelta(i)(g)
+-          bucketStrictWriteRead(i)(g) := baseStrict +
+-            bucketStrictWriteReadDelta(i)(g)
++          bucketStore(i)(g) := currentStoreNextWide(g)(63, 0)
++          bucketFirstStore(i)(g) := currentFirstStoreNextWide(g)(63, 0)
++          bucketLoadFirst(i)(g) := Mux(bucketValid(i),
++            loadFirstNextWide(i)(g)(63, 0), bucketLoadFirstDelta(i)(g))
++          bucketStoreFirst(i)(g) := Mux(bucketValid(i),
++            storeFirstNextWide(i)(g)(63, 0), bucketStoreFirstDelta(i)(g))
++          bucketStrictWriteRead(i)(g) := Mux(bucketValid(i),
++            strictWriteReadNextWide(i)(g)(63, 0), bucketStrictWriteReadDelta(i)(g))
+         }.otherwise {
+           when (bucketLoadFirstDelta(i)(g) =/= 0.U) {
+-            bucketLoadFirst(i)(g) := bucketLoadFirst(i)(g) +
+-              bucketLoadFirstDelta(i)(g)
++            bucketLoadFirst(i)(g) := loadFirstNextWide(i)(g)(63, 0)
+           }
+           when (bucketStoreFirstDelta(i)(g) =/= 0.U) {
+-            bucketStoreFirst(i)(g) := bucketStoreFirst(i)(g) +
+-              bucketStoreFirstDelta(i)(g)
++            bucketStoreFirst(i)(g) := storeFirstNextWide(i)(g)(63, 0)
+           }
+           when (bucketStrictWriteReadDelta(i)(g) =/= 0.U) {
+-            bucketStrictWriteRead(i)(g) := bucketStrictWriteRead(i)(g) +
+-              bucketStrictWriteReadDelta(i)(g)
++            bucketStrictWriteRead(i)(g) := strictWriteReadNextWide(i)(g)(63, 0)
+           }
+         }
+       }
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/SafePrefixScanner.scala b/chipyard/generators/boom/src/main/scala/lsu/SafePrefixScanner.scala
+new file mode 100644
+index 0000000..e9e26e6
+--- /dev/null
++++ b/chipyard/generators/boom/src/main/scala/lsu/SafePrefixScanner.scala
+@@ -0,0 +1,46 @@
++package boom.lsu
++
++import chisel3._
++import chisel3.util._
++
++/** Exact combinational cyclic prefix over fixed physical packet slots.
++  * An offset in 1..window maps to one slot, and each slot has exactly one
++  * such offset. Compare full sequence once per slot, then choose the first
++  * failing distance. No state, events, PASS conditions or capacities change.
++  */
++class SafePrefixScanner(val window: Int = 256, val seqBits: Int = 32) extends Module {
++  require(isPow2(window) && window > 1 && seqBits > log2Ceil(window))
++  private val indexBits = log2Ceil(window)
++  val io = IO(new Bundle {
++    val watermark = Input(UInt(seqBits.W))
++    val allocated = Input(Vec(window, Bool()))
++    val completed = Input(Vec(window, Bool()))
++    val passed = Input(Vec(window, Bool()))
++    val seq = Input(Vec(window, UInt(seqBits.W)))
++    val advance = Output(UInt((indexBits + 1).W))
++  })
++  val low = io.watermark(indexBits - 1, 0)
++  val high = io.watermark(seqBits - 1, indexBits)
++  val nextHigh = high + 1.U
++  val failed = VecInit((0 until window).map { i =>
++    val nextWindow = i.U <= low
++    // Only two high halves can be expected in one cyclic window. Share the
++    // incrementer rather than forming one high+predicate adder per slot.
++    val expectedHigh = Mux(nextWindow, nextHigh, high)
++    val expectedSeq = Cat(expectedHigh, i.U(indexBits.W))
++    val pass = io.allocated(i) && io.seq(i) === expectedSeq &&
++      io.completed(i) && io.passed(i)
++    !pass
++  })
++  // Cyclic distance order is [low+1, window-1], then [0, low]. Two ordinary
++  // priority encoders and one subtraction find exactly the same first fail
++  // as a minimum over 256 independently subtracted distances.
++  val afterLow = VecInit((0 until window).map(i => failed(i) && i.U > low))
++  val firstSlot = Mux(afterLow.asUInt.orR,
++    PriorityEncoder(afterLow.asUInt), PriorityEncoder(failed.asUInt))
++  val distanceLow = firstSlot - low
++  val distance = Mux(distanceLow === 0.U,
++    window.U((indexBits + 1).W), Cat(0.U(1.W), distanceLow))
++  io.advance := Mux(failed.asUInt.orR, distance - 1.U,
++    window.U((indexBits + 1).W))
++}
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/dcache.scala b/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
+index 9495fb3..71d058b 100644
+--- a/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
+@@ -2695,16 +2695,14 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+   BoringUtils.addSource(barrierFailureSeq,
+     GH_GlobalParams.GH_L2_BARRIER_FAILURE_SEQ_BORE)
+ 
+-  var contiguous = true.B
+-  var safeAdvance = 0.U((statsIndexBits + 1).W)
+-  for (offset <- 1 to statsWindow) {
+-    val seq = safePacketWatermark + offset.U
+-    val idx = seq(statsIndexBits - 1, 0)
+-    val slotPass = allocatedNext(idx) && seqNext(idx) === seq &&
+-      completedNext(idx) && passedNext(idx)
+-    contiguous = contiguous && slotPass
+-    safeAdvance = Mux(contiguous, offset.U, safeAdvance)
+-  }
++  val safePrefix = Module(new SafePrefixScanner(statsWindow,
++    GH_GlobalParams.GH_PACKET_SEQ_BITS))
++  safePrefix.io.watermark := safePacketWatermark
++  safePrefix.io.allocated := allocatedNext
++  safePrefix.io.seq := seqNext
++  safePrefix.io.completed := completedNext
++  safePrefix.io.passed := passedNext
++  val safeAdvance = safePrefix.io.advance
+   val newSafePacketWatermark = safePacketWatermark + safeAdvance
+ 
+   // Commit-ordered physical-address statistics use the same package bitmap
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/BarrierLatencyStats.scala b/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/BarrierLatencyStats.scala
+index 4a34996..843952f 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/BarrierLatencyStats.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/BarrierLatencyStats.scala
+@@ -60,15 +60,27 @@ class GHBarrierLatencyStats(val window: Int) extends Module {
+       buckets.seq(i) <= io.safeWatermark
+   }
+ 
+-  // 64 bits per bucket plus eight bits for a 256-entry reduction. The extra
+-  // bit also accommodates one same-cycle event below.
+-  val resolvedBucketsWide = (0 until window).map(i =>
+-    Mux(bucketResolve(i), buckets.count(i), 0.U(64.W)).pad(73)).reduce(_ + _)
+-  val requestBucketsWide = (0 until window).map(i =>
+-    Mux(bucketResolve(i), buckets.requestCycleSum(i), 0.U(64.W)).pad(73)).reduce(_ + _)
+-  val safeBucketsWide = (0 until window).map(i =>
+-    Mux(bucketResolve(i),
+-      (io.currentCycle * buckets.count(i)).pad(137), 0.U(137.W))).reduce(_ + _)
++  // An exact width-growing balanced tree: 256 unsigned 64-bit terms need
++  // at most 72 bits. Preserve the 73-bit ABI and same-cycle-event headroom,
++  // while avoiding a serial chain of 255 already-widened 73-bit additions.
++  private def exactBucketSum(terms: Seq[UInt]): UInt = {
++    require(terms.nonEmpty && window <= 256)
++    def tree(xs: Seq[UInt]): UInt = {
++      if (xs.size == 1) xs.head
++      else tree(xs.grouped(2).map {
++        case Seq(a, b) => a +& b
++        case Seq(a) => a
++      }.toSeq)
++    }
++    tree(terms).pad(73)
++  }
++  val resolvedBucketsWide = exactBucketSum((0 until window).map(i =>
++    Mux(bucketResolve(i), buckets.count(i), 0.U(64.W))))
++  val requestBucketsWide = exactBucketSum((0 until window).map(i =>
++    Mux(bucketResolve(i), buckets.requestCycleSum(i), 0.U(64.W))))
++  // Candidate only: exact distributive factoring, no state/timing/overflow changes.
++  // window<=256 implies resolvedBucketsWide fits 73 bits; 64*73 fits 137 bits.
++  val safeBucketsWide = io.currentCycle * resolvedBucketsWide
+ 
+   // The producer classifies against its pre-edge watermark. If the same edge
+   // advances the exported watermark past the event package, settle it at zero
+diff --git a/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/InclusiveCache.scala b/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/InclusiveCache.scala
+index 91e1814..f1af5a4 100644
+--- a/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/InclusiveCache.scala
++++ b/chipyard/generators/sifive-cache/design/craft/inclusivecache/src/InclusiveCache.scala
+@@ -438,13 +438,23 @@ class InclusiveCache(
+       val l2StatsValid = RegInit(true.B)
+       // Use widened reductions: up to 256 buckets may resolve together, and
+       // each bucket may contain more than one line from the same package.
+-      val l2ResolvedThisCycleWide = (0 until l2StatsWindow).map(i =>
+-        Mux(l2BucketResolve(i), l2Bucket.count(i), 0.U(64.W)).pad(73)).reduce(_ + _)
+-      val l2WritebackCycleThisCycleWide = (0 until l2StatsWindow).map(i =>
+-        Mux(l2BucketResolve(i), l2Bucket.writebackCycleSum(i), 0.U(64.W)).pad(73)).reduce(_ + _)
+-      val l2VerifyCycleThisCycleWide = (0 until l2StatsWindow).map(i =>
+-        Mux(l2BucketResolve(i), (l2Cycle * l2Bucket.count(i)).pad(137),
+-          0.U(137.W))).reduce(_ + _)
++      def exactL2BucketSum(terms: Seq[UInt]): UInt = {
++        require(terms.nonEmpty && l2StatsWindow <= 256)
++        def tree(xs: Seq[UInt]): UInt = {
++          if (xs.size == 1) xs.head
++          else tree(xs.grouped(2).map {
++            case Seq(a, b) => a +& b
++            case Seq(a) => a
++          }.toSeq)
++        }
++        tree(terms).pad(73)
++      }
++      val l2ResolvedThisCycleWide = exactL2BucketSum((0 until l2StatsWindow).map(i =>
++        Mux(l2BucketResolve(i), l2Bucket.count(i), 0.U(64.W))))
++      val l2WritebackCycleThisCycleWide = exactL2BucketSum((0 until l2StatsWindow).map(i =>
++        Mux(l2BucketResolve(i), l2Bucket.writebackCycleSum(i), 0.U(64.W))))
++      // Candidate only: keep the same 137-bit result and overflow consumers.
++      val l2VerifyCycleThisCycleWide = l2Cycle * l2ResolvedThisCycleWide
+       val l2ResolvedThisCycle = l2ResolvedThisCycleWide(63, 0)
+       val l2WritebackCycleThisCycle = l2WritebackCycleThisCycleWide(63, 0)
+       val l2VerifyCycleThisCycle = l2VerifyCycleThisCycleWide(63, 0)

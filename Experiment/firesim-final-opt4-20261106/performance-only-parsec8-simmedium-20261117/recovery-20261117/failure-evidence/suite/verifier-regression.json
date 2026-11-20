@@ -1,0 +1,84 @@
+{
+  "status": "PASS_PARSER_AND_STREAMING_EVENT_GATES",
+  "cases": [
+    {
+      "name": "valid_pair",
+      "pass_expected": true,
+      "actual_issues": []
+    },
+    {
+      "name": "missing_events",
+      "pass_expected": false,
+      "actual_issues": [
+        "incomplete real task event coverage"
+      ]
+    },
+    {
+      "name": "unmatched_begin",
+      "pass_expected": false,
+      "actual_issues": [
+        "incomplete real task event coverage"
+      ]
+    },
+    {
+      "name": "unmatched_result",
+      "pass_expected": false,
+      "actual_issues": [
+        "task RESULT without matching BEGIN",
+        "incomplete real task event coverage"
+      ]
+    },
+    {
+      "name": "failed_result",
+      "pass_expected": false,
+      "actual_issues": [
+        "task failed/cancelled or lacks true full comparison"
+      ]
+    },
+    {
+      "name": "missing_full_compare",
+      "pass_expected": false,
+      "actual_issues": [
+        "task failed/cancelled or lacks true full comparison"
+      ]
+    },
+    {
+      "name": "cancelled",
+      "pass_expected": false,
+      "actual_issues": [
+        "task failed/cancelled or lacks true full comparison"
+      ]
+    },
+    {
+      "name": "wrong_context",
+      "pass_expected": false,
+      "actual_issues": [
+        "task context/hart mismatch"
+      ]
+    },
+    {
+      "name": "wrong_privilege",
+      "pass_expected": false,
+      "actual_issues": [
+        "task context/hart mismatch"
+      ]
+    },
+    {
+      "name": "duplicate_begin",
+      "pass_expected": false,
+      "actual_issues": [
+        "duplicate task BEGIN",
+        "incomplete real task event coverage"
+      ]
+    },
+    {
+      "name": "assertion",
+      "pass_expected": false,
+      "actual_issues": [
+        "RTL assertion"
+      ]
+    }
+  ],
+  "original_event_gate_equivalence_cases": 6,
+  "hardware_io": false
+}

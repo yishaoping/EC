@@ -1,0 +1,5 @@
+read_verilog -sv -DSYNTHESIS /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-queue-adapter-round56-v1-20261112/negative-response-swap.sv
+prep -top OwnerQueueAdapter -flatten
+opt -full
+opt_clean
+sat -seq 1 -set relation 1 -prove observations 1 -verify -timeout 120

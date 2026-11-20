@@ -1,0 +1,104 @@
+{
+  "SAT_priority_mutation_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-r5-20261112/mutation-negative.log",
+  "SAT_step_lemma_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-r5-20261112/step-proof.log",
+  "area_scope": "One256x64bank/all258reads/all256writes, notfullAddressStats orwholeOpt4",
+  "area_started": false,
+  "automatic_area_broker_receipt": {
+    "error": "AssertionError('DEFER_RESOURCE_LIMIT: ordinary synthesis slots full')",
+    "request_sha256": "29f6f78ea02579b9fda3e9e4e8080a84f6f28730983637a2dd83ee925384f535",
+    "status": "DEFERRED",
+    "utc": "2026-11-12T02:03:56.856560+00:00"
+  },
+  "automatic_area_request": {
+    "action": "cpu_job",
+    "spec": {
+      "argv": [
+        "/usr/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-full-host-continuation-r2-20261112/bucket_area.py"
+      ],
+      "checkpoints": [
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-mcrams-full-host-continuation-r2-state.json"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-full-host-continuation-r2-20261112",
+      "inputs": {
+        "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-full-host-continuation-r2-20261112/bucket_area.py": "594e4e606fd7525a8298f05b34f15f1e430156d5b1bc994607f82228476d520f"
+      },
+      "kind": "module",
+      "name": "address-bucket-mcrams-area-r1-8491167d",
+      "outputs": [
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-area-r1-20261112/result.json"
+      ]
+    }
+  },
+  "captured_utc": "2026-11-12T02:04:07.560182+00:00",
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "performance_scope": "FMRincludesPeekPokeandbridgeIO; targetcyclesidentical; notarchitecturalslowdown",
+  "schema": "ec-address-mcrams-target-parity-successor-receipt/1",
+  "status": "TARGET_BANK_PARITY_PASS_ACTUAL_AREA_SUBMITTED_RESOURCE_DEFERRED",
+  "target_parity": {
+    "actual_size": [
+      256,
+      64
+    ],
+    "area_scope": "One exact storage-update interface; arithmetic and full address module are not replaced",
+    "child": {},
+    "completed_utc": "2026-11-12T01:59:00.237348+00:00",
+    "fpga_access": false,
+    "full_debug_retained": true,
+    "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "host_wall_seconds": 7.554800939018605,
+    "last_receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-r5-20261112/receipts/negative-MemMC.json",
+    "pid": 2400140,
+    "ports": {
+      "read": 258,
+      "write": 256
+    },
+    "production_admission": false,
+    "reference_trace_sha256": "efb37e5041487e7a4f09ded736d035ec5e1a2efa639a4b6e43d3a8bb2fe7db3a",
+    "results": {
+      "MemMC": {
+        "binary_sha256": "52ec48b7bbcbab435bcf285434a24b9231db21a6267f937e06f54d5a22d24baf",
+        "host_rtl_sha256": "719c2fd0a27edc5c66a036ec30f606208e2816ceb01ad3027c572e8e3c70c2b0",
+        "metrics": {
+          "FMR_including_bridge_io": 506.281,
+          "checked_values": 152478,
+          "event_digest": "ca9bc157a305eeca",
+          "initial_uninitialized_values_skipped": 258,
+          "status": "PASS",
+          "target_cycles": 592,
+          "throughput_host_cycles": 32402,
+          "throughput_target_cycles": 64,
+          "throughput_wall_seconds": 5.54405
+        },
+        "negative_rejected": true
+      },
+      "Reg": {
+        "binary_sha256": "d594aad683ed4835281000da3142e13155851671134b85c7bc6822266e354147",
+        "host_rtl_sha256": "5060b2499d6926df3f28f05f8d454b40e1dbc98dee152d187b0fee4d4bcfc126",
+        "metrics": {
+          "FMR_including_bridge_io": 10.125,
+          "checked_values": 152478,
+          "event_digest": "ca9bc157a305eeca",
+          "initial_uninitialized_values_skipped": 258,
+          "status": "PASS",
+          "target_cycles": 592,
+          "throughput_host_cycles": 648,
+          "throughput_target_cycles": 64,
+          "throughput_wall_seconds": 0.0528729
+        },
+        "negative_rejected": true
+      }
+    },
+    "schema": "ec-address-bucket-regvec-mcrams-prototype/1",
+    "scope": "One original storage update interface, not full AddressStats or whole DUT equivalence",
+    "stage": "negative-MemMC",
+    "start_ticks": "25962650",
+    "started_utc": "2026-11-12T01:45:06.126710+00:00",
+    "status": "PASS_WORD_TRANSITION_LEMMA_AND_FINITE_FULL_WIDTH_ALL_WORD_TARGET_PARITY_AREA_PENDING",
+    "updated_utc": "2026-11-12T01:59:00.241335+00:00",
+    "whole_dut_equivalence": false
+  },
+  "whole_module_equivalence": false
+}

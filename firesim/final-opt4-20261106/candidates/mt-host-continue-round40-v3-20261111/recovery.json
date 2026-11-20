@@ -1,0 +1,7 @@
+{
+  "previous_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-mt-host-continue-round40-v2-state.json",
+  "previous_failure_preserved": true,
+  "cause": "Overstrong circuit serialization guard rejected the original MT pass because it creates unused one-thread module definitions for all five singleton classes.",
+  "fix": "Prove each of five exact tile classes has one instance, each preexisting non-top module is AST-identical, and every top statement is AST-identical modulo transparent Block/EmptyStmt wrappers; record newly added unreachable threaded definitions.",
+  "target_changes": false
+}

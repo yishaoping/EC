@@ -1,0 +1,8 @@
+{
+  "schema": "ec-service-job-spec/1",
+  "name": "c4-capacity-edif",
+  "argv": ["runuser", "-u", "guozh", "--", "/usr/bin/python3", "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/audit_c4_edif_capacity.py"],
+  "inputs": ["/data1/gzh/EC/firesim/final-opt4-20261106/scripts/audit_c4_edif_capacity.py"],
+  "legacy_states": ["/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/C4-capacity-edif-state.json"],
+  "checkpoint_policy": "Read immutable DCP EDIF only, streaming counters and recursive instance census. No live CAD or FPGA access. Atomic statistics and durable final evidence; rerun only if confirmed exited and no complete census."
+}

@@ -1,0 +1,51 @@
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala b/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
+index f389059..a791e07 100644
+--- a/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
+@@ -137,23 +137,32 @@ class PackageAddressStats(
+ 
+   // Each term is a population count, bounded by the source mask's size.
+   // Keep all state/output widths at 64; only the combinational reduction is
+-  // bounded and balanced. No intermediate can overflow this exact width.
++  // bounded. No architectural state or cycle boundary changes.
+   private def exactHitSum(terms: Seq[UInt], maxTerm: Int): UInt = {
+     require(terms.nonEmpty && maxTerm > 0)
+-    // Bound every subtree by its own number of leaves. Padding every leaf
+-    // to the final sum width recreates wide arithmetic at all 79 nodes.
+-    def balanced(xs: Seq[(UInt, Int)]): (UInt, Int) = {
+-      if (xs.size == 1) xs.head
+-      else balanced(xs.grouped(2).map {
+-        case Seq((a, aMax), (b, bMax)) =>
+-          val bound = aMax + bMax
+-          val width = log2Ceil(bound + 1)
+-          (a.pad(width) + b.pad(width), bound)
+-        case Seq(a) => a
+-      }.toSeq)
+-    }
+     val leafWidth = log2Ceil(maxTerm + 1)
+-    balanced(terms.map(t => (t(leafWidth - 1, 0), maxTerm)))._1.pad(64)
++    val width = log2Ceil(terms.size * maxTerm + 1)
++    val columns = Array.fill(width + 3)(collection.mutable.ArrayBuffer[UInt]())
++    terms.foreach { term =>
++      for (bit <- 0 until leafWidth) columns(bit) += term(bit).asUInt
++    }
++    // Every 3..6 one-bit compressor is exact at ceil(log2(n+1)) bits.
++    // Replacement preserves the nonnegative weighted integer sum. Proven
++    // processTouch bounds ensure total < 2^width, so high bits are zero.
++    for (column <- 0 until width) {
++      while (columns(column).size > 2) {
++        val count = columns(column).size min 6
++        val group = columns(column).take(count).toSeq
++        columns(column).remove(0, count)
++        val sumWidth = log2Ceil(count + 1)
++        val sum = group.map(_.pad(sumWidth)).reduce(_ + _)
++        for (bit <- 0 until sumWidth) columns(column + bit) += sum(bit).asUInt
++      }
++    }
++    def row(lane: Int): UInt = VecInit((0 until width).map { column =>
++      if (columns(column).size > lane) columns(column)(lane) else 0.U(1.W)
++    }).asUInt
++    (row(0) + row(1)).pad(64)
+   }
+ 
+   private def touchedMask(event: QueuedAddressAccessEvent): UInt = {

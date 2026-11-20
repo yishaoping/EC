@@ -1,0 +1,46 @@
+{
+  "utc": "2026-11-12T13:54:01.541642+00:00",
+  "status": "R5_STARTED_SPARE_CPU222223_AFTER_EXACT_IDLE_R4_RETIREMENT",
+  "plan": {
+    "actual_size": {
+      "granularities": 4,
+      "result_bits_per_bucket": 256,
+      "slots": 256,
+      "sources": 80
+    },
+    "area_gain_unknown": true,
+    "candidate": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-histogram-fame5-r5-20261112",
+    "cpus": [
+      222,
+      223
+    ],
+    "fpga_access": false,
+    "inputs_sha256": "d7f078628a8c297444ef58086c31b39e958a4bfb9dd57f3b7926b8e401eb85d3",
+    "latest_recovery": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-histogram-fame5-r5-20261112/recovery.json",
+    "memory_limit_gib": 64,
+    "next": "Adopt r5 on222223; do not restart r1/r2/r3/r4. Actual2/4 generated-host token smoke then full256 plain/threaded tokens and serial paired host maps. No gain or whole FIT claimed. Preserve foreground packed/barrier/DSP and other CAD.",
+    "no_new_agent_requested": true,
+    "owner": "existing unattended optimizer round152",
+    "preserve_barrier_r2": true,
+    "preserve_packed_single_area_owner": true,
+    "private_compiler_change": "Only stale HistogramBucket.clock DontTouchAnnotation cleanup iff port is absent after FAME; original installed source unmodified. Both pair sides use same private pass.",
+    "production_admission": false,
+    "recoveries": [
+      "r1 nonlocal instance annotation after harness nesting",
+      "r2 unused clock optimized away before default clock inference",
+      "r3 consumed target clock stale DontTouch; private reversible metadata-only correction",
+      "r4 correctly deferred for foregroundDSP on220221; exact single idle waiter retired; r5 same hardware on spare222223"
+    ],
+    "scope": "Actual strict address histogram, not complete address module or whole EC",
+    "smoke_pass": false,
+    "source_projection_reversal_pass": true,
+    "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-histogram-fame5-r5-20261112/state.json",
+    "status": "R5_STARTED_SPARE_CPU222223_AFTER_EXACT_IDLE_R4_RETIREMENT",
+    "unit": "ec-opt4-address-histogram-fame5-r5-20261112.service",
+    "updated_utc": "2026-11-12T13:54:01.541642+00:00"
+  },
+  "no_board_io": true,
+  "retired_only_exact_single_idle_r4_waiter": true,
+  "no_other_live_job_signalled": true,
+  "policy_sha256_before": "d87c65a5be115b787022106a70009b80389e0669d0bb83b69ded4580dd444810"
+}

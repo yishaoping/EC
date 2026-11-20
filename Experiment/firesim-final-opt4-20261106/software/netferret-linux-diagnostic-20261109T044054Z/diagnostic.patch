@@ -1,0 +1,20 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-protocol-20261107T110127Z/server.c
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-linux-diagnostic-20261109T044054Z/server.c
+@@ -303,6 +303,9 @@
+             fprintf(stderr, "Invalid query frame length\n"); exit(1);
+         }
+         ec_recv_exact(fd, pkt_ptr->buf, pkt_ptr->len);
++        unsigned long long ec_hash = 1469598103934665603ULL;
++        for (int ec_i=0; ec_i<pkt_ptr->len; ++ec_i) ec_hash = (ec_hash ^ (unsigned char)pkt_ptr->buf[ec_i]) * 1099511628211ULL;
++        fprintf(stderr, "EC_FERRET_FRAME bytes=%d fnv=%016llx\n", pkt_ptr->len, ec_hash);
+ 
+ 
+ 		/* 3. enqueue */
+@@ -497,6 +500,7 @@
+ 			char *obj = NULL;
+ 			if (p.dist == HUGE_VAL) continue;
+ 			cass_map_id_to_dataobj(query_table->map, p.id, &obj);
++			fprintf(stderr, "EC_FERRET_RANK id=%u dist=%a max=%a obj=%p\n", p.id, (double)p.dist, (double)CASS_DIST_MAX, (void *)obj);
+ 			assert(obj != NULL);
+ 
+ 			sprintf(str_ptr, "\t%s:%g", obj, p.dist);

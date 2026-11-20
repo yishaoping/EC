@@ -1,0 +1,38 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-protocol-20261107T110127Z/client.c
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/client.c
+@@ -83,25 +83,16 @@
+ 
+ int dir_helper (char *dir, char *head)
+ {
+-	DIR *pd = NULL;
+-	struct dirent *ent = NULL;
+-	int result = 0;
+-	pd = opendir(dir);
+-	if (pd == NULL) goto except;
+-	for (;;)
+-	{
+-		ent = readdir(pd);
+-		if (ent == NULL) break;
+-		if (scan_dir(ent->d_name, head) != 0) return -1;
+-	}
+-	goto final;
+-
+-except:
+-	result = -1;
+-	perror("Error:");
+-final:
+-	if (pd != NULL) closedir(pd);
+-	return result;
++    struct dirent **entries = NULL;
++    int count = scandir(dir, &entries, NULL, alphasort);
++    if (count < 0) { perror("scandir"); return -1; }
++    int rc = 0;
++    for (int i = 0; i < count; ++i) {
++        if (!rc && scan_dir(entries[i]->d_name, head) != 0) rc = -1;
++        free(entries[i]);
++    }
++    free(entries);
++    return rc;
+ }
+ 
+ /* the whole path to the file */

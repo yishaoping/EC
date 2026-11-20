@@ -1,0 +1,117 @@
+{
+  "schema": "ec-streamcluster-staged-io-diagnostic/1",
+  "original_source": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/streamcluster/streamcluster.cpp",
+  "original_sha256": "5214d638429348e8aad3a83bb9ffdeec25ba95263c6d0ccd182a828afae72efc",
+  "candidate_source": "/data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-diagnostic-20261106T115645Z/streamcluster.cpp",
+  "candidate_sha256": "cdbfe6597c4e118fee9b943c0e3d0102a880aafab3df053a8f4b115d8ed4cfd4",
+  "diagnostic_elf": "/data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-diagnostic-20261106T115645Z/streamcluster-STAGED-DIAGNOSTIC-NOT-FOR-FPGA",
+  "diagnostic_sha256": "12beadec314bf49af0682bc943ec9f3235387394571280851c7a598953a28ee6",
+  "commands": [
+    [
+      "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+      "-O3",
+      "-march=rv64gc",
+      "-mabi=lp64d",
+      "-static",
+      "-D_GNU_SOURCE",
+      "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+      "-c",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-diagnostic-20261106T115645Z/diagnostic-hooks.c",
+      "-o",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-diagnostic-20261106T115645Z/hooks.o"
+    ],
+    [
+      "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+      "-O3",
+      "-march=rv64gc",
+      "-mabi=lp64d",
+      "-static",
+      "-D_GNU_SOURCE",
+      "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+      "-std=gnu++17",
+      "-DENABLE_PARSEC_HOOKS",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-diagnostic-20261106T115645Z/streamcluster.cpp",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-diagnostic-20261106T115645Z/hooks.o",
+      "-lm",
+      "-pthread",
+      "-o",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-diagnostic-20261106T115645Z/streamcluster-STAGED-DIAGNOSTIC-NOT-FOR-FPGA"
+    ],
+    [
+      "/usr/bin/qemu-riscv64",
+      "-strace",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-diagnostic-20261106T115645Z/streamcluster-STAGED-DIAGNOSTIC-NOT-FOR-FPGA",
+      "2",
+      "5",
+      "1",
+      "10",
+      "10",
+      "5",
+      "none",
+      "output.txt",
+      "1"
+    ],
+    [
+      "/usr/bin/qemu-riscv64",
+      "-strace",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-diagnostic-20261106T115645Z/streamcluster-STAGED-DIAGNOSTIC-NOT-FOR-FPGA",
+      "10",
+      "20",
+      "32",
+      "4096",
+      "4096",
+      "1000",
+      "none",
+      "output.txt",
+      "1"
+    ]
+  ],
+  "cases": [
+    {
+      "input": "test",
+      "argv": [
+        "2",
+        "5",
+        "1",
+        "10",
+        "10",
+        "5",
+        "none",
+        "output.txt",
+        "1"
+      ],
+      "syscalls_in_original_roi": [],
+      "output_sha256": "5a584433049a3e4609e98118456e2735fa79bc32a9b1d4a972ddb3995426e56f",
+      "expected_sha256": "5a584433049a3e4609e98118456e2735fa79bc32a9b1d4a972ddb3995426e56f",
+      "output_matches": true,
+      "trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/streamcluster-staged-diagnostic-20261106T115645Z/test/trace.log"
+    },
+    {
+      "input": "simsmall",
+      "argv": [
+        "10",
+        "20",
+        "32",
+        "4096",
+        "4096",
+        "1000",
+        "none",
+        "output.txt",
+        "1"
+      ],
+      "syscalls_in_original_roi": [],
+      "output_sha256": "c6d42ff4e3a8b64c9240f425bfeeca2a381b8bdbce8e09d4237b6487847e9c67",
+      "expected_sha256": "c6d42ff4e3a8b64c9240f425bfeeca2a381b8bdbce8e09d4237b6487847e9c67",
+      "output_matches": true,
+      "trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/streamcluster-staged-diagnostic-20261106T115645Z/simsmall/trace.log"
+    }
+  ],
+  "installed_in_fpga_image": false,
+  "fpga_validation": "NOT_RUN",
+  "formal_eligible": false,
+  "limitations": [
+    "Synthetic-input serial test/simsmall candidate only",
+    "External IO scheduling and allocator residency differ; must use identically in both groups and label as staged IO",
+    "No proof yet for asynchronous interrupts, checker task matching or drain"
+  ]
+}

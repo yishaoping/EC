@@ -1,0 +1,16 @@
+{
+  "schema": "ec-service-job-spec/1",
+  "name": "network-linux",
+  "argv": [
+    "python3",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/validate_network_linux.py"
+  ],
+  "inputs": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/validate_network_linux.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/network_binding.py"
+  ],
+  "legacy_states": [
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-linux-validation.json"
+  ],
+  "checkpoint_policy": "Reuse diagnostic kernel and completed bounded per-case Linux results, never DUT or FPGA; no instruction checkpoint"
+}

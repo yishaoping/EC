@@ -1,0 +1,11 @@
+{
+  "correction": "Add exact shared precise-output boundary and fail on timeout or unstable channel; keep all3003 tokens and52 outputs.",
+  "evidence": "Other live actual host validators use peek_poke.peek(output_ports[0], true) and reject timeout/unstable before reading public outputs.",
+  "hardware_changed": false,
+  "hardware_inequivalence_proven": false,
+  "predecessor": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-banked-production-host-r2-20261113/failure.json",
+  "predecessor_log_sha256": "908ee88e23fb50d3969e6ba3eacaca24aeece8a929dd2ced089a2a8bd6ee707c",
+  "proven": "The r2 TestComplete C++ source read outputs immediately after step(1), without PeekPokeBridge precise/unstable/timeout synchronization.",
+  "symptom": "At token12 expected io_counters_0=0, immediate MMIO peek observed2.",
+  "target_oracle_or_stimulus_changed": false
+}

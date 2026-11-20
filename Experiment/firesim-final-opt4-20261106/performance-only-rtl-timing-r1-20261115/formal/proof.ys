@@ -1,0 +1,8 @@
+read_json projected-cut.json
+read_verilog relation.v
+hierarchy -top Relation
+flatten
+techmap
+opt -full
+check -assert
+sat -verify -prove ok 1 -set-def-inputs -show-inputs -show ok

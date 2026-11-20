@@ -1,0 +1,120 @@
+{
+  "algorithm_sources_modified": false,
+  "auxiliary_wallclock_report": "removed; FPGA ROI target cycles are authoritative",
+  "binaries": {
+    "freqmine": {
+      "algorithm_sources_modified": false,
+      "application_threads": 1,
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/roi-retirement-checker-repair-20261117/parsec-continuation-v7-20261118/builds/freqmine/freqmine",
+      "reference_path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/freqmine-reference",
+      "reference_sha256": "0b53bb92d1019761f9017aea54986dbe80f217344ddd79f1aca205dc04d1da7d",
+      "sha256": "1cf97bb5dc9496dc1d6aae4c055d50ffdb7c2a385a38785345fd25c04769cf38"
+    }
+  },
+  "c4_incompatible_reason": null,
+  "cases": [
+    {
+      "algorithm_unchanged": true,
+      "argv": [
+        "kosarak_500k.dat",
+        "410"
+      ],
+      "diagnostic_roi_syscalls": [],
+      "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/diagnostic-simmedium/trace.log",
+      "fpga_validation": "NOT_RUN",
+      "input": "simmedium",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/apps/freqmine/inputs/input_simmedium.tar": "5d3d9e97fe7806009d278ef726bbf65dd0b7a791bfadade60618d2be2825ccbf"
+      },
+      "input_files": {
+        "kosarak_500k.dat": "63a18321218dfbb14157e46e4c3dd28e19f3ba9162ef0b663a4c6c342b110e0b"
+      },
+      "program": "freqmine",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/reference-simmedium/counts.txt": "9ee9457ee5393858423d6f665bc9a673c89312edfbb67fa6e1f0e4c85b064da5"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/freqmine/parsec/simmedium.runconf",
+      "runconf_sha256": "0c070b44111999f86253a4bfb9ce25cd6c04cb01337f8ad2d8d94594c114ec84",
+      "software_reference": "QEMU_RISCV_USER_ONLY",
+      "threads": 1,
+      "validation": {
+        "kind": "stdout_integer_hash",
+        "reference": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/reference-simmedium/counts.txt",
+        "reference_sha256": "9ee9457ee5393858423d6f665bc9a673c89312edfbb67fa6e1f0e4c85b064da5"
+      },
+      "warmups": 0
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-D_GNU_SOURCE",
+        "-std=gnu++17",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/src/freqmine",
+        "-DENABLE_PARSEC_HOOKS",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/src/freqmine/fpmax.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/src/freqmine/data.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/src/freqmine/fp_tree.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/src/freqmine/buffer.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/src/freqmine/fsout.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/src/freqmine/fp_node.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/src/freqmine/wtime.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/hooks.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/roi-retirement-checker-repair-20261117/protocol-drain-repair-20261118/builds/software/apps/dac_roi.o",
+        "-lm",
+        "-pthread",
+        "-o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/roi-retirement-checker-repair-20261117/parsec-continuation-v7-20261118/builds/freqmine/freqmine"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/roi-retirement-checker-repair-20261117/parsec-continuation-v7-20261118/builds/freqmine"
+    }
+  ],
+  "formal_eligible": true,
+  "formal_input_policy": "Official simmedium, one thread, original full computation ROI, no warmup; exact complete output check",
+  "fpga_validation": "NOT_RUN",
+  "heap_preallocation_bytes": 536870912,
+  "host_log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z",
+  "integration_patch": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/software-integration.patch",
+  "integration_patch_sha256": "47179a5118b2d9b30ffcdbf67b764747902dbcd27aa00112f356df15722f6488",
+  "output_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/roi-retirement-checker-repair-20261117/parsec-continuation-v7-20261118/builds/freqmine",
+  "parsec_commit": "a06d35960951c9bfad61eb4826bca8d167f98c19",
+  "pid": 1648537,
+  "smoke": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/roi-retirement-checker-repair-20261117/protocol-drain-repair-20261118/builds/software/apps/roi-smoke",
+    "sha256": "c4574192963ab182046df3db6022fcd047e20a7ab3ec45dfe97adf13f46fd6b0"
+  },
+  "software_profile": "freqmine-serial-staged-input-preallocated-heap-no-aux-timing",
+  "sources": {
+    "COPYRIGHT": "b470bee2e4b3d1b3f1cdfd78239d89b3386b58b6689149536283d53fb30660ec",
+    "LICENSE": "f2ede4d0c7617bbd77a40a46b4735b5c429d7c08f033db39983c5158ba11044c",
+    "Makefile": "b80f546eddd4d7e5b4b71f65b3b737d628e2030ad6b132f941bd4d7c916f9d52",
+    "README": "3c8d68ac0dd9aae98bb101522878d3aca070ffc775471c4a1f333166a2c08e80",
+    "buffer.cpp": "34d8ee039752c1662ab12eee7c0be9f0920ef68d979f8da44bc4db27b1a98201",
+    "buffer.h": "59654b1af0fa88d766eea09a8f08784b74f8554d393b0eca2d685d017f70604a",
+    "common.h": "cae71e03399db559922799f00aca83fa179b730a1d75b664116c444ea46c78ca",
+    "custom.h": "6e718cb32808c417f1a7b512cd55bfaeb4cd56efeb4e8d50535a4e18f7ec08a1",
+    "data.cpp": "02767073cd566468c9ad4dd57614afb0ec0260eac44bcb55dd2456d695db7492",
+    "data.h": "80e2e19f7dbac2eef5cef3a79cb600a7cccdc2231847a964557c024f0b9672a5",
+    "encoding.h": "40513cda414c3292dfc9db1c4c83dbadd6424abe94d4cd6f4837dd6292072b39",
+    "fp_node.cpp": "1c72091249a4814e7700ab61d074beced4d2c199d423747cc2bc0cf814f6ad84",
+    "fp_node.h": "319ca756ea27dd7273a0d24e15bc64675c0e6f1792eabd7e49bc6c0055723fe6",
+    "fp_tree.cpp": "9a37526ff4d8c578ff6151618d2650d1ea3b11299df483d0999f74096619a541",
+    "fp_tree.h": "0d023404fad7a528a1ab27c04d2133bc10b5b10d08321d7a71a47bf1718e8f75",
+    "fpmax.cpp": "4616f917353544418ff7ee621d3cd581653d85425b7ec46f9a06e86587c9b927",
+    "fsout.cpp": "299f6bdecbba1411deefccaa5f648a28169d5c31c2ee4eb478d560b27ec06db5",
+    "fsout.h": "dc0f9c57ebaa87223fa907da07628792b5547635e97eac8bc70ebfa7dd1c5e3e",
+    "rocc.h": "0153080a79febf77a0f79bf0579c868b9995166d858b29e2729149a1a99b59e4",
+    "wtime.cpp": "4a991d279f077111c7ee9a4cda6bf90759744dd1d45f11ad926bf9620c4d3840",
+    "wtime.h": "ee505870ea84044ac79de71e12339e58c6517e1ed50267e70a6d8ee76cec63fd"
+  },
+  "status": "PREPARED_FPGA_NOT_RUN",
+  "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-staged-resident-apps-build.json",
+  "parent_receipt_sha256": "3908222d8774de0de52f76b7fc12dbd0ec1f06ced04b69522a379507ec0e29dd",
+  "software_change": "validated U-mode real-drain hook only; v7 kernel/firmware IRQ guard"
+}

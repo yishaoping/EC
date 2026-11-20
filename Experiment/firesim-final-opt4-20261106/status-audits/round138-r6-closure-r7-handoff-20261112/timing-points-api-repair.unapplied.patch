@@ -1,0 +1,20 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-routed-conditional-r7-20261112/recover.tcl.in
++++ future-independent-successor/recover.tcl.in
+@@ -38,7 +38,7 @@
+ proc repair_critical_data_nets {} {
+   set nets {}
+   foreach path [get_timing_paths -delay_type max -slack_lesser_than 0 -max_paths 128 -nworst 1] {
+-    foreach point [get_property POINTS $path] {
++    foreach point [get_property TIMING_POINTS $path] {
+       set pin [get_property PIN $point]
+       if {![llength $pin] || [get_property DIRECTION $pin] ne "OUT"} {continue}
+       set cell [get_cells -quiet -of_objects $pin]
+@@ -63,7 +63,7 @@
+ proc repair_critical_srl_output_nets {} {
+   set nets {}
+   foreach path [get_timing_paths -delay_type max -slack_lesser_than 0 -max_paths 256 -nworst 1] {
+-    foreach point [get_property POINTS $path] {
++    foreach point [get_property TIMING_POINTS $path] {
+       set pin [get_property PIN $point]
+       if {![llength $pin] || [get_property DIRECTION $pin] ne "OUT"} {continue}
+       set cell [get_cells -quiet -of_objects $pin]

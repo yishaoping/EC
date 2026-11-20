@@ -1,0 +1,57 @@
+{
+  "schema": "ec-uart-baud-repair/1",
+  "observed_utc": "2026-11-06T12:48:45.115660+00:00",
+  "symptom": "SBI early console readable; Linux SiFive takeover yields NUL bytes",
+  "cause": "fixed FireSim UART bridge div54 / initBaudRate3686400 versus Linux 115200 divisor1736",
+  "repair": "Matched software DT chosen console=ttySIF0,3686400 and stdout-path serial0:3686400n8; no DUT edit",
+  "runtime_validation": "NATIVE_FPGA_VALID_SMOKE_AND_PARSEC_TEST",
+  "records": [
+    {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-elaborate-20261106T100250.032318Z/firesim.firesim.FireSim.anno.json",
+      "sha256": "8c5c43c59661c7d93a34b80ae1b8a9625d11b977ce135761b66ded22c58e9032",
+      "uart_bridge": {
+        "class": "firesim.bridges.UARTKey",
+        "uParams": {
+          "address": 1409286144,
+          "dataBits": 8,
+          "stopBits": 2,
+          "divisorBits": 16,
+          "oversample": 4,
+          "nSamples": 3,
+          "nTxEntries": 256,
+          "nRxEntries": 256,
+          "includeFourWire": false,
+          "includeParity": false,
+          "includeIndependentParity": false,
+          "initBaudRate": 3686400
+        },
+        "div": 54
+      }
+    },
+    {
+      "path": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-elaborate-20261102T092109.491588Z/firesim.firesim.FireSim.anno.json",
+      "sha256": "f04244d83fe20ba82873f878b00420dd6d3e28b5d8363ed0d80e69b27cc10713",
+      "uart_bridge": {
+        "class": "firesim.bridges.UARTKey",
+        "uParams": {
+          "address": 1409286144,
+          "dataBits": 8,
+          "stopBits": 2,
+          "divisorBits": 16,
+          "oversample": 4,
+          "nSamples": 3,
+          "nTxEntries": 256,
+          "nRxEntries": 256,
+          "includeFourWire": false,
+          "includeParity": false,
+          "includeIndependentParity": false,
+          "initBaudRate": 3686400
+        },
+        "div": 54
+      }
+    }
+  ],
+  "runtime_evidence": [
+    "Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T124817Z/result.json"
+  ]
+}

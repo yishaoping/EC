@@ -1,0 +1,490 @@
+{
+  "deadline": "2026-11-18 Asia/Shanghai; time unspecified",
+  "deadline_feasibility": "No validated fullEC FIT/certified route exists; completion by deadline unproven.",
+  "no_new_whole_CAD": true,
+  "no_owner_mutated": true,
+  "no_restarted_map": true,
+  "owners": [
+    {
+      "active_stage": "compile-full-target-parity",
+      "cgroups": [
+        "13:devices:/user.slice",
+        "12:misc:/",
+        "11:net_cls,net_prio:/",
+        "10:blkio:/user.slice",
+        "9:memory:/user.slice/user-1008.slice/user@1008.service",
+        "8:cpuset:/",
+        "7:hugetlb:/",
+        "6:perf_event:/",
+        "5:pids:/user.slice/user-1008.slice/user@1008.service",
+        "4:freezer:/",
+        "3:rdma:/",
+        "2:cpu,cpuacct:/user.slice",
+        "1:name=systemd:/user.slice/user-1008.slice/user@1008.service/ec-opt4-address-banked-production-host-r1-20261112.service",
+        "0::/user.slice/user-1008.slice/user@1008.service/ec-opt4-address-banked-production-host-r1-20261112.service"
+      ],
+      "identity": {
+        "cpu_ticks": 119,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 4061372,
+        "process_state": "S",
+        "rss_bytes": 27602944,
+        "start_ticks": "30719198"
+      },
+      "live": true,
+      "name": "Opt4-address-banked-production-host-r1-20261112",
+      "state": {
+        "active_stage": "compile-full-target-parity",
+        "child": {
+          "cpu_ticks": 5,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 4067813,
+          "process_state": "S",
+          "rss_bytes": 13438976,
+          "start_ticks": "30743905"
+        },
+        "cpu_ticks": 4,
+        "cpus": [
+          212,
+          213
+        ],
+        "fpga_access": false,
+        "full_system_fit": false,
+        "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "geometry": {
+          "banks": 16,
+          "lanes": 16,
+          "slots": 256
+        },
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "no_CAD": true,
+        "pid": 4061372,
+        "process_state": "R",
+        "production_admission": false,
+        "rss_bytes": 16019456,
+        "schema": "ec-complete-banked-production-host/1",
+        "scope": "Complete target cycle/invalid-state comparison plus actual plain/threaded complete-module GoldenGate feedback/token test. No area/FIT claim.",
+        "source_binding_sha256": "cfc132e89a2fb528f28cbf909b037258942cea166d78f311f432e35d7ad5b94b",
+        "stage_seconds": 540.2183459330117,
+        "start_ticks": "30719198",
+        "started_utc": "2026-11-12T14:57:51.592606+00:00",
+        "status": "RUNNING_COMPILE-FULL-TARGET-PARITY",
+        "updated_utc": "2026-11-12T15:10:58.834294+00:00",
+        "whole_synthesis": false
+      },
+      "state_sha256": "71452fbd6b05e53ea998cc90b8d51c5e2d9bf1a8ba8cbc10e4945a1f358ce219",
+      "status": "RUNNING_COMPILE-FULL-TARGET-PARITY"
+    },
+    {
+      "active_stage": "full-dcache-cycle",
+      "cgroups": [
+        "13:devices:/user.slice",
+        "12:misc:/",
+        "11:net_cls,net_prio:/",
+        "10:blkio:/user.slice",
+        "9:memory:/user.slice/user-1008.slice/user@1008.service",
+        "8:cpuset:/",
+        "7:hugetlb:/",
+        "6:perf_event:/",
+        "5:pids:/user.slice/user-1008.slice/user@1008.service",
+        "4:freezer:/",
+        "3:rdma:/",
+        "2:cpu,cpuacct:/user.slice",
+        "1:name=systemd:/user.slice/user-1008.slice/user@1008.service/ec-opt4-dcache-storage-compose-r3-20261112.service",
+        "0::/user.slice/user-1008.slice/user@1008.service/ec-opt4-dcache-storage-compose-r3-20261112.service"
+      ],
+      "identity": {
+        "cpu_ticks": 162,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 4055826,
+        "process_state": "S",
+        "rss_bytes": 16482304,
+        "start_ticks": "30698654"
+      },
+      "live": true,
+      "name": "Opt4-dcache-storage-compose-r3-20261112",
+      "state": {
+        "active_stage": "full-dcache-cycle",
+        "child": {
+          "cpu_ticks": 0,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 4080127,
+          "process_state": "R",
+          "rss_bytes": 4096,
+          "start_ticks": "30779675"
+        },
+        "cpu_ticks": 29,
+        "cpus": [
+          216,
+          217
+        ],
+        "fpga_access": false,
+        "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "no_RTL_regeneration": true,
+        "parent_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+        "pid": 4055826,
+        "process_state": "R",
+        "production_admission": false,
+        "rss_bytes": 16117760,
+        "schema": "ec-dcache-storage-composition-continuation/1",
+        "scope": "Full frozen DCache cycle/observation finite regression and complete DCache OOC area. No whole formal or host/shell FIT claim.",
+        "source_contract": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-dcache-storage-compose-r2-20261112/source-contract.json",
+        "source_variant": "5542ec134e5a90657a1f733555a74302e58a50e5dafed99e1affdb47a761efd2",
+        "source_variant_is_private": true,
+        "stage_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-dcache-storage-compose-r3-20261112/full-dcache-cycle.log",
+        "stage_seconds": 180.0127510400489,
+        "start_ticks": "30698654",
+        "started_utc": "2026-11-12T14:54:26.412808+00:00",
+        "status": "RUNNING_FULL-DCACHE-CYCLE",
+        "updated_utc": "2026-11-12T15:10:56.331372+00:00",
+        "whole_synthesis": false
+      },
+      "state_sha256": "06bb8f86402b439393cfdc738cecaa652f59ce32680a237b995e34e4863bf1b3",
+      "status": "RUNNING_FULL-DCACHE-CYCLE"
+    },
+    {
+      "active_stage": "goldengate-Plain16",
+      "cgroups": [
+        "13:devices:/user.slice",
+        "12:misc:/",
+        "11:net_cls,net_prio:/",
+        "10:blkio:/user.slice",
+        "9:memory:/user.slice/user-1008.slice/user@1008.service",
+        "8:cpuset:/",
+        "7:hugetlb:/",
+        "6:perf_event:/",
+        "5:pids:/user.slice/user-1008.slice/user@1008.service",
+        "4:freezer:/",
+        "3:rdma:/",
+        "2:cpu,cpuacct:/user.slice",
+        "1:name=systemd:/user.slice/user-1008.slice/user@1008.service/ec-opt4-address-banked-state-fame5-r4-20261112.service",
+        "0::/user.slice/user-1008.slice/user@1008.service/ec-opt4-address-banked-state-fame5-r4-20261112.service"
+      ],
+      "identity": {
+        "cpu_ticks": 275,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 4028150,
+        "process_state": "S",
+        "rss_bytes": 43851776,
+        "start_ticks": "30600362"
+      },
+      "live": true,
+      "name": "Opt4-address-banked-state-fame5-r4-20261112",
+      "state": {
+        "active_stage": "goldengate-Plain16",
+        "child": {
+          "cpu_ticks": 96958,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 4058052,
+          "process_state": "S",
+          "rss_bytes": 23773970432,
+          "start_ticks": "30708366"
+        },
+        "cpu_ticks": 37,
+        "cpus": [
+          218,
+          219
+        ],
+        "fpga_access": false,
+        "full_system_fit": false,
+        "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "geometry": {
+          "banks": 16,
+          "parallel_lanes": 16,
+          "selected_module_types": [
+            "BucketBank"
+          ],
+          "target_slots": 256
+        },
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "inputs_sha256": "6e435c64b558b7054a37c6c634691069399043a3331481b6aa7f90aff9602f58",
+        "pid": 4028150,
+        "process_state": "R",
+        "production_admission": false,
+        "rss_bytes": 16138240,
+        "schema": "ec-banked-bucket-state-fame5-screen/1",
+        "scope": "Five complete bucket-state vectors, valid/seq and exact carry outputs. External processCommit/safeError qualification; not complete address module or EC.",
+        "stage_seconds": 900.0990829390357,
+        "start_ticks": "30600362",
+        "started_utc": "2026-11-12T14:38:03.579100+00:00",
+        "status": "RUNNING_GOLDENGATE-PLAIN16",
+        "updated_utc": "2026-11-12T15:11:03.331143+00:00"
+      },
+      "state_sha256": "f9e4a920ce1e866aa5c4c0732a793ec02d6ef8350fcc19011e188029802ca071",
+      "status": "RUNNING_GOLDENGATE-PLAIN16"
+    },
+    {
+      "active_stage": "parity-compile",
+      "cgroups": [
+        "13:devices:/user.slice",
+        "12:misc:/",
+        "11:net_cls,net_prio:/",
+        "10:blkio:/user.slice",
+        "9:memory:/user.slice/user-1008.slice/user@1008.service",
+        "8:cpuset:/",
+        "7:hugetlb:/",
+        "6:perf_event:/",
+        "5:pids:/user.slice/user-1008.slice/user@1008.service",
+        "4:freezer:/",
+        "3:rdma:/",
+        "2:cpu,cpuacct:/user.slice",
+        "1:name=systemd:/user.slice/user-1008.slice/user@1008.service/ec-opt4-address-banked-complete-module-r1-20261112.service",
+        "0::/user.slice/user-1008.slice/user@1008.service/ec-opt4-address-banked-complete-module-r1-20261112.service"
+      ],
+      "identity": {
+        "cpu_ticks": 274,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 4040119,
+        "process_state": "S",
+        "rss_bytes": 17477632,
+        "start_ticks": "30640672"
+      },
+      "live": true,
+      "name": "Opt4-address-banked-complete-module-r1-20261112",
+      "state": {
+        "active_stage": "parity-compile",
+        "child": {
+          "cpu_ticks": 5,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 4051790,
+          "process_state": "S",
+          "rss_bytes": 13574144,
+          "start_ticks": "30686174"
+        },
+        "cpu_ticks": 40,
+        "cpus": [
+          226,
+          227
+        ],
+        "derived_parent": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+        "fpga_access": false,
+        "full_host_synthesis": false,
+        "full_system_fit": false,
+        "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "geometry": {
+          "banks": 16,
+          "parallel_lanes": 16,
+          "selected_type": "BucketBank",
+          "slots": 256
+        },
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "inputs_sha256": "68661a0b5a30d1d4eba2a32d4a16a5ff86e7819f4be16e6ef70e0f30f2a2b13b",
+        "memory_limit_gib": 64,
+        "no_cad_in_this_controller": true,
+        "pid": 4040119,
+        "process_state": "R",
+        "production_admission": false,
+        "rss_bytes": 16564224,
+        "schema": "ec-banked-complete-module-validation/1",
+        "scope": "Complete actual AddressStats source with sixteen r4 banks. Target parity only; not a FAME host area result or full EC equivalence.",
+        "stage_seconds": 1110.2517710989923,
+        "start_ticks": "30640672",
+        "started_utc": "2026-11-12T14:44:46.704227+00:00",
+        "status": "RUNNING_PARITY-COMPILE",
+        "updated_utc": "2026-11-12T15:10:51.558295+00:00"
+      },
+      "state_sha256": "0519eb1a982e3eb0341f8ae70b9723cd3eff27e1e2a60faea16b81350dffbbfe",
+      "status": "RUNNING_PARITY-COMPILE"
+    },
+    {
+      "active_stage": "map-Plain256",
+      "cgroups": [
+        "13:devices:/user.slice",
+        "12:misc:/",
+        "11:net_cls,net_prio:/",
+        "10:blkio:/user.slice",
+        "9:memory:/user.slice/user-1008.slice/user@1008.service",
+        "8:cpuset:/",
+        "7:hugetlb:/",
+        "6:perf_event:/",
+        "5:pids:/user.slice/user-1008.slice/user@1008.service",
+        "4:freezer:/",
+        "3:rdma:/",
+        "2:cpu,cpuacct:/user.slice",
+        "1:name=systemd:/user.slice/user-1008.slice/user@1008.service/ec-opt4-address-histogram-fame5-r6-20261112.service",
+        "0::/user.slice/user-1008.slice/user@1008.service/ec-opt4-address-histogram-fame5-r6-20261112.service"
+      ],
+      "identity": {
+        "cpu_ticks": 333,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 3953259,
+        "process_state": "S",
+        "rss_bytes": 28848128,
+        "start_ticks": "30361327"
+      },
+      "live": true,
+      "name": "Opt4-address-histogram-fame5-r6-20261112",
+      "state": {
+        "active_stage": "map-Plain256",
+        "child": {
+          "cpu_ticks": 0,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 3987523,
+          "process_state": "S",
+          "rss_bytes": 3928064,
+          "start_ticks": "30457370"
+        },
+        "cpu_ticks": 40,
+        "cpus": [
+          222,
+          223
+        ],
+        "fpga_access": false,
+        "full_system_fit": false,
+        "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "inputs_sha256": "b434a8ccd0a1bf5333292547a9cfd931fe68bcebe72631b6a2676980f6a24e21",
+        "pid": 3953259,
+        "process_state": "R",
+        "production_admission": false,
+        "rss_bytes": 16195584,
+        "schema": "ec-address-histogram-fame5-prototype/1",
+        "scope": "Actual strict address histogram only; not complete PackageAddressStats or whole EC",
+        "stage_seconds": 3390.891430560965,
+        "start_ticks": "30361327",
+        "started_utc": "2026-11-12T13:58:13.251285+00:00",
+        "status": "RUNNING_MAP-PLAIN256",
+        "updated_utc": "2026-11-12T15:10:44.165957+00:00"
+      },
+      "state_sha256": "a9571ad005a20b2bad81a0536b9ee2d6452e7a6098bd20a8d468fdb65c153e66",
+      "status": "RUNNING_MAP-PLAIN256"
+    },
+    {
+      "active_stage": "map-Candidate",
+      "cgroups": [
+        "13:devices:/user.slice",
+        "12:misc:/",
+        "11:net_cls,net_prio:/",
+        "10:blkio:/user.slice",
+        "9:memory:/user.slice/user-1008.slice/user@1008.service",
+        "8:cpuset:/",
+        "7:hugetlb:/",
+        "6:perf_event:/",
+        "5:pids:/user.slice/user-1008.slice/user@1008.service",
+        "4:freezer:/",
+        "3:rdma:/",
+        "2:cpu,cpuacct:/user.slice",
+        "1:name=systemd:/user.slice/user-1008.slice/user@1008.service/ec-opt4-address-packed-full-module-r1-20261112.service",
+        "0::/user.slice/user-1008.slice/user@1008.service/ec-opt4-address-packed-full-module-r1-20261112.service"
+      ],
+      "identity": {
+        "cpu_ticks": 1251,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 3332996,
+        "process_state": "S",
+        "rss_bytes": 22114304,
+        "start_ticks": "29246727"
+      },
+      "live": true,
+      "name": "Opt4-address-packed-full-module-r1-20261112",
+      "state": {
+        "active_stage": "map-Candidate",
+        "child": {
+          "cpu_ticks": 0,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 3963268,
+          "process_state": "S",
+          "rss_bytes": 3956736,
+          "start_ticks": "30389443"
+        },
+        "complete_formal_equivalence": false,
+        "cpu_ticks": 34,
+        "cpus": [
+          214,
+          215
+        ],
+        "derived_parent": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+        "finite_parity_pass": true,
+        "fpga_access": false,
+        "full_host_synthesis": false,
+        "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "inputs_sha256": "044a7547393c12be496875f70e1357a756b412ee3cd720026dd3c6858ec3affa",
+        "log_bytes": 38823,
+        "memory_limit_gib": 64,
+        "monitor_outputs": 5684,
+        "pid": 3332996,
+        "process_state": "R",
+        "production_admission": false,
+        "proof_only_ports_excluded_from_area": true,
+        "rss_bytes": 16089088,
+        "schema": "ec-private-packed-complete-module/1",
+        "scope": "Complete actual PackageAddressStats target: unchanged state/update priorities and public interface. Private proof observes all5120 bucketwords plus valid/sequence, including invalid payload. Paired area excludes proof-only ports.",
+        "stage_wall_seconds": 4080.839621622057,
+        "start_ticks": "29246727",
+        "started_utc": "2026-11-12T10:52:27.185274+00:00",
+        "status": "RUNNING_MAP-CANDIDATE",
+        "updated_utc": "2026-11-12T15:10:54.837903+00:00"
+      },
+      "state_sha256": "2e231a27460c18cad6fed75852d6b680b39b7a51c0db85ff6dc8b331630028a7",
+      "status": "RUNNING_MAP-CANDIDATE"
+    },
+    {
+      "active_stage": "Candidate",
+      "cgroups": [
+        "13:devices:/user.slice",
+        "12:misc:/",
+        "11:net_cls,net_prio:/",
+        "10:blkio:/user.slice",
+        "9:memory:/user.slice/user-1008.slice/user@1008.service",
+        "8:cpuset:/",
+        "7:hugetlb:/",
+        "6:perf_event:/",
+        "5:pids:/user.slice/user-1008.slice/user@1008.service",
+        "4:freezer:/",
+        "3:rdma:/",
+        "2:cpu,cpuacct:/user.slice",
+        "1:name=systemd:/user.slice/user-1008.slice/user@1008.service/ec-opt4-address-dsp-fullmodule-pair-r1-20261112.service",
+        "0::/user.slice/user-1008.slice/user@1008.service/ec-opt4-address-dsp-fullmodule-pair-r1-20261112.service"
+      ],
+      "identity": {
+        "cpu_ticks": 469,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 3933775,
+        "process_state": "S",
+        "rss_bytes": 18460672,
+        "start_ticks": "30299875"
+      },
+      "live": true,
+      "name": "Opt4-address-dsp-fullmodule-pair-r1-20261112",
+      "state": {
+        "active_stage": "Candidate",
+        "child": {
+          "cpu_ticks": 0,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 3933825,
+          "process_state": "S",
+          "rss_bytes": 3796992,
+          "start_ticks": "30300155"
+        },
+        "cpu_ticks": 268,
+        "cpus": [
+          220,
+          221
+        ],
+        "fpga_access": false,
+        "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "inputs_sha256": "c3f54ad8fd7af19c8b81acaa2921d5f82d569c593dbe4822a019061335debf3b",
+        "pid": 3933775,
+        "process_state": "R",
+        "production_admission": false,
+        "rss_bytes": 18391040,
+        "schema": "ec-address-full-generated-leaf-dsp-pair/1",
+        "scope": "Complete generated address module extracted from actual owner-MCRams host, renamed FPGATop for strict area parsing. Two identical OOC maps differing only3072 USE_DSP synthesis attributes. No host/shell FIT claim.",
+        "stage_seconds": 4981.099212655972,
+        "start_ticks": "30299875",
+        "started_utc": "2026-11-12T13:48:01.013844+00:00",
+        "status": "RUNNING_MAP_CANDIDATE",
+        "target_cycle_changes": 0,
+        "updated_utc": "2026-11-12T15:11:02.217859+00:00",
+        "whole_fit": false
+      },
+      "state_sha256": "3f88498697be48d62a64fe0e3ef4f710e1d2dc2cc38885c71a1b700e7cc7e7e2",
+      "status": "RUNNING_MAP_CANDIDATE"
+    }
+  ],
+  "schema": "ec-round155-adopted-owner-receipt/1",
+  "utc": "2026-11-12T15:11:13.593305+00:00"
+}

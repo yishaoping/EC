@@ -1,0 +1,76 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2021.1 (lin64) Build 3247384 Thu Jun 10 19:36:07 MDT 2021
+| Date         : Sat Nov 14 09:53:40 2026
+| Host         : devjz-ubt20-s01 running 64-bit Ubuntu 20.04.6 LTS
+| Command      : report_utilization -hierarchical -file /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-local-cdc-r1-20261114/area-r1/Flat/hierarchical.rpt
+| Design       : AsyncQueue
+| Device       : xcu280fsvh2892-2L
+| Design State : Optimized
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++------------------------------+--------------------------------------------------+------------+------------+---------+------+-------+--------+--------+------+------------+
+|           Instance           |                      Module                      | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs  | RAMB36 | RAMB18 | URAM | DSP Blocks |
++------------------------------+--------------------------------------------------+------------+------------+---------+------+-------+--------+--------+------+------------+
+| AsyncQueue                   |                                            (top) |      21073 |      21073 |       0 |    0 | 78479 |      0 |      0 |    0 |          0 |
+|   sink                       |                                   AsyncQueueSink |        119 |        119 |       0 |    0 |   349 |      0 |      0 |    0 |          0 |
+|     (sink)                   |                                   AsyncQueueSink |          0 |          0 |       0 |    0 |    18 |      0 |      0 |    0 |          0 |
+|     io_deq_bits_deq_bits_reg |                            ClockCrossingReg_w305 |          0 |          0 |       0 |    0 |   305 |      0 |      0 |    0 |          0 |
+|     sink_valid_0             |                                AsyncValidSync_18 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       io_out_source_valid_0  |       AsyncResetSynchronizerShiftReg_w1_d2_i0_38 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|         output_chain         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_39 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     sink_valid_1             |                                AsyncValidSync_19 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       io_out_source_valid_0  |       AsyncResetSynchronizerShiftReg_w1_d2_i0_36 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|         output_chain         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_37 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     source_extend            |                                AsyncValidSync_20 |          1 |          1 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       io_out_source_valid_0  |       AsyncResetSynchronizerShiftReg_w1_d2_i0_34 |          1 |          1 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|         output_chain         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_35 |          1 |          1 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     source_valid             |                                AsyncValidSync_21 |        117 |        117 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       io_out_source_valid_0  |       AsyncResetSynchronizerShiftReg_w1_d2_i0_32 |        117 |        117 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|         output_chain         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_33 |        117 |        117 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     widx_widx_gray           |       AsyncResetSynchronizerShiftReg_w9_d2_i0_22 |          1 |          1 |       0 |    0 |    18 |      0 |      0 |    0 |          0 |
+|       output_chain           | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_23 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       output_chain_1         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_24 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       output_chain_2         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_25 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       output_chain_3         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_26 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       output_chain_4         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_27 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       output_chain_5         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_28 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       output_chain_6         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_29 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       output_chain_7         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_30 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       output_chain_8         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_31 |          1 |          1 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|   source                     |                                 AsyncQueueSource |      20954 |      20954 |       0 |    0 | 78130 |      0 |      0 |    0 |          0 |
+|     (source)                 |                                 AsyncQueueSource |      20748 |      20748 |       0 |    0 | 78104 |      0 |      0 |    0 |          0 |
+|     ridx_ridx_gray           |          AsyncResetSynchronizerShiftReg_w9_d2_i0 |          1 |          1 |       0 |    0 |    18 |      0 |      0 |    0 |          0 |
+|       output_chain           |  AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_9 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       output_chain_1         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_10 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       output_chain_2         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_11 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       output_chain_3         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_12 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       output_chain_4         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_13 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       output_chain_5         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_14 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       output_chain_6         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_15 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       output_chain_7         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_16 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       output_chain_8         | AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_17 |          1 |          1 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     sink_extend              |                                   AsyncValidSync |          1 |          1 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       io_out_source_valid_0  |        AsyncResetSynchronizerShiftReg_w1_d2_i0_7 |          1 |          1 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|         output_chain         |  AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_8 |          1 |          1 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     sink_valid               |                                 AsyncValidSync_0 |        204 |        204 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       io_out_source_valid_0  |        AsyncResetSynchronizerShiftReg_w1_d2_i0_5 |        204 |        204 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|         output_chain         |  AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_6 |        204 |        204 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     source_valid_0           |                                 AsyncValidSync_1 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       io_out_source_valid_0  |        AsyncResetSynchronizerShiftReg_w1_d2_i0_3 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|         output_chain         |  AsyncResetSynchronizerPrimitiveShiftReg_d2_i0_4 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     source_valid_1           |                                 AsyncValidSync_2 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|       io_out_source_valid_0  |          AsyncResetSynchronizerShiftReg_w1_d2_i0 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|         output_chain         |    AsyncResetSynchronizerPrimitiveShiftReg_d2_i0 |          0 |          0 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
++------------------------------+--------------------------------------------------+------------+------------+---------+------+-------+--------+--------+------+------------+
+
+

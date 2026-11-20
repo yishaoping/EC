@@ -1,0 +1,33 @@
+{
+  "status": "PASS_SOURCE_BOUND_HOST_CLOCK_ONLY_INTERFACE_AUDIT_NOT_BOARD_VALIDATION",
+  "checks": {
+    "async_clock_converter_configs": true,
+    "driver_21_guard": true,
+    "driver_no_physical_clock_scaling": true,
+    "target_step_uses_DONE": true,
+    "target_events_not_host_time": true,
+    "clock_counter_reads_latched_registers": true,
+    "unused_memory_channels": true,
+    "probe_proved_same_target_registers": true,
+    "all_unrelated_clock_periods_preserved": true
+  },
+  "clock_converter_configs": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.srcs/sources_1/bd/design_1/ip/design_1_axi_clock_converter_0_0/design_1_axi_clock_converter_0_0.xci": {
+      "MODELPARAM_VALUE.C_AXI_IS_ACLK_ASYNC": "1",
+      "MODELPARAM_VALUE.C_SYNCHRONIZER_STAGE": "3",
+      "MODELPARAM_VALUE.C_S_AXI_ACLK_RATIO": "1",
+      "MODELPARAM_VALUE.C_M_AXI_ACLK_RATIO": "2"
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.srcs/sources_1/bd/design_1/ip/design_1_axi_clock_converter_1_0/design_1_axi_clock_converter_1_0.xci": {
+      "MODELPARAM_VALUE.C_AXI_IS_ACLK_ASYNC": "1",
+      "MODELPARAM_VALUE.C_SYNCHRONIZER_STAGE": "3",
+      "MODELPARAM_VALUE.C_S_AXI_ACLK_RATIO": "1",
+      "MODELPARAM_VALUE.C_M_AXI_ACLK_RATIO": "2"
+    }
+  },
+  "reused_driver_sha256": "de8e51b2f64c7eb3fb9048235a5e7fd336f74a5dc53282faa97e044630eceb3b",
+  "host_clock_note": "Actual divider30 changes physical host execution speed only; software target cycles remain explicit bridge STEP/DONE tokens. No architectural target-frequency value is assumed.",
+  "remaining": "Full physical timing/DRC/pulse/bus-skew and independently restored all-clock audit required, then board directed and application trace comparison.",
+  "fpga_access": false,
+  "utc": "2026-11-12T01:47:14.078236+00:00"
+}

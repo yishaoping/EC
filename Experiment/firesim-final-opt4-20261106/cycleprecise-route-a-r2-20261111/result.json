@@ -1,0 +1,111 @@
+{
+  "argv": [
+    "nice",
+    "-n",
+    "15",
+    "/tools/Xilinx/Vivado/2021.1/bin/vivado",
+    "-mode",
+    "batch",
+    "-nojournal",
+    "-log",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-route-a-r2-20261111/35r1w81/model/vivado.log",
+    "-source",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-route-a-r2-20261111/35r1w81/model/map.tcl"
+  ],
+  "child": {},
+  "completed_utc": "2026-11-11T09:01:39.794530+00:00",
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "last_receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-route-a-r2-20261111/receipts/35r1w81-map-model.json",
+  "metasimulation": "FAILED_WITH_EVIDENCE",
+  "metasimulation_error": "AssertionError(('metasim-build-PlainConfig', 2, '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-route-a-r2-20261111/metasim-build-PlainConfig.log'))",
+  "pid": 3713999,
+  "results": {
+    "35r1w81": {
+      "cycle": {
+        "compared_read_values": 277758,
+        "fmr_host_over_target": 36.902,
+        "host_cycles": 302301,
+        "negative_rejected": true,
+        "read_write_conflicts": 6116,
+        "same_address_writes": 0,
+        "status": "PASS",
+        "target_cycles": 8192,
+        "target_cycles_per_second": 5881.94,
+        "target_reset_tokens": 45,
+        "wall_seconds": 1.39274
+      },
+      "lut_saved": 385642.0,
+      "model": {
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-route-a-r2-20261111/35r1w81/model/utilization.rpt",
+        "resources": {
+          "Block RAM Tile": 1.5,
+          "CARRY8": 0.0,
+          "CLB LUTs": 3289.0,
+          "CLB Registers": 2908.0,
+          "DSPs": 0.0
+        },
+        "sha256": "7b86d8169ae6ae58912d73090e4b6f8b9bd75f4b0c276c2b546b518dcc1bc90a"
+      },
+      "reference": {
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-route-a-r2-20261111/35r1w81/reference/utilization.rpt",
+        "resources": {
+          "Block RAM Tile": 0.0,
+          "CARRY8": 0.0,
+          "CLB LUTs": 388931.0,
+          "CLB Registers": 41472.0,
+          "DSPs": 0.0
+        },
+        "sha256": "16bb6d8eaef8981f691bc9a7ef06d2787b305afa333dfa7b11e50be836b9687a"
+      },
+      "scope": "Actual Golden Gate library RAM boundary, not complete EC/DCache/whole FIT; randomized target-boundary comparison, not universal formal equivalence."
+    },
+    "4r2w64": {
+      "cycle": {
+        "compared_read_values": 31718,
+        "fmr_host_over_target": 6.86755,
+        "host_cycles": 56259,
+        "negative_rejected": true,
+        "read_write_conflicts": 5824,
+        "same_address_writes": 1125,
+        "status": "PASS",
+        "target_cycles": 8192,
+        "target_cycles_per_second": 183949,
+        "target_reset_tokens": 45,
+        "wall_seconds": 0.0445342
+      },
+      "lut_saved": 97499.0,
+      "model": {
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-route-a-r2-20261111/4r2w64/model/utilization.rpt",
+        "resources": {
+          "Block RAM Tile": 1.0,
+          "CARRY8": 0.0,
+          "CLB LUTs": 352.0,
+          "CLB Registers": 268.0,
+          "DSPs": 0.0
+        },
+        "sha256": "93182cfd6d42abcc7930bc043ae4b551293e3438b9a491e84235a73b99e0359b"
+      },
+      "reference": {
+        "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-route-a-r2-20261111/4r2w64/reference/utilization.rpt",
+        "resources": {
+          "Block RAM Tile": 0.0,
+          "CARRY8": 0.0,
+          "CLB LUTs": 97851.0,
+          "CLB Registers": 32768.0,
+          "DSPs": 0.0
+        },
+        "sha256": "a3c601379bfcb3127ba05a1f07a260b5c7a1ec3bf7fb708c54ad10a22c9b471d"
+      },
+      "scope": "Actual Golden Gate library RAM boundary, not complete EC/DCache/whole FIT; randomized target-boundary comparison, not universal formal equivalence."
+    }
+  },
+  "schema": "ec-opt4-cycleprecise-route-a/1",
+  "stage": "35r1w81-map-model",
+  "start_ticks": "19859323",
+  "started_utc": "2026-11-11T08:47:53.017946+00:00",
+  "status": "COMPLETE_LOCAL_PROTOTYPES",
+  "target_function_changed": false,
+  "updated_utc": "2026-11-11T09:01:39.794540+00:00"
+}

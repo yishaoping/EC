@@ -1,0 +1,133 @@
+{
+  "checker_latency": null,
+  "counts": null,
+  "drain_cycles": 0,
+  "driver_returncode": 0,
+  "driver_stop_after_guest_powerdown": false,
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r1-20261106T125841Z/heartbeat.csv": "7e30f88d7b653e725b93bc5863822dc82edf6b882392ede62908f566826d49af",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r1-20261106T125841Z/host.log": "dd2ddf80ce14536ecb92a3c77e589acf4277c83b0607209128e952d44a78779c",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r1-20261106T125841Z/latency_histogram.csv": "7348bacc4d184cc676cfcf89f8d0ec40dd28eeaa86ae0f6fefa797b43dc6d210",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r1-20261106T125841Z/manifest.json": "883f3ff94a611559adf7243e7adfa83e750bee84c9497689b78e1a4568b624cc",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r1-20261106T125841Z/memory_stats0.csv": "6679c5006d14d8413ec36ba18171c1f179c0196e04b362e4af778b06baad416e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r1-20261106T125841Z/roi-raw.jsonl": "3800e379d0287141699ec0496d77bf10a5fc44a67affaef3cd563e60a4219c53",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r1-20261106T125841Z/snapshot.json": "9316f691ed8d290d42de76114cebf226469093266427826424b516888438aa13",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r1-20261106T125841Z/state.json": "9316f691ed8d290d42de76114cebf226469093266427826424b516888438aa13",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r1-20261106T125841Z/uart.in": "80d57d002c2d37f0beeb279d55f7765c2726773f393abbd62c8b0bd5482a1b57",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r1-20261106T125841Z/uart.log": "823e4523d0261f7a0813256dac4ad317c4c09eb658af8a735048d6ae08b0cbc5"
+  },
+  "fased_readback": {
+    "readLatency": 30,
+    "readMaxReqs": 4,
+    "relaxFunctionalModel": 0,
+    "writeLatency": 30,
+    "writeMaxReqs": 4
+  },
+  "formal": true,
+  "fpga_execution": true,
+  "guest_power_down_observed": true,
+  "host_wall_seconds": 177.37044068984687,
+  "identity": {
+    "apps_manifest_sha256": "0ccb15ae6db46dd4f3c3c098823e33596012d8f6cab7dddcdcf04f90d498ea4a",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:e2:00.0",
+    "board_serial": "21770433G001A",
+    "case": {
+      "algorithm_unchanged": true,
+      "argv": [
+        "1",
+        "in_16K.txt",
+        "prices.txt"
+      ],
+      "fpga_validation": "NOT_RUN",
+      "input": "simmedium",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/inputs/input_simmedium.tar": "cb50267d053cb4bb841125aa5efa4fa915662817fbff3fe336dd092a7dd94147"
+      },
+      "input_files": {
+        "in_16K.txt": "f31b70b2f2c0f702464fcca7ca7fb68e3821530bb2d8132659f50fb6510715dd"
+      },
+      "official_reference_max_absolute_error": 2.7284587281073414e-05,
+      "output_count": 16384,
+      "program": "blackscholes",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-formal-20261106T123109Z/reference/prices.txt": "0593ad06c392032063c79b1c14337e9daedabe1324e285e069fc277edc72dd43"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/parsec/simmedium.runconf",
+      "runconf_sha256": "395ed0429ccd6d2bf638363bfc30a3b7f9a7f9cbd84dedb8da169182ebaf73d6",
+      "software_reference": "QEMU_USER_ONLY",
+      "threads": 1,
+      "warmups": 0
+    },
+    "configuration": "Native",
+    "driver_receipt_sha256": "d5a615cc0928ebce6c285d04003dab39e10123f8a144ba30775485965eb9bcea",
+    "driver_sha256": "9cfeb80105d39d9cd9e0bc86979f298893aea154bb6a5f28587ae29722bd68c6",
+    "elf_sha256": "75b4e2923b0a7b1d096023daa6610f5c622bf04771b4e2966bbdee006e5270ea",
+    "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+    "firmware_receipt_sha256": "08895ba4bc337d331e670a1890d133bde0b542f7e4b402cf377ae092e0ec0737",
+    "firmware_sha256": "f9697974067d54eaa36ce2506ad6a7873e436a54704f178514c0477c84013997",
+    "formal": true,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "host_bridge_restart": false,
+    "input": "simmedium",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "program": "blackscholes",
+    "repetition": 1,
+    "rootfs_sha256": "427d0b923bc2be77b67ba0ff11efd47bb83c7bbf28fd990e10c658dcf7178711",
+    "run_id": "native-blackscholes-simmedium-r1-20261106T125841Z",
+    "software_diagnostic": false,
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "de6afa4c377dd53e7b987906022858e34571d580a4d42dd834881711450c2ce6",
+  "issues": [],
+  "participation": null,
+  "raw": {
+    "epochs": [
+      {
+        "aborted": false,
+        "begin_tick": 1752562345,
+        "end_tick": 2582300079,
+        "epoch": 1,
+        "faults": 0,
+        "formal_sample_eligible": false,
+        "reset_seen": false,
+        "roi_cycles": 829737734,
+        "source_boundaries_complete": true,
+        "states": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    ],
+    "file_sha256": "3800e379d0287141699ec0496d77bf10a5fc44a67affaef3cd563e60a4219c53",
+    "formal_sample_eligible": false,
+    "last_sequence": 12,
+    "parsed_records": 13,
+    "partial_tail_bytes": 0,
+    "protocol_issues": [],
+    "runtime_validation": "NOT_ESTABLISHED_BY_RAW_LOG",
+    "schema": "ec-dac-b-raw-roi/1",
+    "warning": "Raw ROI boundaries only. Output/job identity, runtime timebase checks and the formal host collector are still required."
+  },
+  "roi_cycles": 829737734,
+  "schema": "ec-isolated-fpga-result/1",
+  "timedout": false,
+  "valid": true
+}

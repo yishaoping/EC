@@ -1,0 +1,84 @@
+{
+  "best_verified_address": {
+    "commit": "00847dc2b8f6be3f1e1ff0639c1104d33334ddc9",
+    "full_module_regression": "PASS_6144_CYCLES_ALL_52_OUTPUTS_NOT_FORMAL",
+    "global_reset_regression": "PASS_GLOBAL_RESET_WITHOUT_RESETSTATS_AT_PHASE_512_513_RESTART_516",
+    "local_formal": "PASS_UNCONDITIONAL_64BIT_ALLOCATION_UPDATE_RESET_AND_256_SLOT_QUALIFICATION",
+    "proof_limits": "Unconditional allocation and update equivalence SAT over arbitrary 64-bit counter/delta and valid values; actual-size stale-payload/reset/overflow vectors; complete frozen-module regression with independent global reset. No full-DUT formal equivalence.",
+    "resources": {
+      "Block RAM Tile": 216.0,
+      "CARRY8": 30842.0,
+      "CLB LUTs": 872880.0,
+      "CLB Registers": 384373.0,
+      "DSPs": 0.0
+    }
+  },
+  "board_allowlist": [
+    "0000:21:00.0"
+  ],
+  "cpu_guard_validation": {
+    "child_never_executed": true,
+    "launcher_sha256": "d5c84fce9d41a4ee3dace98e5bb68086bc27b088d28b54dc0d752dc1cd16355e",
+    "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/frozen-only-scope-20261111T023049/actual-cpu-launcher-rejection.log",
+    "passed": true,
+    "rejected_status": "CANCELLED_BY_FROZEN_ONLY_SCOPE",
+    "scope_guard_sha256": "46175935994e8b939563df6bbaef6a105f87a8ba4ba6ac744acab11d561ae294",
+    "utc": "2026-11-11T02:38:52.931996+00:00"
+  },
+  "current_cad": {
+    "commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+    "identity": {
+      "cpu_ticks": 713,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 1737960,
+      "process_state": "S",
+      "rss_bytes": 328228864,
+      "start_ticks": "16778336"
+    },
+    "resources": null,
+    "stage": "dut_synth",
+    "status": "RUNNING_DUT_SYNTH"
+  },
+  "extra_functional_goal_trigger_absent": true,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "functional_extensions_allowed": false,
+  "last_completed_whole": {
+    "commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+    "lut_excess": 1912003,
+    "postopt": {
+      "Block RAM Tile": {
+        "available": 2016.0,
+        "percent": 51.01686507936508,
+        "used": 1028.5
+      },
+      "CARRY8": {
+        "available": 162960.0,
+        "percent": 56.939739813451155,
+        "used": 92789.0
+      },
+      "CLB LUTs": {
+        "available": 1303680.0,
+        "percent": 246.66198760432007,
+        "used": 3215683.0
+      },
+      "CLB Registers": {
+        "available": 2607360.0,
+        "percent": 68.91173447471772,
+        "used": 1796777.0
+      },
+      "DSPs": {
+        "available": 9024.0,
+        "percent": 2.160904255319149,
+        "used": 195.0
+      },
+      "URAM": {
+        "available": 960.0,
+        "percent": 0.0,
+        "used": 0.0
+      }
+    },
+    "status": "NOT_FIT_POSTOPT"
+  },
+  "native_paused": true,
+  "utc": "2026-11-11T02:39:42.600943+00:00"
+}

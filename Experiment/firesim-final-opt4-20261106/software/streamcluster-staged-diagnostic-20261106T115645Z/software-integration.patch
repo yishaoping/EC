@@ -1,0 +1,109 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/streamcluster/streamcluster.cpp
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-diagnostic-20261106T115645Z/streamcluster.cpp
+@@ -1812,8 +1812,35 @@
+   FILE* fp;
+ };
+ 
++#include <malloc.h>
++// Software integration only: defer external IO; retain all original math,
++// formatting, synthetic input generation, and original parsec ROI hook sites.
++static FILE *ec_staged_output;
++static FILE *ec_staged_messages;
++static char ec_stderr_buffer[1024*1024];
++static char ec_output_buffer[1024*1024];
++static void ec_prepare_external_io(const char *path) {
++  // Bound this candidate to current single-thread synthetic-input cases.
++  ec_staged_messages=fmemopen(ec_stderr_buffer,sizeof(ec_stderr_buffer),"w");
++  if (!ec_staged_messages) exit(125);
++  ec_staged_output=fopen(path,"w");
++  if (!ec_staged_output || setvbuf(ec_staged_output,ec_output_buffer,_IOFBF,sizeof(ec_output_buffer))) exit(125);
++  mallopt(M_TRIM_THRESHOLD,-1); mallopt(M_MMAP_MAX,0);
++  volatile char *reserve=(volatile char*)malloc(32*1024*1024);
++  if (!reserve) exit(125);
++  for (size_t i=0;i<32*1024*1024;i+=4096) reserve[i]=0;
++  free((void*)reserve);
++}
++static void ec_finish_external_io(void) {
++  if (fclose(ec_staged_output) || fflush(ec_staged_messages)) exit(125);
++  long n=ftell(ec_staged_messages);
++  if (n<0 || (size_t)n>=sizeof(ec_stderr_buffer) ||
++      fwrite(ec_stderr_buffer,1,n,stderr)!=(size_t)n ||
++      fclose(ec_staged_messages) || fflush(stderr)) exit(125);
++}
++
+ void outcenterIDs( Points* centers, long* centerIDs, char* outfile ) {
+-  FILE* fp = fopen(outfile, "w");
++  FILE* fp = ec_staged_output;
+   if( fp==NULL ) {
+     fprintf(stderr, "error opening %s\n",outfile);
+     exit(1);
+@@ -1833,7 +1860,7 @@
+       fprintf(fp,"\n\n");
+     }
+   }
+-  fclose(fp);
++  /* close/flush is deferred to original ROI end */
+ }
+ 
+ void streamCluster( PStream* stream, 
+@@ -1852,7 +1879,7 @@
+ #endif
+ 
+   if( block == NULL ) { 
+-    fprintf(stderr,"not enough memory for a chunk!\n");
++    fprintf(ec_staged_messages,"not enough memory for a chunk!\n");
+     exit(1);
+   }
+ 
+@@ -1890,10 +1917,10 @@
+   while(1) {
+ 
+     size_t numRead  = stream->read(block, dim, chunksize ); 
+-    fprintf(stderr,"read %d points\n",numRead);
++    fprintf(ec_staged_messages,"read %d points\n",numRead);
+ 
+     if( stream->ferror() || numRead < (unsigned int)chunksize && !stream->feof() ) {
+-      fprintf(stderr, "error reading data!\n");
++      fprintf(ec_staged_messages, "error reading data!\n");
+       exit(1);
+     }
+ 
+@@ -1913,16 +1940,16 @@
+ #endif
+ 
+ 
+-    //fprintf(stderr,"center_table = 0x%08x\n",(int)center_table);
+-    //fprintf(stderr,"is_center = 0x%08x\n",(int)is_center);
++    //fprintf(ec_staged_messages,"center_table = 0x%08x\n",(int)center_table);
++    //fprintf(ec_staged_messages,"is_center = 0x%08x\n",(int)is_center);
+ 
+     localSearch(&points,kmin, kmax,&kfinal); // parallel
+ 
+-    //fprintf(stderr,"finish local search\n");
++    //fprintf(ec_staged_messages,"finish local search\n");
+     contcenters(&points); /* sequential */
+     if( kfinal + centers.num > centersize ) {
+       //here we don't handle the situation where # of centers gets too large. 
+-      fprintf(stderr,"oops! no more space for centers\n");
++      fprintf(ec_staged_messages,"oops! no more space for centers\n");
+       exit(1);
+     }
+ 
+@@ -2027,6 +2054,9 @@
+   }
+ 
+ 
++if (n <= 0) { fprintf(stderr,"staged-IO diagnostic supports synthetic input only\n"); return 125; }
++  ec_prepare_external_io(outfilename);
++
+ #ifdef ENABLE_PARSEC_HOOKS
+   __parsec_roi_begin();
+ #endif
+@@ -2036,6 +2066,7 @@
+ #ifdef ENABLE_PARSEC_HOOKS
+   __parsec_roi_end();
+ #endif
++  ec_finish_external_io();
+ 
+   delete stream;
+ 

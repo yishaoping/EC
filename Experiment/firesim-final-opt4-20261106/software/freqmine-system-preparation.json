@@ -1,0 +1,75 @@
+{
+  "apps_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-apps-build.json",
+  "child_pid": 1556884,
+  "commands": [
+    [
+      "python3",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_system.py",
+      "Native",
+      "firmware",
+      "--kernel-result",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/freqmine-kernel-build.json",
+      "--fdt-result",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-build.json",
+      "--output-receipt",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/freqmine-firmware-build.json",
+      "--build-root",
+      "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds",
+      "--jobs",
+      "8"
+    ],
+    [
+      "python3",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_earlyconsole.py",
+      "C4",
+      "--parent-receipt",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/canneal-formal-kernel-build.json",
+      "--rootfs-receipt",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-rootfs-build.json",
+      "--output-receipt",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/freqmine-kernel-build.json",
+      "--build-root",
+      "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds"
+    ],
+    [
+      "python3",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_system.py",
+      "C4",
+      "firmware",
+      "--kernel-result",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/freqmine-kernel-build.json",
+      "--fdt-result",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-build.json",
+      "--output-receipt",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/freqmine-firmware-build.json",
+      "--build-root",
+      "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds",
+      "--jobs",
+      "8"
+    ]
+  ],
+  "ended_utc": "2026-11-07T05:14:29.806138+00:00",
+  "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/freqmine-C4-firmware-build.log",
+  "pid": 1549964,
+  "profile": "freqmine",
+  "reuse": [
+    {
+      "config_equal_except_initramfs": true,
+      "configuration": "Native",
+      "kernel_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/freqmine-kernel-build.json",
+      "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/canneal-formal-kernel-build.json",
+      "roi_driver_object_sha256": "0e8715bd4344f6d79b836efd9c99035e0ceba0e93cd21787072ef27ab95c8894"
+    },
+    {
+      "config_equal_except_initramfs": true,
+      "configuration": "C4",
+      "kernel_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/freqmine-kernel-build.json",
+      "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/canneal-formal-kernel-build.json",
+      "roi_driver_object_sha256": "4985634486e3dc90cf4bfa44feb6fdf6b90c4ec134ddc3b191cb9ca704f5e5fc"
+    }
+  ],
+  "rootfs_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-rootfs-build.json",
+  "stage": "C4-firmware",
+  "started_utc": "2026-11-07T05:14:09.983491+00:00",
+  "status": "READY_FOR_FPGA_NOT_RUN"
+}

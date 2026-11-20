@@ -1,0 +1,144 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 491  of event 'cycles'
+# Event count (approx.): 32422730033
+#
+# Overhead  Command  Shared Object      Symbol                                                                                                                                    
+# ........  .......  .................  ..........................................................................................................................................
+#
+    33.03%  vivado   librdi_synth.so    [.] 0x0000000001b83300
+            |
+            ---0x7fcf13183300
+
+     9.17%  vivado   librdi_synth.so    [.] UHashList<DFPin*, DFPin*, UEKey<DFPin*>, UHashListNode<DFPin*>, DFPin*>::insertAfter
+            |
+            ---UHashList<DFPin*, DFPin*, UEKey<DFPin*>, UHashListNode<DFPin*>, DFPin*>::insertAfter
+               |          
+                --6.53%--0xfad37810
+
+     8.61%  vivado   librdi_synth.so    [.] 0x0000000001b832f4
+            |
+            ---0x7fcf131832f4
+
+     8.23%  vivado   librdi_synth.so    [.] HOptDfg::mergeReconvergentPartitionsFromPin
+            |
+            ---HOptDfg::mergeReconvergentPartitionsFromPin
+               HOptDfg::mergeReconvergentPartitionsFromPin
+               HOptDfg::mergeReconvergentPartitionsFromPin
+               HOptDfg::mergeReconvergentPartitionsFromPin
+               |          
+               |--5.13%--HOptDfg::mergeReconvergentPartitionsFromPin
+               |          HOptDfg::mergeReconvergentPartitionsForGraph
+               |          0
+               |          |          
+               |          |--1.47%--0x3fb3be098
+               |          |          0x3fb3be0c8
+               |          |          0x3fb3be0f8
+               |          |          0x3fb3be128
+               |          |          
+               |          |--1.43%--0x3fb3be1e8
+               |          |          0x3fb3be218
+               |          |          0x3fb3be248
+               |          |          0x3fb3be278
+               |          |          0x3fb3be2a8
+               |          |          0x1442b4d28
+               |          |          
+               |           --1.43%--0x30cb03f28
+               |                     0x30cb03f58
+               |                     0x30cb03f88
+               |                     0x30cb03fb8
+               |                     0x3fb3be008
+               |                     0x1442b49f8
+               |          
+                --3.10%--HOptDfg::mergeReconvergentPartitionsFromPin
+                          HOptDfg::mergeReconvergentPartitionsFromPin
+                          HOptDfg::mergeReconvergentPartitionsForGraph
+                          0
+                          |          
+                           --2.29%--0x30cb03f28
+                                     0x30cb03f58
+                                     0x30cb03f88
+                                     0x30cb03fb8
+                                     0x3fb3be008
+                                     0x1442b49f8
+
+     5.30%  vivado   librdi_synth.so    [.] 0x0000000001b83130
+            |
+            ---0x7fcf13183130
+
+     2.04%  vivado   librdi_synth.so    [.] 0x0000000001b83193
+            |
+            ---0x7fcf13183193
+
+     1.83%  vivado   libtcmalloc.so.4   [.] tc_deletearray_nothrow
+            |
+            ---tc_deletearray_nothrow
+               |          
+                --1.02%--UHashList<DFPin*, DFPin*, UEKey<DFPin*>, UHashListNode<DFPin*>, DFPin*>::~UHashList
+                          HOptDfg::mergeReconvergentPartitionsFromPin
+                          HOptDfg::mergeReconvergentPartitionsFromPin
+                          HOptDfg::mergeReconvergentPartitionsFromPin
+                          HOptDfg::mergeReconvergentPartitionsFromPin
+                          HOptDfg::mergeReconvergentPartitionsForGraph
+                          0
+
+     1.63%  vivado   librdi_synth.so    [.] UHashList<DFPin*, DFPin*, UEKey<DFPin*>, UHashListNode<DFPin*>, DFPin*>::~UHashList
+            |
+            ---UHashList<DFPin*, DFPin*, UEKey<DFPin*>, UHashListNode<DFPin*>, DFPin*>::~UHashList
+               HOptDfg::mergeReconvergentPartitionsFromPin
+               HOptDfg::mergeReconvergentPartitionsFromPin
+               HOptDfg::mergeReconvergentPartitionsFromPin
+               HOptDfg::mergeReconvergentPartitionsFromPin
+               HOptDfg::mergeReconvergentPartitionsForGraph
+               0
+
+     1.63%  vivado   librdi_synth.so    [.] 0x0000000001b831c1
+            |
+            ---0x7fcf131831c1
+
+     1.63%  vivado   [kernel.kallsyms]  [k] getrusage
+            |
+            ---getrusage
+               __do_sys_getrusage
+               __x64_sys_getrusage
+               x64_sys_call
+               do_syscall_64
+               entry_SYSCALL_64_after_hwframe
+               __getrusage
+               |          
+                --1.43%--0xfad37810
+
+     1.63%  vivado   libtcmalloc.so.4   [.] operator new[]
+            |
+            ---operator new[]
+
+     1.22%  vivado   librdi_synth.so    [.] 0x0000000001b83124
+            |
+            ---0x7fcf13183124
+
+     1.22%  vivado   librdi_synth.so    [.] 0x0000000001b831ad
+            |
+            ---0x7fcf131831ad
+
+     1.02%  vivado   [kernel.kallsyms]  [k] do_syscall_64
+            |
+            ---do_syscall_64
+
+     1.02%  vivado   [kernel.kallsyms]  [k] entry_SYSCALL_64
+            |
+            ---entry_SYSCALL_64
+               __getrusage
+               0xfad37810
+
+     1.02%  vivado   [kernel.kallsyms]  [k] update_curr
+            |
+            ---update_curr
+
+
+
+#
+# (Cannot load tips.txt file, please install perf!)
+#

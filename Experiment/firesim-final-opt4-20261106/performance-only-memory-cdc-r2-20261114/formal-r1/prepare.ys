@@ -1,0 +1,7 @@
+read_verilog -D SYNTHESIS /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-memory-cdc-r2-20261114/run-r1/target/QueuePair.v
+proc
+flatten AsyncQueue LocalMemAsyncQueue
+memory_map
+opt_clean
+write_json /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-memory-cdc-r2-20261114/formal-r1/flattened.json
+write_rtlil /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-memory-cdc-r2-20261114/formal-r1/flattened.il

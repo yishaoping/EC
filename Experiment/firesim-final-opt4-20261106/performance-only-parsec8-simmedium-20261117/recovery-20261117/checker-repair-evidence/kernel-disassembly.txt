@@ -1,0 +1,33 @@
+
+/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/C4-earlyconsole-20261107T025952Z/vmlinux:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+ffffffff80002e00 <handle_exception>:
+ffffffff80002e00:	14021273          	csrrw	tp,sscratch,tp
+ffffffff80002e04:	00021f63          	bnez	tp,ffffffff80002e22 <_save_context>
+
+ffffffff80002e08 <_restore_kernel_tpsp>:
+ffffffff80002e08:	14002273          	csrr	tp,sscratch
+ffffffff80002e0c:	00223823          	sd	sp,16(tp) # 10 <section_count+0xe>
+ffffffff80002e10:	712d                	addi	sp,sp,-288
+ffffffff80002e12:	00e15113          	srli	sp,sp,0xe
+ffffffff80002e16:	00117113          	andi	sp,sp,1
+ffffffff80002e1a:	1c011e63          	bnez	sp,ffffffff80002ff6 <handle_kernel_stack_overflow>
+ffffffff80002e1e:	01023103          	ld	sp,16(tp) # 10 <section_count+0xe>
+
+ffffffff80002e22 <_save_context>:
+ffffffff80002e22:	00223c23          	sd	sp,24(tp) # 18 <section_count+0x16>
+ffffffff80002e26:	01023103          	ld	sp,16(tp) # 10 <section_count+0xe>
+ffffffff80002e2a:	712d                	addi	sp,sp,-288
+ffffffff80002e2c:	e406                	sd	ra,8(sp)
+ffffffff80002e2e:	ec0e                	sd	gp,24(sp)
+ffffffff80002e30:	f416                	sd	t0,40(sp)
+ffffffff80002e32:	f81a                	sd	t1,48(sp)
+ffffffff80002e34:	fc1e                	sd	t2,56(sp)
+ffffffff80002e36:	e0a2                	sd	s0,64(sp)
+ffffffff80002e38:	e4a6                	sd	s1,72(sp)
+ffffffff80002e3a:	e8aa                	sd	a0,80(sp)
+ffffffff80002e3c:	ecae                	sd	a1,88(sp)
+ffffffff80002e3e:	f0b2                	sd	a2,96(sp)

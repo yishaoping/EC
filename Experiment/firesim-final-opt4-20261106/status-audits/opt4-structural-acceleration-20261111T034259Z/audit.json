@@ -1,0 +1,117 @@
+{
+  "area_only": true,
+  "baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "current_whole_resources_available": false,
+  "fpga_operations_this_turn": 0,
+  "large_whole_jobs_started_this_turn": 0,
+  "latest_complete_whole": {
+    "carry8": 92789,
+    "commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+    "dsp": 195,
+    "lut": 3215683,
+    "lut_capacity": 1303680,
+    "lut_excess": 1912003,
+    "status": "NOT_FIT_POSTOPT"
+  },
+  "native_resumed": false,
+  "requests": {
+    "e0c3737f-prepare-runtime": {
+      "bundle": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Opt4-fit-e0c3737f/bundle.json",
+      "next": "actual seven-file ABI comparison after candidate GoldenGate; CAD certification before deployment",
+      "request_sha256": "d72c58ef6e97b4c18a4a07776369146ecc60568de16ce92e4cb3d0347bb2bb44",
+      "status": "TEMPLATES_PREPARED_NO_FPGA_ACCESS",
+      "utc": "2026-11-11T03:24:03.509447+00:00"
+    },
+    "e0c3737f-start-runtime": {
+      "error": "AssertionError('WAITING_CERTIFIABLE_BITSTREAM')",
+      "request_sha256": "ebd021dd59f3c57c2df916cd8f304b132a39f973fd24bcfc260120d4ee49d4ff",
+      "status": "DEFERRED",
+      "utc": "2026-11-11T03:42:47.114072+00:00"
+    },
+    "update-share-svb-cad-r3-e0c3737f": {
+      "error": "AssertionError('DEFER_EXISTING_WHOLE_CAD')",
+      "request_sha256": "191cb945b5959dc25d73029f822606530ef3b0acbe4e6265e5b44f7fda28a0fa",
+      "status": "DEFERRED",
+      "utc": "2026-11-11T03:42:47.145458+00:00"
+    }
+  },
+  "schema": "ec-opt4-structural-acceleration-audit/1",
+  "states": {
+    "Opt4-fit-address-static-retire-r2-state.json": {
+      "identity": {
+        "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "identity_matches": true,
+        "pid": 2315842,
+        "process_state": "S",
+        "start_ticks": "18022744"
+      },
+      "state": {
+        "active_stage": "emit-address",
+        "hardware_commit": "1a5717752b2efd28d99b7b0b5cccb97e9ff6215c",
+        "local_formal": "PASS_ALL_256X4_BITWISE_CLEAR_LIFTED_TO64_ARBITRARY_PAYLOAD_VALID_INDEX_RESETSTATS_AND_PRIORITY",
+        "source_id": "6b2b0cd36757eb600c4470c1489ba61469a1b81f92a7a766ce0c5ed51006f0e5",
+        "status": "RUNNING_EMIT-ADDRESS",
+        "updated_utc": "2026-11-11T03:42:36.311177+00:00"
+      }
+    },
+    "Opt4-fit-bucket-tag-cad-state.json": {
+      "identity": {
+        "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "identity_matches": true,
+        "pid": 1737960,
+        "process_state": "S",
+        "start_ticks": "16778336"
+      },
+      "state": {
+        "current_stage": "dut_synth",
+        "hardware_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+        "source_id": "3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561",
+        "stage_wall_seconds": 11850.84696424898,
+        "status": "RUNNING_DUT_SYNTH",
+        "updated_utc": "2026-11-11T03:42:58.646977+00:00"
+      }
+    },
+    "Opt4-fit-update-share-svb-r2-state.json": {
+      "identity": {
+        "exited": true,
+        "pid": 2218872
+      },
+      "state": {
+        "active_stage": "emit-svb",
+        "hardware_commit": "e0c3737f989c563f99a00f3fd26c1cbd27421775",
+        "source_id": "b058237185f3c6f1c730e4a128e4c3670299eb45a250627fa61aeb3eb631d235",
+        "status": "PASS_COMPOSED_SOURCE_BOUND_MODULE_EQUIVALENCE_TYPECHECKED_NOT_FULL_DUT_FORMAL_OR_CAD",
+        "updated_utc": "2026-11-11T03:14:14.932051+00:00"
+      }
+    },
+    "Opt4-fit-update-share-svb-software-prep-r4-state.json": {
+      "identity": {
+        "exited": true,
+        "pid": 2308129
+      },
+      "state": {
+        "hardware_commit": "e0c3737f989c563f99a00f3fd26c1cbd27421775",
+        "program_count": 13,
+        "source_id": "b058237185f3c6f1c730e4a128e4c3670299eb45a250627fa61aeb3eb631d235",
+        "status": "13_ORDINARY_PROGRAMS_EXACT_PAIRED_SOFTWARE_READY_NOT_FPGA_ADMITTED",
+        "updated_utc": "2026-11-11T03:39:15.964896+00:00"
+      }
+    },
+    "Opt4-fit-update-share-svb-system-r3-state.json": {
+      "identity": {
+        "exited": true,
+        "pid": 2237267
+      },
+      "state": {
+        "active_stage": "goldengate",
+        "configuration_matches_frozen_parameters": true,
+        "hardware_commit": "e0c3737f989c563f99a00f3fd26c1cbd27421775",
+        "modified_class_origins_verified": true,
+        "source_id": "b058237185f3c6f1c730e4a128e4c3670299eb45a250627fa61aeb3eb631d235",
+        "status": "RTL_READY_REAL_ABI_CHECKED",
+        "updated_utc": "2026-11-11T03:35:52.412846+00:00"
+      }
+    }
+  },
+  "utc": "2026-11-11T03:42:59.242007+00:00"
+}

@@ -1,0 +1,69 @@
+{
+  "algorithm_sources_modified": false,
+  "binaries": {
+    "client/client": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-kernel-reference-20261107T103840Z/netstreamcluster/client/client",
+      "sha256": "eee5da6a9b8e9868b683f60a0ee24194f78b830a05bfd2162b6909da0bb60b29"
+    },
+    "server/server": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-kernel-reference-20261107T103840Z/netstreamcluster/server/server",
+      "sha256": "5463d778af310b3bfb08b670f556208bc7937e34ce13b444d9d0d9f5d98fe857"
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-DENABLE_PARSEC_HOOKS",
+        "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netstreamcluster/src/server/streamcluster.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/diagnostic-hooks.o",
+        "-static",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-kernel-reference-20261107T103840Z/netstreamcluster/server/server"
+      ],
+      "returncode": 0,
+      "source": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netstreamcluster/src/server/streamcluster.cpp",
+      "source_sha256": "d02dd3d58916fd5d81a8580aeae1c632caad7bed058ca19e2e651e3179dc74ff"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-DENABLE_PARSEC_HOOKS",
+        "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netstreamcluster/src/client/client.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/diagnostic-hooks.o",
+        "-static",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-kernel-reference-20261107T103840Z/netstreamcluster/client/client"
+      ],
+      "returncode": 0,
+      "source": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netstreamcluster/src/client/client.cpp",
+      "source_sha256": "e3dd54568266faf200bb05cc5f340e8ce0f6e603a22e911192fb8d043e7603bb"
+    }
+  ],
+  "compiler_sha256": "7a35cc42e180e654ff8d30dfd681ae40a737ffd904f89cf130a5a1b8812fe421",
+  "formal_eligible": false,
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-kernel-reference-20261107T103840Z",
+  "schema": "ec-network-kernel-reference/1",
+  "status": "COMPILED",
+  "user_stack_candidate_receipt_sha256": "eb8c7b23b020f54a34d12e73904bb7a741655c2242144f83a10213bcebd662e4"
+}

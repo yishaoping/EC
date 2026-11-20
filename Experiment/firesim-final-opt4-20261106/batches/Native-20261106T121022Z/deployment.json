@@ -1,0 +1,72 @@
+{
+  "bdfs": [
+    "0000:e2:00.0",
+    "0000:21:00.0"
+  ],
+  "bitstream": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-bitstream-20261102T095746.955739Z/vivado_proj/firesim.bit",
+  "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+  "board_flash_firmware_updated": false,
+  "completed_cards": [
+    {
+      "bdf": "0000:e2:00.0",
+      "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+      "serial": "21770433G001A"
+    },
+    {
+      "bdf": "0000:21:00.0",
+      "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+      "serial": "21770433G02LA"
+    }
+  ],
+  "configuration": "Native",
+  "deployment_tools": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/firesim.py": "517b5b6f43beaeaf5f955cb66825f12e7aa51ce4328e0c920ee6bd69a837a42f",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/fpga-util.py": "5ea9d9326a1683e9b1646c42572edf86e8633dc6feae9ae214b66b99841370a1",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/pcielib.py": "8bf0f20af16957a981cb34e64031deeccde370837e4d1615cee328313498a4ef",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/probe_targets.tcl": "c6ff49bd199588dcdcab1e00dfb47cb56d15043fb1ef15974ea5fdfec0daca3b",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/probe_targets_3122.tcl": "9bfc21406f433d45b0753b5ec3f1365a9999cf610339ededa47835e481da0e52",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/program_fpga.tcl": "a303e69e7df101ed3ae25215ca7373d9675f2b79a793b71ece6fd5dfcaa0621a",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/provenance.json": "3f4dcc11685b2005e585679927d2c25ea608526b30bf7a5f8e7672862cbf8c9f",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/start_owned_hw_server.py": "8072a1ca79140fb871136a624b3903e0ac2d722142c8d1fd7eeabb2ad3242ece",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/util.py": "99c369f5383bca276e3722fcef45f8bb3e8f18a7d476750dc3cb5644181568f8"
+  },
+  "ended_utc": "2026-11-06T12:11:58.482517+00:00",
+  "existing_module_sha256": "3c6181237df79a2394bee005f2fd615ac67a5ccd9ea01bdfb710b63e22cbdfe0",
+  "global_operations": [
+    "rmmod existing xdma",
+    "program each volatile FPGA bitstream with PCIe remove/rescan",
+    "insmod existing xdma"
+  ],
+  "host_reboot": false,
+  "pid": 8066,
+  "postcheck": {
+    "cleanup_users": [],
+    "mapping": [
+      {
+        "bdf": "0000:e2:00.0",
+        "driver": "xdma",
+        "serial": "21770433G001A"
+      },
+      {
+        "bdf": "0000:21:00.0",
+        "driver": "xdma",
+        "serial": "21770433G02LA"
+      }
+    ],
+    "observed_utc": "2026-11-06T12:12:00.201203+00:00",
+    "open_devices": [],
+    "permission_denied": 0,
+    "simulation_processes": [],
+    "user_confirms_boards_available": true
+  },
+  "schema": "ec-dual-fpga-deployment/1",
+  "serials": [
+    "21770433G001A",
+    "21770433G02LA"
+  ],
+  "source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+  "started_utc": "2026-11-06T12:10:25.729482+00:00",
+  "status": "DEPLOYED_NOT_RUN",
+  "system_driver_updated": false,
+  "user_authorization": "2026-11-06 explicit both-board availability and direct deployment"
+}

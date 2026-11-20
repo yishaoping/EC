@@ -1,0 +1,30 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/src/main/cc/core/simulation.cc
++++ /data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-efficiency-driver-20261106T130931Z/efficiency-host-sources/simulation.cc
+@@ -12,6 +12,8 @@
+ #include <cassert>
+ #include <cinttypes>
+ #include <cstdio>
++
++static uint64_t ec_invocation_tcycle_start = 0;
+ 
+ simulation_t::simulation_t(widget_registry_t &registry,
+                            const std::vector<std::string> &args)
+@@ -40,6 +42,7 @@
+ }
+ 
+ void simulation_t::record_start_times() {
++  ec_invocation_tcycle_start = clock.tcycle();
+   start_hcycle = clock.hcycle();
+   start_time = timestamp();
+ }
+@@ -58,6 +61,10 @@
+ 
+   const uint64_t hcycles = *end_hcycle - *start_hcycle;
+   const double sim_time = diff_secs(end_time, start_time);
++  fprintf(stderr, "EC_HOST_INTERVAL target_start=%" PRIu64 " target_end=%" PRIu64 " target_delta=%" PRIu64 " host_delta=%" PRIu64 " wall_seconds=%.9f throughput_cycles_per_second=%.3f\n",
++          ec_invocation_tcycle_start, end_tcycle, end_tcycle-ec_invocation_tcycle_start,
++          hcycles, sim_time, (end_tcycle-ec_invocation_tcycle_start)/sim_time);
++
+   const double sim_speed = ((double)end_tcycle) / (sim_time * 1000.0);
+   const double measured_host_frequency =
+       ((double)hcycles) / (sim_time * 1000.0);

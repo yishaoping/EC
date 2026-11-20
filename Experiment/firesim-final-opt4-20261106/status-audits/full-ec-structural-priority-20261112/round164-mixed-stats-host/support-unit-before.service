@@ -1,0 +1,17 @@
+[Unit]
+Description=Deterministic EC area sprint sprint-continuation-r1; no FPGA IO
+After=default.target
+[Service]
+Type=simple
+WorkingDirectory=/data1/gzh/EC/firesim/final-opt4-20261106/candidates/sprint-continuation-r1-20261112
+ExecStart=/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/sprint-continuation-r1-20261112/controller.py
+Nice=10
+Restart=always
+RestartSec=30
+KillMode=process
+LimitCORE=0
+MemoryMax=2G
+StandardOutput=append:/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/area-sprint-20261112/service.log
+StandardError=append:/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/area-sprint-20261112/service.log
+[Install]
+WantedBy=default.target

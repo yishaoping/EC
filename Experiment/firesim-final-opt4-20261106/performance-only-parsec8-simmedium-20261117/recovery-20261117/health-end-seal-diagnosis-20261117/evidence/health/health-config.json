@@ -1,0 +1,45 @@
+{
+  "apps_manifest_sha256": "0ccb15ae6db46dd4f3c3c098823e33596012d8f6cab7dddcdcf04f90d498ea4a",
+  "boot_cycle_limit": 2400000000,
+  "boot_timeout_seconds": 3600,
+  "bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+  "case": {
+    "argv": [],
+    "diagnostic_only": true,
+    "input": "simmedium",
+    "program": "smoke",
+    "threads": 1,
+    "warmups": 0
+  },
+  "cycle_stall_timeout_seconds": 120,
+  "diagnostic_only": true,
+  "elf_sha256": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8",
+  "fdt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb",
+  "fdt_sha256": "c712fed367c0b57d9a1ed9f6e53688861a646f3732654b253131ff6e8953dda6",
+  "firmware": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/C4-firmware-20261107T030118.611141Z/platform/generic/firmware/fw_payload.elf",
+  "firmware_sha256": "7546b77fd5f039488b604763b952bcacc6cad0792bd109666b61dc2b27987c34",
+  "input": "simmedium",
+  "linux_memory_cap_bytes": 2147483648,
+  "native_median_roi_cycles": null,
+  "native_samples": [],
+  "prepare_timeout_seconds": 3600,
+  "profile": "formal",
+  "program": "smoke",
+  "receipt_sha256": {
+    "apps": "0ccb15ae6db46dd4f3c3c098823e33596012d8f6cab7dddcdcf04f90d498ea4a",
+    "firmware": "50c1ca145b559c1efb1e7a6f00566c4c1b5a87e8d3ec5aeba7cd05b4f032e196",
+    "rootfs": "d65d2353a1d8902a3291863dcea141d432ca4bfd6fdba99668b08d048fde54be"
+  },
+  "receipts": {
+    "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/formal-apps-build.json",
+    "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/formal-firmware-build.json",
+    "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/formal-rootfs-build.json"
+  },
+  "repetition": 1,
+  "rootfs_sha256": "427d0b923bc2be77b67ba0ff11efd47bb83c7bbf28fd990e10c658dcf7178711",
+  "software_semantics_label": "diagnostic-smoke-not-PARSEC",
+  "status": "READY",
+  "target_boom_hz": 200000000,
+  "target_checker_hz": 100000000,
+  "timeout_seconds": 1800
+}

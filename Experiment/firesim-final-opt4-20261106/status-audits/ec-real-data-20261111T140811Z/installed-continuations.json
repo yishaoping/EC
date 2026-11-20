@@ -1,0 +1,61 @@
+{
+  "cad_restarts": false,
+  "fpga_operations": false,
+  "installations": {
+    "cycleprecise-original-svb-application-onboard-recovered-r1-20261111/installation.json": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-application-onboard-recovered-r1-20261111/installation.json",
+      "record": {
+        "deployment_operations": [],
+        "fpga_access_at_install": false,
+        "inputs_sha256": "85dc1da91afc8d4736883ce7a9837daaf0c991eb03d4bc5f88e25bb7ed617ec2",
+        "installed_utc": "2026-11-11T14:22:09.212103+00:00",
+        "rule": "No deployment; wait bound CPU real trace proof, original SVB certificate and completed directed board run, matching current deployment and both card21 locks. Full Opt4 has priority.",
+        "unit": "ec-opt4-original-svb-application-onboard-recovered-r1.service",
+        "unit_sha256": "66f0665ce7767b9a871203084e44aaedef075a59d4688491c639cc81041d509a"
+      },
+      "sha256": "c69ba4b52eb1fceef0fc54e649d064255340c5ca29481c32b6e9e91fc9f1d87b"
+    },
+    "cycleprecise-svb-postroute-recovery-r1-20261111/installation.json": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/installation.json",
+      "record": {
+        "fpga_access_at_install": false,
+        "inputs_sha256": "8cc9145a387c85d024e95a6e4515259edb49c08c6dab56cd4b3742ed5b3e6055",
+        "installed_utc": "2026-11-11T14:19:03.350701+00:00",
+        "rule": "Only failed inactive empty producer -> unique bounded replacement; no third component route. Independent source/timing/DRC cert then both21 locks. Existing completed component wins; no e2/global operations.",
+        "starts_cpu_cad_at_install": false,
+        "units": {
+          "ec-opt4-original-svb-recovered-follow-r1.service": "15bea8ab2f8298bc0bdbb6eb3a812736987f989d82d7e94fcbeba1238981e53e",
+          "ec-opt4-svb-physical-recovery-r1-dispatch.service": "b030a48e348c5d5f0df348268931beb237c93ba0b67eee420679abdc8ea5923b",
+          "ec-opt4-svb-physical-recovery-r1-dispatch.timer": "0ecb173d33410a46bfcfe50a57343a202868591fb1fb8a18d86b83caa8d19e06",
+          "ec-opt4-svb-recovery-original-postroute-r1.service": "d20c480cfa969752cdc6aa970bd76edaa189b84e81922de7003ea0d971d595c8",
+          "ec-opt4-svb-recovery-original-replicate-r1.service": "f1aa677187f00c5e86efcc130d37f835995986e9bf093d5fe40588895ef7ad71",
+          "ec-opt4-svb-recovery-spread-postroute-r1.service": "e314cc2da70edf639f2c35fca51c054d6fe1694bdc54326b6e305ee9065a82f8",
+          "ec-opt4-svb-recovery-spread-replicate-r1.service": "f82f0ea938b78dc1686c68b45780b5a1b756b3e0b99a79ec0e2d3fc22ae4b489"
+        }
+      },
+      "sha256": "ec7d3f6f6043f39240a72156d17b4afcc8673e6e6c55dd5c1d89ca327d980da0"
+    },
+    "cycleprecise-svb-postroute-recovery-r1-20261111/strict-r2-installation.json": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/strict-r2-installation.json",
+      "record": {
+        "disabled_pure_timer": "ec-opt4-svb-physical-recovery-r1-dispatch.timer",
+        "fpga_access": false,
+        "inputs_sha256": "26a6ee3a6082993254871e18bff8588da28cac46d0a37434e4fbe747a67bd20a",
+        "installed_utc": "2026-11-11T14:24:53.746898+00:00",
+        "r1_files_untouched": true,
+        "root_follower_preserved": true,
+        "starts_cad_at_install": false,
+        "units": {
+          "ec-opt4-svb-physical-recovery-r2-dispatch.service": "cc087090fc40abd4fee2d01b7e785f63da96eb65ca58e892936653acd253585e",
+          "ec-opt4-svb-physical-recovery-r2-dispatch.timer": "45684416b464d9a992b6bebe48c95040df74f8821619b185b21ffad3c1adf820",
+          "ec-opt4-svb-recovery-original-postroute-r2.service": "bcd717b832d344e194cecdfd6b1c86d19366c30595057082bd966c55723aa603",
+          "ec-opt4-svb-recovery-original-replicate-r2.service": "130bc6b572e7090b95a2871e78efb058958ebfb3ba05aad37c955bb4bfac5a8c",
+          "ec-opt4-svb-recovery-spread-postroute-r2.service": "fb37c2573b06b14726e2061b63741c801576657cdfee516216ca1076c5ebd1c8",
+          "ec-opt4-svb-recovery-spread-replicate-r2.service": "ad44f9095da81dad450b99abaa3142f31e833742293390af1a90a9d974b52081"
+        }
+      },
+      "sha256": "c2c60dd3fe26024528c7ae3ee6343ef59a2187cc49cce48c71aca7ad572cfb21"
+    }
+  },
+  "utc": "2026-11-11T14:25:55.933009+00:00"
+}

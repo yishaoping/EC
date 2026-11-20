@@ -1,0 +1,40 @@
+{
+  "schema": "ec-firesim-integration/1",
+  "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "hardware_tag": "opt4-final-performance-fpga-20261106",
+  "frozen_source": "/data1/gzh/EC-backups/opt4-final-performance-20261106/source/chipyard",
+  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard",
+  "checkpoint_manifest": "/data1/gzh/EC/firesim/dac2026/checkpoints/20261104/manifests/opt4-linux-v6-c4.json",
+  "checkpoint_manifest_sha256": "b72a758b5b0548a0934d22a5bfdbfa3931e45896313621e4373fd8e0b3c936e2",
+  "firesim_upstream_commit": "07efa6a6da18bd64d1159ae84a4701b37abb1228",
+  "firesim_checkpoint_commit": "7345ef3cf162c311153d7d0db983da22361b181b",
+  "integration_patch_sha256": "53de40eafec804db9b87250ae75fcd9855a7c50636feaabd46f6e53083961265",
+  "matching_hardware_inputs": 1908,
+  "platform_delta_files": [
+    "generators/boom/src/main/scala/exu/core.scala",
+    "generators/rocket-chip/src/main/scala/util/SafeChainObservation.scala",
+    "generators/rocket-chip/src/main/scala/util/CacheOpportunityObservation.scala",
+    "generators/rocket-chip/src/main/scala/rocket/RocketCore.scala",
+    "generators/rocket-chip/src/main/scala/rocket/CSR.scala",
+    "generators/chipyard/src/main/scala/DigitalTop.scala"
+  ],
+  "functional_runtime": "NOT_RUN",
+  "generated_rtl": "BUILT_GOLDENGATE_NOT_RUN",
+  "bitstream": "NOT_BUILT",
+  "supersedes_handoff_only": true,
+  "notes": [
+    "No frozen source or existing integration was modified.",
+    "DPI/file-only observation blackboxes remain disabled for FireSim; this is not evidence of runtime metrics.",
+    "Linux integration adds ROI peripheral and read-only service teardown CSR; no recovery control is disabled."
+  ],
+  "host_driver": "BUILT_NOT_RUN",
+  "build_receipts": {
+    "parameters": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-parameters-20261106T100204.040607Z/result.json",
+    "elaborate": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-elaborate-20261106T100250.032318Z/result.json",
+    "goldengate": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-goldengate-20261106T100436.256198Z/result.json",
+    "driver": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-driver-20261106T104028.658367Z/result.json"
+  },
+  "native_reuse": "/data1/gzh/EC/firesim/final-opt4-20261106/native-reuse.json",
+  "generated_svb_audit": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/generated-svb-audit.json",
+  "runtime_scope_audit": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runtime-scope-audit.json"
+}

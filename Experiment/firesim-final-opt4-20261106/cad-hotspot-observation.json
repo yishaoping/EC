@@ -1,0 +1,20 @@
+{
+  "schema": "ec-cad-hotspot-observation/1",
+  "sample_file": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cad-synth-profile.perf",
+  "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cad-synth-profile-report.txt",
+  "sample_duration_seconds": 10,
+  "frequency_hz": 49,
+  "samples": 491,
+  "lost_samples": 0,
+  "observed_hot_symbols": [
+    "HOptDfg::mergeReconvergentPartitionsFromPin",
+    "HOptDfg::mergeReconvergentPartitionsForGraph",
+    "UHashList<DFPin*>::insertAfter",
+    "librdi_synth.so offsets 0x1b83300/0x1b832f4"
+  ],
+  "conclusion": "Vivado is spending CPU on synthesis graph processing. Sampling does not prove forward progress or eventual completion; no root-cause proof of an algorithmic defect.",
+  "original_build_retained": true,
+  "independent_runtime_directive_candidate": "C4-runtime-cad-state.json",
+  "DUT_or_GoldenGate_input_change": false,
+  "all_candidates_require_implementation_and_timing": true
+}

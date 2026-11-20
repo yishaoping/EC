@@ -1,0 +1,67 @@
+{
+  "captured_utc": "2026-11-12T02:59:47.852604+00:00",
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "new_completed_result": {
+    "LUT_delta": 60726,
+    "address_onebank_MemMC": {
+      "BRAM": 1,
+      "CARRY8": 1584,
+      "DSP": 0,
+      "FF": 161277,
+      "LUT": 117874
+    },
+    "address_onebank_Reg": {
+      "BRAM": 0,
+      "CARRY8": 1584,
+      "DSP": 0,
+      "FF": 122050,
+      "LUT": 57148
+    },
+    "decision": "REJECT_FOR_AREA_NO_FULLADDRESS_INTEGRATION",
+    "evidence": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-area-r2-20261112/area-decision.json"
+  },
+  "new_correctness_result": {
+    "SAT_arbitrary_word_priority_lemma": true,
+    "both_negative_controls_rejected": true,
+    "digest": "ca9bc157a305eeca",
+    "observations": 152478,
+    "scope": "one256x64banknotfulladdress",
+    "target_cycles": 592
+  },
+  "no_FPGA_operations": true,
+  "no_active_inputs_modified": true,
+  "no_live_CAD_or_metasim_interrupted": true,
+  "owner_Canneal_MC": {
+    "parity_passed": false,
+    "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-mcrams-owner-mc-runtime-r2-state.json",
+    "status": "RUNNING_REUSES_COMPLETED_PLAIN_SAME_BINARY_TARGET_CAPTURE_COMPARISON"
+  },
+  "private_fulladdress_candidate": {
+    "path": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-full-address-storage-r2-20261112",
+    "resource_waiter": "ec-opt4-full-address-rtl-r2-resource-waiter.service",
+    "root_notified_to_retire_idlewaiter_afternegativearea": true,
+    "status": "PREPARED_FULL_SOURCE_PROJECTION_PASS_BUT_AREA_ADMISSION_REJECTED"
+  },
+  "runtime": {
+    "atomicNativeboundrefsverified": 39,
+    "board": "0000:21:00.0",
+    "fpga_execution": false,
+    "profile": "Opt4-fit-C4-SVB32-MCRams-owner-r1",
+    "root_follower": "ec-opt4-mcrams-owner-runtime-follow-r1.service",
+    "softwareprograms": 13,
+    "status": "INSTALLED_ACTIVE_WAITING_REAL_CERTIFIED_FULLPHYSICAL"
+  },
+  "schema": "ec-MCRams-actual-round-final-handoff/1",
+  "whole_generated_host": {
+    "FIT": "UNKNOWN_NO_REPORT_OR_DCP_YET",
+    "LUT": null,
+    "new_verified_substages": [
+      "FinishedSynthesize",
+      "FinishedConstraintValidation",
+      "FinishedRTLOptimizationPhase2",
+      "DSPgenerationandabsorption"
+    ],
+    "stage": "synth_design",
+    "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-mcrams-full-host-capacity-r1-state.json"
+  }
+}

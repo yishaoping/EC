@@ -1,0 +1,15 @@
+Frozen functional baseline: 8491167d84b6d9521b151a743673c1516926a1f8. Native remains paused; deployment remains owned by existing certified 21-only services.
+
+The round added a source-bound RAM transaction proof and submitted it through the persistent CPU broker. The broker returned STARTED for ec-opt4-auto-owner-ram-transaction-r55-v1-3656aec4.service. The exact controller PID/start/boot identity and validated input hashes are in admission.json. The proof runs on CPU 247 with an 8 GiB address-space limit and reads policy before every solver stage.
+
+The proof keeps the actual emitted 35R1W, 512x81 RamModel intact. Only reversible observer ports/assignments are added. For an arbitrary watched reader/address, an independent monitor saves the pre-edge abstract word on command acceptance and checks each tracked valid response against it through stalls. Writes use an independently computed all-readers-acquired/valid/en/mask/reset predicate. Nine 9-bit slices cover all payload bits. Reset starts from related arbitrary memory; no initialized-memory claim is made. Four actual-source mutations must fail without timing out. Read README.md in the controller capsule for the exact invariant and assumptions.
+
+The prior round 53 ledger binds 100 controller/storage/read-snapshot obligations and 12 rejected mutations, but explicitly leaves FAME/adapter/target-advance composition open. This new proof attempts a transaction-level composition inside the RAM only. A submitted/running proof is not PASS; only a hash-bound complete.json/result.json can establish that narrow result. It cannot admit full DCache or Opt4.
+
+Latest measured full Opt4 capacity remains 9ae NOT_FIT_POSTOPT: 2,847,382 LUT / 90,740 CARRY8 / 195 DSP; LUT excess 1,543,702. The successful actual generated owner host-wrapper area analysis reports 3,245 LUT / 2,906 FF / 1.5 BRAM / 0 CARRY8. Its scope excludes DCache and FAMETop; no whole saving follows. All previous parser-failure evidence remains preserved.
+
+The adopted snapshot shows e0 DUT synthesis, owner MCRams runtime, and SVB application-payload-negative replay active. SVB component routes failed timing/physical implementation; the existing physical recovery waits for its unchanged load<48 resource guard. No CAD, runtime, controller input, supervisor, timer, driver or device was modified. No competing whole synthesis or deployment was launched.
+
+Sprint resource snapshot at 2026-11-11T18:42:18Z: 255.52 GiB available memory, 306.48 GiB free disk, load1 56.89. The 24-hour deadline is 2026-11-12T08:52:10Z. Full FIT remains high risk given the measured gap and absent e0 capacity report; the new proof supplies no area forecast. No certified FPGA sample is claimed.
+
+Next: adopt the exact proof result after completion. Preserve failures/timeouts and use a new version if partitioning is needed. Continue the existing P0 replay and physical-recovery followers. Complete RAM/adapter/FAME target-advance composition and owner full-target parity before full-system area admission. Recheck normal state after at least 300 seconds and whole synthesis after at least 600 seconds.

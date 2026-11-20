@@ -1,0 +1,14 @@
+{
+  "schema": "ec-service-job-spec/1",
+  "name": "cad-monitor",
+  "argv": [
+    "python3",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/cad_witness.py",
+    "C4-runtime-cad-state.json"
+  ],
+  "legacy_states": [],
+  "inputs": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/cad_witness.py"
+  ],
+  "checkpoint_policy": "Reuse exact certified artifacts and atomic complete samples; incomplete guest reruns from start, CAD uses only completed DCP/run markers; no instruction-level restore"
+}

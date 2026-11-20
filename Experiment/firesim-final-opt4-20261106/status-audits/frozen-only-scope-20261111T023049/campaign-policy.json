@@ -1,0 +1,31 @@
+{
+  "architectural_recovery_authorized": true,
+  "architectural_recovery_branch": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-architectural-recovery-r1-20261111",
+  "architectural_recovery_contract": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-architectural-recovery-contract-r1-20261111/CONTRACT.md",
+  "architectural_recovery_decision": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/architectural-recovery-decision.json",
+  "architectural_recovery_full_validated": false,
+  "architectural_recovery_latest_progress": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/architectural-recovery-progress.json",
+  "architectural_recovery_latest_worktree": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-architectural-recovery-r3-20261111",
+  "board_allowlist": [
+    "0000:21:00.0"
+  ],
+  "cad_capsule": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-tree-cad-r1-20261111/build.py",
+  "current_live_whole_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+  "fpga_access": false,
+  "goal": "Certified FIT bitstream and real validated Opt4 FPGA experiments; runtime unavailability never stops RTL iteration",
+  "native_paused": true,
+  "prepared_composed_candidate": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+  "schema": "ec-opt4-continuous-iteration-policy/1",
+  "selection_required_before_expensive_next_synthesis": true,
+  "selection_rules": [
+    "Preserve current live whole synthesis; reuse validated DCP/stage outputs",
+    "Read actual DUT and complete post-opt resource reports; classify FIT/NOT FIT honestly",
+    "Choose structurally significant measured/proven module gains per verification time; no unproved stacking",
+    "Do not launch another whole merely for a small selector gain when capacity shortfall remains massive; prepare larger combinations first",
+    "On FIT immediately implement, timing, DRC, bitstream and certify; failed physical implementation requires targeted diagnosis/recovery",
+    "One new whole-DUT synthesis at a time, eight ordinary jobs, at most two memory/load-gated light auxiliaries",
+    "Proof timeout/tool failure/no gain marks only that candidate failed; other candidates and next AI round continue"
+  ],
+  "svb_system_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-fit-svb-system-r2-state.json",
+  "utc": "2026-11-11T01:24:47.414862+00:00"
+}

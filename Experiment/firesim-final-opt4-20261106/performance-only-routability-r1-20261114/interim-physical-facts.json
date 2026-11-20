@@ -1,0 +1,61 @@
+{
+  "utc": "2026-11-14T01:25:37.332393+00:00",
+  "profile": "Performance-Only",
+  "baseline": "6fada307bb77be90b39720d3f95404fece0e431b",
+  "source_checkpoint_read_only": true,
+  "clock_contract": [
+    "buildtop_reference_clock master=clk_out1_design_1_clk_wiz_0_0 period=19.998 source=design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/clockBridge_clocks_0_buffer/I sink=design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/clockBridge_clocks_0_buffer/O setup=1 hold=0",
+    "tileClockGroup_tile_1 master=clk_out1_design_1_clk_wiz_0_0 period=19.998 source=design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/clockBridge_clocks_1_buffer/I sink=design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/clockBridge_clocks_1_buffer/O setup=2 hold=1"
+  ],
+  "muxfx_remapped": 153042,
+  "remap_errors": 0,
+  "congestion_clusters": [
+    {
+      "level": 8,
+      "window": "CLEL_R_X8Y336 .. LAG_LAG_X134Y719 (overlaps second Level8 window)",
+      "modules": [
+        "ghm_u_data_cdc_3/source",
+        "ghm_u_data_cdc_2/source",
+        "ghm_u_data_cdc_1/source"
+      ]
+    },
+    {
+      "level": 7,
+      "window": "CLEM_X64Y315 .. CLEL_L_X127Y474",
+      "modules": [
+        "ghm_u_data_cdc_0/source",
+        "BOOM dcache",
+        "dcache/mshrs/mshrs_0"
+      ]
+    },
+    {
+      "level": 6,
+      "window": "CLEM_X22Y300 .. CLEM_X53Y395",
+      "modules": [
+        "BOOM dcache/svb (67%)",
+        "checker1 frontend/BJL",
+        "ghm_u_data_cdc_0/source"
+      ]
+    }
+  ],
+  "slr_clb_occupation_percent": [
+    99.82,
+    99.93,
+    100.0
+  ],
+  "aggregate_sll_percent": [
+    25.68,
+    29.0
+  ],
+  "new_candidate_routing_result": null,
+  "bitstream_generated": false,
+  "model_requests_disabled": true,
+  "fpga_access": false,
+  "remapped_lut": 1242046,
+  "lut_capacity": 1303680,
+  "lut_headroom": 61634,
+  "remapped_f7": 1334,
+  "remapped_f8": 602,
+  "current_stage": "AltSpreadLogic_high placement",
+  "routing_improvement_unmeasured": true
+}

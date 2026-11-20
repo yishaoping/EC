@@ -1,0 +1,50 @@
+{
+  "profile": "netferret-sentinel-candidate",
+  "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sentinel-candidate-state.json",
+  "status": "COMPLETE_REVIEW_EVIDENCE",
+  "formal_eligible": false,
+  "findings": {
+    "simmedium": {
+      "linux_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sentinel-linux-20261109T044334Z/netferret-simmedium/result.json",
+      "linux_returncode": 0,
+      "both_peers_exit_zero": true,
+      "roi_complete": true,
+      "exact_user_output": false,
+      "all_query_results_identical_ignoring_order": true,
+      "query_count": 64,
+      "formal_valid": false
+    },
+    "simsmall": {
+      "linux_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sentinel-linux-20261109T044334Z/netferret-simsmall/result.json",
+      "linux_returncode": 0,
+      "both_peers_exit_zero": true,
+      "roi_complete": true,
+      "exact_user_output": false,
+      "all_query_results_identical_ignoring_order": true,
+      "query_count": 16,
+      "formal_valid": false
+    },
+    "test": {
+      "linux_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sentinel-linux-20261109T044334Z/netferret-test/result.json",
+      "linux_returncode": 124,
+      "both_peers_exit_zero": false,
+      "roi_complete": false,
+      "exact_user_output": null,
+      "all_query_results_identical_ignoring_order": null,
+      "query_count": null,
+      "formal_valid": false
+    }
+  },
+  "observed_utc": "2026-11-09T04:52:18.498374+00:00",
+  "test_root_cause_proven": {
+    "symptom": "Assertion in t_out obj != NULL",
+    "first_bad": "rank entry id=1049857796, dist=MAXFLOAT exactly, map lookup returned NULL",
+    "source_invariant": "TOPK_INIT initializes only distance to CASS_DIST_MAX; unfilled entries are not valid query results",
+    "fix_scope": "Skip explicit CASS_DIST_MAX sentinel as well as HUGE_VAL; never skip valid neighbors",
+    "evidence": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-linux-diagnostic-state.json"
+  },
+  "remaining_linux_test_timeout": {
+    "observation": "Sentinel repair user test passed; Linux timed out without first frame; live replay reached ROI begin but no listen/frame diagnostic",
+    "root_cause": "Not yet proven; transport startup/order suspected, no stack-library patch applied"
+  }
+}

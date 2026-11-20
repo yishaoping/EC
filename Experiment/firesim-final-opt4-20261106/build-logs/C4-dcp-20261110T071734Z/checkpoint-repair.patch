@@ -1,0 +1,80 @@
+--- before/build_c4_from_dcp.py
++++ after/build_c4_from_dcp.py
+@@ -136,13 +136,38 @@
+         snap=read(out/'snapshot.complete.json');st['reused_checkpoints']=snap['dcps']
+         dut=next(d for d in snap['dcps'] if Path(d['snapshot']).stem==DUT)
+         st['dut_dcp']=dut['snapshot'];st['dut_dcp_sha256']=dut['sha256']
+-    for d in st['reused_checkpoints']:assert sha(d['snapshot'])==d['sha256']
++    # Vivado's scripts-only generation removes incomplete IP output products.
++    # Keep independent, verified checkpoints outside its managed .gen tree.
++    stable = out/'reused-checkpoints'; stable.mkdir(exist_ok=True)
++    for d in st['reused_checkpoints']:
++        p=stable/Path(d['snapshot']).name
++        if not p.exists():
++            src=Path(d['snapshot']) if Path(d['snapshot']).exists() else Path(d['original'])
++            before=src.stat(); assert sha(src)==d['sha256']
++            tmp=p.with_suffix('.copying');shutil.copy2(src,tmp)
++            assert sha(tmp)==d['sha256']
++            after=src.stat();assert (before.st_size,before.st_mtime_ns)==(after.st_size,after.st_mtime_ns)
++            os.replace(tmp,p)
++        assert sha(p)==d['sha256']
++        d['stable_snapshot']=str(p)
++
++    def materialize_checkpoints():
++        for d in st['reused_checkpoints']:
++            p=Path(d['snapshot']);p.parent.mkdir(parents=True,exist_ok=True)
++            if not p.exists():shutil.copy2(d['stable_snapshot'],p)
++            assert sha(p)==d['sha256']
++            if p.stem==DUT:
++                with zipfile.ZipFile(d['stable_snapshot']) as z:
++                    for member in [DUT+'_stub.v',DUT+'_stub.vhdl']:
++                        (p.parent/member).write_bytes(z.read(member))
++    materialize_checkpoints()
++    save(STATE,st)
+ 
+     def stage(name,text,cwd):
+         if st['stages'].get(name,{}).get('returncode')==0:return
+         tcl=logs/(name+'.tcl');tcl.write_text(text)
+         env={**os.environ,'OMP_NUM_THREADS':'2','TMPDIR':str(out/'tmp'),'LD_LIBRARY_PATH':''}
+-        argv=['nice','-n','15',VIVADO,'-mode','batch','-nojournal','-log',str(logs/(name+'.vivado.log')),'-source',str(tcl)]
++        argv=['nice','-n','5',VIVADO,'-mode','batch','-nojournal','-log',str(logs/(name+'.vivado.log')),'-source',str(tcl)]
+         started=time.monotonic()
+         with (logs/(name+'.log')).open('ab',buffering=0) as stream:
+             child=subprocess.Popen(argv,cwd=cwd,env=env,stdin=subprocess.DEVNULL,
+@@ -191,6 +216,7 @@
+ close_project
+ exit 0
+ ''',out)
++    materialize_checkpoints()
+     top=out/'vivado_proj/firesim.runs/synth_1/design_1_wrapper.tcl'
+     stage('top_synth',f'source {{{top}}}\nputs "EC_TOP_SYNTH_OK"\nexit 0\n',top.parent)
+     assert (top.parent/'design_1_wrapper.dcp').is_file()
+@@ -200,10 +226,24 @@
+     assert str(out) in code
+     save(logs/'implementation-script-binding.json',dict(path=str(impl),sha256=sha(impl),
+         original_dut_run_reexecuted=False,no_original_paths=True,top_dcp=str(top.parent/'design_1_wrapper.dcp')))
+-    # Generated init_design must contain the reused DUT checkpoint. Otherwise
+-    # stop for review rather than accidentally implementing a black box.
+-    assert DUT+'.dcp' in code,'generated impl does not bind DUT DCP'
+-    stage('implementation',f'source {{{impl}}}\nputs "EC_IMPLEMENTATION_ROUTE_OK"\nexit 0\n',impl.parent)
++    # Generated init_design binds OOC checkpoints through the block design.
++    # Require the actual DUT file from that BD plus zero unresolved cells
++    # immediately after linking, before any implementation work.
++    assert str(out/'vivado_proj/firesim.srcs/sources_1/bd/design_1/design_1.bd') in code
++    assert Path(st['dut_dcp']).is_file()
++    link='  link_design -top design_1_wrapper -part '+PART
++    assert code.count(link)==1
++    gate='''
++  set bb [get_cells -hier -quiet -filter {IS_BLACKBOX == 1}]
++  puts "EC_DCP_LINK_OK unresolved=[llength $bb]"
++  if {[llength $bb]} { error "unresolved cells after DCP stitching" }
++'''
++    adapted=logs/'implementation-bound.tcl'
++    adapted.write_text(code.replace(link,link+gate).replace('set_param general.maxThreads 2','set_param general.maxThreads 8'))
++    save(logs/'implementation-adaptation.json',dict(original=str(impl),original_sha256=sha(impl),
++        adapted=str(adapted),adapted_sha256=sha(adapted),changes=['post-link zero black-box gate','general.maxThreads 2 to 8'],rtl_changed=False))
++    materialize_checkpoints()
++    stage('implementation',f'source {{{adapted}}}\nputs "EC_IMPLEMENTATION_ROUTE_OK"\nexit 0\n',impl.parent)
+     routed=impl.parent/'design_1_wrapper_routed.dcp'
+     assert routed.is_file()
+     stage('timing_bitstream',f'''set_param general.maxThreads 2

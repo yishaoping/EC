@@ -1,0 +1,156 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 605  of event 'cpu-clock'
+# Event count (approx.): 12346938615
+#
+# Overhead  Command  Shared Object      Symbol                                                                                                                               IPC   [IPC Coverage]
+# ........  .......  .................  ...................................................................................................................................  ....................
+#
+    22.31%  vivado   librdi_synth.so    [.] NDesC::objHasDirective                                                                                                           -      -            
+            |
+            ---NDesC::objHasDirective
+               0xde465500
+
+    12.40%  vivado   librdi_synth.so    [.] ConstProp::getBDDsOfInputs                                                                                                       -      -            
+            |
+            ---ConstProp::getBDDsOfInputs
+               |          
+                --11.24%--0x76866020
+                          |          
+                           --3.47%--0
+
+     9.59%  vivado   librdi_synth.so    [.] ConstProp::getEquivalentNet                                                                                                      -      -            
+            |
+            ---ConstProp::getEquivalentNet
+               |          
+                --3.64%--0x76866020
+
+     5.95%  vivado   librdi_synth.so    [.] ConstProp::evaluateCombinational                                                                                                 -      -            
+            |
+            ---ConstProp::evaluateCombinational
+               ConstProp::evaluate
+               0xde465500
+
+     5.79%  vivado   librdi_synth.so    [.] ConstProp::evaluate                                                                                                              -      -            
+            |
+            ---ConstProp::evaluate
+               0xde465500
+
+     5.79%  vivado   librdi_synth.so    [.] ConstProp::~ConstProp                                                                                                            -      -            
+            |
+            ---ConstProp::~ConstProp
+
+     4.96%  vivado   librdi_synth.so    [.] UHashSet<void*, void*, UEKey<void*>, UHashMapNode<void*, NNet>, NNet, UEValue<NNet, UHashMapNode<void*, NNet> > >::quickAdd      -      -            
+            |
+            ---UHashSet<void*, void*, UEKey<void*>, UHashMapNode<void*, NNet>, NNet, UEValue<NNet, UHashMapNode<void*, NNet> > >::quickAdd
+               |          
+               |--1.49%--0x2336569b8
+               |          
+                --0.99%--0x1a4a35580
+                          0x21c87a460
+
+     3.64%  vivado   librdi_synth.so    [.] UHashSet<NInstC*, NInstC*, UEKey<NInstC*>, UHashSetNode<NInstC*>, NInstC*, UEValue<NInstC*, UHashSetNode<NInstC*> > >::quickAdd  -      -            
+            |
+            ---UHashSet<NInstC*, NInstC*, UEKey<NInstC*>, UHashSetNode<NInstC*>, NInstC*, UEValue<NInstC*, UHashSetNode<NInstC*> > >::quickAdd
+
+     3.47%  vivado   libtcmalloc.so.4   [.] operator new[]                                                                                                                   -      -            
+            |
+            ---operator new[]
+               |          
+               |--0.99%--UHashSet<void*, void*, UEKey<void*>, UHashMapNode<void*, NNet>, NNet, UEValue<NNet, UHashMapNode<void*, NNet> > >::quickAdd
+               |          |          
+               |           --0.66%--ConstProp::evaluate
+               |                     0xde465500
+               |          
+                --0.83%--ConstProp::evaluateCombinational
+                          ConstProp::evaluate
+                          0xde465500
+
+     3.31%  vivado   libtcmalloc.so.4   [.] tc_deletearray_nothrow                                                                                                           -      -            
+            |
+            ---tc_deletearray_nothrow
+               |          
+               |--2.48%--ConstProp::evaluateCombinational
+               |          ConstProp::evaluate
+               |          0xde465500
+               |          
+                --0.83%--ConstProp::~ConstProp
+
+     3.14%  vivado   libtcmalloc.so.4   [.] tcmalloc::CentralFreeList::FetchFromOneSpans                                                                                     -      -            
+            |
+            ---tcmalloc::CentralFreeList::FetchFromOneSpans
+               |          
+                --2.81%--tcmalloc::CentralFreeList::RemoveRange
+                          tcmalloc::ThreadCache::FetchFromCentralCache
+                          operator new[]
+                          |          
+                          |--0.99%--UHashSet<void*, void*, UEKey<void*>, UHashMapNode<void*, NNet>, NNet, UEValue<NNet, UHashMapNode<void*, NNet> > >::quickAdd
+                          |          
+                          |--0.99%--UHashSet<NNetC*, NNetC*, UEKey<NNetC*>, UHashMapNode<NNetC*, int>, int, UEValue<int, UHashMapNode<NNetC*, int> > >::quickAdd
+                          |          0x76866020
+                          |          
+                           --0.83%--UHashSet<NInstC*, NInstC*, UEKey<NInstC*>, UHashSetNode<NInstC*>, NInstC*, UEValue<NInstC*, UHashSetNode<NInstC*> > >::quickAdd
+
+     2.48%  vivado   librdi_common.so   [.] DD::DD                                                                                                                           -      -            
+            |
+            ---DD::DD
+               |          
+                --2.31%--ConstProp::evaluate
+                          0xde465500
+
+     2.31%  vivado   libtcmalloc.so.4   [.] tcmalloc::CentralFreeList::ReleaseToSpans                                                                                        -      -            
+            |
+            ---tcmalloc::CentralFreeList::ReleaseToSpans
+               tcmalloc::CentralFreeList::ReleaseListToSpans
+               tcmalloc::CentralFreeList::InsertRange
+               tcmalloc::ThreadCache::ReleaseToCentralCache
+               tcmalloc::ThreadCache::ListTooLong
+               tc_deletearray_nothrow
+               ConstProp::~ConstProp
+
+     1.32%  vivado   libtcmalloc.so.4   [.] tcmalloc::ThreadCache::ReleaseToCentralCache                                                                                     -      -            
+            |
+            ---tcmalloc::ThreadCache::ReleaseToCentralCache
+               tcmalloc::ThreadCache::ListTooLong
+               tc_deletearray_nothrow
+               ConstProp::~ConstProp
+
+     1.16%  vivado   librdi_common.so   [.] Cudd_SupportSizeUseGivenArray                                                                                                    -      -            
+            |
+            ---Cudd_SupportSizeUseGivenArray
+               0
+
+     0.83%  vivado   librdi_synth.so    [.] UHashSet<NNetC*, NNetC*, UEKey<NNetC*>, UHashMapNode<NNetC*, int>, int, UEValue<int, UHashMapNode<NNetC*, int> > >::quickAdd     -      -            
+            |
+            ---UHashSet<NNetC*, NNetC*, UEKey<NNetC*>, UHashMapNode<NNetC*, int>, int, UEValue<int, UHashMapNode<NNetC*, int> > >::quickAdd
+
+     0.66%  vivado   librdi_common.so   [.] Cudd_RecursiveDeref                                                                                                              -      -            
+            |
+            ---Cudd_RecursiveDeref
+
+     0.66%  vivado   librdi_common.so   [.] Cudd_Ref                                                                                                                         -      -            
+            |
+            ---Cudd_Ref
+
+     0.66%  vivado   librdi_synth.so    [.] ConstProp::isKeepHierInst                                                                                                        -      -            
+            |
+            ---ConstProp::isKeepHierInst
+
+     0.66%  vivado   librdi_synth.so    [.] NBaseModC::realModule                                                                                                            -      -            
+            |
+            ---NBaseModC::realModule
+
+     0.66%  vivado   librdi_synth.so    [.] TLibPin::function                                                                                                                -      -            
+            |
+            ---TLibPin::function
+               ConstProp::evaluate
+               0xde465500
+
+
+
+#
+# (Cannot load tips.txt file, please install perf!)
+#

@@ -1,0 +1,103 @@
+{
+  "FPGA_IO": false,
+  "barrier_commit": "16b2d8945f6e17385a4fe136eadd9597ee1ac4fc",
+  "exact_outputs_hashes_verified": true,
+  "full_system_fit": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "new_hardware_commit": "ec54e76b82918104c3aa601542ed5a1514de6611",
+  "production_admission": false,
+  "reason": "16-lane screen has lower measured threaded LUT, FF, and bridge-inclusive hostcycles than 8-lane screen; both full target/host finite oracles PASS. No wholeEC saving inferred.",
+  "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-barrier-banked-host-r4-20261113/result.json",
+  "result_sha256": "0c51ae563b54368cf5762f7303b261113bf67d2648efe65839553c15f5731b8f",
+  "same_scope_screens": {
+    "16": {
+      "plain": {
+        "Block RAM Tile": 0.0,
+        "CARRY8": 9276.0,
+        "CLB LUTs": 80214.0,
+        "CLB Registers": 45227.0,
+        "DSPs": 16.0,
+        "URAM": 0.0
+      },
+      "savings": {
+        "Block RAM Tile": 0.0,
+        "CARRY8": 8400.0,
+        "CLB LUTs": 62606.0,
+        "CLB Registers": 33047.0,
+        "DSPs": 0.0,
+        "URAM": 0.0
+      },
+      "threaded": {
+        "Block RAM Tile": 0.0,
+        "CARRY8": 876.0,
+        "CLB LUTs": 17608.0,
+        "CLB Registers": 12180.0,
+        "DSPs": 16.0,
+        "URAM": 0.0
+      },
+      "tokens": {
+        "Plain": {
+          "checked_outputs": 57323,
+          "digest": "6f89a7c37eefaf99",
+          "host_cycles_including_bridge_io": 606216,
+          "target_tokens": 8192
+        },
+        "Threaded": {
+          "checked_outputs": 57323,
+          "digest": "6f89a7c37eefaf99",
+          "host_cycles_including_bridge_io": 655368,
+          "target_tokens": 8192
+        }
+      }
+    },
+    "8": {
+      "plain": {
+        "Block RAM Tile": 0.0,
+        "CARRY8": 9164.0,
+        "CLB LUTs": 79857.0,
+        "CLB Registers": 44841.0,
+        "DSPs": 16.0,
+        "URAM": 0.0
+      },
+      "savings": {
+        "Block RAM Tile": 0.0,
+        "CARRY8": 8432.0,
+        "CLB LUTs": 61967.0,
+        "CLB Registers": 23688.0,
+        "DSPs": 0.0,
+        "URAM": 0.0
+      },
+      "threaded": {
+        "Block RAM Tile": 0.0,
+        "CARRY8": 732.0,
+        "CLB LUTs": 17890.0,
+        "CLB Registers": 21153.0,
+        "DSPs": 16.0,
+        "URAM": 0.0
+      },
+      "tokens": {
+        "Plain": {
+          "checked_outputs": 57323,
+          "digest": "6f89a7c37eefaf99",
+          "host_cycles_including_bridge_io": 606216,
+          "target_tokens": 8192
+        },
+        "Threaded": {
+          "checked_outputs": 57323,
+          "digest": "6f89a7c37eefaf99",
+          "host_cycles_including_bridge_io": 786440,
+          "target_tokens": 8192
+        }
+      }
+    }
+  },
+  "schema": "ec-round161-adopted-barrier-screen/1",
+  "selected_next_geometry": {
+    "banks": 16,
+    "lanes": 16,
+    "slots": 256
+  },
+  "source_binding": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/common-stats-bank-r2-20261113/source-binding.json",
+  "source_binding_sha256": "1b43d4598c1b8aef67100be0df760b7f82cf877a05e8cbeba59b1b935ea7e663",
+  "utc": "2026-11-12T17:25:45.077291+00:00"
+}

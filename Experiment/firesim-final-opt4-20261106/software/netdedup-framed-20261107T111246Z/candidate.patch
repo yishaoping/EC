@@ -1,0 +1,59 @@
+--- a/server/encoder.c
++++ b/server/encoder.c
+@@ -822,6 +822,7 @@
+   int fd = args->fd;
+   int fd_out = create_output_file(conf->outfile);
+   int r;
++  size_t ec_remaining = stats.total_input;
+ 
+   chunk_t *temp = NULL;
+   chunk_t *chunk = NULL;
+@@ -876,10 +877,12 @@
+     //Read data until buffer full
+     size_t bytes_read=0;
+     while(bytes_read < MAXBUF) {
+-#ifdef ENABLE_PARSEC_UPTCPIP
+-        r = uptcp_recv(fd, chunk->uncompressed_data.ptr+bytes_left+bytes_read, MAXBUF-bytes_read, 0);
+-#else
+-        r = recv(fd, chunk->uncompressed_data.ptr+bytes_left+bytes_read, MAXBUF-bytes_read, 0);
++      if (ec_remaining == 0) break;
++      size_t ec_want = MAXBUF-bytes_read < ec_remaining ? MAXBUF-bytes_read : ec_remaining;
++#ifdef ENABLE_PARSEC_UPTCPIP
++        r = uptcp_recv(fd, chunk->uncompressed_data.ptr+bytes_left+bytes_read, ec_want, 0);
++#else
++        r = recv(fd, chunk->uncompressed_data.ptr+bytes_left+bytes_read, ec_want, 0);
+ #endif
+         if(r<0) switch(errno) {
+           case EAGAIN:
+@@ -899,7 +902,8 @@
+           default:
+             EXIT_TRACE("I/O error: Unrecognized error\n");break;
+         }
+-        if(r==0) break;
++        if(r==0) { EXIT_TRACE("Truncated declared network payload\n"); }
++        ec_remaining -= r;
+         bytes_read += r;
+     }
+     //No data left over from last iteration and also nothing new read in, simply clean up and quit
+@@ -1472,12 +1476,15 @@
+   listen_fd = init_server_socket(&fd);
+   printf("[netdedup.server]: accept client\n");
+ 
+-#ifdef ENABLE_PARSEC_UPTCPIP
+-  if (uptcp_recv(fd, &bytes_input, sizeof(size_t), 0) < 0) {
+-#else
+-  if (recv(fd, &bytes_input, sizeof(size_t), 0) < 0) {
+-#endif
+-       EXIT_TRACE("recv() size failed: %s\n", strerror(errno));
++  size_t ec_header_bytes = 0;
++  while (ec_header_bytes < sizeof(bytes_input)) {
++#ifdef ENABLE_PARSEC_UPTCPIP
++    ssize_t ec_n = uptcp_recv(fd, (char *)&bytes_input + ec_header_bytes, sizeof(bytes_input) - ec_header_bytes, 0);
++#else
++    ssize_t ec_n = recv(fd, (char *)&bytes_input + ec_header_bytes, sizeof(bytes_input) - ec_header_bytes, 0);
++#endif
++    if (ec_n <= 0) EXIT_TRACE("Incomplete network length header\n");
++    ec_header_bytes += ec_n;
+   }	
+ 
+ #ifdef ENABLE_STATISTICS

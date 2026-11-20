@@ -1,0 +1,25 @@
+# Opt4 structural storage execution evidence — 20261111T042537Z
+
+Function/cycle baseline remains `8491167d`; no new architectural functionality, no frozen Tag edits. Native remains paused; no FPGA operation in this work. All future deployment is21-only.
+
+- Latest complete whole post-opt remains **3,215,683 LUT /92,789 CARRY8 /195 DSP** (8da24a26). U2801,303,680LUT → **1,912,003 LUT excess**. Live9ae9a7fc still DUT synth, no own final resource report; do not subtract local gains and claim FIT. Original controller1737960/start16778336 and worker1886276/start16844839 preserved.
+- Actual fixed geometry DCache ownership storage screen: **305,778→15,888 LUT**, saving289,890; FF74,752→512, CARRY8/DSP0. Generated arbitrary512word reset/mask transition SAT and mutation passed;8192cycle146bit8reader pre/post edge reset/collision/model check passed. This is a generic probe, not complete DCache/whole savings.
+- New actual independent source **2210930f**, source ID548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c. Replaces only four full-width ownership arrays; retains50originalreads, exactwriteguards and full512x32generation observation. Source reversal to e0 and inherited scanner-only delta to frozen verified; actual changedDCache typecheck passed. Actual ChiselArbiter2 write-coalescing/reset512word induction SAT passed, negative mutation rejected. Not full-DUT formal or production admission.
+- Source-aware area now runs at actual256x2geometry,12variable readers, full512generation taps and original field aliases. Its8192cycle allgeneration observation comparison already passed. Actual area pending. Automatic `dcache-owner-system-r2` waits actual observed gain>=75,000LUT plus source and arbiter proofs, then parameters/origins/elaboration/GoldenGate/seven-file ABI. No whole build admission by generic probe.
+- Newly completed **27f7e7d6** complete address: **841,782 LUT /55,418 CARRY8 /0DSP**, parent9ae990,905LUT →149,123LUT saved. Full32 sequence bits and90asynchronous readers retained with45two-read replicas; full frozen6144cycle52output and independent reset regression passed. Not additive with00847dc2 gain.
+- New combination **e21194b2**, source ID6bd845f54a3e213f29c6faa462d8599dbf7ae6b9749363bff147a33a4bb60b30, composes exact27storage with00847dc2reset-correct update sharing atop e0. Source reconstruction and byte-identical helper proof checked; full frozen comparison/modulemap actually submitted to independent service. Not production-selected until actual combined result.
+- **1a571775** static retirement candidate passed localSAT and full6144cycle52output comparison; complete module map running.7e68 retirement read alternative completed1,072,174LUT and is excluded for regression in area. The previous one-hot latency-read candidatec4b5820d is83,794→95,728LUT and excluded.
+- **e0c3737f** combined proof/GG/7fileABI/13exactpairedsoftwareprofiles ready; wholeCAD remains DEFERRED_EXISTING_WHOLE_CAD. This does not mean next whole synthesis has started. Real9aeNOTFIT report→next candidate selection→single whole synth; FIT→physical implementation/timing/DRC/bitstream/21-onlyruntime remains active. Larger proven candidates may supersede before launch, never a live CAD.
+
+Permission/scope failures and proof/controller syntax recoveries retained under versioned job/log directories. Generic probe used a stale worktree binding then unsupported systemVerilator; corrected separately to source-bound e0 and installedVerilator5 while reusing accepted SAT/emission. Source validation initially required frozen byteequality and correctly rejected inherited scanner-only difference; r3 explicitly reconstructs that exact inherited delta. Arbiter proof syntax failure retained, r3 proof passed. No failed run was marked passed and no live input changed.
+
+Persistent entries:
+
+- `/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/state.json` — actual supervisor round/PID/start/boot. Worker rounds21completed and22active at audit, not mere service status.
+- `/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-fit-bucket-tag-cad-state.json` — actual whole phase/resources.
+- `/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-fit-dcache-owner-observed-map-r1-state.json` — measured observed-storage area result, not generic saving.
+- `/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-fit-dcache-owner-system-r2-state.json` — automatic conditional wholeRTL preparation.
+- `/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-fit-address-update-sequence-r1-state.json` — new composed address regression/map.
+- `/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/campaign-policy.json` — scope/selection/handoff.
+
+No certified Opt4bitstream, no Opt4FPGA result. Resume by matchingboot_id/PID/start_ticks; adopt live services without restart or input changes. Accepted proofs/results retained; failures use independent recovery versions. Current owner candidate and new address combination are independent; composing them needs another explicit source-bound composition receipt. Full observations cannot be dropped for area.

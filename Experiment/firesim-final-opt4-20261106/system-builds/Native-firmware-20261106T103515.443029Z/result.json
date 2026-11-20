@@ -1,0 +1,72 @@
+{
+  "build_script_sha256": "f016c0e72d717e3dda6fa4627a18c33e8eb3e21b2c5bb7d2e74f2f64d7adab9e",
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/builds/Native-firmware-20261106T103515.443029Z",
+        "PLATFORM=generic",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "FW_PAYLOAD_PATH=/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/builds/Native-kernel-20261106T102944.621231Z/arch/riscv/boot/Image",
+        "FW_PAYLOAD_FDT_PATH=/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-20261106T102421.238493Z/Native.dtb"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/opensbi"
+    }
+  ],
+  "configuration": "Native",
+  "content_checks": {
+    "fdt": {
+      "bytes": 7988,
+      "exact_bytes_present": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-20261106T102421.238493Z/Native.dtb",
+      "payload_offset": 1712,
+      "sha256": "c53fb635990c2ade6257a10dd1c8fddf03546ece8615b7a11a4bc5073c43b735"
+    },
+    "kernel": {
+      "bytes": 23913472,
+      "exact_bytes_present": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/builds/Native-kernel-20261106T102944.621231Z/arch/riscv/boot/Image",
+      "payload_offset": 2097152,
+      "sha256": "84807ecd6d3b47065598ebb7713553bc93dfc78e98928c8ff2b9b15ebd9535c7"
+    }
+  },
+  "error": null,
+  "fpga_execution": "NOT_RUN",
+  "input_files": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/builds/Native-kernel-20261106T102944.621231Z/arch/riscv/boot/Image": "84807ecd6d3b47065598ebb7713553bc93dfc78e98928c8ff2b9b15ebd9535c7",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-20261106T102421.238493Z/Native.dtb": "c53fb635990c2ade6257a10dd1c8fddf03546ece8615b7a11a4bc5073c43b735",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-build.json": "9a3f5287b60a9ec72e4c29eb9c6edc867f1110487998bee19e19f39b14c52948",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/kernel-build.json": "4ed88cd7ead8fba91ef154b2a89f0eaf352124546d32622bb1441ab8d200e7db",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/linux-profile.json": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1"
+  },
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/builds/Native-firmware-20261106T103515.443029Z",
+  "outputs": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/builds/Native-firmware-20261106T103515.443029Z/platform/generic/firmware/fw_payload.bin": "46de79ada783ac859360db7b3cd9ab97bc8e51cc78c7df989cdbaa4f66023937",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/builds/Native-firmware-20261106T103515.443029Z/platform/generic/firmware/fw_payload.elf": "e7e5b0ea6247fb0b20c31b6bb9fbbfb65233acf39bc40b335f39dfc3e4586c52"
+  },
+  "phase": "firmware",
+  "resources": {
+    "available_memory_gib": 224.08390426635742,
+    "free_disk_gib": 46.56211853027344,
+    "host_cpus": 256,
+    "jobs": 2,
+    "load_1min": 36.36962890625,
+    "make_jobs": 1,
+    "niceness": 15
+  },
+  "returncode": 0,
+  "runtime_validation": "NOT_RUN",
+  "schema": "ec-firesim-system-build/1",
+  "source_id": "ba806bac1c35a13384eb18ea30f828503a7469f67b14abe4318215ec4b542ad4",
+  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/opensbi",
+  "tool_hashes": {
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ld": "10424f5eeafd5806fbca7b88bdae336c202be5a9fa332c1a662a8d0a7ae62fba",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objcopy": "2a38397dae082b022b6370eb9fbfac9c337b95433fc89cb35d384516a0997f1e"
+  },
+  "wall_seconds": 4.655959200114012
+}

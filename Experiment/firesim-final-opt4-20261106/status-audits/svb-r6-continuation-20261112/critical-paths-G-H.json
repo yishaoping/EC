@@ -1,0 +1,733 @@
+{
+  "functional_baseline": "8491167d",
+  "fpga_access": false,
+  "observations": [
+    {
+      "strategy": "G-postroute-critical-routing",
+      "negative_setup_paths": 39,
+      "group_counts": {
+        "GTYE4_CHANNEL_TXOUTCLK[3]_3": 39
+      },
+      "source_counts": {
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/read_ptr_reg[3]/C": 1,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg/C": 3,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep/C": 2,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_c_e4_inst/CORECLK": 2,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep__0/C": 2,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/counter_reg[0]/C": 2,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tvalid_reg_lower_reg/C": 5,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/core_reset_n_o_reg_rep__2/C": 6,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_cc_output_mux_blk/output_fifo_read_ptr_reg/C": 1,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C": 14,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_valid_reg_reg/C": 1
+      },
+      "drc_warnings": {
+        "NTCN-8": 16,
+        "PDCN-1569": 10,
+        "REQP-1858": 22,
+        "RTSTAT-10": 1
+      },
+      "paths": [
+        {
+          "slack_ns": -0.023,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/read_ptr_reg[3]/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_cc_output_mux_blk/m_axis_cc_tdata_first_reg_reg[125]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.847ns  (logic 0.155ns (8.392%)  route 1.692ns (91.608%))",
+          "clock_skew": "-0.155ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.023,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cq_intfc_mod/core_cq_tdata_reg_upper_reg[108]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.775ns  (logic 0.116ns (6.535%)  route 1.659ns (93.465%))",
+          "clock_skew": "-0.141ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.023,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cq_intfc_mod/core_cq_tdata_reg_upper_reg[113]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.775ns  (logic 0.116ns (6.535%)  route 1.659ns (93.465%))",
+          "clock_skew": "-0.141ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.021,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cq_intfc_mod/core_cq_tdata_reg_upper_reg[203]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.787ns  (logic 0.116ns (6.491%)  route 1.671ns (93.509%))",
+          "clock_skew": "-0.128ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.021,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rc_intfc_mod/core_rc_tuser_reg_lower_reg[27]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.778ns  (logic 0.079ns (4.443%)  route 1.699ns (95.557%))",
+          "clock_skew": "-0.136ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.02,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_c_e4_inst/CORECLK",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cq_intfc_mod/core_cq_tdata_reg_upper_reg[179]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.949ns  (logic 0.621ns (31.862%)  route 1.328ns (68.138%))",
+          "clock_skew": "-0.050ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.02,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep__0/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[220]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.835ns  (logic 0.224ns (12.207%)  route 1.611ns (87.793%))",
+          "clock_skew": "-0.164ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.019,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep__0/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[24]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.834ns  (logic 0.225ns (12.268%)  route 1.609ns (87.732%))",
+          "clock_skew": "-0.164ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.017,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/counter_reg[0]/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[63]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "2.059ns  (logic 0.177ns (8.596%)  route 1.882ns (91.404%))",
+          "clock_skew": "0.063ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.016,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tvalid_reg_lower_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[49]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.839ns  (logic 0.118ns (6.417%)  route 1.721ns (93.583%))",
+          "clock_skew": "-0.156ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.016,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tvalid_reg_lower_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[128]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.843ns  (logic 0.226ns (12.263%)  route 1.617ns (87.737%))",
+          "clock_skew": "-0.152ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.015,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tvalid_reg_lower_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[23]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.819ns  (logic 0.182ns (10.005%)  route 1.637ns (89.995%))",
+          "clock_skew": "-0.175ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.015,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/core_reset_n_o_reg_rep__2/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[66]/R",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.812ns  (logic 0.079ns (4.360%)  route 1.733ns (95.640%))",
+          "clock_skew": "-0.083ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.015,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/core_reset_n_o_reg_rep__2/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[68]/R",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.812ns  (logic 0.079ns (4.360%)  route 1.733ns (95.640%))",
+          "clock_skew": "-0.083ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.015,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_cc_output_mux_blk/output_fifo_read_ptr_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_cc_output_mux_blk/out_data_o_reg[128]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.825ns  (logic 0.201ns (11.014%)  route 1.624ns (88.986%))",
+          "clock_skew": "-0.168ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.013,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_c_e4_inst/CORECLK",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cq_intfc_mod/core_cq_tdata_reg_lower_reg[142]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.997ns  (logic 0.609ns (30.496%)  route 1.388ns (69.504%))",
+          "clock_skew": "0.006ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tvalid_reg_lower_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[106]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.823ns  (logic 0.118ns (6.473%)  route 1.705ns (93.527%))",
+          "clock_skew": "-0.168ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[196]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.776ns  (logic 0.229ns (12.894%)  route 1.547ns (87.106%))",
+          "clock_skew": "-0.129ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[203]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.776ns  (logic 0.229ns (12.894%)  route 1.547ns (87.106%))",
+          "clock_skew": "-0.129ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[204]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.776ns  (logic 0.229ns (12.894%)  route 1.547ns (87.106%))",
+          "clock_skew": "-0.129ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[216]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.776ns  (logic 0.229ns (12.894%)  route 1.547ns (87.106%))",
+          "clock_skew": "-0.129ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[194]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.705ns  (logic 0.229ns (13.431%)  route 1.476ns (86.569%))",
+          "clock_skew": "-0.201ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[225]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.705ns  (logic 0.229ns (13.431%)  route 1.476ns (86.569%))",
+          "clock_skew": "-0.201ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[226]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.705ns  (logic 0.229ns (13.431%)  route 1.476ns (86.569%))",
+          "clock_skew": "-0.201ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/core_reset_n_o_reg_rep__2/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cq_intfc_mod/core_cq_tdata_reg_lower_reg[46]/R",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.674ns  (logic 0.079ns (4.719%)  route 1.595ns (95.281%))",
+          "clock_skew": "-0.218ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.009,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tvalid_reg_lower_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[242]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.839ns  (logic 0.206ns (11.202%)  route 1.633ns (88.798%))",
+          "clock_skew": "-0.149ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.009,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/core_reset_n_o_reg_rep__2/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[83]/R",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.799ns  (logic 0.079ns (4.391%)  route 1.720ns (95.609%))",
+          "clock_skew": "-0.090ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.009,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/core_reset_n_o_reg_rep__2/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[84]/R",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.799ns  (logic 0.079ns (4.391%)  route 1.720ns (95.609%))",
+          "clock_skew": "-0.090ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.008,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[175]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.699ns  (logic 0.229ns (13.479%)  route 1.470ns (86.521%))",
+          "clock_skew": "-0.202ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.008,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[224]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.699ns  (logic 0.229ns (13.479%)  route 1.470ns (86.521%))",
+          "clock_skew": "-0.202ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.008,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[231]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.699ns  (logic 0.229ns (13.479%)  route 1.470ns (86.521%))",
+          "clock_skew": "-0.202ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.007,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[209]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.705ns  (logic 0.229ns (13.431%)  route 1.476ns (86.569%))",
+          "clock_skew": "-0.195ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.007,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rc_intfc_mod/core_rc_tdata_reg_lower_reg[96]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.757ns  (logic 0.079ns (4.496%)  route 1.678ns (95.504%))",
+          "clock_skew": "-0.142ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.006,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[214]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.661ns  (logic 0.229ns (13.787%)  route 1.432ns (86.213%))",
+          "clock_skew": "-0.238ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.004,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_valid_reg_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/fifo_occupancy_reg[3]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.956ns  (logic 0.342ns (17.485%)  route 1.614ns (82.515%))",
+          "clock_skew": "-0.027ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.003,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/core_reset_n_o_reg_rep__2/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cq_intfc_mod/core_cq_tdata_reg_lower_reg[109]/R",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.704ns  (logic 0.079ns (4.636%)  route 1.625ns (95.364%))",
+          "clock_skew": "-0.179ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.003,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/counter_reg[0]/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[129]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "2.009ns  (logic 0.204ns (10.154%)  route 1.805ns (89.846%))",
+          "clock_skew": "0.027ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.002,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[163]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.748ns  (logic 0.229ns (13.101%)  route 1.519ns (86.899%))",
+          "clock_skew": "-0.147ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.002,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[169]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.748ns  (logic 0.229ns (13.101%)  route 1.519ns (86.899%))",
+          "clock_skew": "-0.147ns (DCD - SCD + CPR)"
+        }
+      ]
+    },
+    {
+      "strategy": "H-postroute-placement-critical-cell",
+      "negative_setup_paths": 45,
+      "group_counts": {
+        "GTYE4_CHANNEL_TXOUTCLK[3]_3": 45
+      },
+      "source_counts": {
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_c_e4_inst/CORECLK": 2,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep__0/C": 2,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/counter_reg[0]/C": 2,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tvalid_reg_lower_reg/C": 5,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/core_reset_n_o_reg_rep__2/C": 6,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_cc_output_mux_blk/output_fifo_read_ptr_reg/C": 1,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C": 14,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_replica/C": 3,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep/C": 9,
+        "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_valid_reg_reg/C": 1
+      },
+      "drc_warnings": {
+        "NTCN-8": 16,
+        "PDCN-1569": 10,
+        "REQP-1858": 22,
+        "RTSTAT-10": 1
+      },
+      "paths": [
+        {
+          "slack_ns": -0.02,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_c_e4_inst/CORECLK",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cq_intfc_mod/core_cq_tdata_reg_upper_reg[179]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.949ns  (logic 0.621ns (31.862%)  route 1.328ns (68.138%))",
+          "clock_skew": "-0.050ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.02,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep__0/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[220]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.835ns  (logic 0.224ns (12.207%)  route 1.611ns (87.793%))",
+          "clock_skew": "-0.164ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.019,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep__0/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[24]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.834ns  (logic 0.225ns (12.268%)  route 1.609ns (87.732%))",
+          "clock_skew": "-0.164ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.017,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/counter_reg[0]/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[63]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "2.059ns  (logic 0.177ns (8.596%)  route 1.882ns (91.404%))",
+          "clock_skew": "0.063ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.016,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tvalid_reg_lower_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[49]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.839ns  (logic 0.118ns (6.417%)  route 1.721ns (93.583%))",
+          "clock_skew": "-0.156ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.016,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tvalid_reg_lower_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[128]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.843ns  (logic 0.226ns (12.263%)  route 1.617ns (87.737%))",
+          "clock_skew": "-0.152ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.015,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tvalid_reg_lower_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[23]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.819ns  (logic 0.182ns (10.005%)  route 1.637ns (89.995%))",
+          "clock_skew": "-0.175ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.015,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/core_reset_n_o_reg_rep__2/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[66]/R",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.812ns  (logic 0.079ns (4.360%)  route 1.733ns (95.640%))",
+          "clock_skew": "-0.083ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.015,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/core_reset_n_o_reg_rep__2/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[68]/R",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.812ns  (logic 0.079ns (4.360%)  route 1.733ns (95.640%))",
+          "clock_skew": "-0.083ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.015,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_cc_output_mux_blk/output_fifo_read_ptr_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_cc_output_mux_blk/out_data_o_reg[128]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.825ns  (logic 0.201ns (11.014%)  route 1.624ns (88.986%))",
+          "clock_skew": "-0.168ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.013,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_c_e4_inst/CORECLK",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cq_intfc_mod/core_cq_tdata_reg_lower_reg[142]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.997ns  (logic 0.609ns (30.496%)  route 1.388ns (69.504%))",
+          "clock_skew": "0.006ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tvalid_reg_lower_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[106]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.823ns  (logic 0.118ns (6.473%)  route 1.705ns (93.527%))",
+          "clock_skew": "-0.168ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[196]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.776ns  (logic 0.229ns (12.894%)  route 1.547ns (87.106%))",
+          "clock_skew": "-0.129ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[203]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.776ns  (logic 0.229ns (12.894%)  route 1.547ns (87.106%))",
+          "clock_skew": "-0.129ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[204]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.776ns  (logic 0.229ns (12.894%)  route 1.547ns (87.106%))",
+          "clock_skew": "-0.129ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[216]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.776ns  (logic 0.229ns (12.894%)  route 1.547ns (87.106%))",
+          "clock_skew": "-0.129ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[194]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.705ns  (logic 0.229ns (13.431%)  route 1.476ns (86.569%))",
+          "clock_skew": "-0.201ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[225]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.705ns  (logic 0.229ns (13.431%)  route 1.476ns (86.569%))",
+          "clock_skew": "-0.201ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[226]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.705ns  (logic 0.229ns (13.431%)  route 1.476ns (86.569%))",
+          "clock_skew": "-0.201ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.012,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/core_reset_n_o_reg_rep__2/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cq_intfc_mod/core_cq_tdata_reg_lower_reg[46]/R",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.674ns  (logic 0.079ns (4.719%)  route 1.595ns (95.281%))",
+          "clock_skew": "-0.218ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.011,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_replica/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cq_intfc_mod/core_cq_tdata_reg_upper_reg[108]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.758ns  (logic 0.113ns (6.428%)  route 1.645ns (93.572%))",
+          "clock_skew": "-0.146ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.011,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_replica/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cq_intfc_mod/core_cq_tdata_reg_upper_reg[113]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.758ns  (logic 0.113ns (6.428%)  route 1.645ns (93.572%))",
+          "clock_skew": "-0.146ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.011,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rc_intfc_mod/core_rc_tdata_reg_lower_reg[96]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.761ns  (logic 0.079ns (4.486%)  route 1.682ns (95.514%))",
+          "clock_skew": "-0.142ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.009,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_replica/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cq_intfc_mod/core_cq_tdata_reg_upper_reg[203]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.770ns  (logic 0.113ns (6.384%)  route 1.657ns (93.616%))",
+          "clock_skew": "-0.133ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.009,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tvalid_reg_lower_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[242]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.839ns  (logic 0.206ns (11.202%)  route 1.633ns (88.798%))",
+          "clock_skew": "-0.149ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.009,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/core_reset_n_o_reg_rep__2/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[83]/R",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.799ns  (logic 0.079ns (4.391%)  route 1.720ns (95.609%))",
+          "clock_skew": "-0.090ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.009,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/core_reset_n_o_reg_rep__2/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[84]/R",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.799ns  (logic 0.079ns (4.391%)  route 1.720ns (95.609%))",
+          "clock_skew": "-0.090ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.008,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[175]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.699ns  (logic 0.229ns (13.479%)  route 1.470ns (86.521%))",
+          "clock_skew": "-0.202ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.008,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[224]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.699ns  (logic 0.229ns (13.479%)  route 1.470ns (86.521%))",
+          "clock_skew": "-0.202ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.008,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[231]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.699ns  (logic 0.229ns (13.479%)  route 1.470ns (86.521%))",
+          "clock_skew": "-0.202ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.007,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[209]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.705ns  (logic 0.229ns (13.431%)  route 1.476ns (86.569%))",
+          "clock_skew": "-0.195ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.006,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[214]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.661ns  (logic 0.229ns (13.787%)  route 1.432ns (86.213%))",
+          "clock_skew": "-0.238ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.004,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_valid_reg_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/fifo_occupancy_reg[3]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.956ns  (logic 0.342ns (17.485%)  route 1.614ns (82.515%))",
+          "clock_skew": "-0.027ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.004,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rc_intfc_mod/core_rc_tdata_reg_lower_reg[183]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.720ns  (logic 0.079ns (4.593%)  route 1.641ns (95.407%))",
+          "clock_skew": "-0.177ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.004,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rc_intfc_mod/core_rc_tdata_reg_lower_reg[194]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.721ns  (logic 0.079ns (4.590%)  route 1.642ns (95.410%))",
+          "clock_skew": "-0.177ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.004,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rc_intfc_mod/core_rc_tdata_reg_lower_reg[197]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.720ns  (logic 0.079ns (4.593%)  route 1.641ns (95.407%))",
+          "clock_skew": "-0.177ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.004,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rc_intfc_mod/core_rc_tdata_reg_lower_reg[199]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.721ns  (logic 0.079ns (4.590%)  route 1.642ns (95.410%))",
+          "clock_skew": "-0.177ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.004,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rc_intfc_mod/core_rc_tdata_reg_lower_reg[200]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.720ns  (logic 0.079ns (4.593%)  route 1.641ns (95.407%))",
+          "clock_skew": "-0.177ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.004,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rc_intfc_mod/core_rc_tdata_reg_lower_reg[211]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.721ns  (logic 0.079ns (4.590%)  route 1.642ns (95.410%))",
+          "clock_skew": "-0.177ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.004,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rc_intfc_mod/core_rc_tdata_reg_lower_reg[226]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.720ns  (logic 0.079ns (4.593%)  route 1.641ns (95.407%))",
+          "clock_skew": "-0.177ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.004,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/user_clk_en_int_reg_rep/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rc_intfc_mod/core_rc_tdata_reg_lower_reg[234]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.721ns  (logic 0.079ns (4.590%)  route 1.642ns (95.410%))",
+          "clock_skew": "-0.177ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.003,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/core_reset_n_o_reg_rep__2/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cq_intfc_mod/core_cq_tdata_reg_lower_reg[109]/R",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.704ns  (logic 0.079ns (4.636%)  route 1.625ns (95.364%))",
+          "clock_skew": "-0.179ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.003,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/counter_reg[0]/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[129]/D",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "2.009ns  (logic 0.204ns (10.154%)  route 1.805ns (89.846%))",
+          "clock_skew": "0.027ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.002,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[163]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.748ns  (logic 0.229ns (13.101%)  route 1.519ns (86.899%))",
+          "clock_skew": "-0.147ns (DCD - SCD + CPR)"
+        },
+        {
+          "slack_ns": -0.002,
+          "source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_upper_reg/C",
+          "destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[169]/CE",
+          "group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+          "data_delay": "1.748ns  (logic 0.229ns (13.101%)  route 1.519ns (86.899%))",
+          "clock_skew": "-0.147ns (DCD - SCD + CPR)"
+        }
+      ]
+    }
+  ]
+}

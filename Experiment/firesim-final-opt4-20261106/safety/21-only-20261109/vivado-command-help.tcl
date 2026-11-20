@@ -1,0 +1,4 @@
+open_hw_manager
+help get_hw_devices
+close_hw_manager
+exit

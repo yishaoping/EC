@@ -1,0 +1,8 @@
+{
+  "schema": "ec-service-job-spec/1",
+  "name": "opt4-fit-modules",
+  "argv": ["runuser", "-u", "guozh", "--", "/usr/bin/python3", "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/prepare_opt4_fit_modules.py"],
+  "inputs": ["/data1/gzh/EC/firesim/final-opt4-20261106/scripts/prepare_opt4_fit_modules.py"],
+  "legacy_states": ["/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-fit-modules-state.json"],
+  "checkpoint_policy": "Independent original and fit source snapshots and isolated Scala class outputs; no full DUT build, no frozen source mutation, no FPGA actions"
+}

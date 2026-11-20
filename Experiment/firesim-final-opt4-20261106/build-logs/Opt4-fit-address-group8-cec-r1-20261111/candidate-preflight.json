@@ -1,0 +1,34 @@
+{
+  "available_memory_gib": 384.4881935119629,
+  "broker_receipt_issue": "Both earlier worker states preserve failure evidence, but their systemd units failed appending CPU_JOB_EXITED because the shared ledger is root-owned mode 0644. This candidate does not modify the broker or ledger.",
+  "formal_admission": false,
+  "fpga_access": false,
+  "free_disk_gib": 380.31467056274414,
+  "full_dut_synthesis": false,
+  "hardware_commit": "32837b0b1987091eb86e4157ec0c6360f5bde58b",
+  "input_manifest_sha256": "3b30a492e42dbef22e6d8e6e22cec1ef02f8ad478c8b4c1ac2ad2867a5cfd868",
+  "max_threads": 8,
+  "minimum_disk_gib": 40,
+  "minimum_memory_gib": 48,
+  "prior_failures": [
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-group8-r1-20261111/proof/sat-equivalent-attempt-1.log",
+      "outcome": "300-second Yosys SAT timeout; 17,045 variables, 46,986 clauses; no counterexample",
+      "sha256": "b1abe7d9f8ec9303d3112cfaaf434c86d6ea59ce32100070b0f77ba76f49e87d"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-group8-proofsplit-r1-20261111/proof/sat-equivalent-g0-attempt-1.log",
+      "outcome": "300-second per-granule Yosys SAT timeout; 8,879 variables, 24,648 clauses; no counterexample",
+      "sha256": "0cd72b53d1986352789d413810debb0cc965e826cf4449fd4fee92f339969f08"
+    }
+  ],
+  "production_selected": false,
+  "proof_limits": [
+    "ABC CEC, topology SAT, 8192-vector actual-size boundary test, and 6144-cycle complete-module comparison are still pending.",
+    "No full-DUT formal equivalence or whole-system FIT claim."
+  ],
+  "recovery": "Synthesize one candidate and reference network per granule and use ABC combinational equivalence checking. Wrappers gate invalid source counts to zero on both sides; the theorem covers every legal count, key and query.",
+  "schema": "ec-opt4-group8-cec-preflight/1",
+  "source_id": "ac8e2b03492d7de78ab5ad94d2383827498f530ee3daf40ef4d2184cc3081706",
+  "status": "BOUND_NO_CEC_VERIFICATION_YET"
+}

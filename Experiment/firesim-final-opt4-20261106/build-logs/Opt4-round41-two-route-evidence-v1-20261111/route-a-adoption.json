@@ -1,0 +1,490 @@
+{
+  "full_canneal_observer_r3": {
+    "child_live": true,
+    "controller_live": true,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-full-gg-external-observer-r3-state.json",
+    "value": {
+      "child": {
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 260705,
+        "start_ticks": "21241870"
+      },
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "heartbeat_last_row": "1735379, 3354",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "host_wall_seconds": 3361.1448097070097,
+      "owned_log_bytes": 1355488910,
+      "pid": 260694,
+      "process_exited": false,
+      "run_directory": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-external-observer-r3-20261111/canneal-observer-on",
+      "schema": "ec-gg-external-observer-state/1",
+      "start_ticks": "21241818",
+      "started_utc": "2026-11-11T12:38:17.790119+00:00",
+      "status": "RUNNING_CANNEAL_OBSERVER_ON",
+      "updated_utc": "2026-11-11T13:34:19.412762+00:00"
+    }
+  },
+  "full_mcrams_same_environment": {
+    "child_live": true,
+    "controller_live": true,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-route-a-full-mcrams-parity-round38-v1-state.json",
+    "value": {
+      "child": {
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 93836,
+        "start_ticks": "20969405"
+      },
+      "formal_fpga_sample": false,
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "heartbeat_last_row": "1272945, 6090",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "host_wall_seconds": 6091.061982474988,
+      "owned_log_bytes": 1003999116,
+      "pid": 93824,
+      "process_exited": false,
+      "schema": "ec-opt4-full-mcrams-finite-parity-run/1",
+      "start_ticks": "20969395",
+      "started_utc": "2026-11-11T11:52:53.617708+00:00",
+      "status": "RUNNING_SAME_ELF_FULL_MCRAMS_CAPTURED_PARITY",
+      "updated_utc": "2026-11-11T13:34:24.681264+00:00"
+    }
+  },
+  "full_svb_payload_dispatch": {
+    "child_live": false,
+    "controller_live": false,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-full-gg-external-observer-r5-dispatch-state.json",
+    "value": {
+      "fpga_access": false,
+      "predecessor": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-external-observer-r3-20261111/result.json",
+      "schema": "ec-gg-external-observer-r5-dispatch/1",
+      "status": "WAITING_PREDECESSOR_COMPLETION",
+      "updated_utc": "2026-11-11T13:30:51.645834+00:00"
+    }
+  },
+  "full_svb_payload_r5": {
+    "child_live": false,
+    "controller_live": false,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-full-gg-external-observer-r5-state.json",
+    "value": {
+      "child": {},
+      "command": [
+        "/nix/store/zxw41nfy4gjlzd31ly7q6mkv4vkybx15-clang-wrapper-16.0.6/bin/clang++",
+        "-L/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/external-libs",
+        "-Wl,-rpath,/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/external-libs",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/testchip_tsi.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/blockdev.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/dromajo.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/groundtest.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/simplenic.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/tracerv.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/trace_tracker.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/tracerv_dwarf.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/tracerv_elf.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/tracerv_processing.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/tsibridge.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/uart.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/firesim_tsi.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/autocounter.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/clock.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/cpu_managed_stream.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/fased_memory_timing_model.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/fpga_managed_stream.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/heartbeat.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/loadmem.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/master.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/peek_poke.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/plusargs.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/reset_pulse.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/synthesized_assertions.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/synthesized_prints.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/termination.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/address_map.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/bridge_driver.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/simif.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/simulation.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/stream_engine.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/systematic_scheduler.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/timing.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/widget.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/widget_registry.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/dpi.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/mm.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/mmio.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/simif_emul.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/entry.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/simif_emul_all.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/firesim_top.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/verilated.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/verilated_dpi.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/verilated_vpi.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/verilated_timing.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/verilated_threads.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-external-observer-r5-20261111/observer_main.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4.csrc/Vemul__ALL.a",
+        "-L/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/external-libs",
+        "-Wl,-rpath,/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/external-libs",
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/lib/libfesvr.a",
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/lib/libdromajo_cosim.a",
+        "-lstdc++",
+        "-lpthread",
+        "-lgmp",
+        "-l:libdwarf.so",
+        "-l:libelf.so",
+        "-lz",
+        "-pthread",
+        "-lpthread",
+        "-latomic",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-external-observer-r5-20261111/VFrozenOpt4Observed"
+      ],
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "heartbeat_last_row": "9356, 31",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "host_wall_seconds": 32.49017560700304,
+      "owned_log_bytes": 7937086,
+      "pid": 301242,
+      "process_exited": true,
+      "run_directory": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-external-observer-r5-20261111/probe-observer-on",
+      "schema": "ec-gg-external-observer-state/1",
+      "start_ticks": "21334003",
+      "started_utc": "2026-11-11T12:53:39.633127+00:00",
+      "status": "PREPARED_AND_PROBE_PASSED_FULL_CANNEAL_DEFERRED",
+      "updated_utc": "2026-11-11T12:55:33.466081+00:00"
+    }
+  },
+  "mt_host_continuation": {
+    "child_live": false,
+    "controller_live": false,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-mt-host-continue-round40-v4-state.json",
+    "value": {
+      "child": {},
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 316052,
+      "production_admission": false,
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mt-host-continue-round40-v4-20261111/result.json",
+      "schema": "ec-opt4-host-continuation-state/1",
+      "stage_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mt-host-continue-round40-v4-20261111/continue.log",
+      "stage_wall_seconds": 1260.1379603750247,
+      "start_ticks": "21361900",
+      "started_utc": "2026-11-11T12:58:18.947729+00:00",
+      "status": "HOST_RTL_EMITTED_FROM_VERIFIED_CLOCK_CHECKPOINT_RUNTIME_PARITY_REQUIRED",
+      "updated_utc": "2026-11-11T13:19:27.509011+00:00"
+    }
+  },
+  "original_svb_binary_replay": {
+    "child_live": false,
+    "controller_live": false,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-original-svb-binary-replay-r1-state.json",
+    "value": {
+      "child": {},
+      "fpga_access": false,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 446476,
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-binary-replay-r1-20261111/result.json",
+      "start_ticks": "21436376",
+      "status": "PASS_RESET_STARTED_STARTUP_TRACE_AND_DIRECTED_DATA_MUTATION",
+      "updated_utc": "2026-11-11T13:10:45.600591+00:00"
+    }
+  },
+  "original_svb_replay_dispatch": {
+    "child_live": false,
+    "controller_live": false,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-original-svb-binary-replay-r1-dispatch-state.json",
+    "value": {
+      "fpga_access": false,
+      "status": "WAITING_COMPLETE_ORIGINAL_SVB_PORT_TRACE",
+      "updated_utc": "2026-11-11T13:31:39.406900+00:00"
+    }
+  },
+  "svb_component_original_cad": {
+    "child_live": true,
+    "controller_live": true,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-state.json",
+    "value": {
+      "certified_bitstream": false,
+      "child_pid": 3979313,
+      "child_start_ticks": "20295096",
+      "configuration": "OriginalSVB32-component",
+      "current_stage": "implementation",
+      "disk_free_gib": 314.10625076293945,
+      "dut_resources": {
+        "Block RAM Tile": {
+          "available": 2016.0,
+          "percent": 0.0,
+          "used": 0.0
+        },
+        "CARRY8": {
+          "available": 162960.0,
+          "percent": 7.19440353460972,
+          "used": 11724.0
+        },
+        "CLB LUTs": {
+          "available": 1303680.0,
+          "percent": 9.182544796269022,
+          "used": 119711.0
+        },
+        "CLB Registers": {
+          "available": 2607360.0,
+          "percent": 2.100515463917526,
+          "used": 54768.0
+        },
+        "DSPs": {
+          "available": 9024.0,
+          "percent": 0.0,
+          "used": 0.0
+        },
+        "URAM": {
+          "available": 960.0,
+          "percent": 0.0,
+          "used": 0.0
+        }
+      },
+      "formal_admission": false,
+      "fpga_access": false,
+      "frozen_dut_reused": false,
+      "frozen_parent_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "inputs": {
+        "frozen_dut_imported": false,
+        "generated": {
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/design/FireSim-generated.defines.vh": "d83752f6629f6f600728f83eb57627fa420047ce4767d8f839132f57f6cf7009",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/design/FireSim-generated.implementation.xdc": "8b3d046fe38e5eedf8d44cc4d6759a169805faaf7d555288d46b765a9086c2a8",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/design/FireSim-generated.sv": "3dc8f6762c32177f926857bc280840ef2655820fe5725259259c1bfddb5811ca",
+          "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/design/FireSim-generated.synthesis.xdc": "ae49751c4a82941dc61b0380511207e9c11bbb3b16c0493f2575ca4357bc969b"
+        },
+        "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+        "rtl_receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/Opt4-fit-system-8491167d/rtl-result.json",
+        "shell_checkpoints": [
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.gen/sources_1/bd/design_1/ip/design_1_axi_clock_converter_0_0/design_1_axi_clock_converter_0_0.dcp",
+            "sha256": "825b7302fe7ca92b5abd571eae17ccd6146f0f8f3ff7a73e59f5611d7888d820"
+          },
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.gen/sources_1/bd/design_1/ip/design_1_axi_tieoff_master_0_0/design_1_axi_tieoff_master_0_0.dcp",
+            "sha256": "238c187ff91fa69ae9bd19e0bb8471d7393f4430e8eac8fd514c1d725329d1b0"
+          },
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.gen/sources_1/bd/design_1/ip/design_1_axi_dwidth_converter_0_0/design_1_axi_dwidth_converter_0_0.dcp",
+            "sha256": "0ba13a21af9956524a0c935d836efd455b36d9a86e6c9776db90b48a20459af5"
+          },
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.gen/sources_1/bd/design_1/ip/design_1_ddr4_0_0/design_1_ddr4_0_0.dcp",
+            "sha256": "aeb14a4affd936c60b81c8a34373ed923dbfc4e56c14c2b5373e64863528a627"
+          },
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.gen/sources_1/bd/design_1/ip/design_1_clk_wiz_0_0/design_1_clk_wiz_0_0.dcp",
+            "sha256": "ecf1971ba5e472c792bcf2020169f5d36a919aeeb6eca864f3ee7f7ebd5af20f"
+          },
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.gen/sources_1/bd/design_1/ip/design_1_proc_sys_reset_1_0/design_1_proc_sys_reset_1_0.dcp",
+            "sha256": "2723af3f53c32b7b86748130b52b33e3d236ebb29c6f357bdda4ebf8d70aca1b"
+          },
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.gen/sources_1/bd/design_1/ip/design_1_util_ds_buf_0/design_1_util_ds_buf_0.dcp",
+            "sha256": "a9736642e55578a46d25a590dab4a1708de390f7d77c30bd32fc6178a613f4e5"
+          },
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.gen/sources_1/bd/design_1/ip/design_1_resetn_inv_0_0/design_1_resetn_inv_0_0.dcp",
+            "sha256": "7d9caa6b7651b6377487554d4aca52687908f6002ef4ffe128e55b2ead3f70c9"
+          },
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.gen/sources_1/bd/design_1/ip/design_1_axi_clock_converter_1_0/design_1_axi_clock_converter_1_0.dcp",
+            "sha256": "24f2cf87235066b06605b76b5139f6b1cbbab15f59c0237bed4cb8791142f551"
+          },
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.gen/sources_1/bd/design_1/ip/design_1_proc_sys_reset_0_0/design_1_proc_sys_reset_0_0.dcp",
+            "sha256": "5e59d00eca5573da797cbe0d8e547de827b0cd9723dafaa39f6e99ab344241e0"
+          },
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.gen/sources_1/bd/design_1/ip/design_1_xdma_0_0/design_1_xdma_0_0.dcp",
+            "sha256": "10000269363d0b01a84b93c333a83a357f91a671f351a6d38d5ba2bee7c13de4"
+          }
+        ],
+        "shell_interface_equal": true,
+        "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+        "utc": "2026-11-11T09:51:47.393078+00:00"
+      },
+      "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-logs",
+      "output_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad",
+      "part": "xcu280-fsvh2892-2L-e",
+      "pid": 3947766,
+      "profile": "OriginalSVB32-component-trace",
+      "reuse_scope": "11 unchanged U280 shell IPs, block design, wrappers and tool-generated control scripts only",
+      "schema": "ec-original-svb-component-cad/1",
+      "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+      "stage_wall_seconds": 12841.841751615983,
+      "stages": {
+        "dut_synth": {
+          "argv": [
+            "nice",
+            "-n",
+            "5",
+            "/tools/Xilinx/Vivado/2021.1/bin/vivado",
+            "-mode",
+            "batch",
+            "-nojournal",
+            "-log",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-logs/dut_synth-attempt-1.vivado.log",
+            "-source",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-logs/dut_synth-attempt-1.tcl"
+          ],
+          "ended_utc": "2026-11-11T09:59:33.896105+00:00",
+          "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+          "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-logs/dut_synth-attempt-1.log",
+          "outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-logs/dut-hierarchical.rpt": "bce668ac73266813d560a67248fd097fec8c5959d2e675d274a15fb309bae3dd",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-logs/dut-utilization.rpt": "741d5df804491e5836e09936fb7a890f44cd179980c7e92a238d008cfcf3e268",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.gen/sources_1/bd/design_1/ip/design_1_firesim_wrapper_0_0/design_1_firesim_wrapper_0_0.dcp": "0a413a2ca9f85d2b84dd463616d82d95e9e8e20081f151c69330fd2ae0fba0d7",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.gen/sources_1/bd/design_1/ip/design_1_firesim_wrapper_0_0/design_1_firesim_wrapper_0_0_stub.v": "4fc0afeb79f37ba5bd70c99e16b5ca2431c109cfbb0a3433d18831cb2aee37a2"
+          },
+          "returncode": 0,
+          "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+          "started_utc": "2026-11-11T09:51:47.544828+00:00",
+          "tcl_sha256": "a11fc033d95f87ebb95b0e470f94848c6f9407c06cdbba9f84bb57be63b88c95",
+          "wall_seconds": 466.3619207699958
+        },
+        "implementation": {
+          "argv": [
+            "nice",
+            "-n",
+            "5",
+            "/tools/Xilinx/Vivado/2021.1/bin/vivado",
+            "-mode",
+            "batch",
+            "-nojournal",
+            "-log",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-logs/implementation-attempt-1.vivado.log",
+            "-source",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-logs/implementation-attempt-1.tcl"
+          ],
+          "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+          "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-logs/implementation-attempt-1.log",
+          "returncode": null,
+          "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+          "started_utc": "2026-11-11T10:00:30.549376+00:00",
+          "tcl_sha256": "e82000077ee8ad4ed4a42e540c125244217aa0ffd66e775caab9324972140a39"
+        },
+        "top_synth": {
+          "argv": [
+            "nice",
+            "-n",
+            "5",
+            "/tools/Xilinx/Vivado/2021.1/bin/vivado",
+            "-mode",
+            "batch",
+            "-nojournal",
+            "-log",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-logs/top_synth-attempt-1.vivado.log",
+            "-source",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-logs/top_synth-attempt-1.tcl"
+          ],
+          "ended_utc": "2026-11-11T10:00:30.520194+00:00",
+          "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+          "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-logs/top_synth-attempt-1.log",
+          "outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.runs/synth_1/design_1_wrapper.dcp": "a2637063abcc0ca837e6efe74b79ae181b3571ff837e1f427c4a66960b05f8b0"
+          },
+          "returncode": 0,
+          "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+          "started_utc": "2026-11-11T09:59:34.046650+00:00",
+          "tcl_sha256": "5b5331b3e8fa39cb47fa7bf10f4e3032c58075d3cba28a660dc33443ac546f73",
+          "wall_seconds": 56.49609767799848
+        }
+      },
+      "start_ticks": "20242622",
+      "started_utc": "2026-11-11T09:51:45.832392+00:00",
+      "status": "RUNNING_IMPLEMENTATION",
+      "updated_utc": "2026-11-11T13:34:32.366200+00:00"
+    }
+  },
+  "svb_independent_spread": {
+    "child_live": true,
+    "controller_live": true,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-spread-implementation-r1-20261111/state.json",
+    "value": {
+      "argv": [
+        "/tools/Xilinx/Vivado/2021.1/bin/vivado",
+        "-mode",
+        "batch",
+        "-nojournal",
+        "-log",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-spread-implementation-r1-20261111/vivado.log",
+        "-source",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-spread-implementation-r1-20261111/implement.tcl"
+      ],
+      "checkpoint_sha256": "17aab576708314e7aa43d84d330f85ab8b73037260ec6a8deea0cb58bf5be5bd",
+      "child": {
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 279128,
+        "start_ticks": "21287457"
+      },
+      "complete_opt4": false,
+      "cpus": [
+        254,
+        255
+      ],
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "memory_limit_gib": 64,
+      "pid": 279123,
+      "producer_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-state.json",
+      "schema": "ec-original-svb-independent-physical-implementation/1",
+      "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+      "stage": "physical-implementation",
+      "start_ticks": "21287446",
+      "started_utc": "2026-11-11T12:45:54.133729+00:00",
+      "status": "RUNNING",
+      "target_changed": false,
+      "updated_utc": "2026-11-11T12:45:54.137989+00:00"
+    }
+  },
+  "svb_original_follower": {
+    "child_live": false,
+    "controller_live": true,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-onboard-r1-20261111/state.json",
+    "value": {
+      "board_bdf": "0000:21:00.0",
+      "board_serial": "21770433G02LA",
+      "cad_stage": "implementation",
+      "cad_status": "RUNNING_IMPLEMENTATION",
+      "complete_opt4": false,
+      "configuration": "OriginalSVB32-component-trace",
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 3986678,
+      "schema": "ec-original-svb-onboard/1",
+      "start_ticks": "20306942",
+      "status": "WAITING_COMPONENT_CAD",
+      "updated_utc": "2026-11-11T13:32:32.610385+00:00"
+    }
+  },
+  "svb_spread_follower": {
+    "child_live": false,
+    "controller_live": true,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-spread-onboard-r2-20261111/state.json",
+    "value": {
+      "board_bdf": "0000:21:00.0",
+      "board_serial": "21770433G02LA",
+      "cad_stage": null,
+      "cad_status": "RUNNING",
+      "complete_opt4": false,
+      "configuration": "OriginalSVB32-component-trace",
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 307029,
+      "schema": "ec-original-svb-onboard/1",
+      "start_ticks": "21344131",
+      "status": "WAITING_COMPONENT_CAD",
+      "updated_utc": "2026-11-11T13:30:21.633572+00:00"
+    }
+  }
+}

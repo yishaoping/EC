@@ -1,0 +1,51 @@
+{
+  "schema": "ec-performance-only-readonly-health/1",
+  "observed_utc": "2026-11-17T02:14:39.059142+00:00",
+  "configuration": "ECPerformanceOnly",
+  "full_PALIMPSEST": false,
+  "board_bdf": "0000:21:00.0",
+  "PID": 1531902,
+  "status": "CHECKER_FATAL_BOOT_UNRECOVERABLE_WITHOUT_INTERVENTION",
+  "target_clock_advances": true,
+  "comparison": {
+    "first_local": "2026-11-17T10:08:20.605809+08:00",
+    "second_local": "2026-11-17T10:11:48.715818+08:00",
+    "sample_interval_seconds": 208.109999,
+    "first_cycle": 2479786005,
+    "second_cycle": 2620013318,
+    "cycle_delta": 140227313,
+    "heartbeat_interval_seconds": 210,
+    "throughput_cycles_per_second": 667749.1095238095,
+    "files_delta": {
+      "heartbeat.csv": 340,
+      "uart.log": 0,
+      "host.log": 0,
+      "rtl-events-0": 0,
+      "state.json": -1,
+      "uart.in": 0
+    }
+  },
+  "benchmark_executed": true,
+  "guest_process_current_state": "UNAVAILABLE_WITHOUT_GUEST_QUERY",
+  "valid_roi_begin_observed": false,
+  "valid_completed_samples": 0,
+  "slowdown": null,
+  "hardware_or_guest_writes": false,
+  "signals_sent": false,
+  "simulator_restarted": false,
+  "duplicate_tasks_started": false,
+  "checkers_with_fatal_trap": [
+    1,
+    3
+  ],
+  "marker_counts": {
+    "EC_SAMPLE_START": 1,
+    "EC_PARSEC_BENCH_BEGIN": 1,
+    "EC_PARSEC_BENCH_END": 0,
+    "EC_SAMPLE_GUEST_DONE": 0,
+    "EC_OPT4_SNAPSHOT": 0
+  },
+  "source_cause": "Proven checker fatal instruction access exception; why firmware trap routing/context failed remains unproven",
+  "existing_runner_missing_fatal_signature": "sbi_trap_error is absent from run.py:230 fatal list",
+  "next_action": "Keep current process per explicit no-stop/no-reset instruction. Prepare isolated analysis of checker startup/privilege/trap-vector context; do not repeat certification on unchanged image."
+}

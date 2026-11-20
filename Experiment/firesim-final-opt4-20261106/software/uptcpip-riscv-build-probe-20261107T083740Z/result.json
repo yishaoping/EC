@@ -1,0 +1,51 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "make",
+        "-j1",
+        "ARCH=riscv64",
+        "CC=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "CXX=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++"
+      ],
+      "label": "original-riscv-target",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/uptcpip-riscv-build-probe-20261107T083740Z/original-riscv-target.log",
+      "log_sha256": "0fd7ba2e45428346914f899f6e7a20a6f2074dadded5eb03c63383ec88f247c6",
+      "returncode": 2
+    },
+    {
+      "argv": [
+        "make",
+        "-j1",
+        "-C",
+        "host.support",
+        "ARCH=riscv64",
+        "CC=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "uptcp_statis.o"
+      ],
+      "label": "riscv-statistics-translation-unit",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/uptcpip-riscv-build-probe-20261107T083740Z/riscv-statistics-translation-unit.log",
+      "log_sha256": "ed1f242d31ff7f984ffea6e72ad729d9f2e9956e104eb83b36411bd60c6d2417",
+      "returncode": 2
+    }
+  ],
+  "completed_utc": "2026-11-07T08:37:40.786465+00:00",
+  "elf_produced": false,
+  "formal_eligible": false,
+  "hardware_operations": false,
+  "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/uptcpip-riscv-build-probe-20261107T083740Z",
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/uptcpip-riscv-build-probe-20261107T083740Z",
+  "programs": [
+    "netdedup",
+    "netferret",
+    "netstreamcluster"
+  ],
+  "remaining_runtime_blocker": "Original threaded/network ROI also requires C4 trap/context support; compiling does not resolve that contract.",
+  "riscv_architecture_header_present": false,
+  "riscv_checksum_present": false,
+  "schema": "ec-network-riscv-build-probe/1",
+  "source": "/data1/gzh/EC/Software/PARSEC/pkgs/libs/uptcpip/src",
+  "source_makefile_sha256": "c6f9136fabdb9d5407131d96f6fff3d8145ca39360391feb56f9c435529fb6c1",
+  "source_unchanged": true,
+  "status": "BLOCKED_WITH_ACTUAL_BUILD_EVIDENCE"
+}

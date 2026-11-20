@@ -1,0 +1,173 @@
+{
+  "checker_latency": null,
+  "counts": null,
+  "drain_cycles": 0,
+  "driver_returncode": 0,
+  "driver_stop_after_guest_powerdown": false,
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-netstreamcluster-simmedium-r1-20261110T074633Z/heartbeat.csv": "22a3d5a89308253133ba7e7961caab681c8c2b8a5ab23ac40ca8c6c0f638654b",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-netstreamcluster-simmedium-r1-20261110T074633Z/host.log": "218cc0cdc20ecdb96b11742ad4f37eac9150959a8212cb2ea7b04143184f72a5",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-netstreamcluster-simmedium-r1-20261110T074633Z/latency_histogram.csv": "7348bacc4d184cc676cfcf89f8d0ec40dd28eeaa86ae0f6fefa797b43dc6d210",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-netstreamcluster-simmedium-r1-20261110T074633Z/manifest.json": "bc16c276024edf1be5cb2f62e5d15f09c18d8f9d4404df01bd54e9fedb2420d4",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-netstreamcluster-simmedium-r1-20261110T074633Z/memory_stats0.csv": "6679c5006d14d8413ec36ba18171c1f179c0196e04b362e4af778b06baad416e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-netstreamcluster-simmedium-r1-20261110T074633Z/roi-parser-source.py": "e55944240285ee0197b1b8bd3bedbe10a4a72305511ac72018fe668578d5f8c1",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-netstreamcluster-simmedium-r1-20261110T074633Z/roi-raw.jsonl": "0d003f0c895cd7fb489e6486f5fbdb5d68a1697df2144714f2eed1143835c361",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-netstreamcluster-simmedium-r1-20261110T074633Z/runner-source.py": "0b6e6b4bbe242f7df873c8b5ff131a421e8fd2fa140bb8facfc652747b64b42f",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-netstreamcluster-simmedium-r1-20261110T074633Z/snapshot.json": "8108bc2019b91e08a993f734443fb5c35664aa50aa656fbf9e5f7e8b1f8a7329",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-netstreamcluster-simmedium-r1-20261110T074633Z/state.json": "570241f91c5f5b1c34fd6682a36e936b18b77609ce853b9c4c45ace1d4684ce7",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-netstreamcluster-simmedium-r1-20261110T074633Z/uart.in": "496a9e3f96e766323dbfe77c33b9b4d4b31cc0b987261349ed9197f29383fce9",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-netstreamcluster-simmedium-r1-20261110T074633Z/uart.log": "60a955ac192859557f6b158a8595ce634909edf7cb83c74007b36de49ba49b2a"
+  },
+  "fased_readback": {
+    "readLatency": 30,
+    "readMaxReqs": 4,
+    "relaxFunctionalModel": 0,
+    "writeLatency": 30,
+    "writeMaxReqs": 4
+  },
+  "formal": true,
+  "fpga_execution": true,
+  "guest_power_down_observed": true,
+  "host_efficiency": {
+    "host_delta": 292205753106,
+    "host_simulation_wall_seconds": 5844.326201,
+    "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+    "simulation_throughput_cycles_per_second": 16660162.243,
+    "target_delta": 97367422711,
+    "target_end": 1153365361682,
+    "target_start": 1055997938971
+  },
+  "host_wall_seconds": 5844.360866254996,
+  "identity": {
+    "apps_manifest_sha256": "f718a6d19cd670bcc8222a5ec2a3befd7523e3bd68bcb2823a87912b4d96c6bf",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:21:00.0",
+    "board_serial": "21770433G02LA",
+    "case": {
+      "algorithm_unchanged": true,
+      "argv": [
+        "10",
+        "20",
+        "128",
+        "16384",
+        "16384",
+        "1000",
+        "none",
+        "output.txt",
+        "1"
+      ],
+      "client_argv": [
+        "128",
+        "16384",
+        "16384",
+        "1"
+      ],
+      "fpga_validation": "NOT_RUN",
+      "input": "simmedium",
+      "input_archives": {},
+      "input_files": {},
+      "input_mapping": "simmedium invokes original simlarge for netstreamcluster; netdedup candidate separates server/client flags and uses unchanged formal archive",
+      "offline_evidence": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netstreamcluster-linux-20261107T110536Z/netstreamcluster-simmedium/result.json",
+      "program": "netstreamcluster",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-followup-20261107T103840Z/netstreamcluster-simmedium-riscv64/work/output.txt": "d049ad6c0d8b708568d0bd52a9df1aec8f1b89de7f0eb550b672c87774a83590"
+      },
+      "roi": "Full original server __parsec_roi_begin/end sites; includes original network/compute/thread/syscall work and elapsed target cycles",
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netstreamcluster/parsec/simmedium.runconf",
+      "runconf_sha256": "2cac0d5b10caaa9e2b4b9e344aa772706eee51810c6cc17ff28538cea80468e4",
+      "software_patch": {
+        "candidate_source_sha256": "5a2e1777d6f8276b1a70c493b5c7037416c8b8a99d62a8ec75de37557856bd1d",
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netstreamcluster-graceful-close-20261110T063034Z/client-graceful-close.patch",
+        "sha256": "011b24d3f2f3558532db195fa491120ba709ffb8f7033983402c3390d0593f61",
+        "source": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netstreamcluster/client/client.cpp",
+        "source_sha256": "e3dd54568266faf200bb05cc5f340e8ce0f6e603a22e911192fb8d043e7603bb"
+      },
+      "software_repair": "Receive lifetime join, same computation/input/original ROI sites; full ACK/close work retained",
+      "thread_definition": "One application worker; original user-TCP/pthread service threads remain enabled",
+      "threads": 1,
+      "validation": {
+        "files": {
+          "output.txt": "d049ad6c0d8b708568d0bd52a9df1aec8f1b89de7f0eb550b672c87774a83590"
+        },
+        "kind": "files_sha256"
+      },
+      "warmups": 0
+    },
+    "configuration": "Native",
+    "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+    "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+    "elf_sha256": "2dc7f5d3d8f03e00b7cd70c2ef2ad03292b8ddb42f2ffb41adfaedc7f2c991c3",
+    "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+    "firmware_receipt_sha256": "45a706aeca6b51f9657ab0f05cc54aa3f4b9b47d207212b290933334c43ad83b",
+    "firmware_sha256": "8d4754cee4ce598341efd969272c4c00ad29c8b40752daac73134f69f93c7371",
+    "formal": true,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "host_bridge_restart": true,
+    "input": "simmedium",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "previous_run_id": null,
+    "program": "netstreamcluster",
+    "repetition": 1,
+    "rootfs_sha256": "9e070221fc5c422d2f685b2e7b4d02036454edf627a425058a69201059825f0c",
+    "run_id": "native-netstreamcluster-simmedium-r1-20261110T074633Z",
+    "software_diagnostic": false,
+    "software_profile": "netstreamcluster-full-roi-graceful-client-close/3",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "target_reset_probe": false,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "c62c2bc0c167e596fb56c428fbb4f95055354a1852f2caa3b9f0c4c553a5cb82",
+  "issues": [],
+  "participation": null,
+  "post_drain_traffic_counters": {},
+  "raw": {
+    "epochs": [
+      {
+        "aborted": false,
+        "begin_tick": 1361746463,
+        "end_tick": 97310653670,
+        "epoch": 1,
+        "faults": 0,
+        "formal_sample_eligible": false,
+        "reset_seen": false,
+        "roi_cycles": 95948907207,
+        "source_boundaries_complete": true,
+        "states": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    ],
+    "excluded_pre_reset_records": 1,
+    "file_sha256": "666b79125607f0320970ed9c6ed70b0cc5818c95314e41c3ed3d47bb5fdac7a7",
+    "formal_sample_eligible": false,
+    "last_sequence": 200,
+    "original_journal_sha256": "0d003f0c895cd7fb489e6486f5fbdb5d68a1697df2144714f2eed1143835c361",
+    "parsed_records": 201,
+    "partial_tail_bytes": 0,
+    "protocol_issues": [],
+    "runtime_validation": "NOT_ESTABLISHED_BY_RAW_LOG",
+    "schema": "ec-dac-b-raw-roi/1",
+    "warning": "Raw ROI boundaries only. Output/job identity, runtime timebase checks and the formal host collector are still required."
+  },
+  "roi_cycles": 95948907207,
+  "schema": "ec-isolated-fpga-result/1",
+  "timedout": false,
+  "valid": true
+}

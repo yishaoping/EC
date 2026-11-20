@@ -1,0 +1,106 @@
+{
+  "bank_source": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-banked-state-fame5-r4-20261112/BankedState.scala",
+  "bank_source_sha256": "4d16d6a7df38e3824c814ee8d7c22935bc8bb6a9a4a02902d2a0fea16860b7ed",
+  "complete_module_parity": false,
+  "edits": [
+    {
+      "label": "namespace and host annotation imports",
+      "new": "package opt4bankedcandidate\nimport chisel3.experimental.annotate\nimport midas.targetutils.EnableModelMultiThreadingAnnotation",
+      "offset": 0,
+      "old": "package opt4packedref"
+    },
+    {
+      "label": "move original bucket registers into identical banks",
+      "new": "  // Exact original state is owned by 16 identical 16-lane banks.\n  // Parent views are combinational wires, without new target registers.\n  require(packetWindow == 256 && packageWays == 8 && lineBytes == 64)\n  val bucketBanks = Seq.fill(16)(Module(new BucketBank))\n  bucketBanks.foreach(bank => annotate(EnableModelMultiThreadingAnnotation(bank)))\n  val bucketValid = Wire(Vec(packetWindow, Bool()))\n  val bucketSeq = Wire(Vec(packetWindow, UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))\n  val bucketStore = Wire(Vec(packetWindow, Vec(4, UInt(64.W))))\n  val bucketLoadFirst = Wire(Vec(packetWindow, Vec(4, UInt(64.W))))\n  val bucketStoreFirst = Wire(Vec(packetWindow, Vec(4, UInt(64.W))))\n  val bucketStrictWriteRead = Wire(Vec(packetWindow, Vec(4, UInt(64.W))))\n  val bucketFirstStore = Wire(Vec(packetWindow, Vec(4, UInt(64.W))))\n  val bucketOverflows = Wire(Vec(packetWindow, Bool()))\n  for (b <- 0 until 16; i <- 0 until 16) {\n    val index = b * 16 + i\n    val state = bucketBanks(b).io.observe(i)\n    bucketOverflows(index) := state(1313)\n    bucketValid(index) := state(1312)\n    bucketSeq(index) := state(1311, 1280)\n    val metrics = Seq(bucketStore, bucketFirstStore, bucketLoadFirst,\n      bucketStoreFirst, bucketStrictWriteRead)\n    for (m <- 0 until 5; g <- 0 until 4) {\n      val lo = 64 * (4 * m + g)\n      metrics(m)(index)(g) := state(lo + 63, lo)\n    }\n  }\n\n",
+      "offset": 11712,
+      "old": "  val bucketValid = RegInit(VecInit(Seq.fill(packetWindow)(false.B)))\n  val bucketSeq = Reg(Vec(packetWindow,\n    UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))\n  val bucketStore = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))\n  val bucketLoadFirst = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))\n  val bucketStoreFirst = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))\n  val bucketStrictWriteRead = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))\n  val bucketFirstStore = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))\n\n"
+    },
+    {
+      "label": "move exact histogram arithmetic into bank",
+      "new": "",
+      "offset": 22203,
+      "old": "  // Compact four source keys locally, then scatter one subtotal per group.\n  // This changes only the exact combinational bucket-delta histogram.\n  private val hitBounds = Seq(8 min lineBytes, 3 min word4Count,\n    2 min word8Count, 1)\n  private def bucketHistogram(keys: Seq[UInt], counts: Seq[Seq[UInt]],\n    bounds: Seq[Int], slots: Int): Vec[Vec[UInt]] = {\n    if (keys.size % 4 == 0) AddressBucketGrouped.histogram(keys, counts, bounds, slots)\n    else VecInit((0 until slots).map(i => VecInit(bounds.indices.map(g =>\n      exactHitSum(keys.indices.map(j => Mux(keys(j) === i.U,\n        counts(j)(g).pad(64), 0.U(64.W))), bounds(g))))))\n  }\n"
+    },
+    {
+      "label": "replace parent histogram outputs with bank-local reductions",
+      "new": "",
+      "offset": 22434,
+      "old": "  val bucketLoadFirstDelta = bucketHistogram(\n    packageBucketKeys, unsafeLoadFirstHitCounts.map(_.toSeq), hitBounds, packetWindow)\n  val bucketStoreFirstDelta = bucketHistogram(\n    packageBucketKeys, unsafeStoreFirstHitCounts.map(_.toSeq), hitBounds, packetWindow)\n  val bucketStrictWriteReadDelta = bucketHistogram(\n    strictBucketKeys, (unsafeStrictWriteReadHitCounts ++\n      unsafeStrictOverflowWriteReadHitCounts).map(_.toSeq), hitBounds, packetWindow)\n"
+    },
+    {
+      "label": "move exact wide add and carry into bank",
+      "new": "",
+      "offset": 25901,
+      "old": "  // Multi-bucket hits still update in parallel. Reuse each exact 65-bit sum\n  // for its carry check and its low-64-bit counter update.\n  val loadFirstNextWide = Wire(Vec(packetWindow, Vec(4, UInt(65.W))))\n  val storeFirstNextWide = Wire(Vec(packetWindow, Vec(4, UInt(65.W))))\n  val strictWriteReadNextWide = Wire(Vec(packetWindow, Vec(4, UInt(65.W))))\n  for (i <- 0 until packetWindow; g <- 0 until 4) {\n    loadFirstNextWide(i)(g) := bucketLoadFirst(i)(g) +& bucketLoadFirstDelta(i)(g)\n    storeFirstNextWide(i)(g) := bucketStoreFirst(i)(g) +& bucketStoreFirstDelta(i)(g)\n    strictWriteReadNextWide(i)(g) := bucketStrictWriteRead(i)(g) +& bucketStrictWriteReadDelta(i)(g)\n  }\n  // Exactly one current bucket receives these two kinds of increments.\n  // Read/mux once and share four adders instead of 256 copies of each.\n  val currentStoreNextWide = Wire(Vec(4, UInt(65.W)))\n  val currentFirstStoreNextWide = Wire(Vec(4, UInt(65.W)))\n  for (g <- 0 until 4) {\n    currentStoreNextWide(g) := Mux(bucketValid(currentBucketIdx),\n      bucketStore(currentBucketIdx)(g), 0.U(64.W)) +& newStoreCounts(g).pad(64)\n    currentFirstStoreNextWide(g) := Mux(bucketValid(currentBucketIdx),\n      bucketFirstStore(currentBucketIdx)(g), 0.U(64.W)) +& newFirstStoreCounts(g).pad(64)\n  }\n\n"
+    },
+    {
+      "label": "use bank carries without changing global fail-closed checks",
+      "new": "      addOverflows(onlineStrictWriteRead(g), strictOnlineDelta))\n",
+      "offset": 27258,
+      "old": "      addOverflows(onlineStrictWriteRead(g), strictOnlineDelta),\n      currentStoreNextWide(g)(64))\n    processArithmeticErrorParts += currentFirstStoreNextWide(g)(64)\n    for (i <- 0 until packetWindow) {\n      processArithmeticErrorParts ++= Seq(\n        loadFirstNextWide(i)(g)(64),\n        storeFirstNextWide(i)(g)(64),\n        strictWriteReadNextWide(i)(g)(64))\n    }\n"
+    },
+    {
+      "label": "aggregate all exact carries including invalid bucket payload",
+      "new": "  val processArithmeticError = processValid &&\n    (processArithmeticErrorParts.reduce(_ || _) || bucketOverflows.asUInt.orR)",
+      "offset": 27327,
+      "old": "  val processArithmeticError = processValid &&\n    processArithmeticErrorParts.reduce(_ || _)"
+    },
+    {
+      "label": "move process writes into bank",
+      "new": "",
+      "offset": 33800,
+      "old": "    for (i <- 0 until packetWindow) {\n      val isCurrent = currentBucketIdx === i.U\n      when (isCurrent) {\n        bucketValid(i) := true.B\n        bucketSeq(i) := processEvent.packetSeq\n      }\n      for (g <- 0 until 4) {\n        when (isCurrent) {\n          bucketStore(i)(g) := currentStoreNextWide(g)(63, 0)\n          bucketFirstStore(i)(g) := currentFirstStoreNextWide(g)(63, 0)\n        }\n        // Preserve allocation from zero even after an independent global\n        // reset leaves an arbitrary payload in an invalid slot. All counter\n        // values and all input cycles retain the original behavior.\n        val allocate = isCurrent && !bucketValid(i)\n        when (AddressBucketUpdate.enabled(isCurrent, bucketLoadFirstDelta(i)(g))) {\n          bucketLoadFirst(i)(g) := Mux(allocate, bucketLoadFirstDelta(i)(g),\n            loadFirstNextWide(i)(g)(63, 0))\n        }\n        when (AddressBucketUpdate.enabled(isCurrent, bucketStoreFirstDelta(i)(g))) {\n          bucketStoreFirst(i)(g) := Mux(allocate, bucketStoreFirstDelta(i)(g),\n            storeFirstNextWide(i)(g)(63, 0))\n        }\n        when (AddressBucketUpdate.enabled(isCurrent, bucketStrictWriteReadDelta(i)(g))) {\n          bucketStrictWriteRead(i)(g) := Mux(allocate, bucketStrictWriteReadDelta(i)(g),\n            strictWriteReadNextWide(i)(g)(63, 0))\n        }\n      }\n    }\n\n"
+    },
+    {
+      "label": "move retirement validity write",
+      "new": "",
+      "offset": 36366,
+      "old": "      bucketValid(retiringIdx) := false.B\n"
+    },
+    {
+      "label": "move retirement payload writes while preserving online decrements",
+      "new": "",
+      "offset": 36862,
+      "old": "        bucketStore(retiringIdx)(g) := 0.U\n        bucketFirstStore(retiringIdx)(g) := 0.U\n        bucketLoadFirst(retiringIdx)(g) := 0.U\n        bucketStoreFirst(retiringIdx)(g) := 0.U\n        bucketStrictWriteRead(retiringIdx)(g) := 0.U\n"
+    },
+    {
+      "label": "move stats-reset bucket writes",
+      "new": "",
+      "offset": 38032,
+      "old": "    for (i <- 0 until packetWindow) {\n      bucketValid(i) := false.B\n      bucketSeq(i) := 0.U\n      for (g <- 0 until 4) {\n        bucketStore(i)(g) := 0.U\n        bucketFirstStore(i)(g) := 0.U\n        bucketLoadFirst(i)(g) := 0.U\n        bucketStoreFirst(i)(g) := 0.U\n        bucketStrictWriteRead(i)(g) := 0.U\n      }\n    }\n"
+    },
+    {
+      "label": "connect complete bank qualification without target state",
+      "new": "  io.idle := !running && queueCount === 0.U && !processValid &&\n    processedSafeWatermark === io.safeWatermark\n\n  // All qualification, error, queue and online/global metric logic above is\n  // retained. Banks receive original same-cycle controls and source counts.\n  for (b <- 0 until 16) {\n    val bank = bucketBanks(b)\n    bank.io.base := (b * 16).U\n    bank.io.processSeq := processEvent.packetSeq\n    bank.io.retiringSeq := retiringSeq\n    bank.io.processCommit := processCommit\n    bank.io.safeAdvance := safeAdvance\n    bank.io.safeError := safeError\n    bank.io.resetStats := io.resetStats\n    for (g <- 0 until 4) {\n      bank.io.newStore.values(g) := newStoreCounts(g)\n      bank.io.newFirstStore.values(g) := newFirstStoreCounts(g)\n    }\n    for (w <- 0 until 8) {\n      bank.io.loadSources(w).key := packageBucketKeys(w)\n      bank.io.storeSources(w).key := packageBucketKeys(w)\n      for (g <- 0 until 4) {\n        bank.io.loadSources(w).counts.values(g) := unsafeLoadFirstHitCounts(w)(g)\n        bank.io.storeSources(w).counts.values(g) := unsafeStoreFirstHitCounts(w)(g)\n      }\n    }\n    val strictCounts = unsafeStrictWriteReadHitCounts ++ unsafeStrictOverflowWriteReadHitCounts\n    for (w <- 0 until 80) {\n      bank.io.strictSources(w).key := strictBucketKeys(w)\n      for (g <- 0 until 4) {\n        bank.io.strictSources(w).counts.values(g) := strictCounts(w)(g)\n      }\n    }\n  }\n\n}\n",
+      "offset": 41110,
+      "old": "  io.idle := !running && queueCount === 0.U && !processValid &&\n    processedSafeWatermark === io.safeWatermark\n}\n"
+    }
+  ],
+  "exact_bank_class_copy_except_namespace": true,
+  "extra_target_pipeline_cycles": 0,
+  "extra_target_registers": 0,
+  "generated": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-banked-complete-module-r1-20261112/AddressBucketUpdate.scala": "935721540dbdd03ad7eb89e0894677336c962fa08b2cadfe98da40673633ae4a",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-banked-complete-module-r1-20261112/BucketBank.scala": "47869433675f76789f0860a9fbf3c63f9bc3f33c82dbe0b5a3b37f6a62c7f3d2",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-banked-complete-module-r1-20261112/CandidateModule.scala": "f5061b6a014133debf3f9f3f9bce3a900916fa41fddce62ca5ce573db7a79d0c",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-banked-complete-module-r1-20261112/CandidateProof.scala": "02f9d33901ca2a2389a0d2bbba2c389feb24ac3c049351c9bfa0cb7223120206",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-banked-complete-module-r1-20261112/ReferenceHelper.scala": "4111af5f725e88032edb64f5367613a56bc3cbe83e61e9e647c8556efb73560a",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-banked-complete-module-r1-20261112/ReferenceModule.scala": "61b02828a6d1a4a4b3ce6f2b5855bd32eee1da64bf7c63d9ccce5a242ace674b",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-banked-complete-module-r1-20261112/ReferenceProof.scala": "c978c81a95fdd9cc5784a47784bdb45b4f72994b70fee01cb50944557ebca46a",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-banked-complete-module-r1-20261112/SourceProjected.scala": "91cda3f53343fb13aaa3963c3b7f03f19e44868314f9821404e4d59c0aacc85f"
+  },
+  "geometry": {
+    "banks": 16,
+    "parallel_lanes": 16,
+    "selected_type": "BucketBank",
+    "slots": 256
+  },
+  "global_queues_tables_error_and_online_metrics_retained": true,
+  "production_admission": false,
+  "public_abi_source_unchanged": true,
+  "schema": "ec-banked-complete-module-source-binding/1",
+  "source": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-packed-full-module-r1-20261112/ReferenceModule.scala",
+  "source_inverse_byte_equal": true,
+  "source_sha256": "da3380a6ad68db776cab1cb3b1965f47f4884721447785c059934087f2435582",
+  "whole_host_saving_unknown": true
+}

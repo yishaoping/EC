@@ -1,0 +1,1432 @@
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/C4/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/berkeley-setup-fpgas.sh
++++ /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/berkeley-setup-fpgas.sh
+@@ -1,50 +1,3 @@
+ #!/bin/bash
+-
+-set -ex
+-
+-BITSTREAM=$SCRATCH_HOME/firesim-private/deploy/results-build/2023-05-12--07-11-08-alveou250_firesim_rocket_singlecore_no_nic_w_pres/cl_xilinx_alveo_u250-firesim-FireSim-FireSimRocketConfig-BaseXilinxAlveoConfig/xilinx_alveo_u250/firesim.bit
+-
+-./fpga-util.py --bdf 04:00.0 --disconnect-bdf
+-./fpga-util.py --bdf 83:00.0 --disconnect-bdf
+-
+-if lspci | grep -i xilinx; then
+-    echo "Something went wrong"
+-    exit 1
+-else
+-    echo "Missing them"
+-fi
+-
+-./fpga-util.py --serial Xilinx/21320733400EA --bitstream $BITSTREAM
+-./fpga-util.py --serial Xilinx/213207334001A --bitstream $BITSTREAM
+-
+-if lspci | grep -i xilinx; then
+-    echo "Something went wrong"
+-    exit 1
+-else
+-    echo "Missing them"
+-fi
+-
+-./fpga-util.py --bdf 04:00.0 --reconnect-bdf
+-./fpga-util.py --bdf 83:00.0 --reconnect-bdf
+-
+-if lspci | grep -i xilinx; then
+-    echo "Found them"
+-else
+-    echo "Something went wrong"
+-    exit 1
+-fi
+-
+-## from scratch
+-#
+-#./fpga-util.py --bdf 04:00.0 --disconnect-bdf
+-#./fpga-util.py --bdf 04:00.1 --disconnect-bdf
+-#./fpga-util.py --bdf 83:00.0 --disconnect-bdf
+-#./fpga-util.py --bdf 83:00.1 --disconnect-bdf
+-#
+-#./fpga-util.py --serial Xilinx/21320733400EA --bitstream $BITSTREAM
+-#./fpga-util.py --serial Xilinx/213207334001A --bitstream $BITSTREAM
+-#
+-##./fpga-util.py --bdf 04:00.0 --reconnect-bdf
+-##./fpga-util.py --bdf 04:00.1 --reconnect-bdf
+-##./fpga-util.py --bdf 83:00.0 --reconnect-bdf
+-##./fpga-util.py --bdf 83:00.1 --reconnect-bdf
++echo 'DISABLED: multi-card setup is forbidden; use campaign scripts/infrasetup.py for 21 only' >&2
++exit 2
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/C4/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/fpga-util.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/fpga-util.py
+@@ -19,6 +19,8 @@
+ SAFE_SERIAL = 'Xilinx/21770433G02LA'
+ 
+ def program_fpga(vivado: Path, serial: str, bitstream: str) -> None:
++    if serial != SAFE_SERIAL:
++        sys.exit(f':ERROR: Refusing JTAG target {serial}')
+     progTcl = scriptPath / 'program_fpga.tcl'
+     assert progTcl.exists(), f"Unable to find {progTcl}"
+     rc, stdout, stderr = util.call_vivado(
+@@ -30,8 +32,11 @@
+                 '-bitstream_path', bitstream,
+         ]
+     )
+-    if rc != 0:
++    log_name = Path.cwd() / ('program-' + serial.replace('/', '_') + '.log')
++    log_name.write_text(stdout + '\n' + stderr)
++    if rc != 0 or f'EC_FPGA_PROGRAMMED serial={serial} file={bitstream}' not in stdout:
+         sys.exit(f":ERROR: Unable to flash FPGA {serial} with {bitstream}.\nstdout:\n{stdout}\nstderr:\n{stderr}")
++    print(f":INFO: Verified Vivado program completion; transcript: {log_name}")
+ 
+ # mapping functions
+ 
+@@ -77,6 +82,12 @@
+     megroup2.add_argument("--reconnect-bdf", help="Reconnect BDF(s)", action="store_true")
+     parsed_args = parser.parse_args(args)
+ 
++    if parsed_args.bdf and parsed_args.bdf != '21:00.0':
++        parser.error('only exact BDF 21:00.0 is allowed')
++    if parsed_args.extended_bdf and parsed_args.extended_bdf != SAFE_BDF:
++        parser.error('only exact BDF 0000:21:00.0 is allowed')
++    if parsed_args.serial:
++        parser.error('serial-only programming is disabled; use --extended-bdf 0000:21:00.0 for checked PCI/JTAG mapping')
+     requested_bus_ids = []
+     if parsed_args.bus_id:
+         requested_bus_ids.append(parsed_args.bus_id)
+@@ -169,13 +180,15 @@
+                 disconnect_bus_id(bus_id)
+ 
+             # program fpga(s) separately if doing multiple bdfs
+-            for i, bus_id in enumerate(bus_ids):
+-                serialNumber = serialNums[i]
+-                program_fpga(parsed_args.vivado_bin, serialNumber, parsed_args.bitstream)
+-                print(f":INFO: Successfully programmed FPGA {bus_id} with {parsed_args.bitstream}")
+-
+-            for bus_id in bus_ids:
+-                reconnect_bus_id(bus_id)
++            try:
++                for i, bus_id in enumerate(bus_ids):
++                    serialNumber = serialNums[i]
++                    program_fpga(parsed_args.vivado_bin, serialNumber, parsed_args.bitstream)
++                    print(f":INFO: Successfully programmed FPGA {bus_id} with {parsed_args.bitstream}")
++            finally:
++                # Restore visibility even when Vivado cannot find/program JTAG.
++                for bus_id in bus_ids:
++                    reconnect_bus_id(bus_id)
+ 
+         if parsed_args.serial or parsed_args.all_serials:
+             serials = []
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/C4/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/generate-fpga-db.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/generate-fpga-db.py
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env python3
++
++raise SystemExit('DISABLED: enumeration can reprogram multiple FPGAs; use existing /opt/firesim-db.json and read-only PCI/JTAG mapping')
+ 
+ import argparse
+ import os
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/C4/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/pcielib.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/pcielib.py
+@@ -7,17 +7,24 @@
+ 
+ pciDevicesPath = Path('/sys/bus/pci/devices')
+ SAFE_BUS_ID = '21'
++SAFE_BDF = '0000:21:00.0'
++SAFE_BRIDGE = '0000:20:03.1'
++SAFE_BRIDGE_PATH = Path('/sys/devices/pci0000:20') / SAFE_BRIDGE
+ 
+ def require_safe_bus_id(bus_id: str) -> None:
+     if bus_id != SAFE_BUS_ID:
+         sys.exit(f":ERROR: Hardware operation blocked for PCI bus {bus_id}; this campaign is pinned to 0000:21:00.0")
+ 
+ def get_device_paths(bus_id: str) -> List[Path]:
+-    result = []
+-    for entry in pciDevicesPath.iterdir():
+-        if re.match('^0000:' + re.escape(bus_id) + ':[a-fA-F0-9]{2}\.[0-7]$', entry.name):
+-            result.append(entry)
+-    return result
++    require_safe_bus_id(bus_id)
++    endpoint = pciDevicesPath / SAFE_BDF
++    if not endpoint.exists():
++        return []
++    if endpoint.resolve().parent != SAFE_BRIDGE_PATH:
++        sys.exit(':ERROR: Target FPGA upstream bridge changed; no hardware operation allowed')
++    if (endpoint / 'vendor').read_text().strip() != '0x10ee' or (endpoint / 'device').read_text().strip() != '0x903f':
++        sys.exit(':ERROR: Target FPGA PCI identity changed')
++    return [endpoint]
+ 
+ def get_device_extended_bdfs(bus_id: str) -> List[str]:
+     return [e.name for e in get_device_paths(bus_id)]
+@@ -41,7 +48,17 @@
+ # obtain bridge paths/bdfs
+ 
+ def get_bridge_paths(bus_id: str) -> List[Path]:
+-    return [e.resolve().absolute().parent for e in get_device_paths(bus_id)]
++    require_safe_bus_id(bus_id)
++    # The endpoint disappears during reprogramming; the known upstream bridge
++    # remains. Never fall back to a host-wide PCI rescan.
++    if not SAFE_BRIDGE_PATH.is_dir():
++        sys.exit(':ERROR: Expected isolated 21 upstream bridge is absent')
++    children = [p.name for p in SAFE_BRIDGE_PATH.iterdir()
++                if re.fullmatch(r'[0-9a-f]{4}:[0-9a-f]{2}:[0-9a-f]{2}\.[0-7]', p.name)]
++    if any(name != SAFE_BDF for name in children):
++        sys.exit(f':ERROR: Unexpected device shares target bridge: {children}')
++    get_device_paths(bus_id)
++    return [SAFE_BRIDGE_PATH]
+ 
+ def get_bridge_extended_bdfs(bus_id: str) -> List[str]:
+     return [e.name for e in get_bridge_paths(bus_id)]
+@@ -119,6 +136,14 @@
+             sys.exit(f":ERROR: Unable to clear error reporting bit for {bridgeBDF}")
+ 
+ def write_to_linux_device_path(path: Path, data: str = '1\n') -> None:
++    allowed = {
++        str(SAFE_BRIDGE_PATH / 'rescan'): {'1\n'},
++        str(SAFE_BRIDGE_PATH / SAFE_BDF / 'remove'): {'1\n'},
++        '/sys/bus/pci/drivers/xdma/unbind': {SAFE_BDF},
++        '/sys/bus/pci/drivers/xdma/bind': {SAFE_BDF},
++    }
++    if str(path) not in allowed or data not in allowed[str(path)]:
++        sys.exit(f':ERROR: Refusing non-target sysfs write: {path}')
+     try:
+         print(f":INFO: Writing to {path}: {data.strip()}")
+         open(path, 'w').write(data)
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/C4/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/program_fpga.tcl
++++ /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/program_fpga.tcl
+@@ -31,6 +31,11 @@
+     set [string range $key 1 end] $value
+ }
+ 
++if {$serial ne "Xilinx/21770433G02LA"} {
++    puts stderr "EC_FATAL_21_ONLY: protected e2 target"
++    exit 2
++}
++
+ puts "Program file: $options(-bitstream_path)"
+ puts "Probes file: $options(-probes_path)"
+ puts "Serial Number: $options(-serial)"
+@@ -38,15 +43,16 @@
+ set_param labtools.enable_cs_server false
+ 
+ open_hw_manager
+-connect_hw_server -allow_non_jtag
++connect_hw_server -url localhost:3122 -allow_non_jtag
+ 
+ # by default vivado opens a default hw target
+-close_hw_target
++if {[llength [current_hw_target -quiet]]} { close_hw_target }
+ 
+ # check if serial is in hw targets
+ set final_hw_target ""
+ foreach {hw_target} [get_hw_targets] {
+-    if {[string first $serial $hw_target] != -1} {
++    if {[lindex [split $hw_target /] end] eq "21770433G02LA"} {
++        if {$final_hw_target ne ""} { puts stderr "EC_FATAL_21_ONLY: ambiguous JTAG serial"; exit 2 }
+         set final_hw_target $hw_target
+     }
+ }
+@@ -59,11 +65,16 @@
+ 
+ puts "Programming $final_hw_target with ${options(-bitstream_path)}"
+ open_hw_target $final_hw_target
+-set_property PROBES.FILE ${options(-probes_path)} [get_hw_device]
+-set_property FULL_PROBES.FILE ${options(-probes_path)} [get_hw_device]
+-set_property PROGRAM.FILE ${options(-bitstream_path)} [get_hw_device]
+-program_hw_devices [get_hw_device]
+-refresh_hw_device [get_hw_device]
++set target_devices [get_hw_devices]
++if {[llength $target_devices] != 1} { puts stderr "EC_FATAL_21_ONLY: unexpected JTAG chain"; exit 2 }
++current_hw_device [lindex $target_devices 0]
++set_property PROBES.FILE ${options(-probes_path)} $target_devices
++set_property FULL_PROBES.FILE ${options(-probes_path)} $target_devices
++set_property PROGRAM.FILE ${options(-bitstream_path)} $target_devices
++program_hw_devices $target_devices
++refresh_hw_device $target_devices
++puts "EC_FPGA_PROGRAMMED serial=$serial file=$options(-bitstream_path) device=$target_devices"
+ close_hw_target
++close_hw_manager
+ 
+ exit
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/Native/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/berkeley-setup-fpgas.sh
++++ /data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/berkeley-setup-fpgas.sh
+@@ -1,50 +1,3 @@
+ #!/bin/bash
+-
+-set -ex
+-
+-BITSTREAM=$SCRATCH_HOME/firesim-private/deploy/results-build/2023-05-12--07-11-08-alveou250_firesim_rocket_singlecore_no_nic_w_pres/cl_xilinx_alveo_u250-firesim-FireSim-FireSimRocketConfig-BaseXilinxAlveoConfig/xilinx_alveo_u250/firesim.bit
+-
+-./fpga-util.py --bdf 04:00.0 --disconnect-bdf
+-./fpga-util.py --bdf 83:00.0 --disconnect-bdf
+-
+-if lspci | grep -i xilinx; then
+-    echo "Something went wrong"
+-    exit 1
+-else
+-    echo "Missing them"
+-fi
+-
+-./fpga-util.py --serial Xilinx/21320733400EA --bitstream $BITSTREAM
+-./fpga-util.py --serial Xilinx/213207334001A --bitstream $BITSTREAM
+-
+-if lspci | grep -i xilinx; then
+-    echo "Something went wrong"
+-    exit 1
+-else
+-    echo "Missing them"
+-fi
+-
+-./fpga-util.py --bdf 04:00.0 --reconnect-bdf
+-./fpga-util.py --bdf 83:00.0 --reconnect-bdf
+-
+-if lspci | grep -i xilinx; then
+-    echo "Found them"
+-else
+-    echo "Something went wrong"
+-    exit 1
+-fi
+-
+-## from scratch
+-#
+-#./fpga-util.py --bdf 04:00.0 --disconnect-bdf
+-#./fpga-util.py --bdf 04:00.1 --disconnect-bdf
+-#./fpga-util.py --bdf 83:00.0 --disconnect-bdf
+-#./fpga-util.py --bdf 83:00.1 --disconnect-bdf
+-#
+-#./fpga-util.py --serial Xilinx/21320733400EA --bitstream $BITSTREAM
+-#./fpga-util.py --serial Xilinx/213207334001A --bitstream $BITSTREAM
+-#
+-##./fpga-util.py --bdf 04:00.0 --reconnect-bdf
+-##./fpga-util.py --bdf 04:00.1 --reconnect-bdf
+-##./fpga-util.py --bdf 83:00.0 --reconnect-bdf
+-##./fpga-util.py --bdf 83:00.1 --reconnect-bdf
++echo 'DISABLED: multi-card setup is forbidden; use campaign scripts/infrasetup.py for 21 only' >&2
++exit 2
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/Native/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/fpga-util.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/fpga-util.py
+@@ -19,6 +19,8 @@
+ SAFE_SERIAL = 'Xilinx/21770433G02LA'
+ 
+ def program_fpga(vivado: Path, serial: str, bitstream: str) -> None:
++    if serial != SAFE_SERIAL:
++        sys.exit(f':ERROR: Refusing JTAG target {serial}')
+     progTcl = scriptPath / 'program_fpga.tcl'
+     assert progTcl.exists(), f"Unable to find {progTcl}"
+     rc, stdout, stderr = util.call_vivado(
+@@ -30,8 +32,11 @@
+                 '-bitstream_path', bitstream,
+         ]
+     )
+-    if rc != 0:
++    log_name = Path.cwd() / ('program-' + serial.replace('/', '_') + '.log')
++    log_name.write_text(stdout + '\n' + stderr)
++    if rc != 0 or f'EC_FPGA_PROGRAMMED serial={serial} file={bitstream}' not in stdout:
+         sys.exit(f":ERROR: Unable to flash FPGA {serial} with {bitstream}.\nstdout:\n{stdout}\nstderr:\n{stderr}")
++    print(f":INFO: Verified Vivado program completion; transcript: {log_name}")
+ 
+ # mapping functions
+ 
+@@ -77,6 +82,12 @@
+     megroup2.add_argument("--reconnect-bdf", help="Reconnect BDF(s)", action="store_true")
+     parsed_args = parser.parse_args(args)
+ 
++    if parsed_args.bdf and parsed_args.bdf != '21:00.0':
++        parser.error('only exact BDF 21:00.0 is allowed')
++    if parsed_args.extended_bdf and parsed_args.extended_bdf != SAFE_BDF:
++        parser.error('only exact BDF 0000:21:00.0 is allowed')
++    if parsed_args.serial:
++        parser.error('serial-only programming is disabled; use --extended-bdf 0000:21:00.0 for checked PCI/JTAG mapping')
+     requested_bus_ids = []
+     if parsed_args.bus_id:
+         requested_bus_ids.append(parsed_args.bus_id)
+@@ -169,13 +180,15 @@
+                 disconnect_bus_id(bus_id)
+ 
+             # program fpga(s) separately if doing multiple bdfs
+-            for i, bus_id in enumerate(bus_ids):
+-                serialNumber = serialNums[i]
+-                program_fpga(parsed_args.vivado_bin, serialNumber, parsed_args.bitstream)
+-                print(f":INFO: Successfully programmed FPGA {bus_id} with {parsed_args.bitstream}")
+-
+-            for bus_id in bus_ids:
+-                reconnect_bus_id(bus_id)
++            try:
++                for i, bus_id in enumerate(bus_ids):
++                    serialNumber = serialNums[i]
++                    program_fpga(parsed_args.vivado_bin, serialNumber, parsed_args.bitstream)
++                    print(f":INFO: Successfully programmed FPGA {bus_id} with {parsed_args.bitstream}")
++            finally:
++                # Restore visibility even when Vivado cannot find/program JTAG.
++                for bus_id in bus_ids:
++                    reconnect_bus_id(bus_id)
+ 
+         if parsed_args.serial or parsed_args.all_serials:
+             serials = []
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/Native/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/generate-fpga-db.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/generate-fpga-db.py
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env python3
++
++raise SystemExit('DISABLED: enumeration can reprogram multiple FPGAs; use existing /opt/firesim-db.json and read-only PCI/JTAG mapping')
+ 
+ import argparse
+ import os
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/Native/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/pcielib.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/pcielib.py
+@@ -7,17 +7,24 @@
+ 
+ pciDevicesPath = Path('/sys/bus/pci/devices')
+ SAFE_BUS_ID = '21'
++SAFE_BDF = '0000:21:00.0'
++SAFE_BRIDGE = '0000:20:03.1'
++SAFE_BRIDGE_PATH = Path('/sys/devices/pci0000:20') / SAFE_BRIDGE
+ 
+ def require_safe_bus_id(bus_id: str) -> None:
+     if bus_id != SAFE_BUS_ID:
+         sys.exit(f":ERROR: Hardware operation blocked for PCI bus {bus_id}; this campaign is pinned to 0000:21:00.0")
+ 
+ def get_device_paths(bus_id: str) -> List[Path]:
+-    result = []
+-    for entry in pciDevicesPath.iterdir():
+-        if re.match('^0000:' + re.escape(bus_id) + ':[a-fA-F0-9]{2}\.[0-7]$', entry.name):
+-            result.append(entry)
+-    return result
++    require_safe_bus_id(bus_id)
++    endpoint = pciDevicesPath / SAFE_BDF
++    if not endpoint.exists():
++        return []
++    if endpoint.resolve().parent != SAFE_BRIDGE_PATH:
++        sys.exit(':ERROR: Target FPGA upstream bridge changed; no hardware operation allowed')
++    if (endpoint / 'vendor').read_text().strip() != '0x10ee' or (endpoint / 'device').read_text().strip() != '0x903f':
++        sys.exit(':ERROR: Target FPGA PCI identity changed')
++    return [endpoint]
+ 
+ def get_device_extended_bdfs(bus_id: str) -> List[str]:
+     return [e.name for e in get_device_paths(bus_id)]
+@@ -41,7 +48,17 @@
+ # obtain bridge paths/bdfs
+ 
+ def get_bridge_paths(bus_id: str) -> List[Path]:
+-    return [e.resolve().absolute().parent for e in get_device_paths(bus_id)]
++    require_safe_bus_id(bus_id)
++    # The endpoint disappears during reprogramming; the known upstream bridge
++    # remains. Never fall back to a host-wide PCI rescan.
++    if not SAFE_BRIDGE_PATH.is_dir():
++        sys.exit(':ERROR: Expected isolated 21 upstream bridge is absent')
++    children = [p.name for p in SAFE_BRIDGE_PATH.iterdir()
++                if re.fullmatch(r'[0-9a-f]{4}:[0-9a-f]{2}:[0-9a-f]{2}\.[0-7]', p.name)]
++    if any(name != SAFE_BDF for name in children):
++        sys.exit(f':ERROR: Unexpected device shares target bridge: {children}')
++    get_device_paths(bus_id)
++    return [SAFE_BRIDGE_PATH]
+ 
+ def get_bridge_extended_bdfs(bus_id: str) -> List[str]:
+     return [e.name for e in get_bridge_paths(bus_id)]
+@@ -119,6 +136,14 @@
+             sys.exit(f":ERROR: Unable to clear error reporting bit for {bridgeBDF}")
+ 
+ def write_to_linux_device_path(path: Path, data: str = '1\n') -> None:
++    allowed = {
++        str(SAFE_BRIDGE_PATH / 'rescan'): {'1\n'},
++        str(SAFE_BRIDGE_PATH / SAFE_BDF / 'remove'): {'1\n'},
++        '/sys/bus/pci/drivers/xdma/unbind': {SAFE_BDF},
++        '/sys/bus/pci/drivers/xdma/bind': {SAFE_BDF},
++    }
++    if str(path) not in allowed or data not in allowed[str(path)]:
++        sys.exit(f':ERROR: Refusing non-target sysfs write: {path}')
+     try:
+         print(f":INFO: Writing to {path}: {data.strip()}")
+         open(path, 'w').write(data)
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/Native/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/program_fpga.tcl
++++ /data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/sims/firesim/platforms/xilinx_alveo_u250/scripts/program_fpga.tcl
+@@ -31,6 +31,11 @@
+     set [string range $key 1 end] $value
+ }
+ 
++if {$serial ne "Xilinx/21770433G02LA"} {
++    puts stderr "EC_FATAL_21_ONLY: protected e2 target"
++    exit 2
++}
++
+ puts "Program file: $options(-bitstream_path)"
+ puts "Probes file: $options(-probes_path)"
+ puts "Serial Number: $options(-serial)"
+@@ -38,15 +43,16 @@
+ set_param labtools.enable_cs_server false
+ 
+ open_hw_manager
+-connect_hw_server -allow_non_jtag
++connect_hw_server -url localhost:3122 -allow_non_jtag
+ 
+ # by default vivado opens a default hw target
+-close_hw_target
++if {[llength [current_hw_target -quiet]]} { close_hw_target }
+ 
+ # check if serial is in hw targets
+ set final_hw_target ""
+ foreach {hw_target} [get_hw_targets] {
+-    if {[string first $serial $hw_target] != -1} {
++    if {[lindex [split $hw_target /] end] eq "21770433G02LA"} {
++        if {$final_hw_target ne ""} { puts stderr "EC_FATAL_21_ONLY: ambiguous JTAG serial"; exit 2 }
+         set final_hw_target $hw_target
+     }
+ }
+@@ -59,11 +65,16 @@
+ 
+ puts "Programming $final_hw_target with ${options(-bitstream_path)}"
+ open_hw_target $final_hw_target
+-set_property PROBES.FILE ${options(-probes_path)} [get_hw_device]
+-set_property FULL_PROBES.FILE ${options(-probes_path)} [get_hw_device]
+-set_property PROGRAM.FILE ${options(-bitstream_path)} [get_hw_device]
+-program_hw_devices [get_hw_device]
+-refresh_hw_device [get_hw_device]
++set target_devices [get_hw_devices]
++if {[llength $target_devices] != 1} { puts stderr "EC_FATAL_21_ONLY: unexpected JTAG chain"; exit 2 }
++current_hw_device [lindex $target_devices 0]
++set_property PROBES.FILE ${options(-probes_path)} $target_devices
++set_property FULL_PROBES.FILE ${options(-probes_path)} $target_devices
++set_property PROGRAM.FILE ${options(-bitstream_path)} $target_devices
++program_hw_devices $target_devices
++refresh_hw_device $target_devices
++puts "EC_FPGA_PROGRAMMED serial=$serial file=$options(-bitstream_path) device=$target_devices"
+ close_hw_target
++close_hw_manager
+ 
+ exit
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/deployment-tools/fpga-util.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/fpga-util.py
+@@ -19,6 +19,8 @@
+ SAFE_SERIAL = 'Xilinx/21770433G02LA'
+ 
+ def program_fpga(vivado: Path, serial: str, bitstream: str) -> None:
++    if serial != SAFE_SERIAL:
++        sys.exit(f':ERROR: Refusing JTAG target {serial}')
+     progTcl = scriptPath / 'program_fpga.tcl'
+     assert progTcl.exists(), f"Unable to find {progTcl}"
+     rc, stdout, stderr = util.call_vivado(
+@@ -80,6 +82,12 @@
+     megroup2.add_argument("--reconnect-bdf", help="Reconnect BDF(s)", action="store_true")
+     parsed_args = parser.parse_args(args)
+ 
++    if parsed_args.bdf and parsed_args.bdf != '21:00.0':
++        parser.error('only exact BDF 21:00.0 is allowed')
++    if parsed_args.extended_bdf and parsed_args.extended_bdf != SAFE_BDF:
++        parser.error('only exact BDF 0000:21:00.0 is allowed')
++    if parsed_args.serial:
++        parser.error('serial-only programming is disabled; use --extended-bdf 0000:21:00.0 for checked PCI/JTAG mapping')
+     requested_bus_ids = []
+     if parsed_args.bus_id:
+         requested_bus_ids.append(parsed_args.bus_id)
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/deployment-tools/pcielib.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/pcielib.py
+@@ -7,17 +7,24 @@
+ 
+ pciDevicesPath = Path('/sys/bus/pci/devices')
+ SAFE_BUS_ID = '21'
++SAFE_BDF = '0000:21:00.0'
++SAFE_BRIDGE = '0000:20:03.1'
++SAFE_BRIDGE_PATH = Path('/sys/devices/pci0000:20') / SAFE_BRIDGE
+ 
+ def require_safe_bus_id(bus_id: str) -> None:
+     if bus_id != SAFE_BUS_ID:
+         sys.exit(f":ERROR: Hardware operation blocked for PCI bus {bus_id}; this campaign is pinned to 0000:21:00.0")
+ 
+ def get_device_paths(bus_id: str) -> List[Path]:
+-    result = []
+-    for entry in pciDevicesPath.iterdir():
+-        if re.match('^0000:' + re.escape(bus_id) + ':[a-fA-F0-9]{2}\.[0-7]$', entry.name):
+-            result.append(entry)
+-    return result
++    require_safe_bus_id(bus_id)
++    endpoint = pciDevicesPath / SAFE_BDF
++    if not endpoint.exists():
++        return []
++    if endpoint.resolve().parent != SAFE_BRIDGE_PATH:
++        sys.exit(':ERROR: Target FPGA upstream bridge changed; no hardware operation allowed')
++    if (endpoint / 'vendor').read_text().strip() != '0x10ee' or (endpoint / 'device').read_text().strip() != '0x903f':
++        sys.exit(':ERROR: Target FPGA PCI identity changed')
++    return [endpoint]
+ 
+ def get_device_extended_bdfs(bus_id: str) -> List[str]:
+     return [e.name for e in get_device_paths(bus_id)]
+@@ -41,7 +48,17 @@
+ # obtain bridge paths/bdfs
+ 
+ def get_bridge_paths(bus_id: str) -> List[Path]:
+-    return [e.resolve().absolute().parent for e in get_device_paths(bus_id)]
++    require_safe_bus_id(bus_id)
++    # The endpoint disappears during reprogramming; the known upstream bridge
++    # remains. Never fall back to a host-wide PCI rescan.
++    if not SAFE_BRIDGE_PATH.is_dir():
++        sys.exit(':ERROR: Expected isolated 21 upstream bridge is absent')
++    children = [p.name for p in SAFE_BRIDGE_PATH.iterdir()
++                if re.fullmatch(r'[0-9a-f]{4}:[0-9a-f]{2}:[0-9a-f]{2}\.[0-7]', p.name)]
++    if any(name != SAFE_BDF for name in children):
++        sys.exit(f':ERROR: Unexpected device shares target bridge: {children}')
++    get_device_paths(bus_id)
++    return [SAFE_BRIDGE_PATH]
+ 
+ def get_bridge_extended_bdfs(bus_id: str) -> List[str]:
+     return [e.name for e in get_bridge_paths(bus_id)]
+@@ -119,6 +136,14 @@
+             sys.exit(f":ERROR: Unable to clear error reporting bit for {bridgeBDF}")
+ 
+ def write_to_linux_device_path(path: Path, data: str = '1\n') -> None:
++    allowed = {
++        str(SAFE_BRIDGE_PATH / 'rescan'): {'1\n'},
++        str(SAFE_BRIDGE_PATH / SAFE_BDF / 'remove'): {'1\n'},
++        '/sys/bus/pci/drivers/xdma/unbind': {SAFE_BDF},
++        '/sys/bus/pci/drivers/xdma/bind': {SAFE_BDF},
++    }
++    if str(path) not in allowed or data not in allowed[str(path)]:
++        sys.exit(f':ERROR: Refusing non-target sysfs write: {path}')
+     try:
+         print(f":INFO: Writing to {path}: {data.strip()}")
+         open(path, 'w').write(data)
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/deployment-tools/program_fpga.tcl
++++ /data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/program_fpga.tcl
+@@ -31,6 +31,11 @@
+     set [string range $key 1 end] $value
+ }
+ 
++if {$serial ne "Xilinx/21770433G02LA"} {
++    puts stderr "EC_FATAL_21_ONLY: protected e2 target"
++    exit 2
++}
++
+ puts "Program file: $options(-bitstream_path)"
+ puts "Probes file: $options(-probes_path)"
+ puts "Serial Number: $options(-serial)"
+@@ -46,7 +51,8 @@
+ # check if serial is in hw targets
+ set final_hw_target ""
+ foreach {hw_target} [get_hw_targets] {
+-    if {[string first $serial $hw_target] != -1} {
++    if {[lindex [split $hw_target /] end] eq "21770433G02LA"} {
++        if {$final_hw_target ne ""} { puts stderr "EC_FATAL_21_ONLY: ambiguous JTAG serial"; exit 2 }
+         set final_hw_target $hw_target
+     }
+ }
+@@ -59,12 +65,15 @@
+ 
+ puts "Programming $final_hw_target with ${options(-bitstream_path)}"
+ open_hw_target $final_hw_target
+-set_property PROBES.FILE ${options(-probes_path)} [get_hw_device]
+-set_property FULL_PROBES.FILE ${options(-probes_path)} [get_hw_device]
+-set_property PROGRAM.FILE ${options(-bitstream_path)} [get_hw_device]
+-program_hw_devices [get_hw_device]
+-refresh_hw_device [get_hw_device]
+-puts "EC_FPGA_PROGRAMMED serial=$serial file=$options(-bitstream_path) device=[get_hw_device]"
++set target_devices [get_hw_devices]
++if {[llength $target_devices] != 1} { puts stderr "EC_FATAL_21_ONLY: unexpected JTAG chain"; exit 2 }
++current_hw_device [lindex $target_devices 0]
++set_property PROBES.FILE ${options(-probes_path)} $target_devices
++set_property FULL_PROBES.FILE ${options(-probes_path)} $target_devices
++set_property PROGRAM.FILE ${options(-bitstream_path)} $target_devices
++program_hw_devices $target_devices
++refresh_hw_device $target_devices
++puts "EC_FPGA_PROGRAMMED serial=$serial file=$options(-bitstream_path) device=$target_devices"
+ close_hw_target
+ close_hw_manager
+ 
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/scripts/board_batch.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/scripts/board_batch.py
+@@ -1,9 +1,7 @@
+ #!/usr/bin/env python3
+-"""Authorized two-card maintenance and isolated Native first-run capture.
+-
+-Requires administrator execution. Does not install drivers, change firmware,
+-reboot the host, or kill unrelated processes. Global maintenance is restricted
+-to times when neither card has a simulation/device user.
++"""21-only deployment and sample capture. No host-wide driver or PCI actions.
++
++The e2 FPGA is protected, including any task already running on it.
+ """
+ import argparse
+ import datetime as dt
+@@ -50,12 +48,20 @@
+ def precheck(cleanup_root=None,target_bdfs=None):
+     targets=BDFS if target_bdfs is None else list(target_bdfs)
+     assert targets and len(set(targets))==len(targets) and all(b==TARGET_BDF for b in targets), targets
+-    opened=[];sims=[];old_users=[];denied=0
++    opened=[];sims=[];other_sims=[];old_users=[];denied=0
++    nodes=set()
++    for b in targets:
++        node_dir=Path('/sys/bus/pci/devices')/b/'xdma'
++        if node_dir.is_dir():nodes.update('/dev/'+p.name for p in node_dir.iterdir())
+     for p in Path('/proc').glob('[0-9]*'):
+         try:
+             cmd=(p/'cmdline').read_bytes().replace(b'\0',b' ').decode(errors='replace')
+             comm=(p/'comm').read_text().strip()
+-            if comm.startswith('FireSim-') or comm=='fpga-util.py':sims.append(dict(pid=int(p.name),cmd=cmd))
++            if comm.startswith('FireSim-') or comm=='fpga-util.py':
++                row=dict(pid=int(p.name),cmd=cmd)
++                bus=re.search(r'(?:^|\s)\+bus=(?:0x)?([0-9a-fA-F]+)(?:\s|$)',cmd)
++                if bus and bus[1].lower()!='21':other_sims.append(row)
++                else:sims.append(row)
+             if cleanup_root and str(cleanup_root) in cmd:old_users.append(dict(pid=int(p.name),kind='command',cmd=cmd))
+             try:
+                 cwd=os.readlink(p/'cwd')
+@@ -64,7 +70,7 @@
+             for fd in (p/'fd').iterdir():
+                 try:
+                     target=os.readlink(fd)
+-                    if re.match(r'/dev/(xdma|xclmgmt)',target) or any(b[5:] in target and '/resource' in target for b in targets):
++                    if target.removesuffix(' (deleted)') in nodes or target.startswith('/dev/xclmgmt') or any(b in target and '/resource' in target for b in targets):
+                         opened.append(dict(pid=int(p.name),fd=fd.name,target=target,cmd=cmd))
+                     if cleanup_root and target.startswith(str(cleanup_root)):old_users.append(dict(pid=int(p.name),kind='fd',path=target))
+                 except PermissionError:denied+=1
+@@ -72,7 +78,7 @@
+             # MMIO remains mapped after a device FD is closed.
+             try:
+                 maps=(p/'maps').read_text()
+-                hits=[x for x in maps.splitlines() if '/dev/xdma' in x or any(b[5:] in x and '/resource' in x for b in targets)]
++                hits=[x for x in maps.splitlines() if any(n in x for n in nodes) or any(b in x and '/resource' in x for b in targets)]
+                 if hits:opened.append(dict(pid=int(p.name),kind='mapping',paths=hits,cmd=cmd))
+             except PermissionError:denied+=1
+         except PermissionError:denied+=1
+@@ -86,7 +92,7 @@
+         assert sum(x['bdf']==b[5:] and x['uid']=='Xilinx/'+serial for x in db)==1
+         mapping.append(dict(bdf=b,serial=serial,driver=(s/'driver').resolve().name))
+     return dict(observed_utc=dt.datetime.now(dt.timezone.utc).isoformat(),target_bdfs=targets,mapping=mapping,
+-                open_devices=opened,simulation_processes=sims,cleanup_users=old_users,
++                open_devices=opened,simulation_processes=sims,other_card_simulations=other_sims,cleanup_users=old_users,
+                 permission_denied=denied,user_confirms_boards_available=True)
+ 
+ 
+@@ -161,8 +167,10 @@
+ 
+ 
+ def deploy_native(out,pair=False,single_c4_bdf=None,single_native_bdf=None):
+-    assert not pair, 'two-card Native/C4 deployment is disabled; this campaign is pinned to FPGA 0000:21:00.0'
+-    assert single_c4_bdf in [None,TARGET_BDF] and single_native_bdf in [None,TARGET_BDF]
++    if pair:
++        raise ValueError('two-card deployment is disabled; only 0000:21:00.0 is allowed')
++    if single_c4_bdf not in [None,TARGET_BDF] or single_native_bdf not in [None,TARGET_BDF]:
++        raise ValueError('only 0000:21:00.0 is allowed')
+     n=json.loads((W/'native-reuse.json').read_text())
+     if single_c4_bdf:
+         c=json.loads((W/'bitstream-runtime-build.json').read_text())
+@@ -182,19 +190,17 @@
+     assert (scripts/'fpga-util.py').exists()
+     check=precheck(target_bdfs=[card['bdf'] for card in cards])
+     save(out/'pre-deployment.json',check)
+-    assert not check['permission_denied'], 'cannot prove device/process scan complete'
+     assert not check['open_devices'] and not check['simulation_processes'], 'concrete device/simulation conflict'
+     ensure_jtag_server(out,[card['serial'] for card in cards])
+     check=precheck(target_bdfs=[card['bdf'] for card in cards])
+     save(out/'pre-maintenance.json',check)
+-    assert not check['permission_denied'], 'cannot prove device/process scan complete before target-card operation'
+     assert not check['open_devices'] and not check['simulation_processes'], 'concrete conflict before target-card operation'
+     log=out/'deployment.log'
+-    state=dict(schema='ec-dual-fpga-deployment/1',status='MAINTENANCE_RUNNING',
++    state=dict(schema='ec-single-fpga-deployment/2',status='MAINTENANCE_RUNNING',
+                configuration='Native+C4' if pair else ('C4' if single_c4_bdf else 'Native'),
+                source_id=cards[0]['source_id'],bitstream=cards[0]['bitstream'],bitstream_sha256=cards[0]['bitstream_sha256'],
+                bdfs=[card['bdf'] for card in cards],serials=[card['serial'] for card in cards],cards=cards,
+-               user_authorization='2026-11-06 explicit both-board availability and direct deployment',
++               user_authorization='2026-11-09 explicit 21-only experiments; never disturb e2',
+                global_operations=[],
+                targeted_operations=[
+                    'unbind XDMA for 0000:21:00.0 only',
+@@ -317,7 +323,6 @@
+ 
+ 
+ def main():
+-    assert os.geteuid()==0, 'administrator execution required'
+     p=argparse.ArgumentParser()
+     p.add_argument('--deploy-only',action='store_true')
+     p.add_argument('--run-only',action='store_true')
+@@ -325,16 +330,17 @@
+     p.add_argument('--single-c4-bdf',choices=BDFS,help='Deploy final C4 to one currently enumerated FPGA')
+     p.add_argument('--single-native-bdf',choices=BDFS,help='Reuse certified Native bitstream on one currently enumerated FPGA')
+     a=p.parse_args()
++    if a.pair:p.error('two-card --pair is disabled; only 0000:21:00.0 may be used')
++    if os.geteuid()!=0:p.error('administrator execution required')
+     assert sum(bool(v) for v in [a.pair,a.single_c4_bdf,a.single_native_bdf])<=1, 'choose one deployment mode'
+     assert not a.single_c4_bdf or a.deploy_only, 'C4 deployment uses isolated runner for samples'
+     (D/'locks').mkdir(exist_ok=True)
+-    maintenance=(D/'locks/dual-maintenance.lock').open('a');fcntl.flock(maintenance,fcntl.LOCK_EX|fcntl.LOCK_NB)
++    maintenance=(D/'locks/maintenance-0000_21_00.0.lock').open('a');fcntl.flock(maintenance,fcntl.LOCK_EX|fcntl.LOCK_NB)
+     stamp=dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+     label='C4-single-' if a.single_c4_bdf else ('Native-C4-' if a.pair else ('Native-single-' if a.single_native_bdf else 'Native-'))
+     batch=D/'batches'/(label+stamp);batch.mkdir(parents=True)
+     try:
+         if not a.run_only:
+-            if not (a.single_c4_bdf or a.single_native_bdf):clean_abandoned(batch)
+             deploy_native(batch,pair=a.pair,single_c4_bdf=a.single_c4_bdf,single_native_bdf=a.single_native_bdf)
+         else:
+             latest=json.loads((D/'latest-deployment.json').read_text());assert latest['configuration']=='Native' and latest['status']=='DEPLOYED_NOT_RUN'
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/scripts/continue_canneal.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/scripts/continue_canneal.py
+@@ -41,7 +41,7 @@
+             time.sleep(300)
+         assert all(sha(p)==hashes[k] for k,p in receipts.items())
+         # Prevent any global maintenance while this software-only batch runs.
+-        maintenance=(D/'locks/dual-maintenance.lock').open('a')
++        maintenance=(D/'locks/maintenance-0000_21_00.0.lock').open('a')
+         fcntl.flock(maintenance,fcntl.LOCK_SH|fcntl.LOCK_NB)
+         def run(label,argv):
+             log=D/(label+'-launch.log')
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/scripts/continue_fpga.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/scripts/continue_fpga.py
+@@ -135,7 +135,7 @@
+     # board_batch re-acquires this lock and rechecks devices immediately before
+     # any global operation; a race then stops deployment safely.
+     while True:
+-        maintenance=(D/'locks/dual-maintenance.lock').open('a')
++        maintenance=(D/'locks/maintenance-0000_21_00.0.lock').open('a')
+         try:
+             fcntl.flock(maintenance,fcntl.LOCK_EX|fcntl.LOCK_NB)
+             maintenance.close()
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/scripts/continue_streamcluster.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/scripts/continue_streamcluster.py
+@@ -36,7 +36,7 @@
+             state['heartbeat_utc']=dt.datetime.now(dt.timezone.utc).isoformat();save(path,state)
+             time.sleep(300)
+         assert all(sha(p)==hashes[k] for k,p in receipts.items())
+-        maintenance=(D/'locks/dual-maintenance.lock').open('a')
++        maintenance=(D/'locks/maintenance-0000_21_00.0.lock').open('a')
+         fcntl.flock(maintenance,fcntl.LOCK_SH|fcntl.LOCK_NB)
+         for inp in ['test','simsmall']:
+             argv=['python3',str(W/'scripts/run_isolated_sample.py'),'C4','streamcluster',inp,
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/scripts/coverage_first.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/scripts/coverage_first.py
+@@ -64,7 +64,7 @@
+ 
+ 
+ def sample_busy():
+-    active = read(D / 'active-0000_e2_00.0.json', {})
++    active = read(D / 'active-0000_21_00.0.json', {})
+     if live(active):
+         return True
+     # A stale RUNNING record with a live owning runner must also be adopted.
+@@ -145,17 +145,21 @@
+ 
+ def matches(row, valid, size, repetition=1):
+     driver_keys = {'driver_receipt_sha256', 'driver_sha256'}
++    # Preserve exact valid historical e2 samples; never change their identity.
++    # New execution and hardware smoke are strictly pinned to 21.
++    board_pairs={('0000:21:00.0','21770433G02LA'),('0000:e2:00.0','21770433G001A')}
+     accepted = row.get('accepted_driver_bindings', []) + [
+         {k: row['bound'][k] for k in driver_keys if k in row['bound']}]
+     return [(p, r) for p, r in valid if r.get('formal') == (size == 'simmedium')
+             and r['identity'].get('input') == size
+             and (size != 'simmedium' or r['identity'].get('repetition') == repetition)
+-            and all(r['identity'].get(k) == v for k, v in row['bound'].items() if k not in driver_keys)
++            and all(r['identity'].get(k) == v for k, v in row['bound'].items() if k not in driver_keys | {'board_bdf'})
++            and (r['identity'].get('board_bdf'),r['identity'].get('board_serial')) in board_pairs
+             and any(all(r['identity'].get(k) == v for k,v in d.items()) for d in accepted)]
+ 
+ 
+ def smoke_valid(row, valid):
+-    keys = ['configuration', 'hardware_source_id', 'driver_sha256',
++    keys = ['configuration', 'board_bdf', 'hardware_source_id', 'driver_sha256',
+             'linux_bootargs', 'linux_memory_cap_bytes']
+     return any(r['identity'].get('program') == 'smoke' and not r.get('formal')
+                and all(r['identity'].get(k) == row['bound'][k] for k in keys)
+@@ -324,7 +328,7 @@
+             continue
+         # C4 failures can consume a deployment. Recover on the SAME certified
+         # image before the next program, under board_batch's exclusive lock.
+-        consumed=read(D/'consumed-0000_e2_00.0.json',{})
++        consumed=read(D/'consumed-0000_21_00.0.json',{})
+         generation=deployment.get('started_utc','')+'|'+BDF+'|'+card.get('bitstream_sha256','')
+         reset_probe = False
+         if cfg=='C4' and consumed.get('deployment_generation')==generation:
+@@ -348,7 +352,7 @@
+         # A zero process exit alone never commits success.
+         after=results();committed=matches(row,after,size,rep)
+         if rec['returncode'] or not committed:
+-            active=read(D/'active-0000_e2_00.0.json',{})
++            active=read(D/'active-0000_21_00.0.json',{})
+             state['failures'][key]=dict(**rec,program=row['program'],configuration=cfg,
+                 input=size,repetition=rep,profile=row['profile'],run_dir=active.get('run_dir'),
+                 reason='nonzero runner exit or missing exact atomic completion')
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/scripts/coverage_status.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/scripts/coverage_status.py
+@@ -19,7 +19,7 @@
+ 
+ def build():
+     rows,valid=c.catalog(),c.results()
+-    active=c.read(D/'active-0000_e2_00.0.json',{})
++    active=c.read(D/'active-0000_21_00.0.json',{})
+     active_live=c.live(active)
+     active_ident=c.read(Path(active['run_dir'])/'manifest.json',{}).get('identity',{}) if active.get('run_dir') else {}
+     coordinator=c.read(D/'coverage-first-state.json',{})
+@@ -69,7 +69,7 @@
+         paired=sum(all(len(r['configurations'][cfg]['formal_completed'])==3 for cfg in ['Native','C4']) for r in programs),
+         Native_first=sum(bool(r['configurations']['Native']['formal_completed']) for r in programs),
+         C4_first=sum(bool(r['configurations']['C4']['formal_completed']) for r in programs))
+-    state_names=['active-0000_e2_00.0.json','suite-native-queue-state.json','suite-c4-queue-state.json',
++    state_names=['active-0000_21_00.0.json','suite-native-queue-state.json','suite-c4-queue-state.json',
+         'C4-runtime-cad-state.json','fpga-continuation-state.json','idle-repairs-state.json',
+         'fluidanimate-stable-native-state.json','coverage-first-state.json']
+     mem=dict(x.split(':',1) for x in Path('/proc/meminfo').read_text().splitlines())
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/scripts/job-specs/native.json
++++ /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job-specs/native.json
+@@ -7,7 +7,7 @@
+   ],
+   "legacy_states": [
+     "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-native-queue-state.json",
+-    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/active-0000_e2_00.0.json"
++    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/active-0000_21_00.0.json"
+   ],
+   "inputs": [
+     "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_campaign_native.py"
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/scripts/job_service.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py
+@@ -41,7 +41,7 @@
+     """Archive only stale states, never results/completion evidence or live inputs."""
+     recovery_lock=(D/'locks/job-interruption-reconcile.lock').open('a');fcntl.flock(recovery_lock,fcntl.LOCK_EX)
+     dest=D/'interruptions'/('host-reboot-'+boot());dest.mkdir(parents=True,exist_ok=True)
+-    paths=[D/n for n in ['C4-runtime-cad-state.json','fpga-continuation-state.json','suite-native-queue-state.json','suite-c4-queue-state.json','active-0000_e2_00.0.json']]
++    paths=[D/n for n in ['C4-runtime-cad-state.json','fpga-continuation-state.json','suite-native-queue-state.json','suite-c4-queue-state.json','active-0000_21_00.0.json']]
+     paths+=list((D/'runs').glob('*/state.json'))+list((D/'sampling-batches').glob('*/state.json'))
+     changed=[]
+     for p in paths:
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/scripts/publish_live.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/scripts/publish_live.py
+@@ -138,12 +138,13 @@
+ 
+ ## 板卡、安全维护与批次
+ 
++- 安全修复与离线检查：[21-only safety report]({D/'safety/21-only-20261109/REPORT.md'})。通用 FireSim Manager 的实体卡 infrasetup/enumeration 已禁用；部署入口为 `{W}/scripts/infrasetup.py Native|C4`，只复用认证 bitstream。
+ - 当前部署目标固定为 Xilinx U280 `0000:21:00.0` / `21770433G02LA`；`0000:e2:00.0` / `21770433G001A` 保留为不触碰设备。系统映射与两端点型号记录在 {link(D/'fpga-target-map-20261109.json')}。旧 `restore_second_pcie.py` 已禁用。
+-- 每次部署前检查目标 BDF/序列号、所有可见进程和 XDMA FD/MMIO；权限拒绝数非零时拒绝操作。FireSim `fpga-util.py` 只接受 `21:00.0` 和目标序列号，拒绝 `--all-bdfs` / `--all-serials`。部署按目标设备 unbind/remove/JTAG/上游桥 rescan/rebind，不卸载全局 XDMA 模块，也不写 `/sys/bus/pci/rescan`。运行实例持有共享维护锁；部署需独占锁并等待活跃样本退出。
++- 每次部署前检查目标 BDF/序列号、所有可见进程和 XDMA FD/MMIO；权限拒绝单独记录；具体目标设备冲突才阻止部署。FireSim `fpga-util.py` 只接受精确 `0000:21:00.0`（序列号仅由核验映射取得，拒绝 serial-only 编程），拒绝 `--all-bdfs` / `--all-serials`。部署按目标设备 unbind/remove/JTAG/上游桥 rescan/rebind，不卸载全局 XDMA 模块，也不写 `/sys/bus/pci/rescan`。21 的运行实例持有单卡共享维护锁；21 部署需单卡独占锁。既有 e2 活样本保持不动，不加载或卸载主机级模块。
+ - 本任务自有 `hw_server:3122` 的 PID、boot ID、日志位于 {link(D/'owned-hw-server-3122.json')}。未停止其他服务或任务，未运行有副作用的 enumeratefpgas。
+ - 最新部署 {link(D/'latest-deployment.json')}，当前 boot ID 匹配：`{current_deployment}`。实际编程证明在该 batch 的 `program-Xilinx_*.log`，部署状态不代替运行验证。
+ - 续跑进程 {link(D/'fpga-continuation-state.json')}：最终 bitstream 成功及软件绑定通过后，仅在 `0000:21:00.0` 部署，执行 C4 smoke → Blackscholes test/reset 探测 → simsmall → simmedium r1/r2/r3。功能门槛不通过时不进入正式测量；重复结果持续保存。
+-- 后续全套队列 {link(D/'suite-execution-plan.json')}；Native 扩展 {link(D/'suite-native-queue-state.json')} 在综合期间复用e2；C4扩展 {link(D/'suite-c4-queue-state.json')} 等首个控制器结束后依次运行就绪程序。原 Canneal/Streamcluster 等待控制器已在确认无子任务后并入全套队列，历史状态保留，未中断样本。各程序先小输入门槛再正式3轮，故障逐项保留；C4仅在具体失败guest后由统一维护流程重载同一认证bitstream以恢复，其余软件/输入变化不触发bitstream重建。
++- 后续全套队列 {link(D/'suite-execution-plan.json')}；Native 扩展 {link(D/'suite-native-queue-state.json')} 在综合期间仅使用21；C4扩展 {link(D/'suite-c4-queue-state.json')} 等首个控制器结束后依次运行就绪程序。原 Canneal/Streamcluster 等待控制器已在确认无子任务后并入全套队列，历史状态保留，未中断样本。各程序先小输入门槛再正式3轮，故障逐项保留；C4仅在具体失败guest后由统一维护流程重载同一认证bitstream以恢复，其余软件/输入变化不触发bitstream重建。
+ 
+ ## 软件、公平性与观测
+ 
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/scripts/run_fluidanimate_stable_native.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_fluidanimate_stable_native.py
+@@ -33,7 +33,7 @@
+     if adoption.get('status')!='BOUND_FOR_BOTH_CONFIGURATIONS':return 'WAITING_AUTHORIZED_PROFILE_READY',None
+     task=next(t for t in read(D/'suite-execution-plan.json')['programs'] if t['program']=='fluidanimate')
+     assert task['software_profile_prefix']==PROFILE and task.get('native_owner')=='ec-parsec-fluidanimate-stable-native.service'
+-    q=read(D/'suite-native-queue-state.json');active=read(D/'active-0000_e2_00.0.json')
++    q=read(D/'suite-native-queue-state.json');active=read(D/'active-0000_21_00.0.json')
+     if q.get('host_boot_id')!=BOOT or q.get('status')!='WAITING_REMAINING_SOFTWARE':return 'WAITING_EXISTING_NATIVE_QUEUE_IDLE',None
+     if active.get('status') in ['RUNNING','STARTING']:return 'WAITING_ACTIVE_SAMPLE',None
+     repair=read(D/'idle-repairs-state.json')
+@@ -83,7 +83,7 @@
+             # a terminal state just before its process exits.
+             try:
+                 existing_repair=(D/'locks/idle-repairs.lock').open('a');fcntl.flock(existing_repair,fcntl.LOCK_EX|fcntl.LOCK_NB)
+-                candidate=(D/'locks/dual-maintenance.lock').open('a');fcntl.flock(candidate,fcntl.LOCK_SH|fcntl.LOCK_NB)
++                candidate=(D/'locks/maintenance-0000_21_00.0.lock').open('a');fcntl.flock(candidate,fcntl.LOCK_SH|fcntl.LOCK_NB)
+             except BlockingIOError:
+                 if existing_repair:existing_repair.close();existing_repair=None
+                 if 'candidate' in locals():candidate.close()
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/scripts/run_idle_repairs.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_idle_repairs.py
+@@ -38,7 +38,7 @@
+ 
+ 
+ def quiet_boundary():
+-    q=read(D/'suite-native-queue-state.json');active=read(D/'active-0000_e2_00.0.json')
++    q=read(D/'suite-native-queue-state.json');active=read(D/'active-0000_21_00.0.json')
+     if q.get('host_boot_id')!=BOOT or q.get('status')!='WAITING_REMAINING_SOFTWARE':return None
+     if active.get('status') in ['RUNNING','STARTING']:return None
+     child=q.get('child_pid')
+@@ -79,7 +79,7 @@
+     while maintenance is None:
+         boundary=quiet_boundary()
+         if boundary:
+-            candidate=(D/'locks/dual-maintenance.lock').open('a')
++            candidate=(D/'locks/maintenance-0000_21_00.0.lock').open('a')
+             try:fcntl.flock(candidate,fcntl.LOCK_SH|fcntl.LOCK_NB)
+             except BlockingIOError:candidate.close()
+             else:
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/scripts/run_isolated_sample.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_isolated_sample.py
+@@ -91,8 +91,9 @@
+                 checker_latency=None,guest_power_down_observed='Power down' in uart,fased_readback=seen,host_efficiency=efficiency)
+ 
+ def run(a):
++    if a.bdf != BDFS[0]:raise ValueError('Only 0000:21:00.0 is authorized')
+     assert os.geteuid()==0
+-    maintenance=(D/'locks/dual-maintenance.lock').open('a');fcntl.flock(maintenance,fcntl.LOCK_SH|fcntl.LOCK_NB)
++    maintenance=(D/'locks/maintenance-0000_21_00.0.lock').open('a');fcntl.flock(maintenance,fcntl.LOCK_SH|fcntl.LOCK_NB)
+     lock=(D/'locks'/('card-'+a.bdf.replace(':','_')+'.lock')).open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+     cfg=a.configuration;native=json.loads((W/'native-reuse.json').read_text());fwpath=a.firmware_receipt or W/'software'/cfg/'firmware-build.json'
+     fw=json.loads(fwpath.read_text());driver_path=a.driver_receipt or W/'runtime'/(cfg+'-observed-driver.json');dr=json.loads(driver_path.read_text())
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/scripts/run_repetitions.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_repetitions.py
+@@ -20,7 +20,7 @@
+     bound=dict(configuration=cfg,board_bdf=a.bdf,program=a.program,input=a.input,firmware_receipt_sha256=sha(fw),apps_manifest_sha256=sha(apps),rootfs_sha256=json.loads(rootfs.read_text())['sha256'],driver_receipt_sha256=sha(driver_path),driver_sha256=sha(exe),hardware_source_id=driver['hardware_source_id'])
+     firmware=json.loads(fw.read_text());dt_receipt=next(Path(f) for f in firmware['input_files'] if f.endswith('.json') and 'fdt' in Path(f).name)
+     fdt=json.loads(dt_receipt.read_text());bound['linux_bootargs']=fdt['bootargs'];bound['linux_memory_cap_bytes']=fdt['linux_mem_cap']
+-    maintenance=(D/'locks/dual-maintenance.lock').open('a');fcntl.flock(maintenance,fcntl.LOCK_SH|fcntl.LOCK_NB)
++    maintenance=(D/'locks/maintenance-0000_21_00.0.lock').open('a');fcntl.flock(maintenance,fcntl.LOCK_SH|fcntl.LOCK_NB)
+     lock=(D/'locks'/('repetitions-'+a.bdf.replace(':','_')+'.lock')).open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+ 
+     def results():
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/final-opt4-20261106/scripts/suite_queue.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/scripts/suite_queue.py
+@@ -66,7 +66,7 @@
+                 if not all(s.get('status') in terminals for s in parents):
+                     state.update(status='WAITING_EXISTING_PRIORITY_QUEUE',heartbeat_utc=dt.datetime.now(dt.timezone.utc).isoformat());save(output,state);time.sleep(300);continue
+                 deployment=read(D/'latest-deployment.json',{})
+-                consumed=read(D/'consumed-0000_e2_00.0.json',{})
++                consumed=read(D/'consumed-0000_21_00.0.json',{})
+                 generation=deployment.get('started_utc','')+'|'+BDF+'|'+deployment.get('bitstream_sha256','')
+                 if consumed.get('deployment_generation')==generation:
+                     previous=read(Path(consumed['run_dir'])/'result.json',{})
+@@ -99,7 +99,7 @@
+                 cad=read(D/'C4-runtime-cad-state.json',{})
+                 if cfg=='Native' and cad.get('status')=='BUILT_NOT_RUN':
+                     state.update(status='YIELDING_TO_READY_C4_BITSTREAM');save(output,state);return
+-                maintenance=(D/'locks/dual-maintenance.lock').open('a')
++                maintenance=(D/'locks/maintenance-0000_21_00.0.lock').open('a')
+                 try:fcntl.flock(maintenance,fcntl.LOCK_SH|fcntl.LOCK_NB)
+                 except BlockingIOError:
+                     maintenance.close();state['tasks'][name]=dict(status='WAITING_MAINTENANCE');continue
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/upstream/deploy/runtools/run_farm_deploy_managers.py
++++ /data1/gzh/EC/firesim/upstream/deploy/runtools/run_farm_deploy_managers.py
+@@ -798,6 +798,8 @@
+         self.PLATFORM_NAME = None
+ 
+     def load_xdma(self) -> None:
++        if not self.parent_node.metasimulation_enabled:
++            raise RuntimeError('Physical Alveo Manager operations are disabled on this host: generic infrasetup/enumeration can affect e2. Use /data1/gzh/EC/firesim/final-opt4-20261106/scripts/infrasetup.py and run_isolated_sample.py; target 0000:21:00.0 only.')
+         """ load the xdma kernel module. """
+         if self.instance_assigned_simulations():
+             # load xdma if unloaded
+@@ -809,6 +811,8 @@
+                 self.instance_logger("XDMA Driver Kernel Module already loaded.")
+ 
+     def unload_xdma(self) -> None:
++        if not self.parent_node.metasimulation_enabled:
++            raise RuntimeError('Physical Alveo Manager operations are disabled on this host: generic infrasetup/enumeration can affect e2. Use /data1/gzh/EC/firesim/final-opt4-20261106/scripts/infrasetup.py and run_isolated_sample.py; target 0000:21:00.0 only.')
+         """ unload the xdma kernel module. """
+         if self.instance_assigned_simulations():
+             # unload xdma if loaded
+@@ -827,6 +831,8 @@
+         return db[slotno]['bdf']
+ 
+     def flash_fpgas(self) -> None:
++        if not self.parent_node.metasimulation_enabled:
++            raise RuntimeError('Physical Alveo Manager operations are disabled on this host: generic infrasetup/enumeration can affect e2. Use /data1/gzh/EC/firesim/final-opt4-20261106/scripts/infrasetup.py and run_isolated_sample.py; target 0000:21:00.0 only.')
+         if self.instance_assigned_simulations():
+             self.instance_logger("""Flash all FPGA Slots.""")
+ 
+@@ -859,6 +865,8 @@
+                 run(f"""{remote_sim_dir}/scripts/fpga-util.py --bitstream {bit} --bdf {bdf}""")
+ 
+     def infrasetup_instance(self, uridir: str) -> None:
++        if not self.parent_node.metasimulation_enabled:
++            raise RuntimeError('Physical Alveo Manager operations are disabled on this host: generic infrasetup/enumeration can affect e2. Use /data1/gzh/EC/firesim/final-opt4-20261106/scripts/infrasetup.py and run_isolated_sample.py; target 0000:21:00.0 only.')
+         """ Handle infrastructure setup for this platform. """
+         metasim_enabled = self.parent_node.metasimulation_enabled
+ 
+@@ -884,6 +892,8 @@
+                 self.copy_switch_slot_infrastructure(slotno)
+ 
+     def create_fpga_database(self, uridir: str) -> None:
++        if not self.parent_node.metasimulation_enabled:
++            raise RuntimeError('Physical Alveo Manager operations are disabled on this host: generic infrasetup/enumeration can affect e2. Use /data1/gzh/EC/firesim/final-opt4-20261106/scripts/infrasetup.py and run_isolated_sample.py; target 0000:21:00.0 only.')
+         self.instance_logger(f"""Creating FPGA database""")
+ 
+         remote_home_dir = self.parent_node.get_sim_dir()
+@@ -936,6 +946,8 @@
+             run(f"""./scripts/generate-fpga-db.py --bitstream {bitstream} --driver {driver} --out-db-json {self.JSON_DB}""")
+ 
+     def enumerate_fpgas(self, uridir: str) -> None:
++        if not self.parent_node.metasimulation_enabled:
++            raise RuntimeError('Physical Alveo Manager operations are disabled on this host: generic infrasetup/enumeration can affect e2. Use /data1/gzh/EC/firesim/final-opt4-20261106/scripts/infrasetup.py and run_isolated_sample.py; target 0000:21:00.0 only.')
+         """ Handle fpga setup for this platform. """
+ 
+         if self.instance_assigned_simulations():
+@@ -954,6 +966,8 @@
+         return
+ 
+     def start_sim_slot(self, slotno: int) -> None:
++        if not self.parent_node.metasimulation_enabled:
++            raise RuntimeError('Physical Alveo Manager operations are disabled on this host: generic infrasetup/enumeration can affect e2. Use /data1/gzh/EC/firesim/final-opt4-20261106/scripts/infrasetup.py and run_isolated_sample.py; target 0000:21:00.0 only.')
+         """ start a simulation. (same as the default except that you have a mapping from slotno to a specific BDF)"""
+         if self.instance_assigned_simulations():
+             self.instance_logger(f"""Starting {self.sim_type_message} simulation for slot: {slotno}.""")
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/upstream/platforms/xilinx_alveo_u250/scripts/berkeley-setup-fpgas.sh
++++ /data1/gzh/EC/firesim/upstream/platforms/xilinx_alveo_u250/scripts/berkeley-setup-fpgas.sh
+@@ -1,50 +1,3 @@
+ #!/bin/bash
+-
+-set -ex
+-
+-BITSTREAM=$SCRATCH_HOME/firesim-private/deploy/results-build/2023-05-12--07-11-08-alveou250_firesim_rocket_singlecore_no_nic_w_pres/cl_xilinx_alveo_u250-firesim-FireSim-FireSimRocketConfig-BaseXilinxAlveoConfig/xilinx_alveo_u250/firesim.bit
+-
+-./fpga-util.py --bdf 04:00.0 --disconnect-bdf
+-./fpga-util.py --bdf 83:00.0 --disconnect-bdf
+-
+-if lspci | grep -i xilinx; then
+-    echo "Something went wrong"
+-    exit 1
+-else
+-    echo "Missing them"
+-fi
+-
+-./fpga-util.py --serial Xilinx/21320733400EA --bitstream $BITSTREAM
+-./fpga-util.py --serial Xilinx/213207334001A --bitstream $BITSTREAM
+-
+-if lspci | grep -i xilinx; then
+-    echo "Something went wrong"
+-    exit 1
+-else
+-    echo "Missing them"
+-fi
+-
+-./fpga-util.py --bdf 04:00.0 --reconnect-bdf
+-./fpga-util.py --bdf 83:00.0 --reconnect-bdf
+-
+-if lspci | grep -i xilinx; then
+-    echo "Found them"
+-else
+-    echo "Something went wrong"
+-    exit 1
+-fi
+-
+-## from scratch
+-#
+-#./fpga-util.py --bdf 04:00.0 --disconnect-bdf
+-#./fpga-util.py --bdf 04:00.1 --disconnect-bdf
+-#./fpga-util.py --bdf 83:00.0 --disconnect-bdf
+-#./fpga-util.py --bdf 83:00.1 --disconnect-bdf
+-#
+-#./fpga-util.py --serial Xilinx/21320733400EA --bitstream $BITSTREAM
+-#./fpga-util.py --serial Xilinx/213207334001A --bitstream $BITSTREAM
+-#
+-##./fpga-util.py --bdf 04:00.0 --reconnect-bdf
+-##./fpga-util.py --bdf 04:00.1 --reconnect-bdf
+-##./fpga-util.py --bdf 83:00.0 --reconnect-bdf
+-##./fpga-util.py --bdf 83:00.1 --reconnect-bdf
++echo 'DISABLED: multi-card setup is forbidden; use campaign scripts/infrasetup.py for 21 only' >&2
++exit 2
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/upstream/platforms/xilinx_alveo_u250/scripts/fpga-util.py
++++ /data1/gzh/EC/firesim/upstream/platforms/xilinx_alveo_u250/scripts/fpga-util.py
+@@ -14,8 +14,13 @@
+ from typing import Dict, Any, List
+ 
+ scriptPath = Path(__file__).resolve().parent
++SAFE_BUS_ID = '21'
++SAFE_BDF = '0000:21:00.0'
++SAFE_SERIAL = 'Xilinx/21770433G02LA'
+ 
+ def program_fpga(vivado: Path, serial: str, bitstream: str) -> None:
++    if serial != SAFE_SERIAL:
++        sys.exit(f':ERROR: Refusing JTAG target {serial}')
+     progTcl = scriptPath / 'program_fpga.tcl'
+     assert progTcl.exists(), f"Unable to find {progTcl}"
+     rc, stdout, stderr = util.call_vivado(
+@@ -27,8 +32,11 @@
+                 '-bitstream_path', bitstream,
+         ]
+     )
+-    if rc != 0:
++    log_name = Path.cwd() / ('program-' + serial.replace('/', '_') + '.log')
++    log_name.write_text(stdout + '\n' + stderr)
++    if rc != 0 or f'EC_FPGA_PROGRAMMED serial={serial} file={bitstream}' not in stdout:
+         sys.exit(f":ERROR: Unable to flash FPGA {serial} with {bitstream}.\nstdout:\n{stdout}\nstderr:\n{stderr}")
++    print(f":INFO: Verified Vivado program completion; transcript: {log_name}")
+ 
+ # mapping functions
+ 
+@@ -41,23 +49,19 @@
+     sys.exit(f":ERROR: Unable to create FPGA database from {firesim.dbPath}")
+ 
+ def get_serial_from_bus_id(id: str) -> str:
++    if id != SAFE_BUS_ID:
++        sys.exit(f":ERROR: Refusing FPGA access on PCI bus {id}; allowed target is {SAFE_BDF}")
+     deviceBDF = pcielib.get_bdf_from_extended_bdf(pcielib.get_singular_device_extended_bdf(id))
+     for e in get_fpga_db():
+-        if deviceBDF == e['bdf']:
++        if deviceBDF == e['bdf'] and e['uid'] == SAFE_SERIAL:
+             return e['uid']
+     sys.exit(":ERROR: Unable to get serial number from bus id")
+ 
+ def get_serials() -> List[str]:
+-    serials = []
+-    for e in get_fpga_db():
+-        serials.append(e['uid'])
+-    return serials
++    return [SAFE_SERIAL]
+ 
+ def get_extended_bdfs() -> List[str]:
+-    bdfs = []
+-    for e in get_fpga_db():
+-        bdfs.append(pcielib.get_extended_bdf_from_bdf(e['bdfs']))
+-    return bdfs
++    return [SAFE_BDF]
+ 
+ # main
+ 
+@@ -78,6 +82,27 @@
+     megroup2.add_argument("--reconnect-bdf", help="Reconnect BDF(s)", action="store_true")
+     parsed_args = parser.parse_args(args)
+ 
++    if parsed_args.bdf and parsed_args.bdf != '21:00.0':
++        parser.error('only exact BDF 21:00.0 is allowed')
++    if parsed_args.extended_bdf and parsed_args.extended_bdf != SAFE_BDF:
++        parser.error('only exact BDF 0000:21:00.0 is allowed')
++    if parsed_args.serial:
++        parser.error('serial-only programming is disabled; use --extended-bdf 0000:21:00.0 for checked PCI/JTAG mapping')
++    requested_bus_ids = []
++    if parsed_args.bus_id:
++        requested_bus_ids.append(parsed_args.bus_id)
++    if parsed_args.bdf:
++        requested_bus_ids.append(pcielib.get_bus_id_from_extended_bdf(
++            pcielib.get_extended_bdf_from_bdf(parsed_args.bdf)))
++    if parsed_args.extended_bdf:
++        requested_bus_ids.append(pcielib.get_bus_id_from_extended_bdf(parsed_args.extended_bdf))
++    if any(bus_id != SAFE_BUS_ID for bus_id in requested_bus_ids):
++        sys.exit(f":ERROR: Refusing PCI targets {requested_bus_ids}; only {SAFE_BDF} is allowed")
++    if parsed_args.all_bdfs or parsed_args.all_serials:
++        sys.exit(":ERROR: --all-bdfs and --all-serials are disabled for this single-card campaign")
++    if parsed_args.serial and parsed_args.serial != SAFE_SERIAL:
++        sys.exit(f":ERROR: Refusing JTAG serial {parsed_args.serial}; only {SAFE_SERIAL} is allowed")
++
+     if parsed_args.hw_server_bin is None:
+         parsed_args.hw_server_bin = shutil.which('hw_server')
+     if parsed_args.vivado_bin is None:
+@@ -123,13 +148,16 @@
+         return bus_ids
+ 
+     def disconnect_bus_id(bus_id: str) -> None:
++        pcielib.require_safe_bus_id(bus_id)
+         pcielib.clear_serr_bits(bus_id)
+         pcielib.clear_fatal_error_reporting_bits(bus_id)
++        pcielib.unbind_xdma(bus_id)
+         pcielib.remove(bus_id)
+         assert not pcielib.any_device_exists(bus_id), f"{bus_id} still visible. Check for proper removal."
+ 
+     def reconnect_bus_id(bus_id: str) -> None:
+         pcielib.rescan(bus_id)
++        pcielib.bind_xdma(bus_id)
+         pcielib.enable_memmapped_transfers(bus_id)
+         assert pcielib.any_device_exists(bus_id), f"{bus_id} not visible. Check for proper rescan."
+ 
+@@ -152,13 +180,15 @@
+                 disconnect_bus_id(bus_id)
+ 
+             # program fpga(s) separately if doing multiple bdfs
+-            for i, bus_id in enumerate(bus_ids):
+-                serialNumber = serialNums[i]
+-                program_fpga(parsed_args.vivado_bin, serialNumber, parsed_args.bitstream)
+-                print(f":INFO: Successfully programmed FPGA {bus_id} with {parsed_args.bitstream}")
+-
+-            for bus_id in bus_ids:
+-                reconnect_bus_id(bus_id)
++            try:
++                for i, bus_id in enumerate(bus_ids):
++                    serialNumber = serialNums[i]
++                    program_fpga(parsed_args.vivado_bin, serialNumber, parsed_args.bitstream)
++                    print(f":INFO: Successfully programmed FPGA {bus_id} with {parsed_args.bitstream}")
++            finally:
++                # Restore visibility even when Vivado cannot find/program JTAG.
++                for bus_id in bus_ids:
++                    reconnect_bus_id(bus_id)
+ 
+         if parsed_args.serial or parsed_args.all_serials:
+             serials = []
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/upstream/platforms/xilinx_alveo_u250/scripts/generate-fpga-db.py
++++ /data1/gzh/EC/firesim/upstream/platforms/xilinx_alveo_u250/scripts/generate-fpga-db.py
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env python3
++
++raise SystemExit('DISABLED: enumeration can reprogram multiple FPGAs; use existing /opt/firesim-db.json and read-only PCI/JTAG mapping')
+ 
+ import argparse
+ import os
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/upstream/platforms/xilinx_alveo_u250/scripts/pcielib.py
++++ /data1/gzh/EC/firesim/upstream/platforms/xilinx_alveo_u250/scripts/pcielib.py
+@@ -6,13 +6,25 @@
+ from typing import Dict, List
+ 
+ pciDevicesPath = Path('/sys/bus/pci/devices')
++SAFE_BUS_ID = '21'
++SAFE_BDF = '0000:21:00.0'
++SAFE_BRIDGE = '0000:20:03.1'
++SAFE_BRIDGE_PATH = Path('/sys/devices/pci0000:20') / SAFE_BRIDGE
++
++def require_safe_bus_id(bus_id: str) -> None:
++    if bus_id != SAFE_BUS_ID:
++        sys.exit(f":ERROR: Hardware operation blocked for PCI bus {bus_id}; this campaign is pinned to 0000:21:00.0")
+ 
+ def get_device_paths(bus_id: str) -> List[Path]:
+-    result = []
+-    for entry in pciDevicesPath.iterdir():
+-        if re.match('^0000:' + re.escape(bus_id) + ':[a-fA-F0-9]{2}\.[0-7]$', entry.name):
+-            result.append(entry)
+-    return result
++    require_safe_bus_id(bus_id)
++    endpoint = pciDevicesPath / SAFE_BDF
++    if not endpoint.exists():
++        return []
++    if endpoint.resolve().parent != SAFE_BRIDGE_PATH:
++        sys.exit(':ERROR: Target FPGA upstream bridge changed; no hardware operation allowed')
++    if (endpoint / 'vendor').read_text().strip() != '0x10ee' or (endpoint / 'device').read_text().strip() != '0x903f':
++        sys.exit(':ERROR: Target FPGA PCI identity changed')
++    return [endpoint]
+ 
+ def get_device_extended_bdfs(bus_id: str) -> List[str]:
+     return [e.name for e in get_device_paths(bus_id)]
+@@ -36,7 +48,17 @@
+ # obtain bridge paths/bdfs
+ 
+ def get_bridge_paths(bus_id: str) -> List[Path]:
+-    return [e.resolve().absolute().parent for e in get_device_paths(bus_id)]
++    require_safe_bus_id(bus_id)
++    # The endpoint disappears during reprogramming; the known upstream bridge
++    # remains. Never fall back to a host-wide PCI rescan.
++    if not SAFE_BRIDGE_PATH.is_dir():
++        sys.exit(':ERROR: Expected isolated 21 upstream bridge is absent')
++    children = [p.name for p in SAFE_BRIDGE_PATH.iterdir()
++                if re.fullmatch(r'[0-9a-f]{4}:[0-9a-f]{2}:[0-9a-f]{2}\.[0-7]', p.name)]
++    if any(name != SAFE_BDF for name in children):
++        sys.exit(f':ERROR: Unexpected device shares target bridge: {children}')
++    get_device_paths(bus_id)
++    return [SAFE_BRIDGE_PATH]
+ 
+ def get_bridge_extended_bdfs(bus_id: str) -> List[str]:
+     return [e.name for e in get_bridge_paths(bus_id)]
+@@ -98,6 +120,7 @@
+ # clear SERR bit in command register
+ # https://support.xilinx.com/s/question/0D52E00006hpjPHSAY/dell-r720-poweredge-server-reboots-on-fpga-reprogramming?language=en_US
+ def clear_serr_bits(bus_id: str) -> None:
++    require_safe_bus_id(bus_id)
+     for bridgeBDF in get_bridge_extended_bdfs(bus_id):
+         run = subprocess.run(['setpci', '-s', bridgeBDF, 'COMMAND=0000:0100'])
+         if run.returncode != 0:
+@@ -106,12 +129,21 @@
+ # clear fatal error reporting enable bit in the device control register
+ # https://support.xilinx.com/s/question/0D52E00006hpjPHSAY/dell-r720-poweredge-server-reboots-on-fpga-reprogramming?language=en_US
+ def clear_fatal_error_reporting_bits(bus_id: str) -> None:
++    require_safe_bus_id(bus_id)
+     for bridgeBDF in get_bridge_extended_bdfs(bus_id):
+         run = subprocess.run(['setpci', '-s', bridgeBDF, 'CAP_EXP+8.w=0000:0004'])
+         if run.returncode != 0:
+             sys.exit(f":ERROR: Unable to clear error reporting bit for {bridgeBDF}")
+ 
+ def write_to_linux_device_path(path: Path, data: str = '1\n') -> None:
++    allowed = {
++        str(SAFE_BRIDGE_PATH / 'rescan'): {'1\n'},
++        str(SAFE_BRIDGE_PATH / SAFE_BDF / 'remove'): {'1\n'},
++        '/sys/bus/pci/drivers/xdma/unbind': {SAFE_BDF},
++        '/sys/bus/pci/drivers/xdma/bind': {SAFE_BDF},
++    }
++    if str(path) not in allowed or data not in allowed[str(path)]:
++        sys.exit(f':ERROR: Refusing non-target sysfs write: {path}')
+     try:
+         print(f":INFO: Writing to {path}: {data.strip()}")
+         open(path, 'w').write(data)
+@@ -119,21 +151,48 @@
+         sys.exit(f":ERROR: Cannot write to {path} value: {data}")
+ 
+ def remove(bus_id: str) -> None:
++    require_safe_bus_id(bus_id)
+     for devicePaths in get_device_paths(bus_id):
+         removePath = devicePaths.resolve().absolute() / 'remove'
+         if removePath.exists():
+             write_to_linux_device_path(removePath)
+ 
+ def rescan(bus_id: str) -> None:
+-    for bridgePath in get_bridge_paths(bus_id):
++    require_safe_bus_id(bus_id)
++    bridgePaths = get_bridge_paths(bus_id)
++    if not bridgePaths:
++        sys.exit(f":ERROR: Unable to find upstream bridge for PCI bus {bus_id}")
++    for bridgePath in bridgePaths:
+         rescanPath = bridgePath / 'rescan'
+-        if rescanPath.exists():
+-            write_to_linux_device_path(rescanPath)
+-    write_to_linux_device_path(Path('/sys/bus/pci/rescan'))
++        if not rescanPath.exists():
++            sys.exit(f":ERROR: No targeted upstream-bridge rescan interface at {rescanPath}")
++        write_to_linux_device_path(rescanPath)
++
++def unbind_xdma(bus_id: str) -> None:
++    require_safe_bus_id(bus_id)
++    unbindPath = Path('/sys/bus/pci/drivers/xdma/unbind')
++    for devicePath in get_device_paths(bus_id):
++        driverPath = devicePath / 'driver'
++        if driverPath.exists() and driverPath.resolve().name == 'xdma':
++            write_to_linux_device_path(unbindPath, devicePath.name)
++
++def bind_xdma(bus_id: str) -> None:
++    require_safe_bus_id(bus_id)
++    bindPath = Path('/sys/bus/pci/drivers/xdma/bind')
++    devices = get_device_paths(bus_id)
++    if not devices:
++        sys.exit(f":ERROR: FPGA endpoint for PCI bus {bus_id} did not return after targeted rescan")
++    for devicePath in devices:
++        driverPath = devicePath / 'driver'
++        if not driverPath.exists():
++            write_to_linux_device_path(bindPath, devicePath.name)
++        if not driverPath.exists() or driverPath.resolve().name != 'xdma':
++            sys.exit(f":ERROR: XDMA did not bind to target {devicePath.name}")
+ 
+ # enable memory mapped transfers for the fpga
+ # https://support.xilinx.com/s/question/0D52E00006iHlNoSAK/lspci-reports-bar-0-disabled?language=en_US
+ def enable_memmapped_transfers(bus_id: str) -> None:
++    require_safe_bus_id(bus_id)
+     for deviceBDF in get_device_extended_bdfs(bus_id):
+         run = subprocess.run(['setpci', '-s', deviceBDF, 'COMMAND=0x02'])
+         if run.returncode != 0:
+--- /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/safety/21-only-20261109/before/upstream/platforms/xilinx_alveo_u250/scripts/program_fpga.tcl
++++ /data1/gzh/EC/firesim/upstream/platforms/xilinx_alveo_u250/scripts/program_fpga.tcl
+@@ -31,6 +31,11 @@
+     set [string range $key 1 end] $value
+ }
+ 
++if {$serial ne "Xilinx/21770433G02LA"} {
++    puts stderr "EC_FATAL_21_ONLY: protected e2 target"
++    exit 2
++}
++
+ puts "Program file: $options(-bitstream_path)"
+ puts "Probes file: $options(-probes_path)"
+ puts "Serial Number: $options(-serial)"
+@@ -38,15 +43,16 @@
+ set_param labtools.enable_cs_server false
+ 
+ open_hw_manager
+-connect_hw_server -allow_non_jtag
++connect_hw_server -url localhost:3122 -allow_non_jtag
+ 
+ # by default vivado opens a default hw target
+-close_hw_target
++if {[llength [current_hw_target -quiet]]} { close_hw_target }
+ 
+ # check if serial is in hw targets
+ set final_hw_target ""
+ foreach {hw_target} [get_hw_targets] {
+-    if {[string first $serial $hw_target] != -1} {
++    if {[lindex [split $hw_target /] end] eq "21770433G02LA"} {
++        if {$final_hw_target ne ""} { puts stderr "EC_FATAL_21_ONLY: ambiguous JTAG serial"; exit 2 }
+         set final_hw_target $hw_target
+     }
+ }
+@@ -59,11 +65,16 @@
+ 
+ puts "Programming $final_hw_target with ${options(-bitstream_path)}"
+ open_hw_target $final_hw_target
+-set_property PROBES.FILE ${options(-probes_path)} [get_hw_device]
+-set_property FULL_PROBES.FILE ${options(-probes_path)} [get_hw_device]
+-set_property PROGRAM.FILE ${options(-bitstream_path)} [get_hw_device]
+-program_hw_devices [get_hw_device]
+-refresh_hw_device [get_hw_device]
++set target_devices [get_hw_devices]
++if {[llength $target_devices] != 1} { puts stderr "EC_FATAL_21_ONLY: unexpected JTAG chain"; exit 2 }
++current_hw_device [lindex $target_devices 0]
++set_property PROBES.FILE ${options(-probes_path)} $target_devices
++set_property FULL_PROBES.FILE ${options(-probes_path)} $target_devices
++set_property PROGRAM.FILE ${options(-bitstream_path)} $target_devices
++program_hw_devices $target_devices
++refresh_hw_device $target_devices
++puts "EC_FPGA_PROGRAMMED serial=$serial file=$options(-bitstream_path) device=$target_devices"
+ close_hw_target
++close_hw_manager
+ 
+ exit

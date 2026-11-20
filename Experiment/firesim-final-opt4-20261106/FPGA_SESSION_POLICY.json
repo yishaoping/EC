@@ -1,0 +1,39 @@
+{
+  "accepted_utc": "2026-11-12T03:02:14.412855+00:00",
+  "area_equivalence_only": true,
+  "audit_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/fpga-exclusive-takeover-20261112T030000Z",
+  "board_allowlist": [
+    "0000:21:00.0"
+  ],
+  "control_owner": "independent-fpga-session-20261112",
+  "coverage_policy": "First cover ready r1 for requested eight, then r2/r3; per-program correctness failures retained and skipped while other ready programs continue",
+  "cpu_comparison_owner": "separate-user-session",
+  "cpu_scope": "Adopt existing MC equivalence prerequisite only; do not control, restart, rewrite or duplicate matched Native/EC CPU comparison and paper consumers",
+  "forbidden_board_bdfs": [
+    "0000:e2:00.0"
+  ],
+  "functional_baseline_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "functional_extensions_allowed": false,
+  "global_xdma_or_dual_card_operations_allowed": false,
+  "legacy_plan_sha256_after": "9295233277b153723cec0bf735de9a8cc853c0ea8d82efe19040a1e92778ca12",
+  "legacy_plan_sha256_before": "5b3d64ca9b5d39be5bc12f89c57dd535c8a44f363a23dcef6e99457cd7699587",
+  "native_fpga_paused": true,
+  "preserve_all_correctness_and_physical_certification_gates": true,
+  "preserve_live_cad_and_hardware_inputs": true,
+  "priority_programs": [
+    "blackscholes",
+    "fluidanimate",
+    "bodytrack",
+    "freqmine",
+    "swaptions",
+    "ferret",
+    "dedup",
+    "streamcluster"
+  ],
+  "resource_guards": "All generic/fullCAD resource gates retained. Independently audited same existing smallSVBslot re-admission192GiBavailable/load128on256logicalCPUs; same2cores224225/64GiBhardcap/max3componentworkers. Bound measuredApeak9303.922MB and separate immutable readmission receipt.",
+  "schema": "ec-fpga-exclusive-session/1",
+  "svb_component_is_not_complete_ec": true,
+  "target_cycle_semantics_preserved": true,
+  "performance_only_profile": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/campaign-policy.json",
+  "full_baseline_preserved": true
+}

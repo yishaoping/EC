@@ -1,0 +1,47 @@
+{
+  "candidate": {
+    "bits": 16,
+    "dcache_sha256": "3ed04d7b933390f249085db9edefe6848b35b4fde2eb45cbb6deae181aeec0d6",
+    "fpga_access": false,
+    "frozen_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "full_snapshot_entries": 512,
+    "hardware_commit": "3d29eff9baf4f8b0c086940321524d403d8ab8aa",
+    "helper_sha256": "a561f1d8135eeaec4ee4624f05b162e744d05f5c548ec704a836aff5c25acedf",
+    "parent_commit": "e0c3737f989c563f99a00f3fd26c1cbd27421775",
+    "production_selected": false,
+    "scalar_read_occurrences": 26,
+    "schema": "ec-opt4-slot-epoch-binding/1",
+    "sets": 256,
+    "source_id": "b8bb592592e62d4a37fef57674d0800559f01eda2ed45852c289420f3a73d9bf",
+    "ways": 2,
+    "whole_dut_admission": false,
+    "worktree": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-slot-epoch-static-r2-20261111",
+    "write_ports": 3,
+    "write_priority": [
+      "probe",
+      "crossPackageMetaClear",
+      "refill"
+    ]
+  },
+  "frozen_parent_relation": "Frozen backup DCache exact byte-equal C4; parent differs only in SafePrefixScanner block. New three writes retain independent enable/address/data and source priority; two increments use original old state, not forwarded writes. RegInit retains synchronous-reset dominance. All26 scalar uses, row read, original assertions and complete512x16 debug observation preserved.",
+  "limits": [
+    "Not monolithic generated DCache formal",
+    "No measured area gain yet",
+    "12 arbitrary readers plus full512word snapshot is storage boundary, not full DCache",
+    "May not enter selected combination until complete module evidence reviewed"
+  ],
+  "policy_sha256": "c52f026f4085213b7f65d4683d572d2084c1320d2a3ed28a03525670569ee7e0",
+  "preserved_jobs": [
+    "9ae9a7fc whole DUT",
+    "e0c3737f already-running whole DUT",
+    "dcache-full-pair-r1",
+    "address-update-sequence-r1",
+    "static-retire-r2",
+    "group8-cec-r1",
+    "owner-update-sequence-system-r2"
+  ],
+  "scope": "Source preparation and invariants only; SAT, simulation, storage map and complete-DCache comparison pending. No whole admission.",
+  "source_reversal_exact": true,
+  "storage_transition_cut": "512 entries, arbitrary three data bits/enables/indices, static versus nested dynamic update plus arbitrary read and sync-reset; bit-independent write/read cut lifts to16. Actual16bit increment and wrap exercised by generated source-helper boundary.",
+  "utc": "2026-11-11T05:35:04.484129+00:00"
+}

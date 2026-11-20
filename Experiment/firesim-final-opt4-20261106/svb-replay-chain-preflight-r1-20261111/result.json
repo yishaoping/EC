@@ -1,0 +1,94 @@
+{
+  "admission_schema_required_keys": [
+    "status",
+    "functional_baseline",
+    "profile",
+    "source_id",
+    "board_allowlist",
+    "driver",
+    "driver_sha256",
+    "driver_args",
+    "required_driver_args",
+    "host_rtl_sha256",
+    "control_header_sha256",
+    "trace",
+    "trace_sha256",
+    "trace_records",
+    "expected_summary",
+    "cpu_proof",
+    "cpu_proof_sha256",
+    "fpga_access",
+    "complete_opt4"
+  ],
+  "baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "completed_utc": "2026-11-11T13:58:34.565187+00:00",
+  "evidence": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-svb-binary-replay-r1-20261111/dispatch-before-direct-receipt-fix.py": "5e9f5dc6f49ca17ac0d54b0b93dbd9f4aa42d0143444ffb4d49b21c3b69cc0ed",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-svb-binary-replay-r1-20261111/dispatch.py": "233f7e1fc35d14705d5c8012a8b4ab1f29779df076d4183f0726a48fe678f092",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-svb-binary-replay-r1-20261111/run.py": "e1d3021a37d2eafb27722487edb38bfde81708cebb99804f45397ebb8f057204",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-svb-gg-stream-replay-r3-20261111/dispatch.py": "c66d3ddd60ec663c448b3ce7fabe99e590a75e37eb60a211270678b6630845cb",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-svb-gg-stream-replay-r3-20261111/plan.json": "5471018c78ecdc0202ca236fec53ad04ff0cabf0ae476d25a0f9fc17c0c462e0",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-svb-gg-stream-replay-r3-20261111/run.py": "d067b9b6d385a8016093455cb7373cb25c702fff23c7a8bc7e6c028e9c98da84",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-replay-chain-preflight-r1-20261111/audit.py": "a23b284b9fc359aee8cd17a47038bd85b55cea5e2bd8dc8e893d7e307f728a16",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/opt4_frozen_scope.py": "46175935994e8b939563df6bbaef6a105f87a8ba4ba6ac744acab11d561ae294",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/opt4_unattended_common.py": "ac709cdf3dc514f987fbb77593cb441e2f47ee2cab2efc46c3d2de3839998e2e"
+  },
+  "force_all_mandatory": true,
+  "fpga_access": false,
+  "full_timeout_scope": "Actualmeasuredperrecord*recordcount*3+600,cap24h; nofullapplicationdataadmittedbythispreflight",
+  "gg_static_bound_inputs": 10,
+  "legacy_missing_job_spec_dependency_removed": true,
+  "limitations": [
+    "Existingstaticinputs/scope/schemaonly; completeapplicationtrace notyetfinished",
+    "No futurefulldataorrealFPGAvalidationclaimed",
+    "No rootbroker mutation/jobsubmission/devicesaccess"
+  ],
+  "observed_state": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-full-gg-external-observer-r5-state.json": {
+      "child": {
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 1114195,
+        "start_ticks": "21591177"
+      },
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "heartbeat_last_row": "725025, 1313",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "host_wall_seconds": 1320.1764727830014,
+      "owned_log_bytes": 873779186,
+      "pid": 1114105,
+      "process_exited": false,
+      "run_directory": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-external-observer-r5-20261111/canneal-observer-on",
+      "schema": "ec-gg-external-observer-state/1",
+      "start_ticks": "21591140",
+      "started_utc": "2026-11-11T13:36:31.300848+00:00",
+      "status": "RUNNING_CANNEAL_OBSERVER_ON",
+      "updated_utc": "2026-11-11T13:58:31.512217+00:00"
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-original-svb-binary-replay-r1-dispatch-state.json": {
+      "fpga_access": false,
+      "status": "WAITING_COMPLETE_ORIGINAL_SVB_PORT_TRACE",
+      "updated_utc": "2026-11-11T13:57:09.838528+00:00"
+    },
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-original-svb-gg-stream-replay-r3-dispatch-state.json": {
+      "fpga_access": false,
+      "status": "WAITING_COMPLETE_REAL_APPLICATION_TRACE",
+      "updated_utc": "2026-11-11T13:55:05.896446+00:00"
+    }
+  },
+  "original_direct_D_receipt_rejected": true,
+  "root_scope_gg": {
+    "audited_worktrees": {},
+    "baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "scope": "frozen_function_and_cycle_equivalence_only"
+  },
+  "root_scope_standalone": {
+    "audited_worktrees": {},
+    "baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "scope": "frozen_function_and_cycle_equivalence_only"
+  },
+  "schema": "ec-svb-replay-chain-preflight/1",
+  "staged_W_receipt_passed": true,
+  "standalone_static_bound_inputs": 9,
+  "status": "PASS_STATIC_ROOT_HASH_FROZEN_SCOPE_FORCEALL_ADMISSION_SCHEMA"
+}

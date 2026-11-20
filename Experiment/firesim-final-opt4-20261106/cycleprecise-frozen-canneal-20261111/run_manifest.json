@@ -1,0 +1,3007 @@
+{
+  "build_evidence": {
+    "revision": {
+      "build_id": "overlap_c2_svb32_permission_private_20261105_175448_d37fdde7",
+      "build_manifest": "experiments/runs/overlap_c2_svb32_permission_private_20261105_175448_d37fdde7/run_manifest.json",
+      "build_manifest_sha256": "69d4758b40af1791250282668a59a18c0f9984af231cec0f30f05e46a5895c94",
+      "canonical_hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "emitted_DCache_sha256": "39f41c9357e669f00745e25d72e601228fa0f639afcb9d2cd04fef1202ac412e",
+      "emitted_SVB_sha256": "9a3788e2c5ec03875659115c12447958cc99c8f0da4611853ed53cea6fe602df",
+      "scope": "Historical-data preservation and ordinary no-fault performance; no rollback execution gate",
+      "simulator": "experiments/build/overlap_c2_svb32_permission_private_20261105_175448_d37fdde7/verilator/simulator-chipyard-v1Config",
+      "simulator_sha256": "5b8b11be30a21d5b11f5a9a2aa398a78459105837f627ed113fc8caee6dd274c",
+      "status": "CANDIDATE"
+    },
+    "revision_file": "/data1/gzh/EC/slowdown/streamcluster_aggressive/variants/preservation_svb32_permission/experiments/build/overlap_c2_svb32_permission_private_20261105_175448_d37fdde7/revision.json",
+    "revision_sha256": "59f00aaf8a7dadc203513a2ab887e2520e2560743c05d8dcbe614b53a4151079",
+    "source": {
+      "base_head": "e939029dba420e4bcaa5052ccb402fb611ccb867",
+      "checker_harts": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "chipyard_tree": "6aacab11f0046188d52cca03ae70870fad97ccdb",
+      "config": "v1Config",
+      "elf_sha256": "da8897e790f0c5e91eff3e9560d2b0e7b4e1de6dff208788fb4d9e2ae462c81c",
+      "experiment": "preservation_c2_svb32_report_permission",
+      "git_head": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "hardware_sha256": {
+        "chipyard/generators/boom/src/main/scala/exu/core.scala": "4f29d4151630c2de33beba31cd834f02e6614e8617a2fa58df4df3efa6937974",
+        "chipyard/generators/boom/src/main/scala/exu/rob.scala": "81406711678554e6fa40354b8f169bc3ebff4c3868d645c2df479572ff703b38",
+        "chipyard/generators/boom/src/main/scala/lsu/dcache.scala": "04c45d705ba647ce4dcee24445623b5cfa4fa30fe3fb045f81082d3b987797f8",
+        "chipyard/generators/boom/src/main/scala/lsu/lsu.scala": "dd7cc4f0843db21feb8581e19b33e955502283c0ab4aea8876a6b21960a3e555",
+        "chipyard/generators/boom/src/main/scala/lsu/mshrs.scala": "041d108608a7c580c3347515a690fea31dc0c5d6054924186cb05cfbc974bf57",
+        "chipyard/generators/boom/src/main/scala/lsu/speculative-version-buffer.scala": "83f781c00f01f0188fc34d84c9efa1f6efdfe95f1aa412c897e90a404a629e8a",
+        "chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala": "cf042432f71c5812f2f93eab1abc5522aa35c61d67042363ab2260be11b6c477",
+        "chipyard/generators/rocket-chip/src/main/resources/csrc/cache_opportunity.cc": "c32d68e0652106a0e7f818869e0a49b5b98b20aece696fb0dfa78fc7ccb1422c",
+        "chipyard/generators/rocket-chip/src/main/resources/vsrc/CacheOpportunityObserver.sv": "6ba6e3330406196f1186af4d065b607a0569aa88187144a33b80bcd6d09c55e5",
+        "chipyard/generators/rocket-chip/src/main/resources/vsrc/SafeChainEventLogger.v": "2ed96c76c7f475c327186ae9379385d5a7c6cd6a2a592d5a1000e4b99b66e263",
+        "chipyard/generators/rocket-chip/src/main/scala/r/R_IC.scala": "5d74332982cb492283a11d36fbe6d14884b5843df7b46e83148e4784806351de",
+        "chipyard/generators/rocket-chip/src/main/scala/r/R_ICSL.scala": "7f4728f0981fa0fede24713e4daad22a0b37faf8b9adfea8294dd4e1fdb5edeb",
+        "chipyard/generators/rocket-chip/src/main/scala/rocket/Frontend.scala": "abf469e993c1adddd081a0995285a74b175a793c034ef55ce0a2006661e7348b",
+        "chipyard/generators/rocket-chip/src/main/scala/rocket/IBuf.scala": "e224117404345623efe9e349884f3527705566da38d86c3a1db37d8467524d76",
+        "chipyard/generators/rocket-chip/src/main/scala/rocket/NBDcache.scala": "418dc952af4c1b0f6ba0f89c13f36a73545be55fda11439e97bb0e20c325225b",
+        "chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala": "c793c7ce1ad3c45b87b30aeca6fe1af01efe1c1a3b82fb5cf93fb0c2884a44e3",
+        "chipyard/generators/rocket-chip/src/main/scala/subsystem/Configs.scala": "21946ff2733bbf3f545cfbd4477f1cec4e75c90f25c34b5cfa843281d4d5fe5d",
+        "chipyard/generators/rocket-chip/src/main/scala/util/CacheOpportunityObservation.scala": "390d69fca410c3fd251c570a7760a9c04f0d688500ede3aaf4547446056e1cea",
+        "chipyard/generators/rocket-chip/src/main/scala/util/SafeChainObservation.scala": "7e93dc74de56b9e7279686a35e6efa67d9008b002d5ceceddfb9b88252dceb22",
+        "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Directory.scala": "4385637900ab09966a6aeca7bece2d748fda944e6f72911baa4ac5f4f8a68fb3",
+        "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala": "1a03d2df8ec7c2520601aec91f4603f4d779ecea4af9a6ce09582c3d0e990b36",
+        "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala": "7081bafc9246f2c94e6962c076325e571e060251d44fe73e77731c302d6f9cd1",
+        "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala": "0baec9bb5711de2399bb8d100926e55546ad467b85e0f76bfa8e00fd43fa7a5f",
+        "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/SourceD.scala": "473ec55685a8f3ef8b2f39cc9db78f33d470f490f58d5b8ad603f9f4e9fb125c"
+      },
+      "loadmem_sha256": "f1c0335e8a7ffc6f57232e9bcb8c80a49f45eacaa1e4f533f4cb3af91ad308ad",
+      "n_svb_entries": 32,
+      "observation_budget": {
+        "event_budgets": {
+          "diagnostic": 8388608,
+          "protocol": 40894464,
+          "summary": 1048576
+        },
+        "mandatory_loss_policy": "continue_workload_reject_validation",
+        "optional_loss_policy": "count_and_continue",
+        "policy": "priority_reserved_v2",
+        "total_stream_limit_bytes": 58720256
+      },
+      "observation_policy": "priority_reserved_v2",
+      "patch_sha256": "791d76099c142784e882a0bff5369597b7f7c8c63961c37438731dee942ee15d",
+      "restored_resource_sha256": {
+        "chipyard/generators/rocket-chip/src/main/resources/vsrc/ClockDivider2.v": "753672a56deb6f6f89857d7336bd634b38e8ebd00fd39bee92e16669988c9d16",
+        "chipyard/generators/rocket-chip/src/main/resources/vsrc/ClockDivider3.v": "4943ad841b27c365546e0c2b08a344c87078750b4df9dd6bee3bb56d18f92906",
+        "chipyard/generators/rocket-chip/src/main/resources/vsrc/EICG_wrapper.v": "8532a50a212f146f10208717be24168a2de73a9754786da272d0dbfcd556c307",
+        "chipyard/generators/rocket-chip/src/main/resources/vsrc/SimDTM.v": "6952c4f506ff117c1015aa0011357c6665bda9ef652643c78b932c0fa8e0b7f6",
+        "chipyard/generators/rocket-chip/src/main/resources/vsrc/SimJTAG.v": "3a5df6035e4658031b96dc27155086425fdf50af4e86e1e33036f2acd04eacf3",
+        "chipyard/generators/rocket-chip/src/main/resources/vsrc/plusarg_reader.v": "482a63c1f24a7ac920909620bd0df108e6954eabf9520de6e72334a2b5450efb"
+      },
+      "revision_mode": "corrected_svb16_integrity_v2",
+      "runner_sha256": "bfd730f9049eac208e94fb991b1782bd6a62750d80549faa46d1f86f5a0298b7",
+      "tool_sha256": {
+        "slowdown/optimization_4_svb/analysis/analyze_svb.py": "4bb9f94d8f6fdeffbf803d9314d24e3fd9e9328ac0f016d5a963fdcc549a507d",
+        "slowdown/optimization_4_svb/analysis/integrity_ledger.py": "33a3bdc65480c9e14a0b8a7e0d6cb8fe2f62dfbca10d7728d09a856417588cea",
+        "slowdown/optimization_4_svb/scripts/compact_capture.py": "89ca29e35927a414a6bca8e1c10722ce5e9b8f7b1c3ddaab335307c28f83d580",
+        "slowdown/optimization_4_svb/scripts/prepare_failure_diagnostics.py": "c844147313a0ebed4d6e4a6538478860605352c730d0b6fe8fcb50b21bd8628f"
+      },
+      "trace_enabled": false
+    }
+  },
+  "candidate_validation": true,
+  "canonical_hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "capture": {
+    "cache_opportunity_limit_bytes": 4194304,
+    "closed": true,
+    "counts": {
+      "cache_opportunity.jsonl_lines": 2,
+      "discarded_diagnostic_bytes": 14289236,
+      "discarded_diagnostic_lines": 84749,
+      "event_records_seen": 68383,
+      "safe_chain_events.tsv_lines": 68383,
+      "stderr.log_lines": 5,
+      "stdout.log_lines": 11
+    },
+    "diagnostic_limit_bytes": 2097152,
+    "diagnostic_ringbuffer": {
+      "dumped": false,
+      "duplicate_events": 1258,
+      "file": null,
+      "limit_bytes": 1048576,
+      "limit_lines": 8192,
+      "policy": "named_diagnostic_events_and_failure_lines_only",
+      "retained_bytes": 1048386,
+      "retained_lines": 5367
+    },
+    "event_budgets": {
+      "diagnostic": 8388608,
+      "protocol": 40894464,
+      "summary": 1048576
+    },
+    "event_bytes_by_class": {
+      "diagnostic": 5367459,
+      "protocol": 15471194,
+      "stderr.log_essential": 857,
+      "stdout.log_essential": 133,
+      "stdout.log_general": 435,
+      "summary": 9998
+    },
+    "event_limit_bytes": 50331648,
+    "event_storage": "priority reserved TSV; explicit loss accounting; bounded final JSON",
+    "incomplete_reasons": [],
+    "mandatory_evidence_complete": true,
+    "observers": {
+      "10:0": {
+        "events_seen": 3,
+        "footer_emitted_count": 3,
+        "footers_seen": 1,
+        "kept": 4,
+        "omitted": 0,
+        "seen": 4
+      },
+      "11:1": {
+        "events_seen": 266,
+        "footer_emitted_count": 266,
+        "footers_seen": 1,
+        "kept": 267,
+        "omitted": 0,
+        "seen": 267
+      },
+      "11:2": {
+        "events_seen": 272,
+        "footer_emitted_count": 272,
+        "footers_seen": 1,
+        "kept": 273,
+        "omitted": 0,
+        "seen": 273
+      },
+      "11:3": {
+        "events_seen": 263,
+        "footer_emitted_count": 263,
+        "footers_seen": 1,
+        "kept": 264,
+        "omitted": 0,
+        "seen": 264
+      },
+      "11:4": {
+        "events_seen": 255,
+        "footer_emitted_count": 255,
+        "footers_seen": 1,
+        "kept": 256,
+        "omitted": 0,
+        "seen": 256
+      },
+      "12:1": {
+        "events_seen": 266,
+        "footer_emitted_count": 266,
+        "footers_seen": 1,
+        "kept": 267,
+        "omitted": 0,
+        "seen": 267
+      },
+      "12:2": {
+        "events_seen": 272,
+        "footer_emitted_count": 272,
+        "footers_seen": 1,
+        "kept": 273,
+        "omitted": 0,
+        "seen": 273
+      },
+      "12:3": {
+        "events_seen": 263,
+        "footer_emitted_count": 263,
+        "footers_seen": 1,
+        "kept": 264,
+        "omitted": 0,
+        "seen": 264
+      },
+      "12:4": {
+        "events_seen": 255,
+        "footer_emitted_count": 255,
+        "footers_seen": 1,
+        "kept": 256,
+        "omitted": 0,
+        "seen": 256
+      },
+      "13:1": {
+        "events_seen": 272,
+        "footer_emitted_count": 272,
+        "footers_seen": 1,
+        "kept": 273,
+        "omitted": 0,
+        "seen": 273
+      },
+      "13:2": {
+        "events_seen": 279,
+        "footer_emitted_count": 279,
+        "footers_seen": 1,
+        "kept": 280,
+        "omitted": 0,
+        "seen": 280
+      },
+      "13:3": {
+        "events_seen": 276,
+        "footer_emitted_count": 276,
+        "footers_seen": 1,
+        "kept": 277,
+        "omitted": 0,
+        "seen": 277
+      },
+      "13:4": {
+        "events_seen": 266,
+        "footer_emitted_count": 266,
+        "footers_seen": 1,
+        "kept": 267,
+        "omitted": 0,
+        "seen": 267
+      },
+      "14:0": {
+        "events_seen": 34,
+        "footer_emitted_count": 34,
+        "footers_seen": 1,
+        "kept": 35,
+        "omitted": 0,
+        "seen": 35
+      },
+      "15:0": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "16:0": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "16:1": {
+        "events_seen": 272,
+        "footer_emitted_count": 272,
+        "footers_seen": 1,
+        "kept": 273,
+        "omitted": 0,
+        "seen": 273
+      },
+      "16:2": {
+        "events_seen": 279,
+        "footer_emitted_count": 279,
+        "footers_seen": 1,
+        "kept": 280,
+        "omitted": 0,
+        "seen": 280
+      },
+      "16:3": {
+        "events_seen": 276,
+        "footer_emitted_count": 276,
+        "footers_seen": 1,
+        "kept": 277,
+        "omitted": 0,
+        "seen": 277
+      },
+      "16:4": {
+        "events_seen": 266,
+        "footer_emitted_count": 266,
+        "footers_seen": 1,
+        "kept": 267,
+        "omitted": 0,
+        "seen": 267
+      },
+      "17:0": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "17:1": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "17:2": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "18:0": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "18:1": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "18:2": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "19:0": {
+        "events_seen": 695,
+        "footer_emitted_count": 695,
+        "footers_seen": 1,
+        "kept": 696,
+        "omitted": 0,
+        "seen": 696
+      },
+      "1:0": {
+        "events_seen": 407,
+        "footer_emitted_count": 407,
+        "footers_seen": 1,
+        "kept": 408,
+        "omitted": 0,
+        "seen": 408
+      },
+      "20:0": {
+        "events_seen": 6662,
+        "footer_emitted_count": 6662,
+        "footers_seen": 1,
+        "kept": 6663,
+        "omitted": 0,
+        "seen": 6663
+      },
+      "21:0": {
+        "events_seen": 3331,
+        "footer_emitted_count": 3331,
+        "footers_seen": 1,
+        "kept": 3332,
+        "omitted": 0,
+        "seen": 3332
+      },
+      "22:0": {
+        "events_seen": 695,
+        "footer_emitted_count": 695,
+        "footers_seen": 1,
+        "kept": 696,
+        "omitted": 0,
+        "seen": 696
+      },
+      "23:0": {
+        "events_seen": 139,
+        "footer_emitted_count": 139,
+        "footers_seen": 1,
+        "kept": 140,
+        "omitted": 0,
+        "seen": 140
+      },
+      "25:0": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "2:0": {
+        "events_seen": 136,
+        "footer_emitted_count": 136,
+        "footers_seen": 1,
+        "kept": 137,
+        "omitted": 0,
+        "seen": 137
+      },
+      "30:0": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "31:0": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "32:0": {
+        "events_seen": 702,
+        "footer_emitted_count": 702,
+        "footers_seen": 1,
+        "kept": 703,
+        "omitted": 0,
+        "seen": 703
+      },
+      "33:0": {
+        "events_seen": 702,
+        "footer_emitted_count": 702,
+        "footers_seen": 1,
+        "kept": 703,
+        "omitted": 0,
+        "seen": 703
+      },
+      "34:0": {
+        "events_seen": 695,
+        "footer_emitted_count": 695,
+        "footers_seen": 1,
+        "kept": 696,
+        "omitted": 0,
+        "seen": 696
+      },
+      "35:0": {
+        "events_seen": 55,
+        "footer_emitted_count": 55,
+        "footers_seen": 1,
+        "kept": 56,
+        "omitted": 0,
+        "seen": 56
+      },
+      "35:1": {
+        "events_seen": 52,
+        "footer_emitted_count": 52,
+        "footers_seen": 1,
+        "kept": 53,
+        "omitted": 0,
+        "seen": 53
+      },
+      "35:10": {
+        "events_seen": 40,
+        "footer_emitted_count": 40,
+        "footers_seen": 1,
+        "kept": 41,
+        "omitted": 0,
+        "seen": 41
+      },
+      "35:11": {
+        "events_seen": 34,
+        "footer_emitted_count": 34,
+        "footers_seen": 1,
+        "kept": 35,
+        "omitted": 0,
+        "seen": 35
+      },
+      "35:12": {
+        "events_seen": 33,
+        "footer_emitted_count": 33,
+        "footers_seen": 1,
+        "kept": 34,
+        "omitted": 0,
+        "seen": 34
+      },
+      "35:13": {
+        "events_seen": 32,
+        "footer_emitted_count": 32,
+        "footers_seen": 1,
+        "kept": 33,
+        "omitted": 0,
+        "seen": 33
+      },
+      "35:14": {
+        "events_seen": 26,
+        "footer_emitted_count": 26,
+        "footers_seen": 1,
+        "kept": 27,
+        "omitted": 0,
+        "seen": 27
+      },
+      "35:15": {
+        "events_seen": 21,
+        "footer_emitted_count": 21,
+        "footers_seen": 1,
+        "kept": 22,
+        "omitted": 0,
+        "seen": 22
+      },
+      "35:16": {
+        "events_seen": 13,
+        "footer_emitted_count": 13,
+        "footers_seen": 1,
+        "kept": 14,
+        "omitted": 0,
+        "seen": 14
+      },
+      "35:17": {
+        "events_seen": 8,
+        "footer_emitted_count": 8,
+        "footers_seen": 1,
+        "kept": 9,
+        "omitted": 0,
+        "seen": 9
+      },
+      "35:18": {
+        "events_seen": 3,
+        "footer_emitted_count": 3,
+        "footers_seen": 1,
+        "kept": 4,
+        "omitted": 0,
+        "seen": 4
+      },
+      "35:19": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "35:2": {
+        "events_seen": 50,
+        "footer_emitted_count": 50,
+        "footers_seen": 1,
+        "kept": 51,
+        "omitted": 0,
+        "seen": 51
+      },
+      "35:20": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "35:21": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "35:22": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "35:23": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "35:24": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "35:25": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "35:26": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "35:27": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "35:28": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "35:29": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "35:3": {
+        "events_seen": 51,
+        "footer_emitted_count": 51,
+        "footers_seen": 1,
+        "kept": 52,
+        "omitted": 0,
+        "seen": 52
+      },
+      "35:30": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "35:31": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "35:4": {
+        "events_seen": 49,
+        "footer_emitted_count": 49,
+        "footers_seen": 1,
+        "kept": 50,
+        "omitted": 0,
+        "seen": 50
+      },
+      "35:5": {
+        "events_seen": 45,
+        "footer_emitted_count": 45,
+        "footers_seen": 1,
+        "kept": 46,
+        "omitted": 0,
+        "seen": 46
+      },
+      "35:6": {
+        "events_seen": 45,
+        "footer_emitted_count": 45,
+        "footers_seen": 1,
+        "kept": 46,
+        "omitted": 0,
+        "seen": 46
+      },
+      "35:7": {
+        "events_seen": 45,
+        "footer_emitted_count": 45,
+        "footers_seen": 1,
+        "kept": 46,
+        "omitted": 0,
+        "seen": 46
+      },
+      "35:8": {
+        "events_seen": 43,
+        "footer_emitted_count": 43,
+        "footers_seen": 1,
+        "kept": 44,
+        "omitted": 0,
+        "seen": 44
+      },
+      "35:9": {
+        "events_seen": 44,
+        "footer_emitted_count": 44,
+        "footers_seen": 1,
+        "kept": 45,
+        "omitted": 0,
+        "seen": 45
+      },
+      "36:0": {
+        "events_seen": 55,
+        "footer_emitted_count": 55,
+        "footers_seen": 1,
+        "kept": 56,
+        "omitted": 0,
+        "seen": 56
+      },
+      "36:1": {
+        "events_seen": 52,
+        "footer_emitted_count": 52,
+        "footers_seen": 1,
+        "kept": 53,
+        "omitted": 0,
+        "seen": 53
+      },
+      "36:10": {
+        "events_seen": 40,
+        "footer_emitted_count": 40,
+        "footers_seen": 1,
+        "kept": 41,
+        "omitted": 0,
+        "seen": 41
+      },
+      "36:11": {
+        "events_seen": 34,
+        "footer_emitted_count": 34,
+        "footers_seen": 1,
+        "kept": 35,
+        "omitted": 0,
+        "seen": 35
+      },
+      "36:12": {
+        "events_seen": 33,
+        "footer_emitted_count": 33,
+        "footers_seen": 1,
+        "kept": 34,
+        "omitted": 0,
+        "seen": 34
+      },
+      "36:13": {
+        "events_seen": 32,
+        "footer_emitted_count": 32,
+        "footers_seen": 1,
+        "kept": 33,
+        "omitted": 0,
+        "seen": 33
+      },
+      "36:14": {
+        "events_seen": 26,
+        "footer_emitted_count": 26,
+        "footers_seen": 1,
+        "kept": 27,
+        "omitted": 0,
+        "seen": 27
+      },
+      "36:15": {
+        "events_seen": 21,
+        "footer_emitted_count": 21,
+        "footers_seen": 1,
+        "kept": 22,
+        "omitted": 0,
+        "seen": 22
+      },
+      "36:16": {
+        "events_seen": 13,
+        "footer_emitted_count": 13,
+        "footers_seen": 1,
+        "kept": 14,
+        "omitted": 0,
+        "seen": 14
+      },
+      "36:17": {
+        "events_seen": 8,
+        "footer_emitted_count": 8,
+        "footers_seen": 1,
+        "kept": 9,
+        "omitted": 0,
+        "seen": 9
+      },
+      "36:18": {
+        "events_seen": 3,
+        "footer_emitted_count": 3,
+        "footers_seen": 1,
+        "kept": 4,
+        "omitted": 0,
+        "seen": 4
+      },
+      "36:19": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "36:2": {
+        "events_seen": 50,
+        "footer_emitted_count": 50,
+        "footers_seen": 1,
+        "kept": 51,
+        "omitted": 0,
+        "seen": 51
+      },
+      "36:20": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "36:21": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "36:22": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "36:23": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "36:24": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "36:25": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "36:26": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "36:27": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "36:28": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "36:29": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "36:3": {
+        "events_seen": 51,
+        "footer_emitted_count": 51,
+        "footers_seen": 1,
+        "kept": 52,
+        "omitted": 0,
+        "seen": 52
+      },
+      "36:30": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "36:31": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "36:4": {
+        "events_seen": 49,
+        "footer_emitted_count": 49,
+        "footers_seen": 1,
+        "kept": 50,
+        "omitted": 0,
+        "seen": 50
+      },
+      "36:5": {
+        "events_seen": 45,
+        "footer_emitted_count": 45,
+        "footers_seen": 1,
+        "kept": 46,
+        "omitted": 0,
+        "seen": 46
+      },
+      "36:6": {
+        "events_seen": 45,
+        "footer_emitted_count": 45,
+        "footers_seen": 1,
+        "kept": 46,
+        "omitted": 0,
+        "seen": 46
+      },
+      "36:7": {
+        "events_seen": 45,
+        "footer_emitted_count": 45,
+        "footers_seen": 1,
+        "kept": 46,
+        "omitted": 0,
+        "seen": 46
+      },
+      "36:8": {
+        "events_seen": 43,
+        "footer_emitted_count": 43,
+        "footers_seen": 1,
+        "kept": 44,
+        "omitted": 0,
+        "seen": 44
+      },
+      "36:9": {
+        "events_seen": 44,
+        "footer_emitted_count": 44,
+        "footers_seen": 1,
+        "kept": 45,
+        "omitted": 0,
+        "seen": 45
+      },
+      "37:0": {
+        "events_seen": 2780,
+        "footer_emitted_count": 2780,
+        "footers_seen": 1,
+        "kept": 2781,
+        "omitted": 0,
+        "seen": 2781
+      },
+      "38:0": {
+        "events_seen": 26648,
+        "footer_emitted_count": 26648,
+        "footers_seen": 1,
+        "kept": 26649,
+        "omitted": 0,
+        "seen": 26649
+      },
+      "3:1": {
+        "events_seen": 69,
+        "footer_emitted_count": 69,
+        "footers_seen": 1,
+        "kept": 70,
+        "omitted": 0,
+        "seen": 70
+      },
+      "3:2": {
+        "events_seen": 71,
+        "footer_emitted_count": 71,
+        "footers_seen": 1,
+        "kept": 72,
+        "omitted": 0,
+        "seen": 72
+      },
+      "3:3": {
+        "events_seen": 69,
+        "footer_emitted_count": 69,
+        "footers_seen": 1,
+        "kept": 70,
+        "omitted": 0,
+        "seen": 70
+      },
+      "3:4": {
+        "events_seen": 67,
+        "footer_emitted_count": 67,
+        "footers_seen": 1,
+        "kept": 68,
+        "omitted": 0,
+        "seen": 68
+      },
+      "48:0": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "49:1": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "49:2": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "49:3": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "49:4": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "4:1": {
+        "events_seen": 69,
+        "footer_emitted_count": 69,
+        "footers_seen": 1,
+        "kept": 70,
+        "omitted": 0,
+        "seen": 70
+      },
+      "4:2": {
+        "events_seen": 71,
+        "footer_emitted_count": 71,
+        "footers_seen": 1,
+        "kept": 72,
+        "omitted": 0,
+        "seen": 72
+      },
+      "4:3": {
+        "events_seen": 69,
+        "footer_emitted_count": 69,
+        "footers_seen": 1,
+        "kept": 70,
+        "omitted": 0,
+        "seen": 70
+      },
+      "4:4": {
+        "events_seen": 67,
+        "footer_emitted_count": 67,
+        "footers_seen": 1,
+        "kept": 68,
+        "omitted": 0,
+        "seen": 68
+      },
+      "50:0": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "51:0": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "52:0": {
+        "events_seen": 1354,
+        "footer_emitted_count": 1354,
+        "footers_seen": 1,
+        "kept": 1355,
+        "omitted": 0,
+        "seen": 1355
+      },
+      "53:0": {
+        "events_seen": 1354,
+        "footer_emitted_count": 1354,
+        "footers_seen": 1,
+        "kept": 1355,
+        "omitted": 0,
+        "seen": 1355
+      },
+      "54:0": {
+        "events_seen": 1354,
+        "footer_emitted_count": 1354,
+        "footers_seen": 1,
+        "kept": 1355,
+        "omitted": 0,
+        "seen": 1355
+      },
+      "55:0": {
+        "events_seen": 1354,
+        "footer_emitted_count": 1354,
+        "footers_seen": 1,
+        "kept": 1355,
+        "omitted": 0,
+        "seen": 1355
+      },
+      "57:0": {
+        "events_seen": 85,
+        "footer_emitted_count": 85,
+        "footers_seen": 1,
+        "kept": 86,
+        "omitted": 0,
+        "seen": 86
+      },
+      "58:0": {
+        "events_seen": 85,
+        "footer_emitted_count": 85,
+        "footers_seen": 1,
+        "kept": 86,
+        "omitted": 0,
+        "seen": 86
+      },
+      "59:0": {
+        "events_seen": 85,
+        "footer_emitted_count": 85,
+        "footers_seen": 1,
+        "kept": 86,
+        "omitted": 0,
+        "seen": 86
+      },
+      "5:1": {
+        "events_seen": 137,
+        "footer_emitted_count": 137,
+        "footers_seen": 1,
+        "kept": 138,
+        "omitted": 0,
+        "seen": 138
+      },
+      "5:2": {
+        "events_seen": 141,
+        "footer_emitted_count": 141,
+        "footers_seen": 1,
+        "kept": 142,
+        "omitted": 0,
+        "seen": 142
+      },
+      "5:3": {
+        "events_seen": 137,
+        "footer_emitted_count": 137,
+        "footers_seen": 1,
+        "kept": 138,
+        "omitted": 0,
+        "seen": 138
+      },
+      "5:4": {
+        "events_seen": 133,
+        "footer_emitted_count": 133,
+        "footers_seen": 1,
+        "kept": 134,
+        "omitted": 0,
+        "seen": 134
+      },
+      "60:0": {
+        "events_seen": 85,
+        "footer_emitted_count": 85,
+        "footers_seen": 1,
+        "kept": 86,
+        "omitted": 0,
+        "seen": 86
+      },
+      "6:1": {
+        "events_seen": 846,
+        "footer_emitted_count": 846,
+        "footers_seen": 1,
+        "kept": 847,
+        "omitted": 0,
+        "seen": 847
+      },
+      "6:2": {
+        "events_seen": 874,
+        "footer_emitted_count": 874,
+        "footers_seen": 1,
+        "kept": 875,
+        "omitted": 0,
+        "seen": 875
+      },
+      "6:3": {
+        "events_seen": 857,
+        "footer_emitted_count": 857,
+        "footers_seen": 1,
+        "kept": 858,
+        "omitted": 0,
+        "seen": 858
+      },
+      "6:4": {
+        "events_seen": 732,
+        "footer_emitted_count": 732,
+        "footers_seen": 1,
+        "kept": 733,
+        "omitted": 0,
+        "seen": 733
+      },
+      "7:0": {
+        "events_seen": 2167,
+        "footer_emitted_count": 2167,
+        "footers_seen": 1,
+        "kept": 2168,
+        "omitted": 0,
+        "seen": 2168
+      },
+      "8:0": {
+        "events_seen": 6500,
+        "footer_emitted_count": 6500,
+        "footers_seen": 1,
+        "kept": 6501,
+        "omitted": 0,
+        "seen": 6501
+      },
+      "9:0": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:1": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:10": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:11": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:12": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:13": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:14": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:15": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:16": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:17": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:18": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:19": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:2": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:20": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:21": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:22": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:23": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:24": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:25": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:26": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:27": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:28": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:29": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:3": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:30": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:31": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:4": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:5": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:6": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:7": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:8": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      },
+      "9:9": {
+        "events_seen": 1,
+        "footer_emitted_count": 1,
+        "footers_seen": 1,
+        "kept": 2,
+        "omitted": 0,
+        "seen": 2
+      }
+    },
+    "optional_evidence_complete": true,
+    "optional_records_omitted": 0,
+    "policy": "priority_reserved_v2",
+    "producer_parse_errors": [],
+    "producers": {
+      "10:0": {
+        "emitted": 3,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 3
+      },
+      "11:1": {
+        "emitted": 266,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 266
+      },
+      "11:2": {
+        "emitted": 272,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 272
+      },
+      "11:3": {
+        "emitted": 263,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 263
+      },
+      "11:4": {
+        "emitted": 255,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 255
+      },
+      "12:1": {
+        "emitted": 266,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 266
+      },
+      "12:2": {
+        "emitted": 272,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 272
+      },
+      "12:3": {
+        "emitted": 263,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 263
+      },
+      "12:4": {
+        "emitted": 255,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 255
+      },
+      "13:1": {
+        "emitted": 272,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 272
+      },
+      "13:2": {
+        "emitted": 279,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 279
+      },
+      "13:3": {
+        "emitted": 276,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 276
+      },
+      "13:4": {
+        "emitted": 266,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 266
+      },
+      "14:0": {
+        "emitted": 34,
+        "limit": 1024,
+        "omitted": 0,
+        "produced": 34
+      },
+      "15:0": {
+        "emitted": 1,
+        "limit": 1024,
+        "omitted": 0,
+        "produced": 1
+      },
+      "16:0": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "16:1": {
+        "emitted": 272,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 272
+      },
+      "16:2": {
+        "emitted": 279,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 279
+      },
+      "16:3": {
+        "emitted": 276,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 276
+      },
+      "16:4": {
+        "emitted": 266,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 266
+      },
+      "17:0": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "17:1": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "17:2": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "18:0": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "18:1": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "18:2": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "19:0": {
+        "emitted": 695,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 695
+      },
+      "1:0": {
+        "emitted": 407,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 407
+      },
+      "20:0": {
+        "emitted": 6662,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 6662
+      },
+      "21:0": {
+        "emitted": 3331,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 3331
+      },
+      "22:0": {
+        "emitted": 695,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 695
+      },
+      "23:0": {
+        "emitted": 139,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 139
+      },
+      "25:0": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "2:0": {
+        "emitted": 136,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 136
+      },
+      "30:0": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "31:0": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "32:0": {
+        "emitted": 702,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 702
+      },
+      "33:0": {
+        "emitted": 702,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 702
+      },
+      "34:0": {
+        "emitted": 695,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 695
+      },
+      "35:0": {
+        "emitted": 55,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 55
+      },
+      "35:1": {
+        "emitted": 52,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 52
+      },
+      "35:10": {
+        "emitted": 40,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 40
+      },
+      "35:11": {
+        "emitted": 34,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 34
+      },
+      "35:12": {
+        "emitted": 33,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 33
+      },
+      "35:13": {
+        "emitted": 32,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 32
+      },
+      "35:14": {
+        "emitted": 26,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 26
+      },
+      "35:15": {
+        "emitted": 21,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 21
+      },
+      "35:16": {
+        "emitted": 13,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 13
+      },
+      "35:17": {
+        "emitted": 8,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 8
+      },
+      "35:18": {
+        "emitted": 3,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 3
+      },
+      "35:19": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "35:2": {
+        "emitted": 50,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 50
+      },
+      "35:20": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "35:21": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "35:22": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "35:23": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "35:24": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "35:25": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "35:26": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "35:27": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "35:28": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "35:29": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "35:3": {
+        "emitted": 51,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 51
+      },
+      "35:30": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "35:31": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "35:4": {
+        "emitted": 49,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 49
+      },
+      "35:5": {
+        "emitted": 45,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 45
+      },
+      "35:6": {
+        "emitted": 45,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 45
+      },
+      "35:7": {
+        "emitted": 45,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 45
+      },
+      "35:8": {
+        "emitted": 43,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 43
+      },
+      "35:9": {
+        "emitted": 44,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 44
+      },
+      "36:0": {
+        "emitted": 55,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 55
+      },
+      "36:1": {
+        "emitted": 52,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 52
+      },
+      "36:10": {
+        "emitted": 40,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 40
+      },
+      "36:11": {
+        "emitted": 34,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 34
+      },
+      "36:12": {
+        "emitted": 33,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 33
+      },
+      "36:13": {
+        "emitted": 32,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 32
+      },
+      "36:14": {
+        "emitted": 26,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 26
+      },
+      "36:15": {
+        "emitted": 21,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 21
+      },
+      "36:16": {
+        "emitted": 13,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 13
+      },
+      "36:17": {
+        "emitted": 8,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 8
+      },
+      "36:18": {
+        "emitted": 3,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 3
+      },
+      "36:19": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "36:2": {
+        "emitted": 50,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 50
+      },
+      "36:20": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "36:21": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "36:22": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "36:23": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "36:24": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "36:25": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "36:26": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "36:27": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "36:28": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "36:29": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "36:3": {
+        "emitted": 51,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 51
+      },
+      "36:30": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "36:31": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "36:4": {
+        "emitted": 49,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 49
+      },
+      "36:5": {
+        "emitted": 45,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 45
+      },
+      "36:6": {
+        "emitted": 45,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 45
+      },
+      "36:7": {
+        "emitted": 45,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 45
+      },
+      "36:8": {
+        "emitted": 43,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 43
+      },
+      "36:9": {
+        "emitted": 44,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 44
+      },
+      "37:0": {
+        "emitted": 2780,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 2780
+      },
+      "38:0": {
+        "emitted": 26648,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 26648
+      },
+      "3:1": {
+        "emitted": 69,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 69
+      },
+      "3:2": {
+        "emitted": 71,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 71
+      },
+      "3:3": {
+        "emitted": 69,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 69
+      },
+      "3:4": {
+        "emitted": 67,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 67
+      },
+      "48:0": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "49:1": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "49:2": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "49:3": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "49:4": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "4:1": {
+        "emitted": 69,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 69
+      },
+      "4:2": {
+        "emitted": 71,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 71
+      },
+      "4:3": {
+        "emitted": 69,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 69
+      },
+      "4:4": {
+        "emitted": 67,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 67
+      },
+      "50:0": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "51:0": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "52:0": {
+        "emitted": 1354,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1354
+      },
+      "53:0": {
+        "emitted": 1354,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1354
+      },
+      "54:0": {
+        "emitted": 1354,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1354
+      },
+      "55:0": {
+        "emitted": 1354,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1354
+      },
+      "57:0": {
+        "emitted": 85,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 85
+      },
+      "58:0": {
+        "emitted": 85,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 85
+      },
+      "59:0": {
+        "emitted": 85,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 85
+      },
+      "5:1": {
+        "emitted": 137,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 137
+      },
+      "5:2": {
+        "emitted": 141,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 141
+      },
+      "5:3": {
+        "emitted": 137,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 137
+      },
+      "5:4": {
+        "emitted": 133,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 133
+      },
+      "60:0": {
+        "emitted": 85,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 85
+      },
+      "6:1": {
+        "emitted": 846,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 846
+      },
+      "6:2": {
+        "emitted": 874,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 874
+      },
+      "6:3": {
+        "emitted": 857,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 857
+      },
+      "6:4": {
+        "emitted": 732,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 732
+      },
+      "7:0": {
+        "emitted": 2167,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 2167
+      },
+      "8:0": {
+        "emitted": 6500,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 6500
+      },
+      "9:0": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:1": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:10": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:11": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:12": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:13": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:14": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:15": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:16": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:17": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:18": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:19": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:2": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:20": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:21": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:22": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:23": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:24": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:25": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:26": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:27": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:28": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:29": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:3": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:30": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:31": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:4": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:5": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:6": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:7": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:8": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      },
+      "9:9": {
+        "emitted": 1,
+        "limit": 200000,
+        "omitted": 0,
+        "produced": 1
+      }
+    },
+    "schema": 2,
+    "sizes": {
+      "cache_opportunity.jsonl": 14130,
+      "safe_chain_events.tsv": 20848651,
+      "stderr.log": 857,
+      "stdout.log": 568
+    },
+    "total_stream_limit_bytes": 58720256
+  },
+  "command": [
+    "/data1/gzh/EC/slowdown/streamcluster_aggressive/variants/preservation_svb32_permission/experiments/build/overlap_c2_svb32_permission_private_20261105_175448_d37fdde7/verilator/simulator-chipyard-v1Config",
+    "-s",
+    "1",
+    "+cycle-count",
+    "+permissive",
+    "+safe-chain-events",
+    "+safe-chain-budgeted",
+    "+cache-opportunity",
+    "+dramsim",
+    "+dramsim_ini_dir=/data1/gzh/EC/slowdown/streamcluster_aggressive/variants/preservation_svb32_permission/chipyard/generators/testchipip/src/main/resources/dramsim2_ini",
+    "+max-cycles=2500000",
+    "+loadmem=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-canneal-20261111/test.loadmem_hex",
+    "+loadmem_addr=80000000",
+    "+permissive-off",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-canneal-20261111/test.riscv"
+  ],
+  "design": "correction",
+  "elf_sha256": "d0d0e9ae99bd963aeed84a8b395e7096f54985d117d11542d553a38680b8397b",
+  "end_utc": "2026-11-11T09:30:32.885697+00:00",
+  "evaluation_git_head": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "evaluation_git_status": "",
+  "evidence_origin": "NEW_TARGET_LEVEL_VERILATOR_REPLAY_NOT_FPGA",
+  "exit_status": 0,
+  "host": {
+    "machine": "x86_64",
+    "node": "devjz-ubt20-s01",
+    "processor": "",
+    "release": "5.15.0-139-generic",
+    "system": "Linux",
+    "version": "#149~20.04.1-Ubuntu SMP Wed Apr 16 08:29:56 UTC 2025"
+  },
+  "host_wall_seconds": 2107.6796125940164,
+  "ipc": 0.8082105128685901,
+  "modeflag": 1,
+  "original_run": "/data1/gzh/EC/slowdown/streamcluster_aggressive/variants/preservation_svb32_permission/slowdown/parsec_evaluation_20261103/runs/canneal_project400_correction_20261105_221338_f22d328e",
+  "output": [
+    "benchmark=canneal checksum=40b2b50000000000 verified=1 routing_cost=4789"
+  ],
+  "profiling_capture_policy": {
+    "capture_sha256": "67ac536c1f353901003375f302828c251773ccdf18c4678020dccb07ae7778d0",
+    "event_limit_bytes": 201326592,
+    "mandatory_checker_work_kinds": [
+      11,
+      12
+    ],
+    "runner_sha256": "8cbd3d9aba1162c42514430c75a8cb05a6f21f9969aa25f5461a8740951203b2"
+  },
+  "roi_cycles": 485329,
+  "roi_end": 1427425,
+  "roi_instret": 392248,
+  "roi_start": 942096,
+  "run_id": "cycleprecise-frozen-canneal-20261111",
+  "seed": 1,
+  "simulator_sha256": "5b8b11be30a21d5b11f5a9a2aa398a78459105837f627ed113fc8caee6dd274c",
+  "software": {
+    "artifacts": {
+      "native": {
+        "elf_sha256": "193230680d086441ac79c4935cb9991a2cffd2919cac163f5af7763e39f73f55",
+        "loadmem_sha256": "c30b1c2e3f33d9093e2f2b4db6461777074bea8149d338f5cfd5720c35e5329c"
+      },
+      "protected": {
+        "elf_sha256": "d0d0e9ae99bd963aeed84a8b395e7096f54985d117d11542d553a38680b8397b",
+        "loadmem_sha256": "0eebf731b26ea47b50e9e06c36888ea198061a9d747fbc1f323d39f8c77bb7b8"
+      }
+    },
+    "benchmark": "canneal",
+    "canonical_hardware": "1532923803d7451b0c7843e9abad1c90ef9eb9ed",
+    "command_line": "canneal 1 400 300 100.nets 2",
+    "commands": [
+      [
+        "/data1/gzh/EC/chipyard/.conda-env/riscv-tools/bin/riscv64-unknown-elf-gcc",
+        "-fno-common",
+        "-fno-builtin-printf",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-specs=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support/htif_nano.specs",
+        "-L/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source",
+        "-march=rv64imafd",
+        "-O2",
+        "-static",
+        "-c",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/hw/interrupt.c",
+        "-o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/0.o"
+      ],
+      [
+        "/data1/gzh/EC/chipyard/.conda-env/riscv-tools/bin/riscv64-unknown-elf-gcc",
+        "-fno-common",
+        "-fno-builtin-printf",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-specs=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support/htif_nano.specs",
+        "-L/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source",
+        "-march=rv64imafd",
+        "-O2",
+        "-static",
+        "-c",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/test.c",
+        "-o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/1.o"
+      ],
+      [
+        "/data1/gzh/EC/chipyard/.conda-env/riscv-tools/bin/riscv64-unknown-elf-gcc",
+        "-fno-common",
+        "-fno-builtin-printf",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-specs=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support/htif_nano.specs",
+        "-L/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source",
+        "-march=rv64imafd",
+        "-O2",
+        "-static",
+        "-c",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/stat/report.c",
+        "-o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/2.o"
+      ],
+      [
+        "/data1/gzh/EC/chipyard/.conda-env/riscv-tools/bin/riscv64-unknown-elf-gcc",
+        "-fno-common",
+        "-fno-builtin-printf",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-specs=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support/htif_nano.specs",
+        "-L/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source",
+        "-march=rv64imafd",
+        "-O2",
+        "-static",
+        "-c",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/core/secondary.c",
+        "-o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/3.o"
+      ],
+      [
+        "/data1/gzh/EC/chipyard/.conda-env/riscv-tools/bin/riscv64-unknown-elf-gcc",
+        "-fno-common",
+        "-fno-builtin-printf",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-specs=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support/htif_nano.specs",
+        "-L/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source",
+        "-march=rv64imafd",
+        "-O2",
+        "-static",
+        "-c",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/cfg/init.c",
+        "-o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/4.o"
+      ],
+      [
+        "/data1/gzh/EC/chipyard/.conda-env/riscv-tools/bin/riscv64-unknown-elf-gcc",
+        "-fno-common",
+        "-fno-builtin-printf",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-specs=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support/htif_nano.specs",
+        "-L/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source",
+        "-march=rv64imafd",
+        "-O2",
+        "-static",
+        "-c",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/core/checker.c",
+        "-o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/5.o"
+      ],
+      [
+        "/data1/gzh/EC/chipyard/.conda-env/riscv-tools/bin/riscv64-unknown-elf-gcc",
+        "-fno-common",
+        "-fno-builtin-printf",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-specs=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support/htif_nano.specs",
+        "-L/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source",
+        "-march=rv64imafd",
+        "-O2",
+        "-static",
+        "-c",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/hw/spin_lock.c",
+        "-o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/6.o"
+      ],
+      [
+        "/data1/gzh/EC/chipyard/.conda-env/riscv-tools/bin/riscv64-unknown-elf-g++",
+        "-fno-common",
+        "-fno-builtin-printf",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-specs=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support/htif_nano.specs",
+        "-L/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source",
+        "-march=rv64imafd",
+        "-O2",
+        "-static",
+        "-c",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/adapter.cpp",
+        "-o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/7.o"
+      ],
+      [
+        "/data1/gzh/EC/chipyard/.conda-env/riscv-tools/bin/riscv64-unknown-elf-g++",
+        "-fno-common",
+        "-fno-builtin-printf",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-specs=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support/htif_nano.specs",
+        "-L/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source",
+        "-march=rv64imafd",
+        "-O2",
+        "-static",
+        "-c",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/annealer_thread.cpp",
+        "-o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/8.o"
+      ],
+      [
+        "/data1/gzh/EC/chipyard/.conda-env/riscv-tools/bin/riscv64-unknown-elf-g++",
+        "-fno-common",
+        "-fno-builtin-printf",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-specs=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support/htif_nano.specs",
+        "-L/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source",
+        "-march=rv64imafd",
+        "-O2",
+        "-static",
+        "-c",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/rng.cpp",
+        "-o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/9.o"
+      ],
+      [
+        "/data1/gzh/EC/chipyard/.conda-env/riscv-tools/bin/riscv64-unknown-elf-g++",
+        "-fno-common",
+        "-fno-builtin-printf",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-specs=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support/htif_nano.specs",
+        "-L/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source",
+        "-march=rv64imafd",
+        "-O2",
+        "-static",
+        "-c",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/netlist.cpp",
+        "-o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/10.o"
+      ],
+      [
+        "/data1/gzh/EC/chipyard/.conda-env/riscv-tools/bin/riscv64-unknown-elf-g++",
+        "-fno-common",
+        "-fno-builtin-printf",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-specs=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support/htif_nano.specs",
+        "-L/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source",
+        "-march=rv64imafd",
+        "-O2",
+        "-static",
+        "-c",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/netlist_elem.cpp",
+        "-o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/11.o"
+      ],
+      [
+        "/data1/gzh/EC/chipyard/.conda-env/riscv-tools/bin/riscv64-unknown-elf-gcc",
+        "-fno-common",
+        "-fno-builtin-printf",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-specs=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support/htif_nano.specs",
+        "-L/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source",
+        "-march=rv64imafd",
+        "-O2",
+        "-static",
+        "-c",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/cxx_runtime.c",
+        "-o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/12.o"
+      ],
+      [
+        "/data1/gzh/EC/chipyard/.conda-env/riscv-tools/bin/riscv64-unknown-elf-g++",
+        "-fno-common",
+        "-fno-builtin-printf",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-specs=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support/htif_nano.specs",
+        "-L/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source/support",
+        "-I/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/source",
+        "-march=rv64imafd",
+        "-O2",
+        "-static",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/0.o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/1.o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/2.o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/3.o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/4.o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/5.o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/6.o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/7.o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/8.o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/9.o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/10.o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/11.o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/12.o",
+        "-Wl,--gc-sections",
+        "-Wl,-Map=/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/test.map",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC-opt4-perf/slowdown/parsec_evaluation_20261103/build/canneal_project400/protected.riscv"
+      ]
+    ],
+    "compiler": "riscv64-unknown-elf-gcc (g2ee5e430018) 12.2.0\nCopyright (C) 2022 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+    "input_class": "project400",
+    "input_filename": "100.nets",
+    "input_sha256": "a91f49b6abdf8ae407101725fceab6b20a47af3b08c804f2dfb562b7d9659cfe",
+    "iterations": 2,
+    "mode_word_file_offset": 269312,
+    "native_scope": "same correction hardware, protected session never started; passive checker cores retained; requires runtime zero-package/version evidence",
+    "output_verification": "finite nonnegative total routing cost, exact cost bits compared to host reference and all target modes",
+    "roi_scope": "workload_run call only, two adjacent CSR samples at each boundary; setup/STOP/checker completion/output excluded",
+    "seed": "Rng::seed=0; srandom(3), upstream unchanged",
+    "source_sha256": {
+      "100.nets": "a91f49b6abdf8ae407101725fceab6b20a47af3b08c804f2dfb562b7d9659cfe",
+      "AtomicPtr.h": "b8e8f23ac11822558c2bb9885189b17b1a5333cbab3b49483f5e512c911a1433",
+      "Benchmark/gapbs/.github/workflows/c-cpp.yml": "edab42563804dcf9d9a9f8a64376d9accfe685ea5efa722239ff44e1e65b2b94",
+      "Benchmark/gapbs/.gitignore": "c1e1604b4875b8fd8a7f7bf2376c1d28c1b3f5c1fdfd21be8b1c3829dc120565",
+      "Benchmark/gapbs/CONTRIBUTING.md": "6417e50a419e1e1e078e1756a47b9f48584e591f5ee386c4ac6856b8f297c3c1",
+      "Benchmark/gapbs/LICENSE": "bc33e6a6a2571d48fde7fc7d30be3aa11fb0558edd46173861274ac7a1f74fc3",
+      "Benchmark/gapbs/Makefile": "1f6e1d74efdefcd72c2862828d7edcb607cf0351ed1f7e4d0d3cb39b8e26d1fa",
+      "Benchmark/gapbs/README.md": "ae3cbf4a19667ce645939f6b64f0aeeef92ce15666ea7037a5fb231eb268cbdc",
+      "Benchmark/gapbs/benchmark/bench.mk": "8795f4eedb9ed2136c43badb9c2e9a023468a79b4897e23c9b014d921f5f714e",
+      "Benchmark/gapbs/gapbs_bfs.c": "341f6f7d094378216bdacadbaa239547c8e2ea076d6db70506a149f8a43299db",
+      "Benchmark/gapbs/gapbs_bfs.h": "4aa7540af9cd5b53fff30a3a932e849d37d368103eb3616c1653a1ac78e6acf9",
+      "Benchmark/gapbs/src/bc.cc": "6df4e8a1947925456983d149918e5c505db959ff42633f5442f6e1a9ec4d8e8c",
+      "Benchmark/gapbs/src/benchmark.h": "a1a477adfee41eddf8fdc9781d776030ca40492f0e875205c23c85ec633d3c9f",
+      "Benchmark/gapbs/src/bfs.cc": "7c32c3c8dc43bf7be417fc5c530b4578bfe3697d8eb47a161cdb142487823f73",
+      "Benchmark/gapbs/src/bitmap.h": "fac674c673a1eef84e27a22667a31421f36ae8078e66ee910be4ff344a8e5e24",
+      "Benchmark/gapbs/src/builder.h": "113e724b86bc7012d9eff83caeb0df4c30023645c36a10d099897c1f3fabd676",
+      "Benchmark/gapbs/src/cc.cc": "0986d8a21cf79e85c88b4615ef1b8aacc1ec1090784b2437d92ee22ae1163fd6",
+      "Benchmark/gapbs/src/cc_sv.cc": "f239bd71cee27cba37f3824ae7b2520c291b116ccc83a329d09484b631c599ee",
+      "Benchmark/gapbs/src/command_line.h": "4df78a89d4e4435500623bea2ab4a4cbd034586d85617ca1408041daebeb51a6",
+      "Benchmark/gapbs/src/converter.cc": "43b8ea897387f185365c2aa4f4aef4e36198ba3a25b76cf3873fb5072aef4e9a",
+      "Benchmark/gapbs/src/generator.h": "6c92c5bc9fc7903e2e1009fe9701683daf9096320930bd26f71ae59c5249b860",
+      "Benchmark/gapbs/src/graph.h": "49d5d25bb7db8b724590aa3df43f0cf4a62c848c06aa319907b3fb335e7482bb",
+      "Benchmark/gapbs/src/platform_atomics.h": "1183b25883d497c038e70359eaf0ebcffdc7f097c7091e10af58c7415473d2b4",
+      "Benchmark/gapbs/src/pr.cc": "f738c225d50dd361596ffbd96c2c88ba551b53492c5ca120b4e24f7b9f33f8b5",
+      "Benchmark/gapbs/src/pr_spmv.cc": "ea1e58b6957b0bcc1e76f4fde54131aa52bdefd2014dae604a9b7d9d1a5dae70",
+      "Benchmark/gapbs/src/pvector.h": "d72027605ae123653c09b1eb8d5b7a26cffe4945b22cbe002d910847893628d7",
+      "Benchmark/gapbs/src/reader.h": "951fb6e82df079389b953f35363e8a502d79da4f3c56b8ce6eab7faac38800e1",
+      "Benchmark/gapbs/src/sliding_queue.h": "f8389900181f1a63c0354e274561336191bbc0e4cfb5f34f70da3abc07e4d443",
+      "Benchmark/gapbs/src/sssp.cc": "fb61be24b84d1cfd6f58acad7d5f19af0e436c41ffcccafbf3a82f53b0c8bba1",
+      "Benchmark/gapbs/src/tc.cc": "de3a1a453e1e632ab2338a36c5a8f846a078a096f5c9ab7e7320b9448bbb43cb",
+      "Benchmark/gapbs/src/timer.h": "3337a59a57341585d296ed01b3eb64ca7f5e02d8c0871f4920ab9d1cd7e63bcb",
+      "Benchmark/gapbs/src/util.h": "a103e6c5767d724adc9b6b421ecade4b2d2c4351e5ea0da5d2c9bf16a9fcecf6",
+      "Benchmark/gapbs/src/writer.h": "3fd16ac75a8c069c7cf09d540ca35b66ec51813406b5fd2f8149253bebd9ebea",
+      "Benchmark/gapbs/test/graphs/4.el": "e5b87f7f3c0403dbaab751efdc4d806ad715e5fcfd7a3d0b62a69b6e8a37f3f6",
+      "Benchmark/gapbs/test/graphs/4.gr": "d9100df37bf32071162bffac796912f6916c82c88a9df45c5c7d2ee76c42e3bb",
+      "Benchmark/gapbs/test/graphs/4.graph": "9a3b48651be698f9d1a954fb0f09834d289b36107e027da5294b9f8e6216864f",
+      "Benchmark/gapbs/test/graphs/4.mtx": "796c139b1c42686669b2a521b3b21a105cfdb316b3fc4faef320d3a1fa924413",
+      "Benchmark/gapbs/test/graphs/4.wel": "b152d7ec0f5fdf6c0294960d4de37a047908302fb9109b3819862bc455526743",
+      "Benchmark/gapbs/test/graphs/4w.graph": "938ed02cecb27a060875c68a349fe26ced29c114c9e639a7ddc6622736a4de96",
+      "Benchmark/gapbs/test/graphs/4w.mtx": "0a104e0d7c4940d4fbe70565c1af56d06d61d9d56783204e13db4ab48c84621a",
+      "Benchmark/gapbs/test/reference/graph-4.el.out": "e772a414e5c9d5772deba136918566c3223c77680de7d01831d8ea6de43b860b",
+      "Benchmark/gapbs/test/reference/graph-4.gr.out": "e772a414e5c9d5772deba136918566c3223c77680de7d01831d8ea6de43b860b",
+      "Benchmark/gapbs/test/reference/graph-4.graph.out": "e772a414e5c9d5772deba136918566c3223c77680de7d01831d8ea6de43b860b",
+      "Benchmark/gapbs/test/reference/graph-4.mtx.out": "e772a414e5c9d5772deba136918566c3223c77680de7d01831d8ea6de43b860b",
+      "Benchmark/gapbs/test/reference/graph-4.wel.out": "e772a414e5c9d5772deba136918566c3223c77680de7d01831d8ea6de43b860b",
+      "Benchmark/gapbs/test/reference/graph-4w.graph.out": "e772a414e5c9d5772deba136918566c3223c77680de7d01831d8ea6de43b860b",
+      "Benchmark/gapbs/test/reference/graph-4w.mtx.out": "e772a414e5c9d5772deba136918566c3223c77680de7d01831d8ea6de43b860b",
+      "Benchmark/gapbs/test/reference/graph-g10.out": "05c0a8ca955c30dd0cbf36f1289bdaf945744f5889477789a55f80ce232c3f16",
+      "Benchmark/gapbs/test/reference/graph-u10.out": "6e79ba13c49438984a07633d7087f9aa36f8a89ae1e12c06df570e529447d55c",
+      "Benchmark/gapbs/test/test.mk": "a9a13dca919bdab33e8dae4de40e32392538807d169b8309b1664b5542570625",
+      "COPYRIGHT": "4594bd28928c9feef1fe350ab1bf6ec56db7558b4b43c3b7bc8b311ec39010f6",
+      "LICENSE": "50cb9d83267ae9cd78d2e89c61910819a95431eb577b55f46c51f38d0becf037",
+      "Makefile": "d8273a876a238b1e07c22fb3eb91e91e39065ccd0c5340ae8935271b5b4946de",
+      "MersenneTwister.h": "19ef1e68a2c7467a194a82063662148e1343980a270792098ba80c3228944e04",
+      "README.md": "d5ca3a75dff61f9d67fcfdb2f90b8bf8faeb59bdd9ce20c884a995da394b00a1",
+      "adapter.cpp": "7fde6a37df2a7d1840fc9305d888b8141885eacf5b645c448dab7c7689249160",
+      "annealer_thread.cpp": "638f58efde34c7edfd2e83a2d83aec951c217516a6428090eab9fd90421c1be6",
+      "annealer_thread.h": "58f7baf4ed557a6f54a58c241824914d08b5ac9a7053f4a6eba64727a19544e8",
+      "annealer_types.h": "5b65435de8098a049048115a82a192ee3e9e5d2499545a7bdec46e71a8099fd3",
+      "bench/stage1_amo.h": "07fa571e3bada031e2b8044273a25243dec31fdab26e3260e4b5e11a8eced9b2",
+      "bench/work.c": "de1c5bbb76c8f0c00238b9b5cdf7b44343c3932bf8c31c1cd36d3f55bd037f33",
+      "bench/work.h": "1187b5c15e08e2b128301e045dd7f4744bff09d75cee4105fc54f04c43217b31",
+      "cfg/config.h": "eb8f0cbce3bd5da62fad63ea07cfef71e60f1f5373aeb246cdae9ba550326fe2",
+      "cfg/init.c": "ee48bc1c4114eae88ac43fc5b43de639b191941be018794ca2efe702ad78fa8a",
+      "cfg/init.h": "111a2a657c90fa0a77b099cfb8820f60840252f385843dd4f144747ce3d17555",
+      "core/checker.c": "3ee05b19186c3d831dbaaac0a54cbc152a35d1b98fed2625a85e66a0f33e6135",
+      "core/checker.h": "f4eeac1596960bd7e60655052b1d001d0e91b6d8db3432d2f3dcde590eeff392",
+      "core/secondary.c": "a705b823e1e5a5ea9fefe8531ec39bcec515dbef92bd5a9e108b01ce516fa99f",
+      "cxx_runtime.c": "751dd7db2c80f7dfeb0695c0637317f7e3c3fff176a644eb3b173859364e45ac",
+      "hw/cycle.h": "cea1126c58dac93293ed58e6d4b1d1f5aca699f54d89d2860cec786284f920ea",
+      "hw/ghe.h": "28d09919767f9ffdca12d5ba81fe1ac315bba1bf66585793137f1f8522e503f5",
+      "hw/ght.h": "8c7b98e56dc788d03874566e68701fcd95cd17ebf5aa9ba060aca17e1c995190",
+      "hw/interrupt.c": "44b6ac7e0d547bd0ac162e16693c9576f3cc3e4f7f692f0ade00357f26e94180",
+      "hw/interrupt.h": "c99d541b3b542f853b848ec953f7181679182292b610ad1ad9bd8f2d3a749d55",
+      "hw/rocc.h": "4cdb4295710a75c03a16ba610d2bb078835ffe02aec7c7dd4901382cb01998b6",
+      "hw/spin_lock.c": "b2b1a567ea08013dfd661d3ad378ca70f49eead8707feb557c6832c82adf2601",
+      "hw/spin_lock.h": "98038e285908460f21880b7859eb51b3f3cdaecc8724a212438bc5fabc0ff0da",
+      "layout_contract.json": "da67a50c2d6366eacf49471ee84fe1fc2ac829a6d0320e9542d7eca57996bf23",
+      "location_t.h": "d1df2f5331ef71292e9f67785e33905b221cc758dd1475744431152e59c59d15",
+      "main.cpp": "dcf6c9e2c2cd2159fbfe0070e3d63cb991c51de968cb47b909ee1bbae154fd9d",
+      "netlist.cpp": "44efbfa2a598abe0a1e7e51b9e73ba0e45b48a601ca456135e2c9ab543c37ce5",
+      "netlist.h": "fe95c557d4228fcddce5c7e50da691cf19a9e9e698acca23f7e59e70ed6d9ef3",
+      "netlist_elem.cpp": "75850ae8b517dabde9c9c88b1e50ff836486a655db0b7af81b2ef1ca1c8b9bbf",
+      "netlist_elem.h": "5704444ed0cf489c4a255605d67820622847d36209d8f260b1ee770e97a98bb0",
+      "rng.cpp": "9df9a299b92f11d3e41ef06e9a582fa6043ede3ff4f4dca720cb11ae3e7dd7f6",
+      "rng.h": "91a8b077f71234cff232260e4cac481d978b6cdd3864261af9f25f7b654f49aa",
+      "stat/report.c": "c4f38a9e96ca29fab962c63fa3050067cdc443f7b455c029cb7507079111acd5",
+      "stat/report.h": "8ba415302a0e293975f381f13169b61910e6035e29476ef0d292e0e1c816b4cd",
+      "support/htif.ld": "49d1998632438e9b831f4abdc29a6cac405286239b7716f2040cbe12714c1bd0",
+      "support/htif_nano.specs": "8c25fc2b910ddac23a8bac089a05dc0912f1a85f5f710d0905c0bf331f0e36c3",
+      "support/libgloss_htif.a": "5f2fac31cdacff9a0b21c76319c486a2a914b606fac743df3a33fd5cea02cc6e",
+      "support/riscv-pk/encoding.h": "02e74a36235b820f02423431d5dcf1cac011086a4051bd6664efd13a911cdc9b",
+      "test.c": "e5345088d4255cc2259ae38e82373a7bc805afe145ba8922a4cb72a3a77afb37"
+    },
+    "start_temperature": 300,
+    "swaps_per_temperature": 400,
+    "symbols": {
+      "common_roi_start": "0x80000544",
+      "common_roi_stop": "0x80000550",
+      "eval_protected": "0x80040c00"
+    },
+    "threads": 1,
+    "upstream_sha256": {
+      "AtomicPtr.h": "b8e8f23ac11822558c2bb9885189b17b1a5333cbab3b49483f5e512c911a1433",
+      "COPYRIGHT": "4594bd28928c9feef1fe350ab1bf6ec56db7558b4b43c3b7bc8b311ec39010f6",
+      "LICENSE": "50cb9d83267ae9cd78d2e89c61910819a95431eb577b55f46c51f38d0becf037",
+      "Makefile": "d8273a876a238b1e07c22fb3eb91e91e39065ccd0c5340ae8935271b5b4946de",
+      "MersenneTwister.h": "19ef1e68a2c7467a194a82063662148e1343980a270792098ba80c3228944e04",
+      "README.md": "d5ca3a75dff61f9d67fcfdb2f90b8bf8faeb59bdd9ce20c884a995da394b00a1",
+      "annealer_thread.cpp": "638f58efde34c7edfd2e83a2d83aec951c217516a6428090eab9fd90421c1be6",
+      "annealer_thread.h": "58f7baf4ed557a6f54a58c241824914d08b5ac9a7053f4a6eba64727a19544e8",
+      "annealer_types.h": "5b65435de8098a049048115a82a192ee3e9e5d2499545a7bdec46e71a8099fd3",
+      "layout_contract.json": "da67a50c2d6366eacf49471ee84fe1fc2ac829a6d0320e9542d7eca57996bf23",
+      "location_t.h": "d1df2f5331ef71292e9f67785e33905b221cc758dd1475744431152e59c59d15",
+      "main.cpp": "dcf6c9e2c2cd2159fbfe0070e3d63cb991c51de968cb47b909ee1bbae154fd9d",
+      "netlist.cpp": "b3dc35169a2a185e1dac2bd48adcdf5da5e687c8b1df9410ee6f81c4251a34ee",
+      "netlist.h": "fe95c557d4228fcddce5c7e50da691cf19a9e9e698acca23f7e59e70ed6d9ef3",
+      "netlist_elem.cpp": "75850ae8b517dabde9c9c88b1e50ff836486a655db0b7af81b2ef1ca1c8b9bbf",
+      "netlist_elem.h": "5704444ed0cf489c4a255605d67820622847d36209d8f260b1ee770e97a98bb0",
+      "rng.cpp": "9df9a299b92f11d3e41ef06e9a582fa6043ede3ff4f4dca720cb11ae3e7dd7f6",
+      "rng.h": "c9d3bc99e8126e6556f95d0f49a0e6c41562c7ff990d28a3096cfbe7df72697d",
+      "test.c": "3c1e5ed74ee71d6c33f1f588fa1628eebad53ba6ea208c6b1ce169452d1ee620"
+    }
+  },
+  "software_correct": true,
+  "software_session_stop": 1427646,
+  "start_utc": "2026-11-11T08:55:25.191627+00:00",
+  "state": "COMPLETED",
+  "total_harness_cycles": 1486308,
+  "validation": "SOFTWARE_PASS_PROTOCOL_PENDING"
+}

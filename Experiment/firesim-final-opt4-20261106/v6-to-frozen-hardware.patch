@@ -1,0 +1,1522 @@
+--- v6/generators/boom/src/main/scala/exu/core.scala
++++ frozen/generators/boom/src/main/scala/exu/core.scala
+@@ -37,7 +37,7 @@
+ import org.chipsalliance.cde.config.Parameters
+ import freechips.rocketchip.rocket.Instructions._
+ import freechips.rocketchip.rocket.{Causes, PRV, TracedInstruction}
+-import freechips.rocketchip.util.{Str, UIntIsOneOf, CoreMonitorBundle, AsyncResetSynchronizerShiftReg}
++import freechips.rocketchip.util.{Str, UIntIsOneOf, CoreMonitorBundle, AsyncResetSynchronizerShiftReg, SafeChainObservation}
+ import freechips.rocketchip.devices.tilelink.{PLICConsts, CLINTConsts}
+ import freechips.rocketchip.rocket._
+ import freechips.rocketchip.subsystem.BankedL2Key
+@@ -1912,39 +1912,6 @@
+     }
+   }
+ 
+-  // DAC B ROI observer: original retirement timestamp, not package execution.
+-  if (p(freechips.rocketchip.util.DacRoiEnabled)) {
+-    import freechips.rocketchip.util.{DacRoiController, DacRoiRequest, DacRoiReply}
+-    import chisel3.util.experimental.BoringUtils
+-    require(xLen == 64)
+-    val dac = Module(new DacRoiController(coreWidth))
+-    dac.io.valid := VecInit(rob.io.commit.arch_valids.map(v => RegNext(v, false.B)))
+-    dac.io.insn := rob.io.commit.debug_insts
+-    dac.io.originalTick := RegNext(dac.io.tick, 0.U)
+-    dac.io.satp := RegNext(Cat(csr.io.ptbr.mode, csr.io.ptbr.asid, csr.io.ptbr.ppn), 0.U)
+-    dac.io.prv := RegNext(csr.io.status.prv, 3.U)
+-    dac.io.hart := io.hartid
+-    dac.io.trap := RegNext(csr.io.trace(0).exception, false.B)
+-    dac.io.busy := io.ic_status.orR
+-    val counters = WireInit(VecInit(Seq.fill(6)(0.U(64.W))))
+-    BoringUtils.addSink(counters, "ec_opt4_package_counters")
+-    dac.io.counters := counters
+-    val requestBits = WireInit(0.U((new DacRoiRequest).getWidth.W))
+-    val requestValid = WireInit(false.B)
+-    val replyReady = WireInit(false.B)
+-    BoringUtils.addSink(requestBits, "ec_dac_roi_request_bits")
+-    BoringUtils.addSink(requestValid, "ec_dac_roi_request_valid")
+-    BoringUtils.addSink(replyReady, "ec_dac_roi_reply_ready")
+-    dac.io.request.bits := requestBits.asTypeOf(new DacRoiRequest)
+-    dac.io.request.valid := requestValid
+-    dac.io.reply.ready := replyReady
+-    BoringUtils.addSource(dac.io.request.ready, "ec_dac_roi_request_ready")
+-    BoringUtils.addSource(dac.io.reply.bits.asUInt, "ec_dac_roi_reply_bits")
+-    BoringUtils.addSource(dac.io.reply.valid, "ec_dac_roi_reply_valid")
+-    BoringUtils.addSource(clock, "ec_dac_roi_clock")
+-    BoringUtils.addSource(reset.asBool, "ec_dac_roi_reset")
+-  }
+-
+   if (trace) {
+     for (w <- 0 until coreWidth) {
+       // Delay the trace so we have a cycle to pull PCs out of the FTQ
+@@ -2146,6 +2113,35 @@
+   val producerSealTargetSeq = ic_master.io.closing_seq
+   ic_master.io.close_tail_ready := io.producer_seal_ready
+   rob.io.gh_stall := io.gh_stall || rsu_stall.asBool || ic_stall.asBool || io.big_hang
++  // RECOVERY_PERF_OBSERVATION_ONLY: cumulative BOOM-cycle partition.
++  // No counter or logger output participates in control. Samples are clipped
++  // offline to the exact application ROI; boundary uncertainty is explicit.
++  val (recoveryPerfCycle, recoveryPerfEnable) = SafeChainObservation.context()
++  val recoveryPerfNoCommit = !rob.io.commit.valids.asUInt.orR
++  // Input-only observation at DCache: overlap is not causal lost-cycle credit.
++  BoringUtils.addSource(recoveryPerfNoCommit && !rob.io.empty,
++    "opt4_preservation_no_commit_rob")
++  val recoveryPerfReasons = Seq(io.gh_stall, rsu_stall.asBool, ic_stall.asBool,
++    io.big_hang, snapshot_dispatch_block, csr.io.csr_stall, !rob.io.empty)
++  val recoveryPerfPrimary = recoveryPerfReasons.indices.map(i =>
++    recoveryPerfNoCommit && recoveryPerfReasons(i) &&
++      !recoveryPerfReasons.take(i).foldLeft(false.B)(_ || _)) :+
++    (recoveryPerfNoCommit && !recoveryPerfReasons.foldLeft(false.B)(_ || _))
++  val recoveryPerfEvents = Seq(true.B, !recoveryPerfNoCommit) ++ recoveryPerfPrimary ++
++    Seq(io.gh_stall, rsu_stall.asBool, ic_stall.asBool, snapshot_dispatch_block)
++  val recoveryPerfCounts = RegInit(VecInit(Seq.fill(recoveryPerfEvents.size)(0.U(64.W))))
++  when (recoveryPerfEnable) {
++    for ((event, i) <- recoveryPerfEvents.zipWithIndex) {
++      when (event) { recoveryPerfCounts(i) := recoveryPerfCounts(i) + 1.U }
++    }
++  }
++  val recoveryPerfInsts = RegInit(0.U(64.W))
++  when (recoveryPerfEnable) {
++    recoveryPerfInsts := recoveryPerfInsts + PopCount(rob.io.commit.arch_valids)
++  }
++  SafeChainObservation.emit(52, clock, reset.asBool, recoveryPerfCycle,
++    recoveryPerfCycle, 0.U, recoveryPerfEnable, recoveryPerfCycle(9,0) === 0.U,
++    Seq(1.U) ++ recoveryPerfCounts.toSeq ++ Seq(recoveryPerfInsts), 0.U, true.B)
+   // SLOWDOWN_TRACE_BEGIN: observation-only; no functional consumers.
+   val slowdown_gate_gh = chisel3.WireInit(io.gh_stall)
+   chisel3.dontTouch(slowdown_gate_gh)
+@@ -2395,7 +2391,6 @@
+   csr.io.checker_priv_mode                        := false.B
+   csr.io.ic_check_done                            := false.B
+   csr.io.clear_ic_status                          := false.B
+-  csr.io.ec_service_idle                          := false.B
+   csr.io.check_ret_priv                           := 0.U
+   rsu_master.io.shadowcsr_in                      := csr.io.shadow_read
+   rsu_master.io.merge                             := snapshot_reg
+--- v6/generators/boom/src/main/scala/lsu/speculative-version-buffer.scala
++++ frozen/generators/boom/src/main/scala/lsu/speculative-version-buffer.scala
+@@ -12,7 +12,7 @@
+ import boom.common._
+ 
+ /** Storage capacity only; cache geometry and version semantics are unchanged. */
+-case object SVBEntries extends Field[Int](16)
++case object SVBEntries extends Field[Int](32)
+ 
+ /** The complete image handed from the L1 line reader to the SVB. */
+ class SpeculativeVersionSnapshot(val rows: Int, val rowBits: Int)(implicit p: Parameters)
+@@ -36,8 +36,7 @@
+ }
+ 
+ /**
+-  * A bounded, global associative buffer for the one case in which the old
+-  * L1 image is an unsafe predecessor of a younger same-line store.
++  * A bounded, global associative buffer for immutable predecessor images.
+   *
+   * Entries never participate in ordinary L1 load selection.  A watermark
+   * classifies them safe; the largest safe package sequence is selected for
+@@ -65,6 +64,7 @@
+     val activeEntry = Output(UInt(log2Ceil(entries).W))
+     val activeLine = Output(UInt(coreMaxAddrBits.W))
+     val activeKey = Output(new CacheImageKey)
++    val activeEpoch = Output(UInt(16.W))
+     val queued = Output(UInt(log2Ceil(entries + 1).W))
+     val coalesced = Output(UInt(log2Ceil(entries + 1).W))
+     val discarded = Output(UInt(log2Ceil(entries + 1).W))
+@@ -120,10 +120,16 @@
+   }
+   val freeAny = freeVec.asUInt.orR
+   val allocOH = PriorityEncoderOH(freeVec.asUInt)
+-  io.capture.ready := freeAny && !io.flush
+-
++  io.capture.ready := freeAny && !io.flush && !io.invalidate.valid
++
++  // Packet identities and the contiguous PASS watermark are global: observer
++  // reset/exception changes neither. Epochs label the original capture; they
++  // must not strand its bytes when the watermark later makes them publishable.
++  val previousWatermark = RegNext(io.safeWatermark, 0.U)
++  assert(io.safeWatermark >= previousWatermark,
++    "SVB lifetime requires a monotonic global safe watermark")
+   val entrySafe = VecInit((0 until entries).map(i =>
+-    valid(i) && state(i) === stSpec && epoch(i) === io.currentEpoch &&
++    valid(i) && state(i) === stSpec &&
+       (!key(i).valid || key(i).contentSeq === 0.U ||
+        key(i).contentSeq <= io.safeWatermark)))
+ 
+@@ -220,11 +226,13 @@
+   io.depthHistogram := depthHistogramReg
+ 
+   // Once selected, hold both entry and payload through arbitration and ACK.
+-  // Flush/coalescing may only discard SPEC entries, never this WB_WAIT owner.
++  // Coalescing/FAIL may retire SPEC entries, never this WB_WAIT owner.
++  // Ordinary flush only pauses admission/selection; it cannot reclaim bytes.
+   io.selected := !active && chooseValid && !io.flush && !io.invalidate.valid
+   io.activeEntry := Mux(io.selected, chooseIdx, activeIdx)
+   io.activeLine := line(io.activeEntry)
+   io.activeKey := key(io.activeEntry)
++  io.activeEpoch := epoch(io.activeEntry)
+   io.queued := PopCount(entrySafe) + (active && !sent).asUInt
+   io.promote.valid := active && !sent
+   io.promote.bits.entry := activeIdx
+@@ -264,8 +272,7 @@
+   when (io.selected) {
+     assert(valid(chooseIdx) && state(chooseIdx) === stSpec,
+       "SVB scheduler reselected WB_WAIT or invalid entry")
+-    assert(epoch(chooseIdx) === io.currentEpoch,
+-      "SVB selected a stale-epoch entry")
++    assert(entrySafe(chooseIdx), "SVB selected an unsafe predecessor")
+     active := true.B
+     activeIdx := chooseIdx
+     sent := false.B
+@@ -285,8 +292,8 @@
+         key(i).generation < key(j).generation))).reduce(_ || _)))
+   io.coalesced := PopCount(coalesce)
+   io.discarded := PopCount((0 until entries).map(i => valid(i) && state(i) === stSpec &&
+-    !coalesce(i) && (io.flush || (io.invalidate.valid && key(i).valid &&
+-      key(i).contentSeq > io.invalidate.bits))))
++    !coalesce(i) && io.invalidate.valid && key(i).valid &&
++      key(i).contentSeq > io.invalidate.bits))
+   for (i <- 0 until entries) {
+     when (coalesce(i)) {
+       valid(i) := false.B
+@@ -321,14 +328,10 @@
+       }
+     }
+   }
+-  when (io.flush) {
+-    for (i <- 0 until entries) {
+-      when (state(i) === stSpec) {
+-        valid(i) := false.B
+-        state(i) := stFree
+-      }
+-    }
+-  }
++  // In particular, retain currently unsafe SPEC images across an ordinary
++  // exception/reset too: they may become the required safe predecessor later.
++  // Only explicit FAIL invalidation, safe supersession, or exact ACK releases
++  // ownership. Full hardware reset remains a separate architectural boundary.
+ 
+   // Simulation evidence is keyed by allocation serial, never reusable slot/key.
+   val observationSerialCounter = RegInit(0.U(64.W))
+@@ -355,7 +358,7 @@
+     CacheOpportunityObservation.lineHash(io.promote.bits.data.toSeq, encRowBits)))
+   for (i <- 0 until entries) {
+     val discard = valid(i) && state(i) === stSpec && !coalesce(i) &&
+-      (io.flush || (io.invalidate.valid && key(i).valid && key(i).contentSeq > io.invalidate.bits))
++      io.invalidate.valid && key(i).valid && key(i).contentSeq > io.invalidate.bits
+     val complete = io.acked && activeIdx === i.U
+     val terminal = coalesce(i) || discard || complete
+     val successor = PriorityEncoder(VecInit((0 until entries).map(j =>
+@@ -363,7 +366,7 @@
+       (key(j).contentSeq > key(i).contentSeq ||
+        (key(j).contentSeq === key(i).contentSeq && key(j).generation > key(i).generation)))).asUInt)
+     integrityEvent(35, terminal, Seq(2.U, observationSerials(i), i.U,
+-      Mux(complete, 1.U, Mux(coalesce(i), 2.U, Mux(io.flush, 3.U, 4.U))),
++      Mux(complete, 1.U, Mux(coalesce(i), 2.U, 4.U)),
+       Mux(coalesce(i), observationSerials(successor), 0.U)), i.U)
+     val safePrevious = RegNext(entrySafe(i), false.B)
+     val serialPrevious = RegNext(observationSerials(i))
+--- v6/generators/boom/src/main/scala/lsu/lsu.scala
++++ frozen/generators/boom/src/main/scala/lsu/lsu.scala
+@@ -719,6 +719,11 @@
+                                                  can_fire_std_incoming(i) &&
+                                                  stq_incoming_idx(i) === stq_retry_idx).reduce(_||_))
+                                ))
++  // An identity-checked terminal accepted on this edge satisfies the older
++  // store barrier for a new S0 request. The STQ owner is still released only
++  // by the existing terminal handler; no physical effect is acknowledged early.
++  val storeTerminalForward = WireDefault(false.B)
++  val storeTerminalForwardIdx = Wire(UInt(stqAddrSz.W))
+   // Can we commit a store
+   val can_fire_store_commit  = widthMap(w =>
+                                ( stq_commit_e.valid                           &&
+@@ -726,7 +731,8 @@
+                                 !stq_commit_e.bits.functional_done            &&
+                                 !(0 until numStqEntries).map(i => stq(i).valid &&
+                                   stq(i).bits.functional_inflight &&
+-                                  IsOlder(i.U, stq_execute_head, stq_head)).reduce(_ || _) &&
++                                  IsOlder(i.U, stq_execute_head, stq_head) &&
++                                  !(storeTerminalForward && storeTerminalForwardIdx === i.U)).reduce(_ || _) &&
+                                 !stq_commit_e.bits.uop.is_fence               &&
+                                 !mem_xcpt_valid                               &&
+                                 !stq_commit_e.bits.uop.exception              &&
+@@ -2257,6 +2263,34 @@
+       stq_head, stq_execute_head, stq_commit_head)
+   }
+ 
++  // OVERLAP_OBSERVATION_ONLY: expose local counts to one DCache STOP record,
++  // preserving the bounded number of logger identities. No functional sinks.
++  val overlapOlderInflight = (0 until numStqEntries).map(i => stq(i).valid &&
++    stq(i).bits.functional_inflight &&
++    IsOlder(i.U, stq_execute_head, stq_head)).reduce(_ || _)
++  val overlapStoreCandidate = stq_commit_e.valid &&
++    !stq_commit_e.bits.functional_inflight && !stq_commit_e.bits.functional_done &&
++    !stq_commit_e.bits.uop.is_fence && !mem_xcpt_valid &&
++    !stq_commit_e.bits.uop.exception &&
++    (stq_commit_e.bits.committed || (stq_commit_e.bits.uop.is_amo &&
++      stq_commit_e.bits.addr.valid && !stq_commit_e.bits.addr_is_virtual &&
++      stq_commit_e.bits.data.valid))
++  val overlapStoreAdmission = (0 until memWidth).map(w =>
++    will_fire_store_commit(w) && dmem_req_fire(w)).reduce(_ || _)
++  val overlapLsuEvents = Seq(overlapStoreCandidate && overlapOlderInflight,
++    storeTerminalForward, overlapStoreAdmission && overlapOlderInflight,
++    overlapStoreAdmission)
++  val overlapLsuCounts = RegInit(VecInit(Seq.fill(4)(0.U(64.W))))
++  when (io.dmem.traffic_reset) { overlapLsuCounts.foreach(_ := 0.U) }
++    .elsewhen (io.dmem.traffic_counting) {
++      for ((event, i) <- overlapLsuEvents.zipWithIndex) {
++        when (event) { overlapLsuCounts(i) := overlapLsuCounts(i) + 1.U }
++      }
++    }
++  for ((value, i) <- overlapLsuCounts.zipWithIndex) {
++    BoringUtils.addSource(value, s"opt4_overlap_lsu_${tileParams.hartId}_$i")
++  }
++
+   // store has been committed AND successfully sent data to memory
+   io.dmem.store_done.ready := true.B
+   val functionalDoneReq = io.dmem.store_done.bits.req
+@@ -2266,6 +2300,10 @@
+     functionalDoneReq.effect_token_valid &&
+     stq(functionalDoneIdx).bits.functional_token === functionalDoneReq.request_token &&
+     stq(functionalDoneIdx).bits.functional_token === functionalDoneReq.effect_token
++  storeTerminalForwardIdx := functionalDoneIdx
++  storeTerminalForward := io.dmem.store_done.fire && functionalDoneMatches &&
++    functionalDoneReq.uop.uses_stq && !functionalDoneReq.is_hella &&
++    !olderStoreNackForcesReplay
+   when (io.dmem.store_done.fire && functionalDoneReq.uop.uses_stq && !functionalDoneReq.is_hella) {
+     printf("STAGE1_TX STORE_DONE cmd=%x size=%x stq=%x req=%x effect=%x status=%x data=%x cycle=%x\n",
+       functionalDoneReq.uop.mem_cmd, functionalDoneReq.uop.mem_size, functionalDoneReq.uop.stq_idx,
+--- v6/generators/boom/src/main/scala/lsu/dcache.scala
++++ frozen/generators/boom/src/main/scala/lsu/dcache.scala
+@@ -631,6 +631,10 @@
+   val svb = Module(new SpeculativeVersionBuffer(entries = nSVBEntries))
+   val svbCapturePending = RegInit(false.B)
+   val svbCaptureIssued = RegInit(false.B)
++  // An exception cancels the semantic capture, but the row reader still
++  // owns its accepted request until its snapshot is consumed. Keep that
++  // descriptor and drain the old response without allocating in a new epoch.
++  val svbCaptureCancelled = RegInit(false.B)
+   val svbFastLineValid = RegInit(false.B)
+   val svbFastSet = Reg(UInt(idxBits.W))
+   val svbFastWay = Reg(UInt(log2Ceil(nWays max 2).W))
+@@ -651,6 +655,18 @@
+   val lastSvbCompletionCycle = RegInit(0.U(64.W))
+   val svbEpoch = RegInit(0.U(16.W))
+   val svbFlush = WireDefault(false.B)
++  // An epoch boundary must not revoke the predecessor of an already-owned
++  // S3 write. Stop new S2 grants immediately, then flush after that write's
++  // physical effect (or cancellation). Remember one-cycle exception pulses.
++  val svbFlushPending = RegInit(false.B)
++  val svbResetPending = RegInit(false.B)
++  val svbEpochBoundary = io.traffic_reset || io.lsu.exception || svbFlushPending
++  // The observer reset defaults high until firmware releases it. Ordinary
++  // boot stores have no SVB dependency and must still reach that firmware.
++  // Only live snapshot/lease ownership (or its deferred drain) needs a barrier.
++  val svbEpochWriteBarrier = svbEpochBoundary &&
++    (svbFastLineValid || svbCapturePending || svbFlushPending)
++  val svbHeldWriteNeedsLease = WireDefault(false.B)
+   val svbInvalidate = Wire(Valid(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))
+   svbInvalidate.valid := false.B
+   svbInvalidate.bits := 0.U
+@@ -758,7 +774,7 @@
+   val probeDrainReady = WireDefault(true.B)
+   val replayPipelineBusy = WireDefault(false.B)
+   val completionArb = Module(new Arbiter(new BoomCacheCompletion, 3))
+-  val completionQ = Module(new Queue(new BoomCacheCompletion, cfg.nMSHRs + nIOMSHRs + 2))
++  val completionQ = Module(new Queue(new BoomCacheCompletion, cfg.nMSHRs + nIOMSHRs + 2, flow = true))
+   completionQ.io.enq <> completionArb.io.out
+   completionArb.io.in(2) <> mshrs.io.mmio_completion
+   val replayResultQ = Seq.fill(cfg.nMSHRs)(Module(new Queue(new BoomCacheCompletion, 2)))
+@@ -1261,7 +1277,7 @@
+       (stale && !mshrs.io.block_hit(w)) || (s2_hit(w) && frozen) ||
+       (!s2_hit(w) && slotReserved(set)(way) && !mshrs.io.block_hit(w)))
+   })
+-  val s2_write_busy = s3_valid || completionQ.io.count =/= 0.U
++  val s2_write_busy = s3_valid
+   val s2_replay_owner_match = s2_raw_req(0).owner_context_valid &&
+     s2_raw_req(0).owner_way === s2_tag_match_way(0) &&
+     s2_raw_req(0).slot_epoch === slotEpoch(s2_raw_req(0).addr(idxMSB, idxLSB))(
+@@ -1599,10 +1615,11 @@
+       crossPackageWbPacketSeq, dirtyPacketSeq(wbReqSet)(wbReqWay)))
+   wb.io.packet_tracked := dirtyPacketTracked(wbReqSet)(wbReqWay)
+   wb.io.data_resp       := s2_data_muxed(0)
+-  wb.io.snapshot_ready  := svb.io.capture.ready
++  val svbCaptureDiscard = svbCaptureCancelled || svbEpochBoundary
++  wb.io.snapshot_ready  := svbCaptureDiscard || svb.io.capture.ready
+   wb.io.svb_req <> svb.io.promote
+   wb.io.req_is_mshr := wbArb.io.chosen === 1.U
+-  svb.io.capture.valid := wb.io.snapshot_valid
++  svb.io.capture.valid := wb.io.snapshot_valid && !svbCaptureDiscard
+   svb.io.capture.bits.line := wb.io.snapshot_line
+   svb.io.capture.bits.key := wb.io.snapshot_key
+   svb.io.capture.bits.epoch := svbEpoch
+@@ -1733,6 +1750,16 @@
+   val measurementSeqFloor = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+   val crossPackagePending = RegInit(false.B)
+   val crossPackageIssued = RegInit(false.B)
++  // A full SVB may become available while the legacy descriptor waits for
++  // safety. Remember only the original fast-path qualification and requester
++  // sequence; moving the same frozen predecessor never grants a write.
++  val crossPackageRescueQualified = RegInit(false.B)
++  val crossPackageRescueSeq = Reg(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
++  val crossPackageRescueEpoch = Reg(UInt(16.W))
++  val crossPackageSvbRescue = WireDefault(false.B)
++  // A safe snapshot can be copied below without giving up the local T
++  // permission. Keep this choice with the WB owner through its exact ACK.
++  val crossPackageKeepResident = RegInit(false.B)
+   val crossPackageMetaClearPending = RegInit(false.B)
+   val crossPackagePendingSet = RegInit(0.U(idxBits.W))
+   val crossPackagePendingWay = RegInit(0.U(log2Ceil(nWays max 2).W))
+@@ -1783,13 +1810,14 @@
+   // the watermark. The held store still carries the fast-line identity and
+   // is admitted only after the capture handshake below.
+   val crossPackageDomainWait = crossPackageDomainWaitRaw && !svbFastLineMatch
+-  val svbEligibleCandidate = crossPackageDomainWaitRaw && !svbFastLineMatch &&
++  val svbEligibleShape = crossPackageDomainWaitRaw && !svbFastLineMatch &&
+     s2_type === t_lsu && s2_req(0).uop.mem_cmd === M_XWR &&
+     s2_req(0).traffic_cacheable && s2_req(0).packet_seq =/= 0.U &&
+     s2_req(0).packet_seq > s2_overwrittenKey.contentSeq &&
+-    s2_overwrittenKey.valid && !L1Preservation.safe(s2_overwrittenKey, safePacketWatermark) &&
++    s2_overwrittenKey.valid && !L1Preservation.safe(s2_overwrittenKey, safePacketWatermark)
++  val svbEligibleCandidate = svbEligibleShape &&
+     // Both capture and legacy preservation use the single freeze descriptor.
+-    !crossPackagePending && !svbCapturePending && !svbFastLineValid
++    !crossPackagePending && !svbCapturePending && !svbFastLineValid && !svbEpochBoundary
+   val svbEligible = svbEligibleCandidate && svb.io.capture.ready
+   val svbFullFallback = svbEligibleCandidate && !svb.io.capture.ready
+   // Gate permission misses before reserving a destination as well as hits.
+@@ -1862,21 +1890,23 @@
+   svbCaptureWbReq.bits.voluntary := false.B
+   svbCaptureWbReq.bits.svb_capture := true.B
+   svbCapturePacketSeq := svbFastSeq
+-  when (svbEligible) {
++  when (svbEligible || crossPackageSvbRescue) {
+     svbCapturePending := true.B
+     svbCaptureIssued := false.B
+-    svbFastSet := s2_store_set
+-    svbFastWay := s2_store_way
+-    svbFastTag := s2_req(0).addr >> untagBits
+-    svbFastEpoch := slotEpoch(s2_store_set)(s2_store_way)
+-    svbFastSeq := s2_req(0).packet_seq
+-    svbFastKey := s2_overwrittenKey
++    svbCaptureCancelled := false.B
++    svbFastSet := Mux(crossPackageSvbRescue, crossPackagePendingSet, s2_store_set)
++    svbFastWay := Mux(crossPackageSvbRescue, crossPackagePendingWay, s2_store_way)
++    svbFastTag := Mux(crossPackageSvbRescue, crossPackagePendingTag, s2_req(0).addr >> untagBits)
++    svbFastEpoch := Mux(crossPackageSvbRescue, crossPackagePendingEpoch, slotEpoch(s2_store_set)(s2_store_way))
++    svbFastSeq := Mux(crossPackageSvbRescue, crossPackageRescueSeq, s2_req(0).packet_seq)
++    svbFastKey := Mux(crossPackageSvbRescue,
++      imageKey(crossPackagePendingSet)(crossPackagePendingWay), s2_overwrittenKey)
+   }
+   when (svbCaptureWbReq.fire) {
+     svbCaptureIssued := true.B
+   }
+-  when (wb.io.snapshot_valid && svb.io.capture.fire) {
+-    assert(!svbFastLineValid, "OWNER-1: capture overwrote an outstanding fast-line lease")
++  val svbSnapshotConsumed = wb.io.snapshot_valid && wb.io.snapshot_ready
++  when (svbSnapshotConsumed) {
+     assert(svbCapturePending && svbCaptureIssued,
+       "SVB snapshot arrived without an issued capture request")
+     assert(wb.io.snapshot_key.asUInt === svbFastKey.asUInt &&
+@@ -1885,16 +1915,20 @@
+       "SVB capture changed pre-overwrite identity")
+     svbCapturePending := false.B
+     svbCaptureIssued := false.B
+-    when (svbFastLineValid) {
+-      printf("FASTLINE_OWNER_CHANGE cycle=%x old_line=%x old_seq=%x old_epoch=%x old_acquire_cycle=%x new_line=%x new_seq=%x new_epoch=%x reason=unexpected_capture_overlap\n",
+-        io.csr_cycle, svbFastLine, svbFastSeq, svbFastEpoch, svbFastAcquireCycle,
+-        wb.io.snapshot_line, wb.io.snapshot_key.contentSeq, wb.io.snapshot_epoch)
+-    }
+-    printf("FASTLINE_ACQUIRE cycle=%x line=%x set=%x tag=%x seq=%x epoch=%x generation=%x owner_state=captured_waiting_store acquire_reason=unsafe_predecessor_snapshot\n",
+-      io.csr_cycle, wb.io.snapshot_line, svbFastSet, svbFastTag, svbFastSeq,
+-      svbFastEpoch, wb.io.snapshot_key.generation)
+-    svbFastAcquireCycle := io.csr_cycle
+-    svbFastLineValid := true.B
++    svbCaptureCancelled := false.B
++    when (svbCaptureDiscard) {
++      assert(!svb.io.capture.fire, "cancelled snapshot allocated in a new epoch")
++      printf("SVB_CAPTURE_DISCARD cycle=%x line=%x seq=%x slot_epoch=%x reason=epoch_flush\n",
++        io.csr_cycle, wb.io.snapshot_line, svbFastSeq, svbFastEpoch)
++    }.otherwise {
++      assert(svb.io.capture.fire, "live snapshot consumed without durable SVB owner")
++      assert(!svbFastLineValid, "OWNER-1: capture overwrote an outstanding fast-line lease")
++      printf("FASTLINE_ACQUIRE cycle=%x line=%x set=%x tag=%x seq=%x epoch=%x generation=%x owner_state=captured_waiting_store acquire_reason=unsafe_predecessor_snapshot\n",
++        io.csr_cycle, wb.io.snapshot_line, svbFastSet, svbFastTag, svbFastSeq,
++        svbFastEpoch, wb.io.snapshot_key.generation)
++      svbFastAcquireCycle := io.csr_cycle
++      svbFastLineValid := true.B
++    }
+   }
+   val svbFastLeaseRevoked = svbFastLineValid && !svbCaptureResidentMatch
+   assert(!(svbCapturePending && crossPackagePending),
+@@ -1955,7 +1989,7 @@
+     !(0 until memWidth).map(w =>
+       (s1_valid(w) && s1_type === t_lsu && s1_req(w).addr(idxMSB, idxLSB) === svbFastSet) ||
+       (s2_valid(w) && s2_type === t_lsu && s2_req(w).addr(idxMSB, idxLSB) === svbFastSet)).reduce(_ || _)
+-  svbCaptureWbReq.valid := svbCapturePending && !svbCaptureIssued && svbCaptureDrained &&
++  svbCaptureWbReq.valid := svbCapturePending && !svbCaptureIssued && !svbEpochBoundary && svbCaptureDrained &&
+     svbCaptureResidentMatch && !crossPackagePending &&
+     !(prober.io.state.valid && prober.io.state.bits(idxMSB, idxLSB) === svbFastSet) &&
+     !svbCaptureMshrConflict && !svbCaptureSlotConflict
+@@ -1970,7 +2004,43 @@
+     !completionPending(crossPackagePendingSet)(crossPackagePendingWay) &&
+     !(prober.io.state.valid && prober.io.state.bits(idxMSB, idxLSB) === crossPackagePendingSet) &&
+     !L1Preservation.safe(imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)
+-  l1CrossPackageBlocked := crossPackageDomainWait || crossPackagePendingLine
++  // This also supplies the existing LSU nack and MSHR replay retry paths;
++  // simply suppressing s2_write_grant would lose an accepted replay owner.
++  l1CrossPackageBlocked := crossPackageDomainWait || crossPackagePendingLine || svbEpochWriteBarrier
++
++  // Use the unchanged capture/lease path if a full-SVB fallback gains space.
++  // The old descriptor has not issued a WB or clear; all older grants and
++  // owners must drain first. Preserve the same set/way/tag/slot epoch, current
++  // immutable predecessor and original incoming sequence across the handoff.
++  // Do not start across a flush, FAIL/CANCELLED, epoch change, safe boundary,
++  // probe, existing capture/lease, or any outstanding terminal responsibility.
++  crossPackageSvbRescue := crossPackagePending && crossPackageRescueQualified &&
++    crossPackageRescueEpoch === svbEpoch && !svbEpochBoundary && !svbInvalidate.valid &&
++    !crossPackageIssued && !crossPackageMetaClearPending && crossPackageResidentMatch &&
++    !crossPackageSlotConflict && !crossPackageMetaClearBlock &&
++    !completionPending(crossPackagePendingSet)(crossPackagePendingWay) &&
++    !(prober.io.state.valid && prober.io.state.bits(idxMSB, idxLSB) === crossPackagePendingSet) &&
++    !svbCapturePending && !svbFastLineValid && svb.io.capture.ready &&
++    imageValid(crossPackagePendingSet)(crossPackagePendingWay) &&
++    imageKey(crossPackagePendingSet)(crossPackagePendingWay).valid &&
++    crossPackageRescueSeq > imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq &&
++    !L1Preservation.safe(imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)
++  when (crossPackageSvbRescue) {
++    crossPackagePending := false.B
++    crossPackagePendingSeq := 0.U
++  }
++  val crossPackageRescued = RegNext(crossPackageSvbRescue, false.B)
++  val crossPackageRescuedSet = RegEnable(crossPackagePendingSet, crossPackageSvbRescue)
++  val crossPackageRescuedWay = RegEnable(crossPackagePendingWay, crossPackageSvbRescue)
++  val crossPackageRescuedTag = RegEnable(crossPackagePendingTag, crossPackageSvbRescue)
++  val crossPackageRescuedEpoch = RegEnable(crossPackagePendingEpoch, crossPackageSvbRescue)
++  when (crossPackageRescued) {
++    assert(!crossPackagePending && svbCapturePending && !svbCaptureIssued &&
++      clearFreezeValid && clearFreezeSet === crossPackageRescuedSet &&
++      svbFastSet === crossPackageRescuedSet && svbFastWay === crossPackageRescuedWay &&
++      svbFastTag === crossPackageRescuedTag && svbFastEpoch === crossPackageRescuedEpoch,
++      "SVB rescue lost or changed the frozen predecessor owner")
++  }
+ 
+   crossPackageWbReq.valid := crossPackagePending &&
+     crossPackageResidentMatch &&
+@@ -1984,10 +2054,14 @@
+   crossPackageWbReq.bits.source := cfg.nMSHRs.U
+   crossPackageWbReq.bits.idx := crossPackagePendingSet
+   crossPackageWbReq.bits.tag := crossPackagePendingTag
+-  // A shadow writeback invalidates the local copy.  Report T->N to L2 so its
+-  // coherence state agrees with the metadata clear performed below.
++  // Preserve T permission for a safe copied image. L2 already handles TtoT
++  // publications (including SVB promotion) without removing its client bit.
++  // A Branch copy keeps the established invalidating fallback.
++  val crossPackageCanKeepResident = ClientStates.hasWritePermission(
++    residentCoh(crossPackagePendingSet)(crossPackagePendingWay).state)
+   crossPackageWbReq.bits.param :=
+-    residentCoh(crossPackagePendingSet)(crossPackagePendingWay).onCacheControl(M_FLUSH)._2
++    Mux(crossPackageCanKeepResident, TLPermissions.TtoT,
++      residentCoh(crossPackagePendingSet)(crossPackagePendingWay).onCacheControl(M_FLUSH)._2)
+   crossPackageWbReq.bits.way_en := UIntToOH(crossPackagePendingWay)
+   crossPackageWbReq.bits.voluntary := true.B
+   crossPackageWbReq.bits.svb_capture := false.B
+@@ -2372,6 +2446,7 @@
+       }
+     }
+   }
++  when (!crossPackagePending || crossPackageSvbRescue) { crossPackageRescueQualified := false.B }
+   when (crossPackageBlockCondition && !crossPackagePending) {
+     printf("PRESERVATION_START cycle=%x line=%x request_seq=%x owner_seq=%x owner_generation=%x valid=%x ready=%x fire=%x blocked_fastline=%x fast_line=%x block_condition=%x slot_reserved=%x nack_hit=%x lookup_epoch=%x live_epoch=%x\n",
+       io.csr_cycle, (s2_req(0).addr >> blockOffBits) << blockOffBits,
+@@ -2383,14 +2458,24 @@
+       s2_nack_hit(0), s2_lookup_epoch(0), slotEpoch(s2_store_set)(s2_store_way))
+     crossPackagePending := true.B
+     crossPackageIssued := false.B
++    crossPackageKeepResident := false.B
+     crossPackagePendingSet := s2_store_set
+     crossPackagePendingWay := s2_store_way
+     crossPackagePendingTag := (s2_req(0).addr >> untagBits)
+     crossPackagePendingSeq := s2_overwrittenPacketSeq
+     crossPackagePendingEpoch := slotEpoch(s2_store_set)(s2_store_way)
+     crossPackagePendingKey := s2_overwrittenKey
+-  }
+-  when (crossPackagePending && !crossPackageIssued && !crossPackageMetaClearPending && crossPackageResidentMatch) {
++    crossPackageRescueQualified := svbFullFallback
++    crossPackageRescueSeq := s2_req(0).packet_seq
++    crossPackageRescueEpoch := svbEpoch
++  }
++  // Remember one-cycle cancellation/epoch pulses even if the old legacy
++  // descriptor survives them. It must never reacquire speculative permission
++  // in a later cycle after the cancellation signal has gone away.
++  when (svbEpochBoundary || svbInvalidate.valid) {
++    crossPackageRescueQualified := false.B
++  }
++  when (crossPackagePending && !crossPackageSvbRescue && !crossPackageIssued && !crossPackageMetaClearPending && crossPackageResidentMatch) {
+     // Pre-freeze grants drain before snapshot admission. Their final image is
+     // the predecessor to preserve, even if its generation changed while draining.
+     crossPackagePendingSeq := imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq
+@@ -2400,6 +2485,7 @@
+       imageValid(crossPackagePendingSet)(crossPackagePendingWay),
+       "WB snapshot accepted before old grants/install owner drained")
+     crossPackageIssued := true.B
++    crossPackageKeepResident := crossPackageCanKeepResident
+     crossPackagePendingKey := imageKey(crossPackagePendingSet)(crossPackagePendingWay)
+     printf("STAGE2_TX PRESERVE line=%x epoch=%x gen=%x seq=%x writer=%x valid=%x\n",
+       crossPackagePendingAddr, crossPackagePendingEpoch,
+@@ -2421,7 +2507,8 @@
+     prober.io.meta_write.bits.idx === crossPackagePendingSet &&
+     prober.io.meta_write.bits.way_en === UIntToOH(crossPackagePendingWay, nWays)
+   when (crossPackageWbDone) {
+-    crossPackageMetaClearPending := crossPackageResidentMatch && !preservationRevoked
++    crossPackageMetaClearPending := crossPackageResidentMatch && !preservationRevoked &&
++      !crossPackageKeepResident
+     crossPackageIssued := false.B
+     printf("STAGE2_TX PRESERVE_DONE line=%x epoch=%x gen=%x seq=%x writer=%x valid=%x accepted=%x\n",
+       crossPackagePendingAddr, crossPackagePendingEpoch, crossPackagePendingKey.generation,
+@@ -2434,7 +2521,28 @@
+       preservationRevoked)
+     when (crossPackageResidentMatch && !preservationRevoked) {
+       lowerPreserved(crossPackagePendingSet)(crossPackagePendingWay) := true.B
+-    }
++      when (crossPackageKeepResident) {
++        // The receipt names these exact frozen bytes. Retain tags, data,
++        // image identity, slot epoch and duplicate-effect ownership. A later
++        // semantic write still needs this receipt and revokes it normally.
++        crossPackagePending := false.B
++        crossPackagePendingSeq := 0.U
++        assert(L1Preservation.safe(crossPackagePendingKey, safePacketWatermark),
++          "retained WB receipt refers to an unsafe predecessor")
++      }
++    }
++  }
++  val retainedReceiptAccepted = crossPackageWbDone && crossPackageKeepResident &&
++    crossPackageResidentMatch && !preservationRevoked
++  val retainedReceiptPrev = RegNext(retainedReceiptAccepted, false.B)
++  val retainedReceiptEpoch = RegEnable(crossPackagePendingEpoch, retainedReceiptAccepted)
++  val retainedReceiptKey = RegEnable(crossPackagePendingKey, retainedReceiptAccepted)
++  when (retainedReceiptPrev) {
++    assert(!crossPackagePending && !crossPackageMetaClearPending &&
++      lowerPreserved(crossPackagePendingSet)(crossPackagePendingWay) &&
++      slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) === retainedReceiptEpoch &&
++      imageKey(crossPackagePendingSet)(crossPackagePendingWay).asUInt === retainedReceiptKey.asUInt,
++      "retained WB receipt changed resident identity or failed to release freeze")
+   }
+   val crossPackageMetaClear = Wire(Decoupled(new L1MetaWriteReq))
+   metaWriteArb.io.in(2) <> crossPackageMetaClear
+@@ -2566,13 +2674,21 @@
+   // Session reset/exception are epoch boundaries. A checker failure only
+   // invalidates versions newer than the safe watermark, preserving a safe
+   // predecessor that may still be waiting for promotion or ACK.
+-  svbFlush := io.traffic_reset || io.lsu.exception
++  svbFlush := svbEpochBoundary && !svbHeldWriteNeedsLease
++  svbFlushPending := svbEpochBoundary && !svbFlush
++  when (svbFlush) {
++    svbResetPending := false.B
++  }.elsewhen (io.traffic_reset) {
++    svbResetPending := true.B
++  }
+   svbInvalidate.valid := barrierFailureAny
+   svbInvalidate.bits := safePacketWatermark
+-  when (io.traffic_reset) {
+-    svbEpoch := 0.U
+-  }.elsewhen (io.lsu.exception) {
+-    when (svbEpoch =/= ~0.U(16.W)) { svbEpoch := svbEpoch + 1.U }
++  when (svbFlush) {
++    when (io.traffic_reset || svbResetPending) {
++      svbEpoch := 0.U
++    }.elsewhen (svbEpoch =/= ~0.U(16.W)) {
++      svbEpoch := svbEpoch + 1.U
++    }
+   }
+   BoringUtils.addSource(barrierFailureSticky,
+     GH_GlobalParams.GH_L2_BARRIER_FAILURE_BORE)
+@@ -2919,6 +3035,7 @@
+   val s2_write_grant = s2_valid(0) && s2_hit(0) && isWrite(s2_req(0).uop.mem_cmd) &&
+     !s2_nack(0) && !l1CrossPackageBlocked && !s3_valid &&
+     (s2_type =/= t_replay || s2_replay_owner_match)
++  assert(!(s2_write_grant && svbEpochWriteBarrier), "write grant crossed a live SVB epoch boundary")
+   // RISC-V AMO.W returns its loaded 32-bit value sign-extended to XLEN,
+   // independently of the arithmetic/logical operation. The ALU physical
+   // write value remains unchanged below.
+@@ -3074,10 +3191,20 @@
+     s3_req.packet_seq === svbFastSeq &&
+     s3_req.slot_epoch === svbFastEpoch &&
+     s3_req.slot_epoch === slotEpoch(s3_set)(s3_way_idx)
+-  val s3_preservationAllowed = L1Preservation.allow(imageValid(s3_set)(s3_way_idx),
++  val s3_l1PreservationAllowed = L1Preservation.allow(imageValid(s3_set)(s3_way_idx),
+     imageKey(s3_set)(s3_way_idx), lowerPreserved(s3_set)(s3_way_idx),
+-    s3_req.packet_seq, safePacketWatermark, outer.staticImageWriter.U) ||
+-    s3_svbOwnsPredecessor
++    s3_req.packet_seq, safePacketWatermark, outer.staticImageWriter.U)
++  val s3_preservationAllowed = s3_l1PreservationAllowed || s3_svbOwnsPredecessor
++  svbHeldWriteNeedsLease := s3_valid && !s3_applied && !s3_duplicate_effect &&
++    !s3_cancelled && !s3_pre_effect_kill && s3_svbOwnsPredecessor && !s3_l1PreservationAllowed
++  when (svbEpochBoundary && svbHeldWriteNeedsLease && !svbFlushPending) {
++    printf("SVB_EPOCH_DEFER cycle=%x req=%x line=%x epoch=%x reset=%x\n",
++      io.csr_cycle, s3_req.request_token, svbFastLine, svbEpoch, io.traffic_reset)
++  }
++  when (svbFlush && svbFlushPending) {
++    printf("SVB_EPOCH_DRAINED cycle=%x epoch=%x reset=%x\n",
++      io.csr_cycle, svbEpoch, io.traffic_reset || svbResetPending)
++  }
+   val s3_effect_eligible = s3_valid && !s3_applied && s3_owner_match &&
+     s3_image_match && s3_preservationAllowed && !s3_duplicate_effect && !s3_owner_revoked && !s3_pre_effect_kill && !s3_cancelled
+   when (s3_valid && !s3_applied && !s3_duplicate_effect && !s3_cancelled && !s3_pre_effect_kill) {
+@@ -3110,7 +3237,11 @@
+   when (s3_valid && s3_duplicate_effect) {
+     s3_result := appliedEffectResult(s3_set)(s3_way_idx)
+   }
+-  completionArb.io.in(0).valid := s3_valid && s3_owner_match && (s3_applied || s3_cancelled)
++  // A terminal may enter the queue on the actual physical effect edge. The
++  // captured return value is already stable in S3. Array backpressure cannot
++  // create a completion, and a full queue retains S3/applied ownership.
++  completionArb.io.in(0).valid := s3_valid && s3_owner_match &&
++    (s3_applied || s3_cancelled || s3_effect_fire)
+   completionArb.io.in(0).bits.req := s3_req
+   completionArb.io.in(0).bits.status := Mux(s3_cancelled, CacheTerminal.cancel,
+     Mux(s3_req.uop.mem_cmd === M_XSC && s3_result === 1.U,
+@@ -3127,7 +3258,13 @@
+   }
+   when (completionQ.io.deq.fire && completionQ.io.deq.bits.req.owner_context_valid) {
+     val r = completionQ.io.deq.bits.req
+-    assert(completionPending(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) &&
++    // An empty flow-through queue can accept and deliver the same terminal
++    // on this edge. Its live S3 owner substitutes for a registered pending
++    // bit only for the identical accepted completion payload.
++    val sameEdgeResponsibility = completionArb.io.out.fire &&
++      completionArb.io.out.bits.asUInt === completionQ.io.deq.bits.asUInt
++    assert((completionPending(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) ||
++      sameEdgeResponsibility) &&
+       slotEpoch(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) === r.slot_epoch,
+       "completion lost its live slot responsibility")
+     completionPending(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) := false.B
+@@ -3366,8 +3503,13 @@
+   }
+   // Give an epoch boundary priority over any same-cycle fast-line update.
+   when (svbFlush) {
+-    svbCapturePending := false.B
+-    svbCaptureIssued := false.B
++    when (svbCapturePending && svbCaptureIssued && !svbSnapshotConsumed) {
++      svbCaptureCancelled := true.B
++    }.otherwise {
++      svbCapturePending := false.B
++      svbCaptureIssued := false.B
++      svbCaptureCancelled := false.B
++    }
+     when (svbFastLineValid) {
+       printf("FASTLINE_RELEASE cycle=%x line=%x set=%x tag=%x seq=%x epoch=%x acquire_cycle=%x release_reason=epoch_flush\n",
+         io.csr_cycle, svbFastLine, svbFastSet, svbFastTag, svbFastSeq,
+@@ -3619,21 +3761,6 @@
+     trafficCounterSnapshot := trafficCounterLive
+     trafficCounterSnapshotValid := true.B
+     trafficStopCapturePending := false.B
+-  }
+-  if (p(freechips.rocketchip.util.DacRoiEnabled)) {
+-    // Live counters, not the software STOP snapshot. Same BOOM clock domain.
+-    import chisel3.util.experimental.BoringUtils
+-    val counters = Wire(Vec(6, UInt(64.W)))
+-    for ((slot, index) <- Seq(
+-      GH_GlobalParams.GH_TRAFFIC_ALLOCATED_PACKAGES,
+-      GH_GlobalParams.GH_TRAFFIC_COMPLETED_PACKAGES,
+-      GH_GlobalParams.GH_TRAFFIC_PASSED_PACKAGES,
+-      GH_GlobalParams.GH_TRAFFIC_FAILED_PACKAGES,
+-      GH_GlobalParams.GH_TRAFFIC_CANCELLED_PACKAGES,
+-      GH_GlobalParams.GH_TRAFFIC_PACKAGE_RESULT_DROPPED).zipWithIndex) {
+-      counters(index) := trafficCounterLive(slot)
+-    }
+-    BoringUtils.addSource(counters, "ec_opt4_package_counters")
+   }
+   io.traffic_counter := Mux(trafficCounterSnapshotValid,
+     trafficCounterSnapshot, trafficCounterLive)
+@@ -4212,6 +4339,193 @@
+     SafeChainObservation.emit(kind, clock, reset.asBool, io.csr_cycle,
+       io.csr_cycle, hart, safeChainRoi, sample, fields, key, force)
+ 
++  // OVERLAP_OBSERVATION_ONLY: traffic-window counts, including the STOP edge.
++  // Every count feeds only the input-only logger. Activity is not causal saving.
++  val overlapSameEdgeTerminal = completionArb.io.out.fire && completionQ.io.deq.fire &&
++    completionArb.io.out.bits.asUInt === completionQ.io.deq.bits.asUInt
++  val overlapCacheEvents = Seq(true.B, s3_effect_fire,
++    s3_effect_fire && completionArb.io.in(0).fire,
++    s3_effect_fire && overlapSameEdgeTerminal,
++    completionQ.io.count === 0.U && overlapSameEdgeTerminal,
++    completionArb.io.out.fire, completionQ.io.deq.fire,
++    s3_valid && s3_applied && !completionArb.io.in(0).fire,
++    completionQ.io.count =/= 0.U,
++    completionQ.io.deq.valid && !completionQ.io.deq.ready)
++  val overlapCacheCounts = RegInit(VecInit(Seq.fill(10)(0.U(64.W))))
++  when (io.traffic_reset) { overlapCacheCounts.foreach(_ := 0.U) }
++    .elsewhen (trafficCounting) {
++      for ((event, i) <- overlapCacheEvents.zipWithIndex) {
++        when (event) { overlapCacheCounts(i) := overlapCacheCounts(i) + 1.U }
++      }
++    }
++  val overlapLsuCounts = Seq.tabulate(4) { i =>
++    val count = WireInit(0.U(64.W))
++    BoringUtils.addSink(count, s"opt4_overlap_lsu_${outer.staticImageWriter}_$i")
++    count
++  }
++  val overlapTrafficStop = RegNext(trafficCounting, false.B) && !trafficCounting
++  safeChainLog(50, Seq(1.U) ++ overlapCacheCounts.toSeq ++ overlapLsuCounts ++ Seq(0.U),
++    0.U, overlapTrafficStop, true.B)
++
++  // RECOVERY_PERF_OBSERVATION_ONLY: physical request blocking exposure.
++  // Reasons may overlap; only core SC52 is a mutually exclusive partition.
++  val recoveryPerfCacheEvents = Seq(
++    true.B, io.lsu.req.valid && !io.lsu.req.ready,
++    io.lsu.req.valid && lsu_clear_freeze_set_conflict,
++    io.lsu.req.valid && !lsu_pipeline_ready,
++    s2_valid(0) && s2_nack(0),
++    s2_valid(0) && isWrite(s2_raw_req(0).uop.mem_cmd) && s2_write_busy,
++    l1CrossPackageBlocked, crossPackagePending, svbCapturePending,
++    mshrs.io.req(0).valid && !mshrs.io.req(0).ready,
++    s2_valid(0) && s2_nack_victim(0),
++    mshrs.io.replay.valid && !mshrs.io.replay.ready,
++    svbFullFallback, wb.io.pending_idx.valid && wb.io.pending_sent,
++    s2_valid(0) && s2_owner_block(0),
++    s2_valid(0) && s2_nack_hit(0), s2_valid(0) && s2_nack_data(0),
++    mshrs.io.refill.fire, crossPackageWbReq.fire, svb.io.capture.fire,
++    svb.io.promote.fire, s3_effect_fire,
++    io.lsu.req.fire, mshrs.io.req(0).fire,
++    mshrs.io.owner_line_valid.asUInt.orR,
++    mshrs.io.install.valid && !mshrs.io.install.ready,
++    tl_out.a.fire, tl_out.c.fire, tl_out.d.fire,
++    svb.io.occupancy === nSVBEntries.U)
++  val recoveryPerfCacheCounts = RegInit(VecInit(Seq.fill(recoveryPerfCacheEvents.size)(0.U(64.W))))
++  when (safeChainRoi) {
++    for ((event, i) <- recoveryPerfCacheEvents.zipWithIndex) {
++      when (event) { recoveryPerfCacheCounts(i) := recoveryPerfCacheCounts(i) + 1.U }
++    }
++  }
++  for (page <- 0 until 2) {
++    safeChainLog(53 + page, Seq(1.U) ++ recoveryPerfCacheCounts.slice(page*15, (page+1)*15),
++      0.U, io.csr_cycle(9,0) === 0.U, true.B)
++  }
++  // PRESERVATION_STAGE_OBSERVATION_ONLY. All predicates terminate in counters.
++  // Denied-request counts are cycle exposures, including retries. The priority
++  // partition below assigns one hardware cause, never inferred retirement loss.
++  val preservationNoCommitRob = WireDefault(false.B)
++  BoringUtils.addSink(preservationNoCommitRob, "opt4_preservation_no_commit_rob")
++  val preservationFreezeDenied = io.lsu.req.valid && !io.lsu.req.ready &&
++    lsu_clear_freeze_set_conflict
++  val preservationHeadLoadDenied = preservationFreezeDenied &&
++    (0 until memWidth).map(w => io.lsu.req.bits(w).valid &&
++      io.lsu.req.bits(w).bits.uop.uses_ldq &&
++      io.lsu.req.bits(w).bits.uop.rob_idx === io.lsu.rob_head_idx &&
++      io.lsu.req.bits(w).bits.addr(idxMSB, idxLSB) === clearFreezeSet).reduce(_ || _)
++  val preservationDescriptorDenied = svbEligibleShape &&
++    (crossPackagePending || svbCapturePending)
++  val preservationLeaseDenied = svbEligibleShape &&
++    svbFastLineValid
++  val preservationDataDenied = svbEligibleShape && !svb.io.capture.ready
++  val preservationWaitWatermark = crossPackagePending && !crossPackageIssued &&
++    !crossPackageMetaClearPending && !L1Preservation.safe(
++      imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)
++  val preservationWaitAck = wb.io.pending_idx.valid && wb.io.pending_sent
++  val preservationIndependent = svbEligibleShape && !(svbFastLineValid && svbFastRequestSameLine) &&
++    !svbFastLineValid && svb.io.capture.ready && !svbEpochBoundary &&
++    ((crossPackagePending && s2_store_set =/= crossPackagePendingSet) ||
++      (svbCapturePending && s2_store_set =/= svbFastSet))
++  val preservationCauses = Seq(svbEpochWriteBarrier,
++    svbEligibleShape && svbFastLineValid && svbFastRequestSameLine, preservationDescriptorDenied,
++    svbEligibleShape && svbFastLineValid, preservationDataDenied,
++    crossPackageDomainWait)
++  val preservationPrimary = preservationCauses.indices.map(i =>
++    preservationCauses(i) && !preservationCauses.take(i).foldLeft(false.B)(_ || _))
++  val preservationDiagEvents = Seq(true.B, preservationFreezeDenied,
++    preservationDescriptorDenied, preservationLeaseDenied, preservationDataDenied,
++    svbCapturePending, svbCapturePending && !svbCaptureIssued,
++    svbCapturePending && svbCaptureIssued, preservationWaitAck,
++    preservationWaitWatermark, crossPackageMetaClearPending,
++    preservationIndependent, preservationHeadLoadDenied,
++    preservationFreezeDenied && preservationNoCommitRob,
++    preservationHeadLoadDenied && preservationNoCommitRob,
++    mshrs.io.install.valid && !installPreservationAllowed,
++    mshrs.io.refill.valid && !refillPreservationAllowed,
++    mshrs.io.wb_req.valid && svb.io.releaseBlocked(1),
++    svbCaptureWbReq.valid && !svbCaptureWbReq.ready,
++    crossPackageWbReq.valid && !crossPackageWbReq.ready,
++    preservationDescriptorDenied && preservationNoCommitRob,
++    preservationLeaseDenied && preservationNoCommitRob,
++    preservationWaitWatermark && preservationNoCommitRob,
++    preservationWaitAck && preservationNoCommitRob) ++ preservationPrimary ++
++    Seq(!svbFastLineValid, svbFastLineValid, false.B, false.B, false.B) ++ Seq(
++    svbFastLeaseAcquire, svbFastLeaseAcquire && svbFastLineValid,
++    svbFastLineValid, false.B,
++    preservationFreezeDenied && svbCapturePending,
++    preservationFreezeDenied && preservationWaitWatermark,
++    preservationFreezeDenied && crossPackageMetaClearPending,
++    preservationFreezeDenied && crossPackageIssued,
++    preservationNoCommitRob, s3_effect_fire && s3_svbOwnsPredecessor)
++  val preservationDiagCounts = RegInit(VecInit(
++    Seq.fill(preservationDiagEvents.size)(0.U(64.W))))
++  when (safeChainRoi) {
++    for ((event, i) <- preservationDiagEvents.zipWithIndex) {
++      when (event) { preservationDiagCounts(i) := preservationDiagCounts(i) + 1.U }
++    }
++  }
++  for (page <- 0 until (preservationDiagEvents.size + 14) / 15) {
++    safeChainLog(57 + page, Seq(1.U) ++ preservationDiagCounts.slice(page*15, (page+1)*15),
++      0.U, io.csr_cycle(13,0) === 0.U || trafficStopPulse, true.B)
++  }
++
++  // Counts are stage exposures; allocation-to-promotion/ACK latency is joined
++  // by allocation serial in the mandatory integrity stream (SC32..38).
++  val preservationPipelineEvents = Seq(
++    true.B, svbCapturePending && wb.io.pending_idx.valid && wb.io.pending_sent,
++    svb.io.capture.fire && L1Preservation.safe(svb.io.capture.bits.key, safePacketWatermark),
++    svb.io.capture.fire && !L1Preservation.safe(svb.io.capture.bits.key, safePacketWatermark),
++    wb.io.snapshot_valid && !wb.io.snapshot_ready,
++    svb.io.capture.fire, svb.io.promote.fire, svb.io.acked,
++    svb.io.occupancy >= 2.U, svb.io.promote.valid && !svb.io.promote.ready,
++    wb.io.pending_idx.valid && wb.io.pending_sent && wb.io.pending_svb,
++    s3_effect_fire && wb.io.pending_idx.valid && wb.io.pending_sent,
++    svbFlush && svb.io.occupancy =/= 0.U,
++    svbFastLeaseAcquire && wb.io.pending_idx.valid && wb.io.pending_sent,
++    svbCapturePending && svb.io.promote.valid)
++  val preservationPipelineCounts = RegInit(VecInit(
++    Seq.fill(preservationPipelineEvents.size)(0.U(64.W))))
++  when (safeChainRoi) {
++    for ((event, i) <- preservationPipelineEvents.zipWithIndex) {
++      when (event) { preservationPipelineCounts(i) := preservationPipelineCounts(i) + 1.U }
++    }
++  }
++  safeChainLog(60, Seq(1.U) ++ preservationPipelineCounts.toSeq, 0.U,
++    io.csr_cycle(13,0) === 0.U || trafficStopPulse, true.B)
++
++  val rescuePerfEvents = Seq(crossPackagePending && crossPackageRescueQualified,
++    crossPackagePending && crossPackageRescueQualified && svb.io.capture.ready,
++    crossPackageSvbRescue)
++  val rescuePerfCounts = RegInit(VecInit(Seq.fill(3)(0.U(64.W))))
++  when (safeChainRoi) {
++    for ((event, i) <- rescuePerfEvents.zipWithIndex) {
++      when (event) { rescuePerfCounts(i) := rescuePerfCounts(i) + 1.U }
++    }
++  }
++  safeChainLog(55, Seq(1.U) ++ rescuePerfCounts.toSeq, 0.U,
++    io.csr_cycle(9,0) === 0.U, true.B)
++  safeChainLog(56, Seq(1.U, crossPackagePendingSet, crossPackagePendingWay,
++    crossPackagePendingTag, crossPackagePendingEpoch, crossPackageRescueSeq,
++    imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq,
++    imageKey(crossPackagePendingSet)(crossPackagePendingWay).generation,
++    svbEpoch, safePacketWatermark, svb.io.occupancy), 0.U,
++    crossPackageSvbRescue, true.B)
++  // RETAINED_COPY_OBSERVATION_ONLY: exactly one additional STOP identity,
++  // bringing this candidate to the existing 128-identity capture limit.
++  val retainedCopyEvents = Seq(true.B, crossPackageWbReq.fire,
++    crossPackageWbReq.fire && crossPackageCanKeepResident,
++    crossPackageWbDone, retainedReceiptAccepted,
++    crossPackageWbDone && crossPackageKeepResident && !crossPackageResidentMatch,
++    crossPackageWbDone && crossPackageKeepResident && preservationRevoked,
++    crossPackageMetaClear.fire)
++  val retainedCopyCounts = RegInit(VecInit(Seq.fill(8)(0.U(64.W))))
++  when (io.traffic_reset) { retainedCopyCounts.foreach(_ := 0.U) }
++    .elsewhen (trafficCounting) {
++      for ((event, i) <- retainedCopyEvents.zipWithIndex) {
++        when (event) { retainedCopyCounts(i) := retainedCopyCounts(i) + 1.U }
++      }
++    }
++  safeChainLog(51, Seq(1.U) ++ retainedCopyCounts.toSeq,
++    0.U, overlapTrafficStop, true.B)
++
+   // OPT2B_OBSERVATION_ONLY: semantic writes and first preservation blocks.
+   // Payload is identity/metadata only, never cacheline bytes. These events
+   // cannot reveal younger stores that the existing serializing path never issues.
+@@ -4332,7 +4646,7 @@
+         releaseSourceBusy.asUInt, size), 0.U, true.B)
+   }
+   releaseProtocolLog(19, svb.io.selected, true.B, svb.io.activeEntry,
+-    svb.io.activeLine, svb.io.activeKey, cfg.nMSHRs.U, TLMessages.ReleaseData, svbEpoch)
++    svb.io.activeLine, svb.io.activeKey, cfg.nMSHRs.U, TLMessages.ReleaseData, svb.io.activeEpoch)
+   releaseProtocolLog(20, releaseFirst || releaseLast, wb.io.pending_svb,
+     wb.io.pending_entry, tl_out.c.bits.address, cReleaseKey, tl_out.c.bits.source,
+     tl_out.c.bits.opcode, wb.io.done_epoch, c_first, c_last, !sourceConflict, tl_out.c.bits.size)
+@@ -4343,7 +4657,7 @@
+     wb.io.pending_line, wb.io.svb_done.bits.key, cfg.nMSHRs.U, TLMessages.ReleaseAck, wb.io.done_epoch)
+   releaseProtocolLog(23, svbSourceBlocked && !svbSourceBlockedPrevious, true.B,
+     svb.io.activeEntry, svb.io.activeLine, svb.io.activeKey, cfg.nMSHRs.U,
+-    TLMessages.ReleaseData, svbEpoch)
++    TLMessages.ReleaseData, svb.io.activeEpoch)
+   releaseProtocolLog(24, sourceConflict || invalidReleaseAck, wb.io.pending_svb,
+     wb.io.pending_entry, wb.io.pending_line, wb.io.pending_key, cfg.nMSHRs.U,
+     Mux(wbAck, tl_out.d.bits.opcode, tl_out.c.bits.opcode), wb.io.done_epoch,
+@@ -4388,6 +4702,10 @@
+ 
+   // CACHE_OPPORTUNITY_OBSERVATION_ONLY. Values flow only into an input-only
+   // DPI sink; no counter, shadow tag, fingerprint, or decision feeds the LSU.
++  // Keep the final full-run accounting current after software STOP as safe
++  // snapshots can now legitimately drain after their original capture epoch.
++  val svbAccountingChanged = RegNext(svb.io.allocation || svb.io.acked ||
++    svb.io.coalesced =/= 0.U || svb.io.discarded =/= 0.U, false.B)
+   val cacheObservationEvents = (0 until memWidth).flatMap { w =>
+     val r = s2_req(w)
+     val set = r.addr(idxMSB, idxLSB)
+@@ -4417,7 +4735,7 @@
+     CacheOpportunityObservation.event(svbFullFallbackEvent || svbUnsupportedFallbackEvent, 4,
+       VecInit(Seq(svbFullFallbackEvent, svbUnsupportedFallbackEvent)).asUInt),
+     CacheOpportunityObservation.event(l1_l2_dirty_wb_event, 8),
+-    CacheOpportunityObservation.event(trafficStopPulse, 30, nSVBEntries.U,
++    CacheOpportunityObservation.event(trafficStopPulse || svbAccountingChanged, 30, nSVBEntries.U,
+       svb.io.entryAccounting(2), svb.io.entryAccounting(0), svb.io.entryAccounting(1),
+       svb.io.entryAccounting(3)(31, 0), svb.io.occupancy, svb.io.maxDepth),
+     CacheOpportunityObservation.event(trafficStopPulse, 31, address = svbWouldFullAt8,
+--- v6/generators/rocket-chip/src/main/scala/util/SafeChainObservation.scala
++++ frozen/generators/rocket-chip/src/main/scala/util/SafeChainObservation.scala
+@@ -49,10 +49,6 @@
+       require(width <= 64, "SC1 fields must fit one hex64 word")))
+     key.widthOption.foreach(width =>
+       require(width <= 1024, "SC1 change key exceeds observation bus"))
+-    // Independent FireSim copy only: the legacy input-only $fwrite logger has
+-    // no GoldenGate model. Keep functional Opt4 logic and the source taps.
+-    // DAC measurement must use its own bridge; disabling this proves no stats.
+-    if (!sys.props.get("ec.dac.firesim").contains("true")) {
+     val logger = Module(new SafeChainEventLogger(kind))
+     logger.suggestName(s"safe_chain_observer_$kind")
+     logger.io.clock := clk
+@@ -80,6 +76,5 @@
+       words(i) := value
+     }
+     logger.io.data := words.asUInt
+-    }
+   }
+ }
+--- v6/generators/rocket-chip/src/main/scala/util/CacheOpportunityObservation.scala
++++ frozen/generators/rocket-chip/src/main/scala/util/CacheOpportunityObservation.scala
+@@ -61,9 +61,6 @@
+       id: UInt, cycle: UInt, occupied: UInt, full: Bool,
+       events: Seq[CacheOpportunityEvent]): Unit = {
+     require(events.nonEmpty)
+-    // This legacy DPI logger is input-only and has no FPGA implementation.
+-    // Its omission is explicit in the build manifest, not a DAC metric source.
+-    if (!sys.props.get("ec.dac.firesim").contains("true")) {
+     val o = Module(new CacheOpportunityObserver(level, sets, ways, blockBytes, mshrs, events.size))
+     o.io.clock := clk; o.io.reset := rst; o.io.clear := clear; o.io.enable := enable
+     o.io.stop := stop; o.io.instance_id := id; o.io.cycle := cycle
+@@ -77,7 +74,6 @@
+     o.io.event_set := VecInit(events.map(_.set)).asUInt
+     o.io.event_way := VecInit(events.map(_.way)).asUInt
+     o.io.event_occupancy := VecInit(events.map(_.occupancy)).asUInt
+-    }
+   }
+ 
+   def rotate(x: UInt, shift: Int): UInt = {
+--- v6/generators/rocket-chip/src/main/scala/rocket/IBuf.scala
++++ frozen/generators/rocket-chip/src/main/scala/rocket/IBuf.scala
+@@ -82,9 +82,13 @@
+   // val inst = icData & icMask | buf.data & ~icMask
+ //===== GuardianCouncil Function: Start ====//
+   val inst_checker = icData & icMask | buf.data & ~icMask
+-  val inst_if_ebreak = Mux(((inst_checker === 0x00100073.U) || (inst_checker === 0x9002.U)), true.B, false.B)
+-  val inst_if_ecall = Mux(inst_checker === 0x00000073.U, true.B, false.B)
+-  val inst = Mux(io.checker_mode.asBool && (inst_if_ebreak || inst_if_ecall), 0x00000013.U, inst_checker) // An sys-call should not be executed in checker mode
++  // Classify only the instruction at the head, not later fetched bytes.
++  // Preserve the original compressed length when suppressing C.EBREAK.
++  val inst_if_cebreak = usingCompressed.B && inst_checker(15, 0) === 0x9002.U
++  val inst_if_ebreak = inst_checker(31, 0) === 0x00100073.U || inst_if_cebreak
++  val inst_if_ecall = inst_checker(31, 0) === 0x00000073.U
++  val inst = Mux(io.checker_mode.asBool && (inst_if_ebreak || inst_if_ecall),
++    Mux(inst_if_cebreak, 0x0001.U, 0x00000013.U), inst_checker)
+ //===== GuardianCouncil Function: End ====//
+   val valid = (UIntToOH(nValid) - 1.U)(fetchWidth-1, 0)
+   val bufMask = UIntToOH(nBufValid) - 1.U
+--- v6/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala
++++ frozen/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala
+@@ -26,6 +26,8 @@
+   useAtomics: Boolean = true,
+   useAtomicsOnlyForIO: Boolean = false,
+   useCompressed: Boolean = true,
++  // Instruction-supply bandwidth is independent of scalar decode/retirement.
++  fetchWords: Int = 1,
+   useRVE: Boolean = false,
+   useSCIE: Boolean = false,
+   useBitManip: Boolean = false,
+@@ -60,9 +62,9 @@
+   val lgPauseCycles = 5
+   val haveFSDirty = false
+   val pmpGranularity: Int = if (useHypervisor) 4096 else 4
+-  val fetchWidth: Int = if (useCompressed) 2 else 1
+-  //  fetchWidth doubled, but coreInstBytes halved, for RVC:
+-  val decodeWidth: Int = fetchWidth / (if (useCompressed) 2 else 1)
++  require(fetchWords == 1 || fetchWords == 2, "Rocket fetch supports one or two 32-bit words")
++  val fetchWidth: Int = fetchWords * (if (useCompressed) 2 else 1)
++  val decodeWidth: Int = 1
+   val retireWidth: Int = 1
+   val instBits: Int = if (useCompressed) 16 else 32
+   val lrscCycles: Int = 80 // worst case is 14 mispredicted branches + slop
+@@ -1537,16 +1539,6 @@
+     Mux(package_result_waiting, package_result_status_waiting, package_result_status),
+     Mux(package_result_waiting, package_result_seq_waiting, package_seq_reg))
+   val package_result_fire = package_result_queue.io.enq.fire
+-  if (p(freechips.rocketchip.util.DacRoiEnabled)) {
+-    when (new_package) {
+-      midas.targetutils.SynthesizePrintf(printf("EC_OPT4_PACKAGE_BEGIN hart=%d seq=%x satp=%x prv=%d\n",
+-        io.hartid, new_package_seq, Cat(csr.io.ptbr.mode, csr.io.ptbr.asid, csr.io.ptbr.ppn), csr.io.status.prv))
+-    }
+-    when (package_result_fire) {
+-      midas.targetutils.SynthesizePrintf(printf("EC_OPT4_PACKAGE_RESULT hart=%d seq=%x status=%d full_compare=%d cancelled=%d\n",
+-        io.hartid, package_seq_reg, package_result_status, full_check_complete, package_cancelled))
+-    }
+-  }
+   // Result capture and RSUSL cleanup are separate state transitions. Delaying
+   // cleanup breaks the result-fire -> package-clear -> frame-start feedback;
+   // result handoff remains blocked by checker_cleanup_done until RSUSL is idle.
+@@ -1565,13 +1557,6 @@
+   package_result_queue.io.deq.ready := io.package_result_ready &&
+     package_result_handoff_allowed
+   val package_result_handoff_fire = package_result_queue.io.deq.fire
+-  // Service FINISH is not architectural/package completion. U-mode firmware
+-  // management may tear down satp only after this real cleanup witness.
+-  val ec_service_safe = checker_cleanup_done && !package_owned &&
+-    !pending_package_seq_valid && no_result_pending &&
+-    !package_result_queue.io.deq.valid && io.cdc_empty
+-  csr.io.ec_service_idle := ec_service_safe && RegNext(ec_service_safe, false.B)
+-
+   io.package_result_valid := package_result_queue.io.deq.valid &&
+     package_result_handoff_allowed
+   io.package_result_seq := package_result_queue.io.deq.bits(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0)
+--- v6/generators/rocket-chip/src/main/scala/rocket/CSR.scala
++++ frozen/generators/rocket-chip/src/main/scala/rocket/CSR.scala
+@@ -364,7 +364,6 @@
+   val r_exception_nocall = Output(Bool())
+   val core_trace = Input(UInt(1.W))
+ 
+-  val ec_service_idle = Input(Bool()) // v6 read-only service teardown witness
+   val checker_mode = Input(Bool())
+   val checker_priv_mode = Input(Bool())
+   val arfs_is_CSR = Input(Bool())
+@@ -868,8 +867,7 @@
+     CSRs.mepc -> read_mepc,
+     CSRs.mtval -> reg_mtval.sextTo(xLen),
+     CSRs.mcause -> reg_mcause,
+-    CSRs.mhartid -> io.hartid,
+-    0xcc0 -> io.ec_service_idle.asUInt) // custom U-mode read-only CSR
++    CSRs.mhartid -> io.hartid)
+ 
+ 
+   val debug_csrs = if (!usingDebug) LinkedHashMap() else LinkedHashMap[Int,Bits](
+--- v6/generators/rocket-chip/src/main/scala/rocket/Frontend.scala
++++ frozen/generators/rocket-chip/src/main/scala/rocket/Frontend.scala
+@@ -170,6 +170,19 @@
+   val checker_busy = checker_state =/= checker_empty || checker_s1_owner || checker_s2_owner
+   val checker_flow = checker_request || checker_busy
+   val checker_emit = checker_state === checker_ready && !io.cpu.checker_clear
++  // An owned S2 response may go straight to FQ after classification. These
++  // wires do not create another response owner; if FQ refuses it, the normal
++  // response register/WAIT_BJL path retains the transaction on this edge.
++  val checker_direct_emit = WireDefault(false.B)
++  val checker_direct_resp = Wire(new FrontendResp)
++  val checker_direct_next_pc = Wire(UInt(vaddrBitsExtended.W))
++  // FQ is flow-through: VALID must not depend on the redirect that its
++  // output can cause in Rocket. A redirect kills IBuf and resets FQ on this
++  // edge, just as for an already registered READY response. Ownership and
++  // BJL reservation advance only on a non-killed accepted delivery.
++  val checker_direct_fire = checker_direct_emit && fq.io.enq.ready && !io.cpu.req.valid
++  val checker_direct_handoff = checker_direct_fire && checker_request &&
++    !redirect_pending && !redirect_settle && !io.cpu.req.valid
+   // OPT2B: accept the already-resolved successor while the current response
+   // is handed to FQ. Never look ahead across a held response, replay or fault.
+   val checker_handoff = checker_emit && fq.io.enq.ready && checker_request &&
+@@ -189,7 +202,7 @@
+   // Redirect first changes the PC/mode; accept the target request only after
+   // the registered settle cycle, and keep it pending until req.fire.
+   val s0_valid = !io.cpu.req.valid && !redirect_settle && Mux(checker_flow,
+-    (checker_state === checker_empty || checker_handoff) && !io.cpu.checker_clear,
++    (checker_state === checker_empty || checker_handoff || checker_direct_handoff) && !io.cpu.checker_clear,
+     s0_fq_has_space || !io.cpu.if_overtaking)
+   dontTouch(s0_fq_has_space)
+   // During the redirect handoff, S1 validity is an acceptance fact.  The
+@@ -297,8 +310,9 @@
+     checker_state === checker_empty &&
+     (icache.io.resp.valid || (s2_kill_speculative_tlb_refill && s2_tlb_resp.miss) || (!s2_tlb_resp.miss && icache.io.s2_kill))
+   legacy_resp.pc := s2_pc
+-  val checker_pc = Mux(checker_state === checker_empty, s1_pc,
+-    Mux(checker_emit && fq.io.enq.ready, checker_next_pc, checker_fetch_pc))
++  val checker_pc = Mux(checker_direct_handoff, checker_direct_next_pc,
++    Mux(checker_state === checker_empty, s1_pc,
++      Mux(checker_emit && fq.io.enq.ready, checker_next_pc, checker_fetch_pc)))
+   io.cpu.npc := alignPC(Mux(io.cpu.req.valid, io.cpu.req.bits.pc,
+     Mux(redirect_pending, redirect_pc, Mux(checker_flow, checker_pc, npc))))
+ 
+@@ -497,9 +511,9 @@
+     when (io.cpu.req.valid) { wrong_path := false.B }
+     dontTouch(specialJalrVec)
+   }
+-  // OPT3: classify the incoming owned response before registering it. This
+-  // removes the unconditional CLASSIFY state; BJL reservation still happens
+-  // only in WAIT_BJL and FQ delivery still happens only in READY.
++  // Classify the incoming owned response before registering it. The direct
++  // path may deliver it immediately; the held path retains misses/replays,
++  // FQ backpressure and CFIs without a matching available BJL head.
+   val checker_cache_valid = if (outer.icacheParams.latency == 1)
+     RegNext(checker_s1_owner && icache.io.resp.valid, false.B) else icache.io.resp.valid
+   val checker_cache_bits = if (outer.icacheParams.latency == 1)
+@@ -510,9 +524,10 @@
+   checker_incoming.replay := checker_cache_valid && checker_cache_bits.replay ||
+     icache.io.s2_kill && !checker_cache_valid && !s2_xcpt
+   when (checker_cache_valid && checker_cache_bits.ae) { checker_incoming.xcpt.ae.inst := true.B }
+-  val checker_classify_fire = checker_s2_owner && checker_state === checker_fetching &&
++  val checker_classify_candidate = checker_s2_owner && checker_state === checker_fetching &&
+     !s2_tlb_resp.miss && (checker_cache_valid || icache.io.s2_kill) &&
+-    !io.cpu.req.valid && !io.cpu.checker_clear
++    !io.cpu.checker_clear
++  val checker_classify_fire = checker_classify_candidate && !io.cpu.req.valid
+   // One checker response owns its data and reservation until FQ accepts it.
+   val checker_start = checker_resp.pc.extract(log2Ceil(fetchBytes)-1, log2Ceil(coreInstBytes))
+   val checker_scan_start = checker_incoming.pc.extract(log2Ceil(fetchBytes)-1, log2Ceil(coreInstBytes))
+@@ -558,13 +573,50 @@
+   val checker_incoming_fault = checker_incoming.replay || checker_incoming.xcpt.asUInt.orR
+   val checker_head_match = BJL.io.bj_resp_cpc === checker_cfi_pc &&
+     BJL.io.bj_resp_is_rvc === checker_cfi_rvc
+-  BJL.io.bj_req_valid := checker_state === checker_wait_bjl && checker_head_match &&
+-    !io.cpu.req.valid && !io.cpu.checker_clear
++  val checker_incoming_prefix = has_cfi && cfi_start(first_cfi) > checker_scan_start
++  val checker_incoming_head_match = BJL.io.bj_resp_cpc === cfi_pc(first_cfi) &&
++    BJL.io.bj_resp_is_rvc === cfi_rvc(first_cfi)
++  // The end mask carries branch ownership through preceding instructions in
++  // IBuf. With the real matching head available, deliver prefix + CFI once,
++  // rather than refetching the same word at the CFI PC. Otherwise the existing
++  // prefix-only fallback can still make progress without a reservation.
++  val checker_folded_prefix = checker_incoming_prefix && !cfi_special(first_cfi) &&
++    checker_incoming_head_match && BJL.io.bj_req_ready
++  val checker_incoming_bjl = has_cfi && !cfi_special(first_cfi) &&
++    (!checker_incoming_prefix || checker_folded_prefix)
++  checker_direct_resp := checker_incoming
++  checker_direct_resp.btb.taken := false.B
++  checker_direct_resp.prefixLength := fetchWidth.U - checker_scan_start
++  checker_direct_resp.bjlEndMask := 0.U
++  checker_direct_next_pc := checker_base + fetchBytes.U
++  when (checker_incoming_prefix && !checker_folded_prefix) {
++    checker_direct_resp.prefixLength := cfi_start(first_cfi) - checker_scan_start
++    checker_direct_next_pc := cfi_pc(first_cfi)
++  }.elsewhen (has_cfi && cfi_special(first_cfi)) {
++    checker_direct_resp.prefixLength := (first_cfi +& 1.U) - checker_scan_start
++    checker_direct_next_pc := cfi_pc(first_cfi) + 4.U
++  }.elsewhen (checker_incoming_bjl) {
++    checker_direct_resp.prefixLength := (first_cfi +& 1.U) - checker_scan_start
++    checker_direct_resp.bjlEndMask := UIntToOH(first_cfi, fetchWidth)
++    checker_direct_resp.btb.taken := BJL.io.bj_resp_taken
++    checker_direct_resp.btb.bridx := first_cfi
++    checker_direct_next_pc := BJL.io.bj_resp_npc
++  }
++  checker_direct_resp.mask := ((UIntToOH(checker_direct_resp.prefixLength, fetchWidth+1) - 1.U) <<
++    checker_scan_start)(fetchWidth-1, 0)
++  // Fault/replay uses the established held-response path. A CFI can bypass
++  // WAIT_BJL only with the real matching log head, reserved on FQ fire.
++  checker_direct_emit := checker_classify_candidate && !checker_incoming_fault &&
++    (!checker_incoming_bjl || checker_incoming_head_match && BJL.io.bj_req_ready)
++  val checker_direct_reserve = checker_direct_fire && checker_incoming_bjl
++  BJL.io.bj_req_valid := ((checker_state === checker_wait_bjl && checker_head_match) ||
++    checker_direct_reserve) && !io.cpu.req.valid && !io.cpu.checker_clear
+   BJL.io.bj_rollback := io.cpu.req.valid
+   BJL.io.bj_s2_replay := false.B
+   BJL.io.bj_commit_valid := io.cpu.bjl_commit
+-  fq.io.enq.valid := checker_emit || legacy_emit
+-  fq.io.enq.bits := Mux(checker_emit, checker_resp, legacy_resp)
++  fq.io.enq.valid := checker_emit || checker_direct_emit || legacy_emit
++  fq.io.enq.bits := Mux(checker_direct_emit, checker_direct_resp,
++    Mux(checker_emit, checker_resp, legacy_resp))
+   when (checker_emit) {
+     fq.io.enq.bits.mask := ((UIntToOH(checker_resp.prefixLength, fetchWidth+1) - 1.U) << checker_start)(fetchWidth-1, 0)
+   }
+@@ -612,7 +664,7 @@
+       checker_state := checker_empty
+     }
+   }
+-  when (BJL.io.bj_req_valid && BJL.io.bj_req_ready) {
++  when (checker_state === checker_wait_bjl && BJL.io.bj_req_valid && BJL.io.bj_req_ready) {
+     checker_resp.prefixLength := (checker_cfi_end +& 1.U) - checker_start
+     checker_resp.bjlEndMask := UIntToOH(checker_cfi_end, fetchWidth)
+     checker_resp.btb.taken := BJL.io.bj_resp_taken
+@@ -632,8 +684,19 @@
+     checker_partial_pc := checker_tail_pc
+     checker_partial_seq := checker_fetch_seq
+   }
++  when (checker_direct_fire) {
++    checker_state := Mux(icache.io.req.fire && checker_request,
++      checker_fetching, checker_empty)
++    checker_partial_valid := lowValid &&
++      checker_direct_resp.prefixLength === fetchWidth.U - checker_scan_start &&
++      !checker_direct_resp.bjlEndMask.orR
++    checker_partial_bits := lowBits
++    checker_partial_pc := lowPC
++    checker_partial_seq := checker_fetch_seq
++    when (!icache.io.req.fire) { s1_pc := checker_direct_next_pc }
++  }
+   val checker_handoff_fire = checker_handoff && icache.io.req.fire
+-  val checker_classify_prev = RegNext(checker_classify_fire, false.B)
++  val checker_classify_prev = RegNext(checker_classify_fire && !checker_direct_fire, false.B)
+   val checker_classify_wait = RegEnable(has_cfi && !checker_incoming_fault &&
+     cfi_start(first_cfi) <= checker_scan_start && !cfi_special(first_cfi), checker_classify_fire)
+   val checker_classify_data = RegEnable(checker_incoming.data, checker_classify_fire)
+@@ -641,10 +704,11 @@
+   when (checker_classify_fire) {
+     // checker_s1_owner is the current response owner on this edge; only a
+     // second FQ consumer would violate the single-owner boundary.
+-    assert(!fq.io.enq.fire, "checker classification overlaps FQ delivery")
++    assert(!checker_emit && !legacy_emit, "checker classification overlaps another FQ owner")
+     assert(checker_incoming.pc === checker_fetch_pc,
+       "checker classifier response PC does not match accepted request")
+-    assert(!BJL.io.bj_req_valid, "checker classifier reserved BJL before WAIT_BJL")
++    assert(!BJL.io.bj_req_valid || checker_direct_reserve,
++      "checker classifier reserved BJL without accepted direct delivery")
+   }
+   when (checker_classify_prev && !io.cpu.req.valid && !io.cpu.checker_clear) {
+     assert(checker_state === Mux(checker_classify_wait, checker_wait_bjl, checker_ready),
+@@ -661,6 +725,24 @@
+   when (checker_handoff_prev && !io.cpu.req.valid && !io.cpu.checker_clear) {
+     assert(checker_state === checker_fetching && checker_s1_owner,
+       "checker handoff lost the accepted successor")
++  }
++  when (checker_direct_fire) {
++    assert(checker_s2_owner && checker_state === checker_fetching &&
++      checker_direct_resp.pc === checker_fetch_pc && !checker_incoming_fault,
++      "checker direct response lost ownership")
++    assert(checker_direct_resp.prefixLength > 0.U &&
++      checker_direct_resp.prefixLength <= fetchWidth.U - checker_scan_start,
++      "checker direct response has invalid prefix")
++    when (checker_incoming_bjl) {
++      assert(checker_incoming_head_match && BJL.io.bj_req_valid && BJL.io.bj_req_ready,
++        "checker direct CFI has no matching reservation")
++    }
++  }
++  val checker_direct_launch = checker_direct_handoff && icache.io.req.fire
++  val checker_direct_launch_prev = RegNext(checker_direct_launch, false.B)
++  when (checker_direct_launch_prev && !io.cpu.req.valid && !io.cpu.checker_clear) {
++    assert(checker_state === checker_fetching && checker_s1_owner,
++      "checker direct handoff lost accepted successor")
+   }
+   when (checker_state === checker_ready) {
+     // Prefix metadata is authoritative in IBuf, including on the first READY cycle.
+@@ -707,8 +789,8 @@
+     false.B, // Retired CLASSIFY state: preserve kind13 counter field position.
+     opt2bFrontendLive && checker_state === checker_wait_bjl,
+     opt2bFrontendLive && checker_state === checker_ready,
+-    checker_emit && fq.io.enq.fire,
+-    checker_handoff_fire,
++    (checker_emit || checker_direct_emit) && fq.io.enq.fire,
++    checker_handoff_fire || checker_direct_launch,
+     icache.io.req.fire && checker_request,
+     checker_emit && !fq.io.enq.ready,
+     checker_emit && fq.io.enq.fire && (checker_resp.replay || checker_resp.xcpt.asUInt.orR),
+@@ -744,10 +826,40 @@
+   for ((event, i) <- opt3Events.zipWithIndex) {
+     when (event) { opt3Counts(i) := opt3Counts(i) + 1.U }
+   }
++  val overlapEvents = Seq(checker_direct_fire, checker_direct_reserve,
++    checker_direct_launch, checker_direct_emit && !fq.io.enq.ready)
++  val overlapCounts = RegInit(VecInit(Seq.fill(4)(0.U(64.W))))
++  for ((event, i) <- overlapEvents.zipWithIndex) {
++    when (event) { overlapCounts(i) := overlapCounts(i) + 1.U }
++  }
+   SafeChainObservation.emit(16, gated_clock, reset.asBool, opt2bCycle, opt2bLocal,
+     outer.staticIdForMetadataUseOnly.U, opt2bRoi, true.B,
+-    Seq(io.cpu.checker_seq) ++ opt3Counts.toSeq ++ Seq(opt2bFrontendFlags),
++    Seq(io.cpu.checker_seq) ++ opt3Counts.toSeq ++ Seq(opt2bFrontendFlags) ++ overlapCounts.toSeq,
+     Cat(io.cpu.checker_seq, opt2bFrontendFlags, opt2bFrontendCounts(6) >> 10))
++  // OVERLAP_OBSERVATION_ONLY: complete local traffic-window snapshot. The
++  // capture-context ROI tap above is sticky and is deliberately not a STOP.
++  val overlapStatsEnable = WireInit(false.B)
++  val overlapStatsReset = WireInit(false.B)
++  chisel3.util.experimental.BoringUtils.addSink(overlapStatsEnable,
++    GH_GlobalParams.GH_L2_STATS_ENABLE_BORE)
++  chisel3.util.experimental.BoringUtils.addSink(overlapStatsReset,
++    GH_GlobalParams.GH_L2_STATS_RESET_BORE)
++  val overlapStatsStop = RegNext(overlapStatsEnable, false.B) && !overlapStatsEnable
++  val overlapTrafficCycles = RegInit(0.U(64.W))
++  val overlapTrafficCounts = RegInit(VecInit(Seq.fill(14)(0.U(64.W))))
++  when (overlapStatsReset) {
++    overlapTrafficCycles := 0.U
++    overlapTrafficCounts.foreach(_ := 0.U)
++  }.elsewhen (overlapStatsEnable) {
++    overlapTrafficCycles := overlapTrafficCycles + 1.U
++    for ((event, i) <- opt2bFrontendEvents.zipWithIndex) {
++      when (event) { overlapTrafficCounts(i) := overlapTrafficCounts(i) + 1.U }
++    }
++  }
++  SafeChainObservation.emit(49, gated_clock, reset.asBool, opt2bCycle, opt2bLocal,
++    outer.staticIdForMetadataUseOnly.U, opt2bRoi, overlapStatsStop,
++    Seq(1.U, overlapTrafficCycles) ++ overlapTrafficCounts.toSeq,
++    0.U, force = overlapStatsStop)
+   dontTouch(icache.io)
+   dontTouch(predicted_taken)
+   dontTouch(io)
+--- v6/generators/rocket-chip/src/main/scala/subsystem/Configs.scala
++++ frozen/generators/rocket-chip/src/main/scala/subsystem/Configs.scala
+@@ -238,7 +238,7 @@
+     val prev = up(TilesLocated(InSubsystem), site)
+     val idOffset = overrideIdOffset.getOrElse(prev.size)
+     val checker = RocketTileParams(
+-      core = RocketCoreParams(useDebug = false,
++      core = RocketCoreParams(useDebug = false, fetchWords = 2,
+       mulDiv = Some(MulDivParams(
+         mulUnroll = 8,
+         divUnroll = 8,
+@@ -253,9 +253,10 @@
+         nMSHRs = 0,
+         blockBytes = site(CacheBlockBytes))),
+       icache = Some(ICacheParams(
++        fetchBytes = 8,
+         rowBits = site(SystemBusKey).beatBits,
+         nSets = 32,
+-        nWays = 1,
++        nWays = 2,
+         nTLBSets = 1,
+         nTLBWays = 32,
+         blockBytes = site(CacheBlockBytes))))
+--- v6/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala
++++ frozen/generators/sifive-cache/design/craft/inclusivecache/src/MSHR.scala
+@@ -339,7 +339,12 @@
+   when (request.prio(2) && Bool(!params.firstLevel)) { // always a hit
+     final_meta_writeback.dirty   := meta.dirty || request.opcode(0)
+     final_meta_writeback.dcache  := meta.dcache || params.isDCacheSource(request.source)
+-    final_meta_writeback.state   := Mux(request.param =/= TtoT && meta.state === TRUNK, TIP, meta.state)
++    // SVB copies report the permission at capture time. A BtoB snapshot may
++    // arrive after this client has acquired T for a younger resident image.
++    // Reports do not shrink that newer permission; keep probing its T owner.
++    // Actual TtoB/TtoN/BtoN releases retain the ordinary downgrade behavior.
++    final_meta_writeback.state   := Mux(request.param =/= TtoT && request.param =/= BtoB &&
++      meta.state === TRUNK, TIP, meta.state)
+     final_meta_writeback.clients := meta.clients & ~Mux(isToN(request.param), req_clientBit, UInt(0))
+     final_meta_writeback.hit     := Bool(true) // chained requests are hits
+   } .elsewhen (request.control && Bool(params.control)) { // request.prio(0)
+@@ -442,6 +447,23 @@
+       final_meta_writeback.outerPreserved === meta.outerPreserved &&
+       final_meta_writeback.dirty === meta.dirty, "peer park changed protected bytes/receipt")
+     assert((final_meta_writeback.clients & ~meta.clients) === UInt(0), "peer park granted ownership")
++  }
++
++  when (request_valid && meta_valid && request.prio(2) && request.param === BtoB &&
++      meta.state === TRUNK) {
++    assert(final_meta_writeback.state === TRUNK &&
++      final_meta_writeback.clients === meta.clients,
++      "non-shrinking historical report revoked a younger T owner")
++  }
++  // Bounded simulation witness only; no functional consumer or scheduling use.
++  val historicalBtoBObserved = RegInit(Bool(false))
++  when (!historicalBtoBObserved && io.schedule.fire() && io.schedule.bits.dir.valid &&
++      request.prio(2) && request.param === BtoB && meta.state === TRUNK) {
++    historicalBtoBObserved := Bool(true)
++    printf("[BTOB_RETAIN_T] bank=%x mshr=%d line=%x seq=%x generation=%x clients=%x before=%x after=%x\n",
++      io.bank, UInt(id), params.restoreAddress(params.expandAddress(request.tag, request.set, UInt(0))),
++      request.image.contentSeq, request.image.generation, meta.clients,
++      meta.state, final_meta_writeback.state)
+   }
+ 
+   // Just because a client says BtoT, by the time we process the request he may be N.
+--- v6/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala
++++ frozen/generators/sifive-cache/design/craft/inclusivecache/src/L2Preservation.scala
+@@ -33,6 +33,9 @@
+     val watermark = UInt(width = 32).flip
+     val bank = UInt(width = 8).flip
+     val lock = Valid(new L2PreservationCandidate(params))
++    // Only this phase has no bank reads or A beats left. The set lock remains
++    // live until the matching terminal ACK; it is not the SourceC port lease.
++    val waitingAck = Bool()
+     val completed = Valid(new L2PreservationCandidate(params))
+     val a = Decoupled(new TLBundleA(params.outer.bundle))
+     val d = Decoupled(new TLBundleD(params.outer.bundle)).flip
+@@ -50,6 +53,7 @@
+     "Stage3 requires end-to-end completion echo")
+   val idle :: read :: delay1 :: delay2 :: send :: waitAck :: failed :: Nil = chisel3.util.Enum(7)
+   val state = RegInit(idle)
++  io.waitingAck := state === waitAck
+   val snapshot = Reg(new L2PreservationCandidate(params))
+   val serial = RegInit(UInt(0, width = 64))
+   val lastAck = RegInit(UInt(0, width = 64))
+@@ -101,6 +105,9 @@
+   when (state === delay2) { data := io.bs_dat.data; state := send }
+   val finalBeat = beat === UInt(params.cache.blockBytes / params.outer.manager.beatBytes - 1)
+   io.a.valid := state === send
++  when (io.waitingAck) {
++    assert(!io.bs_adr.valid && !io.a.valid, "L2 waitAck still uses checkpoint data path")
++  }
+   io.a.bits := 0.U.asTypeOf(new TLBundleA(params.outer.bundle))
+   io.a.bits.opcode := TLMessages.PutFullData
+   io.a.bits.size := UInt(params.offsetBits)
+--- v6/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala
++++ frozen/generators/sifive-cache/design/craft/inclusivecache/src/Scheduler.scala
+@@ -108,6 +108,9 @@
+   val sourceE = Module(new SourceE(params))
+   val sourceX = Module(new SourceX(params))
+   val preservation = Module(new L2Preservation(params))
++  // Keep the captured set locked through terminal ACK, but return the shared
++  // SourceC read port once every checkpoint A beat has been accepted.
++  val sourceCReserved = preservation.io.lock.valid && !preservation.io.waitingAck
+   preservation.io.watermark := io.safeWatermark
+   preservation.io.bank := io.bank
+   sourceC.io.watermark := io.safeWatermark
+@@ -332,7 +335,7 @@
+   val stage3Allowed = mshrs.zip(candidates).map { case (m, x) =>
+     val outerSafe = !m.io.schedule.bits.c.valid || CacheImage.safe(m.io.resident.bits.image, io.safeWatermark)
+     !x.valid && !locked(m.io.status.bits.set) && outerSafe &&
+-      (!m.io.schedule.bits.c.valid || (!preservation.io.lock.valid && !drainForCheckpoint)) &&
++      (!m.io.schedule.bits.c.valid || (!sourceCReserved && !drainForCheckpoint)) &&
+       (!m.io.schedule.bits.d.valid || !drainForCheckpoint)
+   }
+   val unsafeVictims = mshrs.map(m => m.io.schedule.valid && m.io.schedule.bits.c.valid &&
+@@ -693,6 +696,31 @@
+   BoringUtils.addSink(observationEnable, GH_GlobalParams.GH_L2_STATS_ENABLE_BORE)
+   val observationContext = SafeChainObservation.context()
+   val observationStop = RegNext(observationEnable, Bool(false)) && !observationEnable
++  // SC48: exact traffic-window counts, one forced STOP sample. These counts
++  // measure overlap opportunities/acceptance, not counterfactual ROI savings.
++  val overlapReleasePending = mshrs.map(m => m.io.schedule.valid &&
++    m.io.schedule.bits.c.valid && m.io.schedule.bits.c.bits.opcode(1)).reduce(_||_)
++  val overlapReleaseFire = sourceC.io.req.fire() && sourceC.io.req.bits.opcode(1)
++  val overlapPredicates = Seq(sourceCReserved,
++    sourceCReserved && overlapReleasePending,
++    preservation.io.waitingAck && overlapReleaseFire,
++    overlapReleasePending && !overlapReleaseFire,
++    preservation.io.waitingAck,
++    preservation.io.waitingAck && overlapReleasePending,
++    preservation.io.lock.valid,
++    preservation.io.lock.valid && overlapReleasePending)
++  val overlapCounts = RegInit(Vec(Seq.fill(9)(UInt(0, width = 64))))
++  when (observationReset) {
++    overlapCounts.foreach(_ := UInt(0))
++  }.elsewhen (observationEnable) {
++    overlapCounts(0) := overlapCounts(0) + UInt(1)
++    overlapPredicates.zipWithIndex.foreach { case (event, i) =>
++      when (event) { overlapCounts(i+1) := overlapCounts(i+1) + UInt(1) }
++    }
++  }
++  SafeChainObservation.emit(48, clock, reset, observationContext._1, observationContext._1,
++    UInt(0), observationContext._2, observationStop,
++    Seq(UInt(1)) ++ overlapCounts.toSeq, UInt(0), force = observationStop)
+   // FullRequest adds fields to QueuedRequest, so a direct aggregate Mux
+   // fails Chisel's runtime type check. Project by field connection, exactly
+   // as the functional MSHR allocation path does above; do not bit-cast.
+@@ -757,10 +785,10 @@
+   bankedStore.io.sinkC_dat := sinkC.io.bs_dat
+   bankedStore.io.sinkD_adr <> sinkD.io.bs_adr
+   bankedStore.io.sinkD_dat := sinkD.io.bs_dat
+-  bankedStore.io.sourceC_adr.valid := Mux(preservation.io.lock.valid, preservation.io.bs_adr.valid, sourceC.io.bs_adr.valid)
+-  bankedStore.io.sourceC_adr.bits := Mux(preservation.io.lock.valid, preservation.io.bs_adr.bits, sourceC.io.bs_adr.bits)
+-  preservation.io.bs_adr.ready := preservation.io.lock.valid && bankedStore.io.sourceC_adr.ready
+-  sourceC.io.bs_adr.ready := !preservation.io.lock.valid && bankedStore.io.sourceC_adr.ready
++  bankedStore.io.sourceC_adr.valid := Mux(sourceCReserved, preservation.io.bs_adr.valid, sourceC.io.bs_adr.valid)
++  bankedStore.io.sourceC_adr.bits := Mux(sourceCReserved, preservation.io.bs_adr.bits, sourceC.io.bs_adr.bits)
++  preservation.io.bs_adr.ready := sourceCReserved && bankedStore.io.sourceC_adr.ready
++  sourceC.io.bs_adr.ready := !sourceCReserved && bankedStore.io.sourceC_adr.ready
+   bankedStore.io.sourceD_radr <> sourceD.io.bs_radr
+   bankedStore.io.sourceD_wadr <> sourceD.io.bs_wadr
+   bankedStore.io.sourceD_wdat := sourceD.io.bs_wdat
+@@ -782,6 +810,8 @@
+     assert(!(sinkD.io.bs_adr.fire() && !sinkD.io.bs_adr.bits.noop && locked(sinkD.io.bs_adr.bits.set)), "L2_PREMATURE_OVERWRITE_ERROR refill")
+   }
+   when (sourceC.io.req.fire()) {
++    assert(!sourceCReserved && !locked(sourceC.io.req.bits.set),
++      "L2 SourceC bypass violates checkpoint reservation")
+     assert(sourceC.io.req.bits.source < UInt(InclusiveCacheParameters.out_mshrs(params.cache, params.micro)),
+       "L2 MSHR release aliases checkpoint source")
+     assert(CacheImage.safe(sourceC.io.req.bits.image, io.safeWatermark), "L2_SPEC_OUTER_WRITE_ERROR victim")
+--- v6/generators/chipyard/src/main/scala/DigitalTop.scala
++++ frozen/generators/chipyard/src/main/scala/DigitalTop.scala
+@@ -27,7 +27,6 @@
+   with sifive.blocks.devices.spi.HasPeripherySPI // Enables optionally adding the sifive SPI port
+   with icenet.CanHavePeripheryIceNIC // Enables optionally adding the IceNIC for FireSim
+   with chipyard.example.CanHavePeripheryInitZero // Enables optionally adding the initzero example widget
+-  with chipyard.example.CanHavePeripheryDacRoi
+   with chipyard.example.CanHavePeripheryGCD // Enables optionally adding the GCD example widget
+   with chipyard.example.CanHavePeripheryStreamingFIR // Enables optionally adding the DSPTools FIR example widget
+   with chipyard.example.CanHavePeripheryStreamingPassthrough // Enables optionally adding the DSPTools streaming-passthrough example widget

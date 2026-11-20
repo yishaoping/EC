@@ -1,0 +1,62 @@
+Slack (MET) :             0.114ns  (required time - arrival time)
+  Source:                 design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_c_e4_inst/CORECLK
+                            (rising edge-triggered cell PCIE4CE4 clocked by GTYE4_CHANNEL_TXOUTCLK[3]_3  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Destination:            design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/core_rq_tready_reg_reg[0]/D
+                            (rising edge-triggered cell FDRE clocked by GTYE4_CHANNEL_TXOUTCLK[3]_3  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Path Group:             GTYE4_CHANNEL_TXOUTCLK[3]_3
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            2.000ns  (GTYE4_CHANNEL_TXOUTCLK[3]_3 rise@2.000ns - GTYE4_CHANNEL_TXOUTCLK[3]_3 rise@0.000ns)
+  Data Path Delay:        1.707ns  (logic 0.599ns (35.091%)  route 1.108ns (64.909%))
+  Logic Levels:           0  
+  Clock Path Skew:        -0.158ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    2.081ns = ( 4.081 - 2.000 ) 
+    Source Clock Delay      (SCD):    2.363ns
+    Clock Pessimism Removal (CPR):    0.124ns
+  Clock Uncertainty:      0.046ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.060ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      2.148ns (routing 1.076ns, distribution 1.072ns)
+  Clock Net Delay (Destination): 1.889ns (routing 0.975ns, distribution 0.914ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock GTYE4_CHANNEL_TXOUTCLK[3]_3 rise edge)
+                                                      0.000     0.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     0.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, estimated)        0.085     0.085    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y92        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.130     0.215 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_coreclk/O
+    X6Y1 (CLOCK_ROOT)    net (fo=6079, estimated)     2.148     2.363    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/CLK_CORECLK
+    PCIE4CE4_X1Y0        PCIE4CE4                                     r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_c_e4_inst/CORECLK
+  -------------------------------------------------------------------    -------------------
+    PCIE4CE4_X1Y0        PCIE4CE4 (Prop_PCIE4CE4_CORECLK_SAXISRQTREADY[0])
+                                                      0.599     2.962 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_c_e4_inst/SAXISRQTREADY[0]
+                         net (fo=1, estimated)        1.108     4.070    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/core_rq_tready_reg_reg[3]_0[0]
+    SLICE_X220Y86        FDRE                                         r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/core_rq_tready_reg_reg[0]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock GTYE4_CHANNEL_TXOUTCLK[3]_3 rise edge)
+                                                      2.000     2.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     2.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, estimated)        0.078     2.078    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y92        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.114     2.192 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_coreclk/O
+    X6Y1 (CLOCK_ROOT)    net (fo=6079, estimated)     1.889     4.081    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/CLK_CORECLK
+    SLICE_X220Y86        FDRE                                         r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/core_rq_tready_reg_reg[0]/C
+                         clock pessimism              0.124     4.205    
+                         clock uncertainty           -0.046     4.159    
+    SLICE_X220Y86        FDRE (Setup_HFF2_SLICEM_C_D)
+                                                      0.025     4.184    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/core_rq_tready_reg_reg[0]
+  -------------------------------------------------------------------
+                         required time                          4.184    
+                         arrival time                          -4.070    
+  -------------------------------------------------------------------
+                         slack                                  0.114    
+
+
+
+
+
+Min Delay Paths
+--------------------------------------------------------------------------------------

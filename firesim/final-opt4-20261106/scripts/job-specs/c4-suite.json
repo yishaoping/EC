@@ -1,0 +1,16 @@
+{
+  "schema": "ec-service-job-spec/1",
+  "name": "c4-suite",
+  "argv": [
+    "python3",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/suite_queue.py",
+    "C4"
+  ],
+  "legacy_states": [
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-c4-queue-state.json"
+  ],
+  "inputs": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/suite_queue.py"
+  ],
+  "checkpoint_policy": "Reuse exact certified artifacts and atomic complete samples; incomplete guest reruns from start, CAD uses only completed DCP/run markers; no instruction-level restore"
+}

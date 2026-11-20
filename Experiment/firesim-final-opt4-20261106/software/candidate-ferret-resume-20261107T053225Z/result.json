@@ -1,0 +1,74 @@
+{
+  "active_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/candidate-ferret-resume-20261107T053225Z/command-3.log",
+  "child_pid": 2049798,
+  "commands": [
+    {
+      "argv": [
+        "bash",
+        "configure",
+        "--host=riscv64-unknown-linux-gnu",
+        "--build=x86_64-pc-linux-gnu",
+        "--prefix=/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies",
+        "--disable-shared",
+        "--enable-static"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/libjpeg",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/candidate-ferret-resume-20261107T053225Z/command-0.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j2"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/libjpeg",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/candidate-ferret-resume-20261107T053225Z/command-1.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "install"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/libjpeg",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/candidate-ferret-resume-20261107T053225Z/command-2.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j2",
+        "dirs",
+        "lib",
+        "version=serial",
+        "CC=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "CXX=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "AR=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ar",
+        "CFLAGS=-O3 -march=rv64gc -mabi=lp64d -fcommon -I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include",
+        "LDFLAGS=-static -L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/src",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/candidate-ferret-resume-20261107T053225Z/command-3.log",
+      "returncode": 2
+    }
+  ],
+  "ended_utc": "2026-11-07T05:32:36.649051+00:00",
+  "error": "RuntimeError('command failed 2: /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/candidate-ferret-resume-20261107T053225Z/command-3.log')",
+  "formal_eligible": false,
+  "fpga_execution": false,
+  "host_tool_workaround": {
+    "ls": "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/host-tools/ls",
+    "reason": "system /usr/bin/ls prints correct output but returns255; existing conda ls returns0; no system tools modified",
+    "sha256": "95810462a52d8c23255cf66bf17f30dfb348ef63f60ab8e18ad1c3b4c8b9f637"
+  },
+  "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/candidate-ferret-resume-20261107T053225Z",
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z",
+  "pid": 2037434,
+  "program": "ferret",
+  "reused_dependencies": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib/libgsl.a": "eb9abfc55b7be107daf4b01c2ef638ff29ec4c8776f2e6b48aff883708661c43"
+  },
+  "source_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/src",
+  "started_utc": "2026-11-07T05:32:25.258479+00:00",
+  "status": "FAILED_WITH_EVIDENCE"
+}

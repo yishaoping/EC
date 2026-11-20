@@ -1,0 +1,13 @@
+{
+  "schema": "ec-service-job-spec/1",
+  "name": "network-ferret-stable-joined",
+  "argv": ["python3", "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/diagnose_netferret_linux.py", "--joined-candidate"],
+  "inputs": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/diagnose_netferret_linux.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/network_binding.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/validate_network_linux.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/validate_network_candidates.py"
+  ],
+  "legacy_states": ["/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-stable-joined-candidate-state.json"],
+  "checkpoint_policy": "Independent nonformal profile adds post-ROI join after cancellation before freeing state; all original computation and ROI retained; QEMU-only"
+}

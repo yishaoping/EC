@@ -1,0 +1,901 @@
+{
+  "status": "COMPARED_COMPLETE_SHELL_POSTOPT_SAME_CONFIGURATION",
+  "profile": "EC Performance-Only",
+  "phase": "post-opt, unplaced",
+  "metrics": {
+    "CLB LUTs": {
+      "before": 824809.0,
+      "after": 815919.0,
+      "delta": -8890.0,
+      "delta_percent": -1.0778252904611856
+    },
+    "CLB Registers": {
+      "before": 448466.0,
+      "after": 448361.0,
+      "delta": -105.0,
+      "delta_percent": -0.023413146147088074
+    },
+    "Register as Flip Flop": {
+      "before": 448465.0,
+      "after": 448360.0,
+      "delta": -105.0,
+      "delta_percent": -0.02341319835438663
+    },
+    "F7 Muxes": {
+      "before": 43726.0,
+      "after": 44334.0,
+      "delta": 608.0,
+      "delta_percent": 1.3904770617024196
+    },
+    "F8 Muxes": {
+      "before": 9633.0,
+      "after": 10342.0,
+      "delta": 709.0,
+      "delta_percent": 7.360116266998858
+    },
+    "F9 Muxes": {
+      "before": 0.0,
+      "after": 0.0,
+      "delta": 0.0,
+      "delta_percent": null
+    },
+    "Block RAM Tile": {
+      "before": 698.5,
+      "after": 698.5,
+      "delta": 0.0,
+      "delta_percent": 0.0
+    },
+    "URAM": {
+      "before": 0.0,
+      "after": 0.0,
+      "delta": 0.0,
+      "delta_percent": null
+    },
+    "LUT as Memory": {
+      "before": 41252.0,
+      "after": 41252.0,
+      "delta": 0.0,
+      "delta_percent": 0.0
+    }
+  },
+  "evidence": {
+    "/var/tmp/guozh-ec-rtl-timing-r2-20261115/full-combined-qualified/top-postopt-utilization.rpt": "b5e91e21effc203a4ed2b528fb45c3eb528420272a370c385990b2701a3246ed",
+    "/var/tmp/guozh-ec-rtl-timing-r2-20261115/full-combined-qualified/top-postopt-hierarchical.rpt": "52940a1a295c4c6a10df71b034e79f09e15dbef9cc36bdeb725b270c4f8031a7",
+    "/var/tmp/guozh-ec-rtl-timing-r2-20261115/full-combined-qualified/top-postopt-fanout.rpt": "1987e6e7bf6ea3b8c22c771039cdc3849e2767fc84e25ade9df263dd090b1eb7",
+    "/var/tmp/guozh-ec-rtl-timing-r2-20261115/full-combined-qualified/top-postopt-slr-utilization.rpt": "d702078a984a947aacea8cc21e5967c4e6c4dc85711193f824303eccc9392c6c",
+    "/var/tmp/guozh-ec-checker-fault-20261117/full-r2/top-postopt-utilization.rpt": "424b8a5207ba300fbc3947620a3b861e6d8f80753804eaf749b9141642e3fc57",
+    "/var/tmp/guozh-ec-checker-fault-20261117/full-r2/top-postopt-hierarchical.rpt": "6a979529ba2dd15668ab5ab9df469109594a6035d9c509b6266269627d590818",
+    "/var/tmp/guozh-ec-checker-fault-20261117/full-r2/top-postopt-fanout.rpt": "2e112a72c91a61e135574f15f39922c56d9efea011ca8c3fe9f737fc0758cde8",
+    "/var/tmp/guozh-ec-checker-fault-20261117/full-r2/top-postopt-slr-utilization.rpt": "8c2877fa1cdbc993d78dadfef49c3402c8df850fa388f1885fb717e1094c7cb9"
+  },
+  "details": {
+    "before": {
+      "top_reported_fanout": [
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_subsystem_mbus_0_reset_catcher/io_sync_reset_chain/output_chain/sync_0_reg_rep__15_0_BUFG",
+          "fanout": 53107,
+          "driver": "BUFGCE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_1_reset_catcher/io_sync_reset_chain/output_chain/sync_0_reg_0",
+          "fanout": 5904,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_2_reset_catcher/io_sync_reset_chain/output_chain/sync_0_reg_0",
+          "fanout": 5903,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_3_reset_catcher/io_sync_reset_chain/output_chain/sync_0_reg_0",
+          "fanout": 5903,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_4_reset_catcher/io_sync_reset_chain/output_chain/sync_0_reg_0",
+          "fanout": 5903,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/proc_sys_reset_0/U0/interconnect_aresetn[0]",
+          "fanout": 5418,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/core_/rsu_master/E[0]",
+          "fanout": 4146,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_1/tile_reset_domain_tile/core/rsu_slave/checker_arfs_snapshot_0",
+          "fanout": 4096,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_2/tile_reset_domain_tile/core/rsu_slave/checker_arfs_snapshot_0",
+          "fanout": 4096,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_3/tile_reset_domain_tile/core/rsu_slave/checker_arfs_snapshot_0",
+          "fanout": 4096,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_4/tile_reset_domain_tile/core/rsu_slave/checker_arfs_snapshot_0",
+          "fanout": 4096,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_2_reset_catcher/io_sync_reset_chain/output_chain/lsl_reset_1",
+          "fanout": 3596,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_3_reset_catcher/io_sync_reset_chain/output_chain/lsl_reset_10",
+          "fanout": 3595,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_1_reset_catcher/io_sync_reset_chain/output_chain/lsl_reset",
+          "fanout": 3594,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_4_reset_catcher/io_sync_reset_chain/output_chain/lsl_reset_19",
+          "fanout": 3594,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/installArb/req_way_en_reg[1]",
+          "fanout": 3212,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/payload_2_flattened_reg_r2_0_63_0_6_i_22",
+          "fanout": 3103,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/payload_2_flattened_reg_r2_0_63_0_6_i_24",
+          "fanout": 3078,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/installArb/req_addr_reg[6]",
+          "fanout": 2970,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/installArb/req_addr_reg[7]",
+          "fanout": 2906,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/installArb/req_addr_reg[8]",
+          "fanout": 2874,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/installArb/req_addr_reg[9]",
+          "fanout": 2850,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/payload_2_flattened_reg_r2_0_63_0_6_i_20",
+          "fanout": 2681,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/installArb/req_addr_reg[10]",
+          "fanout": 2258,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/payload_2_flattened_reg_r2_0_63_0_6_i_18",
+          "fanout": 2126,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/payload_2_flattened_reg_r2_0_63_0_6_i_16",
+          "fanout": 2074,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/payload_2_flattened_reg_r2_0_63_0_6_i_14",
+          "fanout": 2072,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/trafficCounterSnapshot_0",
+          "fanout": 2016,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/ddr4_0/inst/u_ddr_axi/USE_UPSIZER.upsizer_d2/ARESET",
+          "fanout": 1944,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_subsystem_mbus_0_reset_catcher/io_sync_reset_chain/output_chain/cancelledPackages",
+          "fanout": 1858,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/core_/csr_exe_unit/alu/r_uops_0_ctrl_csr_cmd_reg[0]_0",
+          "fanout": 1670,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_5/rpq/ADDRH[0]",
+          "fanout": 1473,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_5/rpq/ADDRH[1]",
+          "fanout": 1473,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_5/rpq/ADDRH[2]",
+          "fanout": 1473,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_5/rpq/ADDRH[3]",
+          "fanout": 1473,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_subsystem_mbus_0_reset_catcher/io_sync_reset_chain/output_chain/stq_0_bits_uop_is_rvc",
+          "fanout": 1410,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/lsu/clear_store",
+          "fanout": 1410,
+          "driver": "LUT5"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/prober/appliedEffectResultMemory_io_writeSet[0]",
+          "fanout": 1344,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/prober/appliedEffectResultMemory_io_writeSet[1]",
+          "fanout": 1344,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/prober/appliedEffectResultMemory_io_writeSet[2]",
+          "fanout": 1344,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/prober/appliedEffectResultMemory_io_writeSet[3]",
+          "fanout": 1344,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/prober/appliedEffectResultMemory_io_writeSet[4]",
+          "fanout": 1344,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/prober/appliedEffectResultMemory_io_writeWay",
+          "fanout": 1344,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_5/rpq/ADDRH[4]",
+          "fanout": 1331,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mmios_0/sdq_enq",
+          "fanout": 1328,
+          "driver": "LUT4"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_1/tile_reset_domain_tile/fpuOpt/load_wb_tag[0]",
+          "fanout": 1263,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_1/tile_reset_domain_tile/fpuOpt/load_wb_tag[1]",
+          "fanout": 1263,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_2/tile_reset_domain_tile/fpuOpt/load_wb_tag[0]",
+          "fanout": 1263,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_2/tile_reset_domain_tile/fpuOpt/load_wb_tag[1]",
+          "fanout": 1263,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_3/tile_reset_domain_tile/fpuOpt/load_wb_tag[0]",
+          "fanout": 1263,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_3/tile_reset_domain_tile/fpuOpt/load_wb_tag[1]",
+          "fanout": 1263,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_4/tile_reset_domain_tile/fpuOpt/load_wb_tag[0]",
+          "fanout": 1263,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_4/tile_reset_domain_tile/fpuOpt/load_wb_tag[1]",
+          "fanout": 1263,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_cal/u_ddr_cal_addr_decode/u_ddr_cal_cplx/cplx_cal",
+          "fanout": 1220,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/ddr4_0/inst/u_ddr_axi/axi_w_channel_0/wready_d3",
+          "fanout": 1160,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/prober/debug_s3_effect_eligible",
+          "fanout": 1148,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/app_wdf_rdy_r",
+          "fanout": 1091,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_1_reset_catcher/io_sync_reset_chain/output_chain/debug_L_timer_worest",
+          "fanout": 1088,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_2_reset_catcher/io_sync_reset_chain/output_chain/debug_L_timer_worest_3",
+          "fanout": 1088,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_3_reset_catcher/io_sync_reset_chain/output_chain/debug_L_timer_worest_12",
+          "fanout": 1088,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_4_reset_catcher/io_sync_reset_chain/output_chain/debug_L_timer_worest_21",
+          "fanout": 1088,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_1/tile_reset_domain_tile/core/rsu_slave/checking_counter_memdelay_reg_n_0_[1]",
+          "fanout": 1061,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_2/tile_reset_domain_tile/core/rsu_slave/checking_counter_memdelay_reg_n_0_[1]",
+          "fanout": 1061,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_3/tile_reset_domain_tile/core/rsu_slave/checking_counter_memdelay_reg_n_0_[1]",
+          "fanout": 1061,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_4/tile_reset_domain_tile/core/rsu_slave/checking_counter_memdelay_reg_n_0_[1]",
+          "fanout": 1061,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_1/tile_reset_domain_tile/core/rsu_slave/checking_counter_memdelay_reg_n_0_[0]",
+          "fanout": 1060,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_2/tile_reset_domain_tile/core/rsu_slave/checking_counter_memdelay_reg_n_0_[0]",
+          "fanout": 1060,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_3/tile_reset_domain_tile/core/rsu_slave/checking_counter_memdelay_reg_n_0_[0]",
+          "fanout": 1060,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_4/tile_reset_domain_tile/core/rsu_slave/checking_counter_memdelay_reg_n_0_[0]",
+          "fanout": 1060,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/app_wdf_rdy_r_copy2",
+          "fanout": 1024,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_1/tile_reset_domain_tile/fpuOpt/load_wb_tag[2]",
+          "fanout": 1003,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_2/tile_reset_domain_tile/fpuOpt/load_wb_tag[2]",
+          "fanout": 1003,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_3/tile_reset_domain_tile/fpuOpt/load_wb_tag[2]",
+          "fanout": 1003,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_4/tile_reset_domain_tile/fpuOpt/load_wb_tag[2]",
+          "fanout": 1003,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rc_intfc_mod/pcie_4_0_512b_rc_output_mux_blk/read_data_valid_reg_reg[0]",
+          "fanout": 982,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/reset_n_o_reg_rep__0_n_0",
+          "fanout": 979,
+          "driver": "FDCE"
+        },
+        {
+          "net": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/reset_n_o_reg_rep__4_n_0",
+          "fanout": 979,
+          "driver": "FDCE"
+        },
+        {
+          "net": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/reset_n_o_reg_rep__5_n_0",
+          "fanout": 979,
+          "driver": "FDCE"
+        },
+        {
+          "net": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/reset_n_o_reg_rep_n_0",
+          "fanout": 979,
+          "driver": "FDCE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/s3_req_addr_reg[10]_rep__14_0[0]",
+          "fanout": 972,
+          "driver": "LUT5"
+        }
+      ],
+      "csr_rsu_hierarchy_rows": [
+        "|                             csr                                                                                                                                                                                                                                                                 |                                                               design_1_firesim_wrapper_0_0_CSRFile |       4449 |       4449 |       0 |    0 |   2984 |      0 |      0 |    0 |          0 |",
+        "|                             rsu_master                                                                                                                                                                                                                                                          |                                                                 design_1_firesim_wrapper_0_0_R_RSU |       2909 |       2909 |       0 |    0 |   4541 |      0 |      0 |    0 |          0 |",
+        "|                             csr                                                                                                                                                                                                                                                                 |                                                         design_1_firesim_wrapper_0_0_CSRFile_1_577 |       2276 |       2276 |       0 |    0 |   2710 |      0 |      0 |    0 |          0 |",
+        "|                             csr                                                                                                                                                                                                                                                                 |                                                         design_1_firesim_wrapper_0_0_CSRFile_1_457 |       2285 |       2285 |       0 |    0 |   2710 |      0 |      0 |    0 |          0 |",
+        "|                             csr                                                                                                                                                                                                                                                                 |                                                         design_1_firesim_wrapper_0_0_CSRFile_1_337 |       2243 |       2243 |       0 |    0 |   2710 |      0 |      0 |    0 |          0 |",
+        "|                             csr                                                                                                                                                                                                                                                                 |                                                             design_1_firesim_wrapper_0_0_CSRFile_1 |       2274 |       2274 |       0 |    0 |   2710 |      0 |      0 |    0 |          0 |"
+      ]
+    },
+    "after": {
+      "top_reported_fanout": [
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_subsystem_mbus_0_reset_catcher/io_sync_reset_chain/output_chain/sync_0_reg_rep__15_0_BUFG",
+          "fanout": 53077,
+          "driver": "BUFGCE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_1_reset_catcher/io_sync_reset_chain/output_chain/sync_0_reg_0",
+          "fanout": 5911,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_3_reset_catcher/io_sync_reset_chain/output_chain/sync_0_reg_0",
+          "fanout": 5911,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_4_reset_catcher/io_sync_reset_chain/output_chain/sync_0_reg_0",
+          "fanout": 5911,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_2_reset_catcher/io_sync_reset_chain/output_chain/sync_0_reg_0",
+          "fanout": 5907,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/proc_sys_reset_0/U0/interconnect_aresetn[0]",
+          "fanout": 5418,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/core_/rsu_master/E[0]",
+          "fanout": 4146,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_1/tile_reset_domain_tile/core/rsu_slave/checker_arfs_snapshot_0",
+          "fanout": 4096,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_2/tile_reset_domain_tile/core/rsu_slave/checker_arfs_snapshot_0",
+          "fanout": 4096,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_3/tile_reset_domain_tile/core/rsu_slave/checker_arfs_snapshot_0",
+          "fanout": 4096,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_4/tile_reset_domain_tile/core/rsu_slave/checker_arfs_snapshot_0",
+          "fanout": 4096,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_1_reset_catcher/io_sync_reset_chain/output_chain/lsl_reset",
+          "fanout": 3585,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_2_reset_catcher/io_sync_reset_chain/output_chain/lsl_reset_1",
+          "fanout": 3585,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_3_reset_catcher/io_sync_reset_chain/output_chain/lsl_reset_10",
+          "fanout": 3585,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_4_reset_catcher/io_sync_reset_chain/output_chain/lsl_reset_19",
+          "fanout": 3585,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/installArb/req_way_en_reg[1]",
+          "fanout": 3212,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/payload_2_flattened_reg_r2_0_63_0_6_i_22",
+          "fanout": 3103,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/payload_2_flattened_reg_r2_0_63_0_6_i_24",
+          "fanout": 3078,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/installArb/req_addr_reg[6]",
+          "fanout": 2970,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/installArb/req_addr_reg[7]",
+          "fanout": 2906,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/installArb/req_addr_reg[8]",
+          "fanout": 2874,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/installArb/req_addr_reg[9]",
+          "fanout": 2850,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/payload_2_flattened_reg_r2_0_63_0_6_i_20",
+          "fanout": 2681,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/installArb/req_addr_reg[10]",
+          "fanout": 2258,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/payload_2_flattened_reg_r2_0_63_0_6_i_18",
+          "fanout": 2126,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/payload_2_flattened_reg_r2_0_63_0_6_i_16",
+          "fanout": 2074,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/payload_2_flattened_reg_r2_0_63_0_6_i_14",
+          "fanout": 2072,
+          "driver": "MUXF7"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/trafficCounterSnapshot_0",
+          "fanout": 2016,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/ddr4_0/inst/u_ddr_axi/USE_UPSIZER.upsizer_d2/ARESET",
+          "fanout": 1944,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_subsystem_mbus_0_reset_catcher/io_sync_reset_chain/output_chain/cancelledPackages",
+          "fanout": 1858,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/core_/csr_exe_unit/alu/r_uops_0_ctrl_csr_cmd_reg[0]_0",
+          "fanout": 1670,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_5/rpq/ADDRH[0]",
+          "fanout": 1473,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_5/rpq/ADDRH[1]",
+          "fanout": 1473,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_5/rpq/ADDRH[2]",
+          "fanout": 1473,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_5/rpq/ADDRH[3]",
+          "fanout": 1473,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_subsystem_mbus_0_reset_catcher/io_sync_reset_chain/output_chain/stq_0_bits_uop_is_rvc",
+          "fanout": 1370,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/cmdRouter/cmd/ram_flattened_reg_0_1_168_181/DOA1",
+          "fanout": 1365,
+          "driver": "RAMD32"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/cmdRouter/cmd/ram_flattened_reg_0_1_168_181/DOB0",
+          "fanout": 1364,
+          "driver": "RAMD32"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/prober/appliedEffectResultMemory_io_writeSet[0]",
+          "fanout": 1344,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/prober/appliedEffectResultMemory_io_writeSet[1]",
+          "fanout": 1344,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/prober/appliedEffectResultMemory_io_writeSet[2]",
+          "fanout": 1344,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/prober/appliedEffectResultMemory_io_writeSet[3]",
+          "fanout": 1344,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/prober/appliedEffectResultMemory_io_writeSet[4]",
+          "fanout": 1344,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/prober/appliedEffectResultMemory_io_writeWay",
+          "fanout": 1344,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_5/rpq/ADDRH[4]",
+          "fanout": 1331,
+          "driver": "LUT6"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mmios_0/sdq_enq",
+          "fanout": 1328,
+          "driver": "LUT4"
+        },
+        {
+          "net": "design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_cal/u_ddr_cal_addr_decode/u_ddr_cal_cplx/cplx_cal",
+          "fanout": 1220,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/ddr4_0/inst/u_ddr_axi/axi_w_channel_0/wready_d3",
+          "fanout": 1160,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/prober/debug_s3_effect_eligible",
+          "fanout": 1148,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/app_wdf_rdy_r",
+          "fanout": 1091,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_1_reset_catcher/io_sync_reset_chain/output_chain/debug_L_timer_worest",
+          "fanout": 1088,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_2_reset_catcher/io_sync_reset_chain/output_chain/debug_L_timer_worest_3",
+          "fanout": 1088,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_3_reset_catcher/io_sync_reset_chain/output_chain/debug_L_timer_worest_12",
+          "fanout": 1088,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/resetSynchronizer/x1_member_allClocks_tileClockGroup_tile_4_reset_catcher/io_sync_reset_chain/output_chain/debug_L_timer_worest_21",
+          "fanout": 1088,
+          "driver": "LUT2"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_1/tile_reset_domain_tile/core/rsu_slave/checking_counter_memdelay_reg_n_0_[1]",
+          "fanout": 1061,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_2/tile_reset_domain_tile/core/rsu_slave/checking_counter_memdelay_reg_n_0_[1]",
+          "fanout": 1061,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_3/tile_reset_domain_tile/core/rsu_slave/checking_counter_memdelay_reg_n_0_[1]",
+          "fanout": 1061,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_4/tile_reset_domain_tile/core/rsu_slave/checking_counter_memdelay_reg_n_0_[1]",
+          "fanout": 1061,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_1/tile_reset_domain_tile/core/rsu_slave/checking_counter_memdelay_reg_n_0_[0]",
+          "fanout": 1060,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_2/tile_reset_domain_tile/core/rsu_slave/checking_counter_memdelay_reg_n_0_[0]",
+          "fanout": 1060,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_3/tile_reset_domain_tile/core/rsu_slave/checking_counter_memdelay_reg_n_0_[0]",
+          "fanout": 1060,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_4/tile_reset_domain_tile/core/rsu_slave/checking_counter_memdelay_reg_n_0_[0]",
+          "fanout": 1060,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/app_wdf_rdy_r_copy2",
+          "fanout": 1024,
+          "driver": "FDRE"
+        },
+        {
+          "net": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rc_intfc_mod/pcie_4_0_512b_rc_output_mux_blk/read_data_valid_reg_reg[0]",
+          "fanout": 982,
+          "driver": "LUT3"
+        },
+        {
+          "net": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/reset_n_o_reg_rep__0_n_0",
+          "fanout": 979,
+          "driver": "FDCE"
+        },
+        {
+          "net": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/reset_n_o_reg_rep__4_n_0",
+          "fanout": 979,
+          "driver": "FDCE"
+        },
+        {
+          "net": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/reset_n_o_reg_rep__5_n_0",
+          "fanout": 979,
+          "driver": "FDCE"
+        },
+        {
+          "net": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/reset_n_o_reg_rep_n_0",
+          "fanout": 979,
+          "driver": "FDCE"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/s3_req_addr_reg[10]_rep__14_0[0]",
+          "fanout": 972,
+          "driver": "LUT5"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/s3_req_addr_reg[10]_rep__14_0[1]",
+          "fanout": 972,
+          "driver": "LUT5"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/s3_req_addr_reg[10]_rep__14_0[2]",
+          "fanout": 972,
+          "driver": "LUT5"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/s3_req_addr_reg[10]_rep__14_0[3]",
+          "fanout": 972,
+          "driver": "LUT5"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/s3_req_addr_reg[10]_rep__14_0[4]",
+          "fanout": 972,
+          "driver": "LUT5"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/s3_req_addr_reg[10]_rep__14_0[5]",
+          "fanout": 972,
+          "driver": "LUT5"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/s3_req_addr_reg[10]_rep__14_1[0]",
+          "fanout": 972,
+          "driver": "LUT5"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/s3_req_addr_reg[10]_rep__14_1[1]",
+          "fanout": 972,
+          "driver": "LUT5"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/s3_req_addr_reg[10]_rep__14_1[2]",
+          "fanout": 972,
+          "driver": "LUT5"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/s3_req_addr_reg[10]_rep__14_1[3]",
+          "fanout": 972,
+          "driver": "LUT5"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/s3_req_addr_reg[10]_rep__14_1[4]",
+          "fanout": 972,
+          "driver": "LUT5"
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs/mshrs_0/s3_req_addr_reg[10]_rep__14_1[5]",
+          "fanout": 972,
+          "driver": "LUT5"
+        }
+      ],
+      "csr_rsu_hierarchy_rows": [
+        "|                             csr                                                                                                                                                                                                                                                                 |                                                               design_1_firesim_wrapper_0_0_CSRFile |       4029 |       4029 |       0 |    0 |   2984 |      0 |      0 |    0 |          0 |",
+        "|                             rsu_master                                                                                                                                                                                                                                                          |                                                                 design_1_firesim_wrapper_0_0_R_RSU |       2884 |       2884 |       0 |    0 |   4544 |      0 |      0 |    0 |          0 |",
+        "|                             csr                                                                                                                                                                                                                                                                 |                                                         design_1_firesim_wrapper_0_0_CSRFile_1_577 |       2308 |       2308 |       0 |    0 |   2711 |      0 |      0 |    0 |          0 |",
+        "|                             csr                                                                                                                                                                                                                                                                 |                                                         design_1_firesim_wrapper_0_0_CSRFile_1_457 |       2306 |       2306 |       0 |    0 |   2711 |      0 |      0 |    0 |          0 |",
+        "|                             csr                                                                                                                                                                                                                                                                 |                                                         design_1_firesim_wrapper_0_0_CSRFile_1_337 |       2307 |       2307 |       0 |    0 |   2711 |      0 |      0 |    0 |          0 |",
+        "|                             csr                                                                                                                                                                                                                                                                 |                                                             design_1_firesim_wrapper_0_0_CSRFile_1 |       2308 |       2308 |       0 |    0 |   2711 |      0 |      0 |    0 |          0 |"
+      ]
+    }
+  },
+  "physical_congestion": "Not measurable from unplaced post-opt; use placed congestion and per-SLR reports",
+  "csr_rsu_fanout_limit": "Top 80 nets only; absence of metadata names does not prove their exact fanout",
+  "cad_access": false,
+  "periodic_patrol": false
+}

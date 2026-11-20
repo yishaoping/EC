@@ -1,0 +1,21 @@
+{
+  "utc": "2026-11-12T21:47:43.453270+00:00",
+  "candidate": "barrier-safe-product-r1",
+  "hardware_commit": "96875c3bcdfeb496dfd535cc68eb4f255d21e4a7",
+  "status": "PREPARED_CONTROLLER_NOT_READY_FOR_AREA_CLAIM",
+  "files": {
+    "controller.py": "8d55882cde69b27c69b09a1e007ed4d377c2a56bcfe14e0e900dba646834a109",
+    "Host.scala": "1eadc4389e6cd32f139bd97af612d39747214525d55cce8e9034be9226b00447",
+    "CandidateProof.scala": "0e51def685432f9ac78fa56b26e0a5be5bc6605a5e83cbe0fb15a6a32ef750c4",
+    "install.py": "f96ca46046678208ac20f680dafe6a0498fddce76881fb37755ea240af3847ac",
+    "source-binding.json": "216585667ace8dfc73d47045303a2d2004e49b8cbcdb162bce28c8fe99b76699"
+  },
+  "diagnosis": [
+    "Host.scala still uses the parent137-bit product; CandidateProof and committed hardware use narrowed low64 product and overflow split, so existing host area would not measure the claimed candidate.",
+    "Copied install.py still points to predecessor barrier-banked-host-r4 and cannot install this candidate safely."
+  ],
+  "hardware_inequivalence_proven": false,
+  "no_candidate_job_started": true,
+  "unchanged_candidate_not_retried": true,
+  "required_correction": "Immutable controller/host/install successor with exact module-body derivation and source binding before any launch; retain proof and all public outputs, no full-host build for unmeasured small gain."
+}

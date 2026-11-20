@@ -1,0 +1,1 @@
+/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-elaborate-20261106T100250.032318Z/firesim.firesim.FireSim.dromajo_params.h

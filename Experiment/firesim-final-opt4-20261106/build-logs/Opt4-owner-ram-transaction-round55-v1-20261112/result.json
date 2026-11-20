@@ -1,0 +1,288 @@
+{
+  "actual_ram_model_sha256": "46428dc8d9868145ee7636f7da186ea61906da0bb3e0fad3dc756ffd95c135a4",
+  "all_41472_stored_bits_covered": true,
+  "arbitrary_watched_address": true,
+  "arbitrary_watched_reader": true,
+  "child": {},
+  "complete_fame_equivalence": false,
+  "completed_utc": "2026-11-11T19:00:23.427370+00:00",
+  "conditional_reset_base": true,
+  "cpu": 247,
+  "cpu_ticks": 5,
+  "data_bits": 81,
+  "fpga_access": false,
+  "full_equivalence": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "initial_memory_assumption": "related arbitrary watched word; no initialized contents or reset base",
+  "inputs": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-transaction-round55-v1-20261112/controller.py": "7a925663fd9983021f354e615a20a12047ae602646882f2188bf69b25c05a2c9",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-transaction-round55-v1-20261112/evidence/actual-RamModel.sv": "46428dc8d9868145ee7636f7da186ea61906da0bb3e0fad3dc756ffd95c135a4",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-transaction-round55-v1-20261112/evidence/lemma-ledger-complete.json": "330b1057c5e23264ccec39e41d8f22d4922151680f7fde400318e9df9991581c",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-transaction-round55-v1-20261112/evidence/lemma-ledger-result.json": "9837f6e6c7727b46c7b8832733bc3111d502f02d8b7f7604916fb05d83ac69d4",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/opt4_unattended_common.py": "ac709cdf3dc514f987fbb77593cb441e2f47ee2cab2efc46c3d2de3839998e2e"
+  },
+  "limitations": [
+    "RAM handshake transaction property only; no complete adapter, queue, reset-mask or FAME target-cycle composition.",
+    "Conditional arbitrary related storage base; this does not establish initialized or reset-visible target memory.",
+    "Inactive response payload is unconstrained. No liveness assumption or completion-time claim.",
+    "No full DCache/Opt4 equivalence, area, timing/DRC/bitstream, FPGA or production admission."
+  ],
+  "memory_read_cut": false,
+  "mutation_receipts": [
+    {
+      "high_bit": 8,
+      "label": "negative-read-address",
+      "log_sha256": "e5c04cd3abb9d5600e8bd002f51ba5f1b4369667ca071d4c365bf78706d1f8c6",
+      "low_bit": 0,
+      "returncode": 1,
+      "script_sha256": "543dd0bda2022100686798465f6ca1e39caced80a9172b9ef4f82387d0c57881",
+      "seconds": 16.301369627006352,
+      "source_sha256": "175cbfc0548339b44eca89c58fc026f466d9f7607ca57e035df514d171bdb4c9"
+    },
+    {
+      "high_bit": 80,
+      "label": "negative-write-high-bit",
+      "log_sha256": "50cdd7e9d7de957685f01922c3394f88f2612776e424f75e670e46ff5a37760e",
+      "low_bit": 72,
+      "returncode": 1,
+      "script_sha256": "e11a73187c4ce3f535e7852ea7969202aebaddf651fb622445d1dad9caa05a43",
+      "seconds": 16.186113723000744,
+      "source_sha256": "8225f6c8fbed4d2313f1cdf2bbfd8541ebd874e3483e1fdd50793964ae5d887c"
+    },
+    {
+      "high_bit": 8,
+      "label": "negative-write-mask",
+      "log_sha256": "25acb4bd06bda661b7f3edd7aff66f0ead5b26d5213b8cdb73fc59cbb404bfd7",
+      "low_bit": 0,
+      "returncode": 1,
+      "script_sha256": "a9f9b9b073a008d9dcabdd521452b99c51490f1d5478046d918cf720646e558e",
+      "seconds": 15.985830534016714,
+      "source_sha256": "220a56360fabb05540314ae9cf65111ed1d0c107ba547a04d568c9555fa243e1"
+    },
+    {
+      "high_bit": 8,
+      "label": "negative-held-response",
+      "log_sha256": "bc0b95d7f898ccd2002a491c3094fe7fc59579acf1f2ac3ce9b55a3eb7ce9756",
+      "low_bit": 0,
+      "returncode": 1,
+      "script_sha256": "13f190a52317d4467fdd235a3d39c095fdc88d778f96db17d235acec575a5027",
+      "seconds": 16.316413258988177,
+      "source_sha256": "576d36c4c024e685accbf88915b81205a1313725a5158221fdc94a529b86abff"
+    }
+  ],
+  "mutations_rejected": 4,
+  "observer_exact_reversal_checked": true,
+  "pid": 2185936,
+  "plan_sha256": "c177bdd896b981541dbcb1c26c44eb6180a6cae39db1c61a2a9c180e8450d0c6",
+  "process_state": "R",
+  "proof_receipts": [
+    {
+      "high_bit": 8,
+      "label": "bits-0-8-reset",
+      "log_sha256": "e146d72ef318f0b29519c49d10b53fd4182d970c5b1781d086e255a1a2bc5854",
+      "low_bit": 0,
+      "returncode": 0,
+      "script_sha256": "e1f146331e4d668ad9fb2c44e8e9832bc10f3bbbb0104d83c9f77346649a17d7",
+      "seconds": 16.603631405014312,
+      "source_sha256": "933dfc3c91f8bfa0d2373bd164ea21953716a5c0761d5c9110b9a647ac16bf32"
+    },
+    {
+      "high_bit": 8,
+      "label": "bits-0-8-step",
+      "log_sha256": "f05318a2b84e8d50b299d5b73e0ea75ebb6403056d2af44cf7ddd336c4230bb7",
+      "low_bit": 0,
+      "returncode": 0,
+      "script_sha256": "0dbb29d29626386cf287f59323219c4beff2ddc7df449f235de9183e31bf37ae",
+      "seconds": 51.30845722797676,
+      "source_sha256": "933dfc3c91f8bfa0d2373bd164ea21953716a5c0761d5c9110b9a647ac16bf32"
+    },
+    {
+      "high_bit": 17,
+      "label": "bits-9-17-reset",
+      "log_sha256": "300c93027c66c06b14caadb5fe2ea8606e97bc8bd805bb9ee3d328c83740cb23",
+      "low_bit": 9,
+      "returncode": 0,
+      "script_sha256": "432ce90d85bbde535238f09013b54a43094e92588a13bf01669e2dc8f3b93d39",
+      "seconds": 16.453150351007935,
+      "source_sha256": "b5759c0970a3323c2ff00bddc03c2b01464973daf4e71c2d762e88e3d0beed86"
+    },
+    {
+      "high_bit": 17,
+      "label": "bits-9-17-step",
+      "log_sha256": "3ac57e0db859353e0e8af5fbfcace95275ab83c080f32ee70e0a0676992a3e54",
+      "low_bit": 9,
+      "returncode": 0,
+      "script_sha256": "f6891a5122f7078c5a32ff33c2b3a7ca5e812565e9c6a683a41fb273e1e543e9",
+      "seconds": 50.139488095999695,
+      "source_sha256": "b5759c0970a3323c2ff00bddc03c2b01464973daf4e71c2d762e88e3d0beed86"
+    },
+    {
+      "high_bit": 26,
+      "label": "bits-18-26-reset",
+      "log_sha256": "19c6f0af9b1bac8c07a4f653c8907e6eabcec6ff2d6e65a66401cf7521e236b0",
+      "low_bit": 18,
+      "returncode": 0,
+      "script_sha256": "1fc2df4d74946e47940840385735e04163aa2f537db8a42c54284a5b6e8608d8",
+      "seconds": 16.314798712992342,
+      "source_sha256": "5560bd3d652b5e63423b257c237e0bcb5615b4c69f09a520b8895ecdab8fe99c"
+    },
+    {
+      "high_bit": 26,
+      "label": "bits-18-26-step",
+      "log_sha256": "448f72ce1b61aa3a08b3eeb0230a67c066cfae1a45f2bba53bfba0b5b67fbdf0",
+      "low_bit": 18,
+      "returncode": 0,
+      "script_sha256": "cf54a997e4d95d887bdea8d269d3f1d638ce89a7ea5a4df0e9d2f8af110ad871",
+      "seconds": 53.953319574997295,
+      "source_sha256": "5560bd3d652b5e63423b257c237e0bcb5615b4c69f09a520b8895ecdab8fe99c"
+    },
+    {
+      "high_bit": 35,
+      "label": "bits-27-35-reset",
+      "log_sha256": "a7eed1780a63cab4c403dff0466a4dba19afe662e59b5c398aea4ed11dff7f8b",
+      "low_bit": 27,
+      "returncode": 0,
+      "script_sha256": "1b61b9a564915d65cc21049ec968fb9080dc6aea204452ded3568cada5b61b42",
+      "seconds": 16.45423711198964,
+      "source_sha256": "310102e147b77f60e1800f547bdee5a8076057249a798d0bb938d739652bfec1"
+    },
+    {
+      "high_bit": 35,
+      "label": "bits-27-35-step",
+      "log_sha256": "e55f1a613987ee3628ad9490f0d7e5bc2da89172d1be7a230781d1509875029e",
+      "low_bit": 27,
+      "returncode": 0,
+      "script_sha256": "2092635985d6245efe8b4b194dc2e1c59cc6f609470297e2b6edbbecd02cacfe",
+      "seconds": 49.58079238201026,
+      "source_sha256": "310102e147b77f60e1800f547bdee5a8076057249a798d0bb938d739652bfec1"
+    },
+    {
+      "high_bit": 44,
+      "label": "bits-36-44-reset",
+      "log_sha256": "3b6d18cc70857fe3ce94176facc97d258ade3248e439024d826ff6e4aa6081a6",
+      "low_bit": 36,
+      "returncode": 0,
+      "script_sha256": "ad514e2044bd0424cc16424260fb7f43f505e88402ee20f72098003f5ceaaa20",
+      "seconds": 16.276600950979628,
+      "source_sha256": "09888d094d4ebe1e9347ada5faa7ec80ef5e3ec4216bfb17822b63638c4acfc6"
+    },
+    {
+      "high_bit": 44,
+      "label": "bits-36-44-step",
+      "log_sha256": "c021ed912c7c639b9e8d891052d1f8f82ddff46d8ed01c50f63ef97a7adf66a4",
+      "low_bit": 36,
+      "returncode": 0,
+      "script_sha256": "eeefbe677db1d79a318728081ef3fd11879cdfb99d3b21293efc0b763aeece22",
+      "seconds": 46.902198311989196,
+      "source_sha256": "09888d094d4ebe1e9347ada5faa7ec80ef5e3ec4216bfb17822b63638c4acfc6"
+    },
+    {
+      "high_bit": 53,
+      "label": "bits-45-53-reset",
+      "log_sha256": "6b6aec983271b5d41a0b3f719d092dd00cd8095ce6356dacdd01b823fd0ca0f0",
+      "low_bit": 45,
+      "returncode": 0,
+      "script_sha256": "3a065833d5286cb14c472141769a8882d96155f5c315068fa0988970361dff77",
+      "seconds": 16.055396940995706,
+      "source_sha256": "f708502b121f546d0af5830a85d1765a21f28de9562920a47f4701ff2f99368e"
+    },
+    {
+      "high_bit": 53,
+      "label": "bits-45-53-step",
+      "log_sha256": "74242caa5985cb44a3cca1e1aa15dc0b1730465757f354a6f6e6489fe40868a0",
+      "low_bit": 45,
+      "returncode": 0,
+      "script_sha256": "2879aef84ba46f54aa5370de0d649a2a1fcd6d3771de47063ba76b689a76111b",
+      "seconds": 50.55395467701601,
+      "source_sha256": "f708502b121f546d0af5830a85d1765a21f28de9562920a47f4701ff2f99368e"
+    },
+    {
+      "high_bit": 62,
+      "label": "bits-54-62-reset",
+      "log_sha256": "c65d3c6f5d6ed5f54164cb2c67e7b10c1698317860be3adc1ae6a3a9fc23be6b",
+      "low_bit": 54,
+      "returncode": 0,
+      "script_sha256": "8a7ceab451cf115507ab9048d67713bc4a09a3ba9753c24229d0ecb0ca2ce5f0",
+      "seconds": 16.205722843005788,
+      "source_sha256": "927d2221e04456393237203473156a5f1ebfc4ade7651b90284d3277dca0d335"
+    },
+    {
+      "high_bit": 62,
+      "label": "bits-54-62-step",
+      "log_sha256": "045cb4e01dead288be307b6ae36144f89c3435c55ff0691cfcc0909019750663",
+      "low_bit": 54,
+      "returncode": 0,
+      "script_sha256": "bc6889a654cad1501c6a3d23f6662b899675a40b8df3d14742b86f44b5fc82fd",
+      "seconds": 47.992263549997006,
+      "source_sha256": "927d2221e04456393237203473156a5f1ebfc4ade7651b90284d3277dca0d335"
+    },
+    {
+      "high_bit": 71,
+      "label": "bits-63-71-reset",
+      "log_sha256": "859af9dc9a37021b8e74afde300bae9f8417925983b17e335083935f7335ba89",
+      "low_bit": 63,
+      "returncode": 0,
+      "script_sha256": "030abb5ce4689fb48f80092da0e21def763b51fce76e8f962a3cba89444a569e",
+      "seconds": 16.407077828014735,
+      "source_sha256": "7dcb4b3ad1679b9308126cc8a418ed2f9b4594881956262b20885a866e224c2c"
+    },
+    {
+      "high_bit": 71,
+      "label": "bits-63-71-step",
+      "log_sha256": "8e099b5a7f64e3f888e9792c23365552afcb0dc25ae3737f08249658bcb4571a",
+      "low_bit": 63,
+      "returncode": 0,
+      "script_sha256": "b8b9b40f38fc0f750b98bf0e22adf7ffb0dd2ce1302751de4a6a613c005a6bd1",
+      "seconds": 51.94240790401818,
+      "source_sha256": "7dcb4b3ad1679b9308126cc8a418ed2f9b4594881956262b20885a866e224c2c"
+    },
+    {
+      "high_bit": 80,
+      "label": "bits-72-80-reset",
+      "log_sha256": "36ba4740d60a1d65b7a8c54033d10a866b2732fadaeedc979e0c38817e151f62",
+      "low_bit": 72,
+      "returncode": 0,
+      "script_sha256": "940b2922f79a2560d82c3da3f42041107da841ffde4dd0f57c4865fe8f540c56",
+      "seconds": 16.429042597999796,
+      "source_sha256": "4592ae8830519e3bb55d4be0dd7beff1fff16f834738987e01a11388d5508523"
+    },
+    {
+      "high_bit": 80,
+      "label": "bits-72-80-step",
+      "log_sha256": "6e7edecf3c4b8d3e9376b31636fb1c3256ef9b3455b24190101bfafaf02a882a",
+      "low_bit": 72,
+      "returncode": 0,
+      "script_sha256": "1285d5b71e5302a75f6f9bca009097a8854e3936f4dcb719711616177662cba6",
+      "seconds": 50.75874227800523,
+      "source_sha256": "4592ae8830519e3bb55d4be0dd7beff1fff16f834738987e01a11388d5508523"
+    },
+    {
+      "high_bit": 8,
+      "label": "arbitration-and-write-order",
+      "log_sha256": "82b5dbb42283e367af5fe5f166e2322aa5d9e01342fdf100e001144c982192c1",
+      "low_bit": 0,
+      "returncode": 0,
+      "script_sha256": "e0833ddf2588e09e0de19fec3770f2a014d4c7669d2c53568cbd67e4603549a3",
+      "seconds": 8.455532038002275,
+      "source_sha256": "933dfc3c91f8bfa0d2373bd164ea21953716a5c0761d5c9110b9a647ac16bf32"
+    }
+  ],
+  "readers": 35,
+  "ready_valid_stability_assumption": false,
+  "reference_snapshot": "Save the pre-edge abstract word on the selected accepted read and hold it independently until reset/advance.",
+  "reference_write": "All 35 reads acquired, write not completed, write_valid/en/mask and not reset; update watched abstract word from original write input.",
+  "rss_bytes": 15024128,
+  "schema": "ec-owner-ram-transaction-induction/1",
+  "selector_assumptions": "Only proof reader/address stay constant over induction edge; command/address/data/response readiness/reset remain arbitrary.",
+  "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+  "stage_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-transaction-round55-v1-20261112/negative-held-response.log",
+  "start_ticks": "23467014",
+  "started_utc": "2026-11-11T18:49:09.771210+00:00",
+  "status": "PASS_ACTUAL_35R1W_RAM_TRANSACTION_SNAPSHOTS_NO_READ_CUT",
+  "target_changed": false,
+  "updated_utc": "2026-11-11T19:00:07.113903+00:00",
+  "whole_fit": false,
+  "words": 512
+}

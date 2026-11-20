@@ -1,0 +1,430 @@
+--- a/scripts/prepare_network_candidates.py
++++ b/scripts/prepare_network_candidates.py
+@@ -91,6 +91,11 @@
+ def main():
+     lock=(D/'software/network-candidate-build.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+     previous=json.loads(RECEIPT.read_text()) if RECEIPT.exists() else {}
++    if previous.get('status') == 'CANDIDATE_ELFS_BUILT' and previous.get('port_version') == PORT_VERSION:
++        from network_binding import verify_files
++        verify_files(previous)
++        print(json.dumps(dict(status='CANDIDATE_ELFS_REUSED',receipt=str(RECEIPT))),flush=True)
++        return 0
+     if previous and previous.get('port_version')!=PORT_VERSION:
+         archive=D/'software'/('network-candidate-build-v'+str(previous.get('port_version',1))+'-'+dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'.json')
+         save(archive,previous);previous={}
+--- a/scripts/validate_network_candidates.py
++++ b/scripts/validate_network_candidates.py
+@@ -18,6 +18,7 @@
+ 
+ from board_batch import W,D,save,sha
+ from job_service import proc
++from network_binding import candidate
+ 
+ P=Path('/data1/gzh/EC/Software/PARSEC')
+ S=W/'scripts/validate_network_candidates.py'
+@@ -32,7 +33,7 @@
+     # mount propagation is private before mounting a temporary test /tmp.
+     subprocess.run(['mount','--make-rprivate','/'],check=True)
+     subprocess.run(['mount','-t','tmpfs','-o','size=128m','tmpfs','/tmp'],check=True)
+-    build=read(W/'software/network-candidate-build.json');src=Path(build['output_dir'])/program
++    bound,build=candidate(W/'software/network-candidate-build.json');src=Path(build['output_dir'])/program
+     compiled=build['programs'][program]
+     assert compiled['status']=='ELF_COMPILED_DIAGNOSTIC_NOT_FORMAL'
+     for b in compiled['binaries'].values():assert sha(b['path'])==b['sha256']
+@@ -84,7 +85,7 @@
+         server_argv=list(map(str,server)),client_argv=list(map(str,client)),binaries=compiled['binaries'],
+         input_archive=input_receipt,private_ipc_namespace=True,private_mount_namespace=True,private_network_namespace=True,
+         namespaces={n:os.readlink('/proc/self/ns/'+n) for n in ['ipc','mnt','net']},formal_eligible=False,fpga_run=False,
+-        roi='Original application hook sites; diagnostic writes only, no checker claim',source_receipt_sha256=sha(W/'software/network-candidate-build.json'),
++        roi='Original application hook sites; diagnostic writes only, no checker claim',source_receipt_sha256=bound,
+         architecture=arch,trace_enabled=trace_enabled,
+         mapping_note='simmedium invokes original simlarge for netstreamcluster; netdedup candidate separates server/client flags and uses unchanged formal archive')
+     save(out/'state.json',state)
+@@ -159,7 +160,16 @@
+     if a.case:return case(a.case,a.size,a.out,a.arch)
+     assert os.geteuid()==0
+     lock=(D/'software/network-offline-validation.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+-    build=read(W/'software/network-candidate-build.json');assert build['status']=='CANDIDATE_ELFS_BUILT'
++    bound,build=candidate(W/'software/network-candidate-build.json')
++    if RECEIPT.exists():
++        old=read(RECEIPT)
++        paths=[Path(c['result']) for c in old.get('cases',[])]
++        if old.get('status')=='COMPLETE_REVIEW_EVIDENCE' and paths:
++            for result_path in paths:
++                result=read(result_path)
++                assert result and result.get('source_receipt_sha256')==bound, 'case software version changed'
++            print('Existing complete offline evidence retained, including failures; no duplicate cases')
++            return 0
+     if RECEIPT.exists():
+         old=read(RECEIPT);archive=D/'software'/('network-offline-before-'+dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'.json');save(archive,old)
+     stamp=dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+--- a/scripts/validate_network_linux.py
++++ b/scripts/validate_network_linux.py
+@@ -14,6 +14,7 @@
+ import time
+ from board_batch import W,D,save,sha
+ from job_service import proc
++from network_binding import candidate
+ sys.path.insert(0,'/data1/gzh/EC/firesim/dac2026/scripts')
+ from prepare_boot_prerequisite import cpio_newc
+ 
+@@ -22,8 +23,7 @@
+ 
+ def main():
+     lock=(D/'software/network-linux-validation.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+-    bound=sha(W/'software/network-candidate-build.json')
+-    build=json.loads((W/'software/network-candidate-build.json').read_text())
++    bound,build=candidate(W/'software/network-candidate-build.json')
+     stamp=dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+     if R.exists():
+         st=json.loads(R.read_text());assert st['candidate_receipt_sha256']==bound
+--- a/scripts/network_followup.py
++++ b/scripts/network_followup.py
+@@ -8,6 +8,7 @@
+ import subprocess
+ from board_batch import W,D,save,sha
+ from job_service import proc
++from network_binding import candidate
+ 
+ R=D/'software/network-followup-state.json'
+ P=Path('/data1/gzh/EC/Software/PARSEC')
+@@ -15,12 +16,12 @@
+ 
+ def main():
+     lock=(D/'software/network-followup.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+-    build=json.loads((W/'software/network-candidate-build.json').read_text())
++    bound,build=candidate(W/'software/network-candidate-build.json')
+     stamp=dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+     out=D/'software'/('network-followup-'+stamp);out.mkdir()
+     state=dict(schema='ec-network-followup/1',status='RUNNING',output_dir=str(out),pid=os.getpid(),
+         start_ticks=proc(os.getpid())['start_ticks'],host_boot_id=Path('/proc/sys/kernel/random/boot_id').read_text().strip(),
+-        started_utc=dt.datetime.now(dt.timezone.utc).isoformat(),candidate_receipt_sha256=sha(W/'software/network-candidate-build.json'),
++        started_utc=dt.datetime.now(dt.timezone.utc).isoformat(),candidate_receipt_sha256=bound,
+         formal_eligible=False,fpga_execution=False,cases=[])
+     if R.exists():
+         prior=json.loads(R.read_text())
+--- a/scripts/netferret_sameisa.py
++++ b/scripts/netferret_sameisa.py
+@@ -8,6 +8,7 @@
+ import subprocess
+ from board_batch import W,D,save,sha
+ from job_service import proc
++from network_binding import candidate
+ P=Path('/data1/gzh/EC/Software/PARSEC')
+ T=Path('/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin')
+ R=D/'software/netferret-sameisa-state.json'
+@@ -15,7 +16,7 @@
+ def main():
+     lock=(D/'software/netferret-sameisa.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+     stamp=dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+-    bound=sha(W/'software/network-candidate-build.json')
++    bound,b=candidate(W/'software/network-candidate-build.json')
+     if R.exists():
+         st=json.loads(R.read_text());assert st['candidate_receipt_sha256']==bound
+         if st['status']=='COMPLETE_REVIEW_EVIDENCE':return
+@@ -26,7 +27,7 @@
+     st.update(pid=os.getpid(),start_ticks=proc(os.getpid())['start_ticks'],host_boot_id=Path('/proc/sys/kernel/random/boot_id').read_text().strip())
+     ref=Path(st['output_dir']);ref.mkdir(exist_ok=True)
+     logs=Path(st['log_dir']);logs.mkdir(exist_ok=True);save(R,st)
+-    b=json.loads((W/'software/network-candidate-build.json').read_text());base=Path(b['output_dir'])
++    base=Path(b['output_dir'])
+     deps=json.loads((W/'software/ferret-candidate-build.json').read_text());prefix=Path(deps['output_dir'])/'dependencies'
+     parent=json.loads((W/'software/apps-build.json').read_text());hooks=Path(parent['output_dir'])/'src/hooks'
+     original=P/'pkgs/netapps/netferret/src';server=original/'server'
+--- a/scripts/validate_netstreamcluster_linux.py
++++ b/scripts/validate_netstreamcluster_linux.py
+@@ -14,6 +14,7 @@
+ import time
+ from board_batch import W,D,save,sha
+ from job_service import proc
++from network_binding import candidate
+ sys.path.insert(0,'/data1/gzh/EC/firesim/dac2026/scripts')
+ from prepare_boot_prerequisite import cpio_newc
+ 
+@@ -22,8 +23,7 @@
+ 
+ def main():
+     lock=(D/'software/netstreamcluster-linux-validation.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+-    bound=sha(W/'software/network-candidate-build.json')
+-    build=json.loads((W/'software/network-candidate-build.json').read_text())
++    bound,build=candidate(W/'software/network-candidate-build.json')
+     stamp=dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+     if R.exists():
+         st=json.loads(R.read_text());assert st['candidate_receipt_sha256']==bound
+--- a/scripts/network_binding.py
++++ b/scripts/network_binding.py
+@@ -0,0 +1,65 @@
++"""Pin network validation to an immutable, fully verified build receipt.
++
++Process metadata and later readelf commands are execution history, not a new
++software version. All other fields must match before an old receipt is reused.
++"""
++import hashlib
++import json
++from pathlib import Path
++
++VOLATILE = {'pid', 'start_ticks', 'host_boot_id', 'started_utc', 'updated_utc',
++            'active_log', 'commands'}
++
++
++def digest(path):
++    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
++
++
++def verify_files(build):
++    assert build['status'] == 'CANDIDATE_ELFS_BUILT', 'candidate build not complete'
++    files = dict(build.get('reused_dependencies', {}))
++    for group in build.get('checkpoints', {}).values():
++        files.update(group)
++    for program in build['programs'].values():
++        assert program['status'] == 'ELF_COMPILED_DIAGNOSTIC_NOT_FORMAL'
++        files.update({b['path']: b['sha256'] for b in program['binaries'].values()})
++    if build.get('patch'):
++        files[build['patch']] = build['patch_sha256']
++    for path, expected in files.items():
++        assert Path(path).is_file() and digest(path) == expected, 'changed candidate artifact: ' + path
++
++
++def candidate(path):
++    """Return receipt SHA and content, using earliest identical build snapshot.
++
++    No existing receipt, checkpoint or result is rewritten. Real software or
++    configuration changes retain a distinct identity and fail old resume gates.
++    """
++    path = Path(path)
++    current = json.loads(path.read_text())
++    verify_files(current)
++    semantic = {k: v for k, v in current.items() if k not in VOLATILE}
++    snapshots = sorted(Path(current['log_dir']).glob('build-result-*.json'))
++    for snapshot in snapshots:
++        prior = json.loads(snapshot.read_text())
++        if {k: v for k, v in prior.items() if k not in VOLATILE} != semantic:
++            continue
++        verify_files(prior)
++        # Excluded command history is allowed only as an unchanged prefix and
++        # successful readelf/objdump or byte-identical diagnostic hook rebuilds.
++        commands = current.get('commands', [])
++        previous = prior.get('commands', [])
++        assert commands[:len(previous)] == previous, 'build command history diverged'
++        for command in commands[len(previous):]:
++            label = command.get('label', '')
++            assert command.get('returncode') == 0 and (
++                label.endswith('-object-architecture') or label == 'diagnostic-hooks'
++            ), 'unreviewed later build command'
++        if any(c.get('label') == 'diagnostic-hooks' for c in commands[len(previous):]):
++            pin_path = path.parent/'network-artifact-pin.json'
++            pin = json.loads(pin_path.read_text())
++            assert pin['canonical_receipt_sha256'] == digest(snapshot)
++            for artifact, expected in pin['extra_artifacts'].items():
++                assert digest(artifact) == expected, 'rebuilt diagnostic hooks changed'
++        return digest(snapshot), prior
++    return digest(path), current
+--- a/scripts/diagnose_netferret_linux.py
++++ b/scripts/diagnose_netferret_linux.py
+@@ -0,0 +1,130 @@
++#!/usr/bin/env python3
++"""Bounded independent evidence run for the Linux/user Ferret divergence."""
++import base64
++import copy
++import datetime as dt
++import difflib
++import fcntl
++import json
++import os
++from pathlib import Path
++import subprocess
++import sys
++
++from board_batch import W, D, save, sha
++from job_service import proc
++
++SENTINEL = '--sentinel-candidate' in sys.argv
++PREFIX = 'netferret-sentinel-candidate' if SENTINEL else 'netferret-linux-diagnostic'
++LINUX_PREFIX = 'netferret-sentinel-linux' if SENTINEL else 'netferret-diagnostic-linux'
++R = D/'software'/(PREFIX+'-state.json')
++
++
++def main():
++    lock = (D/'software'/(PREFIX+'.lock')).open('a')
++    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
++    if R.exists():
++        state = json.loads(R.read_text())
++        if state['status'] == 'COMPLETE_REVIEW_EVIDENCE':
++            return
++    else:
++        stamp = dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
++        state = dict(status='BUILDING', output_dir=str(W/'software'/(PREFIX+'-'+stamp)),
++                     log_dir=str(D/'software'/(PREFIX+'-'+stamp)),
++                     formal_eligible=False, fpga_execution=False, commands=[])
++    state.update(pid=os.getpid(), start_ticks=proc(os.getpid())['start_ticks'],
++                 host_boot_id=Path('/proc/sys/kernel/random/boot_id').read_text().strip())
++    out, logs = Path(state['output_dir']), Path(state['log_dir'])
++    out.mkdir(exist_ok=True); logs.mkdir(exist_ok=True); save(R, state)
++    original = json.loads((W/'software/netferret-protocol-candidate-build.json').read_text())
++    src = Path(original['output_dir'])/'server.c'
++    text = src.read_text()
++    if SENTINEL:
++        assert text.count('if (p.dist == HUGE_VAL) continue;') == 1
++        text = text.replace('if (p.dist == HUGE_VAL) continue;',
++            'if (p.dist == HUGE_VAL || p.dist == CASS_DIST_MAX) continue;')
++    text = text.replace('assert(obj != NULL);',
++        'fprintf(stderr, "EC_FERRET_RANK id=%u dist=%a max=%a obj=%p\\n", p.id, (double)p.dist, (double)CASS_DIST_MAX, (void *)obj);\n\t\t\tassert(obj != NULL);')
++    text = text.replace('ec_recv_exact(fd, pkt_ptr->buf, pkt_ptr->len);',
++        'ec_recv_exact(fd, pkt_ptr->buf, pkt_ptr->len);\n'
++        '        unsigned long long ec_hash = 1469598103934665603ULL;\n'
++        '        for (int ec_i=0; ec_i<pkt_ptr->len; ++ec_i) ec_hash = (ec_hash ^ (unsigned char)pkt_ptr->buf[ec_i]) * 1099511628211ULL;\n'
++        '        fprintf(stderr, "EC_FERRET_FRAME bytes=%d fnv=%016llx\\n", pkt_ptr->len, ec_hash);')
++    target = out/'server.c'; target.write_text(text)
++    patch = logs/'diagnostic.patch'; patch.write_text(''.join(difflib.unified_diff(src.read_text().splitlines(True), text.splitlines(True), fromfile=str(src), tofile=str(target))))
++    state['patch'] = dict(path=str(patch), sha256=sha(patch)); save(R, state)
++    prep = json.loads((D/'software/netferret-protocol-preparation.json').read_text())
++    commands = prep['commands'][:2]
++    server = out/'netferret/server/parsec/bin/ferret-pthreads'; server.parent.mkdir(parents=True, exist_ok=True)
++    obj = out/'server.o'
++    def run(label, argv, timeout=600):
++        log = logs/(label+'.log')
++        with log.open('ab', buffering=0) as stream:
++            child = subprocess.Popen(['nice', '-n', '15', *map(str, argv)], stdout=stream,
++                stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, start_new_session=True,
++                env={**os.environ, 'PYTHONPATH':str(W/'scripts'), 'EC_NETWORK_NO_TRACE':'1'})
++            state.update(status='RUNNING', stage=label, child_pid=child.pid, child_start_ticks=proc(child.pid)['start_ticks']); save(R, state)
++            rc=child.wait(timeout=timeout)
++            os.fsync(stream.fileno())
++        state.pop('child_pid', None); state.pop('child_start_ticks', None)
++        state['commands'].append(dict(label=label, argv=list(map(str, argv)), returncode=rc, log=str(log))); save(R,state)
++        return rc
++    if not server.exists():
++        argv=commands[0]['argv']; argv=[str(target) if a==str(src) else str(obj) if a==str(src.parent/'server.o') else a for a in argv]
++        assert run('build-object',argv)==0
++        argv=commands[1]['argv']; old_server=original['programs']['netferret']['binaries']['server/parsec/bin/ferret-pthreads']['path']
++        argv=[str(obj) if a==str(src.parent/'server.o') else str(server) if a==old_server else a for a in argv]
++        assert run('build-link',argv)==0
++    client=out/'netferret/client/client'; client.parent.mkdir(parents=True,exist_ok=True)
++    if not client.exists(): client.symlink_to(original['programs']['netferret']['binaries']['client/client']['path'])
++    receipt=copy.deepcopy(original);receipt.update(output_dir=str(out),profile='netferret-linux-divergence-diagnostic/1',formal_eligible=False)
++    receipt['programs']['netferret']['binaries']={k:dict(path=str(p),sha256=sha(p)) for k,p in [('server/parsec/bin/ferret-pthreads',server),('client/client',client)]}
++    receipt_path=out/'receipt.json';save(receipt_path,receipt);state['receipt']=str(receipt_path);save(R,state)
++    if SENTINEL:
++        user=out/'user.py'
++        user.write_text((W/'scripts/validate_network_candidates.py').read_text().replace("W/'software/network-candidate-build.json'",repr(str(receipt_path))))
++        for size in ['test','simsmall','simmedium']:
++            dst=logs/('user-'+size)
++            if (dst/'result.json').exists(): continue
++            dst.mkdir(exist_ok=True)
++            run('user-'+size,['unshare','--ipc','--mount','--net','--fork',sys.executable,str(user),'--case','netferret','--size',size,'--out',str(dst)],timeout=1900)
++    linux=out/'linux.py';text=(W/'scripts/validate_network_linux.py').read_text()
++    for a,b in [("W/'software/network-candidate-build.json'",repr(str(receipt_path))),
++                ("R=D/'software/network-linux-validation.json'", "R=D/'software/"+LINUX_PREFIX+"-validation.json'"),
++                ("'software/network-linux-validation.lock'","'software/"+LINUX_PREFIX+"-validation.lock'"),
++                ("'network-linux-'+stamp","'"+LINUX_PREFIX+"-'+stamp"),
++                ("for size in ['test','simsmall','simmedium']:","for size in ['test','simsmall','simmedium']:" if SENTINEL else "for size in ['test','simsmall']:"),
++                ("for name in ['netdedup','netferret','netstreamcluster']:","for name in ['netferret']:"),
++                ('wait "$server_pid"; server_rc=$?', 'wait "$server_pid"; server_rc=$?\nif [ "$server_rc" -ne 0 ]; then kill "$client_pid"; fi'),
++                ('/bin/busybox sha256sum OUTPUT', '/bin/busybox sha256sum OUTPUT\necho EC_NET_DUMP_BEGIN\n/bin/busybox cat OUTPUT\necho EC_NET_DUMP_END')]:
++        text=text.replace(a,b)
++    linux.write_text(text)
++    linux_path=D/'software'/(LINUX_PREFIX+'-validation.json')
++    if not linux_path.exists() or json.loads(linux_path.read_text())['status']!='COMPLETE_REVIEW_EVIDENCE':
++        assert run('linux', [sys.executable, str(linux)],timeout=5400)==0
++    linux_state=json.loads(linux_path.read_text())
++    for case in linux_state['cases']:
++        result=Path(case['result']);console=(result.parent/'console.log').read_text(errors='replace')
++        output=result.parent/'captured-output.txt'
++        if 'EC_NET_DUMP_BEGIN' in console and 'EC_NET_DUMP_END' in console:
++            body=console.split('EC_NET_DUMP_BEGIN',1)[1].split('EC_NET_DUMP_END',1)[0].strip('\r\n')+'\n'
++            output.write_text(body)
++        ranks=[l for l in console.splitlines() if 'EC_FERRET_RANK' in l]
++        frames=[l for l in console.splitlines() if 'EC_FERRET_FRAME' in l]
++        state.setdefault('cases',{})[case['input']]=dict(result=str(result),ranks=ranks,frames=frames)
++        if SENTINEL and output.exists():
++            user_result=logs/('user-'+case['input'])/'result.json'
++            ur=json.loads(user_result.read_text())
++            if 'output' in ur:
++                expected=Path(ur['output']['path']).read_text().splitlines()
++                actual=output.read_text().splitlines()
++                assert len(actual)==len(set(l.split('\t')[0] for l in actual)), 'duplicate query output'
++                state['cases'][case['input']].update(
++                    captured_output=str(output),exact_repaired_user_output=actual==expected,
++                    same_query_results=sorted(actual)==sorted(expected),queries=len(actual),
++                    user_result=str(user_result))
++    state.update(status='COMPLETE_REVIEW_EVIDENCE',ended_utc=dt.datetime.now(dt.timezone.utc).isoformat());save(R,state)
++
++
++if __name__ == '__main__':
++    main()
+--- a/scripts/prepare_network_runtime_candidates.py
++++ b/scripts/prepare_network_runtime_candidates.py
+@@ -0,0 +1,73 @@
++#!/usr/bin/env python3
++"""Link actual ROI hooks for ready network candidates, without FPGA access.
++
++These ELFs remain outside the formal queue until original ROI/context support
++is proven. Compiling hooks never establishes checker compatibility.
++"""
++import copy
++import datetime as dt
++import fcntl
++import json
++from pathlib import Path
++import subprocess
++
++from board_batch import W, D, save, sha
++from network_binding import candidate
++
++
++def main():
++    lock=(D/'software/network-runtime-candidates.lock').open('a')
++    fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
++    base_sha,base=candidate(W/'software/network-candidate-build.json')
++    parent=json.loads((W/'software/apps-build.json').read_text())
++    hooks=Path(parent['output_dir'])
++    stamp=dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
++    out=W/'software'/('network-runtime-candidates-'+stamp);out.mkdir()
++    logs=D/'software'/out.name;logs.mkdir()
++    state=dict(schema='ec-network-runtime-candidates/1',status='LINKING',output_dir=str(out),
++               log_dir=str(logs),canonical_base_receipt_sha256=base_sha,
++               hardware_commit='8491167d84b6d9521b151a743673c1516926a1f8',
++               hardware_modified=False,fpga_execution=False,formal_eligible=False,
++               programs={},commands=[])
++    roi=[hooks/'hooks.o',hooks/'dac_roi.o']
++    state['roi_objects']={str(p):sha(p) for p in roi}
++    for name in ['netdedup','netstreamcluster']:
++        build=copy.deepcopy(base)
++        if name=='netdedup':
++            receipt_path=W/'software/netdedup-framed-candidate-build.json'
++            build=json.loads(receipt_path.read_text())
++            original=Path(base['output_dir'])/'netdedup/server/encoder.c'
++            replacement=Path(build['output_dir'])/'encoder.c'
++            entry=next(c for c in base['commands'] if c['label']=='netdedup-server')
++            argv=[str(replacement) if a==str(original) else a for a in entry['argv']]
++            key='server/netdedup'
++        else:
++            receipt_path=W/'software/network-candidate-build.json'
++            entry=next(c for c in base['commands'] if c['label']=='netstreamcluster-server')
++            argv=list(entry['argv']);key='server/server'
++        output=out/name/key;output.parent.mkdir(parents=True)
++        argv=[a for a in argv if not a.endswith('/diagnostic-hooks.o')]
++        argv[-1]=str(output);argv+=list(map(str,roi))
++        log=logs/(name+'-link.log')
++        with log.open('wb') as stream:
++            result=subprocess.run(['nice','-n','15',*argv],stdout=stream,stderr=subprocess.STDOUT,timeout=120)
++        state['commands'].append(dict(program=name,argv=argv,returncode=result.returncode,log=str(log)))
++        assert result.returncode==0,name
++        bins=build['programs'][name]['binaries']
++        for b in bins.values():assert sha(b['path'])==b['sha256']
++        bins[key]=dict(path=str(output),sha256=sha(output))
++        info=json.loads((D/'software'/(name+'-preparation-state.json')).read_text())
++        state['programs'][name]=dict(binaries=bins,source_receipt=str(receipt_path),source_receipt_sha256=sha(receipt_path),
++            hooks='Original application ROI sites linked to real ec_dac_roi begin/end objects',
++            original_roi_preserved=True,formal_runconf=info['formal_runconf'],
++            input_mapping=info['mapping'],application_thread_argument=1,
++            actual_process_threads='Includes user-TCP internal threads; argument 1 does not imply single-thread process',
++            runtime_validation='NOT_RUN',checker_compatibility='BLOCKED_ORIGINAL_ROI_CONTEXT_AND_SYSCALLS',
++            admission='Do not enroll as formal; need supported complete original ROI, zero faults, real checker comparison/drain and exact output')
++        save(logs/'manifest.json',state)
++    state.update(status='LINKED_NOT_FPGA_VALIDATED',ended_utc=dt.datetime.now(dt.timezone.utc).isoformat())
++    save(logs/'manifest.json',state);save(W/'software/network-runtime-candidates.json',state)
++    print(json.dumps(dict(status=state['status'],manifest=str(logs/'manifest.json'),programs=list(state['programs']))))
++
++
++if __name__=='__main__':main()

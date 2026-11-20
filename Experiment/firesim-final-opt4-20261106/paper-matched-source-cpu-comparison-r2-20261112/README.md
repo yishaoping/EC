@@ -1,0 +1,11 @@
+# Source-matched CPU GoldenGate comparison
+
+Canneal project400 is complete and independently verified. Clean Native: 312,165 ROI cycles; frozen EC: 536,456 ROI cycles. Both retire 392,248 ROI instructions and produce checksum 40b2b50000000000, routing cost 4789. EC has 131 matched full PASS checker results, zero final pending, and 332 BOOM CSR cycles from ROI stop to final corresponding accepted result.
+
+EC/Native ROI cycles: 1.7185014335. Including the observed EC tail in the numerator: 1.7195649737. These are CPU GoldenGate source-matched profile results, not FPGA results and not the historical Verilator comparison. The clean Native has exactly one BOOM and no checker; the original EC ELF cannot execute on it because its startup unconditionally initializes EC custom hardware. A separate Native boot adapter therefore preserves all 44 kernel/input source files, compiled kernel objects, compiler modes and ROI CSR order. Linked addresses and startup/cache state differ. This is not a same-ELF claim and not a Linux simmedium PARSEC comparison.
+
+Both configurations use BOOM 200 MHz, the same BOOM/cache parameters, L2 1 MiB/16 ways/outerLatency12, and FASED LatencyBandwidthPipe read/write latency30/max outstanding4/relax0. Frozen EC checker frequency is 100 MHz. Native host 420.896 seconds and EC host 3791.372 seconds are metasim execution costs, never architectural slowdown. Single deterministic sample per configuration; not three FPGA repetitions.
+
+See canneal_project400/result.json, comparison.csv, roi-cycles.pdf and roi-cycles.svg; complete.json binds result and evidence. The persistent consumer checks the already-running Blackscholes project64 result at five-minute intervals and will commit it separately only after output, exit, EOF/hash, source/config/input/ROI and instruction-count validation. A count mismatch withholds the ratio. No FPGA access or new simulation is performed by this consumer.
+
+The first export consumer used /usr/bin/python3 (without matplotlib) and stopped this sample before its complete marker; all of those files remain in ../paper-matched-source-cpu-comparison-r1-20261112. The r2 export uses the actual verified conda interpreter and has already completed plotting and atomic sample commit. This was an export dependency failure, not a DUT or Native sample failure.

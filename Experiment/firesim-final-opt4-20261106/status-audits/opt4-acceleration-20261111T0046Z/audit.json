@@ -1,0 +1,183 @@
+{
+  "bitstream_generated": false,
+  "board_allowlist": [
+    "0000:21:00.0"
+  ],
+  "formal_opt4_samples": 0,
+  "measured_best_address_ooc": {
+    "baseline_luts": 1500571,
+    "carry8": 55418,
+    "dsp": 0,
+    "lut_reduction": 509666,
+    "luts": 990905,
+    "reduction_percent": 33.96480406458941
+  },
+  "native_paused": true,
+  "new_candidates": [
+    {
+      "commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+      "role": "balanced exact-cycle SVB selection",
+      "stage": "local merge SAT and actual topology passed; direct32 SAT and module map pending"
+    },
+    {
+      "commit": "7e68d3df224fd37fd3f462b9deff376566ed9a79",
+      "role": "share retirement bank read decode",
+      "stage": "RUNNING_MAP-FULL-MODULE"
+    }
+  ],
+  "new_whole_candidate": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+  "new_whole_source_id": "3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561",
+  "no_fpga_access": true,
+  "permission_and_binding_verification": {
+    "cache": "/data1/gzh/EC/firesim/final-opt4-20261106/cache/unattended-opt4/ccache",
+    "ccache_two_real_compiles": true,
+    "explicit_evidence_binding": true,
+    "hash_mismatch_and_wrong_root_rejected": 2,
+    "ledger_user_append": true,
+    "status": "PASS",
+    "uid": 1008,
+    "utc": "2026-11-11T00:13:13.678753+00:00"
+  },
+  "postopt_verdict": {
+    "fpga_access": false,
+    "hardware_commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+    "largest_disjoint_target_subtrees": [
+      {
+        "instance": "addressStats",
+        "luts": 1265491
+      },
+      {
+        "instance": "BOOM core",
+        "luts": 244938
+      },
+      {
+        "instance": "MSHRFile",
+        "luts": 222552
+      },
+      {
+        "instance": "L2",
+        "luts": 168544
+      }
+    ],
+    "lut_excess": 1912003,
+    "metrics": {
+      "Block RAM Tile": {
+        "available": 2016.0,
+        "used": 1028.5
+      },
+      "CARRY8": {
+        "available": 162960.0,
+        "used": 92789.0
+      },
+      "CLB LUTs": {
+        "available": 1303680.0,
+        "used": 3215683.0
+      },
+      "CLB Registers": {
+        "available": 2607360.0,
+        "used": 1796777.0
+      },
+      "DSPs": {
+        "available": 9024.0,
+        "used": 195.0
+      },
+      "URAM": {
+        "available": 960.0,
+        "used": 0.0
+      }
+    },
+    "optimized_checkpoint": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/builds/cad-8da24a26/vivado_proj/firesim.runs/impl_1/design_1_wrapper_opt.dcp",
+    "part": "xcu280-fsvh2892-2L-e",
+    "place_route_started": false,
+    "reports": {
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-cad-8da24a26/top-postopt-hierarchical.rpt": "f16c830318eb2e9b458ad9773cdc0823454e0b562860f2aef44027db7661580e",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-cad-8da24a26/top-postopt-utilization.rpt": "ca68b0b33348b52b6205a6959e66cec19abd32072714026812d6505767bdcf13"
+    },
+    "required_lut_reduction_fraction": 0.5945869042439818,
+    "schema": "ec-opt4-complete-postopt-capacity/1",
+    "scope": "complete top after successful opt_design, including shell",
+    "source_id": "7e77ddda28298ac88be13c28dbe98771982bc6ca9587f810adf875bffd580cc1",
+    "status": "NOT_FIT_REPORT_CONFIRMED_CAPACITY_GATE_FINISHING_DRC",
+    "utc": "2026-11-11T00:45:17.870149+00:00"
+  },
+  "resource_attribution": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dut-attribution-8da24a26-20261111/result.json",
+  "rollback_readiness": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-checker-rollback-readiness-9ae9a7fc-20261111/readiness.json",
+  "rollback_runtime_validated": false,
+  "runtime_start_request": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/9ae9a7fc-start-runtime.json",
+  "schema": "ec-opt4-acceleration-audit/1",
+  "source_storage_audit": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-storage-analysis-20261111/feasibility.json",
+  "tasks": {
+    "Opt4-fit-address-update-share-r2": {
+      "active_stage": "map-full-module",
+      "actual_size_boundary": "PASS_8192_VECTORS_256_SLOTS_1280_64BIT_COUNTERS_STALE_INVALID_OVERFLOW_RESET_RETIRE",
+      "hardware_commit": "00847dc2b8f6be3f1e1ff0639c1104d33334ddc9",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "local_formal": "PASS_UNCONDITIONAL_64BIT_ALLOCATION_UPDATE_RESET_AND_256_SLOT_QUALIFICATION",
+      "pid": 1737896,
+      "source_id": "6b0de8636ec9d88f7d9702769c03325df78ab43c3c1fe527fff9dc1a3aafbbdb",
+      "start_ticks": "16778236",
+      "status": "RUNNING_MAP-FULL-MODULE"
+    },
+    "Opt4-fit-bucket-tag-cad": {
+      "child_pid": 1886240,
+      "current_stage": "dut_synth",
+      "hardware_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 1737960,
+      "source_id": "3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561",
+      "start_ticks": "16778336",
+      "status": "RUNNING_DUT_SYNTH"
+    },
+    "Opt4-fit-bucket-tag-system-r1": {
+      "active_stage": "goldengate",
+      "hardware_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 1721924,
+      "source_id": "3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561",
+      "start_ticks": "16732278",
+      "status": "RTL_READY_REAL_ABI_CHECKED"
+    },
+    "Opt4-fit-cad": {
+      "child_pid": 1688300,
+      "current_stage": "implementation",
+      "hardware_commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 2790677,
+      "source_id": "7e77ddda28298ac88be13c28dbe98771982bc6ca9587f810adf875bffd580cc1",
+      "start_ticks": "11895255",
+      "status": "RUNNING_IMPLEMENTATION"
+    },
+    "Opt4-fit-retire-read-r1": {
+      "active_stage": "map-full-module",
+      "actual_size_boundary": "PASS_8192_VECTORS_256_SLOTS_64BIT_EXTREMA_ALL_INDICES",
+      "hardware_commit": "7e68d3df224fd37fd3f462b9deff376566ed9a79",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "local_formal": "PASS_ARBITRARY_256X64_BIT_BANK_ALL_8BIT_INDEX_VALUES",
+      "pid": 1896443,
+      "source_id": "4c8636670eb9f78b3df716d02c5690dd50b163582fa370c323b5b4fe4dd3cea5",
+      "start_ticks": "16895677",
+      "status": "RUNNING_MAP-FULL-MODULE"
+    },
+    "Opt4-fit-svb-tree-r5": {
+      "active_stage": "sat32",
+      "error": "AssertionError(('sat32', 1, PosixPath('/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-svb-tree-r5-20261111/sat32-attempt-1.log')))",
+      "hardware_commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 1892804,
+      "source_id": "f678ac806ea4b0f801596b26ec8bf9ef914a3161b39f92564ac25452abd8eafc",
+      "start_ticks": "16875697",
+      "status": "FAILED_WITH_EVIDENCE"
+    },
+    "Opt4-fit-svb-tree-r6": {},
+    "Opt4-svb-invalidation-validation-r1": {
+      "error": "AssertionError('compile failed')",
+      "hardware_commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 1913610,
+      "source_id": "f678ac806ea4b0f801596b26ec8bf9ef914a3161b39f92564ac25452abd8eafc",
+      "start_ticks": "16970839",
+      "status": "FAILED_WITH_EVIDENCE"
+    }
+  },
+  "utc": "2026-11-11T00:46:42.730096+00:00"
+}

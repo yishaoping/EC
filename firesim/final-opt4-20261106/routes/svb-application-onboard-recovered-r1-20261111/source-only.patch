@@ -1,0 +1,21 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/routes/svb-application-onboard-r1-20261111/run.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/routes/svb-application-onboard-recovered-r1-20261111/run.py
+@@ -19,7 +19,7 @@
+ W = Path('/data1/gzh/EC/firesim/final-opt4-20261106')
+ D = Path('/data1/gzh/EC/Experiment/firesim-final-opt4-20261106')
+ C = Path(__file__).resolve().parent
+-L = D/'cycleprecise-original-svb-application-onboard-r1-20261111'
++L = D/'cycleprecise-original-svb-application-onboard-recovered-r1-20261111'
+ PREP = D/'cycleprecise-frozen-svb-fpga-r2-20261111'
+ CPU = D/'cycleprecise-original-svb-gg-stream-replay-r3-20261111'
+ DRIVER = W/'candidates/full-svb-gg-stream-replay-r2-20261111'
+@@ -48,8 +48,7 @@
+ 
+ 
+ def completed_component():
+-    for name in ['cycleprecise-original-svb-onboard-r1-20261111',
+-                 'cycleprecise-original-svb-spread-onboard-r2-20261111']:
++    for name in ['cycleprecise-original-svb-recovered-onboard-r1-20261111']:
+         root = D/name
+         r = read(root/'result.json')
+         marker = read(root/'complete.json')

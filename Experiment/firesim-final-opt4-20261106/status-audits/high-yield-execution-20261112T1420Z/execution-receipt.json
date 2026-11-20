@@ -1,0 +1,108 @@
+{
+  "board_allowlist": [
+    "0000:21:00.0"
+  ],
+  "captured_utc": "2026-11-12T14:41:39.154936+00:00",
+  "cpu_parsec_operations_this_turn": 0,
+  "deadline_assessment": "No validated completeEC FIT route currently establishes deployment and eight first rounds by November18. Running jobs and partial validation do not establish feasibility.",
+  "e0_full_shell": {
+    "capacity": 1303680,
+    "excess": 1485332,
+    "lut": 2789012
+  },
+  "fpga_operations_this_turn": 0,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "latest_complete_address_reference": {
+    "lut": 912502,
+    "scope": "Complete PackageAddressStats OOC, packed pair Reference only; no completed new candidate yet"
+  },
+  "measured_applied_result": {
+    "candidate_lut": 1448,
+    "reference_lut": 34766,
+    "saved": 33318,
+    "scope": "Local 512x64 2R1W storage only; never add to whole estimate"
+  },
+  "measured_dcache_field": {
+    "candidate_lut": 1629524,
+    "reference_lut": 1770518,
+    "saved": 140994,
+    "scope": "Complete DCache OOC, not whole shell saving"
+  },
+  "new_whole_synthesis": 0,
+  "owner_mcrams_host": {
+    "capacity": 1303680,
+    "excess": 1116802,
+    "lut": 2420482,
+    "owner_saving_already_included": true,
+    "shell_excluded": true
+  },
+  "results": {
+    "address_banked": {
+      "active_stage": "compile-host-PlainSmoke2",
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-banked-state-fame5-r4-20261112/state.json",
+      "sha256": "7265b75a13fc418be819f491c53ee76b35333a5a94e25184addaa4f5f0d84cf9",
+      "stage_seconds": 90.04372031497769,
+      "started_utc": "2026-11-12T14:38:03.579100+00:00",
+      "status": "RUNNING_COMPILE-HOST-PLAINSMOKE2",
+      "updated_utc": "2026-11-12T14:41:34.242110+00:00"
+    },
+    "address_dsp": {
+      "active_stage": "Candidate",
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-dsp-fullmodule-pair-r1-20261112/state.json",
+      "sha256": "94d48de4aa6e36aac1a62633fe067a41ed1311a3d7cad918c884c7fdb52f43ed",
+      "stage_seconds": 3210.262006186007,
+      "started_utc": "2026-11-12T13:48:01.013844+00:00",
+      "status": "RUNNING_MAP_CANDIDATE",
+      "updated_utc": "2026-11-12T14:41:31.380654+00:00"
+    },
+    "address_packed": {
+      "active_stage": "map-Candidate",
+      "finite_parity_pass": true,
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-full-module-r1-20261112/state.json",
+      "sha256": "c9670c2ccf2e66353e80fe420b7bad6982e86334848ff53b56ff2f49af42bc91",
+      "stage_wall_seconds": 2310.19415633101,
+      "started_utc": "2026-11-12T10:52:27.185274+00:00",
+      "status": "RUNNING_MAP-CANDIDATE",
+      "updated_utc": "2026-11-12T14:41:24.192439+00:00"
+    },
+    "dcache_composition": {
+      "active_stage": "goldengate-target",
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-dcache-storage-compose-r2-20261112/state.json",
+      "sha256": "6d9c92a9669e00284b9644358f8e2a6269f3cde5cb5b1d66321d589ee47dcd30",
+      "source_variant": "5542ec134e5a90657a1f733555a74302e58a50e5dafed99e1affdb47a761efd2",
+      "stage_seconds": 840.1415011430508,
+      "started_utc": "2026-11-12T14:25:56.638801+00:00",
+      "status": "RUNNING_GOLDENGATE-TARGET",
+      "updated_utc": "2026-11-12T14:41:12.520933+00:00"
+    },
+    "field_module_area": {
+      "complete_dcache_cycles_verified": false,
+      "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+      "lut_saved": 140994.0,
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-fit-dcache-field-read-full-map-r2-state.json",
+      "sha256": "a67220e4028ee5c777eb60b0ae14af4321a0c7a85dab863edf8ee490d1d3c830",
+      "started_utc": "2026-11-11T08:52:14.193883+00:00",
+      "status": "COMPLETE_REAL_FULL_DCACHE_FIELD_OBSERVED_PAIR_NOT_WHOLE_FIT_NOT_CYCLE_ADMITTED",
+      "updated_utc": "2026-11-11T16:15:34.298417+00:00"
+    },
+    "result_local_area": {
+      "active_stage": "map-candidate",
+      "hardware_commit": "51a2bd2588fe09ded84c3d9911d9b8481da929ca",
+      "measured_storage_lut_saving": 33318.0,
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-fit-dcache-result-memory-mapping-r3-state.json",
+      "sha256": "b0b9d9d475bc17f24975c3fa8ad7da3cbc8097e6cc358f5791d684f71e503699",
+      "started_utc": "2026-11-11T01:58:45.783655+00:00",
+      "status": "LOCAL_STORAGE_VERIFIED_AND_MAPPED_COMPLETE_DCACHE_PENDING_NOT_ADMITTED",
+      "updated_utc": "2026-11-11T02:01:40.528956+00:00"
+    }
+  },
+  "root_cause_reanalysis_stopped": true,
+  "schema": "ec-high-yield-actual-execution/1",
+  "structural_actual_actions": [
+    "Preserved existing DSP and packed complete-module pairs",
+    "Prepared exact15-substitution DCache composition on3656aec4; compiled and frozenparameters matched; actual GG in progress",
+    "Adopted complete16x16 bucketstate RMW experiment; recovered missing dependency and pre-dedup checker; stateful token failure retained, unthreaded control and exact RTL-reusing driver diagnostic now active"
+  ],
+  "svb_operations_this_turn": 0,
+  "whole_fit": false
+}

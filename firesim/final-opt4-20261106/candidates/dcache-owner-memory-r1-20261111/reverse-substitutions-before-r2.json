@@ -1,0 +1,287 @@
+[
+  [
+    "  // Function/cycle-equivalent full-width metadata storage; no validity filter\n  // on readers. Independent reset mask represents the original zeroed payload.\n  class OwnerPayload extends Bundle {\n    val image = new CacheImageKey\n    val generation = UInt(32.W)\n    val packetSeq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)\n    val tracked = Bool()\n  }\n  require(isPow2(nSets) && isPow2(nWays))\n  private val ownerWayBits = log2Ceil(nWays)\n  private def ownerIndex(set: UInt, way: UInt): UInt =\n    if (nWays == 1) set else Cat(set, way(ownerWayBits - 1, 0))\n  val ownerMemory = Mem(nSets * nWays, new OwnerPayload)\n  val ownerWritten = RegInit(VecInit(Seq.fill(nSets * nWays)(false.B)))\n  val ownerWriteEnable = WireDefault(false.B)\n  val ownerWriteIndex = WireDefault(0.U(log2Ceil(nSets * nWays).W))\n  val ownerWriteData = WireDefault(0.U.asTypeOf(new OwnerPayload))\n  private def readOwner(set: UInt, way: UInt): OwnerPayload = {\n    val index = ownerIndex(set, way)\n    Mux(ownerWritten(index), ownerMemory.read(index), 0.U.asTypeOf(new OwnerPayload))\n  }\n  when (ownerWriteEnable && !reset.asBool) {\n    ownerMemory.write(ownerWriteIndex, ownerWriteData)\n    ownerWritten(ownerWriteIndex) := true.B\n  }",
+    "  val dirtyPacketSeq = RegInit(VecInit(Seq.fill(nSets)(VecInit(\n    Seq.fill(nWays)(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))))))\n  val dirtyPacketTracked = RegInit(VecInit(Seq.fill(nSets)(VecInit(\n    Seq.fill(nWays)(false.B)))))",
+    1
+  ],
+  [
+    "  // lineGeneration is the full-width ownerMemory generation field.",
+    "  val lineGeneration = RegInit(VecInit(Seq.fill(nSets)(VecInit(\n    Seq.fill(nWays)(0.U(32.W))))))",
+    1
+  ],
+  [
+    "  // imageKey is the full-width ownerMemory image field.",
+    "  val imageKey = RegInit(VecInit(Seq.fill(nSets)(VecInit(\n    Seq.fill(nWays)(0.U.asTypeOf(new CacheImageKey))))))",
+    1
+  ],
+  [
+    "      ownerWriteEnable := true.B\n      ownerWriteIndex := ownerIndex(set, way)\n      ownerWriteData.packetSeq := mshrs.io.refill.bits.image.contentSeq\n      ownerWriteData.tracked := mshrs.io.refill.bits.image.valid &&\n        mshrs.io.refill.bits.image.contentSeq =/= 0.U\n      ownerWriteData.generation := mshrs.io.refill.bits.image.generation\n      ownerWriteData.image := mshrs.io.refill.bits.image",
+    "      dirtyPacketSeq(set)(way) := mshrs.io.refill.bits.image.contentSeq\n      dirtyPacketTracked(set)(way) := mshrs.io.refill.bits.image.valid &&\n        mshrs.io.refill.bits.image.contentSeq =/= 0.U\n      lineGeneration(set)(way) := mshrs.io.refill.bits.image.generation\n      imageKey(set)(way) := mshrs.io.refill.bits.image",
+    1
+  ],
+  [
+    "    ownerWriteEnable := true.B\n    ownerWriteIndex := ownerIndex(set, way)\n    ownerWriteData.generation := imageSerial",
+    "    lineGeneration(set)(way) := imageSerial",
+    1
+  ],
+  [
+    "    ownerWriteData.image.valid := true.B\n    ownerWriteData.image.writer := outer.staticImageWriter.U\n    ownerWriteData.image.generation := imageSerial\n    ownerWriteData.image.contentSeq := s3_req.packet_seq",
+    "    imageKey(set)(way).valid := true.B\n    imageKey(set)(way).writer := outer.staticImageWriter.U\n    imageKey(set)(way).generation := imageSerial\n    imageKey(set)(way).contentSeq := s3_req.packet_seq",
+    1
+  ],
+  [
+    "    ownerWriteData.packetSeq := s3_req.packet_seq\n    ownerWriteData.tracked := s3_req.packet_seq =/= 0.U",
+    "    dirtyPacketSeq(set)(way) := s3_req.packet_seq\n    dirtyPacketTracked(set)(way) := s3_req.packet_seq =/= 0.U",
+    1
+  ],
+  [
+    "readOwner(wbReqSet, wbReqWay).packetSeq",
+    "dirtyPacketSeq(wbReqSet)(wbReqWay)",
+    1
+  ],
+  [
+    "readOwner(wbReqSet, wbReqWay).packetSeq",
+    "dirtyPacketSeq(wbReqSet)(wbReqWay)",
+    1
+  ],
+  [
+    "readOwner(s2_store_set, s2_store_way).packetSeq",
+    "dirtyPacketSeq(s2_store_set)(s2_store_way)",
+    1
+  ],
+  [
+    "readOwner(modifyingSet, modifyingWay).packetSeq",
+    "dirtyPacketSeq(modifyingSet)(modifyingWay)",
+    1
+  ],
+  [
+    "readOwner(wbReqSet, wbReqWay).tracked",
+    "dirtyPacketTracked(wbReqSet)(wbReqWay)",
+    1
+  ],
+  [
+    "readOwner(wbReqSet, wbReqWay).tracked",
+    "dirtyPacketTracked(wbReqSet)(wbReqWay)",
+    1
+  ],
+  [
+    "readOwner(s2_store_set, s2_store_way).tracked",
+    "dirtyPacketTracked(s2_store_set)(s2_store_way)",
+    1
+  ],
+  [
+    "readOwner(modifyingSet, modifyingWay).tracked",
+    "dirtyPacketTracked(modifyingSet)(modifyingWay)",
+    1
+  ],
+  [
+    "readOwner(set, way).generation",
+    "lineGeneration(set)(way)",
+    1
+  ],
+  [
+    "readOwner(set, way).generation",
+    "lineGeneration(set)(way)",
+    1
+  ],
+  [
+    "readOwner(set, way).generation",
+    "lineGeneration(set)(way)",
+    1
+  ],
+  [
+    "readOwner(wbReqSet, wbReqWay).generation",
+    "lineGeneration(wbReqSet)(wbReqWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).generation",
+    "lineGeneration(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(s3_set, s3_way_idx).generation",
+    "lineGeneration(s3_set)(s3_way_idx)",
+    1
+  ],
+  [
+    "readOwner(s, w).generation",
+    "lineGeneration(s)(w)",
+    1
+  ],
+  [
+    "readOwner(installSet, installWay).image",
+    "imageKey(installSet)(installWay)",
+    1
+  ],
+  [
+    "readOwner(refillReqSet, refillReqWay).image",
+    "imageKey(refillReqSet)(refillReqWay)",
+    1
+  ],
+  [
+    "readOwner(wbReqSet, wbReqWay).image",
+    "imageKey(wbReqSet)(wbReqWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(s2_store_set, s2_store_way).image",
+    "imageKey(s2_store_set)(s2_store_way)",
+    1
+  ],
+  [
+    "readOwner(svbFastSet, svbFastWay).image",
+    "imageKey(svbFastSet)(svbFastWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(s3_set, s3_way_idx).image",
+    "imageKey(s3_set)(s3_way_idx)",
+    1
+  ],
+  [
+    "readOwner(set, way).image",
+    "imageKey(set)(way)",
+    1
+  ],
+  [
+    "readOwner(set, way).image",
+    "imageKey(set)(way)",
+    1
+  ],
+  [
+    "readOwner(set, way).image",
+    "imageKey(set)(way)",
+    1
+  ],
+  [
+    "readOwner(set, way).image",
+    "imageKey(set)(way)",
+    1
+  ],
+  [
+    "readOwner(set, way).image",
+    "imageKey(set)(way)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "readOwner(opt2bWriteSet, opt2bWriteWay).image",
+    "imageKey(opt2bWriteSet)(opt2bWriteWay)",
+    1
+  ],
+  [
+    "readOwner(crossPackagePendingSet, crossPackagePendingWay).image",
+    "imageKey(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ]
+]

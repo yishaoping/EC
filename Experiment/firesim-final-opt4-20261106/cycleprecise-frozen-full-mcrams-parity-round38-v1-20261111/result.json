@@ -1,0 +1,73 @@
+{
+  "binary_sha256": "1fd2d1a399f2b1e4f84a295e614a5fc295123ac1030d316347bd1b4470b6cd8c",
+  "captured_observation_parity_passed": true,
+  "checker_local_event_count": 262,
+  "child_peak_rss_kib": 45184,
+  "comparison_mutations_rejected": {
+    "changed_target_value": true,
+    "different_clock_header": true,
+    "missing_target_row": true,
+    "shifted_target_cycle": true
+  },
+  "completed_utc": "2026-11-11T14:13:42.289657+00:00",
+  "elf_sha256": "d0d0e9ae99bd963aeed84a8b395e7096f54985d117d11542d553a38680b8397b",
+  "exact_checker_local_event_values_and_cycles": true,
+  "exact_print_streams": {
+    "rtl-prints-0": {
+      "exact_match": true,
+      "expected_sha256": "1f47891a01656018a51cd2c40487d3340f0879c129bb55e1058578500d71de93",
+      "sha256": "1f47891a01656018a51cd2c40487d3340f0879c129bb55e1058578500d71de93"
+    },
+    "rtl-prints-1": {
+      "exact_match": true,
+      "expected_sha256": "8e1809832252f2a42c58cb6188a197779661a3c7cb36bbdab226e7ffb24bcbea",
+      "sha256": "8e1809832252f2a42c58cb6188a197779661a3c7cb36bbdab226e7ffb24bcbea"
+    }
+  },
+  "exact_roi_and_output_rows": true,
+  "formal_fpga_sample": false,
+  "fpga_access": false,
+  "full_observation_parity_passed": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_rtl_sha256": "c027132fbb6013365ae539a984d0842bfde10d2dbae71c2e64ba1edef51ce776",
+  "host_wall_seconds": 8416.889084414986,
+  "limitations": [
+    "Finite captured outputs do not cover all original outputs or state",
+    "BOOM result acceptance/release and complete drain are unobserved",
+    "No complete real application payload trace or strict checkerDone-minusBOOMDone",
+    "Host implementation debug stdout may repeat across host stalls; exact comparison uses captured target print streams and application records",
+    "No FPGA execution, physical implementation or whole-system area admission"
+  ],
+  "output_correctness": true,
+  "parser_error": null,
+  "plan_sha256": "fd330eb1f307c0d50f217ce7a7cd96a29a9ec044e398968575edf9f3ef3fec2a",
+  "production_admission": false,
+  "returncode": 0,
+  "schema": "ec-opt4-full-mcrams-finite-parity-result/1",
+  "source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+  "status": "PASS_SAME_ELF_FINITE_CAPTURED_TARGET_CYCLE_OBSERVATIONS_NOT_FULL_EQUIVALENCE",
+  "stdout": {
+    "faults": [],
+    "metrics": [
+      "*** PASSED *** after 1759000 cycles",
+      "Wallclock Time Elapsed: 8416.7 s",
+      "Host Frequency: 5.470 KHz",
+      "Target Cycles Emulated: 1759000",
+      "Effective Target Frequency: 0.209 KHz",
+      "FMR: 26.18",
+      "- Verilator: cpu 8385.605 s on 1 threads; allocated 16567 MB"
+    ],
+    "sha256": "80505e5b13fc7529a164dc85c3b149d62ceb4ec46693bff2fe75ce0f6cffe477",
+    "target_rows": [
+      "[ROI] hart=0 start=1074401 stop=1610857 cycles=536456",
+      "[OUTPUT] benchmark=canneal checksum=40b2b50000000000 verified=1 routing_cost=4789",
+      "[APP] protected=1 start=1074401 end=1610857 cycles=536456 instret=392248 session_stop=1611099",
+      "[COMPUTATION] status=PASS scope=official_serial_kernel",
+      "[END] hart=0 status=PASS"
+    ]
+  },
+  "stop_cause": null,
+  "target_annotations_sha256": "8c5c43c59661c7d93a34b80ae1b8a9625d11b977ce135761b66ded22c58e9032",
+  "target_fir_sha256": "3d6163dc6626d3d35a1a746da0956992316a50c5ddd0ed104a8e67f881356fec",
+  "whole_fit": false
+}

@@ -1,0 +1,6 @@
+read_verilog -sv ../target/QueuePair.v
+hierarchy -top QueuePair
+proc
+memory_map
+opt_clean
+write_json flattened.json

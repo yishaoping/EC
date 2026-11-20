@@ -1,0 +1,33 @@
+--- /data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/B/chipyard/sims/firesim/sim/midas/src/main/cc/bridges/ec_dac_roi.cc
++++ /data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-restart-driver-20261106T130112Z/restart-host-sources/ec_dac_roi.cc
+@@ -8,6 +8,8 @@
+ #include <stdexcept>
+ #include <unistd.h>
+ 
++static uint64_t sequence_origin = 0;
++static bool first_record = true;
+ char ec_dac_roi_t::KIND;
+ ec_dac_roi_t::ec_dac_roi_t(simif_t &sim, const DACROIBRIDGEMODULE_struct &m,
+                            unsigned index, const std::vector<std::string> &args)
+@@ -58,7 +60,8 @@
+   // Every uint64 is decimal text; no conversion through double/JS Number.
+   std::ostringstream line;
+   line << "{\"schema\":\"ec-dac-b-raw-roi/1\",\"configuration\":\"B\","
+-       << "\"formal_sample\":false,\"synthetic\":false,\"sequence\":" << v[0]
++       << "\"formal_sample\":false,\"synthetic\":false,\"sequence\":" << (v[0] - sequence_origin)
++       << ",\"bridge_sequence\":" << v[0] << ",\"sequence_origin\":" << sequence_origin
+        << ",\"under_reset\":" << v[1] << ",\"state_transition\":" << v[2]
+        << ",\"epoch\":" << v[3] << ",\"state\":" << v[4]
+        << ",\"source_boom_tick\":" << v[5] << ",\"roi_begin_tick\":" << v[6]
+@@ -84,6 +87,11 @@
+     std::array<uint64_t, 9> values{};
+     for (size_t i = 0; i < values.size(); ++i)
+       values[i] = uint64_t(read(lows[i])) | (uint64_t(read(highs[i])) << 32);
++    if (first_record) {
++      sequence_origin = values[0];
++      expected_sequence = values[0];
++      first_record = false;
++    }
+     if (values[0] != expected_sequence) { fail("missing or duplicate observer record"); return; }
+     save(values);
+     if (failed) return;

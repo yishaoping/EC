@@ -1,0 +1,12 @@
+{
+  "status": "PASS_INDUCTIVE_RESET_MASK_REFINEMENT",
+  "width": 82,
+  "depth": 256,
+  "rtl_sha256": "e6b93ed7e7d36d7ccea8201f0f4210e1e85a57fff5c1c448b5ff374cb90fa577",
+  "flattened_sha256": "91944e1ee9af8163b54578614c5dbd72f6b6f9f0a7f967674c4f8bbb96f159c9",
+  "relation": "reference[i] == (written[i] ? memory[i] : 0), identical pointers",
+  "initialization": "Separate SAT with unrelated reference/candidate current states proves reset sets reference payload, written bits and both sets of pointers to zero; candidate payload arbitrary.",
+  "method": "All full-width payload next-state/public-output cones checked for lane independence/symmetry. SAT proves every control/output/clock and projected data next-state relation for arbitrary state and inputs; induction extends to all cycles/all 82 lanes.",
+  "negative_control": "Removing word-zero next-state masking produces a counterexample.",
+  "full_system_equivalence": false
+}

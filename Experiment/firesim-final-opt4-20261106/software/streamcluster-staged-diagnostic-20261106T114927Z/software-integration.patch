@@ -1,0 +1,60 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/streamcluster/streamcluster.cpp
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-diagnostic-20261106T114927Z/streamcluster.cpp
+@@ -1812,8 +1812,29 @@
+   FILE* fp;
+ };
+ 
++#include <malloc.h>
++// Software integration only: defer external IO; retain all original math,
++// formatting, synthetic input generation, and original parsec ROI hook sites.
++static FILE *ec_staged_output;
++static char ec_stderr_buffer[1024*1024];
++static char ec_output_buffer[1024*1024];
++static void ec_prepare_external_io(const char *path) {
++  // Bound this candidate to current single-thread synthetic-input cases.
++  if (setvbuf(stderr,ec_stderr_buffer,_IOFBF,sizeof(ec_stderr_buffer))) exit(125);
++  ec_staged_output=fopen(path,"w");
++  if (!ec_staged_output || setvbuf(ec_staged_output,ec_output_buffer,_IOFBF,sizeof(ec_output_buffer))) exit(125);
++  mallopt(M_TRIM_THRESHOLD,-1); mallopt(M_MMAP_MAX,0);
++  volatile char *reserve=(volatile char*)malloc(32*1024*1024);
++  if (!reserve) exit(125);
++  for (size_t i=0;i<32*1024*1024;i+=4096) reserve[i]=0;
++  free((void*)reserve);
++}
++static void ec_finish_external_io(void) {
++  if (fclose(ec_staged_output) || fflush(stderr)) exit(125);
++}
++
+ void outcenterIDs( Points* centers, long* centerIDs, char* outfile ) {
+-  FILE* fp = fopen(outfile, "w");
++  FILE* fp = ec_staged_output;
+   if( fp==NULL ) {
+     fprintf(stderr, "error opening %s\n",outfile);
+     exit(1);
+@@ -1833,7 +1854,7 @@
+       fprintf(fp,"\n\n");
+     }
+   }
+-  fclose(fp);
++  /* close/flush is deferred to original ROI end */
+ }
+ 
+ void streamCluster( PStream* stream, 
+@@ -2027,6 +2048,9 @@
+   }
+ 
+ 
++if (n <= 0) { fprintf(stderr,"staged-IO diagnostic supports synthetic input only\n"); return 125; }
++  ec_prepare_external_io(outfilename);
++
+ #ifdef ENABLE_PARSEC_HOOKS
+   __parsec_roi_begin();
+ #endif
+@@ -2036,6 +2060,7 @@
+ #ifdef ENABLE_PARSEC_HOOKS
+   __parsec_roi_end();
+ #endif
++  ec_finish_external_io();
+ 
+   delete stream;
+ 

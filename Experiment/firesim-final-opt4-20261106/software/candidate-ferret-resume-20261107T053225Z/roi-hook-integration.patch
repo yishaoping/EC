@@ -1,0 +1,16 @@
+--- /data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/src/benchmark/ferret-serial.c
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/src/benchmark/ferret-serial.c
+@@ -303,11 +303,11 @@
+ 	stimer_tick(&tmr);
+ 
+ #ifdef ENABLE_PARSEC_HOOKS
+-	__parsec_roi_begins();
++	__parsec_roi_begin();
+ #endif
+ 	scan();
+ #ifdef ENABLE_PARSEC_HOOKS
+-	__parsec_roi_ends();
++	__parsec_roi_end();
+ #endif
+ 
+ 	stimer_tuck(&tmr, "QUERY TIME");

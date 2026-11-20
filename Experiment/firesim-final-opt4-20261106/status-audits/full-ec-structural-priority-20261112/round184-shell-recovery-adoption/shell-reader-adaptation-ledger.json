@@ -1,0 +1,43 @@
+{
+  "ABI_reader_shell_path_adaptation_required": false,
+  "ABI_reader_upstream": "common-composed-validate-r2-20261113",
+  "actual_output_expected": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-common-composed-shell-cad-r3-20261113",
+  "actual_output_ready": false,
+  "adopted_recovery": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/common-composed-shell-cad-r3-20261113/source-binding.json",
+  "adopted_recovery_sha256": "f7cbe58ddb0fc667bc0540aca44f29fbdca47a5608334bbe9ea4a209e0c400df",
+  "existing_ABI_reader": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/common-host-abi-r1-20261113/controller.py",
+  "existing_ABI_reader_sha256": "318170ef9a113ee0d4f3eb47651fa3aabebe3087e3f3aaf54f68517c1ca52d87",
+  "no_FPGA_IO": true,
+  "no_certification_work_added": true,
+  "no_reader_modified": true,
+  "old_R1_references": [
+    {
+      "line": 18,
+      "text": "SHELL = D/'build-logs/Opt4-common-composed-shell-cad-r1-20261113'"
+    },
+    {
+      "line": 24,
+      "text": "SHELL_PIN = '2f73ef9c2018168d7c6446f74b1fc678f8d0da2f783ffc483aac22a4d2f791da'"
+    },
+    {
+      "line": 46,
+      "text": "    unit = 'ec-opt4-common-composed-shell-cad-r1-20261113.service'"
+    },
+    {
+      "line": 88,
+      "text": "    binding_path = W/'candidates/common-composed-shell-cad-r1-20261113/source-binding.json'"
+    },
+    {
+      "line": 124,
+      "text": "    assert routed[0].resolve().is_relative_to(W/'candidates/common-composed-shell-cad-r1-20261113/project')"
+    }
+  ],
+  "old_binding": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/common-composed-shell-cad-r1-20261113/source-binding.json",
+  "old_binding_sha256": "2f73ef9c2018168d7c6446f74b1fc678f8d0da2f783ffc483aac22a4d2f791da",
+  "reader": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-common-physical-postflight-r1-20261113/area-experiments/common-physical-postflight-r1-20261113/postflight.py",
+  "reader_experiment_commit": "8be0e97e649f2c16314b953609ec90298fc2b1d3",
+  "reader_sha256": "aeaff6ab449e829d95c56f4e08188a9a39c6c6ea43034587165ea07a10303333",
+  "required_adaptation": "After actual R3 FIT physical result and exact producer cgroup release, version/rebind SHELL directory, service, candidate binding and SHELL_PIN, and routed checkpoint project prefix to authenticated R3. Bind exact new result/host/source/IP/checkpoint/bitstream hashes. Never run old reader against old R1 or weaken any checks.",
+  "schema": "ec-existing-shell-reader-adaptation-ledger/1",
+  "utc": "2026-11-13T01:56:34.394513+00:00"
+}

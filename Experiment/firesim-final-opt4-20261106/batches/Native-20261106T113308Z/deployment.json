@@ -1,0 +1,61 @@
+{
+  "bdfs": [
+    "0000:e2:00.0",
+    "0000:21:00.0"
+  ],
+  "bitstream": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-bitstream-20261102T095746.955739Z/vivado_proj/firesim.bit",
+  "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+  "board_flash_firmware_updated": false,
+  "completed_cards": [
+    {
+      "bdf": "0000:e2:00.0",
+      "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+      "serial": "21770433G001A"
+    },
+    {
+      "bdf": "0000:21:00.0",
+      "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+      "serial": "21770433G02LA"
+    }
+  ],
+  "configuration": "Native",
+  "ended_utc": "2026-11-06T11:33:37.697847+00:00",
+  "existing_module_sha256": "3c6181237df79a2394bee005f2fd615ac67a5ccd9ea01bdfb710b63e22cbdfe0",
+  "global_operations": [
+    "rmmod existing xdma",
+    "program each volatile FPGA bitstream with PCIe remove/rescan",
+    "insmod existing xdma"
+  ],
+  "host_reboot": false,
+  "pid": 4010537,
+  "postcheck": {
+    "cleanup_users": [],
+    "mapping": [
+      {
+        "bdf": "0000:e2:00.0",
+        "driver": "xdma",
+        "serial": "21770433G001A"
+      },
+      {
+        "bdf": "0000:21:00.0",
+        "driver": "xdma",
+        "serial": "21770433G02LA"
+      }
+    ],
+    "observed_utc": "2026-11-06T11:33:39.377826+00:00",
+    "open_devices": [],
+    "permission_denied": 0,
+    "simulation_processes": [],
+    "user_confirms_boards_available": true
+  },
+  "schema": "ec-dual-fpga-deployment/1",
+  "serials": [
+    "21770433G001A",
+    "21770433G02LA"
+  ],
+  "source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+  "started_utc": "2026-11-06T11:33:12.489766+00:00",
+  "status": "DEPLOYED_NOT_RUN",
+  "system_driver_updated": false,
+  "user_authorization": "2026-11-06 explicit both-board availability and direct deployment"
+}

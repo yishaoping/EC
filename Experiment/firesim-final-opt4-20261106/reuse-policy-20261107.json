@@ -1,0 +1,36 @@
+{
+  "schema": "ec-firesim-reuse-policy/1",
+  "updated_utc": "2026-11-07T03:12:51.254315+00:00",
+  "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "bitstream_rebuild_triggers": [
+    "functional DUT or target configuration change",
+    "GoldenGate/bridge hardware change",
+    "invalid provenance, failed implementation or unavailable original bitstream"
+  ],
+  "no_rebuild_for": [
+    "benchmark/input/repetition changes",
+    "guest application or immutable initramfs update with unchanged DUT interfaces",
+    "host-only driver instrumentation using matching generated ABI"
+  ],
+  "reset_policy": "C4 first sample fresh deployment; second sample target-reset probe with previous clean powerdown and full current checker/output validation; reuse unchanged deployment only after success",
+  "native_formal_samples_reused": 3,
+  "storage": {
+    "cad_root": "/var/tmp/guozh-firesim-final-opt4-20261107-cad",
+    "free_gib": 359.3392143249512,
+    "data_free_gib": 43.200138092041016,
+    "extra_deletions_this_turn": []
+  },
+  "scripts": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/continue_fpga.py": "742c9170ff91d57eae713b86033557a252efde37abc7a92f47cdd8d0d8df76ce",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/board_batch.py": "d1ceb7ddbe5586878190adc7a4ceb5bb206d66c021bfdc3255ab7ed573feefcb",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_isolated_sample.py": "09580cd6e64013e7b4197178e57ac4f0287ef01b047f17cb543139194a68b270",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_system.py": "cf36b112a62bfc72a5f00ad208e2192a5dd13ef5ef5e68e09e27d017c7b636f2",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/publish_live.py": "b58dddf5f52dff147b00921e1e3d4c103634efb5b6418a0dfe26f10361ba860d"
+  },
+  "native_restart_validation": [
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261107T031102Z/result.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-test-r1-20261107T031341Z/result.json"
+  ],
+  "c4_continuation_pid": 500621,
+  "cad_pid": 345417
+}

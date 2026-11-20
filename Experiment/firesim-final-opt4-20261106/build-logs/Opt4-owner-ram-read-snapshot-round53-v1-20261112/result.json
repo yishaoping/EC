@@ -1,0 +1,175 @@
+{
+  "actual_ram_model_sha256": "46428dc8d9868145ee7636f7da186ea61906da0bb3e0fad3dc756ffd95c135a4",
+  "all_41472_stored_bits_covered": true,
+  "arbitrary_watched_address": true,
+  "bits_per_word": 81,
+  "child": {},
+  "collision_semantics": "When observed read address equals arbitrary watched address, the actual pipeline captures the pre-edge word, including simultaneous write to that address.",
+  "completed_utc": "2026-11-11T18:13:47.161819+00:00",
+  "cpu": 247,
+  "cpu_ticks": 5,
+  "fpga_access": false,
+  "full_equivalence": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "induction_hypothesis": "Only actual selected word equals reference word before edge; no pipeline assumption.",
+  "initial_memory_assumption": false,
+  "inputs": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-read-snapshot-round53-v1-20261112/evidence/actual-RamModel.sv": "46428dc8d9868145ee7636f7da186ea61906da0bb3e0fad3dc756ffd95c135a4",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-read-snapshot-round53-v1-20261112/evidence/owner-model-plan.json": "ba6b2cd2365e76f8293e86b123945bd0f572e7fe2b46f139500a1841fe2a156b",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-read-snapshot-round53-v1-20261112/evidence/owner-model-reuse-complete.json": "12eb798ba4ba6895f324f8cead6223f65d73c6be332f4402ec15382c8ed7f76f",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-read-snapshot-round53-v1-20261112/evidence/owner-model-reuse-result.json": "325221369262b9423cb8c718866217e8ef5f350597ed54d144c44e2495285171",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-read-snapshot-round53-v1-20261112/evidence/storage-complete.json": "6c3945ba1ad8f3830ee9259559ad36cec4475eab01bdac4520f7248ed2011e88",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-read-snapshot-round53-v1-20261112/evidence/storage-result.json": "c81f5e32debba962b809d88bfdea7173f8fd0b220fe86f2e76c679fd4cb1e707",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/opt4_unattended_common.py": "ac709cdf3dc514f987fbb77593cb441e2f47ee2cab2efc46c3d2de3839998e2e"
+  },
+  "limitations": [
+    "Reference memory write uses actual observed control/address/data; controller equivalence is separate.",
+    "Watched-word storage invariant is a separately bound prerequisite, not reproved here.",
+    "No complete multi-cycle FAME/target-cycle composition, DCache/Opt4 equivalence, area, FIT, FPGA or production admission."
+  ],
+  "memory_read_cut": false,
+  "mutation_receipts": [
+    {
+      "high_bit": 80,
+      "label": "negative-pipeline-high-bit",
+      "log_sha256": "0ddbabf3cf6586fa6e9cc75eb2565bd94f6552b188e1b38f9b94e7677199018c",
+      "low_bit": 72,
+      "returncode": 1,
+      "script_sha256": "b906f8335b4471a387f815b13e5db53606a12642fad60655bee8a56330d878d8",
+      "seconds": 12.615492619981524,
+      "source_sha256": "802ec28d4cee3d561c667fcdb9d67ff788dc9e51e5d8ef80a4b02050e332e77e"
+    },
+    {
+      "high_bit": 8,
+      "label": "negative-async-read-address",
+      "log_sha256": "ba87327b7e61df338ce000b4a6eb5f71757643087b6da1c922d7fa48345b4e8f",
+      "low_bit": 0,
+      "returncode": 1,
+      "script_sha256": "a7485b34c027521f7eeb8673f1b6b85a984354ad57b438adc67fdaaf51d1c572",
+      "seconds": 12.424042765982449,
+      "source_sha256": "2bde5b97c821564159ed04f9ab0c8fcc9bb2ed9986afd06ae6ce3f253899348e"
+    },
+    {
+      "high_bit": 8,
+      "label": "negative-same-edge-write-forwarding",
+      "log_sha256": "30f92618b84e0df383f7c1223de3e2898556c7333686abcb1520c6f78e89159a",
+      "low_bit": 0,
+      "returncode": 1,
+      "script_sha256": "2967935ea57f1ad514a144bd691a8668f357deaa5d638ccc67aa6becb4ad3957",
+      "seconds": 13.703057039005216,
+      "source_sha256": "96ddb66b55efe527cf9fc49c8fcc4f5f02863a8f275d2f595c4ad5bbc1dcca79"
+    }
+  ],
+  "mutations_rejected": 3,
+  "observer_exact_reversal_checked": true,
+  "pid": 2161042,
+  "plan_sha256": "87c5d208990e75b2582cb011d2f40b3300b4990808905ca78082e6a04dfb400e",
+  "process_state": "R",
+  "proof_receipts": [
+    {
+      "high_bit": 8,
+      "label": "bits-0-8",
+      "log_sha256": "87b17f414fff1e810f2ca44d093371f10b03ee4e19475b03d19f81d9b3ca3227",
+      "low_bit": 0,
+      "returncode": 0,
+      "script_sha256": "e4cd4236221639149c050e3e80887ca7b5569a71d3296852adb7cdbe9c5166e9",
+      "seconds": 14.128423820016906,
+      "source_sha256": "479ab0bc08c591bdfe6cd4bc0471436e4ddd77f1c579092e7f4ab39bc233fcb7"
+    },
+    {
+      "high_bit": 17,
+      "label": "bits-9-17",
+      "log_sha256": "443d09da8010724f09624a5ee053bed036c637ffa7c26039f0a2025f457fb8f3",
+      "low_bit": 9,
+      "returncode": 0,
+      "script_sha256": "e7ee609141228123da1d72bc0bb9b7880ec91b02669c58bdc2161a82649406ef",
+      "seconds": 14.064659811992897,
+      "source_sha256": "12e2f472bf8a3e062cd9543752b96cde285afe109665a965aed25424114ab932"
+    },
+    {
+      "high_bit": 26,
+      "label": "bits-18-26",
+      "log_sha256": "2f82e2ab4c6c098bbcccd6f87e297710cb9908703e691ba79333d8838b232c3a",
+      "low_bit": 18,
+      "returncode": 0,
+      "script_sha256": "268b37f155a64a0876b2b2ac421e63f1ad3a6eae96a1dffde10f5f28c4c5ec85",
+      "seconds": 14.182149536005454,
+      "source_sha256": "8e4184ffeffb28429c165f56bf2ff35140e5e0dbdb5ad45442ff35970215a103"
+    },
+    {
+      "high_bit": 35,
+      "label": "bits-27-35",
+      "log_sha256": "9dea817d46d2c92f2debb6a07ca8c5927fd905ab75c0552b1860fbca2deeeee2",
+      "low_bit": 27,
+      "returncode": 0,
+      "script_sha256": "59dab2cb278113c8696281d3be4c03220b708631cacd1a5d55305335bb91a888",
+      "seconds": 14.087017199984984,
+      "source_sha256": "3d6c1ce21062795942ebb1250ad03d1345549b5d821fc56ea65d60c11d54fe3e"
+    },
+    {
+      "high_bit": 44,
+      "label": "bits-36-44",
+      "log_sha256": "844ba754621bbf84a9b52ea29c5ac2329fd0a0a3ef411484fd47c2921d7ce05c",
+      "low_bit": 36,
+      "returncode": 0,
+      "script_sha256": "ae9dd2a05c1353cd5b6dc5ea428602084dfe0ccff15ff37b820aadf6fe429ec8",
+      "seconds": 14.162337418994866,
+      "source_sha256": "ffc3e5003b8f8a4492db7dc926b42d9942be6a38c156b17eef1a704626f9a6cf"
+    },
+    {
+      "high_bit": 53,
+      "label": "bits-45-53",
+      "log_sha256": "38aca60f211d92d111708cf3f4d79785722be298565d20aa700a62b8963ce972",
+      "low_bit": 45,
+      "returncode": 0,
+      "script_sha256": "08938a95079073201a9f48d1cf02b3cccb43507d39e184d90323e4fbf63cc58c",
+      "seconds": 14.03341519300011,
+      "source_sha256": "d38ca2e33f54bd82388a7237b9c538830cfc215e9b2a21bae4ee86412a9856e8"
+    },
+    {
+      "high_bit": 62,
+      "label": "bits-54-62",
+      "log_sha256": "9f340e4cae63086ca60075721e0e32a166fc1847e3da2f75809cf9a00af0b34e",
+      "low_bit": 54,
+      "returncode": 0,
+      "script_sha256": "11879388d9b78abd3afc38053889e4c6bc34c95effb4ac625393aec21bdd00dd",
+      "seconds": 14.080301982001401,
+      "source_sha256": "14701d432ece0582182b4796332dd875dce3f6e95702ccc54035f150c5e5edd6"
+    },
+    {
+      "high_bit": 71,
+      "label": "bits-63-71",
+      "log_sha256": "af0dd46c4b195280ebf6ed2e35a805afb08d1d6026e00a6d97b71e2a3ce2d340",
+      "low_bit": 63,
+      "returncode": 0,
+      "script_sha256": "f9bb81572bf9920d4a67874374f7a904f62ce57fe8e83c35a8c9da08793f5361",
+      "seconds": 13.956866449996596,
+      "source_sha256": "898462dce4492dc3d6a4a4bda5608917195d57a13885a81ef1f8363e3da0409d"
+    },
+    {
+      "high_bit": 80,
+      "label": "bits-72-80",
+      "log_sha256": "ee62cb4e43f9b8abde7d66f51e035aee94421cc26f51b59e3e11a55c2c8c9618",
+      "low_bit": 72,
+      "returncode": 0,
+      "script_sha256": "a77e1a4c2eb9c4f685d0bf35228bef87f44f6e2f0b9e47ff3c0b8ca642589f87",
+      "seconds": 13.913153705012519,
+      "source_sha256": "a3bc07be7e632a0cac5e0170ff957c63f5f0a3e58a81cee25a79bb87715f60d1"
+    }
+  ],
+  "read_capture_reset_gating": "actual ungated pipeline",
+  "rss_bytes": 14950400,
+  "schema": "ec-owner-ram-read-snapshot-proof/1",
+  "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+  "stage_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-read-snapshot-round53-v1-20261112/negative-same-edge-write-forwarding.log",
+  "start_ticks": "23238213",
+  "started_utc": "2026-11-11T18:11:01.770209+00:00",
+  "status": "PASS_ACTUAL_512X81_HOST_RAM_READ_SNAPSHOT_AND_SAME_EDGE_OLD_WORD_RELATION",
+  "target_changed": false,
+  "updated_utc": "2026-11-11T18:13:33.461972+00:00",
+  "watched_address_stable_across_induction_edge": true,
+  "whole_fit": false,
+  "words": 512
+}

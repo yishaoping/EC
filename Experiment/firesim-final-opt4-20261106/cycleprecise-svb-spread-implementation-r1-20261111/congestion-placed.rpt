@@ -1,0 +1,44 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2021.1 (lin64) Build 3247384 Thu Jun 10 19:36:07 MDT 2021
+| Date         : Wed Nov 11 21:15:52 2026
+| Host         : devjz-ubt20-s01 running 64-bit Ubuntu 20.04.6 LTS
+| Command      : report_design_analysis -congestion -file /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-spread-implementation-r1-20261111/congestion-placed.rpt
+| Design       : design_1_wrapper
+| Device       : xcu280
+| Design State : Fully Placed
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Report Design Analysis
+
+Table of Contents
+-----------------
+1. Placer Final Level Congestion Reporting
+2. SLR Net Crossing Reporting
+
+1. Placer Final Level Congestion Reporting
+------------------------------------------
+
++-----------+--------+-------+----------------------------------+---------------+---------------+-----+--------+------+------+------+------+-----+-------+-----+-------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Direction |  Type  | Level |              Window              | Combined LUTs | Avg LUT Input | LUT | LUTRAM | Flop | MUXF | RAMB | URAM | DSP | CARRY | SRL |                                                                       Cell Names                                                                      |
++-----------+--------+-------+----------------------------------+---------------+---------------+-----+--------+------+------+------+------+-----+-------+-----+-------------------------------------------------------------------------------------------------------------------------------------------------------+
+| West      | Global |     5 | (CLEL_R_X57Y387,DSP_X72Y415)     |            0% |         7.409 | 96% | 0%     |   3% |   1% | 0%   | 0%   | 0%  |   91% |  0% | design_1_i/firesim_wrapper_0/inst/firesim_top/top/model/sim/target/SVBProbe_/dut(99%)                                                                 |
+| East      | Long   |     5 | (CLEL_R_X84Y384,CLEL_R_X99Y415)  |            0% |         5.673 | 80% | 0%     |   7% |   1% | 0%   | 0%   | 0%  |   61% |  0% | design_1_i/firesim_wrapper_0/inst/firesim_top/top/model/sim/target/SVBProbe_/dut(99%)                                                                 |
+| West      | Long   |     5 | (CLEL_R_X60Y345,CLEL_R_X74Y376)  |            0% |         7.180 | 94% | 0%     |   3% |   1% | 0%   | 0%   | 0%  |   89% |  0% | design_1_i/firesim_wrapper_0/inst/firesim_top/top/model/sim/target/SVBProbe_/dut(97%)                                                                 |
+| West      | Long   |     6 | (CLEM_X33Y345,CLEM_X63Y408)      |            2% |         5.186 | 69% | 0%     |   8% |   1% | 0%   | NA   | 0%  |   65% |  0% | design_1_i/firesim_wrapper_0/inst/firesim_top/top/model/sim/target/SVBProbe_/dut(91%),design_1_i/firesim_wrapper_0/inst/firesim_top/top/model/sim(5%) |
+| East      | Short  |     5 | (CLEL_R_X42Y378,CLEL_R_X57Y409)  |            0% |         4.708 | 62% | 0%     |   7% |   1% | 0%   | NA   | 0%  |   57% |  0% | design_1_i/firesim_wrapper_0/inst/firesim_top/top/model/sim/target/SVBProbe_/dut(98%)                                                                 |
+| West      | Short  |     5 | (CLEL_R_X87Y379,CLEL_R_X102Y410) |            0% |         6.063 | 84% | 0%     |   5% |   1% | 0%   | 0%   | 0%  |   65% |  0% | design_1_i/firesim_wrapper_0/inst/firesim_top/top/model/sim/target/SVBProbe_/dut(99%)                                                                 |
++-----------+--------+-------+----------------------------------+---------------+---------------+-----+--------+------+------+------+------+-----+-------+-----+-------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
+2. SLR Net Crossing Reporting
+-----------------------------
+
++-------------------------------------------------------------+-----------------------------+-------------+-------------+-------------+
+|                          Cell Names                         | Number of Nets crossing SLR | 0 - 1 Cuts  | 0 - 2 Cuts  | 1 - 2 Cuts  |
++-------------------------------------------------------------+-----------------------------+-------------+-------------+-------------+
+| design_1_i                                                  | 129                         | 128         | 1           | 0           |
+| design_1_i/firesim_wrapper_0/inst/firesim_top/top/model/sim | 1                           | 1           | 0           | 0           |
++-------------------------------------------------------------+-----------------------------+-------------+-------------+-------------+
+
+

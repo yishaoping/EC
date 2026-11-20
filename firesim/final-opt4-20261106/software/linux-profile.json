@@ -1,0 +1,51 @@
+{
+  "schema": "ec-firesim-linux-profile/1",
+  "created_utc": "2026-11-06T10:11:33.331102+00:00",
+  "profile": "firesim-final-phys36-fullram",
+  "MAX_PHYSMEM_BITS": 36,
+  "SECTION_SIZE_BITS": 27,
+  "linux_mem_cap": null,
+  "target_memory_base": 2147483648,
+  "target_memory_bytes": 17179869184,
+  "target_memory_end": 19327352832,
+  "changes": [
+    {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/linux/drivers/misc/ec_dac_roi.c",
+      "reference": "/data1/gzh/EC/firesim/dac2026/measurement/linux/ec_dac_roi.c",
+      "before_sha256": "de9581ea53e922731319ed73ba077ffe84aeeaf9fc1a67f6b735151308c53056",
+      "sha256": "994d92fb832d210fe2920efb92ef3a545c229c7af236c66c458d71c6d91578ea"
+    },
+    {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/linux/drivers/misc/ec_dac_roi_regs.h",
+      "reference": "/data1/gzh/EC/firesim/dac2026/measurement/linux/ec_dac_roi_regs.h",
+      "before_sha256": "bdc093895333f19db8a24640b62a4572bc61095b8773b051c0be632d8916ffb8",
+      "sha256": "bdc093895333f19db8a24640b62a4572bc61095b8773b051c0be632d8916ffb8"
+    },
+    {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/linux/drivers/misc/ec_dac_roi_uapi.h",
+      "reference": "/data1/gzh/EC/firesim/dac2026/measurement/linux/ec_dac_roi_uapi.h",
+      "before_sha256": "23e11341af35213abd1d69dc5cd2231541ee878e36c7ad6161ae685342e28365",
+      "sha256": "23e11341af35213abd1d69dc5cd2231541ee878e36c7ad6161ae685342e28365"
+    },
+    {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/linux/arch/riscv/include/asm/sparsemem.h",
+      "before_sha256": "5dcc6fa16bd73d0744d49a83ddc92294b4e8d867a67da3973296aa18dcce85cc",
+      "sha256": "24bac4dc35f511b4f8120bab559ea2fe90c6c30f955564479361bd54a54b636c",
+      "reason": "Unified physical address bound covers actual FireSim RAM end 0x480000000; retain SECTION_SIZE_BITS=27 and all generated RAM."
+    },
+    {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/linux/arch/riscv/include/asm/sparsemem.h",
+      "before_sha256": "5dcc6fa16bd73d0744d49a83ddc92294b4e8d867a67da3973296aa18dcce85cc",
+      "sha256": "24bac4dc35f511b4f8120bab559ea2fe90c6c30f955564479361bd54a54b636c",
+      "reason": "Unified physical address bound covers actual FireSim RAM end 0x480000000; retain SECTION_SIZE_BITS=27 and all generated RAM."
+    }
+  ],
+  "runtime_validation": "NOT_RUN",
+  "formal_eligibility": "ONLY_AFTER_MATCHED_GROUP_RUNTIME_VALIDATION",
+  "notes": [
+    "Both groups use the same bounds and kernel configuration. Not mixed with historical diagnostic36 or diagnostic36-small results.",
+    "Native replaces only ROI driver implementation. Copied C4 service headers remain unreferenced and compile no checker service."
+  ],
+  "source_closure_repair": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/linux-source-closure-repair.json",
+  "source_closure_repair_sha256": "21a040ce27a99e48094b9b13e89c1560dcabd410d5873816bb981fe03bead870"
+}

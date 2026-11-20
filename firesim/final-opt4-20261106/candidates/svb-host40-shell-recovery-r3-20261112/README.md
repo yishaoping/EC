@@ -1,0 +1,9 @@
+# Conditional host40 shell C/D successor r3
+
+Systemd waits while r2 is live. Only an actual recorded r2 failure with nochild, exitedservice and exactemptycgroup permits reuse of224-225 extra smallcomponent slot. Any r2 success or existinghost40bitcomplete wins; noduplicateCAD. Same64GiB/max3actualcomponentworkers/256GiBfree/150GiBdisk/load48 admission. No existingtask/input modification and no FPGA I/O incontroller.
+
+Select best actual finalreportedWNS checkpoint from failedr2A/B and completedr3attempts (hashbound); originalsealedhost40probe only when no validfinal exists. C performs supportedpostroute `phys_opt_design -clock_opt`: physical globalbuffer skewrepair only,no targetperiod/RTL/retime change. This is motivated by actual-0.468ns clockskeweffect. IfCfails,D reuses bestactualcheckpoint and reroutes only safenegativeshellFD-Qcriticalnets with tool-supported `route_design -unroute -nets` then `route_design -nets ... -delay`; no directive combined with nets. Full legalrouter cleanup and all66clock/setup/hold/DRC/coverage/pulse/busskewgates preserved. Toolhelp evidence bound.
+
+Success uses independent r3chosenresult/certificate/directedFPGA/applicationtrace paths. Rootfollowers shareboth21locks; any completedr2/originalcomponent wins. Old idlehost40r1followerhand-off remains exactPID/boot/start/cgroup-onePython-only andholds2locks; noCAD orboardtaskstopped. Applicationfollowercannotdeploy andchecks latestbitSHA. FullOpt4retainspriority,Nativepaused,noe2/globalactions.
+
+Rawoutputs: cycleprecise-svb-host40-shell-recovery-r3-20261112; directedrun: cycleprecise-original-svb-host40-shell-onboard-r3-20261112; applicationrun: cycleprecise-original-svb-host40-shell-application-onboard-r3-20261112. Installation starts safe waitingonly while r2validlyruns. No newbitstream/timingpass/FPGAresult is claimed by this preparation.

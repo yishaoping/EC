@@ -1,0 +1,84 @@
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/BarrierLatencyStats.scala b/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/BarrierLatencyStats.scala
+index 843952f..bf18c2d 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/BarrierLatencyStats.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/BarrierLatencyStats.scala
+@@ -10,6 +10,16 @@ import chisel3.util._
+   * their request timestamps in the bucket until the safe watermark reaches
+   * their full package sequence.
+   */
++/** Share only accepted-event arithmetic; all values remain full width. */
++object GHBarrierEventUpdate {
++  def count(allocate: Bool, old: UInt): UInt =
++    Mux(allocate, 1.U(64.W), old + 1.U)
++  def cycleSum(allocate: Bool, old: UInt, cycle: UInt): UInt =
++    Mux(allocate, cycle, old + cycle)
++  def selected(accepted: Bool, index: UInt, slot: Int): Bool =
++    accepted && index === slot.U
++}
++
+ class GHBarrierLatencyBucket(val window: Int) extends Bundle {
+   require(window > 0)
+   val valid = Vec(window, Bool())
+@@ -139,24 +149,24 @@ class GHBarrierLatencyStats(val window: Int) extends Module {
+       buckets.requestCycleSum(i) := 0.U
+     }
+   }.otherwise {
++    val eventAllocates = !buckets.valid(eventIndex) || bucketResolve(eventIndex)
++    val nextEventCount = GHBarrierEventUpdate.count(eventAllocates, buckets.count(eventIndex))
++    val nextEventCycleSum = GHBarrierEventUpdate.cycleSum(eventAllocates,
++      buckets.requestCycleSum(eventIndex), io.currentCycle)
+     for (i <- 0 until window) {
+       when (bucketResolve(i)) {
+         buckets.valid(i) := false.B
+         buckets.count(i) := 0.U
+         buckets.requestCycleSum(i) := 0.U
+       }
+-    }
+-
+-    when (eventAccepted) {
+-      when (!buckets.valid(eventIndex) || bucketResolve(eventIndex)) {
+-        buckets.valid(eventIndex) := true.B
+-        buckets.seq(eventIndex) := io.event.bits
+-        buckets.count(eventIndex) := 1.U
+-        buckets.requestCycleSum(eventIndex) := io.currentCycle
+-      }.otherwise {
+-        buckets.count(eventIndex) := buckets.count(eventIndex) + 1.U
+-        buckets.requestCycleSum(eventIndex) :=
+-          buckets.requestCycleSum(eventIndex) + io.currentCycle
++      // Preserve the original event-after-resolution priority at every slot.
++      when (GHBarrierEventUpdate.selected(eventAccepted, eventIndex, i)) {
++        when (eventAllocates) {
++          buckets.valid(i) := true.B
++          buckets.seq(i) := io.event.bits
++        }
++        buckets.count(i) := nextEventCount
++        buckets.requestCycleSum(i) := nextEventCycleSum
+       }
+     }
+ 
+diff --git a/lineage.json b/lineage.json
+index f3df0f7..a235f9d 100644
+--- a/lineage.json
++++ b/lineage.json
+@@ -1,7 +1,7 @@
+ {
+   "address_commit": "00847dc2b8f6be3f1e1ff0639c1104d33334ddc9",
+   "area_parent": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+-  "branch": "opt4-fit/20261110",
++  "branch": "opt4/barrier-update-share-r1-20261111",
+   "core_features": "C4, SVB32, L2 report-permission repair; no checker/rollback/EC disabling",
+   "created_utc": "2026-11-10T09:12:05.475254+00:00",
+   "formal_admission": false,
+@@ -12,10 +12,10 @@
+   "functional_extensions_allowed": false,
+   "parent_source": "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard",
+   "profile": "Opt4-fit-C4-SVB32-update-share-svb-compose-r2",
+-  "purpose": "Independent derived Opt4-fit optimization. Never identity-equivalent to frozen hardware by name.",
++  "purpose": "Function/cycle-equivalent barrier event write factoring; full reset, overflow and instrumentation retained.",
+   "reason": "Exact address candidate and its required AddressBucketUpdate helper plus exact separately verified SVB selector; original broken composition retained as evidence.",
+   "schema": "ec-opt4-fit-lineage/1",
+   "snapshot_baseline_commit": "0390a808ff557e2ac7da329fbee063857d46159c",
+-  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/chipyard",
++  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-barrier-update-share-r1-20261111/chipyard",
+   "svb_commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470"
+ }

@@ -1,0 +1,148 @@
+{
+  "checker_latency": null,
+  "counts": null,
+  "drain_cycles": 0,
+  "driver_returncode": 0,
+  "driver_stop_after_guest_powerdown": false,
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simsmall-r1-20261107T035009Z/heartbeat.csv": "12eb57b6858f9a7b364bb56744187b9d129e529512701c6dacf8f950ceb3d2f5",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simsmall-r1-20261107T035009Z/host.log": "f3fba28ef093ad774e9a3941e5a44d141e7dbd3189dc83cf7a3c08b3d7297f42",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simsmall-r1-20261107T035009Z/latency_histogram.csv": "7348bacc4d184cc676cfcf89f8d0ec40dd28eeaa86ae0f6fefa797b43dc6d210",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simsmall-r1-20261107T035009Z/manifest.json": "df8f2a9f5e12c0548e49ea4959f6b4c42372957ae74f9ca4832b34ae72197d8f",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simsmall-r1-20261107T035009Z/memory_stats0.csv": "6679c5006d14d8413ec36ba18171c1f179c0196e04b362e4af778b06baad416e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simsmall-r1-20261107T035009Z/roi-raw.jsonl": "ac0a2faa4bcb506b56529705bf9f648b20b7c7f56f38aa1695e3cc8f49e4a72d",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simsmall-r1-20261107T035009Z/snapshot.json": "75f2beb15bd502cd916c38d72b3e41f369f4cbac929b1a0ab383c297441cd1e6",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simsmall-r1-20261107T035009Z/state.json": "043d218da36ddef941a69c2c73e2a25ee64c799bc8ead541783a1f80f2abfb73",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simsmall-r1-20261107T035009Z/uart.in": "8c02ad5cb4f66852f3501f25bdd77e9da3cd60c3d2f3ede58969074c3118b385",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simsmall-r1-20261107T035009Z/uart.log": "6b32074070fc8fd0826712251484180dbfa0b5b523c9d618fd891fecf8e78e6d"
+  },
+  "fased_readback": {
+    "readLatency": 30,
+    "readMaxReqs": 4,
+    "relaxFunctionalModel": 0,
+    "writeLatency": 30,
+    "writeMaxReqs": 4
+  },
+  "formal": false,
+  "fpga_execution": true,
+  "guest_power_down_observed": true,
+  "host_efficiency": {
+    "host_delta": 12418161292,
+    "host_simulation_wall_seconds": 248.369715,
+    "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+    "simulation_throughput_cycles_per_second": 16538906.473,
+    "target_delta": 4107763487,
+    "target_end": 4107763487,
+    "target_start": 0
+  },
+  "host_wall_seconds": 248.446377761,
+  "identity": {
+    "apps_manifest_sha256": "0ccb15ae6db46dd4f3c3c098823e33596012d8f6cab7dddcdcf04f90d498ea4a",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:e2:00.0",
+    "board_serial": "21770433G001A",
+    "case": {
+      "argv": [
+        "1",
+        "10000",
+        "2000",
+        "100000.nets",
+        "32"
+      ],
+      "expected_final_routing": "9.27689e+07",
+      "fpga_validation": "NOT_RUN",
+      "input": "simsmall",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/inputs/input_simsmall.tar": "f25eb45c9387563507b02d87f0f82f00f4fee77be5b073f8dbd749109362727e"
+      },
+      "input_files": {
+        "100000.nets": "2e07e10bf2edca4894de935d11877b78754a94b08faf4a248511595656ff85c5"
+      },
+      "program": "canneal",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-20261106T095914Z/references/canneal-simsmall/stdout.log": "3344b0c11003d142caad2a632fe8ddce1eaffe1a6010f4bd576368e4e378ef90"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/parsec/simsmall.runconf",
+      "runconf_sha256": "6941c3e1752ce0dc9c31497b96a379f05636d31238cce357f30ea604593d5c8d",
+      "software_reference": "QEMU_RISCV_USER_ONLY; not FPGA evidence",
+      "threads": 1,
+      "warmups": 0
+    },
+    "configuration": "Native",
+    "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+    "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+    "elf_sha256": "07cb43662f5cb38e9497bea005217c22d7c1d54be18ee31c4a6ba21fe04aeb91",
+    "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+    "firmware_receipt_sha256": "d1bd3e550e62ef99b1395a065dfd24ffde9e5694ae1bd75eb38409df7a3194bd",
+    "firmware_sha256": "0970afbb4477277101849ff54d729b6adc9feb04e6206a2ba49d6d5100b7302e",
+    "formal": false,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "host_bridge_restart": true,
+    "input": "simsmall",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "previous_run_id": null,
+    "program": "canneal",
+    "repetition": 1,
+    "rootfs_sha256": "427d0b923bc2be77b67ba0ff11efd47bb83c7bbf28fd990e10c658dcf7178711",
+    "run_id": "native-canneal-simsmall-r1-20261107T035009Z",
+    "software_diagnostic": false,
+    "software_profile": "original-parsec-serial",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "target_reset_probe": false,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "123581fe0ca261116a6318494fefa7915f02c510f562f5a4aa6d416ea9037037",
+  "issues": [],
+  "participation": null,
+  "post_drain_traffic_counters": {},
+  "raw": {
+    "epochs": [
+      {
+        "aborted": false,
+        "begin_tick": 3390120003,
+        "end_tick": 3816184184,
+        "epoch": 1,
+        "faults": 0,
+        "formal_sample_eligible": false,
+        "reset_seen": false,
+        "roi_cycles": 426064181,
+        "source_boundaries_complete": true,
+        "states": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    ],
+    "excluded_pre_reset_records": 2,
+    "file_sha256": "0a41cc6f18bb1216211ee76d23f62818a1db5d2333a511d588cdb199a22c5af3",
+    "formal_sample_eligible": false,
+    "last_sequence": 13,
+    "original_journal_sha256": "ac0a2faa4bcb506b56529705bf9f648b20b7c7f56f38aa1695e3cc8f49e4a72d",
+    "parsed_records": 14,
+    "partial_tail_bytes": 0,
+    "protocol_issues": [],
+    "runtime_validation": "NOT_ESTABLISHED_BY_RAW_LOG",
+    "schema": "ec-dac-b-raw-roi/1",
+    "warning": "Raw ROI boundaries only. Output/job identity, runtime timebase checks and the formal host collector are still required."
+  },
+  "roi_cycles": 426064181,
+  "schema": "ec-isolated-fpga-result/1",
+  "timedout": false,
+  "valid": true
+}

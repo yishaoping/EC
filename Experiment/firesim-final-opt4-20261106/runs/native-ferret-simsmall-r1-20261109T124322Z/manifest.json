@@ -1,0 +1,239 @@
+{
+  "argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-efficiency-driver-20261106T135905Z/FireSim-xilinx_alveo_u280",
+    "+permissive",
+    "+domain=0000",
+    "+bus=21",
+    "+device=00",
+    "+function=0",
+    "+bar=0",
+    "+pci-vendor=10ee",
+    "+pci-device=903f",
+    "+uart-in0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-ferret-simsmall-r1-20261109T124322Z/uart.in",
+    "+uart-out0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-ferret-simsmall-r1-20261109T124322Z/uart.log",
+    "+fesvr-step-size=2004765",
+    "+mm_readLatency_0=30",
+    "+mm_readMaxReqs_0=4",
+    "+mm_relaxFunctionalModel_0=0",
+    "+mm_writeLatency_0=30",
+    "+mm_writeMaxReqs_0=4",
+    "+ec-dac-roi-log=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-ferret-simsmall-r1-20261109T124322Z/roi-raw.jsonl",
+    "+ec-dac-snapshot-seconds=30",
+    "+permissive-off",
+    "+prog0=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-firmware-20261109T123811.141147Z/platform/generic/firmware/fw_payload.elf"
+  ],
+  "deployment": {
+    "bdfs": [
+      "0000:21:00.0"
+    ],
+    "bitstream": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-bitstream-20261102T095746.955739Z/vivado_proj/firesim.bit",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_flash_firmware_updated": false,
+    "cards": [
+      {
+        "bdf": "0000:21:00.0",
+        "bitstream": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-bitstream-20261102T095746.955739Z/vivado_proj/firesim.bit",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "configuration": "Native",
+        "serial": "21770433G02LA",
+        "source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4"
+      }
+    ],
+    "completed_cards": [
+      {
+        "bdf": "0000:21:00.0",
+        "bitstream": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-bitstream-20261102T095746.955739Z/vivado_proj/firesim.bit",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "configuration": "Native",
+        "serial": "21770433G02LA",
+        "source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4"
+      }
+    ],
+    "configuration": "Native",
+    "control_plane_reconciliation": {
+      "e2_identity_unchanged": true,
+      "original_failure_preserved": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/batches/Native-single-20261109T022232Z/FAILED.json",
+      "original_receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/batches/Native-single-20261109T022232Z/deployment-before-reconciliation.json",
+      "program_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/batches/Native-single-20261109T022232Z/program-Xilinx_21770433G02LA.log",
+      "program_log_sha256": "3cdea514a2bdf2a9f456437851afccfe8c7c07d6b223e0272299b7264654fd35",
+      "raw_witness": "EC_FPGA_PROGRAMMED serial=Xilinx/21770433G02LA file=/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-bitstream-20261102T095746.955739Z/vivado_proj/firesim.bit device=xcu280_u55c_0",
+      "reason": "Vivado actually programmed target successfully; legacy call_vivado rejected echoed Tcl source containing ERROR: literals. Corrected guard strings and accepted exact completion witness; no second programming.",
+      "revalidated_utc": "2026-11-09T02:33:21.019423+00:00"
+    },
+    "deployment_tools": {
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/firesim.py": "517b5b6f43beaeaf5f955cb66825f12e7aa51ce4328e0c920ee6bd69a837a42f",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/fpga-util.py": "947c989b35b0a0adc7c1f024e3aec26e1c661820972767dacd174809887a449e",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/pcielib.py": "8ad176ad368ffa5d5c2677115ff4f313bba7abe71cd898abd26d7548c2fb9f00",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/probe_targets.tcl": "c6ff49bd199588dcdcab1e00dfb47cb56d15043fb1ef15974ea5fdfec0daca3b",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/probe_targets_3122.tcl": "9bfc21406f433d45b0753b5ec3f1365a9999cf610339ededa47835e481da0e52",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/program_fpga.tcl": "93e6731f9447cf48bd1ae0f5b1c2d458f5726d62193cb98cc13daca887e1332f",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/provenance.json": "3f4dcc11685b2005e585679927d2c25ea608526b30bf7a5f8e7672862cbf8c9f",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/start_owned_hw_server.py": "8072a1ca79140fb871136a624b3903e0ac2d722142c8d1fd7eeabb2ad3242ece",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/util.py": "99c369f5383bca276e3722fcef45f8bb3e8f18a7d476750dc3cb5644181568f8"
+    },
+    "ended_utc": "2026-11-09T02:33:21.019330+00:00",
+    "global_operations": [],
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "host_reboot": false,
+    "pid": 71733,
+    "postcheck": {
+      "cleanup_users": [],
+      "mapping": [
+        {
+          "bdf": "0000:21:00.0",
+          "driver": "xdma",
+          "serial": "21770433G02LA"
+        }
+      ],
+      "observed_utc": "2026-11-09T02:33:21.019087+00:00",
+      "open_devices": [],
+      "other_card_simulations": [],
+      "permission_denied": 0,
+      "simulation_processes": [],
+      "target_bdfs": [
+        "0000:21:00.0"
+      ],
+      "user_confirms_boards_available": true
+    },
+    "schema": "ec-single-fpga-deployment/2",
+    "serials": [
+      "21770433G02LA"
+    ],
+    "source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "started_utc": "2026-11-09T02:22:44.481930+00:00",
+    "status": "DEPLOYED_NOT_RUN",
+    "system_driver_updated": false,
+    "targeted_operations": [
+      "unbind XDMA for 0000:21:00.0 only",
+      "remove and rescan through the 0000:21:00.0 upstream bridge only",
+      "program JTAG serial Xilinx/21770433G02LA only",
+      "rebind XDMA for 0000:21:00.0 only"
+    ],
+    "user_authorization": "2026-11-09 explicit 21-only experiments; never disturb e2"
+  },
+  "identity": {
+    "apps_manifest_sha256": "d2d71ba35ef1b6d9a0534debc2039493d0c684772e9107f9bff44870022ae71a",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:21:00.0",
+    "board_serial": "21770433G02LA",
+    "case": {
+      "algorithm_unchanged": true,
+      "argv": [
+        "corel",
+        "lsh",
+        "queries",
+        "10",
+        "20",
+        "1",
+        "output.txt"
+      ],
+      "diagnostic_roi_syscalls": [],
+      "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/ferret-order-recovery-20261109T123400Z/fixed-user-simsmall.log",
+      "fpga_validation": "NOT_RUN",
+      "input": "simsmall",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inputs/input_simsmall.tar": "ed5d46a1ef8a16ca3a948bce3a62b838e1b0cd2aeeefa27e3094b84b16f87d78"
+      },
+      "input_files": {
+        "corel/__cass.env": "1aca980c5048e545369400d562c482289baf1769dc4abd5aa8b30e9740ad14e2",
+        "corel/corel.raw": "efbf7ac26bbd67dfb633de6ae717dc2fb26a7acb29c3ccae250da024ff570dd0",
+        "corel/lsh.lsh": "91a901f44d196c6aec120cda39457d958c8ad6de08ffa60181c92b784ffc8288",
+        "corel/map_corel.map": "7023bacae6d2130f92592559c74855de6aebcd304a1d86f607edc8d43851ba82",
+        "queries/acorn.jpg": "773e0931235ab50a611c0c94d02dd08ea5dad9d301f8f6a17450420af0240584",
+        "queries/air-fighter.jpg": "24221fd90e445bc3e87dbbd35c8543b0026e23acaab1b59f2259fa0692ba6ba2",
+        "queries/airplane-2.jpg": "0c8dd6b4e1b38a4ffb3dde5bb2ac4e61b76de266d2a27223668112eea54fb225",
+        "queries/airplane-takeoff-3.jpg": "da6c52cab344460e1368dcc2a09dc3ff30666cea7d45d9a85a205092df945017",
+        "queries/alcatraz-island-prison.jpg": "737e1bf18f3ab580bcc3b4d15a5b68d7c4a4d1766346eb5ffff1032f8ce58f8e",
+        "queries/american-flag-3.jpg": "d2095a2739f0089c345ee479294518006e55e32962829e7fa63a1cf86c0e6da9",
+        "queries/apartment.jpg": "ed7da7acbbb7a65783a22736887764e51ff6b8dc92abe8bf4c789bdebafeab09",
+        "queries/apollo-2.jpg": "980e47af054aea74792ad5272aac92dd2676ab6f1d958494bf1f0120114e894e",
+        "queries/apollo-earth.jpg": "b3f6b71be8ce3d561a4c3d4e353158a8483ddff92ace020aae6d2c7e7d68ce0a",
+        "queries/apple-11.jpg": "996ec8d4ba81886f2b8c93a64783d671910322dc59b73aeb7c64156a79896dbd",
+        "queries/apple-14.jpg": "fd4ade6e9fc64576e3fb97eb7bae2e804e93cb9793f95a13caf8408c3f4ff365",
+        "queries/apple-16.jpg": "b2604a419f903657ceb7ecfde86db472a17ab6193148286ab65edbdc391e89b2",
+        "queries/apple-7.jpg": "9b2cc88714a02c269efa8d1a1bc573ab6e5a93e145362668212d1ee17242a037",
+        "queries/aquarium-fish-25.jpg": "cc79857444ef620084e56622d9461b5ae544dc71b8370e08381092ea0559f898",
+        "queries/arches-9.jpg": "23e9b359c9389c70e0fa507ff3746416110a2eda1ff4bf1e92f35521c86ba7da",
+        "queries/arches.jpg": "596308d9297df5cf9b24ce18bd2436685bbe58eaa1d2b5776df47b4dec8d9b45"
+      },
+      "linux_output": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/ferret-order-recovery-20261109T123400Z/fixed-linux-simsmall-output.txt",
+      "linux_output_sha256": "7e5346f70cfb376526399f589532e5af9b2c11bd5f4f36fc989d781e0a131331",
+      "original_query_rows_exact": true,
+      "original_reference": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-ferret-20261107T055439Z/reference-simsmall/output.txt",
+      "program": "ferret",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/ferret-order-recovery-20261109T123400Z/fixed-user-simsmall/output.txt": "7e5346f70cfb376526399f589532e5af9b2c11bd5f4f36fc989d781e0a131331"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/parsec/simsmall.runconf",
+      "runconf_sha256": "c60f7c49b74ae702adcbb740ac150ed32ce71006c048a77f906d85c22986ab76",
+      "threads": 1,
+      "validation": {
+        "files": {
+          "output.txt": "7e5346f70cfb376526399f589532e5af9b2c11bd5f4f36fc989d781e0a131331"
+        },
+        "kind": "files_sha256"
+      },
+      "warmups": 0
+    },
+    "configuration": "Native",
+    "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+    "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+    "elf_sha256": "aa201077237e4a1c19167eb65cc3a59fcbbc44130e2454b2b60454d4fcf600be",
+    "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+    "firmware_receipt_sha256": "fc0f6186665057c81aa3e655eb15dd2df558474ac33eb64f86848d539ad57257",
+    "firmware_sha256": "3a972592d7aa9df90d509c280f63fd3402740665886c37719004567697fdf6fa",
+    "formal": false,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "host_bridge_restart": true,
+    "input": "simsmall",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "previous_run_id": null,
+    "program": "ferret",
+    "repetition": 1,
+    "rootfs_sha256": "4ad3f2be6f210d416b9c7063ee2ca38d15dac7e9d89d3371a8216c1d96f85afa",
+    "run_id": "native-ferret-simsmall-r1-20261109T124322Z",
+    "software_diagnostic": false,
+    "software_profile": "ferret-serial-staged-stable-directory-order/1",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "target_reset_probe": false,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "41983c1df9d08cbaa359d5d9fe670352bfdc92b4a715ea69bccde5ae3bb054ff",
+  "precheck": {
+    "cleanup_users": [],
+    "mapping": [
+      {
+        "bdf": "0000:21:00.0",
+        "driver": "xdma",
+        "serial": "21770433G02LA"
+      }
+    ],
+    "observed_utc": "2026-11-09T12:43:22.593624+00:00",
+    "open_devices": [],
+    "other_card_simulations": [],
+    "permission_denied": 0,
+    "simulation_processes": [],
+    "target_bdfs": [
+      "0000:21:00.0"
+    ],
+    "user_confirms_boards_available": true
+  },
+  "roi_parser_sha256": "e55944240285ee0197b1b8bd3bedbe10a4a72305511ac72018fe668578d5f8c1",
+  "runner_sha256": "0b6e6b4bbe242f7df873c8b5ff131a421e8fd2fa140bb8facfc652747b64b42f",
+  "schema": "ec-isolated-fpga-sample/1",
+  "target_reset_probe_previous": null
+}

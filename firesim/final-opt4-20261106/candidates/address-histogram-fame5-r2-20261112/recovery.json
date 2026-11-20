@@ -1,0 +1,16 @@
+{
+  "utc": "2026-11-12T13:44:34.905220+00:00",
+  "prior_unit": "ec-opt4-address-histogram-fame5-r1-20261112.service",
+  "prior_identity": {
+    "pid": 3921566,
+    "start_ticks": "30260202",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96"
+  },
+  "prior_properties": "MainPID=0; ControlGroup=; ActiveState=failed",
+  "prior_controller_proc_exists": false,
+  "prior_cgroup_exists": false,
+  "cause": "Installed PromoteSubmodule asserts local targets. Nested bridge harness DUT plus dedup produced nonlocal ~FAMETop|Smoke2/dut:Histogram/bucket_1:HistogramBucket. Compilation and elaboration passed; no host RTL, simulation or CAD ran.",
+  "minimal_correction": "Make selected identical histogram bucket modules direct children of the private bridge harness; same combinational function/inputs/outputs and configs, no target state or compiler-source change.",
+  "prior_evidence_retained": true,
+  "prior_live_job_signalled": false
+}

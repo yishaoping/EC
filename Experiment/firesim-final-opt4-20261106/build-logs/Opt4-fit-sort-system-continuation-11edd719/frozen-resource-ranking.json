@@ -1,0 +1,251 @@
+{
+  "schema": "ec-frozen-area-ranking/1",
+  "utc": "2026-11-10T14:36:27.336493+00:00",
+  "source_report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-capacity-20261110/top-postopt/hierarchical.rpt",
+  "scope": "Frozen full-top post-opt hierarchy only; inclusive rows overlap and must not be added; not a derived fit prediction",
+  "rows": [
+    {
+      "name": "design_1_wrapper",
+      "path": "design_1_wrapper",
+      "depth": 1,
+      "module": "(top)",
+      "lut": 5825558,
+      "ff": 1797709,
+      "dsp": 9027
+    },
+    {
+      "name": "design_1_i",
+      "path": "design_1_wrapper/design_1_i",
+      "depth": 3,
+      "module": "design_1",
+      "lut": 5825085,
+      "ff": 1796968,
+      "dsp": 9027
+    },
+    {
+      "name": "firesim_wrapper_0",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0",
+      "depth": 5,
+      "module": "design_1_firesim_wrapper_0_0",
+      "lut": 5741348,
+      "ff": 1706473,
+      "dsp": 9024
+    },
+    {
+      "name": "inst",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst",
+      "depth": 7,
+      "module": "design_1_firesim_wrapper_0_0__firesim_wrapper",
+      "lut": 5064478,
+      "ff": 1706473,
+      "dsp": 9024
+    },
+    {
+      "name": "firesim_top",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top",
+      "depth": 9,
+      "module": "design_1_firesim_wrapper_0_0__F1Shim",
+      "lut": 5064478,
+      "ff": 1706473,
+      "dsp": 9024
+    },
+    {
+      "name": "top",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top",
+      "depth": 11,
+      "module": "design_1_firesim_wrapper_0_0__FPGATop",
+      "lut": 5064476,
+      "ff": 1706455,
+      "dsp": 9024
+    },
+    {
+      "name": "sim",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim",
+      "depth": 13,
+      "module": "design_1_firesim_wrapper_0_0__SimWrapper",
+      "lut": 5051982,
+      "ff": 1694266,
+      "dsp": 9024
+    },
+    {
+      "name": "target",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target",
+      "depth": 15,
+      "module": "design_1_firesim_wrapper_0_0__FAMETop",
+      "lut": 5049461,
+      "ff": 1689911,
+      "dsp": 9024
+    },
+    {
+      "name": "FireSim_",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_",
+      "depth": 17,
+      "module": "design_1_firesim_wrapper_0_0__FireSim",
+      "lut": 5049461,
+      "ff": 1689911,
+      "dsp": 9024
+    },
+    {
+      "name": "lazyModule",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule",
+      "depth": 19,
+      "module": "design_1_firesim_wrapper_0_0__ChipTop",
+      "lut": 5047575,
+      "ff": 1688605,
+      "dsp": 9024
+    },
+    {
+      "name": "system",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system",
+      "depth": 21,
+      "module": "design_1_firesim_wrapper_0_0__DigitalTop",
+      "lut": 5047575,
+      "ff": 1688605,
+      "dsp": 9024
+    },
+    {
+      "name": "subsystem_l2_wrapper",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system/subsystem_l2_wrapper",
+      "depth": 23,
+      "module": "design_1_firesim_wrapper_0_0__CoherenceManagerWrapper",
+      "lut": 925305,
+      "ff": 91003,
+      "dsp": 4924
+    },
+    {
+      "name": "l2",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system/subsystem_l2_wrapper/l2",
+      "depth": 25,
+      "module": "design_1_firesim_wrapper_0_0__InclusiveCache",
+      "lut": 924994,
+      "ff": 90677,
+      "dsp": 4924
+    },
+    {
+      "name": "l2DramBarrierStats",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system/subsystem_l2_wrapper/l2/l2DramBarrierStats",
+      "depth": 27,
+      "module": "design_1_firesim_wrapper_0_0__GHBarrierLatencyStats_2025",
+      "lut": 468739,
+      "ff": 41601,
+      "dsp": 2048
+    },
+    {
+      "name": "safeWatermarkGraySync_l2_safe_watermark_sync",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system/subsystem_l2_wrapper/l2/safeWatermarkGraySync_l2_safe_watermark_sync",
+      "depth": 27,
+      "module": "design_1_firesim_wrapper_0_0__AsyncResetSynchronizerShiftReg_w32_d3_i0_2026",
+      "lut": 108649,
+      "ff": 105,
+      "dsp": 0
+    },
+    {
+      "name": "output_chain_31",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system/subsystem_l2_wrapper/l2/safeWatermarkGraySync_l2_safe_watermark_sync/output_chain_31",
+      "depth": 29,
+      "module": "design_1_firesim_wrapper_0_0__AsyncResetSynchronizerPrimitiveShiftReg_d3_i0_2052",
+      "lut": 108508,
+      "ff": 12,
+      "dsp": 0
+    },
+    {
+      "name": "tile_prci_domain",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system/tile_prci_domain",
+      "depth": 23,
+      "module": "design_1_firesim_wrapper_0_0__TilePRCIDomain",
+      "lut": 3688216,
+      "ff": 927782,
+      "dsp": 4100
+    },
+    {
+      "name": "tile_reset_domain_boom_tile",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system/tile_prci_domain/tile_reset_domain_boom_tile",
+      "depth": 25,
+      "module": "design_1_firesim_wrapper_0_0__BoomTile",
+      "lut": 3687107,
+      "ff": 927767,
+      "dsp": 4100
+    },
+    {
+      "name": "core",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system/tile_prci_domain/tile_reset_domain_boom_tile/core",
+      "depth": 27,
+      "module": "design_1_firesim_wrapper_0_0__BoomCore",
+      "lut": 697700,
+      "ff": 75210,
+      "dsp": 0
+    },
+    {
+      "name": "csr",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system/tile_prci_domain/tile_reset_domain_boom_tile/core/csr",
+      "depth": 29,
+      "module": "design_1_firesim_wrapper_0_0__CSRFile",
+      "lut": 383784,
+      "ff": 2984,
+      "dsp": 0
+    },
+    {
+      "name": "dcache",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system/tile_prci_domain/tile_reset_domain_boom_tile/dcache",
+      "depth": 27,
+      "module": "design_1_firesim_wrapper_0_0__BoomNonBlockingDCache",
+      "lut": 2898506,
+      "ff": 787681,
+      "dsp": 4100
+    },
+    {
+      "name": "addressStats",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system/tile_prci_domain/tile_reset_domain_boom_tile/dcache/addressStats",
+      "depth": 29,
+      "module": "design_1_firesim_wrapper_0_0__PackageAddressStats",
+      "lut": 1476753,
+      "ff": 390791,
+      "dsp": 0
+    },
+    {
+      "name": "crossPackageBarrierStats",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system/tile_prci_domain/tile_reset_domain_boom_tile/dcache/crossPackageBarrierStats",
+      "depth": 29,
+      "module": "design_1_firesim_wrapper_0_0__GHBarrierLatencyStats",
+      "lut": 377324,
+      "ff": 41601,
+      "dsp": 2048
+    },
+    {
+      "name": "l1L2BarrierStats",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system/tile_prci_domain/tile_reset_domain_boom_tile/dcache/l1L2BarrierStats",
+      "depth": 29,
+      "module": "design_1_firesim_wrapper_0_0__GHBarrierLatencyStats_1713",
+      "lut": 354265,
+      "ff": 41601,
+      "dsp": 2048
+    },
+    {
+      "name": "mshrs",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system/tile_prci_domain/tile_reset_domain_boom_tile/dcache/mshrs",
+      "depth": 29,
+      "module": "design_1_firesim_wrapper_0_0__BoomMSHRFile",
+      "lut": 211046,
+      "ff": 17078,
+      "dsp": 0
+    },
+    {
+      "name": "mshrs_0",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system/tile_prci_domain/tile_reset_domain_boom_tile/dcache/mshrs/mshrs_0",
+      "depth": 31,
+      "module": "design_1_firesim_wrapper_0_0__BoomMSHR",
+      "lut": 138032,
+      "ff": 2200,
+      "dsp": 0
+    },
+    {
+      "name": "svb",
+      "path": "design_1_wrapper/design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim_/lazyModule/system/tile_prci_domain/tile_reset_domain_boom_tile/dcache/svb",
+      "depth": 29,
+      "module": "design_1_firesim_wrapper_0_0__SpeculativeVersionBuffer",
+      "lut": 112305,
+      "ff": 20710,
+      "dsp": 0
+    }
+  ]
+}

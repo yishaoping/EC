@@ -1,0 +1,946 @@
+{
+  "actual_ram_model_sha256": "46428dc8d9868145ee7636f7da186ea61906da0bb3e0fad3dc756ffd95c135a4",
+  "address_bits": 9,
+  "adopted_successful_v2_stages": 38,
+  "child": {},
+  "completed_utc": "2026-11-11T18:18:25.197894+00:00",
+  "cpu": 249,
+  "cpu_ticks": 5,
+  "data_bits": 81,
+  "fpga_access": false,
+  "full_equivalence": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "induction_factors": [
+    "control_relation",
+    "pipeline_relation",
+    "payload_relation_0",
+    "payload_relation_1",
+    "payload_relation_2",
+    "payload_relation_3",
+    "payload_relation_4",
+    "payload_relation_5",
+    "payload_relation_6",
+    "payload_relation_7",
+    "payload_relation_8",
+    "payload_relation_9",
+    "payload_relation_10",
+    "payload_relation_11",
+    "payload_relation_12",
+    "payload_relation_13",
+    "payload_relation_14",
+    "payload_relation_15",
+    "payload_relation_16",
+    "payload_relation_17",
+    "payload_relation_18",
+    "payload_relation_19",
+    "payload_relation_20",
+    "payload_relation_21",
+    "payload_relation_22",
+    "payload_relation_23",
+    "payload_relation_24",
+    "payload_relation_25",
+    "payload_relation_26",
+    "payload_relation_27",
+    "payload_relation_28",
+    "payload_relation_29",
+    "payload_relation_30",
+    "payload_relation_31",
+    "payload_relation_32",
+    "payload_relation_33",
+    "payload_relation_34"
+  ],
+  "induction_hypothesis": "full original relation at preceding edge",
+  "initial_payload_assumption": false,
+  "inputs": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-controller-round53-v3-20261112/evidence/actual-RamModel.sv": "46428dc8d9868145ee7636f7da186ea61906da0bb3e0fad3dc756ffd95c135a4",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-controller-round53-v3-20261112/evidence/owner-channel-result.json": "45111dc0049ebb33622992ed4229bd6a2e0d5066c362955a4519cf546d7d738f",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-controller-round53-v3-20261112/evidence/owner-model-plan.json": "ba6b2cd2365e76f8293e86b123945bd0f572e7fe2b46f139500a1841fe2a156b",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-controller-round53-v3-20261112/evidence/owner-model-reuse-complete.json": "12eb798ba4ba6895f324f8cead6223f65d73c6be332f4402ec15382c8ed7f76f",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-controller-round53-v3-20261112/evidence/owner-model-reuse-result.json": "325221369262b9423cb8c718866217e8ef5f350597ed54d144c44e2495285171",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-controller-round53-v3-20261112/evidence/owner-queue-result.json": "16c694319ae663d96fa2af9a8f58e35acc84003be49bda1e88cd686e13f3d137",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-controller-round53-v3-20261112/evidence/v1-failure.json": "05af4327caab99dbebc5e838a0d22d58d0adcd5b187567d2b563d608f1c71dad",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-controller-round53-v3-20261112/evidence/v1-step-receipt.json": "27ea2de202b70866c4730013dc4e550ea76953c116d01c6bba240af8ac775034",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-controller-round53-v3-20261112/evidence/v2-controller.py": "999b600d208b7e63ec7c92d8229162046604c8bf2d7fc0be916bde39d93a4925",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-controller-round53-v3-20261112/evidence/v2-failure.json": "c86056fde255ec16a69f5aaf31d6c810f147bd6843528f720c9450fb509ed383",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-controller-round53-v3-20261112/evidence/v2-stage-bindings.json": "132ecb7bf72e3f5d95fd748d33f041175963efeadcb8351b4af82802b38f6991",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/opt4_unattended_common.py": "ac709cdf3dc514f987fbb77593cb441e2f47ee2cab2efc46c3d2de3839998e2e"
+  },
+  "invalid_response_payload_compared": false,
+  "limitations": [
+    "Symbolic memory-read cut; memory contents and read/write collision semantics remain separate.",
+    "Payload comparison is guarded by valid; inactive Decoupled payload is unconstrained.",
+    "No end-to-end target-cycle/FAME proof, full DCache/Opt4 equivalence, area, FIT, FPGA or production admission."
+  ],
+  "mutation_receipts": [
+    {
+      "label": "negative-priority",
+      "log_sha256": "0d36ef4e7fde507a071e8bb47d16010a94ffa1744fe37ab0181e15c2195e491c",
+      "returncode": 1,
+      "script_sha256": "39905e9ddf2f4daf5213e114a8ed6a2ab0c0e8b3d14a87404e68bab09c10915e",
+      "seconds": 3.893227730994113,
+      "source_sha256": "9b166dd8cda3a02cf3155c616c3450515d6ac090bd55b38cc325fdde81e78fbd"
+    },
+    {
+      "label": "negative-address",
+      "log_sha256": "5647d1d4ae5418ff11f8fee8ec9d1129f250728b7d2d1b0a169f0187dc1ac8d4",
+      "returncode": 1,
+      "script_sha256": "b60757fc765bc8654b6080160975653ad9fcdda3003f7576ae4dd943f4881945",
+      "seconds": 2.192254502995638,
+      "source_sha256": "b17f31c523aaaab57378e301710b19b7825a574eeb1a36e552a9872a7c0d9500"
+    },
+    {
+      "label": "negative-mask",
+      "log_sha256": "13dfce7d08e0623b9c4ef4db0ba392099fa8c7245a538a41e8b95fb96c801a0e",
+      "returncode": 1,
+      "script_sha256": "22d440698711d31c120fe95b76cf96a7c08efac401c7cbb5327aa458a5e385cd",
+      "seconds": 3.8010084260022268,
+      "source_sha256": "300bd082ffd06000104cdb049b6559cff06639292b4b923646eb9635f7816752"
+    },
+    {
+      "label": "negative-payload",
+      "log_sha256": "6a2b44e885a1a30ac5442222d178da7eeb2e7fd788b7a8e8c0351765fc0468e9",
+      "returncode": 1,
+      "script_sha256": "1dad93e5b65fc38ea8763b7e993dab93a0e36548a6ec8c6a9aafb8bfe8e72ebc",
+      "seconds": 1.5684801919851452,
+      "source_sha256": "fe13dbad90852c5cc9fd5654c567facbad437312f52ed8fda282585db30f999f"
+    },
+    {
+      "label": "negative-reset",
+      "log_sha256": "7575f91b380192026d352bbaf7b8c66505b468446550ce8fcafb70fb23bf1e89",
+      "returncode": 1,
+      "script_sha256": "8e3856b0ab84aeafe9cba65340120e5798dcdbd499e9261de477e1e9b3a74ac0",
+      "seconds": 2.0766074229904916,
+      "source_sha256": "5bc416ababdcf3b48b9a6ef1f7bf9d1e30aaf6132011e891c2d0f687b45084e6"
+    },
+    {
+      "label": "negative-advance",
+      "log_sha256": "3e03eb0d4d80d7f7a9ef0bb5e52ef3e5ea8fafc3968067c1dd47cfa6ace6c8f3",
+      "returncode": 1,
+      "script_sha256": "017e9c5c0f10e2d0cfc7f8d24d632c6803547427723e459e016c5197e67953dc",
+      "seconds": 3.5848463590082247,
+      "source_sha256": "00b28ce67a72213686696117c3b72facd8452a22f232d68dba940e28559fb813"
+    },
+    {
+      "label": "negative-pipeline",
+      "log_sha256": "c69476aa79a1ee6c3c2afa89a1b521bbaf320063d4d0d6095fe294399f2d01a5",
+      "returncode": 1,
+      "script_sha256": "a545acdf7beebac2646e161784faab1bebff22ff70f86faf4bd62111b731e206",
+      "seconds": 2.8047039470111486,
+      "source_sha256": "605f139086d517a490653acadbc91ddd0f0f80ec9acfda605cd9d8d093c8aa32"
+    }
+  ],
+  "mutations_rejected": 7,
+  "observation_factors": [
+    "command_ready_equal",
+    "response_valid_equal",
+    "write_ready_equal",
+    "advance_equal",
+    "read_address_equal",
+    "write_enable_equal",
+    "write_address_equal",
+    "write_payload_equal",
+    "response_payload_equal_0",
+    "response_payload_equal_1",
+    "response_payload_equal_2",
+    "response_payload_equal_3",
+    "response_payload_equal_4",
+    "response_payload_equal_5",
+    "response_payload_equal_6",
+    "response_payload_equal_7",
+    "response_payload_equal_8",
+    "response_payload_equal_9",
+    "response_payload_equal_10",
+    "response_payload_equal_11",
+    "response_payload_equal_12",
+    "response_payload_equal_13",
+    "response_payload_equal_14",
+    "response_payload_equal_15",
+    "response_payload_equal_16",
+    "response_payload_equal_17",
+    "response_payload_equal_18",
+    "response_payload_equal_19",
+    "response_payload_equal_20",
+    "response_payload_equal_21",
+    "response_payload_equal_22",
+    "response_payload_equal_23",
+    "response_payload_equal_24",
+    "response_payload_equal_25",
+    "response_payload_equal_26",
+    "response_payload_equal_27",
+    "response_payload_equal_28",
+    "response_payload_equal_29",
+    "response_payload_equal_30",
+    "response_payload_equal_31",
+    "response_payload_equal_32",
+    "response_payload_equal_33",
+    "response_payload_equal_34"
+  ],
+  "pid": 2164897,
+  "plan_sha256": "2f25e5ca4d62b73e17da510f9919315adeb96b880a1e85c0f2dc3c4b25632d54",
+  "predecessor_timeout_preserved": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-controller-round53-v3-20261112/evidence/v1-failure.json",
+  "process_state": "R",
+  "proof_boundary": {
+    "cut_meaning": "Read data is arbitrary independently on every host edge; controller and pipeline only.",
+    "exact_reversal_checked": true,
+    "memory_contents_proved": false,
+    "original_memory_dimensions": [
+      512,
+      81
+    ],
+    "read_data_cut_original": "assign data_read_data_async_data = data[data_read_data_async_addr];",
+    "read_data_cut_replacement": "assign data_read_data_async_data = proof_read_word;",
+    "read_ports": 35,
+    "write_ports": 1
+  },
+  "proof_receipts": [
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "reset",
+      "log_sha256": "7fec32c97167ecaae41c858f765b4ce680a6f73271550e08a8f0d5f2cfd42e50",
+      "returncode": 0,
+      "script_sha256": "2661a3448c31a644b1234e68918f4e7d1d8694736070b54e9103b0f79ad207c1",
+      "seconds": 1.8215496510092635,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-control_relation",
+      "log_sha256": "375cef95f1595488b0f535bc0fe4441080ea62bd75b0366bc0aa7b8bcfae2ef7",
+      "returncode": 0,
+      "script_sha256": "017e2899637ec41124aa19b218b54ed1dbf5e0eae4ac59c3efa78f4613831451",
+      "seconds": 2.6129700470191892,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-pipeline_relation",
+      "log_sha256": "68e3fe43ebdb0df379c36ede1d547629c978621c34f22a9a72289fc40848e636",
+      "returncode": 0,
+      "script_sha256": "d79f04675fe2cffd198ca3352c557d7980859e455ea27ce9e9be47b015a513fe",
+      "seconds": 1.8212917240161914,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_0",
+      "log_sha256": "1fe8d4d62133eb79fd398d3994c23bfd1fcadd97d784351f4411624ed34ca249",
+      "returncode": 0,
+      "script_sha256": "2615a2e49ecfe5807606fee2daf742c00a7148dcd317d9d750d43cb78da7334f",
+      "seconds": 2.5994852769945282,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_1",
+      "log_sha256": "02d6eb309e609c3cb66e82b1547a58f607000d6ccc5c76eebd5d72e90de38789",
+      "returncode": 0,
+      "script_sha256": "29147122e7b0d8f0e63cf6dd5207dfb6dbde71184f85122e70bd8a7ab0254d80",
+      "seconds": 2.451035467995098,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_2",
+      "log_sha256": "143150ad50c9931b36f773502d92f5a76c81f4c7ea0f891b402371cebbf85dd4",
+      "returncode": 0,
+      "script_sha256": "9cddffdff30715bdb1fea031f2d538ce2388df274870a6315dbbf0092d8cc08f",
+      "seconds": 2.4930984679958783,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_3",
+      "log_sha256": "864479386b2e1216894035c538495423763e71a2bf9676517bc343fe325f8b5e",
+      "returncode": 0,
+      "script_sha256": "d7753b1b68128af86f3b6ebea4bf2a8e9a82dfa25b728b2ae1fbfbe8189b9874",
+      "seconds": 2.4889927309995983,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_4",
+      "log_sha256": "a84b667be3f9a60da0c580d6ecd665d9e8c638babb1d51518457b4428585fab9",
+      "returncode": 0,
+      "script_sha256": "faf56404de50f02268121610ca661820c957971dd0a45155636db1f683b77512",
+      "seconds": 2.4475744729861617,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_5",
+      "log_sha256": "e92dbffb5548077998cc7a5f570ac8de48c808557d6bf487e1e3ae1d82148657",
+      "returncode": 0,
+      "script_sha256": "baa4b548bc1216fc116e3dbb9718c9d8b1d3ce067a768c711dbebe46d8629fef",
+      "seconds": 2.495049871999072,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_6",
+      "log_sha256": "8662358498bfbdcec81e963ed1ec15c81a6270c6157b3ee54a4fe2ffc94f8a33",
+      "returncode": 0,
+      "script_sha256": "a42a07bca76ff873a085820993adb114ba4161d2b5edc5170d991068fc344944",
+      "seconds": 2.497862223011907,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_7",
+      "log_sha256": "3b3c979aec5fece85990d1acf41adf90b8884636096817975442d98a2b705ed8",
+      "returncode": 0,
+      "script_sha256": "72aac59e981bf2ef7cd7761fcdfee1cd47d62baba2e54aaf54b360784bf26278",
+      "seconds": 2.4974303810158744,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_8",
+      "log_sha256": "5ee9ac2e424bef0b0d668f059acbbdae7c6a8d3d2001c6f84f0fbe0d36c389d3",
+      "returncode": 0,
+      "script_sha256": "cffad74cb3efbb66b6aa63d61d7ed000917c185a30b06882fef7aba7d8d0044a",
+      "seconds": 2.5523892620112747,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_9",
+      "log_sha256": "6319bdbaa3d67f78b663ce79c309db429814f73d74cab430712be81940004317",
+      "returncode": 0,
+      "script_sha256": "c51980a35ddbfec20d45c95db8d37182e0f59ec359e26408293da21bf3d3365a",
+      "seconds": 2.7093240589892957,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_10",
+      "log_sha256": "3410958ab0f30c1a7a6b062403be12c8fbc0a47e7b8dcddfbb65920239d0bfc5",
+      "returncode": 0,
+      "script_sha256": "f78efe07f09a4a004754f5eca6b487b791e2e74d6703dc89d235d29856f3d7c1",
+      "seconds": 2.445149353996385,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_11",
+      "log_sha256": "ea64bcaf6ae7722a1a7fd253aa9ade1edfaf4722b17caa4d9c356dce5480da8b",
+      "returncode": 0,
+      "script_sha256": "800b80ae3f2713249760111977197eea2e5aa32c1d13a9a12bc33a8e0e0290a8",
+      "seconds": 2.5487428559863474,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_12",
+      "log_sha256": "786c6e7d84c65d9b234d41e0f04a3c619ad02dd9b7d475327d01d7d21df66d44",
+      "returncode": 0,
+      "script_sha256": "8d7b6f1fb7aca2ad7bdb67498b61e665eac5734dd1e536105ddaba7a55c19d91",
+      "seconds": 2.5439640829863492,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_13",
+      "log_sha256": "c628d1fa9189c408a3ac4ab4089901283e0df0a8cb16ff41add3394701415d13",
+      "returncode": 0,
+      "script_sha256": "a90cefdcf76894164348b54f80e02d7bede5dfd603477a4ad596c71f587939d5",
+      "seconds": 2.4968081730185077,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_14",
+      "log_sha256": "8bc969ed8cea5545714b28b8a08c71902b948d493f99eadd3fe5c928f7f5cc08",
+      "returncode": 0,
+      "script_sha256": "8d2d8735ce39d9a4869fe07d9826de2fed9490f85d7e4ab2e152915704cf2700",
+      "seconds": 2.4346306009974796,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_15",
+      "log_sha256": "b2277cd91b08e4d61850be5953d9bb22fc0964da6765a80b8dfac12a52227ed2",
+      "returncode": 0,
+      "script_sha256": "4e29939d83eb6bc538b42d2c962e1b9c8fc44cf02ed77a623ba7e93a1d7d49cb",
+      "seconds": 2.4971651190135162,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_16",
+      "log_sha256": "9c74699d3b7235ea84ab4e48e27a573f1c0a3029603c8aac9c3b71ca8d10af88",
+      "returncode": 0,
+      "script_sha256": "e8afed98563e8c826e976507911660d90667f8faa561fe80ee227c8894d6e77b",
+      "seconds": 2.489449174987385,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_17",
+      "log_sha256": "9c90f01962f12d3e0511a458524ed3ed5fdd736d6b0b8a085be2977950ade810",
+      "returncode": 0,
+      "script_sha256": "ce6ee65ca94ccddd4080e8859356c28c38a9d67a1671aa5d8cf07a37f64ba411",
+      "seconds": 2.501053363987012,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_18",
+      "log_sha256": "d2de08c4078d8eca50232451fb242d682de4515d6b30a56dd0bac0e74a865033",
+      "returncode": 0,
+      "script_sha256": "0de577f42076becd63068c98c42316e7464ab928aa25bda4352ed16e5abec79f",
+      "seconds": 2.4528728629811667,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_19",
+      "log_sha256": "60e265ef87e3d50534c2aaea597e0777119485398b65947e364317d0361717b8",
+      "returncode": 0,
+      "script_sha256": "29fd03a04ce13bbd8dac544f8c34fde00b3d07c13025d33e47519ae348389fd5",
+      "seconds": 2.8473416470224038,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_20",
+      "log_sha256": "008e01df0d80562bd906cea3c495b0b83cb8e4df5a3867bc2fe92ed922b57132",
+      "returncode": 0,
+      "script_sha256": "29ec9e889169654f82581f1062cc9709e2e6d8f8a68a990dca81f7f6b072ec6e",
+      "seconds": 2.5386375699890777,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_21",
+      "log_sha256": "97cebd85c734a615b54d60a936832ad206b21fa34c38f757ac519082c0b09ce3",
+      "returncode": 0,
+      "script_sha256": "edcf067ec5353c567da672e4d3eee082a21f5a8b9384403011bf2a742e57e463",
+      "seconds": 2.4887688609887846,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_22",
+      "log_sha256": "83ff74cf763c01072f1099a74e4555da437be92184792098fa51ef3130c8161d",
+      "returncode": 0,
+      "script_sha256": "78fb2200745edb1c6af7a7fb7cec6e1be823d8ae379d4f13ef8f6762aa3097f9",
+      "seconds": 2.537079919973621,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_23",
+      "log_sha256": "82c9146abd543895f48c3090c2c687dfc1caf7f2f1252119366901d3ed9dde0f",
+      "returncode": 0,
+      "script_sha256": "3cdd13d1f3c3759e583d40f1d5cd671ab3409b0f734d0be3a74b88f70a62218d",
+      "seconds": 2.5451415090064984,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_24",
+      "log_sha256": "bdbd9999407f036154c7e6375a6d26f531d2b63227fd18fa475c689905bea15b",
+      "returncode": 0,
+      "script_sha256": "7cf497a44744363b0ff947f545332d0554950b59d7b2bf339a71f182b245e3f9",
+      "seconds": 2.6012434549920727,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_25",
+      "log_sha256": "83e401c3e8eb92fcf0665e66d0b18f27f1a3bfc8c5b6c836d5f0958d176722d2",
+      "returncode": 0,
+      "script_sha256": "b5d2436cdcf8deed5426700773064f8fa32420fb9b34634922006878269c6904",
+      "seconds": 2.5466548599943053,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_26",
+      "log_sha256": "7634aa7e41a769312e4a052540d81647f0e3025f075c0d80537a112adb1ff39b",
+      "returncode": 0,
+      "script_sha256": "f4ceaa3af9cb0fc08f882c277af1c980f998c0b6f671c5ea48ae97100a60ddd7",
+      "seconds": 2.503710665012477,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_27",
+      "log_sha256": "d0c328a4016941fce3ca6b0a1807a057f92f4d6706c131efb32a669612606761",
+      "returncode": 0,
+      "script_sha256": "4f50e16e8a23cf2fb0c5105231be09c21901002f7fd87c6ebb64c317a4b4bc21",
+      "seconds": 2.5011866329878103,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_28",
+      "log_sha256": "ea3ab7b35ae0a9a5ed3e17f39030c0a3b3e1469dd3d95804ae69f1e411be76d6",
+      "returncode": 0,
+      "script_sha256": "ebaa03d900c1be8e3b0b4f652f45a93be88101a617dae5c4402c5613de103131",
+      "seconds": 2.553295504010748,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_29",
+      "log_sha256": "0a98060365481d11134e8d1d843431d58bdab6435ed6e7d82af0aacaebd24051",
+      "returncode": 0,
+      "script_sha256": "ba4685a7faa99f4c88cda281e9ec730550ab29e445c1874ed2da49baad370c59",
+      "seconds": 2.3971899789758027,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_30",
+      "log_sha256": "b0f4c0e90ee2583c7aad8fc9ea6eb6dbfde4b4f4d6f2de8023397ff052b95afc",
+      "returncode": 0,
+      "script_sha256": "204d298b35eb5f9e30441b70340349652e2a1431a8b32e577769c4b93911ce06",
+      "seconds": 2.4968818869965617,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_31",
+      "log_sha256": "e60b694f08a2d8bc5759348e534df9c2a25956dcc14d62760330e4070feedb6b",
+      "returncode": 0,
+      "script_sha256": "7b3cbf863d882d3ad0c7f7a649600b1e30f82a6f812ebcfed9e2d354519fbf75",
+      "seconds": 2.5433646950114053,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_32",
+      "log_sha256": "0f23c9a77b8ffc6fca185956b6a554ccd6881b34c5324f8f7ff657ca11942841",
+      "returncode": 0,
+      "script_sha256": "c179b8aa969e6c80780070ea3cbd87290a185a184a43c8c5685be51ce22fd6e4",
+      "seconds": 2.4948446240159683,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_33",
+      "log_sha256": "9a651982f57d93b71e711e419135661c05490b87c0a1a3a43249833453657752",
+      "returncode": 0,
+      "script_sha256": "8e75c94f6406ca5cffa4d1a683f57100f0485f4c13242451374561f3189d3c04",
+      "seconds": 2.555271066026762,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "adopted_from": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v2-20261112",
+      "exact_observer_extension_only": true,
+      "label": "step-payload_relation_34",
+      "log_sha256": "65e1cacd5d7bd778e78586c266b7e82e66f0cfd3b8189ed4664899263ba4c084",
+      "returncode": 0,
+      "script_sha256": "acd66ae63f8bab285c41297720025e2cd4daaa04395dc34ddcf34f4e5c1c8c13",
+      "seconds": 2.4465736059937626,
+      "source_sha256": "b95e86c86703943b6ad6d3b2838861b4b7206b5539c6256246894d94927fda5f"
+    },
+    {
+      "label": "observations-command_ready_equal",
+      "log_sha256": "c702946512d10be0f1b7f408681275cbbe5f4acc4c4a5717ac5d44c4c5256faf",
+      "returncode": 0,
+      "script_sha256": "f355004b47354bb8d50962339e114f3857f01830c7f8ea0b8c9f353f168ea48c",
+      "seconds": 1.606009762006579,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_valid_equal",
+      "log_sha256": "744664080fab015628948ac6bcaa7aabe816beaa7b59443dd25c1e2c4002f4a2",
+      "returncode": 0,
+      "script_sha256": "c5818d608dd94527f4f332b5c344e0d44b3ad3f809384bd88a72376d66be532c",
+      "seconds": 1.6167126950167585,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-write_ready_equal",
+      "log_sha256": "f051523216f56c3cbefe9d0c46165b797cba6b7fa8c24f527e534a707e489e79",
+      "returncode": 0,
+      "script_sha256": "b124f71434d427b1d19b12ce5ba71289fd06e44268b3bace7a99eebf86465729",
+      "seconds": 1.6664541689970065,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-advance_equal",
+      "log_sha256": "deb74469eeb759abac3f9193677862bf576b877b2f2e90e851fae13840465616",
+      "returncode": 0,
+      "script_sha256": "1b0bd57a02c6fa166983fdc49380708170e6b7c2f2540380af5047401fdb8631",
+      "seconds": 1.6625034890021197,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-read_address_equal",
+      "log_sha256": "fa25babf93c34ba2b5373e4b5bc95e74df25f41057d9b8b5dc5e21ae4aa733e6",
+      "returncode": 0,
+      "script_sha256": "9d08d87dc9d0eff44acc47d49de98c9068357fe4089d75ce2e83d84681b954c0",
+      "seconds": 1.666882596007781,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-write_enable_equal",
+      "log_sha256": "86f37c183a73d848d418c8cc7c83b26dc7508b571b0f972114d7c158a7d8ab6e",
+      "returncode": 0,
+      "script_sha256": "2c683c7c2d4ebcbc5e05dad65d464b09492bbf566ca79bd447f8b88c98354e97",
+      "seconds": 1.6595261949987616,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-write_address_equal",
+      "log_sha256": "eba5aa861767e2a3dde1f3294cddae5be50c6a9a4c0b70057e00b62e2fd745bc",
+      "returncode": 0,
+      "script_sha256": "acf288cb17004d203b18fcb9e5f2c9b08e5f821431857161cb35d1e69be3dbdb",
+      "seconds": 1.454934710985981,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-write_payload_equal",
+      "log_sha256": "d51d0b118103c9e164037074fd1fcb7d3d252654f2202d3c704f0d08279a9a5e",
+      "returncode": 0,
+      "script_sha256": "30e918c737b89f476ada0e09e6276bf375b2bda78b60536b04c9270e15bb0d9e",
+      "seconds": 1.4673963469977025,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_0",
+      "log_sha256": "61bf340d527bcc09b686deb49cb493a5006ffe905db64ce309bafb44f5561f20",
+      "returncode": 0,
+      "script_sha256": "b700c1a0a90c420ac6c8a4cd9b8cd2b759eaa8acd59cba8acce844192aa1be38",
+      "seconds": 1.6628493779862765,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_1",
+      "log_sha256": "23d115f0c2ad93296b7d31cdcc66ddbe8a755de5c5770d5d642e75322aa3764a",
+      "returncode": 0,
+      "script_sha256": "61e1921283a5765369c1630172cd95f2137b0a59261ffb1b6a9934537dd10ae2",
+      "seconds": 1.6651371639745776,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_2",
+      "log_sha256": "c1bdbed12109e4ec5a11562db187ff15a6b097aabcd4460f5b7a7294555d5972",
+      "returncode": 0,
+      "script_sha256": "f6c95cd31e2b8a58de367accd19bd4c44d0a893a3f70aa8a2eb8f00452fd7177",
+      "seconds": 1.6692152240138967,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_3",
+      "log_sha256": "f7a3e13bee2350f114dee41db8e16ae554dfbfba781ede98e15d6e27828bac43",
+      "returncode": 0,
+      "script_sha256": "44437ba563218d32a79e1856019f0310fcfd17a25f958667e07c69e43051710c",
+      "seconds": 1.6136389859893825,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_4",
+      "log_sha256": "e304203d7eb4a3d3bf0bfdab7070b0c5a7e1ba4606b82e8bd72c81682fd05189",
+      "returncode": 0,
+      "script_sha256": "aec78ac8f58eaad3b58dfae8e41794609a820298e1242bc8b2cb419018bf52b2",
+      "seconds": 1.6136970160005149,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_5",
+      "log_sha256": "b13a8110158eda352709644cb7727e5cd250534cd2bab6c3a997f65c03839bae",
+      "returncode": 0,
+      "script_sha256": "1377b3b99f7289d464164c05d5e20e89499c54c203a0ddcb5e0d7077a9bd7c41",
+      "seconds": 1.6215956090018153,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_6",
+      "log_sha256": "c42524a6cef4565bdc1dda235aaa4e1829556ae30ff77b70abb1368cc72d5cab",
+      "returncode": 0,
+      "script_sha256": "ebd292316301a405dc58f1412972d811b82b3536e38a2ac4d455dbb60f5910c8",
+      "seconds": 1.6094855569826905,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_7",
+      "log_sha256": "01c3e6d0dbb54a5a6fb00656465824ab06777bc0076418ab8e597e8b20a2be1a",
+      "returncode": 0,
+      "script_sha256": "d10c1be267769a095e3f0bb365086dbff54fb71b22bc3285ac8e00505a01c6a4",
+      "seconds": 1.6092332330008503,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_8",
+      "log_sha256": "69362d573210b6570ff8d9bf9f5a0da34197f5d22359d7d952aeaa4bc7baa3cb",
+      "returncode": 0,
+      "script_sha256": "b9c207f609c55046f9fe67e6cd6375f2c68d5d6183f8ac1f69eaae4d003e15d5",
+      "seconds": 1.6615611849993002,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_9",
+      "log_sha256": "75fbc7942124b1f19ca55a07f2ffd0df550838aab836562807c737cea460c7d7",
+      "returncode": 0,
+      "script_sha256": "c9f9befce8ad54e2daace0091e7be42347e6a669ff48ffa7f218749bc1f6d354",
+      "seconds": 1.669286142976489,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_10",
+      "log_sha256": "d3146132087ec9997c514d6dd49cf6e0930470f0ad79eabe6e8496386b5a1604",
+      "returncode": 0,
+      "script_sha256": "264bea84c2f13663f76e03e15f645b4a58a629b752773fe924026f2b3cadb7e7",
+      "seconds": 1.6637048170086928,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_11",
+      "log_sha256": "b76f205833a65fd134bfe151863fc0da9fba1f6e009ab323f7a433df8a8d637f",
+      "returncode": 0,
+      "script_sha256": "9435256159efaf4c81859e71ef82c1995b8abf581287e1a00cdee031b48a01ce",
+      "seconds": 1.6680662389844656,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_12",
+      "log_sha256": "ff9f42c3a03c9966033f887d0d724a0a0345eae3972f04d2a5cee028da259960",
+      "returncode": 0,
+      "script_sha256": "c9cf816e8a208f56436ad31fbf6b784c60329defb44de28551e5748910f350e9",
+      "seconds": 1.618370098003652,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_13",
+      "log_sha256": "a43ba2dcbc9fd9925fdb34336b5a1de2cfe8b5858d30708e93dffaa907587393",
+      "returncode": 0,
+      "script_sha256": "eea2693c486961c421a68f69f0db3aca00680ec4d91d30372dcc70bd8e14d3d9",
+      "seconds": 1.6638468909950461,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_14",
+      "log_sha256": "921b7f46369621198fd87e6964f09ca75719bd8e2d49425ec825ddbbb423ce87",
+      "returncode": 0,
+      "script_sha256": "1c0cf9d1c589b294b6ff45076d1f12cd51bbbe333c39ac4fa82ececfa78c51b8",
+      "seconds": 1.6647205129847862,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_15",
+      "log_sha256": "97ced2e8a829a3436c587a4f3f6642f2481d1e8019cec00d39ec6a9e4299ade5",
+      "returncode": 0,
+      "script_sha256": "58b483df4b287a187bddcdc4010bc7e757ab69354f04b78cc72bf4221d91df8c",
+      "seconds": 1.6160861350072082,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_16",
+      "log_sha256": "e411e0e934c4472071e79c9e06634133a3d42c9ce6b99129cfa204dae38b70bd",
+      "returncode": 0,
+      "script_sha256": "850dffd7214715c5d6295f19925f641f066b3ff7de636a3f199ed7b00ad44f29",
+      "seconds": 1.621541039989097,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_17",
+      "log_sha256": "65ce8bc5bbcc2aa8fa267ae21a23aa212d18208149fc77d7c355ba58cf88df04",
+      "returncode": 0,
+      "script_sha256": "1ab7a933323cc178cc6d19c69980ce2c7350f0526577e362b2a147b891ca9202",
+      "seconds": 1.6135181660065427,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_18",
+      "log_sha256": "6bb04016bbe6b251c683bf2fe17682ba62c4bac13b24ec76dd87746986fab631",
+      "returncode": 0,
+      "script_sha256": "c68dff2d374b6e26e8f8364a8b10e3670dffd8da13a9cb943c5d962e22b7d4c6",
+      "seconds": 1.6606528630072717,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_19",
+      "log_sha256": "7a582459ae2e69d6fcde480f70fd2dbc01381a84095d11b7994df90ac6650929",
+      "returncode": 0,
+      "script_sha256": "e64a7435fe766a683323f259b5746ff66bb9b324a5ef6648b00b6954f0cc9f9a",
+      "seconds": 1.6173276100016665,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_20",
+      "log_sha256": "8b4960a0cf87957da8e9f53e2753b491e2da35b8a6c94ef42887c1e1148060a3",
+      "returncode": 0,
+      "script_sha256": "5a3e96ce27b56f34c7a726f89066d53d7098983545bfaecce604df3c06f993bc",
+      "seconds": 1.6150752260000445,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_21",
+      "log_sha256": "f178c57b72c58e31b06817d54c32eb38f85bd503052bbf877c6fc6063d7089f6",
+      "returncode": 0,
+      "script_sha256": "7e4e37cc582198d350022dd792b935600786de789fe3ffe1219236431a0e8c7b",
+      "seconds": 1.6650941059924662,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_22",
+      "log_sha256": "f33c8d983c170f004b818311b357edf761da5283526666f0f93b49f8776f49d6",
+      "returncode": 0,
+      "script_sha256": "1802adfb9b58b89249049e62ee9a961d6739358e2ebc2c923893725d62e7360c",
+      "seconds": 1.6173691419826355,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_23",
+      "log_sha256": "ba888e006a8ee27fbdd8de1e4d9d7cfa72c32d59fd4c3068081e25d27d0a4bd2",
+      "returncode": 0,
+      "script_sha256": "90d67d4e8a8d318505482e260e198db3b94c1c093a6a0d49d154a4b27718d4d3",
+      "seconds": 1.665306923998287,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_24",
+      "log_sha256": "9ba02b721d7f28c2e4c291dbeda014abc0224e608838a2dec893ab00ec5852cb",
+      "returncode": 0,
+      "script_sha256": "29f40180f48cb0abc954165070e05219b3f4c6043b1a831a6fba9c88217cb76a",
+      "seconds": 1.6135409279959276,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_25",
+      "log_sha256": "4712e8dc13bce3251a34b678d066c0885070ef0877e781af5a7c7871d106d52a",
+      "returncode": 0,
+      "script_sha256": "6649cab3b7da56bdf6221e50b82b320c9967ac9ec08863bccffe8bcfb5e7d61a",
+      "seconds": 1.6173417019890621,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_26",
+      "log_sha256": "4010e06db7eae877e55dfa4695e2e0025cd2e3384a539cc0aef4976c2f7298ea",
+      "returncode": 0,
+      "script_sha256": "bfe15e70462cccc04635f9f54f9b0203556f0ce2bb8cec6985e37dd28a933a7e",
+      "seconds": 1.6175105139845982,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_27",
+      "log_sha256": "4971c5f37a74c2d48fa54f60fbddb82134950433784f866445b80fa88b748c1d",
+      "returncode": 0,
+      "script_sha256": "8a46037419b23e000c539595777222e8889158e7532ec76e4e7cb444ca4f674f",
+      "seconds": 1.6211280279967468,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_28",
+      "log_sha256": "f593459cf1a7163d80a2373dde4002ca12346942ebce667d65a9781f2ac632ee",
+      "returncode": 0,
+      "script_sha256": "fb9eabf119aa87e018b40f9b0f18f82b1f0fd3f0218ca3ee21a3caa2d2cd97a7",
+      "seconds": 1.6173591440019663,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_29",
+      "log_sha256": "d3476b6901e0cee0207d03c0ef272ed78067b80cab3411ffb9960f8d0b22b790",
+      "returncode": 0,
+      "script_sha256": "99bc3013a75d7da48daac7d28d34376bd6a2c2ac727af8fb505d4305da126cc0",
+      "seconds": 1.6580982429732103,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_30",
+      "log_sha256": "bcde4d770ffcdf70de04f4e524309618ebf6347dbf9a892564f93e7db057f910",
+      "returncode": 0,
+      "script_sha256": "21067333d848388974185ebc3761644bc403e90dea6a2d657f6f04b6de393cfc",
+      "seconds": 1.6086401210050099,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_31",
+      "log_sha256": "209286f4d4585a376d88c3d31eee74ab48556fafb0ad9fb7bef06e24cc2608dc",
+      "returncode": 0,
+      "script_sha256": "e0d1352da9e0de5fbea674c56f6a6db0ff7419267c0572a3cffdb27ec1aacb7d",
+      "seconds": 1.6095392639981583,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_32",
+      "log_sha256": "4664ef4b2a30fb59adc6bfd20366f2e5385733d4497192408043697e70d6eb87",
+      "returncode": 0,
+      "script_sha256": "7a996611d6b855558945900a37ab73461bcb7db9f3d061416a67fec058fda8fa",
+      "seconds": 1.641384766990086,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_33",
+      "log_sha256": "5089e65dc44928dd95370449c57e2e0e428942699ab918475f48319f346bfcdb",
+      "returncode": 0,
+      "script_sha256": "c4c63572e7179453a3caee533edca73c1d9329faba6c4f66d8dd50c98279d0d2",
+      "seconds": 1.6651941210147925,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "observations-response_payload_equal_34",
+      "log_sha256": "d676fdd4a4d1fc4e0c72a0a6d6d0059977e8ae292e6fc74088bbb2e3da356026",
+      "returncode": 0,
+      "script_sha256": "416c25428d6eb4d89876c5730ed25b23de9e8997ad135e4f1767a52c6832ea5a",
+      "seconds": 1.6091638309881091,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    },
+    {
+      "label": "read-before-write",
+      "log_sha256": "0b58cfd0f0694b94cfedecac2468ea8fa7850c22ba09ef2b6f086f5f3154bcb2",
+      "returncode": 0,
+      "script_sha256": "f4a41b617a6056026b6f1918ced52833278e1a23d7d545256d32c4d4daf4d274",
+      "seconds": 1.405381346005015,
+      "source_sha256": "bd3b9e656561e5c28a4d8a846951e40ba3db5a8980d0ce29f9935975b792bce3"
+    }
+  ],
+  "readers": 35,
+  "ready_valid_stability_assumption": false,
+  "reset_from_arbitrary_controller_state": true,
+  "rss_bytes": 16224256,
+  "schema": "ec-owner-ram-controller-proof/1",
+  "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+  "stage_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v3-20261112/negative-pipeline.log",
+  "start_ticks": "23273379",
+  "started_utc": "2026-11-11T18:16:53.420910+00:00",
+  "status": "PASS_ACTUAL_35R1W_RAM_CONTROLLER_AND_PAYLOAD_RELATIONAL_INDUCTION_WITH_SYMBOLIC_READ_CUT",
+  "target_changed": false,
+  "universal_related_state_induction": true,
+  "updated_utc": "2026-11-11T18:18:22.397945+00:00",
+  "v2_timeout_preserved": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-controller-round53-v3-20261112/evidence/v2-failure.json",
+  "whole_fit": false
+}

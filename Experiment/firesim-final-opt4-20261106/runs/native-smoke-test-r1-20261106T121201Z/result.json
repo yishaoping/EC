@@ -1,0 +1,90 @@
+{
+  "checker_latency": null,
+  "counts": null,
+  "drain_cycles": null,
+  "driver_returncode": 0,
+  "driver_stop_after_guest_powerdown": false,
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T121201Z/diagnostic-trace-C0": "9b69638da62117bf15a259e009911da4f2710dc479c8a1be2a51be676aa3d719",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T121201Z/heartbeat.csv": "e03e0edce01dd177aaba848ca1d62011e8e2f0f6718d07a0df6231102c3f40d5",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T121201Z/host.log": "542866c0cb7acbdbe1689a76e14d09c486df1993b106391c3967720aa90b629c",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T121201Z/latency_histogram.csv": "7348bacc4d184cc676cfcf89f8d0ec40dd28eeaa86ae0f6fefa797b43dc6d210",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T121201Z/manifest.json": "6c3f0b5ebaa7dd901605ae6822be58cc8bffebf438eab4775f10371ebb9ac7c9",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T121201Z/memory_stats0.csv": "6679c5006d14d8413ec36ba18171c1f179c0196e04b362e4af778b06baad416e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T121201Z/roi-raw.jsonl": "8a0a8205aa2fb81aa47a63ac099b8b08c43fb96ff76760fd3eacbfb792322616",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T121201Z/snapshot.json": "6aa091bd16f7af0cae9c608415a7817601855cb6a800db4b57ca6f5b9234d4bd",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T121201Z/state.json": "6aa091bd16f7af0cae9c608415a7817601855cb6a800db4b57ca6f5b9234d4bd",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T121201Z/uart.in": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T121201Z/uart.log": "87920989ca788d3a45a7c31d1d6d6f0e1c099d2c4c2082da145d70073c2d2b72"
+  },
+  "fased_readback": {
+    "readLatency": 30,
+    "readMaxReqs": 4,
+    "relaxFunctionalModel": 0,
+    "writeLatency": 30,
+    "writeMaxReqs": 4
+  },
+  "formal": false,
+  "fpga_execution": true,
+  "guest_power_down_observed": false,
+  "host_wall_seconds": 120.96235207654536,
+  "identity": {
+    "apps_manifest_sha256": "9c59fd0424f57c2d2387e61c8a30703c044d497b10620f4c15c67f147e8406bf",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:e2:00.0",
+    "board_serial": "21770433G001A",
+    "case": null,
+    "configuration": "Native",
+    "driver_receipt_sha256": "d5a615cc0928ebce6c285d04003dab39e10123f8a144ba30775485965eb9bcea",
+    "driver_sha256": "9cfeb80105d39d9cd9e0bc86979f298893aea154bb6a5f28587ae29722bd68c6",
+    "elf_sha256": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8",
+    "firmware_receipt_sha256": "0e9ee156d9cd6583d5c508ebd19e22fe7d1346e2257b8e92306d65c650cb1734",
+    "firmware_sha256": "a79e0091f5de6b78809188184104144ad8fddcfc3731bdcd28f6507d4612c878",
+    "formal": false,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "input": "test",
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "program": "smoke",
+    "repetition": 1,
+    "rootfs_sha256": "a33e7b7d5a6ae0810b69c91b9b256fa8c2a5a6376cd76ac865b26048dfb5aff1",
+    "run_id": "native-smoke-test-r1-20261106T121201Z",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "b7d8180828dac0a9a9cc2a7e186fb0561b7b184e466ec98c886b7f120c070f22",
+  "issues": [
+    "host timeout",
+    "incomplete Native ROI boundaries/transport",
+    "missing successful application command exit",
+    "missing unique successful output validation"
+  ],
+  "participation": null,
+  "raw": {
+    "epochs": [],
+    "file_sha256": "8a0a8205aa2fb81aa47a63ac099b8b08c43fb96ff76760fd3eacbfb792322616",
+    "formal_sample_eligible": false,
+    "last_sequence": 7,
+    "parsed_records": 8,
+    "partial_tail_bytes": 0,
+    "protocol_issues": [],
+    "runtime_validation": "NOT_ESTABLISHED_BY_RAW_LOG",
+    "schema": "ec-dac-b-raw-roi/1",
+    "warning": "Raw ROI boundaries only. Output/job identity, runtime timebase checks and the formal host collector are still required."
+  },
+  "roi_cycles": null,
+  "schema": "ec-isolated-fpga-result/1",
+  "timedout": true,
+  "valid": false
+}

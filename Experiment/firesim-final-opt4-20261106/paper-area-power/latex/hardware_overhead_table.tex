@@ -1,0 +1,30 @@
+% Requires graphicx (available in the ACM/DAC template).
+\begin{table}[t]
+\centering
+\caption{FPGA resource usage of the EC Performance-Only prototype (\texttt{6fada307}) after full-shell logic optimization in Vivado 2021.1. Counts describe mapped resources before placement/routing; they are not the incremental area of full PALIMPSEST.}
+\label{tab:ec-fpga-resources}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrrrr}
+\hline
+Component & LUTs & Registers & BRAM36-eq. & DSPs \\
+\hline
+BOOM/L1 and local control & 418,603 & 199,156 & 32 & 36 \\
+Shared L2 and coherence & 16,117 & 7,278 & 292 & 0 \\
+SVB & 64,699 & 20,711 & 0 & 0 \\
+LSLs (four) & 15,172 & 14,332 & 16 & 0 \\
+Checker domains, excluding LSLs & 276,644 & 275,182 & 8 & 76 \\
+GHM CDC and GH\_BUF & 122,369 & 380,975 & 0 & 0 \\
+Other target logic & 11,501 & 13,308 & 4 & 0 \\
+FireSim host and harness & 14,372 & 16,995 & 193 & 0 \\
+FPGA shell and interfaces & 84,210 & 91,236 & 133.5 & 3 \\
+\hline
+Total & 1,023,687 & 1,019,173 & 678.5 & 115 \\
+U280 utilization & 78.52\% & 39.09\% & 33.66\% & 1.27\% \\
+\hline
+\end{tabular}%
+}
+\vspace{2pt}
+\parbox{\columnwidth}{\scriptsize Disjoint resource partition: child resources are excluded from parent groups; LUT-sharing residuals are retained. Registers include one AND/OR primitive (1,019,172 flip-flops). BRAM36-eq. is $658+41/2$; URAM usage is zero; CARRY8 usage is 15,706 (9.64\%). FAME-hoisted BOOM register-file RAM models are assigned to BOOM. Routing failed, so no final post-route area, timing-closed frequency, or measured board power is reported.}
+\end{table}

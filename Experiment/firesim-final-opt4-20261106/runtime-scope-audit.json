@@ -1,0 +1,77 @@
+{
+  "schema": "ec-firesim-runtime-scope-audit/1",
+  "observed_utc": "2026-11-06T10:33:23.692292+00:00",
+  "sources": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/main/scala/util/DacRoi.scala": "e41828d04b47ad2a209defc28c700113e3a74e53451e00a846c0ab63df9c4ed2",
+    "/data1/gzh/EC/firesim/dac2026/checker-v6/ec_dac_roi.c": "de9581ea53e922731319ed73ba077ffe84aeeaf9fc1a67f6b735151308c53056",
+    "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/streamcluster/src/streamcluster.cpp": "5214d638429348e8aad3a83bb9ffdeec25ba95263c6d0ccd182a828afae72efc",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala": "92c65bd8130abe53db7eb75c830958f8ffdbb2f97aef93ca2074abef02912ac0"
+  },
+  "observations": [
+    {
+      "status": "PROVEN_SOURCE",
+      "finding": "C4 DacRoiController sets fault bit 8 if trap, non-user privilege, or satp change while ROI running (or ended and busy).",
+      "path": "firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/main/scala/util/DacRoi.scala",
+      "line": 76
+    },
+    {
+      "status": "PROVEN_SOURCE",
+      "finding": "Linux driver declares scope=user_no_trap_one_mm and one context per boot.",
+      "path": "firesim/dac2026/checker-v6/ec_dac_roi.c",
+      "line": 276
+    },
+    {
+      "status": "PROVEN_SOURCE",
+      "finding": "Original Streamcluster ROI encloses streamCluster, including stderr writes and output open/write/close. Original ROI must not be moved to hide this.",
+      "path": "Software/PARSEC/pkgs/kernels/streamcluster/src/streamcluster.cpp",
+      "line": 2031
+    },
+    {
+      "status": "UNPROVEN_RUNTIME",
+      "finding": "Canneal/Blackscholes computational ROI may avoid synchronous syscalls, but timer interrupts remain unsupported and have not been validated on DUT."
+    },
+    {
+      "status": "PROVEN_SOURCE_LIMIT",
+      "finding": "PACKAGE_RESULT logs current seq/status/full_compare at result queue enqueue. When package_result_waiting is selected, queue bits use saved seq/status. This observer is not a general independent proof of matching for that path.",
+      "path": "firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/main/scala/rocket/RocketCore.scala",
+      "line": 1538
+    }
+  ],
+  "strict_latency": {
+    "status": "UNAVAILABLE",
+    "reason": "No proven paired BOOM execution-complete and Rocket full-compare-complete timestamps for same validation unit on a verified common clock; PACKAGE_BEGIN is not BOOM completion."
+  },
+  "modifications_made_to_bypass_scope": false,
+  "fpga_validation": "NOT_RUN",
+  "requirements_before_formal": [
+    "Resolve or demonstrate handling of original ROI traps/interrupts without changing algorithm, input or ROI.",
+    "Validate positive generated/completed/passed counts, zero faults/unmatched tasks, full comparison path, real drain and firmware parked mask.",
+    "Do not infer PASS from elaboration, QEMU software execution or guest DONE alone."
+  ],
+  "software_syscall_diagnostic": "Experiment/firesim-final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/result.json",
+  "software_syscall_findings": {
+    "streamcluster": {
+      "write": 2,
+      "openat": 1,
+      "newfstatat": 1,
+      "close": 1
+    },
+    "canneal": {},
+    "blackscholes": {}
+  },
+  "updated_utc": "2026-11-06T12:11:28.090639+00:00",
+  "staged_streamcluster_candidate": {
+    "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/streamcluster-staged-diagnostic-20261106T115645Z/result.json",
+    "status": "QEMU_REFERENCE_MATCH_AND_NO_SYNCHRONOUS_ROI_SYSCALLS",
+    "original_parsec_roi_hook_sites_preserved": true,
+    "synthetic_test_simsmall_only": true,
+    "fpga_validation": "NOT_RUN",
+    "installed_in_current_rootfs": false,
+    "same_for_native_and_correction_required": true,
+    "limitations": [
+      "staged IO changes external IO scheduling and preallocates memory; label software profile, do not claim unmodified binary",
+      "original file input path still unsupported",
+      "asynchronous interrupts and checker execution/drain still unvalidated"
+    ]
+  }
+}

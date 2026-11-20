@@ -1,0 +1,7 @@
+{
+  "kind": "observed compiler failure before retry",
+  "source_log": "netdedup-linger-20261107T105517Z/build.log (superseded by retry; observation preserved)",
+  "observed_error": "dedup_client.c:17:10: fatal error: debug.h: No such file or directory",
+  "fix": "Added existing original client header directory via -I; no application/hardware change",
+  "evidence_boundary": "Observation from first read, not a reconstructed full compiler log"
+}

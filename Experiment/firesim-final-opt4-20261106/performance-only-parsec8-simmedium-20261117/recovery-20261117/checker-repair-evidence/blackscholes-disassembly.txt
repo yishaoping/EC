@@ -1,0 +1,21 @@
+
+/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-formal-20261106T123109Z/blackscholes:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+0000000000010f60 <_Z9bs_threadPv+0x27a>:
+   10f60:	7bcb0007          	0x7bcb0007
+   10f64:	c01958f7          	0xc01958f7
+   10f68:	0975fbd3          	fsub.s	fs7,fa1,fs7
+   10f6c:	21399553          	fneg.s	fa0,fs3
+   10f70:	11257553          	fmul.s	fa0,fa0,fs2
+   10f74:	370000ef          	jal	ra,112e4 <__expf>
+   10f78:	10a4f4d3          	fmul.s	fs1,fs1,fa0
+   10f7c:	ecb1                	bnez	s1,10fd8 <_Z9bs_threadPv+0x2f2>
+   10f7e:	1174f4d3          	fmul.s	fs1,fs1,fs7
+   10f82:	67a2                	ld	a5,8(sp)
+   10f84:	01a98733          	add	a4,s3,s10
+   10f88:	0d11                	addi	s10,s10,4
+   10f8a:	488af4c7          	fmsub.s	fs1,fs5,fs0,fs1
+   10f8e:	          	fsw	ft0,0(zero) # 0 <_nl_current_LC_CTYPE>

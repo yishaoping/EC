@@ -1,0 +1,166 @@
+{
+  "argv": [
+    "python3",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_repetitions.py",
+    "Native",
+    "--program",
+    "swaptions",
+    "--input",
+    "simmedium",
+    "--repetitions",
+    "3",
+    "--timeout",
+    "14400",
+    "--bdf",
+    "0000:e2:00.0",
+    "--apps-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/swaptions-preallocated-apps-build.json",
+    "--rootfs-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/swaptions-preallocated-rootfs-build.json",
+    "--firmware-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/swaptions-preallocated-firmware-build.json",
+    "--driver-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json"
+  ],
+  "child_pid": 1521998,
+  "completed_commands": [
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-queue-logs/Native-swaptions-test-20261107T050755Z.log",
+      "returncode": 0,
+      "stage": "swaptions-test"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-queue-logs/Native-swaptions-simsmall-20261107T050856Z.log",
+      "returncode": 0,
+      "stage": "swaptions-simsmall"
+    }
+  ],
+  "configuration": "Native",
+  "heartbeat_utc": "2026-11-07T05:02:55.892111+00:00",
+  "host_boot_id": "09ba1a37-9f6d-4a9e-ad1b-9c057e9ad64c",
+  "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-queue-logs/Native-swaptions-formal3-20261107T051113Z.log",
+  "no_deployment_or_global_operations": true,
+  "pid": 1308726,
+  "plan_sha256": "cec0dfb79093c91117f28d0233f4fe7cbeb533799c3115d3b5d91b72f387e64d",
+  "schema": "ec-full-suite-queue/1",
+  "stage": "swaptions-formal3",
+  "start_ticks": "525656",
+  "started_utc": "2026-11-07T05:02:55.889673+00:00",
+  "status": "RUNNING",
+  "tasks": {
+    "blackscholes": {
+      "status": "OWNED_BY_EXISTING_PRIORITY_QUEUE"
+    },
+    "bodytrack": {
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/bodytrack-firmware-build.json"
+      ],
+      "status": "WAITING_SOFTWARE"
+    },
+    "canneal": {
+      "status": "OWNED_BY_EXISTING_PRIORITY_QUEUE"
+    },
+    "dedup": {
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/dedup-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/dedup-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/dedup-firmware-build.json"
+      ],
+      "status": "WAITING_SOFTWARE"
+    },
+    "facesim": {
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/facesim-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/facesim-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/facesim-firmware-build.json"
+      ],
+      "status": "WAITING_SOFTWARE"
+    },
+    "ferret": {
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/ferret-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/ferret-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/ferret-firmware-build.json"
+      ],
+      "status": "WAITING_SOFTWARE"
+    },
+    "fluidanimate": {
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fluidanimate-firmware-build.json"
+      ],
+      "status": "WAITING_SOFTWARE"
+    },
+    "freqmine": {
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/freqmine-firmware-build.json"
+      ],
+      "status": "WAITING_SOFTWARE"
+    },
+    "netdedup": {
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/netdedup-firmware-build.json"
+      ],
+      "status": "WAITING_SOFTWARE"
+    },
+    "netferret": {
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/netferret-firmware-build.json"
+      ],
+      "status": "WAITING_SOFTWARE"
+    },
+    "netstreamcluster": {
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netstreamcluster-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netstreamcluster-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/netstreamcluster-firmware-build.json"
+      ],
+      "status": "WAITING_SOFTWARE"
+    },
+    "raytrace": {
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/raytrace-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/raytrace-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/raytrace-firmware-build.json"
+      ],
+      "status": "WAITING_SOFTWARE"
+    },
+    "streamcluster": {
+      "status": "OWNED_BY_EXISTING_PRIORITY_QUEUE"
+    },
+    "swaptions": {
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/swaptions-preallocated-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/swaptions-preallocated-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/swaptions-preallocated-rootfs-build.json"
+      },
+      "status": "RUNNING"
+    },
+    "vips": {
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/vips-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/vips-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/vips-firmware-build.json"
+      ],
+      "status": "WAITING_SOFTWARE"
+    },
+    "x264": {
+      "missing": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/x264-apps-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/x264-rootfs-build.json",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/x264-firmware-build.json"
+      ],
+      "status": "WAITING_SOFTWARE"
+    }
+  }
+}

@@ -1,0 +1,777 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------
+| Tool Version      : Vivado v.2021.1 (lin64) Build 3247384 Thu Jun 10 19:36:07 MDT 2021
+| Date              : Sun Nov 15 10:54:54 2026
+| Host              : devjz-ubt20-s01 running 64-bit Ubuntu 20.04.6 LTS
+| Command           : report_timing -delay_type min -max_paths 20 -input_pins -nets -file hold.rpt
+| Design            : GH_FIFO_SC_Reference
+| Device            : xcu280-fsvh2892
+| Speed File        : -2L  PRODUCTION 1.29 11-17-2020
+| Temperature Grade : E
+---------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[13]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_0_reg[13]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[13] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[13]
+    SLICE_X81Y136        FDRE                                         r  mem_0_reg[13]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X81Y136        FDRE                                         r  mem_0_reg[13]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X81Y136        FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_0_reg[13]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[21]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_0_reg[21]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[21] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[21]
+    SLICE_X37Y99         FDRE                                         r  mem_0_reg[21]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X37Y99         FDRE                                         r  mem_0_reg[21]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X37Y99         FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_0_reg[21]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[26]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_0_reg[26]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[26] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[26]
+    SLICE_X46Y111        FDRE                                         r  mem_0_reg[26]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X46Y111        FDRE                                         r  mem_0_reg[26]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X46Y111        FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_0_reg[26]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[29]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_0_reg[29]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[29] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[29]
+    SLICE_X106Y87        FDRE                                         r  mem_0_reg[29]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X106Y87        FDRE                                         r  mem_0_reg[29]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X106Y87        FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_0_reg[29]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[2]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_0_reg[2]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[2] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[2]
+    SLICE_X63Y124        FDRE                                         r  mem_0_reg[2]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X63Y124        FDRE                                         r  mem_0_reg[2]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X63Y124        FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_0_reg[2]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[35]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_0_reg[35]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[35] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[35]
+    SLICE_X39Y112        FDRE                                         r  mem_0_reg[35]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X39Y112        FDRE                                         r  mem_0_reg[35]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X39Y112        FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_0_reg[35]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[48]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_0_reg[48]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[48] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[48]
+    SLICE_X104Y127       FDRE                                         r  mem_0_reg[48]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X104Y127       FDRE                                         r  mem_0_reg[48]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X104Y127       FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_0_reg[48]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[54]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_0_reg[54]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[54] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[54]
+    SLICE_X41Y126        FDRE                                         r  mem_0_reg[54]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X41Y126        FDRE                                         r  mem_0_reg[54]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X41Y126        FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_0_reg[54]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[57]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_0_reg[57]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[57] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[57]
+    SLICE_X37Y122        FDRE                                         r  mem_0_reg[57]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X37Y122        FDRE                                         r  mem_0_reg[57]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X37Y122        FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_0_reg[57]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[58]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_0_reg[58]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[58] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[58]
+    SLICE_X106Y146       FDRE                                         r  mem_0_reg[58]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X106Y146       FDRE                                         r  mem_0_reg[58]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X106Y146       FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_0_reg[58]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[73]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_0_reg[73]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[73] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[73]
+    SLICE_X41Y148        FDRE                                         r  mem_0_reg[73]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X41Y148        FDRE                                         r  mem_0_reg[73]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X41Y148        FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_0_reg[73]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[10]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_100_reg[10]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[10] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[10]
+    SLICE_X72Y137        FDRE                                         r  mem_100_reg[10]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X72Y137        FDRE                                         r  mem_100_reg[10]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X72Y137        FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_100_reg[10]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[12]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_100_reg[12]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[12] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[12]
+    SLICE_X63Y154        FDRE                                         r  mem_100_reg[12]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X63Y154        FDRE                                         r  mem_100_reg[12]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X63Y154        FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_100_reg[12]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[14]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_100_reg[14]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[14] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[14]
+    SLICE_X94Y128        FDRE                                         r  mem_100_reg[14]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X94Y128        FDRE                                         r  mem_100_reg[14]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X94Y128        FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_100_reg[14]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[15]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_100_reg[15]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[15] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[15]
+    SLICE_X106Y110       FDRE                                         r  mem_100_reg[15]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X106Y110       FDRE                                         r  mem_100_reg[15]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X106Y110       FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_100_reg[15]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[25]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_100_reg[25]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[25] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[25]
+    SLICE_X71Y154        FDRE                                         r  mem_100_reg[25]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X71Y154        FDRE                                         r  mem_100_reg[25]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X71Y154        FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_100_reg[25]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[27]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_100_reg[27]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[27] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[27]
+    SLICE_X37Y82         FDRE                                         r  mem_100_reg[27]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X37Y82         FDRE                                         r  mem_100_reg[27]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X37Y82         FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_100_reg[27]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[29]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_100_reg[29]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[29] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[29]
+    SLICE_X104Y86        FDRE                                         r  mem_100_reg[29]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X104Y86        FDRE                                         r  mem_100_reg[29]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X104Y86        FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_100_reg[29]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[39]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_100_reg[39]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[39] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[39]
+    SLICE_X74Y117        FDRE                                         r  mem_100_reg[39]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X74Y117        FDRE                                         r  mem_100_reg[39]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X74Y117        FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_100_reg[39]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+Slack (VIOLATED) :        -0.080ns  (arrival time - required time)
+  Source:                 io_enq_bits[49]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_100_reg[49]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.012ns  (logic 0.000ns (0.000%)  route 0.012ns (100.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.030ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.030ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[49] (IN)
+                         net (fo=256, unset)          0.012     0.012    io_enq_bits[49]
+    SLICE_X76Y92         FDRE                                         r  mem_100_reg[49]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X76Y92         FDRE                                         r  mem_100_reg[49]/C
+                         clock pessimism              0.000     0.030    
+    SLICE_X76Y92         FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.062     0.092    mem_100_reg[49]
+  -------------------------------------------------------------------
+                         required time                         -0.092    
+                         arrival time                           0.012    
+  -------------------------------------------------------------------
+                         slack                                 -0.080    
+
+
+
+

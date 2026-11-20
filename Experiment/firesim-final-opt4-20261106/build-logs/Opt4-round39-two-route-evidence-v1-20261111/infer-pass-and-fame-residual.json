@@ -1,0 +1,32 @@
+{
+  "causal_chain": {
+    "downstream": "Full MT+MCRams compiler continuation remains blocked; existing MCRams parity and route B CAD continue independently",
+    "immediate": "The original FAME module transformer removes input Clock ports that are not its clock-channel inputs; their original internal connects remain (source-supported)",
+    "symptom": "FAME validation rejects six undeclared Clock references (proven)",
+    "upstream": "Post-channel input roots differ; the separate pre-excision proof below establishes their original two master-clock roots"
+  },
+  "changed_clock_annotations": 12,
+  "constraints": [
+    "Never tie clocks based only on equal rational frequency or name",
+    "Do not delete retained target connections or observations to pass validation",
+    "Keep the exact pre-excision feedback-clock proof bound to any further isolated compiler repair",
+    "No target RTL or live input changes, no core-sharing or area claim"
+  ],
+  "exact_circuit_object_preserved": true,
+  "full_fame_validation_passed": false,
+  "host_output_admitted": false,
+  "inferred_model_port_annotations": 3183,
+  "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mt-clock-repair-round39-v2-20261111/original-pass-check.log",
+  "log_sha256": "7e9279aa87729fa0698fc38dad707b849fe4713c169739007e627e20337989b2",
+  "missing_references": [
+    "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_clock_sr_out",
+    "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_clock_sr_out",
+    "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_clock_sr_out",
+    "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_clock_sr_out",
+    "lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_auto_clock_sr_out",
+    "lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_clock_0"
+  ],
+  "original_and_restored_clock_mutation_rejected": true,
+  "original_infer_pass": true,
+  "preserved_channels": 1747
+}

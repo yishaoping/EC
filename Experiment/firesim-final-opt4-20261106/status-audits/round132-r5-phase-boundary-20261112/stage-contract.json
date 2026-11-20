@@ -1,0 +1,89 @@
+{
+  "schema": "ec-round132-bound-r5-stage-contract/1",
+  "utc": "2026-11-12T07:50:17.660239+00:00",
+  "source_checks": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r5-20261112/application.py": {
+      "expected": "00b3f6ada0abb9af60199b32249dd7f0c9782988de5e24c05c848f844d9c0a72",
+      "actual": "00b3f6ada0abb9af60199b32249dd7f0c9782988de5e24c05c848f844d9c0a72",
+      "match": true
+    },
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r5-20261112/audit.tcl.in": {
+      "expected": "93f1dd6c8d4e57ce4b053f36ce83741228b630a9b308dc4076a534d29a266f5b",
+      "actual": "93f1dd6c8d4e57ce4b053f36ce83741228b630a9b308dc4076a534d29a266f5b",
+      "match": true
+    },
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r5-20261112/certificate.py": {
+      "expected": "4de4d5bca59df344eaf8e8fd98b82ecade56d2bb9b9fbb8ba55c13a6b96dfa1c",
+      "actual": "4de4d5bca59df344eaf8e8fd98b82ecade56d2bb9b9fbb8ba55c13a6b96dfa1c",
+      "match": true
+    },
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r5-20261112/controller.py": {
+      "expected": "f69e1dd20d7d050ba237eb0d2e0c6ddd8af44ba33fa75c96f2c2974b3bf0e0d7",
+      "actual": "f69e1dd20d7d050ba237eb0d2e0c6ddd8af44ba33fa75c96f2c2974b3bf0e0d7",
+      "match": true
+    },
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r5-20261112/hostclock-interface-audit.json": {
+      "expected": "1157c8f1974f129e570977a60c3f6827a96a282646bef021ec72a2cf5260d65b",
+      "actual": "1157c8f1974f129e570977a60c3f6827a96a282646bef021ec72a2cf5260d65b",
+      "match": true
+    },
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r5-20261112/install.py": {
+      "expected": "48b3f38024a431ae88b60e967c51bfb7c23077e6be7ae5a82262ea406f6ac39d",
+      "actual": "48b3f38024a431ae88b60e967c51bfb7c23077e6be7ae5a82262ea406f6ac39d",
+      "match": true
+    },
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r5-20261112/physical-clock-contract.json": {
+      "expected": "1a52165b57e61a5079780d905ab41f58652cab5b6f06e5d3233f4028de25f6c4",
+      "actual": "1a52165b57e61a5079780d905ab41f58652cab5b6f06e5d3233f4028de25f6c4",
+      "match": true
+    },
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r5-20261112/recover.tcl.in": {
+      "expected": "ff9f490cb91438c8460a0c23327732865f6c47e46eb2009eff6f1d67ef9fe576",
+      "actual": "ff9f490cb91438c8460a0c23327732865f6c47e46eb2009eff6f1d67ef9fe576",
+      "match": true
+    },
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r5-20261112/runtime.py": {
+      "expected": "057d8360bc3d9b18a3d177206f415f0fbc40743ed2dd132005acbaac1c2a0096",
+      "actual": "057d8360bc3d9b18a3d177206f415f0fbc40743ed2dd132005acbaac1c2a0096",
+      "match": true
+    },
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r5-20261112/shell-nets.tcl": {
+      "expected": "a621ec7be47feab4154ecd1aa0decd77e186b3fae762b6b91a9ba632324a1466",
+      "actual": "a621ec7be47feab4154ecd1aa0decd77e186b3fae762b6b91a9ba632324a1466",
+      "match": true
+    }
+  },
+  "inputs_sha256": "f10f4a6062c0d21695240423818f7ee778d3490e6699c58538d32390acdc225d",
+  "template_sha256": "ff9f490cb91438c8460a0c23327732865f6c47e46eb2009eff6f1d67ef9fe576",
+  "ordered_stage_markers": [
+    "snapshot physical",
+    "route_design -directive Explore -tns_cleanup",
+    "snapshot routed",
+    "if {[lindex $s 0]>=0 && [lindex $s 1]<0}",
+    "phys_opt_design -hold_fix",
+    "snapshot hold-fixed",
+    "route_design -directive Explore -tns_cleanup",
+    "snapshot routed-hold-fixed",
+    "clock_contract",
+    "snapshot final",
+    "report_route_status",
+    "report_drc",
+    "setup/hold gate failed",
+    "route coverage failed",
+    "DRC errors",
+    "clock coverage failed",
+    "pulse width failed",
+    "bus skew failed",
+    "write_bitstream -force",
+    "EC_SVB_HOST40_BITSTREAM_COMPLETE"
+  ],
+  "hold_fix_predicate": "routed WNS >= 0 and routed WHS < 0",
+  "first_route_success_does_not_certify": true,
+  "router_intermediate_timing_is_not_snapshot": true,
+  "negative_routed_setup_skips_hold_fix_and_reaches_unchanged_final_gate": true,
+  "automatic_next_strategy": "F after actual E failure; existing controller only",
+  "forbidden_bound_source_changes": false,
+  "process_signals": [],
+  "new_jobs": [],
+  "full_source_revalidation_repeated": false
+}

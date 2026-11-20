@@ -1,0 +1,14 @@
+[
+  [
+    "  val installedImage = Reg(Vec(nSets, Vec(nWays, new CacheImageKey)))",
+    "  val installedImage = Mem(nSets * nWays, new CacheImageKey)"
+  ],
+  [
+    "    installedImage(installSet)(installWay) := mshrs.io.install.bits.image",
+    "    installedImage.write(Cat(installSet, installWay), mshrs.io.install.bits.image)"
+  ],
+  [
+    "installedImage(refillReqSet)(refillReqWay).asUInt",
+    "installedImage.read(Cat(refillReqSet, refillReqWay)).asUInt"
+  ]
+]

@@ -1,0 +1,91 @@
+{
+  "build_script_sha256": "cf36b112a62bfc72a5f00ad208e2192a5dd13ef5ef5e68e09e27d017c7b636f2",
+  "commands": [
+    [
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/linux/scripts/config",
+      "--file",
+      "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T070914Z/.config",
+      "--enable",
+      "RISCV_SBI_V01",
+      "--enable",
+      "SERIAL_EARLYCON_RISCV_SBI",
+      "--enable",
+      "HVC_RISCV_SBI",
+      "--enable",
+      "PRINTK_TIME"
+    ],
+    [
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/linux/scripts/config",
+      "--file",
+      "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T070914Z/.config",
+      "--set-str",
+      "INITRAMFS_SOURCE",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/rootfs-dedup-raw-20261107T070914Z/initramfs.cpio.raw"
+    ],
+    [
+      "make",
+      "-j2",
+      "O=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T070914Z",
+      "ARCH=riscv",
+      "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+      "HOSTCC=/usr/bin/gcc",
+      "HOSTCXX=/usr/bin/g++",
+      "olddefconfig"
+    ],
+    [
+      "make",
+      "-j2",
+      "O=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T070914Z",
+      "ARCH=riscv",
+      "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+      "HOSTCC=/usr/bin/gcc",
+      "HOSTCXX=/usr/bin/g++",
+      "Image",
+      "vmlinux"
+    ]
+  ],
+  "configuration": "Native",
+  "content_checks": {
+    "memory_profile": "firesim-final-phys36-fullram",
+    "roi_driver_object": "0e8715bd4344f6d79b836efd9c99035e0ceba0e93cd21787072ef27ab95c8894",
+    "same_rootfs": "7ed974c4b2639c38c101cf34449fda69c8967a56580a570b2ebee2059fe726c5"
+  },
+  "error": null,
+  "fpga_execution": "NOT_RUN",
+  "input_files": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/linux-profile.json": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/dedup-staged-raw-rootfs-build.json": "c161a227bd5a3a3bf131f677096e43b59cee741a0933bac89127ec77f196b259",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/rootfs-dedup-raw-20261107T070914Z/initramfs.cpio.raw": "7ed974c4b2639c38c101cf34449fda69c8967a56580a570b2ebee2059fe726c5"
+  },
+  "output_dir": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T070914Z",
+  "outputs": {
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T070914Z/vmlinux": "ef11da5ab2f495ca01b5d0ac6ad06bb22950bc801cc34cea91c4cbf7057f996c",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T070914Z/arch/riscv/boot/Image": "ad546aa15aa1082269500513235bb048a3d43435306f23b0274fcc13a164cc1b",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T070914Z/.config": "2e1bff2380641dd49a6a783ef0e7980e96471809b1b899a570c75218e1fd5ccb",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T070914Z/drivers/misc/ec_dac_roi.o": "0e8715bd4344f6d79b836efd9c99035e0ceba0e93cd21787072ef27ab95c8894"
+  },
+  "phase": "kernel",
+  "resources": {
+    "actual_build_root": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds",
+    "available_memory_gib": 466.27125549316406,
+    "free_disk_gib": 359.8615379333496,
+    "host_cpus": 256,
+    "jobs": 16,
+    "load_1min": 1.7060546875,
+    "log_free_disk_gib": 43.20879364013672
+  },
+  "returncode": 0,
+  "runtime_validation": "NOT_RUN",
+  "schema": "ec-firesim-system-build/1",
+  "source_id": "5e984a6cbb3e5363bb373b71f9f7bb1aa750e325f8e5ad5a77c6011f66d77789",
+  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/linux",
+  "tool_hashes": {
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ld": "10424f5eeafd5806fbca7b88bdae336c202be5a9fa332c1a662a8d0a7ae62fba",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objcopy": "2a38397dae082b022b6370eb9fbfac9c337b95433fc89cb35d384516a0997f1e"
+  },
+  "wall_seconds": 11.885244420000163,
+  "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/canneal-formal-kernel-build.json",
+  "parent_receipt_sha256": "6411230362ec61f49f17c4897b5d22309d7b8af9b57a3c0eb848947f54492548",
+  "integration_change": "Enable the earlycon=sbi backend already requested by DT; no DUT/app/input/ROI edits"
+}

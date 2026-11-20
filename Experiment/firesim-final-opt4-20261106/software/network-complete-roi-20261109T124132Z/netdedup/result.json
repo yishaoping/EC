@@ -1,0 +1,101 @@
+{
+  "architecture": "riscv64",
+  "binaries": {
+    "client/netdedup_client": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-linger-20261107T105517Z/netdedup_client",
+      "sha256": "8e3ca2b226616fb8f74a069d99d9bcb0615c4655a4108ddffe3be46f95c5aaa8"
+    },
+    "server/netdedup": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-framed-20261107T111246Z/netdedup/server/netdedup",
+      "sha256": "b6a40cb5bf266d993af0c0442faa9b2f8bbaa0c56f239550d0df0fdfc7920989"
+    }
+  },
+  "children": {
+    "client": {
+      "cmdline": "nice -n 15 /usr/bin/qemu-riscv64 -strace /data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/diagnostic-netdedup/netdedup/client/netdedup_client -i test.dat ",
+      "pid": 2973849,
+      "process_state": "R",
+      "start_ticks": "3981400"
+    },
+    "server": {
+      "cmdline": "nice -n 15 /usr/bin/qemu-riscv64 -strace /data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/diagnostic-netdedup/netdedup/server/netdedup -c -v -t 1 -o out.ddp ",
+      "pid": 2973850,
+      "process_state": "R",
+      "start_ticks": "3981400"
+    }
+  },
+  "client_argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/diagnostic-netdedup/netdedup/client/netdedup_client",
+    "-i",
+    "test.dat"
+  ],
+  "correctness": {
+    "decoded_sha256": "dc122cd797e76d1e0b07efe6262829098581816f1727d9a883bd4052a4e659ef",
+    "input_sha256": "dc122cd797e76d1e0b07efe6262829098581816f1727d9a883bd4052a4e659ef",
+    "method": "decode entire compressed stream and byte SHA256 versus original input",
+    "passed": true
+  },
+  "ended_utc": "2026-11-09T12:41:33.912178+00:00",
+  "exit_codes": {
+    "client": 0,
+    "server": 0
+  },
+  "formal_eligible": false,
+  "fpga_run": false,
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "input": "test",
+  "input_archive": {
+    "path": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/inputs/input_test.tar",
+    "sha256": "ada9fb08b78e630669e433d975d3fcd9ef88f6e9b31f8969c3a6566e94f72f0a"
+  },
+  "mapping_note": "simmedium invokes original simlarge for netstreamcluster; netdedup candidate separates server/client flags and uses unchanged formal archive",
+  "namespaces": {
+    "ipc": "ipc:[4026535151]",
+    "mnt": "mnt:[4026535150]",
+    "net": "net:[4026535152]"
+  },
+  "output": {
+    "bytes": 28,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-complete-roi-20261109T124132Z/netdedup/work/out.ddp",
+    "sha256": "0bac53914c63ca3939aa2977b312b35ee2a440aab8b60ffbbce3ca82b5e1316b"
+  },
+  "pid": 2973838,
+  "private_ipc_namespace": true,
+  "private_mount_namespace": true,
+  "private_network_namespace": true,
+  "program": "netdedup",
+  "roi": "Original application hook sites; diagnostic writes only, no checker claim",
+  "roi_diagnostic": {
+    "begin_seen": true,
+    "end_seen": true,
+    "source": "server.log; diagnostic marker writes remain visible",
+    "syscall_counts": {
+      "brk": 4,
+      "clock_gettime": 307,
+      "clock_nanosleep": 437,
+      "futex": 11,
+      "mmap": 3,
+      "mprotect": 1,
+      "mremap": 2,
+      "munmap": 4,
+      "openat": 1,
+      "write": 7
+    },
+    "time_base": "host QEMU trace order only; no target cycles or checker latency"
+  },
+  "schema": "ec-network-qemu-case/1",
+  "server_argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/diagnostic-netdedup/netdedup/server/netdedup",
+    "-c",
+    "-v",
+    "-t",
+    "1",
+    "-o",
+    "out.ddp"
+  ],
+  "source_receipt_sha256": "6911316ac913ca2a9592ef0217bb6b7fd3b3638fb9a0cc46b18deb5e967680d1",
+  "start_ticks": "3981384",
+  "status": "PROTOCOL_AND_DECODE_PASSED",
+  "trace_enabled": true,
+  "wall_seconds": 0.3419802799980971
+}

@@ -1,0 +1,1517 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version      : Vivado v.2021.1 (lin64) Build 3247384 Thu Jun 10 19:36:07 MDT 2021
+| Date              : Fri Nov 13 10:09:00 2026
+| Host              : devjz-ubt20-s01 running 64-bit Ubuntu 20.04.6 LTS
+| Command           : report_timing -delay_type max -path_type full_clock_expanded -max_paths 10 -file /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-checkpoint-timing-r2-20261113/DSP-Candidate/setup-paths.rpt
+| Design            : FPGATop
+| Device            : xcu280-fsvh2892
+| Speed File        : -2L  PRODUCTION 1.29 11-17-2020
+| Temperature Grade : E
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (VIOLATED) :        -4.283ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[0]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        14.187ns  (logic 5.227ns (36.844%)  route 8.960ns (63.156%))
+  Logic Levels:           48  (CARRY8=5 DSP_ALU=2 DSP_C_DATA=1 DSP_OUTPUT=2 LUT2=4 LUT3=10 LUT4=2 LUT5=8 LUT6=14)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_478/O
+                         net (fo=1, unplaced)         0.242     1.599    wideAddDsp_strictWriteReadNextWide_250_2_0_i_478_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_236/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  wideAddDsp_strictWriteReadNextWide_57_2_0_i_298/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_273/O
+                         net (fo=1, unplaced)         0.233     2.489    wideAddDsp_strictWriteReadNextWide_78_3_0_i_273_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_182/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  wideAddDsp_strictWriteReadNextWide_250_2_0_i_781/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_323/O
+                         net (fo=1, unplaced)         0.242     3.427    wideAddDsp_strictWriteReadNextWide_11_1_0_i_323_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_266/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  wideAddDsp_strictWriteReadNextWide_206_3_0_i_916/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_921/O
+                         net (fo=1, unplaced)         0.185     4.309    wideAddDsp_strictWriteReadNextWide_250_2_0_i_921_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_770/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_358/O
+                         net (fo=7, unplaced)         0.210     4.780    wideAddDsp_strictWriteReadNextWide_70_2_0_i_358_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_207/O
+                         net (fo=26, unplaced)        0.240     5.090    wideAddDsp_strictWriteReadNextWide_70_2_0_i_207_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  wideAddDsp_strictWriteReadNextWide_68_3_0_i_195/O
+                         net (fo=3, unplaced)         0.191     5.351    wideAddDsp_strictWriteReadNextWide_68_3_0_i_195_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  wideAddDsp_strictWriteReadNextWide_67_2_0_i_261/O
+                         net (fo=4, unplaced)         0.197     5.586    wideAddDsp_strictWriteReadNextWide_67_2_0_i_261_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  wideAddDsp_strictWriteReadNextWide_65_3_0_i_140/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_181/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.070     6.145 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_83/O
+                         net (fo=4, unplaced)         0.197     6.342    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.070     6.412 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_30/O
+                         net (fo=3, unplaced)         0.191     6.603    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.641 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_145/O
+                         net (fo=2, unplaced)         0.185     6.826    wideAddDsp_strictWriteReadNextWide_65_1_0_i_145_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_71/O
+                         net (fo=2, unplaced)         0.185     7.049    wideAddDsp_strictWriteReadNextWide_65_1_0_i_71_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     7.087 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_140/O
+                         net (fo=2, unplaced)         0.185     7.272    wideAddDsp_strictWriteReadNextWide_65_1_0_i_140_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.342 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_63/O
+                         net (fo=2, unplaced)         0.185     7.527    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.597 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_22/O
+                         net (fo=4, unplaced)         0.197     7.794    wideAddDsp_strictWriteReadNextWide_65_1_0_i_22_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_18/O
+                         net (fo=4, unplaced)         0.197     8.061    wideAddDsp_strictWriteReadNextWide_65_1_0_i_18_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.131 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_15/O
+                         net (fo=4, unplaced)         0.197     8.328    wideAddDsp_strictWriteReadNextWide_65_1_0_i_15_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.398 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_12/O
+                         net (fo=2, unplaced)         0.185     8.583    wideAddDsp_strictWriteReadNextWide_65_1_0_i_12_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.621 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_1/O
+                         net (fo=3, unplaced)         0.173     8.794    wideAddDsp_strictWriteReadNextWide_65_1_0/C[7]
+                         DSP_C_DATA (Prop_DSP_C_DATA_C[7]_C_DATA[7])
+                                                      0.105     8.899 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA_INST/C_DATA[7]
+                         net (fo=2, unplaced)         0.000     8.899    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA.C_DATA<7>
+                         DSP_ALU (Prop_DSP_ALU_C_DATA[7]_COUT[3])
+                                                      0.564     9.463 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU_INST/COUT[3]
+                         net (fo=1, unplaced)         0.000     9.463    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU.COUT<3>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_COUT[3]_CARRYCASCOUT)
+                                                      0.171     9.634 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_OUTPUT_INST/CARRYCASCOUT
+                         net (fo=1, unplaced)         0.004     9.638    wideAddDsp_strictWriteReadNextWide_65_1_1/CARRYCASCIN
+                         DSP_ALU (Prop_DSP_ALU_CARRYCASCIN_ALU_OUT[16])
+                                                      0.474    10.112 r  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU_INST/ALU_OUT[16]
+                         net (fo=1, unplaced)         0.000    10.112    wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU.ALU_OUT<16>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_ALU_OUT[16]_P[16])
+                                                      0.109    10.221 f  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_OUTPUT_INST/P[16]
+                         net (fo=1, unplaced)         0.154    10.375    strictWriteReadNextWide_65_1[64]
+                         LUT6 (Prop_LUT6_I3_O)        0.090    10.465 f  io_error[5]_INST_0_i_1155/O
+                         net (fo=1, unplaced)         0.185    10.650    io_error[5]_INST_0_i_1155_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038    10.688 f  io_error[5]_INST_0_i_371/O
+                         net (fo=1, unplaced)         0.137    10.825    io_error[5]_INST_0_i_371_n_0
+                         LUT6 (Prop_LUT6_I4_O)        0.053    10.878 f  io_error[5]_INST_0_i_95/O
+                         net (fo=1, unplaced)         0.141    11.019    io_error[5]_INST_0_i_95_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.100    11.119 f  io_error[5]_INST_0_i_10/O
+                         net (fo=1, unplaced)         0.137    11.256    io_error[5]_INST_0_i_10_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.053    11.309 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    11.500    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    11.538 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.830    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.868 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    12.081    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    12.153 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    12.371    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    12.498 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    12.503    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    12.555 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    12.746    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    12.784 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    13.041    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    13.079 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    13.401    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    13.439 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    13.699    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    13.737 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.922    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.960 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    14.187    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[0]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[0]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[0]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -14.187    
+  -------------------------------------------------------------------
+                         slack                                 -4.283    
+
+Slack (VIOLATED) :        -4.283ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[10]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        14.187ns  (logic 5.227ns (36.844%)  route 8.960ns (63.156%))
+  Logic Levels:           48  (CARRY8=5 DSP_ALU=2 DSP_C_DATA=1 DSP_OUTPUT=2 LUT2=4 LUT3=10 LUT4=2 LUT5=8 LUT6=14)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_478/O
+                         net (fo=1, unplaced)         0.242     1.599    wideAddDsp_strictWriteReadNextWide_250_2_0_i_478_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_236/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  wideAddDsp_strictWriteReadNextWide_57_2_0_i_298/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_273/O
+                         net (fo=1, unplaced)         0.233     2.489    wideAddDsp_strictWriteReadNextWide_78_3_0_i_273_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_182/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  wideAddDsp_strictWriteReadNextWide_250_2_0_i_781/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_323/O
+                         net (fo=1, unplaced)         0.242     3.427    wideAddDsp_strictWriteReadNextWide_11_1_0_i_323_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_266/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  wideAddDsp_strictWriteReadNextWide_206_3_0_i_916/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_921/O
+                         net (fo=1, unplaced)         0.185     4.309    wideAddDsp_strictWriteReadNextWide_250_2_0_i_921_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_770/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_358/O
+                         net (fo=7, unplaced)         0.210     4.780    wideAddDsp_strictWriteReadNextWide_70_2_0_i_358_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_207/O
+                         net (fo=26, unplaced)        0.240     5.090    wideAddDsp_strictWriteReadNextWide_70_2_0_i_207_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  wideAddDsp_strictWriteReadNextWide_68_3_0_i_195/O
+                         net (fo=3, unplaced)         0.191     5.351    wideAddDsp_strictWriteReadNextWide_68_3_0_i_195_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  wideAddDsp_strictWriteReadNextWide_67_2_0_i_261/O
+                         net (fo=4, unplaced)         0.197     5.586    wideAddDsp_strictWriteReadNextWide_67_2_0_i_261_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  wideAddDsp_strictWriteReadNextWide_65_3_0_i_140/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_181/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.070     6.145 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_83/O
+                         net (fo=4, unplaced)         0.197     6.342    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.070     6.412 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_30/O
+                         net (fo=3, unplaced)         0.191     6.603    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.641 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_145/O
+                         net (fo=2, unplaced)         0.185     6.826    wideAddDsp_strictWriteReadNextWide_65_1_0_i_145_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_71/O
+                         net (fo=2, unplaced)         0.185     7.049    wideAddDsp_strictWriteReadNextWide_65_1_0_i_71_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     7.087 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_140/O
+                         net (fo=2, unplaced)         0.185     7.272    wideAddDsp_strictWriteReadNextWide_65_1_0_i_140_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.342 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_63/O
+                         net (fo=2, unplaced)         0.185     7.527    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.597 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_22/O
+                         net (fo=4, unplaced)         0.197     7.794    wideAddDsp_strictWriteReadNextWide_65_1_0_i_22_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_18/O
+                         net (fo=4, unplaced)         0.197     8.061    wideAddDsp_strictWriteReadNextWide_65_1_0_i_18_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.131 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_15/O
+                         net (fo=4, unplaced)         0.197     8.328    wideAddDsp_strictWriteReadNextWide_65_1_0_i_15_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.398 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_12/O
+                         net (fo=2, unplaced)         0.185     8.583    wideAddDsp_strictWriteReadNextWide_65_1_0_i_12_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.621 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_1/O
+                         net (fo=3, unplaced)         0.173     8.794    wideAddDsp_strictWriteReadNextWide_65_1_0/C[7]
+                         DSP_C_DATA (Prop_DSP_C_DATA_C[7]_C_DATA[7])
+                                                      0.105     8.899 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA_INST/C_DATA[7]
+                         net (fo=2, unplaced)         0.000     8.899    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA.C_DATA<7>
+                         DSP_ALU (Prop_DSP_ALU_C_DATA[7]_COUT[3])
+                                                      0.564     9.463 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU_INST/COUT[3]
+                         net (fo=1, unplaced)         0.000     9.463    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU.COUT<3>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_COUT[3]_CARRYCASCOUT)
+                                                      0.171     9.634 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_OUTPUT_INST/CARRYCASCOUT
+                         net (fo=1, unplaced)         0.004     9.638    wideAddDsp_strictWriteReadNextWide_65_1_1/CARRYCASCIN
+                         DSP_ALU (Prop_DSP_ALU_CARRYCASCIN_ALU_OUT[16])
+                                                      0.474    10.112 r  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU_INST/ALU_OUT[16]
+                         net (fo=1, unplaced)         0.000    10.112    wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU.ALU_OUT<16>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_ALU_OUT[16]_P[16])
+                                                      0.109    10.221 f  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_OUTPUT_INST/P[16]
+                         net (fo=1, unplaced)         0.154    10.375    strictWriteReadNextWide_65_1[64]
+                         LUT6 (Prop_LUT6_I3_O)        0.090    10.465 f  io_error[5]_INST_0_i_1155/O
+                         net (fo=1, unplaced)         0.185    10.650    io_error[5]_INST_0_i_1155_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038    10.688 f  io_error[5]_INST_0_i_371/O
+                         net (fo=1, unplaced)         0.137    10.825    io_error[5]_INST_0_i_371_n_0
+                         LUT6 (Prop_LUT6_I4_O)        0.053    10.878 f  io_error[5]_INST_0_i_95/O
+                         net (fo=1, unplaced)         0.141    11.019    io_error[5]_INST_0_i_95_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.100    11.119 f  io_error[5]_INST_0_i_10/O
+                         net (fo=1, unplaced)         0.137    11.256    io_error[5]_INST_0_i_10_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.053    11.309 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    11.500    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    11.538 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.830    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.868 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    12.081    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    12.153 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    12.371    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    12.498 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    12.503    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    12.555 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    12.746    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    12.784 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    13.041    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    13.079 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    13.401    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    13.439 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    13.699    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    13.737 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.922    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.960 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    14.187    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[10]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[10]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[10]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -14.187    
+  -------------------------------------------------------------------
+                         slack                                 -4.283    
+
+Slack (VIOLATED) :        -4.283ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[11]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        14.187ns  (logic 5.227ns (36.844%)  route 8.960ns (63.156%))
+  Logic Levels:           48  (CARRY8=5 DSP_ALU=2 DSP_C_DATA=1 DSP_OUTPUT=2 LUT2=4 LUT3=10 LUT4=2 LUT5=8 LUT6=14)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_478/O
+                         net (fo=1, unplaced)         0.242     1.599    wideAddDsp_strictWriteReadNextWide_250_2_0_i_478_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_236/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  wideAddDsp_strictWriteReadNextWide_57_2_0_i_298/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_273/O
+                         net (fo=1, unplaced)         0.233     2.489    wideAddDsp_strictWriteReadNextWide_78_3_0_i_273_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_182/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  wideAddDsp_strictWriteReadNextWide_250_2_0_i_781/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_323/O
+                         net (fo=1, unplaced)         0.242     3.427    wideAddDsp_strictWriteReadNextWide_11_1_0_i_323_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_266/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  wideAddDsp_strictWriteReadNextWide_206_3_0_i_916/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_921/O
+                         net (fo=1, unplaced)         0.185     4.309    wideAddDsp_strictWriteReadNextWide_250_2_0_i_921_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_770/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_358/O
+                         net (fo=7, unplaced)         0.210     4.780    wideAddDsp_strictWriteReadNextWide_70_2_0_i_358_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_207/O
+                         net (fo=26, unplaced)        0.240     5.090    wideAddDsp_strictWriteReadNextWide_70_2_0_i_207_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  wideAddDsp_strictWriteReadNextWide_68_3_0_i_195/O
+                         net (fo=3, unplaced)         0.191     5.351    wideAddDsp_strictWriteReadNextWide_68_3_0_i_195_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  wideAddDsp_strictWriteReadNextWide_67_2_0_i_261/O
+                         net (fo=4, unplaced)         0.197     5.586    wideAddDsp_strictWriteReadNextWide_67_2_0_i_261_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  wideAddDsp_strictWriteReadNextWide_65_3_0_i_140/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_181/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.070     6.145 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_83/O
+                         net (fo=4, unplaced)         0.197     6.342    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.070     6.412 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_30/O
+                         net (fo=3, unplaced)         0.191     6.603    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.641 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_145/O
+                         net (fo=2, unplaced)         0.185     6.826    wideAddDsp_strictWriteReadNextWide_65_1_0_i_145_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_71/O
+                         net (fo=2, unplaced)         0.185     7.049    wideAddDsp_strictWriteReadNextWide_65_1_0_i_71_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     7.087 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_140/O
+                         net (fo=2, unplaced)         0.185     7.272    wideAddDsp_strictWriteReadNextWide_65_1_0_i_140_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.342 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_63/O
+                         net (fo=2, unplaced)         0.185     7.527    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.597 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_22/O
+                         net (fo=4, unplaced)         0.197     7.794    wideAddDsp_strictWriteReadNextWide_65_1_0_i_22_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_18/O
+                         net (fo=4, unplaced)         0.197     8.061    wideAddDsp_strictWriteReadNextWide_65_1_0_i_18_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.131 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_15/O
+                         net (fo=4, unplaced)         0.197     8.328    wideAddDsp_strictWriteReadNextWide_65_1_0_i_15_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.398 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_12/O
+                         net (fo=2, unplaced)         0.185     8.583    wideAddDsp_strictWriteReadNextWide_65_1_0_i_12_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.621 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_1/O
+                         net (fo=3, unplaced)         0.173     8.794    wideAddDsp_strictWriteReadNextWide_65_1_0/C[7]
+                         DSP_C_DATA (Prop_DSP_C_DATA_C[7]_C_DATA[7])
+                                                      0.105     8.899 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA_INST/C_DATA[7]
+                         net (fo=2, unplaced)         0.000     8.899    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA.C_DATA<7>
+                         DSP_ALU (Prop_DSP_ALU_C_DATA[7]_COUT[3])
+                                                      0.564     9.463 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU_INST/COUT[3]
+                         net (fo=1, unplaced)         0.000     9.463    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU.COUT<3>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_COUT[3]_CARRYCASCOUT)
+                                                      0.171     9.634 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_OUTPUT_INST/CARRYCASCOUT
+                         net (fo=1, unplaced)         0.004     9.638    wideAddDsp_strictWriteReadNextWide_65_1_1/CARRYCASCIN
+                         DSP_ALU (Prop_DSP_ALU_CARRYCASCIN_ALU_OUT[16])
+                                                      0.474    10.112 r  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU_INST/ALU_OUT[16]
+                         net (fo=1, unplaced)         0.000    10.112    wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU.ALU_OUT<16>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_ALU_OUT[16]_P[16])
+                                                      0.109    10.221 f  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_OUTPUT_INST/P[16]
+                         net (fo=1, unplaced)         0.154    10.375    strictWriteReadNextWide_65_1[64]
+                         LUT6 (Prop_LUT6_I3_O)        0.090    10.465 f  io_error[5]_INST_0_i_1155/O
+                         net (fo=1, unplaced)         0.185    10.650    io_error[5]_INST_0_i_1155_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038    10.688 f  io_error[5]_INST_0_i_371/O
+                         net (fo=1, unplaced)         0.137    10.825    io_error[5]_INST_0_i_371_n_0
+                         LUT6 (Prop_LUT6_I4_O)        0.053    10.878 f  io_error[5]_INST_0_i_95/O
+                         net (fo=1, unplaced)         0.141    11.019    io_error[5]_INST_0_i_95_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.100    11.119 f  io_error[5]_INST_0_i_10/O
+                         net (fo=1, unplaced)         0.137    11.256    io_error[5]_INST_0_i_10_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.053    11.309 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    11.500    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    11.538 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.830    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.868 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    12.081    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    12.153 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    12.371    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    12.498 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    12.503    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    12.555 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    12.746    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    12.784 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    13.041    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    13.079 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    13.401    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    13.439 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    13.699    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    13.737 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.922    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.960 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    14.187    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[11]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[11]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[11]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -14.187    
+  -------------------------------------------------------------------
+                         slack                                 -4.283    
+
+Slack (VIOLATED) :        -4.283ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[12]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        14.187ns  (logic 5.227ns (36.844%)  route 8.960ns (63.156%))
+  Logic Levels:           48  (CARRY8=5 DSP_ALU=2 DSP_C_DATA=1 DSP_OUTPUT=2 LUT2=4 LUT3=10 LUT4=2 LUT5=8 LUT6=14)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_478/O
+                         net (fo=1, unplaced)         0.242     1.599    wideAddDsp_strictWriteReadNextWide_250_2_0_i_478_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_236/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  wideAddDsp_strictWriteReadNextWide_57_2_0_i_298/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_273/O
+                         net (fo=1, unplaced)         0.233     2.489    wideAddDsp_strictWriteReadNextWide_78_3_0_i_273_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_182/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  wideAddDsp_strictWriteReadNextWide_250_2_0_i_781/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_323/O
+                         net (fo=1, unplaced)         0.242     3.427    wideAddDsp_strictWriteReadNextWide_11_1_0_i_323_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_266/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  wideAddDsp_strictWriteReadNextWide_206_3_0_i_916/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_921/O
+                         net (fo=1, unplaced)         0.185     4.309    wideAddDsp_strictWriteReadNextWide_250_2_0_i_921_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_770/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_358/O
+                         net (fo=7, unplaced)         0.210     4.780    wideAddDsp_strictWriteReadNextWide_70_2_0_i_358_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_207/O
+                         net (fo=26, unplaced)        0.240     5.090    wideAddDsp_strictWriteReadNextWide_70_2_0_i_207_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  wideAddDsp_strictWriteReadNextWide_68_3_0_i_195/O
+                         net (fo=3, unplaced)         0.191     5.351    wideAddDsp_strictWriteReadNextWide_68_3_0_i_195_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  wideAddDsp_strictWriteReadNextWide_67_2_0_i_261/O
+                         net (fo=4, unplaced)         0.197     5.586    wideAddDsp_strictWriteReadNextWide_67_2_0_i_261_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  wideAddDsp_strictWriteReadNextWide_65_3_0_i_140/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_181/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.070     6.145 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_83/O
+                         net (fo=4, unplaced)         0.197     6.342    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.070     6.412 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_30/O
+                         net (fo=3, unplaced)         0.191     6.603    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.641 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_145/O
+                         net (fo=2, unplaced)         0.185     6.826    wideAddDsp_strictWriteReadNextWide_65_1_0_i_145_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_71/O
+                         net (fo=2, unplaced)         0.185     7.049    wideAddDsp_strictWriteReadNextWide_65_1_0_i_71_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     7.087 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_140/O
+                         net (fo=2, unplaced)         0.185     7.272    wideAddDsp_strictWriteReadNextWide_65_1_0_i_140_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.342 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_63/O
+                         net (fo=2, unplaced)         0.185     7.527    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.597 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_22/O
+                         net (fo=4, unplaced)         0.197     7.794    wideAddDsp_strictWriteReadNextWide_65_1_0_i_22_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_18/O
+                         net (fo=4, unplaced)         0.197     8.061    wideAddDsp_strictWriteReadNextWide_65_1_0_i_18_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.131 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_15/O
+                         net (fo=4, unplaced)         0.197     8.328    wideAddDsp_strictWriteReadNextWide_65_1_0_i_15_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.398 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_12/O
+                         net (fo=2, unplaced)         0.185     8.583    wideAddDsp_strictWriteReadNextWide_65_1_0_i_12_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.621 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_1/O
+                         net (fo=3, unplaced)         0.173     8.794    wideAddDsp_strictWriteReadNextWide_65_1_0/C[7]
+                         DSP_C_DATA (Prop_DSP_C_DATA_C[7]_C_DATA[7])
+                                                      0.105     8.899 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA_INST/C_DATA[7]
+                         net (fo=2, unplaced)         0.000     8.899    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA.C_DATA<7>
+                         DSP_ALU (Prop_DSP_ALU_C_DATA[7]_COUT[3])
+                                                      0.564     9.463 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU_INST/COUT[3]
+                         net (fo=1, unplaced)         0.000     9.463    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU.COUT<3>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_COUT[3]_CARRYCASCOUT)
+                                                      0.171     9.634 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_OUTPUT_INST/CARRYCASCOUT
+                         net (fo=1, unplaced)         0.004     9.638    wideAddDsp_strictWriteReadNextWide_65_1_1/CARRYCASCIN
+                         DSP_ALU (Prop_DSP_ALU_CARRYCASCIN_ALU_OUT[16])
+                                                      0.474    10.112 r  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU_INST/ALU_OUT[16]
+                         net (fo=1, unplaced)         0.000    10.112    wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU.ALU_OUT<16>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_ALU_OUT[16]_P[16])
+                                                      0.109    10.221 f  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_OUTPUT_INST/P[16]
+                         net (fo=1, unplaced)         0.154    10.375    strictWriteReadNextWide_65_1[64]
+                         LUT6 (Prop_LUT6_I3_O)        0.090    10.465 f  io_error[5]_INST_0_i_1155/O
+                         net (fo=1, unplaced)         0.185    10.650    io_error[5]_INST_0_i_1155_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038    10.688 f  io_error[5]_INST_0_i_371/O
+                         net (fo=1, unplaced)         0.137    10.825    io_error[5]_INST_0_i_371_n_0
+                         LUT6 (Prop_LUT6_I4_O)        0.053    10.878 f  io_error[5]_INST_0_i_95/O
+                         net (fo=1, unplaced)         0.141    11.019    io_error[5]_INST_0_i_95_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.100    11.119 f  io_error[5]_INST_0_i_10/O
+                         net (fo=1, unplaced)         0.137    11.256    io_error[5]_INST_0_i_10_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.053    11.309 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    11.500    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    11.538 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.830    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.868 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    12.081    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    12.153 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    12.371    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    12.498 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    12.503    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    12.555 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    12.746    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    12.784 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    13.041    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    13.079 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    13.401    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    13.439 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    13.699    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    13.737 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.922    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.960 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    14.187    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[12]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[12]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[12]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -14.187    
+  -------------------------------------------------------------------
+                         slack                                 -4.283    
+
+Slack (VIOLATED) :        -4.283ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[13]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        14.187ns  (logic 5.227ns (36.844%)  route 8.960ns (63.156%))
+  Logic Levels:           48  (CARRY8=5 DSP_ALU=2 DSP_C_DATA=1 DSP_OUTPUT=2 LUT2=4 LUT3=10 LUT4=2 LUT5=8 LUT6=14)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_478/O
+                         net (fo=1, unplaced)         0.242     1.599    wideAddDsp_strictWriteReadNextWide_250_2_0_i_478_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_236/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  wideAddDsp_strictWriteReadNextWide_57_2_0_i_298/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_273/O
+                         net (fo=1, unplaced)         0.233     2.489    wideAddDsp_strictWriteReadNextWide_78_3_0_i_273_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_182/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  wideAddDsp_strictWriteReadNextWide_250_2_0_i_781/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_323/O
+                         net (fo=1, unplaced)         0.242     3.427    wideAddDsp_strictWriteReadNextWide_11_1_0_i_323_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_266/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  wideAddDsp_strictWriteReadNextWide_206_3_0_i_916/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_921/O
+                         net (fo=1, unplaced)         0.185     4.309    wideAddDsp_strictWriteReadNextWide_250_2_0_i_921_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_770/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_358/O
+                         net (fo=7, unplaced)         0.210     4.780    wideAddDsp_strictWriteReadNextWide_70_2_0_i_358_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_207/O
+                         net (fo=26, unplaced)        0.240     5.090    wideAddDsp_strictWriteReadNextWide_70_2_0_i_207_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  wideAddDsp_strictWriteReadNextWide_68_3_0_i_195/O
+                         net (fo=3, unplaced)         0.191     5.351    wideAddDsp_strictWriteReadNextWide_68_3_0_i_195_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  wideAddDsp_strictWriteReadNextWide_67_2_0_i_261/O
+                         net (fo=4, unplaced)         0.197     5.586    wideAddDsp_strictWriteReadNextWide_67_2_0_i_261_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  wideAddDsp_strictWriteReadNextWide_65_3_0_i_140/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_181/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.070     6.145 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_83/O
+                         net (fo=4, unplaced)         0.197     6.342    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.070     6.412 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_30/O
+                         net (fo=3, unplaced)         0.191     6.603    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.641 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_145/O
+                         net (fo=2, unplaced)         0.185     6.826    wideAddDsp_strictWriteReadNextWide_65_1_0_i_145_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_71/O
+                         net (fo=2, unplaced)         0.185     7.049    wideAddDsp_strictWriteReadNextWide_65_1_0_i_71_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     7.087 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_140/O
+                         net (fo=2, unplaced)         0.185     7.272    wideAddDsp_strictWriteReadNextWide_65_1_0_i_140_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.342 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_63/O
+                         net (fo=2, unplaced)         0.185     7.527    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.597 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_22/O
+                         net (fo=4, unplaced)         0.197     7.794    wideAddDsp_strictWriteReadNextWide_65_1_0_i_22_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_18/O
+                         net (fo=4, unplaced)         0.197     8.061    wideAddDsp_strictWriteReadNextWide_65_1_0_i_18_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.131 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_15/O
+                         net (fo=4, unplaced)         0.197     8.328    wideAddDsp_strictWriteReadNextWide_65_1_0_i_15_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.398 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_12/O
+                         net (fo=2, unplaced)         0.185     8.583    wideAddDsp_strictWriteReadNextWide_65_1_0_i_12_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.621 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_1/O
+                         net (fo=3, unplaced)         0.173     8.794    wideAddDsp_strictWriteReadNextWide_65_1_0/C[7]
+                         DSP_C_DATA (Prop_DSP_C_DATA_C[7]_C_DATA[7])
+                                                      0.105     8.899 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA_INST/C_DATA[7]
+                         net (fo=2, unplaced)         0.000     8.899    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA.C_DATA<7>
+                         DSP_ALU (Prop_DSP_ALU_C_DATA[7]_COUT[3])
+                                                      0.564     9.463 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU_INST/COUT[3]
+                         net (fo=1, unplaced)         0.000     9.463    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU.COUT<3>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_COUT[3]_CARRYCASCOUT)
+                                                      0.171     9.634 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_OUTPUT_INST/CARRYCASCOUT
+                         net (fo=1, unplaced)         0.004     9.638    wideAddDsp_strictWriteReadNextWide_65_1_1/CARRYCASCIN
+                         DSP_ALU (Prop_DSP_ALU_CARRYCASCIN_ALU_OUT[16])
+                                                      0.474    10.112 r  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU_INST/ALU_OUT[16]
+                         net (fo=1, unplaced)         0.000    10.112    wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU.ALU_OUT<16>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_ALU_OUT[16]_P[16])
+                                                      0.109    10.221 f  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_OUTPUT_INST/P[16]
+                         net (fo=1, unplaced)         0.154    10.375    strictWriteReadNextWide_65_1[64]
+                         LUT6 (Prop_LUT6_I3_O)        0.090    10.465 f  io_error[5]_INST_0_i_1155/O
+                         net (fo=1, unplaced)         0.185    10.650    io_error[5]_INST_0_i_1155_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038    10.688 f  io_error[5]_INST_0_i_371/O
+                         net (fo=1, unplaced)         0.137    10.825    io_error[5]_INST_0_i_371_n_0
+                         LUT6 (Prop_LUT6_I4_O)        0.053    10.878 f  io_error[5]_INST_0_i_95/O
+                         net (fo=1, unplaced)         0.141    11.019    io_error[5]_INST_0_i_95_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.100    11.119 f  io_error[5]_INST_0_i_10/O
+                         net (fo=1, unplaced)         0.137    11.256    io_error[5]_INST_0_i_10_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.053    11.309 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    11.500    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    11.538 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.830    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.868 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    12.081    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    12.153 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    12.371    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    12.498 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    12.503    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    12.555 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    12.746    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    12.784 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    13.041    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    13.079 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    13.401    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    13.439 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    13.699    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    13.737 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.922    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.960 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    14.187    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[13]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[13]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[13]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -14.187    
+  -------------------------------------------------------------------
+                         slack                                 -4.283    
+
+Slack (VIOLATED) :        -4.283ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[14]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        14.187ns  (logic 5.227ns (36.844%)  route 8.960ns (63.156%))
+  Logic Levels:           48  (CARRY8=5 DSP_ALU=2 DSP_C_DATA=1 DSP_OUTPUT=2 LUT2=4 LUT3=10 LUT4=2 LUT5=8 LUT6=14)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_478/O
+                         net (fo=1, unplaced)         0.242     1.599    wideAddDsp_strictWriteReadNextWide_250_2_0_i_478_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_236/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  wideAddDsp_strictWriteReadNextWide_57_2_0_i_298/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_273/O
+                         net (fo=1, unplaced)         0.233     2.489    wideAddDsp_strictWriteReadNextWide_78_3_0_i_273_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_182/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  wideAddDsp_strictWriteReadNextWide_250_2_0_i_781/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_323/O
+                         net (fo=1, unplaced)         0.242     3.427    wideAddDsp_strictWriteReadNextWide_11_1_0_i_323_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_266/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  wideAddDsp_strictWriteReadNextWide_206_3_0_i_916/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_921/O
+                         net (fo=1, unplaced)         0.185     4.309    wideAddDsp_strictWriteReadNextWide_250_2_0_i_921_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_770/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_358/O
+                         net (fo=7, unplaced)         0.210     4.780    wideAddDsp_strictWriteReadNextWide_70_2_0_i_358_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_207/O
+                         net (fo=26, unplaced)        0.240     5.090    wideAddDsp_strictWriteReadNextWide_70_2_0_i_207_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  wideAddDsp_strictWriteReadNextWide_68_3_0_i_195/O
+                         net (fo=3, unplaced)         0.191     5.351    wideAddDsp_strictWriteReadNextWide_68_3_0_i_195_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  wideAddDsp_strictWriteReadNextWide_67_2_0_i_261/O
+                         net (fo=4, unplaced)         0.197     5.586    wideAddDsp_strictWriteReadNextWide_67_2_0_i_261_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  wideAddDsp_strictWriteReadNextWide_65_3_0_i_140/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_181/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.070     6.145 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_83/O
+                         net (fo=4, unplaced)         0.197     6.342    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.070     6.412 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_30/O
+                         net (fo=3, unplaced)         0.191     6.603    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.641 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_145/O
+                         net (fo=2, unplaced)         0.185     6.826    wideAddDsp_strictWriteReadNextWide_65_1_0_i_145_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_71/O
+                         net (fo=2, unplaced)         0.185     7.049    wideAddDsp_strictWriteReadNextWide_65_1_0_i_71_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     7.087 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_140/O
+                         net (fo=2, unplaced)         0.185     7.272    wideAddDsp_strictWriteReadNextWide_65_1_0_i_140_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.342 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_63/O
+                         net (fo=2, unplaced)         0.185     7.527    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.597 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_22/O
+                         net (fo=4, unplaced)         0.197     7.794    wideAddDsp_strictWriteReadNextWide_65_1_0_i_22_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_18/O
+                         net (fo=4, unplaced)         0.197     8.061    wideAddDsp_strictWriteReadNextWide_65_1_0_i_18_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.131 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_15/O
+                         net (fo=4, unplaced)         0.197     8.328    wideAddDsp_strictWriteReadNextWide_65_1_0_i_15_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.398 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_12/O
+                         net (fo=2, unplaced)         0.185     8.583    wideAddDsp_strictWriteReadNextWide_65_1_0_i_12_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.621 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_1/O
+                         net (fo=3, unplaced)         0.173     8.794    wideAddDsp_strictWriteReadNextWide_65_1_0/C[7]
+                         DSP_C_DATA (Prop_DSP_C_DATA_C[7]_C_DATA[7])
+                                                      0.105     8.899 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA_INST/C_DATA[7]
+                         net (fo=2, unplaced)         0.000     8.899    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA.C_DATA<7>
+                         DSP_ALU (Prop_DSP_ALU_C_DATA[7]_COUT[3])
+                                                      0.564     9.463 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU_INST/COUT[3]
+                         net (fo=1, unplaced)         0.000     9.463    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU.COUT<3>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_COUT[3]_CARRYCASCOUT)
+                                                      0.171     9.634 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_OUTPUT_INST/CARRYCASCOUT
+                         net (fo=1, unplaced)         0.004     9.638    wideAddDsp_strictWriteReadNextWide_65_1_1/CARRYCASCIN
+                         DSP_ALU (Prop_DSP_ALU_CARRYCASCIN_ALU_OUT[16])
+                                                      0.474    10.112 r  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU_INST/ALU_OUT[16]
+                         net (fo=1, unplaced)         0.000    10.112    wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU.ALU_OUT<16>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_ALU_OUT[16]_P[16])
+                                                      0.109    10.221 f  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_OUTPUT_INST/P[16]
+                         net (fo=1, unplaced)         0.154    10.375    strictWriteReadNextWide_65_1[64]
+                         LUT6 (Prop_LUT6_I3_O)        0.090    10.465 f  io_error[5]_INST_0_i_1155/O
+                         net (fo=1, unplaced)         0.185    10.650    io_error[5]_INST_0_i_1155_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038    10.688 f  io_error[5]_INST_0_i_371/O
+                         net (fo=1, unplaced)         0.137    10.825    io_error[5]_INST_0_i_371_n_0
+                         LUT6 (Prop_LUT6_I4_O)        0.053    10.878 f  io_error[5]_INST_0_i_95/O
+                         net (fo=1, unplaced)         0.141    11.019    io_error[5]_INST_0_i_95_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.100    11.119 f  io_error[5]_INST_0_i_10/O
+                         net (fo=1, unplaced)         0.137    11.256    io_error[5]_INST_0_i_10_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.053    11.309 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    11.500    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    11.538 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.830    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.868 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    12.081    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    12.153 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    12.371    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    12.498 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    12.503    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    12.555 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    12.746    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    12.784 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    13.041    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    13.079 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    13.401    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    13.439 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    13.699    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    13.737 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.922    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.960 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    14.187    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[14]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[14]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[14]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -14.187    
+  -------------------------------------------------------------------
+                         slack                                 -4.283    
+
+Slack (VIOLATED) :        -4.283ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[15]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        14.187ns  (logic 5.227ns (36.844%)  route 8.960ns (63.156%))
+  Logic Levels:           48  (CARRY8=5 DSP_ALU=2 DSP_C_DATA=1 DSP_OUTPUT=2 LUT2=4 LUT3=10 LUT4=2 LUT5=8 LUT6=14)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_478/O
+                         net (fo=1, unplaced)         0.242     1.599    wideAddDsp_strictWriteReadNextWide_250_2_0_i_478_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_236/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  wideAddDsp_strictWriteReadNextWide_57_2_0_i_298/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_273/O
+                         net (fo=1, unplaced)         0.233     2.489    wideAddDsp_strictWriteReadNextWide_78_3_0_i_273_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_182/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  wideAddDsp_strictWriteReadNextWide_250_2_0_i_781/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_323/O
+                         net (fo=1, unplaced)         0.242     3.427    wideAddDsp_strictWriteReadNextWide_11_1_0_i_323_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_266/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  wideAddDsp_strictWriteReadNextWide_206_3_0_i_916/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_921/O
+                         net (fo=1, unplaced)         0.185     4.309    wideAddDsp_strictWriteReadNextWide_250_2_0_i_921_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_770/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_358/O
+                         net (fo=7, unplaced)         0.210     4.780    wideAddDsp_strictWriteReadNextWide_70_2_0_i_358_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_207/O
+                         net (fo=26, unplaced)        0.240     5.090    wideAddDsp_strictWriteReadNextWide_70_2_0_i_207_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  wideAddDsp_strictWriteReadNextWide_68_3_0_i_195/O
+                         net (fo=3, unplaced)         0.191     5.351    wideAddDsp_strictWriteReadNextWide_68_3_0_i_195_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  wideAddDsp_strictWriteReadNextWide_67_2_0_i_261/O
+                         net (fo=4, unplaced)         0.197     5.586    wideAddDsp_strictWriteReadNextWide_67_2_0_i_261_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  wideAddDsp_strictWriteReadNextWide_65_3_0_i_140/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_181/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.070     6.145 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_83/O
+                         net (fo=4, unplaced)         0.197     6.342    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.070     6.412 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_30/O
+                         net (fo=3, unplaced)         0.191     6.603    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.641 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_145/O
+                         net (fo=2, unplaced)         0.185     6.826    wideAddDsp_strictWriteReadNextWide_65_1_0_i_145_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_71/O
+                         net (fo=2, unplaced)         0.185     7.049    wideAddDsp_strictWriteReadNextWide_65_1_0_i_71_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     7.087 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_140/O
+                         net (fo=2, unplaced)         0.185     7.272    wideAddDsp_strictWriteReadNextWide_65_1_0_i_140_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.342 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_63/O
+                         net (fo=2, unplaced)         0.185     7.527    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.597 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_22/O
+                         net (fo=4, unplaced)         0.197     7.794    wideAddDsp_strictWriteReadNextWide_65_1_0_i_22_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_18/O
+                         net (fo=4, unplaced)         0.197     8.061    wideAddDsp_strictWriteReadNextWide_65_1_0_i_18_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.131 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_15/O
+                         net (fo=4, unplaced)         0.197     8.328    wideAddDsp_strictWriteReadNextWide_65_1_0_i_15_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.398 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_12/O
+                         net (fo=2, unplaced)         0.185     8.583    wideAddDsp_strictWriteReadNextWide_65_1_0_i_12_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.621 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_1/O
+                         net (fo=3, unplaced)         0.173     8.794    wideAddDsp_strictWriteReadNextWide_65_1_0/C[7]
+                         DSP_C_DATA (Prop_DSP_C_DATA_C[7]_C_DATA[7])
+                                                      0.105     8.899 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA_INST/C_DATA[7]
+                         net (fo=2, unplaced)         0.000     8.899    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA.C_DATA<7>
+                         DSP_ALU (Prop_DSP_ALU_C_DATA[7]_COUT[3])
+                                                      0.564     9.463 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU_INST/COUT[3]
+                         net (fo=1, unplaced)         0.000     9.463    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU.COUT<3>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_COUT[3]_CARRYCASCOUT)
+                                                      0.171     9.634 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_OUTPUT_INST/CARRYCASCOUT
+                         net (fo=1, unplaced)         0.004     9.638    wideAddDsp_strictWriteReadNextWide_65_1_1/CARRYCASCIN
+                         DSP_ALU (Prop_DSP_ALU_CARRYCASCIN_ALU_OUT[16])
+                                                      0.474    10.112 r  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU_INST/ALU_OUT[16]
+                         net (fo=1, unplaced)         0.000    10.112    wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU.ALU_OUT<16>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_ALU_OUT[16]_P[16])
+                                                      0.109    10.221 f  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_OUTPUT_INST/P[16]
+                         net (fo=1, unplaced)         0.154    10.375    strictWriteReadNextWide_65_1[64]
+                         LUT6 (Prop_LUT6_I3_O)        0.090    10.465 f  io_error[5]_INST_0_i_1155/O
+                         net (fo=1, unplaced)         0.185    10.650    io_error[5]_INST_0_i_1155_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038    10.688 f  io_error[5]_INST_0_i_371/O
+                         net (fo=1, unplaced)         0.137    10.825    io_error[5]_INST_0_i_371_n_0
+                         LUT6 (Prop_LUT6_I4_O)        0.053    10.878 f  io_error[5]_INST_0_i_95/O
+                         net (fo=1, unplaced)         0.141    11.019    io_error[5]_INST_0_i_95_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.100    11.119 f  io_error[5]_INST_0_i_10/O
+                         net (fo=1, unplaced)         0.137    11.256    io_error[5]_INST_0_i_10_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.053    11.309 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    11.500    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    11.538 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.830    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.868 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    12.081    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    12.153 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    12.371    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    12.498 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    12.503    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    12.555 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    12.746    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    12.784 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    13.041    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    13.079 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    13.401    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    13.439 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    13.699    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    13.737 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.922    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.960 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    14.187    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[15]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[15]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[15]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -14.187    
+  -------------------------------------------------------------------
+                         slack                                 -4.283    
+
+Slack (VIOLATED) :        -4.283ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[16]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        14.187ns  (logic 5.227ns (36.844%)  route 8.960ns (63.156%))
+  Logic Levels:           48  (CARRY8=5 DSP_ALU=2 DSP_C_DATA=1 DSP_OUTPUT=2 LUT2=4 LUT3=10 LUT4=2 LUT5=8 LUT6=14)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_478/O
+                         net (fo=1, unplaced)         0.242     1.599    wideAddDsp_strictWriteReadNextWide_250_2_0_i_478_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_236/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  wideAddDsp_strictWriteReadNextWide_57_2_0_i_298/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_273/O
+                         net (fo=1, unplaced)         0.233     2.489    wideAddDsp_strictWriteReadNextWide_78_3_0_i_273_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_182/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  wideAddDsp_strictWriteReadNextWide_250_2_0_i_781/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_323/O
+                         net (fo=1, unplaced)         0.242     3.427    wideAddDsp_strictWriteReadNextWide_11_1_0_i_323_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_266/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  wideAddDsp_strictWriteReadNextWide_206_3_0_i_916/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_921/O
+                         net (fo=1, unplaced)         0.185     4.309    wideAddDsp_strictWriteReadNextWide_250_2_0_i_921_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_770/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_358/O
+                         net (fo=7, unplaced)         0.210     4.780    wideAddDsp_strictWriteReadNextWide_70_2_0_i_358_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_207/O
+                         net (fo=26, unplaced)        0.240     5.090    wideAddDsp_strictWriteReadNextWide_70_2_0_i_207_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  wideAddDsp_strictWriteReadNextWide_68_3_0_i_195/O
+                         net (fo=3, unplaced)         0.191     5.351    wideAddDsp_strictWriteReadNextWide_68_3_0_i_195_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  wideAddDsp_strictWriteReadNextWide_67_2_0_i_261/O
+                         net (fo=4, unplaced)         0.197     5.586    wideAddDsp_strictWriteReadNextWide_67_2_0_i_261_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  wideAddDsp_strictWriteReadNextWide_65_3_0_i_140/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_181/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.070     6.145 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_83/O
+                         net (fo=4, unplaced)         0.197     6.342    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.070     6.412 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_30/O
+                         net (fo=3, unplaced)         0.191     6.603    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.641 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_145/O
+                         net (fo=2, unplaced)         0.185     6.826    wideAddDsp_strictWriteReadNextWide_65_1_0_i_145_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_71/O
+                         net (fo=2, unplaced)         0.185     7.049    wideAddDsp_strictWriteReadNextWide_65_1_0_i_71_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     7.087 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_140/O
+                         net (fo=2, unplaced)         0.185     7.272    wideAddDsp_strictWriteReadNextWide_65_1_0_i_140_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.342 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_63/O
+                         net (fo=2, unplaced)         0.185     7.527    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.597 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_22/O
+                         net (fo=4, unplaced)         0.197     7.794    wideAddDsp_strictWriteReadNextWide_65_1_0_i_22_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_18/O
+                         net (fo=4, unplaced)         0.197     8.061    wideAddDsp_strictWriteReadNextWide_65_1_0_i_18_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.131 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_15/O
+                         net (fo=4, unplaced)         0.197     8.328    wideAddDsp_strictWriteReadNextWide_65_1_0_i_15_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.398 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_12/O
+                         net (fo=2, unplaced)         0.185     8.583    wideAddDsp_strictWriteReadNextWide_65_1_0_i_12_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.621 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_1/O
+                         net (fo=3, unplaced)         0.173     8.794    wideAddDsp_strictWriteReadNextWide_65_1_0/C[7]
+                         DSP_C_DATA (Prop_DSP_C_DATA_C[7]_C_DATA[7])
+                                                      0.105     8.899 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA_INST/C_DATA[7]
+                         net (fo=2, unplaced)         0.000     8.899    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA.C_DATA<7>
+                         DSP_ALU (Prop_DSP_ALU_C_DATA[7]_COUT[3])
+                                                      0.564     9.463 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU_INST/COUT[3]
+                         net (fo=1, unplaced)         0.000     9.463    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU.COUT<3>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_COUT[3]_CARRYCASCOUT)
+                                                      0.171     9.634 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_OUTPUT_INST/CARRYCASCOUT
+                         net (fo=1, unplaced)         0.004     9.638    wideAddDsp_strictWriteReadNextWide_65_1_1/CARRYCASCIN
+                         DSP_ALU (Prop_DSP_ALU_CARRYCASCIN_ALU_OUT[16])
+                                                      0.474    10.112 r  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU_INST/ALU_OUT[16]
+                         net (fo=1, unplaced)         0.000    10.112    wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU.ALU_OUT<16>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_ALU_OUT[16]_P[16])
+                                                      0.109    10.221 f  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_OUTPUT_INST/P[16]
+                         net (fo=1, unplaced)         0.154    10.375    strictWriteReadNextWide_65_1[64]
+                         LUT6 (Prop_LUT6_I3_O)        0.090    10.465 f  io_error[5]_INST_0_i_1155/O
+                         net (fo=1, unplaced)         0.185    10.650    io_error[5]_INST_0_i_1155_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038    10.688 f  io_error[5]_INST_0_i_371/O
+                         net (fo=1, unplaced)         0.137    10.825    io_error[5]_INST_0_i_371_n_0
+                         LUT6 (Prop_LUT6_I4_O)        0.053    10.878 f  io_error[5]_INST_0_i_95/O
+                         net (fo=1, unplaced)         0.141    11.019    io_error[5]_INST_0_i_95_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.100    11.119 f  io_error[5]_INST_0_i_10/O
+                         net (fo=1, unplaced)         0.137    11.256    io_error[5]_INST_0_i_10_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.053    11.309 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    11.500    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    11.538 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.830    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.868 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    12.081    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    12.153 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    12.371    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    12.498 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    12.503    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    12.555 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    12.746    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    12.784 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    13.041    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    13.079 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    13.401    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    13.439 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    13.699    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    13.737 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.922    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.960 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    14.187    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[16]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[16]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[16]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -14.187    
+  -------------------------------------------------------------------
+                         slack                                 -4.283    
+
+Slack (VIOLATED) :        -4.283ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[17]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        14.187ns  (logic 5.227ns (36.844%)  route 8.960ns (63.156%))
+  Logic Levels:           48  (CARRY8=5 DSP_ALU=2 DSP_C_DATA=1 DSP_OUTPUT=2 LUT2=4 LUT3=10 LUT4=2 LUT5=8 LUT6=14)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_478/O
+                         net (fo=1, unplaced)         0.242     1.599    wideAddDsp_strictWriteReadNextWide_250_2_0_i_478_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_236/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  wideAddDsp_strictWriteReadNextWide_57_2_0_i_298/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_273/O
+                         net (fo=1, unplaced)         0.233     2.489    wideAddDsp_strictWriteReadNextWide_78_3_0_i_273_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_182/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  wideAddDsp_strictWriteReadNextWide_250_2_0_i_781/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_323/O
+                         net (fo=1, unplaced)         0.242     3.427    wideAddDsp_strictWriteReadNextWide_11_1_0_i_323_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_266/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  wideAddDsp_strictWriteReadNextWide_206_3_0_i_916/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_921/O
+                         net (fo=1, unplaced)         0.185     4.309    wideAddDsp_strictWriteReadNextWide_250_2_0_i_921_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_770/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_358/O
+                         net (fo=7, unplaced)         0.210     4.780    wideAddDsp_strictWriteReadNextWide_70_2_0_i_358_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_207/O
+                         net (fo=26, unplaced)        0.240     5.090    wideAddDsp_strictWriteReadNextWide_70_2_0_i_207_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  wideAddDsp_strictWriteReadNextWide_68_3_0_i_195/O
+                         net (fo=3, unplaced)         0.191     5.351    wideAddDsp_strictWriteReadNextWide_68_3_0_i_195_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  wideAddDsp_strictWriteReadNextWide_67_2_0_i_261/O
+                         net (fo=4, unplaced)         0.197     5.586    wideAddDsp_strictWriteReadNextWide_67_2_0_i_261_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  wideAddDsp_strictWriteReadNextWide_65_3_0_i_140/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_181/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.070     6.145 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_83/O
+                         net (fo=4, unplaced)         0.197     6.342    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.070     6.412 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_30/O
+                         net (fo=3, unplaced)         0.191     6.603    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.641 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_145/O
+                         net (fo=2, unplaced)         0.185     6.826    wideAddDsp_strictWriteReadNextWide_65_1_0_i_145_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_71/O
+                         net (fo=2, unplaced)         0.185     7.049    wideAddDsp_strictWriteReadNextWide_65_1_0_i_71_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     7.087 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_140/O
+                         net (fo=2, unplaced)         0.185     7.272    wideAddDsp_strictWriteReadNextWide_65_1_0_i_140_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.342 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_63/O
+                         net (fo=2, unplaced)         0.185     7.527    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.597 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_22/O
+                         net (fo=4, unplaced)         0.197     7.794    wideAddDsp_strictWriteReadNextWide_65_1_0_i_22_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_18/O
+                         net (fo=4, unplaced)         0.197     8.061    wideAddDsp_strictWriteReadNextWide_65_1_0_i_18_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.131 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_15/O
+                         net (fo=4, unplaced)         0.197     8.328    wideAddDsp_strictWriteReadNextWide_65_1_0_i_15_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.398 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_12/O
+                         net (fo=2, unplaced)         0.185     8.583    wideAddDsp_strictWriteReadNextWide_65_1_0_i_12_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.621 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_1/O
+                         net (fo=3, unplaced)         0.173     8.794    wideAddDsp_strictWriteReadNextWide_65_1_0/C[7]
+                         DSP_C_DATA (Prop_DSP_C_DATA_C[7]_C_DATA[7])
+                                                      0.105     8.899 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA_INST/C_DATA[7]
+                         net (fo=2, unplaced)         0.000     8.899    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA.C_DATA<7>
+                         DSP_ALU (Prop_DSP_ALU_C_DATA[7]_COUT[3])
+                                                      0.564     9.463 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU_INST/COUT[3]
+                         net (fo=1, unplaced)         0.000     9.463    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU.COUT<3>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_COUT[3]_CARRYCASCOUT)
+                                                      0.171     9.634 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_OUTPUT_INST/CARRYCASCOUT
+                         net (fo=1, unplaced)         0.004     9.638    wideAddDsp_strictWriteReadNextWide_65_1_1/CARRYCASCIN
+                         DSP_ALU (Prop_DSP_ALU_CARRYCASCIN_ALU_OUT[16])
+                                                      0.474    10.112 r  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU_INST/ALU_OUT[16]
+                         net (fo=1, unplaced)         0.000    10.112    wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU.ALU_OUT<16>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_ALU_OUT[16]_P[16])
+                                                      0.109    10.221 f  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_OUTPUT_INST/P[16]
+                         net (fo=1, unplaced)         0.154    10.375    strictWriteReadNextWide_65_1[64]
+                         LUT6 (Prop_LUT6_I3_O)        0.090    10.465 f  io_error[5]_INST_0_i_1155/O
+                         net (fo=1, unplaced)         0.185    10.650    io_error[5]_INST_0_i_1155_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038    10.688 f  io_error[5]_INST_0_i_371/O
+                         net (fo=1, unplaced)         0.137    10.825    io_error[5]_INST_0_i_371_n_0
+                         LUT6 (Prop_LUT6_I4_O)        0.053    10.878 f  io_error[5]_INST_0_i_95/O
+                         net (fo=1, unplaced)         0.141    11.019    io_error[5]_INST_0_i_95_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.100    11.119 f  io_error[5]_INST_0_i_10/O
+                         net (fo=1, unplaced)         0.137    11.256    io_error[5]_INST_0_i_10_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.053    11.309 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    11.500    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    11.538 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.830    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.868 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    12.081    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    12.153 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    12.371    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    12.498 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    12.503    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    12.555 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    12.746    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    12.784 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    13.041    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    13.079 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    13.401    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    13.439 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    13.699    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    13.737 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.922    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.960 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    14.187    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[17]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[17]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[17]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -14.187    
+  -------------------------------------------------------------------
+                         slack                                 -4.283    
+
+Slack (VIOLATED) :        -4.283ns  (required time - arrival time)
+  Source:                 strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+                            (rising edge-triggered cell RAMB36E2 clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_addr_reg[18]/CE
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (EC_SCREEN_100MHZ rise@10.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        14.187ns  (logic 5.227ns (36.844%)  route 8.960ns (63.156%))
+  Logic Levels:           48  (CARRY8=5 DSP_ALU=2 DSP_C_DATA=1 DSP_OUTPUT=2 LUT2=4 LUT3=10 LUT4=2 LUT5=8 LUT6=14)
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000     0.000    clock
+                         RAMB36E2                                     r  strictMem_11_flattened_reg_bram_3/CLKBWRCLK
+  -------------------------------------------------------------------    -------------------
+                         RAMB36E2 (Prop_RAMB36E2_CLKBWRCLK_DOUTBDOUT[15])
+                                                      0.878     0.878 r  strictMem_11_flattened_reg_bram_3/DOUTBDOUT[15]
+                         net (fo=1608, unplaced)      0.340     1.218    strictBucketKeys_11[0]
+                         LUT4 (Prop_LUT4_I0_O)        0.139     1.357 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_478/O
+                         net (fo=1, unplaced)         0.242     1.599    wideAddDsp_strictWriteReadNextWide_250_2_0_i_478_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     1.781 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_236/CO[3]
+                         net (fo=43, unplaced)        0.157     1.938    bucketStrictWriteReadDelta_ordered_11
+                         LUT3 (Prop_LUT3_I2_O)        0.070     2.008 r  wideAddDsp_strictWriteReadNextWide_57_2_0_i_298/O
+                         net (fo=5, unplaced)         0.158     2.166    _bucketStrictWriteReadDelta_T_305[0]
+                         LUT6 (Prop_LUT6_I0_O)        0.090     2.256 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_273/O
+                         net (fo=1, unplaced)         0.233     2.489    wideAddDsp_strictWriteReadNextWide_78_3_0_i_273_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     2.671 r  wideAddDsp_strictWriteReadNextWide_78_3_0_i_182/CO[3]
+                         net (fo=57, unplaced)        0.164     2.835    bucketStrictWriteReadDelta_ordered_13
+                         LUT5 (Prop_LUT5_I4_O)        0.070     2.905 f  wideAddDsp_strictWriteReadNextWide_250_2_0_i_781/O
+                         net (fo=8, unplaced)         0.168     3.073    _bucketStrictWriteReadDelta_T_320[0]
+                         LUT4 (Prop_LUT4_I1_O)        0.112     3.185 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_323/O
+                         net (fo=1, unplaced)         0.242     3.427    wideAddDsp_strictWriteReadNextWide_11_1_0_i_323_n_0
+                         CARRY8 (Prop_CARRY8_DI[0]_CO[3])
+                                                      0.182     3.609 r  wideAddDsp_strictWriteReadNextWide_11_1_0_i_266/CO[3]
+                         net (fo=77, unplaced)        0.171     3.780    bucketStrictWriteReadDelta_ordered_14
+                         LUT3 (Prop_LUT3_I2_O)        0.038     3.818 r  wideAddDsp_strictWriteReadNextWide_206_3_0_i_916/O
+                         net (fo=88, unplaced)        0.268     4.086    _bucketStrictWriteReadDelta_T_330[0]
+                         LUT6 (Prop_LUT6_I5_O)        0.038     4.124 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_921/O
+                         net (fo=1, unplaced)         0.185     4.309    wideAddDsp_strictWriteReadNextWide_250_2_0_i_921_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     4.347 r  wideAddDsp_strictWriteReadNextWide_250_2_0_i_770/O
+                         net (fo=2, unplaced)         0.185     4.532    _bucketStrictWriteReadDelta_T_340
+                         LUT6 (Prop_LUT6_I0_O)        0.038     4.570 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_358/O
+                         net (fo=7, unplaced)         0.210     4.780    wideAddDsp_strictWriteReadNextWide_70_2_0_i_358_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     4.850 r  wideAddDsp_strictWriteReadNextWide_70_2_0_i_207/O
+                         net (fo=26, unplaced)        0.240     5.090    wideAddDsp_strictWriteReadNextWide_70_2_0_i_207_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     5.160 f  wideAddDsp_strictWriteReadNextWide_68_3_0_i_195/O
+                         net (fo=3, unplaced)         0.191     5.351    wideAddDsp_strictWriteReadNextWide_68_3_0_i_195_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038     5.389 r  wideAddDsp_strictWriteReadNextWide_67_2_0_i_261/O
+                         net (fo=4, unplaced)         0.197     5.586    wideAddDsp_strictWriteReadNextWide_67_2_0_i_261_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.038     5.624 r  wideAddDsp_strictWriteReadNextWide_65_3_0_i_140/O
+                         net (fo=9, unplaced)         0.216     5.840    _bucketStrictWriteReadDelta_T_114837
+                         LUT5 (Prop_LUT5_I3_O)        0.038     5.878 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_181/O
+                         net (fo=4, unplaced)         0.197     6.075    _bucketStrictWriteReadDelta_T_115580[0]
+                         LUT2 (Prop_LUT2_I0_O)        0.070     6.145 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_83/O
+                         net (fo=4, unplaced)         0.197     6.342    _bucketStrictWriteReadDelta_T_115617[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.070     6.412 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_30/O
+                         net (fo=3, unplaced)         0.191     6.603    _bucketStrictWriteReadDelta_T_115636[0]
+                         LUT2 (Prop_LUT2_I1_O)        0.038     6.641 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_145/O
+                         net (fo=2, unplaced)         0.185     6.826    wideAddDsp_strictWriteReadNextWide_65_1_0_i_145_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038     6.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_71/O
+                         net (fo=2, unplaced)         0.185     7.049    wideAddDsp_strictWriteReadNextWide_65_1_0_i_71_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038     7.087 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_140/O
+                         net (fo=2, unplaced)         0.185     7.272    wideAddDsp_strictWriteReadNextWide_65_1_0_i_140_n_0
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.342 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_63/O
+                         net (fo=2, unplaced)         0.185     7.527    _bucketStrictWriteReadDelta_T_115644[3]
+                         LUT5 (Prop_LUT5_I3_O)        0.070     7.597 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_22/O
+                         net (fo=4, unplaced)         0.197     7.794    wideAddDsp_strictWriteReadNextWide_65_1_0_i_22_n_0
+                         LUT3 (Prop_LUT3_I0_O)        0.070     7.864 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_18/O
+                         net (fo=4, unplaced)         0.197     8.061    wideAddDsp_strictWriteReadNextWide_65_1_0_i_18_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.131 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_15/O
+                         net (fo=4, unplaced)         0.197     8.328    wideAddDsp_strictWriteReadNextWide_65_1_0_i_15_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.070     8.398 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_12/O
+                         net (fo=2, unplaced)         0.185     8.583    wideAddDsp_strictWriteReadNextWide_65_1_0_i_12_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.038     8.621 r  wideAddDsp_strictWriteReadNextWide_65_1_0_i_1/O
+                         net (fo=3, unplaced)         0.173     8.794    wideAddDsp_strictWriteReadNextWide_65_1_0/C[7]
+                         DSP_C_DATA (Prop_DSP_C_DATA_C[7]_C_DATA[7])
+                                                      0.105     8.899 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA_INST/C_DATA[7]
+                         net (fo=2, unplaced)         0.000     8.899    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_C_DATA.C_DATA<7>
+                         DSP_ALU (Prop_DSP_ALU_C_DATA[7]_COUT[3])
+                                                      0.564     9.463 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU_INST/COUT[3]
+                         net (fo=1, unplaced)         0.000     9.463    wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_ALU.COUT<3>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_COUT[3]_CARRYCASCOUT)
+                                                      0.171     9.634 r  wideAddDsp_strictWriteReadNextWide_65_1_0/DSP_OUTPUT_INST/CARRYCASCOUT
+                         net (fo=1, unplaced)         0.004     9.638    wideAddDsp_strictWriteReadNextWide_65_1_1/CARRYCASCIN
+                         DSP_ALU (Prop_DSP_ALU_CARRYCASCIN_ALU_OUT[16])
+                                                      0.474    10.112 r  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU_INST/ALU_OUT[16]
+                         net (fo=1, unplaced)         0.000    10.112    wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_ALU.ALU_OUT<16>
+                         DSP_OUTPUT (Prop_DSP_OUTPUT_ALU_OUT[16]_P[16])
+                                                      0.109    10.221 f  wideAddDsp_strictWriteReadNextWide_65_1_1/DSP_OUTPUT_INST/P[16]
+                         net (fo=1, unplaced)         0.154    10.375    strictWriteReadNextWide_65_1[64]
+                         LUT6 (Prop_LUT6_I3_O)        0.090    10.465 f  io_error[5]_INST_0_i_1155/O
+                         net (fo=1, unplaced)         0.185    10.650    io_error[5]_INST_0_i_1155_n_0
+                         LUT6 (Prop_LUT6_I5_O)        0.038    10.688 f  io_error[5]_INST_0_i_371/O
+                         net (fo=1, unplaced)         0.137    10.825    io_error[5]_INST_0_i_371_n_0
+                         LUT6 (Prop_LUT6_I4_O)        0.053    10.878 f  io_error[5]_INST_0_i_95/O
+                         net (fo=1, unplaced)         0.141    11.019    io_error[5]_INST_0_i_95_n_0
+                         LUT6 (Prop_LUT6_I3_O)        0.100    11.119 f  io_error[5]_INST_0_i_10/O
+                         net (fo=1, unplaced)         0.137    11.256    io_error[5]_INST_0_i_10_n_0
+                         LUT3 (Prop_LUT3_I1_O)        0.053    11.309 f  io_error[5]_INST_0_i_2/O
+                         net (fo=3, unplaced)         0.191    11.500    _processArithmeticError_T_3126
+                         LUT6 (Prop_LUT6_I0_O)        0.038    11.538 f  metricStoreTotal_0[63]_i_4/O
+                         net (fo=255, unplaced)       0.292    11.830    metricStoreTotal_0[63]_i_4_n_0
+                         LUT5 (Prop_LUT5_I4_O)        0.038    11.868 r  processEvent_addr[39]_i_3/O
+                         net (fo=8, unplaced)         0.213    12.081    processEvent_addr[39]_i_3_n_0
+                         LUT3 (Prop_LUT3_I2_O)        0.072    12.153 r  io_error[0]_INST_0_i_8/O
+                         net (fo=1, unplaced)         0.218    12.371    io_error[0]_INST_0_i_8_n_0
+                         CARRY8 (Prop_CARRY8_DI[1]_CO[7])
+                                                      0.127    12.498 r  io_error[0]_INST_0_i_5/CO[7]
+                         net (fo=1, unplaced)         0.005    12.503    io_error[0]_INST_0_i_5_n_0
+                         CARRY8 (Prop_CARRY8_CI_CO[0])
+                                                      0.052    12.555 r  io_error[0]_INST_0_i_3/CO[0]
+                         net (fo=3, unplaced)         0.191    12.746    io_error[0]_INST_0_i_3_n_7
+                         LUT5 (Prop_LUT5_I2_O)        0.038    12.784 f  io_statsValid_INST_0_i_2/O
+                         net (fo=56, unplaced)        0.257    13.041    _GEN_9
+                         LUT6 (Prop_LUT6_I3_O)        0.038    13.079 r  enqPtr[7]_i_3/O
+                         net (fo=992, unplaced)       0.322    13.401    p_733_in
+                         LUT2 (Prop_LUT2_I0_O)        0.038    13.439 r  queue_63_size[1]_i_9/O
+                         net (fo=64, unplaced)        0.260    13.699    queue_63_size[1]_i_9_n_0
+                         LUT6 (Prop_LUT6_I0_O)        0.038    13.737 r  queue_0_size[1]_i_5/O
+                         net (fo=1, unplaced)         0.185    13.922    queue_0_addr2
+                         LUT6 (Prop_LUT6_I5_O)        0.038    13.960 r  queue_0_size[1]_i_1/O
+                         net (fo=107, unplaced)       0.227    14.187    queue_0_safeWatermark
+                         FDRE                                         r  queue_0_addr_reg[18]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                     10.000    10.000 r  
+                                                      0.000    10.000 r  clock (IN)
+                         net (fo=387137, unset)       0.000    10.000    clock
+                         FDRE                                         r  queue_0_addr_reg[18]/C
+                         clock pessimism              0.000    10.000    
+                         clock uncertainty           -0.035     9.965    
+                         FDRE (Setup_FDRE_C_CE)      -0.061     9.904    queue_0_addr_reg[18]
+  -------------------------------------------------------------------
+                         required time                          9.904    
+                         arrival time                         -14.187    
+  -------------------------------------------------------------------
+                         slack                                 -4.283    
+
+
+
+

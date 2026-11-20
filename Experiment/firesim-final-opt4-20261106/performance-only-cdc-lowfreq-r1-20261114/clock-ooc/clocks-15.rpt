@@ -1,0 +1,53 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version      : Vivado v.2021.1 (lin64) Build 3247384 Thu Jun 10 19:36:07 MDT 2021
+| Date              : Sat Nov 14 10:32:16 2026
+| Host              : devjz-ubt20-s01 running 64-bit Ubuntu 20.04.6 LTS
+| Command           : report_clocks -file /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/clock-ooc/clocks-15.rpt
+| Design            : design_1_clk_wiz_0_0
+| Device            : xcu280-fsvh2892
+| Speed File        : -2L  PRODUCTION 1.29 11-17-2020
+| Temperature Grade : E
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Clock Report
+
+
+Attributes
+  P: Propagated
+  G: Generated
+  A: Auto-derived
+  R: Renamed
+  V: Virtual
+  I: Inverted
+  S: Pin phase-shifted with Latency mode
+
+Clock                          Period(ns)  Waveform(ns)    Attributes  Sources
+host_input_300MHz              3.333       {0.000 1.666}   P           {clk_in1}
+clk_out1_design_1_clk_wiz_0_0  66.660      {0.000 33.330}  P,G,A       {inst/mmcme4_adv_inst/CLKOUT0}
+
+
+====================================================
+Generated Clocks
+====================================================
+
+Generated Clock     : clk_out1_design_1_clk_wiz_0_0
+Master Source       : inst/mmcme4_adv_inst/CLKIN1
+Master Clock        : host_input_300MHz
+Edges               : {1 2 3}
+Edge Shifts(ns)     : {0.000 31.663 63.327}
+Generated Sources   : {inst/mmcme4_adv_inst/CLKOUT0}
+
+
+
+====================================================
+User Uncertainty
+====================================================
+
+
+
+====================================================
+User Jitter
+====================================================
+
+

@@ -1,0 +1,407 @@
+{
+  "precheck": {
+    "cleanup_users": [],
+    "mapping": [
+      {
+        "bdf": "0000:21:00.0",
+        "driver": "xdma",
+        "serial": "21770433G02LA"
+      }
+    ],
+    "observed_utc": "2026-11-09T02:15:27.622337+00:00",
+    "open_devices": [],
+    "other_card_simulations": [
+      {
+        "cmd": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-efficiency-driver-20261106T135905Z/FireSim-xilinx_alveo_u280 +permissive +domain=0000 +bus=e2 +device=00 +function=0 +bar=0 +pci-vendor=10ee +pci-device=903f +uart-in0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-facesim-simsmall-r1-20261109T014326Z/uart.in +uart-out0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-facesim-simsmall-r1-20261109T014326Z/uart.log +fesvr-step-size=2004765 +mm_readLatency_0=30 +mm_readMaxReqs_0=4 +mm_relaxFunctionalModel_0=0 +mm_writeLatency_0=30 +mm_writeMaxReqs_0=4 +ec-dac-roi-log=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-facesim-simsmall-r1-20261109T014326Z/roi-raw.jsonl +ec-dac-snapshot-seconds=30 +permissive-off +prog0=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-firmware-20261107T071424.273722Z/platform/generic/firmware/fw_payload.elf ",
+        "pid": 13546
+      }
+    ],
+    "permission_denied": 0,
+    "simulation_processes": [],
+    "target_bdfs": [
+      "0000:21:00.0"
+    ],
+    "user_confirms_boards_available": true
+  },
+  "protected_processes": {
+    "13544": {
+      "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_isolated_sample.py Native facesim simsmall --bdf 0000:e2:00.0 --repetition 1 --timeout 7200 --apps-receipt /data1/gzh/EC/firesim/final-opt4-20261106/software/facesim-staged-resident-safe-fdt-apps-build.json --rootfs-receipt /data1/gzh/EC/firesim/final-opt4-20261106/software/facesim-staged-resident-safe-fdt-rootfs-build.json --firmware-receipt /data1/gzh/EC/firesim/final-opt4-20261106/software/Native/facesim-staged-resident-safe-fdt-firmware-build.json --driver-receipt /data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json ",
+      "pid": 13544,
+      "process_state": "S",
+      "start_ticks": "32643"
+    },
+    "13546": {
+      "cmdline": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-efficiency-driver-20261106T135905Z/FireSim-xilinx_alveo_u280 +permissive +domain=0000 +bus=e2 +device=00 +function=0 +bar=0 +pci-vendor=10ee +pci-device=903f +uart-in0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-facesim-simsmall-r1-20261109T014326Z/uart.in +uart-out0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-facesim-simsmall-r1-20261109T014326Z/uart.log +fesvr-step-size=2004765 +mm_readLatency_0=30 +mm_readMaxReqs_0=4 +mm_relaxFunctionalModel_0=0 +mm_writeLatency_0=30 +mm_writeMaxReqs_0=4 +ec-dac-roi-log=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-facesim-simsmall-r1-20261109T014326Z/roi-raw.jsonl +ec-dac-snapshot-seconds=30 +permissive-off +prog0=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-firmware-20261107T071424.273722Z/platform/generic/firmware/fw_payload.elf ",
+      "pid": 13546,
+      "process_state": "R",
+      "start_ticks": "32740"
+    },
+    "5257": {
+      "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/coverage_first.py ",
+      "pid": 5257,
+      "process_state": "S",
+      "start_ticks": "2613"
+    }
+  },
+  "units": {
+    "c4-first": {
+      "cgroup_processes": [
+        {
+          "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run c4-first ",
+          "pid": 6407,
+          "process_state": "S",
+          "start_ticks": "3045"
+        },
+        {
+          "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/continue_fpga.py ",
+          "pid": 6409,
+          "process_state": "S",
+          "start_ticks": "3050"
+        }
+      ],
+      "state_audit": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/c4-first/state.json",
+        "processes": [
+          {
+            "expected_start_ticks": "3045",
+            "field": "pid",
+            "identity_live": true,
+            "identity_uncertain": false,
+            "observed": {
+              "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run c4-first ",
+              "pid": 6407,
+              "process_state": "S",
+              "start_ticks": "3045"
+            },
+            "old_boot": false
+          },
+          {
+            "expected_start_ticks": "3050",
+            "field": "child_pid",
+            "identity_live": true,
+            "identity_uncertain": false,
+            "observed": {
+              "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/continue_fpga.py ",
+              "pid": 6409,
+              "process_state": "S",
+              "start_ticks": "3050"
+            },
+            "old_boot": false
+          }
+        ],
+        "recorded_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "status": "RUNNING"
+      },
+      "systemd": "MainPID=6407\nControlGroup=/system.slice/ec-parsec-c4-first.service\nActiveState=active\nSubState=running\n"
+    },
+    "c4-suite": {
+      "cgroup_processes": [
+        {
+          "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run c4-suite ",
+          "pid": 7432,
+          "process_state": "S",
+          "start_ticks": "3247"
+        },
+        {
+          "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/suite_queue.py C4 ",
+          "pid": 7454,
+          "process_state": "S",
+          "start_ticks": "3252"
+        }
+      ],
+      "state_audit": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/c4-suite/state.json",
+        "processes": [
+          {
+            "expected_start_ticks": "3247",
+            "field": "pid",
+            "identity_live": true,
+            "identity_uncertain": false,
+            "observed": {
+              "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run c4-suite ",
+              "pid": 7432,
+              "process_state": "S",
+              "start_ticks": "3247"
+            },
+            "old_boot": false
+          },
+          {
+            "expected_start_ticks": "3252",
+            "field": "child_pid",
+            "identity_live": true,
+            "identity_uncertain": false,
+            "observed": {
+              "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/suite_queue.py C4 ",
+              "pid": 7454,
+              "process_state": "S",
+              "start_ticks": "3252"
+            },
+            "old_boot": false
+          }
+        ],
+        "recorded_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "status": "RUNNING"
+      },
+      "systemd": "MainPID=7432\nControlGroup=/system.slice/ec-parsec-c4-suite.service\nActiveState=active\nSubState=running\n"
+    },
+    "cad": {
+      "cgroup_processes": [
+        {
+          "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run cad ",
+          "pid": 5514,
+          "process_state": "S",
+          "start_ticks": "2639"
+        },
+        {
+          "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_bitstream.py ",
+          "pid": 5526,
+          "process_state": "S",
+          "start_ticks": "2644"
+        },
+        {
+          "cmdline": "runuser -u guozh -- nice -n 15 /tools/Xilinx/Vivado/2021.1/bin/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261109T013827Z/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261109T013827Z/resume_cad.tcl -tclargs /var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z resume ",
+          "pid": 5893,
+          "process_state": "S",
+          "start_ticks": "2900"
+        },
+        {
+          "cmdline": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261109T013827Z/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261109T013827Z/resume_cad.tcl -tclargs /var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z resume ",
+          "pid": 5911,
+          "process_state": "S",
+          "start_ticks": "2900"
+        },
+        {
+          "cmdline": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/loader -exec vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261109T013827Z/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261109T013827Z/resume_cad.tcl -tclargs /var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z resume ",
+          "pid": 5929,
+          "process_state": "S",
+          "start_ticks": "2903"
+        },
+        {
+          "cmdline": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261109T013827Z/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261109T013827Z/resume_cad.tcl -tclargs /var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z resume ",
+          "pid": 5950,
+          "process_state": "S",
+          "start_ticks": "2912"
+        },
+        {
+          "cmdline": "/bin/sh /var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z/vivado_proj/firesim.runs/design_1_firesim_wrapper_0_0_synth_1/runme.sh ",
+          "pid": 11045,
+          "process_state": "S",
+          "start_ticks": "10611"
+        },
+        {
+          "cmdline": "/bin/sh ./ISEWrap.sh runme.log vivado -log design_1_firesim_wrapper_0_0.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source design_1_firesim_wrapper_0_0.tcl ",
+          "pid": 11047,
+          "process_state": "S",
+          "start_ticks": "10614"
+        },
+        {
+          "cmdline": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/vivado -log design_1_firesim_wrapper_0_0.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source design_1_firesim_wrapper_0_0.tcl ",
+          "pid": 11048,
+          "process_state": "S",
+          "start_ticks": "10614"
+        },
+        {
+          "cmdline": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/loader -exec vivado -log design_1_firesim_wrapper_0_0.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source design_1_firesim_wrapper_0_0.tcl ",
+          "pid": 11067,
+          "process_state": "S",
+          "start_ticks": "10618"
+        },
+        {
+          "cmdline": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -log design_1_firesim_wrapper_0_0.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source design_1_firesim_wrapper_0_0.tcl ",
+          "pid": 11088,
+          "process_state": "S",
+          "start_ticks": "10629"
+        },
+        {
+          "cmdline": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/vivado -exec parallel_synth_helper --key LaunchHelperProcessKey_11088_1794188401 --partid xcu280-fsvh2892-2L-e --parent_pid 11088 ",
+          "pid": 11249,
+          "process_state": "S",
+          "start_ticks": "12241"
+        },
+        {
+          "cmdline": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/loader -exec vivado -exec parallel_synth_helper --key LaunchHelperProcessKey_11088_1794188401 --partid xcu280-fsvh2892-2L-e --parent_pid 11088 ",
+          "pid": 11265,
+          "process_state": "S",
+          "start_ticks": "12250"
+        },
+        {
+          "cmdline": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/parallel_synth_helper --key LaunchHelperProcessKey_11088_1794188401 --partid xcu280-fsvh2892-2L-e --parent_pid 11088 ",
+          "pid": 11284,
+          "process_state": "S",
+          "start_ticks": "12261"
+        }
+      ],
+      "state_audit": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/cad/state.json",
+        "processes": [
+          {
+            "expected_start_ticks": "2639",
+            "field": "pid",
+            "identity_live": true,
+            "identity_uncertain": false,
+            "observed": {
+              "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run cad ",
+              "pid": 5514,
+              "process_state": "S",
+              "start_ticks": "2639"
+            },
+            "old_boot": false
+          },
+          {
+            "expected_start_ticks": "2644",
+            "field": "child_pid",
+            "identity_live": true,
+            "identity_uncertain": false,
+            "observed": {
+              "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_bitstream.py ",
+              "pid": 5526,
+              "process_state": "S",
+              "start_ticks": "2644"
+            },
+            "old_boot": false
+          }
+        ],
+        "recorded_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "status": "RUNNING"
+      },
+      "systemd": "MainPID=5514\nControlGroup=/system.slice/ec-parsec-cad.service\nActiveState=active\nSubState=running\n"
+    },
+    "coverage-first": {
+      "cgroup_processes": [
+        {
+          "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run coverage-first ",
+          "pid": 5180,
+          "process_state": "S",
+          "start_ticks": "2596"
+        },
+        {
+          "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/coverage_first.py ",
+          "pid": 5257,
+          "process_state": "S",
+          "start_ticks": "2613"
+        },
+        {
+          "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_isolated_sample.py Native facesim simsmall --bdf 0000:e2:00.0 --repetition 1 --timeout 7200 --apps-receipt /data1/gzh/EC/firesim/final-opt4-20261106/software/facesim-staged-resident-safe-fdt-apps-build.json --rootfs-receipt /data1/gzh/EC/firesim/final-opt4-20261106/software/facesim-staged-resident-safe-fdt-rootfs-build.json --firmware-receipt /data1/gzh/EC/firesim/final-opt4-20261106/software/Native/facesim-staged-resident-safe-fdt-firmware-build.json --driver-receipt /data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json ",
+          "pid": 13544,
+          "process_state": "S",
+          "start_ticks": "32643"
+        },
+        {
+          "cmdline": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-efficiency-driver-20261106T135905Z/FireSim-xilinx_alveo_u280 +permissive +domain=0000 +bus=e2 +device=00 +function=0 +bar=0 +pci-vendor=10ee +pci-device=903f +uart-in0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-facesim-simsmall-r1-20261109T014326Z/uart.in +uart-out0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-facesim-simsmall-r1-20261109T014326Z/uart.log +fesvr-step-size=2004765 +mm_readLatency_0=30 +mm_readMaxReqs_0=4 +mm_relaxFunctionalModel_0=0 +mm_writeLatency_0=30 +mm_writeMaxReqs_0=4 +ec-dac-roi-log=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-facesim-simsmall-r1-20261109T014326Z/roi-raw.jsonl +ec-dac-snapshot-seconds=30 +permissive-off +prog0=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-firmware-20261107T071424.273722Z/platform/generic/firmware/fw_payload.elf ",
+          "pid": 13546,
+          "process_state": "R",
+          "start_ticks": "32740"
+        }
+      ],
+      "state_audit": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/coverage-first/state.json",
+        "processes": [
+          {
+            "expected_start_ticks": "2596",
+            "field": "pid",
+            "identity_live": true,
+            "identity_uncertain": false,
+            "observed": {
+              "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run coverage-first ",
+              "pid": 5180,
+              "process_state": "S",
+              "start_ticks": "2596"
+            },
+            "old_boot": false
+          },
+          {
+            "expected_start_ticks": "2613",
+            "field": "child_pid",
+            "identity_live": true,
+            "identity_uncertain": false,
+            "observed": {
+              "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/coverage_first.py ",
+              "pid": 5257,
+              "process_state": "S",
+              "start_ticks": "2613"
+            },
+            "old_boot": false
+          }
+        ],
+        "recorded_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "status": "RUNNING"
+      },
+      "systemd": "MainPID=5180\nControlGroup=/system.slice/ec-parsec-coverage-first.service\nActiveState=active\nSubState=running\n"
+    },
+    "native": {
+      "cgroup_processes": [
+        {
+          "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run native ",
+          "pid": 6400,
+          "process_state": "S",
+          "start_ticks": "3042"
+        },
+        {
+          "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_campaign_native.py ",
+          "pid": 6408,
+          "process_state": "S",
+          "start_ticks": "3049"
+        },
+        {
+          "cmdline": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/hw_server -s tcp::3122 ",
+          "pid": 6701,
+          "process_state": "S",
+          "start_ticks": "3098"
+        },
+        {
+          "cmdline": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/loader -exec hw_server -s tcp::3122 ",
+          "pid": 6725,
+          "process_state": "S",
+          "start_ticks": "3103"
+        },
+        {
+          "cmdline": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/hw_server -s tcp::3122 ",
+          "pid": 6776,
+          "process_state": "S",
+          "start_ticks": "3113"
+        },
+        {
+          "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/suite_queue.py Native ",
+          "pid": 12630,
+          "process_state": "S",
+          "start_ticks": "19158"
+        }
+      ],
+      "state_audit": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/native/state.json",
+        "processes": [
+          {
+            "expected_start_ticks": "3042",
+            "field": "pid",
+            "identity_live": true,
+            "identity_uncertain": false,
+            "observed": {
+              "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run native ",
+              "pid": 6400,
+              "process_state": "S",
+              "start_ticks": "3042"
+            },
+            "old_boot": false
+          },
+          {
+            "expected_start_ticks": "3049",
+            "field": "child_pid",
+            "identity_live": true,
+            "identity_uncertain": false,
+            "observed": {
+              "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_campaign_native.py ",
+              "pid": 6408,
+              "process_state": "S",
+              "start_ticks": "3049"
+            },
+            "old_boot": false
+          }
+        ],
+        "recorded_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "status": "RUNNING"
+      },
+      "systemd": "MainPID=6400\nControlGroup=/system.slice/ec-parsec-native.service\nActiveState=active\nSubState=running\n"
+    }
+  },
+  "utc": "2026-11-09T02:15:26.955357+00:00"
+}

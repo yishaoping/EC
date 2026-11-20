@@ -1,0 +1,110 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Benchmarks/facesim/main.cpp
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Benchmarks/facesim/main-ec-staged.cpp
+@@ -7,7 +7,8 @@
+ #include "../../Public_Library/Thread_Utilities/THREAD_DIVISION_PARAMETERS.h"
+ 
+ #include "FACE_DRIVER.h"
+-#include "Storytelling/STORYTELLING_EXAMPLE.h"
++#include <malloc.h>
++#include "Storytelling/STORYTELLING_EXAMPLE-ec-staged.h"
+ #include "../../Public_Library/Utilities/LOG.h"
+ 
+ #ifdef ENABLE_PARSEC_HOOKS
+@@ -50,10 +51,17 @@
+ 	parse_args.Add_Option_Argument ("-timing");
+ 	parse_args.Parse (argc, argv);
+ 
+-	STORYTELLING_EXAMPLE<float, float> example;
++	// Prepare resident heap before original initialization and full ROI.
++        mallopt(M_TRIM_THRESHOLD,-1);mallopt(M_MMAP_MAX,0);
++        volatile char *ec_heap=(volatile char*)malloc(768*1024*1024);
++        if(!ec_heap)exit(125);
++        for(size_t i=0;i<768*1024*1024;i+=4096)ec_heap[i]=0;
++        free((void*)ec_heap);
++        STORYTELLING_EXAMPLE<float, float> example;
+ 
+ 	FILE_UTILITIES::Create_Directory (example.output_directory);
+-	LOG::Copy_Log_To_File (example.output_directory + "/log.txt", example.restart);
++	// Auxiliary timing/OS log disabled via existing PhysBAM API. No synthetic times.
++	LOG::Initialize_Logging(true,true,0);
+ 
+ 	if (parse_args.Is_Value_Set ("-threads"))
+ 	{
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Public_Library/Solids_And_Fluids/SOLIDS_FLUIDS_DRIVER.cpp
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Public_Library/Solids_And_Fluids/SOLIDS_FLUIDS_DRIVER-ec-staged.cpp
+@@ -5,6 +5,7 @@
+ // Class SOLIDS_FLUIDS_DRIVER
+ //#####################################################################
+ #include "SOLIDS_FLUIDS_DRIVER.h"
++#include <sstream>
+ #include "../Utilities/LOG.h"
+ #ifdef ENABLE_PARSEC_HOOKS
+ #include <hooks.h>
+@@ -20,6 +21,8 @@
+ 
+ 	if (!example.restart && example.write_output_files && !example.write_substeps) Write_Output_Files (example.first_frame);
+ 
++std::ostringstream ec_messages,ec_errors;
++	std::streambuf *ec_cout=std::cout.rdbuf(ec_messages.rdbuf()),*ec_cerr=std::cerr.rdbuf(ec_errors.rdbuf());
+ #ifdef ENABLE_PARSEC_HOOKS
+ 	__parsec_roi_begin();
+ #endif
+@@ -27,6 +30,8 @@
+ #ifdef ENABLE_PARSEC_HOOKS
+ 	__parsec_roi_end();
+ #endif
++	std::cout.rdbuf(ec_cout);std::cerr.rdbuf(ec_cerr);
++	std::cout<<ec_messages.str();std::cerr<<ec_errors.str();
+ 
+ 	//Always write last frame for verification purposes
+ 	if (!example.write_output_files && !example.write_substeps) Write_Output_Files (example.last_frame);
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Benchmarks/facesim/Storytelling/STORYTELLING_EXAMPLE.h
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Benchmarks/facesim/Storytelling/STORYTELLING_EXAMPLE-ec-staged.h
+@@ -11,6 +11,8 @@
+ #include "../../../Public_Library/Constitutive_Models/DIAGONALIZED_FACE_3D.h"
+ #include "../../../Public_Library/Collisions_And_Interactions/COLLISION_PENALTY_FORCES.h"
+ 
++#include <map>
++#include <sstream>
+ namespace PhysBAM
+ {
+ 
+@@ -39,6 +41,7 @@
+ 	using SOLIDS_FLUIDS_EXAMPLE<T>::verbose;
+ 	std::string control_directory;
+ 	T control_frame_rate;
++	std::map<std::string,std::string> ec_control_bytes;
+ 
+ 	FACE_CONTROL_PARAMETERS<T> input_control_parameters;
+ 	ACTIVATION_CONTROL_SET<T> *input_activation_controls;
+@@ -48,6 +51,14 @@
+ 	{
+ 		output_directory = "Storytelling/output";
+ 		control_directory = data_directory + "/Face_Data/Motion_Data/Storytelling_Controls";
++        // Official one-frame input consumes control frames 0,1,2. Stage raw
++        // bytes only; Read_Binary and interpolation stay at original ROI sites.
++        for(int ec_frame=0;ec_frame<=2;ec_frame++) {
++          std::string ec_name=control_directory+"/storytelling_controls."+STRING_UTILITIES::string_sprintf("%d",ec_frame);
++          std::istream *ec_in=FILE_UTILITIES::Safe_Open_Input(ec_name);
++          std::ostringstream ec_bytes;ec_bytes<<ec_in->rdbuf();delete ec_in;
++          ec_control_bytes[ec_name]=ec_bytes.str();
++        }
+ 
+ 		// Simulation source
+ 		model_directory = data_directory + "/Face_Data/Eftychis_840k";
+@@ -114,9 +125,13 @@
+ 		T interpolation_fraction = fractional_control_frame - (T) integer_control_frame;
+ 		std::string last_control_filename = control_directory + "/storytelling_controls." + STRING_UTILITIES::string_sprintf ("%d", integer_control_frame);
+ 		std::string next_control_filename = control_directory + "/storytelling_controls." + STRING_UTILITIES::string_sprintf ("%d", integer_control_frame + 1);
+-		FILE_UTILITIES::Read_From_File<RW> (last_control_filename, input_control_parameters);
++		if(ec_control_bytes.find(last_control_filename)==ec_control_bytes.end())exit(125);
++        std::istringstream ec_last(ec_control_bytes[last_control_filename],std::ios::in|std::ios::binary);
++        Read_Binary<RW>(ec_last,input_control_parameters);
+ 		input_control_parameters.Save_Controls();
+-		FILE_UTILITIES::Read_From_File<RW> (next_control_filename, input_control_parameters);
++		if(ec_control_bytes.find(next_control_filename)==ec_control_bytes.end())exit(125);
++        std::istringstream ec_next(ec_control_bytes[next_control_filename],std::ios::in|std::ios::binary);
++        Read_Binary<RW>(ec_next,input_control_parameters);
+ 		input_control_parameters.Interpolate (interpolation_fraction);
+ 		VECTOR_ND<T> input_controls;
+ 		input_control_parameters.Get (input_controls);

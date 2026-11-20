@@ -1,0 +1,691 @@
+{
+  "active_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/035-netferret-client-elf.log",
+  "checkpoints": {
+    "stack_libraries": {
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib/libuptcp.a": "8dd0e849625da8841084e79475b5e4984b5d31b323ff488d2f491d10dbd28b2b",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib/libuptcp.client.a": "798f5609ffad8a01153241c535ff930fd98ff2f0077472b0283a4563dd2d5505",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib/libuptcp.client.sim.a": "5d27e033d353d0ad9857f3e2cb58caf311e5776656b6f60cac9657cfa52889f0",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib/libuptcp.sim.a": "5d254ea2d5b3f7a89c863950f3f2a49a4ed909cc6e59519daab0e140a0d1ca93"
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "make",
+        "clean",
+        "ARCH=riscv64"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip",
+      "label": "stack-clean",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/000-stack-clean.log",
+      "log_sha256": "94dc5867be17754628e7cb0ce0b12a91456cd12475ba4cea63769b0f2990163e",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j4",
+        "ARCH=riscv64",
+        "CC=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "CXX=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "GCC_OX=-O2 -g -march=rv64gc -mabi=lp64d -fcommon -fno-strict-aliasing"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip",
+      "label": "stack-build",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/001-stack-build.log",
+      "log_sha256": "ce5373729dd3a32a592d5fbe2d9241fe3d673c6b4c92945e2c4ba96e2ee85734",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+        "-f",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib/libuptcp.a"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "libuptcp.a-object-architecture",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/002-libuptcp.a-object-architecture.log",
+      "log_sha256": "3d7be8a7858f4547247bfa21aa44d01fd401d188dd1150432549a6f2aea9dcdf",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+        "-f",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib/libuptcp.client.sim.a"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "libuptcp.client.sim.a-object-architecture",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/003-libuptcp.client.sim.a-object-architecture.log",
+      "log_sha256": "86f8fa81f9c5328c058d1ac36d39107827f3e468c03e2495fdc2d057fe334adc",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+        "-f",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib/libuptcp.client.a"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "libuptcp.client.a-object-architecture",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/004-libuptcp.client.a-object-architecture.log",
+      "log_sha256": "e423a57651ee0d8b2f5ab6676d0d95ec9ef0b07efdf9872578adf88e2b9b6d46",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+        "-f",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib/libuptcp.sim.a"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "libuptcp.sim.a-object-architecture",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/005-libuptcp.sim.a-object-architecture.log",
+      "log_sha256": "e697cc44842365139ce5f4209385fe732bdbe60c0057651595087e51fa3faee4",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O2",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.c",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.o"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "diagnostic-hooks",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/006-diagnostic-hooks.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-pthread",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netstreamcluster/server/streamcluster.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.o",
+        "-static",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib",
+        "-luptcp",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netstreamcluster/server/server"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netstreamcluster",
+      "label": "netstreamcluster-server",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/007-netstreamcluster-server.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-pthread",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netstreamcluster/client/client.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.o",
+        "-static",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib",
+        "-luptcp.client",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netstreamcluster/client/client"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netstreamcluster",
+      "label": "netstreamcluster-client",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/008-netstreamcluster-client.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-readelf",
+        "-h",
+        "-l",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netstreamcluster/server/server"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "netstreamcluster-server-elf",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/009-netstreamcluster-server-elf.log",
+      "log_sha256": "4ca35f9cd3f57717ae1dbf1ba0bdb05ab0a420fc1cdd5eb4d5d71a818f247cba",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-readelf",
+        "-h",
+        "-l",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netstreamcluster/client/client"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "netstreamcluster-client-elf",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/010-netstreamcluster-client-elf.log",
+      "log_sha256": "dc5066e456d9fc3b744c9d39d856403128cdf50992608ef443fa4242ddafdd4e",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-DENABLE_PARSEC_HOOKS",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/server",
+        "-I/data1/gzh/EC/Software/PARSEC/pkgs/libs/zlib/src",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-DENABLE_GZIP_COMPRESSION",
+        "-DENABLE_STATISTICS",
+        "-D_XOPEN_SOURCE=600",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/server/hashtable.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/server/util.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/server/dedup.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/server/rabin.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/server/encoder.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/server/decoder.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/server/mbuffer.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/server/sha.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-dedup-staged-20261107T051530Z/libz.a",
+        "-static",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib",
+        "-luptcp",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/server/netdedup"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup",
+      "label": "netdedup-server",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/011-netdedup-server.log",
+      "log_sha256": "77e14dbbb088dcd1e23654a0d5f494dd4e1f92af8fe3c38282d949d96ce12164",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-DENABLE_PARSEC_HOOKS",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/server",
+        "-I/data1/gzh/EC/Software/PARSEC/pkgs/libs/zlib/src",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-DENABLE_GZIP_COMPRESSION",
+        "-DENABLE_STATISTICS",
+        "-D_XOPEN_SOURCE=600",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/client/dedup_client.c",
+        "-static",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib",
+        "-luptcp.client",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/client/netdedup_client"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup",
+      "label": "netdedup-client",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/012-netdedup-client.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-readelf",
+        "-h",
+        "-l",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/server/netdedup"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "netdedup-netdedup-elf",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/013-netdedup-netdedup-elf.log",
+      "log_sha256": "9d69c2953e6d427f590cf3e9106af7c39953943595a60c82e98d42763cec9c14",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-readelf",
+        "-h",
+        "-l",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/client/netdedup_client"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "netdedup-netdedup_client-elf",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/014-netdedup-netdedup_client-elf.log",
+      "log_sha256": "e90a5d65afb22775baf0f75025736c3cc9565c08d567746d7c89d5545097927b",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "dirs",
+        "version=pthreads",
+        "CC=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "CXX=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "AR=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ar",
+        "CFLAGS=-O2 -g -march=rv64gc -mabi=lp64d -fcommon -fno-strict-aliasing -D_GNU_SOURCE -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib -I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks -DENABLE_PARSEC_HOOKS -I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include -pthread",
+        "LDFLAGS=-static -L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib",
+        "LIBS=/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.o -pthread"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server",
+      "label": "netferret-dirs",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/015-netferret-dirs.log",
+      "log_sha256": "f8cff2bc206791b6eb7e34b689b00347bd4247998185840ac3a28f1a6b191c1c",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j4",
+        "lib",
+        "version=pthreads",
+        "CC=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "CXX=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "AR=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ar",
+        "CFLAGS=-O2 -g -march=rv64gc -mabi=lp64d -fcommon -fno-strict-aliasing -D_GNU_SOURCE -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib -I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks -DENABLE_PARSEC_HOOKS -I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include -pthread",
+        "LDFLAGS=-static -L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib",
+        "LIBS=/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.o -pthread"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server",
+      "label": "netferret-libs",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/016-netferret-libs.log",
+      "log_sha256": "2aa7784967bd5b277fb4a8c5facf95692db9466ade3a8c84eec7822fd506a785",
+      "returncode": 2
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+        "-f",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib/libuptcp.a"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "libuptcp.a-object-architecture",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/017-libuptcp.a-object-architecture.log",
+      "log_sha256": "3d7be8a7858f4547247bfa21aa44d01fd401d188dd1150432549a6f2aea9dcdf",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+        "-f",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib/libuptcp.client.sim.a"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "libuptcp.client.sim.a-object-architecture",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/018-libuptcp.client.sim.a-object-architecture.log",
+      "log_sha256": "86f8fa81f9c5328c058d1ac36d39107827f3e468c03e2495fdc2d057fe334adc",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+        "-f",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib/libuptcp.client.a"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "libuptcp.client.a-object-architecture",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/019-libuptcp.client.a-object-architecture.log",
+      "log_sha256": "e423a57651ee0d8b2f5ab6676d0d95ec9ef0b07efdf9872578adf88e2b9b6d46",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+        "-f",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib/libuptcp.sim.a"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "libuptcp.sim.a-object-architecture",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/020-libuptcp.sim.a-object-architecture.log",
+      "log_sha256": "e697cc44842365139ce5f4209385fe732bdbe60c0057651595087e51fa3faee4",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O2",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.c",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.o"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "diagnostic-hooks",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/021-diagnostic-hooks.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "dirs",
+        "version=pthreads",
+        "CC=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "CXX=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "AR=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ar",
+        "CFLAGS=-O2 -g -march=rv64gc -mabi=lp64d -fcommon -fno-strict-aliasing -D_GNU_SOURCE -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib -I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks -DENABLE_PARSEC_HOOKS -I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server/include -DENABLE_PARSEC_UPTCPIP -pthread",
+        "LDFLAGS=-static -L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib",
+        "LIBS=/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.o -pthread"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server",
+      "label": "netferret-dirs",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/022-netferret-dirs.log",
+      "log_sha256": "f8cff2bc206791b6eb7e34b689b00347bd4247998185840ac3a28f1a6b191c1c",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j4",
+        "lib",
+        "version=pthreads",
+        "CC=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "CXX=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "AR=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ar",
+        "CFLAGS=-O2 -g -march=rv64gc -mabi=lp64d -fcommon -fno-strict-aliasing -D_GNU_SOURCE -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib -I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks -DENABLE_PARSEC_HOOKS -I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server/include -DENABLE_PARSEC_UPTCPIP -pthread",
+        "LDFLAGS=-static -L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib",
+        "LIBS=/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.o -pthread"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server",
+      "label": "netferret-libs",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/023-netferret-libs.log",
+      "log_sha256": "fcf0ce2aa9cd7a25440e1fbdc0e3090e41c6cf3feeaf827f108606e847b690c4",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j4",
+        "benchmark",
+        "version=pthreads",
+        "CC=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "CXX=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "AR=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ar",
+        "CFLAGS=-O2 -g -march=rv64gc -mabi=lp64d -fcommon -fno-strict-aliasing -D_GNU_SOURCE -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib -I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks -DENABLE_PARSEC_HOOKS -I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server/include -DENABLE_PARSEC_UPTCPIP -pthread",
+        "LDFLAGS=-static -L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib",
+        "LIBS=/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.o -pthread"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server",
+      "label": "netferret-server",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/024-netferret-server.log",
+      "log_sha256": "f60d7a697ee27236864397a1e4d35ffc7e0ea31157ce2cd380fe457a17c9d69d",
+      "returncode": 2
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+        "-f",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib/libuptcp.a"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "libuptcp.a-object-architecture",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/025-libuptcp.a-object-architecture.log",
+      "log_sha256": "3d7be8a7858f4547247bfa21aa44d01fd401d188dd1150432549a6f2aea9dcdf",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+        "-f",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib/libuptcp.client.sim.a"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "libuptcp.client.sim.a-object-architecture",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/026-libuptcp.client.sim.a-object-architecture.log",
+      "log_sha256": "86f8fa81f9c5328c058d1ac36d39107827f3e468c03e2495fdc2d057fe334adc",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+        "-f",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib/libuptcp.client.a"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "libuptcp.client.a-object-architecture",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/027-libuptcp.client.a-object-architecture.log",
+      "log_sha256": "e423a57651ee0d8b2f5ab6676d0d95ec9ef0b07efdf9872578adf88e2b9b6d46",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objdump",
+        "-f",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib/libuptcp.sim.a"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "libuptcp.sim.a-object-architecture",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/028-libuptcp.sim.a-object-architecture.log",
+      "log_sha256": "e697cc44842365139ce5f4209385fe732bdbe60c0057651595087e51fa3faee4",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O2",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.c",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.o"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "diagnostic-hooks",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/029-diagnostic-hooks.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "dirs",
+        "version=pthreads",
+        "CC=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "CXX=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "AR=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ar",
+        "CFLAGS=-O2 -g -march=rv64gc -mabi=lp64d -fcommon -fno-strict-aliasing -D_GNU_SOURCE -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib -I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks -DENABLE_PARSEC_HOOKS -I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server/include -DENABLE_PARSEC_UPTCPIP -pthread",
+        "LDFLAGS=-static -L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server/parsec/lib",
+        "LIBS=/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.o -pthread"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server",
+      "label": "netferret-dirs",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/030-netferret-dirs.log",
+      "log_sha256": "f8cff2bc206791b6eb7e34b689b00347bd4247998185840ac3a28f1a6b191c1c",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j4",
+        "lib",
+        "version=pthreads",
+        "CC=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "CXX=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "AR=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ar",
+        "CFLAGS=-O2 -g -march=rv64gc -mabi=lp64d -fcommon -fno-strict-aliasing -D_GNU_SOURCE -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib -I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks -DENABLE_PARSEC_HOOKS -I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server/include -DENABLE_PARSEC_UPTCPIP -pthread",
+        "LDFLAGS=-static -L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server/parsec/lib",
+        "LIBS=/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.o -pthread"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server",
+      "label": "netferret-libs",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/031-netferret-libs.log",
+      "log_sha256": "eab34d4a8233b10a69593d6248c1eb37ee2758c339afc6d0111d2ed0239f497d",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j4",
+        "benchmark",
+        "version=pthreads",
+        "CC=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "CXX=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "AR=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ar",
+        "CFLAGS=-O2 -g -march=rv64gc -mabi=lp64d -fcommon -fno-strict-aliasing -D_GNU_SOURCE -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib -I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks -DENABLE_PARSEC_HOOKS -I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server/include -DENABLE_PARSEC_UPTCPIP -pthread",
+        "LDFLAGS=-static -L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server/parsec/lib",
+        "LIBS=/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/diagnostic-hooks.o -pthread"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server",
+      "label": "netferret-server",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/032-netferret-server.log",
+      "log_sha256": "52979acd9cd112a1f4e581adb5db219402f26b779ad1d061c6e25053c093f3aa",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j4",
+        "CC=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "CFLAGS=-O2 -g -march=rv64gc -mabi=lp64d -fcommon -fno-strict-aliasing -D_GNU_SOURCE -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib -I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks -DENABLE_PARSEC_HOOKS -I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server/include -DENABLE_PARSEC_UPTCPIP -pthread",
+        "LDFLAGS=-static -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/uptcpip/lib",
+        "LIBS=-pthread"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/client",
+      "label": "netferret-client",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/033-netferret-client.log",
+      "log_sha256": "96062ec82b8f918d29bad94b90eaa460d022af513d71fbcc7bcabb41ec4af484",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-readelf",
+        "-h",
+        "-l",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server/parsec/bin/ferret-pthreads"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "netferret-ferret-pthreads-elf",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/034-netferret-ferret-pthreads-elf.log",
+      "log_sha256": "5b6099f2cc7ee118e3355ddbaba4483497ef8cf8518a0c7b60581ee190e08e9a",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-readelf",
+        "-h",
+        "-l",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/client/client"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+      "label": "netferret-client-elf",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/035-netferret-client-elf.log",
+      "log_sha256": "76cdf526b5a9843dc06d8694a6e11734ff4b54047402e28b8f430b4e404e6943",
+      "returncode": 0
+    }
+  ],
+  "compiler_sha256": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+  "formal_eligible": false,
+  "fpga_execution": false,
+  "hardware_modified": false,
+  "host_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z",
+  "patch": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/candidate.patch",
+  "patch_sha256": "b11b6e66e8ab8981c7d803c93903bccfe61c54935b3e6cb91927fbd23eb139bc",
+  "pid": 2253092,
+  "programs": {
+    "netdedup": {
+      "binaries": {
+        "client/netdedup_client": {
+          "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/client/netdedup_client",
+          "sha256": "8a1807d536a0417dc9f33f837d65381a57119afb734b5d9dcb97e87a76ae9865"
+        },
+        "server/netdedup": {
+          "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netdedup/server/netdedup",
+          "sha256": "099379e93dc1c27fbcb98b5180e19881f7546aeccb1262881e08c4e13a98666b"
+        }
+      },
+      "fpga_validation": "NOT_RUN",
+      "offline_protocol_validation": "NOT_RUN",
+      "original_roi_preserved": true,
+      "status": "ELF_COMPILED_DIAGNOSTIC_NOT_FORMAL"
+    },
+    "netferret": {
+      "binaries": {
+        "client/client": {
+          "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/client/client",
+          "sha256": "49fbb065693669423f9504e1621f32aa54bf2f3fd81454130b1ca8b058a6aa7e"
+        },
+        "server/parsec/bin/ferret-pthreads": {
+          "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netferret/server/parsec/bin/ferret-pthreads",
+          "sha256": "5dcb5d7d64c3d27e04bf0d25df016078f38df2df001e3b31fb7d23f57f9917ad"
+        }
+      },
+      "fpga_validation": "NOT_RUN",
+      "offline_protocol_validation": "NOT_RUN",
+      "original_roi_preserved": true,
+      "status": "ELF_COMPILED_DIAGNOSTIC_NOT_FORMAL"
+    },
+    "netstreamcluster": {
+      "binaries": {
+        "client/client": {
+          "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netstreamcluster/client/client",
+          "sha256": "784d47e5e59f4132d067af3a6322bae8765fc2d6ff0c6e7a2cf2a2867085da28"
+        },
+        "server/server": {
+          "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T101946Z/netstreamcluster/server/server",
+          "sha256": "49620ddf67269afd1c649c9f6cd014731be1b3e5701896afdc6fafeec0fcfb8a"
+        }
+      },
+      "fpga_validation": "NOT_RUN",
+      "offline_protocol_validation": "NOT_RUN",
+      "original_roi_preserved": true,
+      "status": "ELF_COMPILED_DIAGNOSTIC_NOT_FORMAL"
+    }
+  },
+  "reused_dependencies": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-dedup-staged-20261107T051530Z/libz.a": "2ab70e7aebde81f0cdba3947ff237250252638d3639a26e88d16e8c69497181e",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib/libgsl.a": "eb9abfc55b7be107daf4b01c2ef638ff29ec4c8776f2e6b48aff883708661c43",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib/libgslcblas.a": "6402c38eb8b5d86cfb753098b14ddac3995db6fc6f16005c68612f60f1ce9879",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib/libjpeg.a": "cd05297b7a989a523a8322f0afda3317515beb03c2fa87bf3e0799522a85164c"
+  },
+  "schema": "ec-network-candidates/1",
+  "source_parsec_commit": "a06d35960951c9bfad61eb4826bca8d167f98c19",
+  "start_ticks": "1512235",
+  "started_utc": "2026-11-07T10:22:44.636523+00:00",
+  "status": "CANDIDATE_ELFS_BUILT",
+  "updated_utc": "2026-11-07T10:22:45.778599+00:00"
+}

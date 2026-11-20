@@ -1,0 +1,665 @@
+{
+  "actual_cad_controller": {
+    "matches": [
+      {
+        "line": 76,
+        "text": "when((state === running || (state === ended && io.busy)) && (io.trap || io.prv =/= 0.U || io.satp =/= expectedSatp)) {"
+      },
+      {
+        "line": 77,
+        "text": "faults := faults | 8.U"
+      },
+      {
+        "line": 83,
+        "text": "val matches = io.satp === expectedSatp && io.prv === 0.U && io.hart === 0.U"
+      }
+    ],
+    "path": "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/main/scala/util/DacRoi.scala",
+    "sha256": "e41828d04b47ad2a209defc28c700113e3a74e53451e00a846c0ab63df9c4ed2"
+  },
+  "dependency": {
+    "build_arch": {
+      "matches": [
+        {
+          "line": 3,
+          "text": "ARCH = $(shell uname -m)"
+        },
+        {
+          "line": 11,
+          "text": "@cp -r include/$(ARCH) include/machine;"
+        },
+        {
+          "line": 13,
+          "text": "@cp -r freebsd.netinet/in_cksum_$(ARCH).c freebsd.netinet/in_cksum.c;"
+        }
+      ],
+      "path": "/data1/gzh/EC/Software/PARSEC/pkgs/libs/uptcpip/src/Makefile",
+      "sha256": "c6f9136fabdb9d5407131d96f6fff3d8145ca39360391feb56f9c435529fb6c1"
+    },
+    "compile_failure_claimed": false,
+    "cross_compile_attempted": false,
+    "distinction": "The default original real-machine path uses user TCP and shared memory; CONFIG_NET=n alone does not prove that path impossible. The simulation/socket fallback additionally needs Linux networking. User-stack worker/context and target architecture portability remain separate issues.",
+    "enabled_stack": {
+      "matches": [
+        {
+          "line": 18,
+          "text": "LIB_UPTCP= -luptcp"
+        },
+        {
+          "line": 19,
+          "text": "LIB_UPTCP_SIM= -luptcp.sim"
+        },
+        {
+          "line": 24,
+          "text": "CFLAGS += -DENABLE_PARSEC_UPTCPIP -DENABLE_GZIP_COMPRESSION"
+        }
+      ],
+      "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netdedup/src/server/Makefile",
+      "sha256": "16aa34c7f413a88f8804cfb0dd70e575bafd5cb4017c5cf4ea3cd6df485eabc2"
+    },
+    "host_threads": {
+      "matches": [
+        {
+          "line": 176,
+          "text": "int pthread_create_wrapper(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine)(void*), void *arg, int type)"
+        },
+        {
+          "line": 181,
+          "text": "int res = pthread_create(thread, attr, start_routine, arg);"
+        },
+        {
+          "line": 349,
+          "text": "usleep(num);"
+        },
+        {
+          "line": 839,
+          "text": "error = pthread_cond_wait(p_cond, p_mutex);"
+        }
+      ],
+      "path": "/data1/gzh/EC/Software/PARSEC/pkgs/libs/uptcpip/src/host.support/host_serv.c",
+      "sha256": "270687f3ea29ab4daadf83a4f02ec9c814117a427185307c4126ff2d8b770272"
+    },
+    "machine_arch_directories": [
+      "i386",
+      "x86_64"
+    ],
+    "shared_memory": {
+      "matches": [
+        {
+          "line": 586,
+          "text": "if((shmid = shmget(shm_key, sizeof(struct shm_bufring), IPC_CREAT | S_IRUSR | S_IWUSR)) < 0){"
+        },
+        {
+          "line": 591,
+          "text": "if((hif_tx_shmbuf_ring = (struct shm_bufring *) shmat(shmid, NULL, 0)) == (void*)-1){"
+        },
+        {
+          "line": 855,
+          "text": "if((shmid = shmget(shm_key, sizeof(struct shm_bufring), IPC_CREAT | S_IRUSR | S_IWUSR)) < 0){"
+        },
+        {
+          "line": 860,
+          "text": "if((hif_rx_shmbuf_ring = (struct shm_bufring *) shmat(shmid, NULL, 0)) == (void*)-1){"
+        }
+      ],
+      "path": "/data1/gzh/EC/Software/PARSEC/pkgs/libs/uptcpip/src/host.support/if_host.c",
+      "sha256": "e483fcb258227c8b31769399484a6debbcffd9cf66f7e990f67c4ddc918ff610"
+    },
+    "stack_roi_auxiliary": {
+      "matches": [
+        {
+          "line": 182,
+          "text": "void parsec_enter_tcpip_roi()"
+        },
+        {
+          "line": 203,
+          "text": "gettimeofday(&global_roi_start_tv, NULL);"
+        },
+        {
+          "line": 207,
+          "text": "void parsec_exit_tcpip_roi()"
+        },
+        {
+          "line": 210,
+          "text": "gettimeofday(&global_roi_end_tv, NULL);"
+        }
+      ],
+      "path": "/data1/gzh/EC/Software/PARSEC/pkgs/libs/uptcpip/src/lib/uptcp_api.c",
+      "sha256": "a5d80e99aa268bc07bc11b339d18770185b034e017fb1f893170d1b3146ec4cc"
+    }
+  },
+  "hardware_modified": false,
+  "kernel_configs": [
+    {
+      "matches": [
+        {
+          "line": 37,
+          "text": "CONFIG_SYSVIPC=y"
+        },
+        {
+          "line": 193,
+          "text": "CONFIG_FUTEX=y"
+        },
+        {
+          "line": 273,
+          "text": "# CONFIG_SMP is not set"
+        },
+        {
+          "line": 562,
+          "text": "# CONFIG_NET is not set"
+        }
+      ],
+      "path": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T052413Z/.config",
+      "sha256": "d0bb984fa69629231b7752f6cbb9fac3f418889a0eb13332c88cbbd52828ce14"
+    },
+    {
+      "matches": [
+        {
+          "line": 37,
+          "text": "CONFIG_SYSVIPC=y"
+        },
+        {
+          "line": 193,
+          "text": "CONFIG_FUTEX=y"
+        },
+        {
+          "line": 273,
+          "text": "# CONFIG_SMP is not set"
+        },
+        {
+          "line": 562,
+          "text": "# CONFIG_NET is not set"
+        }
+      ],
+      "path": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/C4-earlyconsole-20261107T025952Z/.config",
+      "sha256": "cd367595b60ffe7e2c33d1e3a0049a2461a102f71f6681b7e818598693e1377d"
+    }
+  ],
+  "observed_utc": "2026-11-07T08:11:21.178414+00:00",
+  "other_programs_continue": true,
+  "programs": {
+    "netdedup": {
+      "argument_parser": {
+        "matches": [
+          {
+            "line": 77,
+            "text": "while (-1 != (ch = getopt(argc, argv, \"cuvo:w:t:h\"))) {"
+          },
+          {
+            "line": 114,
+            "text": "case '?':"
+          },
+          {
+            "line": 115,
+            "text": "fprintf(stdout, \"Unknown option `-%c'.\\n\", optopt);"
+          }
+        ],
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netdedup/src/server/dedup.c",
+        "sha256": "818d4f599c1c98cac94f893325e8537d233da2ff8c243875e91c58d29c832e62"
+      },
+      "bound_elf": null,
+      "formal_runconf": {
+        "matches": [
+          {
+            "line": 16,
+            "text": "run_exec=\"bin/netdedup\""
+          },
+          {
+            "line": 19,
+            "text": "run_args=\"-c -p -v -t ${NTHREADS} -i media.dat -o output.dat.ddp\""
+          }
+        ],
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netdedup/parsec/simmedium.runconf",
+        "sha256": "4418bbe5bbcee48690b2ad99245965e6f20b71e10b18f97c29e11b1f9858a6ce"
+      },
+      "fpga_run": false,
+      "input_inconsistency": "Official simmedium.runconf invokes bin/netdedup directly with -p and -i media.dat, but the actual server getopt string cuvo:w:t:h does not accept p or i. The source wrapper starts a distinct client/server pair and maps simmedium client to test.dat. This is a concrete upstream CLI/input mismatch, not a claimed runtime or cross-compile test; no silent substitution authorized.",
+      "original_roi_chain": "Original serial ROI calls SerialIntegratedPipeline, which creates output, receives data, chunks/deduplicates/compresses and writes the result.",
+      "required_resolution": "Port the original user TCP stack to RISC-V and prove syscall/context/worker support for the complete original ROI. Moving all network work outside ROI or substituting the standalone benchmark cannot satisfy this workload.",
+      "source": {
+        "matches": [
+          {
+            "line": 823,
+            "text": "int fd_out = create_output_file(conf->outfile);"
+          },
+          {
+            "line": 880,
+            "text": "r = uptcp_recv(fd, chunk->uncompressed_data.ptr+bytes_left+bytes_read, MAXBUF-bytes_read, 0);"
+          },
+          {
+            "line": 882,
+            "text": "r = recv(fd, chunk->uncompressed_data.ptr+bytes_left+bytes_read, MAXBUF-bytes_read, 0);"
+          },
+          {
+            "line": 1120,
+            "text": "r = uptcp_recv(fd, chunk->uncompressed_data.ptr+bytes_left+bytes_read, MAXBUF-bytes_read, 0);"
+          },
+          {
+            "line": 1122,
+            "text": "r = recv(fd, chunk->uncompressed_data.ptr+bytes_left+bytes_read, MAXBUF-bytes_read, 0);"
+          },
+          {
+            "line": 1504,
+            "text": "__parsec_roi_begin();"
+          },
+          {
+            "line": 1582,
+            "text": "__parsec_roi_end();"
+          },
+          {
+            "line": 1620,
+            "text": "__parsec_roi_begin();"
+          },
+          {
+            "line": 1627,
+            "text": "SerialIntegratedPipeline(&generic_args);"
+          },
+          {
+            "line": 1633,
+            "text": "__parsec_roi_end();"
+          }
+        ],
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netdedup/src/server/encoder.c",
+        "sha256": "9f4e7141176521d1167e00f0b6c0fb21bfec30cde4b793bdf910c23d876744f7"
+      },
+      "status": "BLOCKED_PROTOCOL_AND_UNPORTED_DEPENDENCY",
+      "wrapper": {
+        "matches": [
+          {
+            "line": 30,
+            "text": "PROGARGS_CLIENT=\"-i test.dat\";;"
+          },
+          {
+            "line": 32,
+            "text": "PROGARGS_CLIENT=\"-i test.dat\";;"
+          },
+          {
+            "line": 34,
+            "text": "PROGARGS_CLIENT=\"-i test.dat\";;"
+          },
+          {
+            "line": 36,
+            "text": "PROGARGS_CLIENT=\"-i test.dat\";;"
+          },
+          {
+            "line": 38,
+            "text": "PROGARGS_CLIENT=\"-i media.dat\";;"
+          },
+          {
+            "line": 40,
+            "text": "PROGARGS_CLIENT=\"-i FC-6-x86_64-disc1.iso\";;"
+          },
+          {
+            "line": 46,
+            "text": "PROGARGS_SERVER=\"-c -v -t ${NUMPROCS} -o output.dat.ddp\""
+          },
+          {
+            "line": 53,
+            "text": "RUN_SERVER=\"$PROG_PATH/netdedup $PROGARGS_SERVER\""
+          },
+          {
+            "line": 54,
+            "text": "RUN_CLIENT=\"$PROG_PATH/netdedup_client $PROGARGS_CLIENT &\""
+          },
+          {
+            "line": 64,
+            "text": "RUN_SERVER=\"$PROG_PATH/netdedup_sim $PROGARGS_SERVER\""
+          },
+          {
+            "line": 72,
+            "text": "RUN_CLIENT=\"$PROG_PATH/netdedup_client_sim $PROGARGS_CLIENT\""
+          }
+        ],
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netdedup/src/run.sh",
+        "sha256": "6d7e3c90ab4ffc0c2452ce075139c4ceb40b450d16171c14be6d564b922ef67b"
+      }
+    },
+    "netferret": {
+      "bound_elf": null,
+      "formal_runconf": {
+        "matches": [
+          {
+            "line": 16,
+            "text": "run_exec=\"bin/run.sh\""
+          },
+          {
+            "line": 19,
+            "text": "run_args=\"${NTHREADS} simmedium\""
+          }
+        ],
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netferret/parsec/simmedium.runconf",
+        "sha256": "048a25c3578932066d3506d856a4cac7fc1b715527b506e0d713368be615b4c2"
+      },
+      "fpga_run": false,
+      "original_roi_chain": "Original ROI creates acceptor/load/segment/extract/vector/rank/output thread pools; those workers accept, receive, compute and send rankings. Requested threads=1 does not remove the pipeline threads.",
+      "required_resolution": "Port the original user TCP stack to RISC-V and prove syscall/context/worker support for the complete original ROI. Moving all network work outside ROI or substituting the standalone benchmark cannot satisfy this workload.",
+      "source": {
+        "matches": [
+          {
+            "line": 201,
+            "text": "if ((fd1 = uptcp_accept(fd0, (struct sockaddr *)  &pin, &addrlen)) == -1) {"
+          },
+          {
+            "line": 203,
+            "text": "if ((fd1 = accept(fd0, (struct sockaddr *)  &pin, &addrlen)) == -1) {"
+          },
+          {
+            "line": 258,
+            "text": "if ((r = uptcp_recv(fd, buf+bytes_recv, (bytes_input-bytes_recv), 0)) == -1) {"
+          },
+          {
+            "line": 260,
+            "text": "if ((r = recv(fd, buf+bytes_recv, (bytes_input-bytes_recv), 0)) == -1) {"
+          },
+          {
+            "line": 492,
+            "text": "if (uptcp_send(rank->fd,  sendbuf, bufsize, 0) == -1) {"
+          },
+          {
+            "line": 494,
+            "text": "if (send(rank->fd,  sendbuf, bufsize, 0) == -1) {"
+          },
+          {
+            "line": 654,
+            "text": "__parsec_roi_begin();"
+          },
+          {
+            "line": 656,
+            "text": "p_acceptor = tpool_create(t_acceptor_desc, NTHREAD_ACCEPTOR);"
+          },
+          {
+            "line": 657,
+            "text": "p_load = tpool_create(t_load_desc, NTHREAD_LOAD);"
+          },
+          {
+            "line": 658,
+            "text": "p_seg = tpool_create(t_seg_desc, NTHREAD_SEG);"
+          },
+          {
+            "line": 659,
+            "text": "p_extract = tpool_create(t_extract_desc, NTHREAD_EXTRACT);"
+          },
+          {
+            "line": 660,
+            "text": "p_vec = tpool_create(t_vec_desc, NTHREAD_VEC);"
+          },
+          {
+            "line": 661,
+            "text": "p_rank = tpool_create(t_rank_desc, NTHREAD_RANK);"
+          },
+          {
+            "line": 662,
+            "text": "p_out = tpool_create(t_out_desc, NTHREAD_OUT);"
+          },
+          {
+            "line": 664,
+            "text": "tpool_join(p_out, NULL);"
+          },
+          {
+            "line": 665,
+            "text": "tpool_join(p_rank, NULL);"
+          },
+          {
+            "line": 666,
+            "text": "tpool_join(p_vec, NULL);"
+          },
+          {
+            "line": 667,
+            "text": "tpool_join(p_extract, NULL);"
+          },
+          {
+            "line": 668,
+            "text": "tpool_join(p_seg, NULL);"
+          },
+          {
+            "line": 669,
+            "text": "tpool_join(p_load, NULL);"
+          },
+          {
+            "line": 672,
+            "text": "__parsec_roi_end();"
+          }
+        ],
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netferret/src/server/benchmark/ferret-pthreads.c",
+        "sha256": "e600ab10c77ad1dfc70f9d010932ad8adffb5f4ba7d8b553f1c2170a940bee0b"
+      },
+      "status": "BLOCKED_PROTOCOL_AND_UNPORTED_DEPENDENCY",
+      "wrapper": {
+        "matches": [
+          {
+            "line": 42,
+            "text": "PROGARGS_SERVER=\"corel lsh 5 5 ${NUMPROCS}\""
+          },
+          {
+            "line": 43,
+            "text": "PROGARGS_CLIENT=\"queries ${CLIENTTHREADS} output.txt\";;"
+          },
+          {
+            "line": 45,
+            "text": "PROGARGS_SERVER=\"corel lsh 5 5 ${NUMPROCS}\""
+          },
+          {
+            "line": 46,
+            "text": "PROGARGS_CLIENT=\"queries ${CLIENTTHREADS} output.txt\";;"
+          },
+          {
+            "line": 48,
+            "text": "PROGARGS_SERVER=\"corel lsh 10 20 ${NUMPROCS}\""
+          },
+          {
+            "line": 49,
+            "text": "PROGARGS_CLIENT=\"queries ${CLIENTTHREADS} output.txt\";;"
+          },
+          {
+            "line": 51,
+            "text": "PROGARGS_SERVER=\"corel lsh 10 20 ${NUMPROCS}\""
+          },
+          {
+            "line": 52,
+            "text": "PROGARGS_CLIENT=\"queries ${CLIENTTHREADS} output.txt\";;"
+          },
+          {
+            "line": 54,
+            "text": "PROGARGS_SERVER=\"corel lsh 10 20 ${NUMPROCS}\""
+          },
+          {
+            "line": 55,
+            "text": "PROGARGS_CLIENT=\"queries ${CLIENTTHREADS} output.txt\";;"
+          },
+          {
+            "line": 57,
+            "text": "PROGARGS_SERVER=\"corel lsh 50 20 ${NUMPROCS}\""
+          },
+          {
+            "line": 58,
+            "text": "PROGARGS_CLIENT=\"queries ${CLIENTTHREADS} output.txt\";;"
+          },
+          {
+            "line": 69,
+            "text": "RUN_SERVER=\"$PROG_PATH/server $PROGARGS_SERVER\""
+          },
+          {
+            "line": 70,
+            "text": "RUN_CLIENT=\"$PROG_PATH/client $PROGARGS_CLIENT &\""
+          },
+          {
+            "line": 80,
+            "text": "RUN_SERVER=\"$PROG_PATH/server_sim $PROGARGS_SERVER\""
+          },
+          {
+            "line": 88,
+            "text": "RUN_CLIENT=\"$PROG_PATH/client_sim $PROGARGS_CLIENT\""
+          }
+        ],
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netferret/src/run.sh",
+        "sha256": "74b22645a552c785a78149f80f4750b751232f85473623d9520395d68e0a5b0a"
+      }
+    },
+    "netstreamcluster": {
+      "bound_elf": null,
+      "formal_runconf": {
+        "matches": [
+          {
+            "line": 16,
+            "text": "run_exec=\"bin/run.sh\""
+          },
+          {
+            "line": 19,
+            "text": "run_args=\"${NTHREADS} simlarge\""
+          }
+        ],
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netstreamcluster/parsec/simmedium.runconf",
+        "sha256": "2cac0d5b10caaa9e2b4b9e344aa772706eee51810c6cc17ff28538cea80468e4"
+      },
+      "fpga_run": false,
+      "input_inconsistency": "Official simmedium.runconf literally invokes run.sh 1 simlarge. Preserve that actual workload or explicitly resolve the upstream label; do not silently use standalone simmedium.",
+      "original_roi_chain": "Original ROI calls streamCluster, creates receive threads and performs accept/recv/send with explicit sleeps while streaming and computing.",
+      "required_resolution": "Port the original user TCP stack to RISC-V and prove syscall/context/worker support for the complete original ROI. Moving all network work outside ROI or substituting the standalone benchmark cannot satisfy this workload.",
+      "source": {
+        "matches": [
+          {
+            "line": 1899,
+            "text": "usleep(100);"
+          },
+          {
+            "line": 1920,
+            "text": "if ((r = uptcp_recv(fd, buf+bytes_recv, (bytes_input-bytes_recv), 0)) == -1) {"
+          },
+          {
+            "line": 1922,
+            "text": "if ((r = recv(fd, buf+bytes_recv, (bytes_input-bytes_recv), 0)) == -1) {"
+          },
+          {
+            "line": 1947,
+            "text": "if (uptcp_send(fd,  &tid, sizeof(tid), 0) == -1) {"
+          },
+          {
+            "line": 1949,
+            "text": "if (send(fd,  &tid, sizeof(tid), 0) == -1) {"
+          },
+          {
+            "line": 2035,
+            "text": "if ((fd1 = uptcp_accept(fd0, (struct sockaddr *)  &pin, &addrlen)) == -1) {"
+          },
+          {
+            "line": 2037,
+            "text": "if ((fd1 = accept(fd0, (struct sockaddr *)  &pin, &addrlen)) == -1) {"
+          },
+          {
+            "line": 2047,
+            "text": "if ((r = uptcp_recv(fd1, &expect_clients, sizeof(expect_clients), 0)) == -1) {"
+          },
+          {
+            "line": 2053,
+            "text": "if ((r = recv(fd1, &expect_clients, sizeof(expect_clients), 0)) == -1) {"
+          },
+          {
+            "line": 2077,
+            "text": "if(uptcp_pthread_create(&thread_id[thread_count], NULL, receive_from_client, arg_ptr) != 0){"
+          },
+          {
+            "line": 2083,
+            "text": "if(pthread_create(&thread_id[thread_count], NULL, receive_from_client, arg_ptr) != 0){"
+          },
+          {
+            "line": 2177,
+            "text": "thread_count = create_receive_threads(&queue, chunksize);"
+          },
+          {
+            "line": 2195,
+            "text": "usleep(100);"
+          },
+          {
+            "line": 2335,
+            "text": "__parsec_roi_begin();"
+          },
+          {
+            "line": 2338,
+            "text": "streamCluster(stream, kmin, kmax, dim, chunksize, clustersize, outfilename );"
+          },
+          {
+            "line": 2341,
+            "text": "__parsec_roi_end();"
+          }
+        ],
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netstreamcluster/src/server/streamcluster.cpp",
+        "sha256": "d02dd3d58916fd5d81a8580aeae1c632caad7bed058ca19e2e651e3179dc74ff"
+      },
+      "status": "BLOCKED_PROTOCOL_AND_UNPORTED_DEPENDENCY",
+      "wrapper": {
+        "matches": [
+          {
+            "line": 42,
+            "text": "PROGARGS_SERVER=\"2 5 1 10 10 5 none output.txt ${NUMPROCS}\""
+          },
+          {
+            "line": 43,
+            "text": "PROGARGS_CLIENT=\"1 10 10 ${CLIENTTHREADS}\";;"
+          },
+          {
+            "line": 45,
+            "text": "PROGARGS_SERVER=\"3 10 3 16 16 10 none output.txt ${NUMPROCS}\""
+          },
+          {
+            "line": 46,
+            "text": "PROGARGS_CLIENT=\"3 16 16 ${CLIENTTHREADS}\";;"
+          },
+          {
+            "line": 48,
+            "text": "PROGARGS_SERVER=\"10 20 32 4096 4096 1000 none output.txt ${NUMPROCS}\""
+          },
+          {
+            "line": 49,
+            "text": "PROGARGS_CLIENT=\"32 4096 4096 ${CLIENTTHREADS}\";;"
+          },
+          {
+            "line": 51,
+            "text": "PROGARGS_SERVER=\"10 20 64 8192 8192 1000  none output.txt ${NUMPROCS}\""
+          },
+          {
+            "line": 52,
+            "text": "PROGARGS_CLIENT=\"64 8192 8192 ${CLIENTTHREADS}\";;"
+          },
+          {
+            "line": 54,
+            "text": "PROGARGS_SERVER=\"10 20 128 16384 16384 1000 none output.txt ${NUMPROCS}\""
+          },
+          {
+            "line": 55,
+            "text": "PROGARGS_CLIENT=\"128 16384 16384 ${CLIENTTHREADS}\";;"
+          },
+          {
+            "line": 57,
+            "text": "PROGARGS_SERVER=\"10 20 128 1000000 200000 5000 none output.txt ${NUMPROCS}\""
+          },
+          {
+            "line": 58,
+            "text": "PROGARGS_CLIENT=\"128 1000000 200000 ${CLIENTTHREADS}\";;"
+          },
+          {
+            "line": 69,
+            "text": "RUN_SERVER=\"$PROG_PATH/server $PROGARGS_SERVER\""
+          },
+          {
+            "line": 70,
+            "text": "RUN_CLIENT=\"$PROG_PATH/client $PROGARGS_CLIENT &\""
+          },
+          {
+            "line": 80,
+            "text": "RUN_SERVER=\"$PROG_PATH/server_sim $PROGARGS_SERVER\""
+          },
+          {
+            "line": 88,
+            "text": "RUN_CLIENT=\"$PROG_PATH/client_sim $PROGARGS_CLIENT\""
+          }
+        ],
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netstreamcluster/src/run.sh",
+        "sha256": "89c3ba46a0973af416cfd6f219b0da99803a862de7829af2b6dee40339b2c15e"
+      }
+    }
+  },
+  "schema": "ec-network-original-roi-audit/1",
+  "source_level_conclusion": "Current C4 ROI contract rejects trap/non-user execution/satp changes while running or draining. Original network APIs are not automatically kernel syscalls when user TCP is enabled, but real worker/thread/blocking paths and architecture port are not proven compatible.",
+  "unresolved_design": "A valid original network run needs a supported complete ROI context protocol. Do not merely mask fault8: that would remove the validity guard without proving checker replay/compare across contexts.",
+  "workloads_removed": false
+}

@@ -1,0 +1,25 @@
+{
+  "utc": "2026-11-12T21:51:40.912879+00:00",
+  "hardware_commit": "19584c031064675debdfcb45199da63a5ad79dec",
+  "hardware_source_commit": "1a71b11ba43d448a847ed44c1f317e98dc61d8ae",
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "source_binding": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/common-bank-geometry-r2-20261113/source-binding.json",
+  "source_binding_sha256": "32d4b5dd7614c34d9617a1179ae36016b2432851004d0808ce2ed16687f58313",
+  "validation_scope": "Local32-slot full-state partitions over arbitrary8-bit bases at full256 production geometry, default16 arbitrary-state cone identity,8/32 query SAT,256-slot mixed caller elaboration. Not complete caller/host/frozenDCache or wholeformal.",
+  "obligations_before_host_area": [
+    "Both8/32 local full-state finite regressions and state mutation negatives pass.",
+    "Default16 state/output/reset/init exact cone identity passes.",
+    "Both8/32 arbitrary-state valid/tag/query/base SAT plus wrong-equality negatives pass.",
+    "Actual address256 + threebarrier256 source compiles and elaborates with128/32 selectedbanks; inspect one identical type after dedup before threading.",
+    "Keep original16-lane production/mixed and DSP owners; new hardware never silently replaces their inputs."
+  ],
+  "obligations_before_whole": [
+    "Actual new complete caller target parity including fullinvalidpayload,overflow,reset and dependency feedback.",
+    "Exact new Plain/Threaded host tokens+all73 publicoutputs and negative mutation, actual hostcycles recorded for throughput.",
+    "Actual samegeometry/scope serial area pair with proofports absent; no localgain extrapolation.",
+    "Material compatible gain,fullfrozenDCache8192cycles/24575observations and completehost/ABI closure before exacthost/shell postopt.",
+    "Fullshell LUT fit only starts place/route/STA/DRC/bitstream/cert/runtimeidentity/card21only/PARSEC gates."
+  ],
+  "new_CAD_from_this_prerequisite": false,
+  "noFIT": true
+}

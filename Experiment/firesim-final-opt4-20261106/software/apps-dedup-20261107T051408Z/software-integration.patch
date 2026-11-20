@@ -1,0 +1,87 @@
+--- /data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/src/encoder.c
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-dedup-20261107T051408Z/src/dedup/encoder.c
+@@ -227,11 +227,34 @@
+  * Takes the file name to use as input and returns the file handle
+  * The output file can be used to write chunks without any further steps
+  */
++#include <malloc.h>
++extern int ec_staged_fd;
++extern unsigned char *ec_staged_data;
++extern size_t ec_staged_size, ec_staged_capacity;
++static void ec_prepare_output(const char *path, size_t input_size) {
++  ec_staged_capacity=input_size*2+1024*1024;
++  ec_staged_data=malloc(ec_staged_capacity);
++  if (!ec_staged_data) exit(125);
++  for(size_t i=0;i<ec_staged_capacity;i+=4096) ec_staged_data[i]=0;
++  ec_staged_fd=open(path,O_CREAT|O_TRUNC|O_WRONLY,0644);
++  if(ec_staged_fd<0) exit(125);
++  mallopt(M_TRIM_THRESHOLD,-1); mallopt(M_MMAP_MAX,0);
++  volatile char *heap=(volatile char*)malloc(128*1024*1024);
++  if(!heap) exit(125);
++  for(size_t i=0;i<128*1024*1024;i+=4096) heap[i]=0;
++  free((void*)heap);
++}
++static void ec_finish_output(void) {
++  int fd=ec_staged_fd; ec_staged_fd=-1;
++  if(xwrite(fd,ec_staged_data,ec_staged_size)!=(int)ec_staged_size || close(fd)) exit(125);
++  free(ec_staged_data);
++}
++
+ static int create_output_file(char *outfile) {
+   int fd;
+ 
+   //Create output file
+-  fd = open(outfile, O_CREAT|O_TRUNC|O_WRONLY|O_TRUNC, S_IRGRP | S_IWUSR | S_IRUSR | S_IROTH);
++  fd = ec_staged_fd;
+   if (fd < 0) {
+     EXIT_TRACE("Cannot open output file.");
+   }
+@@ -953,7 +976,7 @@
+   free(rabintab);
+   free(rabinwintab);
+ 
+-  close(fd_out);
++  /* OS output close deferred until original ROI has ended */
+ 
+   return NULL;
+ }
+@@ -1558,6 +1581,8 @@
+   generic_args.nqueues = -1;
+   generic_args.fd = fd;
+ 
++  ec_prepare_output(conf->outfile,filestat.st_size);
++
+ #ifdef ENABLE_PARSEC_HOOKS
+   __parsec_roi_begin();
+ #endif
+@@ -1568,6 +1593,7 @@
+ #ifdef ENABLE_PARSEC_HOOKS
+   __parsec_roi_end();
+ #endif
++  ec_finish_output();
+ 
+ #endif //ENABLE_PTHREADS
+ 
+--- /data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/src/util.c
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-dedup-20261107T051408Z/src/dedup/util.c
+@@ -1,3 +1,8 @@
++#include <stdlib.h>
++#include <string.h>
++int ec_staged_fd=-1;
++unsigned char *ec_staged_data;
++size_t ec_staged_size, ec_staged_capacity;
+ #include <stdio.h>
+ #include <errno.h>
+ #include <unistd.h>
+@@ -26,6 +31,11 @@
+ }
+ 
+ int xwrite(int sd, const void *buf, size_t len) {
++  if(sd==ec_staged_fd && ec_staged_fd>=0) {
++    if(len>ec_staged_capacity-ec_staged_size) exit(125);
++    memcpy(ec_staged_data+ec_staged_size,buf,len);ec_staged_size+=len;
++    return len;
++  }
+   char *p = (char *)buf;
+   size_t nsent = 0;
+   ssize_t rv;

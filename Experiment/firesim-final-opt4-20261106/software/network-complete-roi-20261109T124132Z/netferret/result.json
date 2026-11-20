@@ -1,0 +1,110 @@
+{
+  "architecture": "riscv64",
+  "binaries": {
+    "client/client": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/netferret/client/client",
+      "sha256": "0592caf89a940d3798a6c3b3ce45393e8b5b055225b146cee39aa0c875beb373"
+    },
+    "server/parsec/bin/ferret-pthreads": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/netferret/server/parsec/bin/ferret-pthreads",
+      "sha256": "6855047813ba2e099f904cbd9c468cf4bc31ddfcadba234e4cc0f4a58d3b4b03"
+    }
+  },
+  "children": {
+    "client": {
+      "cmdline": "nice -n 15 /usr/bin/qemu-riscv64 -strace /data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/diagnostic-netferret/netferret/client/client queries 1 output.txt ",
+      "pid": 2973910,
+      "process_state": "R",
+      "start_ticks": "3981468"
+    },
+    "server": {
+      "cmdline": "nice -n 15 /usr/bin/qemu-riscv64 -strace /data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/diagnostic-netferret/netferret/server/parsec/bin/ferret-pthreads corel lsh 5 5 1 ",
+      "pid": 2973894,
+      "process_state": "R",
+      "start_ticks": "3981463"
+    }
+  },
+  "client_argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/diagnostic-netferret/netferret/client/client",
+    "queries",
+    "1",
+    "output.txt"
+  ],
+  "correctness": {
+    "method": "all input query names returned; numerical reference comparison remains pending",
+    "passed": false,
+    "queries": 1,
+    "results": 1
+  },
+  "ended_utc": "2026-11-09T12:41:34.687088+00:00",
+  "exit_codes": {
+    "client": 0,
+    "server": 0
+  },
+  "formal_eligible": false,
+  "fpga_run": false,
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "input": "test",
+  "input_archive": {
+    "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inputs/input_test.tar",
+    "sha256": "197f8146b1abd0eb2165a1c91764780f947a20c536724f384314e2f006af65f4"
+  },
+  "mapping_note": "simmedium invokes original simlarge for netstreamcluster; netdedup candidate separates server/client flags and uses unchanged formal archive",
+  "namespaces": {
+    "ipc": "ipc:[4026535151]",
+    "mnt": "mnt:[4026535150]",
+    "net": "net:[4026535313]"
+  },
+  "output": {
+    "bytes": 44,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-complete-roi-20261109T124132Z/netferret/work/output.txt",
+    "sha256": "4d1802954a45bc028a3f725fd051d0f43c56d5b5c9c5b33724ec346af9119157"
+  },
+  "pid": 2973891,
+  "private_ipc_namespace": true,
+  "private_mount_namespace": true,
+  "private_network_namespace": true,
+  "program": "netferret",
+  "roi": "Original application hook sites; diagnostic writes only, no checker claim",
+  "roi_diagnostic": {
+    "begin_seen": true,
+    "end_seen": true,
+    "source": "server.log; diagnostic marker writes remain visible",
+    "syscall_counts": {
+      "brk": 8,
+      "clock_gettime": 1755,
+      "clock_nanosleep": 3907,
+      "clone": 11,
+      "close": 4,
+      "exit": 6,
+      "futex": 109,
+      "madvise": 5,
+      "mmap": 27,
+      "mprotect": 26,
+      "munmap": 24,
+      "newfstatat": 2,
+      "openat": 4,
+      "read": 1,
+      "rt_sigprocmask": 34,
+      "sched_setaffinity": 10,
+      "shmat": 2,
+      "shmget": 2,
+      "write": 4
+    },
+    "time_base": "host QEMU trace order only; no target cycles or checker latency"
+  },
+  "schema": "ec-network-qemu-case/1",
+  "server_argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/diagnostic-netferret/netferret/server/parsec/bin/ferret-pthreads",
+    "corel",
+    "lsh",
+    "5",
+    "5",
+    "1"
+  ],
+  "source_receipt_sha256": "fb26071c227f980ddfa7fd25a9b4b4f0483f6daf3b4f94e2c66647354e11affe",
+  "start_ticks": "3981447",
+  "status": "PROTOCOL_COMPLETED_REFERENCE_PENDING",
+  "trace_enabled": true,
+  "wall_seconds": 0.4857809239983908
+}

@@ -1,0 +1,10 @@
+{
+  "schema": "ec-service-job-spec/1",
+  "name": "coverage-first",
+  "resume_after_adopted_exit": true,
+  "restart_supervisor_on_error": true,
+  "argv": ["python3", "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/coverage_first.py"],
+  "inputs": ["/data1/gzh/EC/firesim/final-opt4-20261106/scripts/coverage_first.py"],
+  "legacy_states": ["/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-state.json"],
+  "checkpoint_policy": "Exact receipt-bound complete samples only; surviving coordinator/child adopted using PID/start_ticks/boot_id; failed signature/stage retained, newly bound profiles requeued; no instruction checkpoint"
+}

@@ -1,0 +1,74 @@
+{
+  "application_expected_output": "benchmark=canneal checksum=40b2b50000000000 verified=1 routing_cost=4789",
+  "created_utc": "2026-11-11T15:40:46.393163+00:00",
+  "derived_hardware": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+  "elf_sha256": "d0d0e9ae99bd963aeed84a8b395e7096f54985d117d11542d553a38680b8397b",
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_timeout_seconds": 10800,
+  "inputs": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-canneal-20261111/test.riscv": "d0d0e9ae99bd963aeed84a8b395e7096f54985d117d11542d553a38680b8397b",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-sample-r1-20261111/binding.json": "390b1c24697e3770476f9111bcade3dd9a728ca97cdd88f24ba8cd5c4f8b6dd1",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/MC/compile-receipt.json": "afa0ca4c6fd0cf5558bc52cdc1a7ac178c6fbacab06f93d1dbc985c6b6f6f615",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/MC/host/FireSim-generated.const.h": "bf602286fbca3c669e04c7543aeab5487e96fcc59f3113467ac7ba535176ecd8",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/MC/host/VOwnerMCRams3656": "263e8dfdde8032f6dcc43d9708ca49e5b2b51f2124536b5c93c02750c69d9c42",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/Plain/compile-receipt.json": "84abc204cd55c1de8ae5eb73c261fc11d359b69dd554aa2c463b53ff02327952",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/Plain/host/FireSim-generated.const.h": "bf602286fbca3c669e04c7543aeab5487e96fcc59f3113467ac7ba535176ecd8",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/Plain/host/VOwnerPlain3656": "ebfbe60cc06d79e8fdc76b39490b9a79913f5d24ff20ce2c8424c790cb73f06d",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/build-plan.json": "4fb5a4e5ec61c59fc7f78163023351fd2f472ad108a455f5c9fdba69171f087e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/result.json": "f34431115668c51008ccede028f9c797e3a977d47474c1971bdefa222c0509df",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-owner-pair-metasim-r1-20261111/controller.py": "cb5e88d9c751b0263a7c6e775162179af4a5f6b41af800160fed6336bdad57e8",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-owner-runtime-continuation-r1-20261111/continue.py": "ce62c90356ad7c61b403639f336fb69cf0d94a61a225f7faa2487b34d9cccace"
+  },
+  "models": {
+    "MCRams": {
+      "binary": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/MC/host/VOwnerMCRams3656",
+      "environment": {
+        "CCACHE_DISABLE": "1",
+        "CXX": "/nix/store/zxw41nfy4gjlzd31ly7q6mkv4vkybx15-clang-wrapper-16.0.6/bin/clang++",
+        "CXXFLAGS": "-O1 -I/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/external-headers -I/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/include -I/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/testchipip/src/main/resources/testchipip/csrc -I/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/src/main/cc/firesim -I/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/src/main/cc -Wno-inconsistent-missing-override",
+        "LDFLAGS": "-L/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/external-libs -Wl,-rpath,/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/external-libs /data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/lib/libfesvr.a /data1/gzh/EC/firesim/envs/manager-1.17.1/lib/libdromajo_cosim.a -lstdc++ -lpthread -lgmp -l:libdwarf.so -l:libelf.so -lz",
+        "LD_LIBRARY_PATH": "",
+        "MAKEFLAGS": "-j2",
+        "OMP_NUM_THREADS": "2",
+        "PATH": "/nix/store/zxw41nfy4gjlzd31ly7q6mkv4vkybx15-clang-wrapper-16.0.6/bin:/nix/store/bj3wbpawbk71c082cvrnqkfyix7ipx0g-verilator-5.048/bin:/usr/bin:/bin"
+      },
+      "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/MC/compile-receipt.json"
+    },
+    "Plain": {
+      "binary": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/Plain/host/VOwnerPlain3656",
+      "environment": {
+        "CCACHE_DISABLE": "1",
+        "CXX": "/nix/store/zxw41nfy4gjlzd31ly7q6mkv4vkybx15-clang-wrapper-16.0.6/bin/clang++",
+        "CXXFLAGS": "-O1 -I/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/external-headers -I/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/include -I/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/testchipip/src/main/resources/testchipip/csrc -I/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/src/main/cc/firesim -I/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/firesim-lib/src/main/cc -Wno-inconsistent-missing-override",
+        "LDFLAGS": "-L/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/external-libs -Wl,-rpath,/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/external-libs /data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/lib/libfesvr.a /data1/gzh/EC/firesim/envs/manager-1.17.1/lib/libdromajo_cosim.a -lstdc++ -lpthread -lgmp -l:libdwarf.so -l:libelf.so -lz",
+        "LD_LIBRARY_PATH": "",
+        "MAKEFLAGS": "-j2",
+        "OMP_NUM_THREADS": "2",
+        "PATH": "/nix/store/zxw41nfy4gjlzd31ly7q6mkv4vkybx15-clang-wrapper-16.0.6/bin:/nix/store/bj3wbpawbk71c082cvrnqkfyix7ipx0g-verilator-5.048/bin:/usr/bin:/bin"
+      },
+      "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-compile-round43-v1-20261111/Plain/compile-receipt.json"
+    }
+  },
+  "no_compile": true,
+  "owned_log_budget_bytes": 4294967296,
+  "production_admission": false,
+  "reference_args": [
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-r1-20261111/host/VFrozenOpt4",
+    "+permissive",
+    "+max-cycles=5000000",
+    "+fesvr-step-size=1000",
+    "+mm_readLatency_0=30",
+    "+mm_readMaxReqs_0=4",
+    "+mm_relaxFunctionalModel_0=0",
+    "+mm_writeLatency_0=30",
+    "+mm_writeMaxReqs_0=4",
+    "+heartbeat-polling-interval=1000",
+    "+print-file=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-sample-r1-20261111/rtl-prints-",
+    "+permissive-off",
+    "+prog0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-canneal-20261111/test.riscv"
+  ],
+  "schema": "ec-owner-runtime-after-unique-round43-compile/1",
+  "target_cycle_limit": 5000000,
+  "whole_fit": false
+}

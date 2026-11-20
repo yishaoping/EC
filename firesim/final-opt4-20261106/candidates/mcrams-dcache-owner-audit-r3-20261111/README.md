@@ -1,0 +1,1 @@
+Independent read-only r3 successor of r2 append-stage audit failure. Reuses successful r1 transform. Validates raw SV prefix against original GG receipt; exact listed blackbox text suffix and final append receipt/result hash. Non-SV GG outputs remain exact. No source or active output change, no transform rerun. Full target finite parity remains a separate admission gate.

@@ -1,0 +1,14 @@
+--- a/drivers/misc/ec_dac_roi.c
++++ b/drivers/misc/ec_dac_roi.c
+@@ -354,6 +354,11 @@
+ 		pr_info("EC_OPT4_CONTEXT_DRAINED epoch=%llu firmware=%llx satp=%016llx generated=%llu completed=%llu outstanding=%llu\n",
+ 			r.epoch, dac_firmware_status(), d->satp,
+ 			r.generated, r.completed, r.outstanding);
++	/* Read existing frozen-DUT traffic/statistics interface only after the
++	 * complete real drain. These are raw named counters, not checker latency. */
++	if (cmd == EC_DAC_DRAIN)
++		for (unsigned int i = 0; i < 128; ++i)
++			pr_info("EC_OPT4_TRAFFIC index=%u value=%lu\n", i, ec_traffic(i));
+ 	d->session = cmd == EC_DAC_END ? DAC_ENDED : DAC_FINISHED;
+ 	b.target_tick = cmd == EC_DAC_END ? r.end : r.drain;
+ 	b.outstanding = r.outstanding;

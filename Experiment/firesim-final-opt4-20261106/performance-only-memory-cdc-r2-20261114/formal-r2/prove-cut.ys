@@ -1,0 +1,5 @@
+read_json cut.json
+miter -equiv -flatten FlatCut MemoryCut cut_equiv
+hierarchy -top cut_equiv
+opt -full
+sat -verify -prove trigger 0 -set-def-inputs

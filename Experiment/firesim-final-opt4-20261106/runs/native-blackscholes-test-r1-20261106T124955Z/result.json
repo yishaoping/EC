@@ -1,0 +1,116 @@
+{
+  "checker_latency": null,
+  "counts": null,
+  "drain_cycles": null,
+  "driver_returncode": 126,
+  "driver_stop_after_guest_powerdown": false,
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-test-r1-20261106T124955Z/heartbeat.csv": "649117e9f99553aaf677c6fef10dc854aa1fc97dbeefae566ec3b615a4b71597",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-test-r1-20261106T124955Z/host.log": "b2101d3d6238fc3ee3dd5dbd5ccff9adaf07bfa3e9e7182ede8af078ba245d42",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-test-r1-20261106T124955Z/latency_histogram.csv": "7348bacc4d184cc676cfcf89f8d0ec40dd28eeaa86ae0f6fefa797b43dc6d210",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-test-r1-20261106T124955Z/manifest.json": "1138a1e1442bf02dee51a13addb312ee32b79f643ad609c78f28cf3b67ee9e22",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-test-r1-20261106T124955Z/memory_stats0.csv": "6679c5006d14d8413ec36ba18171c1f179c0196e04b362e4af778b06baad416e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-test-r1-20261106T124955Z/roi-raw.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-test-r1-20261106T124955Z/snapshot.json": "b136c2edbb698165495a872fde3e909e586f6aad4a3d590f1ec617dc98ca74ea",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-test-r1-20261106T124955Z/state.json": "b136c2edbb698165495a872fde3e909e586f6aad4a3d590f1ec617dc98ca74ea",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-test-r1-20261106T124955Z/uart.in": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-test-r1-20261106T124955Z/uart.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "fased_readback": {
+    "readLatency": 30,
+    "readMaxReqs": 4,
+    "relaxFunctionalModel": 0,
+    "writeLatency": 30,
+    "writeMaxReqs": 4
+  },
+  "formal": false,
+  "fpga_execution": true,
+  "guest_power_down_observed": false,
+  "host_wall_seconds": 0.024282656610012054,
+  "identity": {
+    "apps_manifest_sha256": "9c59fd0424f57c2d2387e61c8a30703c044d497b10620f4c15c67f147e8406bf",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:21:00.0",
+    "board_serial": "21770433G02LA",
+    "case": {
+      "argv": [
+        "1",
+        "in_4.txt",
+        "prices.txt"
+      ],
+      "fpga_validation": "NOT_RUN",
+      "input": "test",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/inputs/input_test.tar": "92aadef92ac86d234c8fb97e41f20f663efc89b74097a4e4675b382cbbe1e541"
+      },
+      "input_files": {
+        "in_4.txt": "9a40f4a6f4b96a32bb834333487d6dcec4436eceae7efbf836574aacb1e6ce46"
+      },
+      "program": "blackscholes",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-20261106T095914Z/references/blackscholes-test/prices.txt": "7299510ae4cc0d01a9c0fe01fc27e112640085f9dd6e2f8378f970f0f14addff"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/parsec/test.runconf",
+      "runconf_sha256": "cdb54b8602e61e9fe18bb1eb4ee3260118de90846c9c60d81a989b1178fd9ac1",
+      "software_reference": "QEMU_RISCV_USER_ONLY; not FPGA evidence",
+      "threads": 1,
+      "warmups": 0
+    },
+    "configuration": "Native",
+    "driver_receipt_sha256": "d5a615cc0928ebce6c285d04003dab39e10123f8a144ba30775485965eb9bcea",
+    "driver_sha256": "9cfeb80105d39d9cd9e0bc86979f298893aea154bb6a5f28587ae29722bd68c6",
+    "elf_sha256": "75b4e2923b0a7b1d096023daa6610f5c622bf04771b4e2966bbdee006e5270ea",
+    "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+    "firmware_receipt_sha256": "1754de0b2f91ef8ce947c2faa45dfd46ddf52b5af86f9a942283d53baf5d192c",
+    "firmware_sha256": "f9f6cd54137df9e3c3eec417455123c3f53a0b1c99b66430761f8398df6e259a",
+    "formal": false,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "input": "test",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "program": "blackscholes",
+    "repetition": 1,
+    "rootfs_sha256": "a33e7b7d5a6ae0810b69c91b9b256fa8c2a5a6376cd76ac865b26048dfb5aff1",
+    "run_id": "native-blackscholes-test-r1-20261106T124955Z",
+    "software_diagnostic": false,
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "e76d3f7e5a32e8b3719530b952b0de06e20857d38bfb6e1823d0a92f24d21485",
+  "issues": [
+    "incomplete Native ROI boundaries/transport",
+    "missing successful application command exit",
+    "missing unique successful output validation",
+    "unexpected driver exit"
+  ],
+  "participation": null,
+  "raw": {
+    "epochs": [],
+    "file_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "formal_sample_eligible": false,
+    "last_sequence": null,
+    "parsed_records": 0,
+    "partial_tail_bytes": 0,
+    "protocol_issues": [],
+    "runtime_validation": "NOT_ESTABLISHED_BY_RAW_LOG",
+    "schema": "ec-dac-b-raw-roi/1",
+    "warning": "Raw ROI boundaries only. Output/job identity, runtime timebase checks and the formal host collector are still required."
+  },
+  "roi_cycles": null,
+  "schema": "ec-isolated-fpga-result/1",
+  "timedout": false,
+  "valid": false
+}

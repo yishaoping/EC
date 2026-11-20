@@ -1,0 +1,16 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-ferret-20261107T055439Z/stage.cc
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/ferret-stable-order-20261109T123400Z/stage.cc
+@@ -1,4 +1,5 @@
+ #include <cstdio>
++#include <algorithm>
+ #include <cstdlib>
+ #include <cstring>
+ #include <dirent.h>
+@@ -19,6 +20,7 @@
+   DIR *d=opendir(p.c_str());if(!d)exit(125);struct dirent *e;
+   while((e=readdir(d))) directories[p].entries.push_back(*e);
+   if(closedir(d))exit(125);
++  std::sort(directories[p].entries.begin(), directories[p].entries.end(), [](const struct dirent &a, const struct dirent &b) { return strcmp(a.d_name, b.d_name) < 0; });
+   directories[p].next=0;
+   for(size_t i=0;i<directories[p].entries.size();i++) {
+    const char *n=directories[p].entries[i].d_name;

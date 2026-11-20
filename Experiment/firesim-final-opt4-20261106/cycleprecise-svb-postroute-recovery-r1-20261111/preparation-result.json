@@ -1,0 +1,128 @@
+{
+  "cad_run_started": false,
+  "checks": {
+    "original-postroute": {
+      "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.runs/impl_1/design_1_wrapper_routed.dcp",
+      "eligible": false,
+      "fpga_access": false,
+      "mode": "postroute",
+      "producer": "original",
+      "producer_identity": {
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 3947766,
+        "start_ticks": "20242622",
+        "status": "RUNNING_IMPLEMENTATION"
+      },
+      "producer_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-state.json",
+      "reasons": [
+        "producer has not exited with recorded failure",
+        "producer/controller child identity still live",
+        "producer service still active",
+        "producer service still owns tasks or task count unknown",
+        "no saved routed checkpoint"
+      ],
+      "target_changed": false,
+      "unit": "ec-opt4-frozen-svb-fpga-r2.service"
+    },
+    "original-replicate": {
+      "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/project/cad/vivado_proj/firesim.runs/impl_1/design_1_wrapper_physopt.dcp",
+      "eligible": false,
+      "fpga_access": false,
+      "mode": "replicate",
+      "producer": "original",
+      "producer_identity": {
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 3947766,
+        "start_ticks": "20242622",
+        "status": "RUNNING_IMPLEMENTATION"
+      },
+      "producer_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-fpga-r2-20261111/cad-state.json",
+      "reasons": [
+        "producer has not exited with recorded failure",
+        "producer/controller child identity still live",
+        "producer service still active",
+        "producer service still owns tasks or task count unknown"
+      ],
+      "target_changed": false,
+      "unit": "ec-opt4-frozen-svb-fpga-r2.service"
+    },
+    "spread-postroute": {
+      "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-spread-implementation-r1-20261111/spread-routed.dcp",
+      "eligible": false,
+      "fpga_access": false,
+      "mode": "postroute",
+      "producer": "spread",
+      "producer_identity": {
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 279123,
+        "start_ticks": "21287446",
+        "status": "RUNNING"
+      },
+      "producer_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-spread-implementation-r1-20261111/state.json",
+      "reasons": [
+        "producer has not exited with recorded failure",
+        "producer/controller child identity still live",
+        "producer service still active",
+        "producer service still owns tasks or task count unknown",
+        "no saved routed checkpoint"
+      ],
+      "target_changed": false,
+      "unit": "ec-opt4-original-svb-spread-impl-r1.service"
+    },
+    "spread-replicate": {
+      "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-spread-implementation-r1-20261111/spread-physopt.dcp",
+      "eligible": false,
+      "fpga_access": false,
+      "mode": "replicate",
+      "producer": "spread",
+      "producer_identity": {
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 279123,
+        "start_ticks": "21287446",
+        "status": "RUNNING"
+      },
+      "producer_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-spread-implementation-r1-20261111/state.json",
+      "reasons": [
+        "producer has not exited with recorded failure",
+        "producer/controller child identity still live",
+        "producer service still active",
+        "producer service still owns tasks or task count unknown"
+      ],
+      "target_changed": false,
+      "unit": "ec-opt4-original-svb-spread-impl-r1.service"
+    },
+    "static_guards": {
+      "at_most_replacement_route_slot": true,
+      "dead_producer_guard": true,
+      "no_new_clock_constraints": true,
+      "no_retimming_requested": true,
+      "no_target_edits": true,
+      "target_period_19_998": true
+    },
+    "tcl_complete": [
+      "postroute",
+      "replicate"
+    ]
+  },
+  "completed_utc": "2026-11-11T14:11:00.889534+00:00",
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "inputs": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/routes/svb-postroute-recovery-r1-20261111/README.md": "953e52e107b0f1c1fcc2ae39155d755ed8e21a59ec8f530d7a425dc81f6237bd",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/routes/svb-postroute-recovery-r1-20261111/pulse-help.tcl": "1a23a0b0ebfb786cfb9829c6065ccea7648c33caa724250745df33ec86ffc3bc",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/routes/svb-postroute-recovery-r1-20261111/recover.tcl.in": "ee9141672bce16ae3844c825d1aed3d55e59d286ab5ea77750ec183662d4f622",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/routes/svb-postroute-recovery-r1-20261111/replicate.tcl.in": "2986a67694b3e1f4e6e1dafb1bef86bb543245a5d6cf87ad01efa1f701c29ea1",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/routes/svb-postroute-recovery-r1-20261111/run.py": "477b1be66671b1f7079408f321a9d5307dad560abba6f9e90a65e26807cef070",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/routes/svb-postroute-recovery-r1-20261111/tool-help.tcl": "99b9342e2bd5d2c55340880379f00c891fa22ae7fdfcd00df470d81e85052501"
+  },
+  "previous_preparation_receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/preparation-result-before-exception-guard.json",
+  "schema": "ec-original-svb-conditional-physical-recovery-preparation/1",
+  "service_installed": false,
+  "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+  "status": "PREPARED_AND_LIVE_PRODUCERS_REFUSED_NOT_LAUNCHED",
+  "target_changed": false,
+  "tool_evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/pulse-help.vivado.log": "ec881fe98a4bc4e4d94cce1074c5d3b0e3f747bc88f686e7e8e382414bf5a126",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-postroute-recovery-r1-20261111/tool-help.vivado.log": "dd8f89a54e93f754e7f98c21c7ded5b2c79fa89e921ebcad701c6ed4c9d0f318"
+  }
+}

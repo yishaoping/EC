@@ -1,0 +1,126 @@
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/AppliedEffectResultMemory.scala b/chipyard/generators/boom/src/main/scala/lsu/AppliedEffectResultMemory.scala
+new file mode 100644
+index 0000000..ffe61a4
+--- /dev/null
++++ b/chipyard/generators/boom/src/main/scala/lsu/AppliedEffectResultMemory.scala
+@@ -0,0 +1,33 @@
++package boom.lsu
++
++import chisel3._
++import chisel3.util._
++
++/** Unreset full-width duplicate-result payload. Both reads are asynchronous;
++  * the single writer acts on exactly the original edge, including reset edges.
++  * The original DCache validity/token arrays retain their original semantics.
++  */
++class AppliedEffectResultMemory(sets: Int, ways: Int, bits: Int) extends Module {
++  require(sets > 1 && ways > 1 && isPow2(sets) && isPow2(ways))
++  require(bits > 0)
++  val io = IO(new Bundle {
++    val readSet = Input(Vec(2, UInt(log2Ceil(sets).W)))
++    val readWay = Input(Vec(2, UInt(log2Ceil(ways).W)))
++    val readData = Output(Vec(2, UInt(bits.W)))
++    val writeEnable = Input(Bool())
++    val writeSet = Input(UInt(log2Ceil(sets).W))
++    val writeWay = Input(UInt(log2Ceil(ways).W))
++    val writeData = Input(UInt(bits.W))
++  })
++  val payload = Mem(sets * ways, UInt(bits.W))
++  for (r <- 0 until 2) {
++    io.readData(r) := payload.read(AppliedEffectResultMemory.index(io.readSet(r), io.readWay(r)))
++  }
++  when (io.writeEnable) {
++    payload.write(AppliedEffectResultMemory.index(io.writeSet, io.writeWay), io.writeData)
++  }
++}
++
++object AppliedEffectResultMemory {
++  def index(set: UInt, way: UInt): UInt = Cat(set, way)
++}
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/dcache.scala b/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
+index 71d058b..bee8b63 100644
+--- a/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/dcache.scala
+@@ -730,7 +730,13 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+     Seq.fill(nWays)(false.B)))))
+   val appliedEffectToken = RegInit(VecInit(Seq.fill(nSets)(VecInit(
+     Seq.fill(nWays)(0.U(64.W))))))
+-  val appliedEffectResult = Reg(Vec(nSets, Vec(nWays, UInt(xLen.W))))
++  // One writer, two independent asynchronous readers. Payload is unreset
++  // exactly as before; all validity, token, and instrumentation arrays stay.
++  val appliedEffectResultMemory = Module(new AppliedEffectResultMemory(nSets, nWays, xLen))
++  appliedEffectResultMemory.io.writeEnable := false.B
++  appliedEffectResultMemory.io.writeSet := 0.U
++  appliedEffectResultMemory.io.writeWay := 0.U
++  appliedEffectResultMemory.io.writeData := 0.U
+   val imageKey = RegInit(VecInit(Seq.fill(nSets)(VecInit(
+     Seq.fill(nWays)(0.U.asTypeOf(new CacheImageKey))))))
+   val lowerPreserved = RegInit(VecInit(Seq.fill(nSets)(VecInit(Seq.fill(nWays)(false.B)))))
+@@ -3045,6 +3051,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+   val amoArchitecturalOldValue = Mux(
+     s2_req(0).uop.mem_size === 2.U, amoWordOldValue, s2_data_word(0))
+ 
++  appliedEffectResultMemory.io.readSet(0) := s2_req(0).addr(idxMSB, idxLSB)
++  appliedEffectResultMemory.io.readWay(0) := OHToUInt(s2_effective_req(0).way_en)
+   when (s2_write_grant) {
+     val set = s2_req(0).addr(idxMSB, idxLSB)
+     val way = OHToUInt(s2_effective_req(0).way_en)
+@@ -3058,7 +3066,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+     s3_replay := s2_type === t_replay
+     s3_old_value := s2_data_word(0)
+     s3_operand := s2_req(0).data
+-    s3_result := Mux(duplicate, appliedEffectResult(set)(way),
++    s3_result := Mux(duplicate, appliedEffectResultMemory.io.readData(0),
+       Mux(s2_sc, s2_sc_fail.asUInt,
+         Mux(isAMO(s2_req(0).uop.mem_cmd), amoArchitecturalOldValue, s2_data_word(0))))
+     printf("STAGE1_TX ISSUE source=DCACHE cmd=%x size=%x stq=%x req=%x effect=%x txn=%x epoch=%x gen=%x is_hella=%x cycle=%x\n",
+@@ -3232,8 +3240,10 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+       s3_set, s3_way_idx, s3_owner_match)
+   }
+   when (s3_effect_fire || (s3_valid && s3_duplicate_effect)) { s3_applied := true.B }
++  appliedEffectResultMemory.io.readSet(1) := s3_set
++  appliedEffectResultMemory.io.readWay(1) := s3_way_idx
+   when (s3_valid && s3_duplicate_effect) {
+-    s3_result := appliedEffectResult(s3_set)(s3_way_idx)
++    s3_result := appliedEffectResultMemory.io.readData(1)
+   }
+   // A terminal may enter the queue on the actual physical effect edge. The
+   // captured return value is already stable in S3. Array backpressure cannot
+@@ -3484,7 +3494,10 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
+     when (s3_req.effect_token_valid) {
+       appliedEffectValid(set)(way) := true.B
+       appliedEffectToken(set)(way) := s3_req.effect_token
+-      appliedEffectResult(set)(way) := s3_result
++      appliedEffectResultMemory.io.writeEnable := true.B
++      appliedEffectResultMemory.io.writeSet := set
++      appliedEffectResultMemory.io.writeWay := way
++      appliedEffectResultMemory.io.writeData := s3_result
+     }
+   }
+   val svbFastLeaseAcquire = wb.io.snapshot_valid && svb.io.capture.fire
+diff --git a/lineage.json b/lineage.json
+index 187822a..9f8b110 100644
+--- a/lineage.json
++++ b/lineage.json
+@@ -1,14 +1,14 @@
+ {
+-  "schema": "ec-opt4-fit-lineage/1",
++  "branch": "opt4/dcache-result-memory-r1-20261111",
++  "core_features": "C4, SVB32, L2 report-permission repair; no checker/rollback/EC disabling",
+   "created_utc": "2026-11-10T09:12:05.475254+00:00",
+-  "purpose": "Independent derived Opt4-fit optimization. Never identity-equivalent to frozen hardware by name.",
++  "formal_admission": false,
+   "frozen_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+   "frozen_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
++  "full_dut_build_authorized_only_after_resource_gate": true,
+   "parent_source": "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard",
+-  "branch": "opt4-fit/20261110",
++  "purpose": "Independent full-width DCache applied-effect result 2R1W asynchronous storage. No validity/token/debug/cycle changes.",
++  "schema": "ec-opt4-fit-lineage/1",
+   "snapshot_baseline_commit": "0390a808ff557e2ac7da329fbee063857d46159c",
+-  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/chipyard",
+-  "core_features": "C4, SVB32, L2 report-permission repair; no checker/rollback/EC disabling",
+-  "formal_admission": false,
+-  "full_dut_build_authorized_only_after_resource_gate": true
++  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-dcache-result-memory-r1-20261111/chipyard"
+ }

@@ -1,0 +1,160 @@
+{
+  "checker_latency": null,
+  "counts": null,
+  "drain_cycles": 0,
+  "driver_returncode": 0,
+  "driver_stop_after_guest_powerdown": false,
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simsmall-r1-20261107T062813Z/heartbeat.csv": "674665e53480653bb4f46ad25da2bf37ab774a6161c495611465e1c1fffac89f",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simsmall-r1-20261107T062813Z/host.log": "7885ce8447f86a27fb221e726eb7187cafdd597a90ebb943dd1136dbd5d1ce54",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simsmall-r1-20261107T062813Z/latency_histogram.csv": "7348bacc4d184cc676cfcf89f8d0ec40dd28eeaa86ae0f6fefa797b43dc6d210",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simsmall-r1-20261107T062813Z/manifest.json": "3abe1a0b88e87bafc4fbd9c29e54d9fa3add0e3ee6909352761fab7e98e2cc3c",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simsmall-r1-20261107T062813Z/memory_stats0.csv": "6679c5006d14d8413ec36ba18171c1f179c0196e04b362e4af778b06baad416e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simsmall-r1-20261107T062813Z/roi-parser-source.py": "e55944240285ee0197b1b8bd3bedbe10a4a72305511ac72018fe668578d5f8c1",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simsmall-r1-20261107T062813Z/roi-raw.jsonl": "047382a97b2699851bc09e5d56fdd3f762b6f81aa0c18d7aeca1090522dd1263",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simsmall-r1-20261107T062813Z/runner-source.py": "228d941ada4a5d1bf671f220e90955389b30a32ac4647b6de86ef614eb27825a",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simsmall-r1-20261107T062813Z/snapshot.json": "f835a992fc4e7ad9a8a6f25d61eb8e8f46ac59d3f5ee300dc4c5e1e4636f9b40",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simsmall-r1-20261107T062813Z/state.json": "2e8de9d07306f71906ebcd744d25deada8bb009ee729ef50ac24945bac6cd150",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simsmall-r1-20261107T062813Z/uart.in": "8ce0efbbe60229a8e4f1330ac6b8c03bcf155c59329a684a6dc2e2324a34ba7a",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simsmall-r1-20261107T062813Z/uart.log": "7f3a9289d17e83e1ca7780d0f8aabfd16c7b5529d3a4ff7ebb8d1caaa91d0d21"
+  },
+  "fased_readback": {
+    "readLatency": 30,
+    "readMaxReqs": 4,
+    "relaxFunctionalModel": 0,
+    "writeLatency": 30,
+    "writeMaxReqs": 4
+  },
+  "formal": false,
+  "fpga_execution": true,
+  "guest_power_down_observed": false,
+  "host_efficiency": {
+    "host_delta": 8283046716,
+    "host_simulation_wall_seconds": 165.658377,
+    "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+    "simulation_throughput_cycles_per_second": 16531004.218,
+    "target_delta": 2738499329,
+    "target_end": 4376401997,
+    "target_start": 1637902668
+  },
+  "host_wall_seconds": 165.6980391709999,
+  "identity": {
+    "apps_manifest_sha256": "68213950013bb1198cb07729d69e04f15cfdedbc9ef32d7ae3fe99fec1338c4a",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:e2:00.0",
+    "board_serial": "21770433G001A",
+    "case": {
+      "algorithm_unchanged": true,
+      "argv": [
+        "1",
+        "5",
+        "in_35K.fluid",
+        "out.fluid"
+      ],
+      "diagnostic_roi_syscalls": [],
+      "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/diagnostic-simsmall/trace.log",
+      "fpga_validation": "NOT_RUN",
+      "input": "simsmall",
+      "input_archive": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/inputs/input_simsmall.tar",
+      "input_archive_sha256": "2ce918f55f2ac604a39217d6d94dd5e399af3eab0f4336336d026db59605e8c7",
+      "input_files": {
+        "in_35K.fluid": "0a649e52c616ee52ef24038b1d4dae316520f517c122f45fa16755b761ada5a6"
+      },
+      "program": "fluidanimate",
+      "reference_outputs": {
+        "out.fluid": "918f0fa738a3bfd533d651cc909cb22285a2011d7a31acc0d9099237206face4"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/parsec/simsmall.runconf",
+      "runconf_sha256": "9264e6fdd36771af23a516927914a1822f0db13e31bf97e3e8ae2d90b5765282",
+      "software_reference": "QEMU_RISCV_USER_ONLY",
+      "threads": 1,
+      "validation": {
+        "files": {
+          "out.fluid": "918f0fa738a3bfd533d651cc909cb22285a2011d7a31acc0d9099237206face4"
+        },
+        "kind": "files_sha256"
+      },
+      "warmups": 0
+    },
+    "configuration": "Native",
+    "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+    "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+    "elf_sha256": "9571c88c69be6865d36dfc41178704960b0462aef9a8d09314567616a9df3962",
+    "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+    "firmware_receipt_sha256": "d5c8b176c181549307d4aca6c47480fca35e020b762279d8c150044ef86f86b5",
+    "firmware_sha256": "700f59806a2a39ae3bc3d3aff69921268e44e4c5404b071136ab64f29f3025ce",
+    "formal": false,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "host_bridge_restart": true,
+    "input": "simsmall",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "previous_run_id": null,
+    "program": "fluidanimate",
+    "repetition": 1,
+    "rootfs_sha256": "09bc3b74739630b7b2e1c904e63cbc81c2ca6e9ea4c5b74b19f6e38bfb427b84",
+    "run_id": "native-fluidanimate-simsmall-r1-20261107T062813Z",
+    "software_diagnostic": false,
+    "software_profile": "fluidanimate-original-serial-no-legacy-checker-harness",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "target_reset_probe": false,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "90ddb9b70c41d3606ae355cbefc516b3c3262f0a7591504618d2438803984acb",
+  "issues": [
+    "guest failure/scope violation",
+    "missing successful application command exit",
+    "missing unique successful output validation"
+  ],
+  "participation": null,
+  "post_drain_traffic_counters": {},
+  "raw": {
+    "epochs": [
+      {
+        "aborted": false,
+        "begin_tick": 1331247888,
+        "end_tick": 2606958829,
+        "epoch": 1,
+        "faults": 0,
+        "formal_sample_eligible": false,
+        "reset_seen": false,
+        "roi_cycles": 1275710941,
+        "source_boundaries_complete": true,
+        "states": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    ],
+    "excluded_pre_reset_records": 1,
+    "file_sha256": "814d7cd16f2df7ac512985a41f1355d26e0e37c677ba1a53730b10955955b403",
+    "formal_sample_eligible": false,
+    "last_sequence": 11,
+    "original_journal_sha256": "047382a97b2699851bc09e5d56fdd3f762b6f81aa0c18d7aeca1090522dd1263",
+    "parsed_records": 12,
+    "partial_tail_bytes": 0,
+    "protocol_issues": [],
+    "runtime_validation": "NOT_ESTABLISHED_BY_RAW_LOG",
+    "schema": "ec-dac-b-raw-roi/1",
+    "warning": "Raw ROI boundaries only. Output/job identity, runtime timebase checks and the formal host collector are still required."
+  },
+  "roi_cycles": 1275710941,
+  "schema": "ec-isolated-fpga-result/1",
+  "timedout": false,
+  "valid": false
+}

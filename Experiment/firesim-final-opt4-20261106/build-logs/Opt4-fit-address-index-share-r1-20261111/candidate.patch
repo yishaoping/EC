@@ -1,0 +1,51 @@
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala b/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
+index 4c5b83e..d84ba4d 100644
+--- a/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
+@@ -428,29 +428,34 @@ class PackageAddressStats(
+   val bucketLoadFirstDelta = Wire(Vec(packetWindow, Vec(4, UInt(64.W))))
+   val bucketStoreFirstDelta = Wire(Vec(packetWindow, Vec(4, UInt(64.W))))
+   val bucketStrictWriteReadDelta = Wire(Vec(packetWindow, Vec(4, UInt(64.W))))
++  val packageBucketIndexMatch = VecInit((0 until packetWindow).map { i =>
++    VecInit((0 until packageWays).map { w =>
++      packageReadData(w).packetSeq(packetIndexBits - 1, 0) === i.U
++    })
++  })
++  val strictBucketIndexMatch = VecInit((0 until packetWindow).map { i =>
++    VecInit((0 until strictWays + strictOverflowEntries).map { w =>
++      val seq = if (w < strictWays) strictReadData(w).packetSeq
++        else strictOverflowData(w - strictWays).packetSeq
++      seq(packetIndexBits - 1, 0) === i.U
++    })
++  })
+   for (i <- 0 until packetWindow) {
+     for (g <- 0 until 4) {
+       val loadTerms = (0 until packageWays).map { w =>
+-        val seq = packageReadData(w).packetSeq
+-        val idx = seq(packetIndexBits - 1, 0)
+-        Mux(unsafeLoadFirstHit(w).orR && idx === i.U,
++        Mux(unsafeLoadFirstHit(w).orR && packageBucketIndexMatch(i)(w),
+           unsafeLoadFirstHitCounts(w)(g).pad(64), 0.U(64.W))
+       }
+       val storeTerms = (0 until packageWays).map { w =>
+-        val seq = packageReadData(w).packetSeq
+-        val idx = seq(packetIndexBits - 1, 0)
+-        Mux(unsafeStoreFirstHit(w).orR && idx === i.U,
++        Mux(unsafeStoreFirstHit(w).orR && packageBucketIndexMatch(i)(w),
+           unsafeStoreFirstHitCounts(w)(g).pad(64), 0.U(64.W))
+       }
+       val strictTerms = (0 until strictWays).map { w =>
+-        val seq = strictReadData(w).packetSeq
+-        val idx = seq(packetIndexBits - 1, 0)
+-        Mux(unsafeStrictWriteReadHit(w).orR && idx === i.U,
++        Mux(unsafeStrictWriteReadHit(w).orR && strictBucketIndexMatch(i)(w),
+           unsafeStrictWriteReadHitCounts(w)(g).pad(64), 0.U(64.W))
+       } ++ (0 until strictOverflowEntries).map { j =>
+-        val seq = strictOverflowData(j).packetSeq
+-        val idx = seq(packetIndexBits - 1, 0)
+-        Mux(unsafeStrictOverflowWriteReadHit(j).orR && idx === i.U,
++        Mux(unsafeStrictOverflowWriteReadHit(j).orR &&
++          strictBucketIndexMatch(i)(strictWays + j),
+           unsafeStrictOverflowWriteReadHitCounts(j)(g).pad(64), 0.U(64.W))
+       }
+       val maxCount = Seq(lineBytes, word4Count, word8Count, 1)(g)

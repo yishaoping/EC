@@ -1,0 +1,1297 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+----------------------------------------------------------------------------------------------------
+| Tool Version      : Vivado v.2021.1 (lin64) Build 3247384 Thu Jun 10 19:36:07 MDT 2021
+| Date              : Sun Nov 15 10:54:53 2026
+| Host              : devjz-ubt20-s01 running 64-bit Ubuntu 20.04.6 LTS
+| Command           : report_timing -delay_type max -max_paths 20 -input_pins -nets -file setup.rpt
+| Design            : GH_FIFO_SC_Reference
+| Device            : xcu280-fsvh2892
+| Speed File        : -2L  PRODUCTION 1.29 11-17-2020
+| Temperature Grade : E
+----------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (MET) :             86.644ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[53]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        13.291ns  (logic 0.509ns (3.830%)  route 12.782ns (96.170%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       11.469    11.577    sptr_reg_n_0_[2]
+    SLICE_X113Y78                                                     r  io_peek_bits[53]_INST_0_i_32/S
+    SLICE_X113Y78        MUXF7 (Prop_F7MUX_AB_SLICEL_S_O)
+                                                      0.065    11.642 r  io_peek_bits[53]_INST_0_i_32/O
+                         net (fo=1, routed)           0.000    11.642    io_peek_bits[53]_INST_0_i_32_n_0
+    SLICE_X113Y78                                                     r  io_peek_bits[53]_INST_0_i_11/I1
+    SLICE_X113Y78        MUXF8 (Prop_F8MUX_BOT_SLICEL_I1_O)
+                                                      0.026    11.668 r  io_peek_bits[53]_INST_0_i_11/O
+                         net (fo=1, routed)           0.452    12.120    io_peek_bits[53]_INST_0_i_11_n_0
+    SLICE_X107Y80                                                     r  io_peek_bits[53]_INST_0_i_4/I0
+    SLICE_X107Y80        LUT6 (Prop_A6LUT_SLICEM_I0_O)
+                                                      0.150    12.270 r  io_peek_bits[53]_INST_0_i_4/O
+                         net (fo=1, routed)           0.011    12.281    io_peek_bits[53]_INST_0_i_4_n_0
+    SLICE_X107Y80                                                     r  io_peek_bits[53]_INST_0_i_1/I1
+    SLICE_X107Y80        MUXF7 (Prop_F7MUX_AB_SLICEM_I1_O)
+                                                      0.065    12.346 r  io_peek_bits[53]_INST_0_i_1/O
+                         net (fo=1, routed)           0.850    13.196    io_peek_bits[53]_INST_0_i_1_n_0
+    SLICE_X100Y127                                                    r  io_peek_bits[53]_INST_0/I3
+    SLICE_X100Y127       LUT6 (Prop_H6LUT_SLICEM_I3_O)
+                                                      0.125    13.321 r  io_peek_bits[53]_INST_0/O
+                         net (fo=0)                   0.000    13.321    io_peek_bits[53]
+                                                                      r  io_peek_bits[53] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -13.321    
+  -------------------------------------------------------------------
+                         slack                                 86.644    
+
+Slack (MET) :             86.656ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[70]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        13.279ns  (logic 0.538ns (4.052%)  route 12.741ns (95.948%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       11.029    11.137    sptr_reg_n_0_[2]
+    SLICE_X115Y49                                                     r  io_peek_bits[70]_INST_0_i_37/S
+    SLICE_X115Y49        MUXF7 (Prop_F7MUX_CD_SLICEM_S_O)
+                                                      0.070    11.207 r  io_peek_bits[70]_INST_0_i_37/O
+                         net (fo=1, routed)           0.000    11.207    io_peek_bits[70]_INST_0_i_37_n_0
+    SLICE_X115Y49                                                     r  io_peek_bits[70]_INST_0_i_14/I0
+    SLICE_X115Y49        MUXF8 (Prop_F8MUX_BOT_SLICEM_I0_O)
+                                                      0.030    11.237 r  io_peek_bits[70]_INST_0_i_14/O
+                         net (fo=1, routed)           0.658    11.895    io_peek_bits[70]_INST_0_i_14_n_0
+    SLICE_X108Y42                                                     r  io_peek_bits[70]_INST_0_i_4/I5
+    SLICE_X108Y42        LUT6 (Prop_C6LUT_SLICEL_I5_O)
+                                                      0.146    12.041 r  io_peek_bits[70]_INST_0_i_4/O
+                         net (fo=1, routed)           0.010    12.051    io_peek_bits[70]_INST_0_i_4_n_0
+    SLICE_X108Y42                                                     r  io_peek_bits[70]_INST_0_i_1/I1
+    SLICE_X108Y42        MUXF7 (Prop_F7MUX_CD_SLICEL_I1_O)
+                                                      0.064    12.115 r  io_peek_bits[70]_INST_0_i_1/O
+                         net (fo=1, routed)           1.044    13.159    io_peek_bits[70]_INST_0_i_1_n_0
+    SLICE_X93Y117                                                     r  io_peek_bits[70]_INST_0/I3
+    SLICE_X93Y117        LUT6 (Prop_H6LUT_SLICEL_I3_O)
+                                                      0.150    13.309 r  io_peek_bits[70]_INST_0/O
+                         net (fo=0)                   0.000    13.309    io_peek_bits[70]
+                                                                      r  io_peek_bits[70] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -13.309    
+  -------------------------------------------------------------------
+                         slack                                 86.656    
+
+Slack (MET) :             86.710ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[28]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        13.225ns  (logic 0.421ns (3.183%)  route 12.804ns (96.817%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       11.130    11.238    sptr_reg_n_0_[2]
+    SLICE_X115Y46                                                     r  io_peek_bits[28]_INST_0_i_38/S
+    SLICE_X115Y46        MUXF7 (Prop_F7MUX_AB_SLICEM_S_O)
+                                                      0.069    11.307 r  io_peek_bits[28]_INST_0_i_38/O
+                         net (fo=1, routed)           0.000    11.307    io_peek_bits[28]_INST_0_i_38_n_0
+    SLICE_X115Y46                                                     r  io_peek_bits[28]_INST_0_i_14/I1
+    SLICE_X115Y46        MUXF8 (Prop_F8MUX_BOT_SLICEM_I1_O)
+                                                      0.028    11.335 r  io_peek_bits[28]_INST_0_i_14/O
+                         net (fo=1, routed)           0.323    11.658    io_peek_bits[28]_INST_0_i_14_n_0
+    SLICE_X111Y47                                                     r  io_peek_bits[28]_INST_0_i_4/I5
+    SLICE_X111Y47        LUT6 (Prop_C6LUT_SLICEM_I5_O)
+                                                      0.088    11.746 r  io_peek_bits[28]_INST_0_i_4/O
+                         net (fo=1, routed)           0.021    11.767    io_peek_bits[28]_INST_0_i_4_n_0
+    SLICE_X111Y47                                                     r  io_peek_bits[28]_INST_0_i_1/I1
+    SLICE_X111Y47        MUXF7 (Prop_F7MUX_CD_SLICEM_I1_O)
+                                                      0.068    11.835 r  io_peek_bits[28]_INST_0_i_1/O
+                         net (fo=1, routed)           1.330    13.165    io_peek_bits[28]_INST_0_i_1_n_0
+    SLICE_X72Y102                                                     r  io_peek_bits[28]_INST_0/I3
+    SLICE_X72Y102        LUT6 (Prop_H6LUT_SLICEM_I3_O)
+                                                      0.090    13.255 r  io_peek_bits[28]_INST_0/O
+                         net (fo=0)                   0.000    13.255    io_peek_bits[28]
+                                                                      r  io_peek_bits[28] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -13.255    
+  -------------------------------------------------------------------
+                         slack                                 86.710    
+
+Slack (MET) :             86.720ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[58]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        13.215ns  (logic 0.540ns (4.086%)  route 12.675ns (95.914%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       11.111    11.219    sptr_reg_n_0_[2]
+    SLICE_X115Y56                                                     r  io_peek_bits[58]_INST_0_i_38/S
+    SLICE_X115Y56        MUXF7 (Prop_F7MUX_AB_SLICEM_S_O)
+                                                      0.069    11.288 r  io_peek_bits[58]_INST_0_i_38/O
+                         net (fo=1, routed)           0.000    11.288    io_peek_bits[58]_INST_0_i_38_n_0
+    SLICE_X115Y56                                                     r  io_peek_bits[58]_INST_0_i_14/I1
+    SLICE_X115Y56        MUXF8 (Prop_F8MUX_BOT_SLICEM_I1_O)
+                                                      0.028    11.316 r  io_peek_bits[58]_INST_0_i_14/O
+                         net (fo=1, routed)           0.383    11.699    io_peek_bits[58]_INST_0_i_14_n_0
+    SLICE_X111Y57                                                     r  io_peek_bits[58]_INST_0_i_4/I5
+    SLICE_X111Y57        LUT6 (Prop_C6LUT_SLICEM_I5_O)
+                                                      0.145    11.844 r  io_peek_bits[58]_INST_0_i_4/O
+                         net (fo=1, routed)           0.021    11.865    io_peek_bits[58]_INST_0_i_4_n_0
+    SLICE_X111Y57                                                     r  io_peek_bits[58]_INST_0_i_1/I1
+    SLICE_X111Y57        MUXF7 (Prop_F7MUX_CD_SLICEM_I1_O)
+                                                      0.068    11.933 r  io_peek_bits[58]_INST_0_i_1/O
+                         net (fo=1, routed)           1.160    13.093    io_peek_bits[58]_INST_0_i_1_n_0
+    SLICE_X104Y131                                                    r  io_peek_bits[58]_INST_0/I3
+    SLICE_X104Y131       LUT6 (Prop_H6LUT_SLICEM_I3_O)
+                                                      0.152    13.245 r  io_peek_bits[58]_INST_0/O
+                         net (fo=0)                   0.000    13.245    io_peek_bits[58]
+                                                                      r  io_peek_bits[58] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -13.245    
+  -------------------------------------------------------------------
+                         slack                                 86.720    
+
+Slack (MET) :             87.044ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[48]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        12.891ns  (logic 0.348ns (2.700%)  route 12.543ns (97.300%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       11.352    11.460    sptr_reg_n_0_[2]
+    SLICE_X114Y71                                                     r  io_peek_bits[48]_INST_0_i_24/S
+    SLICE_X114Y71        MUXF7 (Prop_F7MUX_AB_SLICEM_S_O)
+                                                      0.069    11.529 r  io_peek_bits[48]_INST_0_i_24/O
+                         net (fo=1, routed)           0.000    11.529    io_peek_bits[48]_INST_0_i_24_n_0
+    SLICE_X114Y71                                                     r  io_peek_bits[48]_INST_0_i_7/I1
+    SLICE_X114Y71        MUXF8 (Prop_F8MUX_BOT_SLICEM_I1_O)
+                                                      0.028    11.557 r  io_peek_bits[48]_INST_0_i_7/O
+                         net (fo=1, routed)           0.472    12.029    io_peek_bits[48]_INST_0_i_7_n_0
+    SLICE_X109Y71                                                     r  io_peek_bits[48]_INST_0_i_3/I0
+    SLICE_X109Y71        LUT6 (Prop_D6LUT_SLICEM_I0_O)
+                                                      0.051    12.080 r  io_peek_bits[48]_INST_0_i_3/O
+                         net (fo=1, routed)           0.025    12.105    io_peek_bits[48]_INST_0_i_3_n_0
+    SLICE_X109Y71                                                     r  io_peek_bits[48]_INST_0_i_1/I0
+    SLICE_X109Y71        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069    12.174 r  io_peek_bits[48]_INST_0_i_1/O
+                         net (fo=1, routed)           0.694    12.868    io_peek_bits[48]_INST_0_i_1_n_0
+    SLICE_X106Y125                                                    r  io_peek_bits[48]_INST_0/I3
+    SLICE_X106Y125       LUT6 (Prop_H6LUT_SLICEM_I3_O)
+                                                      0.053    12.921 r  io_peek_bits[48]_INST_0/O
+                         net (fo=0)                   0.000    12.921    io_peek_bits[48]
+                                                                      r  io_peek_bits[48] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -12.921    
+  -------------------------------------------------------------------
+                         slack                                 87.044    
+
+Slack (MET) :             87.167ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[24]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        12.768ns  (logic 0.384ns (3.008%)  route 12.384ns (96.992%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       11.705    11.813    sptr_reg_n_0_[2]
+    SLICE_X115Y80                                                     r  io_peek_bits[24]_INST_0_i_38/S
+    SLICE_X115Y80        MUXF7 (Prop_F7MUX_AB_SLICEM_S_O)
+                                                      0.069    11.882 r  io_peek_bits[24]_INST_0_i_38/O
+                         net (fo=1, routed)           0.000    11.882    io_peek_bits[24]_INST_0_i_38_n_0
+    SLICE_X115Y80                                                     r  io_peek_bits[24]_INST_0_i_14/I1
+    SLICE_X115Y80        MUXF8 (Prop_F8MUX_BOT_SLICEM_I1_O)
+                                                      0.028    11.910 r  io_peek_bits[24]_INST_0_i_14/O
+                         net (fo=1, routed)           0.468    12.378    io_peek_bits[24]_INST_0_i_14_n_0
+    SLICE_X107Y80                                                     r  io_peek_bits[24]_INST_0_i_4/I5
+    SLICE_X107Y80        LUT6 (Prop_C6LUT_SLICEM_I5_O)
+                                                      0.088    12.466 r  io_peek_bits[24]_INST_0_i_4/O
+                         net (fo=1, routed)           0.021    12.487    io_peek_bits[24]_INST_0_i_4_n_0
+    SLICE_X107Y80                                                     r  io_peek_bits[24]_INST_0_i_1/I1
+    SLICE_X107Y80        MUXF7 (Prop_F7MUX_CD_SLICEM_I1_O)
+                                                      0.068    12.555 r  io_peek_bits[24]_INST_0_i_1/O
+                         net (fo=1, routed)           0.190    12.745    io_peek_bits[24]_INST_0_i_1_n_0
+    SLICE_X107Y82                                                     r  io_peek_bits[24]_INST_0/I3
+    SLICE_X107Y82        LUT6 (Prop_H6LUT_SLICEM_I3_O)
+                                                      0.053    12.798 r  io_peek_bits[24]_INST_0/O
+                         net (fo=0)                   0.000    12.798    io_peek_bits[24]
+                                                                      r  io_peek_bits[24] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -12.798    
+  -------------------------------------------------------------------
+                         slack                                 87.167    
+
+Slack (MET) :             87.265ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[44]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        12.670ns  (logic 0.427ns (3.370%)  route 12.243ns (96.630%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       10.728    10.836    sptr_reg_n_0_[2]
+    SLICE_X115Y38                                                     r  io_peek_bits[44]_INST_0_i_24/S
+    SLICE_X115Y38        MUXF7 (Prop_F7MUX_AB_SLICEM_S_O)
+                                                      0.069    10.905 r  io_peek_bits[44]_INST_0_i_24/O
+                         net (fo=1, routed)           0.000    10.905    io_peek_bits[44]_INST_0_i_24_n_0
+    SLICE_X115Y38                                                     r  io_peek_bits[44]_INST_0_i_7/I1
+    SLICE_X115Y38        MUXF8 (Prop_F8MUX_BOT_SLICEM_I1_O)
+                                                      0.028    10.933 r  io_peek_bits[44]_INST_0_i_7/O
+                         net (fo=1, routed)           0.498    11.431    io_peek_bits[44]_INST_0_i_7_n_0
+    SLICE_X108Y36                                                     r  io_peek_bits[44]_INST_0_i_3/I0
+    SLICE_X108Y36        LUT6 (Prop_D6LUT_SLICEL_I0_O)
+                                                      0.099    11.530 r  io_peek_bits[44]_INST_0_i_3/O
+                         net (fo=1, routed)           0.009    11.539    io_peek_bits[44]_INST_0_i_3_n_0
+    SLICE_X108Y36                                                     r  io_peek_bits[44]_INST_0_i_1/I0
+    SLICE_X108Y36        MUXF7 (Prop_F7MUX_CD_SLICEL_I0_O)
+                                                      0.063    11.602 r  io_peek_bits[44]_INST_0_i_1/O
+                         net (fo=1, routed)           1.008    12.610    io_peek_bits[44]_INST_0_i_1_n_0
+    SLICE_X101Y98                                                     r  io_peek_bits[44]_INST_0/I3
+    SLICE_X101Y98        LUT6 (Prop_H6LUT_SLICEL_I3_O)
+                                                      0.090    12.700 r  io_peek_bits[44]_INST_0/O
+                         net (fo=0)                   0.000    12.700    io_peek_bits[44]
+                                                                      r  io_peek_bits[44] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -12.700    
+  -------------------------------------------------------------------
+                         slack                                 87.265    
+
+Slack (MET) :             87.380ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[72]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        12.555ns  (logic 0.507ns (4.038%)  route 12.048ns (95.962%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       10.648    10.756    sptr_reg_n_0_[2]
+    SLICE_X103Y40                                                     r  io_peek_bits[72]_INST_0_i_26/S
+    SLICE_X103Y40        MUXF7 (Prop_F7MUX_AB_SLICEL_S_O)
+                                                      0.065    10.821 r  io_peek_bits[72]_INST_0_i_26/O
+                         net (fo=1, routed)           0.000    10.821    io_peek_bits[72]_INST_0_i_26_n_0
+    SLICE_X103Y40                                                     r  io_peek_bits[72]_INST_0_i_8/I1
+    SLICE_X103Y40        MUXF8 (Prop_F8MUX_BOT_SLICEL_I1_O)
+                                                      0.026    10.847 r  io_peek_bits[72]_INST_0_i_8/O
+                         net (fo=1, routed)           0.452    11.299    io_peek_bits[72]_INST_0_i_8_n_0
+    SLICE_X100Y44                                                     r  io_peek_bits[72]_INST_0_i_3/I1
+    SLICE_X100Y44        LUT6 (Prop_D6LUT_SLICEM_I1_O)
+                                                      0.145    11.444 r  io_peek_bits[72]_INST_0_i_3/O
+                         net (fo=1, routed)           0.025    11.469    io_peek_bits[72]_INST_0_i_3_n_0
+    SLICE_X100Y44                                                     r  io_peek_bits[72]_INST_0_i_1/I0
+    SLICE_X100Y44        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069    11.538 r  io_peek_bits[72]_INST_0_i_1/O
+                         net (fo=1, routed)           0.923    12.461    io_peek_bits[72]_INST_0_i_1_n_0
+    SLICE_X89Y117                                                     r  io_peek_bits[72]_INST_0/I3
+    SLICE_X89Y117        LUT6 (Prop_H6LUT_SLICEL_I3_O)
+                                                      0.124    12.585 r  io_peek_bits[72]_INST_0/O
+                         net (fo=0)                   0.000    12.585    io_peek_bits[72]
+                                                                      r  io_peek_bits[72] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -12.585    
+  -------------------------------------------------------------------
+                         slack                                 87.380    
+
+Slack (MET) :             87.510ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[42]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        12.425ns  (logic 0.419ns (3.372%)  route 12.006ns (96.628%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       10.726    10.834    sptr_reg_n_0_[2]
+    SLICE_X109Y52                                                     r  io_peek_bits[42]_INST_0_i_34/S
+    SLICE_X109Y52        MUXF7 (Prop_F7MUX_AB_SLICEM_S_O)
+                                                      0.069    10.903 r  io_peek_bits[42]_INST_0_i_34/O
+                         net (fo=1, routed)           0.000    10.903    io_peek_bits[42]_INST_0_i_34_n_0
+    SLICE_X109Y52                                                     r  io_peek_bits[42]_INST_0_i_12/I1
+    SLICE_X109Y52        MUXF8 (Prop_F8MUX_BOT_SLICEM_I1_O)
+                                                      0.028    10.931 r  io_peek_bits[42]_INST_0_i_12/O
+                         net (fo=1, routed)           0.331    11.262    io_peek_bits[42]_INST_0_i_12_n_0
+    SLICE_X104Y52                                                     r  io_peek_bits[42]_INST_0_i_4/I1
+    SLICE_X104Y52        LUT6 (Prop_C6LUT_SLICEM_I1_O)
+                                                      0.051    11.313 r  io_peek_bits[42]_INST_0_i_4/O
+                         net (fo=1, routed)           0.021    11.334    io_peek_bits[42]_INST_0_i_4_n_0
+    SLICE_X104Y52                                                     r  io_peek_bits[42]_INST_0_i_1/I1
+    SLICE_X104Y52        MUXF7 (Prop_F7MUX_CD_SLICEM_I1_O)
+                                                      0.068    11.402 r  io_peek_bits[42]_INST_0_i_1/O
+                         net (fo=1, routed)           0.928    12.330    io_peek_bits[42]_INST_0_i_1_n_0
+    SLICE_X97Y109                                                     r  io_peek_bits[42]_INST_0/I3
+    SLICE_X97Y109        LUT6 (Prop_H6LUT_SLICEM_I3_O)
+                                                      0.125    12.455 r  io_peek_bits[42]_INST_0/O
+                         net (fo=0)                   0.000    12.455    io_peek_bits[42]
+                                                                      r  io_peek_bits[42] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -12.455    
+  -------------------------------------------------------------------
+                         slack                                 87.510    
+
+Slack (MET) :             87.519ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[38]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        12.416ns  (logic 0.448ns (3.608%)  route 11.968ns (96.392%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       10.987    11.095    sptr_reg_n_0_[2]
+    SLICE_X113Y65                                                     r  io_peek_bits[38]_INST_0_i_31/S
+    SLICE_X113Y65        MUXF7 (Prop_F7MUX_CD_SLICEL_S_O)
+                                                      0.063    11.158 r  io_peek_bits[38]_INST_0_i_31/O
+                         net (fo=1, routed)           0.000    11.158    io_peek_bits[38]_INST_0_i_31_n_0
+    SLICE_X113Y65                                                     r  io_peek_bits[38]_INST_0_i_11/I0
+    SLICE_X113Y65        MUXF8 (Prop_F8MUX_BOT_SLICEL_I0_O)
+                                                      0.026    11.184 r  io_peek_bits[38]_INST_0_i_11/O
+                         net (fo=1, routed)           0.501    11.685    io_peek_bits[38]_INST_0_i_11_n_0
+    SLICE_X107Y63                                                     r  io_peek_bits[38]_INST_0_i_4/I0
+    SLICE_X107Y63        LUT6 (Prop_C6LUT_SLICEM_I0_O)
+                                                      0.088    11.773 r  io_peek_bits[38]_INST_0_i_4/O
+                         net (fo=1, routed)           0.021    11.794    io_peek_bits[38]_INST_0_i_4_n_0
+    SLICE_X107Y63                                                     r  io_peek_bits[38]_INST_0_i_1/I1
+    SLICE_X107Y63        MUXF7 (Prop_F7MUX_CD_SLICEM_I1_O)
+                                                      0.068    11.862 r  io_peek_bits[38]_INST_0_i_1/O
+                         net (fo=1, routed)           0.459    12.321    io_peek_bits[38]_INST_0_i_1_n_0
+    SLICE_X107Y96                                                     r  io_peek_bits[38]_INST_0/I3
+    SLICE_X107Y96        LUT6 (Prop_H6LUT_SLICEM_I3_O)
+                                                      0.125    12.446 r  io_peek_bits[38]_INST_0/O
+                         net (fo=0)                   0.000    12.446    io_peek_bits[38]
+                                                                      r  io_peek_bits[38] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -12.446    
+  -------------------------------------------------------------------
+                         slack                                 87.519    
+
+Slack (MET) :             87.628ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[52]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        12.307ns  (logic 0.372ns (3.023%)  route 11.935ns (96.977%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       10.575    10.683    sptr_reg_n_0_[2]
+    SLICE_X103Y14                                                     r  io_peek_bits[52]_INST_0_i_30/S
+    SLICE_X103Y14        MUXF7 (Prop_F7MUX_AB_SLICEL_S_O)
+                                                      0.065    10.748 r  io_peek_bits[52]_INST_0_i_30/O
+                         net (fo=1, routed)           0.000    10.748    io_peek_bits[52]_INST_0_i_30_n_0
+    SLICE_X103Y14                                                     r  io_peek_bits[52]_INST_0_i_10/I1
+    SLICE_X103Y14        MUXF8 (Prop_F8MUX_BOT_SLICEL_I1_O)
+                                                      0.026    10.774 r  io_peek_bits[52]_INST_0_i_10/O
+                         net (fo=1, routed)           0.486    11.260    io_peek_bits[52]_INST_0_i_10_n_0
+    SLICE_X101Y10                                                     r  io_peek_bits[52]_INST_0_i_3/I5
+    SLICE_X101Y10        LUT6 (Prop_D6LUT_SLICEL_I5_O)
+                                                      0.089    11.349 r  io_peek_bits[52]_INST_0_i_3/O
+                         net (fo=1, routed)           0.009    11.358    io_peek_bits[52]_INST_0_i_3_n_0
+    SLICE_X101Y10                                                     r  io_peek_bits[52]_INST_0_i_1/I0
+    SLICE_X101Y10        MUXF7 (Prop_F7MUX_CD_SLICEL_I0_O)
+                                                      0.063    11.421 r  io_peek_bits[52]_INST_0_i_1/O
+                         net (fo=1, routed)           0.865    12.286    io_peek_bits[52]_INST_0_i_1_n_0
+    SLICE_X101Y92                                                     r  io_peek_bits[52]_INST_0/I3
+    SLICE_X101Y92        LUT6 (Prop_H6LUT_SLICEL_I3_O)
+                                                      0.051    12.337 r  io_peek_bits[52]_INST_0/O
+                         net (fo=0)                   0.000    12.337    io_peek_bits[52]
+                                                                      r  io_peek_bits[52] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -12.337    
+  -------------------------------------------------------------------
+                         slack                                 87.628    
+
+Slack (MET) :             87.650ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[41]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        12.285ns  (logic 0.433ns (3.525%)  route 11.852ns (96.475%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       10.496    10.604    sptr_reg_n_0_[2]
+    SLICE_X99Y15                                                      r  io_peek_bits[41]_INST_0_i_28/S
+    SLICE_X99Y15         MUXF7 (Prop_F7MUX_AB_SLICEM_S_O)
+                                                      0.069    10.673 r  io_peek_bits[41]_INST_0_i_28/O
+                         net (fo=1, routed)           0.000    10.673    io_peek_bits[41]_INST_0_i_28_n_0
+    SLICE_X99Y15                                                      r  io_peek_bits[41]_INST_0_i_9/I1
+    SLICE_X99Y15         MUXF8 (Prop_F8MUX_BOT_SLICEM_I1_O)
+                                                      0.028    10.701 r  io_peek_bits[41]_INST_0_i_9/O
+                         net (fo=1, routed)           0.219    10.920    io_peek_bits[41]_INST_0_i_9_n_0
+    SLICE_X100Y20                                                     r  io_peek_bits[41]_INST_0_i_3/I3
+    SLICE_X100Y20        LUT6 (Prop_D6LUT_SLICEM_I3_O)
+                                                      0.099    11.019 r  io_peek_bits[41]_INST_0_i_3/O
+                         net (fo=1, routed)           0.025    11.044    io_peek_bits[41]_INST_0_i_3_n_0
+    SLICE_X100Y20                                                     r  io_peek_bits[41]_INST_0_i_1/I0
+    SLICE_X100Y20        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069    11.113 r  io_peek_bits[41]_INST_0_i_1/O
+                         net (fo=1, routed)           1.112    12.225    io_peek_bits[41]_INST_0_i_1_n_0
+    SLICE_X94Y98                                                      r  io_peek_bits[41]_INST_0/I3
+    SLICE_X94Y98         LUT6 (Prop_H6LUT_SLICEM_I3_O)
+                                                      0.090    12.315 r  io_peek_bits[41]_INST_0/O
+                         net (fo=0)                   0.000    12.315    io_peek_bits[41]
+                                                                      r  io_peek_bits[41] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -12.315    
+  -------------------------------------------------------------------
+                         slack                                 87.650    
+
+Slack (MET) :             87.676ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[18]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        12.259ns  (logic 0.483ns (3.940%)  route 11.776ns (96.060%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       10.491    10.599    sptr_reg_n_0_[2]
+    SLICE_X93Y47                                                      r  io_peek_bits[18]_INST_0_i_30/S
+    SLICE_X93Y47         MUXF7 (Prop_F7MUX_AB_SLICEL_S_O)
+                                                      0.065    10.664 r  io_peek_bits[18]_INST_0_i_30/O
+                         net (fo=1, routed)           0.000    10.664    io_peek_bits[18]_INST_0_i_30_n_0
+    SLICE_X93Y47                                                      r  io_peek_bits[18]_INST_0_i_10/I1
+    SLICE_X93Y47         MUXF8 (Prop_F8MUX_BOT_SLICEL_I1_O)
+                                                      0.026    10.690 r  io_peek_bits[18]_INST_0_i_10/O
+                         net (fo=1, routed)           0.253    10.943    io_peek_bits[18]_INST_0_i_10_n_0
+    SLICE_X95Y45                                                      r  io_peek_bits[18]_INST_0_i_3/I5
+    SLICE_X95Y45         LUT6 (Prop_D6LUT_SLICEM_I5_O)
+                                                      0.122    11.065 r  io_peek_bits[18]_INST_0_i_3/O
+                         net (fo=1, routed)           0.025    11.090    io_peek_bits[18]_INST_0_i_3_n_0
+    SLICE_X95Y45                                                      r  io_peek_bits[18]_INST_0_i_1/I0
+    SLICE_X95Y45         MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069    11.159 r  io_peek_bits[18]_INST_0_i_1/O
+                         net (fo=1, routed)           1.007    12.166    io_peek_bits[18]_INST_0_i_1_n_0
+    SLICE_X78Y113                                                     r  io_peek_bits[18]_INST_0/I3
+    SLICE_X78Y113        LUT6 (Prop_F6LUT_SLICEL_I3_O)
+                                                      0.123    12.289 r  io_peek_bits[18]_INST_0/O
+                         net (fo=0)                   0.000    12.289    io_peek_bits[18]
+                                                                      r  io_peek_bits[18] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -12.289    
+  -------------------------------------------------------------------
+                         slack                                 87.676    
+
+Slack (MET) :             87.700ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[79]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        12.235ns  (logic 0.413ns (3.376%)  route 11.822ns (96.624%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       10.446    10.554    sptr_reg_n_0_[2]
+    SLICE_X97Y15                                                      r  io_peek_bits[79]_INST_0_i_28/S
+    SLICE_X97Y15         MUXF7 (Prop_F7MUX_AB_SLICEM_S_O)
+                                                      0.069    10.623 r  io_peek_bits[79]_INST_0_i_28/O
+                         net (fo=1, routed)           0.000    10.623    io_peek_bits[79]_INST_0_i_28_n_0
+    SLICE_X97Y15                                                      r  io_peek_bits[79]_INST_0_i_9/I1
+    SLICE_X97Y15         MUXF8 (Prop_F8MUX_BOT_SLICEM_I1_O)
+                                                      0.028    10.651 r  io_peek_bits[79]_INST_0_i_9/O
+                         net (fo=1, routed)           0.382    11.033    io_peek_bits[79]_INST_0_i_9_n_0
+    SLICE_X93Y20                                                      r  io_peek_bits[79]_INST_0_i_3/I3
+    SLICE_X93Y20         LUT6 (Prop_D6LUT_SLICEL_I3_O)
+                                                      0.050    11.083 r  io_peek_bits[79]_INST_0_i_3/O
+                         net (fo=1, routed)           0.009    11.092    io_peek_bits[79]_INST_0_i_3_n_0
+    SLICE_X93Y20                                                      r  io_peek_bits[79]_INST_0_i_1/I0
+    SLICE_X93Y20         MUXF7 (Prop_F7MUX_CD_SLICEL_I0_O)
+                                                      0.063    11.155 r  io_peek_bits[79]_INST_0_i_1/O
+                         net (fo=1, routed)           0.985    12.140    io_peek_bits[79]_INST_0_i_1_n_0
+    SLICE_X87Y89                                                      r  io_peek_bits[79]_INST_0/I3
+    SLICE_X87Y89         LUT6 (Prop_H6LUT_SLICEM_I3_O)
+                                                      0.125    12.265 r  io_peek_bits[79]_INST_0/O
+                         net (fo=0)                   0.000    12.265    io_peek_bits[79]
+                                                                      r  io_peek_bits[79] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -12.265    
+  -------------------------------------------------------------------
+                         slack                                 87.700    
+
+Slack (MET) :             87.734ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[60]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        12.201ns  (logic 0.451ns (3.696%)  route 11.750ns (96.304%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       10.312    10.420    sptr_reg_n_0_[2]
+    SLICE_X107Y30                                                     r  io_peek_bits[60]_INST_0_i_36/S
+    SLICE_X107Y30        MUXF7 (Prop_F7MUX_AB_SLICEM_S_O)
+                                                      0.069    10.489 r  io_peek_bits[60]_INST_0_i_36/O
+                         net (fo=1, routed)           0.000    10.489    io_peek_bits[60]_INST_0_i_36_n_0
+    SLICE_X107Y30                                                     r  io_peek_bits[60]_INST_0_i_13/I1
+    SLICE_X107Y30        MUXF8 (Prop_F8MUX_BOT_SLICEM_I1_O)
+                                                      0.028    10.517 r  io_peek_bits[60]_INST_0_i_13/O
+                         net (fo=1, routed)           0.518    11.035    io_peek_bits[60]_INST_0_i_13_n_0
+    SLICE_X101Y30                                                     r  io_peek_bits[60]_INST_0_i_4/I3
+    SLICE_X101Y30        LUT6 (Prop_C6LUT_SLICEL_I3_O)
+                                                      0.088    11.123 r  io_peek_bits[60]_INST_0_i_4/O
+                         net (fo=1, routed)           0.010    11.133    io_peek_bits[60]_INST_0_i_4_n_0
+    SLICE_X101Y30                                                     r  io_peek_bits[60]_INST_0_i_1/I1
+    SLICE_X101Y30        MUXF7 (Prop_F7MUX_CD_SLICEL_I1_O)
+                                                      0.064    11.197 r  io_peek_bits[60]_INST_0_i_1/O
+                         net (fo=1, routed)           0.910    12.107    io_peek_bits[60]_INST_0_i_1_n_0
+    SLICE_X80Y77                                                      r  io_peek_bits[60]_INST_0/I3
+    SLICE_X80Y77         LUT6 (Prop_H6LUT_SLICEL_I3_O)
+                                                      0.124    12.231 r  io_peek_bits[60]_INST_0/O
+                         net (fo=0)                   0.000    12.231    io_peek_bits[60]
+                                                                      r  io_peek_bits[60] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -12.231    
+  -------------------------------------------------------------------
+                         slack                                 87.734    
+
+Slack (MET) :             87.767ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[29]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        12.168ns  (logic 0.328ns (2.696%)  route 11.840ns (97.304%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       10.692    10.800    sptr_reg_n_0_[2]
+    SLICE_X110Y33                                                     r  io_peek_bits[29]_INST_0_i_26/S
+    SLICE_X110Y33        MUXF7 (Prop_F7MUX_AB_SLICEL_S_O)
+                                                      0.065    10.865 r  io_peek_bits[29]_INST_0_i_26/O
+                         net (fo=1, routed)           0.000    10.865    io_peek_bits[29]_INST_0_i_26_n_0
+    SLICE_X110Y33                                                     r  io_peek_bits[29]_INST_0_i_8/I1
+    SLICE_X110Y33        MUXF8 (Prop_F8MUX_BOT_SLICEL_I1_O)
+                                                      0.026    10.891 r  io_peek_bits[29]_INST_0_i_8/O
+                         net (fo=1, routed)           0.411    11.302    io_peek_bits[29]_INST_0_i_8_n_0
+    SLICE_X107Y27                                                     r  io_peek_bits[29]_INST_0_i_3/I1
+    SLICE_X107Y27        LUT6 (Prop_D6LUT_SLICEM_I1_O)
+                                                      0.051    11.353 r  io_peek_bits[29]_INST_0_i_3/O
+                         net (fo=1, routed)           0.025    11.378    io_peek_bits[29]_INST_0_i_3_n_0
+    SLICE_X107Y27                                                     r  io_peek_bits[29]_INST_0_i_1/I0
+    SLICE_X107Y27        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069    11.447 r  io_peek_bits[29]_INST_0_i_1/O
+                         net (fo=1, routed)           0.712    12.159    io_peek_bits[29]_INST_0_i_1_n_0
+    SLICE_X107Y88                                                     r  io_peek_bits[29]_INST_0/I3
+    SLICE_X107Y88        LUT6 (Prop_H6LUT_SLICEM_I3_O)
+                                                      0.039    12.198 r  io_peek_bits[29]_INST_0/O
+                         net (fo=0)                   0.000    12.198    io_peek_bits[29]
+                                                                      r  io_peek_bits[29] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -12.198    
+  -------------------------------------------------------------------
+                         slack                                 87.767    
+
+Slack (MET) :             87.779ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[75]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        12.156ns  (logic 0.328ns (2.698%)  route 11.828ns (97.302%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       10.499    10.607    sptr_reg_n_0_[2]
+    SLICE_X95Y11                                                      r  io_peek_bits[75]_INST_0_i_36/S
+    SLICE_X95Y11         MUXF7 (Prop_F7MUX_AB_SLICEM_S_O)
+                                                      0.069    10.676 r  io_peek_bits[75]_INST_0_i_36/O
+                         net (fo=1, routed)           0.000    10.676    io_peek_bits[75]_INST_0_i_36_n_0
+    SLICE_X95Y11                                                      r  io_peek_bits[75]_INST_0_i_13/I1
+    SLICE_X95Y11         MUXF8 (Prop_F8MUX_BOT_SLICEM_I1_O)
+                                                      0.028    10.704 r  io_peek_bits[75]_INST_0_i_13/O
+                         net (fo=1, routed)           0.427    11.131    io_peek_bits[75]_INST_0_i_13_n_0
+    SLICE_X92Y11                                                      r  io_peek_bits[75]_INST_0_i_4/I3
+    SLICE_X92Y11         LUT6 (Prop_C6LUT_SLICEL_I3_O)
+                                                      0.050    11.181 r  io_peek_bits[75]_INST_0_i_4/O
+                         net (fo=1, routed)           0.010    11.191    io_peek_bits[75]_INST_0_i_4_n_0
+    SLICE_X92Y11                                                      r  io_peek_bits[75]_INST_0_i_1/I1
+    SLICE_X92Y11         MUXF7 (Prop_F7MUX_CD_SLICEL_I1_O)
+                                                      0.064    11.255 r  io_peek_bits[75]_INST_0_i_1/O
+                         net (fo=1, routed)           0.892    12.147    io_peek_bits[75]_INST_0_i_1_n_0
+    SLICE_X88Y84                                                      r  io_peek_bits[75]_INST_0/I3
+    SLICE_X88Y84         LUT6 (Prop_H6LUT_SLICEM_I3_O)
+                                                      0.039    12.186 r  io_peek_bits[75]_INST_0/O
+                         net (fo=0)                   0.000    12.186    io_peek_bits[75]
+                                                                      r  io_peek_bits[75] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -12.186    
+  -------------------------------------------------------------------
+                         slack                                 87.779    
+
+Slack (MET) :             87.817ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[66]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        12.118ns  (logic 0.399ns (3.293%)  route 11.719ns (96.707%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       10.867    10.975    sptr_reg_n_0_[2]
+    SLICE_X108Y66                                                     r  io_peek_bits[66]_INST_0_i_28/S
+    SLICE_X108Y66        MUXF7 (Prop_F7MUX_AB_SLICEL_S_O)
+                                                      0.065    11.040 r  io_peek_bits[66]_INST_0_i_28/O
+                         net (fo=1, routed)           0.000    11.040    io_peek_bits[66]_INST_0_i_28_n_0
+    SLICE_X108Y66                                                     r  io_peek_bits[66]_INST_0_i_9/I1
+    SLICE_X108Y66        MUXF8 (Prop_F8MUX_BOT_SLICEL_I1_O)
+                                                      0.026    11.066 r  io_peek_bits[66]_INST_0_i_9/O
+                         net (fo=1, routed)           0.278    11.344    io_peek_bits[66]_INST_0_i_9_n_0
+    SLICE_X104Y66                                                     r  io_peek_bits[66]_INST_0_i_3/I3
+    SLICE_X104Y66        LUT6 (Prop_D6LUT_SLICEM_I3_O)
+                                                      0.122    11.466 r  io_peek_bits[66]_INST_0_i_3/O
+                         net (fo=1, routed)           0.025    11.491    io_peek_bits[66]_INST_0_i_3_n_0
+    SLICE_X104Y66                                                     r  io_peek_bits[66]_INST_0_i_1/I0
+    SLICE_X104Y66        MUXF7 (Prop_F7MUX_CD_SLICEM_I0_O)
+                                                      0.069    11.560 r  io_peek_bits[66]_INST_0_i_1/O
+                         net (fo=1, routed)           0.549    12.109    io_peek_bits[66]_INST_0_i_1_n_0
+    SLICE_X104Y116                                                    r  io_peek_bits[66]_INST_0/I3
+    SLICE_X104Y116       LUT6 (Prop_H6LUT_SLICEM_I3_O)
+                                                      0.039    12.148 r  io_peek_bits[66]_INST_0/O
+                         net (fo=0)                   0.000    12.148    io_peek_bits[66]
+                                                                      r  io_peek_bits[66] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -12.148    
+  -------------------------------------------------------------------
+                         slack                                 87.817    
+
+Slack (MET) :             87.892ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[15]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        12.043ns  (logic 0.456ns (3.786%)  route 11.587ns (96.214%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       10.817    10.925    sptr_reg_n_0_[2]
+    SLICE_X109Y56                                                     r  io_peek_bits[15]_INST_0_i_38/S
+    SLICE_X109Y56        MUXF7 (Prop_F7MUX_AB_SLICEM_S_O)
+                                                      0.069    10.994 r  io_peek_bits[15]_INST_0_i_38/O
+                         net (fo=1, routed)           0.000    10.994    io_peek_bits[15]_INST_0_i_38_n_0
+    SLICE_X109Y56                                                     r  io_peek_bits[15]_INST_0_i_14/I1
+    SLICE_X109Y56        MUXF8 (Prop_F8MUX_BOT_SLICEM_I1_O)
+                                                      0.028    11.022 r  io_peek_bits[15]_INST_0_i_14/O
+                         net (fo=1, routed)           0.482    11.504    io_peek_bits[15]_INST_0_i_14_n_0
+    SLICE_X100Y56                                                     r  io_peek_bits[15]_INST_0_i_4/I5
+    SLICE_X100Y56        LUT6 (Prop_C6LUT_SLICEM_I5_O)
+                                                      0.123    11.627 r  io_peek_bits[15]_INST_0_i_4/O
+                         net (fo=1, routed)           0.021    11.648    io_peek_bits[15]_INST_0_i_4_n_0
+    SLICE_X100Y56                                                     r  io_peek_bits[15]_INST_0_i_1/I1
+    SLICE_X100Y56        MUXF7 (Prop_F7MUX_CD_SLICEM_I1_O)
+                                                      0.068    11.716 r  io_peek_bits[15]_INST_0_i_1/O
+                         net (fo=1, routed)           0.267    11.983    io_peek_bits[15]_INST_0_i_1_n_0
+    SLICE_X101Y57                                                     r  io_peek_bits[15]_INST_0/I3
+    SLICE_X101Y57        LUT6 (Prop_H6LUT_SLICEL_I3_O)
+                                                      0.090    12.073 r  io_peek_bits[15]_INST_0/O
+                         net (fo=0)                   0.000    12.073    io_peek_bits[15]
+                                                                      r  io_peek_bits[15] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -12.073    
+  -------------------------------------------------------------------
+                         slack                                 87.892    
+
+Slack (MET) :             88.227ns  (required time - arrival time)
+  Source:                 sptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            io_peek_bits[55]
+                            (output port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Max at Slow Process Corner
+  Requirement:            100.000ns  (queue rise@100.000ns - queue rise@0.000ns)
+  Data Path Delay:        11.708ns  (logic 0.393ns (3.357%)  route 11.315ns (96.643%))
+  Logic Levels:           5  (LUT6=2 MUXF7=2 MUXF8=1)
+  Output Delay:           0.000ns
+  Clock Path Skew:        -0.030ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.000ns = ( 100.000 - 100.000 ) 
+    Source Clock Delay      (SCD):    0.030ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.030     0.030    clock
+    SLICE_X61Y84         FDRE                                         r  sptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.078     0.108 r  sptr_reg[2]/Q
+                         net (fo=2637, routed)       10.266    10.374    sptr_reg_n_0_[2]
+    SLICE_X108Y19                                                     r  io_peek_bits[55]_INST_0_i_30/S
+    SLICE_X108Y19        MUXF7 (Prop_F7MUX_AB_SLICEL_S_O)
+                                                      0.065    10.439 r  io_peek_bits[55]_INST_0_i_30/O
+                         net (fo=1, routed)           0.000    10.439    io_peek_bits[55]_INST_0_i_30_n_0
+    SLICE_X108Y19                                                     r  io_peek_bits[55]_INST_0_i_10/I1
+    SLICE_X108Y19        MUXF8 (Prop_F8MUX_BOT_SLICEL_I1_O)
+                                                      0.026    10.465 r  io_peek_bits[55]_INST_0_i_10/O
+                         net (fo=1, routed)           0.225    10.690    io_peek_bits[55]_INST_0_i_10_n_0
+    SLICE_X108Y15                                                     r  io_peek_bits[55]_INST_0_i_3/I5
+    SLICE_X108Y15        LUT6 (Prop_D6LUT_SLICEL_I5_O)
+                                                      0.036    10.726 r  io_peek_bits[55]_INST_0_i_3/O
+                         net (fo=1, routed)           0.009    10.735    io_peek_bits[55]_INST_0_i_3_n_0
+    SLICE_X108Y15                                                     r  io_peek_bits[55]_INST_0_i_1/I0
+    SLICE_X108Y15        MUXF7 (Prop_F7MUX_CD_SLICEL_I0_O)
+                                                      0.063    10.798 r  io_peek_bits[55]_INST_0_i_1/O
+                         net (fo=1, routed)           0.815    11.613    io_peek_bits[55]_INST_0_i_1_n_0
+    SLICE_X107Y95                                                     r  io_peek_bits[55]_INST_0/I3
+    SLICE_X107Y95        LUT6 (Prop_H6LUT_SLICEM_I3_O)
+                                                      0.125    11.738 r  io_peek_bits[55]_INST_0/O
+                         net (fo=0)                   0.000    11.738    io_peek_bits[55]
+                                                                      r  io_peek_bits[55] (OUT)
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)    100.000   100.000 r  
+                         clock pessimism              0.000   100.000    
+                         clock uncertainty           -0.035    99.965    
+                         output delay                -0.000    99.965    
+  -------------------------------------------------------------------
+                         required time                         99.965    
+                         arrival time                         -11.738    
+  -------------------------------------------------------------------
+                         slack                                 88.227    
+
+
+
+

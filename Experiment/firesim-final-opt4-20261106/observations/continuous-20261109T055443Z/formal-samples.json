@@ -1,0 +1,3044 @@
+{
+  "missing_metric_policy": "null means not collected; host time is not architecture slowdown",
+  "observed_utc": "2026-11-09T05:54:43.726516+00:00",
+  "samples": [
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r1-20261106T125841Z/complete.json",
+        "sha256": "b90f9c5f194dff1866ca3033e360e67737b23aa52a5e118d42987bc0a8144d24"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": null,
+      "host_wall_seconds": 177.37044068984687,
+      "identity": {
+        "apps_manifest_sha256": "0ccb15ae6db46dd4f3c3c098823e33596012d8f6cab7dddcdcf04f90d498ea4a",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "1",
+            "in_16K.txt",
+            "prices.txt"
+          ],
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/inputs/input_simmedium.tar": "cb50267d053cb4bb841125aa5efa4fa915662817fbff3fe336dd092a7dd94147"
+          },
+          "input_files": {
+            "in_16K.txt": "f31b70b2f2c0f702464fcca7ca7fb68e3821530bb2d8132659f50fb6510715dd"
+          },
+          "official_reference_max_absolute_error": 2.7284587281073414e-05,
+          "output_count": 16384,
+          "program": "blackscholes",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-formal-20261106T123109Z/reference/prices.txt": "0593ad06c392032063c79b1c14337e9daedabe1324e285e069fc277edc72dd43"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/parsec/simmedium.runconf",
+          "runconf_sha256": "395ed0429ccd6d2bf638363bfc30a3b7f9a7f9cbd84dedb8da169182ebaf73d6",
+          "software_reference": "QEMU_USER_ONLY",
+          "threads": 1,
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "d5a615cc0928ebce6c285d04003dab39e10123f8a144ba30775485965eb9bcea",
+        "driver_sha256": "9cfeb80105d39d9cd9e0bc86979f298893aea154bb6a5f28587ae29722bd68c6",
+        "elf_sha256": "75b4e2923b0a7b1d096023daa6610f5c622bf04771b4e2966bbdee006e5270ea",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "08895ba4bc337d331e670a1890d133bde0b542f7e4b402cf377ae092e0ec0737",
+        "firmware_sha256": "f9697974067d54eaa36ce2506ad6a7873e436a54704f178514c0477c84013997",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": false,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "program": "blackscholes",
+        "repetition": 1,
+        "rootfs_sha256": "427d0b923bc2be77b67ba0ff11efd47bb83c7bbf28fd990e10c658dcf7178711",
+        "run_id": "native-blackscholes-simmedium-r1-20261106T125841Z",
+        "software_diagnostic": false,
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "de6afa4c377dd53e7b987906022858e34571d580a4d42dd834881711450c2ce6",
+      "input": "simmedium",
+      "issues": [],
+      "program": "blackscholes",
+      "repetition": 1,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r1-20261106T125841Z/result.json",
+        "sha256": "50cdca30c66c0f38c4d86a1ae8b501c90de134bba56053531f48f3257e7fd5c9"
+      },
+      "roi_cycles": 829737734,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r2-20261106T130737Z/complete.json",
+        "sha256": "1f954c1cd87a4ea9dcc48a105904fd9fdf0589725ff938f83b4ff9b76bf347b9"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": null,
+      "host_wall_seconds": 176.5797529090196,
+      "identity": {
+        "apps_manifest_sha256": "0ccb15ae6db46dd4f3c3c098823e33596012d8f6cab7dddcdcf04f90d498ea4a",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "1",
+            "in_16K.txt",
+            "prices.txt"
+          ],
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/inputs/input_simmedium.tar": "cb50267d053cb4bb841125aa5efa4fa915662817fbff3fe336dd092a7dd94147"
+          },
+          "input_files": {
+            "in_16K.txt": "f31b70b2f2c0f702464fcca7ca7fb68e3821530bb2d8132659f50fb6510715dd"
+          },
+          "official_reference_max_absolute_error": 2.7284587281073414e-05,
+          "output_count": 16384,
+          "program": "blackscholes",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-formal-20261106T123109Z/reference/prices.txt": "0593ad06c392032063c79b1c14337e9daedabe1324e285e069fc277edc72dd43"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/parsec/simmedium.runconf",
+          "runconf_sha256": "395ed0429ccd6d2bf638363bfc30a3b7f9a7f9cbd84dedb8da169182ebaf73d6",
+          "software_reference": "QEMU_USER_ONLY",
+          "threads": 1,
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "17d95a4a949397a5c3e731b21359fdba44cf5eccfa4d08b932beac0c7e5b1ea0",
+        "driver_sha256": "80b192807a20fdf4713ea698b32451e37ad99f54c77ca795a4310f4d05e5d5bc",
+        "elf_sha256": "75b4e2923b0a7b1d096023daa6610f5c622bf04771b4e2966bbdee006e5270ea",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "08895ba4bc337d331e670a1890d133bde0b542f7e4b402cf377ae092e0ec0737",
+        "firmware_sha256": "f9697974067d54eaa36ce2506ad6a7873e436a54704f178514c0477c84013997",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "program": "blackscholes",
+        "repetition": 2,
+        "rootfs_sha256": "427d0b923bc2be77b67ba0ff11efd47bb83c7bbf28fd990e10c658dcf7178711",
+        "run_id": "native-blackscholes-simmedium-r2-20261106T130737Z",
+        "software_diagnostic": false,
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "a6f16f6868e653eab95ad54a3bc7e8fb59e5d67a5092d447b092410c651f7f8a",
+      "input": "simmedium",
+      "issues": [],
+      "program": "blackscholes",
+      "repetition": 2,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r2-20261106T130737Z/result.json",
+        "sha256": "9ff0739ae455648d8b6f0a7fdda2bd02cb59093ef9bfa3ededbcac15b5f8922b"
+      },
+      "roi_cycles": 828230479,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r3-20261106T131036Z/complete.json",
+        "sha256": "18babcc6971ed985fa4e1e40890bd31b3d1c390f36f940b574f7dfe0f6782b38"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": null,
+      "host_wall_seconds": 176.93765668198466,
+      "identity": {
+        "apps_manifest_sha256": "0ccb15ae6db46dd4f3c3c098823e33596012d8f6cab7dddcdcf04f90d498ea4a",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "1",
+            "in_16K.txt",
+            "prices.txt"
+          ],
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/inputs/input_simmedium.tar": "cb50267d053cb4bb841125aa5efa4fa915662817fbff3fe336dd092a7dd94147"
+          },
+          "input_files": {
+            "in_16K.txt": "f31b70b2f2c0f702464fcca7ca7fb68e3821530bb2d8132659f50fb6510715dd"
+          },
+          "official_reference_max_absolute_error": 2.7284587281073414e-05,
+          "output_count": 16384,
+          "program": "blackscholes",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-formal-20261106T123109Z/reference/prices.txt": "0593ad06c392032063c79b1c14337e9daedabe1324e285e069fc277edc72dd43"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/parsec/simmedium.runconf",
+          "runconf_sha256": "395ed0429ccd6d2bf638363bfc30a3b7f9a7f9cbd84dedb8da169182ebaf73d6",
+          "software_reference": "QEMU_USER_ONLY",
+          "threads": 1,
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "17d95a4a949397a5c3e731b21359fdba44cf5eccfa4d08b932beac0c7e5b1ea0",
+        "driver_sha256": "80b192807a20fdf4713ea698b32451e37ad99f54c77ca795a4310f4d05e5d5bc",
+        "elf_sha256": "75b4e2923b0a7b1d096023daa6610f5c622bf04771b4e2966bbdee006e5270ea",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "08895ba4bc337d331e670a1890d133bde0b542f7e4b402cf377ae092e0ec0737",
+        "firmware_sha256": "f9697974067d54eaa36ce2506ad6a7873e436a54704f178514c0477c84013997",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "program": "blackscholes",
+        "repetition": 3,
+        "rootfs_sha256": "427d0b923bc2be77b67ba0ff11efd47bb83c7bbf28fd990e10c658dcf7178711",
+        "run_id": "native-blackscholes-simmedium-r3-20261106T131036Z",
+        "software_diagnostic": false,
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "97931a91fdd2d51df4b6877cc1b02ceee00ac6383f3ec358283339d2ff8a424f",
+      "input": "simmedium",
+      "issues": [],
+      "program": "blackscholes",
+      "repetition": 3,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r3-20261106T131036Z/result.json",
+        "sha256": "00d3599be93270bcc6cd27fd0aa97cbebe82f8f257d6f947a7269e682ce31083"
+      },
+      "roi_cycles": 829885720,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r1-20261107T040043Z/complete.json",
+        "sha256": "15ad63985892c9df158275375df7c407489fac4c4a641df583cb4c681801c7e0"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 21832973199,
+        "host_simulation_wall_seconds": 436.666134,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16578345.251,
+        "target_delta": 7239201929,
+        "target_end": 15278314067,
+        "target_start": 8039112138
+      },
+      "host_wall_seconds": 436.7268455220001,
+      "identity": {
+        "apps_manifest_sha256": "4b1c3ff7c608bbe423b0670e5f39bef5aada145df0c5956ceb62a71fe310ff1e",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "1",
+            "15000",
+            "2000",
+            "200000.nets",
+            "64"
+          ],
+          "expected_final_routing": "2.49424e+08",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/inputs/input_simmedium.tar": "90e184af6f8357c37e5fb797fa6d26519660bbb7dff545d7bc9c369d989f817b"
+          },
+          "input_files": {
+            "200000.nets": "ce5c1edaac17180fd71728f8774d009429f7d6c910b3ecba3563a6ee0639f036"
+          },
+          "program": "canneal",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-canneal-formal-20261107T035216Z/reference/stdout.log": "4c65e9194ea07f5a067568971eeaaa19bb6bca285efe1bae8b472398166509e1"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/parsec/simmedium.runconf",
+          "runconf_sha256": "92bf6703c3faaba5d8b29c12011470c089f672903b9da9ec1d0c07cdfee9e9c9",
+          "software_reference": "QEMU_RISCV_USER_ONLY",
+          "threads": 1,
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "07cb43662f5cb38e9497bea005217c22d7c1d54be18ee31c4a6ba21fe04aeb91",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "831fb08c2357457762e5a4dc55a23f1dfbc98b0162d842e1dcf22b1b0eeb9d82",
+        "firmware_sha256": "05597944f57df04424e8a870322e295495b17ab70708f653878bedba1e5337be",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "canneal",
+        "repetition": 1,
+        "rootfs_sha256": "67f83857977d77d164139d5b89a407326dd2f5db44873c65cf12bcd9bafec577",
+        "run_id": "native-canneal-simmedium-r1-20261107T040043Z",
+        "software_diagnostic": false,
+        "software_profile": "original-canneal-serial",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "a703439b929d581556c04038977124bbe2b573a302b9d5319e4383b7dcdcd7d1",
+      "input": "simmedium",
+      "issues": [],
+      "program": "canneal",
+      "repetition": 1,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r1-20261107T040043Z/result.json",
+        "sha256": "fd60d53d72153eb196fd1d32554313f589074c50bf26922692fcb3b898de2981"
+      },
+      "roi_cycles": 1418636771,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r2-20261107T040801Z/complete.json",
+        "sha256": "5c61d8325df073f7b08b9b88195666b740e6dd00f2e58cd79ee6dc48b8f7fb66"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 21792567938,
+        "host_simulation_wall_seconds": 435.866384,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16608761.634,
+        "target_delta": 7239200876,
+        "target_end": 22517520482,
+        "target_start": 15278319606
+      },
+      "host_wall_seconds": 435.90742259499984,
+      "identity": {
+        "apps_manifest_sha256": "4b1c3ff7c608bbe423b0670e5f39bef5aada145df0c5956ceb62a71fe310ff1e",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "1",
+            "15000",
+            "2000",
+            "200000.nets",
+            "64"
+          ],
+          "expected_final_routing": "2.49424e+08",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/inputs/input_simmedium.tar": "90e184af6f8357c37e5fb797fa6d26519660bbb7dff545d7bc9c369d989f817b"
+          },
+          "input_files": {
+            "200000.nets": "ce5c1edaac17180fd71728f8774d009429f7d6c910b3ecba3563a6ee0639f036"
+          },
+          "program": "canneal",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-canneal-formal-20261107T035216Z/reference/stdout.log": "4c65e9194ea07f5a067568971eeaaa19bb6bca285efe1bae8b472398166509e1"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/parsec/simmedium.runconf",
+          "runconf_sha256": "92bf6703c3faaba5d8b29c12011470c089f672903b9da9ec1d0c07cdfee9e9c9",
+          "software_reference": "QEMU_RISCV_USER_ONLY",
+          "threads": 1,
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "07cb43662f5cb38e9497bea005217c22d7c1d54be18ee31c4a6ba21fe04aeb91",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "831fb08c2357457762e5a4dc55a23f1dfbc98b0162d842e1dcf22b1b0eeb9d82",
+        "firmware_sha256": "05597944f57df04424e8a870322e295495b17ab70708f653878bedba1e5337be",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "canneal",
+        "repetition": 2,
+        "rootfs_sha256": "67f83857977d77d164139d5b89a407326dd2f5db44873c65cf12bcd9bafec577",
+        "run_id": "native-canneal-simmedium-r2-20261107T040801Z",
+        "software_diagnostic": false,
+        "software_profile": "original-canneal-serial",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "fe6695c4fac928692cc7550fcde7483c333b7a16caadb732b45178916a481cda",
+      "input": "simmedium",
+      "issues": [],
+      "program": "canneal",
+      "repetition": 2,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r2-20261107T040801Z/result.json",
+        "sha256": "c2245565ac0342c19dfa88b3af1937b8634e681156c72dc16837bd6e8f4f3786"
+      },
+      "roi_cycles": 1416842131,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r3-20261107T041517Z/complete.json",
+        "sha256": "9dde8554047510e181beec0a74b9a98671c1c4c6b71dd0fe4b2e5c997e275a38"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 21792489282,
+        "host_simulation_wall_seconds": 435.861959,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16608933.89,
+        "target_delta": 7239202462,
+        "target_end": 29756726897,
+        "target_start": 22517524435
+      },
+      "host_wall_seconds": 435.890937874,
+      "identity": {
+        "apps_manifest_sha256": "4b1c3ff7c608bbe423b0670e5f39bef5aada145df0c5956ceb62a71fe310ff1e",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "1",
+            "15000",
+            "2000",
+            "200000.nets",
+            "64"
+          ],
+          "expected_final_routing": "2.49424e+08",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/inputs/input_simmedium.tar": "90e184af6f8357c37e5fb797fa6d26519660bbb7dff545d7bc9c369d989f817b"
+          },
+          "input_files": {
+            "200000.nets": "ce5c1edaac17180fd71728f8774d009429f7d6c910b3ecba3563a6ee0639f036"
+          },
+          "program": "canneal",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-canneal-formal-20261107T035216Z/reference/stdout.log": "4c65e9194ea07f5a067568971eeaaa19bb6bca285efe1bae8b472398166509e1"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/parsec/simmedium.runconf",
+          "runconf_sha256": "92bf6703c3faaba5d8b29c12011470c089f672903b9da9ec1d0c07cdfee9e9c9",
+          "software_reference": "QEMU_RISCV_USER_ONLY",
+          "threads": 1,
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "07cb43662f5cb38e9497bea005217c22d7c1d54be18ee31c4a6ba21fe04aeb91",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "831fb08c2357457762e5a4dc55a23f1dfbc98b0162d842e1dcf22b1b0eeb9d82",
+        "firmware_sha256": "05597944f57df04424e8a870322e295495b17ab70708f653878bedba1e5337be",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "canneal",
+        "repetition": 3,
+        "rootfs_sha256": "67f83857977d77d164139d5b89a407326dd2f5db44873c65cf12bcd9bafec577",
+        "run_id": "native-canneal-simmedium-r3-20261107T041517Z",
+        "software_diagnostic": false,
+        "software_profile": "original-canneal-serial",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "e57d435a8b2b94c8c47da3ffd32b6cc92d13043416db590b6febd57909dd3b12",
+      "input": "simmedium",
+      "issues": [],
+      "program": "canneal",
+      "repetition": 3,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-simmedium-r3-20261107T041517Z/result.json",
+        "sha256": "d0fa2082e84a68426c4dc0d3823bff3cbe57817f05d3b58c15cbdd8b7687b098"
+      },
+      "roi_cycles": 1423403483,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-streamcluster-simmedium-r1-20261107T053224Z/complete.json",
+        "sha256": "83cdbf71a2d05af4f4da843c09cc2852e6d97c64bff4d73b7fa523b177463687"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 26657164486,
+        "host_simulation_wall_seconds": 533.154658,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16597489.025,
+        "target_delta": 8849028585,
+        "target_end": 62751149267,
+        "target_start": 53902120682
+      },
+      "host_wall_seconds": 533.1887035969994,
+      "identity": {
+        "apps_manifest_sha256": "0ba5ec33bebb078524f9e3f5291a2cfbccf69062d5b0c9462cc5bd2ec03856cc",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "10",
+            "20",
+            "64",
+            "8192",
+            "8192",
+            "1000",
+            "none",
+            "output.txt",
+            "1"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-streamcluster-staged-formal-20261107T051813Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {},
+          "input_files": {},
+          "input_generation": "original synthetic input; seed1",
+          "program": "streamcluster",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-streamcluster-staged-formal-20261107T051813Z/reference-simmedium/output.txt": "5040e9757cb95073331b5fb3ff604f77c7cb6047f65aae1c44ca3648713d2f21"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/streamcluster/parsec/simmedium.runconf",
+          "runconf_sha256": "4d6d5d9877791e042f03af09828442a7f456142f0bb8f6b923c8ded9265abbb8",
+          "software_reference": "QEMU_RISCV_USER_ONLY",
+          "threads": 1,
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "f7c5140c53fa0d43d08c9977f26e9cad12310a628b49298e94fcc4c6c33e971b",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "cc6f292af05beecc5299c9ec2e19c54d4057e0285376071d7de979dc9cdd258d",
+        "firmware_sha256": "0862b23e11b29ab12baeb6555952823dadb567e70dcd9678d643490fe9e9d24d",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "streamcluster",
+        "repetition": 1,
+        "rootfs_sha256": "283411ab78b216bec84254f0f77123f813c4dcb34547b530b72677d9dfc045dd",
+        "run_id": "native-streamcluster-simmedium-r1-20261107T053224Z",
+        "software_diagnostic": false,
+        "software_profile": "streamcluster-staged-io-synthetic-serial",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "d01e40c79d268239119431397f8ca84fce424afd2704b0b24ede696d2c3a6b22",
+      "input": "simmedium",
+      "issues": [],
+      "program": "streamcluster",
+      "repetition": 1,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-streamcluster-simmedium-r1-20261107T053224Z/result.json",
+        "sha256": "5bda8b051556c6c459cc7eee8184c2d207ef09bf0856e8d1b81b15ba88c3d7f6"
+      },
+      "roi_cycles": 7859948287,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-streamcluster-simmedium-r2-20261107T054117Z/complete.json",
+        "sha256": "33d9db197b61fc4db6917f638f94eb22ac4f0b8d2d07a62363ffeb5b9704f984"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 26609397260,
+        "host_simulation_wall_seconds": 532.199638,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16627274.031,
+        "target_delta": 8849029220,
+        "target_end": 71600181977,
+        "target_start": 62751152757
+      },
+      "host_wall_seconds": 532.2529513720001,
+      "identity": {
+        "apps_manifest_sha256": "0ba5ec33bebb078524f9e3f5291a2cfbccf69062d5b0c9462cc5bd2ec03856cc",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "10",
+            "20",
+            "64",
+            "8192",
+            "8192",
+            "1000",
+            "none",
+            "output.txt",
+            "1"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-streamcluster-staged-formal-20261107T051813Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {},
+          "input_files": {},
+          "input_generation": "original synthetic input; seed1",
+          "program": "streamcluster",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-streamcluster-staged-formal-20261107T051813Z/reference-simmedium/output.txt": "5040e9757cb95073331b5fb3ff604f77c7cb6047f65aae1c44ca3648713d2f21"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/streamcluster/parsec/simmedium.runconf",
+          "runconf_sha256": "4d6d5d9877791e042f03af09828442a7f456142f0bb8f6b923c8ded9265abbb8",
+          "software_reference": "QEMU_RISCV_USER_ONLY",
+          "threads": 1,
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "f7c5140c53fa0d43d08c9977f26e9cad12310a628b49298e94fcc4c6c33e971b",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "cc6f292af05beecc5299c9ec2e19c54d4057e0285376071d7de979dc9cdd258d",
+        "firmware_sha256": "0862b23e11b29ab12baeb6555952823dadb567e70dcd9678d643490fe9e9d24d",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "streamcluster",
+        "repetition": 2,
+        "rootfs_sha256": "283411ab78b216bec84254f0f77123f813c4dcb34547b530b72677d9dfc045dd",
+        "run_id": "native-streamcluster-simmedium-r2-20261107T054117Z",
+        "software_diagnostic": false,
+        "software_profile": "streamcluster-staged-io-synthetic-serial",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "2bb81b66314476e9432d543651b48face38cdd14817fe787291c1d5983460bde",
+      "input": "simmedium",
+      "issues": [],
+      "program": "streamcluster",
+      "repetition": 2,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-streamcluster-simmedium-r2-20261107T054117Z/result.json",
+        "sha256": "0c299bac81fbc129b107075b2f579fe670f146673d34ad42d55640c9ab0870fd"
+      },
+      "roi_cycles": 7860308074,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-streamcluster-simmedium-r3-20261107T055010Z/complete.json",
+        "sha256": "2793890bb127698ad2144ea30e3361d16f268cdb7b5c8c5406738ef11510fe2b"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 26609198232,
+        "host_simulation_wall_seconds": 532.206744,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16627051.77,
+        "target_delta": 8849029085,
+        "target_end": 80449214687,
+        "target_start": 71600185602
+      },
+      "host_wall_seconds": 532.2548373110003,
+      "identity": {
+        "apps_manifest_sha256": "0ba5ec33bebb078524f9e3f5291a2cfbccf69062d5b0c9462cc5bd2ec03856cc",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "10",
+            "20",
+            "64",
+            "8192",
+            "8192",
+            "1000",
+            "none",
+            "output.txt",
+            "1"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-streamcluster-staged-formal-20261107T051813Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {},
+          "input_files": {},
+          "input_generation": "original synthetic input; seed1",
+          "program": "streamcluster",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-streamcluster-staged-formal-20261107T051813Z/reference-simmedium/output.txt": "5040e9757cb95073331b5fb3ff604f77c7cb6047f65aae1c44ca3648713d2f21"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/streamcluster/parsec/simmedium.runconf",
+          "runconf_sha256": "4d6d5d9877791e042f03af09828442a7f456142f0bb8f6b923c8ded9265abbb8",
+          "software_reference": "QEMU_RISCV_USER_ONLY",
+          "threads": 1,
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "f7c5140c53fa0d43d08c9977f26e9cad12310a628b49298e94fcc4c6c33e971b",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "cc6f292af05beecc5299c9ec2e19c54d4057e0285376071d7de979dc9cdd258d",
+        "firmware_sha256": "0862b23e11b29ab12baeb6555952823dadb567e70dcd9678d643490fe9e9d24d",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "streamcluster",
+        "repetition": 3,
+        "rootfs_sha256": "283411ab78b216bec84254f0f77123f813c4dcb34547b530b72677d9dfc045dd",
+        "run_id": "native-streamcluster-simmedium-r3-20261107T055010Z",
+        "software_diagnostic": false,
+        "software_profile": "streamcluster-staged-io-synthetic-serial",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "4071bf2b9fa7d3adbfe2743192dba0f719ff5b914123df6f8efd78c257dc5292",
+      "input": "simmedium",
+      "issues": [],
+      "program": "streamcluster",
+      "repetition": 3,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-streamcluster-simmedium-r3-20261107T055010Z/result.json",
+        "sha256": "5483e89648ab6ba388cd6cad9577c3143a96d274c12ef98bfba3897bd736de7d"
+      },
+      "roi_cycles": 7859659608,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-swaptions-simmedium-r1-20261107T051114Z/complete.json",
+        "sha256": "eafc67e6797c16a5906298a6913583d37148abde65026aba0bc59d79cf5ed328"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 17655351538,
+        "host_simulation_wall_seconds": 353.115768,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16566510.219,
+        "target_delta": 5849895979,
+        "target_end": 38816259932,
+        "target_start": 32966363953
+      },
+      "host_wall_seconds": 353.17084167699977,
+      "identity": {
+        "apps_manifest_sha256": "2841eb68be82b7029fe5baa7c3f827e704423e7a4241c8e8d33a29fea824c007",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "-ns",
+            "32",
+            "-sm",
+            "20000",
+            "-nt",
+            "1"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-preallocated-20261107T050149Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "heap_preallocation_bytes": 33554432,
+          "input": "simmedium",
+          "input_archives": {},
+          "input_files": {},
+          "input_generation": "original deterministic seed1979",
+          "program": "swaptions",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-preallocated-20261107T050149Z/reference-simmedium/validation.txt": "0c4033c2965f42b0759d50334032a14bf3d5d254858e598e2b82307228b15b4f"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/swaptions/parsec/simmedium.runconf",
+          "runconf_sha256": "acf18b236d1cff30793514f44cb753c8d43cf7c1256812295d23f13d09933927",
+          "software_reference": "QEMU_RISCV_USER_ONLY",
+          "threads": 1,
+          "validation": {
+            "kind": "stdout_prefix_hash",
+            "prefix": "Swaption ",
+            "reference": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-preallocated-20261107T050149Z/reference-simmedium/validation.txt",
+            "reference_sha256": "0c4033c2965f42b0759d50334032a14bf3d5d254858e598e2b82307228b15b4f"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "cbc20875411af1c2bd2aa2173f4ad73163df67498594e0e6acbe311430758a52",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "71b1fe3e12afe78cc85ef10fd529ab000fa6a047bef2e9eac49ed41442442563",
+        "firmware_sha256": "8aff04a534b18fed39edd40af45b5e0a96695743226977fd0397c95c17a64892",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "swaptions",
+        "repetition": 1,
+        "rootfs_sha256": "3ad3b2916296e8dbe074998f0249a1c77fc2f45bff3ac60045231830cd1fe70a",
+        "run_id": "native-swaptions-simmedium-r1-20261107T051114Z",
+        "software_diagnostic": false,
+        "software_profile": "swaptions-serial-preallocated-heap",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "dd5fc7d08783d85179e56b5e6d18a434e524a32e777cfd59ac50a456c7f29660",
+      "input": "simmedium",
+      "issues": [],
+      "program": "swaptions",
+      "repetition": 1,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-swaptions-simmedium-r1-20261107T051114Z/result.json",
+        "sha256": "de0847bd072660078dafc77d62f4d81d716d6d5ef0052bf324676f997d15fd5b"
+      },
+      "roi_cycles": 4870809991,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-swaptions-simmedium-r2-20261107T051708Z/complete.json",
+        "sha256": "7306068d47e0702330fd1f281208538b7fda7bb541ef268fec4e2e1c212e0033"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 17650367458,
+        "host_simulation_wall_seconds": 353.013627,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16571317.305,
+        "target_delta": 5849900826,
+        "target_end": 44666164202,
+        "target_start": 38816263376
+      },
+      "host_wall_seconds": 353.06158903599953,
+      "identity": {
+        "apps_manifest_sha256": "2841eb68be82b7029fe5baa7c3f827e704423e7a4241c8e8d33a29fea824c007",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "-ns",
+            "32",
+            "-sm",
+            "20000",
+            "-nt",
+            "1"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-preallocated-20261107T050149Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "heap_preallocation_bytes": 33554432,
+          "input": "simmedium",
+          "input_archives": {},
+          "input_files": {},
+          "input_generation": "original deterministic seed1979",
+          "program": "swaptions",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-preallocated-20261107T050149Z/reference-simmedium/validation.txt": "0c4033c2965f42b0759d50334032a14bf3d5d254858e598e2b82307228b15b4f"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/swaptions/parsec/simmedium.runconf",
+          "runconf_sha256": "acf18b236d1cff30793514f44cb753c8d43cf7c1256812295d23f13d09933927",
+          "software_reference": "QEMU_RISCV_USER_ONLY",
+          "threads": 1,
+          "validation": {
+            "kind": "stdout_prefix_hash",
+            "prefix": "Swaption ",
+            "reference": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-preallocated-20261107T050149Z/reference-simmedium/validation.txt",
+            "reference_sha256": "0c4033c2965f42b0759d50334032a14bf3d5d254858e598e2b82307228b15b4f"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "cbc20875411af1c2bd2aa2173f4ad73163df67498594e0e6acbe311430758a52",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "71b1fe3e12afe78cc85ef10fd529ab000fa6a047bef2e9eac49ed41442442563",
+        "firmware_sha256": "8aff04a534b18fed39edd40af45b5e0a96695743226977fd0397c95c17a64892",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "swaptions",
+        "repetition": 2,
+        "rootfs_sha256": "3ad3b2916296e8dbe074998f0249a1c77fc2f45bff3ac60045231830cd1fe70a",
+        "run_id": "native-swaptions-simmedium-r2-20261107T051708Z",
+        "software_diagnostic": false,
+        "software_profile": "swaptions-serial-preallocated-heap",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "0ff9c380769a7bd921199a74522bf4838597f2f85aee6d8685ca2843928842d9",
+      "input": "simmedium",
+      "issues": [],
+      "program": "swaptions",
+      "repetition": 2,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-swaptions-simmedium-r2-20261107T051708Z/result.json",
+        "sha256": "fdff31a744aee260656ec7f59713044dd59d7be6fd8933991937a01c9b6f2804"
+      },
+      "roi_cycles": 4870171180,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-swaptions-simmedium-r3-20261107T052301Z/complete.json",
+        "sha256": "6341d47f724ac9d6468e0944d5876219726bff15324d7a8df01471b680f800cf"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 17662878261,
+        "host_simulation_wall_seconds": 353.264381,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16559543.672,
+        "target_delta": 5849896945,
+        "target_end": 50516068472,
+        "target_start": 44666171527
+      },
+      "host_wall_seconds": 353.29341029699935,
+      "identity": {
+        "apps_manifest_sha256": "2841eb68be82b7029fe5baa7c3f827e704423e7a4241c8e8d33a29fea824c007",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "-ns",
+            "32",
+            "-sm",
+            "20000",
+            "-nt",
+            "1"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-preallocated-20261107T050149Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "heap_preallocation_bytes": 33554432,
+          "input": "simmedium",
+          "input_archives": {},
+          "input_files": {},
+          "input_generation": "original deterministic seed1979",
+          "program": "swaptions",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-preallocated-20261107T050149Z/reference-simmedium/validation.txt": "0c4033c2965f42b0759d50334032a14bf3d5d254858e598e2b82307228b15b4f"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/swaptions/parsec/simmedium.runconf",
+          "runconf_sha256": "acf18b236d1cff30793514f44cb753c8d43cf7c1256812295d23f13d09933927",
+          "software_reference": "QEMU_RISCV_USER_ONLY",
+          "threads": 1,
+          "validation": {
+            "kind": "stdout_prefix_hash",
+            "prefix": "Swaption ",
+            "reference": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-preallocated-20261107T050149Z/reference-simmedium/validation.txt",
+            "reference_sha256": "0c4033c2965f42b0759d50334032a14bf3d5d254858e598e2b82307228b15b4f"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "cbc20875411af1c2bd2aa2173f4ad73163df67498594e0e6acbe311430758a52",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "71b1fe3e12afe78cc85ef10fd529ab000fa6a047bef2e9eac49ed41442442563",
+        "firmware_sha256": "8aff04a534b18fed39edd40af45b5e0a96695743226977fd0397c95c17a64892",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "swaptions",
+        "repetition": 3,
+        "rootfs_sha256": "3ad3b2916296e8dbe074998f0249a1c77fc2f45bff3ac60045231830cd1fe70a",
+        "run_id": "native-swaptions-simmedium-r3-20261107T052301Z",
+        "software_diagnostic": false,
+        "software_profile": "swaptions-serial-preallocated-heap",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "6634c94b296cbffa44e3294a1e3ee7b32c3fb116491095a9e9f1895afd8bd134",
+      "input": "simmedium",
+      "issues": [],
+      "program": "swaptions",
+      "repetition": 3,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-swaptions-simmedium-r3-20261107T052301Z/result.json",
+        "sha256": "f03db8a82467d9f8d189ca8d2a5d4709821ea6feab6a4f5a374e7a1d8330c35a"
+      },
+      "roi_cycles": 4870239106,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simmedium-r1-20261107T124945Z/complete.json",
+        "sha256": "95abb4e5b966f1dd81095fbc70ed16f3774f7d40f28b5514a185c3e727d8e835"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 14458983025,
+        "host_simulation_wall_seconds": 289.188942,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16568354.277,
+        "target_delta": 4791384844,
+        "target_end": 380650744847,
+        "target_start": 375859360003
+      },
+      "host_wall_seconds": 289.2186539150025,
+      "identity": {
+        "apps_manifest_sha256": "bc25fb95b171933b65f5f13a944b5888d01d7740b017d4ae0ff7ffae7981cd44",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": false,
+          "argv": [
+            "1",
+            "5",
+            "in_100K.fluid",
+            "out.fluid"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-stable-candidate-20261107T083942Z/trace-simmedium.log",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archive": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/inputs/input_simmedium.tar",
+          "input_archive_sha256": "3f4a4b2014282f7db29e2cd8ec307f4c291eb35ce43f8bef2dece2857445bf7b",
+          "input_files": {
+            "in_100K.fluid": "40bf640c419080111ee44a9946545489e695b4b8cf2ac5f7b280de365714294e"
+          },
+          "program": "fluidanimate",
+          "reference_outputs": {
+            "out.fluid": "6309876f3a874fec3f0ae8ab96499026050746e70d9a0cc864b6adb8cbbc58a7"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/parsec/simmedium.runconf",
+          "runconf_sha256": "812e8488f11553480bd154db052a99f5d7f84ddae8d192f46fcc3ac6604e00a0",
+          "software_bugfix": "Stable cell/particle index pair ordering instead of cross-allocation pointer ordering",
+          "software_reference": "STABLE_PAIR_ORDER_RISCV_REFERENCE",
+          "software_semantics_label": "Authorized repair of original address-dependent omitted particle interactions; separate from original profile",
+          "threads": 1,
+          "validation": {
+            "files": {
+              "out.fluid": "6309876f3a874fec3f0ae8ab96499026050746e70d9a0cc864b6adb8cbbc58a7"
+            },
+            "kind": "files_sha256"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "41f5a050564f052d6ead9033fa8ff8bb6c5e9ab99ed3db8571aa0d1a2bc0e2d5",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "54d42c05e90e74686f042d102e5919f8f096c5d3ad93bffe2e0094151b5ea2a1",
+        "firmware_sha256": "371684043c83017484f30fe2a6aa7319042fdbcc2b4d196dea3aeb49607f692e",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "fluidanimate",
+        "repetition": 1,
+        "rootfs_sha256": "a6cff2a023de0da30e47d4db95f1f361b578a5c26b2febaaa99704b751055973",
+        "run_id": "native-fluidanimate-simmedium-r1-20261107T124945Z",
+        "software_diagnostic": false,
+        "software_profile": "fluidanimate-stable-index-pairing-authorized-repair",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "2799a315daabe2a5956975106e8a3d07239bad18b43e2102fe606109dce944fb",
+      "input": "simmedium",
+      "issues": [],
+      "program": "fluidanimate",
+      "repetition": 1,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simmedium-r1-20261107T124945Z/result.json",
+        "sha256": "d0ff25e8a581b50af929c67ae0943be82eb45d638d8aa2eebf8050f36d9eaa8e"
+      },
+      "roi_cycles": 2955094722,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simmedium-r2-20261107T125435Z/complete.json",
+        "sha256": "d625f28cec22030517f90f2be4b631ffb75fc6fab16c237c34307d352d86c4d1"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 14526858900,
+        "host_simulation_wall_seconds": 290.546188,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16566812.227,
+        "target_delta": 4813424140,
+        "target_end": 385464185612,
+        "target_start": 380650761472
+      },
+      "host_wall_seconds": 290.6165118509998,
+      "identity": {
+        "apps_manifest_sha256": "bc25fb95b171933b65f5f13a944b5888d01d7740b017d4ae0ff7ffae7981cd44",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": false,
+          "argv": [
+            "1",
+            "5",
+            "in_100K.fluid",
+            "out.fluid"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-stable-candidate-20261107T083942Z/trace-simmedium.log",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archive": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/inputs/input_simmedium.tar",
+          "input_archive_sha256": "3f4a4b2014282f7db29e2cd8ec307f4c291eb35ce43f8bef2dece2857445bf7b",
+          "input_files": {
+            "in_100K.fluid": "40bf640c419080111ee44a9946545489e695b4b8cf2ac5f7b280de365714294e"
+          },
+          "program": "fluidanimate",
+          "reference_outputs": {
+            "out.fluid": "6309876f3a874fec3f0ae8ab96499026050746e70d9a0cc864b6adb8cbbc58a7"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/parsec/simmedium.runconf",
+          "runconf_sha256": "812e8488f11553480bd154db052a99f5d7f84ddae8d192f46fcc3ac6604e00a0",
+          "software_bugfix": "Stable cell/particle index pair ordering instead of cross-allocation pointer ordering",
+          "software_reference": "STABLE_PAIR_ORDER_RISCV_REFERENCE",
+          "software_semantics_label": "Authorized repair of original address-dependent omitted particle interactions; separate from original profile",
+          "threads": 1,
+          "validation": {
+            "files": {
+              "out.fluid": "6309876f3a874fec3f0ae8ab96499026050746e70d9a0cc864b6adb8cbbc58a7"
+            },
+            "kind": "files_sha256"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "41f5a050564f052d6ead9033fa8ff8bb6c5e9ab99ed3db8571aa0d1a2bc0e2d5",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "54d42c05e90e74686f042d102e5919f8f096c5d3ad93bffe2e0094151b5ea2a1",
+        "firmware_sha256": "371684043c83017484f30fe2a6aa7319042fdbcc2b4d196dea3aeb49607f692e",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "fluidanimate",
+        "repetition": 2,
+        "rootfs_sha256": "a6cff2a023de0da30e47d4db95f1f361b578a5c26b2febaaa99704b751055973",
+        "run_id": "native-fluidanimate-simmedium-r2-20261107T125435Z",
+        "software_diagnostic": false,
+        "software_profile": "fluidanimate-stable-index-pairing-authorized-repair",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "96d9ffebf4aef9f20531ba61d2c51486d091028ffee92878fccf906307cbb411",
+      "input": "simmedium",
+      "issues": [],
+      "program": "fluidanimate",
+      "repetition": 2,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simmedium-r2-20261107T125435Z/result.json",
+        "sha256": "7f28a4be559a8e9a99776e764b35e13f4cdc5f7e6b04f7177123c6c01d512ef5"
+      },
+      "roi_cycles": 2955023031,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simmedium-r3-20261107T125927Z/complete.json",
+        "sha256": "2ad5fa26802750e380a91ba1b06852e3721bba0a64f21a2e657ad9500ac369ac"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 14442664693,
+        "host_simulation_wall_seconds": 288.858982,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16587266.71,
+        "target_delta": 4791380976,
+        "target_end": 390255573962,
+        "target_start": 385464192986
+      },
+      "host_wall_seconds": 288.9234677259992,
+      "identity": {
+        "apps_manifest_sha256": "bc25fb95b171933b65f5f13a944b5888d01d7740b017d4ae0ff7ffae7981cd44",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": false,
+          "argv": [
+            "1",
+            "5",
+            "in_100K.fluid",
+            "out.fluid"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-stable-candidate-20261107T083942Z/trace-simmedium.log",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archive": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/inputs/input_simmedium.tar",
+          "input_archive_sha256": "3f4a4b2014282f7db29e2cd8ec307f4c291eb35ce43f8bef2dece2857445bf7b",
+          "input_files": {
+            "in_100K.fluid": "40bf640c419080111ee44a9946545489e695b4b8cf2ac5f7b280de365714294e"
+          },
+          "program": "fluidanimate",
+          "reference_outputs": {
+            "out.fluid": "6309876f3a874fec3f0ae8ab96499026050746e70d9a0cc864b6adb8cbbc58a7"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/parsec/simmedium.runconf",
+          "runconf_sha256": "812e8488f11553480bd154db052a99f5d7f84ddae8d192f46fcc3ac6604e00a0",
+          "software_bugfix": "Stable cell/particle index pair ordering instead of cross-allocation pointer ordering",
+          "software_reference": "STABLE_PAIR_ORDER_RISCV_REFERENCE",
+          "software_semantics_label": "Authorized repair of original address-dependent omitted particle interactions; separate from original profile",
+          "threads": 1,
+          "validation": {
+            "files": {
+              "out.fluid": "6309876f3a874fec3f0ae8ab96499026050746e70d9a0cc864b6adb8cbbc58a7"
+            },
+            "kind": "files_sha256"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "41f5a050564f052d6ead9033fa8ff8bb6c5e9ab99ed3db8571aa0d1a2bc0e2d5",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "54d42c05e90e74686f042d102e5919f8f096c5d3ad93bffe2e0094151b5ea2a1",
+        "firmware_sha256": "371684043c83017484f30fe2a6aa7319042fdbcc2b4d196dea3aeb49607f692e",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "fluidanimate",
+        "repetition": 3,
+        "rootfs_sha256": "a6cff2a023de0da30e47d4db95f1f361b578a5c26b2febaaa99704b751055973",
+        "run_id": "native-fluidanimate-simmedium-r3-20261107T125927Z",
+        "software_diagnostic": false,
+        "software_profile": "fluidanimate-stable-index-pairing-authorized-repair",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "5dbeed1eff752776ae3a24f7f9c63183759ad4f3f03a3c44d7bf10d631b0696a",
+      "input": "simmedium",
+      "issues": [],
+      "program": "fluidanimate",
+      "repetition": 3,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-simmedium-r3-20261107T125927Z/result.json",
+        "sha256": "668206dc39b507382d40fb8b1e086b6ee19a515e8fa4efa5fc636aa892db330f"
+      },
+      "roi_cycles": 2953960508,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-bodytrack-simmedium-r1-20261107T063100Z/complete.json",
+        "sha256": "b7f8b8e0bf610c5dd96978fef80334f6b7195e54fabafe13760ba18cefad4e91"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 16161949619,
+        "host_simulation_wall_seconds": 323.239076,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16596840.148,
+        "target_delta": 5364747274,
+        "target_end": 9741153137,
+        "target_start": 4376405863
+      },
+      "host_wall_seconds": 323.26163515100006,
+      "identity": {
+        "apps_manifest_sha256": "e0eab7f3f251ba700cb42ff67e447ae900a5d33848caf3565608d70452a1bd8f",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "sequenceB_2",
+            "4",
+            "2",
+            "2000",
+            "5",
+            "0",
+            "1"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-bodytrack-staged-output-20261107T052920Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/apps/bodytrack/inputs/input_simmedium.tar": "bd768bd4c13e1cdde18f2c2657d8c5cae9fc9970d9bbe4866431bb63107ea725"
+          },
+          "input_files": {
+            "sequenceB_2/BodyShapeParameters.txt": "a78ab7dcdff3d0105b26814d0bd73b34b755f4f4ff95999e57fce6ffe1ed45c1",
+            "sequenceB_2/CALIB/Camera1.cal": "20d06415fbdd360a8df4dda96434102e33faff411fff0436ffd40a5189a20473",
+            "sequenceB_2/CALIB/Camera2.cal": "f4622c1dec46bc06bcffcfc83a781c705eb6ca65132e88bde1c2d10f910aef49",
+            "sequenceB_2/CALIB/Camera3.cal": "899ade11c401579641310b555f7da0303a619e3ecab21d4617b7e3e2b2f087f8",
+            "sequenceB_2/CALIB/Camera4.cal": "9a8b9f3ed768aba65328cb61fbdfd66a976129ce43a2312fd21cd8ef1e90e779",
+            "sequenceB_2/CAM1/image0000.bmp": "b2743fd18426a2da19e6105be1921f0d1c5248b1376340822e1677cd1ad46559",
+            "sequenceB_2/CAM1/image0001.bmp": "6e184f7319dac339189c44889bcd82ab7588f827c183b3d460b73316bc1faac5",
+            "sequenceB_2/CAM2/image0000.bmp": "7e250bee9395b6e86057341a7df102f96ee3d1d95a4c3b2252ccc4b9c973a4d4",
+            "sequenceB_2/CAM2/image0001.bmp": "bfb2b3fb217d61b37e7aeb630705612893467c0cbf74e3708e9e3dd5d7f29599",
+            "sequenceB_2/CAM3/image0000.bmp": "ee0b9d29985cbc67be6aba2a0c34a164307d6ac74eb996be4a06cbb8b68d0b1b",
+            "sequenceB_2/CAM3/image0001.bmp": "0a6dd3f2420760b6c6154b371656ee933632b2960ef7ca1fdebc1d0844fb122f",
+            "sequenceB_2/CAM4/image0000.bmp": "b6c5f9efb11b3d13e71b0c4f10895f095ae5ef62be2d4f19e725154883625856",
+            "sequenceB_2/CAM4/image0001.bmp": "b073e567bb4b3710404a9279dbb82db201fb2d44571d587471dac80584433951",
+            "sequenceB_2/FG1/image0000.bmp": "9cde21e975ec0c8449853da6d068e45a8f82fddcfd92221e10a9c1f729159ded",
+            "sequenceB_2/FG1/image0001.bmp": "f98ca948079a4d122428c2b22099b99d42558c304ebe72237517879980936788",
+            "sequenceB_2/FG2/image0000.bmp": "f8533ea8b99c6417ae907d541e4c075287e4784cf39d0af467abfed06f18569b",
+            "sequenceB_2/FG2/image0001.bmp": "40d898dec5e3c864c2a47fb481c40bf74856476c3c36a70a73ae89b3c797abf5",
+            "sequenceB_2/FG3/image0000.bmp": "1baa4f15ab241e1352009be338e4b41fdcc623a390dc38c7f3fb08b76d835ab0",
+            "sequenceB_2/FG3/image0001.bmp": "c0926d29b8c0921a9db21b3051c7bde2710004a97126a387c58ee1981f18b245",
+            "sequenceB_2/FG4/image0000.bmp": "517fdc8f72b5a85aeafcaf88d8b76088d020b6df750e4f6b0e66cf181d50f636",
+            "sequenceB_2/FG4/image0001.bmp": "5f97a76ea514b81a2dc56e7812f57cd5d218ecf4f7562f6ebf55f3864db970e8",
+            "sequenceB_2/InitialPose.txt": "df6cdf04c6432ff9dcb036ef2d27f278b225a20c61310b841d1a749d88be37b9",
+            "sequenceB_2/PoseParameters.txt": "92e36b2b46deb892b3b239f9e6153767d73c49ef2f15e59f6bdab1fae7bf5a99"
+          },
+          "program": "bodytrack",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-bodytrack-staged-output-20261107T052920Z/reference-simmedium/sequenceB_2/poses.txt": "d0bb8539fef22e7c7d0c528731e61430b4e7376a2763af6215690f0f4f3e426d"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/bodytrack/parsec/simmedium.runconf",
+          "runconf_sha256": "84e5aeea7dc1077a505759aaa730e7c206c149c4fbcde4c6c8e4d9c85f99a029",
+          "software_reference": "QEMU_RISCV_USER_ONLY",
+          "threads": 1,
+          "validation": {
+            "files": {
+              "sequenceB_2/Result0000.bmp": "69b2c2f7004ed149c3c5241be6c0ebcfb6211629e6e2a72a142999fbe4b5596e",
+              "sequenceB_2/Result0001.bmp": "be9234c6aac6b7e5ab435daa24a93acd06c3d220897988c4b8b4e62fc0e43322",
+              "sequenceB_2/poses.txt": "d0bb8539fef22e7c7d0c528731e61430b4e7376a2763af6215690f0f4f3e426d"
+            },
+            "kind": "files_sha256"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "7df5fad1b0c7ad3f8eb1d52a9bf58964211d685a13f2042b4afe52e3a053131e",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "5ead7ca9952ac36e2c84314df11b1e184d9583960ccdf1a25e2809bbc0b56c27",
+        "firmware_sha256": "dbd2bf43dc353783f96969f3adf0d8e0defc8010629b6be74a77cb5377e69a90",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "bodytrack",
+        "repetition": 1,
+        "rootfs_sha256": "1de7f64b4d3ff1e7a3b3fa90410b6634bdf0033e8ab2e64354d2a03e245e771c",
+        "run_id": "native-bodytrack-simmedium-r1-20261107T063100Z",
+        "software_diagnostic": false,
+        "software_profile": "bodytrack-serial-staged-input-preallocated-heap-no-aux-timing",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "407a7afd956debbe1241a094491e22a6dc0fc5aa1e6e65aec3f728b930fefd20",
+      "input": "simmedium",
+      "issues": [],
+      "program": "bodytrack",
+      "repetition": 1,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-bodytrack-simmedium-r1-20261107T063100Z/result.json",
+        "sha256": "f0befefcbdc8c2381f6ae38bcb9b5614e44a1873701b9a5ed1ed39c3b3c2816b"
+      },
+      "roi_cycles": 3194624914,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-bodytrack-simmedium-r2-20261107T063624Z/complete.json",
+        "sha256": "7cd5485384a8954a2bc4175444532c18c4fc54b69404643ac70030b7db3e6780"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 16218694528,
+        "host_simulation_wall_seconds": 324.376521,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16538637.635,
+        "target_delta": 5364745738,
+        "target_end": 15105904277,
+        "target_start": 9741158539
+      },
+      "host_wall_seconds": 324.403913117,
+      "identity": {
+        "apps_manifest_sha256": "e0eab7f3f251ba700cb42ff67e447ae900a5d33848caf3565608d70452a1bd8f",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "sequenceB_2",
+            "4",
+            "2",
+            "2000",
+            "5",
+            "0",
+            "1"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-bodytrack-staged-output-20261107T052920Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/apps/bodytrack/inputs/input_simmedium.tar": "bd768bd4c13e1cdde18f2c2657d8c5cae9fc9970d9bbe4866431bb63107ea725"
+          },
+          "input_files": {
+            "sequenceB_2/BodyShapeParameters.txt": "a78ab7dcdff3d0105b26814d0bd73b34b755f4f4ff95999e57fce6ffe1ed45c1",
+            "sequenceB_2/CALIB/Camera1.cal": "20d06415fbdd360a8df4dda96434102e33faff411fff0436ffd40a5189a20473",
+            "sequenceB_2/CALIB/Camera2.cal": "f4622c1dec46bc06bcffcfc83a781c705eb6ca65132e88bde1c2d10f910aef49",
+            "sequenceB_2/CALIB/Camera3.cal": "899ade11c401579641310b555f7da0303a619e3ecab21d4617b7e3e2b2f087f8",
+            "sequenceB_2/CALIB/Camera4.cal": "9a8b9f3ed768aba65328cb61fbdfd66a976129ce43a2312fd21cd8ef1e90e779",
+            "sequenceB_2/CAM1/image0000.bmp": "b2743fd18426a2da19e6105be1921f0d1c5248b1376340822e1677cd1ad46559",
+            "sequenceB_2/CAM1/image0001.bmp": "6e184f7319dac339189c44889bcd82ab7588f827c183b3d460b73316bc1faac5",
+            "sequenceB_2/CAM2/image0000.bmp": "7e250bee9395b6e86057341a7df102f96ee3d1d95a4c3b2252ccc4b9c973a4d4",
+            "sequenceB_2/CAM2/image0001.bmp": "bfb2b3fb217d61b37e7aeb630705612893467c0cbf74e3708e9e3dd5d7f29599",
+            "sequenceB_2/CAM3/image0000.bmp": "ee0b9d29985cbc67be6aba2a0c34a164307d6ac74eb996be4a06cbb8b68d0b1b",
+            "sequenceB_2/CAM3/image0001.bmp": "0a6dd3f2420760b6c6154b371656ee933632b2960ef7ca1fdebc1d0844fb122f",
+            "sequenceB_2/CAM4/image0000.bmp": "b6c5f9efb11b3d13e71b0c4f10895f095ae5ef62be2d4f19e725154883625856",
+            "sequenceB_2/CAM4/image0001.bmp": "b073e567bb4b3710404a9279dbb82db201fb2d44571d587471dac80584433951",
+            "sequenceB_2/FG1/image0000.bmp": "9cde21e975ec0c8449853da6d068e45a8f82fddcfd92221e10a9c1f729159ded",
+            "sequenceB_2/FG1/image0001.bmp": "f98ca948079a4d122428c2b22099b99d42558c304ebe72237517879980936788",
+            "sequenceB_2/FG2/image0000.bmp": "f8533ea8b99c6417ae907d541e4c075287e4784cf39d0af467abfed06f18569b",
+            "sequenceB_2/FG2/image0001.bmp": "40d898dec5e3c864c2a47fb481c40bf74856476c3c36a70a73ae89b3c797abf5",
+            "sequenceB_2/FG3/image0000.bmp": "1baa4f15ab241e1352009be338e4b41fdcc623a390dc38c7f3fb08b76d835ab0",
+            "sequenceB_2/FG3/image0001.bmp": "c0926d29b8c0921a9db21b3051c7bde2710004a97126a387c58ee1981f18b245",
+            "sequenceB_2/FG4/image0000.bmp": "517fdc8f72b5a85aeafcaf88d8b76088d020b6df750e4f6b0e66cf181d50f636",
+            "sequenceB_2/FG4/image0001.bmp": "5f97a76ea514b81a2dc56e7812f57cd5d218ecf4f7562f6ebf55f3864db970e8",
+            "sequenceB_2/InitialPose.txt": "df6cdf04c6432ff9dcb036ef2d27f278b225a20c61310b841d1a749d88be37b9",
+            "sequenceB_2/PoseParameters.txt": "92e36b2b46deb892b3b239f9e6153767d73c49ef2f15e59f6bdab1fae7bf5a99"
+          },
+          "program": "bodytrack",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-bodytrack-staged-output-20261107T052920Z/reference-simmedium/sequenceB_2/poses.txt": "d0bb8539fef22e7c7d0c528731e61430b4e7376a2763af6215690f0f4f3e426d"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/bodytrack/parsec/simmedium.runconf",
+          "runconf_sha256": "84e5aeea7dc1077a505759aaa730e7c206c149c4fbcde4c6c8e4d9c85f99a029",
+          "software_reference": "QEMU_RISCV_USER_ONLY",
+          "threads": 1,
+          "validation": {
+            "files": {
+              "sequenceB_2/Result0000.bmp": "69b2c2f7004ed149c3c5241be6c0ebcfb6211629e6e2a72a142999fbe4b5596e",
+              "sequenceB_2/Result0001.bmp": "be9234c6aac6b7e5ab435daa24a93acd06c3d220897988c4b8b4e62fc0e43322",
+              "sequenceB_2/poses.txt": "d0bb8539fef22e7c7d0c528731e61430b4e7376a2763af6215690f0f4f3e426d"
+            },
+            "kind": "files_sha256"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "7df5fad1b0c7ad3f8eb1d52a9bf58964211d685a13f2042b4afe52e3a053131e",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "5ead7ca9952ac36e2c84314df11b1e184d9583960ccdf1a25e2809bbc0b56c27",
+        "firmware_sha256": "dbd2bf43dc353783f96969f3adf0d8e0defc8010629b6be74a77cb5377e69a90",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "bodytrack",
+        "repetition": 2,
+        "rootfs_sha256": "1de7f64b4d3ff1e7a3b3fa90410b6634bdf0033e8ab2e64354d2a03e245e771c",
+        "run_id": "native-bodytrack-simmedium-r2-20261107T063624Z",
+        "software_diagnostic": false,
+        "software_profile": "bodytrack-serial-staged-input-preallocated-heap-no-aux-timing",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "612e2943647800e8d0add592b33d65e428b5730f73b38d2a6c17533705145b32",
+      "input": "simmedium",
+      "issues": [],
+      "program": "bodytrack",
+      "repetition": 2,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-bodytrack-simmedium-r2-20261107T063624Z/result.json",
+        "sha256": "74435a73c4983a79313cc156ddb964d3cc14613524455dbe17fc618789a0a5e1"
+      },
+      "roi_cycles": 3195119553,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-bodytrack-simmedium-r3-20261107T064149Z/complete.json",
+        "sha256": "334e1afe90b6b1cb4d3dd5599ff27262b66448e7529b72db99830f16d22871d3"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 16162042103,
+        "host_simulation_wall_seconds": 323.257702,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16595877.682,
+        "target_delta": 5364745282,
+        "target_end": 20470655417,
+        "target_start": 15105910135
+      },
+      "host_wall_seconds": 323.2881776600002,
+      "identity": {
+        "apps_manifest_sha256": "e0eab7f3f251ba700cb42ff67e447ae900a5d33848caf3565608d70452a1bd8f",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "sequenceB_2",
+            "4",
+            "2",
+            "2000",
+            "5",
+            "0",
+            "1"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-bodytrack-staged-output-20261107T052920Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/apps/bodytrack/inputs/input_simmedium.tar": "bd768bd4c13e1cdde18f2c2657d8c5cae9fc9970d9bbe4866431bb63107ea725"
+          },
+          "input_files": {
+            "sequenceB_2/BodyShapeParameters.txt": "a78ab7dcdff3d0105b26814d0bd73b34b755f4f4ff95999e57fce6ffe1ed45c1",
+            "sequenceB_2/CALIB/Camera1.cal": "20d06415fbdd360a8df4dda96434102e33faff411fff0436ffd40a5189a20473",
+            "sequenceB_2/CALIB/Camera2.cal": "f4622c1dec46bc06bcffcfc83a781c705eb6ca65132e88bde1c2d10f910aef49",
+            "sequenceB_2/CALIB/Camera3.cal": "899ade11c401579641310b555f7da0303a619e3ecab21d4617b7e3e2b2f087f8",
+            "sequenceB_2/CALIB/Camera4.cal": "9a8b9f3ed768aba65328cb61fbdfd66a976129ce43a2312fd21cd8ef1e90e779",
+            "sequenceB_2/CAM1/image0000.bmp": "b2743fd18426a2da19e6105be1921f0d1c5248b1376340822e1677cd1ad46559",
+            "sequenceB_2/CAM1/image0001.bmp": "6e184f7319dac339189c44889bcd82ab7588f827c183b3d460b73316bc1faac5",
+            "sequenceB_2/CAM2/image0000.bmp": "7e250bee9395b6e86057341a7df102f96ee3d1d95a4c3b2252ccc4b9c973a4d4",
+            "sequenceB_2/CAM2/image0001.bmp": "bfb2b3fb217d61b37e7aeb630705612893467c0cbf74e3708e9e3dd5d7f29599",
+            "sequenceB_2/CAM3/image0000.bmp": "ee0b9d29985cbc67be6aba2a0c34a164307d6ac74eb996be4a06cbb8b68d0b1b",
+            "sequenceB_2/CAM3/image0001.bmp": "0a6dd3f2420760b6c6154b371656ee933632b2960ef7ca1fdebc1d0844fb122f",
+            "sequenceB_2/CAM4/image0000.bmp": "b6c5f9efb11b3d13e71b0c4f10895f095ae5ef62be2d4f19e725154883625856",
+            "sequenceB_2/CAM4/image0001.bmp": "b073e567bb4b3710404a9279dbb82db201fb2d44571d587471dac80584433951",
+            "sequenceB_2/FG1/image0000.bmp": "9cde21e975ec0c8449853da6d068e45a8f82fddcfd92221e10a9c1f729159ded",
+            "sequenceB_2/FG1/image0001.bmp": "f98ca948079a4d122428c2b22099b99d42558c304ebe72237517879980936788",
+            "sequenceB_2/FG2/image0000.bmp": "f8533ea8b99c6417ae907d541e4c075287e4784cf39d0af467abfed06f18569b",
+            "sequenceB_2/FG2/image0001.bmp": "40d898dec5e3c864c2a47fb481c40bf74856476c3c36a70a73ae89b3c797abf5",
+            "sequenceB_2/FG3/image0000.bmp": "1baa4f15ab241e1352009be338e4b41fdcc623a390dc38c7f3fb08b76d835ab0",
+            "sequenceB_2/FG3/image0001.bmp": "c0926d29b8c0921a9db21b3051c7bde2710004a97126a387c58ee1981f18b245",
+            "sequenceB_2/FG4/image0000.bmp": "517fdc8f72b5a85aeafcaf88d8b76088d020b6df750e4f6b0e66cf181d50f636",
+            "sequenceB_2/FG4/image0001.bmp": "5f97a76ea514b81a2dc56e7812f57cd5d218ecf4f7562f6ebf55f3864db970e8",
+            "sequenceB_2/InitialPose.txt": "df6cdf04c6432ff9dcb036ef2d27f278b225a20c61310b841d1a749d88be37b9",
+            "sequenceB_2/PoseParameters.txt": "92e36b2b46deb892b3b239f9e6153767d73c49ef2f15e59f6bdab1fae7bf5a99"
+          },
+          "program": "bodytrack",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-bodytrack-staged-output-20261107T052920Z/reference-simmedium/sequenceB_2/poses.txt": "d0bb8539fef22e7c7d0c528731e61430b4e7376a2763af6215690f0f4f3e426d"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/bodytrack/parsec/simmedium.runconf",
+          "runconf_sha256": "84e5aeea7dc1077a505759aaa730e7c206c149c4fbcde4c6c8e4d9c85f99a029",
+          "software_reference": "QEMU_RISCV_USER_ONLY",
+          "threads": 1,
+          "validation": {
+            "files": {
+              "sequenceB_2/Result0000.bmp": "69b2c2f7004ed149c3c5241be6c0ebcfb6211629e6e2a72a142999fbe4b5596e",
+              "sequenceB_2/Result0001.bmp": "be9234c6aac6b7e5ab435daa24a93acd06c3d220897988c4b8b4e62fc0e43322",
+              "sequenceB_2/poses.txt": "d0bb8539fef22e7c7d0c528731e61430b4e7376a2763af6215690f0f4f3e426d"
+            },
+            "kind": "files_sha256"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "7df5fad1b0c7ad3f8eb1d52a9bf58964211d685a13f2042b4afe52e3a053131e",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "5ead7ca9952ac36e2c84314df11b1e184d9583960ccdf1a25e2809bbc0b56c27",
+        "firmware_sha256": "dbd2bf43dc353783f96969f3adf0d8e0defc8010629b6be74a77cb5377e69a90",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "bodytrack",
+        "repetition": 3,
+        "rootfs_sha256": "1de7f64b4d3ff1e7a3b3fa90410b6634bdf0033e8ab2e64354d2a03e245e771c",
+        "run_id": "native-bodytrack-simmedium-r3-20261107T064149Z",
+        "software_diagnostic": false,
+        "software_profile": "bodytrack-serial-staged-input-preallocated-heap-no-aux-timing",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "77c39967468696a738395c2ebd286bcc74b25963c32feb30d610e0c5f6a9eed0",
+      "input": "simmedium",
+      "issues": [],
+      "program": "bodytrack",
+      "repetition": 3,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-bodytrack-simmedium-r3-20261107T064149Z/result.json",
+        "sha256": "cd52edca4d949d178aea052334a655891562256d861f9ed123c087b0eb12b890"
+      },
+      "roi_cycles": 3194104220,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simmedium-r1-20261107T120538Z/complete.json",
+        "sha256": "9d243a8fdb8d6299f7c8a2f2deeb4c38030c0a9fb172da42f484afd471e99794"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 33783770708,
+        "host_simulation_wall_seconds": 675.691252,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16523127.371,
+        "target_delta": 11164532620,
+        "target_end": 345575376407,
+        "target_start": 334410843787
+      },
+      "host_wall_seconds": 675.7560050419997,
+      "identity": {
+        "apps_manifest_sha256": "e00659e7ca83e528b1b71d1d09936cfae0e86cec879dc6659d01f24a186b3fb5",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "-c",
+            "-p",
+            "-v",
+            "-t",
+            "1",
+            "-i",
+            "media.dat",
+            "-o",
+            "output.dat.ddp"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-dedup-staged-20261107T051530Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "full_decode_matches_input": true,
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/inputs/input_simmedium.tar": "9daba6f32da1082a4e29a49c4f95dbc819ef999e715bacdcc7ca8a40bf046d1a"
+          },
+          "input_files": {
+            "media.dat": "3af825d1a6a6b7308b9c265e807ace1f13489f3758d35ed9cb3e79d93e876d5b"
+          },
+          "program": "dedup",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-dedup-staged-20261107T051530Z/reference-simmedium/output.dat.ddp": "6e24ba26d52c6732eccaff5aa665b6acb40621c4e7fc89f84ea55fcc70ef7fd7"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/parsec/simmedium.runconf",
+          "runconf_sha256": "607b290bd6027c049d529cb5382b22d0d67b3b4fd3c5bbd2a6e856758cf662e1",
+          "threads": 1,
+          "validation": {
+            "files": {
+              "output.dat.ddp": "6e24ba26d52c6732eccaff5aa665b6acb40621c4e7fc89f84ea55fcc70ef7fd7"
+            },
+            "kind": "files_sha256"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "abe779f2a51cfb288572f4ef014ef85608c3462f1c08905e4f26f840739de9c3",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "c7a845f6837d96a7d12ff837d559d3f5a3200ef2704c5b0b0bb9b3666adf6787",
+        "firmware_sha256": "eef632f786d95244763b7c255339fc7679a9ae1e8b471233cebe099c88a91a0d",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "dedup",
+        "repetition": 1,
+        "rootfs_sha256": "7ed974c4b2639c38c101cf34449fda69c8967a56580a570b2ebee2059fe726c5",
+        "run_id": "native-dedup-simmedium-r1-20261107T120538Z",
+        "software_diagnostic": false,
+        "software_profile": "dedup-serial-preload-staged-output-heap256m",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "10acfcefccba75a32a06fda9ab698dafdc3a5dab8d27746f5445eebfcb37ee10",
+      "input": "simmedium",
+      "issues": [],
+      "program": "dedup",
+      "repetition": 1,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simmedium-r1-20261107T120538Z/result.json",
+        "sha256": "1114bf2df69da55c1dd25b4cae83093c8604d99022a7fe15d6c3755b6da8ba15"
+      },
+      "roi_cycles": 6472778992,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simmedium-r2-20261107T121655Z/complete.json",
+        "sha256": "3b5fbc0f6f2050727e6c494c613cb4d7688ca7e3854372849d14f6248be8cc9d"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 33605810645,
+        "host_simulation_wall_seconds": 672.133342,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16577782.185,
+        "target_delta": 11142480143,
+        "target_end": 356717860277,
+        "target_start": 345575380134
+      },
+      "host_wall_seconds": 672.176261397999,
+      "identity": {
+        "apps_manifest_sha256": "e00659e7ca83e528b1b71d1d09936cfae0e86cec879dc6659d01f24a186b3fb5",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "-c",
+            "-p",
+            "-v",
+            "-t",
+            "1",
+            "-i",
+            "media.dat",
+            "-o",
+            "output.dat.ddp"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-dedup-staged-20261107T051530Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "full_decode_matches_input": true,
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/inputs/input_simmedium.tar": "9daba6f32da1082a4e29a49c4f95dbc819ef999e715bacdcc7ca8a40bf046d1a"
+          },
+          "input_files": {
+            "media.dat": "3af825d1a6a6b7308b9c265e807ace1f13489f3758d35ed9cb3e79d93e876d5b"
+          },
+          "program": "dedup",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-dedup-staged-20261107T051530Z/reference-simmedium/output.dat.ddp": "6e24ba26d52c6732eccaff5aa665b6acb40621c4e7fc89f84ea55fcc70ef7fd7"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/parsec/simmedium.runconf",
+          "runconf_sha256": "607b290bd6027c049d529cb5382b22d0d67b3b4fd3c5bbd2a6e856758cf662e1",
+          "threads": 1,
+          "validation": {
+            "files": {
+              "output.dat.ddp": "6e24ba26d52c6732eccaff5aa665b6acb40621c4e7fc89f84ea55fcc70ef7fd7"
+            },
+            "kind": "files_sha256"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "abe779f2a51cfb288572f4ef014ef85608c3462f1c08905e4f26f840739de9c3",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "c7a845f6837d96a7d12ff837d559d3f5a3200ef2704c5b0b0bb9b3666adf6787",
+        "firmware_sha256": "eef632f786d95244763b7c255339fc7679a9ae1e8b471233cebe099c88a91a0d",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "dedup",
+        "repetition": 2,
+        "rootfs_sha256": "7ed974c4b2639c38c101cf34449fda69c8967a56580a570b2ebee2059fe726c5",
+        "run_id": "native-dedup-simmedium-r2-20261107T121655Z",
+        "software_diagnostic": false,
+        "software_profile": "dedup-serial-preload-staged-output-heap256m",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "a84654006255b0753ba03d1a9623bd906888694c34118e47ee692a252220eaac",
+      "input": "simmedium",
+      "issues": [],
+      "program": "dedup",
+      "repetition": 2,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simmedium-r2-20261107T121655Z/result.json",
+        "sha256": "af238ed6bc182e7125d4e257838d0b3c8e4f09166390954cc2b027ecd26b64c2"
+      },
+      "roi_cycles": 6464549139,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simmedium-r3-20261107T122808Z/complete.json",
+        "sha256": "ffc27694add480c8897820e4bf99743bf16857d8710740c09d04cf15134ecc6e"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 33663315447,
+        "host_simulation_wall_seconds": 673.297114,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16549128.311,
+        "target_delta": 11142480331,
+        "target_end": 367860344147,
+        "target_start": 356717863816
+      },
+      "host_wall_seconds": 673.3331384250014,
+      "identity": {
+        "apps_manifest_sha256": "e00659e7ca83e528b1b71d1d09936cfae0e86cec879dc6659d01f24a186b3fb5",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "-c",
+            "-p",
+            "-v",
+            "-t",
+            "1",
+            "-i",
+            "media.dat",
+            "-o",
+            "output.dat.ddp"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-dedup-staged-20261107T051530Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "full_decode_matches_input": true,
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/inputs/input_simmedium.tar": "9daba6f32da1082a4e29a49c4f95dbc819ef999e715bacdcc7ca8a40bf046d1a"
+          },
+          "input_files": {
+            "media.dat": "3af825d1a6a6b7308b9c265e807ace1f13489f3758d35ed9cb3e79d93e876d5b"
+          },
+          "program": "dedup",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-dedup-staged-20261107T051530Z/reference-simmedium/output.dat.ddp": "6e24ba26d52c6732eccaff5aa665b6acb40621c4e7fc89f84ea55fcc70ef7fd7"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/parsec/simmedium.runconf",
+          "runconf_sha256": "607b290bd6027c049d529cb5382b22d0d67b3b4fd3c5bbd2a6e856758cf662e1",
+          "threads": 1,
+          "validation": {
+            "files": {
+              "output.dat.ddp": "6e24ba26d52c6732eccaff5aa665b6acb40621c4e7fc89f84ea55fcc70ef7fd7"
+            },
+            "kind": "files_sha256"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "abe779f2a51cfb288572f4ef014ef85608c3462f1c08905e4f26f840739de9c3",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "c7a845f6837d96a7d12ff837d559d3f5a3200ef2704c5b0b0bb9b3666adf6787",
+        "firmware_sha256": "eef632f786d95244763b7c255339fc7679a9ae1e8b471233cebe099c88a91a0d",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "dedup",
+        "repetition": 3,
+        "rootfs_sha256": "7ed974c4b2639c38c101cf34449fda69c8967a56580a570b2ebee2059fe726c5",
+        "run_id": "native-dedup-simmedium-r3-20261107T122808Z",
+        "software_diagnostic": false,
+        "software_profile": "dedup-serial-preload-staged-output-heap256m",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "d6ff74d1dbc01ca4ec09f83eaa46064f5d7e3406fadfbd96b2c3914f4307304a",
+      "input": "simmedium",
+      "issues": [],
+      "program": "dedup",
+      "repetition": 3,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simmedium-r3-20261107T122808Z/result.json",
+        "sha256": "39501c853c3f8640fc19aaafc340c4fdaa3e56a8d49912536d370bcf7440e50f"
+      },
+      "roi_cycles": 6463713978,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-freqmine-simmedium-r1-20261107T071435Z/complete.json",
+        "sha256": "26cfd1b2e5947f8520ec3b69768d6ac39df7ba02b220d654d62f2e452ca7a3e3"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 277457063354,
+        "host_simulation_wall_seconds": 5549.293529,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16659730.045,
+        "target_delta": 92449732136,
+        "target_end": 140060901962,
+        "target_start": 47611169826
+      },
+      "host_wall_seconds": 5549.3581263119995,
+      "identity": {
+        "apps_manifest_sha256": "3908222d8774de0de52f76b7fc12dbd0ec1f06ced04b69522a379507ec0e29dd",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "kosarak_500k.dat",
+            "410"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/apps/freqmine/inputs/input_simmedium.tar": "5d3d9e97fe7806009d278ef726bbf65dd0b7a791bfadade60618d2be2825ccbf"
+          },
+          "input_files": {
+            "kosarak_500k.dat": "63a18321218dfbb14157e46e4c3dd28e19f3ba9162ef0b663a4c6c342b110e0b"
+          },
+          "program": "freqmine",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/reference-simmedium/counts.txt": "9ee9457ee5393858423d6f665bc9a673c89312edfbb67fa6e1f0e4c85b064da5"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/freqmine/parsec/simmedium.runconf",
+          "runconf_sha256": "0c070b44111999f86253a4bfb9ce25cd6c04cb01337f8ad2d8d94594c114ec84",
+          "software_reference": "QEMU_RISCV_USER_ONLY",
+          "threads": 1,
+          "validation": {
+            "kind": "stdout_integer_hash",
+            "reference": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/reference-simmedium/counts.txt",
+            "reference_sha256": "9ee9457ee5393858423d6f665bc9a673c89312edfbb67fa6e1f0e4c85b064da5"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "9738afd02fba6464dceb21bc6d1713eae5c7f881c09aaa3df5282f058ca6d2fc",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "2edc482ec8b059c03dea87ed3be2a3a01d2a993ae5b1e6d739e78dc31c1ce217",
+        "firmware_sha256": "41f10c4880ea2d9a1f68f7818c20a8edcc33715c24b6cfb23d43d02e228ef265",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "freqmine",
+        "repetition": 1,
+        "rootfs_sha256": "c5a7bfacfd78594ff1b93503ad3bc8ec5edfd012535e4b06a94380a417cd457e",
+        "run_id": "native-freqmine-simmedium-r1-20261107T071435Z",
+        "software_diagnostic": false,
+        "software_profile": "freqmine-serial-staged-input-preallocated-heap-no-aux-timing",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "4549af10d74899fbe5b27cb0ac95e9680f31e5141761ae8f11a9d2697fcd9fd5",
+      "input": "simmedium",
+      "issues": [],
+      "program": "freqmine",
+      "repetition": 1,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-freqmine-simmedium-r1-20261107T071435Z/result.json",
+        "sha256": "0cf353561ab116d773184eb02c56a8539d7be2cc1c0379b3708b005a32ee126c"
+      },
+      "roi_cycles": 89280523270,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-freqmine-simmedium-r2-20261107T084705Z/complete.json",
+        "sha256": "9254dc9a5a8b10a48ef981b897ef49530626804bd88f151d72d13cdd6f846511"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 277872020304,
+        "host_simulation_wall_seconds": 5557.598375,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16658643.266,
+        "target_delta": 92582048743,
+        "target_end": 232642954427,
+        "target_start": 140060905684
+      },
+      "host_wall_seconds": 5557.670073605999,
+      "identity": {
+        "apps_manifest_sha256": "3908222d8774de0de52f76b7fc12dbd0ec1f06ced04b69522a379507ec0e29dd",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "kosarak_500k.dat",
+            "410"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/apps/freqmine/inputs/input_simmedium.tar": "5d3d9e97fe7806009d278ef726bbf65dd0b7a791bfadade60618d2be2825ccbf"
+          },
+          "input_files": {
+            "kosarak_500k.dat": "63a18321218dfbb14157e46e4c3dd28e19f3ba9162ef0b663a4c6c342b110e0b"
+          },
+          "program": "freqmine",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/reference-simmedium/counts.txt": "9ee9457ee5393858423d6f665bc9a673c89312edfbb67fa6e1f0e4c85b064da5"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/freqmine/parsec/simmedium.runconf",
+          "runconf_sha256": "0c070b44111999f86253a4bfb9ce25cd6c04cb01337f8ad2d8d94594c114ec84",
+          "software_reference": "QEMU_RISCV_USER_ONLY",
+          "threads": 1,
+          "validation": {
+            "kind": "stdout_integer_hash",
+            "reference": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/reference-simmedium/counts.txt",
+            "reference_sha256": "9ee9457ee5393858423d6f665bc9a673c89312edfbb67fa6e1f0e4c85b064da5"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "9738afd02fba6464dceb21bc6d1713eae5c7f881c09aaa3df5282f058ca6d2fc",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "2edc482ec8b059c03dea87ed3be2a3a01d2a993ae5b1e6d739e78dc31c1ce217",
+        "firmware_sha256": "41f10c4880ea2d9a1f68f7818c20a8edcc33715c24b6cfb23d43d02e228ef265",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "freqmine",
+        "repetition": 2,
+        "rootfs_sha256": "c5a7bfacfd78594ff1b93503ad3bc8ec5edfd012535e4b06a94380a417cd457e",
+        "run_id": "native-freqmine-simmedium-r2-20261107T084705Z",
+        "software_diagnostic": false,
+        "software_profile": "freqmine-serial-staged-input-preallocated-heap-no-aux-timing",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "2106136aee1b76cdbc086298fdb1f0b6087363bf0ca6cb0dcae488d29764a3bf",
+      "input": "simmedium",
+      "issues": [],
+      "program": "freqmine",
+      "repetition": 2,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-freqmine-simmedium-r2-20261107T084705Z/result.json",
+        "sha256": "677a0e63824acf7cead93e3778e9a338fb768cc2e9ee85527439ca71de52f1dd"
+      },
+      "roi_cycles": 89411029335,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-freqmine-simmedium-r3-20261107T101944Z/complete.json",
+        "sha256": "8e299597f35550bca50c1067933ac744b02cb5c1ec02f2c529259cd89092e02a"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 277855603836,
+        "host_simulation_wall_seconds": 5557.279491,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16655630.892,
+        "target_delta": 92559995965,
+        "target_end": 325202954477,
+        "target_start": 232642958512
+      },
+      "host_wall_seconds": 5557.331869497999,
+      "identity": {
+        "apps_manifest_sha256": "3908222d8774de0de52f76b7fc12dbd0ec1f06ced04b69522a379507ec0e29dd",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:e2:00.0",
+        "board_serial": "21770433G001A",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "kosarak_500k.dat",
+            "410"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/apps/freqmine/inputs/input_simmedium.tar": "5d3d9e97fe7806009d278ef726bbf65dd0b7a791bfadade60618d2be2825ccbf"
+          },
+          "input_files": {
+            "kosarak_500k.dat": "63a18321218dfbb14157e46e4c3dd28e19f3ba9162ef0b663a4c6c342b110e0b"
+          },
+          "program": "freqmine",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/reference-simmedium/counts.txt": "9ee9457ee5393858423d6f665bc9a673c89312edfbb67fa6e1f0e4c85b064da5"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/freqmine/parsec/simmedium.runconf",
+          "runconf_sha256": "0c070b44111999f86253a4bfb9ce25cd6c04cb01337f8ad2d8d94594c114ec84",
+          "software_reference": "QEMU_RISCV_USER_ONLY",
+          "threads": 1,
+          "validation": {
+            "kind": "stdout_integer_hash",
+            "reference": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/reference-simmedium/counts.txt",
+            "reference_sha256": "9ee9457ee5393858423d6f665bc9a673c89312edfbb67fa6e1f0e4c85b064da5"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "9738afd02fba6464dceb21bc6d1713eae5c7f881c09aaa3df5282f058ca6d2fc",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "2edc482ec8b059c03dea87ed3be2a3a01d2a993ae5b1e6d739e78dc31c1ce217",
+        "firmware_sha256": "41f10c4880ea2d9a1f68f7818c20a8edcc33715c24b6cfb23d43d02e228ef265",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "freqmine",
+        "repetition": 3,
+        "rootfs_sha256": "c5a7bfacfd78594ff1b93503ad3bc8ec5edfd012535e4b06a94380a417cd457e",
+        "run_id": "native-freqmine-simmedium-r3-20261107T101944Z",
+        "software_diagnostic": false,
+        "software_profile": "freqmine-serial-staged-input-preallocated-heap-no-aux-timing",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "bb94c44383d8d9fc318cedea6b51227cb1cc127b712cf249dcdac6ea24982187",
+      "input": "simmedium",
+      "issues": [],
+      "program": "freqmine",
+      "repetition": 3,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-freqmine-simmedium-r3-20261107T101944Z/result.json",
+        "sha256": "af33b315996874201c0b9bc5bc5a17cfefd0ed9477f30f184035af2934b9328d"
+      },
+      "roi_cycles": 89380362214,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-facesim-simmedium-r1-20261109T023353Z/complete.json",
+        "sha256": "9d2ee588504cac1dc2fae98b2c3640c2566666edb5962643ee005679fa6ad13d"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 133311917842,
+        "host_simulation_wall_seconds": 2666.305188,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16618246.19,
+        "target_delta": 44309316032,
+        "target_end": 44309316032,
+        "target_start": 0
+      },
+      "host_wall_seconds": 2666.3488232579994,
+      "identity": {
+        "apps_manifest_sha256": "2bd6fc661b4599aae8cd4cc502c83f156f9ef2c04eef4cb022db8227e2c67acb",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:21:00.0",
+        "board_serial": "21770433G02LA",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "-timing",
+            "-threads",
+            "1"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-resident-20261107T063015Z/diagnostic/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/apps/facesim/inputs/input_simmedium.tar": "a1700a08a043ae6e94f02e5f159b8f999051809bc42830fc6614d94b3a75d9bb"
+          },
+          "input_files": {
+            "Face_Data/Eftychis_840k/Front_370k/attachment_list.txt": "4e4ab68c21bd22536550f15f673da41126ac4ad6ea3671990facf07f4f98b989",
+            "Face_Data/Eftychis_840k/Front_370k/buccinator_left.constitutive_data": "ef0bb842befc7c8bb6d57137ca6dc23a23cef7334203fffbd4a2f40c06288ffb",
+            "Face_Data/Eftychis_840k/Front_370k/buccinator_right.constitutive_data": "6c13f0e5566040ba8495f9ae04e37979287fbc2b3c19ccdf204b4fcf071cb084",
+            "Face_Data/Eftychis_840k/Front_370k/corrugator_supercilii_left.constitutive_data": "311629933b1bb5004d0f678a87972ceae20358cdb75a2e9785af78a294cc6044",
+            "Face_Data/Eftychis_840k/Front_370k/corrugator_supercilii_right.constitutive_data": "3d1ffd087b5cfaa9645bd9fe562039a7d1c1bf05d3411b72f4138841c67406a6",
+            "Face_Data/Eftychis_840k/Front_370k/cranium.attached_nodes": "af8580861f70f871d101ec9cc47521fe025fa755b5709db469a0fa8e2f03809c",
+            "Face_Data/Eftychis_840k/Front_370k/cranium_extended.attached_nodes": "4f77f7c77ce7cb9d7ca4d83dd47eecc13d126bb533e9e44019bcbbbada48c212",
+            "Face_Data/Eftychis_840k/Front_370k/depressor_anguli_oris_left.constitutive_data": "14dcc876eafbc8d1fa8f32ca8c4f136d03746943fa5ef1c89fe584b59d3e2880",
+            "Face_Data/Eftychis_840k/Front_370k/depressor_anguli_oris_right.constitutive_data": "63a38636b2a790e079ec3dacae78ef094db83bc3515393742eff5c4c69befa5f",
+            "Face_Data/Eftychis_840k/Front_370k/depressor_labii_inferioris_left.constitutive_data": "e9a205ba73ad5fbf5f70980c733940fd373738c31ce67fcec76a2b7abf108d71",
+            "Face_Data/Eftychis_840k/Front_370k/depressor_labii_inferioris_right.constitutive_data": "5f1258cf8b3135b56d801b8ee8443d616a6d1e1b24014e57a89cade1e164469c",
+            "Face_Data/Eftychis_840k/Front_370k/face_simulation.tet": "9cb76ce4e11c18c54045ea0e7a2ff732b656f4b91641c9d8cdc38e109b1d95c3",
+            "Face_Data/Eftychis_840k/Front_370k/face_simulation_1.tet": "6f2a8fd74fb39c3b2b9f40ae8e03598a462fe4ee34dcde23b4eda8b5b115fbeb",
+            "Face_Data/Eftychis_840k/Front_370k/face_simulation_128.tet": "4781471880d95074ffc342f24c27e46db5b3387e8e20f4376c56b88c7ec24cf0",
+            "Face_Data/Eftychis_840k/Front_370k/face_simulation_16.tet": "827be660bfd2b00ad97a9bcf486caa64a25b024a6cb182cae25472b5b598626c",
+            "Face_Data/Eftychis_840k/Front_370k/face_simulation_2.tet": "67d1548712acb3b7af860f9c87784c80c11af0178708e8d8a8c8940a1e526834",
+            "Face_Data/Eftychis_840k/Front_370k/face_simulation_3.tet": "cd6a6418128ae0a726893ce41082ea9d47f49931ce3cdd9d08421d05278d9d95",
+            "Face_Data/Eftychis_840k/Front_370k/face_simulation_32.tet": "fc84a5769104f576e53aaa498b9af12046ab32a771c7efe6a17bbff9cf6bf3ba",
+            "Face_Data/Eftychis_840k/Front_370k/face_simulation_4.tet": "afbda1976eff9bca42dd7890bec28b968444a07f0381d26e7c04aa0951754a1e",
+            "Face_Data/Eftychis_840k/Front_370k/face_simulation_6.tet": "dfe38148fda43852682c8c33013b08c4c4ca45014e27037e8ed14b7dcac13625",
+            "Face_Data/Eftychis_840k/Front_370k/face_simulation_64.tet": "974af93b13fe2118ee2effd3914b8333b6c5fea48fe24490beb67c92667ba9cd",
+            "Face_Data/Eftychis_840k/Front_370k/face_simulation_8.tet": "dedf38b693b71ead04d9683f14481d997b59fc3f4b5dabfbfca9de26224b7b5c",
+            "Face_Data/Eftychis_840k/Front_370k/face_simulation_original.log": "ee215a992725875e30af305ff423181c98a04dfbe40c9fc92cf61f625f55668e",
+            "Face_Data/Eftychis_840k/Front_370k/flesh.attached_nodes": "604fec18ee4cab104fce99227cd808c16e8445246abf71fbcb20ba29f4e2cf96",
+            "Face_Data/Eftychis_840k/Front_370k/flesh_extended.attached_nodes": "735f10e4ad436262e84dc80021bfafd5dd83174f3b168501ea852bb05b0bb15b",
+            "Face_Data/Eftychis_840k/Front_370k/jaw.attached_nodes": "8def2482455c719a1fc41d300c86145b096c715d187f8cdb168f8d594460f7f8",
+            "Face_Data/Eftychis_840k/Front_370k/jaw_joint_parameters": "ca5f399c1f7cd60c7e6946ffe7646037d5800687624612f3bce4b7c7a69677b8",
+            "Face_Data/Eftychis_840k/Front_370k/levator_anguli_oris_left.constitutive_data": "18bb4ba3003f18b78a323453b6248f0a2c7665d30f66f5f5b94cdc1fd93c42db",
+            "Face_Data/Eftychis_840k/Front_370k/levator_anguli_oris_right.constitutive_data": "49a40fe36825a5c4cf290daa820fadece8438392a75c2385b3157ac2846c7b4f",
+            "Face_Data/Eftychis_840k/Front_370k/levator_labii_superioris_left.constitutive_data": "e1f82a74a81192cfaffb24a52c74dd67e0dda7456d545052bd1d785ae9f03ad4",
+            "Face_Data/Eftychis_840k/Front_370k/levator_labii_superioris_right.constitutive_data": "ff879f86cec80c1734cbc4a6df7401ac4f2d04b409a88fdb0812500759680e0b",
+            "Face_Data/Eftychis_840k/Front_370k/llsan_lateral_left.constitutive_data": "83a90ac941c13db10e7e787ef4324bfb35b6c2054cc7e74190b53e39c2ae425f",
+            "Face_Data/Eftychis_840k/Front_370k/llsan_lateral_right.constitutive_data": "1c784c370951e52cfd41a727765dc2c03f2189001d918fa9a2177b1a9169ccb7",
+            "Face_Data/Eftychis_840k/Front_370k/llsan_medial_left.constitutive_data": "e9260f3ff011faeeed4b1ed790297ddb879aa5bee88265bab726ba9b29deaad0",
+            "Face_Data/Eftychis_840k/Front_370k/llsan_medial_right.constitutive_data": "594ce4c9a7fde145563fd7104ea84bd24a9a1af24d17fe515794afc41b65a926",
+            "Face_Data/Eftychis_840k/Front_370k/mentalis_left.constitutive_data": "dfdf4aff2cd42cad2593a6c5bc5caba4cb40cc11633aeeef926c83d9c0fb8643",
+            "Face_Data/Eftychis_840k/Front_370k/mentalis_right.constitutive_data": "06e9ecfcc6dfb1cc2d6e9f09bb27e481948e437436e7c0221ad9ecf82ef4d7e0",
+            "Face_Data/Eftychis_840k/Front_370k/muscle_list.txt": "0887a14d47e33e49eb5fe5261c0e5171e422335007b6be20f425463aa1771588",
+            "Face_Data/Eftychis_840k/Front_370k/nasalis_alar_left.constitutive_data": "5d34b882a8916c446fb4eef44b8062184ffecd5e0b3dbb2a1acf51446aa4b38c",
+            "Face_Data/Eftychis_840k/Front_370k/nasalis_alar_right.constitutive_data": "deeda0ec87a580100e7062f269fc3ba80a91d9caf44f0066a8b9ee7bb69644cf",
+            "Face_Data/Eftychis_840k/Front_370k/nasalis_transverse.constitutive_data": "3fc06c46058fc73c50e208f7723443fafacc843d139c86d5ac16f66721ab320d",
+            "Face_Data/Eftychis_840k/Front_370k/node_divisions_1.dat": "97cca7fff36c98dff43cb9cd59b35de233d1ba683510e193fbdc525a5f0ed8d9",
+            "Face_Data/Eftychis_840k/Front_370k/node_divisions_128.dat": "9a9e504daf60b8ececaa0fd9c5e5ab96d7c4bf53934b20ad402ad384c2d0491e",
+            "Face_Data/Eftychis_840k/Front_370k/node_divisions_16.dat": "8f7394d7b97981fc28450baab26cfc6a3da6d3c7c726955fb9147408570da85a",
+            "Face_Data/Eftychis_840k/Front_370k/node_divisions_2.dat": "89e300e0d76feb4a8bb1fe91a3f3b0eaead4a2c96d5cc3ed7d11f3ef1c4d9a10",
+            "Face_Data/Eftychis_840k/Front_370k/node_divisions_3.dat": "03a0be1e82febba882e23bcb99a1146709c59db2e54a7d2508cc79c0a9de60e5",
+            "Face_Data/Eftychis_840k/Front_370k/node_divisions_32.dat": "47997d8bf1e22883169bff31163e42977dbbd425d5baf13da82d5398556baead",
+            "Face_Data/Eftychis_840k/Front_370k/node_divisions_4.dat": "502a19b1a80d369eec72bad235c673e6558a403b859f8d1ea54d51d75df01fba",
+            "Face_Data/Eftychis_840k/Front_370k/node_divisions_6.dat": "5349e05e8d9bb960a933d587409e782c0e47e4547633ed12ee6e8dd99ebd4a7e",
+            "Face_Data/Eftychis_840k/Front_370k/node_divisions_64.dat": "5e1d6688be6daef73cee3f380f9c124a1e88932717624cd07496d86b27a7c1de",
+            "Face_Data/Eftychis_840k/Front_370k/node_divisions_8.dat": "b64e6c34afe17fe7ac71424c777787f02b2308ad525b5450ab2962f9fe25c612",
+            "Face_Data/Eftychis_840k/Front_370k/orbicularis_oculi_left.constitutive_data": "0001e15d4196d2edeb2cb8a08878142fb72db6d60509f5c8ecc888e2ec9d35a0",
+            "Face_Data/Eftychis_840k/Front_370k/orbicularis_oculi_right.constitutive_data": "7ed92acebdd87f05deb061752f6e1cb4ac78946cd71d537e60911ae461873ae8",
+            "Face_Data/Eftychis_840k/Front_370k/orbicularis_oris.constitutive_data": "0bdf6e6587f24932d4f946cb85103f148473ae14096b9b757103f9f593150036",
+            "Face_Data/Eftychis_840k/Front_370k/particle_positions_1.dat": "f7fd59570d206af4eb55bfbbf82a050549b1700212b0fdff1590b228e63513db",
+            "Face_Data/Eftychis_840k/Front_370k/particle_positions_128.dat": "e0a242217f0c7cbb7197d6f9ce8749da270d51e0ce0105a60723aed0e4cf315d",
+            "Face_Data/Eftychis_840k/Front_370k/particle_positions_16.dat": "ec5eb77ae097cdb877c108ace2b62f7ce57da6483bdf2a4638de8de9c0705970",
+            "Face_Data/Eftychis_840k/Front_370k/particle_positions_2.dat": "2bec14837c086b72b0efdc9d7918036319df4010b16f651b2a1559567c2d3ef0",
+            "Face_Data/Eftychis_840k/Front_370k/particle_positions_3.dat": "dc59edebf9a57648564a69f29e1027d520216cec70890717c08dbda675f609c2",
+            "Face_Data/Eftychis_840k/Front_370k/particle_positions_32.dat": "85a21bd5d75d9822adc6bc1b9d8a79ccaa60384974ff5328983fca66a9d4c817",
+            "Face_Data/Eftychis_840k/Front_370k/particle_positions_4.dat": "101da1982889709571c22a9e7d393766c8a7473a7c267503730e7f655cc38bca",
+            "Face_Data/Eftychis_840k/Front_370k/particle_positions_6.dat": "310ba7370ae763a03cdc42f677b18753ac05eb9eed10a49b0e8599e43b6a8638",
+            "Face_Data/Eftychis_840k/Front_370k/particle_positions_64.dat": "da23fbc039bce7c5a5a1bf73e589d2ee85d14c19c38c4370c7bae588b36060e2",
+            "Face_Data/Eftychis_840k/Front_370k/particle_positions_8.dat": "32921fcf22ca9fd4aa3c2f0ad53bcb4267dab7808f84c777d15542ed845a7509",
+            "Face_Data/Eftychis_840k/Front_370k/peak_isometric_stress_list.txt": "244b2ecf062c867f00ca59f32c54323c37c5fd5ae8d7fb803b5dcad02100b6e5",
+            "Face_Data/Eftychis_840k/Front_370k/procerus_left.constitutive_data": "34fb96662f53eb24412a150caed4c366bd2904e3b9237d7e047bd95365188a1f",
+            "Face_Data/Eftychis_840k/Front_370k/procerus_right.constitutive_data": "fa6ca9a4448136446bc37af1e689520e872ca1effd4532cff1e188085b5ee2bb",
+            "Face_Data/Eftychis_840k/Front_370k/risorius_left.constitutive_data": "80bba66dfe22583ea16336b686e95d55e52383c0319955fc791ebb5082ff723a",
+            "Face_Data/Eftychis_840k/Front_370k/risorius_right.constitutive_data": "ed186db2e0cd87fb877c1a4d9fdf3ad05d72673b49cec3f028ff2689345a9f16",
+            "Face_Data/Eftychis_840k/Front_370k/zygomatic_major_left.constitutive_data": "3e19e408d7db7dc04f8e908f12125678bd5e367395535f74a22a0ccba09e9621",
+            "Face_Data/Eftychis_840k/Front_370k/zygomatic_major_right.constitutive_data": "9171fb1e5026e172016e2cf68e2f2d566173c610376b25a0b0aefba55196b677",
+            "Face_Data/Eftychis_840k/Front_370k/zygomatic_minor_left.constitutive_data": "b83e4c0d3a7656ee60ec8d0d00a35bc185837994e3a4b86f7769ba1e79a04340",
+            "Face_Data/Eftychis_840k/Front_370k/zygomatic_minor_right.constitutive_data": "5a309927cc5e88ddb9de650626d5b4cf5acf1bd9fbfacf42c342147f4753748b",
+            "Face_Data/Eftychis_840k/eftychis_cranium_collision_surface.phi": "8831ff700a40712abfe4ae9e772e0086a621f47261e979afeaed3a2d20e6f579",
+            "Face_Data/Eftychis_840k/eftychis_cranium_collision_surface.rgd": "d0f27e7325a3e722673007596b6333464c9d7d079f48ad0f36e7f1aabafbfb0f",
+            "Face_Data/Eftychis_840k/eftychis_cranium_collision_surface.tri": "9f407e7748555faa9e72c764abffa93ffc58cabe7d190a1191d26e2838a33af3",
+            "Face_Data/Eftychis_840k/eftychis_cranium_collision_surface_smoothed.phi": "c8977e62c4af34bf6cedcfe88d0104371fd8172e2f21d2e2aa884898dccb2b50",
+            "Face_Data/Eftychis_840k/eftychis_cranium_collision_surface_smoothed.rgd": "087196591f8fd8669670f242f6426b5227dd65ace6ef71edd25412fc7506e69c",
+            "Face_Data/Eftychis_840k/eftychis_cranium_collision_surface_smoothed.tri": "8c62ea2e9ec4088c8e579818f394041144f662ae3556e6ed919acb1a340eb7fa",
+            "Face_Data/Eftychis_840k/eftychis_jaw_collision_surface.phi": "8c15ee723d21e2f7376fc861926d3c5e10c6efb761526967b820ba46f46da353",
+            "Face_Data/Eftychis_840k/eftychis_jaw_collision_surface.rgd": "0399a190548663c34ba213ac158b93713997b75e77b6a804eefdc07001fbd1d2",
+            "Face_Data/Eftychis_840k/eftychis_jaw_collision_surface.tri": "c03b966b20fc31b7c061871ede005ce6ff8b0936242b47e12d62994042e66f9f",
+            "Face_Data/Eftychis_840k/eftychis_jaw_collision_surface_smoothed.phi": "8c3da6aa1cba659d487d850cbe535169cf359b3f8307188fc09ab5e6b245bece",
+            "Face_Data/Eftychis_840k/eftychis_jaw_collision_surface_smoothed.rgd": "d3bea8a9d5790bd3a854b8c5718ca9fff78c509dc4d87767af49832d4b9ba0ba",
+            "Face_Data/Eftychis_840k/eftychis_jaw_collision_surface_smoothed.tri": "4a7ee320c9de985f4f5ae08e68d4448e510fcbf558b3657a907b43c577dc4f01",
+            "Face_Data/Motion_Data/Storytelling_Controls/storytelling_controls.1": "5fa6f88357dad361eab387a94e70c7f47a62e33f03d8985e9bee0301f941ce5c",
+            "Face_Data/Motion_Data/Storytelling_Controls/storytelling_controls.2": "bb0a870b21291e8f1d3fc29c091df1f0b11046302fc410c9798689e27e8a19b6"
+          },
+          "official_simsmall_simmedium_identical": true,
+          "program": "facesim",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-resident-20261107T063015Z/reference/Storytelling/output/controls.1": "2c70eb5ec6b1d6c4b923ec347481627a59050df7547dfdc2020cd1e0254ead7b",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-resident-20261107T063015Z/reference/Storytelling/output/deformable_object_1_particle_class_state.1": "caab01d0e1869080a3fbaaab034183decbc864ca198ef8610549e1dc5e2b02bf",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-resident-20261107T063015Z/reference/Storytelling/output/deformable_object_1_particle_mass.1": "423035271bbe1dd077e07d30367d1376a2cf852f5f34765b13c45a2c284672c0",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-resident-20261107T063015Z/reference/Storytelling/output/deformable_object_1_position.1": "8a48ab599db702e0ed1691a17fbc7cc099a9210d236dab2ce52e852f6ec9999f",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-resident-20261107T063015Z/reference/Storytelling/output/rigid_bodies.1": "9e435601cf835951272863003b4ff2427a468d8ed3cd1b9248e28264f5fc3483",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-resident-20261107T063015Z/reference/Storytelling/output/rigid_body_active_ids.1": "152ee596bba99ecfcde4a6fce299dacc88ec7f6592f760f4d827431300a2692c",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-resident-20261107T063015Z/reference/Storytelling/output/rigid_body_implicit_surface_1.phi": "8831ff700a40712abfe4ae9e772e0086a621f47261e979afeaed3a2d20e6f579",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-resident-20261107T063015Z/reference/Storytelling/output/rigid_body_implicit_surface_2.phi": "8c15ee723d21e2f7376fc861926d3c5e10c6efb761526967b820ba46f46da353",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-resident-20261107T063015Z/reference/Storytelling/output/rigid_body_implicit_surface_active_ids.1": "152ee596bba99ecfcde4a6fce299dacc88ec7f6592f760f4d827431300a2692c",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-resident-20261107T063015Z/reference/Storytelling/output/rigid_body_implicit_surface_key": "ea8af56c091b08cd89859ec2b8041a5e12bbb5560cd890528013ea04d0413308",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-resident-20261107T063015Z/reference/Storytelling/output/rigid_body_key": "aa81387eddc72587f28e9329d6001d080aaa00877aad7d0f33889f7cbe6d5726",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-resident-20261107T063015Z/reference/Storytelling/output/rigid_body_names": "471a23a4caf523b5dffe9b5e01aaa6796a8c827f058bc2165da8f429d938aeb3",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-resident-20261107T063015Z/reference/Storytelling/output/rigid_body_triangulated_surface_1.tri": "9f407e7748555faa9e72c764abffa93ffc58cabe7d190a1191d26e2838a33af3",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-resident-20261107T063015Z/reference/Storytelling/output/rigid_body_triangulated_surface_2.tri": "c03b966b20fc31b7c061871ede005ce6ff8b0936242b47e12d62994042e66f9f",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-facesim-staged-resident-20261107T063015Z/reference/Storytelling/output/rigid_body_triangulated_surface_active_ids.1": "152ee596bba99ecfcde4a6fce299dacc88ec7f6592f760f4d827431300a2692c"
+          },
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/facesim/parsec/simmedium.runconf",
+          "runconf_sha256": "8d49a2e04eabadb72f680d1aa56eb193769c29b2f0f8b2ffeb4fba478904106d",
+          "threads": 1,
+          "validation": {
+            "files": {
+              "Storytelling/output/controls.1": "2c70eb5ec6b1d6c4b923ec347481627a59050df7547dfdc2020cd1e0254ead7b",
+              "Storytelling/output/deformable_object_1_particle_class_state.1": "caab01d0e1869080a3fbaaab034183decbc864ca198ef8610549e1dc5e2b02bf",
+              "Storytelling/output/deformable_object_1_particle_mass.1": "423035271bbe1dd077e07d30367d1376a2cf852f5f34765b13c45a2c284672c0",
+              "Storytelling/output/deformable_object_1_position.1": "8a48ab599db702e0ed1691a17fbc7cc099a9210d236dab2ce52e852f6ec9999f",
+              "Storytelling/output/rigid_bodies.1": "9e435601cf835951272863003b4ff2427a468d8ed3cd1b9248e28264f5fc3483",
+              "Storytelling/output/rigid_body_active_ids.1": "152ee596bba99ecfcde4a6fce299dacc88ec7f6592f760f4d827431300a2692c",
+              "Storytelling/output/rigid_body_implicit_surface_1.phi": "8831ff700a40712abfe4ae9e772e0086a621f47261e979afeaed3a2d20e6f579",
+              "Storytelling/output/rigid_body_implicit_surface_2.phi": "8c15ee723d21e2f7376fc861926d3c5e10c6efb761526967b820ba46f46da353",
+              "Storytelling/output/rigid_body_implicit_surface_active_ids.1": "152ee596bba99ecfcde4a6fce299dacc88ec7f6592f760f4d827431300a2692c",
+              "Storytelling/output/rigid_body_implicit_surface_key": "ea8af56c091b08cd89859ec2b8041a5e12bbb5560cd890528013ea04d0413308",
+              "Storytelling/output/rigid_body_key": "aa81387eddc72587f28e9329d6001d080aaa00877aad7d0f33889f7cbe6d5726",
+              "Storytelling/output/rigid_body_names": "471a23a4caf523b5dffe9b5e01aaa6796a8c827f058bc2165da8f429d938aeb3",
+              "Storytelling/output/rigid_body_triangulated_surface_1.tri": "9f407e7748555faa9e72c764abffa93ffc58cabe7d190a1191d26e2838a33af3",
+              "Storytelling/output/rigid_body_triangulated_surface_2.tri": "c03b966b20fc31b7c061871ede005ce6ff8b0936242b47e12d62994042e66f9f",
+              "Storytelling/output/rigid_body_triangulated_surface_active_ids.1": "152ee596bba99ecfcde4a6fce299dacc88ec7f6592f760f4d827431300a2692c"
+            },
+            "kind": "files_sha256"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "d3e5abca6814ebac4b759bdb8f60adcc100cdf0a4238196eb4166dd0cfd6efb3",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "0e009891e587bbe9d8e9cfef57e830d626e15f2837ec5bd356c2b1c181299f88",
+        "firmware_sha256": "58781ca74d0177a205c9d5ee0477fa808f1353b340a19c9fa7a33387f81ae928",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "facesim",
+        "repetition": 1,
+        "rootfs_sha256": "1f06b99dc3c6a90e44ea444f29ffc723ac1f6048622b2d3ab63980cc9478ae5e",
+        "run_id": "native-facesim-simmedium-r1-20261109T023353Z",
+        "software_diagnostic": false,
+        "software_profile": "facesim-staged-resident-serial",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "1dc77dc521a32d783690acfaa505ab2d0dd9ed08f97afc4254ad6f9a50e3e4cc",
+      "input": "simmedium",
+      "issues": [],
+      "program": "facesim",
+      "repetition": 1,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-facesim-simmedium-r1-20261109T023353Z/result.json",
+        "sha256": "df4bab8ea06ad02fc2de52f3a1815e6653360ea072bd1cd66520cb473c3bbd18"
+      },
+      "roi_cycles": 23266064819,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-raytrace-simmedium-r1-20261109T035359Z/complete.json",
+        "sha256": "f33c2243cad1c977ac32d7a5ac793c16d436ca966f1d5f1b0649dcd72c65cb4e"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 87161325044,
+        "host_simulation_wall_seconds": 1743.260802,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16625672.393,
+        "target_delta": 28982882989,
+        "target_end": 108680315417,
+        "target_start": 79697432428
+      },
+      "host_wall_seconds": 1743.3345877910006,
+      "identity": {
+        "apps_manifest_sha256": "abfd662d67706cbd878b41f615a1691c59b720cb6f67786a86ac8988599d3d62",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:21:00.0",
+        "board_serial": "21770433G02LA",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "happy_buddha.obj",
+            "-automove",
+            "-nthreads",
+            "1",
+            "-frames",
+            "3",
+            "-res",
+            "960",
+            "540"
+          ],
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-raytrace-headless-20261107T065042Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/apps/raytrace/inputs/input_simmedium.tar": "267a8e9a1a66c49727c6d473a8d0d0d2cfacf8b0f5051fc5d6faca06588ef16d"
+          },
+          "input_files": {
+            "happy_buddha.obj": "5dd570b1d5a8d9437f4b26982a7d318ad13f20c811519506cea6178810a025dc"
+          },
+          "program": "raytrace",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-raytrace-headless-20261107T065042Z/reference-simmedium/frames.rgba": "703a523dd36f791a496a05c358bac72c79e56519759a95a506a0fae1594631cd",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-raytrace-headless-20261107T065042Z/reference-simmedium/frames.shape": "b1c1aa6444bf4bdf0d27007d3783a0f8a3efab261af091a8b13ede260b5a986f"
+          },
+          "roi": "original complete multi-frame render and automove loop, plus identical per-frame output copy observation",
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/raytrace/parsec/simmedium.runconf",
+          "runconf_sha256": "adea48a1653fd26a4ecf890e89febe4cf2db5675b39af1f64ffea9d7aedbb406",
+          "threads": 1,
+          "validation": {
+            "files": {
+              "frames.rgba": "703a523dd36f791a496a05c358bac72c79e56519759a95a506a0fae1594631cd",
+              "frames.shape": "b1c1aa6444bf4bdf0d27007d3783a0f8a3efab261af091a8b13ede260b5a986f"
+            },
+            "kind": "files_sha256"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "239f1c81fec1a4ec3c541d46669e9d2a67dc1fe922387956c328661acac2d8ca",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "7c7dc7b3cac8a39bee6945f08096633d91457aa30e33e22def6341cb94b0f611",
+        "firmware_sha256": "80169874e12f592b36e0586b9fd9d6106d72c3e7dc8c0abddada35ad32bb3518",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "raytrace",
+        "repetition": 1,
+        "rootfs_sha256": "a6cc0639ad0c3b2ca297628ae5159c9af28c970df3e277e5466623a8fa006417",
+        "run_id": "native-raytrace-simmedium-r1-20261109T035359Z",
+        "software_diagnostic": false,
+        "software_profile": "raytrace-original-headless-memory-framebuffer",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "041d99e8cab7398d096f9027991fa1fc7b45dcae7f4b1ecebfbe7b8ce60f6890",
+      "input": "simmedium",
+      "issues": [],
+      "program": "raytrace",
+      "repetition": 1,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-raytrace-simmedium-r1-20261109T035359Z/result.json",
+        "sha256": "3d473d4af63bf33019d30398f75ec8f858b38f8aeab86c4412518cfa21a27508"
+      },
+      "roi_cycles": 2400529768,
+      "roi_instructions": null,
+      "valid": true
+    },
+    {
+      "complete": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-x264-simmedium-r1-20261109T043328Z/complete.json",
+        "sha256": "7144ac7c55c04496166805c43092280cf12b9fa933972b7ae48482042c8c213e"
+      },
+      "configuration": "Native",
+      "driver_returncode": 0,
+      "host_efficiency": {
+        "host_delta": 113697078909,
+        "host_simulation_wall_seconds": 2273.996352,
+        "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+        "simulation_throughput_cycles_per_second": 16653503.599,
+        "target_delta": 37870006433,
+        "target_end": 156710475287,
+        "target_start": 118840468854
+      },
+      "host_wall_seconds": 2274.0469977800003,
+      "identity": {
+        "apps_manifest_sha256": "afcdcfdc9004edf70627d657180b506894bcc0e4d5c1ddaf30428dc9763566fa",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "board_bdf": "0000:21:00.0",
+        "board_serial": "21770433G02LA",
+        "case": {
+          "algorithm_unchanged": true,
+          "argv": [
+            "--no-progress",
+            "--quiet",
+            "--qp",
+            "20",
+            "--partitions",
+            "b8x8,i4x4",
+            "--ref",
+            "5",
+            "--direct",
+            "auto",
+            "--b-pyramid",
+            "normal",
+            "--weightb",
+            "--mixed-refs",
+            "--no-fast-pskip",
+            "--me",
+            "umh",
+            "--subme",
+            "7",
+            "--analyse",
+            "b8x8,i4x4",
+            "--threads",
+            "1",
+            "-o",
+            "eledream.264",
+            "eledream_640x360_32.y4m"
+          ],
+          "auxiliary_progress_option": "--no-progress; original supported flag, both groups",
+          "diagnostic_roi_syscalls": [],
+          "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-x264-no-progress-20261107T064407Z/diagnostic-simmedium/trace.log",
+          "fpga_validation": "NOT_RUN",
+          "input": "simmedium",
+          "input_archives": {
+            "/data1/gzh/EC/Software/PARSEC/pkgs/apps/x264/inputs/input_simmedium.tar": "0f4287eccdaf1179f0f33dbd603eccd5e0a0ab6354589b66af83270ce33aecee"
+          },
+          "input_files": {
+            "eledream_640x360_32.y4m": "1bbc486b19fce16cdab130d72ad0376349a8c0ea801dd33606470e46e363c376"
+          },
+          "legacy_option_integration": "bare --b-pyramid maps explicitly to normal (enabled pyramid); all remaining official flags retained identically in Native/C4/reference",
+          "original_official_argv": [
+            "--quiet",
+            "--qp",
+            "20",
+            "--partitions",
+            "b8x8,i4x4",
+            "--ref",
+            "5",
+            "--direct",
+            "auto",
+            "--b-pyramid",
+            "--weightb",
+            "--mixed-refs",
+            "--no-fast-pskip",
+            "--me",
+            "umh",
+            "--subme",
+            "7",
+            "--analyse",
+            "b8x8,i4x4",
+            "--threads",
+            "1",
+            "-o",
+            "eledream.264",
+            "eledream_640x360_32.y4m"
+          ],
+          "program": "x264",
+          "reference_outputs": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-x264-no-progress-20261107T064407Z/reference-simmedium/eledream.264": "cf6fa8b7369adbb1700b787d2c54cf881b7f754d3fee3257562ac07385ab0841"
+          },
+          "roi": "encoder open/initialization, headers, every input frame encode and full delayed-frame drain; cleanup/report/external flush outside",
+          "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/x264/parsec/simmedium.runconf",
+          "runconf_sha256": "508791ac4b9a4645a9e8402093540c9f4d257b21f8d6d5543901dbf65cd44198",
+          "threads": 1,
+          "validation": {
+            "files": {
+              "eledream.264": "cf6fa8b7369adbb1700b787d2c54cf881b7f754d3fee3257562ac07385ab0841"
+            },
+            "kind": "files_sha256"
+          },
+          "warmups": 0
+        },
+        "configuration": "Native",
+        "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+        "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+        "elf_sha256": "326fc96009dc58f7a4cd215be411153c0b8d3eb98e4ca1d857dee1b9cb8796ac",
+        "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+        "firmware_receipt_sha256": "fd0f3c79e19d63794d991c63c4f2c0fff580a908f6961dc957f24ed059192b86",
+        "firmware_sha256": "e99b74d90e27c1ed4f428e60120965b2c2b534e28bd91bc1c1440e45cd290a92",
+        "formal": true,
+        "hardware_commit": null,
+        "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+        "host_bridge_restart": true,
+        "input": "simmedium",
+        "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+        "linux_memory_cap_bytes": 2147483648,
+        "memory_model": {
+          "model": "LatencyBandwidthPipe",
+          "settings": {
+            "readLatency": 30,
+            "readMaxReqs": 4,
+            "relaxFunctionalModel": 0,
+            "writeLatency": 30,
+            "writeMaxReqs": 4
+          }
+        },
+        "previous_run_id": null,
+        "program": "x264",
+        "repetition": 1,
+        "rootfs_sha256": "b5c0dad860e7767da7c0ebba0faa04533c0f75ab27c866c4815fac903841f30b",
+        "run_id": "native-x264-simmedium-r1-20261109T043328Z",
+        "software_diagnostic": false,
+        "software_profile": "x264-original-encoder-staged-io-no-progress",
+        "target_boom_hz": 200000000,
+        "target_checker_hz": null,
+        "target_reset_probe": false,
+        "threads": 1,
+        "warmups": 0
+      },
+      "identity_sha256": "07dc6b6e602d33f522094d834ac12727831650abba23ffaaca45ff1da40745bc",
+      "input": "simmedium",
+      "issues": [],
+      "program": "x264",
+      "repetition": 1,
+      "result": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-x264-simmedium-r1-20261109T043328Z/result.json",
+        "sha256": "3d48975c83b7f15d54324ac9ae14c269a3ac681ca123b005e3abff9b731f37d9"
+      },
+      "roi_cycles": 34722053946,
+      "roi_instructions": null,
+      "valid": true
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "application_rows": [
+    "[ROI] hart=0 start=86779 stop=6253212 cycles=6166433",
+    "[OUTPUT] benchmark=blackscholes checksum=1187d037cad2df6f verified=1 options=64 runs=100",
+    "[APP] protected=1 start=86779 end=6253212 cycles=6166433 instret=3562647 session_stop=6253380",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "blackscholes",
+  "binary_sha256": "cc2993bd8c6f56893afd9e73cc358684c07c481a52ef8eb50dc7a136134b2867",
+  "binding_sha256": "ce984761a67f16515146f77c0e835ba933c60dccff4a370140547e87f5572777",
+  "checker_result_acceptance_tail_after_roi_csr_cycles": 9655,
+  "completed_utc": "2026-11-11T17:42:06.990657+00:00",
+  "elf_sha256": "63958341b07cf07fd64e171ddd5ddf5c91e7fec6f63afe4dbfb3dc7d07086e8b",
+  "faults": [],
+  "formal_fpga_sample": false,
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_simulator_FMR": 3.01,
+  "host_wall_seconds": 12994.935568810994,
+  "input": "project64",
+  "last_boom_accepted_result": {
+    "boom_csr_cycle": 6262867,
+    "checker": 2,
+    "fastest_target_cycle": 6264836,
+    "host_time": 18882081500,
+    "kind": "BOOM_RESULT_ACCEPTED",
+    "package_seq": 1122,
+    "raw_payload": 17179870306,
+    "record": 2244,
+    "status": 0
+  },
+  "limitations": [
+    "Finite simulation result, not FPGA measurement or universal RTL equivalence",
+    "Allocation-to-result acceptance not strict checkerDone minus BOOMexecutionDone",
+    "No fullSVBbinarycapture here; no architecturalrollback/restartclaim",
+    "FASED30/max4 vs plain+dramsim differs; no cycleequivalenceclaim"
+  ],
+  "output": [
+    "benchmark=blackscholes checksum=1187d037cad2df6f verified=1 options=64 runs=100"
+  ],
+  "pending_at_observation_end": 0,
+  "pending_at_roi_stop": 3,
+  "plain_target_reference": {
+    "manifest_sha256": "1047e6cc29bf30603f47496e12cb4b8901ea433cf7890dd9d7c16dd4676d82ed",
+    "memory_model": "+dramsim; differs from GG FASED LatencyPipe30/max4",
+    "roi_cycles": 6145083,
+    "roi_instructions": 3562647,
+    "run": "/data1/gzh/EC/slowdown/streamcluster_aggressive/variants/preservation_svb32_permission/slowdown/parsec_evaluation_20261103/runs/blackscholes_project64_correction_20261106_033522_d67818d9",
+    "total_cycles": 6215767
+  },
+  "plan_sha256": "37435bc3cb6bdcc368b8bec9c41bf1cacffd95b15237cc78885da8cb284d460d",
+  "returncode": 0,
+  "roi_cycles": 6166433,
+  "roi_end_csr": 6253212,
+  "roi_instructions": 3562647,
+  "roi_start_csr": 86779,
+  "schema": "ec-full-frozen-gg-blackscholes-result/1",
+  "scope": "Full original baremetal project64, noROIshrink, CPU originalGG simulation; not formalLinuxPARSEC/FPGAmeasurement/cycleequivalenceagainst+dramsim",
+  "simulation_target_cycles_per_host_second": 491.8071325677809,
+  "software_correct": true,
+  "software_session_stop": 6253380,
+  "source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+  "status": "PASS_COMPLETE_APPLICATION_AND_STRICT_CHECKER_DRAIN",
+  "stdout_integrity_sha256": "655c1eefcde37f0a001a022674b6229072863c093e7f8dea80b19c42ff81c18c",
+  "stop_cause": null,
+  "strict_acceptance": {
+    "allocations": 1122,
+    "boom_pass_accepted": 1122,
+    "cancel": 0,
+    "completed_utc": "2026-11-11T17:42:06.989054+00:00",
+    "duplicate": 0,
+    "evidence": {
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-blackscholes-observed-r1-20261111/external-events.jsonl": "54b31c84d88addb8ce436f3a78508f1344fb247967982fa0bf02e02c72004e2f",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-blackscholes-observed-r1-20261111/rtl-prints-1": "488c84b74b0911f230ee9483d43a76b5d985f29dfd8fae8388609a4c903196ef",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-acceptance-strict-r1-20261111/analyze.py": "78403531ae11adce3d36160df38f50336eef04def839bce92ddf00be41175048",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-gg-package-analysis-round37-v1-20261111/controller.py": "02c3aba4d4971f03ce3341865162402e2e1161eccc3d5fedc8abb93916f03e24"
+    },
+    "fail": 0,
+    "fpga_access": false,
+    "full_compare_local_results": 1122,
+    "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "limitations": [
+      "Finite observed package protocol; not universal RTL equivalence",
+      "No strict checkerDone minus samepackage BOOMexecutionDone",
+      "SVB lifetime/payload drain evaluated separately",
+      "No architectural rollback/restart claim"
+    ],
+    "local_begins": 1122,
+    "passed": true,
+    "pending": 0,
+    "per_checker": {
+      "1": 275,
+      "2": 283,
+      "3": 282,
+      "4": 282
+    },
+    "sample_errors": 0,
+    "schema": "ec-strict-finite-checker-join/1",
+    "status": "PASS_STRICT_COMPLETE_ALLOCATION_BEGIN_FULLCOMPARE_RESULT_BOOM_ACCEPTANCE_JOIN"
+  },
+  "strict_acceptance_error": null,
+  "total_fastest_target_cycles": 6391002,
+  "valid": true
+}

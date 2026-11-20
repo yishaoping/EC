@@ -1,0 +1,83 @@
+{
+  "formal": {
+    "status": "PASS_ALL_STATE_REGISTER_TRANSITION_AND_OUTPUT_EQUIVALENCE",
+    "state_words": 315,
+    "state_bits": 78475,
+    "payload_bits": 305,
+    "capacity": 256,
+    "method": "Exact state bijection/initialization/FF-clock-reset parameters; exhaustive structural payload-lane independence and permutation check on both actual full-width flattened netlists; combinational SAT proves every control, clock/reset equation and representative lane. Proven lane symmetry extends the result to all 305 payload bits.",
+    "cut_source_sha256": "7746ab6c0637aad8c3fdc5b0022fee961b5b61dba402d7c5be3d2e8c6b038f44",
+    "state_mapping_sha256": "7a3ea01052855b59638baacdebc048dd3b23fda76dc4689538c37a396fa4fb00",
+    "emitted_rtl_sha256": "e01ccf7a157d3425dcf2b926f3bb1b9eb0be667ff94facf5ee4713fdcfc11c6c",
+    "proof_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-memory-cdc-r2-20261114/formal-r4/proof.log",
+    "lane_check": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-memory-cdc-r2-20261114/formal-r4/lane-symmetry.json",
+    "full_system_equivalence": false,
+    "admission_receipt": true,
+    "actual_proof_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-memory-cdc-r2-20261114/formal-r4/result.json",
+    "actual_proof_result_sha256": "c6d7e52a7a243820831f930c8ced0b1d12c9e29278edd4f35fa74e092772fcf3",
+    "independent_monolithic_confirmation": "Still running; not a dependency of the completed all-state lane-symmetry and SAT proof.",
+    "admitted_utc": "2026-11-14T02:05:27.322678+00:00"
+  },
+  "host": {
+    "status": "PASS_TWO_CLOCK_GOLDENGATE_FINITE_TOKENS_AND_NEGATIVE_CONTROL",
+    "utc": "2026-11-14T01:48:30.707341+00:00",
+    "hardware_baseline": "6fada307",
+    "fpga_access": false,
+    "model_requests": false,
+    "full_system_equivalence": false,
+    "tokens": 8192,
+    "capacity": 256,
+    "payload_bits": 305,
+    "scope": "Both actual queue implementations in one generated host, exact public output token boundary; whole-system validation and routability remain unproved."
+  },
+  "area": {
+    "status": "COMPLETE_QUEUE_PAIR_AREA_MEASURED_NOT_HOST_OR_SHELL",
+    "utc": "2026-11-14T01:42:27.721392+00:00",
+    "profile": "Performance-Only equivalent GHM data-queue candidate",
+    "fpga_access": false,
+    "model_requests": false,
+    "shell_fit": false,
+    "generated_host_area": false,
+    "results": {
+      "Flat": {
+        "CLB LUTs": 21073.0,
+        "CLB Registers": 78479.0,
+        "CARRY8": 0.0,
+        "F7 Muxes": 10370.0,
+        "F8 Muxes": 5185.0,
+        "F9 Muxes": 0.0,
+        "Block RAM Tile": 0.0,
+        "URAM": 0.0,
+        "DSPs": 0.0
+      },
+      "Local": {
+        "CLB LUTs": 44.0,
+        "CLB Registers": 88.0,
+        "CARRY8": 0.0,
+        "F7 Muxes": 0.0,
+        "F8 Muxes": 0.0,
+        "F9 Muxes": 0.0,
+        "Block RAM Tile": 4.5,
+        "URAM": 0.0,
+        "DSPs": 0.0
+      }
+    },
+    "savings_per_queue": {
+      "CLB LUTs": 21029.0,
+      "CLB Registers": 78391.0,
+      "CARRY8": 0.0,
+      "F7 Muxes": 10370.0,
+      "F8 Muxes": 5185.0,
+      "F9 Muxes": 0.0,
+      "Block RAM Tile": -4.5,
+      "URAM": 0.0,
+      "DSPs": 0.0
+    },
+    "rtl_sha256": "e01ccf7a157d3425dcf2b926f3bb1b9eb0be667ff94facf5ee4713fdcfc11c6c",
+    "capacity": 256,
+    "payload_bits": 305,
+    "next_action": "Use actual paired result with host equivalence and whole-system constraints; never add this delta directly to shell LUT or claim routability."
+  },
+  "functional_baseline": "6fada307bb77be90b39720d3f95404fece0e431b",
+  "whole_system_area_gain_not_assumed": true
+}

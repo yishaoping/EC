@@ -1,0 +1,60 @@
+{
+  "status": "PASS_EXISTING_QUEUE_AND_STRICT_PHYSICAL_CONTINUATION_AUDIT",
+  "utc": "2026-11-15T06:07:35.294441+00:00",
+  "requested_candidate": "4915b82c138d63cfb7b74f2fe5249ab96c765d34",
+  "compiled_build_commit": "80da038d800f77baa53dd97ac0436eb352410953",
+  "hardware_binding": "All production source files byte-identical to requested candidate",
+  "source_id": "3702128e000dbfa981961bde5c8a6ad004eca0ffc2f01eb33fe7c19a9f9a7d19",
+  "current_stage": "WAITING_EXISTING_CAD_PHYSICAL_LEASE",
+  "physical_stage": "WAITING_OWN_VERIFIED_COMPLETE_SHELL_POSTOPT",
+  "services": {
+    "ec-performance-only-combined-r2-20261115.service": {
+      "MainPID": "2888623",
+      "ActiveState": "active",
+      "SubState": "running"
+    },
+    "ec-performance-only-combined-physical-r2-20261115.service": {
+      "MainPID": "2892967",
+      "ActiveState": "active",
+      "SubState": "running"
+    }
+  },
+  "comparison_baseline": {
+    "CLB LUTs": 882423.0,
+    "CLB Registers": 647405.0,
+    "F7 Muxes": 68045.0,
+    "F8 Muxes": 21589.0,
+    "F9 Muxes": 0.0,
+    "Block RAM Tile": 696.5,
+    "URAM": 0.0
+  },
+  "baseline_report": "/var/tmp/guozh-ec-rtl-structure-r1-20261114/cad-r1/top-postopt-utilization.rpt",
+  "baseline_report_sha256": "02ba260b11c6b90622af7cf5e19b47b2275fd51c785db1fbcfac4ca6654b107d",
+  "DTB_fix_included": true,
+  "target_ROM_exactly_matches_baseline": true,
+  "clock_group_fix_bound": true,
+  "complete_checkpoint_clock_replay": "Pending new post-opt; exact resolved original PCIe memberships and actual exception database must pass before placement",
+  "host_clock_mhz": 10,
+  "DDR_period_ns": 3.332,
+  "minimum_savings_gate": false,
+  "stage_reports": [
+    "complete-shell utilization/hierarchy/fanout",
+    "placed and post-physopt per-SLR CLB/BRAM/SLL",
+    "placed and routed congestion",
+    "setup/hold timing",
+    "DDR-specific setup/hold",
+    "legality/resource-conflict route status",
+    "DRC/methodology/bus-skew/clock coverage"
+  ],
+  "compare_BJL_and_result_resources": "Use real post-opt hierarchy against preserved old hierarchy; never add module savings",
+  "strict_bitstream_gate": true,
+  "old_failed_route_reuse": false,
+  "new_RTL_changes": false,
+  "new_CAD_jobs": false,
+  "old_CAD_interrupted": false,
+  "periodic_patrol": false,
+  "fpga_access": false,
+  "board_policy": "21-only",
+  "new_shell_postopt": null,
+  "new_bitstream": null
+}

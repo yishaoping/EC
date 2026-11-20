@@ -1,0 +1,124 @@
+{
+  "binaries": {
+    "client/client": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-protocol-20261107T110127Z/netferret/client/client",
+      "sha256": "9b2a359427a2c2d01606b2c95cedd51eee801e264bc3cbb05111d54f6413c3a8"
+    },
+    "server/parsec/bin/ferret-pthreads": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-protocol-20261107T110127Z/netferret/server/parsec/bin/ferret-pthreads",
+      "sha256": "2e65f96f8550e88ffd241b131fc9512f21d8fb1571211400741b13d781fce670"
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/include",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include",
+        "-c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-protocol-20261107T110127Z/server.c",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-protocol-20261107T110127Z/server.o"
+      ],
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-20261107T110127Z/server-object.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-static",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-protocol-20261107T110127Z/server.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/diagnostic-hooks.o",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/parsec/lib",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/lib",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-Wl,--start-group",
+        "-lcass",
+        "-lcassimage",
+        "-lgsl",
+        "-lgslcblas",
+        "-ljpeg",
+        "-luptcp",
+        "-Wl,--end-group",
+        "-pthread",
+        "-lrt",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-protocol-20261107T110127Z/netferret/server/parsec/bin/ferret-pthreads"
+      ],
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-20261107T110127Z/server-link.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O2",
+        "-g",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/include",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-ferret-20261107T052719Z/dependencies/include",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/client",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-protocol-20261107T110127Z/client.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/client/tpool.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/src/queue.c",
+        "-static",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/uptcpip/lib",
+        "-luptcp.client",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-protocol-20261107T110127Z/netferret/client/client"
+      ],
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-20261107T110127Z/client.log",
+      "returncode": 0
+    }
+  ],
+  "ended_utc": "2026-11-07T11:07:57.164217+00:00",
+  "formal_eligible": false,
+  "fpga_execution": false,
+  "linux_returncode": 0,
+  "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-20261107T110127Z",
+  "original_algorithm_pipeline_and_roi_preserved": true,
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-protocol-20261107T110127Z",
+  "patch": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-20261107T110127Z/candidate.patch",
+  "patch_sha256": "9996b3fd38d2ff978880dd088f47a69529fa41f7ae6dde3b7e7ae2ce8d1df07b",
+  "receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-protocol-candidate-build.json",
+  "schema": "ec-netferret-protocol-candidate/1",
+  "status": "COMPLETE_REVIEW_EVIDENCE",
+  "user_cases": [
+    {
+      "input": "test",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-20261107T110127Z/user-test/result.json",
+      "returncode": 0
+    },
+    {
+      "input": "simsmall",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-20261107T110127Z/user-simsmall/result.json",
+      "returncode": 0
+    },
+    {
+      "input": "simmedium",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-20261107T110127Z/user-simmedium/result.json",
+      "returncode": 0
+    }
+  ]
+}

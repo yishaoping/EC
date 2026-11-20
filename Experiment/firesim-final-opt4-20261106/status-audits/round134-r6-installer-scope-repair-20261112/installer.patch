@@ -1,0 +1,43 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r6-20261112/install.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r6-installer-r2-20261112/install.py
+@@ -1,7 +1,8 @@
+ #!/usr/bin/python3
+ import importlib.util,os,sys,subprocess
+ from pathlib import Path
+-C=Path(__file__).resolve().parent
++C=Path('/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r6-20261112')
++DRIVER=Path(__file__).resolve()
+ W=C.parent.parent
+ D=Path('/data1/gzh/EC/Experiment/firesim-final-opt4-20261106')
+ AUDIT=D/'status-audits/round133-r6-minimal-api-recovery-20261112'
+@@ -9,6 +10,9 @@
+ from opt4_unattended_common import read,save,sha,now,live
+ 
+ def validate():
++    pins=read(DRIVER.parent/'inputs.json')
++    assert pins['candidate']==str(C)
++    for path,h in pins['files'].items():assert sha(path)==h,('installer dependency changed',path)
+     for name in ['inputs.json','runtime-inputs.json','application-inputs.json']:
+         p=read(C/name)
+         assert p['board_allowlist']==['0000:21:00.0']
+@@ -27,9 +31,10 @@
+                  'ec-opt4-svb-host40-shell-application-follow-r6.service']:
+         path=Path('/etc/systemd/system')/unit
+         assert not path.exists(),('preserve pre-existing unit',unit)
++    return controller
+ 
+ def main():
+-    validate()
++    controller=validate()
+     if '--validate-only' in sys.argv:return
+     assert os.geteuid()==0 and not (C/'installation.json').exists(),'adopt installed r6'
+     units={}
+@@ -68,7 +73,7 @@
+         assert not path.exists(),'preserve existing unit'
+         path.write_text(text);units[unit]=sha(path)
+     sources={n:sha(C/n) for n in ['controller.py','install.py','runtime.py','application.py','certificate.py','recover.tcl.in','physical-clock-contract.json','inputs.json','runtime-inputs.json','application-inputs.json','rebind_inputs.py']}
+-    save(C/'installation.json',dict(status='INDEPENDENT_R6_MINIMAL_VIVADO_API_REPAIR_INSTALLED_FROM_R5_F_CHECKPOINT',utc=now(),units_sha256=units,fpga_io=False,target_rtl_changed=False,physical_gates_changed=False,inputs_sha256=sha(C/'inputs.json'),candidate_sources=sources))
++    save(C/'installation.json',dict(status='INDEPENDENT_R6_MINIMAL_VIVADO_API_REPAIR_INSTALLED_FROM_R5_F_CHECKPOINT',utc=now(),units_sha256=units,fpga_io=False,target_rtl_changed=False,physical_gates_changed=False,inputs_sha256=sha(C/'inputs.json'),candidate_sources=sources,installer_driver=dict(path=str(DRIVER),sha256=sha(DRIVER),revision='r2-explicit-controller-return')))
+     AUDIT.mkdir(exist_ok=True)
+     good,admission=controller.admitted()
+     save(AUDIT/'repair-plan.json',dict(

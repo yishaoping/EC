@@ -1,0 +1,174 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-dcache-field-read-prune-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
++++ private/MemPackageAddressStats.scala
+@@ -1,4 +1,7 @@
+-package boom.lsu
++package opt4addressmcrams
++import boom.lsu.{AddressBucketGrouped, AddressBucketUpdate}
++import chisel3.experimental.annotate
++import midas.targetutils.MemModelAnnotation
+ 
+ import chisel3._
+ import chisel3.util._
+@@ -116,6 +119,7 @@
+     val error = Output(UInt(64.W))
+     val pending = Output(UInt(64.W))
+     val idle = Output(Bool())
++    val debugBuckets = Output(Vec(5, Vec(packetWindow, Vec(4, UInt(64.W)))))
+   })
+ 
+   private def packageSetOf(lineTag: UInt): UInt = {
+@@ -253,11 +257,46 @@
+   val bucketValid = RegInit(VecInit(Seq.fill(packetWindow)(false.B)))
+   val bucketSeq = Reg(Vec(packetWindow,
+     UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))
+-  val bucketStore = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))
+-  val bucketLoadFirst = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))
+-  val bucketStoreFirst = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))
+-  val bucketStrictWriteRead = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))
+-  val bucketFirstStore = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))
++  val bucketStoreMemory = Seq.fill(4)(Mem(packetWindow, UInt(64.W)))
++  bucketStoreMemory.foreach(m => annotate(MemModelAnnotation(m)))
++  val bucketStore = Wire(Vec(packetWindow, Vec(4, UInt(64.W))))
++  val bucketStoreWriteData = WireDefault(bucketStore)
++  val bucketStoreWriteEnable = WireDefault(VecInit(Seq.fill(packetWindow)(VecInit(Seq.fill(4)(false.B)))))
++  for (i <- 0 until packetWindow; g <- 0 until 4) {
++    bucketStore(i)(g) := bucketStoreMemory(g).read(i.U)
++  }
++  val bucketLoadFirstMemory = Seq.fill(4)(Mem(packetWindow, UInt(64.W)))
++  bucketLoadFirstMemory.foreach(m => annotate(MemModelAnnotation(m)))
++  val bucketLoadFirst = Wire(Vec(packetWindow, Vec(4, UInt(64.W))))
++  val bucketLoadFirstWriteData = WireDefault(bucketLoadFirst)
++  val bucketLoadFirstWriteEnable = WireDefault(VecInit(Seq.fill(packetWindow)(VecInit(Seq.fill(4)(false.B)))))
++  for (i <- 0 until packetWindow; g <- 0 until 4) {
++    bucketLoadFirst(i)(g) := bucketLoadFirstMemory(g).read(i.U)
++  }
++  val bucketStoreFirstMemory = Seq.fill(4)(Mem(packetWindow, UInt(64.W)))
++  bucketStoreFirstMemory.foreach(m => annotate(MemModelAnnotation(m)))
++  val bucketStoreFirst = Wire(Vec(packetWindow, Vec(4, UInt(64.W))))
++  val bucketStoreFirstWriteData = WireDefault(bucketStoreFirst)
++  val bucketStoreFirstWriteEnable = WireDefault(VecInit(Seq.fill(packetWindow)(VecInit(Seq.fill(4)(false.B)))))
++  for (i <- 0 until packetWindow; g <- 0 until 4) {
++    bucketStoreFirst(i)(g) := bucketStoreFirstMemory(g).read(i.U)
++  }
++  val bucketStrictWriteReadMemory = Seq.fill(4)(Mem(packetWindow, UInt(64.W)))
++  bucketStrictWriteReadMemory.foreach(m => annotate(MemModelAnnotation(m)))
++  val bucketStrictWriteRead = Wire(Vec(packetWindow, Vec(4, UInt(64.W))))
++  val bucketStrictWriteReadWriteData = WireDefault(bucketStrictWriteRead)
++  val bucketStrictWriteReadWriteEnable = WireDefault(VecInit(Seq.fill(packetWindow)(VecInit(Seq.fill(4)(false.B)))))
++  for (i <- 0 until packetWindow; g <- 0 until 4) {
++    bucketStrictWriteRead(i)(g) := bucketStrictWriteReadMemory(g).read(i.U)
++  }
++  val bucketFirstStoreMemory = Seq.fill(4)(Mem(packetWindow, UInt(64.W)))
++  bucketFirstStoreMemory.foreach(m => annotate(MemModelAnnotation(m)))
++  val bucketFirstStore = Wire(Vec(packetWindow, Vec(4, UInt(64.W))))
++  val bucketFirstStoreWriteData = WireDefault(bucketFirstStore)
++  val bucketFirstStoreWriteEnable = WireDefault(VecInit(Seq.fill(packetWindow)(VecInit(Seq.fill(4)(false.B)))))
++  for (i <- 0 until packetWindow; g <- 0 until 4) {
++    bucketFirstStore(i)(g) := bucketFirstStoreMemory(g).read(i.U)
++  }
+ 
+   // A valid bucket's low sequence bits equal its fixed slot index. The high
+   // bits therefore distinguish the complete sequence without a low-bit mux.
+@@ -733,23 +772,28 @@
+       }
+       for (g <- 0 until 4) {
+         when (isCurrent) {
+-          bucketStore(i)(g) := currentStoreNextWide(g)(63, 0)
+-          bucketFirstStore(i)(g) := currentFirstStoreNextWide(g)(63, 0)
++          bucketStoreWriteEnable(i)(g) := true.B
++          bucketStoreWriteData(i)(g) := currentStoreNextWide(g)(63, 0)
++          bucketFirstStoreWriteEnable(i)(g) := true.B
++          bucketFirstStoreWriteData(i)(g) := currentFirstStoreNextWide(g)(63, 0)
+         }
+         // Preserve allocation from zero even after an independent global
+         // reset leaves an arbitrary payload in an invalid slot. All counter
+         // values and all input cycles retain the original behavior.
+         val allocate = isCurrent && !bucketValid(i)
+         when (AddressBucketUpdate.enabled(isCurrent, bucketLoadFirstDelta(i)(g))) {
+-          bucketLoadFirst(i)(g) := Mux(allocate, bucketLoadFirstDelta(i)(g),
++          bucketLoadFirstWriteEnable(i)(g) := true.B
++          bucketLoadFirstWriteData(i)(g) := Mux(allocate, bucketLoadFirstDelta(i)(g),
+             loadFirstNextWide(i)(g)(63, 0))
+         }
+         when (AddressBucketUpdate.enabled(isCurrent, bucketStoreFirstDelta(i)(g))) {
+-          bucketStoreFirst(i)(g) := Mux(allocate, bucketStoreFirstDelta(i)(g),
++          bucketStoreFirstWriteEnable(i)(g) := true.B
++          bucketStoreFirstWriteData(i)(g) := Mux(allocate, bucketStoreFirstDelta(i)(g),
+             storeFirstNextWide(i)(g)(63, 0))
+         }
+         when (AddressBucketUpdate.enabled(isCurrent, bucketStrictWriteReadDelta(i)(g))) {
+-          bucketStrictWriteRead(i)(g) := Mux(allocate, bucketStrictWriteReadDelta(i)(g),
++          bucketStrictWriteReadWriteEnable(i)(g) := true.B
++          bucketStrictWriteReadWriteData(i)(g) := Mux(allocate, bucketStrictWriteReadDelta(i)(g),
+             strictWriteReadNextWide(i)(g)(63, 0))
+         }
+       }
+@@ -822,11 +866,16 @@
+           onlineStoreFirst(g) - bucketStoreFirst(retiringIdx)(g)
+         onlineStrictWriteRead(g) := onlineStrictWriteRead(g) -
+           bucketStrictWriteRead(retiringIdx)(g)
+-        bucketStore(retiringIdx)(g) := 0.U
+-        bucketFirstStore(retiringIdx)(g) := 0.U
+-        bucketLoadFirst(retiringIdx)(g) := 0.U
+-        bucketStoreFirst(retiringIdx)(g) := 0.U
+-        bucketStrictWriteRead(retiringIdx)(g) := 0.U
++        bucketStoreWriteEnable(retiringIdx)(g) := true.B
++        bucketStoreWriteData(retiringIdx)(g) := 0.U
++        bucketFirstStoreWriteEnable(retiringIdx)(g) := true.B
++        bucketFirstStoreWriteData(retiringIdx)(g) := 0.U
++        bucketLoadFirstWriteEnable(retiringIdx)(g) := true.B
++        bucketLoadFirstWriteData(retiringIdx)(g) := 0.U
++        bucketStoreFirstWriteEnable(retiringIdx)(g) := true.B
++        bucketStoreFirstWriteData(retiringIdx)(g) := 0.U
++        bucketStrictWriteReadWriteEnable(retiringIdx)(g) := true.B
++        bucketStrictWriteReadWriteData(retiringIdx)(g) := 0.U
+       }
+     }
+   }
+@@ -865,11 +914,16 @@
+       bucketValid(i) := false.B
+       bucketSeq(i) := 0.U
+       for (g <- 0 until 4) {
+-        bucketStore(i)(g) := 0.U
+-        bucketFirstStore(i)(g) := 0.U
+-        bucketLoadFirst(i)(g) := 0.U
+-        bucketStoreFirst(i)(g) := 0.U
+-        bucketStrictWriteRead(i)(g) := 0.U
++        bucketStoreWriteEnable(i)(g) := true.B
++        bucketStoreWriteData(i)(g) := 0.U
++        bucketFirstStoreWriteEnable(i)(g) := true.B
++        bucketFirstStoreWriteData(i)(g) := 0.U
++        bucketLoadFirstWriteEnable(i)(g) := true.B
++        bucketLoadFirstWriteData(i)(g) := 0.U
++        bucketStoreFirstWriteEnable(i)(g) := true.B
++        bucketStoreFirstWriteData(i)(g) := 0.U
++        bucketStrictWriteReadWriteEnable(i)(g) := true.B
++        bucketStrictWriteReadWriteData(i)(g) := 0.U
+       }
+     }
+     for (g <- 0 until 4) {
+@@ -950,4 +1004,24 @@
+     (processedSafeWatermark =/= io.safeWatermark).asUInt
+   io.idle := !running && queueCount === 0.U && !processValid &&
+     processedSafeWatermark === io.safeWatermark
++  for (i <- 0 until packetWindow; g <- 0 until 4) {
++    when (bucketStoreWriteEnable(i)(g)) { bucketStoreMemory(g).write(i.U, bucketStoreWriteData(i)(g)) }
++  }
++  for (i <- 0 until packetWindow; g <- 0 until 4) {
++    when (bucketLoadFirstWriteEnable(i)(g)) { bucketLoadFirstMemory(g).write(i.U, bucketLoadFirstWriteData(i)(g)) }
++  }
++  for (i <- 0 until packetWindow; g <- 0 until 4) {
++    when (bucketStoreFirstWriteEnable(i)(g)) { bucketStoreFirstMemory(g).write(i.U, bucketStoreFirstWriteData(i)(g)) }
++  }
++  for (i <- 0 until packetWindow; g <- 0 until 4) {
++    when (bucketStrictWriteReadWriteEnable(i)(g)) { bucketStrictWriteReadMemory(g).write(i.U, bucketStrictWriteReadWriteData(i)(g)) }
++  }
++  for (i <- 0 until packetWindow; g <- 0 until 4) {
++    when (bucketFirstStoreWriteEnable(i)(g)) { bucketFirstStoreMemory(g).write(i.U, bucketFirstStoreWriteData(i)(g)) }
++  }
++  io.debugBuckets(0) := bucketStore
++  io.debugBuckets(1) := bucketLoadFirst
++  io.debugBuckets(2) := bucketStoreFirst
++  io.debugBuckets(3) := bucketStrictWriteRead
++  io.debugBuckets(4) := bucketFirstStore
+ }

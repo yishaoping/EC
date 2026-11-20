@@ -1,0 +1,10 @@
+{
+  "status": "FAILED_ANALYZER_TIMING_ADDITIVITY_ASSUMPTION_PRESERVED",
+  "utc": "2026-11-12T03:32:58.302878+00:00",
+  "controller": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/fpga-critical-diagnosis-round119-v1-20261112/analyze.py",
+  "controller_sha256": "ca122cee0a8ceba46bcd1efdbfc7dd251cc4a0fa8baf6dfb89135f61823c2c91",
+  "error": "AssertionError()",
+  "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 5, in <module>\n  File \"/data1/gzh/EC/firesim/final-opt4-20261106/candidates/fpga-critical-diagnosis-round119-v1-20261112/analyze.py\", line 247, in main\n    physical = timing(A / 'final-timing.rpt')\n  File \"/data1/gzh/EC/firesim/final-opt4-20261106/candidates/fpga-critical-diagnosis-round119-v1-20261112/analyze.py\", line 151, in timing\n    assert summary and sum(d['failing_endpoints'] for d in domains) == summary['setup_violators']\nAssertionError\n",
+  "partial_diagnosis_outputs": [],
+  "correction": "Vivado intra/inter clock groups can share failing endpoints. Keep groups separate from unique design summary; do not sum as a nonoverlapping partition."
+}

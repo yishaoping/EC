@@ -1,0 +1,76 @@
+23Y345->CLEL_R_X86Y408)
+	INT_X23Y344->INT_X86Y407 (CLEM_X23Y344->CLEL_R_X86Y407)
+LONG Congestion bounded by tiles (Lower Left Tile -> Upper Right Tile):
+NORTH
+	INT_X53Y370->INT_X100Y417 (CLEM_X53Y370->DSP_X100Y415)
+	INT_X64Y391->INT_X95Y422 (CLEM_X64Y391->DSP_X95Y420)
+	INT_X64Y390->INT_X95Y421 (CLEM_X64Y390->DSP_X95Y420)
+	INT_X64Y389->INT_X95Y420 (CLEM_X64Y389->DSP_X95Y420)
+	INT_X64Y388->INT_X95Y419 (CLEM_X64Y388->DSP_X95Y415)
+SOUTH
+	INT_X55Y380->INT_X102Y411 (CLEM_X55Y380->CLEL_R_X102Y411)
+	INT_X64Y382->INT_X95Y413 (CLEM_X64Y382->DSP_X95Y410)
+	INT_X64Y381->INT_X95Y412 (CLEM_X64Y381->DSP_X95Y410)
+	INT_X64Y380->INT_X95Y411 (CLEM_X64Y380->DSP_X95Y410)
+	INT_X64Y379->INT_X95Y410 (CLEM_X64Y379->DSP_X95Y410)
+EAST
+	INT_X80Y368->INT_X111Y415 (CLEM_X80Y368->DSP_X111Y415)
+	INT_X69Y384->INT_X100Y415 (CLEM_X69Y384->DSP_X100Y415)
+	INT_X69Y383->INT_X100Y414 (CLEM_X69Y383->DSP_X100Y410)
+	INT_X69Y382->INT_X100Y413 (CLEM_X69Y382->DSP_X100Y410)
+	INT_X69Y381->INT_X100Y412 (CLEM_X69Y381->DSP_X100Y410)
+WEST
+	INT_X27Y306->INT_X90Y433 (CLEM_X27Y306->CLEL_R_X90Y433)
+	INT_X64Y336->INT_X127Y399 (CLEM_X64Y336->CLEL_R_X127Y399)
+	INT_X64Y335->INT_X127Y398 (CLEM_X64Y335->CLEL_R_X127Y398)
+	INT_X64Y334->INT_X127Y397 (CLEM_X64Y334->CLEL_R_X127Y397)
+	INT_X64Y333->INT_X127Y396 (CLEM_X64Y333->CLEL_R_X127Y396)
+SHORT Congestion bounded by tiles (Lower Left Tile -> Upper Right Tile):
+NORTH
+	INT_X62Y372->INT_X109Y419 (CLEM_X62Y372->CLEL_R_X109Y419)
+	INT_X66Y385->INT_X97Y416 (CLEM_X66Y385->CLEL_R_X97Y416)
+	INT_X66Y384->INT_X97Y415 (CLEM_X66Y384->CLEL_R_X97Y415)
+	INT_X66Y383->INT_X97Y414 (CLEM_X66Y383->CLEL_R_X97Y414)
+	INT_X54Y386->INT_X85Y417 (CLEM_X54Y386->CLEL_R_X85Y417)
+SOUTH
+	INT_X83Y268->INT_X106Y307 (CLEM_X83Y268->DSP_X106Y305)
+	INT_X80Y272->INT_X95Y287 (CLEM_X80Y272->DSP_X95Y285)
+	INT_X80Y271->INT_X95Y286 (CLEM_X80Y271->DSP_X95Y285)
+	INT_X80Y270->INT_X95Y285 (CLEM_X80Y270->DSP_X95Y285)
+	INT_X80Y285->INT_X95Y300 (CLEM_X80Y285->DSP_X95Y300)
+EAST
+	INT_X82Y339->INT_X113Y418 (CLEM_X82Y339->CLEL_R_X113Y418)
+	INT_X76Y383->INT_X107Y414 (BRAM_X76Y380->CLEL_R_X107Y414)
+	INT_X76Y382->INT_X107Y413 (BRAM_X76Y380->CLEL_R_X107Y413)
+	INT_X76Y381->INT_X107Y412 (BRAM_X76Y380->CLEL_R_X107Y412)
+	INT_X76Y380->INT_X107Y411 (BRAM_X76Y380->CLEL_R_X107Y411)
+WEST
+	INT_X55Y329->INT_X102Y424 (CLEM_X55Y329->CLEL_R_X102Y424)
+	INT_X64Y368->INT_X95Y399 (CLEM_X64Y368->DSP_X95Y395)
+	INT_X64Y336->INT_X95Y367 (CLEM_X64Y336->DSP_X95Y365)
+	INT_X64Y367->INT_X95Y398 (CLEM_X64Y367->DSP_X95Y395)
+	INT_X64Y335->INT_X95Y366 (CLEM_X64Y335->DSP_X95Y365)
+
+INFO: [Route 35-448] Estimated Global/Short routing congestion is level 6 (64x64). Congestion levels of 5 and greater can reduce routability and impact timing closure.
+
+INFO: [Route 35-581] Estimated Timing congestion is level 7 (128x128). Congestion levels of 5 and greater may impact timing closure.
+INFO: [Route 35-580] Design has 2 pins with tight setup and hold constraints.
+
+The top 5 pins with tight setup and hold constraints:
+
++--------------------------+--------------------------+----------------------------------------------------------------------------------------------------------+
+|       Launch Clock       |      Capture Clock       |                                                 Pin                                                      |
++--------------------------+--------------------------+----------------------------------------------------------------------------------------------------------+
+|                 pipe_clk |                 pipe_clk |design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_c_e4_inst/PIPERX10DATA[10]|
+|                 pipe_clk |                 pipe_clk |design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_c_e4_inst/PIPERX10DATA[20]|
++--------------------------+--------------------------+----------------------------------------------------------------------------------------------------------+
+
+File with complete list of pins: tight_setup_hold_pins.txt
+
+
+Phase 4 Rip-up And Reroute
+
+Phase 4.1 Global Iteration 0
+ Number of Nodes with overlaps = 355934
+ Number of Nodes with overlaps = 149114
+ Number of Nodes with overlaps = 75138

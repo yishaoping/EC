@@ -1,0 +1,3274 @@
+{
+  "channel_count": 1747,
+  "circuit": "FAMETop",
+  "clock_proofs": {
+    "FireSim>lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_clock": {
+      "chain": [
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 10984,
+              "rhs": "lazyModule_.system_tile_prci_domain_1_tile_reset_domain_tile_clock"
+            }
+          ],
+          "instances": [],
+          "module": "FireSim",
+          "reference": "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_clock"
+        },
+        {
+          "instances": [],
+          "module": "FireSim",
+          "reference": "lazyModule_.system_tile_prci_domain_1_tile_reset_domain_tile_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1512930,
+              "rhs": "system_.tile_prci_domain_1_tile_reset_domain_tile_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_"
+          ],
+          "module": "ChipTop",
+          "reference": "system_tile_prci_domain_1_tile_reset_domain_tile_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_"
+          ],
+          "module": "ChipTop",
+          "reference": "system_.tile_prci_domain_1_tile_reset_domain_tile_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1509571,
+              "rhs": "tile_prci_domain_1_.tile_reset_domain_tile_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tile_prci_domain_1_tile_reset_domain_tile_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tile_prci_domain_1_.tile_reset_domain_tile_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1485256,
+              "rhs": "tile_reset_domain_.tile_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_1_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "tile_reset_domain_tile_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_1_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "tile_reset_domain_.tile_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1482721,
+              "rhs": "auto_clock_in_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_1_",
+            "tile_reset_domain_"
+          ],
+          "module": "TileResetDomain_1",
+          "reference": "tile_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_1_",
+            "tile_reset_domain_"
+          ],
+          "module": "TileResetDomain_1",
+          "reference": "auto_clock_in_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1485316,
+              "rhs": "clockNode.auto_out_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_1_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "tile_reset_domain_.auto_clock_in_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_1_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "clockNode.auto_out_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 11554,
+              "rhs": "auto_in_member_subsystem_sbus_0_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_1_",
+            "clockNode"
+          ],
+          "module": "ClockGroup",
+          "reference": "auto_out_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_1_",
+            "clockNode"
+          ],
+          "module": "ClockGroup",
+          "reference": "auto_in_member_subsystem_sbus_0_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1485362,
+              "rhs": "auto_tap_clock_in_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_1_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "clockNode.auto_in_member_subsystem_sbus_0_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_1_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "auto_tap_clock_in_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1510810,
+              "rhs": "tileClockGroup.auto_out_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tile_prci_domain_1_.auto_tap_clock_in_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tileClockGroup.auto_out_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 11554,
+              "rhs": "auto_in_member_subsystem_sbus_0_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tileClockGroup"
+          ],
+          "module": "ClockGroup",
+          "reference": "auto_out_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tileClockGroup"
+          ],
+          "module": "ClockGroup",
+          "reference": "auto_in_member_subsystem_sbus_0_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511386,
+              "rhs": "clockNamePrefixer.auto_clock_name_prefixer_out_1_member_tileClockGroup_tile_1_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tileClockGroup.auto_in_member_subsystem_sbus_0_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "clockNamePrefixer.auto_clock_name_prefixer_out_1_member_tileClockGroup_tile_1_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508134,
+              "rhs": "auto_clock_name_prefixer_in_1_member_tileClockGroup_tileClockGroup_tile_1_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "clockNamePrefixer"
+          ],
+          "module": "ClockGroupParameterModifier",
+          "reference": "auto_clock_name_prefixer_out_1_member_tileClockGroup_tile_1_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "clockNamePrefixer"
+          ],
+          "module": "ClockGroupParameterModifier",
+          "reference": "auto_clock_name_prefixer_in_1_member_tileClockGroup_tileClockGroup_tile_1_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511606,
+              "rhs": "aggregator.auto_out_1_member_tileClockGroup_tileClockGroup_tile_1_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "clockNamePrefixer.auto_clock_name_prefixer_in_1_member_tileClockGroup_tileClockGroup_tile_1_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "aggregator.auto_out_1_member_tileClockGroup_tileClockGroup_tile_1_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508071,
+              "rhs": "auto_in_member_allClocks_tileClockGroup_tile_1_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "aggregator"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_out_1_member_tileClockGroup_tileClockGroup_tile_1_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "aggregator"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_in_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511586,
+              "rhs": "frequencySpecifier.auto_out_1_member_tileClockGroup_tileClockGroup_tile_1_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "aggregator.auto_in_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "frequencySpecifier.auto_out_1_member_tileClockGroup_tileClockGroup_tile_1_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508071,
+              "rhs": "auto_in_member_allClocks_tileClockGroup_tile_1_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "frequencySpecifier"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_out_1_member_tileClockGroup_tileClockGroup_tile_1_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "frequencySpecifier"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_in_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511628,
+              "rhs": "clockGroupCombiner.auto_out_1_member_tileClockGroup_tileClockGroup_tile_1_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "frequencySpecifier.auto_in_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "clockGroupCombiner.auto_out_1_member_tileClockGroup_tileClockGroup_tile_1_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508071,
+              "rhs": "auto_in_member_allClocks_tileClockGroup_tile_1_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "clockGroupCombiner"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_out_1_member_tileClockGroup_tileClockGroup_tile_1_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "clockGroupCombiner"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_in_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511650,
+              "rhs": "resetSynchronizer.auto_out_member_allClocks_tileClockGroup_tile_1_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "clockGroupCombiner.auto_in_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "resetSynchronizer.auto_out_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508235,
+              "rhs": "auto_in_member_allClocks_tileClockGroup_tile_1_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "resetSynchronizer"
+          ],
+          "module": "ClockGroupResetSynchronizer",
+          "reference": "auto_out_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "resetSynchronizer"
+          ],
+          "module": "ClockGroupResetSynchronizer",
+          "reference": "auto_in_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511672,
+              "rhs": "prci_ctrl_domain.auto_tileResetSetter_clock_out_member_allClocks_tileClockGroup_tile_1_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "resetSynchronizer.auto_in_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "prci_ctrl_domain.auto_tileResetSetter_clock_out_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1507965,
+              "rhs": "tileResetSetter.auto_clock_out_member_allClocks_tileClockGroup_tile_1_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain"
+          ],
+          "module": "ClockSinkDomain_5",
+          "reference": "auto_tileResetSetter_clock_out_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain"
+          ],
+          "module": "ClockSinkDomain_5",
+          "reference": "tileResetSetter.auto_clock_out_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1507854,
+              "rhs": "auto_clock_in_member_allClocks_tileClockGroup_tile_1_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain",
+            "tileResetSetter"
+          ],
+          "module": "TileResetSetter",
+          "reference": "auto_clock_out_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain",
+            "tileResetSetter"
+          ],
+          "module": "TileResetSetter",
+          "reference": "auto_clock_in_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1507994,
+              "rhs": "auto_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_1_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain"
+          ],
+          "module": "ClockSinkDomain_5",
+          "reference": "tileResetSetter.auto_clock_in_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain"
+          ],
+          "module": "ClockSinkDomain_5",
+          "reference": "auto_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511555,
+              "rhs": "auto_prci_ctrl_domain_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_1_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "prci_ctrl_domain.auto_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "auto_prci_ctrl_domain_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1513040,
+              "rhs": "clocks_clocks_2"
+            }
+          ],
+          "instances": [
+            "lazyModule_"
+          ],
+          "module": "ChipTop",
+          "reference": "system_.auto_prci_ctrl_domain_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_1_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_"
+          ],
+          "module": "ChipTop",
+          "reference": "clocks_clocks_2"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 11083,
+              "rhs": "clockBridge_clocks_1"
+            }
+          ],
+          "instances": [],
+          "module": "FireSim",
+          "reference": "lazyModule_.clocks_clocks_2"
+        },
+        {
+          "instances": [],
+          "module": "FireSim",
+          "reference": "clockBridge_clocks_1"
+        }
+      ],
+      "endpoint": {
+        "input": "clockBridge_clocks_1",
+        "module": "FireSim"
+      },
+      "status": "WIRE_ALIAS_RESOLVED"
+    },
+    "FireSim>lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_clock": {
+      "chain": [
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 10953,
+              "rhs": "lazyModule_.system_tile_prci_domain_2_tile_reset_domain_tile_clock"
+            }
+          ],
+          "instances": [],
+          "module": "FireSim",
+          "reference": "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_clock"
+        },
+        {
+          "instances": [],
+          "module": "FireSim",
+          "reference": "lazyModule_.system_tile_prci_domain_2_tile_reset_domain_tile_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1512899,
+              "rhs": "system_.tile_prci_domain_2_tile_reset_domain_tile_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_"
+          ],
+          "module": "ChipTop",
+          "reference": "system_tile_prci_domain_2_tile_reset_domain_tile_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_"
+          ],
+          "module": "ChipTop",
+          "reference": "system_.tile_prci_domain_2_tile_reset_domain_tile_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1509540,
+              "rhs": "tile_prci_domain_2_.tile_reset_domain_tile_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tile_prci_domain_2_tile_reset_domain_tile_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tile_prci_domain_2_.tile_reset_domain_tile_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1485256,
+              "rhs": "tile_reset_domain_.tile_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_2_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "tile_reset_domain_tile_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_2_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "tile_reset_domain_.tile_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1482721,
+              "rhs": "auto_clock_in_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_2_",
+            "tile_reset_domain_"
+          ],
+          "module": "TileResetDomain_1",
+          "reference": "tile_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_2_",
+            "tile_reset_domain_"
+          ],
+          "module": "TileResetDomain_1",
+          "reference": "auto_clock_in_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1485316,
+              "rhs": "clockNode.auto_out_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_2_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "tile_reset_domain_.auto_clock_in_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_2_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "clockNode.auto_out_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 11554,
+              "rhs": "auto_in_member_subsystem_sbus_0_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_2_",
+            "clockNode"
+          ],
+          "module": "ClockGroup",
+          "reference": "auto_out_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_2_",
+            "clockNode"
+          ],
+          "module": "ClockGroup",
+          "reference": "auto_in_member_subsystem_sbus_0_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1485362,
+              "rhs": "auto_tap_clock_in_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_2_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "clockNode.auto_in_member_subsystem_sbus_0_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_2_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "auto_tap_clock_in_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1510971,
+              "rhs": "tileClockGroup_1.auto_out_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tile_prci_domain_2_.auto_tap_clock_in_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tileClockGroup_1.auto_out_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 11554,
+              "rhs": "auto_in_member_subsystem_sbus_0_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tileClockGroup_1"
+          ],
+          "module": "ClockGroup",
+          "reference": "auto_out_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tileClockGroup_1"
+          ],
+          "module": "ClockGroup",
+          "reference": "auto_in_member_subsystem_sbus_0_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511398,
+              "rhs": "clockNamePrefixer.auto_clock_name_prefixer_out_2_member_tileClockGroup_tile_2_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tileClockGroup_1.auto_in_member_subsystem_sbus_0_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "clockNamePrefixer.auto_clock_name_prefixer_out_2_member_tileClockGroup_tile_2_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508132,
+              "rhs": "auto_clock_name_prefixer_in_2_member_tileClockGroup_tileClockGroup_tile_2_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "clockNamePrefixer"
+          ],
+          "module": "ClockGroupParameterModifier",
+          "reference": "auto_clock_name_prefixer_out_2_member_tileClockGroup_tile_2_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "clockNamePrefixer"
+          ],
+          "module": "ClockGroupParameterModifier",
+          "reference": "auto_clock_name_prefixer_in_2_member_tileClockGroup_tileClockGroup_tile_2_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511604,
+              "rhs": "aggregator.auto_out_2_member_tileClockGroup_tileClockGroup_tile_2_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "clockNamePrefixer.auto_clock_name_prefixer_in_2_member_tileClockGroup_tileClockGroup_tile_2_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "aggregator.auto_out_2_member_tileClockGroup_tileClockGroup_tile_2_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508069,
+              "rhs": "auto_in_member_allClocks_tileClockGroup_tile_2_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "aggregator"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_out_2_member_tileClockGroup_tileClockGroup_tile_2_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "aggregator"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_in_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511584,
+              "rhs": "frequencySpecifier.auto_out_2_member_tileClockGroup_tileClockGroup_tile_2_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "aggregator.auto_in_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "frequencySpecifier.auto_out_2_member_tileClockGroup_tileClockGroup_tile_2_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508069,
+              "rhs": "auto_in_member_allClocks_tileClockGroup_tile_2_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "frequencySpecifier"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_out_2_member_tileClockGroup_tileClockGroup_tile_2_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "frequencySpecifier"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_in_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511626,
+              "rhs": "clockGroupCombiner.auto_out_2_member_tileClockGroup_tileClockGroup_tile_2_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "frequencySpecifier.auto_in_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "clockGroupCombiner.auto_out_2_member_tileClockGroup_tileClockGroup_tile_2_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508069,
+              "rhs": "auto_in_member_allClocks_tileClockGroup_tile_2_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "clockGroupCombiner"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_out_2_member_tileClockGroup_tileClockGroup_tile_2_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "clockGroupCombiner"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_in_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511648,
+              "rhs": "resetSynchronizer.auto_out_member_allClocks_tileClockGroup_tile_2_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "clockGroupCombiner.auto_in_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "resetSynchronizer.auto_out_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508233,
+              "rhs": "auto_in_member_allClocks_tileClockGroup_tile_2_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "resetSynchronizer"
+          ],
+          "module": "ClockGroupResetSynchronizer",
+          "reference": "auto_out_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "resetSynchronizer"
+          ],
+          "module": "ClockGroupResetSynchronizer",
+          "reference": "auto_in_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511670,
+              "rhs": "prci_ctrl_domain.auto_tileResetSetter_clock_out_member_allClocks_tileClockGroup_tile_2_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "resetSynchronizer.auto_in_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "prci_ctrl_domain.auto_tileResetSetter_clock_out_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1507963,
+              "rhs": "tileResetSetter.auto_clock_out_member_allClocks_tileClockGroup_tile_2_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain"
+          ],
+          "module": "ClockSinkDomain_5",
+          "reference": "auto_tileResetSetter_clock_out_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain"
+          ],
+          "module": "ClockSinkDomain_5",
+          "reference": "tileResetSetter.auto_clock_out_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1507852,
+              "rhs": "auto_clock_in_member_allClocks_tileClockGroup_tile_2_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain",
+            "tileResetSetter"
+          ],
+          "module": "TileResetSetter",
+          "reference": "auto_clock_out_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain",
+            "tileResetSetter"
+          ],
+          "module": "TileResetSetter",
+          "reference": "auto_clock_in_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1507992,
+              "rhs": "auto_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_2_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain"
+          ],
+          "module": "ClockSinkDomain_5",
+          "reference": "tileResetSetter.auto_clock_in_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain"
+          ],
+          "module": "ClockSinkDomain_5",
+          "reference": "auto_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511553,
+              "rhs": "auto_prci_ctrl_domain_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_2_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "prci_ctrl_domain.auto_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "auto_prci_ctrl_domain_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1513038,
+              "rhs": "clocks_clocks_3"
+            }
+          ],
+          "instances": [
+            "lazyModule_"
+          ],
+          "module": "ChipTop",
+          "reference": "system_.auto_prci_ctrl_domain_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_2_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_"
+          ],
+          "module": "ChipTop",
+          "reference": "clocks_clocks_3"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 11084,
+              "rhs": "clockBridge_clocks_1"
+            }
+          ],
+          "instances": [],
+          "module": "FireSim",
+          "reference": "lazyModule_.clocks_clocks_3"
+        },
+        {
+          "instances": [],
+          "module": "FireSim",
+          "reference": "clockBridge_clocks_1"
+        }
+      ],
+      "endpoint": {
+        "input": "clockBridge_clocks_1",
+        "module": "FireSim"
+      },
+      "status": "WIRE_ALIAS_RESOLVED"
+    },
+    "FireSim>lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_clock": {
+      "chain": [
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 10922,
+              "rhs": "lazyModule_.system_tile_prci_domain_3_tile_reset_domain_tile_clock"
+            }
+          ],
+          "instances": [],
+          "module": "FireSim",
+          "reference": "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_clock"
+        },
+        {
+          "instances": [],
+          "module": "FireSim",
+          "reference": "lazyModule_.system_tile_prci_domain_3_tile_reset_domain_tile_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1512868,
+              "rhs": "system_.tile_prci_domain_3_tile_reset_domain_tile_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_"
+          ],
+          "module": "ChipTop",
+          "reference": "system_tile_prci_domain_3_tile_reset_domain_tile_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_"
+          ],
+          "module": "ChipTop",
+          "reference": "system_.tile_prci_domain_3_tile_reset_domain_tile_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1509509,
+              "rhs": "tile_prci_domain_3_.tile_reset_domain_tile_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tile_prci_domain_3_tile_reset_domain_tile_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tile_prci_domain_3_.tile_reset_domain_tile_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1485256,
+              "rhs": "tile_reset_domain_.tile_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_3_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "tile_reset_domain_tile_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_3_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "tile_reset_domain_.tile_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1482721,
+              "rhs": "auto_clock_in_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_3_",
+            "tile_reset_domain_"
+          ],
+          "module": "TileResetDomain_1",
+          "reference": "tile_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_3_",
+            "tile_reset_domain_"
+          ],
+          "module": "TileResetDomain_1",
+          "reference": "auto_clock_in_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1485316,
+              "rhs": "clockNode.auto_out_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_3_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "tile_reset_domain_.auto_clock_in_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_3_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "clockNode.auto_out_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 11554,
+              "rhs": "auto_in_member_subsystem_sbus_0_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_3_",
+            "clockNode"
+          ],
+          "module": "ClockGroup",
+          "reference": "auto_out_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_3_",
+            "clockNode"
+          ],
+          "module": "ClockGroup",
+          "reference": "auto_in_member_subsystem_sbus_0_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1485362,
+              "rhs": "auto_tap_clock_in_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_3_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "clockNode.auto_in_member_subsystem_sbus_0_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_3_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "auto_tap_clock_in_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511132,
+              "rhs": "tileClockGroup_2.auto_out_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tile_prci_domain_3_.auto_tap_clock_in_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tileClockGroup_2.auto_out_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 11554,
+              "rhs": "auto_in_member_subsystem_sbus_0_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tileClockGroup_2"
+          ],
+          "module": "ClockGroup",
+          "reference": "auto_out_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tileClockGroup_2"
+          ],
+          "module": "ClockGroup",
+          "reference": "auto_in_member_subsystem_sbus_0_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511410,
+              "rhs": "clockNamePrefixer.auto_clock_name_prefixer_out_3_member_tileClockGroup_tile_3_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tileClockGroup_2.auto_in_member_subsystem_sbus_0_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "clockNamePrefixer.auto_clock_name_prefixer_out_3_member_tileClockGroup_tile_3_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508130,
+              "rhs": "auto_clock_name_prefixer_in_3_member_tileClockGroup_tileClockGroup_tile_3_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "clockNamePrefixer"
+          ],
+          "module": "ClockGroupParameterModifier",
+          "reference": "auto_clock_name_prefixer_out_3_member_tileClockGroup_tile_3_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "clockNamePrefixer"
+          ],
+          "module": "ClockGroupParameterModifier",
+          "reference": "auto_clock_name_prefixer_in_3_member_tileClockGroup_tileClockGroup_tile_3_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511602,
+              "rhs": "aggregator.auto_out_3_member_tileClockGroup_tileClockGroup_tile_3_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "clockNamePrefixer.auto_clock_name_prefixer_in_3_member_tileClockGroup_tileClockGroup_tile_3_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "aggregator.auto_out_3_member_tileClockGroup_tileClockGroup_tile_3_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508067,
+              "rhs": "auto_in_member_allClocks_tileClockGroup_tile_3_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "aggregator"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_out_3_member_tileClockGroup_tileClockGroup_tile_3_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "aggregator"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_in_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511582,
+              "rhs": "frequencySpecifier.auto_out_3_member_tileClockGroup_tileClockGroup_tile_3_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "aggregator.auto_in_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "frequencySpecifier.auto_out_3_member_tileClockGroup_tileClockGroup_tile_3_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508067,
+              "rhs": "auto_in_member_allClocks_tileClockGroup_tile_3_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "frequencySpecifier"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_out_3_member_tileClockGroup_tileClockGroup_tile_3_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "frequencySpecifier"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_in_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511624,
+              "rhs": "clockGroupCombiner.auto_out_3_member_tileClockGroup_tileClockGroup_tile_3_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "frequencySpecifier.auto_in_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "clockGroupCombiner.auto_out_3_member_tileClockGroup_tileClockGroup_tile_3_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508067,
+              "rhs": "auto_in_member_allClocks_tileClockGroup_tile_3_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "clockGroupCombiner"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_out_3_member_tileClockGroup_tileClockGroup_tile_3_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "clockGroupCombiner"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_in_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511646,
+              "rhs": "resetSynchronizer.auto_out_member_allClocks_tileClockGroup_tile_3_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "clockGroupCombiner.auto_in_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "resetSynchronizer.auto_out_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508231,
+              "rhs": "auto_in_member_allClocks_tileClockGroup_tile_3_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "resetSynchronizer"
+          ],
+          "module": "ClockGroupResetSynchronizer",
+          "reference": "auto_out_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "resetSynchronizer"
+          ],
+          "module": "ClockGroupResetSynchronizer",
+          "reference": "auto_in_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511668,
+              "rhs": "prci_ctrl_domain.auto_tileResetSetter_clock_out_member_allClocks_tileClockGroup_tile_3_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "resetSynchronizer.auto_in_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "prci_ctrl_domain.auto_tileResetSetter_clock_out_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1507961,
+              "rhs": "tileResetSetter.auto_clock_out_member_allClocks_tileClockGroup_tile_3_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain"
+          ],
+          "module": "ClockSinkDomain_5",
+          "reference": "auto_tileResetSetter_clock_out_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain"
+          ],
+          "module": "ClockSinkDomain_5",
+          "reference": "tileResetSetter.auto_clock_out_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1507850,
+              "rhs": "auto_clock_in_member_allClocks_tileClockGroup_tile_3_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain",
+            "tileResetSetter"
+          ],
+          "module": "TileResetSetter",
+          "reference": "auto_clock_out_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain",
+            "tileResetSetter"
+          ],
+          "module": "TileResetSetter",
+          "reference": "auto_clock_in_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1507990,
+              "rhs": "auto_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_3_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain"
+          ],
+          "module": "ClockSinkDomain_5",
+          "reference": "tileResetSetter.auto_clock_in_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain"
+          ],
+          "module": "ClockSinkDomain_5",
+          "reference": "auto_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511551,
+              "rhs": "auto_prci_ctrl_domain_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_3_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "prci_ctrl_domain.auto_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "auto_prci_ctrl_domain_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1513036,
+              "rhs": "clocks_clocks_4"
+            }
+          ],
+          "instances": [
+            "lazyModule_"
+          ],
+          "module": "ChipTop",
+          "reference": "system_.auto_prci_ctrl_domain_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_3_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_"
+          ],
+          "module": "ChipTop",
+          "reference": "clocks_clocks_4"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 11085,
+              "rhs": "clockBridge_clocks_1"
+            }
+          ],
+          "instances": [],
+          "module": "FireSim",
+          "reference": "lazyModule_.clocks_clocks_4"
+        },
+        {
+          "instances": [],
+          "module": "FireSim",
+          "reference": "clockBridge_clocks_1"
+        }
+      ],
+      "endpoint": {
+        "input": "clockBridge_clocks_1",
+        "module": "FireSim"
+      },
+      "status": "WIRE_ALIAS_RESOLVED"
+    },
+    "FireSim>lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_clock": {
+      "chain": [
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 10891,
+              "rhs": "lazyModule_.system_tile_prci_domain_4_tile_reset_domain_tile_clock"
+            }
+          ],
+          "instances": [],
+          "module": "FireSim",
+          "reference": "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_clock"
+        },
+        {
+          "instances": [],
+          "module": "FireSim",
+          "reference": "lazyModule_.system_tile_prci_domain_4_tile_reset_domain_tile_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1512837,
+              "rhs": "system_.tile_prci_domain_4_tile_reset_domain_tile_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_"
+          ],
+          "module": "ChipTop",
+          "reference": "system_tile_prci_domain_4_tile_reset_domain_tile_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_"
+          ],
+          "module": "ChipTop",
+          "reference": "system_.tile_prci_domain_4_tile_reset_domain_tile_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1509478,
+              "rhs": "tile_prci_domain_4_.tile_reset_domain_tile_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tile_prci_domain_4_tile_reset_domain_tile_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tile_prci_domain_4_.tile_reset_domain_tile_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1485256,
+              "rhs": "tile_reset_domain_.tile_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_4_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "tile_reset_domain_tile_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_4_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "tile_reset_domain_.tile_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1482721,
+              "rhs": "auto_clock_in_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_4_",
+            "tile_reset_domain_"
+          ],
+          "module": "TileResetDomain_1",
+          "reference": "tile_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_4_",
+            "tile_reset_domain_"
+          ],
+          "module": "TileResetDomain_1",
+          "reference": "auto_clock_in_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1485316,
+              "rhs": "clockNode.auto_out_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_4_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "tile_reset_domain_.auto_clock_in_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_4_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "clockNode.auto_out_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 11554,
+              "rhs": "auto_in_member_subsystem_sbus_0_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_4_",
+            "clockNode"
+          ],
+          "module": "ClockGroup",
+          "reference": "auto_out_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_4_",
+            "clockNode"
+          ],
+          "module": "ClockGroup",
+          "reference": "auto_in_member_subsystem_sbus_0_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1485362,
+              "rhs": "auto_tap_clock_in_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_4_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "clockNode.auto_in_member_subsystem_sbus_0_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tile_prci_domain_4_"
+          ],
+          "module": "TilePRCIDomain_1",
+          "reference": "auto_tap_clock_in_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511293,
+              "rhs": "tileClockGroup_3.auto_out_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tile_prci_domain_4_.auto_tap_clock_in_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tileClockGroup_3.auto_out_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 11554,
+              "rhs": "auto_in_member_subsystem_sbus_0_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tileClockGroup_3"
+          ],
+          "module": "ClockGroup",
+          "reference": "auto_out_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "tileClockGroup_3"
+          ],
+          "module": "ClockGroup",
+          "reference": "auto_in_member_subsystem_sbus_0_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511422,
+              "rhs": "clockNamePrefixer.auto_clock_name_prefixer_out_4_member_tileClockGroup_tile_4_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "tileClockGroup_3.auto_in_member_subsystem_sbus_0_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "clockNamePrefixer.auto_clock_name_prefixer_out_4_member_tileClockGroup_tile_4_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508128,
+              "rhs": "auto_clock_name_prefixer_in_4_member_tileClockGroup_tileClockGroup_tile_4_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "clockNamePrefixer"
+          ],
+          "module": "ClockGroupParameterModifier",
+          "reference": "auto_clock_name_prefixer_out_4_member_tileClockGroup_tile_4_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "clockNamePrefixer"
+          ],
+          "module": "ClockGroupParameterModifier",
+          "reference": "auto_clock_name_prefixer_in_4_member_tileClockGroup_tileClockGroup_tile_4_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511600,
+              "rhs": "aggregator.auto_out_4_member_tileClockGroup_tileClockGroup_tile_4_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "clockNamePrefixer.auto_clock_name_prefixer_in_4_member_tileClockGroup_tileClockGroup_tile_4_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "aggregator.auto_out_4_member_tileClockGroup_tileClockGroup_tile_4_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508065,
+              "rhs": "auto_in_member_allClocks_tileClockGroup_tile_4_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "aggregator"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_out_4_member_tileClockGroup_tileClockGroup_tile_4_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "aggregator"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_in_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511580,
+              "rhs": "frequencySpecifier.auto_out_4_member_tileClockGroup_tileClockGroup_tile_4_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "aggregator.auto_in_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "frequencySpecifier.auto_out_4_member_tileClockGroup_tileClockGroup_tile_4_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508065,
+              "rhs": "auto_in_member_allClocks_tileClockGroup_tile_4_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "frequencySpecifier"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_out_4_member_tileClockGroup_tileClockGroup_tile_4_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "frequencySpecifier"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_in_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511622,
+              "rhs": "clockGroupCombiner.auto_out_4_member_tileClockGroup_tileClockGroup_tile_4_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "frequencySpecifier.auto_in_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "clockGroupCombiner.auto_out_4_member_tileClockGroup_tileClockGroup_tile_4_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508065,
+              "rhs": "auto_in_member_allClocks_tileClockGroup_tile_4_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "clockGroupCombiner"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_out_4_member_tileClockGroup_tileClockGroup_tile_4_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "clockGroupCombiner"
+          ],
+          "module": "ClockGroupAggregator_7",
+          "reference": "auto_in_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511644,
+              "rhs": "resetSynchronizer.auto_out_member_allClocks_tileClockGroup_tile_4_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "clockGroupCombiner.auto_in_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "resetSynchronizer.auto_out_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1508229,
+              "rhs": "auto_in_member_allClocks_tileClockGroup_tile_4_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "resetSynchronizer"
+          ],
+          "module": "ClockGroupResetSynchronizer",
+          "reference": "auto_out_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "resetSynchronizer"
+          ],
+          "module": "ClockGroupResetSynchronizer",
+          "reference": "auto_in_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511666,
+              "rhs": "prci_ctrl_domain.auto_tileResetSetter_clock_out_member_allClocks_tileClockGroup_tile_4_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "resetSynchronizer.auto_in_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "prci_ctrl_domain.auto_tileResetSetter_clock_out_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1507959,
+              "rhs": "tileResetSetter.auto_clock_out_member_allClocks_tileClockGroup_tile_4_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain"
+          ],
+          "module": "ClockSinkDomain_5",
+          "reference": "auto_tileResetSetter_clock_out_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain"
+          ],
+          "module": "ClockSinkDomain_5",
+          "reference": "tileResetSetter.auto_clock_out_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1507848,
+              "rhs": "auto_clock_in_member_allClocks_tileClockGroup_tile_4_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain",
+            "tileResetSetter"
+          ],
+          "module": "TileResetSetter",
+          "reference": "auto_clock_out_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain",
+            "tileResetSetter"
+          ],
+          "module": "TileResetSetter",
+          "reference": "auto_clock_in_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1507988,
+              "rhs": "auto_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_4_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain"
+          ],
+          "module": "ClockSinkDomain_5",
+          "reference": "tileResetSetter.auto_clock_in_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_",
+            "prci_ctrl_domain"
+          ],
+          "module": "ClockSinkDomain_5",
+          "reference": "auto_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1511549,
+              "rhs": "auto_prci_ctrl_domain_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_4_clock"
+            }
+          ],
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "prci_ctrl_domain.auto_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_",
+            "system_"
+          ],
+          "module": "DigitalTop",
+          "reference": "auto_prci_ctrl_domain_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 1513034,
+              "rhs": "clocks_clocks_5"
+            }
+          ],
+          "instances": [
+            "lazyModule_"
+          ],
+          "module": "ChipTop",
+          "reference": "system_.auto_prci_ctrl_domain_tileResetSetter_clock_in_member_allClocks_tileClockGroup_tile_4_clock"
+        },
+        {
+          "instances": [
+            "lazyModule_"
+          ],
+          "module": "ChipTop",
+          "reference": "clocks_clocks_5"
+        },
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 11086,
+              "rhs": "clockBridge_clocks_1"
+            }
+          ],
+          "instances": [],
+          "module": "FireSim",
+          "reference": "lazyModule_.clocks_clocks_5"
+        },
+        {
+          "instances": [],
+          "module": "FireSim",
+          "reference": "clockBridge_clocks_1"
+        }
+      ],
+      "endpoint": {
+        "input": "clockBridge_clocks_1",
+        "module": "FireSim"
+      },
+      "status": "WIRE_ALIAS_RESOLVED"
+    },
+    "FireSim>synthesizedPrintf_clockBridge_clocks_1": {
+      "chain": [
+        {
+          "drivers": [
+            {
+              "conditional": false,
+              "kind": "connect",
+              "line": 10887,
+              "rhs": "clockBridge_clocks_1"
+            }
+          ],
+          "instances": [],
+          "module": "FireSim",
+          "reference": "synthesizedPrintf_clockBridge_clocks_1"
+        },
+        {
+          "instances": [],
+          "module": "FireSim",
+          "reference": "clockBridge_clocks_1"
+        }
+      ],
+      "endpoint": {
+        "input": "clockBridge_clocks_1",
+        "module": "FireSim"
+      },
+      "status": "WIRE_ALIAS_RESOLVED"
+    }
+  },
+  "compiler_changed": false,
+  "completed_utc": "2026-11-11T11:49:16.557501+00:00",
+  "conflicts": [
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in__to__FireSim__lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_synthesizedPrintf_core_printf_wire_args_0",
+        "clock": "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_core_printf_1_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in__to__FireSim__lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_synthesizedPrintf_core_printf_wire_args_0",
+        "clock": "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_core_printf_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in__to__FireSim__lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_synthesizedPrintf_core_printf_1_wire_args_0",
+        "clock": "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_core_printf_1_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in__to__FireSim__lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_synthesizedPrintf_core_printf_1_wire_args_0",
+        "clock": "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_core_printf_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in__to__FireSim__lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_synthesizedPrintf_core_printf_wire_args_0",
+        "clock": "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_core_printf_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in__to__FireSim__lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_synthesizedPrintf_core_printf_wire_args_0",
+        "clock": "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_core_printf_1_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in__to__FireSim__lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_synthesizedPrintf_core_printf_1_wire_args_0",
+        "clock": "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_core_printf_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in__to__FireSim__lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_synthesizedPrintf_core_printf_1_wire_args_0",
+        "clock": "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_core_printf_1_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in__to__FireSim__lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_synthesizedPrintf_core_printf_wire_args_0",
+        "clock": "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_core_printf_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in__to__FireSim__lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_synthesizedPrintf_core_printf_wire_args_0",
+        "clock": "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_core_printf_1_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in__to__FireSim__lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_synthesizedPrintf_core_printf_1_wire_args_0",
+        "clock": "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_core_printf_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in__to__FireSim__lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_synthesizedPrintf_core_printf_1_wire_args_0",
+        "clock": "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_core_printf_1_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in__to__FireSim__lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_synthesizedPrintf_core_printf_wire_args_0",
+        "clock": "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_core_printf_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in__to__FireSim__lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_synthesizedPrintf_core_printf_wire_args_0",
+        "clock": "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_core_printf_1_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in__to__FireSim__lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_synthesizedPrintf_core_printf_1_wire_args_0",
+        "clock": "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_core_printf_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in__to__FireSim__lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_synthesizedPrintf_core_printf_1_wire_args_0",
+        "clock": "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_core_printf_1_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in__to__FireSim_lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile__auto_hartid_in",
+        "clock": "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_core_printf_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in__to__FireSim_lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile__auto_hartid_in",
+        "clock": "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_core_printf_1_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_1_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in__to__FireSim_lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile__auto_hartid_in",
+        "clock": "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_core_printf_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in__to__FireSim_lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile__auto_hartid_in",
+        "clock": "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_core_printf_1_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_2_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in__to__FireSim_lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile__auto_hartid_in",
+        "clock": "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_core_printf_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in__to__FireSim_lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile__auto_hartid_in",
+        "clock": "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_core_printf_1_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_3_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in__to__FireSim_lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile__auto_hartid_in",
+        "clock": "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_core_printf_1_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    },
+    {
+      "a": {
+        "channel": "FireSim__lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in__to__FireSim_lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile__auto_hartid_in",
+        "clock": "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_clock",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "b": {
+        "channel": "synthesizedPrintf_lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_core_printf_wire_args_0",
+        "clock": "synthesizedPrintf_clockBridge_clocks_1",
+        "payload": [
+          "lazyModule_system_tile_prci_domain_4_tile_reset_domain_tile_auto_hartid_in"
+        ]
+      },
+      "flow": "sources",
+      "identical_payload": true,
+      "module": "FireSim",
+      "wire_identical_clock": true
+    }
+  ],
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "inputs": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-mt-mcrams-r1-20261111/goldengate.log": "413c6aecf335c832689fbded3b97e8dc973dee2f5bebb86608c9de7d50c5ac90",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-mt-mcrams-r1-20261111/goldengate/post-channel-excision.fir": "e4cf17467e05587a5ecd56e14eb48e4c1bc02b88519785668fe2a685335fca3a",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-mt-mcrams-r1-20261111/goldengate/post-channel-excision.json": "2a101c780e21260c8f0bdcaf562d1ce663ce13a2a3b2e20fe6ba3c1d0268aca5",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-mt-mcrams-r1-20261111/state.json": "43c877e2001009ebecb15dbda7b94184ced20e78c69616a935debf7c3fb30661",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/src/main/scala/midas/passes/fame/FAMEUtils.scala": "a0b18d53257c3996e08549a601559c5ef80e7087ff4c7d674aab01d9fb58dc17",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/src/main/scala/midas/passes/fame/InferModelPorts.scala": "3cd28e7ca9a9e3a22ca4208da23b40ed89b5ee511207f816ebcc2312185a3f30",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/src/main/scala/midas/passes/fame/MultiThreadFAME5Models.scala": "eb5855d50732ed7a5e456068698f933fec4273cd05d50becb766ea2a3a7524bc",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-elaborate-20261106T100250.032318Z/firesim.firesim.FireSim.anno.json": "8c5c43c59661c7d93a34b80ae1b8a9625d11b977ce135761b66ded22c58e9032",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-elaborate-20261106T100250.032318Z/firesim.firesim.FireSim.fir": "3d6163dc6626d3d35a1a746da0956992316a50c5ddd0ed104a8e67f881356fec"
+  },
+  "limitations": [
+    "No compiler repair applied",
+    "Not full target equivalence or MT sharing proof",
+    "No whole-system area, timing or FPGA admission",
+    "Four specialized Rocket modules remain a later MTModels sharing obligation"
+  ],
+  "model_flow_group_count": 32,
+  "module_count": 623,
+  "negative_checks": {
+    "alias_loop": "REJECTED",
+    "computed_clock": "REJECTED",
+    "conditional_connect": "REJECTED",
+    "different_roots_even_if_same_frequency": "REJECTED",
+    "distinct_drivers": "REJECTED",
+    "identical_duplicate_connects": "ACCEPTED",
+    "undriven_clock": "REJECTED"
+  },
+  "pid": 75171,
+  "policy_observed": "8491167d baseline, function/cycle equivalent target only, no features, Native paused,21-only. 9ae DONE NOTFIT postopt2847382LUT gap1543702. Preserve activee0 and modulemaps; never restart9ae or infer completeFIT from localhostRAM gains.",
+  "schema": "ec-opt4-mt-channel-audit/1",
+  "scope": "Saved InferModelPorts channel-clock boundary only",
+  "start_ticks": "20946585",
+  "started_utc": "2026-11-11T11:49:05.460483+00:00",
+  "status": "PASS_ALL_CONFLICT_CLOCKS_WIRE_IDENTICAL_NO_REPAIR_APPLIED",
+  "target_changed": false,
+  "transformed_modules": [
+    "BoomTile",
+    "FireSim",
+    "RocketTile",
+    "RocketTile_1",
+    "RocketTile_2",
+    "RocketTile_3",
+    "regfile",
+    "regfile_0",
+    "regfile_1",
+    "regfile_2",
+    "regfile_3",
+    "regfile_4",
+    "rf",
+    "rf_0",
+    "rf_1",
+    "rf_2"
+  ]
+}

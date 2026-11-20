@@ -1,0 +1,6 @@
+read_verilog -sv /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-common-query-select-r1-20261113/Contract/Contract.v
+prep -top Contract
+flatten
+opt_clean
+check -assert
+sat -timeout 60 -prove io_same 0 -show-inputs -show-outputs

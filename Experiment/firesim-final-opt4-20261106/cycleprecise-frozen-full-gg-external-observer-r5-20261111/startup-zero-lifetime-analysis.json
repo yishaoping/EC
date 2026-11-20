@@ -1,0 +1,59 @@
+{
+  "schema": "ec-original-svb-real-trace-latency/1",
+  "status": "PASS_MATCHED_COMPLETE_LIFETIME_SAMPLES_WITH_EXPLICIT_CENSORING",
+  "captures": 0,
+  "complete_ack_lifetimes": 0,
+  "censored_lifetimes": 0,
+  "metrics": {
+    "capture_to_promotion": {
+      "n": 0,
+      "total": 0,
+      "mean": null,
+      "median": null,
+      "p95": null,
+      "p99": null,
+      "maximum": null,
+      "histogram": {},
+      "units": "fastest BOOM target cycles"
+    },
+    "promotion_to_ack": {
+      "n": 0,
+      "total": 0,
+      "mean": null,
+      "median": null,
+      "p95": null,
+      "p99": null,
+      "maximum": null,
+      "histogram": {},
+      "units": "fastest BOOM target cycles"
+    },
+    "capture_to_ack": {
+      "n": 0,
+      "total": 0,
+      "mean": null,
+      "median": null,
+      "p95": null,
+      "p99": null,
+      "maximum": null,
+      "histogram": {},
+      "units": "fastest BOOM target cycles"
+    }
+  },
+  "sample_lifetimes": [],
+  "censored": [],
+  "occupancy_histogram_target_cycles": {
+    "0": 9947
+  },
+  "final_preedge_occupancy": 0,
+  "all_observed_ownership_ended": true,
+  "full_sv_replay_admission": "Requires independent original target SVB full replay receipt; this analysis alone is insufficient",
+  "timebase": "fastest BOOM target-cycle number from original GoldenGate ClockBridge; CSR values are corroboration and never used across epochs",
+  "data_kind": "CPU GoldenGate metasimulation observations; no FPGA measurements",
+  "fpga_access": false,
+  "strict_checkerDone_minus_BOOMDone": "NOT_MEASURED; SVB ACK is writeback ReleaseAck ownership completion",
+  "limitations": [
+    "Reused entries with no ACK are censored, not silently discarded",
+    "Final preedge occupancy does not by itself prove complete system checker/architectural drain",
+    "No full architectural rollback/restart verification"
+  ]
+}

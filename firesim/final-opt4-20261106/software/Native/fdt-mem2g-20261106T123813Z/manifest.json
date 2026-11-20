@@ -1,0 +1,48 @@
+{
+  "schema": "ec-firesim-fdt/1",
+  "phase": "fdt",
+  "configuration": "Native",
+  "returncode": 0,
+  "elaboration_result": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-roi-v5/B-elaborate-20261102T092109.491588Z/result.json",
+  "elaboration_result_sha256": "f6192e954858e575ecd210c35b106355e387b92bf98d36b3f604a60f6c168590",
+  "source_dts": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-elaborate-20261102T092109.491588Z/firesim.firesim.FireSim.dts",
+  "source_dts_sha256": "b97f7f1d8422f020b697facd6bf95db88d57b70d7add510b3106b5837db83e0f",
+  "dts": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T123813Z/Native.dts",
+  "dts_sha256": "ae3c9dff86de8a5a22d08ef719799dfa709b0f232b2101fa28d7ad23a11a9f6b",
+  "fdt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T123813Z/Native.dtb",
+  "sha256": "fae79acb1713f9249a35e89961f3be014e526820a0713644531abf7b5eaae6ac",
+  "command": [
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/dtc",
+    "-I",
+    "dts",
+    "-O",
+    "dtb",
+    "-p",
+    "4096",
+    "-o",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T123813Z/Native.dtb",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T123813Z/Native.dts"
+  ],
+  "bootargs": "console=ttySIF0,115200 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+  "linux_harts": [
+    0
+  ],
+  "firmware_checker_harts": [],
+  "target_memory_base": 2147483648,
+  "target_memory_bytes": 17179869184,
+  "linux_mem_cap": 2147483648,
+  "linux_profile_sha256": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1",
+  "target_boom_hz": 200000000,
+  "target_checker_hz": null,
+  "runtime_validation": "NOT_RUN",
+  "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-build.json",
+  "parent_receipt_sha256": "9a3f5287b60a9ec72e4c29eb9c6edc867f1110487998bee19e19f39b14c52948",
+  "profile": "matched-guest-mem2g-phys36-canonical-isa",
+  "isa_normalization": [
+    {
+      "original": "rv64imafdcZicsr_Zifencei_Zihpm",
+      "canonical": "rv64imafdc_zicsr_zifencei_zihpm"
+    }
+  ],
+  "normalizer_sha256": "cdc93d5c3bd0f2f013eb5029a1addb1a0c53a4e72b8f23ebbe814439cbc4a59e"
+}

@@ -1,0 +1,27 @@
+{
+  "causal_strength": "PROVEN_BY_SAVED_TRACEBACK_AND_SOURCE_ORDER",
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "immediate_blocker": "STRICT_RESOURCE_GUARD_LOAD_NOT_BELOW_48",
+  "next": "Versioned recovery must defer before consuming an attempt until original load<48, memory>=128GiB,disk>=96GiB guards pass, then use sealed exited producer with exact cgroup and unique outputs; preserve existing followers. No blind retry or guard lowering.",
+  "no_recovery_cad_launched": true,
+  "observed_utc": "2026-11-11T17:05:30.321652+00:00",
+  "resource_guard_unchanged": true,
+  "schema": "ec-svb-recovery-resource-diagnosis/1",
+  "source_run_script": "/data1/gzh/EC/firesim/final-opt4-20261106/routes/svb-postroute-recovery-r1-20261111/run.py",
+  "stages_absent": {
+    "spread-postroute": {
+      "recover.tcl": true,
+      "recovery.log": true,
+      "result.json": true,
+      "sealed-inputs.json": true
+    },
+    "spread-replicate": {
+      "recover.tcl": true,
+      "recovery.log": true,
+      "result.json": true,
+      "sealed-inputs.json": true
+    }
+  },
+  "symptom": "spread postroute and replicate r2 failed at load<48 assertion, before CAD invocation"
+}

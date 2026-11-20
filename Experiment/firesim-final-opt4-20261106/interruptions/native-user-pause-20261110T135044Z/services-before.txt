@@ -1,0 +1,20 @@
+● ec-parsec-coverage-first.service - EC PARSEC campaign coverage-first
+     Loaded: loaded (/etc/systemd/system/ec-parsec-coverage-first.service; enabled; vendor preset: enabled)
+     Active: active (running) since Tue 2026-11-10 08:32:27 CST; 13h ago
+   Main PID: 328009 (python3)
+      Tasks: 2 (limit: 618493)
+     Memory: 30.9M
+     CGroup: /system.slice/ec-parsec-coverage-first.service
+             ├─328009 /usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run coverage-first
+             └─328019 python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/coverage_first.py
+
+● ec-parsec-native.service - EC PARSEC campaign native
+     Loaded: loaded (/etc/systemd/system/ec-parsec-native.service; disabled; vendor preset: enabled)
+     Active: active (running) since Mon 2026-11-09 10:33:52 CST; 1 day 11h ago
+   Main PID: 80042 (python3)
+      Tasks: 3 (limit: 618493)
+     Memory: 20.2M
+     CGroup: /system.slice/ec-parsec-native.service
+             ├─80042 /usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run native
+             ├─80043 python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_campaign_native.py
+             └─80045 python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/suite_queue.py Native

@@ -1,0 +1,101 @@
+{
+  "schema": "ec-round131-offline-runner-validation/1",
+  "cases": [
+    {
+      "case": "success",
+      "passed": true,
+      "stages_reaching_engine": [
+        "top_opt",
+        "place",
+        "route",
+        "timing_drc_bitstream"
+      ],
+      "expected_error": null
+    },
+    {
+      "case": "not_fit",
+      "passed": true,
+      "stages_reaching_engine": [
+        "top_opt"
+      ],
+      "expected_error": null
+    },
+    {
+      "case": "missing_topopt_contract",
+      "passed": true,
+      "stages_reaching_engine": [
+        "top_opt"
+      ],
+      "expected_error": "required stage output absent"
+    },
+    {
+      "case": "tampered_preplace_contract",
+      "passed": true,
+      "stages_reaching_engine": [
+        "top_opt"
+      ],
+      "expected_error": "verified contract changed"
+    },
+    {
+      "case": "missing_final_contract",
+      "passed": true,
+      "stages_reaching_engine": [
+        "top_opt",
+        "place",
+        "route",
+        "timing_drc_bitstream"
+      ],
+      "expected_error": "required stage output absent"
+    },
+    {
+      "case": "canonical_changed",
+      "passed": true,
+      "stages_reaching_engine": [
+        "top_opt",
+        "place",
+        "route",
+        "timing_drc_bitstream"
+      ],
+      "expected_error": "canonical predecessor changed"
+    },
+    {
+      "case": "actual_installed_observer_refused",
+      "passed": true,
+      "reason": "installed r4b observer remains active"
+    },
+    {
+      "case": "released",
+      "passed": true,
+      "reason": "released exact service and empty cgroup accepted"
+    },
+    {
+      "case": "service_still_active",
+      "passed": true,
+      "reason": "installed r4b observer service has not exited"
+    },
+    {
+      "case": "wrong_service_cgroup",
+      "passed": true,
+      "reason": ""
+    },
+    {
+      "case": "orphan_in_exact_cgroup",
+      "passed": true,
+      "reason": "installed r4b observer exact cgroup has not released"
+    },
+    {
+      "case": "prior_repair_request",
+      "passed": true,
+      "reason": "existing r4b repair owns this continuation"
+    },
+    {
+      "case": "singleton_lock_contention",
+      "passed": true,
+      "reason": "same observer lock prevents successor admission"
+    }
+  ],
+  "all_passed": true,
+  "actual_fullshell_CAD_executed": false,
+  "processes_signalled": [],
+  "production_requests_created": []
+}

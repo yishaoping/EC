@@ -1,0 +1,46 @@
+{
+  "created_utc": "2026-11-11T19:23:24.172576+00:00",
+  "end_to_end_fame_equivalence": false,
+  "fpga_access": false,
+  "full_dcache_equivalence": false,
+  "induction_contract": {
+    "assumptions": [
+      "Exact universally-proved queue relation and atomic adapter observations at each induction step.",
+      "Watched reader is in [0,34]; proof reader and watched address remain constant over an induction edge.",
+      "Base uses related arbitrary actual/abstract word; no initialized payload or reset-defined memory."
+    ],
+    "guarantees_to_be_checked": [
+      "All 9 slices of a watched word update only from four abstract FIFO command heads on enabled masked writes.",
+      "Save the pre-write word for each accepted watched read and hold under arbitrary RAM response stalls.",
+      "Carry watched-word snapshot through the actual selected two-entry response FIFO to output.",
+      "Actual memory write cannot coincide with a read acceptance."
+    ],
+    "unconstrained": [
+      "Host reset, command valid/address/data/en/mask, response backpressure.",
+      "All other RAM words and initial arbitrary payloads."
+    ]
+  },
+  "input_count": 19,
+  "no_memory_read_cut": true,
+  "no_ram_endpoint_cut": true,
+  "no_target_edit": true,
+  "plan_sha256": "61e47f6c3ad5af8f06faff1e232651541cc7f547a96b8d88a3119dbff6b09998",
+  "queue_lemma": {
+    "assumed_in_new_job": true,
+    "mutation_count": 5,
+    "positive_count": 3,
+    "result_sha256": "173239b031c90853dfa19f34a1a53591bbb1b941f1af4c6f32c5771d20a93673",
+    "status": "PASS_ALL109_OWNER_QUEUES_AND_ATOMIC_ADAPTER_JOINS_WITH_RAM_ENDPOINT_CUT"
+  },
+  "ram_transaction_lemma": {
+    "mutation_count": 4,
+    "physically_instantiated_in_new_job": true,
+    "positive_count": 19,
+    "result_sha256": "b6208388ff7a75cfdf699b21b87bfd554f15a585a6bb282e72dcf14f87ce92e2",
+    "status": "PASS_ACTUAL_35R1W_RAM_TRANSACTION_SNAPSHOTS_NO_READ_CUT"
+  },
+  "request_sha256": "5154514725f96861c617c311373e3b83296b13f12f838d5fafca6400365142c5",
+  "schema": "ec-connected-owner-proof-review/1",
+  "status": "PASS_CAPSULE_INPUT_AND_COMPOSITION_ASSUMPTION_REVIEW_NOT_PROOF_RESULT",
+  "whole_fit": false
+}

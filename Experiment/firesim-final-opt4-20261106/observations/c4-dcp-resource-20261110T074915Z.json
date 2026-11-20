@@ -1,0 +1,94 @@
+{
+  "utc": "2026-11-10T07:49:15.482884+00:00",
+  "boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "processes": [
+    {
+      "pid": 11088,
+      "start_ticks": "10629",
+      "state": "S",
+      "cpu_seconds": 108965.65,
+      "rss_gib": 31.407943725585938,
+      "io": {
+        "rchar": 80647403686,
+        "wchar": 81128325571,
+        "syscr": 9600095,
+        "syscw": 17070562,
+        "read_bytes": 11263037440,
+        "write_bytes": 81145892864,
+        "cancelled_write_bytes": 4885233664
+      },
+      "children": [],
+      "cmd": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -log design_1_firesim_wrapper_0_0.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source design_1_firesim_wrapper_0_0.tcl "
+    },
+    {
+      "pid": 2302531,
+      "start_ticks": "10852266",
+      "state": "S",
+      "cpu_seconds": 0.0,
+      "rss_gib": 0.0035858154296875,
+      "io": {
+        "rchar": 66522,
+        "wchar": 329,
+        "syscr": 169,
+        "syscw": 16,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "children": [
+        2302553
+      ],
+      "cmd": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-dcp-20261110T071734Z/implementation.vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-dcp-20261110T071734Z/implementation.tcl "
+    },
+    {
+      "pid": 2302553,
+      "start_ticks": "10852268",
+      "state": "S",
+      "cpu_seconds": 0.0,
+      "rss_gib": 0.003631591796875,
+      "io": {
+        "rchar": 1499877,
+        "wchar": 232,
+        "syscr": 450,
+        "syscw": 16,
+        "read_bytes": 0,
+        "write_bytes": 0,
+        "cancelled_write_bytes": 0
+      },
+      "children": [
+        2302586
+      ],
+      "cmd": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/loader -exec vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-dcp-20261110T071734Z/implementation.vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-dcp-20261110T071734Z/implementation.tcl "
+    },
+    {
+      "pid": 2302586,
+      "start_ticks": "10852277",
+      "state": "S",
+      "cpu_seconds": 153.89,
+      "rss_gib": 5.398521423339844,
+      "io": {
+        "rchar": 4025589737,
+        "wchar": 36764912,
+        "syscr": 536512,
+        "syscw": 2361,
+        "read_bytes": 0,
+        "write_bytes": 36876288,
+        "cancelled_write_bytes": 36753408
+      },
+      "children": [],
+      "cmd": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-dcp-20261110T071734Z/implementation.vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-dcp-20261110T071734Z/implementation.tcl "
+    }
+  ],
+  "loadavg": [
+    28.94970703125,
+    29.77978515625,
+    35.6953125
+  ],
+  "cpu_count": 256,
+  "mem_available_gib": 405.7398262023926,
+  "pressure": {
+    "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=126797821\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+    "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1875580\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=1857188\n",
+    "io": "some avg10=0.00 avg60=0.00 avg300=0.00 total=78659512\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=76614178\n"
+  }
+}

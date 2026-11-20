@@ -1,0 +1,157 @@
+{
+  "build_script_sha256": "cf36b112a62bfc72a5f00ad208e2192a5dd13ef5ef5e68e09e27d017c7b636f2",
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j16",
+        "O=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-kernel-20261107T030548.789089Z",
+        "ARCH=riscv",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "defconfig"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/linux"
+    },
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/linux/scripts/config",
+        "--file",
+        "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-kernel-20261107T030548.789089Z/.config",
+        "--disable",
+        "DRM",
+        "--disable",
+        "SOUND",
+        "--disable",
+        "NET",
+        "--disable",
+        "SCSI",
+        "--disable",
+        "ATA",
+        "--disable",
+        "USB_SUPPORT",
+        "--disable",
+        "PCI",
+        "--disable",
+        "VIRTIO",
+        "--disable",
+        "MODULES",
+        "--disable",
+        "BPF_SYSCALL",
+        "--disable",
+        "DEBUG_KERNEL",
+        "--disable",
+        "DEBUG_INFO",
+        "--disable",
+        "KALLSYMS",
+        "--disable",
+        "SMP",
+        "--enable",
+        "BLK_DEV_INITRD",
+        "--enable",
+        "DEVTMPFS",
+        "--enable",
+        "DEVTMPFS_MOUNT",
+        "--enable",
+        "PROC_FS",
+        "--enable",
+        "SYSFS",
+        "--enable",
+        "TMPFS",
+        "--enable",
+        "SERIAL_SIFIVE",
+        "--enable",
+        "SERIAL_SIFIVE_CONSOLE",
+        "--enable",
+        "UNIX98_PTYS",
+        "--enable",
+        "FUTEX",
+        "--enable",
+        "MULTIUSER",
+        "--enable",
+        "DEBUG_INFO_NONE",
+        "--enable",
+        "EC_DAC_ROI",
+        "--set-str",
+        "INITRAMFS_SOURCE",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/rootfs-20261106T123225Z/initramfs.cpio"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/linux"
+    },
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j16",
+        "O=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-kernel-20261107T030548.789089Z",
+        "ARCH=riscv",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "olddefconfig"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/linux"
+    },
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j16",
+        "O=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-kernel-20261107T030548.789089Z",
+        "ARCH=riscv",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "Image",
+        "vmlinux"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/linux"
+    }
+  ],
+  "configuration": "Native",
+  "content_checks": {
+    "memory_profile": "firesim-final-phys36-fullram",
+    "roi_driver_object": "0e8715bd4344f6d79b836efd9c99035e0ceba0e93cd21787072ef27ab95c8894",
+    "same_rootfs": "427d0b923bc2be77b67ba0ff11efd47bb83c7bbf28fd990e10c658dcf7178711"
+  },
+  "error": null,
+  "fpga_execution": "NOT_RUN",
+  "input_files": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/formal-rootfs-build.json": "d65d2353a1d8902a3291863dcea141d432ca4bfd6fdba99668b08d048fde54be",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/linux-profile.json": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/rootfs-20261106T123225Z/initramfs.cpio": "427d0b923bc2be77b67ba0ff11efd47bb83c7bbf28fd990e10c658dcf7178711"
+  },
+  "output_dir": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-kernel-20261107T030548.789089Z",
+  "outputs": {
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-kernel-20261107T030548.789089Z/.config": "edcfdb09e068a68677298581c7d93cd86fccc0659764cf1651520fe5ece3fb21",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-kernel-20261107T030548.789089Z/arch/riscv/boot/Image": "596679dbb2812804dbb00fd188d8c61e39823e6cb5e0b86faf636ae3d6f9e5c4",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-kernel-20261107T030548.789089Z/drivers/misc/ec_dac_roi.o": "0e8715bd4344f6d79b836efd9c99035e0ceba0e93cd21787072ef27ab95c8894",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-kernel-20261107T030548.789089Z/vmlinux": "d557689351d4079d66f28ca72e6c234f19d72536258394160e997adae47422c7"
+  },
+  "phase": "kernel",
+  "resources": {
+    "actual_build_root": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds",
+    "available_memory_gib": 466.27125549316406,
+    "free_disk_gib": 359.8615379333496,
+    "host_cpus": 256,
+    "jobs": 16,
+    "load_1min": 1.7060546875,
+    "log_free_disk_gib": 43.20879364013672
+  },
+  "returncode": 0,
+  "runtime_validation": "NOT_RUN",
+  "schema": "ec-firesim-system-build/1",
+  "source_id": "5e984a6cbb3e5363bb373b71f9f7bb1aa750e325f8e5ad5a77c6011f66d77789",
+  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/linux",
+  "tool_hashes": {
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ld": "10424f5eeafd5806fbca7b88bdae336c202be5a9fa332c1a662a8d0a7ae62fba",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objcopy": "2a38397dae082b022b6370eb9fbfac9c337b95433fc89cb35d384516a0997f1e"
+  },
+  "wall_seconds": 55.13382600500336
+}

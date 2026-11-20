@@ -1,0 +1,176 @@
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/AddressCurrentBucketMemory.scala b/chipyard/generators/boom/src/main/scala/lsu/AddressCurrentBucketMemory.scala
+new file mode 100644
+index 0000000..0c14c8c
+--- /dev/null
++++ b/chipyard/generators/boom/src/main/scala/lsu/AddressCurrentBucketMemory.scala
+@@ -0,0 +1,29 @@
++package boom.lsu
++
++import chisel3._
++import chisel3.util._
++
++/** Full-width payload with two asynchronous reads and one synchronous writer.
++  * Validity stays in PackageAddressStats. No read or write adds a cycle.
++  */
++class AddressCurrentBucketMemory(slots: Int) extends Module {
++  require(slots > 1 && isPow2(slots))
++  val io = IO(new Bundle {
++    val currentIndex = Input(UInt(log2Ceil(slots).W))
++    val retiringIndex = Input(UInt(log2Ceil(slots).W))
++    val writeEnable = Input(Bool())
++    val writeData = Input(Vec(2, Vec(4, UInt(64.W))))
++    val current = Output(Vec(2, Vec(4, UInt(64.W))))
++    val retiring = Output(Vec(2, Vec(4, UInt(64.W))))
++  })
++  val payload = Mem(slots, Vec(2, Vec(4, UInt(64.W))))
++  io.current := payload.read(io.currentIndex)
++  io.retiring := payload.read(io.retiringIndex)
++  when (io.writeEnable) { payload.write(io.currentIndex, io.writeData) }
++}
++
++object AddressCurrentBucketMemory {
++  def base(valid: Bool, value: UInt): UInt = Mux(valid, value, 0.U(64.W))
++  def sum(valid: Bool, value: UInt, delta: UInt): UInt =
++    base(valid, value) +& delta.pad(64)
++}
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala b/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
+index cd38e25..c1fa463 100644
+--- a/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
+@@ -250,14 +250,16 @@ class PackageAddressStats(
+   val onlineStrictWriteRead = RegInit(VecInit(Seq.fill(4)(0.U(64.W))))
+   val onlineFirstStore = RegInit(VecInit(Seq.fill(4)(0.U(64.W))))
+ 
++  // These two categories have exactly one writer per cycle. Async reads
++  // preserve current/retiring combinational timing. Invalid payload is hidden
++  // by the original validity guards; allocation always starts from zero.
++  val currentBucketMemory = Module(new AddressCurrentBucketMemory(packetWindow))
+   val bucketValid = RegInit(VecInit(Seq.fill(packetWindow)(false.B)))
+   val bucketSeq = Reg(Vec(packetWindow,
+     UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))
+-  val bucketStore = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))
+   val bucketLoadFirst = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))
+   val bucketStoreFirst = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))
+   val bucketStrictWriteRead = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))
+-  val bucketFirstStore = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))
+ 
+   // A valid bucket's low sequence bits equal its fixed slot index. The high
+   // bits therefore distinguish the complete sequence without a low-bit mux.
+@@ -496,6 +498,7 @@ class PackageAddressStats(
+   }
+ 
+   val currentBucketIdx = processEvent.packetSeq(packetIndexBits - 1, 0)
++  currentBucketMemory.io.currentIndex := currentBucketIdx
+   val currentBucketCollision = bucketValid(currentBucketIdx) &&
+     !bucketSequenceMatches(currentBucketIdx, processEvent.packetSeq)
+   val qualifiedPackageBucketError = packageReadData.indices.map { w =>
+@@ -539,10 +542,10 @@ class PackageAddressStats(
+   val currentStoreNextWide = Wire(Vec(4, UInt(65.W)))
+   val currentFirstStoreNextWide = Wire(Vec(4, UInt(65.W)))
+   for (g <- 0 until 4) {
+-    currentStoreNextWide(g) := Mux(bucketValid(currentBucketIdx),
+-      bucketStore(currentBucketIdx)(g), 0.U(64.W)) +& newStoreCounts(g).pad(64)
+-    currentFirstStoreNextWide(g) := Mux(bucketValid(currentBucketIdx),
+-      bucketFirstStore(currentBucketIdx)(g), 0.U(64.W)) +& newFirstStoreCounts(g).pad(64)
++    currentStoreNextWide(g) := AddressCurrentBucketMemory.sum(
++      bucketValid(currentBucketIdx), currentBucketMemory.io.current(0)(g), newStoreCounts(g))
++    currentFirstStoreNextWide(g) := AddressCurrentBucketMemory.sum(
++      bucketValid(currentBucketIdx), currentBucketMemory.io.current(1)(g), newFirstStoreCounts(g))
+   }
+ 
+   val processArithmeticErrorParts = collection.mutable.ArrayBuffer[Bool]()
+@@ -583,6 +586,14 @@ class PackageAddressStats(
+   val processCommit = processValid && !processStructuralError &&
+     !processArithmeticError && !io.fatalProtocolError
+ 
++  // ResetStats used to clear payload with final assignment priority. Only
++  // validity needs clearing now; suppress that edge's memory write as well.
++  currentBucketMemory.io.writeEnable := processCommit && !io.resetStats
++  for (g <- 0 until 4) {
++    currentBucketMemory.io.writeData(0)(g) := currentStoreNextWide(g)(63, 0)
++    currentBucketMemory.io.writeData(1)(g) := currentFirstStoreNextWide(g)(63, 0)
++  }
++
+   // Safe-watermark retirement is serialized before the next event whose
+   // captured watermark has advanced.  This preserves event-time membership.
+   val safeTarget = Mux(queueCount =/= 0.U,
+@@ -591,12 +602,13 @@ class PackageAddressStats(
+     processedSafeWatermark < safeTarget
+   val retiringSeq = processedSafeWatermark + 1.U
+   val retiringIdx = retiringSeq(packetIndexBits - 1, 0)
++  currentBucketMemory.io.retiringIndex := retiringIdx
+   val retiringSlotCollision = safeAdvance && bucketValid(retiringIdx) &&
+     !bucketSequenceMatches(retiringIdx, retiringSeq)
+   val retiringUnderflow = safeAdvance && bucketValid(retiringIdx) &&
+     (0 until 4).map { g =>
+-      bucketStore(retiringIdx)(g) > onlineStore(g) ||
+-      bucketFirstStore(retiringIdx)(g) > onlineFirstStore(g) ||
++      currentBucketMemory.io.retiring(0)(g) > onlineStore(g) ||
++      currentBucketMemory.io.retiring(1)(g) > onlineFirstStore(g) ||
+       bucketLoadFirst(retiringIdx)(g) > onlineLoadFirst(g) ||
+       bucketStoreFirst(retiringIdx)(g) > onlineStoreFirst(g) ||
+       bucketStrictWriteRead(retiringIdx)(g) > onlineStrictWriteRead(g)
+@@ -733,8 +745,6 @@ class PackageAddressStats(
+       }
+       for (g <- 0 until 4) {
+         when (isCurrent) {
+-          bucketStore(i)(g) := currentStoreNextWide(g)(63, 0)
+-          bucketFirstStore(i)(g) := currentFirstStoreNextWide(g)(63, 0)
+           bucketLoadFirst(i)(g) := Mux(bucketValid(i),
+             loadFirstNextWide(i)(g)(63, 0), bucketLoadFirstDelta(i)(g))
+           bucketStoreFirst(i)(g) := Mux(bucketValid(i),
+@@ -813,17 +823,15 @@ class PackageAddressStats(
+     when (bucketValid(retiringIdx)) {
+       bucketValid(retiringIdx) := false.B
+       for (g <- 0 until 4) {
+-        onlineStore(g) := onlineStore(g) - bucketStore(retiringIdx)(g)
++        onlineStore(g) := onlineStore(g) - currentBucketMemory.io.retiring(0)(g)
+         onlineFirstStore(g) := onlineFirstStore(g) -
+-          bucketFirstStore(retiringIdx)(g)
++          currentBucketMemory.io.retiring(1)(g)
+         onlineLoadFirst(g) :=
+           onlineLoadFirst(g) - bucketLoadFirst(retiringIdx)(g)
+         onlineStoreFirst(g) :=
+           onlineStoreFirst(g) - bucketStoreFirst(retiringIdx)(g)
+         onlineStrictWriteRead(g) := onlineStrictWriteRead(g) -
+           bucketStrictWriteRead(retiringIdx)(g)
+-        bucketStore(retiringIdx)(g) := 0.U
+-        bucketFirstStore(retiringIdx)(g) := 0.U
+         bucketLoadFirst(retiringIdx)(g) := 0.U
+         bucketStoreFirst(retiringIdx)(g) := 0.U
+         bucketStrictWriteRead(retiringIdx)(g) := 0.U
+@@ -865,8 +873,6 @@ class PackageAddressStats(
+       bucketValid(i) := false.B
+       bucketSeq(i) := 0.U
+       for (g <- 0 until 4) {
+-        bucketStore(i)(g) := 0.U
+-        bucketFirstStore(i)(g) := 0.U
+         bucketLoadFirst(i)(g) := 0.U
+         bucketStoreFirst(i)(g) := 0.U
+         bucketStrictWriteRead(i)(g) := 0.U
+diff --git a/lineage.json b/lineage.json
+index 187822a..e99032f 100644
+--- a/lineage.json
++++ b/lineage.json
+@@ -1,14 +1,14 @@
+ {
+-  "schema": "ec-opt4-fit-lineage/1",
++  "branch": "opt4/address-async-current-r1-20261111",
++  "core_features": "C4, SVB32, L2 report-permission repair; no checker/rollback/EC disabling",
+   "created_utc": "2026-11-10T09:12:05.475254+00:00",
+-  "purpose": "Independent derived Opt4-fit optimization. Never identity-equivalent to frozen hardware by name.",
++  "formal_admission": false,
+   "frozen_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+   "frozen_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
++  "full_dut_build_authorized_only_after_resource_gate": true,
+   "parent_source": "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard",
+-  "branch": "opt4-fit/20261110",
++  "purpose": "Async single-writer storage for current-only store/first-store counters; exact zero-based allocation and unchanged cycle semantics.",
++  "schema": "ec-opt4-fit-lineage/1",
+   "snapshot_baseline_commit": "0390a808ff557e2ac7da329fbee063857d46159c",
+-  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/chipyard",
+-  "core_features": "C4, SVB32, L2 report-permission repair; no checker/rollback/EC disabling",
+-  "formal_admission": false,
+-  "full_dut_build_authorized_only_after_resource_gate": true
++  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-async-current-r1-20261111/chipyard"
+ }

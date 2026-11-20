@@ -1,0 +1,162 @@
+{
+  "actual_ram_model_sha256": "46428dc8d9868145ee7636f7da186ea61906da0bb3e0fad3dc756ffd95c135a4",
+  "all_41472_stored_bits_covered": true,
+  "arbitrary_watched_address": true,
+  "bits_per_word": 81,
+  "child": {},
+  "completed_utc": "2026-11-11T18:05:41.661538+00:00",
+  "cpu": 247,
+  "cpu_ticks": 5,
+  "fpga_access": false,
+  "full_equivalence": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "initial_memory_assumption": false,
+  "initialization_or_reset_base_proved": false,
+  "inputs": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-storage-round53-v1-20261112/evidence/actual-RamModel.sv": "46428dc8d9868145ee7636f7da186ea61906da0bb3e0fad3dc756ffd95c135a4",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-storage-round53-v1-20261112/evidence/owner-model-plan.json": "ba6b2cd2365e76f8293e86b123945bd0f572e7fe2b46f139500a1841fe2a156b",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-storage-round53-v1-20261112/evidence/owner-model-reuse-complete.json": "12eb798ba4ba6895f324f8cead6223f65d73c6be332f4402ec15382c8ed7f76f",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-ram-storage-round53-v1-20261112/evidence/owner-model-reuse-result.json": "325221369262b9423cb8c718866217e8ef5f350597ed54d144c44e2495285171",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/opt4_unattended_common.py": "ac709cdf3dc514f987fbb77593cb441e2f47ee2cab2efc46c3d2de3839998e2e"
+  },
+  "limitations": [
+    "Storage step relation only. No initialized contents or reset base is claimed.",
+    "Reference write uses actual writer control; independent controller proof is a separate bound obligation.",
+    "No multi-cycle request/read snapshot/FAME/target-cycle composition, full DCache/Opt4 proof, area, FIT or FPGA result."
+  ],
+  "memory_read_cut": false,
+  "mutation_receipts": [
+    {
+      "high_bit": 8,
+      "label": "negative-payload",
+      "log_sha256": "d7b0201bec080b4c38b63937965edc3059830da3091aa545834a5dcdcf916ec1",
+      "low_bit": 0,
+      "returncode": 1,
+      "script_sha256": "05138e8ea93218ba765bbd088f18ec15a5a34dee7d7c396dcf32ab7d250f73ec",
+      "seconds": 7.837140451010782,
+      "source_sha256": "421a8d0520ef266f2f8b9580a4a615d3ab2b3164f8889c5865530d6973d34a55"
+    },
+    {
+      "high_bit": 8,
+      "label": "negative-address",
+      "log_sha256": "2253945c6965e500eaa806dd1dd19fb148549d243773b4bc0d20b510ea463809",
+      "low_bit": 0,
+      "returncode": 1,
+      "script_sha256": "c0629b64edc1c04d20b5ec5e23c4e25445897748a9b634d2df9e6da6680cca0f",
+      "seconds": 7.6387297789915465,
+      "source_sha256": "8412fe51c04592b736967279660266cd781f0e29c1a3ee84952e7fa278179e43"
+    }
+  ],
+  "mutations_rejected": 2,
+  "observer_exact_reversal_checked": true,
+  "pid": 2156563,
+  "plan_sha256": "58155244ee375d80ca3da0c9f646ed46e984d0ddcad95035271d1de15c4c6cc0",
+  "process_state": "R",
+  "proof_receipts": [
+    {
+      "high_bit": 8,
+      "label": "bits-0-8",
+      "log_sha256": "6691107fd20d78afdfb2e3356554f2f46b3f9dc711d9b97dc9d42d5a058b21cd",
+      "low_bit": 0,
+      "returncode": 0,
+      "script_sha256": "84b2ea1cf6811fd97f7a353be9dc50cbf1e96eb47133b521a26c5bc725a69104",
+      "seconds": 8.7386752589955,
+      "source_sha256": "dc92b3430227eccf6070c4da8d596fbe122ec76e3d68ec4e0b644529f95c1809"
+    },
+    {
+      "high_bit": 17,
+      "label": "bits-9-17",
+      "log_sha256": "7056c10ed621337d61586a92c7edaed43fe7374e73315eab9d2cfe672f050ca9",
+      "low_bit": 9,
+      "returncode": 0,
+      "script_sha256": "77ecac378a545207c0010b0b11ac95399a02b3c6bef82dbab0957781d9e01914",
+      "seconds": 8.792893682984868,
+      "source_sha256": "ef7168770ea8967f21315563549ceff307fd96be00a2244e1d45f069a24df06c"
+    },
+    {
+      "high_bit": 26,
+      "label": "bits-18-26",
+      "log_sha256": "bdf8d5a80c9bf1459e9aaba06a3b28dcdaff7a22a1c53dc82949711a8f87252f",
+      "low_bit": 18,
+      "returncode": 0,
+      "script_sha256": "683becb8d79cef45f509e6820414d6c3261469d89313cc50f8946dbf436c2f7f",
+      "seconds": 8.784312256000703,
+      "source_sha256": "5ee964380be3d333207b900d38bed49f823cfcec9c2889202d95db786d2322f2"
+    },
+    {
+      "high_bit": 35,
+      "label": "bits-27-35",
+      "log_sha256": "33700eabdf96de685495ee0eb5bd80f1506602318dcc8574ba28acc5693fe837",
+      "low_bit": 27,
+      "returncode": 0,
+      "script_sha256": "ae317b59ba858e2c72246126991537e048ac34454abb5dbdc3c477f2dbb95b7f",
+      "seconds": 8.628740546992049,
+      "source_sha256": "3fa203052222165bafabc261098d4562fc2da29f6e5ff2dfc656d7259a00e96d"
+    },
+    {
+      "high_bit": 44,
+      "label": "bits-36-44",
+      "log_sha256": "5f3b12b6e9d03c3c62ae608d185001318edbdc96c5fc10f3042afc6c27f0b0f3",
+      "low_bit": 36,
+      "returncode": 0,
+      "script_sha256": "4d4abef4060fd4b06493d4c9ab16ae2656c2eb67b5ecb2e38e936767004f666d",
+      "seconds": 8.661554493010044,
+      "source_sha256": "1959932c56a23963975c8be2c5b85c62ffc1bc357d2d613f5a835caa95059f45"
+    },
+    {
+      "high_bit": 53,
+      "label": "bits-45-53",
+      "log_sha256": "ee84d371b9ea923d8869487a78452aeebe829a47eac83c3192434cb65938f25d",
+      "low_bit": 45,
+      "returncode": 0,
+      "script_sha256": "9d449b2898ee4bbfa2ea418bccd7d0a888ca949d6fcbc9872827738fbd34396e",
+      "seconds": 8.616689290996874,
+      "source_sha256": "abe8e06627ed3c3ba1b3fe4fb46036cceea50b72f19c9a0e6f052ffb0f1176ba"
+    },
+    {
+      "high_bit": 62,
+      "label": "bits-54-62",
+      "log_sha256": "9564f6c30268d585699e5bcacf987f904651dc516bc311fef5ed1679ef1c7d5b",
+      "low_bit": 54,
+      "returncode": 0,
+      "script_sha256": "31dab92ce9f6e3d01177263179ec7af480407810663c9a81afb9ebdbdce68f88",
+      "seconds": 8.576995551004075,
+      "source_sha256": "bbc7755e2ad0d3b8ff2f37aaeb669ea40e36a038f0cf9f6918e41a820ef72064"
+    },
+    {
+      "high_bit": 71,
+      "label": "bits-63-71",
+      "log_sha256": "7daaddb47f664e3de5998ad06efde45c679da130daa5851a1691bcdaef5a9c27",
+      "low_bit": 63,
+      "returncode": 0,
+      "script_sha256": "e9d719a43f35f79c8220b4e800f93126ed8d01858ec40c1b1ef1f0c94f9dcb33",
+      "seconds": 8.575531471986324,
+      "source_sha256": "b58103a5cd58ae5bc252b364379481e213a33d8303a303aa3721c68a00841800"
+    },
+    {
+      "high_bit": 80,
+      "label": "bits-72-80",
+      "log_sha256": "7e4b47e28b6544d051d8a236f0e4ddc735bcfaa6e4e40b7fd4df6d0aca7d64e7",
+      "low_bit": 72,
+      "returncode": 0,
+      "script_sha256": "93b18e25a93b4268f2c45ce46cc23dbad1783ee75ffd7cf43022ff2810a99f5b",
+      "seconds": 8.587554749014089,
+      "source_sha256": "628c3c354f6487de5d034a7dfd7c0eb4494b2c7a3a6098a25439ae2b8878c6fe"
+    }
+  ],
+  "relation_base": "For arbitrary initial RAM, choose expected_word equal to that same selected word.",
+  "rss_bytes": 15040512,
+  "schema": "ec-owner-ram-storage-proof/1",
+  "source_id": "79aedd9ada6137e018d7f9c9c175fd4a06f53820d235ddcbe4b4a185e75fd68d",
+  "stage_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-storage-round53-v1-20261112/negative-address.log",
+  "start_ticks": "23196856",
+  "started_utc": "2026-11-11T18:04:08.187969+00:00",
+  "status": "PASS_ACTUAL_512X81_HOST_RAM_ARBITRARY_ADDRESS_STORAGE_STEP_INDUCTION",
+  "target_changed": false,
+  "updated_utc": "2026-11-11T18:05:34.025950+00:00",
+  "watched_address_stable_across_induction_edge": true,
+  "whole_fit": false,
+  "words": 512
+}

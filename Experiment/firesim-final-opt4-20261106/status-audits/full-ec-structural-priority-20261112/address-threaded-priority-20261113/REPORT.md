@@ -1,0 +1,11 @@
+Current facts: AddressStats production Threaded area is not complete. Its same-harness Plain reference is1247953LUT; no actual candidate total or saving may be claimed. Complete DCache pair saves136579LUT with8192cycles/24575observations PASS. Latest complete shell remains2478437LUT versus1303680available, gap1174757. New combined shell has not started because its existing validated-material-area prerequisites are not complete. No complete EC certifiedbitstream or FPGA PARSEC exists.
+
+The existing production Vivado and common-host/caller validation owners remain untouched and compute. No new hardware candidate was added. Future-only compiler field indexing removes a profiled linear lookup while retaining everyflow check;293stock/indexedcases193exactnegativepassed. It does not establish hardware gain. Sourcecommit8359b23; currentJVM is unchanged.
+
+The exact common-shell successor had a known future cycle-receipt contract mismatch. Immutable recoveryR3commit3b1110f is active and waiting for originalR1knownerror/cgrouprelease/noCAD, then reuses the exact completedhost, fullshellcapacity/physicalchecks. Its R2initialownbranchfailure was diagnosed and retained; R3branch/committedbytes were checked beforelaunch. No primaryCAD/validator was restarted.
+
+Read-only existingcheckpoint timing comparisons are active under94e40fc. Same10nsconstraints are used within DSPleafReference/Candidate and withinproductionPlain/Threaded pairs. Different scopes cannot be ranked by theirWNS. No resynthesis, physicalcheck or newDSPselection is implied.
+
+Next high-potential existing implementation is the AddressStatssequencequerynetwork. Actual8dcomplete-shellbucketSequenceMemory309168LUT includesreplica_20=291575. Existingcommonbankqueryrefinement already rewrites this network. Complete its area and source-compatible fullshell measurement before adding candidates. If the NEW fullshell stillhas materialgap, use its actualhierarchy; oldMSHRsubtree155001LUT is an independent structure to inspect then.
+
+Constraints remain8491167d/fullfeatures/cachegeometry/checker/rollback/targetcycles; onlycard0000:21:00.0/serial21770433G02LA; no device access wasperformed. No completion guarantee forNovember18 follows fromrunningjobs.

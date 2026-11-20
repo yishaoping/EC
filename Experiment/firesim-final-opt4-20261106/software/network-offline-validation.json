@@ -1,0 +1,195 @@
+{
+  "active_program": "netdedup-simmedium-riscv64",
+  "cases": [
+    {
+      "architecture": "x86_64",
+      "input": "test",
+      "program": "netdedup",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netdedup-test-x86_64/result.json",
+      "returncode": 0,
+      "status": "PROTOCOL_AND_DECODE_PASSED"
+    },
+    {
+      "architecture": "riscv64",
+      "input": "test",
+      "program": "netdedup",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netdedup-test-riscv64/result.json",
+      "returncode": 0,
+      "status": "PROTOCOL_AND_DECODE_PASSED"
+    },
+    {
+      "architecture": "x86_64",
+      "input": "test",
+      "program": "netstreamcluster",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netstreamcluster-test-x86_64/result.json",
+      "returncode": 0,
+      "status": "PROTOCOL_COMPLETED_REFERENCE_PENDING"
+    },
+    {
+      "architecture": "riscv64",
+      "input": "test",
+      "program": "netstreamcluster",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netstreamcluster-test-riscv64/result.json",
+      "returncode": 0,
+      "status": "PROTOCOL_COMPLETED_REFERENCE_PENDING"
+    },
+    {
+      "architecture": "x86_64",
+      "input": "test",
+      "program": "netferret",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netferret-test-x86_64/result.json",
+      "returncode": 0,
+      "status": "PROTOCOL_COMPLETED_REFERENCE_PENDING"
+    },
+    {
+      "architecture": "riscv64",
+      "input": "test",
+      "program": "netferret",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netferret-test-riscv64/result.json",
+      "returncode": 2,
+      "status": "FAILED_WITH_EVIDENCE"
+    },
+    {
+      "architecture": "x86_64",
+      "input": "simsmall",
+      "program": "netdedup",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netdedup-simsmall-x86_64/result.json",
+      "returncode": 0,
+      "status": "PROTOCOL_AND_DECODE_PASSED"
+    },
+    {
+      "architecture": "riscv64",
+      "input": "simsmall",
+      "program": "netdedup",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netdedup-simsmall-riscv64/result.json",
+      "returncode": 0,
+      "status": "PROTOCOL_AND_DECODE_PASSED"
+    },
+    {
+      "architecture": "x86_64",
+      "input": "simsmall",
+      "program": "netstreamcluster",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netstreamcluster-simsmall-x86_64/result.json",
+      "returncode": 0,
+      "status": "PROTOCOL_COMPLETED_REFERENCE_PENDING"
+    },
+    {
+      "architecture": "riscv64",
+      "input": "simsmall",
+      "program": "netstreamcluster",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netstreamcluster-simsmall-riscv64/result.json",
+      "returncode": 0,
+      "status": "PROTOCOL_COMPLETED_REFERENCE_PENDING"
+    },
+    {
+      "architecture": "x86_64",
+      "input": "simmedium",
+      "program": "netdedup",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netdedup-simmedium-x86_64/result.json",
+      "returncode": 0,
+      "status": "PROTOCOL_AND_DECODE_PASSED"
+    },
+    {
+      "architecture": "riscv64",
+      "input": "simmedium",
+      "program": "netdedup",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netdedup-simmedium-riscv64/result.json",
+      "returncode": 0,
+      "status": "PROTOCOL_AND_DECODE_PASSED"
+    }
+  ],
+  "comparisons": [
+    {
+      "exact_bytes": true,
+      "host_output": {
+        "bytes": 28,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netdedup-test-x86_64/work/out.ddp",
+        "sha256": "0bac53914c63ca3939aa2977b312b35ee2a440aab8b60ffbbce3ca82b5e1316b"
+      },
+      "input": "test",
+      "interpretation": "Full output SHA256 comparison to separately compiled original x86 user-TCP algorithm; QEMU only, not FPGA/checker proof",
+      "program": "netdedup",
+      "riscv_output": {
+        "bytes": 28,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netdedup-test-riscv64/work/out.ddp",
+        "sha256": "0bac53914c63ca3939aa2977b312b35ee2a440aab8b60ffbbce3ca82b5e1316b"
+      }
+    },
+    {
+      "exact_bytes": true,
+      "host_output": {
+        "bytes": 44,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netstreamcluster-test-x86_64/work/output.txt",
+        "sha256": "df19d532b26216389f8f6f12139376aa48e81a12ffad0fb25b3685d92ef2e804"
+      },
+      "input": "test",
+      "interpretation": "Full output SHA256 comparison to separately compiled original x86 user-TCP algorithm; QEMU only, not FPGA/checker proof",
+      "program": "netstreamcluster",
+      "riscv_output": {
+        "bytes": 44,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netstreamcluster-test-riscv64/work/output.txt",
+        "sha256": "df19d532b26216389f8f6f12139376aa48e81a12ffad0fb25b3685d92ef2e804"
+      }
+    },
+    {
+      "exact_bytes": true,
+      "host_output": {
+        "bytes": 9724863,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netdedup-simsmall-x86_64/work/out.ddp",
+        "sha256": "a3154e672cd05086a1adbec6226440bd67837c219678d1eb810c77a2ed7fb71b"
+      },
+      "input": "simsmall",
+      "interpretation": "Full output SHA256 comparison to separately compiled original x86 user-TCP algorithm; QEMU only, not FPGA/checker proof",
+      "program": "netdedup",
+      "riscv_output": {
+        "bytes": 9724863,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netdedup-simsmall-riscv64/work/out.ddp",
+        "sha256": "a3154e672cd05086a1adbec6226440bd67837c219678d1eb810c77a2ed7fb71b"
+      }
+    },
+    {
+      "exact_bytes": false,
+      "host_output": {
+        "bytes": 3056,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netstreamcluster-simsmall-x86_64/work/output.txt",
+        "sha256": "566f2398d679d9d310746f053aefde4af22faa79c6e17e978bca0f912f821dfb"
+      },
+      "input": "simsmall",
+      "interpretation": "Full output SHA256 comparison to separately compiled original x86 user-TCP algorithm; QEMU only, not FPGA/checker proof",
+      "program": "netstreamcluster",
+      "riscv_output": {
+        "bytes": 3056,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netstreamcluster-simsmall-riscv64/work/output.txt",
+        "sha256": "d4a7b68f5bbf9e8de76778866c354c5badd55ac4b74874bd262e49e72439031b"
+      }
+    },
+    {
+      "exact_bytes": true,
+      "host_output": {
+        "bytes": 30448592,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netdedup-simmedium-x86_64/work/out.ddp",
+        "sha256": "6e24ba26d52c6732eccaff5aa665b6acb40621c4e7fc89f84ea55fcc70ef7fd7"
+      },
+      "input": "simmedium",
+      "interpretation": "Full output SHA256 comparison to separately compiled original x86 user-TCP algorithm; QEMU only, not FPGA/checker proof",
+      "program": "netdedup",
+      "riscv_output": {
+        "bytes": 30448592,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netdedup-simmedium-riscv64/work/out.ddp",
+        "sha256": "6e24ba26d52c6732eccaff5aa665b6acb40621c4e7fc89f84ea55fcc70ef7fd7"
+      }
+    }
+  ],
+  "ended_utc": "2026-11-07T10:31:10.186813+00:00",
+  "formal_eligible": false,
+  "fpga_execution": false,
+  "host_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "no_hardware_or_scheduler_modifications": true,
+  "no_host_ipc_cleanup": true,
+  "output_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z",
+  "pid": 2305178,
+  "schema": "ec-network-offline-validation/1",
+  "start_ticks": "1549679",
+  "started_utc": "2026-11-07T10:28:59.081611+00:00",
+  "status": "COMPLETE_REVIEW_EVIDENCE"
+}

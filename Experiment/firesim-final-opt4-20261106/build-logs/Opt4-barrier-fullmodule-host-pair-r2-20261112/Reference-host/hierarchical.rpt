@@ -1,0 +1,97 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2021.1 (lin64) Build 3247384 Thu Jun 10 19:36:07 MDT 2021
+| Date         : Thu Nov 12 21:36:49 2026
+| Host         : devjz-ubt20-s01 running 64-bit Ubuntu 20.04.6 LTS
+| Command      : report_utilization -hierarchical -file /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-barrier-fullmodule-host-pair-r2-20261112/Reference-host/hierarchical.rpt
+| Design       : FPGATop
+| Device       : xcu280fsvh2892-2L
+| Design State : Synthesized
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++------------------------------------------------------+----------------------------+------------+------------+---------+------+-------+--------+--------+------+------------+
+|                       Instance                       |           Module           | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs  | RAMB36 | RAMB18 | URAM | DSP Blocks |
++------------------------------------------------------+----------------------------+------------+------------+---------+------+-------+--------+--------+------+------------+
+| FPGATop                                              |                      (top) |      83888 |      83864 |      24 |    0 | 44457 |      0 |      0 |    0 |         16 |
+|   (FPGATop)                                          |                      (top) |       6072 |       6072 |       0 |    0 |     0 |      0 |      0 |    0 |          0 |
+|   ClockBridgeModule_0                                |          ClockBridgeModule |        183 |        183 |       0 |    0 |   291 |      0 |      0 |    0 |          0 |
+|     (ClockBridgeModule_0)                            |          ClockBridgeModule |          2 |          2 |       0 |    0 |   256 |      0 |      0 |    0 |          0 |
+|     crFile                                           |                  MCRFile_1 |        181 |        181 |       0 |    0 |    35 |      0 |      0 |    0 |          0 |
+|   PeekPokeBridgeModule_0                             |       PeekPokeBridgeModule |        799 |        779 |      20 |    0 |   852 |      0 |      0 |    0 |          0 |
+|     (PeekPokeBridgeModule_0)                         |       PeekPokeBridgeModule |        138 |        138 |       0 |    0 |   749 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter                                 |           SatUpDownCounter |         21 |         21 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_1                               |        SatUpDownCounter_25 |         21 |         21 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_10                              |        SatUpDownCounter_26 |          6 |          6 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_11                              |        SatUpDownCounter_27 |          5 |          5 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_12                              |        SatUpDownCounter_28 |          9 |          9 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_13                              |        SatUpDownCounter_29 |         15 |         15 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_2                               |        SatUpDownCounter_30 |         22 |         22 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_3                               |        SatUpDownCounter_31 |         21 |         21 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_4                               |        SatUpDownCounter_32 |         22 |         22 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_5                               |        SatUpDownCounter_33 |         20 |         20 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_6                               |        SatUpDownCounter_34 |         22 |         22 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_7                               |        SatUpDownCounter_35 |          5 |          5 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_8                               |        SatUpDownCounter_36 |          7 |          7 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_9                               |        SatUpDownCounter_37 |          6 |          6 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     crFile                                           |                  MCRFile_2 |        409 |        409 |       0 |    0 |    72 |      0 |      0 |    0 |          0 |
+|     step_q                                           |                      Queue |         50 |         30 |      20 |    0 |     3 |      0 |      0 |    0 |          0 |
+|   SimulationMaster_0                                 |           SimulationMaster |        212 |        212 |       0 |    0 |   199 |      0 |      0 |    0 |          0 |
+|     (SimulationMaster_0)                             |           SimulationMaster |         20 |         20 |       0 |    0 |   135 |      0 |      0 |    0 |          0 |
+|     crFile                                           |                    MCRFile |        192 |        192 |       0 |    0 |    64 |      0 |      0 |    0 |          0 |
+|   ctrlInterconnect                                   | NastiRecursiveInterconnect |        628 |        624 |       4 |    0 |   182 |      0 |      0 |    0 |          0 |
+|     xbar                                             |              NastiCrossbar |        628 |        624 |       4 |    0 |   182 |      0 |      0 |    0 |          0 |
+|       router                                         |                NastiRouter |        628 |        624 |       4 |    0 |   182 |      0 |      0 |    0 |          0 |
+|         ar_queue                                     |               ReorderQueue |        200 |        200 |       0 |    0 |    64 |      0 |      0 |    0 |          0 |
+|         aw_queue                                     |            ReorderQueue_24 |        132 |        132 |       0 |    0 |    64 |      0 |      0 |    0 |          0 |
+|         b_arb                                        |                  RRArbiter |         31 |         31 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|         err_slave                                    |            NastiErrorSlave |        155 |        155 |       0 |    0 |    44 |      0 |      0 |    0 |          0 |
+|           (err_slave)                                |            NastiErrorSlave |          4 |          4 |       0 |    0 |    10 |      0 |      0 |    0 |          0 |
+|           b_queue                                    |       QueueCompatibility_2 |         65 |         65 |       0 |    0 |    13 |      0 |      0 |    0 |          0 |
+|           r_queue                                    |       QueueCompatibility_1 |         86 |         86 |       0 |    0 |    21 |      0 |      0 |    0 |          0 |
+|         r_arb                                        |        HellaPeekingArbiter |         78 |         78 |       0 |    0 |     3 |      0 |      0 |    0 |          0 |
+|         w_queue                                      |         QueueCompatibility |         32 |         28 |       4 |    0 |     5 |      0 |      0 |    0 |          0 |
+|   sim                                                |                 SimWrapper |      76100 |      76100 |       0 |    0 | 42933 |      0 |      0 |    0 |         16 |
+|     PipeChannel_peekPokeBridge_io_currentCycle       |              PipeChannel_1 |         71 |         71 |       0 |    0 |   256 |      0 |      0 |    0 |          0 |
+|       tokens                                         |            ShiftQueue_1_23 |         71 |         71 |       0 |    0 |   256 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_dropped            |            PipeChannel_1_0 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|       tokens                                         |            ShiftQueue_1_22 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_event_bits         |              PipeChannel_2 |      29468 |      29468 |       0 |    0 |   195 |      0 |      0 |    0 |          0 |
+|       tokens                                         |            ShiftQueue_2_21 |      29468 |      29468 |       0 |    0 |   195 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_event_valid        |                PipeChannel |        253 |        253 |       0 |    0 |     4 |      0 |      0 |    0 |          0 |
+|       tokens                                         |              ShiftQueue_20 |        253 |        253 |       0 |    0 |     4 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_fatalProtocolError |              PipeChannel_3 |          4 |          4 |       0 |    0 |     4 |      0 |      0 |    0 |          0 |
+|       tokens                                         |              ShiftQueue_19 |          4 |          4 |       0 |    0 |     4 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_pending            |            PipeChannel_1_4 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|       tokens                                         |            ShiftQueue_1_18 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_requestCycleSum    |            PipeChannel_1_5 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|       tokens                                         |            ShiftQueue_1_17 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_resetStats         |              PipeChannel_6 |         29 |         29 |       0 |    0 |     4 |      0 |      0 |    0 |          0 |
+|       tokens                                         |              ShiftQueue_16 |         29 |         29 |       0 |    0 |     4 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_resolved           |            PipeChannel_1_7 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|       tokens                                         |            ShiftQueue_1_15 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_safeCycleSum       |            PipeChannel_1_8 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|       tokens                                         |            ShiftQueue_1_14 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_safeWatermark      |            PipeChannel_2_9 |       4130 |       4130 |       0 |    0 |    66 |      0 |      0 |    0 |          0 |
+|       tokens                                         |               ShiftQueue_2 |       4130 |       4130 |       0 |    0 |    66 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_seen               |           PipeChannel_1_10 |         51 |         51 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|       tokens                                         |            ShiftQueue_1_13 |         51 |         51 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_statsValid         |           PipeChannel_1_11 |         20 |         20 |       0 |    0 |     4 |      0 |      0 |    0 |          0 |
+|       tokens                                         |               ShiftQueue_1 |         20 |         20 |       0 |    0 |     4 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_reset                 |             PipeChannel_12 |         16 |         16 |       0 |    0 |     4 |      0 |      0 |    0 |          0 |
+|       tokens                                         |                 ShiftQueue |         16 |         16 |       0 |    0 |     4 |      0 |      0 |    0 |          0 |
+|     target                                           |                    FAMETop |      42606 |      42606 |       0 |    0 | 41616 |      0 |      0 |    0 |         16 |
+|       ReferenceHarness_                              |           ReferenceHarness |      42606 |      42606 |       0 |    0 | 41616 |      0 |      0 |    0 |         16 |
+|         (ReferenceHarness_)                          |           ReferenceHarness |         22 |         22 |       0 |    0 |    15 |      0 |      0 |    0 |          0 |
+|         dut                                          |      GHBarrierLatencyStats |      42584 |      42584 |       0 |    0 | 41601 |      0 |      0 |    0 |         16 |
++------------------------------------------------------+----------------------------+------------+------------+---------+------+-------+--------+--------+------+------------+
+
+

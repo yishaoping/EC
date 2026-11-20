@@ -1,0 +1,36 @@
+\paragraph{Hardware resource usage.}
+We characterize the EC Performance-Only prototype (revision
+\texttt{6fada307}) using Vivado 2021.1 reports for an Alveo U280.
+After full-shell logic optimization, the design uses 1,023,687 LUTs
+(78.52\%), 1,019,173 registers (39.09\%), 678.5 BRAM36-equivalent
+tiles (33.66\%), 115 DSPs (1.27\%), and no URAM.
+These counts include the transformed target, FireSim host infrastructure,
+and FPGA shell. We partition the hierarchy into disjoint groups to avoid
+counting child modules twice. In particular, the SVB accounts for 64,699 LUTs,
+while the four LSLs use 15,172 LUTs and 16 BRAM36 blocks.
+This prototype retains data preservation, cache isolation, checker execution
+logic, normal commit, and backpressure, while removing address/bucket and
+barrier-latency diagnostic instrumentation. The source profile explicitly
+retains recovery logic; these results do not establish a complete,
+recovery-validated PALIMPSEST implementation.
+The subsequent routing attempt failed, preventing timing closure and
+deployment. Therefore, Table~\ref{tab:ec-fpga-resources} reports
+pre-route mapped resource usage rather than a successfully implemented
+FPGA footprint. We do not claim an incremental percentage over PEEK or
+ParaMedic without matched builds and accounting boundaries.
+
+% Optional supplemental estimate; not a measured-power result.
+\paragraph{Power estimate.}
+A separate report-only analysis of the archived, fully placed checkpoint
+produces a vectorless estimate of 15.378~W total on-chip power
+(11.918~W dynamic and 3.460~W device static)
+at the constrained approximately 50~MHz host clock. No workload SAIF/VCD
+activity is available, and routing parasitics are estimated. The tool reports
+low confidence; propagated reset activity further limits the estimate.
+We therefore do not use it to claim workload power, board power,
+energy savings, or a full-PALIMPSEST power overhead.
+
+% Audit-only diagnostic (excluded from quantitative power claims): the
+% failed-route report lists 15.350 W total, 11.890 W dynamic and 3.460 W
+% static, with Low confidence, no simulation activity, and excessive reset
+% activity warnings. It was computed on an illegally routed design.

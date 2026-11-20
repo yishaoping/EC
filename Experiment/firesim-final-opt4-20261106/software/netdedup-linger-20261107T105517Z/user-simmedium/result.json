@@ -1,0 +1,90 @@
+{
+  "architecture": "riscv64",
+  "binaries": {
+    "client/netdedup_client": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-linger-20261107T105517Z/netdedup_client",
+      "sha256": "8e3ca2b226616fb8f74a069d99d9bcb0615c4655a4108ddffe3be46f95c5aaa8"
+    },
+    "server/netdedup": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netdedup/server/netdedup",
+      "sha256": "7f877570cd50bf13d4a401f8b8c7e8cef296755106ff1b0126f9d9e858b69a2d"
+    }
+  },
+  "children": {
+    "client": {
+      "cmdline": "nice -n 15 /usr/bin/qemu-riscv64 /data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-linger-20261107T105517Z/netdedup/client/netdedup_client -i media.dat ",
+      "pid": 2726092,
+      "process_state": "R",
+      "start_ticks": "1725644"
+    },
+    "server": {
+      "cmdline": "nice -n 15 /usr/bin/qemu-riscv64 /data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-linger-20261107T105517Z/netdedup/server/netdedup -c -v -t 1 -o out.ddp ",
+      "pid": 2726094,
+      "process_state": "R",
+      "start_ticks": "1725645"
+    }
+  },
+  "client_argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-linger-20261107T105517Z/netdedup/client/netdedup_client",
+    "-i",
+    "media.dat"
+  ],
+  "correctness": {
+    "decoded_sha256": "3af825d1a6a6b7308b9c265e807ace1f13489f3758d35ed9cb3e79d93e876d5b",
+    "input_sha256": "3af825d1a6a6b7308b9c265e807ace1f13489f3758d35ed9cb3e79d93e876d5b",
+    "method": "decode entire compressed stream and byte SHA256 versus original input",
+    "passed": true
+  },
+  "ended_utc": "2026-11-07T10:58:22.615453+00:00",
+  "exit_codes": {
+    "client": 0,
+    "server": 0
+  },
+  "formal_eligible": false,
+  "fpga_run": false,
+  "host_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "input": "simmedium",
+  "input_archive": {
+    "path": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/inputs/input_simmedium.tar",
+    "sha256": "9daba6f32da1082a4e29a49c4f95dbc819ef999e715bacdcc7ca8a40bf046d1a"
+  },
+  "mapping_note": "simmedium invokes original simlarge for netstreamcluster; netdedup candidate separates server/client flags and uses unchanged formal archive",
+  "namespaces": {
+    "ipc": "ipc:[4026534228]",
+    "mnt": "mnt:[4026534227]",
+    "net": "net:[4026534229]"
+  },
+  "output": {
+    "bytes": 30448592,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netdedup-linger-20261107T105517Z/user-simmedium/work/out.ddp",
+    "sha256": "6e24ba26d52c6732eccaff5aa665b6acb40621c4e7fc89f84ea55fcc70ef7fd7"
+  },
+  "pid": 2725974,
+  "private_ipc_namespace": true,
+  "private_mount_namespace": true,
+  "private_network_namespace": true,
+  "program": "netdedup",
+  "roi": "Original application hook sites; diagnostic writes only, no checker claim",
+  "roi_diagnostic": {
+    "begin_seen": true,
+    "end_seen": true,
+    "source": "server.log; diagnostic marker writes remain visible",
+    "syscall_counts": {},
+    "time_base": "host QEMU trace order only; no target cycles or checker latency"
+  },
+  "schema": "ec-network-qemu-case/1",
+  "server_argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-linger-20261107T105517Z/netdedup/server/netdedup",
+    "-c",
+    "-v",
+    "-t",
+    "1",
+    "-o",
+    "out.ddp"
+  ],
+  "source_receipt_sha256": "8f8e1bcd19d684c657192b6806584b3e3784fb08f90fbbdcc2de90056c5bc718",
+  "start_ticks": "1725630",
+  "status": "PROTOCOL_AND_DECODE_PASSED",
+  "trace_enabled": false,
+  "wall_seconds": 3.9220402380015003
+}

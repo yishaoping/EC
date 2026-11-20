@@ -1,0 +1,162 @@
+{
+  "checker_latency": null,
+  "counts": null,
+  "drain_cycles": 0,
+  "driver_returncode": 0,
+  "driver_stop_after_guest_powerdown": false,
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simsmall-r1-20261107T115938Z/heartbeat.csv": "a55899ad97d7bf02e826a7bf253517e1e22948441312c27734cd2f55a1bc3b75",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simsmall-r1-20261107T115938Z/host.log": "0df9cf859bf3bf844e759d76bd0a6a0e1a748275ee08df900f3b1f4693d5d0ac",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simsmall-r1-20261107T115938Z/latency_histogram.csv": "7348bacc4d184cc676cfcf89f8d0ec40dd28eeaa86ae0f6fefa797b43dc6d210",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simsmall-r1-20261107T115938Z/manifest.json": "d07bb675099faee7cea5beb567bc3952d66dd7961ece1932766e15147aa44281",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simsmall-r1-20261107T115938Z/memory_stats0.csv": "6679c5006d14d8413ec36ba18171c1f179c0196e04b362e4af778b06baad416e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simsmall-r1-20261107T115938Z/roi-parser-source.py": "e55944240285ee0197b1b8bd3bedbe10a4a72305511ac72018fe668578d5f8c1",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simsmall-r1-20261107T115938Z/roi-raw.jsonl": "e53154a024b1fa12aa0b2304d87e566d31f7a7e73af2a4619437007ed7dab67c",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simsmall-r1-20261107T115938Z/runner-source.py": "228d941ada4a5d1bf671f220e90955389b30a32ac4647b6de86ef614eb27825a",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simsmall-r1-20261107T115938Z/snapshot.json": "b33a97068654e441fe3ffb58ee933d0fe6e2600bcc886742a206931e8849e338",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simsmall-r1-20261107T115938Z/state.json": "4d71fb1c6d7d131f858aefa3a9e6f766ca935cf6bc206a37534ec68a499277c1",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simsmall-r1-20261107T115938Z/uart.in": "270295ce26f0173821d602ec8ab144f0b2b69ac90fc507fceb84f1002e4840d0",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-dedup-simsmall-r1-20261107T115938Z/uart.log": "ba7f6ec6059f0d59e9b21d4826b52a5234b4e2eea31edb85d0959678990ca335"
+  },
+  "fased_readback": {
+    "readLatency": 30,
+    "readMaxReqs": 4,
+    "relaxFunctionalModel": 0,
+    "writeLatency": 30,
+    "writeMaxReqs": 4
+  },
+  "formal": false,
+  "fpga_execution": true,
+  "guest_power_down_observed": true,
+  "host_efficiency": {
+    "host_delta": 17979609719,
+    "host_simulation_wall_seconds": 359.59908,
+    "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+    "simulation_throughput_cycles_per_second": 16390485.593,
+    "target_delta": 5894003540,
+    "target_end": 334410840122,
+    "target_start": 328516836582
+  },
+  "host_wall_seconds": 359.6523006490024,
+  "identity": {
+    "apps_manifest_sha256": "e00659e7ca83e528b1b71d1d09936cfae0e86cec879dc6659d01f24a186b3fb5",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:e2:00.0",
+    "board_serial": "21770433G001A",
+    "case": {
+      "algorithm_unchanged": true,
+      "argv": [
+        "-c",
+        "-p",
+        "-v",
+        "-t",
+        "1",
+        "-i",
+        "media.dat",
+        "-o",
+        "output.dat.ddp"
+      ],
+      "diagnostic_roi_syscalls": [],
+      "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-dedup-staged-20261107T051530Z/diagnostic-simsmall/trace.log",
+      "fpga_validation": "NOT_RUN",
+      "full_decode_matches_input": true,
+      "input": "simsmall",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/inputs/input_simsmall.tar": "195d27a51206430f771d4c2e76e8824797fea76b64a92b9d8a34d96108b48fcd"
+      },
+      "input_files": {
+        "media.dat": "a8959fe42ec93b687bfdd1a8f92624c1d78c7df7e3353587ac5523f51f35dc7a"
+      },
+      "program": "dedup",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-dedup-staged-20261107T051530Z/reference-simsmall/output.dat.ddp": "a3154e672cd05086a1adbec6226440bd67837c219678d1eb810c77a2ed7fb71b"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/parsec/simsmall.runconf",
+      "runconf_sha256": "25b212a390d2ad0f02c0c056d817412295a56c6fe1d84982c58377b7b411a2bb",
+      "threads": 1,
+      "validation": {
+        "files": {
+          "output.dat.ddp": "a3154e672cd05086a1adbec6226440bd67837c219678d1eb810c77a2ed7fb71b"
+        },
+        "kind": "files_sha256"
+      },
+      "warmups": 0
+    },
+    "configuration": "Native",
+    "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+    "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+    "elf_sha256": "abe779f2a51cfb288572f4ef014ef85608c3462f1c08905e4f26f840739de9c3",
+    "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+    "firmware_receipt_sha256": "c7a845f6837d96a7d12ff837d559d3f5a3200ef2704c5b0b0bb9b3666adf6787",
+    "firmware_sha256": "eef632f786d95244763b7c255339fc7679a9ae1e8b471233cebe099c88a91a0d",
+    "formal": false,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "host_bridge_restart": true,
+    "input": "simsmall",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "previous_run_id": null,
+    "program": "dedup",
+    "repetition": 1,
+    "rootfs_sha256": "7ed974c4b2639c38c101cf34449fda69c8967a56580a570b2ebee2059fe726c5",
+    "run_id": "native-dedup-simsmall-r1-20261107T115938Z",
+    "software_diagnostic": false,
+    "software_profile": "dedup-serial-preload-staged-output-heap256m",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "target_reset_probe": false,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "b2808ee2068bd6dd113e42421a272f99066ca03dde22dc4f971eaa001b8327a6",
+  "issues": [],
+  "participation": null,
+  "post_drain_traffic_counters": {},
+  "raw": {
+    "epochs": [
+      {
+        "aborted": false,
+        "begin_tick": 3299343579,
+        "end_tick": 5447218409,
+        "epoch": 1,
+        "faults": 0,
+        "formal_sample_eligible": false,
+        "reset_seen": false,
+        "roi_cycles": 2147874830,
+        "source_boundaries_complete": true,
+        "states": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    ],
+    "excluded_pre_reset_records": 1,
+    "file_sha256": "5de7e191249f693333139f1d2ddc41b0fadd0e384480a27f81e4de10a9b37ddc",
+    "formal_sample_eligible": false,
+    "last_sequence": 17,
+    "original_journal_sha256": "e53154a024b1fa12aa0b2304d87e566d31f7a7e73af2a4619437007ed7dab67c",
+    "parsed_records": 18,
+    "partial_tail_bytes": 0,
+    "protocol_issues": [],
+    "runtime_validation": "NOT_ESTABLISHED_BY_RAW_LOG",
+    "schema": "ec-dac-b-raw-roi/1",
+    "warning": "Raw ROI boundaries only. Output/job identity, runtime timebase checks and the formal host collector are still required."
+  },
+  "roi_cycles": 2147874830,
+  "schema": "ec-isolated-fpga-result/1",
+  "timedout": false,
+  "valid": true
+}

@@ -1,0 +1,61 @@
+{
+  "schema": "ec-performance-only-checker-r3-owner-adoption/1",
+  "utc": "2026-11-13T05:26:35.456257+00:00",
+  "profile": "EC Performance-Only: data preservation + cache isolation",
+  "hardware_commit": "6fada307bb77be90b39720d3f95404fece0e431b",
+  "owner": {
+    "CAD_control": false,
+    "FPGA_IO": false,
+    "controller_sha256": "83592b042d93ac953b29acf183d133244d56f931b4d65f8ad098e01f1cb4ddea",
+    "diagnosis": "R1 successful exact whole-host compile; R2 observer successfully compiled, parser assumed absolute compiler and direct main. Actual final link uses bare clang++ and Vemul__main.o inside Vemul__ALL.a. R3 replays actual link with compiled observer before archive; all predecessor model objects and RTL byte unchanged.",
+    "experiment_commit": "570803d340a33fd50639466982ed75dbe8fef32a",
+    "hardware_commit": "6fada307bb77be90b39720d3f95404fece0e431b",
+    "no_model_rebuild": true,
+    "oracle": "Unchanged R2 real4checker full_compare + actual DCache edge/BOOM sequence join; no injected results",
+    "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-preservation-validation-r1-20261113/candidates/performance-only-checker-whole-r3-20261113",
+    "service": "ec-performance-only-checker-whole-r3-20261113.service",
+    "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-performance-only-checker-whole-r3-20261113/state.json",
+    "status": "STARTING_OBSERVER_LINK_ONLY_CONTINUATION",
+    "utc": "2026-11-13T05:15:22.259785+00:00"
+  },
+  "status": "RUNNING_INTEGRATED-WORKLOAD",
+  "controller_identity": {
+    "pid": 475879,
+    "state": "S",
+    "start_ticks": "35865375",
+    "cpu_ticks": 251,
+    "nice": 19,
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "cgroup": "13:devices:/user.slice\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/user.slice\n9:memory:/user.slice/user-1008.slice/user@1008.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/user.slice/user-1008.slice/user@1008.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/user.slice\n1:name=systemd:/user.slice/user-1008.slice/user@1008.service/ec-performance-only-checker-whole-r3-20261113.service\n0::/user.slice/user-1008.slice/user@1008.service/ec-performance-only-checker-whole-r3-20261113.service\n",
+    "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-preservation-validation-r1-20261113/candidates/performance-only-checker-whole-r3-20261113/controller.py ",
+    "children": [
+      475932
+    ]
+  },
+  "workload_identity": {
+    "pid": 475932,
+    "state": "R",
+    "start_ticks": "35865651",
+    "cpu_ticks": 59569,
+    "nice": 19,
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "cgroup": "13:devices:/user.slice\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/user.slice\n9:memory:/user.slice/user-1008.slice/user@1008.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/user.slice/user-1008.slice/user@1008.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/user.slice\n1:name=systemd:/user.slice/user-1008.slice/user@1008.service/ec-performance-only-checker-whole-r3-20261113.service\n0::/user.slice/user-1008.slice/user@1008.service/ec-performance-only-checker-whole-r3-20261113.service\n",
+    "cmdline": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-performance-only-checker-whole-r3-20261113/VPerformanceOnly6fada307Observed +permissive +max-cycles=5000000 +fesvr-step-size=1000 +mm_readLatency_0=30 +mm_readMaxReqs_0=4 +mm_relaxFunctionalModel_0=0 +mm_writeLatency_0=30 +mm_writeMaxReqs_0=4 +heartbeat-polling-interval=1000 +print-file=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-performance-only-checker-whole-r3-20261113/run/rtl-prints- +permissive-off +prog0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-canneal-20261111/test.riscv ",
+    "children": []
+  },
+  "authentication": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round197/checker-r3-authentication.json",
+  "authentication_sha256": "79f73bcbe84e10e425caa9b46d870f7487ada0f60083a0f5aefead0160580c7f",
+  "link_receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-performance-only-checker-whole-r3-20261113/observer-link-receipt.json",
+  "link_receipt_sha256": "25390ec3d56de84d4783614e0e2118e864b8c52c0e3854e9c44a0c855001d981",
+  "result_path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-performance-only-checker-whole-r3-20261113/result.json",
+  "result_exists": false,
+  "model_and_RTL_unchanged": true,
+  "protected_artifacts_verified": 644,
+  "strict_oracle_unchanged": true,
+  "integrated_validation_started": true,
+  "actual_integrated_checker_execution_passed": false,
+  "no_duplicate": true,
+  "no_new_jobs": true,
+  "no_FPGA_IO": true,
+  "no_CAD_control": true
+}

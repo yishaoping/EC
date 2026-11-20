@@ -1,0 +1,215 @@
+{
+  "argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-efficiency-driver-20261106T135905Z/FireSim-xilinx_alveo_u280",
+    "+permissive",
+    "+domain=0000",
+    "+bus=21",
+    "+device=00",
+    "+function=0",
+    "+bar=0",
+    "+pci-vendor=10ee",
+    "+pci-device=903f",
+    "+uart-in0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-vips-test-r1-20261109T042304Z/uart.in",
+    "+uart-out0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-vips-test-r1-20261109T042304Z/uart.log",
+    "+fesvr-step-size=2004765",
+    "+mm_readLatency_0=30",
+    "+mm_readMaxReqs_0=4",
+    "+mm_relaxFunctionalModel_0=0",
+    "+mm_writeLatency_0=30",
+    "+mm_writeMaxReqs_0=4",
+    "+ec-dac-roi-log=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-vips-test-r1-20261109T042304Z/roi-raw.jsonl",
+    "+ec-dac-snapshot-seconds=30",
+    "+permissive-off",
+    "+prog0=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-firmware-20261107T060553.463786Z/platform/generic/firmware/fw_payload.elf"
+  ],
+  "deployment": {
+    "bdfs": [
+      "0000:21:00.0"
+    ],
+    "bitstream": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-bitstream-20261102T095746.955739Z/vivado_proj/firesim.bit",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_flash_firmware_updated": false,
+    "cards": [
+      {
+        "bdf": "0000:21:00.0",
+        "bitstream": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-bitstream-20261102T095746.955739Z/vivado_proj/firesim.bit",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "configuration": "Native",
+        "serial": "21770433G02LA",
+        "source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4"
+      }
+    ],
+    "completed_cards": [
+      {
+        "bdf": "0000:21:00.0",
+        "bitstream": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-bitstream-20261102T095746.955739Z/vivado_proj/firesim.bit",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "configuration": "Native",
+        "serial": "21770433G02LA",
+        "source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4"
+      }
+    ],
+    "configuration": "Native",
+    "control_plane_reconciliation": {
+      "e2_identity_unchanged": true,
+      "original_failure_preserved": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/batches/Native-single-20261109T022232Z/FAILED.json",
+      "original_receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/batches/Native-single-20261109T022232Z/deployment-before-reconciliation.json",
+      "program_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/batches/Native-single-20261109T022232Z/program-Xilinx_21770433G02LA.log",
+      "program_log_sha256": "3cdea514a2bdf2a9f456437851afccfe8c7c07d6b223e0272299b7264654fd35",
+      "raw_witness": "EC_FPGA_PROGRAMMED serial=Xilinx/21770433G02LA file=/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-bitstream-20261102T095746.955739Z/vivado_proj/firesim.bit device=xcu280_u55c_0",
+      "reason": "Vivado actually programmed target successfully; legacy call_vivado rejected echoed Tcl source containing ERROR: literals. Corrected guard strings and accepted exact completion witness; no second programming.",
+      "revalidated_utc": "2026-11-09T02:33:21.019423+00:00"
+    },
+    "deployment_tools": {
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/firesim.py": "517b5b6f43beaeaf5f955cb66825f12e7aa51ce4328e0c920ee6bd69a837a42f",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/fpga-util.py": "947c989b35b0a0adc7c1f024e3aec26e1c661820972767dacd174809887a449e",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/pcielib.py": "8ad176ad368ffa5d5c2677115ff4f313bba7abe71cd898abd26d7548c2fb9f00",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/probe_targets.tcl": "c6ff49bd199588dcdcab1e00dfb47cb56d15043fb1ef15974ea5fdfec0daca3b",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/probe_targets_3122.tcl": "9bfc21406f433d45b0753b5ec3f1365a9999cf610339ededa47835e481da0e52",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/program_fpga.tcl": "93e6731f9447cf48bd1ae0f5b1c2d458f5726d62193cb98cc13daca887e1332f",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/provenance.json": "3f4dcc11685b2005e585679927d2c25ea608526b30bf7a5f8e7672862cbf8c9f",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/start_owned_hw_server.py": "8072a1ca79140fb871136a624b3903e0ac2d722142c8d1fd7eeabb2ad3242ece",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/util.py": "99c369f5383bca276e3722fcef45f8bb3e8f18a7d476750dc3cb5644181568f8"
+    },
+    "ended_utc": "2026-11-09T02:33:21.019330+00:00",
+    "global_operations": [],
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "host_reboot": false,
+    "pid": 71733,
+    "postcheck": {
+      "cleanup_users": [],
+      "mapping": [
+        {
+          "bdf": "0000:21:00.0",
+          "driver": "xdma",
+          "serial": "21770433G02LA"
+        }
+      ],
+      "observed_utc": "2026-11-09T02:33:21.019087+00:00",
+      "open_devices": [],
+      "other_card_simulations": [],
+      "permission_denied": 0,
+      "simulation_processes": [],
+      "target_bdfs": [
+        "0000:21:00.0"
+      ],
+      "user_confirms_boards_available": true
+    },
+    "schema": "ec-single-fpga-deployment/2",
+    "serials": [
+      "21770433G02LA"
+    ],
+    "source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "started_utc": "2026-11-09T02:22:44.481930+00:00",
+    "status": "DEPLOYED_NOT_RUN",
+    "system_driver_updated": false,
+    "targeted_operations": [
+      "unbind XDMA for 0000:21:00.0 only",
+      "remove and rescan through the 0000:21:00.0 upstream bridge only",
+      "program JTAG serial Xilinx/21770433G02LA only",
+      "rebind XDMA for 0000:21:00.0 only"
+    ],
+    "user_authorization": "2026-11-09 explicit 21-only experiments; never disturb e2"
+  },
+  "identity": {
+    "apps_manifest_sha256": "e21abb326a873e686b04b5d44a11f3fac5e9b4e7d5a0cc04ed8d864e420bba1f",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:21:00.0",
+    "board_serial": "21770433G02LA",
+    "case": {
+      "algorithm_unchanged": true,
+      "argv": [
+        "im_benchmark",
+        "barbados_256x288.v",
+        "output.v"
+      ],
+      "diagnostic_roi_syscalls": [],
+      "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-vips-20261107T060302Z/diagnostic-test/trace.log",
+      "fpga_validation": "NOT_RUN",
+      "input": "test",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/apps/vips/inputs/input_test.tar": "c8c2b41932ac57aa7b13632b2dd0731171479ed52a23855610454a2538fadcc5"
+      },
+      "input_files": {
+        "barbados_256x288.v": "372bebf8661cfd2226e758e331b0c2df0ae4cfbdf932e58cf136ba206566aea7"
+      },
+      "program": "vips",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-vips-20261107T060302Z/reference-test/output.pixels": "e30d432fcc64aa848baf68ee492564887b10f66290a54c4d74d8fd154b0fd8dc",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-vips-20261107T060302Z/reference-test/output.shape": "f75800f1d14a660ae113dc17abfb8d0ae556326561a6e4bf47901e03e6364c41"
+      },
+      "roi": "Full original im_benchmarkn(in,out,1), eager IM_SETBUF/vips_sink_memory completes every output pixel inside ROI",
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/vips/parsec/test.runconf",
+      "runconf_sha256": "ef869bef0155ed0628bd5a7f6b3e12706de1f73960e01ea333dde31c70460b6c",
+      "threads": 1,
+      "validation": {
+        "files": {
+          "output.pixels": "e30d432fcc64aa848baf68ee492564887b10f66290a54c4d74d8fd154b0fd8dc",
+          "output.shape": "f75800f1d14a660ae113dc17abfb8d0ae556326561a6e4bf47901e03e6364c41"
+        },
+        "kind": "files_sha256"
+      },
+      "warmups": 0
+    },
+    "configuration": "Native",
+    "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+    "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+    "elf_sha256": "339e1ed66c1ea9ec4d1434cbfd0df9aaa7374c440acabd19bedf155009a1e3dc",
+    "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+    "firmware_receipt_sha256": "4ec0521e9826a5e9c75d1b17163c7b59d03d0c58599dde000d4a3ddfa614b693",
+    "firmware_sha256": "2ad705749c4b4e790f3af4ab8e8734d32c386aed493eb24eecf0996d258134ca",
+    "formal": false,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "host_bridge_restart": true,
+    "input": "test",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "previous_run_id": null,
+    "program": "vips",
+    "repetition": 1,
+    "rootfs_sha256": "0c72f68e2dc48fdf20910a6fdef231fe920fdd7d3909e0e2b17ba4e8c7bf002f",
+    "run_id": "native-vips-test-r1-20261109T042304Z",
+    "software_diagnostic": false,
+    "software_profile": "vips-complete-im-benchmark-resident-io",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "target_reset_probe": false,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "65e48f761823c0beb032f1ecbe5887645ea23118b339977b5717a0def9a9c5ee",
+  "precheck": {
+    "cleanup_users": [],
+    "mapping": [
+      {
+        "bdf": "0000:21:00.0",
+        "driver": "xdma",
+        "serial": "21770433G02LA"
+      }
+    ],
+    "observed_utc": "2026-11-09T04:23:04.857045+00:00",
+    "open_devices": [],
+    "other_card_simulations": [],
+    "permission_denied": 0,
+    "simulation_processes": [],
+    "target_bdfs": [
+      "0000:21:00.0"
+    ],
+    "user_confirms_boards_available": true
+  },
+  "roi_parser_sha256": "e55944240285ee0197b1b8bd3bedbe10a4a72305511ac72018fe668578d5f8c1",
+  "runner_sha256": "0b6e6b4bbe242f7df873c8b5ff131a421e8fd2fa140bb8facfc652747b64b42f",
+  "schema": "ec-isolated-fpga-sample/1",
+  "target_reset_probe_previous": null
+}

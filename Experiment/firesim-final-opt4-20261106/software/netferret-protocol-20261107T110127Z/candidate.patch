@@ -1,0 +1,254 @@
+--- a/client.c
++++ b/client.c
+@@ -176,6 +176,44 @@
+ 	return NULL;
+ }
+ 
++
++/* Transport framing only: computation, pipeline and original ROI are retained. */
++static void ec_send_exact(int fd, const void *buf, size_t bytes) {
++    const char *p = buf;
++    while (bytes) {
++#ifdef ENABLE_PARSEC_UPTCPIP
++        ssize_t n = uptcp_send(fd, p, bytes, 0);
++#else
++        ssize_t n = send(fd, p, bytes, 0);
++#endif
++        if (n <= 0) { perror("ec_send_exact"); exit(1); }
++        p += n; bytes -= n;
++    }
++}
++static void ec_recv_exact(int fd, void *buf, size_t bytes) {
++    char *p = buf;
++    while (bytes) {
++#ifdef ENABLE_PARSEC_UPTCPIP
++        ssize_t n = uptcp_recv(fd, p, bytes, 0);
++#else
++        ssize_t n = recv(fd, p, bytes, 0);
++#endif
++        if (n <= 0) { perror("ec_recv_exact: incomplete frame"); exit(1); }
++        p += n; bytes -= n;
++    }
++}
++static void ec_close_end(int fd) {
++    struct linger linger = {1, 30};
++#ifdef ENABLE_PARSEC_UPTCPIP
++    /* UpTCP forwards BSD option numbers directly; these are BSD constants. */
++    if (uptcp_setsockopt(fd, 0xffff, 0x0080, &linger, sizeof(linger)) != 0 || uptcp_close(fd) != 0) {
++#else
++    if (setsockopt(fd, SOL_SOCKET, SO_LINGER, &linger, sizeof(linger)) != 0 || close(fd) != 0) {
++#endif
++        perror("ec_close_end"); exit(1);
++    }
++}
++
+ void send_end_tag()
+ {
+ 	int		 fd;
+@@ -208,13 +246,8 @@
+         }
+ 
+ 	end_tag = -1;
+-#ifdef ENABLE_PARSEC_UPTCPIP
+-        if (uptcp_send(fd, &end_tag, sizeof(int), 0) == -1) {
+-#else           
+-        if (send(fd, &end_tag, sizeof(int), 0) == -1) {
+-#endif                  
+-		fprintf(stderr, "Socket error: send input file data error\n");
+-        }
++        ec_send_exact(fd, &end_tag, sizeof(end_tag));
++        ec_close_end(fd);
+ 
+ }
+ 
+@@ -299,47 +332,12 @@
+ 	        }
+ 
+ 	        /* Send data to server*/
+-	        int bytes_left = pkt_ptr->len + sizeof(int);
+-	        int bytes_tosend = 0;
+-        	buf_ptr = (char*)pkt_ptr;
+-	        while(bytes_left >0){
+-        	        bytes_tosend = bytes_left; 
+-#ifdef ENABLE_PARSEC_UPTCPIP
+-	                if (uptcp_send(fd, buf_ptr, bytes_tosend, 0) == -1) {
+-#else           
+-	                if (send(fd, buf_ptr, bytes_tosend, 0) == -1) {
+-#endif                  
+-	                        fprintf(stderr, "Socket error: send input file data error\n");
+-	                }
+-        	        bytes_left -= bytes_tosend;
+-	                buf_ptr += bytes_tosend;
+-        	}
+-
+-
+-		/* 4. wait for results */
+-	        int bytes_recv = 0;
+-		int bytes_input = MAX_SOCKET_BUF;
+-
+-	        buf_ptr = (char*)pkt_ptr; 
+-	        while(bytes_recv < bytes_input) {
+-#ifdef ENABLE_PARSEC_UPTCPIP
+-			if ((r = uptcp_recv(fd, buf_ptr+bytes_recv, (bytes_input-bytes_recv), 0)) == -1) {
+-#else
+-			if ((r = recv(fd, buf_ptr+bytes_recv, (bytes_input-bytes_recv), 0)) == -1) {
+-#endif
+-				fprintf(stderr, "recv error\n\n");
+-			}
+-
+-			if(bytes_input == MAX_SOCKET_BUF){
+-				bytes_input = pkt_ptr->len;
+-			}
+-
+-			bytes_recv += r; 
+-
+-			if(r == 0)
+-				break;
+-			bytes_recv += r;
+-		}
++        ec_send_exact(fd, pkt_ptr, pkt_ptr->len + sizeof(int));
++        ec_recv_exact(fd, &pkt_ptr->len, sizeof(pkt_ptr->len));
++        if (pkt_ptr->len < 0 || pkt_ptr->len > MAX_SOCKET_BUF - sizeof(int)) {
++            fprintf(stderr, "Invalid result frame length\n"); exit(1);
++        }
++        ec_recv_exact(fd, pkt_ptr->buf, pkt_ptr->len);
+ 
+ 		/* 5. write results */
+ 		pthread_mutex_lock(&fout_lock);
+@@ -350,9 +348,7 @@
+ 
+ 		cnt_dequeue++;
+ 
+-		if(cnt_enqueue == cnt_dequeue){ /* last item */
+-			send_end_tag();
+-		}	
++		/* End tag follows both joined producer/consumer pools. */	
+ 
+ 		pthread_mutex_unlock(&fout_lock);
+ 
+@@ -419,6 +415,7 @@
+ 
+ 	tpool_join(p_process, NULL);
+ 	tpool_join(p_load, NULL);
++	send_end_tag();
+ 
+ 	tpool_destroy(p_load);
+ 	tpool_destroy(p_process);
+--- a/server.c
++++ b/server.c
+@@ -147,13 +147,51 @@
+ 
+ 
+ /* ------ The Stages ------ */
++
++/* Transport framing only: computation, pipeline and original ROI are retained. */
++static void ec_send_exact(int fd, const void *buf, size_t bytes) {
++    const char *p = buf;
++    while (bytes) {
++#ifdef ENABLE_PARSEC_UPTCPIP
++        ssize_t n = uptcp_send(fd, p, bytes, 0);
++#else
++        ssize_t n = send(fd, p, bytes, 0);
++#endif
++        if (n <= 0) { perror("ec_send_exact"); exit(1); }
++        p += n; bytes -= n;
++    }
++}
++static void ec_recv_exact(int fd, void *buf, size_t bytes) {
++    char *p = buf;
++    while (bytes) {
++#ifdef ENABLE_PARSEC_UPTCPIP
++        ssize_t n = uptcp_recv(fd, p, bytes, 0);
++#else
++        ssize_t n = recv(fd, p, bytes, 0);
++#endif
++        if (n <= 0) { perror("ec_recv_exact: incomplete frame"); exit(1); }
++        p += n; bytes -= n;
++    }
++}
++static void ec_close_end(int fd) {
++    struct linger linger = {1, 30};
++#ifdef ENABLE_PARSEC_UPTCPIP
++    /* UpTCP forwards BSD option numbers directly; these are BSD constants. */
++    if (uptcp_setsockopt(fd, 0xffff, 0x0080, &linger, sizeof(linger)) != 0 || uptcp_close(fd) != 0) {
++#else
++    if (setsockopt(fd, SOL_SOCKET, SO_LINGER, &linger, sizeof(linger)) != 0 || close(fd) != 0) {
++#endif
++        perror("ec_close_end"); exit(1);
++    }
++}
++
+ void *t_acceptor (void *dummy)
+ {
+ 	int 			fd0, fd1;
+ 	struct sockaddr_in      sin;
+ 	struct sockaddr_in      pin;
+ 	struct hostent  	*hp;
+-	socklen_t 		addrlen;
++	socklen_t 		addrlen = sizeof(pin);
+ 	struct request_data 	*req;
+ 
+ 	/* 1. create a socket */
+@@ -253,35 +291,18 @@
+ 		pkt_ptr->len = 0;
+ 		buf = (char*)pkt_ptr;
+ 
+-		while(bytes_recv < bytes_input) { 
+-#ifdef ENABLE_PARSEC_UPTCPIP 
+-			if ((r = uptcp_recv(fd, buf+bytes_recv, (bytes_input-bytes_recv), 0)) == -1) { 
+-#else 
+-			if ((r = recv(fd, buf+bytes_recv, (bytes_input-bytes_recv), 0)) == -1) { 
+-#endif 
+-				printf("I/O error\n"); 
+-			} 
+-
+-			/*
+-			 * Extract bytes_input from recv_buf
+-			 *
+-			 * struct send_buf { 
+- 			 *    int   send_bytes; 
+- 			 *    char  *buf;
+- 			 * };
+- 			 */
+-			if(bytes_input == MAX_SOCKET_BUF)
+-				bytes_input = pkt_ptr->len + sizeof(int); 
+-
+-			if(pkt_ptr->len == -1){  /* last connection */
+-#ifdef ENABLE_PARSEC_UPTCPIP
+-			      parsec_exit_tcpip_roi();
+-#endif
+-			      goto exit;
+-}
+-
+-			bytes_recv += r; 
+-		}
++        ec_recv_exact(fd, &pkt_ptr->len, sizeof(pkt_ptr->len));
++        if (pkt_ptr->len == -1) {
++#ifdef ENABLE_PARSEC_UPTCPIP
++            parsec_exit_tcpip_roi();
++#endif
++            ec_close_end(fd);
++            goto exit;
++        }
++        if (pkt_ptr->len < 0 || pkt_ptr->len > MAX_SOCKET_BUF - sizeof(int)) {
++            fprintf(stderr, "Invalid query frame length\n"); exit(1);
++        }
++        ec_recv_exact(fd, pkt_ptr->buf, pkt_ptr->len);
+ 
+ 
+ 		/* 3. enqueue */
+@@ -488,13 +509,7 @@
+ 		sendbuf = (char*)pkt_ptr;
+ 		pkt_ptr->len = bufsize;
+ 		bufsize += sizeof(int);
+-#ifdef ENABLE_PARSEC_UPTCPIP
+-		if (uptcp_send(rank->fd,  sendbuf, bufsize, 0) == -1) {
+-#else
+-		if (send(rank->fd,  sendbuf, bufsize, 0) == -1) {
+-#endif
+-			fprintf(stderr, "Socket error: cannot send ack to client\n");
+-		}
++        ec_send_exact(rank->fd, sendbuf, bufsize);
+ 
+ 		cass_result_free(&rank->result);
+ 		free(rank);

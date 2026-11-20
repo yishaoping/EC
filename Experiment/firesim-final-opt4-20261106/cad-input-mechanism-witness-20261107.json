@@ -1,0 +1,24 @@
+{
+  "schema": "ec-cad-input-mechanism-witness/1",
+  "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+  "rtl": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z/design/FireSim-generated.sv",
+  "rtl_sha256": "27362c56925b674288d37039c749ec9fbdd1a2e62141aac6d072022fd4d60885",
+  "witnesses": [
+    {
+      "kind": "l2_report_permission",
+      "line": 120272,
+      "text": "wire [1:0] _final_meta_writeback_state_T_5 = request_param != 3'h3 & request_param != 3'h4 & _T_19 ? 2'h3 : meta_state"
+    },
+    {
+      "kind": "svb_entry31",
+      "line": 196069,
+      "text": "reg [1:0] state_31; // @[speculative-version-buffer.scala 102:22]"
+    }
+  ],
+  "interpretation": [
+    "SVB entry 31 present, consistent with 32-entry elaboration audit",
+    "L2 final state retains reports TtoT=3/BtoB=4 instead of demoting TRUNK"
+  ],
+  "runtime_validation": "NOT_RUN"
+}

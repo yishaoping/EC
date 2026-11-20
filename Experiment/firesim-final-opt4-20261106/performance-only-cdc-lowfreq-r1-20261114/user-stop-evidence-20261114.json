@@ -1,0 +1,357 @@
+{
+  "status": "USER_REQUESTED_STOP",
+  "utc": "2026-11-14T15:23:37.637237+00:00",
+  "reason": "User is stopping this implementation to try another approach",
+  "states": {
+    "state.json": {
+      "profile": "EC Performance-Only: CDC Mem + low FPGA host frequency",
+      "hardware_commit": "6e1e9b966d599c442b3bdf2f3a838aae2ee5c6da",
+      "performance_baseline": "6fada307bb77be90b39720d3f95404fece0e431b",
+      "frozen_full_ec": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "fpga_access": false,
+      "model_requests": false,
+      "bitstream": null,
+      "new_complete_shell_resources": {
+        "CLB LUTs": {
+          "used": 936815.0,
+          "available": 1303680.0,
+          "percent": 71.85927528227786
+        },
+        "CLB Registers": {
+          "used": 707725.0,
+          "available": 2607360.0,
+          "percent": 27.143355731467846
+        },
+        "CARRY8": {
+          "used": 15706.0,
+          "available": 162960.0,
+          "percent": 9.63794796269023
+        },
+        "Block RAM Tile": {
+          "used": 696.5,
+          "available": 2016.0,
+          "percent": 34.548611111111114
+        },
+        "URAM": {
+          "used": 0.0,
+          "available": 960.0,
+          "percent": 0.0
+        },
+        "DSPs": {
+          "used": 115.0,
+          "available": 9024.0,
+          "percent": 1.2743794326241136
+        }
+      },
+      "candidates": [
+        {
+          "candidate": "mem-15mhz-altspreadlogic_high",
+          "returncode": 2,
+          "ended_utc": "2026-11-14T10:41:14.083539+00:00",
+          "tcl_sha256": "14135a242c21551187e05e88c8122053d1ad49f6800a8cee1e8b6fc0edda5646",
+          "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-15mhz-altspreadlogic_high/vivado.log",
+          "routing": {
+            "routable": 1455764,
+            "fully_routed": 1375149,
+            "errors": 80615,
+            "unrouted": null,
+            "partial": null,
+            "conflicts": 80615,
+            "legal": false,
+            "fraction": 0.9446235790966118
+          },
+          "timing": {
+            "wns": -3.457,
+            "tns": -2225.635,
+            "setup_endpoints": 5976,
+            "whs": -0.188,
+            "ths": -11.557,
+            "hold_endpoints": 865
+          },
+          "resources": {
+            "CLB LUTs": {
+              "used": 926494.0,
+              "available": 1303680.0
+            },
+            "CLB Registers": {
+              "used": 707830.0,
+              "available": 2607360.0
+            },
+            "CARRY8": {
+              "used": 15706.0,
+              "available": 162960.0
+            },
+            "Block RAM Tile": {
+              "used": 696.5,
+              "available": 2016.0
+            },
+            "URAM": {
+              "used": 0.0,
+              "available": 960.0
+            },
+            "DSPs": {
+              "used": 115.0,
+              "available": 9024.0
+            }
+          },
+          "remapped_resources": {
+            "CLB LUTs": {
+              "used": 936815.0,
+              "available": 1303680.0
+            },
+            "CLB Registers": {
+              "used": 707725.0,
+              "available": 2607360.0
+            },
+            "CARRY8": {
+              "used": 15706.0,
+              "available": 162960.0
+            },
+            "Block RAM Tile": {
+              "used": 696.5,
+              "available": 2016.0
+            },
+            "URAM": {
+              "used": 0.0,
+              "available": 960.0
+            },
+            "DSPs": {
+              "used": 115.0,
+              "available": 9024.0
+            }
+          },
+          "placed_congestion_level": 6,
+          "slr_placed": {
+            "total_slls_used": 4115,
+            "CLB": {
+              "used": [
+                52709.0,
+                52659.0,
+                53957.0
+              ],
+              "percent": [
+                95.9,
+                97.52,
+                99.92
+              ]
+            },
+            "CLB LUTs": {
+              "used": [
+                320579.0,
+                296141.0,
+                309744.0
+              ],
+              "percent": [
+                72.91,
+                68.55,
+                71.7
+              ]
+            },
+            "CLB Registers": {
+              "used": [
+                193323.0,
+                189189.0,
+                325254.0
+              ],
+              "percent": [
+                21.98,
+                21.9,
+                37.65
+              ]
+            },
+            "Block RAM Tile": {
+              "used": [
+                198.5,
+                456.0,
+                42.0
+              ],
+              "percent": [
+                29.54,
+                67.86,
+                6.25
+              ]
+            },
+            "URAM": {
+              "used": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "percent": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "DSPs": {
+              "used": [
+                3.0,
+                36.0,
+                76.0
+              ],
+              "percent": [
+                0.1,
+                1.17,
+                2.47
+              ]
+            }
+          },
+          "slr_routed": {
+            "total_slls_used": 4168,
+            "CLB": {
+              "used": [
+                52709.0,
+                52661.0,
+                53957.0
+              ],
+              "percent": [
+                95.9,
+                97.52,
+                99.92
+              ]
+            },
+            "CLB LUTs": {
+              "used": [
+                320579.0,
+                296171.0,
+                309744.0
+              ],
+              "percent": [
+                72.91,
+                68.56,
+                71.7
+              ]
+            },
+            "CLB Registers": {
+              "used": [
+                193323.0,
+                189194.0,
+                325313.0
+              ],
+              "percent": [
+                21.98,
+                21.9,
+                37.65
+              ]
+            },
+            "Block RAM Tile": {
+              "used": [
+                198.5,
+                456.0,
+                42.0
+              ],
+              "percent": [
+                29.54,
+                67.86,
+                6.25
+              ]
+            },
+            "URAM": {
+              "used": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "percent": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            },
+            "DSPs": {
+              "used": [
+                3.0,
+                36.0,
+                76.0
+              ],
+              "percent": [
+                0.1,
+                1.17,
+                2.47
+              ]
+            }
+          },
+          "actual_clock_contract": [
+            "buildtop_reference_clock master=lopt nominal_MHz=15 actual_period_ns=66.640 actual_MHz=15.006002400960384 mmcm_divide=80.0 setup=1 hold=0",
+            "tileClockGroup_tile_1 master=lopt nominal_MHz=15 actual_period_ns=66.640 actual_MHz=15.006002400960384 mmcm_divide=80.0 setup=2 hold=1"
+          ],
+          "evidence": {
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-15mhz-altspreadlogic_high/clock-contract.txt": "9082490c3b6c091fc3dbf13453691973aba68f853108cfddc0e697bc3fae777d",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-15mhz-altspreadlogic_high/host-mmcm.txt": "b2a3bc7169855986d8f2b0ce9ff43709296f6bbb3961cd5b9e635d922541528b",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-15mhz-altspreadlogic_high/route-status.rpt": "6083ca49ee9132cb6b8a39a37acc338473a74396bc324e05456843d326b6773f",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-15mhz-altspreadlogic_high/timing.rpt": "d87d6e04354b093725ae74660e5aa5041c6916464ea5532ab0feeabbf97a1d60",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-15mhz-altspreadlogic_high/drc.rpt": "204fd190a71b6fd0a20a342369f0363929f30b6f28f97a7c14f4f930fb9a3448",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-15mhz-altspreadlogic_high/methodology.rpt": "5efc55b8d5e856c1a4980c1bb6025607c69ed9c85f4d662c61284f7badfb5556",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-15mhz-altspreadlogic_high/bus-skew.rpt": "ac211f75208b17d12204b4628fcd698212cac7e8340de926885be28f711a09b0",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-15mhz-altspreadlogic_high/utilization.rpt": "4c03e0c81a1043cd9801096cb2e561adb6c507ddac3d2a79a8c86fe7b176f454",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-15mhz-altspreadlogic_high/congestion-placed.rpt": "3823719d8fd7428b450ce600a75363e935e33d231ffbf31b858b0197e9a8f5d9",
+            "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-15mhz-altspreadlogic_high/congestion-routed.rpt": "7b7eb080e8121d03a624c9da8be1e4a6c1febf7755fc134ce339895badde9c06"
+          },
+          "bitstream_generated": false,
+          "nominal_host_mhz": 15
+        },
+        {
+          "candidate": "mem-10mhz-ssi_spreadslls",
+          "returncode": 1,
+          "ended_utc": "2026-11-14T10:45:25.704722+00:00",
+          "tcl_sha256": "8825e490de178f1056edbab8913b9eadb10f8a834c3af72ee9641768c55b2338",
+          "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-10mhz-ssi_spreadslls/vivado.log",
+          "bitstream_generated": false,
+          "nominal_host_mhz": 10
+        }
+      ],
+      "status": "RUNNING_ENVIRONMENT_FIXED_10MHZ_PHYSICAL_RECOVERY",
+      "utc": "2026-11-14T11:01:05.613939+00:00",
+      "cad_status": "RECOVERY_CONTROLLER_ACTIVE",
+      "cad_child": null,
+      "cad_stage": "open_saved_routed_checkpoint",
+      "nominal_host_mhz": 10,
+      "candidate": "mem-10mhz-recovery-r2",
+      "last_result": {
+        "candidate": "mem-10mhz-ssi_spreadslls",
+        "returncode": 1,
+        "ended_utc": "2026-11-14T10:45:25.704722+00:00",
+        "tcl_sha256": "8825e490de178f1056edbab8913b9eadb10f8a834c3af72ee9641768c55b2338",
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-10mhz-ssi_spreadslls/vivado.log",
+        "bitstream_generated": false,
+        "nominal_host_mhz": 10
+      },
+      "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-15mhz-altspreadlogic_high/routed.dcp",
+      "live_physical_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/state.json"
+    },
+    "physical/state.json": {
+      "baseline_preserved": true,
+      "candidates": [],
+      "child_pid": 2264442,
+      "child_started_utc": "2026-11-14T11:01:05.617927+00:00",
+      "current_candidate": "mem-10mhz-recovery-r2",
+      "disk_free_gib": 125.19543075561523,
+      "elapsed_seconds": 15750.639176313009,
+      "fpga_access": false,
+      "functional_baseline": "6fada307bb77be90b39720d3f95404fece0e431b",
+      "hardware_commit": "6e1e9b966d599c442b3bdf2f3a838aae2ee5c6da",
+      "model_requests": false,
+      "phase": "Phase 4.2 Global Iteration 1",
+      "pid": 2264411,
+      "profile": "EC Performance-Only: CDC Mem 10 MHz physical recovery",
+      "schema": "ec-performance-only-routability-campaign/1",
+      "started_utc": "2026-11-14T11:01:04.565845+00:00",
+      "status": "RUNNING_MEM-10MHZ-RECOVERY-R2",
+      "tcl_sha256": "d9973c7161ee5b84b8ffd93e502df76cd7112cb0281bc4bf9297afc3975fc309",
+      "updated_utc": "2026-11-14T15:23:36.257635+00:00"
+    },
+    "fresh10-state.json": {
+      "status": "WAITING_CURRENT_OWNER_COMPLETION_EVENT",
+      "utc": "2026-11-14T11:58:43.228447+00:00",
+      "periodic_patrol": false,
+      "model_requests": false,
+      "owner_pid": 2264411,
+      "next_candidate": "mem-10mhz-fresh-ssi-r3",
+      "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-memory-cdc-r2-20261114/complete-shell-r3/shell-postopt.dcp"
+    }
+  },
+  "services": {
+    "ec-performance-only-cdc-mem-10mhz-recovery-r2-20261114.service": "Restart=no\nMainPID=2264411\nActiveState=active\nSubState=running\n",
+    "ec-performance-only-cdc-mem-10mhz-fresh-r3-20261114.service": "Restart=no\nMainPID=2324759\nActiveState=active\nSubState=running\n"
+  }
+}

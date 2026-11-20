@@ -1,0 +1,21 @@
+{
+  "schema": "ec-service-job-spec/1",
+  "name": "cad",
+  "argv": [
+    "python3",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_bitstream.py"
+  ],
+  "legacy_states": [
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/C4-runtime-cad-state.json"
+  ],
+  "inputs": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_bitstream.py"
+  ],
+  "checkpoint_policy": "Reuse exact certified artifacts and atomic complete samples; incomplete guest reruns from start, CAD uses only completed DCP/run markers; no instruction-level restore",
+  "completion_state": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/C4-runtime-cad-state.json",
+    "statuses": [
+      "BUILT_NOT_RUN"
+    ]
+  }
+}

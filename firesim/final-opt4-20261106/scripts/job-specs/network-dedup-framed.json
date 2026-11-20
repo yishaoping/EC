@@ -1,0 +1,8 @@
+{
+  "schema": "ec-service-job-spec/1",
+  "name": "network-dedup-framed",
+  "argv": ["python3", "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/prepare_netdedup_framed.py"],
+  "inputs": ["/data1/gzh/EC/firesim/final-opt4-20261106/scripts/prepare_netdedup_framed.py"],
+  "legacy_states": ["/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netdedup-framed-preparation.json"],
+  "checkpoint_policy": "Isolated software-only exact-length stream framing; require full input and exact output, preserve original compression/ROI and all earlier failures; no FPGA or queue edits"
+}

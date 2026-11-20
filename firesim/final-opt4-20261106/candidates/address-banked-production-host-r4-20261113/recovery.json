@@ -1,0 +1,15 @@
+{
+  "schema": "ec-production-host-oracle-boundary-recovery/1",
+  "preflight_predecessor": "Opt4-address-banked-production-host-r3-20261113",
+  "preflight_failure": "The r3 controller compared its experiment commit to the hardware commit before admitting any validation stage. The failed unit wrote only predecessor-release evidence and had no state.json or child process.",
+  "preflight_cgroup_released": true,
+  "hardware_changed": false,
+  "target_oracle_or_stimulus_changed": false,
+  "predecessor": "Opt4-address-banked-production-host-r2-20261113",
+  "diagnosis": "The r2 host oracle sampled all public outputs immediately after step(1), without synchronizing to the shared precise PeekPokeBridge output boundary. At token 12 it read io_counters_0=2 while the target trace expected 0. This demonstrates an invalid observation boundary, not hardware inequivalence.",
+  "correction": "Wait for the precise output boundary and reject timeout or unstable channels before checking all existing public outputs.",
+  "target_cycles_added": 0,
+  "public_output_oracle_unchanged": true,
+  "negative_mutation_retained": true,
+  "area_or_fit_claim": false
+}

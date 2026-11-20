@@ -1,0 +1,199 @@
+{
+  "schema": "ec-roi-syscall-diagnosis/1",
+  "apps_manifest_sha256": "9c59fd0424f57c2d2387e61c8a30703c044d497b10620f4c15c67f147e8406bf",
+  "commands": [
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-D_GNU_SOURCE",
+        "-static",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/diagnostic-only-hooks.c",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/hooks.o"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-D_GNU_SOURCE",
+        "-static",
+        "-std=gnu++17",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/streamcluster",
+        "-x",
+        "c++",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/streamcluster/streamcluster.cpp",
+        "-x",
+        "none",
+        "-DENABLE_PARSEC_HOOKS",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/hooks.o",
+        "-lm",
+        "-pthread",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/streamcluster-DIAGNOSTIC-NOT-FOR-FPGA"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "-strace",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/streamcluster-DIAGNOSTIC-NOT-FOR-FPGA",
+        "2",
+        "5",
+        "1",
+        "10",
+        "10",
+        "5",
+        "none",
+        "output.txt",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/streamcluster"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-D_GNU_SOURCE",
+        "-static",
+        "-std=gnu++17",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/canneal",
+        "-x",
+        "c++",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/canneal/annealer_thread.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/canneal/rng.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/canneal/netlist.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/canneal/main.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/canneal/netlist_elem.cpp",
+        "-x",
+        "none",
+        "-DENABLE_PARSEC_HOOKS",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/hooks.o",
+        "-lm",
+        "-pthread",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/canneal-DIAGNOSTIC-NOT-FOR-FPGA"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "-strace",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/canneal-DIAGNOSTIC-NOT-FOR-FPGA",
+        "1",
+        "5",
+        "100",
+        "10.nets",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/canneal"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-D_GNU_SOURCE",
+        "-static",
+        "-std=gnu++17",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/blackscholes",
+        "-x",
+        "c++",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/blackscholes/blackscholes.c",
+        "-x",
+        "none",
+        "-DENABLE_PARSEC_HOOKS",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/hooks.o",
+        "-lm",
+        "-pthread",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/blackscholes-DIAGNOSTIC-NOT-FOR-FPGA"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "-strace",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/blackscholes-DIAGNOSTIC-NOT-FOR-FPGA",
+        "1",
+        "in_4.txt",
+        "prices.txt"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/blackscholes"
+    }
+  ],
+  "cases": [
+    {
+      "program": "streamcluster",
+      "input": "test",
+      "diagnostic_elf": "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/streamcluster-DIAGNOSTIC-NOT-FOR-FPGA",
+      "diagnostic_elf_sha256": "a2148d9b670c930d0503ad66a8f9ec827064ca899844838e020388adbc839e59",
+      "trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/streamcluster/qemu-strace.log",
+      "trace_sha256": "d8357d9a0068a0bb37fd0df4453eac56390a880b7c3bf503c62a2234d136b4b5",
+      "syscalls_between_original_roi_hooks": {
+        "write": 2,
+        "openat": 1,
+        "newfstatat": 1,
+        "close": 1
+      },
+      "syscall_records": [
+        "3750357 write(2,0x7fb390,15)read 10 points",
+        "3750357 openat(AT_FDCWD,\"output.txt\",O_WRONLY|O_CREAT|O_TRUNC,0666) = 3",
+        "3750357 newfstatat(3,\"\",0x00000040007fccd0,0x1000) = 0",
+        "3750357 write(3,0x14ba30,44) = 44",
+        "3750357 close(3) = 0"
+      ],
+      "application_exit": 0,
+      "actual_dac_hooks": false,
+      "fpga_validation": "NOT_RUN",
+      "formal_eligible": false
+    },
+    {
+      "program": "canneal",
+      "input": "test",
+      "diagnostic_elf": "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/canneal-DIAGNOSTIC-NOT-FOR-FPGA",
+      "diagnostic_elf_sha256": "9edd1113e5c53c433379b2c6514ef8829a13a44f35d4e999feb920e2fe7e9520",
+      "trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/canneal/qemu-strace.log",
+      "trace_sha256": "8019dcc1baf1f6abef6992cdc1b38953048f658d1351b0d1bc080b430b779c3f",
+      "syscalls_between_original_roi_hooks": {},
+      "syscall_records": [],
+      "application_exit": 0,
+      "actual_dac_hooks": false,
+      "fpga_validation": "NOT_RUN",
+      "formal_eligible": false
+    },
+    {
+      "program": "blackscholes",
+      "input": "test",
+      "diagnostic_elf": "/data1/gzh/EC/firesim/final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/blackscholes-DIAGNOSTIC-NOT-FOR-FPGA",
+      "diagnostic_elf_sha256": "107bd440e3017ffce0cf9171bd460b02a903e5c624d1433f5aed65fe9c44cafb",
+      "trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/roi-syscall-diagnostic-20261106T103118Z/blackscholes/qemu-strace.log",
+      "trace_sha256": "9afab4448af046eb292d01c78253c7930f28d7a9df88679638a5ac28121fc0c8",
+      "syscalls_between_original_roi_hooks": {},
+      "syscall_records": [],
+      "application_exit": 0,
+      "actual_dac_hooks": false,
+      "fpga_validation": "NOT_RUN",
+      "formal_eligible": false
+    }
+  ],
+  "diagnostic_only": true,
+  "fpga_validation": "NOT_RUN"
+}

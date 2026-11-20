@@ -1,0 +1,6 @@
+read_verilog /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-fieldbank-generated-proof-r4-20261111/slots-104-111.v
+hierarchy -check -top GeneratedOwnerTransition
+proc
+opt
+opt_clean -purge
+sat -verify -timeout 45 -set legal_interface 1 -prove equivalent 1 -show-inputs

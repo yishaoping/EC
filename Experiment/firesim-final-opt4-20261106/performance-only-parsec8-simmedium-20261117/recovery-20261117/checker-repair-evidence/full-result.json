@@ -1,0 +1,22 @@
+{
+  "status": "PASS_FULL_EMITTED_CSR_AND_BASELINE_NEGATIVE_CONTROL",
+  "generated_rtl_sha256": "0967039e6fea83fed56a9843a2a5e2c8724c7362b223f31f16d58ff8f02e838a",
+  "testbench_sha256": "3785c892d0dbac408f15ccd4179bc08b81569e1f19d92e725edc29fc8c5b3617",
+  "contexts": 3,
+  "results": {
+    "candidate": {
+      "expected_result_observed": true,
+      "returncode": 0,
+      "module_sha256": "d9b14b476a4a6c6f86aa99d2adfaf299da8adaecbb7c10226fdcff8fcce40266",
+      "log": "FULL_EMITTED_CONTEXT prv=1 pc=ff80002e00 satp_mode=8 vm_enabled=1\nFULL_EMITTED_CONTEXT prv=0 pc=3f9c8aa020 satp_mode=8 vm_enabled=1\nFULL_EMITTED_CONTEXT prv=3 pc=0080006ab0 satp_mode=8 vm_enabled=0\nFULL_GENERATED_CSR_PASS contexts=3\n"
+    },
+    "baseline": {
+      "expected_result_observed": true,
+      "returncode": 0,
+      "module_sha256": "911d91e4082e89a96e2dd2af94eb1bd2540558c009539a11fd09a1de6d842407",
+      "log": "FATAL: /var/tmp/guozh-ec-checker-fault-20261117/full-r2/generated-csr-check/tb.sv:412: actual full emitted entry expected 1 got 3\n       Time: 216000 Scope: tb\n"
+    }
+  },
+  "fpga_health_passed": false,
+  "original_runtime_trigger_recovered": false
+}

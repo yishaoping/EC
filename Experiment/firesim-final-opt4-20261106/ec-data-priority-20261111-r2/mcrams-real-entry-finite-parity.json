@@ -1,0 +1,71 @@
+{
+  "evidence_sha256": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-r5-20261111/negative-MCConfig.log": "8a70a9481e53c650718081bb6e3402689433748cba270a9178850dbf5e5fe098",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-r5-20261111/negative-PlainConfig.log": "c164d5954062e3ce5a415bb8853cf68bff9845cbe8d12b092038cf1bd81b69e2",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-r5-20261111/reference-summary.json": "7fc746675e972d978b318539bc28eb09a097fc65413570f8040e2f22c9589bf5",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-r5-20261111/result.json": "936f3cabe101e3409be3e7c746bfd2b41ee2032073c3d4022c5bccd46ea4346d",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-r5-20261111/run-MCConfig.log": "777524d1376a354699f956fc070d1782ca90ae65de74e58f8f545ad7d5433985",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-r5-20261111/run-PlainConfig.log": "5d98f438e45ccef540c828ca6a51990792dc6f01cd430f00daea153232b71a21"
+  },
+  "full_dut_equivalence": false,
+  "functional_baseline_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+  "production_admission": false,
+  "reference": {
+    "compared_values": 178857,
+    "read_after_write_pairs": 512,
+    "read_write_conflicts": 21215,
+    "reset_cycles": 12,
+    "scoreboard_pass": true,
+    "sweep_addresses": 512,
+    "target_cycles": 2569,
+    "undefined_values_skipped": 973
+  },
+  "results": {
+    "MCConfig": {
+      "binary_sha256": "af8f3ee1463f866cf83346f5f9140e1301c3226ef1571d413b5d2a85a65aa692",
+      "host_rtl_sha256": "99f04d704947edcf11c0a42731bf7865aa298a0a0aceeca2d3267df0bb38560d",
+      "metrics": {
+        "checked_values": 178857,
+        "event_digest": "e3c422883c079803",
+        "fmr_including_peekpoke_io": 172.016,
+        "status": "PASS",
+        "target_cycles_per_second": 260.328,
+        "target_test_cycles": 2569,
+        "throughput_host_cycles": 88072,
+        "throughput_target_cycles": 512,
+        "throughput_wall_seconds": 1.96675,
+        "undefined_values_skipped": 973
+      },
+      "negative_rejected": true,
+      "target_sha256": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-r5-20261111/target/Entry.anno.json": "79f447c5745cfd1919fb487db400111682b58b399dc5e0eae99c08ee14c798d5",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-r5-20261111/target/Entry.fir": "4c53b515e174b682e0ecd9f2434dded0b3065c9fc2de093e58e530e7e919c69d"
+      }
+    },
+    "PlainConfig": {
+      "binary_sha256": "16a146b9bc22408a3a999bc32091481fba4f490f12666efb221890930bd6703d",
+      "host_rtl_sha256": "d85bcf157457b724570b8a6d25bf1302f432e00564c7046fa75d04efa1bf16f9",
+      "metrics": {
+        "checked_values": 178857,
+        "event_digest": "e3c422883c079803",
+        "fmr_including_peekpoke_io": 172.016,
+        "status": "PASS",
+        "target_cycles_per_second": 336.76,
+        "target_test_cycles": 2569,
+        "throughput_host_cycles": 88072,
+        "throughput_target_cycles": 512,
+        "throughput_wall_seconds": 1.52037,
+        "undefined_values_skipped": 973
+      },
+      "negative_rejected": true,
+      "target_sha256": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-r5-20261111/target/Entry.anno.json": "79f447c5745cfd1919fb487db400111682b58b399dc5e0eae99c08ee14c798d5",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-r5-20261111/target/Entry.fir": "4c53b515e174b682e0ecd9f2434dded0b3065c9fc2de093e58e530e7e919c69d"
+      }
+    }
+  },
+  "scope": "Finite isolated 512x81,35R1W real DCache entry shape with written-mask/reset and observation-only captures, not full DCache",
+  "status": "PASS_REAL_DCACHE_MEMORY_INTERFACE_SAME_TARGET_GG_PLAIN_AND_MCRAMS_NOT_FULL_DCACHE",
+  "undefined_collision_scope": "973 output values explicitly not compared; direct scoreboard and exact-target trace validate all defined outputs,512 paired write-then-no-write reads,512-address sweep"
+}

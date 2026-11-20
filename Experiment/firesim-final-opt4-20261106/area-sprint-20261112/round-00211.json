@@ -1,0 +1,300 @@
+{
+  "schema": "ec-area-sprint-round-evidence/1",
+  "round": 211,
+  "utc": "2026-11-13T09:25:59.925687+00:00",
+  "outcome": "WAITING_ACTIVE_JOB",
+  "summary": "EC Performance-Only 6fada307: same R6 completed the second multi-cell placement optimization pass (20 nets optimized, 42 cells moved) and advanced to Phase 11 Rewire. 831s since prior durable observation, +22163 log bytes, +5839.0 process CPU-seconds. Authenticated 922 pinned artifacts including 644 protected checker artifacts. Actual whole-checker PASS131/131/131 and complete-shell postopt capacity FIT1023687/1303680LUT remain valid. Intermediate estimated WNS=-2.647ns; final timing, bitstream, certification and card21 runtime pending.",
+  "next_action": "Preserve the same R6 through place/route/setup-hold/bitstream; no cuts, restart, duplicate CAD, checker run or driver rebuild. After actual physical output and exact R6 cgroup release, allocate two idle campaign CPUs and run /data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-physical-postflight-r1-20261113/candidates/performance-only-physical-postflight-r1-20261113/postflight.py --run --cpus CPU0 CPU1 for report-only all-STA/pulse/skew/clock/IO/internal-unconstrained/route/DRC checks under the existing CAD lease. Then run /data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-certificate-analysis-bind-r1-20261113/candidates/performance-only-certificate-analysis-bind-r1-20261113/certify.py --write to bind the existing foreground strict checker analysis and exact physical/ABI/software evidence. Only then hand off the existing runtime owner at a safe boundary without bypassing any21lock. Require integrated card21 boot/checker/LSL-SVB/isolation/drain before the requested eight first simmedium samples. Unknown failures require immutable diagnosed corrections after exact predecessor release; do not repeat completed validation.",
+  "retry_after_seconds": 600,
+  "hardware_commit": "6fada307bb77be90b39720d3f95404fece0e431b",
+  "source_id": "461e1b98833d1a78a8bd27c0eed2d3353c648dfbf29ae5588db31bbce0f77369",
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "profile": "EC Performance-Only: data preservation + cache isolation",
+  "full_PALIMPSEST": false,
+  "hardware_unchanged": true,
+  "experiment_commit": "cef2d0bd09ec1480db0f29034c2b0a29a28b949f",
+  "checker_analysis_commit": "02436d48a8dbc3a16f92c9f689f8fb391e89d5c5",
+  "source_binding": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-support-r6-20261113/candidates/performance-only-support-r6-20261113/source-binding.json",
+  "source_binding_sha256": "1b339db692dc0376bb6798a93b479f452485507b825e7102496e7b7db74bf54e",
+  "prototype_FIT": true,
+  "capacity_FIT": true,
+  "prototype_area_LUT": 1023687,
+  "LUT_headroom": 279993,
+  "actual_placed_checkpoint": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round204/followthrough-audit.json",
+    "sha256": "2e74dca6d13d7eb7b598c12891b3893e82585e6f2ebe8a92d5043c3fe01d1756"
+  },
+  "placed_resources": {
+    "CLB LUTs": 1015701.0,
+    "CLB Registers": 1019298.0,
+    "CARRY8": 15706.0,
+    "Block RAM Tile": 678.5,
+    "URAM": 0.0,
+    "DSPs": 115.0
+  },
+  "placed_LUT_headroom": 287979,
+  "intermediate_estimated_WNS_ns": -2.647,
+  "high_congestion_warning": true,
+  "physical_timing_passed": false,
+  "bitstream_exists": false,
+  "runtime_certified": false,
+  "actual_integrated_checker_execution_passed": true,
+  "actual_checker_counts": {
+    "actual_target_edges": 1759001,
+    "allocations": 131,
+    "real_full_compare_results": 131,
+    "BOOM_accepted": 131,
+    "per_checker": {
+      "1": 33,
+      "2": 33,
+      "3": 33,
+      "4": 32
+    },
+    "pending": 0,
+    "sample_errors": 0
+  },
+  "checker_scope": "Finite actual complete Performance-Only FireSim MCRams-host Canneal project400 correctness test. Not Linux simmedium, FPGA validation, Slowdown data, or universal equivalence.",
+  "real_progress": {
+    "stage": "phys_opt_design_second_rewire",
+    "current_phase": "Phase 11 Rewire",
+    "completed_physical_optimization_phases": [
+      {
+        "phase": "SLR Crossing Optimization",
+        "optimized_nets_or_cells": 228,
+        "created_cells": 212,
+        "moved_existing_cells": 18
+      },
+      {
+        "phase": "Fanout Optimization",
+        "optimized_nets_or_cells": 6,
+        "created_cells": 0,
+        "moved_existing_cells": 0
+      },
+      {
+        "phase": "Single Cell Placement Optimization",
+        "optimized_nets_or_cells": 127,
+        "created_cells": 0,
+        "moved_existing_cells": 127
+      },
+      {
+        "phase": "Multi Cell Placement Optimization",
+        "optimized_nets_or_cells": 43,
+        "created_cells": 0,
+        "moved_existing_cells": 93
+      },
+      {
+        "phase": "Rewire",
+        "optimized_nets_or_cells": 63,
+        "created_cells": 29,
+        "moved_existing_cells": 0
+      },
+      {
+        "phase": "Critical Cell Optimization",
+        "optimized_nets_or_cells": 14,
+        "created_cells": 16,
+        "moved_existing_cells": 0
+      },
+      {
+        "phase": "Fanout Optimization",
+        "pass_number": 2,
+        "optimized_nets_or_cells": 3,
+        "created_cells": 4,
+        "moved_existing_cells": 0
+      },
+      {
+        "phase": "Single Cell Placement Optimization",
+        "pass_number": 2,
+        "optimized_nets_or_cells": 113,
+        "created_cells": 0,
+        "moved_existing_cells": 113
+      },
+      {
+        "phase": "Multi Cell Placement Optimization",
+        "pass_number": 2,
+        "optimized_nets_or_cells": 20,
+        "created_cells": 0,
+        "moved_existing_cells": 42
+      }
+    ],
+    "critical_cell_progress": {
+      "identified_candidates": 30,
+      "replicated_nets": [
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_5/rpq/s2_tag_match_way_0_reg[1]_rep__2_11",
+          "replications": 1
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/replayResultQ_3/_GEN_379844",
+          "replications": 1
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/rob_debug_wdata[12][6]_i_40_n_0",
+          "replications": 1
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/core_/csr_exe_unit/ifpu/ifpu/D[1]",
+          "replications": 1
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/fregfile_io_write_ports_0_REG_bits_data[63]_i_4_9",
+          "replications": 1
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/rob_debug_wdata[12][2]_i_21_n_0",
+          "replications": 1
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/lsu/fregfile_io_write_ports_0_REG_bits_data[64]_i_4_1",
+          "replications": 1
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/mshrs_io_req_0_valid",
+          "replications": 1
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_5/rpq/ram_flattened_reg_0_15_350_363_i_129_0",
+          "replications": 1
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/lsu/fregfile_io_write_ports_0_REG_bits_data[64]_i_4_7",
+          "replications": 1
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_1/debug_killed_store_replay_valid_reg_2",
+          "replications": 2
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/meta_0/crossPackagePendingSet_reg[2]_rep__0_3",
+          "replications": 1
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/completionQ/lsu/p_1851_in",
+          "replications": 1
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/completionQ/s3_req_uop_stq_idx_reg[2]_0",
+          "replications": 2
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/replayResultQ_3/s2_raw_req_0_addr_reg[10]_rep__12",
+          "replications": 6
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/replayResultQ_3/_GEN_379844_repN",
+          "replications": 4
+        },
+        {
+          "net": "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/svb/_GEN_436116. Rewired (signal push) design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/svb/s3_req_addr_reg[13]_rep_2 to 6 loads",
+          "replications": 1
+        }
+      ],
+      "declined_nets": [
+        "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/core_/alu_exe_unit/alu/r_data_2_reg[2]_29",
+        "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/wb_forward_valid_0_reg_7",
+        "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/fregfile_io_write_ports_0_REG_bits_data[40]_i_4_n_0",
+        "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/rpq/s2_valid_REG_reg",
+        "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/s3_req_effect_token[63]_i_2_n_0",
+        "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/req_uop_mem_cmd[4]_i_4_n_0",
+        "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/fregfile_io_write_ports_0_REG_bits_data[34]_i_3_n_0",
+        "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/rob_debug_wdata[12][4]_i_32_n_0",
+        "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mmios_0/mshrs_io_req_0_ready",
+        "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_0/lsu/p_1881_in",
+        "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/lsu/mem_paddr_0[39]_i_15_n_0",
+        "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/prober/crossPackageMetaClearPending_reg",
+        "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/prober/debug_s3_effect_eligible",
+        "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache/mshrs/mshrs_1/p_9653_in",
+        "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/lsu/ldq_wakeup_idx_reg[3]_0[36]",
+        "design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_3/tile_reset_domain_tile/core/icsl/mem_reg_xcpt_reg_repN"
+      ],
+      "processed_unique_nets": 33,
+      "replication_outcome_lines": 17,
+      "nonreplication_outcome_lines": 16,
+      "phase_completed": true
+    },
+    "second_rewire_progress": {
+      "signal_push_started": true,
+      "phase_completed": false
+    },
+    "authenticated_artifacts": 922,
+    "protected_checker_artifacts": 644,
+    "whole_CAD_observation_seconds": 830.726071,
+    "CAD_log_growth_bytes": 22163,
+    "process_CPU_seconds": 5838.99
+  },
+  "launched_jobs": [],
+  "adopted_not_launched_jobs": [
+    "ec-performance-only-support-r6-20261113.service"
+  ],
+  "evidence": [
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round211/observe.py",
+      "sha256": "dded214415598a1b9283feba3f3aaded423bbc135a9547ef7e0d97232d53cbbd"
+    },
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round211/capture_followthrough.py",
+      "sha256": "e563a386e26b524943bac5148dd9f2634246701bb61aac59fe3998ddd8965f8c"
+    },
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round211/owner-start.json",
+      "sha256": "35dde1329782a60ca32ec0fe906471179ea2dcb323ec576bd0f5c32a59ad5d55"
+    },
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round211/owner-end.json",
+      "sha256": "bc958089587f4c767458d8d3357b69d1fe4edc58da2976cb72ffc4c2e2ebd866"
+    },
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round211/evidence-readiness.json",
+      "sha256": "e6bf9e8c1f512e2c4a77784289ef3efaf39df04b21508a7457183deb89277c52"
+    },
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round211/followthrough-audit.json",
+      "sha256": "21779a8aa9a2cf81a182ada0774c635eb18276cdae189dc74d229f190fa52b79"
+    },
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round211/EXACT_SCOPE.md",
+      "sha256": "d545ba129a0c86ae49b3507dfff8d83d32f04324626e1f238b1315b956996021"
+    },
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round211/publish.py",
+      "sha256": "dc33580ddaa212f2c59564e430fbf8fbd05024e4397074b9621c040786c762d6"
+    }
+  ],
+  "physical_readiness": {
+    "postflight": {
+      "status": "WAITING_EXACT_R6_PHYSICAL_COMPLETION_AND_CGROUP_RELEASE",
+      "FPGA_IO": false,
+      "final_checkpoint_checks_started": false
+    },
+    "certificate": {
+      "status": "WAITING_FINAL_PHYSICAL_WITH_EXISTING_STRICT_CHECKER_ANALYSIS_BINDING",
+      "certificate_created": false,
+      "FPGA_IO": false
+    }
+  },
+  "existing_runtime_lock_preserved": true,
+  "handoff_performed": false,
+  "no_FPGA_IO": true,
+  "no_CPU_or_SVB_session_control": true,
+  "no_healthy_restart": true,
+  "no_new_cuts": true,
+  "no_new_service_or_waiter": true,
+  "no_new_intelligent_supervisor": true,
+  "no_subagents": true,
+  "no_driver_rebuild": true,
+  "no_simulation_or_checker_analysis_repeated": true,
+  "fullshell_ledger": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/area-sprint-20261112/fullshell-adoptions.json",
+    "sha256": "4f2f686829b0b34546f0fbb37367f7a69c3b82f69e95e8bbce29465df4c9a2b3"
+  },
+  "prototype_ledger": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-20261113/fullshell-adoptions.json",
+    "sha256": "1a1677b3dacc6442b9349e1b789b55767b2ea889c49ccd8f87de8b7afe74a54f"
+  },
+  "postflight_entry": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-physical-postflight-r1-20261113/candidates/performance-only-physical-postflight-r1-20261113/postflight.py",
+  "certificate_entry": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-certificate-analysis-bind-r1-20261113/candidates/performance-only-certificate-analysis-bind-r1-20261113/certify.py",
+  "actual_physical_progress": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round211/followthrough-audit.json",
+    "sha256": "21779a8aa9a2cf81a182ada0774c635eb18276cdae189dc74d229f190fa52b79"
+  },
+  "intermediate_estimated_TNS_ns": -85547.465
+}

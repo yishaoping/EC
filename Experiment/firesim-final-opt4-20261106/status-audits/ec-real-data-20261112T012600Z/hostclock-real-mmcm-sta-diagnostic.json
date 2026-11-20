@@ -1,0 +1,33 @@
+{
+  "after": {
+    "failing_setup_endpoints": 5840,
+    "whs_ns": 0.001,
+    "wns_ns": -0.424
+  },
+  "before": {
+    "failing_setup_endpoints": 10203,
+    "whs_ns": 0.001,
+    "wns_ns": -2.01
+  },
+  "bitstream_written": false,
+  "checkpoint_sha256": "1a5d20422660f6fd50421e7932a6f4c03408d63f5bb010ec2b665f5d289e0e03",
+  "completed_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-hostclock-probe-r2-20261112/result.json",
+  "completed_result_sha256": "ff47a9fa906ec777dcc4d8c587ae10afa54422ab8b8dda0139a8a456c458d076",
+  "conclusion": "Actual host clock variant removes target critical timing but does not solve independent shell timing. NOT_CERTIFIED. Requires versioned physical repair plus separate all-clock/certificate/runtime gates; existing50MHz tasks unchanged.",
+  "data_kind": "PHYSICAL_DCP_STA_DIAGNOSTIC_NOT_FPGA_MEASUREMENT",
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-hostclock-probe-r2-20261112/after-clocks.rpt": "7b53de090d76d6609ea9679962561f803b495be4b0534329c04d3bc8a7881c4e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-hostclock-probe-r2-20261112/after-mmcm.rpt": "e9357cceb02da08bdb6eda58e9659ce4f2395aefa0b21b87c4fd826084821f12",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-hostclock-probe-r2-20261112/after-timing.rpt": "02319d2e111849f7bb310fd692ddbd76cb28c179bdbc83f8273c091c2b222bd4",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-hostclock-probe-r2-20261112/before-clocks.rpt": "71ecfba07357dbaa843a3e5582f30c4f63615490b25c6830e40b41e41ad451bc",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-hostclock-probe-r2-20261112/before-mmcm.rpt": "6537a2173005f957d8ab8396f0f4764352689a0a24c6c9356dcd14de183173c0",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-hostclock-probe-r2-20261112/before-timing.rpt": "c161a4151b58d29d8431a9906886ae0122939a61c04ecbf65e7a3a26b4888751"
+  },
+  "fpga_access": false,
+  "input_checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-spread-implementation-r1-20261111/spread-routed.dcp",
+  "physical_change": "MMCME4_ADV CLKOUT0_DIVIDE_F24to30; actualderivedperiod19.998to24.9975ns, allotherclockperiodsunchanged; no newXDC",
+  "reported_period_ns": 24.997,
+  "route_started": false,
+  "target_rtl_changed": false,
+  "utc": "2026-11-12T01:38:16.941538+00:00"
+}

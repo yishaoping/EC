@@ -1,0 +1,29 @@
+{
+  "build_failures_are_not_functional_or_area_rejections": true,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "rejected_exact_candidates": {
+    "address-naive-258R256W-memory": {
+      "candidate_lut": 117874,
+      "reason": "258R/256W expansion worse; no heap-only retry.",
+      "reference_lut": 57148,
+      "regression_lut": 60726,
+      "scope": "isolated target multiport screen, not wholemodule"
+    },
+    "barrier-simple-high-port-async-memory": {
+      "candidate_lut": 158516,
+      "reason": "Exact 256-read storage replacement worsens area; do not retry unchanged.",
+      "reference_lut": 83888,
+      "regression_lut": 74628,
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-barrier-fullmodule-host-pair-r2-20261112/result.json",
+      "scope": "complete actual barrier generated-host pair"
+    },
+    "slotEpoch-static-selection": {
+      "reason": "Previously measured LUT regression; excluded from composition.",
+      "regression_lut": 8003,
+      "scope": "isolated target metadata screen"
+    }
+  },
+  "schema": "ec-exact-candidate-blacklist/1",
+  "scope_rule": "Reject exact measured implementation/configuration, not every possible host-time-shared successor. Do not mix local target and wholehost areas.",
+  "updated_utc": "2026-11-12T18:13:29.666331+00:00"
+}

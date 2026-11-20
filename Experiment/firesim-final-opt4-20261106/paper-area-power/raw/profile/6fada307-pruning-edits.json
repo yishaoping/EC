@@ -1,0 +1,182 @@
+[
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  // Commit-ordered physical-address statistics use the same package bitmap\n  // watermark but retain their own tagged table.  The input watermark is the\n  // pre-edge value, so a store and a PASS result on the same edge are classified\n  // using the safety state that existed when the store committed.\n  val addressStatsFatal = WireDefault(false.B)\n  val addressStats = Module(new PackageAddressStats(\n    coreWidth, coreMaxAddrBits, cfg.blockBytes, statsWindow))\n  addressStats.io.resetStats := io.traffic_reset\n  addressStats.io.start := io.traffic_start\n  addressStats.io.stop := io.traffic_stop\n  addressStats.io.events := io.lsu.address_stats_event\n  addressStats.io.safeWatermark := safePacketWatermark\n  addressStats.io.sequenceBaseline := io.packet_seq_baseline\n  addressStats.io.fatalProtocolError := addressStatsFatal\n\n",
+    "new": "  // EC Performance-Only: no address diagnostics; real safe-prefix logic remains.\n\n"
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  // Buckets intentionally use separate storage from the verification bitmap:\n  // one package may generate multiple dirty writebacks.\n  val bucketState = RegInit(0.U.asTypeOf(new DirtyWritebackBucket(statsWindow)))\n  val bucketValid = bucketState.valid\n  val bucketSeq = bucketState.seq\n  val bucketCount = bucketState.count\n  val bucketWritebackCycleSum = bucketState.writebackCycleSum\n  val bucketResolve = Wire(Vec(statsWindow, Bool()))\n  for (i <- 0 until statsWindow) {\n    bucketResolve(i) := bucketValid(i) && bucketSeq(i) <= newSafePacketWatermark\n  }\n  // 256 buckets can resolve together, and one new writeback can settle on the\n  // same edge. Keep a 73rd bit so that all 257 contributions are observable.\n  val resolvedBucketsThisCycleWide = (0 until statsWindow).map(i =>\n    Mux(bucketResolve(i), bucketCount(i), 0.U(64.W)).pad(73)).reduce(_ + _)\n  val writebackCyclesResolvedFromBucketsWide = (0 until statsWindow).map(i =>\n    Mux(bucketResolve(i), bucketWritebackCycleSum(i), 0.U(64.W)).pad(73)).reduce(_ + _)\n\n  // A tracked non-zero sequence is the line-level verify_required metadata.\n  // The two writeback-time classes are deliberately decided only from the\n  // safe watermark sampled before this edge; completion/result details do not\n  // change the meaning of \"verified at writeback\".\n  val verifyRequiredDirtyWb = trafficCounting && l1_l2_dirty_wb_event &&\n    wb.io.active_packet_tracked && wb.io.active_packet_seq =/= 0.U\n  val unverifiedDirtyWb = verifyRequiredDirtyWb &&\n    wb.io.active_packet_seq > safePacketWatermark\n  // A result and writeback may arrive on the same BOOM edge. Classify against\n  // the pre-edge watermark, then settle the new event immediately at zero\n  // cycles if this edge also makes its package safe.\n  val wbResolvedImmediately = unverifiedDirtyWb &&\n    wb.io.active_packet_seq <= newSafePacketWatermark\n  val wbBucketIdx = wb.io.active_packet_seq(statsIndexBits - 1, 0)\n  val wbBucketAvailable = !bucketValid(wbBucketIdx) || bucketResolve(wbBucketIdx) ||\n    bucketSeq(wbBucketIdx) === wb.io.active_packet_seq\n  val wbNeedsBucket = unverifiedDirtyWb && !wbResolvedImmediately\n  val wbBucketAccepted = wbNeedsBucket && wbBucketAvailable\n  val wbBucketDropped = wbNeedsBucket && !wbBucketAvailable\n  val verifiedDirtyWb = verifyRequiredDirtyWb &&\n    wb.io.active_packet_seq <= safePacketWatermark\n  val nonverifyDirtyWb = trafficCounting && l1_l2_dirty_wb_event &&\n    !verifyRequiredDirtyWb\n\n  val resolvedThisCycleWide = resolvedBucketsThisCycleWide +\n    Mux(wbResolvedImmediately, 1.U(73.W), 0.U(73.W))\n  val writebackCyclesResolvedThisCycleWide = writebackCyclesResolvedFromBucketsWide +\n    Mux(wbResolvedImmediately, io.csr_cycle, 0.U).pad(73)\n  val resolvedBucketsThisCycle = resolvedBucketsThisCycleWide(63, 0)\n  val resolvedThisCycle = resolvedThisCycleWide(63, 0)\n  val writebackCyclesResolvedThisCycle = writebackCyclesResolvedThisCycleWide(63, 0)\n  // Every event settled by this watermark advance uses the same BOOM cycle.\n  val safeCyclesResolvedThisCycleProduct = io.csr_cycle * resolvedThisCycleWide\n  val safeCyclesResolvedThisCycle = safeCyclesResolvedThisCycleProduct(63, 0)\n  val perCycleSumOverflow = resolvedThisCycleWide(72, 64).orR ||\n    writebackCyclesResolvedThisCycleWide(72, 64).orR\n  val safeCycleProductOverflow = safeCyclesResolvedThisCycleProduct(136, 64).orR\n\n  for (i <- 0 until statsWindow) {\n    when (bucketResolve(i)) {\n      bucketValid(i) := false.B\n      bucketCount(i) := 0.U\n      bucketWritebackCycleSum(i) := 0.U\n    }\n  }\n  when (wbBucketAccepted) {\n    when (!bucketValid(wbBucketIdx) || bucketResolve(wbBucketIdx)) {\n      bucketValid(wbBucketIdx) := true.B\n      bucketSeq(wbBucketIdx) := wb.io.active_packet_seq\n      bucketCount(wbBucketIdx) := 1.U\n      bucketWritebackCycleSum(wbBucketIdx) := io.csr_cycle\n    }.otherwise {\n      bucketCount(wbBucketIdx) := bucketCount(wbBucketIdx) + 1.U\n      bucketWritebackCycleSum(wbBucketIdx) :=\n        bucketWritebackCycleSum(wbBucketIdx) + io.csr_cycle\n    }\n  }\n\n  val unverifiedDirtyWbSeen = RegInit(0.U(64.W))\n  val unverifiedDirtyWbResolved = RegInit(0.U(64.W))\n  val unverifiedDirtyWbPending = RegInit(0.U(64.W))\n  val unverifiedDirtyWbDropped = RegInit(0.U(64.W))\n  val failedPackages = RegInit(0.U(64.W))\n  val verifiedDirtyWbCount = RegInit(0.U(64.W))\n  val nonverifyDirtyWbCount = RegInit(0.U(64.W))\n  val verifyRequiredDirtyWbCount = RegInit(0.U(64.W))\n  val allocatedPackages = RegInit(0.U(64.W))\n  val completedPackages = RegInit(0.U(64.W))\n  val passedPackages = RegInit(0.U(64.W))\n  val cancelledPackages = RegInit(0.U(64.W))\n  val safeCycleSum = RegInit(0.U(64.W))\n  val writebackCycleSum = RegInit(0.U(64.W))\n  val statsValid = RegInit(true.B)\n  val packageResultDropped = RegInit(0.U(64.W))\n  val statsArithmeticOverflow = RegInit(0.U(64.W))\n  val resetBoundaryInvalid = io.traffic_reset &&\n    (io.traffic_check_state || bitmapAllocated.asUInt.orR ||\n      safePacketWatermark =/= io.packet_seq_baseline)\n  val bucketArithmeticOverflow = wbBucketAccepted && bucketValid(wbBucketIdx) &&\n    !bucketResolve(wbBucketIdx) &&\n    (bucketCount(wbBucketIdx) === ~0.U(64.W) ||\n      bucketWritebackCycleSum(wbBucketIdx) > (~0.U(64.W) - io.csr_cycle))\n  val invalidResultsThisCycle = PopCount(VecInit(io.checker_results.indices.map { i =>\n    io.checker_results(i)(GH_GlobalParams.GH_CHECKER_RESULT_BITS - 1) &&\n      !resultAccepted(i) && !resultStale(i) && !resultHeldDuplicate(i)\n  }))\n  val acceptedResultsThisCycle = PopCount(resultAccepted)\n  val passedResultsThisCycle = PopCount(VecInit(io.checker_results.indices.map { i =>\n    resultAccepted(i) && !resultFailed(i) && !resultCancelled(i)\n  }))\n  addressStatsFatal := allocationCollision || invalidResultsThisCycle =/= 0.U ||\n    resultFailed.asUInt.orR || resultCancelled.asUInt.orR\n  when (measuredPacketAlloc) { allocatedPackages := allocatedPackages + 1.U }\n  when (acceptedResultsThisCycle =/= 0.U) {\n    completedPackages := completedPackages + acceptedResultsThisCycle\n  }\n  when (passedResultsThisCycle =/= 0.U) {\n    passedPackages := passedPackages + passedResultsThisCycle\n  }\n  when (unverifiedDirtyWb) { unverifiedDirtyWbSeen := unverifiedDirtyWbSeen + 1.U }\n  when (verifyRequiredDirtyWb) {\n    verifyRequiredDirtyWbCount := verifyRequiredDirtyWbCount + 1.U\n  }\n  when (verifiedDirtyWb) { verifiedDirtyWbCount := verifiedDirtyWbCount + 1.U }\n  when (nonverifyDirtyWb) { nonverifyDirtyWbCount := nonverifyDirtyWbCount + 1.U }\n  when (resolvedThisCycle =/= 0.U) {\n    unverifiedDirtyWbResolved := unverifiedDirtyWbResolved + resolvedThisCycle\n    safeCycleSum := safeCycleSum + safeCyclesResolvedThisCycle\n    writebackCycleSum := writebackCycleSum + writebackCyclesResolvedThisCycle\n  }\n  val resolvedArithmeticOverflow = resolvedThisCycle =/= 0.U &&\n    (perCycleSumOverflow || safeCycleProductOverflow ||\n      unverifiedDirtyWbResolved > (~0.U(64.W) - resolvedThisCycle) ||\n      safeCycleSum > (~0.U(64.W) - safeCyclesResolvedThisCycle) ||\n      writebackCycleSum > (~0.U(64.W) - writebackCyclesResolvedThisCycle))\n  val pendingAccountingInvalid = resolvedBucketsThisCycle.pad(65) >\n    (unverifiedDirtyWbPending.pad(65) + wbBucketAccepted.asUInt)\n  when (bucketArithmeticOverflow || resolvedArithmeticOverflow || pendingAccountingInvalid) {\n    statsArithmeticOverflow := statsArithmeticOverflow +\n      bucketArithmeticOverflow.asUInt + resolvedArithmeticOverflow.asUInt +\n      pendingAccountingInvalid.asUInt\n  }\n  unverifiedDirtyWbPending := unverifiedDirtyWbPending +\n    wbBucketAccepted.asUInt - resolvedBucketsThisCycle\n  when (wbBucketDropped) { unverifiedDirtyWbDropped := unverifiedDirtyWbDropped + 1.U }\n  when (resultFailed.asUInt.orR) { failedPackages := failedPackages + PopCount(resultFailed) }\n  when (resultCancelled.asUInt.orR) {\n    cancelledPackages := cancelledPackages + PopCount(resultCancelled)\n  }\n  when (allocationCollision || invalidResultsThisCycle =/= 0.U) {\n    packageResultDropped := packageResultDropped + allocationCollision.asUInt + invalidResultsThisCycle\n  }\n  when (allocationCollision || invalidResultsThisCycle =/= 0.U || wbBucketDropped ||\n      resultFailed.asUInt.orR || resultCancelled.asUInt.orR ||\n      bucketArithmeticOverflow || resolvedArithmeticOverflow || pendingAccountingInvalid) {\n    statsValid := false.B\n  }\n  when (trafficCounting && l1_l2_c_event) {\n    l1_l2_c_count := l1_l2_c_count + 1.U\n  }\n  when (trafficCounting && l1_l2_dirty_wb_event) {\n    l1_l2_dirty_wb_count := l1_l2_dirty_wb_count + 1.U\n  }\n\n  when (io.traffic_reset) {\n    for (i <- 0 until statsWindow) {\n      bucketValid(i) := false.B\n      bucketSeq(i) := 0.U\n      bucketCount(i) := 0.U\n      bucketWritebackCycleSum(i) := 0.U\n    }\n    measurementSeqFloor := io.packet_seq_baseline\n    l1_l2_c_count := 0.U\n    l1_l2_dirty_wb_count := 0.U\n    unverifiedDirtyWbSeen := 0.U\n    unverifiedDirtyWbResolved := 0.U\n    unverifiedDirtyWbPending := 0.U\n    unverifiedDirtyWbDropped := 0.U\n    failedPackages := 0.U\n    verifiedDirtyWbCount := 0.U\n    nonverifyDirtyWbCount := 0.U\n    verifyRequiredDirtyWbCount := 0.U\n    allocatedPackages := 0.U\n    completedPackages := 0.U\n    passedPackages := 0.U\n    cancelledPackages := 0.U\n    safeCycleSum := 0.U\n    writebackCycleSum := 0.U\n    statsValid := !resetBoundaryInvalid\n    packageResultDropped := resetBoundaryInvalid.asUInt\n    statsArithmeticOverflow := 0.U\n  }\n\n",
+    "new": "  // EC Performance-Only: diagnostic buckets and latency reductions omitted.\n  // These are unsupported metrics (valid=0), never capacity for saved data.\n  val unverifiedDirtyWbSeen = 0.U(64.W)\n  val unverifiedDirtyWbResolved = 0.U(64.W)\n  val unverifiedDirtyWbPending = 0.U(64.W)\n  val unverifiedDirtyWbDropped = 0.U(64.W)\n  val safeCycleSum = 0.U(64.W)\n  val writebackCycleSum = 0.U(64.W)\n  val statsValid = false.B\n  val statsArithmeticOverflow = 0.U(64.W)\n  val verifiedDirtyWbCount = 0.U(64.W)\n  val nonverifyDirtyWbCount = 0.U(64.W)\n  val verifyRequiredDirtyWbCount = 0.U(64.W)\n  // Preserve real package-result health counters and physical traffic counts.\n  val failedPackages = RegInit(0.U(64.W))\n  val allocatedPackages = RegInit(0.U(64.W))\n  val completedPackages = RegInit(0.U(64.W))\n  val passedPackages = RegInit(0.U(64.W))\n  val cancelledPackages = RegInit(0.U(64.W))\n  val packageResultDropped = RegInit(0.U(64.W))\n  val resetBoundaryInvalid = io.traffic_reset &&\n    (io.traffic_check_state || bitmapAllocated.asUInt.orR ||\n      safePacketWatermark =/= io.packet_seq_baseline)\n  val invalidResultsThisCycle = PopCount(VecInit(io.checker_results.indices.map { i =>\n    io.checker_results(i)(GH_GlobalParams.GH_CHECKER_RESULT_BITS - 1) &&\n      !resultAccepted(i) && !resultStale(i) && !resultHeldDuplicate(i)\n  }))\n  val acceptedResultsThisCycle = PopCount(resultAccepted)\n  val passedResultsThisCycle = PopCount(VecInit(io.checker_results.indices.map { i =>\n    resultAccepted(i) && !resultFailed(i) && !resultCancelled(i)\n  }))\n  when (measuredPacketAlloc) { allocatedPackages := allocatedPackages + 1.U }\n  when (acceptedResultsThisCycle =/= 0.U) {\n    completedPackages := completedPackages + acceptedResultsThisCycle\n  }\n  when (passedResultsThisCycle =/= 0.U) {\n    passedPackages := passedPackages + passedResultsThisCycle\n  }\n  when (resultFailed.asUInt.orR) { failedPackages := failedPackages + PopCount(resultFailed) }\n  when (resultCancelled.asUInt.orR) {\n    cancelledPackages := cancelledPackages + PopCount(resultCancelled)\n  }\n  when (allocationCollision || invalidResultsThisCycle =/= 0.U) {\n    packageResultDropped := packageResultDropped + allocationCollision.asUInt + invalidResultsThisCycle\n  }\n  when (trafficCounting && l1_l2_c_event) { l1_l2_c_count := l1_l2_c_count + 1.U }\n  when (trafficCounting && l1_l2_dirty_wb_event) {\n    l1_l2_dirty_wb_count := l1_l2_dirty_wb_count + 1.U\n  }\n  when (io.traffic_reset) {\n    measurementSeqFloor := io.packet_seq_baseline\n    l1_l2_c_count := 0.U\n    l1_l2_dirty_wb_count := 0.U\n    failedPackages := 0.U\n    allocatedPackages := 0.U\n    completedPackages := 0.U\n    passedPackages := 0.U\n    cancelledPackages := 0.U\n    packageResultDropped := resetBoundaryInvalid.asUInt\n  }\n\n"
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  // New barrier-cost measurements use independent storage and do not alter\n  // the existing physical dirty-writeback counters. They never feed ready or\n  // valid back into the cache pipeline; a bucket collision only invalidates\n  // the corresponding measurement.\n  val crossPackageBarrierStats = Module(new GHBarrierLatencyStats(statsWindow))\n  crossPackageBarrierStats.io.resetStats := io.traffic_reset\n  crossPackageBarrierStats.io.event.valid := crossPackageBarrierEvent\n  crossPackageBarrierStats.io.event.bits := Mux(\n    p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B,\n    s2_overwrittenPacketSeq, overwrittenPacketSeq)\n  crossPackageBarrierStats.io.safeWatermark := newSafePacketWatermark\n  crossPackageBarrierStats.io.currentCycle := io.csr_cycle\n  crossPackageBarrierStats.io.fatalProtocolError := addressStatsFatal\n\n  val l1L2BarrierStats = Module(new GHBarrierLatencyStats(statsWindow))\n  l1L2BarrierStats.io.resetStats := io.traffic_reset\n  l1L2BarrierStats.io.event.valid := trafficCounting &&\n    l1ReplacementWbEvent && l1ReplacementPacketTracked &&\n    l1ReplacementPacketSeq =/= 0.U &&\n    l1ReplacementPacketSeq > safePacketWatermark\n  l1L2BarrierStats.io.event.bits := l1ReplacementPacketSeq\n  l1L2BarrierStats.io.safeWatermark := newSafePacketWatermark\n  l1L2BarrierStats.io.currentCycle := io.csr_cycle\n  l1L2BarrierStats.io.fatalProtocolError := addressStatsFatal\n\n",
+    "new": "  // EC Performance-Only: omit diagnostic BarrierLatencyStats; real barriers above remain.\n\n"
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  for (i <- 0 until GH_GlobalParams.GH_ADDRESS_STATS_GRANULES *\n      GH_GlobalParams.GH_ADDRESS_STATS_PER_GRANULE) {\n    trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_ADDRESS_STATS_BASE + i) :=\n      addressStats.io.counters(i)\n  }\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_ADDRESS_STATS_VALID) :=\n    addressStats.io.statsValid.asUInt\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_ADDRESS_STATS_ERROR) :=\n    addressStats.io.error\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_ADDRESS_STATS_PENDING) :=\n    addressStats.io.pending\n  for (i <- 0 until GH_GlobalParams.GH_ADDRESS_STATS_GRANULES *\n      GH_GlobalParams.GH_ADDRESS_FIRST_STORE_STRIDE) {\n    trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_FIRST_STORE_BASE + i) :=\n      addressStats.io.firstStoreCounters(i)\n  }\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_CROSS_PACKAGE_SEEN) :=\n    crossPackageBarrierStats.io.seen\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_CROSS_PACKAGE_RESOLVED) :=\n    crossPackageBarrierStats.io.resolved\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_CROSS_PACKAGE_PENDING) :=\n    crossPackageBarrierStats.io.pending\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_CROSS_PACKAGE_DROPPED) :=\n    crossPackageBarrierStats.io.dropped\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_CROSS_PACKAGE_REQUEST_CYCLE_SUM) :=\n    crossPackageBarrierStats.io.requestCycleSum\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_CROSS_PACKAGE_SAFE_CYCLE_SUM) :=\n    crossPackageBarrierStats.io.safeCycleSum\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_CROSS_PACKAGE_STATS_VALID) :=\n    crossPackageBarrierStats.io.statsValid\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_BARRIER_SEEN) :=\n    l1L2BarrierStats.io.seen\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_BARRIER_RESOLVED) :=\n    l1L2BarrierStats.io.resolved\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_BARRIER_PENDING) :=\n    l1L2BarrierStats.io.pending\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_BARRIER_DROPPED) :=\n    l1L2BarrierStats.io.dropped\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_BARRIER_REQUEST_CYCLE_SUM) :=\n    l1L2BarrierStats.io.requestCycleSum\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_BARRIER_SAFE_CYCLE_SUM) :=\n    l1L2BarrierStats.io.safeCycleSum\n  trafficCounterLive(GH_GlobalParams.GH_TRAFFIC_L1_L2_BARRIER_STATS_VALID) :=\n    l1L2BarrierStats.io.statsValid\n",
+    "new": "  // Omitted address/first-store/barrier metrics retain the default zero, including VALID.\n"
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "              io.lsu.traffic_arch_counter(14) === 0.U &&\n              addressStats.io.idle &&\n              crossPackageBarrierStats.io.pending === 0.U &&\n              l1L2BarrierStats.io.pending === 0.U) {",
+    "new": "              io.lsu.traffic_arch_counter(14) === 0.U) {"
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  val debug_address_stats_event_valid = VecInit(io.lsu.address_stats_event.map(_.valid))\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  dontTouch(debug_address_stats_event_valid)\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  val debug_address_stats_event_addr = VecInit(io.lsu.address_stats_event.map(_.bits.addr))\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  dontTouch(debug_address_stats_event_addr)\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  val debug_address_stats_event_is_store = VecInit(io.lsu.address_stats_event.map(_.bits.isStore))\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  dontTouch(debug_address_stats_event_is_store)\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  val debug_address_stats_event_seq = VecInit(io.lsu.address_stats_event.map(_.bits.packetSeq))\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  dontTouch(debug_address_stats_event_seq)\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/lsu.scala",
+    "old": "  val debug_address_stats_event_valid = VecInit(io.dmem.address_stats_event.map(_.valid))\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/lsu.scala",
+    "old": "  dontTouch(debug_address_stats_event_valid)\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/lsu.scala",
+    "old": "  val debug_address_stats_event_addr = VecInit(io.dmem.address_stats_event.map(_.bits.addr))\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/lsu.scala",
+    "old": "  dontTouch(debug_address_stats_event_addr)\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/lsu.scala",
+    "old": "  val debug_address_stats_event_is_store = VecInit(io.dmem.address_stats_event.map(_.bits.isStore))\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/lsu.scala",
+    "old": "  dontTouch(debug_address_stats_event_is_store)\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/lsu.scala",
+    "old": "  val debug_address_stats_event_seq = VecInit(io.dmem.address_stats_event.map(_.bits.packetSeq))\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/lsu.scala",
+    "old": "  dontTouch(debug_address_stats_event_seq)\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  val debug_address_stats_valid = addressStats.io.statsValid\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  dontTouch(debug_address_stats_valid)\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  val debug_address_stats_error = addressStats.io.error\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  dontTouch(debug_address_stats_error)\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  val debug_address_stats_pending = addressStats.io.pending\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "old": "  dontTouch(debug_address_stats_pending)\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/lsu.scala",
+    "old": "  // ROB \u67b6\u6784\u63d0\u4ea4\u70b9\u7684\u666e\u901a cacheable load/store \u7269\u7406\u5730\u5740\u4e8b\u4ef6\u3002\u4e8b\u4ef6\u987a\u5e8f\u4e0e\n  // commit lane \u987a\u5e8f\u4e00\u81f4\uff1bDCache \u4fa7\u7edf\u8ba1\u6a21\u5757\u8d1f\u8d23\u7f13\u51b2\uff0c\u4e0d\u80fd\u53cd\u538b\u63d0\u4ea4\u3002\n  val address_stats_event            = Output(Vec(coreWidth,\n    Valid(new AddressAccessEvent(coreMaxAddrBits))))\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/lsu.scala",
+    "old": "  io.dmem.address_stats_event := VecInit(Seq.fill(coreWidth)(\n    0.U.asTypeOf(Valid(new AddressAccessEvent(coreMaxAddrBits)))))\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/lsu.scala",
+    "old": "      when (stq(idx).bits.traffic_cacheable) {\n        io.dmem.address_stats_event(w).valid := true.B\n        io.dmem.address_stats_event(w).bits.addr := stq(idx).bits.addr.bits\n        io.dmem.address_stats_event(w).bits.size := stq(idx).bits.uop.mem_size\n        io.dmem.address_stats_event(w).bits.isStore := true.B\n        io.dmem.address_stats_event(w).bits.packetSeq := stq(idx).bits.packet_seq\n      }\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/boom/src/main/scala/lsu/lsu.scala",
+    "old": "      when (ldq(idx).bits.traffic_cacheable) {\n        io.dmem.address_stats_event(w).valid := true.B\n        io.dmem.address_stats_event(w).bits.addr := ldq(idx).bits.addr.bits\n        io.dmem.address_stats_event(w).bits.size := ldq(idx).bits.uop.mem_size\n        io.dmem.address_stats_event(w).bits.isStore := false.B\n        io.dmem.address_stats_event(w).bits.packetSeq := ldq(idx).bits.packet_seq\n      }\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/InclusiveCache.scala",
+    "old": "      val l2StatsWindow = 256\n      val l2StatsIndexBits = log2Ceil(l2StatsWindow)\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/InclusiveCache.scala",
+    "old": "      val l2Bucket = RegInit(0.U.asTypeOf(new L2DirtyWritebackBucket(l2StatsWindow)))\n      val l2BucketResolve = Wire(Vec(l2StatsWindow, Bool()))\n",
+    "new": ""
+  },
+  {
+    "path": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/InclusiveCache.scala",
+    "old": "      val l2DramBarrierStats = Module(new GHBarrierLatencyStats(l2StatsWindow))\n      val l2BarrierMonitorEvent = chisel3.WireDefault(false.B)\n      if (realBarrierEnabled) {\n        l2BarrierMonitorEvent := !barrierActive && barrierCandidateUnsafe\n      } else {\n        l2BarrierMonitorEvent := scheduler.io.dcacheWritebackRequest &&\n          scheduler.io.dcacheWritebackRequestDirty &&\n          scheduler.io.dcacheWritebackRequestPacketTracked &&\n          scheduler.io.dcacheWritebackRequestPacketSeq =/= 0.U &&\n          scheduler.io.dcacheWritebackRequestPacketSeq > l2SafeWatermark\n      }\n      l2DramBarrierStats.io.resetStats := l2StatsReset\n      l2DramBarrierStats.io.event.valid := l2Counting && l2BarrierMonitorEvent\n      l2DramBarrierStats.io.event.bits :=\n        Mux(realBarrierEnabled.B,\n          stage3BarrierSeq,\n          scheduler.io.dcacheWritebackRequestPacketSeq)\n      l2DramBarrierStats.io.safeWatermark := l2SafeWatermark\n      l2DramBarrierStats.io.currentCycle := l2Cycle\n      // Package FAIL/CANCEL is checked in the BOOM-domain report. The L2\n      // monitor only owns local slot/counter validity.\n      l2DramBarrierStats.io.fatalProtocolError := barrierErrorDetected\n      val l2Required = l2Counting && writeback && dirty &&\n        scheduler.io.dcacheWritebackPacketTracked &&\n        scheduler.io.dcacheWritebackPacketSeq =/= 0.U\n      val l2Verified = l2Required &&\n        scheduler.io.dcacheWritebackPacketSeq <= l2SafeWatermark\n      val l2Unverified = l2Required && !l2Verified\n      // A dirty L2 writeback without packet attribution is a valid\n      // non-verification class, matching the L1->L2 accounting semantics.\n      val l2Nonverify = l2Counting && writeback && dirty && !l2Required\n      val l2BucketIdx = scheduler.io.dcacheWritebackPacketSeq(l2StatsIndexBits - 1, 0)\n      val l2BucketAvailable = !l2Bucket.valid(l2BucketIdx) ||\n        l2BucketResolve(l2BucketIdx) ||\n        l2Bucket.seq(l2BucketIdx) === scheduler.io.dcacheWritebackPacketSeq\n      val l2BucketAccepted = l2Unverified && l2BucketAvailable\n      val l2BucketDropped = l2Unverified && !l2BucketAvailable\n      for (i <- 0 until l2StatsWindow) {\n        l2BucketResolve(i) := l2Bucket.valid(i) &&\n          l2Bucket.seq(i) <= l2SafeWatermark\n      }\n\n      val l2RequiredCount = RegInit(UInt(0, width = 64))\n      val l2VerifiedCount = RegInit(UInt(0, width = 64))\n      val l2UnverifiedCount = RegInit(UInt(0, width = 64))\n      val l2ResolvedCount = RegInit(UInt(0, width = 64))\n      val l2PendingCount = RegInit(UInt(0, width = 64))\n      val l2NonverifyCount = RegInit(UInt(0, width = 64))\n      // `other` is reserved for statistics failures such as bucket collisions.\n      val l2OtherCount = RegInit(UInt(0, width = 64))\n      val l2WritebackCycleSum = RegInit(UInt(0, width = 64))\n      val l2VerifyCycleSum = RegInit(UInt(0, width = 64))\n      val l2StatsValid = RegInit(true.B)\n      // Use widened reductions: up to 256 buckets may resolve together, and\n      // each bucket may contain more than one line from the same package.\n      def exactL2BucketSum(terms: Seq[UInt]): UInt = {\n        require(terms.nonEmpty && l2StatsWindow <= 256)\n        def tree(xs: Seq[UInt]): UInt = {\n          if (xs.size == 1) xs.head\n          else tree(xs.grouped(2).map {\n            case Seq(a, b) => a +& b\n            case Seq(a) => a\n          }.toSeq)\n        }\n        tree(terms).pad(73)\n      }\n      val l2ResolvedThisCycleWide = exactL2BucketSum((0 until l2StatsWindow).map(i =>\n        Mux(l2BucketResolve(i), l2Bucket.count(i), 0.U(64.W))))\n      val l2WritebackCycleThisCycleWide = exactL2BucketSum((0 until l2StatsWindow).map(i =>\n        Mux(l2BucketResolve(i), l2Bucket.writebackCycleSum(i), 0.U(64.W))))\n      // Candidate only: keep the same 137-bit result and overflow consumers.\n      val l2VerifyCycleThisCycleWide = l2Cycle * l2ResolvedThisCycleWide\n      val l2ResolvedThisCycle = l2ResolvedThisCycleWide(63, 0)\n      val l2WritebackCycleThisCycle = l2WritebackCycleThisCycleWide(63, 0)\n      val l2VerifyCycleThisCycle = l2VerifyCycleThisCycleWide(63, 0)\n      val l2PendingBeforeAdd = Cat(0.U(1.W), l2PendingCount) +\n        l2BucketAccepted.asUInt\n      val l2PendingUnderflow = l2ResolvedThisCycleWide >\n        l2PendingBeforeAdd.pad(73)\n      val l2PendingNextWide = l2PendingBeforeAdd.pad(73) -\n        l2ResolvedThisCycleWide\n      val l2CounterArithmeticOverflow =\n        l2ResolvedThisCycleWide(72, 64).orR ||\n        l2WritebackCycleThisCycleWide(72, 64).orR ||\n        l2VerifyCycleThisCycleWide(136, 64).orR ||\n        l2PendingNextWide(72, 64).orR\n      for (i <- 0 until l2StatsWindow) {\n        when (l2BucketResolve(i)) {\n          l2Bucket.valid(i) := false.B\n          l2Bucket.count(i) := 0.U\n          l2Bucket.writebackCycleSum(i) := 0.U\n        }\n      }\n      when (l2Counting && l2BucketAccepted) {\n        when (!l2Bucket.valid(l2BucketIdx) || l2BucketResolve(l2BucketIdx)) {\n          l2Bucket.valid(l2BucketIdx) := true.B\n          l2Bucket.seq(l2BucketIdx) := scheduler.io.dcacheWritebackPacketSeq\n          l2Bucket.count(l2BucketIdx) := 1.U\n          l2Bucket.writebackCycleSum(l2BucketIdx) := l2Cycle\n        }.otherwise {\n          l2Bucket.count(l2BucketIdx) := l2Bucket.count(l2BucketIdx) + 1.U\n          l2Bucket.writebackCycleSum(l2BucketIdx) :=\n            l2Bucket.writebackCycleSum(l2BucketIdx) + l2Cycle\n        }\n      }\n      when (l2StatsReset) {\n        l2Cycle := 0.U\n      }.otherwise {\n        // Keep the L2 time base running after STOP so delayed verification\n        // completions receive their actual L2-cycle timestamp.\n        l2Cycle := l2Cycle + 1.U\n      }\n      when (l2Counting && l2Required) { l2RequiredCount := l2RequiredCount + 1.U }\n      when (l2Counting && l2Verified) { l2VerifiedCount := l2VerifiedCount + 1.U }\n      when (l2Counting && l2Unverified) { l2UnverifiedCount := l2UnverifiedCount + 1.U }\n      when (l2Counting && l2Nonverify) {\n        l2NonverifyCount := l2NonverifyCount + 1.U\n      }\n      when (l2Counting && l2BucketDropped) {\n        l2OtherCount := l2OtherCount + 1.U\n      }\n      when (l2Counting && l2BucketDropped) { l2StatsValid := false.B }\n      when (l2ResolvedThisCycle =/= 0.U) {\n        l2ResolvedCount := l2ResolvedCount + l2ResolvedThisCycle\n        l2WritebackCycleSum := l2WritebackCycleSum + l2WritebackCycleThisCycle\n        l2VerifyCycleSum := l2VerifyCycleSum + l2VerifyCycleThisCycle\n      }\n      when (l2ResolvedThisCycle =/= 0.U || l2BucketAccepted) {\n        // Clamp an invalid subtraction to zero so a diagnostic condition does\n        // not leave a permanently huge pending count that blocks report_end.\n        l2PendingCount := Mux(l2PendingUnderflow, 0.U,\n          l2PendingNextWide(63, 0))\n      }\n      when (l2CounterArithmeticOverflow || l2PendingUnderflow) {\n        l2StatsValid := false.B\n      }\n      when (l2StatsReset) {\n        cleanCount := 0.U\n        dirtyCount := 0.U\n        l2RequiredCount := 0.U\n        l2VerifiedCount := 0.U\n        l2UnverifiedCount := 0.U\n        l2ResolvedCount := 0.U\n        l2PendingCount := 0.U\n        l2NonverifyCount := 0.U\n        l2OtherCount := 0.U\n        l2WritebackCycleSum := 0.U\n        l2VerifyCycleSum := 0.U\n        l2StatsValid := true.B\n        for (i <- 0 until l2StatsWindow) {\n          l2Bucket.valid(i) := false.B\n          l2Bucket.seq(i) := 0.U\n          l2Bucket.count(i) := 0.U\n          l2Bucket.writebackCycleSum(i) := 0.U\n        }\n      }\n\n",
+    "new": "      // EC Performance-Only: omit diagnostic barrier/dirty-writeback buckets.\n      // Preserve actual barrier protocol, watermark CDC, cycle and physical WB counts.\n      when (l2StatsReset) {\n        l2Cycle := 0.U\n        cleanCount := 0.U\n        dirtyCount := 0.U\n      }.otherwise { l2Cycle := l2Cycle + 1.U }\n\n"
+  },
+  {
+    "path": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/InclusiveCache.scala",
+    "old": "      val l2Stats = Seq(l2RequiredCount, l2VerifiedCount, l2UnverifiedCount,\n        l2ResolvedCount, l2PendingCount, l2NonverifyCount, l2OtherCount,\n        l2WritebackCycleSum, l2VerifyCycleSum,\n        Cat(0.U(63.W), l2StatsValid))\n",
+    "new": "      val l2Stats = Seq.fill(10)(0.U(64.W)) // unsupported; VALID is zero\n"
+  },
+  {
+    "path": "chipyard/generators/sifive-cache/design/craft/inclusivecache/src/InclusiveCache.scala",
+    "old": "      val l2BarrierStats = Seq(\n        l2DramBarrierStats.io.seen,\n        l2DramBarrierStats.io.resolved,\n        l2DramBarrierStats.io.pending,\n        l2DramBarrierStats.io.dropped,\n        l2DramBarrierStats.io.requestCycleSum,\n        l2DramBarrierStats.io.safeCycleSum,\n        l2DramBarrierStats.io.statsValid)\n",
+    "new": "      val l2BarrierStats = Seq.fill(7)(0.U(64.W)) // unsupported; VALID is zero\n"
+  }
+]

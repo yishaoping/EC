@@ -1,0 +1,112 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2021.1 (lin64) Build 3247384 Thu Jun 10 19:36:07 MDT 2021
+| Date         : Fri Nov 13 01:05:03 2026
+| Host         : devjz-ubt20-s01 running 64-bit Ubuntu 20.04.6 LTS
+| Command      : report_utilization -hierarchical -file /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-barrier-banked-host-r4-20261113/Plain16/hierarchical.rpt
+| Design       : FPGATop
+| Device       : xcu280fsvh2892-2L
+| Design State : Synthesized
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++------------------------------------------------------+----------------------------+------------+------------+---------+------+-------+--------+--------+------+------------+
+|                       Instance                       |           Module           | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs  | RAMB36 | RAMB18 | URAM | DSP Blocks |
++------------------------------------------------------+----------------------------+------------+------------+---------+------+-------+--------+--------+------+------------+
+| FPGATop                                              |                      (top) |      80214 |      80190 |      24 |    0 | 45227 |      0 |      0 |    0 |         16 |
+|   (FPGATop)                                          |                      (top) |       4471 |       4471 |       0 |    0 |     0 |      0 |      0 |    0 |          0 |
+|   ClockBridgeModule_0                                |          ClockBridgeModule |        171 |        171 |       0 |    0 |   291 |      0 |      0 |    0 |          0 |
+|     (ClockBridgeModule_0)                            |          ClockBridgeModule |          2 |          2 |       0 |    0 |   256 |      0 |      0 |    0 |          0 |
+|     crFile                                           |                  MCRFile_1 |        169 |        169 |       0 |    0 |    35 |      0 |      0 |    0 |          0 |
+|   PeekPokeBridgeModule_0                             |       PeekPokeBridgeModule |        846 |        826 |      20 |    0 |   852 |      0 |      0 |    0 |          0 |
+|     (PeekPokeBridgeModule_0)                         |       PeekPokeBridgeModule |        138 |        138 |       0 |    0 |   749 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter                                 |           SatUpDownCounter |         29 |         29 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_1                               |        SatUpDownCounter_40 |         21 |         21 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_10                              |        SatUpDownCounter_41 |          6 |          6 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_11                              |        SatUpDownCounter_42 |          5 |          5 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_12                              |        SatUpDownCounter_43 |          9 |          9 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_13                              |        SatUpDownCounter_44 |          7 |          7 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_2                               |        SatUpDownCounter_45 |         22 |         22 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_3                               |        SatUpDownCounter_46 |         21 |         21 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_4                               |        SatUpDownCounter_47 |         22 |         22 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_5                               |        SatUpDownCounter_48 |         20 |         20 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_6                               |        SatUpDownCounter_49 |         22 |         22 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_7                               |        SatUpDownCounter_50 |          5 |          5 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_8                               |        SatUpDownCounter_51 |          7 |          7 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     SatUpDownCounter_9                               |        SatUpDownCounter_52 |          6 |          6 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|     crFile                                           |                  MCRFile_2 |        456 |        456 |       0 |    0 |    72 |      0 |      0 |    0 |          0 |
+|     step_q                                           |                      Queue |         50 |         30 |      20 |    0 |     3 |      0 |      0 |    0 |          0 |
+|   SimulationMaster_0                                 |           SimulationMaster |        213 |        213 |       0 |    0 |   199 |      0 |      0 |    0 |          0 |
+|     (SimulationMaster_0)                             |           SimulationMaster |         20 |         20 |       0 |    0 |   135 |      0 |      0 |    0 |          0 |
+|     crFile                                           |                    MCRFile |        193 |        193 |       0 |    0 |    64 |      0 |      0 |    0 |          0 |
+|   ctrlInterconnect                                   | NastiRecursiveInterconnect |        634 |        630 |       4 |    0 |   182 |      0 |      0 |    0 |          0 |
+|     xbar                                             |              NastiCrossbar |        634 |        630 |       4 |    0 |   182 |      0 |      0 |    0 |          0 |
+|       router                                         |                NastiRouter |        634 |        630 |       4 |    0 |   182 |      0 |      0 |    0 |          0 |
+|         ar_queue                                     |               ReorderQueue |        200 |        200 |       0 |    0 |    64 |      0 |      0 |    0 |          0 |
+|         aw_queue                                     |            ReorderQueue_39 |        132 |        132 |       0 |    0 |    64 |      0 |      0 |    0 |          0 |
+|         b_arb                                        |                  RRArbiter |         33 |         33 |       0 |    0 |     2 |      0 |      0 |    0 |          0 |
+|         err_slave                                    |            NastiErrorSlave |        160 |        160 |       0 |    0 |    44 |      0 |      0 |    0 |          0 |
+|           (err_slave)                                |            NastiErrorSlave |          4 |          4 |       0 |    0 |    10 |      0 |      0 |    0 |          0 |
+|           b_queue                                    |       QueueCompatibility_2 |         63 |         63 |       0 |    0 |    13 |      0 |      0 |    0 |          0 |
+|           r_queue                                    |       QueueCompatibility_1 |         93 |         93 |       0 |    0 |    21 |      0 |      0 |    0 |          0 |
+|         r_arb                                        |        HellaPeekingArbiter |         77 |         77 |       0 |    0 |     3 |      0 |      0 |    0 |          0 |
+|         w_queue                                      |         QueueCompatibility |         32 |         28 |       4 |    0 |     5 |      0 |      0 |    0 |          0 |
+|   sim                                                |                 SimWrapper |      73984 |      73984 |       0 |    0 | 43703 |      0 |      0 |    0 |         16 |
+|     PipeChannel_peekPokeBridge_io_currentCycle       |              PipeChannel_1 |       9258 |       9258 |       0 |    0 |  1017 |      0 |      0 |    0 |          0 |
+|       tokens                                         |            ShiftQueue_1_38 |       9258 |       9258 |       0 |    0 |  1017 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_dropped            |            PipeChannel_1_0 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|       tokens                                         |            ShiftQueue_1_37 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_event_bits         |              PipeChannel_2 |      13837 |      13837 |       0 |    0 |   102 |      0 |      0 |    0 |          0 |
+|       tokens                                         |            ShiftQueue_2_36 |      13837 |      13837 |       0 |    0 |   102 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_event_valid        |                PipeChannel |         45 |         45 |       0 |    0 |     4 |      0 |      0 |    0 |          0 |
+|       tokens                                         |              ShiftQueue_35 |         45 |         45 |       0 |    0 |     4 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_fatalProtocolError |              PipeChannel_3 |          4 |          4 |       0 |    0 |     4 |      0 |      0 |    0 |          0 |
+|       tokens                                         |              ShiftQueue_34 |          4 |          4 |       0 |    0 |     4 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_pending            |            PipeChannel_1_4 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|       tokens                                         |            ShiftQueue_1_33 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_requestCycleSum    |            PipeChannel_1_5 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|       tokens                                         |            ShiftQueue_1_32 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_resetStats         |              PipeChannel_6 |        202 |        202 |       0 |    0 |     6 |      0 |      0 |    0 |          0 |
+|       tokens                                         |              ShiftQueue_31 |        202 |        202 |       0 |    0 |     6 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_resolved           |            PipeChannel_1_7 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|       tokens                                         |            ShiftQueue_1_30 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_safeCycleSum       |            PipeChannel_1_8 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|       tokens                                         |            ShiftQueue_1_29 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_safeWatermark      |            PipeChannel_2_9 |       6007 |       6007 |       0 |    0 |   162 |      0 |      0 |    0 |          0 |
+|       tokens                                         |               ShiftQueue_2 |       6007 |       6007 |       0 |    0 |   162 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_seen               |           PipeChannel_1_10 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|       tokens                                         |            ShiftQueue_1_28 |         50 |         50 |       0 |    0 |   130 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_io_statsValid         |           PipeChannel_1_11 |         20 |         20 |       0 |    0 |     4 |      0 |      0 |    0 |          0 |
+|       tokens                                         |               ShiftQueue_1 |         20 |         20 |       0 |    0 |     4 |      0 |      0 |    0 |          0 |
+|     PipeChannel_peekPokeBridge_reset                 |             PipeChannel_12 |          7 |          7 |       0 |    0 |     6 |      0 |      0 |    0 |          0 |
+|       tokens                                         |                 ShiftQueue |          7 |          7 |       0 |    0 |     6 |      0 |      0 |    0 |          0 |
+|     target                                           |                    FAMETop |      59033 |      59033 |       0 |    0 | 41618 |      0 |      0 |    0 |         16 |
+|       Host16_                                        |                     Host16 |      59033 |      59033 |       0 |    0 | 41618 |      0 |      0 |    0 |         16 |
+|         (Host16_)                                    |                     Host16 |       1339 |       1339 |       0 |    0 |   400 |      0 |      0 |    0 |         16 |
+|         bucketBanks_0                                |        GHBarrierBucketBank |       3641 |       3641 |       0 |    0 |  2576 |      0 |      0 |    0 |          0 |
+|         bucketBanks_1                                |     GHBarrierBucketBank_13 |       3643 |       3643 |       0 |    0 |  2576 |      0 |      0 |    0 |          0 |
+|         bucketBanks_10                               |     GHBarrierBucketBank_14 |       3579 |       3579 |       0 |    0 |  2577 |      0 |      0 |    0 |          0 |
+|         bucketBanks_11                               |     GHBarrierBucketBank_15 |       3378 |       3378 |       0 |    0 |  2576 |      0 |      0 |    0 |          0 |
+|         bucketBanks_12                               |     GHBarrierBucketBank_16 |       3377 |       3377 |       0 |    0 |  2576 |      0 |      0 |    0 |          0 |
+|         bucketBanks_13                               |     GHBarrierBucketBank_17 |       3579 |       3579 |       0 |    0 |  2576 |      0 |      0 |    0 |          0 |
+|         bucketBanks_14                               |     GHBarrierBucketBank_18 |       3377 |       3377 |       0 |    0 |  2576 |      0 |      0 |    0 |          0 |
+|         bucketBanks_15                               |     GHBarrierBucketBank_19 |       3579 |       3579 |       0 |    0 |  2576 |      0 |      0 |    0 |          0 |
+|         bucketBanks_2                                |     GHBarrierBucketBank_20 |       3642 |       3642 |       0 |    0 |  2577 |      0 |      0 |    0 |          0 |
+|         bucketBanks_3                                |     GHBarrierBucketBank_21 |       3643 |       3643 |       0 |    0 |  2576 |      0 |      0 |    0 |          0 |
+|         bucketBanks_4                                |     GHBarrierBucketBank_22 |       4498 |       4498 |       0 |    0 |  2576 |      0 |      0 |    0 |          0 |
+|         bucketBanks_5                                |     GHBarrierBucketBank_23 |       3579 |       3579 |       0 |    0 |  2576 |      0 |      0 |    0 |          0 |
+|         bucketBanks_6                                |     GHBarrierBucketBank_24 |       3579 |       3579 |       0 |    0 |  2576 |      0 |      0 |    0 |          0 |
+|         bucketBanks_7                                |     GHBarrierBucketBank_25 |       3378 |       3378 |       0 |    0 |  2576 |      0 |      0 |    0 |          0 |
+|         bucketBanks_8                                |     GHBarrierBucketBank_26 |       3642 |       3642 |       0 |    0 |  2576 |      0 |      0 |    0 |          0 |
+|         bucketBanks_9                                |     GHBarrierBucketBank_27 |       3580 |       3580 |       0 |    0 |  2576 |      0 |      0 |    0 |          0 |
++------------------------------------------------------+----------------------------+------------+------------+---------+------+-------+--------+--------+------+------------+
+
+

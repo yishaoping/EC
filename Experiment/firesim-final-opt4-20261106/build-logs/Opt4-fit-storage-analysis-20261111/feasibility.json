@@ -1,0 +1,377 @@
+{
+  "banks": [
+    {
+      "bank": "slotEpoch",
+      "read_examples": [
+        {
+          "line": 1020,
+          "text": "val s1_lookup_epoch = RegNext(widthMap(w => slotEpoch(s0_req(w).addr(idxMSB, idxLSB))))"
+        },
+        {
+          "line": 1270,
+          "text": "val stale = s2_tag_match(w) && s2_lookup_epoch(w) =/= slotEpoch(set)(way)"
+        },
+        {
+          "line": 1283,
+          "text": "s2_raw_req(0).slot_epoch === slotEpoch(s2_raw_req(0).addr(idxMSB, idxLSB))("
+        },
+        {
+          "line": 1428,
+          "text": "assert(slotEpoch(pset)(pway) =/= ~0.U(16.W), \"slot epoch exhausted\")"
+        },
+        {
+          "line": 1458,
+          "text": "slotEpoch(installSet)(installWay) === installReq.slot_epoch"
+        },
+        {
+          "line": 1460,
+          "text": "installReservationMatch && slotEpoch(installSet)(installWay) + 1.U === installReq.slot_epoch,"
+        },
+        {
+          "line": 1493,
+          "text": "assert(slotEpoch(installSet)(installWay) + 1.U === installReq.slot_epoch,"
+        },
+        {
+          "line": 1772,
+          "text": "slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) === crossPackagePendingEpoch &&"
+        },
+        {
+          "line": 1800,
+          "text": "slotEpoch(svbFastSet)(svbFastWay) === svbFastEpoch &&"
+        },
+        {
+          "line": 1839,
+          "text": "s2_lookup_epoch(0) === slotEpoch(s2_store_set)(s2_store_way) &&"
+        }
+      ],
+      "read_expression_lines": 24,
+      "storage": "Reg/RegInit Vec; retain all ports/reset/latency",
+      "write_examples": [
+        {
+          "line": 1214,
+          "text": "s2_lookup(w).slot_epoch := slotEpoch(set)(way) + (!s2_tag_match(w)).asUInt"
+        },
+        {
+          "line": 1429,
+          "text": "slotEpoch(pset)(pway) := slotEpoch(pset)(pway) + 1.U"
+        },
+        {
+          "line": 1505,
+          "text": "selectedRefillSlotEpoch := slotEpoch(refillReqSet)(refillReqWay)"
+        },
+        {
+          "line": 1608,
+          "text": "wb.io.owner_epoch := slotEpoch(wbReqSet)(wbReqWay)"
+        },
+        {
+          "line": 1900,
+          "text": "svbFastEpoch := Mux(crossPackageSvbRescue, crossPackagePendingEpoch, slotEpoch(s2_store_set)(s2_store_way))"
+        },
+        {
+          "line": 2466,
+          "text": "crossPackagePendingEpoch := slotEpoch(s2_store_set)(s2_store_way)"
+        }
+      ],
+      "write_expression_lines": 8
+    },
+    {
+      "bank": "lineGeneration",
+      "read_examples": [
+        {
+          "line": 2569,
+          "text": "lineGeneration(crossPackagePendingSet)(crossPackagePendingWay),"
+        },
+        {
+          "line": 3184,
+          "text": "(!s3_req.image_valid || s3_req.line_generation === lineGeneration(s3_set)(s3_way_idx))"
+        },
+        {
+          "line": 3796,
+          "text": "(0 until nWays).map(w => lineGeneration(s)(w))))"
+        }
+      ],
+      "read_expression_lines": 3,
+      "storage": "Reg/RegInit Vec; retain all ports/reset/latency",
+      "write_examples": [
+        {
+          "line": 1215,
+          "text": "s2_lookup(w).line_generation := lineGeneration(set)(way)"
+        },
+        {
+          "line": 1239,
+          "text": "s2_effective_req(w).line_generation := lineGeneration(set)(way)"
+        },
+        {
+          "line": 1250,
+          "text": "s2_effective_req(w).line_generation := lineGeneration(set)(way)"
+        },
+        {
+          "line": 1609,
+          "text": "wb.io.image_generation := lineGeneration(wbReqSet)(wbReqWay)"
+        },
+        {
+          "line": 3439,
+          "text": "lineGeneration(set)(way) := mshrs.io.refill.bits.image.generation"
+        },
+        {
+          "line": 3467,
+          "text": "lineGeneration(set)(way) := imageSerial"
+        }
+      ],
+      "write_expression_lines": 6
+    },
+    {
+      "bank": "imageKey",
+      "read_examples": [
+        {
+          "line": 1473,
+          "text": "imageValid(installSet)(installWay), imageKey(installSet)(installWay),"
+        },
+        {
+          "line": 1521,
+          "text": "imageKey(refillReqSet)(refillReqWay), lowerPreserved(refillReqSet)(refillReqWay),"
+        },
+        {
+          "line": 1774,
+          "text": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).asUInt === crossPackagePendingKey.asUInt)"
+        },
+        {
+          "line": 1792,
+          "text": "val s2_overwrittenKey = imageKey(s2_store_set)(s2_store_way)"
+        },
+        {
+          "line": 1801,
+          "text": "imageKey(svbFastSet)(svbFastWay).asUInt === svbFastKey.asUInt"
+        },
+        {
+          "line": 1903,
+          "text": "imageKey(crossPackagePendingSet)(crossPackagePendingWay), s2_overwrittenKey)"
+        },
+        {
+          "line": 2006,
+          "text": "!L1Preservation.safe(imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)"
+        },
+        {
+          "line": 2025,
+          "text": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).valid &&"
+        },
+        {
+          "line": 2026,
+          "text": "crossPackageRescueSeq > imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq &&"
+        },
+        {
+          "line": 2027,
+          "text": "!L1Preservation.safe(imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)"
+        }
+      ],
+      "read_expression_lines": 29,
+      "storage": "Reg/RegInit Vec; retain all ports/reset/latency",
+      "write_examples": [
+        {
+          "line": 1611,
+          "text": "wb.io.image_key := imageKey(wbReqSet)(wbReqWay)"
+        },
+        {
+          "line": 1783,
+          "text": "crossPackageWbPacketSeq := imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq"
+        },
+        {
+          "line": 2481,
+          "text": "crossPackagePendingSeq := imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq"
+        },
+        {
+          "line": 2489,
+          "text": "crossPackagePendingKey := imageKey(crossPackagePendingSet)(crossPackagePendingWay)"
+        },
+        {
+          "line": 3440,
+          "text": "imageKey(set)(way) := mshrs.io.refill.bits.image"
+        },
+        {
+          "line": 3477,
+          "text": "imageKey(set)(way).valid := true.B"
+        }
+      ],
+      "write_expression_lines": 9
+    },
+    {
+      "bank": "dirtyPacketSeq",
+      "read_examples": [
+        {
+          "line": 1606,
+          "text": "val l1ReplacementPacketSeq = dirtyPacketSeq(wbReqSet)(wbReqWay)"
+        },
+        {
+          "line": 1615,
+          "text": "crossPackageWbPacketSeq, dirtyPacketSeq(wbReqSet)(wbReqWay)))"
+        },
+        {
+          "line": 1790,
+          "text": "val s2_overwrittenPacketSeq = dirtyPacketSeq(s2_store_set)(s2_store_way)"
+        },
+        {
+          "line": 3354,
+          "text": "val overwrittenPacketSeq = dirtyPacketSeq(modifyingSet)(modifyingWay)"
+        }
+      ],
+      "read_expression_lines": 4,
+      "storage": "Reg/RegInit Vec; retain all ports/reset/latency",
+      "write_examples": [
+        {
+          "line": 3436,
+          "text": "dirtyPacketSeq(set)(way) := mshrs.io.refill.bits.image.contentSeq"
+        },
+        {
+          "line": 3482,
+          "text": "dirtyPacketSeq(set)(way) := s3_req.packet_seq"
+        }
+      ],
+      "write_expression_lines": 2
+    },
+    {
+      "bank": "appliedEffectToken",
+      "read_examples": [
+        {
+          "line": 2572,
+          "text": "appliedEffectToken(crossPackagePendingSet)(crossPackagePendingWay),"
+        },
+        {
+          "line": 3052,
+          "text": "appliedEffectToken(set)(way) === s2_req(0).effect_token"
+        },
+        {
+          "line": 3182,
+          "text": "appliedEffectToken(s3_set)(s3_way_idx) === s3_req.effect_token"
+        },
+        {
+          "line": 3800,
+          "text": "(0 until nWays).map(w => appliedEffectToken(s)(w))))"
+        }
+      ],
+      "read_expression_lines": 4,
+      "storage": "Reg/RegInit Vec; retain all ports/reset/latency",
+      "write_examples": [
+        {
+          "line": 3486,
+          "text": "appliedEffectToken(set)(way) := s3_req.effect_token"
+        }
+      ],
+      "write_expression_lines": 1
+    },
+    {
+      "bank": "appliedEffectResult",
+      "read_examples": [],
+      "read_expression_lines": 0,
+      "storage": "Reg/RegInit Vec; retain all ports/reset/latency",
+      "write_examples": [
+        {
+          "line": 3061,
+          "text": "s3_result := Mux(duplicate, appliedEffectResult(set)(way),"
+        },
+        {
+          "line": 3236,
+          "text": "s3_result := appliedEffectResult(s3_set)(s3_way_idx)"
+        },
+        {
+          "line": 3487,
+          "text": "appliedEffectResult(set)(way) := s3_result"
+        }
+      ],
+      "write_expression_lines": 3
+    },
+    {
+      "bank": "residentTag",
+      "read_examples": [
+        {
+          "line": 1771,
+          "text": "residentTag(crossPackagePendingSet)(crossPackagePendingWay) === crossPackagePendingTag &&"
+        },
+        {
+          "line": 1799,
+          "text": "residentTag(svbFastSet)(svbFastWay) === svbFastTag &&"
+        },
+        {
+          "line": 3112,
+          "text": "residentValid(s3_set)(s3_way_idx) && residentTag(s3_set)(s3_way_idx) === (s3_req.addr >> untagBits))"
+        }
+      ],
+      "read_expression_lines": 3,
+      "storage": "Reg/RegInit Vec; retain all ports/reset/latency",
+      "write_examples": [
+        {
+          "line": 806,
+          "text": "when (r.data.coh.isValid()) { residentTag(r.idx)(way) := r.data.tag }"
+        }
+      ],
+      "write_expression_lines": 1
+    },
+    {
+      "bank": "reservedTransaction",
+      "read_examples": [
+        {
+          "line": 1454,
+          "text": "reservedTransaction(installSet)(installWay) === installReq.transaction_token &&"
+        },
+        {
+          "line": 1513,
+          "text": "mshrs.io.refill.bits.transaction_token === reservedTransaction(refillReqSet)(refillReqWay) &&"
+        },
+        {
+          "line": 2571,
+          "text": "reservedTransaction(crossPackagePendingSet)(crossPackagePendingWay),"
+        },
+        {
+          "line": 3109,
+          "text": "reservedTransaction(s3_set)(s3_way_idx) === s3_req.transaction_token &&"
+        }
+      ],
+      "read_expression_lines": 4,
+      "storage": "Reg/RegInit Vec; retain all ports/reset/latency",
+      "write_examples": [
+        {
+          "line": 1398,
+          "text": "reservedTransaction(set)(way) := r.transaction_token"
+        }
+      ],
+      "write_expression_lines": 1
+    },
+    {
+      "bank": "installedImage",
+      "read_examples": [
+        {
+          "line": 1511,
+          "text": "mshrs.io.refill.bits.image.asUInt === installedImage(refillReqSet)(refillReqWay).asUInt &&"
+        }
+      ],
+      "read_expression_lines": 1,
+      "storage": "Reg/RegInit Vec; retain all ports/reset/latency",
+      "write_examples": [
+        {
+          "line": 1491,
+          "text": "installedImage(installSet)(installWay) := mshrs.io.install.bits.image"
+        }
+      ],
+      "write_expression_lines": 1
+    }
+  ],
+  "conclusions": [
+    "The live cache uses combinational multiple reads and same-cycle guard/update ownership checks; direct conversion to synchronous BRAM/URAM changes cycle semantics and is not admitted.",
+    "Address histogram has parallel updates across many slots in one target cycle, while all ports and exact same-cycle arithmetic must remain; one BRAM cannot replace it directly.",
+    "FPGA implementation sharing of decodes/one-hot muxes is admissible only with full-width and cycle equivalence; no narrowing/token dropping or serializing target updates.",
+    "MSHR0 mapped net names include DCache lineGeneration/slotEpoch/imageKey logic: mapped hierarchy alone cannot identify a source-local MSHR fix.",
+    "Read counts are source expression lines, not independently proven physical ports; source lines and synthesized net cones must both be checked before a storage redesign."
+  ],
+  "fpga_access": false,
+  "full_dut_synthesis": false,
+  "geometry": {
+    "rowBits": 128,
+    "sets": 256,
+    "ways": 2
+  },
+  "hardware_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+  "schema": "ec-opt4-cache-storage-feasibility/1",
+  "source": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-bucket-tag-r3-20261111/chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+  "source_id": "3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561",
+  "source_sha256": "0fb9e4b3931827120aed8311dbbc87a2d25e697c76505717af7162a0a9f1663d",
+  "utc": "2026-11-11T00:43:02.644719+00:00"
+}

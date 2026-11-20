@@ -1,0 +1,12 @@
+Canneal same-model full GoldenGate metasim: finite package-result drain verified
+
+Baseline 8491167d84b6d9521b151a743673c1516926a1f8; ELF d0d0e9ae99bd963aeed84a8b395e7096f54985d117d11542d553a38680b8397b.
+ROI [1074401,1610857) = 536456 targetcycles /392248instructions. Output checksum40b2b50000000000, routing_cost4789, exit0. Original/observer prints and targetcount1759002 match.
+
+131 allocations,131unique accepted PASS, zeroFAIL/CANCEL, zero sampling errors. Local checker begin/result seq/hart/status exactly pair with BOOM acceptance. Per checker {1: 33, 2: 33, 3: 33, 4: 32}. Two results remain at ROIstop; final accepted package130 by checker2 occurs CSR1611189 (fastest1613158):332CSRcycles after ROIstop. Endpending0. This is finite package-result drain; it is not strict checkerDone minus samepackage BOOMexecutionDone and is not SVBpayloadACKdrain.
+
+Observed hostwall3421.544904496s; target1759002. Hostwall is not targetruntime/slowdown.
+
+PlainRTL ROI485329 differs by51127cycles (+10.5345%) with same392248instructions/output. Memorymodels differ (plain+dramsim vs FASED30latency/max4requests), so this is not controlled cycleequivalence and cannot attribute the difference to GoldenGate.
+
+Raw evidence: /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-external-observer-r3-20261111/canneal-observer-on/external-events.jsonl, /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-external-observer-r3-20261111/canneal-observer-on/rtl-prints-1 and /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-external-observer-r3-20261111/result.json. Full analysis: /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-external-observer-r3-20261111/acceptance-analysis.json.

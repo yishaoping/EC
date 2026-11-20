@@ -1,0 +1,186 @@
+{
+  "observed_utc": "2026-11-07T11:15:53.199126+00:00",
+  "boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "hardware_changes": false,
+  "existing_fpga_cad_scheduler_services_stopped_or_restarted": false,
+  "live_identities": {
+    "Native Freqmine r3": {
+      "pid": 2234375,
+      "start_ticks": "1494192",
+      "status": "RUNNING",
+      "identity_live": true
+    },
+    "C4 CAD": {
+      "pid": 175581,
+      "start_ticks": "192528",
+      "status": "RUNNING",
+      "identity_live": true
+    },
+    "Native service": {
+      "pid": 86135,
+      "start_ticks": "89098",
+      "status": "RUNNING",
+      "identity_live": true
+    },
+    "C4 first": {
+      "pid": 291370,
+      "start_ticks": "253757",
+      "status": "RUNNING",
+      "identity_live": true
+    },
+    "Coverage scheduler": {
+      "pid": 1942548,
+      "start_ticks": "1273289",
+      "status": "RUNNING",
+      "identity_live": true
+    }
+  },
+  "software_states": {
+    "network-linux-validation": {
+      "status": "RUNNING",
+      "active_case": "netferret-simsmall",
+      "cases": [
+        {
+          "input": "test",
+          "program": "netdedup",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-linux-20261107T104558Z/netdedup-test/result.json",
+          "status": "FAILED_WITH_EVIDENCE"
+        },
+        {
+          "input": "test",
+          "program": "netferret",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-linux-20261107T104558Z/netferret-test/result.json",
+          "status": "FAILED_WITH_EVIDENCE"
+        },
+        {
+          "input": "test",
+          "program": "netstreamcluster",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-linux-20261107T104558Z/netstreamcluster-test/result.json",
+          "status": "LINUX_PROTOCOL_AND_EXACT_OUTPUT_PASSED"
+        },
+        {
+          "input": "simsmall",
+          "program": "netdedup",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-linux-20261107T104558Z/netdedup-simsmall/result.json",
+          "status": "FAILED_WITH_EVIDENCE"
+        }
+      ],
+      "output_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-linux-20261107T104558Z"
+    },
+    "netstreamcluster-linux-validation": {
+      "status": "RUNNING",
+      "active_case": "netstreamcluster-simmedium",
+      "cases": [
+        {
+          "input": "simsmall",
+          "program": "netstreamcluster",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netstreamcluster-linux-20261107T110536Z/netstreamcluster-simsmall/result.json",
+          "status": "LINUX_PROTOCOL_AND_EXACT_OUTPUT_PASSED"
+        }
+      ],
+      "output_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netstreamcluster-linux-20261107T110536Z"
+    },
+    "netdedup-linger-preparation": {
+      "status": "VALIDATING",
+      "user_cases": [
+        {
+          "input": "test",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netdedup-linger-20261107T105517Z/user-test/result.json",
+          "returncode": 0
+        },
+        {
+          "input": "simsmall",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netdedup-linger-20261107T105517Z/user-simsmall/result.json",
+          "returncode": 0
+        },
+        {
+          "input": "simmedium",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netdedup-linger-20261107T105517Z/user-simmedium/result.json",
+          "returncode": 0
+        }
+      ],
+      "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-linger-20261107T105517Z",
+      "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netdedup-linger-20261107T105517Z",
+      "linux_returncode": 1
+    },
+    "netdedup-linger-linux-validation": {
+      "status": "RUNNING",
+      "active_case": "netdedup-simsmall",
+      "cases": [
+        {
+          "input": "test",
+          "program": "netdedup",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netdedup-linger-linux-20261107T105925Z/netdedup-test/result.json",
+          "status": "FAILED_WITH_EVIDENCE"
+        }
+      ],
+      "output_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netdedup-linger-linux-20261107T105925Z"
+    },
+    "netferret-protocol-preparation": {
+      "status": "COMPLETE_REVIEW_EVIDENCE",
+      "user_cases": [
+        {
+          "input": "test",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-20261107T110127Z/user-test/result.json",
+          "returncode": 0
+        },
+        {
+          "input": "simsmall",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-20261107T110127Z/user-simsmall/result.json",
+          "returncode": 0
+        },
+        {
+          "input": "simmedium",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-20261107T110127Z/user-simmedium/result.json",
+          "returncode": 0
+        }
+      ],
+      "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-protocol-20261107T110127Z",
+      "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-20261107T110127Z",
+      "linux_returncode": 0
+    },
+    "netferret-protocol-linux-validation": {
+      "status": "COMPLETE_REVIEW_EVIDENCE",
+      "active_case": "netferret-simmedium",
+      "cases": [
+        {
+          "input": "test",
+          "program": "netferret",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-linux-20261107T110137Z/netferret-test/result.json",
+          "status": "FAILED_WITH_EVIDENCE"
+        },
+        {
+          "input": "simsmall",
+          "program": "netferret",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-linux-20261107T110137Z/netferret-simsmall/result.json",
+          "status": "FAILED_WITH_EVIDENCE"
+        },
+        {
+          "input": "simmedium",
+          "program": "netferret",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-linux-20261107T110137Z/netferret-simmedium/result.json",
+          "status": "FAILED_WITH_EVIDENCE"
+        }
+      ],
+      "output_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-linux-20261107T110137Z"
+    },
+    "netdedup-framed-preparation": {
+      "status": "VALIDATING",
+      "user_cases": [
+        {
+          "input": "test",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netdedup-framed-20261107T111246Z/user-test/result.json",
+          "returncode": 2
+        },
+        {
+          "input": "simsmall",
+          "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netdedup-framed-20261107T111246Z/user-simsmall/result.json",
+          "returncode": 0
+        }
+      ],
+      "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-framed-20261107T111246Z",
+      "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netdedup-framed-20261107T111246Z"
+    }
+  }
+}

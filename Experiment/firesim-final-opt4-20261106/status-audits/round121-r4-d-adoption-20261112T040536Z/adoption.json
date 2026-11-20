@@ -1,0 +1,606 @@
+{
+  "C_final": {
+    "checkpoint_sha256": "51b6ac50f4fd672b6bb118df117a26b62fe478fc857244a81e861c28b5a6dc8c",
+    "drc_errors": 0,
+    "drc_warning_count": 49,
+    "hold_failing_endpoints": 0,
+    "routing_errors": 0,
+    "setup_failing_endpoints": 2130,
+    "tns_ns": -292.97,
+    "whs_ns": 0.001,
+    "wns_ns": -0.411
+  },
+  "D": {
+    "actual_vivado": {
+      "affinity": "224-225",
+      "argv": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/D-shell-critical-shortest-route/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/D-shell-critical-shortest-route/recover.tcl",
+      "cgroups": [
+        "13:devices:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+        "12:misc:/",
+        "11:net_cls,net_prio:/",
+        "10:blkio:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+        "9:memory:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+        "8:cpuset:/",
+        "7:hugetlb:/",
+        "6:perf_event:/",
+        "5:pids:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+        "4:freezer:/",
+        "3:rdma:/",
+        "2:cpu,cpuacct:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+        "1:name=systemd:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+        "0::/system.slice/ec-opt4-svb-host40-shell-physical-r4.service"
+      ],
+      "cpu_ticks": 150843,
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 2626454,
+      "process_state": "S",
+      "rss_bytes": 7218270208,
+      "start_ticks": "26706184"
+    },
+    "result_complete": false,
+    "sealed_inputs_sha256": "d74e79ae220d71191613edcfb6374409ed185578e7c8a9d68b11373d0f399a25",
+    "selected_checkpoint_sha256": "20a3da60324379288041cdedb8a2f9cb9fb5c26281f3c68fa2de86c781a92c80",
+    "source_checkpoint_sha256": "51b6ac50f4fd672b6bb118df117a26b62fe478fc857244a81e861c28b5a6dc8c"
+  },
+  "action": "ADOPT_EXISTING_R4_AND_SEAL_C_TO_RUNNING_D_PROVENANCE",
+  "board_bdf": "0000:21:00.0",
+  "board_serial": "21770433G02LA",
+  "complete_ec": false,
+  "fpga_io": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "immutable_failed_results": {
+    "B-shell-FD-replicate": {
+      "completed_utc": "2026-11-12T03:23:45.375328+00:00",
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/B-shell-FD-replicate/result.json",
+      "returncode": 1,
+      "sha256": "dad45676d3d80cc2d1eb43a89d541bb208758da4a138d827e3b92116d575b052",
+      "status": "FAILED_WITH_EVIDENCE",
+      "verified_output_count": 6
+    },
+    "C-postroute-clock-skew": {
+      "completed_utc": "2026-11-12T03:48:59.652172+00:00",
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/C-postroute-clock-skew/result.json",
+      "returncode": 1,
+      "sha256": "c005f7e3edbaf4bf539e6758128f4868e59bb1777bca6ee580b09e863c93afe6",
+      "status": "FAILED_WITH_EVIDENCE",
+      "verified_output_count": 17
+    }
+  },
+  "installation_sha256": "a73b5b58ab1d25f9fac3c50d955d9833c7b77bd622390c210ec1e7b16cabad61",
+  "live_services": [
+    {
+      "controller": {
+        "affinity": "224-225",
+        "argv": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/controller.py",
+        "cgroups": [
+          "13:devices:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+          "12:misc:/",
+          "11:net_cls,net_prio:/",
+          "10:blkio:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+          "9:memory:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+          "8:cpuset:/",
+          "7:hugetlb:/",
+          "6:perf_event:/",
+          "5:pids:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+          "4:freezer:/",
+          "3:rdma:/",
+          "2:cpu,cpuacct:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+          "1:name=systemd:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+          "0::/system.slice/ec-opt4-svb-host40-shell-physical-r4.service"
+        ],
+        "cpu_ticks": 601,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2561977,
+        "process_state": "S",
+        "rss_bytes": 16109568,
+        "start_ticks": "26532915"
+      },
+      "identity_verified": true,
+      "properties": {
+        "ActiveState": "active",
+        "ControlGroup": "/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+        "Id": "ec-opt4-svb-host40-shell-physical-r4.service",
+        "MainPID": "2561977",
+        "MemoryMax": "68719476736",
+        "SubState": "running"
+      },
+      "recursive_tasks": [
+        {
+          "affinity": "224-225",
+          "argv": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/controller.py",
+          "cgroups": [
+            "13:devices:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "12:misc:/",
+            "11:net_cls,net_prio:/",
+            "10:blkio:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "9:memory:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "8:cpuset:/",
+            "7:hugetlb:/",
+            "6:perf_event:/",
+            "5:pids:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "4:freezer:/",
+            "3:rdma:/",
+            "2:cpu,cpuacct:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "1:name=systemd:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "0::/system.slice/ec-opt4-svb-host40-shell-physical-r4.service"
+          ],
+          "cpu_ticks": 601,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2561977,
+          "process_state": "S",
+          "rss_bytes": 16109568,
+          "start_ticks": "26532915"
+        },
+        {
+          "affinity": "224-225",
+          "argv": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/D-shell-critical-shortest-route/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/D-shell-critical-shortest-route/recover.tcl",
+          "cgroups": [
+            "13:devices:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "12:misc:/",
+            "11:net_cls,net_prio:/",
+            "10:blkio:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "9:memory:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "8:cpuset:/",
+            "7:hugetlb:/",
+            "6:perf_event:/",
+            "5:pids:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "4:freezer:/",
+            "3:rdma:/",
+            "2:cpu,cpuacct:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "1:name=systemd:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "0::/system.slice/ec-opt4-svb-host40-shell-physical-r4.service"
+          ],
+          "cpu_ticks": 0,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2626418,
+          "process_state": "S",
+          "rss_bytes": 3809280,
+          "start_ticks": "26706173"
+        },
+        {
+          "affinity": "224-225",
+          "argv": "/bin/bash /tools/Xilinx/Vivado/2021.1/bin/loader -exec vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/D-shell-critical-shortest-route/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/D-shell-critical-shortest-route/recover.tcl",
+          "cgroups": [
+            "13:devices:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "12:misc:/",
+            "11:net_cls,net_prio:/",
+            "10:blkio:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "9:memory:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "8:cpuset:/",
+            "7:hugetlb:/",
+            "6:perf_event:/",
+            "5:pids:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "4:freezer:/",
+            "3:rdma:/",
+            "2:cpu,cpuacct:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "1:name=systemd:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "0::/system.slice/ec-opt4-svb-host40-shell-physical-r4.service"
+          ],
+          "cpu_ticks": 1,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2626434,
+          "process_state": "S",
+          "rss_bytes": 3796992,
+          "start_ticks": "26706175"
+        },
+        {
+          "affinity": "224-225",
+          "argv": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/D-shell-critical-shortest-route/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/D-shell-critical-shortest-route/recover.tcl",
+          "cgroups": [
+            "13:devices:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "12:misc:/",
+            "11:net_cls,net_prio:/",
+            "10:blkio:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "9:memory:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "8:cpuset:/",
+            "7:hugetlb:/",
+            "6:perf_event:/",
+            "5:pids:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "4:freezer:/",
+            "3:rdma:/",
+            "2:cpu,cpuacct:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "1:name=systemd:/system.slice/ec-opt4-svb-host40-shell-physical-r4.service",
+            "0::/system.slice/ec-opt4-svb-host40-shell-physical-r4.service"
+          ],
+          "cpu_ticks": 150843,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2626454,
+          "process_state": "S",
+          "rss_bytes": 7218270208,
+          "start_ticks": "26706184"
+        }
+      ],
+      "state_file": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/state.json",
+      "state_updated_utc": "2026-11-12T04:04:01.354517+00:00",
+      "status": "RUNNING_ADMITTED_HOST40_SHELL_RECOVERY",
+      "unit": "ec-opt4-svb-host40-shell-physical-r4.service"
+    },
+    {
+      "controller": {
+        "affinity": "0-255",
+        "argv": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/runtime.py",
+        "cgroups": [
+          "13:devices:/system.slice/ec-opt4-svb-host40-shell-follow-r4.service",
+          "12:misc:/",
+          "11:net_cls,net_prio:/",
+          "10:blkio:/system.slice/ec-opt4-svb-host40-shell-follow-r4.service",
+          "9:memory:/system.slice/ec-opt4-svb-host40-shell-follow-r4.service",
+          "8:cpuset:/",
+          "7:hugetlb:/",
+          "6:perf_event:/",
+          "5:pids:/system.slice/ec-opt4-svb-host40-shell-follow-r4.service",
+          "4:freezer:/",
+          "3:rdma:/",
+          "2:cpu,cpuacct:/system.slice/ec-opt4-svb-host40-shell-follow-r4.service",
+          "1:name=systemd:/system.slice/ec-opt4-svb-host40-shell-follow-r4.service",
+          "0::/system.slice/ec-opt4-svb-host40-shell-follow-r4.service"
+        ],
+        "cpu_ticks": 6,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2561978,
+        "process_state": "S",
+        "rss_bytes": 16392192,
+        "start_ticks": "26532916"
+      },
+      "identity_verified": true,
+      "properties": {
+        "ActiveState": "active",
+        "ControlGroup": "/system.slice/ec-opt4-svb-host40-shell-follow-r4.service",
+        "Id": "ec-opt4-svb-host40-shell-follow-r4.service",
+        "MainPID": "2561978",
+        "MemoryMax": "34359738368",
+        "SubState": "running"
+      },
+      "recursive_tasks": [
+        {
+          "affinity": "0-255",
+          "argv": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/runtime.py",
+          "cgroups": [
+            "13:devices:/system.slice/ec-opt4-svb-host40-shell-follow-r4.service",
+            "12:misc:/",
+            "11:net_cls,net_prio:/",
+            "10:blkio:/system.slice/ec-opt4-svb-host40-shell-follow-r4.service",
+            "9:memory:/system.slice/ec-opt4-svb-host40-shell-follow-r4.service",
+            "8:cpuset:/",
+            "7:hugetlb:/",
+            "6:perf_event:/",
+            "5:pids:/system.slice/ec-opt4-svb-host40-shell-follow-r4.service",
+            "4:freezer:/",
+            "3:rdma:/",
+            "2:cpu,cpuacct:/system.slice/ec-opt4-svb-host40-shell-follow-r4.service",
+            "1:name=systemd:/system.slice/ec-opt4-svb-host40-shell-follow-r4.service",
+            "0::/system.slice/ec-opt4-svb-host40-shell-follow-r4.service"
+          ],
+          "cpu_ticks": 6,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2561978,
+          "process_state": "S",
+          "rss_bytes": 16392192,
+          "start_ticks": "26532916"
+        }
+      ],
+      "state_file": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-host40-shell-onboard-r4-20261112/state.json",
+      "state_updated_utc": "2026-11-12T04:05:09.619844+00:00",
+      "status": "WAITING_INDEPENDENT_HOST40_PHYSICAL_RESULT_NO_FPGA_IO",
+      "unit": "ec-opt4-svb-host40-shell-follow-r4.service"
+    },
+    {
+      "controller": {
+        "affinity": "0-255",
+        "argv": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/application.py",
+        "cgroups": [
+          "13:devices:/system.slice/ec-opt4-svb-host40-shell-application-follow-r4.service",
+          "12:misc:/",
+          "11:net_cls,net_prio:/",
+          "10:blkio:/system.slice/ec-opt4-svb-host40-shell-application-follow-r4.service",
+          "9:memory:/system.slice/ec-opt4-svb-host40-shell-application-follow-r4.service",
+          "8:cpuset:/",
+          "7:hugetlb:/",
+          "6:perf_event:/",
+          "5:pids:/system.slice/ec-opt4-svb-host40-shell-application-follow-r4.service",
+          "4:freezer:/",
+          "3:rdma:/",
+          "2:cpu,cpuacct:/system.slice/ec-opt4-svb-host40-shell-application-follow-r4.service",
+          "1:name=systemd:/system.slice/ec-opt4-svb-host40-shell-application-follow-r4.service",
+          "0::/system.slice/ec-opt4-svb-host40-shell-application-follow-r4.service"
+        ],
+        "cpu_ticks": 6,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2561979,
+        "process_state": "S",
+        "rss_bytes": 15683584,
+        "start_ticks": "26532916"
+      },
+      "identity_verified": true,
+      "properties": {
+        "ActiveState": "active",
+        "ControlGroup": "/system.slice/ec-opt4-svb-host40-shell-application-follow-r4.service",
+        "Id": "ec-opt4-svb-host40-shell-application-follow-r4.service",
+        "MainPID": "2561979",
+        "MemoryMax": "4294967296",
+        "SubState": "running"
+      },
+      "recursive_tasks": [
+        {
+          "affinity": "0-255",
+          "argv": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/application.py",
+          "cgroups": [
+            "13:devices:/system.slice/ec-opt4-svb-host40-shell-application-follow-r4.service",
+            "12:misc:/",
+            "11:net_cls,net_prio:/",
+            "10:blkio:/system.slice/ec-opt4-svb-host40-shell-application-follow-r4.service",
+            "9:memory:/system.slice/ec-opt4-svb-host40-shell-application-follow-r4.service",
+            "8:cpuset:/",
+            "7:hugetlb:/",
+            "6:perf_event:/",
+            "5:pids:/system.slice/ec-opt4-svb-host40-shell-application-follow-r4.service",
+            "4:freezer:/",
+            "3:rdma:/",
+            "2:cpu,cpuacct:/system.slice/ec-opt4-svb-host40-shell-application-follow-r4.service",
+            "1:name=systemd:/system.slice/ec-opt4-svb-host40-shell-application-follow-r4.service",
+            "0::/system.slice/ec-opt4-svb-host40-shell-application-follow-r4.service"
+          ],
+          "cpu_ticks": 6,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2561979,
+          "process_state": "S",
+          "rss_bytes": 15683584,
+          "start_ticks": "26532916"
+        }
+      ],
+      "state_file": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-host40-shell-application-onboard-r4-20261112/state.json",
+      "state_updated_utc": "2026-11-12T04:05:09.662472+00:00",
+      "status": "WAITING_CERTIFIED_COMPONENT_AND_REAL_APPLICATION_CPU_REPLAY",
+      "unit": "ec-opt4-svb-host40-shell-application-follow-r4.service"
+    },
+    {
+      "controller": {
+        "affinity": "0-255",
+        "argv": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/fpga-priority-handoff-r1-20261112/follower.py",
+        "cgroups": [
+          "13:devices:/system.slice/ec-opt4-fpga-priority-handoff-r1.service",
+          "12:misc:/",
+          "11:net_cls,net_prio:/",
+          "10:blkio:/system.slice/ec-opt4-fpga-priority-handoff-r1.service",
+          "9:memory:/system.slice/ec-opt4-fpga-priority-handoff-r1.service",
+          "8:cpuset:/",
+          "7:hugetlb:/",
+          "6:perf_event:/",
+          "5:pids:/system.slice/ec-opt4-fpga-priority-handoff-r1.service",
+          "4:freezer:/",
+          "3:rdma:/",
+          "2:cpu,cpuacct:/system.slice/ec-opt4-fpga-priority-handoff-r1.service",
+          "1:name=systemd:/system.slice/ec-opt4-fpga-priority-handoff-r1.service",
+          "0::/system.slice/ec-opt4-fpga-priority-handoff-r1.service"
+        ],
+        "cpu_ticks": 7,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2551972,
+        "process_state": "S",
+        "rss_bytes": 15663104,
+        "start_ticks": "26486048"
+      },
+      "identity_verified": true,
+      "properties": {
+        "ActiveState": "active",
+        "ControlGroup": "/system.slice/ec-opt4-fpga-priority-handoff-r1.service",
+        "Id": "ec-opt4-fpga-priority-handoff-r1.service",
+        "MainPID": "2551972",
+        "MemoryMax": "infinity",
+        "SubState": "running"
+      },
+      "recursive_tasks": [
+        {
+          "affinity": "0-255",
+          "argv": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/fpga-priority-handoff-r1-20261112/follower.py",
+          "cgroups": [
+            "13:devices:/system.slice/ec-opt4-fpga-priority-handoff-r1.service",
+            "12:misc:/",
+            "11:net_cls,net_prio:/",
+            "10:blkio:/system.slice/ec-opt4-fpga-priority-handoff-r1.service",
+            "9:memory:/system.slice/ec-opt4-fpga-priority-handoff-r1.service",
+            "8:cpuset:/",
+            "7:hugetlb:/",
+            "6:perf_event:/",
+            "5:pids:/system.slice/ec-opt4-fpga-priority-handoff-r1.service",
+            "4:freezer:/",
+            "3:rdma:/",
+            "2:cpu,cpuacct:/system.slice/ec-opt4-fpga-priority-handoff-r1.service",
+            "1:name=systemd:/system.slice/ec-opt4-fpga-priority-handoff-r1.service",
+            "0::/system.slice/ec-opt4-fpga-priority-handoff-r1.service"
+          ],
+          "cpu_ticks": 7,
+          "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+          "pid": 2551972,
+          "process_state": "S",
+          "rss_bytes": 15663104,
+          "start_ticks": "26486048"
+        }
+      ],
+      "state_file": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/fpga-priority-handoff-r1-20261112/state.json",
+      "state_updated_utc": "2026-11-12T04:02:21.105151+00:00",
+      "status": "WAITING_REAL_FULL_PHYSICAL_CERTIFICATION",
+      "unit": "ec-opt4-fpga-priority-handoff-r1.service"
+    }
+  ],
+  "manifests": {
+    "application-inputs.json": "94f5b6191eb259c1fe1a021b89cf540a9a36e72985778a57a4951716021f828b",
+    "inputs.json": "567b43630a6b15c1fcfcbfdb80fe2830f1965f6cbb2b261c93acc165a6a08e37",
+    "runtime-inputs.json": "97f82ac2f71387634fe934126bd9bbbda40eac1b6b8e3b083535e73a8c49a900"
+  },
+  "minimum_check_intervals_seconds": {
+    "component": 300,
+    "whole": 600
+  },
+  "new_jobs_launched": [],
+  "next_automatic_action": "Existing D finishes under unchanged gates; success is independently certified, then existing r4 followers run directed and same-bit application replay only on21. Existing full-host capacity/parity continuation remains owner. If D fails, preserve result and require independently versioned minimal repair.",
+  "prerequisites": [
+    {
+      "controller": {
+        "affinity": "240-247",
+        "argv": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-full-host-capacity-r1-20261112/controller.py --run",
+        "cgroups": [
+          "13:devices:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service",
+          "12:misc:/",
+          "11:net_cls,net_prio:/",
+          "10:blkio:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service",
+          "9:memory:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service",
+          "8:cpuset:/",
+          "7:hugetlb:/",
+          "6:perf_event:/",
+          "5:pids:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service",
+          "4:freezer:/",
+          "3:rdma:/",
+          "2:cpu,cpuacct:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service",
+          "1:name=systemd:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service",
+          "0::/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service"
+        ],
+        "cpu_ticks": 521,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2379596,
+        "process_state": "S",
+        "rss_bytes": 15646720,
+        "start_ticks": "25825420"
+      },
+      "identity_verified": true,
+      "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-mcrams-full-host-capacity-r1-state.json",
+      "state_updated_utc": "2026-11-12T04:05:14.360778+00:00",
+      "status": "RUNNING_FULL_HOST_SYNTH_DESIGN"
+    },
+    {
+      "controller": {
+        "affinity": "250-251",
+        "argv": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-owner-mc-runtime-r2-20261112/controller.py --run",
+        "cgroups": [
+          "13:devices:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service",
+          "12:misc:/",
+          "11:net_cls,net_prio:/",
+          "10:blkio:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service",
+          "9:memory:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service",
+          "8:cpuset:/",
+          "7:hugetlb:/",
+          "6:perf_event:/",
+          "5:pids:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service",
+          "4:freezer:/",
+          "3:rdma:/",
+          "2:cpu,cpuacct:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service",
+          "1:name=systemd:/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service",
+          "0::/system.slice/ec-opt4-auto-owner-mc-runtime-r2-3656aec4.service"
+        ],
+        "cpu_ticks": 572,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2378806,
+        "process_state": "S",
+        "rss_bytes": 15634432,
+        "start_ticks": "25817526"
+      },
+      "identity_verified": true,
+      "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-mcrams-owner-mc-runtime-r2-state.json",
+      "state_updated_utc": "2026-11-12T04:05:27.066563+00:00",
+      "status": "RUNNING_RUN_MCRAMS"
+    },
+    {
+      "controller": {
+        "affinity": "0-255",
+        "argv": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-full-host-continuation-r2-20261112/continue.py",
+        "cgroups": [
+          "13:devices:/system.slice/ec-opt4-auto-mcrams-host-continuation-r2-3656aec4.service",
+          "12:misc:/",
+          "11:net_cls,net_prio:/",
+          "10:blkio:/system.slice/ec-opt4-auto-mcrams-host-continuation-r2-3656aec4.service",
+          "9:memory:/system.slice/ec-opt4-auto-mcrams-host-continuation-r2-3656aec4.service",
+          "8:cpuset:/",
+          "7:hugetlb:/",
+          "6:perf_event:/",
+          "5:pids:/system.slice/ec-opt4-auto-mcrams-host-continuation-r2-3656aec4.service",
+          "4:freezer:/",
+          "3:rdma:/",
+          "2:cpu,cpuacct:/system.slice/ec-opt4-auto-mcrams-host-continuation-r2-3656aec4.service",
+          "1:name=systemd:/system.slice/ec-opt4-auto-mcrams-host-continuation-r2-3656aec4.service",
+          "0::/system.slice/ec-opt4-auto-mcrams-host-continuation-r2-3656aec4.service"
+        ],
+        "cpu_ticks": 9,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2403708,
+        "process_state": "S",
+        "rss_bytes": 14753792,
+        "start_ticks": "25996277"
+      },
+      "identity_verified": true,
+      "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-mcrams-full-host-continuation-r2-state.json",
+      "state_updated_utc": "2026-11-12T04:00:45.003863+00:00",
+      "status": "ADOPTING_EXISTING_CAPACITY_AND_PARITY_NO_DUPLICATES"
+    },
+    {
+      "identity": {
+        "affinity": "240-247",
+        "argv": "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-full-host-capacity-r1-20261112/vivado.log -source /data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-full-host-capacity-r1-20261112/capacity.tcl",
+        "cgroups": [
+          "13:devices:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service",
+          "12:misc:/",
+          "11:net_cls,net_prio:/",
+          "10:blkio:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service",
+          "9:memory:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service",
+          "8:cpuset:/",
+          "7:hugetlb:/",
+          "6:perf_event:/",
+          "5:pids:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service",
+          "4:freezer:/",
+          "3:rdma:/",
+          "2:cpu,cpuacct:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service",
+          "1:name=systemd:/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service",
+          "0::/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service"
+        ],
+        "cpu_ticks": 979597,
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 2379656,
+        "process_state": "S",
+        "rss_bytes": 13378002944,
+        "start_ticks": "25825451"
+      },
+      "identity_verified": true,
+      "role": "existing full-host Vivado"
+    }
+  ],
+  "process_signals_sent": false,
+  "retired_historical_physical_waiters": [
+    {
+      "properties": {
+        "ActiveState": "inactive",
+        "ControlGroup": "",
+        "MainPID": "0"
+      },
+      "recursive_tasks": [],
+      "unit": "ec-opt4-svb-host40-shell-physical-r2.service"
+    },
+    {
+      "properties": {
+        "ActiveState": "inactive",
+        "ControlGroup": "",
+        "MainPID": "0"
+      },
+      "recursive_tasks": [],
+      "unit": "ec-opt4-svb-host40-shell-physical-r3.service"
+    }
+  ],
+  "root_operations": false,
+  "schema": "ec-opt4-round121-r4-adoption/1",
+  "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+  "source_or_runtime_changed": false,
+  "utc": "2026-11-12T04:05:36.856288+00:00",
+  "verified_control_files": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/application.py": "6b59c0c7f138401f55c2702c7bdd991c8cba03d2412566611d8aea7d609e27da",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/audit.tcl.in": "93f1dd6c8d4e57ce4b053f36ce83741228b630a9b308dc4076a534d29a266f5b",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/certificate.py": "4de4d5bca59df344eaf8e8fd98b82ecade56d2bb9b9fbb8ba55c13a6b96dfa1c",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/controller.py": "1750e64a6cb5b7876cc5bf82f34bfc6a73bfe6fc8ae03d01e46d9d6a00093380",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/hostclock-interface-audit.json": "1157c8f1974f129e570977a60c3f6827a96a282646bef021ec72a2cf5260d65b",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/inputs.json": "567b43630a6b15c1fcfcbfdb80fe2830f1965f6cbb2b261c93acc165a6a08e37",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/install.py": "ba27e0d5c9a332c2189a483ea75f33af7f07196d25ad65ef57067a81bdb0a493",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/physical-clock-contract.json": "1a52165b57e61a5079780d905ab41f58652cab5b6f06e5d3233f4028de25f6c4",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/recover.tcl.in": "ff9f490cb91438c8460a0c23327732865f6c47e46eb2009eff6f1d67ef9fe576",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/runtime-inputs.json": "97f82ac2f71387634fe934126bd9bbbda40eac1b6b8e3b083535e73a8c49a900",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/runtime.py": "9f610724ed099ec9e6bb38fe13984ab5a7e4341b5e42cc5f8ca35405f0ad1ea2",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112/shell-nets.tcl": "a621ec7be47feab4154ecd1aa0decd77e186b3fae762b6b91a9ba632324a1466"
+  }
+}

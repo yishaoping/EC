@@ -1,0 +1,50 @@
+{
+  "utc": "2026-11-12T13:58:59.754251+00:00",
+  "status": "R6_ACTUAL_FAME5_2THREAD_SMOKE_STARTED_TOKEN_PARITY_AREA_PENDING",
+  "plan": {
+    "actual_size": {
+      "granularities": 4,
+      "result_bits_per_bucket": 256,
+      "slots": 256,
+      "sources": 80
+    },
+    "area_gain_unknown": true,
+    "banking_priority": "Keepactual256targetbuckets. Userdeadline11/18: prefer16identicalbankinstances each16parallelbucketlanes (or32banksx8lanes), then FAME5sharesbanks. Single256threadpool can ruin application throughput. ActualpreparedNativefreqmine89.36bROIcycles; at assumed40MHz/FMR256 Native-cycle-countscenario159h forfreqalone, all8~216h BEFORE ECoverhead/boot. These are hypotheticalplanning not ECmeasurements. Banked16/32threadsharing fits ONE modeltype/power2constraint and preserves all256slots/targetcycleoutputs. If immutableold256prototype alreadylive preserve it; before newfullsizeCAD choose banked architecture or documentthroughput tradeoff. No second duplicateexistingjob.",
+    "candidate": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-histogram-fame5-r6-20261112",
+    "cpus": [
+      222,
+      223
+    ],
+    "fpga_access": false,
+    "inputs_sha256": "b434a8ccd0a1bf5333292547a9cfd931fe68bcebe72631b6a2676980f6a24e21",
+    "latest_recovery": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-histogram-fame5-r6-20261112/recovery.json",
+    "memory_limit_gib": 64,
+    "next": "Adopt r6 on222223; never restart r1-r5. Smoke2/4 actual host tokens and negative detection -> full256 plain/threaded tokens -> serial same-harness paired host area, reject regressions. Preserve packed/barrier/DSP/CAD. Further independent area reduction still mandatory.",
+    "no_new_agent_requested": true,
+    "owner": "existing unattended optimizer round152",
+    "preserve_barrier_r2": true,
+    "preserve_packed_single_area_owner": true,
+    "private_compiler_change": "Metadata only: drop HistogramBucket.clock DontTouchAnnotation using ReferenceTarget.leafModule iff port absent after FAME; print removals. No hardware IR, clock constraint, or installed source change. Same private pass both pair sides.",
+    "production_admission": false,
+    "recoveries": [
+      "r1 nonlocal instance annotation after harness nesting",
+      "r2 unused clock optimized away before default clock inference",
+      "r3 consumed target clock stale DontTouch; private reversible metadata-only correction",
+      "r4 correctly deferred for foregroundDSP on220221; exact single idle waiter retired; r5 same hardware on spare222223",
+      "r5 metadata cleanup matched annotation root rather than leafModule; r6 fixes narrow match and logs removals"
+    ],
+    "scope": "Actual strict address histogram, not complete address module or whole EC",
+    "smoke_pass": false,
+    "source_projection_reversal_pass": true,
+    "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-histogram-fame5-r6-20261112/state.json",
+    "status": "R6_ACTUAL_FAME5_2THREAD_SMOKE_STARTED_TOKEN_PARITY_AREA_PENDING",
+    "unit": "ec-opt4-address-histogram-fame5-r6-20261112.service",
+    "updated_utc": "2026-11-12T13:58:59.754251+00:00"
+  },
+  "no_board_io": true,
+  "no_production_admission": true,
+  "no_other_live_job_signalled": true,
+  "prior_failed_versions_preserved": true,
+  "private_metadata_patch_sha256": "f2485a23101904f8d935ca16ff28e7e634aed6b92be84b9a6b3697698c1779cb",
+  "policy_sha256_before": "69adcee0b55f59e7c2aaf5c0b055d1a95f089f0e56a32ea5dadcf921ec650ffb"
+}

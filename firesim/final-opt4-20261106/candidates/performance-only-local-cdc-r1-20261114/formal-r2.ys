@@ -1,0 +1,13 @@
+read_verilog -D SYNTHESIS /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-local-cdc-r1-20261114/run-r2/target/QueuePair.v
+proc
+flatten AsyncQueue AsyncQueue_1
+opt_clean
+clk2fflogic
+opt_clean
+equiv_make AsyncQueue AsyncQueue_1 queue_equiv
+hierarchy -top queue_equiv
+opt_clean
+equiv_simple -undef -seq 2
+equiv_induct -undef -seq 4
+equiv_status -assert
+write_json /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-local-cdc-r1-20261114/formal-r2/proven.json

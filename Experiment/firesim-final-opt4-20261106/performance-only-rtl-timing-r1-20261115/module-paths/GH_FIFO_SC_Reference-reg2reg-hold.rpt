@@ -1,0 +1,921 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version      : Vivado v.2021.1 (lin64) Build 3247384 Thu Jun 10 19:36:07 MDT 2021
+| Date              : Sun Nov 15 11:00:00 2026
+| Host              : devjz-ubt20-s01 running 64-bit Ubuntu 20.04.6 LTS
+| Command           : report_timing -from [all_registers -output_pins] -to [all_registers -data_pins] -delay_type min -max_paths 20 -input_pins -nets -file /var/tmp/guozh-ec-rtl-timing-r1-20261115/module-paths/GH_FIFO_SC_Reference-reg2reg-hold.rpt
+| Design            : GH_FIFO_SC_Reference
+| Device            : xcu280-fsvh2892
+| Speed File        : -2L  PRODUCTION 1.29 11-17-2020
+| Temperature Grade : E
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (MET) :             0.070ns  (arrival time - required time)
+  Source:                 wptr_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            wptr_reg[5]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.123ns  (logic 0.074ns (60.163%)  route 0.049ns (39.837%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X62Y84         FDRE                                         r  wptr_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X62Y84         FDRE (Prop_EFF_SLICEL_C_Q)
+                                                      0.039     0.052 r  wptr_reg[4]/Q
+                         net (fo=130, routed)         0.034     0.086    wptr[4]
+    SLICE_X62Y84                                                      r  wptr[5]_i_1/I1
+    SLICE_X62Y84         LUT6 (Prop_E6LUT_SLICEL_I1_O)
+                                                      0.035     0.121 r  wptr[5]_i_1/O
+                         net (fo=2, routed)           0.015     0.136    wptr[5]_i_1_n_0
+    SLICE_X62Y84         FDRE                                         r  wptr_reg[5]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X62Y84         FDRE                                         r  wptr_reg[5]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X62Y84         FDRE (Hold_EFF2_SLICEL_C_D)
+                                                      0.047     0.066    wptr_reg[5]
+  -------------------------------------------------------------------
+                         required time                         -0.066    
+                         arrival time                           0.136    
+  -------------------------------------------------------------------
+                         slack                                  0.070    
+
+Slack (MET) :             0.070ns  (arrival time - required time)
+  Source:                 cptr_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            cptr_reg[5]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.122ns  (logic 0.059ns (48.361%)  route 0.063ns (51.639%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X60Y81         FDRE                                         r  cptr_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X60Y81         FDRE (Prop_FFF_SLICEM_C_Q)
+                                                      0.037     0.050 r  cptr_reg[4]/Q
+                         net (fo=11, routed)          0.042     0.092    cptr_reg_n_0_[4]
+    SLICE_X60Y81                                                      r  cptr[5]_i_1/I1
+    SLICE_X60Y81         LUT6 (Prop_G6LUT_SLICEM_I1_O)
+                                                      0.022     0.114 r  cptr[5]_i_1/O
+                         net (fo=1, routed)           0.021     0.135    cptr[5]_i_1_n_0
+    SLICE_X60Y81         FDRE                                         r  cptr_reg[5]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X60Y81         FDRE                                         r  cptr_reg[5]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X60Y81         FDRE (Hold_GFF_SLICEM_C_D)
+                                                      0.046     0.065    cptr_reg[5]
+  -------------------------------------------------------------------
+                         required time                         -0.065    
+                         arrival time                           0.135    
+  -------------------------------------------------------------------
+                         slack                                  0.070    
+
+Slack (MET) :             0.076ns  (arrival time - required time)
+  Source:                 wptr_reg[6]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            wptr_reg[6]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.128ns  (logic 0.074ns (57.812%)  route 0.054ns (42.187%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.018ns
+    Source Clock Delay      (SCD):    0.012ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.012     0.012    clock
+    SLICE_X62Y83         FDRE                                         r  wptr_reg[6]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X62Y83         FDRE (Prop_DFF_SLICEL_C_Q)
+                                                      0.039     0.051 r  wptr_reg[6]/Q
+                         net (fo=95, routed)          0.038     0.089    wptr[6]
+    SLICE_X62Y83                                                      r  wptr[6]_i_1/I3
+    SLICE_X62Y83         LUT6 (Prop_D6LUT_SLICEL_I3_O)
+                                                      0.035     0.124 r  wptr[6]_i_1/O
+                         net (fo=1, routed)           0.016     0.140    wptr[6]_i_1_n_0
+    SLICE_X62Y83         FDRE                                         r  wptr_reg[6]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.018     0.018    clock
+    SLICE_X62Y83         FDRE                                         r  wptr_reg[6]/C
+                         clock pessimism              0.000     0.018    
+    SLICE_X62Y83         FDRE (Hold_DFF_SLICEL_C_D)
+                                                      0.046     0.064    wptr_reg[6]
+  -------------------------------------------------------------------
+                         required time                         -0.064    
+                         arrival time                           0.140    
+  -------------------------------------------------------------------
+                         slack                                  0.076    
+
+Slack (MET) :             0.085ns  (arrival time - required time)
+  Source:                 wptr_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            wptr_reg[7]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.138ns  (logic 0.054ns (39.130%)  route 0.084ns (60.870%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X62Y84         FDRE                                         r  wptr_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X62Y84         FDRE (Prop_EFF_SLICEL_C_Q)
+                                                      0.039     0.052 f  wptr_reg[4]/Q
+                         net (fo=130, routed)         0.069     0.121    wptr[4]
+    SLICE_X62Y83                                                      f  wptr[7]_i_1/I4
+    SLICE_X62Y83         LUT6 (Prop_H6LUT_SLICEL_I4_O)
+                                                      0.015     0.136 r  wptr[7]_i_1/O
+                         net (fo=1, routed)           0.015     0.151    wptr[7]_i_1_n_0
+    SLICE_X62Y83         FDRE                                         r  wptr_reg[7]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X62Y83         FDRE                                         r  wptr_reg[7]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X62Y83         FDRE (Hold_HFF2_SLICEL_C_D)
+                                                      0.047     0.066    wptr_reg[7]
+  -------------------------------------------------------------------
+                         required time                         -0.066    
+                         arrival time                           0.151    
+  -------------------------------------------------------------------
+                         slack                                  0.085    
+
+Slack (MET) :             0.090ns  (arrival time - required time)
+  Source:                 cptr_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            cptr_reg[4]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.142ns  (logic 0.077ns (54.225%)  route 0.065ns (45.775%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X60Y81         FDRE                                         r  cptr_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X60Y81         FDRE (Prop_FFF_SLICEM_C_Q)
+                                                      0.037     0.050 r  cptr_reg[4]/Q
+                         net (fo=11, routed)          0.041     0.091    cptr_reg_n_0_[4]
+    SLICE_X60Y81                                                      r  cptr[4]_i_1/I0
+    SLICE_X60Y81         LUT6 (Prop_F6LUT_SLICEM_I0_O)
+                                                      0.040     0.131 r  cptr[4]_i_1/O
+                         net (fo=2, routed)           0.024     0.155    cptr[4]_i_1_n_0
+    SLICE_X60Y81         FDRE                                         r  cptr_reg[4]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X60Y81         FDRE                                         r  cptr_reg[4]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X60Y81         FDRE (Hold_FFF_SLICEM_C_D)
+                                                      0.046     0.065    cptr_reg[4]
+  -------------------------------------------------------------------
+                         required time                         -0.065    
+                         arrival time                           0.155    
+  -------------------------------------------------------------------
+                         slack                                  0.090    
+
+Slack (MET) :             0.101ns  (arrival time - required time)
+  Source:                 cptr_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            cptr_reg[0]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.153ns  (logic 0.090ns (58.824%)  route 0.063ns (41.176%))
+  Logic Levels:           1  (LUT2=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X60Y81         FDRE                                         r  cptr_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X60Y81         FDRE (Prop_HFF_SLICEM_C_Q)
+                                                      0.039     0.052 f  cptr_reg[0]/Q
+                         net (fo=21, routed)          0.042     0.094    cptr_reg_n_0_[0]
+    SLICE_X60Y81                                                      f  cptr[0]_i_1/I1
+    SLICE_X60Y81         LUT2 (Prop_H6LUT_SLICEM_I1_O)
+                                                      0.051     0.145 r  cptr[0]_i_1/O
+                         net (fo=1, routed)           0.021     0.166    cptr[0]_i_1_n_0
+    SLICE_X60Y81         FDRE                                         r  cptr_reg[0]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X60Y81         FDRE                                         r  cptr_reg[0]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X60Y81         FDRE (Hold_HFF_SLICEM_C_D)
+                                                      0.046     0.065    cptr_reg[0]
+  -------------------------------------------------------------------
+                         required time                         -0.065    
+                         arrival time                           0.166    
+  -------------------------------------------------------------------
+                         slack                                  0.101    
+
+Slack (MET) :             0.107ns  (arrival time - required time)
+  Source:                 cptr_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            sptr_reg[1]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.160ns  (logic 0.074ns (46.250%)  route 0.086ns (53.750%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X60Y82         FDRE                                         r  cptr_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X60Y82         FDRE (Prop_HFF_SLICEM_C_Q)
+                                                      0.039     0.052 r  cptr_reg[1]/Q
+                         net (fo=17, routed)          0.062     0.114    cptr_reg_n_0_[1]
+    SLICE_X60Y83                                                      r  sptr[1]_i_1/I2
+    SLICE_X60Y83         LUT6 (Prop_D6LUT_SLICEM_I2_O)
+                                                      0.035     0.149 r  sptr[1]_i_1/O
+                         net (fo=1, routed)           0.024     0.173    p_1_in[1]
+    SLICE_X60Y83         FDRE                                         r  sptr_reg[1]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X60Y83         FDRE                                         r  sptr_reg[1]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X60Y83         FDRE (Hold_DFF2_SLICEM_C_D)
+                                                      0.047     0.066    sptr_reg[1]
+  -------------------------------------------------------------------
+                         required time                         -0.066    
+                         arrival time                           0.173    
+  -------------------------------------------------------------------
+                         slack                                  0.107    
+
+Slack (MET) :             0.118ns  (arrival time - required time)
+  Source:                 cptr_reg[6]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            sptr_reg[6]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.171ns  (logic 0.088ns (51.462%)  route 0.083ns (48.538%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X59Y82         FDRE                                         r  cptr_reg[6]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X59Y82         FDRE (Prop_HFF2_SLICEL_C_Q)
+                                                      0.039     0.052 r  cptr_reg[6]/Q
+                         net (fo=11, routed)          0.064     0.116    cptr_reg_n_0_[6]
+    SLICE_X60Y82                                                      r  sptr[6]_i_1/I2
+    SLICE_X60Y82         LUT6 (Prop_E6LUT_SLICEM_I2_O)
+                                                      0.049     0.165 r  sptr[6]_i_1/O
+                         net (fo=1, routed)           0.019     0.184    p_1_in[6]
+    SLICE_X60Y82         FDRE                                         r  sptr_reg[6]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X60Y82         FDRE                                         r  sptr_reg[6]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X60Y82         FDRE (Hold_EFF2_SLICEM_C_D)
+                                                      0.047     0.066    sptr_reg[6]
+  -------------------------------------------------------------------
+                         required time                         -0.066    
+                         arrival time                           0.184    
+  -------------------------------------------------------------------
+                         slack                                  0.118    
+
+Slack (MET) :             0.120ns  (arrival time - required time)
+  Source:                 wptr_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            wptr_reg[0]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.172ns  (logic 0.062ns (36.047%)  route 0.110ns (63.953%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.018ns
+    Source Clock Delay      (SCD):    0.012ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.012     0.012    clock
+    SLICE_X62Y83         FDRE                                         r  wptr_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X62Y83         FDRE (Prop_AFF_SLICEL_C_Q)
+                                                      0.039     0.051 f  wptr_reg[0]/Q
+                         net (fo=146, routed)         0.028     0.079    wptr[0]
+    SLICE_X62Y83                                                      f  wptr[0]_i_1/I5
+    SLICE_X62Y83         LUT6 (Prop_B6LUT_SLICEL_I5_O)
+                                                      0.023     0.102 r  wptr[0]_i_1/O
+                         net (fo=2, routed)           0.082     0.184    wptr[0]_i_1_n_0
+    SLICE_X62Y83         FDRE                                         r  wptr_reg[0]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.018     0.018    clock
+    SLICE_X62Y83         FDRE                                         r  wptr_reg[0]/C
+                         clock pessimism              0.000     0.018    
+    SLICE_X62Y83         FDRE (Hold_AFF_SLICEL_C_D)
+                                                      0.046     0.064    wptr_reg[0]
+  -------------------------------------------------------------------
+                         required time                         -0.064    
+                         arrival time                           0.184    
+  -------------------------------------------------------------------
+                         slack                                  0.120    
+
+Slack (MET) :             0.142ns  (arrival time - required time)
+  Source:                 cptr_reg[5]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            sptr_reg[5]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.195ns  (logic 0.089ns (45.641%)  route 0.106ns (54.359%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X60Y81         FDRE                                         r  cptr_reg[5]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X60Y81         FDRE (Prop_GFF_SLICEM_C_Q)
+                                                      0.039     0.052 r  cptr_reg[5]/Q
+                         net (fo=10, routed)          0.082     0.134    cptr_reg_n_0_[5]
+    SLICE_X60Y82                                                      r  sptr[5]_i_1/I2
+    SLICE_X60Y82         LUT6 (Prop_F6LUT_SLICEM_I2_O)
+                                                      0.050     0.184 r  sptr[5]_i_1/O
+                         net (fo=1, routed)           0.024     0.208    p_1_in[5]
+    SLICE_X60Y82         FDRE                                         r  sptr_reg[5]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X60Y82         FDRE                                         r  sptr_reg[5]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X60Y82         FDRE (Hold_FFF2_SLICEM_C_D)
+                                                      0.047     0.066    sptr_reg[5]
+  -------------------------------------------------------------------
+                         required time                         -0.066    
+                         arrival time                           0.208    
+  -------------------------------------------------------------------
+                         slack                                  0.142    
+
+Slack (MET) :             0.165ns  (arrival time - required time)
+  Source:                 cptr_reg[6]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            cptr_reg[6]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.218ns  (logic 0.080ns (36.697%)  route 0.138ns (63.303%))
+  Logic Levels:           1  (LUT3=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X59Y82         FDRE                                         r  cptr_reg[6]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X59Y82         FDRE (Prop_HFF2_SLICEL_C_Q)
+                                                      0.039     0.052 r  cptr_reg[6]/Q
+                         net (fo=11, routed)          0.086     0.138    cptr_reg_n_0_[6]
+    SLICE_X59Y82                                                      r  cptr[6]_i_1/I0
+    SLICE_X59Y82         LUT3 (Prop_D6LUT_SLICEL_I0_O)
+                                                      0.041     0.179 r  cptr[6]_i_1/O
+                         net (fo=1, routed)           0.052     0.231    cptr[6]_i_1_n_0
+    SLICE_X59Y82         FDRE                                         r  cptr_reg[6]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X59Y82         FDRE                                         r  cptr_reg[6]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X59Y82         FDRE (Hold_HFF2_SLICEL_C_D)
+                                                      0.047     0.066    cptr_reg[6]
+  -------------------------------------------------------------------
+                         required time                         -0.066    
+                         arrival time                           0.231    
+  -------------------------------------------------------------------
+                         slack                                  0.165    
+
+Slack (MET) :             0.171ns  (arrival time - required time)
+  Source:                 wptr_reg[3]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            wptr_reg[4]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.223ns  (logic 0.074ns (33.184%)  route 0.149ns (66.816%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X61Y84         FDRE                                         r  wptr_reg[3]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y84         FDRE (Prop_HFF_SLICEM_C_Q)
+                                                      0.039     0.052 r  wptr_reg[3]/Q
+                         net (fo=125, routed)         0.065     0.117    wptr[3]
+    SLICE_X62Y84                                                      r  wptr[4]_i_1/I1
+    SLICE_X62Y84         LUT6 (Prop_F6LUT_SLICEL_I1_O)
+                                                      0.035     0.152 r  wptr[4]_i_1/O
+                         net (fo=2, routed)           0.084     0.236    wptr[4]_i_1_n_0
+    SLICE_X62Y84         FDRE                                         r  wptr_reg[4]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X62Y84         FDRE                                         r  wptr_reg[4]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X62Y84         FDRE (Hold_EFF_SLICEL_C_D)
+                                                      0.046     0.065    wptr_reg[4]
+  -------------------------------------------------------------------
+                         required time                         -0.065    
+                         arrival time                           0.236    
+  -------------------------------------------------------------------
+                         slack                                  0.171    
+
+Slack (MET) :             0.192ns  (arrival time - required time)
+  Source:                 wptr_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            wptr_reg[2]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.244ns  (logic 0.059ns (24.180%)  route 0.185ns (75.820%))
+  Logic Levels:           1  (LUT4=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X61Y81         FDRE                                         r  wptr_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y81         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.039     0.052 r  wptr_reg[1]/Q
+                         net (fo=135, routed)         0.063     0.115    wptr[1]
+    SLICE_X62Y81                                                      r  wptr[2]_i_1/I1
+    SLICE_X62Y81         LUT4 (Prop_D5LUT_SLICEL_I1_O)
+                                                      0.020     0.135 r  wptr[2]_i_1/O
+                         net (fo=1, routed)           0.122     0.257    wptr[2]_i_1_n_0
+    SLICE_X62Y81         FDRE                                         r  wptr_reg[2]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X62Y81         FDRE                                         r  wptr_reg[2]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X62Y81         FDRE (Hold_EFF_SLICEL_C_D)
+                                                      0.046     0.065    wptr_reg[2]
+  -------------------------------------------------------------------
+                         required time                         -0.065    
+                         arrival time                           0.257    
+  -------------------------------------------------------------------
+                         slack                                  0.192    
+
+Slack (MET) :             0.205ns  (arrival time - required time)
+  Source:                 cptr_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            cptr_reg[2]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.257ns  (logic 0.089ns (34.630%)  route 0.168ns (65.370%))
+  Logic Levels:           1  (LUT4=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X60Y83         FDRE                                         r  cptr_reg[2]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X60Y83         FDRE (Prop_HFF_SLICEM_C_Q)
+                                                      0.039     0.052 r  cptr_reg[2]/Q
+                         net (fo=14, routed)          0.033     0.085    cptr_reg_n_0_[2]
+    SLICE_X60Y83                                                      r  cptr[2]_i_1/I0
+    SLICE_X60Y83         LUT4 (Prop_C5LUT_SLICEM_I0_O)
+                                                      0.050     0.135 r  cptr[2]_i_1/O
+                         net (fo=1, routed)           0.135     0.270    cptr[2]_i_1_n_0
+    SLICE_X60Y83         FDRE                                         r  cptr_reg[2]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X60Y83         FDRE                                         r  cptr_reg[2]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X60Y83         FDRE (Hold_HFF_SLICEM_C_D)
+                                                      0.046     0.065    cptr_reg[2]
+  -------------------------------------------------------------------
+                         required time                         -0.065    
+                         arrival time                           0.270    
+  -------------------------------------------------------------------
+                         slack                                  0.205    
+
+Slack (MET) :             0.206ns  (arrival time - required time)
+  Source:                 sptr_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            sptr_reg[0]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.259ns  (logic 0.099ns (38.224%)  route 0.160ns (61.776%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X60Y83         FDRE                                         r  sptr_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X60Y83         FDRE (Prop_FFF2_SLICEM_C_Q)
+                                                      0.040     0.053 f  sptr_reg[0]/Q
+                         net (fo=5264, routed)        0.136     0.189    sptr_reg_n_0_[0]
+    SLICE_X60Y83                                                      f  sptr[0]_i_1/I5
+    SLICE_X60Y83         LUT6 (Prop_F6LUT_SLICEM_I5_O)
+                                                      0.059     0.248 r  sptr[0]_i_1/O
+                         net (fo=1, routed)           0.024     0.272    p_1_in[0]
+    SLICE_X60Y83         FDRE                                         r  sptr_reg[0]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X60Y83         FDRE                                         r  sptr_reg[0]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X60Y83         FDRE (Hold_FFF2_SLICEM_C_D)
+                                                      0.047     0.066    sptr_reg[0]
+  -------------------------------------------------------------------
+                         required time                         -0.066    
+                         arrival time                           0.272    
+  -------------------------------------------------------------------
+                         slack                                  0.206    
+
+Slack (MET) :             0.212ns  (arrival time - required time)
+  Source:                 cptr_reg[6]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            cptr_reg[7]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.265ns  (logic 0.079ns (29.811%)  route 0.186ns (70.189%))
+  Logic Levels:           1  (LUT4=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X59Y82         FDRE                                         r  cptr_reg[6]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X59Y82         FDRE (Prop_HFF2_SLICEL_C_Q)
+                                                      0.039     0.052 r  cptr_reg[6]/Q
+                         net (fo=11, routed)          0.085     0.137    cptr_reg_n_0_[6]
+    SLICE_X59Y82                                                      r  cptr[7]_i_2/I1
+    SLICE_X59Y82         LUT4 (Prop_C6LUT_SLICEL_I1_O)
+                                                      0.040     0.177 r  cptr[7]_i_2/O
+                         net (fo=1, routed)           0.101     0.278    cptr[7]_i_2_n_0
+    SLICE_X59Y82         FDRE                                         r  cptr_reg[7]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X59Y82         FDRE                                         r  cptr_reg[7]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X59Y82         FDRE (Hold_GFF2_SLICEL_C_D)
+                                                      0.047     0.066    cptr_reg[7]
+  -------------------------------------------------------------------
+                         required time                         -0.066    
+                         arrival time                           0.278    
+  -------------------------------------------------------------------
+                         slack                                  0.212    
+
+Slack (MET) :             0.229ns  (arrival time - required time)
+  Source:                 sptr_reg[7]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            sptr_reg[7]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.282ns  (logic 0.083ns (29.433%)  route 0.199ns (70.567%))
+  Logic Levels:           2  (LUT4=1 LUT5=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.018ns
+    Source Clock Delay      (SCD):    0.012ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.012     0.012    clock
+    SLICE_X59Y83         FDRE                                         r  sptr_reg[7]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X59Y83         FDRE (Prop_DFF2_SLICEL_C_Q)
+                                                      0.041     0.053 r  sptr_reg[7]/Q
+                         net (fo=89, routed)          0.094     0.147    sptr_reg_n_0_[7]
+    SLICE_X59Y83                                                      r  sptr[7]_i_5/I1
+    SLICE_X59Y83         LUT4 (Prop_F6LUT_SLICEL_I1_O)
+                                                      0.022     0.169 r  sptr[7]_i_5/O
+                         net (fo=1, routed)           0.099     0.268    sptr[7]_i_5_n_0
+    SLICE_X59Y83                                                      r  sptr[7]_i_2/I2
+    SLICE_X59Y83         LUT5 (Prop_D5LUT_SLICEL_I2_O)
+                                                      0.020     0.288 r  sptr[7]_i_2/O
+                         net (fo=1, routed)           0.006     0.294    p_1_in[7]
+    SLICE_X59Y83         FDRE                                         r  sptr_reg[7]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.018     0.018    clock
+    SLICE_X59Y83         FDRE                                         r  sptr_reg[7]/C
+                         clock pessimism              0.000     0.018    
+    SLICE_X59Y83         FDRE (Hold_DFF2_SLICEL_C_D)
+                                                      0.047     0.065    sptr_reg[7]
+  -------------------------------------------------------------------
+                         required time                         -0.065    
+                         arrival time                           0.294    
+  -------------------------------------------------------------------
+                         slack                                  0.229    
+
+Slack (MET) :             0.230ns  (arrival time - required time)
+  Source:                 cptr_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            cptr_reg[1]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.282ns  (logic 0.063ns (22.340%)  route 0.219ns (77.660%))
+  Logic Levels:           1  (LUT3=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X60Y82         FDRE                                         r  cptr_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X60Y82         FDRE (Prop_HFF_SLICEM_C_Q)
+                                                      0.039     0.052 r  cptr_reg[1]/Q
+                         net (fo=17, routed)          0.053     0.105    cptr_reg_n_0_[1]
+    SLICE_X60Y82                                                      r  cptr[1]_i_1/I0
+    SLICE_X60Y82         LUT3 (Prop_D5LUT_SLICEM_I0_O)
+                                                      0.024     0.129 r  cptr[1]_i_1/O
+                         net (fo=1, routed)           0.166     0.295    cptr[1]_i_1_n_0
+    SLICE_X60Y82         FDRE                                         r  cptr_reg[1]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X60Y82         FDRE                                         r  cptr_reg[1]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X60Y82         FDRE (Hold_HFF_SLICEM_C_D)
+                                                      0.046     0.065    cptr_reg[1]
+  -------------------------------------------------------------------
+                         required time                         -0.065    
+                         arrival time                           0.295    
+  -------------------------------------------------------------------
+                         slack                                  0.230    
+
+Slack (MET) :             0.237ns  (arrival time - required time)
+  Source:                 wptr_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            wptr_reg[1]/D
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.290ns  (logic 0.062ns (21.379%)  route 0.228ns (78.621%))
+  Logic Levels:           1  (LUT3=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X61Y81         FDRE                                         r  wptr_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y81         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.039     0.052 r  wptr_reg[1]/Q
+                         net (fo=135, routed)         0.093     0.145    wptr[1]
+    SLICE_X61Y81                                                      r  wptr[1]_i_1/I0
+    SLICE_X61Y81         LUT3 (Prop_C5LUT_SLICEM_I0_O)
+                                                      0.023     0.168 r  wptr[1]_i_1/O
+                         net (fo=1, routed)           0.135     0.303    wptr[1]_i_1_n_0
+    SLICE_X61Y81         FDRE                                         r  wptr_reg[1]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X61Y81         FDRE                                         r  wptr_reg[1]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X61Y81         FDRE (Hold_HFF2_SLICEM_C_D)
+                                                      0.047     0.066    wptr_reg[1]
+  -------------------------------------------------------------------
+                         required time                         -0.066    
+                         arrival time                           0.303    
+  -------------------------------------------------------------------
+                         slack                                  0.237    
+
+Slack (MET) :             0.243ns  (arrival time - required time)
+  Source:                 wptr_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_142_reg[13]/CE
+                            (rising edge-triggered cell FDRE clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.242ns  (logic 0.089ns (36.777%)  route 0.153ns (63.223%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        0.006ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.019ns
+    Source Clock Delay      (SCD):    0.013ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.013     0.013    clock
+    SLICE_X61Y81         FDRE                                         r  wptr_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X61Y81         FDRE (Prop_HFF2_SLICEM_C_Q)
+                                                      0.039     0.052 r  wptr_reg[1]/Q
+                         net (fo=135, routed)         0.071     0.123    wptr[1]
+    SLICE_X61Y79                                                      r  mem_142[81]_i_1/I4
+    SLICE_X61Y79         LUT6 (Prop_B6LUT_SLICEM_I4_O)
+                                                      0.050     0.173 r  mem_142[81]_i_1/O
+                         net (fo=82, routed)          0.082     0.255    mem_142[81]_i_1_n_0
+    SLICE_X65Y79         FDRE                                         r  mem_142_reg[13]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=21015, unset)        0.019     0.019    clock
+    SLICE_X65Y79         FDRE                                         r  mem_142_reg[13]/C
+                         clock pessimism              0.000     0.019    
+    SLICE_X65Y79         FDRE (Hold_HFF2_SLICEM_C_CE)
+                                                     -0.007     0.012    mem_142_reg[13]
+  -------------------------------------------------------------------
+                         required time                         -0.012    
+                         arrival time                           0.255    
+  -------------------------------------------------------------------
+                         slack                                  0.243    
+
+
+
+

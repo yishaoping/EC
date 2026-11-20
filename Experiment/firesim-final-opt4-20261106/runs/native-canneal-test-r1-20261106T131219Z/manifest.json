@@ -1,0 +1,218 @@
+{
+  "argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-restart-driver-20261106T130112Z/FireSim-xilinx_alveo_u280",
+    "+permissive",
+    "+domain=0000",
+    "+bus=21",
+    "+device=00",
+    "+function=0",
+    "+bar=0",
+    "+pci-vendor=10ee",
+    "+pci-device=903f",
+    "+uart-in0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-test-r1-20261106T131219Z/uart.in",
+    "+uart-out0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-test-r1-20261106T131219Z/uart.log",
+    "+fesvr-step-size=2004765",
+    "+mm_readLatency_0=30",
+    "+mm_readMaxReqs_0=4",
+    "+mm_relaxFunctionalModel_0=0",
+    "+mm_writeLatency_0=30",
+    "+mm_writeMaxReqs_0=4",
+    "+ec-dac-roi-log=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-test-r1-20261106T131219Z/roi-raw.jsonl",
+    "+ec-dac-snapshot-seconds=30",
+    "+permissive-off",
+    "+prog0=/tmp/guozh-firesim-final-opt4-20261106/system-builds/Native-firmware-20261106T124737.729247Z/platform/generic/firmware/fw_payload.elf"
+  ],
+  "deployment": {
+    "bdfs": [
+      "0000:e2:00.0",
+      "0000:21:00.0"
+    ],
+    "bitstream": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-bitstream-20261102T095746.955739Z/vivado_proj/firesim.bit",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_flash_firmware_updated": false,
+    "completed_cards": [
+      {
+        "bdf": "0000:e2:00.0",
+        "bitstream": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-bitstream-20261102T095746.955739Z/vivado_proj/firesim.bit",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "configuration": "Native",
+        "serial": "21770433G001A",
+        "source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4"
+      },
+      {
+        "bdf": "0000:21:00.0",
+        "bitstream": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-bitstream-20261102T095746.955739Z/vivado_proj/firesim.bit",
+        "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+        "configuration": "Native",
+        "serial": "21770433G02LA",
+        "source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4"
+      }
+    ],
+    "configuration": "Native",
+    "deployment_tools": {
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/firesim.py": "517b5b6f43beaeaf5f955cb66825f12e7aa51ce4328e0c920ee6bd69a837a42f",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/fpga-util.py": "5ea9d9326a1683e9b1646c42572edf86e8633dc6feae9ae214b66b99841370a1",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/pcielib.py": "8bf0f20af16957a981cb34e64031deeccde370837e4d1615cee328313498a4ef",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/probe_targets.tcl": "c6ff49bd199588dcdcab1e00dfb47cb56d15043fb1ef15974ea5fdfec0daca3b",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/probe_targets_3122.tcl": "9bfc21406f433d45b0753b5ec3f1365a9999cf610339ededa47835e481da0e52",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/program_fpga.tcl": "a303e69e7df101ed3ae25215ca7373d9675f2b79a793b71ece6fd5dfcaa0621a",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/provenance.json": "3f4dcc11685b2005e585679927d2c25ea608526b30bf7a5f8e7672862cbf8c9f",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/start_owned_hw_server.py": "8072a1ca79140fb871136a624b3903e0ac2d722142c8d1fd7eeabb2ad3242ece",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/deployment-tools/util.py": "99c369f5383bca276e3722fcef45f8bb3e8f18a7d476750dc3cb5644181568f8"
+    },
+    "ended_utc": "2026-11-06T12:55:26.858850+00:00",
+    "existing_module_sha256": "3c6181237df79a2394bee005f2fd615ac67a5ccd9ea01bdfb710b63e22cbdfe0",
+    "global_operations": [
+      "rmmod existing xdma",
+      "program each volatile FPGA bitstream with PCIe remove/rescan",
+      "insmod existing xdma"
+    ],
+    "host_reboot": false,
+    "pid": 369342,
+    "postcheck": {
+      "cleanup_users": [],
+      "mapping": [
+        {
+          "bdf": "0000:e2:00.0",
+          "driver": "xdma",
+          "serial": "21770433G001A"
+        },
+        {
+          "bdf": "0000:21:00.0",
+          "driver": "xdma",
+          "serial": "21770433G02LA"
+        }
+      ],
+      "observed_utc": "2026-11-06T12:55:28.707337+00:00",
+      "open_devices": [],
+      "permission_denied": 0,
+      "simulation_processes": [],
+      "user_confirms_boards_available": true
+    },
+    "schema": "ec-dual-fpga-deployment/1",
+    "serials": [
+      "21770433G001A",
+      "21770433G02LA"
+    ],
+    "source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "started_utc": "2026-11-06T12:53:54.647621+00:00",
+    "status": "DEPLOYED_NOT_RUN",
+    "system_driver_updated": false,
+    "user_authorization": "2026-11-06 explicit both-board availability and direct deployment"
+  },
+  "identity": {
+    "apps_manifest_sha256": "9c59fd0424f57c2d2387e61c8a30703c044d497b10620f4c15c67f147e8406bf",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:21:00.0",
+    "board_serial": "21770433G02LA",
+    "case": {
+      "argv": [
+        "1",
+        "5",
+        "100",
+        "10.nets",
+        "1"
+      ],
+      "expected_final_routing": "132",
+      "fpga_validation": "NOT_RUN",
+      "input": "test",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/inputs/input_test.tar": "1205d96ba9381135245f455bf7100a2ba99b16903d664681793eb37ea28d66a4"
+      },
+      "input_files": {
+        "10.nets": "f7a0cf5b56e72a2a7b3f59f10f61667505c0c658e613a034f839151c8555f635"
+      },
+      "program": "canneal",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-20261106T095914Z/references/canneal-test/stdout.log": "ae48fdd312edaa6edd192135ced63059641247cd082e7b99b201ad9b4b2cffde"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/parsec/test.runconf",
+      "runconf_sha256": "19e5857f8109dfcc88c9974720524ae7f4b6aaa9cb1d705476b73c01158c1713",
+      "software_reference": "QEMU_RISCV_USER_ONLY; not FPGA evidence",
+      "threads": 1,
+      "warmups": 0
+    },
+    "configuration": "Native",
+    "driver_receipt_sha256": "17d95a4a949397a5c3e731b21359fdba44cf5eccfa4d08b932beac0c7e5b1ea0",
+    "driver_sha256": "80b192807a20fdf4713ea698b32451e37ad99f54c77ca795a4310f4d05e5d5bc",
+    "elf_sha256": "07cb43662f5cb38e9497bea005217c22d7c1d54be18ee31c4a6ba21fe04aeb91",
+    "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+    "firmware_receipt_sha256": "1754de0b2f91ef8ce947c2faa45dfd46ddf52b5af86f9a942283d53baf5d192c",
+    "firmware_sha256": "f9f6cd54137df9e3c3eec417455123c3f53a0b1c99b66430761f8398df6e259a",
+    "formal": false,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "host_bridge_restart": true,
+    "input": "test",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "program": "canneal",
+    "repetition": 1,
+    "rootfs_sha256": "a33e7b7d5a6ae0810b69c91b9b256fa8c2a5a6376cd76ac865b26048dfb5aff1",
+    "run_id": "native-canneal-test-r1-20261106T131219Z",
+    "software_diagnostic": false,
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "d079e36a1370cba88b405a5d3425001f4f3c564138696da5c743ab96569717eb",
+  "precheck": {
+    "cleanup_users": [],
+    "mapping": [
+      {
+        "bdf": "0000:e2:00.0",
+        "driver": "xdma",
+        "serial": "21770433G001A"
+      },
+      {
+        "bdf": "0000:21:00.0",
+        "driver": "xdma",
+        "serial": "21770433G02LA"
+      }
+    ],
+    "observed_utc": "2026-11-06T13:12:19.123278+00:00",
+    "open_devices": [
+      {
+        "cmd": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-restart-driver-20261106T130112Z/FireSim-xilinx_alveo_u280 +permissive +domain=0000 +bus=e2 +device=00 +function=0 +bar=0 +pci-vendor=10ee +pci-device=903f +uart-in0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r3-20261106T131036Z/uart.in +uart-out0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r3-20261106T131036Z/uart.log +fesvr-step-size=2004765 +mm_readLatency_0=30 +mm_readMaxReqs_0=4 +mm_relaxFunctionalModel_0=0 +mm_writeLatency_0=30 +mm_writeMaxReqs_0=4 +ec-dac-roi-log=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r3-20261106T131036Z/roi-raw.jsonl +ec-dac-snapshot-seconds=30 +permissive-off +prog0=/tmp/guozh-firesim-final-opt4-20261106/system-builds/Native-firmware-20261106T124938.281911Z/platform/generic/firmware/fw_payload.elf ",
+        "fd": "3",
+        "pid": 599209,
+        "target": "/dev/xdma1_h2c_0"
+      },
+      {
+        "cmd": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-restart-driver-20261106T130112Z/FireSim-xilinx_alveo_u280 +permissive +domain=0000 +bus=e2 +device=00 +function=0 +bar=0 +pci-vendor=10ee +pci-device=903f +uart-in0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r3-20261106T131036Z/uart.in +uart-out0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r3-20261106T131036Z/uart.log +fesvr-step-size=2004765 +mm_readLatency_0=30 +mm_readMaxReqs_0=4 +mm_relaxFunctionalModel_0=0 +mm_writeLatency_0=30 +mm_writeMaxReqs_0=4 +ec-dac-roi-log=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r3-20261106T131036Z/roi-raw.jsonl +ec-dac-snapshot-seconds=30 +permissive-off +prog0=/tmp/guozh-firesim-final-opt4-20261106/system-builds/Native-firmware-20261106T124938.281911Z/platform/generic/firmware/fw_payload.elf ",
+        "fd": "4",
+        "pid": 599209,
+        "target": "/dev/xdma1_c2h_0"
+      },
+      {
+        "cmd": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-restart-driver-20261106T130112Z/FireSim-xilinx_alveo_u280 +permissive +domain=0000 +bus=e2 +device=00 +function=0 +bar=0 +pci-vendor=10ee +pci-device=903f +uart-in0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r3-20261106T131036Z/uart.in +uart-out0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r3-20261106T131036Z/uart.log +fesvr-step-size=2004765 +mm_readLatency_0=30 +mm_readMaxReqs_0=4 +mm_relaxFunctionalModel_0=0 +mm_writeLatency_0=30 +mm_writeMaxReqs_0=4 +ec-dac-roi-log=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r3-20261106T131036Z/roi-raw.jsonl +ec-dac-snapshot-seconds=30 +permissive-off +prog0=/tmp/guozh-firesim-final-opt4-20261106/system-builds/Native-firmware-20261106T124938.281911Z/platform/generic/firmware/fw_payload.elf ",
+        "kind": "mapping",
+        "paths": [
+          "7fe5b805c000-7fe5ba05c000 rw-s 00000000 00:05 27963                      /dev/xdma1_user"
+        ],
+        "pid": 599209
+      }
+    ],
+    "permission_denied": 0,
+    "simulation_processes": [
+      {
+        "cmd": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-restart-driver-20261106T130112Z/FireSim-xilinx_alveo_u280 +permissive +domain=0000 +bus=e2 +device=00 +function=0 +bar=0 +pci-vendor=10ee +pci-device=903f +uart-in0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r3-20261106T131036Z/uart.in +uart-out0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r3-20261106T131036Z/uart.log +fesvr-step-size=2004765 +mm_readLatency_0=30 +mm_readMaxReqs_0=4 +mm_relaxFunctionalModel_0=0 +mm_writeLatency_0=30 +mm_writeMaxReqs_0=4 +ec-dac-roi-log=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-simmedium-r3-20261106T131036Z/roi-raw.jsonl +ec-dac-snapshot-seconds=30 +permissive-off +prog0=/tmp/guozh-firesim-final-opt4-20261106/system-builds/Native-firmware-20261106T124938.281911Z/platform/generic/firmware/fw_payload.elf ",
+        "pid": 599209
+      }
+    ],
+    "user_confirms_boards_available": true
+  },
+  "runner_sha256": "115afa7d98cdb50329492047b6102f859bc597a4f771859ecb0ada32696de6e2",
+  "schema": "ec-isolated-fpga-sample/1"
+}

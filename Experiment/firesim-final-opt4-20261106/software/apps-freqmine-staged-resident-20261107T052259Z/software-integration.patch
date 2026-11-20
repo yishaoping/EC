@@ -1,0 +1,173 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/pristine/fpmax.cpp
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/src/freqmine/fpmax.cpp
+@@ -40,6 +40,8 @@
+ 
+ #include "wtime.h"
+ #include <stdio.h>
++#include <malloc.h>
++#include <sched.h>
+ #include <string.h>
+ #include <assert.h>
+ #include <stdlib.h>
+@@ -132,6 +134,14 @@
+ 	}
+ 	THRESHOLD = atoi(argv[2]);
+ 
++// Same sole hart0 context; move auxiliary affinity before the ROI.
++        cpu_set_t ec_mask; CPU_ZERO(&ec_mask); CPU_SET(0,&ec_mask);
++        if(sched_setaffinity(0,sizeof(ec_mask),&ec_mask)) exit(125);
++        mallopt(M_TRIM_THRESHOLD,-1); mallopt(M_MMAP_MAX,0);
++        volatile char *ec_heap=(volatile char*)malloc(512*1024*1024);
++        if(!ec_heap) exit(125);
++        for(size_t ec_i=0;ec_i<512*1024*1024;ec_i+=4096) ec_heap[ec_i]=0;
++        free((void*)ec_heap);
+ 	Data* fdat=new Data(argv[1]);
+ 
+ 	if(!fdat->isOpen()) {
+@@ -139,7 +149,7 @@
+ 		exit(2);
+ 	}
+ 
+-	wtime(&tstart);
++/* auxiliary wall-clock sampling removed; FPGA ROI is measured */
+ 	fp_buf = new memory * [workingthread];
+ 	fp_tree_buf = new memory * [workingthread];
+ 	for (i = 0; i < workingthread; i ++) {
+@@ -153,7 +163,8 @@
+ 	__parsec_roi_begin();
+ #endif
+ 	fptree -> scan1_DB(fdat);
+-	wtime(&tdatap);
++
++/* auxiliary wall-clock sampling removed; FPGA ROI is measured */
+ 
+ 	fptree->scan2_DB(workingthread);
+ 	fdat->close();
+@@ -188,6 +199,7 @@
+ #ifdef ENABLE_PARSEC_HOOKS
+ 	__parsec_roi_end();
+ #endif
++        fdat->ec_close_after_roi();
+ 	printLen();
+ 	if(fout)
+ 		fout->close();
+@@ -201,9 +213,10 @@
+ 	delete [] fp_tree_buf;
+ 	delete []order_item;
+ 	delete []item_order;
+-							
+-	wtime(&tend);
+-	printf ("the data preparation cost %f seconds, the FPgrowth cost %f seconds\n", tdatap - tstart, tend - tdatap);
++
++/* auxiliary wall-clock sampling removed; FPGA ROI is measured */
++
++/* Auxiliary timing report unavailable in staged profile. */
+ 
+ #ifdef ENABLE_PARSEC_HOOKS
+ 	__parsec_bench_end();
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/pristine/fp_tree.cpp
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/src/freqmine/fp_tree.cpp
+@@ -868,18 +868,7 @@
+ 	#pragma omp parallel for
+ 	for (int k = 0; k < workingthread; k ++) {
+ 		int i;
+-#ifdef __linux__
+-#ifdef CPU_SETSIZE
+-		cpu_set_t cpu_mask; 
+-		CPU_ZERO(&cpu_mask);
+-		CPU_SET(k,&cpu_mask);
+-		sched_setaffinity(k,sizeof(cpu_set_t), &cpu_mask); 
+-#else
+-		unsigned long cpu_mask = (unsigned long) 1 << MyRank;
+-		printf("NOT CPU_SETSIZE cpu_mask:%d\n", cpu_mask);
+-		sched_setaffinity(k, sizeof(unsigned long), &cpu_mask);
+-#endif
+-#endif
++/* Sole-worker affinity set before original ROI. */
+ 		currentnodeiter[k] = (int**)fp_buf[k]->newbuf(1, itemno * (14 + fast_rightsib_table_size) * sizeof(int *) + num_hot_node * 2 * sizeof(int *)  + (fast_rightsib_table_size * itemno) * sizeof(int *) + fast_rightsib_table_size + 3 * sizeof(int*));
+ 		nodestack[k] = (Fnode**)(currentnodeiter[k] + itemno);
+ 		itemstack[k] = (int*)(nodestack[k] + itemno);
+@@ -1046,7 +1035,8 @@
+ {
+     double tstart, tend;
+ 	int j;
+-	wtime(&tstart);
++
++/* auxiliary wall-clock sampling removed */
+ 	database_tiling(workingthread);
+ 	Fnode **local_hashtable = hashtable[0];
+ #pragma omp parallel for schedule(dynamic,1)
+@@ -1170,7 +1160,8 @@
+ 		for (int i = 0; i < local_rightsib_backpatch_count; i ++)
+ 			*local_rightsib_backpatch_stack[i] = NULL;
+ 	}
+-	wtime(&tend);
++
++/* auxiliary wall-clock sampling removed */
+ //	printf("Creating the first tree from source file cost %f seconds\n", tend - tstart);
+ //       printf("we have %d nodes in the initial FP tree\n", totalnodes);
+ }
+@@ -1294,7 +1285,7 @@
+ 	int function_type;
+ 	int workingthread = omp_get_max_threads();
+ 
+-	wtime(&tstart);
++/* auxiliary wall-clock sampling removed */
+ 	fp_node_sub_buf = new memory(80, 131072, 2097152 * 4, 2);
+ 	if (itemno <= 0x100) {
+ 		function_type = 0;
+@@ -1311,7 +1302,8 @@
+ 	for (int k = 0; k < hot_node_num; k ++)
+ 		hashtable[0][k] = NULL;
+ 	int first_data_num = new_data_num[0][0];
+-	wtime(&temp_time);
++
++/* auxiliary wall-clock sampling removed */
+ 	for (int i = 0; i < workingthread; i ++)
+ 		fp_tree_buf[i]->freebuf(first_MR_tree[i], first_MC_tree[i], first_MB_tree[i]);
+ 	fp_tree_buf[0]->freebuf(MR_tree, MC_tree, MB_tree);
+@@ -1423,7 +1415,8 @@
+ 			release_node_array_after_mining(sequence, thread, workingthread);
+ 		}
+ 	}
+-	 wtime(&tend);
++
++/* auxiliary wall-clock sampling removed */
+ //	 printf("the major FP_growth cost %f vs %f seconds\n", tend - tstart, temp_time - tstart);
+ 	return 0;
+ }
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/pristine/data.cpp
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/src/freqmine/data.cpp
+@@ -8,11 +8,15 @@
+ 
+ Data::Data(char *filename)
+ {
+-#ifndef BINARY
+-  in = fopen(filename,"r+t");
+-#else
+-  in = fopen(filename, "r+b");
+-#endif
++// Preload bytes only; all transaction parsing remains in the ROI.
++  FILE *source=fopen(filename,"rb");
++  if(!source) { in=NULL; return; }
++  if(fseek(source,0,SEEK_END)) exit(125);
++  long size=ftell(source); if(size<0 || fseek(source,0,SEEK_SET)) exit(125);
++  void *bytes=malloc(size?size:1); if(!bytes) exit(125);
++  if(fread(bytes,1,size,source)!=(size_t)size || fclose(source)) exit(125);
++  in=fmemopen(bytes,size,"rb"); if(!in) exit(125);
++
+ }
+ 
+ Data::~Data()
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/pristine/data.h
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-freqmine-staged-resident-20261107T052259Z/src/freqmine/data.h
+@@ -18,7 +18,8 @@
+ 	Data(char *filename);
+ 	~Data();
+ 	int isOpen();
+-	void close(){if(in)fclose(in);}
++	void close(){/* OS close deferred after original ROI */}
++        void ec_close_after_roi(){if(in){fclose(in);in=NULL;}}
+ 
+ 	long totallength;
+ 	

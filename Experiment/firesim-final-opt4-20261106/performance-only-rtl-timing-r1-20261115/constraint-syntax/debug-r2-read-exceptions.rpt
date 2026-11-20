@@ -1,0 +1,19 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+-----------------------------------------------------------------------------------------
+| Tool Version      : Vivado v.2021.1 (lin64) Build 3247384 Thu Jun 10 19:36:07 MDT 2021
+| Date              : Sun Nov 15 11:05:17 2026
+| Host              : devjz-ubt20-s01 running 64-bit Ubuntu 20.04.6 LTS
+| Command           : report_exceptions -file debug-r2-read-exceptions.rpt
+| Design            : Tiny
+| Device            : xcu280-fsvh2892
+| Speed File        : -2L  PRODUCTION 1.29 11-17-2020
+| Temperature Grade : E
+-----------------------------------------------------------------------------------------
+
+Exceptions Report
+
+Position  From                                          Through         To                                            Setup           Hold            Status           
+--------  --------------------------------------------  --------------  --------------------------------------------  --------------  --------------  -----------------
+3         [get_clocks { pcie_refclk_clk_p }]                            [get_clocks { GTYE4_CHANNEL_TXOUTCLK[3]_3 }]  clock_group     clock_group     
+3         [get_clocks { GTYE4_CHANNEL_TXOUTCLK[3]_3 }]                  [get_clocks { pcie_refclk_clk_p }]            clock_group     clock_group     Non-existent path
+

@@ -1,0 +1,163 @@
+{
+  "action": "CAPTURE_AUTHORITATIVE_R5_EVIDENCE_WHILE_E_CONTINUES",
+  "board_bdf": "0000:21:00.0",
+  "board_serial": "21770433G02LA",
+  "bound_inputs_changed": false,
+  "bound_source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+  "evidence": {
+    "e_log_path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r5-20261112/E-preroute-shell-replication/vivado.log",
+    "e_log_sha256": "2446a7bc4137b26a6244ab4f20593c3313a982c74892634f5e620010246f7903",
+    "e_log_snapshot": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/round126-r5-authoritative-status-20261112/r5-E-vivado.log",
+    "e_log_snapshot_sha256": "2446a7bc4137b26a6244ab4f20593c3313a982c74892634f5e620010246f7903",
+    "final_result_exists": false,
+    "private_unroute_succeeded": true,
+    "replication_added_cells": 52,
+    "replication_optimized_nets": 4,
+    "route_markers": [
+      "Phase 4 Rip-up And Reroute",
+      "Phase 4.1 Global Iteration 0"
+    ]
+  },
+  "fpga_io": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "immutability": "Receipt and copied log are evidence snapshots; bound r5 sources and all existing jobs remain untouched.",
+  "new_cad_started": false,
+  "next_automatic_action": "Allow existing E to finish; on actual E failure let conditional F execute private unroute plus explicit fanout_opt/placement_opt/routing_opt. On physical success continue independent certification then 21-only directed and same-bit application replay.",
+  "round": 126,
+  "schema": "ec-r5-authoritative-status-continuity/1",
+  "services": {
+    "application": {
+      "show": {
+        "ActiveState": "active",
+        "ControlGroup": "/system.slice/ec-opt4-svb-host40-shell-application-follow-r5.service",
+        "ExecMainStartTimestamp": "Thu 2026-11-12 12:31:31 CST",
+        "Id": "ec-opt4-svb-host40-shell-application-follow-r5.service",
+        "MainPID": "2692643",
+        "SubState": "running"
+      },
+      "unit": "ec-opt4-svb-host40-shell-application-follow-r5.service"
+    },
+    "follow": {
+      "show": {
+        "ActiveState": "active",
+        "ControlGroup": "/system.slice/ec-opt4-svb-host40-shell-follow-r5.service",
+        "ExecMainStartTimestamp": "Thu 2026-11-12 12:31:31 CST",
+        "Id": "ec-opt4-svb-host40-shell-follow-r5.service",
+        "MainPID": "2692644",
+        "SubState": "running"
+      },
+      "unit": "ec-opt4-svb-host40-shell-follow-r5.service"
+    },
+    "physical": {
+      "show": {
+        "ActiveState": "active",
+        "ControlGroup": "/system.slice/ec-opt4-svb-host40-shell-physical-r5.service",
+        "ExecMainStartTimestamp": "Thu 2026-11-12 12:31:31 CST",
+        "Id": "ec-opt4-svb-host40-shell-physical-r5.service",
+        "MainPID": "2692645",
+        "SubState": "running"
+      },
+      "unit": "ec-opt4-svb-host40-shell-physical-r5.service"
+    }
+  },
+  "states": {
+    "application": {
+      "expected_cgroup": "/system.slice/ec-opt4-svb-host40-shell-application-follow-r5.service",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "live_proc": {
+        "cgroups": [
+          "13:devices:/system.slice/ec-opt4-svb-host40-shell-application-follow-r5.service",
+          "12:misc:/",
+          "11:net_cls,net_prio:/",
+          "10:blkio:/system.slice/ec-opt4-svb-host40-shell-application-follow-r5.service",
+          "9:memory:/system.slice/ec-opt4-svb-host40-shell-application-follow-r5.service",
+          "8:cpuset:/",
+          "7:hugetlb:/",
+          "6:perf_event:/",
+          "5:pids:/system.slice/ec-opt4-svb-host40-shell-application-follow-r5.service",
+          "4:freezer:/",
+          "3:rdma:/",
+          "2:cpu,cpuacct:/system.slice/ec-opt4-svb-host40-shell-application-follow-r5.service",
+          "1:name=systemd:/system.slice/ec-opt4-svb-host40-shell-application-follow-r5.service",
+          "0::/system.slice/ec-opt4-svb-host40-shell-application-follow-r5.service"
+        ],
+        "pid": 2692643,
+        "process_state": "S",
+        "start_ticks": "26961211"
+      },
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-host40-shell-application-onboard-r5-20261112/state.json",
+      "pid": 2692643,
+      "sha256": "1dfb91932bdccc8eb5842003d6f1887b174813f43f646fd6f99e536659d440d4",
+      "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+      "start_ticks": "26961211",
+      "state_updated_utc": "2026-11-12T05:21:32.831399+00:00",
+      "status": "WAITING_CERTIFIED_COMPONENT_AND_REAL_APPLICATION_CPU_REPLAY"
+    },
+    "follow": {
+      "expected_cgroup": "/system.slice/ec-opt4-svb-host40-shell-follow-r5.service",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "live_proc": {
+        "cgroups": [
+          "13:devices:/system.slice/ec-opt4-svb-host40-shell-follow-r5.service",
+          "12:misc:/",
+          "11:net_cls,net_prio:/",
+          "10:blkio:/system.slice/ec-opt4-svb-host40-shell-follow-r5.service",
+          "9:memory:/system.slice/ec-opt4-svb-host40-shell-follow-r5.service",
+          "8:cpuset:/",
+          "7:hugetlb:/",
+          "6:perf_event:/",
+          "5:pids:/system.slice/ec-opt4-svb-host40-shell-follow-r5.service",
+          "4:freezer:/",
+          "3:rdma:/",
+          "2:cpu,cpuacct:/system.slice/ec-opt4-svb-host40-shell-follow-r5.service",
+          "1:name=systemd:/system.slice/ec-opt4-svb-host40-shell-follow-r5.service",
+          "0::/system.slice/ec-opt4-svb-host40-shell-follow-r5.service"
+        ],
+        "pid": 2692644,
+        "process_state": "S",
+        "start_ticks": "26961211"
+      },
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-host40-shell-onboard-r5-20261112/state.json",
+      "pid": 2692644,
+      "sha256": "c97635934758dea94725b740335d55d10bd0bb83b7859868f146078dcce68887",
+      "source_id": null,
+      "start_ticks": "26961211",
+      "state_updated_utc": "2026-11-12T05:21:32.868449+00:00",
+      "status": "WAITING_INDEPENDENT_HOST40_PHYSICAL_RESULT_NO_FPGA_IO"
+    },
+    "physical": {
+      "expected_cgroup": "/system.slice/ec-opt4-svb-host40-shell-physical-r5.service",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "live_proc": {
+        "cgroups": [
+          "13:devices:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service",
+          "12:misc:/",
+          "11:net_cls,net_prio:/",
+          "10:blkio:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service",
+          "9:memory:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service",
+          "8:cpuset:/",
+          "7:hugetlb:/",
+          "6:perf_event:/",
+          "5:pids:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service",
+          "4:freezer:/",
+          "3:rdma:/",
+          "2:cpu,cpuacct:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service",
+          "1:name=systemd:/system.slice/ec-opt4-svb-host40-shell-physical-r5.service",
+          "0::/system.slice/ec-opt4-svb-host40-shell-physical-r5.service"
+        ],
+        "pid": 2692645,
+        "process_state": "S",
+        "start_ticks": "26961211"
+      },
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r5-20261112/state.json",
+      "pid": 2692645,
+      "sha256": "a6f7aac23969b31ec279fa856ec961e0581ceff7bd5b32d97b6f1a25a77f510e",
+      "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+      "start_ticks": "26961211",
+      "state_updated_utc": "2026-11-12T05:21:33.300756+00:00",
+      "status": "RUNNING_ADMITTED_HOST40_SHELL_RECOVERY"
+    }
+  },
+  "utc": "2026-11-12T05:23:16Z"
+}

@@ -1,0 +1,20 @@
+{
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "inputs": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-dcache-field-read-prune-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala": "58e9f8ec8b2ae65f28915825f21cf8dd2d07732b2243c473321d461ad4e57fe4",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-address-bucket-r1-20261112/Bucket.scala": "3d5b1469401df3e293fb649cd656cb61ca73778c9fbbfbc47be414a391655482",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-address-bucket-r1-20261112/TestBucket.cc": "53a7a56f0d8c0383cbad6cf9f376637e98ee2a7e812bffd4acd59dd45843d69b",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-address-bucket-r1-20261112/controller.py": "415c3434344f107979993644e3533f8cfbb77bd6d111546cbc1ab3d041914eb6",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-address-bucket-r1-20261112/step-proof.v": "59c86dc9e055f328305606cdf9da6d35de63fb7b57e8db03cbcdedde3e602ce3"
+  },
+  "no_large_cad": true,
+  "not_yet_integrated": true,
+  "scope": "Isolated original 256x64 bucket storage transition; unchanged per-word arithmetic remains input; all256 debug outputs and current/retire reads retained. No complete AddressStats equivalence claim.",
+  "source_interfaces": [
+    "bucketLoadFirst",
+    "bucketStoreFirst",
+    "bucketStrictWriteRead"
+  ],
+  "target_semantics": "process per-word writes -> retirement clear -> resetStats clear. Globalreset payload has no reset assignment. Undefined initial values excluded only before first resetStats edge."
+}

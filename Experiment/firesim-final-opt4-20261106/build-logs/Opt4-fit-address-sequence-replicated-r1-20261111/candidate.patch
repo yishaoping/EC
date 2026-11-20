@@ -1,0 +1,158 @@
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/AddressBucketSequenceMemory.scala b/chipyard/generators/boom/src/main/scala/lsu/AddressBucketSequenceMemory.scala
+new file mode 100644
+index 0000000..0310fd6
+--- /dev/null
++++ b/chipyard/generators/boom/src/main/scala/lsu/AddressBucketSequenceMemory.scala
+@@ -0,0 +1,52 @@
++package boom.lsu
++
++import chisel3._
++import chisel3.util._
++
++/** Each physical copy has only two asynchronous readers and one writer.
++  * All copies receive every write on the same edge. Parent validity hides
++  * unwritten payload, and no reset initializes or clears memory contents.
++  */
++class AddressBucketSequenceReplica(slots: Int, sequenceBits: Int) extends Module {
++  val io = IO(new Bundle {
++    val readIndex = Input(Vec(2, UInt(log2Ceil(slots).W)))
++    val readData = Output(Vec(2, UInt(sequenceBits.W)))
++    val writeEnable = Input(Bool())
++    val writeIndex = Input(UInt(log2Ceil(slots).W))
++    val writeData = Input(UInt(sequenceBits.W))
++  })
++  val payload = Mem(slots, UInt(sequenceBits.W))
++  for (r <- 0 until 2) { io.readData(r) := payload.read(io.readIndex(r)) }
++  when (io.writeEnable) { payload.write(io.writeIndex, io.writeData) }
++}
++
++class AddressBucketSequenceMemory(slots: Int, readers: Int, sequenceBits: Int = 32) extends Module {
++  require(slots > 1 && isPow2(slots) && readers > 0 && sequenceBits > log2Ceil(slots))
++  val io = IO(new Bundle {
++    val readIndex = Input(Vec(readers, UInt(log2Ceil(slots).W)))
++    val readData = Output(Vec(readers, UInt(sequenceBits.W)))
++    val writeEnable = Input(Bool())
++    val writeIndex = Input(UInt(log2Ceil(slots).W))
++    val writeData = Input(UInt(sequenceBits.W))
++  })
++  for (copy <- 0 until (readers + 1) / 2) {
++    val replica = Module(new AddressBucketSequenceReplica(slots, sequenceBits))
++    replica.io.writeEnable := io.writeEnable
++    replica.io.writeIndex := io.writeIndex
++    replica.io.writeData := io.writeData
++    for (port <- 0 until 2) {
++      val reader = copy * 2 + port
++      if (reader < readers) {
++        replica.io.readIndex(port) := io.readIndex(reader)
++        io.readData(reader) := replica.io.readData(port)
++      } else {
++        replica.io.readIndex(port) := 0.U
++      }
++    }
++  }
++}
++
++object AddressBucketSequenceMemory {
++  def matches(stored: UInt, sequence: UInt, indexBits: Int): Bool =
++    stored(stored.getWidth - 1, indexBits) === sequence(sequence.getWidth - 1, indexBits)
++}
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala b/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
+index cd38e25..b76dd3a 100644
+--- a/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
+@@ -251,8 +251,12 @@ class PackageAddressStats(
+   val onlineFirstStore = RegInit(VecInit(Seq.fill(4)(0.U(64.W))))
+ 
+   val bucketValid = RegInit(VecInit(Seq.fill(packetWindow)(false.B)))
+-  val bucketSeq = Reg(Vec(packetWindow,
+-    UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)))
++  // All sequence bits are retained. The single write port and every
++  // combinational reader preserve the original edge and access semantics.
++  private val bucketSequenceReaders = packageWays + strictWays + strictOverflowEntries + 2
++  val bucketSequenceMemory = Module(new AddressBucketSequenceMemory(
++    packetWindow, bucketSequenceReaders, GH_GlobalParams.GH_PACKET_SEQ_BITS))
++  private var bucketSequenceReadPort = 0
+   val bucketStore = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))
+   val bucketLoadFirst = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))
+   val bucketStoreFirst = Reg(Vec(packetWindow, Vec(4, UInt(64.W))))
+@@ -261,9 +265,13 @@ class PackageAddressStats(
+ 
+   // A valid bucket's low sequence bits equal its fixed slot index. The high
+   // bits therefore distinguish the complete sequence without a low-bit mux.
+-  private def bucketSequenceMatches(index: UInt, sequence: UInt): Bool =
+-    bucketSeq(index)(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, packetIndexBits) ===
+-      sequence(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, packetIndexBits)
++  private def bucketSequenceMatches(index: UInt, sequence: UInt): Bool = {
++    val port = bucketSequenceReadPort
++    bucketSequenceReadPort += 1
++    bucketSequenceMemory.io.readIndex(port) := index
++    AddressBucketSequenceMemory.matches(
++      bucketSequenceMemory.io.readData(port), sequence, packetIndexBits)
++  }
+ 
+ 
+   val processLineTag = processEvent.addr(addrBits - 1, blockOffBits)
+@@ -583,6 +591,12 @@ class PackageAddressStats(
+   val processCommit = processValid && !processStructuralError &&
+     !processArithmeticError && !io.fatalProtocolError
+ 
++  // resetStats has final assignment priority in the original register
++  // table. Invalid payload is hidden by bucketValid; suppress its write edge.
++  bucketSequenceMemory.io.writeEnable := processCommit && !io.resetStats
++  bucketSequenceMemory.io.writeIndex := currentBucketIdx
++  bucketSequenceMemory.io.writeData := processEvent.packetSeq
++
+   // Safe-watermark retirement is serialized before the next event whose
+   // captured watermark has advanced.  This preserves event-time membership.
+   val safeTarget = Mux(queueCount =/= 0.U,
+@@ -602,6 +616,8 @@ class PackageAddressStats(
+       bucketStrictWriteRead(retiringIdx)(g) > onlineStrictWriteRead(g)
+     }.reduce(_ || _)
+   val safeError = retiringSlotCollision || retiringUnderflow
++  require(bucketSequenceReadPort == bucketSequenceReaders,
++    "every original sequence reader must have one combinational memory port")
+ 
+   val headLineTag = queueHead.addr(addrBits - 1, blockOffBits)
+   val headPackageSet = packageSetOf(headLineTag)
+@@ -729,7 +745,6 @@ class PackageAddressStats(
+       val isCurrent = currentBucketIdx === i.U
+       when (isCurrent) {
+         bucketValid(i) := true.B
+-        bucketSeq(i) := processEvent.packetSeq
+       }
+       for (g <- 0 until 4) {
+         when (isCurrent) {
+@@ -863,7 +878,6 @@ class PackageAddressStats(
+     }
+     for (i <- 0 until packetWindow) {
+       bucketValid(i) := false.B
+-      bucketSeq(i) := 0.U
+       for (g <- 0 until 4) {
+         bucketStore(i)(g) := 0.U
+         bucketFirstStore(i)(g) := 0.U
+diff --git a/lineage.json b/lineage.json
+index 187822a..d47989f 100644
+--- a/lineage.json
++++ b/lineage.json
+@@ -1,14 +1,14 @@
+ {
+-  "schema": "ec-opt4-fit-lineage/1",
++  "branch": "opt4/address-sequence-replicated-r1-20261111",
++  "core_features": "C4, SVB32, L2 report-permission repair; no checker/rollback/EC disabling",
+   "created_utc": "2026-11-10T09:12:05.475254+00:00",
+-  "purpose": "Independent derived Opt4-fit optimization. Never identity-equivalent to frozen hardware by name.",
++  "formal_admission": false,
+   "frozen_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+   "frozen_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
++  "full_dut_build_authorized_only_after_resource_gate": true,
+   "parent_source": "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard",
+-  "branch": "opt4-fit/20261110",
++  "purpose": "Replicate full-width async sequence storage into 45 two-read/one-write memories; unchanged parent module and cycles.",
++  "schema": "ec-opt4-fit-lineage/1",
+   "snapshot_baseline_commit": "0390a808ff557e2ac7da329fbee063857d46159c",
+-  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/chipyard",
+-  "core_features": "C4, SVB32, L2 report-permission repair; no checker/rollback/EC disabling",
+-  "formal_admission": false,
+-  "full_dut_build_authorized_only_after_resource_gate": true
++  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-sequence-replicated-r1-20261111/chipyard"
+ }

@@ -1,0 +1,235 @@
+201583:
+2026-11-13 09:40:34
+Full thread dump OpenJDK 64-Bit Server VM (17.0.3-internal+0-adhoc..src mixed mode, sharing):
+
+Threads class SMR info:
+_java_thread_list=0x00007f7bfc001f70, length=12, elements={
+0x00007f88b40151e0, 0x00007f88b411b900, 0x00007f88b411cd60, 0x00007f88b4124720,
+0x00007f88b4125ad0, 0x00007f88b4126ee0, 0x00007f88b4128890, 0x00007f88b4129dc0,
+0x00007f88b412b230, 0x00007f88b4196210, 0x00007f88b4199f30, 0x00007f7bfc000fe0
+}
+
+"main" #1 prio=5 os_prio=0 cpu=9445453.28ms elapsed=9634.12s tid=0x00007f88b40151e0 nid=0x31370 runnable  [0x00007f88bd1ad000]
+   java.lang.Thread.State: RUNNABLE
+	at scala.collection.immutable.List.find(List.scala:413)
+	at firrtl.Utils$.field_type(Utils.scala:463)
+	at firrtl.passes.InferTypes$.infer_types_e$1(InferTypes.scala:50)
+	at firrtl.passes.InferTypes$.$anonfun$run$17(InferTypes.scala:82)
+	at firrtl.passes.InferTypes$$$Lambda$1037/0x000000080109eda8.apply(Unknown Source)
+	at firrtl.ir.Connect.mapExpr(IR.scala:688)
+	at firrtl.Mappers$StmtMagnet$$anon$4.map(Mappers.scala:34)
+	at firrtl.Mappers$StmtMap$.map$extension(Mappers.scala:48)
+	at firrtl.passes.InferTypes$.infer_types_s$1(InferTypes.scala:82)
+	at firrtl.passes.InferTypes$.$anonfun$run$15(InferTypes.scala:82)
+	at firrtl.passes.InferTypes$$$Lambda$1031/0x000000080109d6e0.apply(Unknown Source)
+	at firrtl.ir.Block.mapStmt(IR.scala:653)
+	at firrtl.Mappers$StmtMagnet$$anon$3.map(Mappers.scala:31)
+	at firrtl.Mappers$StmtMap$.map$extension(Mappers.scala:48)
+	at firrtl.passes.InferTypes$.infer_types_s$1(InferTypes.scala:82)
+	at firrtl.passes.InferTypes$.$anonfun$run$21(InferTypes.scala:93)
+	at firrtl.passes.InferTypes$$$Lambda$1029/0x000000080109cf48.apply(Unknown Source)
+	at firrtl.ir.Module.mapStmt(IR.scala:1198)
+	at firrtl.Mappers$ModuleMagnet$$anon$14.map(Mappers.scala:108)
+	at firrtl.Mappers$ModuleMap$.map$extension(Mappers.scala:121)
+	at firrtl.passes.InferTypes$.infer_types$1(InferTypes.scala:93)
+	at firrtl.passes.InferTypes$.$anonfun$run$23(InferTypes.scala:96)
+	at firrtl.passes.InferTypes$$$Lambda$1026/0x000000080109c3e0.apply(Unknown Source)
+	at scala.collection.immutable.List.map(List.scala:250)
+	at scala.collection.immutable.List.map(List.scala:79)
+	at firrtl.passes.InferTypes$.run(InferTypes.scala:96)
+	at firrtl.passes.InferBinaryPoints.run(InferBinaryPoints.scala:111)
+	at firrtl.passes.Pass.execute(Pass.scala:14)
+	at firrtl.passes.Pass.execute$(Pass.scala:14)
+	at firrtl.passes.InferBinaryPoints.execute(InferBinaryPoints.scala:13)
+	at firrtl.Transform.runTransform(Compiler.scala:349)
+	at firrtl.Transform.runTransform$(Compiler.scala:348)
+	at firrtl.passes.InferBinaryPoints.runTransform(InferBinaryPoints.scala:13)
+	at firrtl.SeqTransformBased.$anonfun$runTransforms$1(Compiler.scala:358)
+	at firrtl.SeqTransformBased$$Lambda$1648/0x000000080115ac40.apply(Unknown Source)
+	at scala.collection.LinearSeqOps.foldLeft(LinearSeq.scala:183)
+	at scala.collection.LinearSeqOps.foldLeft$(LinearSeq.scala:179)
+	at scala.collection.immutable.List.foldLeft(List.scala:79)
+	at firrtl.SeqTransformBased.runTransforms(Compiler.scala:358)
+	at firrtl.SeqTransformBased.runTransforms$(Compiler.scala:357)
+	at firrtl.SeqTransform.runTransforms(Compiler.scala:362)
+	at firrtl.SeqTransform.execute(Compiler.scala:368)
+	at firrtl.Transform.runTransform(Compiler.scala:349)
+	at firrtl.Transform.runTransform$(Compiler.scala:348)
+	at firrtl.SeqTransform.runTransform(Compiler.scala:362)
+	at midas.passes.MidasTransforms.$anonfun$execute$1(MidasTransforms.scala:108)
+	at midas.passes.MidasTransforms$$Lambda$1869/0x00000008011b3440.apply(Unknown Source)
+	at scala.collection.LinearSeqOps.foldLeft(LinearSeq.scala:183)
+	at scala.collection.LinearSeqOps.foldLeft$(LinearSeq.scala:179)
+	at scala.collection.immutable.List.foldLeft(List.scala:79)
+	at midas.passes.MidasTransforms.execute(MidasTransforms.scala:107)
+	at firrtl.Transform.transform(Compiler.scala:280)
+	at firrtl.Transform.transform$(Compiler.scala:280)
+	at midas.passes.MidasTransforms.transform(MidasTransforms.scala:11)
+	at firrtl.stage.transforms.ExpandPrepares.execute(ExpandPrepares.scala:19)
+	at firrtl.Transform.transform(Compiler.scala:280)
+	at firrtl.Transform.transform$(Compiler.scala:280)
+	at firrtl.stage.transforms.ExpandPrepares.transform(ExpandPrepares.scala:7)
+	at firrtl.stage.transforms.CatchCustomTransformExceptions.execute(CatchCustomTransformExceptions.scala:10)
+	at firrtl.Transform.transform(Compiler.scala:280)
+	at firrtl.Transform.transform$(Compiler.scala:280)
+	at firrtl.stage.transforms.CatchCustomTransformExceptions.transform(CatchCustomTransformExceptions.scala:7)
+	at firrtl.stage.transforms.UpdateAnnotations.internalTransform(UpdateAnnotations.scala:22)
+	at firrtl.stage.transforms.UpdateAnnotations.internalTransform(UpdateAnnotations.scala:8)
+	at firrtl.options.Translator.transform(Phase.scala:248)
+	at firrtl.options.Translator.transform$(Phase.scala:248)
+	at firrtl.stage.transforms.UpdateAnnotations.transform(UpdateAnnotations.scala:8)
+	at firrtl.options.DependencyManager.$anonfun$transform$5(DependencyManager.scala:280)
+	at firrtl.options.DependencyManager$$Lambda$780/0x00000008010224f0.apply(Unknown Source)
+	at firrtl.Utils$.time(Utils.scala:181)
+	at firrtl.options.DependencyManager.$anonfun$transform$3(DependencyManager.scala:280)
+	at firrtl.options.DependencyManager$$Lambda$778/0x0000000801021c80.apply(Unknown Source)
+	at scala.collection.LinearSeqOps.foldLeft(LinearSeq.scala:183)
+	at scala.collection.LinearSeqOps.foldLeft$(LinearSeq.scala:179)
+	at scala.collection.immutable.List.foldLeft(List.scala:79)
+	at firrtl.options.DependencyManager.transform(DependencyManager.scala:269)
+	at firrtl.options.DependencyManager.transform$(DependencyManager.scala:255)
+	at firrtl.stage.TransformManager.transform(TransformManager.scala:14)
+	at firrtl.stage.TransformManager.execute(TransformManager.scala:22)
+	at midas.stage.GoldenGateCompilerPhase.transform(GoldenGateCompilerPhase.scala:52)
+	at midas.stage.GoldenGateCompilerPhase.transform(GoldenGateCompilerPhase.scala:15)
+	at firrtl.options.phases.DeletedWrapper.internalTransform(DeletedWrapper.scala:38)
+	at firrtl.options.phases.DeletedWrapper.internalTransform(DeletedWrapper.scala:15)
+	at firrtl.options.Translator.transform(Phase.scala:248)
+	at firrtl.options.Translator.transform$(Phase.scala:248)
+	at firrtl.options.phases.DeletedWrapper.transform(DeletedWrapper.scala:15)
+	at midas.stage.GoldenGateStage.$anonfun$run$1(GoldenGateStage.scala:26)
+	at midas.stage.GoldenGateStage$$Lambda$521/0x0000000800e318a0.apply(Unknown Source)
+	at scala.collection.LinearSeqOps.foldLeft(LinearSeq.scala:183)
+	at scala.collection.LinearSeqOps.foldLeft$(LinearSeq.scala:179)
+	at scala.collection.immutable.List.foldLeft(List.scala:79)
+	at midas.stage.GoldenGateStage.run(GoldenGateStage.scala:26)
+	at firrtl.options.Stage$$anon$1.transform(Stage.scala:43)
+	at firrtl.options.Stage$$anon$1.transform(Stage.scala:43)
+	at firrtl.options.phases.DeletedWrapper.internalTransform(DeletedWrapper.scala:38)
+	at firrtl.options.phases.DeletedWrapper.internalTransform(DeletedWrapper.scala:15)
+	at firrtl.options.Translator.transform(Phase.scala:248)
+	at firrtl.options.Translator.transform$(Phase.scala:248)
+	at firrtl.options.phases.DeletedWrapper.transform(DeletedWrapper.scala:15)
+	at firrtl.options.Stage.$anonfun$transform$5(Stage.scala:47)
+	at firrtl.options.Stage$$Lambda$519/0x0000000800e30728.apply(Unknown Source)
+	at scala.collection.LinearSeqOps.foldLeft(LinearSeq.scala:183)
+	at scala.collection.LinearSeqOps.foldLeft$(LinearSeq.scala:179)
+	at scala.collection.immutable.List.foldLeft(List.scala:79)
+	at firrtl.options.Stage.$anonfun$transform$3(Stage.scala:47)
+	at firrtl.options.Stage$$Lambda$511/0x0000000800e2bd28.apply(Unknown Source)
+	at logger.Logger$.$anonfun$makeScope$2(Logger.scala:137)
+	at logger.Logger$$$Lambda$513/0x0000000800e2c2a0.apply(Unknown Source)
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:59)
+	at logger.Logger$.makeScope(Logger.scala:135)
+	at firrtl.options.Stage.transform(Stage.scala:47)
+	at firrtl.options.Stage.execute(Stage.scala:58)
+	at firrtl.options.StageMain.main(Stage.scala:71)
+	at midas.stage.GoldenGateMain.main(GoldenGateStage.scala)
+
+   Locked ownable synchronizers:
+	- None
+
+"Reference Handler" #2 daemon prio=10 os_prio=0 cpu=6.44ms elapsed=9634.09s tid=0x00007f88b411b900 nid=0x31377 waiting on condition  [0x00007f7c29ffe000]
+   java.lang.Thread.State: RUNNABLE
+	at java.lang.ref.Reference.waitForReferencePendingList(java.base@17.0.3-internal/Native Method)
+	at java.lang.ref.Reference.processPendingReferences(java.base@17.0.3-internal/Reference.java:253)
+	at java.lang.ref.Reference$ReferenceHandler.run(java.base@17.0.3-internal/Reference.java:215)
+
+   Locked ownable synchronizers:
+	- None
+
+"Finalizer" #3 daemon prio=8 os_prio=0 cpu=0.15ms elapsed=9634.09s tid=0x00007f88b411cd60 nid=0x31378 in Object.wait()  [0x00007f7c0bffe000]
+   java.lang.Thread.State: WAITING (on object monitor)
+	at java.lang.Object.wait(java.base@17.0.3-internal/Native Method)
+	- waiting on <0x00007f7cdb6b6930> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.ReferenceQueue.remove(java.base@17.0.3-internal/ReferenceQueue.java:155)
+	- locked <0x00007f7cdb6b6930> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.ReferenceQueue.remove(java.base@17.0.3-internal/ReferenceQueue.java:176)
+	at java.lang.ref.Finalizer$FinalizerThread.run(java.base@17.0.3-internal/Finalizer.java:172)
+
+   Locked ownable synchronizers:
+	- None
+
+"Signal Dispatcher" #4 daemon prio=9 os_prio=0 cpu=0.57ms elapsed=9634.08s tid=0x00007f88b4124720 nid=0x31379 waiting on condition  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"Service Thread" #5 daemon prio=9 os_prio=0 cpu=11.83ms elapsed=9634.08s tid=0x00007f88b4125ad0 nid=0x3137a runnable  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"Monitor Deflation Thread" #6 daemon prio=9 os_prio=0 cpu=92.91ms elapsed=9634.08s tid=0x00007f88b4126ee0 nid=0x3137b runnable  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"C2 CompilerThread0" #7 daemon prio=9 os_prio=0 cpu=55224.55ms elapsed=9634.08s tid=0x00007f88b4128890 nid=0x3137c runnable  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+   No compile task
+
+   Locked ownable synchronizers:
+	- None
+
+"C1 CompilerThread0" #8 daemon prio=9 os_prio=0 cpu=5378.25ms elapsed=9634.08s tid=0x00007f88b4129dc0 nid=0x3137d runnable  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+   No compile task
+
+   Locked ownable synchronizers:
+	- None
+
+"Sweeper thread" #9 daemon prio=9 os_prio=0 cpu=673.72ms elapsed=9634.08s tid=0x00007f88b412b230 nid=0x3137e runnable  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"Notification Thread" #10 daemon prio=9 os_prio=0 cpu=0.03ms elapsed=9634.07s tid=0x00007f88b4196210 nid=0x3137f runnable  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"Common-Cleaner" #11 daemon prio=8 os_prio=0 cpu=18.03ms elapsed=9634.06s tid=0x00007f88b4199f30 nid=0x31381 in Object.wait()  [0x00007f7be3ffe000]
+   java.lang.Thread.State: TIMED_WAITING (on object monitor)
+	at java.lang.Object.wait(java.base@17.0.3-internal/Native Method)
+	- waiting on <0x00007f7cdb6d8d90> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.ReferenceQueue.remove(java.base@17.0.3-internal/ReferenceQueue.java:155)
+	- locked <0x00007f7cdb6d8d90> (a java.lang.ref.ReferenceQueue$Lock)
+	at jdk.internal.ref.CleanerImpl.run(java.base@17.0.3-internal/CleanerImpl.java:140)
+	at java.lang.Thread.run(java.base@17.0.3-internal/Thread.java:833)
+	at jdk.internal.misc.InnocuousThread.run(java.base@17.0.3-internal/InnocuousThread.java:162)
+
+   Locked ownable synchronizers:
+	- None
+
+"Attach Listener" #12 daemon prio=9 os_prio=0 cpu=0.67ms elapsed=195.25s tid=0x00007f7bfc000fe0 nid=0x44da0 waiting on condition  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"VM Thread" os_prio=0 cpu=17821.97ms elapsed=9634.09s tid=0x00007f88b41170b0 nid=0x31376 runnable  
+
+"GC Thread#0" os_prio=0 cpu=137103.64ms elapsed=9634.10s tid=0x00007f88b404b800 nid=0x31371 runnable  
+
+"GC Thread#1" os_prio=0 cpu=137140.62ms elapsed=9633.02s tid=0x00007f7c0c0047e0 nid=0x31397 runnable  
+
+"G1 Main Marker" os_prio=0 cpu=4.31ms elapsed=9634.10s tid=0x00007f88b4058dd0 nid=0x31372 runnable  
+
+"G1 Conc#0" os_prio=0 cpu=246398.22ms elapsed=9634.10s tid=0x00007f88b4059d30 nid=0x31373 runnable  
+
+"G1 Refine#0" os_prio=0 cpu=15314.19ms elapsed=9634.09s tid=0x00007f88b40edd50 nid=0x31374 runnable  
+
+"G1 Refine#1" os_prio=0 cpu=13602.90ms elapsed=9631.26s tid=0x00007f7c14000ea0 nid=0x313c6 runnable  
+
+"G1 Service" os_prio=0 cpu=2885.69ms elapsed=9634.09s tid=0x00007f88b40eec40 nid=0x31375 runnable  
+
+"VM Periodic Task Thread" os_prio=0 cpu=1313.81ms elapsed=9634.07s tid=0x00007f88b4197b90 nid=0x31380 waiting on condition  
+
+JNI global refs: 8, weak refs: 0
+

@@ -1,0 +1,113 @@
+{
+  "current_old_pid": {
+    "pid": 3343678,
+    "present": false
+  },
+  "direct_symptom": {
+    "status": "PROVEN",
+    "value": "Verilator >40000 preprocessor tokens on a line"
+  },
+  "disposition": "Preserve failure. Healthy foreground r1 already owns parity and paired area; no r4c or duplicate.",
+  "downstream_effect": {
+    "status": "PROVEN",
+    "value": "No simulation/parity or area result from r4b"
+  },
+  "exact_old_cgroup": "/sys/fs/cgroup/systemd/system.slice/ec-opt4-auto-address-packed-module-parity-r4b-8491167d.service",
+  "immediate_block": {
+    "status": "PROVEN",
+    "value": "Generated testbench cannot be parsed"
+  },
+  "new_requests": [],
+  "offending_line": 5185,
+  "offending_line_characters": 530716,
+  "old_cgroup_exists": false,
+  "old_cgroup_members": [],
+  "process_signals": [],
+  "receipt": {
+    "accepted": false,
+    "argv": [
+      "/usr/local/bin/verilator",
+      "--binary",
+      "--timing",
+      "--top-module",
+      "tb",
+      "--Mdir",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-module-parity-r4b-20261112/obj",
+      "-j",
+      "2",
+      "--output-split",
+      "10000",
+      "--output-split-cfuncs",
+      "200",
+      "--x-initial",
+      "0",
+      "--x-assign",
+      "0",
+      "-Wno-fatal",
+      "-DRANDOMIZE_REG_INIT",
+      "-DRANDOMIZE_MEM_INIT",
+      "-DRANDOM=32'h0",
+      "-CFLAGS",
+      "-O0",
+      "-MAKEFLAGS",
+      "OPT_FAST=-O0 OPT_SLOW=-O0",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-module-parity-r4b-20261112/pair/PackedAddressPair.v",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-packed-module-parity-r4b-20261112/pair-tb.v"
+    ],
+    "completed_utc": "2026-11-12T11:01:52.024026+00:00",
+    "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-module-parity-r4b-20261112/verilate.log",
+    "log_sha256": "cb1390597cf8acdaf48fcd8eb66e9bce8403f6261f28c3c7ed722dcbfa9ff58e",
+    "negative": false,
+    "outputs": {},
+    "required_marker": null,
+    "returncode": 1,
+    "wall_seconds": 10.231002808955964
+  },
+  "service": {
+    "ActiveState": "inactive",
+    "ControlGroup": "",
+    "Id": "ec-opt4-auto-address-packed-module-parity-r4b-8491167d.service",
+    "MainPID": "0",
+    "Result": "success",
+    "SubState": "dead"
+  },
+  "source_testbench": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-packed-module-parity-r4b-20261112/pair-tb.v",
+  "state": {
+    "active_stage": "verilate",
+    "actual_histogram_receipt_sha256": "f0fd11d4726f9cb38b6526e2d87359ee6622a5c7942472ada5761b525fb7e637",
+    "area_result_available": false,
+    "child": {},
+    "common_initial_payload": "zero; no arbitrary-state equivalence claim",
+    "cpu_ticks": 22,
+    "cpus": [
+      214,
+      215
+    ],
+    "ended_utc": "2026-11-12T11:01:52.025293+00:00",
+    "error": "AssertionError(('verilate', {'argv': ['/usr/local/bin/verilator', '--binary', '--timing', '--top-module', 'tb', '--Mdir', '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-module-parity-r4b-20261112/obj', '-j', '2', '--output-split', '10000', '--output-split-cfuncs', '200', '--x-initial', '0', '--x-assign', '0', '-Wno-fatal', '-DRANDOMIZE_REG_INIT', '-DRANDOMIZE_MEM_INIT', \"-DRANDOM=32'h0\", '-CFLAGS', '-O0', '-MAKEFLAGS', 'OPT_FAST=-O0 OPT_SLOW=-O0', '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-module-parity-r4b-20261112/pair/PackedAddressPair.v', '/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-packed-module-parity-r4b-20261112/pair-tb.v'], 'returncode': 1, 'accepted': False, 'negative': False, 'required_marker': None, 'log': '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-module-parity-r4b-20261112/verilate.log', 'log_sha256': 'cb1390597cf8acdaf48fcd8eb66e9bce8403f6261f28c3c7ed722dcbfa9ff58e', 'outputs': {}, 'wall_seconds': 10.231002808955964, 'completed_utc': '2026-11-12T11:01:52.024026+00:00'}))",
+    "formal_equivalence": false,
+    "fpga_access": false,
+    "full_host_synthesis": false,
+    "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "inputs_sha256": "b8f016da1f8326bcb3db036a9149461b1e428c8b4db489e9f4c873d933b5f973",
+    "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-packed-module-parity-r4b-20261112/verilate.log",
+    "memory_limit_gib": 24,
+    "pid": 3343678,
+    "process_state": "R",
+    "production_admission": false,
+    "rss_bytes": 14942208,
+    "schema": "ec-private-packed-complete-module-parity/1",
+    "stage_wall_seconds": 10.229972511995584,
+    "start_ticks": "29280508",
+    "started_utc": "2026-11-12T10:58:04.885888+00:00",
+    "status": "FAILED_WITH_EVIDENCE",
+    "updated_utc": "2026-11-12T11:01:52.025302+00:00"
+  },
+  "testbench_sha256": "b6a27e3bd3d901fe5b08334b2760228846b96130adf21c45ed78d0ba3b2d4a9a",
+  "upstream_trigger": {
+    "status": "PROVEN",
+    "value": "Single 530716-character pair connection line"
+  },
+  "utc": "2026-11-12T11:12:26.486020+00:00"
+}

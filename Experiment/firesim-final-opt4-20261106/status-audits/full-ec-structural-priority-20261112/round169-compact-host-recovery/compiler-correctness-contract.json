@@ -1,0 +1,35 @@
+{
+  "board_operations": false,
+  "exact_representation_argument": [
+    "Integer BFS enumerates exactly every reachable original vertex; port rows retain exactly reachable ports other than root, matching stock DiGraph.simplify.",
+    "A row bit i means exactly one dependency on port i.64-bit chunk factors are keyed by both chunk index and complete bit pattern, per instance.",
+    "Each original dependency edge becomes source->factor->destination. Sharing a factor only for the identical destination subset cannot add or remove paths between real nodes.",
+    "Every factored cycle projects to an original cycle and every original cycle expands to a factored cycle. Virtual nodes are never written into the circuit.",
+    "Analysis API expands factored instance edges; source paths and full graph edges are compared with unmodified stock analysis in the regression."
+  ],
+  "experiment_commit": "525fc22aeb16d5a3c2a3e70c601e95d0a764b427",
+  "full_system_fit": false,
+  "hardware_files_byte_equal_to_parent": {
+    "chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala": "53874d59d51c0d39d32a87d05b8f370d0776cafa333d49a0ef415951d30639a9",
+    "chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/BarrierLatencyStats.scala": "d9eb6e3e9d65e663a19dda92c2e263687e1193d092e911c71676d6e968e1747e",
+    "chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/ecstatscommon/AddressBucketGrouped.scala": "da325a7444a9659c010a3aa461fe12970f9a0661b332f047a0745b7450728c61",
+    "chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/ecstatscommon/AddressBucketUpdate.scala": "e219b088d34cab0d8cc61c713612ff8063b12a018fbc5c37077396aacee7f92f",
+    "chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/ecstatscommon/StatsBank.scala": "a003a66fd89435d29d08acea2b1ba7d1ebaffa289671ba095cc75a1c02d86a71"
+  },
+  "schema": "ec-private-compiler-representation-contract/1",
+  "source_binding_sha256": "6f263ab342ff5554541aa99312b2b0a0f14cc4bda90062198fa58918d03ecab0",
+  "source_scope": "Only private CheckCombLoops analysis representation; original circuit statement extraction, SCC, memory/ExtModule handling and error-trigger retained.",
+  "unchanged_hardware_parent": "81b93f1bf35aa1ee67db6958cb865e71fa489416",
+  "utc": "2026-11-12T20:12:08.702095+00:00",
+  "validation": {
+    "circuit_text_equal": true,
+    "exact_port_paths": true,
+    "expanded_edges_equal": true,
+    "log_sha256": "714819053e626f527c46e734574b00ba3ff7983f4836abb4e05381f6acbbb595",
+    "manual_regression_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-common-stats-host-r4-20261113/regression-v3.log",
+    "negative_loops": 5,
+    "proof_scope": "Source argument and finite compiler regression; not full host or hardware equivalence",
+    "stock_hierarchical_loop_diagnostic_bug_retained_as_reject": true,
+    "valid_circuits": 260
+  }
+}

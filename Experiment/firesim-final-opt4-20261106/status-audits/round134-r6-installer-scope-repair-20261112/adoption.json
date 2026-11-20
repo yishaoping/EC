@@ -1,0 +1,164 @@
+{
+  "CAD_jobs_launched_by_this_round": [],
+  "CPU_comparison_controls": [],
+  "FPGA_operations": [],
+  "candidate": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-r5-routed-repair-r6-20261112",
+  "candidate_inputs_sha256": "24f9d1c97d8f600cd071f9e0c0d6d0436508500a736790c5da12b4980cf19e29",
+  "existing_processes_signalled": [],
+  "installation": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-r5-routed-repair-r6-20261112/installation.json",
+  "installation_sha256": "d81c3b9eb47c8feeab584b2c8220e491a39356b40ff810ea21ec7a0a3594e3a5",
+  "minimum_normal_CAD_recheck_seconds": 300,
+  "minimum_whole_CAD_recheck_seconds": 600,
+  "new_requests": [],
+  "next_automatic_action": "Existing r6 G -> H -> I -> J with all gates; on real certification, existing 21-only directed and same-bit application followers.",
+  "original_metrics_request_duplicated": false,
+  "physical_cgroup_processes": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-r5-routed-repair-r6-20261112/controller.py"
+      ],
+      "exact_cgroup": "/system.slice/ec-opt4-svb-host40-shell-physical-r6.service",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 3109899,
+      "process_state": "S",
+      "start_ticks": "28470862"
+    },
+    {
+      "argv": [
+        "/bin/bash",
+        "/tools/Xilinx/Vivado/2021.1/bin/vivado",
+        "-mode",
+        "batch",
+        "-nojournal",
+        "-log",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r6-20261112/G-postroute-critical-routing/vivado.log",
+        "-source",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r6-20261112/G-postroute-critical-routing/recover.tcl"
+      ],
+      "exact_cgroup": "/system.slice/ec-opt4-svb-host40-shell-physical-r6.service",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 3109958,
+      "process_state": "S",
+      "start_ticks": "28470990"
+    },
+    {
+      "argv": [
+        "/bin/bash",
+        "/tools/Xilinx/Vivado/2021.1/bin/loader",
+        "-exec",
+        "vivado",
+        "-mode",
+        "batch",
+        "-nojournal",
+        "-log",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r6-20261112/G-postroute-critical-routing/vivado.log",
+        "-source",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r6-20261112/G-postroute-critical-routing/recover.tcl"
+      ],
+      "exact_cgroup": "/system.slice/ec-opt4-svb-host40-shell-physical-r6.service",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 3109974,
+      "process_state": "S",
+      "start_ticks": "28470992"
+    },
+    {
+      "argv": [
+        "/tools/Xilinx/Vivado/2021.1/bin/unwrapped/lnx64.o/vivado",
+        "-mode",
+        "batch",
+        "-nojournal",
+        "-log",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r6-20261112/G-postroute-critical-routing/vivado.log",
+        "-source",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r6-20261112/G-postroute-critical-routing/recover.tcl"
+      ],
+      "exact_cgroup": "/system.slice/ec-opt4-svb-host40-shell-physical-r6.service",
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "pid": 3109996,
+      "process_state": "S",
+      "start_ticks": "28471000"
+    }
+  ],
+  "predecessor_final_whs_ns": 0.001,
+  "predecessor_final_wns_ns": -0.029,
+  "predecessor_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r5-20261112/E-preroute-shell-replication/result.json",
+  "predecessor_result_sha256": "f9d97aa4a4c049218586756c75495d90e02bc7bb61cf73ee8e62e85542d8129b",
+  "r6_certified": false,
+  "r6_final_timing_available": false,
+  "real_validate_only_result": "REFUSED_EXISTING_R6_STATE_BEFORE_ANY_UNIT_WRITE",
+  "round": 134,
+  "schema": "ec-opt4-round134-r6-adoption/1",
+  "selected_checkpoint": {
+    "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r5-20261112/E-preroute-shell-replication/final.dcp",
+    "sha256": "17b05879a2837d73809dfb50e2173d79acb260e9fc5f6f2acfedbb09b6e5fa8c",
+    "timing": {
+      "hold_failing": 0,
+      "setup_failing": 51,
+      "ths": 0.0,
+      "tns": -0.864,
+      "whs": 0.001,
+      "wns": -0.029
+    },
+    "utc": "2026-11-12T08:43:08.721048+00:00"
+  },
+  "separately_prepared_installer": "SUPERSEDED_DO_NOT_INSTALL",
+  "services": [
+    {
+      "identity": {
+        "argv": [
+          "/usr/bin/python3",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-r5-routed-repair-r6-20261112/controller.py"
+        ],
+        "exact_cgroup": "/system.slice/ec-opt4-svb-host40-shell-physical-r6.service",
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 3109899,
+        "process_state": "R",
+        "start_ticks": "28470862"
+      },
+      "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r6-20261112/state.json",
+      "state_copy": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/round134-r6-installer-scope-repair-20261112/r6-physical-state.json",
+      "state_copy_sha256": "d7f9fcdcdbf6095baf4501174a9985e8dd911ad8ec3aaf8f3070054a26a1d182",
+      "status": "RUNNING_R5_E_INCREMENTAL_POSTROUTE_REPAIR",
+      "unit": "ec-opt4-svb-host40-shell-physical-r6.service"
+    },
+    {
+      "identity": {
+        "argv": [
+          "/usr/bin/python3",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-r5-routed-repair-r6-20261112/runtime.py"
+        ],
+        "exact_cgroup": "/system.slice/ec-opt4-svb-host40-shell-follow-r6.service",
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 3109930,
+        "process_state": "S",
+        "start_ticks": "28470947"
+      },
+      "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-host40-shell-onboard-r6-20261112/state.json",
+      "state_copy": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/round134-r6-installer-scope-repair-20261112/r6-follow-state.json",
+      "state_copy_sha256": "7fac398555861cdf1a0a47e7f963d84276d2f4871ea5aa3bba0d58f2e9819147",
+      "status": "WAITING_INDEPENDENT_HOST40_PHYSICAL_RESULT_NO_FPGA_IO",
+      "unit": "ec-opt4-svb-host40-shell-follow-r6.service"
+    },
+    {
+      "identity": {
+        "argv": [
+          "/usr/bin/python3",
+          "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-r5-routed-repair-r6-20261112/application.py"
+        ],
+        "exact_cgroup": "/system.slice/ec-opt4-svb-host40-shell-application-follow-r6.service",
+        "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+        "pid": 3110004,
+        "process_state": "S",
+        "start_ticks": "28471027"
+      },
+      "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-host40-shell-application-onboard-r6-20261112/state.json",
+      "state_copy": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/round134-r6-installer-scope-repair-20261112/r6-application-follow-state.json",
+      "state_copy_sha256": "83e35667dfafc4453745d81665825c35a75bb00eef600576689d5b0295319927",
+      "status": "WAITING_CERTIFIED_COMPONENT_AND_REAL_APPLICATION_CPU_REPLAY",
+      "unit": "ec-opt4-svb-host40-shell-application-follow-r6.service"
+    }
+  ],
+  "status": "ADOPT_EXISTING_FOREGROUND_R6_NO_INSTALL_OR_DUPLICATE",
+  "utc": "2026-11-12T08:48:09.776547+00:00"
+}

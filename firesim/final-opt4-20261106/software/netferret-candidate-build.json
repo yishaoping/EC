@@ -1,0 +1,292 @@
+{
+  "application_threads_argument": 1,
+  "binaries": {
+    "client/client": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/client/client",
+      "sha256": "006032902710c9509e9cd8a58def1e1f5b9b5b2453e0e3c3f6b486e20680e8e5"
+    },
+    "server/parsec/bin/ferret-pthreads": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/parsec/bin/ferret-pthreads",
+      "sha256": "b7860972873695bea6d307ac353dc3abaac6609532b76dc021d75825128304ee"
+    }
+  },
+  "c4_admission": {
+    "driver": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/linux/drivers/misc/ec_dac_roi.c",
+      "predicate": "dac_begin: context_started || get_nr_threads(current) != 1 || !service_va -> -EOPNOTSUPP",
+      "sha256": "4caff1f1ba2b4b30d2ee155ace94b78975baabb15daec32a7d57bfaf0a6c81a9"
+    },
+    "driver_modified": false,
+    "evidence": "Saved QEMU test syscall traces contain actual clone/futex/nanosleep in original ROI. User TCP is shared-memory transport; CONFIG_NET=n alone is not its blocker.",
+    "hardware_modified": false,
+    "monitor": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/rocket-chip/src/main/scala/util/DacRoi.scala",
+      "predicate": "running (or ended and busy) plus trap/prv!=U/satp mismatch -> faults bit 8",
+      "sha256": "e41828d04b47ad2a209defc28c700113e3a74e53451e00a846c0ab63df9c4ed2"
+    },
+    "required": "A proved checker-compatible execution/context path preserving entire original ROI and real comparisons. Do not remove guards, mask faults, disable checking or narrow ROI.",
+    "status": "BLOCKED_ORIGINAL_ROI_PROTOCOL"
+  },
+  "candidate_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-candidate-build.json",
+  "candidate_receipt_sha256": "eb8c7b23b020f54a34d12e73904bb7a741655c2242144f83a10213bcebd662e4",
+  "cross_isa_note": "x86 differs in large-input ranks; not accepted by numerical tolerance. Same RISC-V original socket implementation returns exactly the same full output as user TCP for all three sizes.",
+  "formal_eligible": false,
+  "formal_runconf": {
+    "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netferret/parsec/simmedium.runconf",
+    "sha256": "048a25c3578932066d3506d856a4cac7fc1b715527b506e0d713368be615b4c2"
+  },
+  "fpga_validation": "NOT_RUN",
+  "independent_repair_candidate": {
+    "formal_eligible": false,
+    "linux_cases": [
+      {
+        "input": "test",
+        "program": "netferret",
+        "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-linux-20261107T110137Z/netferret-test/result.json",
+        "status": "FAILED_WITH_EVIDENCE"
+      },
+      {
+        "input": "simsmall",
+        "program": "netferret",
+        "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-linux-20261107T110137Z/netferret-simsmall/result.json",
+        "status": "FAILED_WITH_EVIDENCE"
+      },
+      {
+        "input": "simmedium",
+        "program": "netferret",
+        "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-linux-20261107T110137Z/netferret-simmedium/result.json",
+        "status": "FAILED_WITH_EVIDENCE"
+      }
+    ],
+    "linux_failure_evidence": [
+      {
+        "assertion_lines": [
+          "server: /data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-protocol-20261107T110127Z/server.c:500: t_out: Assertion `obj != NULL' failed."
+        ],
+        "both_peers_exit_zero": false,
+        "exact_qemu_user_output": false,
+        "input": "test",
+        "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-linux-20261107T110137Z/netferret-test/result.json",
+        "returncode": 124,
+        "root_cause": "UNPROVEN; retain complete failed sample and do not change correctness gate"
+      },
+      {
+        "assertion_lines": [],
+        "both_peers_exit_zero": true,
+        "exact_qemu_user_output": false,
+        "input": "simsmall",
+        "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-linux-20261107T110137Z/netferret-simsmall/result.json",
+        "returncode": 0,
+        "root_cause": "UNPROVEN; retain complete failed sample and do not change correctness gate"
+      },
+      {
+        "assertion_lines": [],
+        "both_peers_exit_zero": true,
+        "exact_qemu_user_output": false,
+        "input": "simmedium",
+        "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-linux-20261107T110137Z/netferret-simmedium/result.json",
+        "returncode": 0,
+        "root_cause": "UNPROVEN; retain complete failed sample and do not change correctness gate"
+      }
+    ],
+    "output_comparisons": [
+      {
+        "exact_v2_output": true,
+        "input": "test",
+        "passed_protocol": true,
+        "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-20261107T110127Z/user-test/result.json"
+      },
+      {
+        "exact_v2_output": true,
+        "input": "simsmall",
+        "passed_protocol": true,
+        "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-20261107T110127Z/user-simsmall/result.json"
+      },
+      {
+        "exact_v2_output": true,
+        "input": "simmedium",
+        "passed_protocol": true,
+        "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-20261107T110127Z/user-simmedium/result.json"
+      }
+    ],
+    "patch": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-20261107T110127Z/candidate.patch",
+    "patch_sha256": "9996b3fd38d2ff978880dd088f47a69529fa41f7ae6dde3b7e7ae2ce8d1df07b",
+    "preparation": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-preparation.json",
+    "receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-protocol-candidate-build.json",
+    "status": "COMPLETE_REVIEW_EVIDENCE",
+    "target_linux_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-protocol-linux-validation.json"
+  },
+  "linux_cases": [
+    {
+      "input": "test",
+      "program": "netferret",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-linux-20261107T104558Z/netferret-test/result.json",
+      "status": "FAILED_WITH_EVIDENCE"
+    }
+  ],
+  "linux_validation_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-linux-validation.json",
+  "mapping": "Original pthread server pipeline retained; 1/16/64 queries for test/simsmall/simmedium, all complete. No substitution with standalone serial Ferret.",
+  "observed_utc": "2026-11-07T11:20:16.579282+00:00",
+  "offline_cases": [
+    {
+      "both_peers_exit_zero": true,
+      "client_argv": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/client/client",
+        "queries",
+        "1",
+        "output.txt"
+      ],
+      "diagnostic_roi": {
+        "begin_seen": true,
+        "end_seen": true,
+        "source": "server.log; diagnostic marker writes remain visible",
+        "syscall_counts": {},
+        "time_base": "host QEMU trace order only; no target cycles or checker latency"
+      },
+      "fpga_valid": false,
+      "input": "test",
+      "input_archive": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inputs/input_test.tar",
+        "sha256": "197f8146b1abd0eb2165a1c91764780f947a20c536724f384314e2f006af65f4"
+      },
+      "output": {
+        "bytes": 164,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-followup-20261107T103840Z/netferret-test-riscv64/work/output.txt",
+        "sha256": "7b36706f34542ca98e7c83c379224336809b3e293e96df83a4616c533a0ff8cc"
+      },
+      "passed": true,
+      "qemu_user_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-followup-20261107T103840Z/netferret-test-riscv64/result.json",
+      "result_sha256": "a34ba870fbf86fe5394414eb54cebdeb2705ccf00cc7e49b8544fe71122f12cc",
+      "same_isa_socket_reference": {
+        "output": {
+          "bytes": 164,
+          "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sameisa-20261107T104210Z/test/work/output.txt",
+          "sha256": "7b36706f34542ca98e7c83c379224336809b3e293e96df83a4616c533a0ff8cc"
+        },
+        "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sameisa-20261107T104210Z/test/result.json",
+        "result_sha256": "e03bd1dae72a8036fa253ba5060ea641f8d9f651c4f183a8799b206dfebb5b1f"
+      },
+      "server_argv": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/parsec/bin/ferret-pthreads",
+        "corel",
+        "lsh",
+        "5",
+        "5",
+        "1"
+      ]
+    },
+    {
+      "both_peers_exit_zero": true,
+      "client_argv": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/client/client",
+        "queries",
+        "1",
+        "output.txt"
+      ],
+      "diagnostic_roi": {
+        "begin_seen": true,
+        "end_seen": true,
+        "source": "server.log; diagnostic marker writes remain visible",
+        "syscall_counts": {},
+        "time_base": "host QEMU trace order only; no target cycles or checker latency"
+      },
+      "fpga_valid": false,
+      "input": "simsmall",
+      "input_archive": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inputs/input_simsmall.tar",
+        "sha256": "ed5d46a1ef8a16ca3a948bce3a62b838e1b0cd2aeeefa27e3094b84b16f87d78"
+      },
+      "output": {
+        "bytes": 4535,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-followup-20261107T103840Z/netferret-simsmall-riscv64/work/output.txt",
+        "sha256": "87354818c21b270cb1aa5daacd938d6e23487463e5bfaaabc99df3cd96372ae4"
+      },
+      "passed": true,
+      "qemu_user_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-followup-20261107T103840Z/netferret-simsmall-riscv64/result.json",
+      "result_sha256": "2e4ca3ad623fd2b3b2f6867d4a77b82f9f324fdbd30793d3aadc05a84bf4d5dd",
+      "same_isa_socket_reference": {
+        "output": {
+          "bytes": 4535,
+          "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sameisa-20261107T104210Z/simsmall/work/output.txt",
+          "sha256": "87354818c21b270cb1aa5daacd938d6e23487463e5bfaaabc99df3cd96372ae4"
+        },
+        "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sameisa-20261107T104210Z/simsmall/result.json",
+        "result_sha256": "f1142d7eee168c32fcb8b5d0531626c551c7a720dcfafe1e1b23830b3e9f8d50"
+      },
+      "server_argv": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/parsec/bin/ferret-pthreads",
+        "corel",
+        "lsh",
+        "10",
+        "20",
+        "1"
+      ]
+    },
+    {
+      "both_peers_exit_zero": true,
+      "client_argv": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/client/client",
+        "queries",
+        "1",
+        "output.txt"
+      ],
+      "diagnostic_roi": {
+        "begin_seen": true,
+        "end_seen": true,
+        "source": "server.log; diagnostic marker writes remain visible",
+        "syscall_counts": {},
+        "time_base": "host QEMU trace order only; no target cycles or checker latency"
+      },
+      "fpga_valid": false,
+      "input": "simmedium",
+      "input_archive": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inputs/input_simmedium.tar",
+        "sha256": "91ee10d3f47afdaf36d016f422ea0c217f5f4f93359e87a276ad5eccf61fd759"
+      },
+      "output": {
+        "bytes": 18070,
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-followup-20261107T103840Z/netferret-simmedium-riscv64/work/output.txt",
+        "sha256": "d9a93c21883253158626f73f9e2a361e1be31e6e4d734808575d50d90a84f97b"
+      },
+      "passed": true,
+      "qemu_user_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-followup-20261107T103840Z/netferret-simmedium-riscv64/result.json",
+      "result_sha256": "37b9ef9fae66fc80cd4f2ba62474c980a4b1daa54bfdc99a658b37c196fe5697",
+      "same_isa_socket_reference": {
+        "output": {
+          "bytes": 18070,
+          "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sameisa-20261107T104210Z/simmedium/work/output.txt",
+          "sha256": "d9a93c21883253158626f73f9e2a361e1be31e6e4d734808575d50d90a84f97b"
+        },
+        "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netferret-sameisa-20261107T104210Z/simmedium/result.json",
+        "result_sha256": "a9245dab591fb34c155b20f0863560de79b6d736c81588ad6024bcc65d33431e"
+      },
+      "server_argv": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netferret/server/parsec/bin/ferret-pthreads",
+        "corel",
+        "lsh",
+        "10",
+        "20",
+        "1"
+      ]
+    }
+  ],
+  "parsec_commit": "a06d35960951c9bfad61eb4826bca8d167f98c19",
+  "patch": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/candidate.patch",
+    "sha256": "1dceb3a8a16a335eec1d0c1039d18a082ef84ffcb42c8937119f8447fa493c50"
+  },
+  "profile": "network-riscv-port-v2-diagnostic",
+  "program": "netferret",
+  "protocol_review": "Original client has duplicate receive-byte accounting and does not frame partial headers robustly; saved untraced tests pass but this remains a transport robustness risk, not a proven fix.",
+  "queue_admission": "Existing coverage-first already enrolls all 16. Formal apps/rootfs/config firmware receipts must be bound only after valid target software/checker path exists; no candidate receipt enables scheduling.",
+  "retained_failure": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netferret-test-riscv64/result.json",
+  "roi": "Original server __parsec_roi_begin/end sites unchanged; diagnostic hooks, not real checker hooks",
+  "schema": "ec-network-program-preparation/1",
+  "status": "QEMU_USER_AND_REFERENCE_PASSED_LINUX_FAILURE_RETAINED",
+  "still_missing": [
+    "Target Linux protocol/correctness validation",
+    "Real ROI hook integration and validated original-ROI C4 context support",
+    "Immutable runnable rootfs and Native/C4 firmware receipts",
+    "FPGA smoke, small input, real checker/drain/correctness validation"
+  ]
+}

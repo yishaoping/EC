@@ -1,0 +1,7 @@
+read_json /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-banked-production-contract-sat-r1-20261112/cut-bank.json
+read_verilog -sv /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-banked-production-contract-sat-r1-20261112/contract.sv
+hierarchy -top Contract
+flatten
+opt -full
+check -assert
+sat -verify -timeout 300 -prove ok 1 -show-inputs -show-outputs

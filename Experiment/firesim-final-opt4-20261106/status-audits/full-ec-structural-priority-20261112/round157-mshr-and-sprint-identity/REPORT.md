@@ -1,0 +1,7 @@
+Private MSHR implementation compiles and its actual 16-entry holdable queue passed 65,536 finite cycles, comparing the complete 909-bit payload even on invalid cycles. Mutable branch masks remain registers; all other MicroOp fields move to single-write asynchronous memory. Source changes affect only the two MSHR queue call sites. Nothing is installed in the sprint commit. This is finite local validation, not complete MSHR/DCache/system equivalence and not an area saving.
+
+The serial complete six-MSHR generated-host pair owns CPUs 204/205 and a 64 GiB cap. It uses the same actual target boundary and same MC/PeekPoke harness. It cannot start whole EC CAD. All existing address/DCache/foreground jobs remain separate.
+
+The offline sprint identity preparer owns CPUs 200/201 and 4 GiB. It waits for the existing composed validator's actual host-binding output. It compares actual generated software ABI, derives a fresh target/host identity, and prepares a distinct runtime bundle for the existing handoff owner. It does not create or launch another runtime owner. The new certifier rejects old3656, mismatched host RTL/ID, shell-excluded results, and missing full-shell physical evidence. No actual fd5 host ABI comparison or bitstream certification has happened yet.
+
+Existing validated full-shell EC is NOT FIT and cannot deliver the requested applications. November 18 feasibility remains unproven; no completeEC FPGA slowdown is available from this round.

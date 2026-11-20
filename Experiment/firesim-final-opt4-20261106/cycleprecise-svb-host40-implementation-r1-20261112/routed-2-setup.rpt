@@ -1,0 +1,1407 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version      : Vivado v.2021.1 (lin64) Build 3247384 Thu Jun 10 19:36:07 MDT 2021
+| Date              : Fri Nov 13 06:17:09 2026
+| Host              : devjz-ubt20-s01 running 64-bit Ubuntu 20.04.6 LTS
+| Command           : report_timing -delay_type max -max_paths 20 -nets -file /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-implementation-r1-20261112/routed-2-setup.rpt
+| Design            : design_1_wrapper
+| Device            : xcu280-fsvh2892
+| Speed File        : -2L  PRODUCTION 1.29 11-17-2020
+| Temperature Grade : E
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (VIOLATED) :        -0.306ns  (required time - arrival time)
+  Source:                 design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/C
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Destination:            design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[177]/D
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Path Group:             mmcm_clkout0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.332ns  (mmcm_clkout0 rise@3.332ns - mmcm_clkout0 rise@0.000ns)
+  Data Path Delay:        3.524ns  (logic 0.201ns (5.704%)  route 3.323ns (94.296%))
+  Logic Levels:           1  (RAMD32=1)
+  Clock Path Skew:        -0.087ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    3.066ns = ( 6.398 - 3.332 ) 
+    Source Clock Delay      (SCD):    2.620ns
+    Clock Pessimism Removal (CPR):    -0.533ns
+  Clock Uncertainty:      0.052ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.077ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.246ns (routing 0.171ns, distribution 1.075ns)
+  Clock Net Delay (Destination): 1.143ns (routing 0.155ns, distribution 0.988ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock mmcm_clkout0 rise edge)
+                                                      0.000     0.000 r  
+    BJ43                                              0.000     0.000 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     0.000    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.782     0.782 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.050     0.832    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     0.832 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.397     1.229    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                     -0.127     1.102 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.244     1.346    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.028     1.374 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.246     2.620    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/div_clk
+    SLICE_X133Y152       FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X133Y152       FDRE (Prop_EFF_SLICEM_C_Q)
+                                                      0.076     2.696 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/Q
+                         net (fo=581, routed)         3.264     5.960    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buffer_ram[29].RAM32M0/ADDRB1
+    SLICE_X137Y11        RAMD32 (Prop_B6LUT_SLICEM_RADR1_O)
+                                                      0.125     6.085 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buffer_ram[29].RAM32M0/RAMB_D1/O
+                         net (fo=1, routed)           0.059     6.144    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_w[177]
+    SLICE_X137Y11        FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[177]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock mmcm_clkout0 rise edge)
+                                                      3.332     3.332 r  
+    BJ43                                              0.000     3.332 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     3.332    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.671     4.003 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.040     4.043    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     4.043 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.344     4.387    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                      0.630     5.017 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.214     5.231    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.024     5.255 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.143     6.398    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/div_clk
+    SLICE_X137Y11        FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[177]/C
+                         clock pessimism             -0.533     5.865    
+                         clock uncertainty           -0.052     5.813    
+    SLICE_X137Y11        FDRE (Setup_BFF_SLICEM_C_D)
+                                                      0.025     5.838    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[177]
+  -------------------------------------------------------------------
+                         required time                          5.838    
+                         arrival time                          -6.144    
+  -------------------------------------------------------------------
+                         slack                                 -0.306    
+
+Slack (VIOLATED) :        -0.305ns  (required time - arrival time)
+  Source:                 design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.gl0.rd/rpntr/gc0.count_d1_reg[0]/C
+                            (rising edge-triggered cell FDCE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/gdm.dm_gen.dm/gpr1.dout_i_reg[127]/D
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             xdma_0_axi_aclk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.000ns  (xdma_0_axi_aclk rise@4.000ns - xdma_0_axi_aclk rise@0.000ns)
+  Data Path Delay:        4.083ns  (logic 0.228ns (5.584%)  route 3.855ns (94.416%))
+  Logic Levels:           1  (RAMD32=1)
+  Clock Path Skew:        -0.200ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    2.250ns = ( 6.250 - 4.000 ) 
+    Source Clock Delay      (SCD):    2.621ns
+    Clock Pessimism Removal (CPR):    0.171ns
+  Clock Uncertainty:      0.046ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.060ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      2.406ns (routing 0.582ns, distribution 1.824ns)
+  Clock Net Delay (Destination): 2.058ns (routing 0.526ns, distribution 1.532ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      0.000     0.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     0.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.085     0.085    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.130     0.215 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       2.406     2.621    design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.gl0.rd/rpntr/s_aclk
+    SLICE_X109Y31        FDCE                                         r  design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.gl0.rd/rpntr/gc0.count_d1_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X109Y31        FDCE (Prop_GFF_SLICEM_C_Q)
+                                                      0.078     2.699 r  design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.gl0.rd/rpntr/gc0.count_d1_reg[0]/Q
+                         net (fo=521, routed)         3.490     6.189    design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/gdm.dm_gen.dm/RAM_reg_0_15_126_139/ADDRA0
+    SLICE_X152Y45        RAMD32 (Prop_A6LUT_SLICEM_RADR0_O)
+                                                      0.150     6.339 r  design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/gdm.dm_gen.dm/RAM_reg_0_15_126_139/RAMA_D1/O
+                         net (fo=1, routed)           0.365     6.704    design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/gdm.dm_gen.dm/RAM_reg_0_15_126_139_n_0
+    SLICE_X150Y40        FDRE                                         r  design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/gdm.dm_gen.dm/gpr1.dout_i_reg[127]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      4.000     4.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     4.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.078     4.078    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.114     4.192 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       2.058     6.250    design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/gdm.dm_gen.dm/s_aclk
+    SLICE_X150Y40        FDRE                                         r  design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/gdm.dm_gen.dm/gpr1.dout_i_reg[127]/C
+                         clock pessimism              0.171     6.421    
+                         clock uncertainty           -0.046     6.374    
+    SLICE_X150Y40        FDRE (Setup_EFF_SLICEM_C_D)
+                                                      0.025     6.399    design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/gdm.dm_gen.dm/gpr1.dout_i_reg[127]
+  -------------------------------------------------------------------
+                         required time                          6.399    
+                         arrival time                          -6.704    
+  -------------------------------------------------------------------
+                         slack                                 -0.305    
+
+Slack (VIOLATED) :        -0.304ns  (required time - arrival time)
+  Source:                 design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/wtlp_dat_vld_ff_reg[0]/C
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[88]/D
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             xdma_0_axi_aclk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.000ns  (xdma_0_axi_aclk rise@4.000ns - xdma_0_axi_aclk rise@0.000ns)
+  Data Path Delay:        4.191ns  (logic 0.239ns (5.703%)  route 3.952ns (94.297%))
+  Logic Levels:           2  (LUT2=1 LUT6=1)
+  Clock Path Skew:        -0.092ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    2.059ns = ( 6.059 - 4.000 ) 
+    Source Clock Delay      (SCD):    2.252ns
+    Clock Pessimism Removal (CPR):    0.101ns
+  Clock Uncertainty:      0.046ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.060ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      2.037ns (routing 0.582ns, distribution 1.455ns)
+  Clock Net Delay (Destination): 1.867ns (routing 0.526ns, distribution 1.341ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      0.000     0.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     0.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.085     0.085    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.130     0.215 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       2.037     2.252    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/user_clk
+    SLICE_X169Y65        FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/wtlp_dat_vld_ff_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X169Y65        FDRE (Prop_DFF2_SLICEL_C_Q)
+                                                      0.081     2.333 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/wtlp_dat_vld_ff_reg[0]/Q
+                         net (fo=5, routed)           0.210     2.543    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/wtlp_dat_vld_ff_reg[1]_0[0]
+    SLICE_X168Y59        LUT2 (Prop_E6LUT_SLICEL_I1_O)
+                                                      0.035     2.578 f  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head[255]_i_3/O
+                         net (fo=429, routed)         3.692     6.270    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/wtlp_512_ph_ff_reg_1
+    SLICE_X181Y2         LUT6 (Prop_C6LUT_SLICEL_I2_O)
+                                                      0.123     6.393 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head[88]_i_1__26/O
+                         net (fo=1, routed)           0.050     6.443    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/p_1_in[88]
+    SLICE_X181Y2         FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[88]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      4.000     4.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     4.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.078     4.078    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.114     4.192 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.867     6.059    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/user_clk
+    SLICE_X181Y2         FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[88]/C
+                         clock pessimism              0.101     6.160    
+                         clock uncertainty           -0.046     6.114    
+    SLICE_X181Y2         FDRE (Setup_CFF_SLICEL_C_D)
+                                                      0.025     6.139    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[88]
+  -------------------------------------------------------------------
+                         required time                          6.139    
+                         arrival time                          -6.443    
+  -------------------------------------------------------------------
+                         slack                                 -0.304    
+
+Slack (VIOLATED) :        -0.304ns  (required time - arrival time)
+  Source:                 design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_enable.aximm.dma_aximm/axi4mm_axi_mm_master_rd/m_axi_rready_ff_reg/C
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/goreg_dm.dout_i_reg[12]/CE
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             xdma_0_axi_aclk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.000ns  (xdma_0_axi_aclk rise@4.000ns - xdma_0_axi_aclk rise@0.000ns)
+  Data Path Delay:        3.835ns  (logic 0.190ns (4.954%)  route 3.645ns (95.046%))
+  Logic Levels:           1  (LUT4=1)
+  Clock Path Skew:        -0.362ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    2.154ns = ( 6.154 - 4.000 ) 
+    Source Clock Delay      (SCD):    2.617ns
+    Clock Pessimism Removal (CPR):    0.101ns
+  Clock Uncertainty:      0.046ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.060ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      2.402ns (routing 0.582ns, distribution 1.820ns)
+  Clock Net Delay (Destination): 1.962ns (routing 0.526ns, distribution 1.436ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      0.000     0.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     0.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.085     0.085    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.130     0.215 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       2.402     2.617    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_enable.aximm.dma_aximm/axi4mm_axi_mm_master_rd/user_clk
+    SLICE_X115Y59        FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_enable.aximm.dma_aximm/axi4mm_axi_mm_master_rd/m_axi_rready_ff_reg/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X115Y59        FDRE (Prop_DFF_SLICEM_C_Q)
+                                                      0.078     2.695 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_enable.aximm.dma_aximm/axi4mm_axi_mm_master_rd/m_axi_rready_ff_reg/Q
+                         net (fo=17, routed)          0.537     3.232    design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.gl0.rd/gr1.gr1_int.rfwft/s_axi_rready
+    SLICE_X109Y31        LUT4 (Prop_A5LUT_SLICEM_I3_O)
+                                                      0.112     3.344 r  design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.gl0.rd/gr1.gr1_int.rfwft/goreg_dm.dout_i[518]_i_1/O
+                         net (fo=519, routed)         3.108     6.452    design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/goreg_dm.dout_i_reg[518]_1[0]
+    SLICE_X156Y66        FDRE                                         r  design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/goreg_dm.dout_i_reg[12]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      4.000     4.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     4.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.078     4.078    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.114     4.192 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.962     6.154    design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/s_aclk
+    SLICE_X156Y66        FDRE                                         r  design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/goreg_dm.dout_i_reg[12]/C
+                         clock pessimism              0.101     6.255    
+                         clock uncertainty           -0.046     6.209    
+    SLICE_X156Y66        FDRE (Setup_HFF2_SLICEM_C_CE)
+                                                     -0.061     6.148    design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/goreg_dm.dout_i_reg[12]
+  -------------------------------------------------------------------
+                         required time                          6.148    
+                         arrival time                          -6.452    
+  -------------------------------------------------------------------
+                         slack                                 -0.304    
+
+Slack (VIOLATED) :        -0.304ns  (required time - arrival time)
+  Source:                 design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/C
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Destination:            design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[75]/D
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Path Group:             mmcm_clkout0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.332ns  (mmcm_clkout0 rise@3.332ns - mmcm_clkout0 rise@0.000ns)
+  Data Path Delay:        3.460ns  (logic 0.201ns (5.809%)  route 3.259ns (94.191%))
+  Logic Levels:           1  (RAMD32=1)
+  Clock Path Skew:        -0.149ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    3.004ns = ( 6.336 - 3.332 ) 
+    Source Clock Delay      (SCD):    2.620ns
+    Clock Pessimism Removal (CPR):    -0.533ns
+  Clock Uncertainty:      0.052ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.077ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.246ns (routing 0.171ns, distribution 1.075ns)
+  Clock Net Delay (Destination): 1.081ns (routing 0.155ns, distribution 0.926ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock mmcm_clkout0 rise edge)
+                                                      0.000     0.000 r  
+    BJ43                                              0.000     0.000 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     0.000    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.782     0.782 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.050     0.832    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     0.832 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.397     1.229    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                     -0.127     1.102 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.244     1.346    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.028     1.374 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.246     2.620    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/div_clk
+    SLICE_X133Y152       FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X133Y152       FDRE (Prop_EFF_SLICEM_C_Q)
+                                                      0.076     2.696 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/Q
+                         net (fo=581, routed)         3.200     5.896    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buffer_ram[12].RAM32M0/ADDRB1
+    SLICE_X129Y14        RAMD32 (Prop_B6LUT_SLICEM_RADR1_O)
+                                                      0.125     6.021 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buffer_ram[12].RAM32M0/RAMB_D1/O
+                         net (fo=1, routed)           0.059     6.080    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_w[75]
+    SLICE_X129Y14        FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[75]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock mmcm_clkout0 rise edge)
+                                                      3.332     3.332 r  
+    BJ43                                              0.000     3.332 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     3.332    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.671     4.003 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.040     4.043    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     4.043 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.344     4.387    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                      0.630     5.017 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.214     5.231    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.024     5.255 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.081     6.336    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/div_clk
+    SLICE_X129Y14        FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[75]/C
+                         clock pessimism             -0.533     5.803    
+                         clock uncertainty           -0.052     5.751    
+    SLICE_X129Y14        FDRE (Setup_BFF_SLICEM_C_D)
+                                                      0.025     5.776    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[75]
+  -------------------------------------------------------------------
+                         required time                          5.776    
+                         arrival time                          -6.080    
+  -------------------------------------------------------------------
+                         slack                                 -0.304    
+
+Slack (VIOLATED) :        -0.304ns  (required time - arrival time)
+  Source:                 design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tready_o_reg/C
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[176]/CE
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             xdma_0_axi_aclk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.000ns  (xdma_0_axi_aclk rise@4.000ns - xdma_0_axi_aclk rise@0.000ns)
+  Data Path Delay:        4.221ns  (logic 0.292ns (6.918%)  route 3.929ns (93.082%))
+  Logic Levels:           2  (LUT5=1 LUT6=1)
+  Clock Path Skew:        0.023ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    2.055ns = ( 6.055 - 4.000 ) 
+    Source Clock Delay      (SCD):    2.193ns
+    Clock Pessimism Removal (CPR):    0.161ns
+  Clock Uncertainty:      0.046ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.060ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.978ns (routing 0.582ns, distribution 1.396ns)
+  Clock Net Delay (Destination): 1.863ns (routing 0.526ns, distribution 1.337ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      0.000     0.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     0.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.085     0.085    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.130     0.215 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.978     2.193    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/CLK_USERCLK
+    SLICE_X183Y23        FDRE                                         r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tready_o_reg/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X183Y23        FDRE (Prop_AFF_SLICEL_C_Q)
+                                                      0.079     2.272 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tready_o_reg/Q
+                         net (fo=17, routed)          0.693     2.965    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/m_axis_rq\\.tready
+    SLICE_X167Y51        LUT6 (Prop_G6LUT_SLICEM_I5_O)
+                                                      0.090     3.055 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head[511]_i_4/O
+                         net (fo=550, routed)         0.057     3.112    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head1
+    SLICE_X167Y51        LUT5 (Prop_C6LUT_SLICEM_I0_O)
+                                                      0.123     3.235 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head[511]_i_2/O
+                         net (fo=549, routed)         3.179     6.414    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head[511]_i_2_n_0
+    SLICE_X160Y3         FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[176]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      4.000     4.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     4.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.078     4.078    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.114     4.192 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.863     6.055    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/user_clk
+    SLICE_X160Y3         FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[176]/C
+                         clock pessimism              0.161     6.216    
+                         clock uncertainty           -0.046     6.170    
+    SLICE_X160Y3         FDRE (Setup_DFF_SLICEL_C_CE)
+                                                     -0.060     6.110    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[176]
+  -------------------------------------------------------------------
+                         required time                          6.110    
+                         arrival time                          -6.414    
+  -------------------------------------------------------------------
+                         slack                                 -0.304    
+
+Slack (VIOLATED) :        -0.304ns  (required time - arrival time)
+  Source:                 design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tready_o_reg/C
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[241]/CE
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             xdma_0_axi_aclk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.000ns  (xdma_0_axi_aclk rise@4.000ns - xdma_0_axi_aclk rise@0.000ns)
+  Data Path Delay:        4.221ns  (logic 0.292ns (6.918%)  route 3.929ns (93.082%))
+  Logic Levels:           2  (LUT5=1 LUT6=1)
+  Clock Path Skew:        0.023ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    2.055ns = ( 6.055 - 4.000 ) 
+    Source Clock Delay      (SCD):    2.193ns
+    Clock Pessimism Removal (CPR):    0.161ns
+  Clock Uncertainty:      0.046ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.060ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.978ns (routing 0.582ns, distribution 1.396ns)
+  Clock Net Delay (Destination): 1.863ns (routing 0.526ns, distribution 1.337ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      0.000     0.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     0.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.085     0.085    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.130     0.215 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.978     2.193    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/CLK_USERCLK
+    SLICE_X183Y23        FDRE                                         r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tready_o_reg/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X183Y23        FDRE (Prop_AFF_SLICEL_C_Q)
+                                                      0.079     2.272 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tready_o_reg/Q
+                         net (fo=17, routed)          0.693     2.965    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/m_axis_rq\\.tready
+    SLICE_X167Y51        LUT6 (Prop_G6LUT_SLICEM_I5_O)
+                                                      0.090     3.055 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head[511]_i_4/O
+                         net (fo=550, routed)         0.057     3.112    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head1
+    SLICE_X167Y51        LUT5 (Prop_C6LUT_SLICEM_I0_O)
+                                                      0.123     3.235 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head[511]_i_2/O
+                         net (fo=549, routed)         3.179     6.414    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head[511]_i_2_n_0
+    SLICE_X160Y3         FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[241]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      4.000     4.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     4.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.078     4.078    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.114     4.192 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.863     6.055    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/user_clk
+    SLICE_X160Y3         FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[241]/C
+                         clock pessimism              0.161     6.216    
+                         clock uncertainty           -0.046     6.170    
+    SLICE_X160Y3         FDRE (Setup_CFF_SLICEL_C_CE)
+                                                     -0.060     6.110    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[241]
+  -------------------------------------------------------------------
+                         required time                          6.110    
+                         arrival time                          -6.414    
+  -------------------------------------------------------------------
+                         slack                                 -0.304    
+
+Slack (VIOLATED) :        -0.304ns  (required time - arrival time)
+  Source:                 design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tready_o_reg/C
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[432]/CE
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             xdma_0_axi_aclk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.000ns  (xdma_0_axi_aclk rise@4.000ns - xdma_0_axi_aclk rise@0.000ns)
+  Data Path Delay:        4.221ns  (logic 0.292ns (6.918%)  route 3.929ns (93.082%))
+  Logic Levels:           2  (LUT5=1 LUT6=1)
+  Clock Path Skew:        0.023ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    2.055ns = ( 6.055 - 4.000 ) 
+    Source Clock Delay      (SCD):    2.193ns
+    Clock Pessimism Removal (CPR):    0.161ns
+  Clock Uncertainty:      0.046ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.060ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.978ns (routing 0.582ns, distribution 1.396ns)
+  Clock Net Delay (Destination): 1.863ns (routing 0.526ns, distribution 1.337ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      0.000     0.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     0.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.085     0.085    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.130     0.215 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.978     2.193    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/CLK_USERCLK
+    SLICE_X183Y23        FDRE                                         r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tready_o_reg/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X183Y23        FDRE (Prop_AFF_SLICEL_C_Q)
+                                                      0.079     2.272 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tready_o_reg/Q
+                         net (fo=17, routed)          0.693     2.965    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/m_axis_rq\\.tready
+    SLICE_X167Y51        LUT6 (Prop_G6LUT_SLICEM_I5_O)
+                                                      0.090     3.055 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head[511]_i_4/O
+                         net (fo=550, routed)         0.057     3.112    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head1
+    SLICE_X167Y51        LUT5 (Prop_C6LUT_SLICEM_I0_O)
+                                                      0.123     3.235 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head[511]_i_2/O
+                         net (fo=549, routed)         3.179     6.414    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head[511]_i_2_n_0
+    SLICE_X160Y3         FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[432]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      4.000     4.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     4.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.078     4.078    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.114     4.192 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.863     6.055    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/user_clk
+    SLICE_X160Y3         FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[432]/C
+                         clock pessimism              0.161     6.216    
+                         clock uncertainty           -0.046     6.170    
+    SLICE_X160Y3         FDRE (Setup_BFF_SLICEL_C_CE)
+                                                     -0.060     6.110    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[432]
+  -------------------------------------------------------------------
+                         required time                          6.110    
+                         arrival time                          -6.414    
+  -------------------------------------------------------------------
+                         slack                                 -0.304    
+
+Slack (VIOLATED) :        -0.304ns  (required time - arrival time)
+  Source:                 design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_adr_offset_reg[3]_rep__18/C
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload_reg[175]/D
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             xdma_0_axi_aclk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.000ns  (xdma_0_axi_aclk rise@4.000ns - xdma_0_axi_aclk rise@0.000ns)
+  Data Path Delay:        4.370ns  (logic 0.333ns (7.620%)  route 4.037ns (92.380%))
+  Logic Levels:           4  (LUT2=1 LUT4=1 LUT6=2)
+  Clock Path Skew:        0.087ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    2.078ns = ( 6.078 - 4.000 ) 
+    Source Clock Delay      (SCD):    2.149ns
+    Clock Pessimism Removal (CPR):    0.158ns
+  Clock Uncertainty:      0.046ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.060ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.934ns (routing 0.582ns, distribution 1.352ns)
+  Clock Net Delay (Destination): 1.886ns (routing 0.526ns, distribution 1.360ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      0.000     0.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     0.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.085     0.085    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.130     0.215 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.934     2.149    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/user_clk
+    SLICE_X191Y110       FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_adr_offset_reg[3]_rep__18/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X191Y110       FDRE (Prop_EFF_SLICEM_C_Q)
+                                                      0.076     2.225 f  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_adr_offset_reg[3]_rep__18/Q
+                         net (fo=133, routed)         0.488     2.713    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_adr_offset_reg[3]_rep__18_n_0
+    SLICE_X204Y119       LUT2 (Prop_F6LUT_SLICEL_I0_O)
+                                                      0.035     2.748 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[991]_i_11/O
+                         net (fo=114, routed)         3.138     5.886    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[991]_i_11_n_0
+    SLICE_X149Y94        LUT6 (Prop_C6LUT_SLICEM_I3_O)
+                                                      0.037     5.923 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[175]_i_7/O
+                         net (fo=1, routed)           0.059     5.982    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg2_pload_mux4[175]
+    SLICE_X149Y94        LUT4 (Prop_F6LUT_SLICEM_I0_O)
+                                                      0.148     6.130 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[175]_i_3/O
+                         net (fo=1, routed)           0.286     6.416    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[175]_i_3_n_0
+    SLICE_X152Y93        LUT6 (Prop_C6LUT_SLICEM_I1_O)
+                                                      0.037     6.453 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[175]_i_1/O
+                         net (fo=1, routed)           0.066     6.519    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[175]_i_1_n_0
+    SLICE_X152Y93        FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload_reg[175]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      4.000     4.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     4.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.078     4.078    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.114     4.192 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.886     6.078    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/user_clk
+    SLICE_X152Y93        FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload_reg[175]/C
+                         clock pessimism              0.158     6.236    
+                         clock uncertainty           -0.046     6.190    
+    SLICE_X152Y93        FDRE (Setup_CFF_SLICEM_C_D)
+                                                      0.025     6.215    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload_reg[175]
+  -------------------------------------------------------------------
+                         required time                          6.215    
+                         arrival time                          -6.519    
+  -------------------------------------------------------------------
+                         slack                                 -0.304    
+
+Slack (VIOLATED) :        -0.303ns  (required time - arrival time)
+  Source:                 design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.gl0.rd/rpntr/gc0.count_d1_reg[0]/C
+                            (rising edge-triggered cell FDCE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/gdm.dm_gen.dm/gpr1.dout_i_reg[114]/D
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             xdma_0_axi_aclk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.000ns  (xdma_0_axi_aclk rise@4.000ns - xdma_0_axi_aclk rise@0.000ns)
+  Data Path Delay:        4.002ns  (logic 0.245ns (6.122%)  route 3.757ns (93.878%))
+  Logic Levels:           1  (RAMD32=1)
+  Clock Path Skew:        -0.280ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    2.170ns = ( 6.170 - 4.000 ) 
+    Source Clock Delay      (SCD):    2.621ns
+    Clock Pessimism Removal (CPR):    0.171ns
+  Clock Uncertainty:      0.046ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.060ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      2.406ns (routing 0.582ns, distribution 1.824ns)
+  Clock Net Delay (Destination): 1.978ns (routing 0.526ns, distribution 1.452ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      0.000     0.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     0.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.085     0.085    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.130     0.215 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       2.406     2.621    design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.gl0.rd/rpntr/s_aclk
+    SLICE_X109Y31        FDCE                                         r  design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.gl0.rd/rpntr/gc0.count_d1_reg[0]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X109Y31        FDCE (Prop_GFF_SLICEM_C_Q)
+                                                      0.078     2.699 r  design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.gl0.rd/rpntr/gc0.count_d1_reg[0]/Q
+                         net (fo=521, routed)         3.341     6.040    design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/gdm.dm_gen.dm/RAM_reg_0_15_112_125/ADDRB0
+    SLICE_X149Y50        RAMD32 (Prop_B5LUT_SLICEM_RADR0_O)
+                                                      0.167     6.207 r  design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/gdm.dm_gen.dm/RAM_reg_0_15_112_125/RAMB/O
+                         net (fo=1, routed)           0.416     6.623    design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/gdm.dm_gen.dm/RAM_reg_0_15_112_125_n_3
+    SLICE_X151Y53        FDRE                                         r  design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/gdm.dm_gen.dm/gpr1.dout_i_reg[114]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      4.000     4.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     4.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.078     4.078    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.114     4.192 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.978     6.170    design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/gdm.dm_gen.dm/s_aclk
+    SLICE_X151Y53        FDRE                                         r  design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/gdm.dm_gen.dm/gpr1.dout_i_reg[114]/C
+                         clock pessimism              0.171     6.341    
+                         clock uncertainty           -0.046     6.295    
+    SLICE_X151Y53        FDRE (Setup_DFF_SLICEL_C_D)
+                                                      0.025     6.320    design_1_i/axi_clock_converter_0/inst/gen_clock_conv.gen_async_conv.asyncfifo_axi/inst_fifo_gen/gaxi_full_lite.gread_ch.grdch2.axi_rdch/grf.rf/gntv_or_sync_fifo.mem/gdm.dm_gen.dm/gpr1.dout_i_reg[114]
+  -------------------------------------------------------------------
+                         required time                          6.320    
+                         arrival time                          -6.623    
+  -------------------------------------------------------------------
+                         slack                                 -0.303    
+
+Slack (VIOLATED) :        -0.303ns  (required time - arrival time)
+  Source:                 design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tready_o_reg/C
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[463]/CE
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             xdma_0_axi_aclk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.000ns  (xdma_0_axi_aclk rise@4.000ns - xdma_0_axi_aclk rise@0.000ns)
+  Data Path Delay:        4.317ns  (logic 0.292ns (6.764%)  route 4.025ns (93.236%))
+  Logic Levels:           2  (LUT5=1 LUT6=1)
+  Clock Path Skew:        0.120ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    2.152ns = ( 6.152 - 4.000 ) 
+    Source Clock Delay      (SCD):    2.193ns
+    Clock Pessimism Removal (CPR):    0.161ns
+  Clock Uncertainty:      0.046ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.060ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.978ns (routing 0.582ns, distribution 1.396ns)
+  Clock Net Delay (Destination): 1.960ns (routing 0.526ns, distribution 1.434ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      0.000     0.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     0.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.085     0.085    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.130     0.215 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.978     2.193    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/CLK_USERCLK
+    SLICE_X183Y23        FDRE                                         r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tready_o_reg/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X183Y23        FDRE (Prop_AFF_SLICEL_C_Q)
+                                                      0.079     2.272 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_rq_intfc_mod/s_axis_rq_tready_o_reg/Q
+                         net (fo=17, routed)          0.693     2.965    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/m_axis_rq\\.tready
+    SLICE_X167Y51        LUT6 (Prop_G6LUT_SLICEM_I5_O)
+                                                      0.090     3.055 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head[511]_i_4/O
+                         net (fo=550, routed)         0.057     3.112    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head1
+    SLICE_X167Y51        LUT5 (Prop_C6LUT_SLICEM_I0_O)
+                                                      0.123     3.235 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head[511]_i_2/O
+                         net (fo=549, routed)         3.275     6.510    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head[511]_i_2_n_0
+    SLICE_X160Y6         FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[463]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      4.000     4.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     4.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.078     4.078    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.114     4.192 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.960     6.152    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/user_clk
+    SLICE_X160Y6         FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[463]/C
+                         clock pessimism              0.161     6.313    
+                         clock uncertainty           -0.046     6.267    
+    SLICE_X160Y6         FDRE (Setup_DFF_SLICEL_C_CE)
+                                                     -0.060     6.207    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[463]
+  -------------------------------------------------------------------
+                         required time                          6.207    
+                         arrival time                          -6.510    
+  -------------------------------------------------------------------
+                         slack                                 -0.303    
+
+Slack (VIOLATED) :        -0.302ns  (required time - arrival time)
+  Source:                 design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/C
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Destination:            design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[191]/D
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Path Group:             mmcm_clkout0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.332ns  (mmcm_clkout0 rise@3.332ns - mmcm_clkout0 rise@0.000ns)
+  Data Path Delay:        3.469ns  (logic 0.200ns (5.765%)  route 3.269ns (94.235%))
+  Logic Levels:           1  (RAMD32=1)
+  Clock Path Skew:        -0.138ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    3.015ns = ( 6.347 - 3.332 ) 
+    Source Clock Delay      (SCD):    2.620ns
+    Clock Pessimism Removal (CPR):    -0.533ns
+  Clock Uncertainty:      0.052ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.077ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.246ns (routing 0.171ns, distribution 1.075ns)
+  Clock Net Delay (Destination): 1.092ns (routing 0.155ns, distribution 0.937ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock mmcm_clkout0 rise edge)
+                                                      0.000     0.000 r  
+    BJ43                                              0.000     0.000 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     0.000    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.782     0.782 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.050     0.832    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     0.832 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.397     1.229    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                     -0.127     1.102 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.244     1.346    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.028     1.374 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.246     2.620    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/div_clk
+    SLICE_X133Y152       FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X133Y152       FDRE (Prop_EFF_SLICEM_C_Q)
+                                                      0.076     2.696 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/Q
+                         net (fo=581, routed)         3.214     5.910    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buffer_ram[31].RAM32M0/ADDRA1
+    SLICE_X133Y5         RAMD32 (Prop_E6LUT_SLICEM_RADR1_O)
+                                                      0.124     6.034 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buffer_ram[31].RAM32M0/RAMA_D1/O
+                         net (fo=1, routed)           0.055     6.089    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_w[191]
+    SLICE_X133Y5         FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[191]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock mmcm_clkout0 rise edge)
+                                                      3.332     3.332 r  
+    BJ43                                              0.000     3.332 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     3.332    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.671     4.003 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.040     4.043    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     4.043 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.344     4.387    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                      0.630     5.017 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.214     5.231    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.024     5.255 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.092     6.347    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/div_clk
+    SLICE_X133Y5         FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[191]/C
+                         clock pessimism             -0.533     5.814    
+                         clock uncertainty           -0.052     5.762    
+    SLICE_X133Y5         FDRE (Setup_EFF_SLICEM_C_D)
+                                                      0.025     5.787    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[191]
+  -------------------------------------------------------------------
+                         required time                          5.787    
+                         arrival time                          -6.089    
+  -------------------------------------------------------------------
+                         slack                                 -0.302    
+
+Slack (VIOLATED) :        -0.302ns  (required time - arrival time)
+  Source:                 design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/C
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Destination:            design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[67]/D
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Path Group:             mmcm_clkout0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.332ns  (mmcm_clkout0 rise@3.332ns - mmcm_clkout0 rise@0.000ns)
+  Data Path Delay:        3.457ns  (logic 0.199ns (5.756%)  route 3.258ns (94.244%))
+  Logic Levels:           1  (RAMD32=1)
+  Clock Path Skew:        -0.150ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    3.003ns = ( 6.335 - 3.332 ) 
+    Source Clock Delay      (SCD):    2.620ns
+    Clock Pessimism Removal (CPR):    -0.533ns
+  Clock Uncertainty:      0.052ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.077ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.246ns (routing 0.171ns, distribution 1.075ns)
+  Clock Net Delay (Destination): 1.080ns (routing 0.155ns, distribution 0.925ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock mmcm_clkout0 rise edge)
+                                                      0.000     0.000 r  
+    BJ43                                              0.000     0.000 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     0.000    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.782     0.782 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.050     0.832    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     0.832 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.397     1.229    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                     -0.127     1.102 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.244     1.346    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.028     1.374 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.246     2.620    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/div_clk
+    SLICE_X133Y152       FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X133Y152       FDRE (Prop_EFF_SLICEM_C_Q)
+                                                      0.076     2.696 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/Q
+                         net (fo=581, routed)         3.199     5.895    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buffer_ram[11].RAM32M0/ADDRC1
+    SLICE_X129Y14        RAMD32 (Prop_G6LUT_SLICEM_RADR1_O)
+                                                      0.123     6.018 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buffer_ram[11].RAM32M0/RAMC_D1/O
+                         net (fo=1, routed)           0.059     6.077    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_w[67]
+    SLICE_X129Y14        FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[67]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock mmcm_clkout0 rise edge)
+                                                      3.332     3.332 r  
+    BJ43                                              0.000     3.332 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     3.332    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.671     4.003 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.040     4.043    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     4.043 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.344     4.387    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                      0.630     5.017 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.214     5.231    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.024     5.255 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.080     6.335    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/div_clk
+    SLICE_X129Y14        FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[67]/C
+                         clock pessimism             -0.533     5.802    
+                         clock uncertainty           -0.052     5.750    
+    SLICE_X129Y14        FDRE (Setup_GFF_SLICEM_C_D)
+                                                      0.025     5.775    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[67]
+  -------------------------------------------------------------------
+                         required time                          5.775    
+                         arrival time                          -6.077    
+  -------------------------------------------------------------------
+                         slack                                 -0.302    
+
+Slack (VIOLATED) :        -0.302ns  (required time - arrival time)
+  Source:                 design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_adr_offset_reg[3]_rep__18/C
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload_reg[305]/D
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             xdma_0_axi_aclk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.000ns  (xdma_0_axi_aclk rise@4.000ns - xdma_0_axi_aclk rise@0.000ns)
+  Data Path Delay:        4.313ns  (logic 0.299ns (6.933%)  route 4.014ns (93.067%))
+  Logic Levels:           4  (LUT2=1 LUT5=1 LUT6=2)
+  Clock Path Skew:        0.032ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    2.023ns = ( 6.023 - 4.000 ) 
+    Source Clock Delay      (SCD):    2.149ns
+    Clock Pessimism Removal (CPR):    0.158ns
+  Clock Uncertainty:      0.046ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.060ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.934ns (routing 0.582ns, distribution 1.352ns)
+  Clock Net Delay (Destination): 1.831ns (routing 0.526ns, distribution 1.305ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      0.000     0.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     0.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.085     0.085    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.130     0.215 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.934     2.149    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/user_clk
+    SLICE_X191Y110       FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_adr_offset_reg[3]_rep__18/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X191Y110       FDRE (Prop_EFF_SLICEM_C_Q)
+                                                      0.076     2.225 f  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_adr_offset_reg[3]_rep__18/Q
+                         net (fo=133, routed)         0.488     2.713    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_adr_offset_reg[3]_rep__18_n_0
+    SLICE_X204Y119       LUT2 (Prop_F6LUT_SLICEL_I0_O)
+                                                      0.035     2.748 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[991]_i_11/O
+                         net (fo=114, routed)         3.176     5.924    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[991]_i_11_n_0
+    SLICE_X159Y76        LUT5 (Prop_F6LUT_SLICEL_I3_O)
+                                                      0.049     5.973 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[305]_i_9/O
+                         net (fo=1, routed)           0.087     6.060    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg2_pload_mux4[305]
+    SLICE_X159Y76        LUT6 (Prop_C6LUT_SLICEL_I4_O)
+                                                      0.050     6.110 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[305]_i_3/O
+                         net (fo=1, routed)           0.214     6.324    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[305]_i_3_n_0
+    SLICE_X163Y77        LUT6 (Prop_D6LUT_SLICEL_I2_O)
+                                                      0.089     6.413 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[305]_i_1/O
+                         net (fo=1, routed)           0.049     6.462    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[305]_i_1_n_0
+    SLICE_X163Y77        FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload_reg[305]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      4.000     4.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     4.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.078     4.078    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.114     4.192 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.831     6.023    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/user_clk
+    SLICE_X163Y77        FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload_reg[305]/C
+                         clock pessimism              0.158     6.181    
+                         clock uncertainty           -0.046     6.135    
+    SLICE_X163Y77        FDRE (Setup_DFF_SLICEL_C_D)
+                                                      0.025     6.160    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload_reg[305]
+  -------------------------------------------------------------------
+                         required time                          6.160    
+                         arrival time                          -6.462    
+  -------------------------------------------------------------------
+                         slack                                 -0.302    
+
+Slack (VIOLATED) :        -0.301ns  (required time - arrival time)
+  Source:                 design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_io_addr_sync/SYNC[2].sync_reg_reg[1]/C
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Destination:            design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_cal/u_ddr_cal_addr_decode/lowCL1_reg[45]/D
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Path Group:             mmcm_clkout0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.332ns  (mmcm_clkout0 rise@3.332ns - mmcm_clkout0 rise@0.000ns)
+  Data Path Delay:        3.492ns  (logic 0.436ns (12.486%)  route 3.056ns (87.514%))
+  Logic Levels:           3  (LUT4=1 LUT5=1 LUT6=1)
+  Clock Path Skew:        -0.114ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    3.022ns = ( 6.354 - 3.332 ) 
+    Source Clock Delay      (SCD):    2.603ns
+    Clock Pessimism Removal (CPR):    -0.533ns
+  Clock Uncertainty:      0.052ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.077ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.229ns (routing 0.171ns, distribution 1.058ns)
+  Clock Net Delay (Destination): 1.099ns (routing 0.155ns, distribution 0.944ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock mmcm_clkout0 rise edge)
+                                                      0.000     0.000 r  
+    BJ43                                              0.000     0.000 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     0.000    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.782     0.782 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.050     0.832    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     0.832 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.397     1.229    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                     -0.127     1.102 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.244     1.346    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.028     1.374 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.229     2.603    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_io_addr_sync/div_clk
+    SLICE_X142Y102       FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_io_addr_sync/SYNC[2].sync_reg_reg[1]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X142Y102       FDRE (Prop_BFF2_SLICEM_C_Q)
+                                                      0.080     2.683 f  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_io_addr_sync/SYNC[2].sync_reg_reg[1]/Q
+                         net (fo=789, routed)         1.473     4.156    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_io_addr_sync/SYNC[2].sync_reg[1]
+    SLICE_X140Y124       LUT4 (Prop_D5LUT_SLICEL_I0_O)
+                                                      0.110     4.266 f  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_io_addr_sync/uppCL0[49]_i_4/O
+                         net (fo=62, routed)          1.097     5.363    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_io_addr_sync/uppCL0[49]_i_4_n_0
+    SLICE_X137Y142       LUT5 (Prop_F6LUT_SLICEM_I0_O)
+                                                      0.123     5.486 f  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_io_addr_sync/lowCL1[53]_i_2/O
+                         net (fo=14, routed)          0.438     5.924    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_io_addr_sync/lowCL1[53]_i_2_n_0
+    SLICE_X138Y148       LUT6 (Prop_G6LUT_SLICEL_I1_O)
+                                                      0.123     6.047 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_io_addr_sync/lowCL1[45]_i_1/O
+                         net (fo=1, routed)           0.048     6.095    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_cal/u_ddr_cal_addr_decode/lowCL1_reg[53]_2[45]
+    SLICE_X138Y148       FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_cal/u_ddr_cal_addr_decode/lowCL1_reg[45]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock mmcm_clkout0 rise edge)
+                                                      3.332     3.332 r  
+    BJ43                                              0.000     3.332 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     3.332    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.671     4.003 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.040     4.043    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     4.043 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.344     4.387    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                      0.630     5.017 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.214     5.231    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.024     5.255 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.099     6.354    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_cal/u_ddr_cal_addr_decode/div_clk
+    SLICE_X138Y148       FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_cal/u_ddr_cal_addr_decode/lowCL1_reg[45]/C
+                         clock pessimism             -0.533     5.821    
+                         clock uncertainty           -0.052     5.769    
+    SLICE_X138Y148       FDRE (Setup_GFF_SLICEL_C_D)
+                                                      0.025     5.794    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_cal/u_ddr_cal_addr_decode/lowCL1_reg[45]
+  -------------------------------------------------------------------
+                         required time                          5.794    
+                         arrival time                          -6.095    
+  -------------------------------------------------------------------
+                         slack                                 -0.301    
+
+Slack (VIOLATED) :        -0.300ns  (required time - arrival time)
+  Source:                 design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/C
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Destination:            design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[153]/D
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Path Group:             mmcm_clkout0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.332ns  (mmcm_clkout0 rise@3.332ns - mmcm_clkout0 rise@0.000ns)
+  Data Path Delay:        3.466ns  (logic 0.201ns (5.799%)  route 3.265ns (94.201%))
+  Logic Levels:           1  (RAMD32=1)
+  Clock Path Skew:        -0.139ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    3.014ns = ( 6.346 - 3.332 ) 
+    Source Clock Delay      (SCD):    2.620ns
+    Clock Pessimism Removal (CPR):    -0.533ns
+  Clock Uncertainty:      0.052ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.077ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.246ns (routing 0.171ns, distribution 1.075ns)
+  Clock Net Delay (Destination): 1.091ns (routing 0.155ns, distribution 0.936ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock mmcm_clkout0 rise edge)
+                                                      0.000     0.000 r  
+    BJ43                                              0.000     0.000 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     0.000    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.782     0.782 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.050     0.832    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     0.832 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.397     1.229    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                     -0.127     1.102 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.244     1.346    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.028     1.374 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.246     2.620    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/div_clk
+    SLICE_X133Y152       FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X133Y152       FDRE (Prop_EFF_SLICEM_C_Q)
+                                                      0.076     2.696 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/Q
+                         net (fo=581, routed)         3.206     5.902    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buffer_ram[25].RAM32M0/ADDRB1
+    SLICE_X129Y4         RAMD32 (Prop_B6LUT_SLICEM_RADR1_O)
+                                                      0.125     6.027 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buffer_ram[25].RAM32M0/RAMB_D1/O
+                         net (fo=1, routed)           0.059     6.086    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_w[153]
+    SLICE_X129Y4         FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[153]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock mmcm_clkout0 rise edge)
+                                                      3.332     3.332 r  
+    BJ43                                              0.000     3.332 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     3.332    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.671     4.003 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.040     4.043    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     4.043 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.344     4.387    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                      0.630     5.017 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.214     5.231    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.024     5.255 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.091     6.346    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/div_clk
+    SLICE_X129Y4         FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[153]/C
+                         clock pessimism             -0.533     5.813    
+                         clock uncertainty           -0.052     5.761    
+    SLICE_X129Y4         FDRE (Setup_BFF_SLICEM_C_D)
+                                                      0.025     5.786    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[153]
+  -------------------------------------------------------------------
+                         required time                          5.786    
+                         arrival time                          -6.086    
+  -------------------------------------------------------------------
+                         slack                                 -0.300    
+
+Slack (VIOLATED) :        -0.300ns  (required time - arrival time)
+  Source:                 design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_adr_offset_reg[3]_rep__18/C
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload_reg[177]/D
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Path Group:             xdma_0_axi_aclk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            4.000ns  (xdma_0_axi_aclk rise@4.000ns - xdma_0_axi_aclk rise@0.000ns)
+  Data Path Delay:        4.310ns  (logic 0.473ns (10.974%)  route 3.837ns (89.026%))
+  Logic Levels:           4  (LUT2=1 LUT4=1 LUT6=2)
+  Clock Path Skew:        0.031ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    2.022ns = ( 6.022 - 4.000 ) 
+    Source Clock Delay      (SCD):    2.149ns
+    Clock Pessimism Removal (CPR):    0.158ns
+  Clock Uncertainty:      0.046ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.060ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.934ns (routing 0.582ns, distribution 1.352ns)
+  Clock Net Delay (Destination): 1.830ns (routing 0.526ns, distribution 1.304ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      0.000     0.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     0.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.085     0.085    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.130     0.215 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.934     2.149    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/user_clk
+    SLICE_X191Y110       FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_adr_offset_reg[3]_rep__18/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X191Y110       FDRE (Prop_EFF_SLICEM_C_Q)
+                                                      0.076     2.225 f  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_adr_offset_reg[3]_rep__18/Q
+                         net (fo=133, routed)         0.488     2.713    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_adr_offset_reg[3]_rep__18_n_0
+    SLICE_X204Y119       LUT2 (Prop_F6LUT_SLICEL_I0_O)
+                                                      0.035     2.748 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[991]_i_11/O
+                         net (fo=114, routed)         3.095     5.843    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[991]_i_11_n_0
+    SLICE_X161Y74        LUT6 (Prop_B6LUT_SLICEM_I3_O)
+                                                      0.149     5.992 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[177]_i_8/O
+                         net (fo=1, routed)           0.111     6.103    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg2_pload_mux4[177]
+    SLICE_X162Y74        LUT4 (Prop_F6LUT_SLICEM_I0_O)
+                                                      0.123     6.226 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[177]_i_3/O
+                         net (fo=1, routed)           0.085     6.311    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[177]_i_3_n_0
+    SLICE_X162Y75        LUT6 (Prop_H6LUT_SLICEM_I1_O)
+                                                      0.090     6.401 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[177]_i_1/O
+                         net (fo=1, routed)           0.058     6.459    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload[177]_i_1_n_0
+    SLICE_X162Y75        FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload_reg[177]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      4.000     4.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     4.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, routed)           0.078     4.078    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.114     4.192 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X7Y2 (CLOCK_ROOT)    net (fo=56022, routed)       1.830     6.022    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/user_clk
+    SLICE_X162Y75        FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload_reg[177]/C
+                         clock pessimism              0.158     6.180    
+                         clock uncertainty           -0.046     6.134    
+    SLICE_X162Y75        FDRE (Setup_HFF_SLICEM_C_D)
+                                                      0.025     6.159    design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rc/tlp_stg3_pload_reg[177]
+  -------------------------------------------------------------------
+                         required time                          6.159    
+                         arrival time                          -6.459    
+  -------------------------------------------------------------------
+                         slack                                 -0.300    
+
+Slack (VIOLATED) :        -0.299ns  (required time - arrival time)
+  Source:                 design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/C
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Destination:            design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[141]/D
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Path Group:             mmcm_clkout0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.332ns  (mmcm_clkout0 rise@3.332ns - mmcm_clkout0 rise@0.000ns)
+  Data Path Delay:        3.463ns  (logic 0.201ns (5.804%)  route 3.262ns (94.196%))
+  Logic Levels:           1  (RAMD32=1)
+  Clock Path Skew:        -0.141ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    3.012ns = ( 6.344 - 3.332 ) 
+    Source Clock Delay      (SCD):    2.620ns
+    Clock Pessimism Removal (CPR):    -0.533ns
+  Clock Uncertainty:      0.052ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.077ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.246ns (routing 0.171ns, distribution 1.075ns)
+  Clock Net Delay (Destination): 1.089ns (routing 0.155ns, distribution 0.934ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock mmcm_clkout0 rise edge)
+                                                      0.000     0.000 r  
+    BJ43                                              0.000     0.000 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     0.000    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.782     0.782 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.050     0.832    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     0.832 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.397     1.229    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                     -0.127     1.102 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.244     1.346    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.028     1.374 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.246     2.620    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/div_clk
+    SLICE_X133Y152       FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X133Y152       FDRE (Prop_EFF_SLICEM_C_Q)
+                                                      0.076     2.696 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/Q
+                         net (fo=581, routed)         3.203     5.899    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buffer_ram[23].RAM32M0/ADDRB1
+    SLICE_X129Y9         RAMD32 (Prop_B6LUT_SLICEM_RADR1_O)
+                                                      0.125     6.024 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buffer_ram[23].RAM32M0/RAMB_D1/O
+                         net (fo=1, routed)           0.059     6.083    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_w[141]
+    SLICE_X129Y9         FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[141]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock mmcm_clkout0 rise edge)
+                                                      3.332     3.332 r  
+    BJ43                                              0.000     3.332 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     3.332    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.671     4.003 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.040     4.043    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     4.043 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.344     4.387    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                      0.630     5.017 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.214     5.231    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.024     5.255 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.089     6.344    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/div_clk
+    SLICE_X129Y9         FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[141]/C
+                         clock pessimism             -0.533     5.811    
+                         clock uncertainty           -0.052     5.759    
+    SLICE_X129Y9         FDRE (Setup_BFF_SLICEM_C_D)
+                                                      0.025     5.784    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[141]
+  -------------------------------------------------------------------
+                         required time                          5.784    
+                         arrival time                          -6.083    
+  -------------------------------------------------------------------
+                         slack                                 -0.299    
+
+Slack (VIOLATED) :        -0.299ns  (required time - arrival time)
+  Source:                 design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/C
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Destination:            design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[179]/D
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Path Group:             mmcm_clkout0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.332ns  (mmcm_clkout0 rise@3.332ns - mmcm_clkout0 rise@0.000ns)
+  Data Path Delay:        3.517ns  (logic 0.201ns (5.715%)  route 3.316ns (94.285%))
+  Logic Levels:           1  (RAMD32=1)
+  Clock Path Skew:        -0.087ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    3.066ns = ( 6.398 - 3.332 ) 
+    Source Clock Delay      (SCD):    2.620ns
+    Clock Pessimism Removal (CPR):    -0.533ns
+  Clock Uncertainty:      0.052ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.077ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.246ns (routing 0.171ns, distribution 1.075ns)
+  Clock Net Delay (Destination): 1.143ns (routing 0.155ns, distribution 0.988ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock mmcm_clkout0 rise edge)
+                                                      0.000     0.000 r  
+    BJ43                                              0.000     0.000 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     0.000    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.782     0.782 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.050     0.832    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     0.832 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.397     1.229    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                     -0.127     1.102 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.244     1.346    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.028     1.374 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.246     2.620    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/div_clk
+    SLICE_X133Y152       FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X133Y152       FDRE (Prop_EFF_SLICEM_C_Q)
+                                                      0.076     2.696 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/Q
+                         net (fo=581, routed)         3.263     5.959    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buffer_ram[29].RAM32M0/ADDRA1
+    SLICE_X137Y11        RAMD32 (Prop_A6LUT_SLICEM_RADR1_O)
+                                                      0.125     6.084 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buffer_ram[29].RAM32M0/RAMA_D1/O
+                         net (fo=1, routed)           0.053     6.137    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_w[179]
+    SLICE_X137Y11        FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[179]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock mmcm_clkout0 rise edge)
+                                                      3.332     3.332 r  
+    BJ43                                              0.000     3.332 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     3.332    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.671     4.003 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.040     4.043    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     4.043 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.344     4.387    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                      0.630     5.017 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.214     5.231    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.024     5.255 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.143     6.398    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/div_clk
+    SLICE_X137Y11        FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[179]/C
+                         clock pessimism             -0.533     5.865    
+                         clock uncertainty           -0.052     5.813    
+    SLICE_X137Y11        FDRE (Setup_AFF_SLICEM_C_D)
+                                                      0.025     5.838    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[179]
+  -------------------------------------------------------------------
+                         required time                          5.838    
+                         arrival time                          -6.137    
+  -------------------------------------------------------------------
+                         slack                                 -0.299    
+
+Slack (VIOLATED) :        -0.299ns  (required time - arrival time)
+  Source:                 design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/C
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Destination:            design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[183]/D
+                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})
+  Path Group:             mmcm_clkout0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.332ns  (mmcm_clkout0 rise@3.332ns - mmcm_clkout0 rise@0.000ns)
+  Data Path Delay:        3.512ns  (logic 0.201ns (5.723%)  route 3.311ns (94.277%))
+  Logic Levels:           1  (RAMD32=1)
+  Clock Path Skew:        -0.092ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    3.061ns = ( 6.393 - 3.332 ) 
+    Source Clock Delay      (SCD):    2.620ns
+    Clock Pessimism Removal (CPR):    -0.533ns
+  Clock Uncertainty:      0.052ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.077ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.246ns (routing 0.171ns, distribution 1.075ns)
+  Clock Net Delay (Destination): 1.138ns (routing 0.155ns, distribution 0.983ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock mmcm_clkout0 rise edge)
+                                                      0.000     0.000 r  
+    BJ43                                              0.000     0.000 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     0.000    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.782     0.782 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.050     0.832    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     0.832 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.397     1.229    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                     -0.127     1.102 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.244     1.346    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.028     1.374 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.246     2.620    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/div_clk
+    SLICE_X133Y152       FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X133Y152       FDRE (Prop_EFF_SLICEM_C_Q)
+                                                      0.076     2.696 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_mc_pi/u_ddr_mc_write/wrQ_reg[1][5]/Q
+                         net (fo=581, routed)         3.252     5.948    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buffer_ram[30].RAM32M0/ADDRB1
+    SLICE_X137Y12        RAMD32 (Prop_B6LUT_SLICEM_RADR1_O)
+                                                      0.125     6.073 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buffer_ram[30].RAM32M0/RAMB_D1/O
+                         net (fo=1, routed)           0.059     6.132    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_w[183]
+    SLICE_X137Y12        FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[183]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock mmcm_clkout0 rise edge)
+                                                      3.332     3.332 r  
+    BJ43                                              0.000     3.332 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     3.332    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.671     4.003 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.040     4.043    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     4.043 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.344     4.387    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                      0.630     5.017 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.214     5.231    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y26         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.024     5.255 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+    X4Y1 (CLOCK_ROOT)    net (fo=20477, routed)       1.138     6.393    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/div_clk
+    SLICE_X137Y12        FDRE                                         r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[183]/C
+                         clock pessimism             -0.533     5.860    
+                         clock uncertainty           -0.052     5.808    
+    SLICE_X137Y12        FDRE (Setup_BFF_SLICEM_C_D)
+                                                      0.025     5.833    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_wr_data/wr_buf_out_data_reg[183]
+  -------------------------------------------------------------------
+                         required time                          5.833    
+                         arrival time                          -6.132    
+  -------------------------------------------------------------------
+                         slack                                 -0.299    
+
+
+
+

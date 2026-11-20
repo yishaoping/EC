@@ -1,0 +1,58 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Benchmarks/facesim/main.cpp
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Benchmarks/facesim/main-ec-staged.cpp
+@@ -7,6 +7,7 @@
+ #include "../../Public_Library/Thread_Utilities/THREAD_DIVISION_PARAMETERS.h"
+ 
+ #include "FACE_DRIVER.h"
++#include <malloc.h>
+ #include "Storytelling/STORYTELLING_EXAMPLE.h"
+ #include "../../Public_Library/Utilities/LOG.h"
+ 
+@@ -50,10 +51,17 @@
+ 	parse_args.Add_Option_Argument ("-timing");
+ 	parse_args.Parse (argc, argv);
+ 
+-	STORYTELLING_EXAMPLE<float, float> example;
++	// Prepare resident heap before original initialization and full ROI.
++        mallopt(M_TRIM_THRESHOLD,-1);mallopt(M_MMAP_MAX,0);
++        volatile char *ec_heap=(volatile char*)malloc(768*1024*1024);
++        if(!ec_heap)exit(125);
++        for(size_t i=0;i<768*1024*1024;i+=4096)ec_heap[i]=0;
++        free((void*)ec_heap);
++        STORYTELLING_EXAMPLE<float, float> example;
+ 
+ 	FILE_UTILITIES::Create_Directory (example.output_directory);
+-	LOG::Copy_Log_To_File (example.output_directory + "/log.txt", example.restart);
++	// Auxiliary timing/OS log disabled via existing PhysBAM API. No synthetic times.
++	LOG::Initialize_Logging(true,true,0);
+ 
+ 	if (parse_args.Is_Value_Set ("-threads"))
+ 	{
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Public_Library/Solids_And_Fluids/SOLIDS_FLUIDS_DRIVER.cpp
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Public_Library/Solids_And_Fluids/SOLIDS_FLUIDS_DRIVER-ec-staged.cpp
+@@ -5,6 +5,7 @@
+ // Class SOLIDS_FLUIDS_DRIVER
+ //#####################################################################
+ #include "SOLIDS_FLUIDS_DRIVER.h"
++#include <sstream>
+ #include "../Utilities/LOG.h"
+ #ifdef ENABLE_PARSEC_HOOKS
+ #include <hooks.h>
+@@ -20,6 +21,8 @@
+ 
+ 	if (!example.restart && example.write_output_files && !example.write_substeps) Write_Output_Files (example.first_frame);
+ 
++std::ostringstream ec_messages,ec_errors;
++	std::streambuf *ec_cout=std::cout.rdbuf(ec_messages.rdbuf()),*ec_cerr=std::cerr.rdbuf(ec_errors.rdbuf());
+ #ifdef ENABLE_PARSEC_HOOKS
+ 	__parsec_roi_begin();
+ #endif
+@@ -27,6 +30,8 @@
+ #ifdef ENABLE_PARSEC_HOOKS
+ 	__parsec_roi_end();
+ #endif
++	std::cout.rdbuf(ec_cout);std::cerr.rdbuf(ec_cerr);
++	std::cout<<ec_messages.str();std::cerr<<ec_errors.str();
+ 
+ 	//Always write last frame for verification purposes
+ 	if (!example.write_output_files && !example.write_substeps) Write_Output_Files (example.last_frame);

@@ -1,0 +1,1124 @@
+{
+  "arrays": {
+    "appliedEffectResult": {
+      "bits_per_entry": 64,
+      "declared_reset": false,
+      "sets": 256,
+      "source_uses": [
+        {
+          "assignment": true,
+          "line": 3061,
+          "statement": "s3_result := Mux(duplicate, appliedEffectResult(set)(way),"
+        },
+        {
+          "assignment": true,
+          "line": 3236,
+          "statement": "s3_result := appliedEffectResult(s3_set)(s3_way_idx)"
+        },
+        {
+          "assignment": true,
+          "line": 3487,
+          "statement": "appliedEffectResult(set)(way) := s3_result"
+        }
+      ],
+      "total_payload_bits": 32768,
+      "ways": 2
+    },
+    "appliedEffectToken": {
+      "bits_per_entry": 64,
+      "declared_reset": true,
+      "sets": 256,
+      "source_uses": [
+        {
+          "assignment": false,
+          "line": 2572,
+          "statement": "appliedEffectToken(crossPackagePendingSet)(crossPackagePendingWay),"
+        },
+        {
+          "assignment": false,
+          "line": 3052,
+          "statement": "appliedEffectToken(set)(way) === s2_req(0).effect_token"
+        },
+        {
+          "assignment": false,
+          "line": 3182,
+          "statement": "appliedEffectToken(s3_set)(s3_way_idx) === s3_req.effect_token"
+        },
+        {
+          "assignment": true,
+          "line": 3486,
+          "statement": "appliedEffectToken(set)(way) := s3_req.effect_token"
+        },
+        {
+          "assignment": false,
+          "line": 3800,
+          "statement": "(0 until nWays).map(w => appliedEffectToken(s)(w))))"
+        }
+      ],
+      "total_payload_bits": 32768,
+      "ways": 2
+    },
+    "dirtyPacketSeq": {
+      "bits_per_entry": 32,
+      "declared_reset": true,
+      "sets": 256,
+      "source_uses": [
+        {
+          "assignment": false,
+          "line": 1606,
+          "statement": "val l1ReplacementPacketSeq = dirtyPacketSeq(wbReqSet)(wbReqWay)"
+        },
+        {
+          "assignment": false,
+          "line": 1615,
+          "statement": "crossPackageWbPacketSeq, dirtyPacketSeq(wbReqSet)(wbReqWay)))"
+        },
+        {
+          "assignment": false,
+          "line": 1790,
+          "statement": "val s2_overwrittenPacketSeq = dirtyPacketSeq(s2_store_set)(s2_store_way)"
+        },
+        {
+          "assignment": false,
+          "line": 3354,
+          "statement": "val overwrittenPacketSeq = dirtyPacketSeq(modifyingSet)(modifyingWay)"
+        },
+        {
+          "assignment": true,
+          "line": 3436,
+          "statement": "dirtyPacketSeq(set)(way) := mshrs.io.refill.bits.image.contentSeq"
+        },
+        {
+          "assignment": true,
+          "line": 3482,
+          "statement": "dirtyPacketSeq(set)(way) := s3_req.packet_seq"
+        }
+      ],
+      "total_payload_bits": 16384,
+      "ways": 2
+    },
+    "imageKey": {
+      "declared_reset": true,
+      "sets": 256,
+      "source_uses": [
+        {
+          "assignment": false,
+          "line": 1473,
+          "statement": "imageValid(installSet)(installWay), imageKey(installSet)(installWay),"
+        },
+        {
+          "assignment": false,
+          "line": 1521,
+          "statement": "imageKey(refillReqSet)(refillReqWay), lowerPreserved(refillReqSet)(refillReqWay),"
+        },
+        {
+          "assignment": true,
+          "line": 1611,
+          "statement": "wb.io.image_key := imageKey(wbReqSet)(wbReqWay)"
+        },
+        {
+          "assignment": false,
+          "line": 1774,
+          "statement": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).asUInt === crossPackagePendingKey.asUInt)"
+        },
+        {
+          "assignment": true,
+          "line": 1783,
+          "statement": "crossPackageWbPacketSeq := imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq"
+        },
+        {
+          "assignment": false,
+          "line": 1792,
+          "statement": "val s2_overwrittenKey = imageKey(s2_store_set)(s2_store_way)"
+        },
+        {
+          "assignment": false,
+          "line": 1801,
+          "statement": "imageKey(svbFastSet)(svbFastWay).asUInt === svbFastKey.asUInt"
+        },
+        {
+          "assignment": false,
+          "line": 1903,
+          "statement": "imageKey(crossPackagePendingSet)(crossPackagePendingWay), s2_overwrittenKey)"
+        },
+        {
+          "assignment": false,
+          "line": 2006,
+          "statement": "!L1Preservation.safe(imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)"
+        },
+        {
+          "assignment": false,
+          "line": 2025,
+          "statement": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).valid &&"
+        },
+        {
+          "assignment": false,
+          "line": 2026,
+          "statement": "crossPackageRescueSeq > imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq &&"
+        },
+        {
+          "assignment": false,
+          "line": 2027,
+          "statement": "!L1Preservation.safe(imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)"
+        },
+        {
+          "assignment": false,
+          "line": 2052,
+          "statement": "L1Preservation.safe(imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)"
+        },
+        {
+          "assignment": true,
+          "line": 2481,
+          "statement": "crossPackagePendingSeq := imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq"
+        },
+        {
+          "assignment": true,
+          "line": 2489,
+          "statement": "crossPackagePendingKey := imageKey(crossPackagePendingSet)(crossPackagePendingWay)"
+        },
+        {
+          "assignment": false,
+          "line": 2492,
+          "statement": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).generation,"
+        },
+        {
+          "assignment": false,
+          "line": 2493,
+          "statement": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq,"
+        },
+        {
+          "assignment": false,
+          "line": 2494,
+          "statement": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).writer,"
+        },
+        {
+          "assignment": false,
+          "line": 2495,
+          "statement": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).valid)"
+        },
+        {
+          "assignment": false,
+          "line": 2498,
+          "statement": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq,"
+        },
+        {
+          "assignment": false,
+          "line": 2499,
+          "statement": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).generation,"
+        },
+        {
+          "assignment": false,
+          "line": 2544,
+          "statement": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).asUInt === retainedReceiptKey.asUInt,"
+        },
+        {
+          "assignment": false,
+          "line": 3193,
+          "statement": "imageKey(s3_set)(s3_way_idx), lowerPreserved(s3_set)(s3_way_idx),"
+        },
+        {
+          "assignment": true,
+          "line": 3440,
+          "statement": "imageKey(set)(way) := mshrs.io.refill.bits.image"
+        },
+        {
+          "assignment": false,
+          "line": 3472,
+          "statement": "imageKey(set)(way).generation, imageKey(set)(way).contentSeq,"
+        },
+        {
+          "assignment": false,
+          "line": 3473,
+          "statement": "imageKey(set)(way).writer, imageKey(set)(way).valid, lowerPreserved(set)(way),"
+        },
+        {
+          "assignment": false,
+          "line": 3474,
+          "statement": "L1Preservation.safe(imageKey(set)(way), safePacketWatermark),"
+        },
+        {
+          "assignment": true,
+          "line": 3477,
+          "statement": "imageKey(set)(way).valid := true.B"
+        },
+        {
+          "assignment": true,
+          "line": 3478,
+          "statement": "imageKey(set)(way).writer := outer.staticImageWriter.U"
+        },
+        {
+          "assignment": true,
+          "line": 3479,
+          "statement": "imageKey(set)(way).generation := imageSerial"
+        },
+        {
+          "assignment": true,
+          "line": 3480,
+          "statement": "imageKey(set)(way).contentSeq := s3_req.packet_seq"
+        },
+        {
+          "assignment": false,
+          "line": 4301,
+          "statement": "val slowdown_opt1_pending_live_key = chisel3.WireInit(imageKey(crossPackagePendingSet)(crossPackagePendingWay))"
+        },
+        {
+          "assignment": false,
+          "line": 4304,
+          "statement": "imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark))"
+        },
+        {
+          "assignment": false,
+          "line": 4419,
+          "statement": "imageKey(crossPackagePendingSet)(crossPackagePendingWay), safePacketWatermark)"
+        },
+        {
+          "assignment": false,
+          "line": 4505,
+          "statement": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).contentSeq,"
+        },
+        {
+          "assignment": false,
+          "line": 4506,
+          "statement": "imageKey(crossPackagePendingSet)(crossPackagePendingWay).generation,"
+        },
+        {
+          "assignment": false,
+          "line": 4532,
+          "statement": "val opt2bWriteKey = imageKey(opt2bWriteSet)(opt2bWriteWay)"
+        },
+        {
+          "assignment": false,
+          "line": 4610,
+          "statement": "val safeChainLiveKey = imageKey(crossPackagePendingSet)(crossPackagePendingWay)"
+        }
+      ],
+      "ways": 2,
+      "width_status": "resolve CacheImageKey/tagBits from exact frozen parameter ABI before numerical storage estimate"
+    },
+    "installedImage": {
+      "declared_reset": false,
+      "sets": 256,
+      "source_uses": [
+        {
+          "assignment": true,
+          "line": 1491,
+          "statement": "installedImage(installSet)(installWay) := mshrs.io.install.bits.image"
+        },
+        {
+          "assignment": false,
+          "line": 1511,
+          "statement": "mshrs.io.refill.bits.image.asUInt === installedImage(refillReqSet)(refillReqWay).asUInt &&"
+        }
+      ],
+      "ways": 2,
+      "width_status": "resolve CacheImageKey/tagBits from exact frozen parameter ABI before numerical storage estimate"
+    },
+    "lineGeneration": {
+      "bits_per_entry": 32,
+      "declared_reset": true,
+      "sets": 256,
+      "source_uses": [
+        {
+          "assignment": true,
+          "line": 1215,
+          "statement": "s2_lookup(w).line_generation := lineGeneration(set)(way)"
+        },
+        {
+          "assignment": true,
+          "line": 1239,
+          "statement": "s2_effective_req(w).line_generation := lineGeneration(set)(way)"
+        },
+        {
+          "assignment": true,
+          "line": 1250,
+          "statement": "s2_effective_req(w).line_generation := lineGeneration(set)(way)"
+        },
+        {
+          "assignment": true,
+          "line": 1609,
+          "statement": "wb.io.image_generation := lineGeneration(wbReqSet)(wbReqWay)"
+        },
+        {
+          "assignment": false,
+          "line": 2569,
+          "statement": "lineGeneration(crossPackagePendingSet)(crossPackagePendingWay),"
+        },
+        {
+          "assignment": false,
+          "line": 3184,
+          "statement": "(!s3_req.image_valid || s3_req.line_generation === lineGeneration(s3_set)(s3_way_idx))"
+        },
+        {
+          "assignment": true,
+          "line": 3439,
+          "statement": "lineGeneration(set)(way) := mshrs.io.refill.bits.image.generation"
+        },
+        {
+          "assignment": true,
+          "line": 3467,
+          "statement": "lineGeneration(set)(way) := imageSerial"
+        },
+        {
+          "assignment": false,
+          "line": 3796,
+          "statement": "(0 until nWays).map(w => lineGeneration(s)(w))))"
+        }
+      ],
+      "total_payload_bits": 16384,
+      "ways": 2
+    },
+    "reservedEpoch": {
+      "bits_per_entry": 16,
+      "declared_reset": false,
+      "sets": 256,
+      "source_uses": [
+        {
+          "assignment": true,
+          "line": 1397,
+          "statement": "reservedEpoch(set)(way) := r.slot_epoch"
+        },
+        {
+          "assignment": false,
+          "line": 1453,
+          "statement": "reservedEpoch(installSet)(installWay) === installReq.slot_epoch &&"
+        },
+        {
+          "assignment": true,
+          "line": 1504,
+          "statement": "selectedRefillReservedEpoch := reservedEpoch(refillReqSet)(refillReqWay)"
+        },
+        {
+          "assignment": true,
+          "line": 3435,
+          "statement": "slotEpoch(set)(way) := reservedEpoch(set)(way)"
+        },
+        {
+          "assignment": false,
+          "line": 3442,
+          "statement": "mshrs.io.refill.bits.line_addr, reservedEpoch(set)(way),"
+        }
+      ],
+      "total_payload_bits": 8192,
+      "ways": 2
+    },
+    "reservedTransaction": {
+      "bits_per_entry": 32,
+      "declared_reset": false,
+      "sets": 256,
+      "source_uses": [
+        {
+          "assignment": true,
+          "line": 1398,
+          "statement": "reservedTransaction(set)(way) := r.transaction_token"
+        },
+        {
+          "assignment": false,
+          "line": 1454,
+          "statement": "reservedTransaction(installSet)(installWay) === installReq.transaction_token &&"
+        },
+        {
+          "assignment": false,
+          "line": 1513,
+          "statement": "mshrs.io.refill.bits.transaction_token === reservedTransaction(refillReqSet)(refillReqWay) &&"
+        },
+        {
+          "assignment": false,
+          "line": 2571,
+          "statement": "reservedTransaction(crossPackagePendingSet)(crossPackagePendingWay),"
+        },
+        {
+          "assignment": false,
+          "line": 3109,
+          "statement": "reservedTransaction(s3_set)(s3_way_idx) === s3_req.transaction_token &&"
+        }
+      ],
+      "total_payload_bits": 16384,
+      "ways": 2
+    },
+    "residentTag": {
+      "declared_reset": false,
+      "sets": 256,
+      "source_uses": [
+        {
+          "assignment": true,
+          "line": 806,
+          "statement": "when (r.data.coh.isValid()) { residentTag(r.idx)(way) := r.data.tag }"
+        },
+        {
+          "assignment": false,
+          "line": 1771,
+          "statement": "residentTag(crossPackagePendingSet)(crossPackagePendingWay) === crossPackagePendingTag &&"
+        },
+        {
+          "assignment": false,
+          "line": 1799,
+          "statement": "residentTag(svbFastSet)(svbFastWay) === svbFastTag &&"
+        },
+        {
+          "assignment": false,
+          "line": 3112,
+          "statement": "residentValid(s3_set)(s3_way_idx) && residentTag(s3_set)(s3_way_idx) === (s3_req.addr >> untagBits))"
+        }
+      ],
+      "ways": 2,
+      "width_status": "resolve CacheImageKey/tagBits from exact frozen parameter ABI before numerical storage estimate"
+    },
+    "slotEpoch": {
+      "bits_per_entry": 16,
+      "declared_reset": true,
+      "sets": 256,
+      "source_uses": [
+        {
+          "assignment": false,
+          "line": 1020,
+          "statement": "val s1_lookup_epoch = RegNext(widthMap(w => slotEpoch(s0_req(w).addr(idxMSB, idxLSB))))"
+        },
+        {
+          "assignment": true,
+          "line": 1214,
+          "statement": "s2_lookup(w).slot_epoch := slotEpoch(set)(way) + (!s2_tag_match(w)).asUInt"
+        },
+        {
+          "assignment": false,
+          "line": 1270,
+          "statement": "val stale = s2_tag_match(w) && s2_lookup_epoch(w) =/= slotEpoch(set)(way)"
+        },
+        {
+          "assignment": false,
+          "line": 1283,
+          "statement": "s2_raw_req(0).slot_epoch === slotEpoch(s2_raw_req(0).addr(idxMSB, idxLSB))("
+        },
+        {
+          "assignment": false,
+          "line": 1428,
+          "statement": "assert(slotEpoch(pset)(pway) =/= ~0.U(16.W), \"slot epoch exhausted\")"
+        },
+        {
+          "assignment": true,
+          "line": 1429,
+          "statement": "slotEpoch(pset)(pway) := slotEpoch(pset)(pway) + 1.U"
+        },
+        {
+          "assignment": false,
+          "line": 1458,
+          "statement": "slotEpoch(installSet)(installWay) === installReq.slot_epoch"
+        },
+        {
+          "assignment": false,
+          "line": 1460,
+          "statement": "installReservationMatch && slotEpoch(installSet)(installWay) + 1.U === installReq.slot_epoch,"
+        },
+        {
+          "assignment": false,
+          "line": 1493,
+          "statement": "assert(slotEpoch(installSet)(installWay) + 1.U === installReq.slot_epoch,"
+        },
+        {
+          "assignment": true,
+          "line": 1505,
+          "statement": "selectedRefillSlotEpoch := slotEpoch(refillReqSet)(refillReqWay)"
+        },
+        {
+          "assignment": true,
+          "line": 1608,
+          "statement": "wb.io.owner_epoch := slotEpoch(wbReqSet)(wbReqWay)"
+        },
+        {
+          "assignment": false,
+          "line": 1772,
+          "statement": "slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) === crossPackagePendingEpoch &&"
+        },
+        {
+          "assignment": false,
+          "line": 1800,
+          "statement": "slotEpoch(svbFastSet)(svbFastWay) === svbFastEpoch &&"
+        },
+        {
+          "assignment": false,
+          "line": 1839,
+          "statement": "s2_lookup_epoch(0) === slotEpoch(s2_store_set)(s2_store_way) &&"
+        },
+        {
+          "assignment": false,
+          "line": 1849,
+          "statement": "!s2_nack_hit(0) && s2_lookup_epoch(0) === slotEpoch(s2_store_set)(s2_store_way) &&"
+        },
+        {
+          "assignment": false,
+          "line": 1871,
+          "statement": "!s2_nack_hit(0), s2_lookup_epoch(0) === slotEpoch(s2_store_set)(s2_store_way),"
+        },
+        {
+          "assignment": true,
+          "line": 1900,
+          "statement": "svbFastEpoch := Mux(crossPackageSvbRescue, crossPackagePendingEpoch, slotEpoch(s2_store_set)(s2_store_way))"
+        },
+        {
+          "assignment": false,
+          "line": 2160,
+          "statement": "s2_lookup_epoch(0), slotEpoch(s2_store_set)(s2_store_way),"
+        },
+        {
+          "assignment": false,
+          "line": 2165,
+          "statement": "Mux(s2_nack_hit(0), 3.U, Mux(s2_lookup_epoch(0) =/= slotEpoch(s2_store_set)(s2_store_way), 4.U, 0.U))))"
+        },
+        {
+          "assignment": false,
+          "line": 2356,
+          "statement": "slotEpoch(s2_store_set)(s2_store_way), prober.io.state.valid,"
+        },
+        {
+          "assignment": false,
+          "line": 2458,
+          "statement": "s2_nack_hit(0), s2_lookup_epoch(0), slotEpoch(s2_store_set)(s2_store_way))"
+        },
+        {
+          "assignment": true,
+          "line": 2466,
+          "statement": "crossPackagePendingEpoch := slotEpoch(s2_store_set)(s2_store_way)"
+        },
+        {
+          "assignment": false,
+          "line": 2543,
+          "statement": "slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) === retainedReceiptEpoch &&"
+        },
+        {
+          "assignment": false,
+          "line": 2575,
+          "statement": "assert(slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) === crossPackagePendingEpoch,"
+        },
+        {
+          "assignment": false,
+          "line": 2577,
+          "statement": "assert(slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) =/= ~0.U(16.W), \"slot epoch exhausted\")"
+        },
+        {
+          "assignment": true,
+          "line": 2581,
+          "statement": "slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) :="
+        },
+        {
+          "assignment": false,
+          "line": 2582,
+          "statement": "slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) + 1.U"
+        },
+        {
+          "assignment": false,
+          "line": 3105,
+          "statement": "val s3_owner_match = s3_req.slot_epoch === slotEpoch(s3_set)(s3_way_idx) &&"
+        },
+        {
+          "assignment": false,
+          "line": 3191,
+          "statement": "s3_req.slot_epoch === slotEpoch(s3_set)(s3_way_idx)"
+        },
+        {
+          "assignment": false,
+          "line": 3266,
+          "statement": "slotEpoch(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) === r.slot_epoch,"
+        },
+        {
+          "assignment": true,
+          "line": 3435,
+          "statement": "slotEpoch(set)(way) := reservedEpoch(set)(way)"
+        },
+        {
+          "assignment": false,
+          "line": 3794,
+          "statement": "(0 until nWays).map(w => slotEpoch(s)(w))))"
+        }
+      ],
+      "total_payload_bits": 8192,
+      "ways": 2
+    }
+  },
+  "dcache_source": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-bucket-tag-r3-20261111/chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+  "dcache_source_sha256": "0fb9e4b3931827120aed8311dbbc87a2d25e697c76505717af7162a0a9f1663d",
+  "hardware_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+  "physical_postopt": {
+    "carry8": 92789,
+    "dsp": 195,
+    "lut": 3215683,
+    "lut_available": 1303680,
+    "lut_excess": 1912003
+  },
+  "physical_reference_commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+  "root_findings": [
+    "Name-only attribution places DCACHE lineGeneration/slotEpoch/imageKey/appliedEffect arrays in MSHR0 and barrier buckets in prober. These prove cross-hierarchy ownership relocation, not MSHR functional complexity. Trace actual source arrays, avoid optimizing an unrelated MSHR FSM.",
+    "PackageAddressStats has256 slots x5 categories x4 granules x64bit=327680 bits of counters. Three multi-bucket hit categories require3072 same-cycle64bit updates. Full counters/error/reset semantics cannot be narrowed/serialized/deleted.",
+    "Ordinary/strict+spill hit histograms scatter8/80 sources over256 destinations. Current grouped4 structure replicates destination reduction and error-qualified tag lookups. Investigate packed reductions and genuine state-storage/mux structures; only full module maps substantiate final gains.",
+    "Address DSP low47 probe passed arbitrary128-bit addition SAT but saved only576 LUT across64 cells (9each); at most27648 arithmetic cells estimate over3072 copies. Not selected for expensive full-module integration. Preserve report and prioritize larger structural gains.",
+    "Local appliedEffectResult memory mapping34766->1448 LUT saves33318; complete DCache boundary/induction proof is still required. It alone cannot close a1.9M gap."
+  ],
+  "schema": "ec-opt4-structural-root-audit/1",
+  "scope": "Read-only structural inventory and mapped primitive name evidence, not a pin-level cone proof. Array width guesses require actual ABI audit; no OOC gain is reported as whole-DUT FIT.",
+  "selected_mapped_name_groups": [
+    {
+      "direct": {
+        "carry8": 57442,
+        "dsp": 0,
+        "ff": 389756,
+        "lut_primitives": 1462518
+      },
+      "groups": [
+        {
+          "carry8": 18006,
+          "dsp": 0,
+          "examples": [
+            "bucketStrictWriteRead_0_0[15]_i_10",
+            "bucketStrictWriteRead_0_0[15]_i_11",
+            "bucketStrictWriteRead_0_0[15]_i_12"
+          ],
+          "ff": 65536,
+          "lut_primitives": 741894,
+          "name_group": "bucketStrictWriteRead"
+        },
+        {
+          "carry8": 3776,
+          "dsp": 0,
+          "examples": [
+            "errorReg[0]_i_1",
+            "errorReg[1]_i_1",
+            "errorReg[3]_i_1"
+          ],
+          "ff": 6,
+          "lut_primitives": 206145,
+          "name_group": "errorReg"
+        },
+        {
+          "carry8": 16898,
+          "dsp": 0,
+          "examples": [
+            "bucketLoadFirst_0_0[15]_i_10",
+            "bucketLoadFirst_0_0[15]_i_11",
+            "bucketLoadFirst_0_0[15]_i_13"
+          ],
+          "ff": 65536,
+          "lut_primitives": 149680,
+          "name_group": "bucketLoadFirst"
+        },
+        {
+          "carry8": 16906,
+          "dsp": 0,
+          "examples": [
+            "bucketStoreFirst_0_0[15]_i_10",
+            "bucketStoreFirst_0_0[15]_i_11",
+            "bucketStoreFirst_0_0[15]_i_13"
+          ],
+          "ff": 65536,
+          "lut_primitives": 148950,
+          "name_group": "bucketStoreFirst"
+        },
+        {
+          "carry8": 448,
+          "dsp": 0,
+          "examples": [
+            "strictOverflowData_0_lineTag_reg[0]",
+            "strictOverflowData_0_lineTag_reg[10]",
+            "strictOverflowData_0_lineTag_reg[11]"
+          ],
+          "ff": 19520,
+          "lut_primitives": 20633,
+          "name_group": "strictOverflowData"
+        },
+        {
+          "carry8": 75,
+          "dsp": 0,
+          "examples": [
+            "onlineStrictWriteRead_0[15]_i_10",
+            "onlineStrictWriteRead_0[15]_i_11",
+            "onlineStrictWriteRead_0[15]_i_114"
+          ],
+          "ff": 256,
+          "lut_primitives": 19424,
+          "name_group": "onlineStrictWriteRead"
+        },
+        {
+          "carry8": 32,
+          "dsp": 0,
+          "examples": [
+            "bucketStore_0_0[63]_i_1",
+            "bucketStore_0_0[63]_i_2",
+            "bucketStore_0_0_reg[0]"
+          ],
+          "ff": 65536,
+          "lut_primitives": 18447,
+          "name_group": "bucketStore"
+        },
+        {
+          "carry8": 65,
+          "dsp": 0,
+          "examples": [
+            "onlineLoadFirst_0[15]_i_10",
+            "onlineLoadFirst_0[15]_i_100",
+            "onlineLoadFirst_0[15]_i_1000"
+          ],
+          "ff": 256,
+          "lut_primitives": 18241,
+          "name_group": "onlineLoadFirst"
+        },
+        {
+          "carry8": 65,
+          "dsp": 0,
+          "examples": [
+            "onlineStoreFirst_0[15]_i_10",
+            "onlineStoreFirst_0[15]_i_100",
+            "onlineStoreFirst_0[15]_i_1000"
+          ],
+          "ff": 256,
+          "lut_primitives": 18171,
+          "name_group": "onlineStoreFirst"
+        },
+        {
+          "carry8": 64,
+          "dsp": 0,
+          "examples": [
+            "onlineStore_0[15]_i_11",
+            "onlineStore_0[15]_i_12",
+            "onlineStore_0[15]_i_13"
+          ],
+          "ff": 256,
+          "lut_primitives": 17940,
+          "name_group": "onlineStore"
+        },
+        {
+          "carry8": 64,
+          "dsp": 0,
+          "examples": [
+            "onlineFirstStore_0[15]_i_11",
+            "onlineFirstStore_0[15]_i_12",
+            "onlineFirstStore_0[15]_i_13"
+          ],
+          "ff": 256,
+          "lut_primitives": 17939,
+          "name_group": "onlineFirstStore"
+        },
+        {
+          "carry8": 32,
+          "dsp": 0,
+          "examples": [
+            "bucketFirstStore_0_0_reg[0]",
+            "bucketFirstStore_0_0_reg[10]",
+            "bucketFirstStore_0_0_reg[11]"
+          ],
+          "ff": 65536,
+          "lut_primitives": 17672,
+          "name_group": "bucketFirstStore"
+        }
+      ],
+      "module": "design_1_firesim_wrapper_0_0_PackageAddressStats"
+    },
+    {
+      "direct": {
+        "carry8": 114,
+        "dsp": 0,
+        "ff": 820,
+        "lut_primitives": 203735
+      },
+      "groups": [
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "protocolFault_i_1",
+            "protocolFault_i_100",
+            "protocolFault_i_10000"
+          ],
+          "ff": 1,
+          "lut_primitives": 63884,
+          "name_group": "protocolFault"
+        },
+        {
+          "carry8": 3,
+          "dsp": 0,
+          "examples": [
+            "s3_result[0]_i_1",
+            "s3_result[0]_i_10",
+            "s3_result[0]_i_11"
+          ],
+          "ff": 0,
+          "lut_primitives": 33944,
+          "name_group": "s3_result"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "installStarted_i_1",
+            "installStarted_i_10",
+            "installStarted_i_100"
+          ],
+          "ff": 1,
+          "lut_primitives": 21811,
+          "name_group": "installStarted"
+        },
+        {
+          "carry8": 6,
+          "dsp": 0,
+          "examples": [
+            "array_0_0_0_reg_bram_0_i_1",
+            "array_0_0_0_reg_bram_0_i_10",
+            "array_0_0_0_reg_bram_0_i_100"
+          ],
+          "ff": 0,
+          "lut_primitives": 21313,
+          "name_group": "array"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "lineGeneration_0_0[0]_i_1",
+            "lineGeneration_0_0[10]_i_1",
+            "lineGeneration_0_0[11]_i_1"
+          ],
+          "ff": 0,
+          "lut_primitives": 17432,
+          "name_group": "lineGeneration"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "slotEpoch_0_0[0]_i_1",
+            "slotEpoch_0_0[10]_i_1",
+            "slotEpoch_0_0[11]_i_1"
+          ],
+          "ff": 0,
+          "lut_primitives": 13072,
+          "name_group": "slotEpoch"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "imageKey_0_0_valid_i_1",
+            "imageKey_0_0_valid_i_3",
+            "imageKey_0_0_writer[15]_i_2"
+          ],
+          "ff": 0,
+          "lut_primitives": 10163,
+          "name_group": "imageKey"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "dirtyPacketSeq_0_0[0]_i_1",
+            "dirtyPacketSeq_0_0[10]_i_1",
+            "dirtyPacketSeq_0_0[11]_i_1"
+          ],
+          "ff": 0,
+          "lut_primitives": 7808,
+          "name_group": "dirtyPacketSeq"
+        },
+        {
+          "carry8": 4,
+          "dsp": 0,
+          "examples": [
+            "ram_flattened_reg_0_15_0_13_i_16",
+            "ram_flattened_reg_0_15_266_279_i_64",
+            "ram_flattened_reg_0_15_280_293_i_109"
+          ],
+          "ff": 0,
+          "lut_primitives": 1714,
+          "name_group": "ram_flattened_reg"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "slotReserved_0_0_i_1",
+            "slotReserved_0_0_i_2",
+            "slotReserved_0_0_i_3"
+          ],
+          "ff": 0,
+          "lut_primitives": 1627,
+          "name_group": "slotReserved"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "installActive_0_0_i_1",
+            "installActive_0_0_i_2",
+            "installActive_0_0_i_3"
+          ],
+          "ff": 0,
+          "lut_primitives": 1570,
+          "name_group": "installActive"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "appliedEffectValid_0_0_i_1",
+            "appliedEffectValid_0_0_i_2",
+            "appliedEffectValid_0_1_i_1"
+          ],
+          "ff": 0,
+          "lut_primitives": 1103,
+          "name_group": "appliedEffectValid"
+        }
+      ],
+      "module": "design_1_firesim_wrapper_0_0_BoomMSHR"
+    },
+    {
+      "direct": {
+        "carry8": 62,
+        "dsp": 0,
+        "ff": 81,
+        "lut_primitives": 83188
+      },
+      "groups": [
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "buckets_count_0[0]_i_1__1",
+            "buckets_count_0[0]_i_2__1",
+            "buckets_count_0[0]_i_4__1"
+          ],
+          "ff": 0,
+          "lut_primitives": 18515,
+          "name_group": "buckets_count"
+        },
+        {
+          "carry8": 8,
+          "dsp": 0,
+          "examples": [
+            "buckets_requestCycleSum_0[0]_i_1__1",
+            "buckets_requestCycleSum_0[10]_i_1__1",
+            "buckets_requestCycleSum_0[11]_i_1__1"
+          ],
+          "ff": 0,
+          "lut_primitives": 18187,
+          "name_group": "buckets_requestCycleSum"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "slotEpoch_0_0[0]_i_2",
+            "slotEpoch_0_0[10]_i_2",
+            "slotEpoch_0_0[11]_i_2"
+          ],
+          "ff": 0,
+          "lut_primitives": 13638,
+          "name_group": "slotEpoch"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "buckets_seq_0[31]_i_1__1",
+            "buckets_seq_100[31]_i_1__1",
+            "buckets_seq_101[31]_i_1__1"
+          ],
+          "ff": 0,
+          "lut_primitives": 9166,
+          "name_group": "buckets_seq"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "pendingKey_generation[0]_i_100",
+            "pendingKey_generation[0]_i_101",
+            "pendingKey_generation[0]_i_102"
+          ],
+          "ff": 0,
+          "lut_primitives": 8298,
+          "name_group": "pendingKey_generation"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "pendingKey_writer[0]_i_100",
+            "pendingKey_writer[0]_i_101",
+            "pendingKey_writer[0]_i_102"
+          ],
+          "ff": 0,
+          "lut_primitives": 4195,
+          "name_group": "pendingKey_writer"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "pendingEpoch[0]_i_100",
+            "pendingEpoch[0]_i_101",
+            "pendingEpoch[0]_i_102"
+          ],
+          "ff": 0,
+          "lut_primitives": 4132,
+          "name_group": "pendingEpoch"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "lowerPreserved_0_0_i_1",
+            "lowerPreserved_0_0_i_3",
+            "lowerPreserved_0_0_i_4"
+          ],
+          "ff": 0,
+          "lut_primitives": 2067,
+          "name_group": "lowerPreserved"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "imageValid_0_0_i_1",
+            "imageValid_0_0_i_2",
+            "imageValid_0_0_i_5"
+          ],
+          "ff": 0,
+          "lut_primitives": 1656,
+          "name_group": "imageValid"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "imageKey_0_0_writer[15]_i_1",
+            "imageKey_0_1_writer[15]_i_1",
+            "imageKey_100_0_writer[15]_i_1"
+          ],
+          "ff": 0,
+          "lut_primitives": 522,
+          "name_group": "imageKey"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "appliedEffectValid_0_0_i_3",
+            "appliedEffectValid_0_1_i_2",
+            "appliedEffectValid_100_0_i_2"
+          ],
+          "ff": 0,
+          "lut_primitives": 518,
+          "name_group": "appliedEffectValid"
+        },
+        {
+          "carry8": 0,
+          "dsp": 0,
+          "examples": [
+            "appliedEffectResult_0_0[63]_i_1",
+            "appliedEffectResult_0_1[63]_i_1",
+            "appliedEffectResult_100_0[63]_i_1"
+          ],
+          "ff": 0,
+          "lut_primitives": 513,
+          "name_group": "appliedEffectResult"
+        }
+      ],
+      "module": "design_1_firesim_wrapper_0_0_BoomProbeUnit"
+    }
+  ],
+  "utc": "2026-11-11T03:28:31.007955+00:00"
+}

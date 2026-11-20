@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "/usr/local/bin/verilator",
+    "--cc",
+    "--exe",
+    "--build",
+    "-j",
+    "2",
+    "--compiler",
+    "clang",
+    "--top-module",
+    "MSHRQueueHarness",
+    "--Mdir",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mshr-queue-split-memory-r4-20261112/obj",
+    "-Wno-fatal",
+    "--x-initial",
+    "0",
+    "--x-assign",
+    "0",
+    "-DRANDOMIZE_REG_INIT",
+    "-DRANDOMIZE_MEM_INIT",
+    "-DRANDOM=32'h0",
+    "-CFLAGS",
+    "-O0",
+    "-MAKEFLAGS",
+    "OPT_FAST=-O0 OPT_SLOW=-O0",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mshr-queue-split-memory-r4-20261112/target/MSHRQueueHarness.v",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mshr-queue-split-memory-r4-20261112/stimulus.cpp"
+  ],
+  "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mshr-queue-split-memory-r4-20261112/compile-finite-pair.log",
+  "log_sha256": "7d699c984829f654be34a370a0481fc51a7a0785c2984bdbcebf8e3c977e4bc9",
+  "missing_outputs": [],
+  "outputs": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mshr-queue-split-memory-r4-20261112/obj/VMSHRQueueHarness": "b818a6a1d598d74f9ad5be5b321ff2e69d2d0d3e45522170864cb80bc88c3abf"
+  },
+  "returncode": 0,
+  "seconds": 4.700309162028134
+}

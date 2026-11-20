@@ -1,0 +1,82 @@
+{
+  "build_script_sha256": "73f9847578feb34a46c2aeaba2f7cc84c53ece1a713243d40e1e2742ffcb0f9e",
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j4",
+        "O=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/C4-firmware-20261107T071428.564947Z",
+        "PLATFORM=generic",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "FW_PAYLOAD_PATH=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/C4-earlyconsole-20261107T063246Z/arch/riscv/boot/Image",
+        "FW_PAYLOAD_FDT_PATH=/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb",
+        "FW_PAYLOAD_FDT_ADDR=0xbfe00000",
+        "FW_JUMP_FDT_ADDR=0xbfe00000"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/opensbi"
+    }
+  ],
+  "configuration": "C4",
+  "content_checks": {
+    "fdt": {
+      "bytes": 10360,
+      "exact_bytes_present": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb",
+      "payload_offset": 1712,
+      "sha256": "c712fed367c0b57d9a1ed9f6e53688861a646f3732654b253131ff6e8953dda6"
+    },
+    "kernel": {
+      "bytes": 122479616,
+      "exact_bytes_present": true,
+      "path": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/C4-earlyconsole-20261107T063246Z/arch/riscv/boot/Image",
+      "payload_offset": 2097152,
+      "sha256": "c61d4956357ca72bfc5658342c9f30589bd8ad59c633dc3bddafea5560401ed9"
+    },
+    "runtime_memory_layout": {
+      "fdt_copy_end": 3219138680,
+      "fdt_copy_start": 3219128320,
+      "kernel_end": 2272060416,
+      "kernel_start": 2149580800,
+      "linux_memory_cap_bytes": 2147483648,
+      "no_overlap": true
+    }
+  },
+  "error": null,
+  "fpga_execution": "NOT_RUN",
+  "input_files": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/system-builds/C4-firmware-20261107T071428.564947Z/bound-fdt-receipt.json": "d07259f391067b08714ba1bed213017e7b4fa25e83f3e4fdc5b6c9e7ae6b49d7",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/system-builds/C4-firmware-20261107T071428.564947Z/bound-kernel-receipt.json": "a98205c029b975b452e3a480d83703d99a3776fcff3f98b214c6bba17c8c39f6",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb": "c712fed367c0b57d9a1ed9f6e53688861a646f3732654b253131ff6e8953dda6",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/linux-profile.json": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/C4-earlyconsole-20261107T063246Z/arch/riscv/boot/Image": "c61d4956357ca72bfc5658342c9f30589bd8ad59c633dc3bddafea5560401ed9"
+  },
+  "output_dir": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/C4-firmware-20261107T071428.564947Z",
+  "outputs": {
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/C4-firmware-20261107T071428.564947Z/platform/generic/firmware/fw_payload.bin": "2d41d4e4928197d40eda3fec8ef5319918eeda5eae9527444847266ecb6b4861",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/C4-firmware-20261107T071428.564947Z/platform/generic/firmware/fw_payload.elf": "3a079e7f8dfe1d28f838a5ce6537f8074b1da091a99ac2e05224c6210ec1d572"
+  },
+  "phase": "firmware",
+  "resources": {
+    "actual_build_root": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds",
+    "available_memory_gib": 448.5059127807617,
+    "free_disk_gib": 345.1088447570801,
+    "host_cpus": 256,
+    "jobs": 4,
+    "load_1min": 6.935546875,
+    "log_free_disk_gib": 36.56246566772461
+  },
+  "returncode": 0,
+  "runtime_validation": "NOT_RUN",
+  "schema": "ec-firesim-system-build/1",
+  "source_id": "1b402684b0360b0230f1105bacac6daa78830e35a1969fbe893d11aef90d0527",
+  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/opensbi",
+  "tool_hashes": {
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ld": "10424f5eeafd5806fbca7b88bdae336c202be5a9fa332c1a662a8d0a7ae62fba",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objcopy": "2a38397dae082b022b6370eb9fbfac9c337b95433fc89cb35d384516a0997f1e"
+  },
+  "wall_seconds": 4.287605991999953
+}

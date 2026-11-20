@@ -1,0 +1,162 @@
+[
+  [
+    "  val slotEpochBank = new SlotEpochBank(nSets, nWays)",
+    "  val slotEpoch = RegInit(VecInit(Seq.fill(nSets)(VecInit(\n    Seq.fill(nWays)(0.U(16.W))))))",
+    1
+  ],
+  [
+    "slotEpochBank.write(0, pset, pway, slotEpochBank.read(pset, pway) + 1.U)",
+    "slotEpoch(pset)(pway) := slotEpoch(pset)(pway) + 1.U",
+    1
+  ],
+  [
+    "slotEpochBank.write(1, crossPackagePendingSet, crossPackagePendingWay,\n      slotEpochBank.read(crossPackagePendingSet, crossPackagePendingWay) + 1.U)",
+    "slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) :=\n      slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) + 1.U",
+    1
+  ],
+  [
+    "slotEpochBank.write(2, set, way, reservedEpoch(set)(way))",
+    "slotEpoch(set)(way) := reservedEpoch(set)(way)",
+    1
+  ],
+  [
+    "slotEpochBank.readSet(s0_req(w).addr(idxMSB, idxLSB))",
+    "slotEpoch(s0_req(w).addr(idxMSB, idxLSB))",
+    1
+  ],
+  [
+    "slotEpochBank.snapshot",
+    "VecInit((0 until nSets).flatMap(s =>\n    (0 until nWays).map(w => slotEpoch(s)(w))))",
+    1
+  ],
+  [
+    "slotEpochBank.read(set, way)",
+    "slotEpoch(set)(way)",
+    1
+  ],
+  [
+    "slotEpochBank.read(set, way)",
+    "slotEpoch(set)(way)",
+    1
+  ],
+  [
+    "slotEpochBank.read(s2_raw_req(0).addr(idxMSB, idxLSB), OHToUInt(s2_raw_req(0).owner_way))",
+    "slotEpoch(s2_raw_req(0).addr(idxMSB, idxLSB))(\n      OHToUInt(s2_raw_req(0).owner_way))",
+    1
+  ],
+  [
+    "slotEpochBank.read(pset, pway)",
+    "slotEpoch(pset)(pway)",
+    1
+  ],
+  [
+    "slotEpochBank.read(installSet, installWay)",
+    "slotEpoch(installSet)(installWay)",
+    1
+  ],
+  [
+    "slotEpochBank.read(installSet, installWay)",
+    "slotEpoch(installSet)(installWay)",
+    1
+  ],
+  [
+    "slotEpochBank.read(installSet, installWay)",
+    "slotEpoch(installSet)(installWay)",
+    1
+  ],
+  [
+    "slotEpochBank.read(refillReqSet, refillReqWay)",
+    "slotEpoch(refillReqSet)(refillReqWay)",
+    1
+  ],
+  [
+    "slotEpochBank.read(wbReqSet, wbReqWay)",
+    "slotEpoch(wbReqSet)(wbReqWay)",
+    1
+  ],
+  [
+    "slotEpochBank.read(crossPackagePendingSet, crossPackagePendingWay)",
+    "slotEpoch(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "slotEpochBank.read(svbFastSet, svbFastWay)",
+    "slotEpoch(svbFastSet)(svbFastWay)",
+    1
+  ],
+  [
+    "slotEpochBank.read(s2_store_set, s2_store_way)",
+    "slotEpoch(s2_store_set)(s2_store_way)",
+    1
+  ],
+  [
+    "slotEpochBank.read(s2_store_set, s2_store_way)",
+    "slotEpoch(s2_store_set)(s2_store_way)",
+    1
+  ],
+  [
+    "slotEpochBank.read(s2_store_set, s2_store_way)",
+    "slotEpoch(s2_store_set)(s2_store_way)",
+    1
+  ],
+  [
+    "slotEpochBank.read(s2_store_set, s2_store_way)",
+    "slotEpoch(s2_store_set)(s2_store_way)",
+    1
+  ],
+  [
+    "slotEpochBank.read(s2_store_set, s2_store_way)",
+    "slotEpoch(s2_store_set)(s2_store_way)",
+    1
+  ],
+  [
+    "slotEpochBank.read(s2_store_set, s2_store_way)",
+    "slotEpoch(s2_store_set)(s2_store_way)",
+    1
+  ],
+  [
+    "slotEpochBank.read(s2_store_set, s2_store_way)",
+    "slotEpoch(s2_store_set)(s2_store_way)",
+    1
+  ],
+  [
+    "slotEpochBank.read(s2_store_set, s2_store_way)",
+    "slotEpoch(s2_store_set)(s2_store_way)",
+    1
+  ],
+  [
+    "slotEpochBank.read(s2_store_set, s2_store_way)",
+    "slotEpoch(s2_store_set)(s2_store_way)",
+    1
+  ],
+  [
+    "slotEpochBank.read(crossPackagePendingSet, crossPackagePendingWay)",
+    "slotEpoch(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "slotEpochBank.read(crossPackagePendingSet, crossPackagePendingWay)",
+    "slotEpoch(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "slotEpochBank.read(crossPackagePendingSet, crossPackagePendingWay)",
+    "slotEpoch(crossPackagePendingSet)(crossPackagePendingWay)",
+    1
+  ],
+  [
+    "slotEpochBank.read(s3_set, s3_way_idx)",
+    "slotEpoch(s3_set)(s3_way_idx)",
+    1
+  ],
+  [
+    "slotEpochBank.read(s3_set, s3_way_idx)",
+    "slotEpoch(s3_set)(s3_way_idx)",
+    1
+  ],
+  [
+    "slotEpochBank.read(r.addr(idxMSB, idxLSB), OHToUInt(r.owner_way))",
+    "slotEpoch(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way))",
+    1
+  ]
+]

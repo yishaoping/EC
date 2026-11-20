@@ -1,0 +1,426 @@
+--- /data1/gzh/EC/Software/PARSEC/pkgs/apps/raytrace/src/LRT/FrameBuffer.hxx
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-raytrace-headless-20261107T065042Z/src/LRT/FrameBuffer.hxx
+@@ -6,23 +6,6 @@
+ 
+ #include "RTTL/common/RTInclude.hxx"
+ #include "RTTL/common/RTVec.hxx"
+-#define GL_GLEXT_PROTOTYPES
+-#ifdef THIS_IS_APPLE
+-#include <glut.h>
+-#else
+-#include <GL/glut.h>
+-#endif
+-#if defined(_WIN32)
+-extern "C" {
+-#include "glext_win.h"
+-}
+-#else
+-#if !defined(sun) && !defined(__sun) && !defined(__sun__)
+-#include "GL/glext.h"
+-#endif
+-#endif
+-
+-
+ #define BEGIN_NAMESPACE {
+ #define END_NAMESPACE }
+ 
+--- /data1/gzh/EC/Software/PARSEC/pkgs/apps/raytrace/src/LRT/FrameBuffer.cxx
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-raytrace-headless-20261107T065042Z/src/LRT/FrameBuffer.cxx
+@@ -1,7 +1,7 @@
+ #include "LRT/include/lrt.h"
+ #include "FrameBuffer.hxx"
+-#include "FrameBuffer/PBOFrameBuffer.hxx"
+-#include "FrameBuffer/GLTextureFB.hxx"
++
++
+ #include "FrameBuffer/MemoryFrameBuffer.hxx"
+ 
+ #define DBG(a) /* do nothing */
+@@ -23,24 +23,7 @@
+     return new LRT::MemoryFrameBuffer;
+   }
+ 
+-  if (Options::usePBOs)
+-    {
+-      // try allocating one ..
+-      frameBuffer = LRT::PBOFrameBuffer::create();
+-      if (frameBuffer)
+-	return frameBuffer;
+-      // something went wrong with a PBO framebuffer (inluding
+-      // having it turned off manually ...
+-      cout << "PBO: could not allocate PBO frame buffer." << endl;
+-      cout << "PBO: falling back to non-PBO framebuffer" << endl;
+-    }
+-  else
+-    cout << "using non-PBO framebuffer" << endl;
+-
+-  frameBuffer = new LRT::BufferedOpenGLTextureRGBA8FB;
+-
+-  if (frameBuffer == NULL)
+-    throw "panic: could not allocate _any_ kind of framebuffer ...";
++  FATAL("headless build requires memory framebuffer");
+ 
+   return frameBuffer;
+ }
+--- /data1/gzh/EC/Software/PARSEC/pkgs/apps/raytrace/src/RTTL/common/RTThread.hxx
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-raytrace-headless-20261107T065042Z/src/RTTL/common/RTThread.hxx
+@@ -32,14 +32,7 @@
+ }
+ #else
+ _INLINE int atomic_add(atomic_t *v, const int c) {
+-  int i = c;
+-  int __i = i;
+-  __asm__ __volatile__(
+-                       "lock ; xaddl %0, %1;"
+-                       :"=r"(i)
+-                        :"m"(*v), "0"(i));
+-
+-  return i + __i;
++  return __atomic_add_fetch(v,c,__ATOMIC_SEQ_CST);
+ }
+ #endif
+ 
+--- /data1/gzh/EC/Software/PARSEC/pkgs/apps/raytrace/src/RTTL/common/RTInclude.hxx
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-raytrace-headless-20261107T065042Z/src/RTTL/common/RTInclude.hxx
+@@ -17,12 +17,14 @@
+ #define ftruncate  truncate
+ #endif //_WIN32
+ 
++#ifdef _WIN32
+ #define getcwd     _getcwd
+ #define chdir      _chdir
+ #define fileno     _fileno
+ #define sleep      Sleep
+ #define strdup     _strdup
+ 
++#endif
+ // default includes
+ #include <assert.h>
+ #include <limits.h>
+--- /data1/gzh/EC/Software/PARSEC/pkgs/apps/raytrace/src/RTTL/common/cmake_autoconfig.h
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-raytrace-headless-20261107T065042Z/src/RTTL/common/cmake_autoconfig.h
+@@ -1,63 +1,3 @@
+-/*
+-\file config.h
+-
+-this file should never be included directly, it should _only_ be
+-called by RTTL/common/RTInclude.hxx
+-
+-we're adding a little define to make sure that happens...
+-
+-\note cmake passes bools as ON/OFF text constants. to make that
+-understandable to the preprocessor we never use boolean cmake
+-variables directly, and instaed use "CMAKE_", plus manually
+-defining CMAKE_ON=1 and CMAKE_OFF=0. If you get some unexpected
+-behavior of your cmake bools, check if you're always prefixing them
+-with "CMAKE_"...
+-*/
+-
+-
+-#ifndef CALLER_IS_COMMON_RTINCLUDE_HXX
+-# error "this file should only be called by RTInclude.hxx"
+-#endif
+-
+-#ifndef THIS_IS_CMAKE
+-# error "cmake_config.h should _not_ be used when using anything else but cmake to build the codebase"
+-// note: when using cmake, we have cmake parse
+-// cmake_autoconfig_template.h, and have it replace all cmake
+-// variables with the cmake configured values, which are then written
+-// toa file called cmake_autoconfig.h thus, when using cmake, you
+-// should only be including cmake_autoconfig.h
+-#endif
+-
+-
+-// cmake-to-bool conversion ....
+-#  define CMAKE_ON 1
+-#  define CMAKE_OFF 0
+-#  define CMAKE_1 1
+-#  define CMAKE_0 0
+-
+-
+-#define USE_PBOS CMAKE_1
+-#if 0
+-#define NEED_ARB_WRAPPERS
+-#endif
+-// #define USE_PBOS CMAKE_1
+-// #if CMAKE_0
+-// #define NEED_ARB_WRAPPERS
+-// #endif
+-
+-
+-#  define DO_STATS_BVH CMAKE_default
+-
+-
+-namespace RTTL {
+-static const char *defaultBVHBuilder = "default";
+-}
+-
+-
+-#define  NEEDS_PTHREAD_BARRIER_T_WRAPPER
+-/* #undef  APPLE */
+-#ifdef APPLE
+-#  define THIS_IS_APPLE 
+-// we originally named it like that, even though we should probably stay with "APPLE" only
+-#endif
+-
++#define USE_PBOS 0
++#define DO_STATS_BVH 0
++namespace RTTL { static const char *defaultBVHBuilder="default"; }
+--- /data1/gzh/EC/Software/PARSEC/pkgs/apps/raytrace/src/MiniView/rtview.cxx
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-raytrace-headless-20261107T065042Z/src/MiniView/rtview.cxx
+@@ -1,7 +1,7 @@
+ #include "RTTL/common/RTInclude.hxx"
+ #include "LRT/include/lrt.h"
+ #include "LRT/FrameBuffer.hxx"
+-#include "LRT/FrameBuffer/PBOFrameBuffer.hxx"
++
+ #include "Camera.hxx"
+ #include "ObjParser.hxx"
+ #include "RTTL/common/Timer.hxx"
+@@ -10,6 +10,8 @@
+ #include <string>
+ #include <stdlib.h>
+ #include <stdio.h>
++#include <string.h>
++#include <malloc.h>
+ 
+ #ifdef ENABLE_PARSEC_HOOKS
+ #include <hooks.h>
+@@ -47,14 +49,6 @@
+ LRTContext lrtContext;
+ LRTCamera  lrtCamera;
+ 
+-void InitGL()
+-{
+-  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+-  glShadeModel(GL_FLAT);
+-  glDisable(GL_DEPTH_TEST);
+-  glDisable(GL_LIGHTING);
+-}
+-
+ void render()
+ {
+   RTVec3f eye    = camera.getOrigin();
+@@ -84,147 +78,6 @@
+     RTVec3f newDirection = camera.getDirection();
+     newDirection.normalize();
+     camera.setOrigin(camera.getOrigin() + (driftRatio-1.0) * newDirection);
+-  }
+-}
+-
+-void display(void)
+-{
+-  render();
+-
+-  if (glDisplay) lrtDisplayFB(lrtFrameBuffer); // display the FB via GL
+-
+-  glutSwapBuffers();
+-  glutPostRedisplay();
+-}
+-
+-/* called if window is resized */
+-void reshape(int w, int h)
+-{
+-  resX = w;
+-  resY = h;
+-
+-  cout << "reshape: " << w << " x " << h << endl;
+-  DBG_PRINT("Ignoring resize");
+-  //if (frameBuffer) frameBuffer->resize(resX,resY);
+-}
+-
+-/* called for mouse events */
+-void mouse(int button, int state, int x, int y)
+-{
+-  lastMouseX = -1;
+-  lastMouseY = -1;
+-
+-  switch(button) {
+-  case GLUT_LEFT_BUTTON:
+-    if(state == GLUT_DOWN) {
+-      mouseButton = M_LEFT;
+-    }
+-    break;
+-
+-  case GLUT_RIGHT_BUTTON:
+-    if(state == GLUT_DOWN) {
+-      mouseButton = M_RIGHT;
+-    }
+-    break;
+-
+-  default:
+-    mouseButton = M_NONE;
+-  }
+-
+-  glutPostRedisplay();
+-}
+-
+-/* called if mouse is moved */
+-void motion(int x, int y)
+-{
+-
+-  switch(mouseButton) {
+-  case M_RIGHT:
+-
+-    if (lastMouseX == -1 || lastMouseY == -1) break;
+-
+-    camera.moveLocal((lastMouseY - y) * moveScale * RTVec3f(1.0f,0.0f,0.0f));
+-    camera.moveLocal((x - lastMouseX) * moveScale * RTVec3f(0.0f,1.0f,0.0f));
+-
+-    break;
+-
+-  case M_LEFT:
+-    if (lastMouseX == -1 || lastMouseY == -1) break;
+-
+-    camera.rotateGlobal(camera.getUp(),rotateScale * (lastMouseX - x));
+-    camera.rotateLocal(RTVec3f(0.0f,1.0f,0.0f),rotateScale * (y - lastMouseY));
+-    break;
+-  }
+-
+-  lastMouseX = x;
+-  lastMouseY = y;
+-
+-  glutPostRedisplay();
+-
+-}
+-
+-/* for keys */
+-void keyboardfunc(unsigned char key, int x, int y)
+-{
+-  int mod = glutGetModifiers();
+-  printf("key %i %c\n",key,key);
+-
+-  switch (key)
+-    {
+-    case '+':
+-    case '*':
+-      moveScale *= 5.0f;
+-      break;
+-
+-    case '-':
+-    case '/':
+-      moveScale /= 5.0f;
+-      break;
+-
+-    case '<':
+-      break;
+-
+-    case '>':
+-      break;
+-
+-
+-    case '!':
+-      break;
+-
+-    case 'q':
+-    case 27:
+-      printf("exiting application\n");
+-      exit(0);
+-      break;
+-    }
+-}
+-
+-/* for special keys */
+-void specialfunc(int key, int x, int y)
+-{
+-  //int mod = glutGetModifiers();
+-  switch(key) {
+-  case GLUT_KEY_F3:
+-    {
+-      RTVec3f o = camera.getOrigin();
+-      RTVec3f d = camera.getDirection();
+-      RTVec3f u = camera.getUp();
+-      cout << "Current camera:" << endl;
+-      cout << " -vp " << o.x << " " << o.y << " " << o.z;
+-      cout << " -vd " << d.x << " " << d.y << " " << d.z;
+-      cout << " -vu " << u.x << " " << u.y << " " << u.z;
+-      cout << endl;
+-      break;
+-    }
+-  case GLUT_KEY_F4:
+-    cout << "Resetting camera" << endl;
+-    camera.initMatrix(viewerOrigin,viewerDirection,viewerUp,viewerAngle);
+-    break;
+-  case GLUT_KEY_F5:
+-    break;
+-  default:
+-    printf("No function associated - sorry!\n");
+-    break;
+   }
+ }
+ 
+@@ -365,17 +218,8 @@
+ 
+   parseCommandLine(argc, argv);
+ 
+-  if (glDisplay) {
+-    /* initialize glut */
+-    glutInit(&argc, argv);
+-    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
+-    glutInitWindowSize(resX, resY);
+-    glutInitWindowPosition(0, 0);
+-    glutCreateWindow("rtview");
+-    InitGL();
+-  } else
+-    LRT::FrameBuffer::Options::useMemoryFB = true;
+-
++  if(glDisplay) FATAL("display unavailable in headless build");
++  LRT::FrameBuffer::Options::useMemoryFB=true;
+   /* create LRT 'objects' */
+   lrtContext     = lrtCreateContext();
+   lrtCamera      = lrtCreateCamera();
+@@ -460,36 +304,36 @@
+   camera.initMatrix(viewerOrigin,viewerDirection,viewerUp,viewerAngle);
+   lrtBuildContext(lrtContext);
+ 
+-  if (glDisplay) {
+-    cout << "Starting glut..." << endl; 
+-
+-    /* open glut window */
+-    glutDisplayFunc(display);
+-    glutReshapeFunc(reshape);
+-    glutMouseFunc(mouse);
+-    glutMotionFunc(motion);
+-    glutSpecialFunc(specialfunc);
+-    glutKeyboardFunc(keyboardfunc);
+-
+-    /* start rendering */
+-#ifdef ENABLE_PARSEC_HOOKS
+-    atexit(__parsec_roi_end);
+-    __parsec_roi_begin();
+-#endif
+-    glutMainLoop();
+-  } else {
++  {
+     cout << "Rendering " << framesToRender << " frames... " << endl << flush;
++    if(framesToRender<=0) FATAL("finite frame count required");
++    LRT::FrameBuffer *ec_fb=reinterpret_cast<LRT::FrameBuffer*>(lrtFrameBuffer);
++    const size_t ec_w=(resX/8)*8,ec_h=(resY/8)*8,ec_bytes=ec_w*ec_h*4;
++    if(!ec_bytes) FATAL("official dimensions render no complete packet");
++    unsigned char *ec_frames=(unsigned char*)malloc(ec_bytes*framesToRender);
++    if(!ec_frames) exit(125);
++    memset(ec_frames,0,ec_bytes*framesToRender);
++    mallopt(M_TRIM_THRESHOLD,-1);mallopt(M_MMAP_MAX,0);
++    volatile char *ec_heap=(volatile char*)malloc(128*1024*1024);if(!ec_heap)exit(125);
++    for(size_t i=0;i<128*1024*1024;i+=4096)ec_heap[i]=0;free((void*)ec_heap);
+ #ifdef ENABLE_PARSEC_HOOKS
+     __parsec_roi_begin();
+ #endif
+     int frame = 0;
+     do {
+       render();
++      for(size_t y=0;y<ec_h;y++) memcpy(ec_frames+frame*ec_bytes+y*ec_w*4,ec_fb->fb+y*ec_fb->res.x*4,ec_w*4);
+       frame++;
+     } while(!(__builtin_expect(framesToRender > 0,0) && frame >= framesToRender));
+ #ifdef ENABLE_PARSEC_HOOKS
+     __parsec_roi_end();
+ #endif
++    FILE *ec_file=fopen("frames.rgba","wb");if(!ec_file)exit(125);
++    if(fwrite(ec_frames,1,ec_bytes*frame,ec_file)!=ec_bytes*frame || fclose(ec_file))exit(125);
++    ec_file=fopen("frames.shape","w");if(!ec_file)exit(125);
++    fprintf(ec_file,"requested=%dx%d rendered=%zux%zu frames=%d RGBA8\n",resX,resY,ec_w,ec_h,frame);
++    if(fclose(ec_file))exit(125);
++
+     cout << "Done" << endl << flush;
+   }
+ 

@@ -1,0 +1,57 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netstreamcluster/server/streamcluster.cpp
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/network-native-wait-20261110T043100Z/streamcluster-receivers-joined.cpp
+@@ -103,6 +103,8 @@
+ 
+ 
+ static pthread_mutex_t    queue_lock = PTHREAD_MUTEX_INITIALIZER;
++static pthread_t ec_receive_threads[MAX_THREAD];
++static int ec_receive_count;
+ static pthread_barrier_t  thread_barrier;
+ 
+ 
+@@ -1982,7 +1984,7 @@
+   struct sockaddr_in      sin;
+   struct sockaddr_in      pin;
+   struct hostent  *hp;
+-  pthread_t       thread_id[MAX_THREAD];
++
+   char    ch;
+   thread_arg*     arg_ptr;
+   socklen_t addrlen;
+@@ -2074,13 +2076,13 @@
+       arg_ptr->queue = queue;
+ 
+ #ifdef ENABLE_PARSEC_UPTCPIP
+-      if(uptcp_pthread_create(&thread_id[thread_count], NULL, receive_from_client, arg_ptr) != 0){
++      if(uptcp_pthread_create(&ec_receive_threads[thread_count], NULL, receive_from_client, arg_ptr) != 0){
+           printf("pthread_create() error\n");
+           uptcp_close(fd1);
+           goto error_exit;
+       }
+ #else
+-      if(pthread_create(&thread_id[thread_count], NULL, receive_from_client, arg_ptr) != 0){
++      if(pthread_create(&ec_receive_threads[thread_count], NULL, receive_from_client, arg_ptr) != 0){
+           printf("pthread_create() error\n");
+           close(fd1);
+           goto error_exit;
+@@ -2090,6 +2092,7 @@
+ 
+   } while(thread_count != expect_clients);
+ 
++  ec_receive_count = thread_count;
+   return thread_count;
+ 
+ error_exit:
+@@ -2263,6 +2266,12 @@
+   localSearch( &centers, kmin, kmax ,&kfinal ); // parallel
+   contcenters(&centers);
+   outcenterIDs( &centers, centerIDs, outfile);
++  /* The receive workers still own arguments pointing at this stack queue.
++   * Finish their original ACK/close/statistics work before leaving its scope. */
++  for (int ec_i = 0; ec_i < ec_receive_count; ++ec_i) {
++    int ec_rc = pthread_join(ec_receive_threads[ec_i], NULL);
++    if (ec_rc) { fprintf(stderr, "receive pthread_join failed: %d\n", ec_rc); exit(1); }
++  }
+ }
+ 
+ int main(int argc, char **argv)

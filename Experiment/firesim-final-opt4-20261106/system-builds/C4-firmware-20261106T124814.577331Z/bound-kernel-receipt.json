@@ -1,0 +1,83 @@
+{
+  "build_script_sha256": "f016c0e72d717e3dda6fa4627a18c33e8eb3e21b2c5bb7d2e74f2f64d7adab9e",
+  "commands": [
+    [
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/linux/scripts/config",
+      "--file",
+      "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/builds/C4-earlyconsole-20261106T122508Z/.config",
+      "--enable",
+      "RISCV_SBI_V01",
+      "--enable",
+      "SERIAL_EARLYCON_RISCV_SBI",
+      "--enable",
+      "HVC_RISCV_SBI",
+      "--enable",
+      "PRINTK_TIME"
+    ],
+    [
+      "make",
+      "-j2",
+      "O=/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/builds/C4-earlyconsole-20261106T122508Z",
+      "ARCH=riscv",
+      "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+      "HOSTCC=/usr/bin/gcc",
+      "HOSTCXX=/usr/bin/g++",
+      "olddefconfig"
+    ],
+    [
+      "make",
+      "-j2",
+      "O=/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/builds/C4-earlyconsole-20261106T122508Z",
+      "ARCH=riscv",
+      "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+      "HOSTCC=/usr/bin/gcc",
+      "HOSTCXX=/usr/bin/g++",
+      "Image",
+      "vmlinux"
+    ]
+  ],
+  "configuration": "C4",
+  "content_checks": {
+    "memory_profile": "firesim-final-phys36-fullram",
+    "roi_driver_object": "42c6507292565772f622016446cfbbf96c7896df0fa535ae62deb267a37b7e65",
+    "same_rootfs": "a33e7b7d5a6ae0810b69c91b9b256fa8c2a5a6376cd76ac865b26048dfb5aff1"
+  },
+  "error": null,
+  "fpga_execution": "NOT_RUN",
+  "input_files": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/linux-profile.json": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/rootfs-20261106T100529Z/initramfs.cpio": "a33e7b7d5a6ae0810b69c91b9b256fa8c2a5a6376cd76ac865b26048dfb5aff1",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/rootfs-build.json": "460a59d45a3cc66e52e2835494fb857059b3a0cbb582280b46e8c7336b1cdcfd"
+  },
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/builds/C4-earlyconsole-20261106T122508Z",
+  "outputs": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/builds/C4-earlyconsole-20261106T122508Z/vmlinux": "20513863d43e135d9d7b84036eb7402d4f60a498e2734a6ec1c75e73a1a65d2a",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/builds/C4-earlyconsole-20261106T122508Z/arch/riscv/boot/Image": "2485b6ad7c107bf378ebbe9ead3013ace4e9d1cc1d462ba4ee83218989d2d186",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/builds/C4-earlyconsole-20261106T122508Z/.config": "1f74d79a8fa5eb7096783a09942cfe257df4e7cb9ecb0cd19ec1a4ccc4aec17f",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/builds/C4-earlyconsole-20261106T122508Z/drivers/misc/ec_dac_roi.o": "42c6507292565772f622016446cfbbf96c7896df0fa535ae62deb267a37b7e65"
+  },
+  "phase": "kernel",
+  "resources": {
+    "available_memory_gib": 245.25686264038086,
+    "free_disk_gib": 49.594520568847656,
+    "host_cpus": 256,
+    "jobs": 2,
+    "load_1min": 31.35693359375,
+    "make_jobs": 1,
+    "niceness": 15
+  },
+  "returncode": 0,
+  "runtime_validation": "NOT_RUN",
+  "schema": "ec-firesim-system-build/1",
+  "source_id": "5154032f59d93662bae2001107d36cd632cde6a81ce51b8c1c8ce9b5c9c28286",
+  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/linux",
+  "tool_hashes": {
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ld": "10424f5eeafd5806fbca7b88bdae336c202be5a9fa332c1a662a8d0a7ae62fba",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objcopy": "2a38397dae082b022b6370eb9fbfac9c337b95433fc89cb35d384516a0997f1e"
+  },
+  "wall_seconds": 23.63242101483047,
+  "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/kernel-build.json",
+  "parent_receipt_sha256": "3409e122465e7c3da2f2c86e925344a25cc5df1c6eb84024c98b8c648916f4ba",
+  "integration_change": "Enable the earlycon=sbi backend already requested by DT; no DUT/app/input/ROI edits"
+}

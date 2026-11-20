@@ -1,0 +1,158 @@
+{
+  "checker_latency": null,
+  "counts": null,
+  "drain_cycles": 0,
+  "driver_returncode": 0,
+  "driver_stop_after_guest_powerdown": false,
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-vips-test-r1-20261109T122938Z/heartbeat.csv": "9f3b28068cd72a9c5a8acec56e1964c9335f200c1e47413c8397001c4ff630dd",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-vips-test-r1-20261109T122938Z/host.log": "01848c30c619bb76ad276d0126cac4f8936d67f3973d3dc318b138b1e9b8304a",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-vips-test-r1-20261109T122938Z/latency_histogram.csv": "7348bacc4d184cc676cfcf89f8d0ec40dd28eeaa86ae0f6fefa797b43dc6d210",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-vips-test-r1-20261109T122938Z/manifest.json": "c33627691594bba7481b9846ae5b259dd7869f05c8b9577f3778e707f4675fda",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-vips-test-r1-20261109T122938Z/memory_stats0.csv": "6679c5006d14d8413ec36ba18171c1f179c0196e04b362e4af778b06baad416e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-vips-test-r1-20261109T122938Z/roi-parser-source.py": "e55944240285ee0197b1b8bd3bedbe10a4a72305511ac72018fe668578d5f8c1",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-vips-test-r1-20261109T122938Z/roi-raw.jsonl": "e9b74f3477869c11776d1e0a90da49cae5771f91bd2c74ef73f483d7e2892341",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-vips-test-r1-20261109T122938Z/runner-source.py": "0b6e6b4bbe242f7df873c8b5ff131a421e8fd2fa140bb8facfc652747b64b42f",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-vips-test-r1-20261109T122938Z/snapshot.json": "d871bbea31f7e42bcd81a6bb8ea0daf2b26f1750c83cd66bdfe565ee9f1a6a28",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-vips-test-r1-20261109T122938Z/state.json": "12a058297f06112967930fa70bf47050c3103cd2a44232d843510b54eff5782f",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-vips-test-r1-20261109T122938Z/uart.in": "c7acb0483b4e92e930053213cf24d5c125090a2083116bba65f73a4eabf57687",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-vips-test-r1-20261109T122938Z/uart.log": "628f13514fe5f5952c880114732a85c26e5b9fcba7c1dfe081bc10e756cb2461"
+  },
+  "fased_readback": {
+    "readLatency": 30,
+    "readMaxReqs": 4,
+    "relaxFunctionalModel": 0,
+    "writeLatency": 30,
+    "writeMaxReqs": 4
+  },
+  "formal": false,
+  "fpga_execution": true,
+  "guest_power_down_observed": true,
+  "host_efficiency": {
+    "host_delta": 11714439124,
+    "host_simulation_wall_seconds": 234.284684,
+    "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+    "simulation_throughput_cycles_per_second": 16497803.224,
+    "target_delta": 3865182615,
+    "target_end": 383010353252,
+    "target_start": 379145170637
+  },
+  "host_wall_seconds": 234.34414487100003,
+  "identity": {
+    "apps_manifest_sha256": "e21abb326a873e686b04b5d44a11f3fac5e9b4e7d5a0cc04ed8d864e420bba1f",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:21:00.0",
+    "board_serial": "21770433G02LA",
+    "case": {
+      "algorithm_unchanged": true,
+      "argv": [
+        "im_benchmark",
+        "barbados_256x288.v",
+        "output.v"
+      ],
+      "diagnostic_roi_syscalls": [],
+      "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-vips-20261107T060302Z/diagnostic-test/trace.log",
+      "fpga_validation": "NOT_RUN",
+      "input": "test",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/apps/vips/inputs/input_test.tar": "c8c2b41932ac57aa7b13632b2dd0731171479ed52a23855610454a2538fadcc5"
+      },
+      "input_files": {
+        "barbados_256x288.v": "372bebf8661cfd2226e758e331b0c2df0ae4cfbdf932e58cf136ba206566aea7"
+      },
+      "program": "vips",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-vips-20261107T060302Z/reference-test/output.pixels": "e30d432fcc64aa848baf68ee492564887b10f66290a54c4d74d8fd154b0fd8dc",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-vips-20261107T060302Z/reference-test/output.shape": "f75800f1d14a660ae113dc17abfb8d0ae556326561a6e4bf47901e03e6364c41"
+      },
+      "roi": "Full original im_benchmarkn(in,out,1), eager IM_SETBUF/vips_sink_memory completes every output pixel inside ROI",
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/vips/parsec/test.runconf",
+      "runconf_sha256": "ef869bef0155ed0628bd5a7f6b3e12706de1f73960e01ea333dde31c70460b6c",
+      "threads": 1,
+      "validation": {
+        "files": {
+          "output.pixels": "e30d432fcc64aa848baf68ee492564887b10f66290a54c4d74d8fd154b0fd8dc",
+          "output.shape": "f75800f1d14a660ae113dc17abfb8d0ae556326561a6e4bf47901e03e6364c41"
+        },
+        "kind": "files_sha256"
+      },
+      "warmups": 0
+    },
+    "configuration": "Native",
+    "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+    "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+    "elf_sha256": "339e1ed66c1ea9ec4d1434cbfd0df9aaa7374c440acabd19bedf155009a1e3dc",
+    "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+    "firmware_receipt_sha256": "ea93ab8220c58ae158b87aa8c41299f0bd6cde32748e031d97cc3ba2e0115b43",
+    "firmware_sha256": "9ce2a6fb04432e5199a20c551eb66c5e760261287296841b0db64865102ccef3",
+    "formal": false,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "host_bridge_restart": true,
+    "input": "test",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "previous_run_id": null,
+    "program": "vips",
+    "repetition": 1,
+    "rootfs_sha256": "0c72f68e2dc48fdf20910a6fdef231fe920fdd7d3909e0e2b17ba4e8c7bf002f",
+    "run_id": "native-vips-test-r1-20261109T122938Z",
+    "software_diagnostic": false,
+    "software_profile": "vips-complete-im-benchmark-resident-io",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "target_reset_probe": false,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "7c14156adca63f244a1d3278b4098c65b92b0f5095c2f4061f0ab11fe4ea8bc0",
+  "issues": [],
+  "participation": null,
+  "post_drain_traffic_counters": {},
+  "raw": {
+    "epochs": [
+      {
+        "aborted": false,
+        "begin_tick": 3445419306,
+        "end_tick": 3650677758,
+        "epoch": 1,
+        "faults": 0,
+        "formal_sample_eligible": false,
+        "reset_seen": false,
+        "roi_cycles": 205258452,
+        "source_boundaries_complete": true,
+        "states": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    ],
+    "excluded_pre_reset_records": 1,
+    "file_sha256": "c4d7b8bf3fd3ab25b24f2ab50c9b9934ce8ee73e2d806e41ba402a640d9aa9a1",
+    "formal_sample_eligible": false,
+    "last_sequence": 13,
+    "original_journal_sha256": "e9b74f3477869c11776d1e0a90da49cae5771f91bd2c74ef73f483d7e2892341",
+    "parsed_records": 14,
+    "partial_tail_bytes": 0,
+    "protocol_issues": [],
+    "runtime_validation": "NOT_ESTABLISHED_BY_RAW_LOG",
+    "schema": "ec-dac-b-raw-roi/1",
+    "warning": "Raw ROI boundaries only. Output/job identity, runtime timebase checks and the formal host collector are still required."
+  },
+  "roi_cycles": 205258452,
+  "schema": "ec-isolated-fpga-result/1",
+  "timedout": false,
+  "valid": true
+}

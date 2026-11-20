@@ -1,0 +1,90 @@
+{
+  "architecture": "x86_64",
+  "binaries": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/client/client": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/client/client",
+      "sha256": "91a0b37607eafc808c592b414b7cf215a6a42e18a3daf1d3ff63a48f4d77a06c"
+    },
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/server/server": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/server/server",
+      "sha256": "c62452fc3b3d943bbf84f8c90253efa7736f79886b83929b41b818547e250b81"
+    }
+  },
+  "children": {
+    "client": {
+      "cmdline": "nice -n 15 /data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/client/client 1 10 10 1 ",
+      "pid": 2377988,
+      "process_state": "R",
+      "start_ticks": "1556962"
+    },
+    "server": {
+      "cmdline": "nice -n 15 /data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/server/server 2 5 1 10 10 5 none output.txt 1 ",
+      "pid": 2377990,
+      "process_state": "R",
+      "start_ticks": "1556963"
+    }
+  },
+  "client_argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/client/client",
+    "1",
+    "10",
+    "10",
+    "1"
+  ],
+  "correctness": {
+    "method": "complete clustering output produced; cross-reference comparison remains pending",
+    "passed": false
+  },
+  "ended_utc": "2026-11-07T10:30:12.293498+00:00",
+  "exit_codes": {
+    "client": 0,
+    "server": 0
+  },
+  "formal_eligible": false,
+  "fpga_run": false,
+  "host_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "input": "test",
+  "input_archive": null,
+  "mapping_note": "simmedium invokes original simlarge for netstreamcluster; netdedup candidate separates server/client flags and uses unchanged formal archive",
+  "namespaces": {
+    "ipc": "ipc:[4026535380]",
+    "mnt": "mnt:[4026535379]",
+    "net": "net:[4026535381]"
+  },
+  "output": {
+    "bytes": 44,
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netstreamcluster-test-x86_64/work/output.txt",
+    "sha256": "df19d532b26216389f8f6f12139376aa48e81a12ffad0fb25b3685d92ef2e804"
+  },
+  "pid": 2377983,
+  "private_ipc_namespace": true,
+  "private_mount_namespace": true,
+  "private_network_namespace": true,
+  "program": "netstreamcluster",
+  "roi": "Original application hook sites; diagnostic writes only, no checker claim",
+  "roi_diagnostic": {
+    "begin_seen": true,
+    "end_seen": true,
+    "source": "server.log; diagnostic marker writes remain visible",
+    "syscall_counts": {},
+    "time_base": "host QEMU trace order only; no target cycles or checker latency"
+  },
+  "schema": "ec-network-qemu-case/1",
+  "server_argv": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/server/server",
+    "2",
+    "5",
+    "1",
+    "10",
+    "10",
+    "5",
+    "none",
+    "output.txt",
+    "1"
+  ],
+  "source_receipt_sha256": "eb8c7b23b020f54a34d12e73904bb7a741655c2242144f83a10213bcebd662e4",
+  "start_ticks": "1556954",
+  "status": "PROTOCOL_COMPLETED_REFERENCE_PENDING",
+  "trace_enabled": false,
+  "wall_seconds": 0.4215746690006199
+}

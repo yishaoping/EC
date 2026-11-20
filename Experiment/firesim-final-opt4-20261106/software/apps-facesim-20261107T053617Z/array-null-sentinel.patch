@@ -1,0 +1,29 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Public_Library/Arrays/ARRAY.h
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-facesim-20261107T052214Z/src/Public_Library/Arrays/ARRAY.h
+@@ -87,22 +87,22 @@
+ 
+ 	T* Allocate_Base_Pointer (const int m_input)
+ 	{
+-		return (new T[m_input]) - 1;
++		return m_input ? (new T[m_input]) - 1 : 0;
+ 	}
+ 
+ 	void Set_Base_Pointer (T* array)
+ 	{
+-		base_pointer = array - 1;
++		base_pointer = array ? array - 1 : 0;
+ 	}
+ 
+ 	T* Get_Array_Pointer() const
+ 	{
+-		return base_pointer + 1;
++		return base_pointer ? base_pointer + 1 : 0;
+ 	}
+ 
+ 	void Deallocate_Base_Pointer()
+ 	{
+-		delete[] (base_pointer + 1);
++		if (base_pointer) delete[] (base_pointer + 1);
+ 	}
+ 
+ 	ARRAY<T>& operator= (const ARRAY<T>& source)

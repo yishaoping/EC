@@ -1,0 +1,73 @@
+{
+  "bank_lanes": [
+    16,
+    8
+  ],
+  "banks": [
+    16,
+    32
+  ],
+  "edits": [
+    {
+      "new": "import chisel3.util._\nimport chisel3.experimental.annotate\nimport midas.targetutils.EnableModelMultiThreadingAnnotation",
+      "offset": 63,
+      "old": "import chisel3.util._"
+    },
+    {
+      "new": "class GHBarrierLatencyStats(val window: Int, val bankLanes: Int = 16) extends Module {",
+      "offset": 1088,
+      "old": "class GHBarrierLatencyStats(val window: Int) extends Module {"
+    },
+    {
+      "new": "  require(isPow2(bankLanes) && bankLanes <= window)\n  val bucketBanks = Seq.tabulate(window / bankLanes) { b =>\n    val bank = Module(new GHBarrierBucketBank(window, bankLanes))\n    bank.io.base := (b * bankLanes).U\n    bank.io.resetStats := io.resetStats\n    bank.io.event := io.event\n    bank.io.safeWatermark := io.safeWatermark\n    bank.io.currentCycle := io.currentCycle\n    annotate(EnableModelMultiThreadingAnnotation(bank))\n    bank\n  }",
+      "offset": 1890,
+      "old": "  val buckets = RegInit(0.U.asTypeOf(new GHBarrierLatencyBucket(window)))"
+    },
+    {
+      "new": "",
+      "offset": 2592,
+      "old": "  val bucketResolve = Wire(Vec(window, Bool()))\n  for (i <- 0 until window) {\n    bucketResolve(i) := buckets.valid(i) &&\n      buckets.seq(i) <= io.safeWatermark\n  }\n\n"
+    },
+    {
+      "new": "  val resolvedBucketsWide = exactBucketSum(bucketBanks.map(_.io.resolvedCount))\n  val requestBucketsWide = exactBucketSum(bucketBanks.map(_.io.resolvedRequest))\n",
+      "offset": 3134,
+      "old": "  val resolvedBucketsWide = exactBucketSum((0 until window).map(i =>\n    Mux(bucketResolve(i), buckets.count(i), 0.U(64.W))))\n  val requestBucketsWide = exactBucketSum((0 until window).map(i =>\n    Mux(bucketResolve(i), buckets.requestCycleSum(i), 0.U(64.W))))\n"
+    },
+    {
+      "new": "  val eventBucketAvailable = bucketBanks.map(_.io.eventAvailable).reduce(_ || _)\n",
+      "offset": 3910,
+      "old": "  val eventBucketAvailable = !buckets.valid(eventIndex) ||\n    bucketResolve(eventIndex) || buckets.seq(eventIndex) === io.event.bits\n"
+    },
+    {
+      "new": "  val bucketCountOverflow = bucketBanks.map(_.io.countOverflow).reduce(_ || _)\n  val bucketCycleOverflow = bucketBanks.map(_.io.cycleOverflow).reduce(_ || _)\n",
+      "offset": 4636,
+      "old": "  val bucketCountOverflow = eventAccepted && buckets.valid(eventIndex) &&\n    !bucketResolve(eventIndex) && buckets.count(eventIndex) === ~0.U(64.W)\n  val bucketCycleOverflow = eventAccepted && buckets.valid(eventIndex) &&\n    !bucketResolve(eventIndex) &&\n    buckets.requestCycleSum(eventIndex) > (~0.U(64.W) - io.currentCycle)\n"
+    },
+    {
+      "new": "  }.otherwise {\n",
+      "offset": 5684,
+      "old": "    for (i <- 0 until window) {\n      buckets.valid(i) := false.B\n      buckets.seq(i) := 0.U\n      buckets.count(i) := 0.U\n      buckets.requestCycleSum(i) := 0.U\n    }\n  }.otherwise {\n    for (i <- 0 until window) {\n      when (bucketResolve(i)) {\n        buckets.valid(i) := false.B\n        buckets.count(i) := 0.U\n        buckets.requestCycleSum(i) := 0.U\n      }\n    }\n\n    when (eventAccepted) {\n      when (!buckets.valid(eventIndex) || bucketResolve(eventIndex)) {\n        buckets.valid(eventIndex) := true.B\n        buckets.seq(eventIndex) := io.event.bits\n        buckets.count(eventIndex) := 1.U\n        buckets.requestCycleSum(eventIndex) := io.currentCycle\n      }.otherwise {\n        buckets.count(eventIndex) := buckets.count(eventIndex) + 1.U\n        buckets.requestCycleSum(eventIndex) :=\n          buckets.requestCycleSum(eventIndex) + io.currentCycle\n      }\n    }\n\n"
+    }
+  ],
+  "extra_target_registers": 0,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "global_counter_arithmetic_and_assignment_bytes_preserved": true,
+  "hardware_commit": "16b2d8945f6e17385a4fe136eadd9597ee1ac4fc",
+  "integration_limit": "Isolated module uses one selected FAME5 type with power-of-two instances. Whole-EC adoption must reconcile AddressStats and three barrier instances under the existing one-type/power-of-two rule before any combined-host build.",
+  "parent_commit": "fd5de2bafb8f5d236dfe240fbecf3436f8c3468a",
+  "proof_files": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/barrier-banked-host-r1-20261113/BankProof.scala": "4703cef0636aa72e0018aaead7001fd3e215aff9a511448af15f8ddd698abe20",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/barrier-banked-host-r1-20261113/CandidateProof.scala": "006048315e3568a699be133d9b9f488d4aab106585544368a77aeffbe03497c9",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/barrier-banked-host-r1-20261113/ReferenceModule.scala": "313812ef96de7d2b820ef2a8b354a5c8a958650a336ed63320e0dfc2060d08fe",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/barrier-banked-host-r1-20261113/ReferenceProof.scala": "66edaa35126bc84916de5561d4efb3ce36ad8c98ea66c441ba1dd982aa6ff529"
+  },
+  "scope": "Experimental complete barrier; no target/host parity, area saving, whole EC equivalence or FIT claim yet.",
+  "slots": 256,
+  "source_files": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-area-barrier-banked-r1-20261113/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/BarrierBucketBank.scala": "5edfe9b36c75ea5d330f6955c0c4be786e74a2436b21a5922ffd744fdaf99067",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-area-barrier-banked-r1-20261113/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/BarrierLatencyStats.scala": "54f4d2dcfccfba48d9ffd3c6290c52c994370529cc4ca369b74ea393af37eeba"
+  },
+  "source_inverse_byte_equal": true,
+  "state_bits_per_entry": 161,
+  "target_cycle_changes": 0
+}

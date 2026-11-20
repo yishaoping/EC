@@ -1,0 +1,32 @@
+--- a/chipyard/generators/boom/src/main/scala/lsu/speculative-version-buffer.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/speculative-version-buffer.scala
+@@ -127,8 +127,11 @@
+     yield (i,j) -> (line(i) === line(j))).toMap
+   private val writerEqual = (for (i <- 0 until entries; j <- i+1 until entries)
+     yield (i,j) -> (key(i).writer === key(j).writer)).toMap
++  val freeVec = VecInit((0 until entries).map(i => !valid(i)))
++  val freeAny = freeVec.asUInt.orR
++  val allocOH = PriorityEncoderOH(freeVec.asUInt)
+   private val capturedOrder = CaptureOrderRelations(io.capture.fire,
+-    UIntToOH(io.allocatedEntry, entries),
++    allocOH,
+     Cat(io.capture.bits.key.contentSeq, io.capture.bits.key.generation),
+     key.map(k => Cat(k.contentSeq, k.generation)).toSeq)
+   private val orderLess = capturedOrder.map { case (pair, relation) => pair -> relation._1 }
+@@ -141,7 +144,6 @@
+     if (i==j) false.B else if (i<j) orderLess((i,j))
+     else !orderLess((j,i)) && !orderEqual((j,i))
+ 
+-  val freeVec = VecInit((0 until entries).map(i => !valid(i)))
+   for (q <- 0 until 4) {
+     val blockedByEntry = VecInit((0 until entries).map(i => valid(i) && line(i) === io.releaseLines(q)))
+     io.releaseBlocked(q) := blockedByEntry.asUInt.orR
+@@ -151,8 +153,6 @@
+     io.releaseBlockingSeq(q) := Mux1H(blockingOH.asBools,key.map(_.contentSeq))
+     io.releaseBlockingGeneration(q) := Mux1H(blockingOH.asBools,key.map(_.generation))
+   }
+-  val freeAny = freeVec.asUInt.orR
+-  val allocOH = PriorityEncoderOH(freeVec.asUInt)
+   io.capture.ready := freeAny && !io.flush && !io.invalidate.valid
+ 
+   // Packet identities and the contiguous PASS watermark are global: observer

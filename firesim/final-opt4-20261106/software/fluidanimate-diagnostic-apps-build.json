@@ -1,0 +1,306 @@
+{
+  "algorithm_sources_modified": false,
+  "binaries": {
+    "fluidanimate": {
+      "algorithm_sources_modified": false,
+      "application_threads": 1,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/fluidanimate",
+      "sha256": "9571c88c69be6865d36dfc41178704960b0462aef9a8d09314567616a9df3962"
+    }
+  },
+  "cases": [
+    {
+      "algorithm_unchanged": true,
+      "argv": [
+        "1",
+        "1",
+        "in_5K.fluid",
+        "out.fluid"
+      ],
+      "diagnostic_roi_syscalls": [],
+      "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/diagnostic-test/trace.log",
+      "fpga_validation": "NOT_RUN",
+      "input": "test",
+      "input_archive": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/inputs/input_test.tar",
+      "input_archive_sha256": "cb6fb5c56afff6c8c962ec59d0b51e403b3f4ce72f2c963b5c37212492f561e0",
+      "input_files": {
+        "in_5K.fluid": "0ecf8072144a42a1d096b7e0cfee8ce1a5a217856b4858112a2ce05d88a62ae2"
+      },
+      "program": "fluidanimate",
+      "reference_outputs": {
+        "out.fluid": "3282157bfae2662113c115cb286574a554de8ad5aa6313811bd25cee47d55cb8"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/parsec/test.runconf",
+      "runconf_sha256": "fb9396fa40d9978db8f258dcfa5e6eaf9b46a635ad571b4afcfad6f0d3a6d07a",
+      "software_reference": "QEMU_RISCV_USER_ONLY",
+      "threads": 1,
+      "validation": {
+        "files": {
+          "out.fluid": "3282157bfae2662113c115cb286574a554de8ad5aa6313811bd25cee47d55cb8"
+        },
+        "kind": "files_sha256"
+      },
+      "warmups": 0
+    },
+    {
+      "algorithm_unchanged": true,
+      "argv": [
+        "1",
+        "5",
+        "in_35K.fluid",
+        "out.fluid"
+      ],
+      "diagnostic_roi_syscalls": [],
+      "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/diagnostic-simsmall/trace.log",
+      "fpga_validation": "NOT_RUN",
+      "input": "simsmall",
+      "input_archive": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/inputs/input_simsmall.tar",
+      "input_archive_sha256": "2ce918f55f2ac604a39217d6d94dd5e399af3eab0f4336336d026db59605e8c7",
+      "input_files": {
+        "in_35K.fluid": "0a649e52c616ee52ef24038b1d4dae316520f517c122f45fa16755b761ada5a6"
+      },
+      "program": "fluidanimate",
+      "reference_outputs": {
+        "out.fluid": "918f0fa738a3bfd533d651cc909cb22285a2011d7a31acc0d9099237206face4"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/parsec/simsmall.runconf",
+      "runconf_sha256": "9264e6fdd36771af23a516927914a1822f0db13e31bf97e3e8ae2d90b5765282",
+      "software_reference": "QEMU_RISCV_USER_ONLY",
+      "threads": 1,
+      "validation": {
+        "files": {
+          "out.fluid": "918f0fa738a3bfd533d651cc909cb22285a2011d7a31acc0d9099237206face4"
+        },
+        "kind": "files_sha256"
+      },
+      "warmups": 0
+    },
+    {
+      "algorithm_unchanged": true,
+      "argv": [
+        "1",
+        "5",
+        "in_100K.fluid",
+        "out.fluid"
+      ],
+      "diagnostic_roi_syscalls": [],
+      "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/diagnostic-simmedium/trace.log",
+      "fpga_validation": "NOT_RUN",
+      "input": "simmedium",
+      "input_archive": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/inputs/input_simmedium.tar",
+      "input_archive_sha256": "3f4a4b2014282f7db29e2cd8ec307f4c291eb35ce43f8bef2dece2857445bf7b",
+      "input_files": {
+        "in_100K.fluid": "40bf640c419080111ee44a9946545489e695b4b8cf2ac5f7b280de365714294e"
+      },
+      "program": "fluidanimate",
+      "reference_outputs": {
+        "out.fluid": "6309876f3a874fec3f0ae8ab96499026050746e70d9a0cc864b6adb8cbbc58a7"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/parsec/simmedium.runconf",
+      "runconf_sha256": "812e8488f11553480bd154db052a99f5d7f84ddae8d192f46fcc3ac6604e00a0",
+      "software_reference": "QEMU_RISCV_USER_ONLY",
+      "threads": 1,
+      "validation": {
+        "files": {
+          "out.fluid": "6309876f3a874fec3f0ae8ab96499026050746e70d9a0cc864b6adb8cbbc58a7"
+        },
+        "kind": "files_sha256"
+      },
+      "warmups": 0
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-D_GNU_SOURCE",
+        "-D_XOPEN_SOURCE=600",
+        "-Wno-invalid-offsetof",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/src/fluidanimate",
+        "-c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/hooks.cpp",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/diagnostic-hooks.o"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-D_GNU_SOURCE",
+        "-D_XOPEN_SOURCE=600",
+        "-Wno-invalid-offsetof",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/src/fluidanimate",
+        "-std=gnu++17",
+        "-x",
+        "c++",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/src/fluidanimate/serial.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/src/fluidanimate/cellpool.cpp",
+        "-x",
+        "none",
+        "-lm",
+        "-pthread",
+        "-DENABLE_PARSEC_HOOKS",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/hooks.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/dac_roi.o",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/fluidanimate"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-D_GNU_SOURCE",
+        "-D_XOPEN_SOURCE=600",
+        "-Wno-invalid-offsetof",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/src/fluidanimate",
+        "-std=gnu++17",
+        "-x",
+        "c++",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/src/fluidanimate/serial.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/src/fluidanimate/cellpool.cpp",
+        "-x",
+        "none",
+        "-lm",
+        "-pthread",
+        "-DENABLE_PARSEC_HOOKS",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/diagnostic-hooks.o",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/fluidanimate-reference"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/fluidanimate-reference",
+        "1",
+        "1",
+        "in_5K.fluid",
+        "out.fluid"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/reference-test"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "-strace",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/fluidanimate-reference",
+        "1",
+        "1",
+        "in_5K.fluid",
+        "out.fluid"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/diagnostic-test"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/fluidanimate-reference",
+        "1",
+        "5",
+        "in_35K.fluid",
+        "out.fluid"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/reference-simsmall"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "-strace",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/fluidanimate-reference",
+        "1",
+        "5",
+        "in_35K.fluid",
+        "out.fluid"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/diagnostic-simsmall"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/fluidanimate-reference",
+        "1",
+        "5",
+        "in_100K.fluid",
+        "out.fluid"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/reference-simmedium"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "-strace",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/fluidanimate-reference",
+        "1",
+        "5",
+        "in_100K.fluid",
+        "out.fluid"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/diagnostic-simmedium"
+    }
+  ],
+  "diagnostic_capture_files": [
+    "out.fluid"
+  ],
+  "diagnostic_policy": "Unchanged computation, ROI and exact-byte validity gate; failed output captured to host before invalid marker. Never a formal sample.",
+  "formal_eligible": false,
+  "formal_input_policy": "Official simmedium, 1 thread, 5 frames, full original serial AdvanceFrame ROI; check every output byte",
+  "fpga_validation": "NOT_RUN",
+  "host_log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z",
+  "integration_patch": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/software-integration.patch",
+  "integration_patch_sha256": "640b70caea8d71780bbfec0d56197344ce6ef9fd4f46fbd9772cb325c542b9b7",
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-diagnostic-20261107T065213Z",
+  "parsec_commit": "a06d35960951c9bfad61eb4826bca8d167f98c19",
+  "pid": 1417890,
+  "platform_harness_removed": true,
+  "reused_apps_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-apps-build.json",
+  "reused_apps_receipt_sha256": "68213950013bb1198cb07729d69e04f15cfdedbc9ef32d7ae3fe99fec1338c4a",
+  "reused_diagnostic_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-diagnostic-apps-build.json",
+  "reused_diagnostic_receipt_sha256": "b59c54e57bf2635c1e19d3ce3673513d4f1ee4c295a75ddd99781f7152eb4875",
+  "smoke": {
+    "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/roi-smoke",
+    "sha256": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8"
+  },
+  "software_profile": "fluidanimate-unchanged-app-failed-output-capture-v2",
+  "sources": {
+    "COPYRIGHT": "223cd1c55b89ea5b7d44685895116746ab1f680b2cd8d7e164dadadf3eb9d3d8",
+    "Makefile": "5f9850ad91d2c749d88133d89e8daae5060b2a229de04e427054640881ed47d5",
+    "Makefile.pthreads": "a8aaac778377454a505fa409fffecf4865dd005801a7a8db35268424cc362b56",
+    "Makefile.serial": "38d5801f243c8e4e081d657e162cce868d2b1093cc64fa3f08c41ccdfa758ae3",
+    "Makefile.tbb": "b243ba53cc84b79274b3f540b970d5176d436384d51f16b207fb4243f62e3dcb",
+    "README": "d9b56da0d67bd45bb795653d74d0e32ade51553b5b8daddaa46c4adb7a1a87f4",
+    "cellpool.cpp": "784804a5426b54c88b134955f401901af25dd4fa2268d491078803f57a6ac842",
+    "cellpool.hpp": "30872a5d5911df1f44305501fb8ab16fb9acf7b00f89a7432aecea49f3b6a184",
+    "custom.h": "6e718cb32808c417f1a7b512cd55bfaeb4cd56efeb4e8d50535a4e18f7ec08a1",
+    "encoding.h": "40513cda414c3292dfc9db1c4c83dbadd6424abe94d4cd6f4837dd6292072b39",
+    "fluid.hpp": "be27f1616cdf7579cb941d9d536b7f0ec7f8d733a8edf0f2ba508f99c99f914a",
+    "fluidcmp.cpp": "bcc62a2ca70032902f84f258bd0df57910bfa4bf1e98cf40e98edcd1e9a48799",
+    "fluidview.cpp": "45e20084cc6b13012457aac4392f40f4459fa8589ae83b60b868bfa469fc17e2",
+    "fluidview.hpp": "644edd232a2e5697cee29d7d16f1278a51960117adcc263fe5b9e7c401bc787b",
+    "parsec_barrier.cpp": "7ef2227eb1a775a39ff706917b318674f8ee59fe52f814cafc7d5dc6a365ad0a",
+    "parsec_barrier.hpp": "6df85047234fb7fb6e2bcaf753af207041f4689a8b111f6a74f389eacf32391c",
+    "pthreads.cpp": "b2ffb4721f09b67d7dc6aacf462eefaa317f528f013ad5892426cf4d48ba5fde",
+    "rocc.h": "0153080a79febf77a0f79bf0579c868b9995166d858b29e2729149a1a99b59e4",
+    "serial.cpp": "729850e6e1bbe4a214bc75d1699c84d030b064a995c5294dbf7f229fe918ff48",
+    "tbb.cpp": "c7d20ad2ff1b1ec2f56527fe96add719acda6fa3891e12d1b992f1bab48909b8"
+  },
+  "status": "PREPARED_FPGA_NOT_RUN",
+  "transport_revision": "busybox-uuencode-m-v2"
+}

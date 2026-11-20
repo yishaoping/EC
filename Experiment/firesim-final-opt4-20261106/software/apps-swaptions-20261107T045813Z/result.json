@@ -1,0 +1,369 @@
+{
+  "binaries": {
+    "swaptions": {
+      "algorithm_sources_modified": false,
+      "application_threads": 1,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/swaptions",
+      "reference_path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/swaptions-reference",
+      "reference_sha256": "bdd999ec7ab5b55dedfe6f545665400640f5a8e35cf844aaa577d5cd97037a0b",
+      "sha256": "dca887fcf1f0294288e8b06931d09b4332e1ec764a2a7250489523c8db2dd493"
+    }
+  },
+  "cases": [
+    {
+      "algorithm_unchanged": true,
+      "argv": [
+        "-ns",
+        "1",
+        "-sm",
+        "5",
+        "-nt",
+        "1"
+      ],
+      "diagnostic_roi_syscalls": [],
+      "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-20261107T045813Z/diagnostic-test/trace.log",
+      "fpga_validation": "NOT_RUN",
+      "input": "test",
+      "input_archives": {},
+      "input_files": {},
+      "input_generation": "original deterministic seed1979",
+      "program": "swaptions",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-20261107T045813Z/reference-test/validation.txt": "d95bfe7945ba6df1d39ebb46ee94459254990611ab54a5d9a9e872c87c3affa4"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/swaptions/parsec/test.runconf",
+      "runconf_sha256": "b8c21668252985c1fda80457fe82307c15328e6e582cd5fa7001030736fb68c7",
+      "software_reference": "QEMU_RISCV_USER_ONLY",
+      "threads": 1,
+      "validation": {
+        "kind": "stdout_prefix_hash",
+        "prefix": "Swaption ",
+        "reference": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-20261107T045813Z/reference-test/validation.txt",
+        "reference_sha256": "d95bfe7945ba6df1d39ebb46ee94459254990611ab54a5d9a9e872c87c3affa4"
+      },
+      "warmups": 0
+    },
+    {
+      "algorithm_unchanged": true,
+      "argv": [
+        "-ns",
+        "16",
+        "-sm",
+        "10000",
+        "-nt",
+        "1"
+      ],
+      "diagnostic_roi_syscalls": [
+        "1278454 brk(0x000000000017c000) = 0x000000000017c000",
+        "1278454 brk(0x000000000017a000) = 0x000000000017a000",
+        "1278454 brk(0x000000000019b000) = 0x000000000019b000",
+        "1278454 brk(0x000000000019a000) = 0x000000000019a000",
+        "1278454 brk(0x00000000001bb000) = 0x00000000001bb000"
+      ],
+      "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-20261107T045813Z/diagnostic-simsmall/trace.log",
+      "fpga_validation": "NOT_RUN",
+      "input": "simsmall",
+      "input_archives": {},
+      "input_files": {},
+      "input_generation": "original deterministic seed1979",
+      "program": "swaptions",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-20261107T045813Z/reference-simsmall/validation.txt": "035f6b0cb1aa322de4e505f5f6923a2ff5fd55176dd411727427d08cd7c724a4"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/swaptions/parsec/simsmall.runconf",
+      "runconf_sha256": "948d10adebb96cc58448203cedded6394ebef6169d7edca9b65dae042c3f97b0",
+      "software_reference": "QEMU_RISCV_USER_ONLY",
+      "threads": 1,
+      "validation": {
+        "kind": "stdout_prefix_hash",
+        "prefix": "Swaption ",
+        "reference": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-20261107T045813Z/reference-simsmall/validation.txt",
+        "reference_sha256": "035f6b0cb1aa322de4e505f5f6923a2ff5fd55176dd411727427d08cd7c724a4"
+      },
+      "warmups": 0
+    },
+    {
+      "algorithm_unchanged": true,
+      "argv": [
+        "-ns",
+        "32",
+        "-sm",
+        "20000",
+        "-nt",
+        "1"
+      ],
+      "diagnostic_roi_syscalls": [
+        "1279336 brk(0x000000000017c000) = 0x000000000017c000",
+        "1279336 brk(0x000000000019d000) = 0x000000000019d000",
+        "1279336 brk(0x000000000019c000) = 0x000000000019c000",
+        "1279336 brk(0x00000000001bd000) = 0x00000000001bd000",
+        "1279336 brk(0x00000000001e0000) = 0x00000000001e0000",
+        "1279336 brk(0x0000000000201000) = 0x0000000000201000",
+        "1279336 brk(0x0000000000200000) = 0x0000000000200000"
+      ],
+      "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-20261107T045813Z/diagnostic-simmedium/trace.log",
+      "fpga_validation": "NOT_RUN",
+      "input": "simmedium",
+      "input_archives": {},
+      "input_files": {},
+      "input_generation": "original deterministic seed1979",
+      "program": "swaptions",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-20261107T045813Z/reference-simmedium/validation.txt": "0c4033c2965f42b0759d50334032a14bf3d5d254858e598e2b82307228b15b4f"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/swaptions/parsec/simmedium.runconf",
+      "runconf_sha256": "acf18b236d1cff30793514f44cb753c8d43cf7c1256812295d23f13d09933927",
+      "software_reference": "QEMU_RISCV_USER_ONLY",
+      "threads": 1,
+      "validation": {
+        "kind": "stdout_prefix_hash",
+        "prefix": "Swaption ",
+        "reference": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-20261107T045813Z/reference-simmedium/validation.txt",
+        "reference_sha256": "0c4033c2965f42b0759d50334032a14bf3d5d254858e598e2b82307228b15b4f"
+      },
+      "warmups": 0
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-D_GNU_SOURCE",
+        "-std=gnu++17",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions",
+        "-x",
+        "c++",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/CumNormalInv.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/MaxFunction.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/RanUnif.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/nr_routines.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/icdf.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/HJM_SimPath_Forward_Blocking.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/HJM.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/HJM_Swaption_Blocking.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/HJM_Securities.cpp",
+        "-x",
+        "none",
+        "-DENABLE_PARSEC_HOOKS",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/hooks.o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/dac_roi.o",
+        "-lm",
+        "-pthread",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/swaptions"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-D_GNU_SOURCE",
+        "-std=gnu++17",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions",
+        "-x",
+        "c++",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/CumNormalInv.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/MaxFunction.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/RanUnif.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/nr_routines.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/icdf.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/HJM_SimPath_Forward_Blocking.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/HJM.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/HJM_Swaption_Blocking.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/HJM_Securities.cpp",
+        "-x",
+        "none",
+        "-lm",
+        "-pthread",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/swaptions-reference"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/hooks",
+        "-c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/diagnostic-hooks.c",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/diagnostic-hooks.o"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z"
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-D_GNU_SOURCE",
+        "-std=gnu++17",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions",
+        "-x",
+        "c++",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/CumNormalInv.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/MaxFunction.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/RanUnif.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/nr_routines.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/icdf.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/HJM_SimPath_Forward_Blocking.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/HJM.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/HJM_Swaption_Blocking.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/src/swaptions/HJM_Securities.cpp",
+        "-x",
+        "none",
+        "-DENABLE_PARSEC_HOOKS",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/diagnostic-hooks.o",
+        "-lm",
+        "-pthread",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/swaptions-diagnostic"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/swaptions-reference",
+        "-ns",
+        "1",
+        "-sm",
+        "5",
+        "-nt",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-20261107T045813Z/reference-test"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "-strace",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/swaptions-diagnostic",
+        "-ns",
+        "1",
+        "-sm",
+        "5",
+        "-nt",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-20261107T045813Z/diagnostic-test"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/swaptions-reference",
+        "-ns",
+        "16",
+        "-sm",
+        "10000",
+        "-nt",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-20261107T045813Z/reference-simsmall"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "-strace",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/swaptions-diagnostic",
+        "-ns",
+        "16",
+        "-sm",
+        "10000",
+        "-nt",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-20261107T045813Z/diagnostic-simsmall"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/swaptions-reference",
+        "-ns",
+        "32",
+        "-sm",
+        "20000",
+        "-nt",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-20261107T045813Z/reference-simmedium"
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "-strace",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/swaptions-diagnostic",
+        "-ns",
+        "32",
+        "-sm",
+        "20000",
+        "-nt",
+        "1"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-20261107T045813Z/diagnostic-simmedium"
+    }
+  ],
+  "formal_eligible": true,
+  "formal_input_policy": "official simmedium, 32 swaptions, 20000 trials, original full worker ROI, one thread/no warmup; require matching FPGA simsmall gate",
+  "fpga_validation": "NOT_RUN",
+  "host_log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-swaptions-20261107T045813Z",
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z",
+  "parsec_commit": "a06d35960951c9bfad61eb4826bca8d167f98c19",
+  "pid": 1277541,
+  "reused_hooks": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/dac_roi.o": "c48cad04fd5a065b3fabe177ef63ae30eed5393d8eb5facf2d1379f00c6d4661",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/hooks.o": "7ddc0541c7c8c574eb59b060894d36f0a47817f5f44d67b0bdcbb7973d56d355",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/roi-smoke": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8"
+  },
+  "script_sha256": "3a41b7be3da6d97467733a25d4a0b31cbd75ccaa3ad9c958e2dc29ab36577276",
+  "smoke": {
+    "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-swaptions-20261107T045813Z/roi-smoke",
+    "sha256": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8"
+  },
+  "software_profile": "original-swaptions-serial",
+  "sources": {
+    "hooks/dac_roi.c": "4514140f54e4c7fc04692fc2d2884e19224893ea07833f0019859ce09f07eb1b",
+    "hooks/dac_roi.h": "67f346d9464922fbaa990bd5cb8a5a68ae17a9ccceec7c6d66a2c8091343f741",
+    "hooks/ec_dac_roi_uapi.h": "23e11341af35213abd1d69dc5cd2231541ee878e36c7ad6161ae685342e28365",
+    "hooks/hooks.c": "a50ff923ff01d06e0cee643d08b66adc9ba555c08fee574fd7bd8f8141bded23",
+    "hooks/hooks.h": "c69b4d07f3ce63a73a5f79b9be994923bac79cc5ec5b7128a1847f7aeb7a1db9",
+    "hooks/opt4_hw.h": "7372eb0c67523ce168a1788a86a2c92d7e9cda85d8da5d3b65979adbd1aee97f",
+    "swaptions/COPYRIGHT": "223cd1c55b89ea5b7d44685895116746ab1f680b2cd8d7e164dadadf3eb9d3d8",
+    "swaptions/CumNormalInv.cpp": "cae84e2eab8c05735c35e82c25b00fb9a555e90763be4b75623504a0208d32c6",
+    "swaptions/HJM.cpp": "22d3c67c4e32bc7669c57fcb8682fba54e2bf3d350dfece8186e640a4ecc49b9",
+    "swaptions/HJM.h": "699f6e5658a6e66efe48381feb4270deebb228a8ef2913d60f05847afedc41b2",
+    "swaptions/HJM_Securities.cpp": "33cda1c6b09d612e047cc50b5b9bf65385067304d71596f1af91e968caab1aea",
+    "swaptions/HJM_Securities.h": "10378d6b5a745d5fd78b70967ae05f349706069f5da251fa757078da0642fd63",
+    "swaptions/HJM_SimPath_Forward_Blocking.cpp": "ca1925b82be11b0c4c0f06705f352a5f29b85b7b9e7b692b220d88dc545c6aef",
+    "swaptions/HJM_Swaption_Blocking.cpp": "d4192fb7b7a3a907043817a2b7d09f2afc064ae2414979b6a7b2b628a921a597",
+    "swaptions/HJM_type.h": "334f039e4874b158c62559cfb65d5dc03f884b3c32d60de4f82980bdde3d8157",
+    "swaptions/Makefile": "b6e614e256342b88ee23dee633d2bb172ff8227df097726f75ce94559511c205",
+    "swaptions/MaxFunction.cpp": "297aeec1cadf76356d8b60385b1b719a61db35d8e96f251fd9994f61920d3566",
+    "swaptions/RanUnif.cpp": "47eef6003bc069c12c71e98af59603a3c8bb260ce394890ca66ddf8fce659afd",
+    "swaptions/custom.h": "6e718cb32808c417f1a7b512cd55bfaeb4cd56efeb4e8d50535a4e18f7ec08a1",
+    "swaptions/encoding.h": "40513cda414c3292dfc9db1c4c83dbadd6424abe94d4cd6f4837dd6292072b39",
+    "swaptions/icdf.cpp": "16b207eb20d2bc3e7e09b967dc2fb4092dc3514a1ac2993a85b93a5c79c426ee",
+    "swaptions/nr_routines.c": "2211b013c10b83c092ee3b9298cbbf0a36f1f87b8ae113108050fb34fd6595c4",
+    "swaptions/nr_routines.h": "1a51c7198cb713b8a953885eff39db5ed6253f3ce618ed7ec978ca23bbbecaab",
+    "swaptions/resource.h": "aa02111d88b0ed0f9270d41158f79ad4f7a20aa50d7a71f5ba9c0a3a7e9eeacd",
+    "swaptions/rocc.h": "0153080a79febf77a0f79bf0579c868b9995166d858b29e2729149a1a99b59e4"
+  },
+  "status": "PREPARED_FPGA_NOT_RUN"
+}

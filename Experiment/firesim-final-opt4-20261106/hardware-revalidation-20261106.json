@@ -1,0 +1,61 @@
+{
+  "schema": "ec-final-hardware-revalidation/1",
+  "time_utc": "2026-11-06T11:18:00.815092+00:00",
+  "frozen_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "tag_and_branch_verified": [
+    "8491167d84b6d9521b151a743673c1516926a1f8",
+    "8491167d84b6d9521b151a743673c1516926a1f8"
+  ],
+  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard",
+  "source_metadata": "restored source snapshot, no independent .git; enclosing repository HEAD is not its version",
+  "source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+  "tracked_changes": "explicit frozen-to-firesim.patch plus source inventory, not git diff from enclosing tree",
+  "closure_inputs_verified": 1914,
+  "platform_deltas": [
+    "generators/boom/src/main/scala/exu/core.scala",
+    "generators/rocket-chip/src/main/scala/util/SafeChainObservation.scala",
+    "generators/rocket-chip/src/main/scala/util/CacheOpportunityObservation.scala",
+    "generators/rocket-chip/src/main/scala/rocket/RocketCore.scala",
+    "generators/rocket-chip/src/main/scala/rocket/CSR.scala",
+    "generators/chipyard/src/main/scala/DigitalTop.scala"
+  ],
+  "patch_sha256": "53de40eafec804db9b87250ae75fcd9855a7c50636feaabd46f6e53083961265",
+  "svb32_source_sha256": "83f781c00f01f0188fc34d84c9efa1f6efdfe95f1aa412c897e90a404a629e8a",
+  "l2_permission_repair_source_sha256": "7081bafc9246f2c94e6962c076325e571e060251d44fe73e77731c302d6f9cd1",
+  "chain": {
+    "parameters": {
+      "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-parameters-20261106T100204.040607Z/result.json",
+      "sha256": "814bbea9df068ec3f86bf95e8e71866ce84849d66933fd6661c63d98a3785a12",
+      "source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+      "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-parameters-20261106T100204.040607Z",
+      "input_result": null
+    },
+    "elaborate": {
+      "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-elaborate-20261106T100250.032318Z/result.json",
+      "sha256": "4284a54a160a374491cd0050611ba35719df94d896faf8b4667f66691407e3ac",
+      "source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+      "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-elaborate-20261106T100250.032318Z",
+      "input_result": null
+    },
+    "goldengate": {
+      "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-goldengate-20261106T100436.256198Z/result.json",
+      "sha256": "8e2ccd55e2fb83b2174dd21cd258f6ae4a6b48820bc9f618a8153c91b0632356",
+      "source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+      "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-goldengate-20261106T100436.256198Z",
+      "input_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-elaborate-20261106T100250.032318Z/result.json"
+    },
+    "driver": {
+      "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-driver-20261106T104028.658367Z/result.json",
+      "sha256": "2b8af8e3766fb3c907a94297bd0ac735bb4917e5a40272d2471d247bbd432996",
+      "source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+      "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-driver-20261106T104028.658367Z",
+      "input_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-goldengate-20261106T100436.256198Z/result.json"
+    }
+  },
+  "old_hardware_tree_used_as_compiler_input": false,
+  "notes": [
+    "opt4-linux-v6 is checkpoint lineage only; final compile/elaborate/GG/driver all use final-opt4-20261106/C4/chipyard.",
+    "Shared Maven cache/tool environment paths are dependencies, not old target RTL.",
+    "GoldenGate generated SVB32 and L2 provenance audit follows separately."
+  ]
+}

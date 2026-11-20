@@ -1,0 +1,248 @@
+{
+  "schema": "ec-disjoint-host-lut-accounting/1",
+  "captured_utc": "2026-11-12T13:29:04.647958+00:00",
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "derived_hardware": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+  "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-full-host-capacity-r1-20261112/postopt-hierarchical.rpt",
+  "report_sha256": "99a79447b2758cb6238088844b4382a31a4d49438f862312e09610eb8cad6428",
+  "complete_generated_host_lut": 2420482,
+  "shell_excluded": true,
+  "capacity": 1303680,
+  "host_lut_excess": 1116802,
+  "disjoint_partitions": [
+    {
+      "name": "addressStats",
+      "lut": 881587,
+      "host_percent": 36.421960584709986
+    },
+    {
+      "name": "three_barrier_stats",
+      "lut": 187696,
+      "host_percent": 7.7544885688057175
+    },
+    {
+      "name": "other_dcache",
+      "lut": 475702,
+      "host_percent": 19.653193041716484
+    },
+    {
+      "name": "other_boom_domain",
+      "lut": 272148,
+      "host_percent": 11.243545707012075
+    },
+    {
+      "name": "four_full_checker_domains",
+      "lut": 210766,
+      "host_percent": 8.70760451843889
+    },
+    {
+      "name": "other_L2_wrapper",
+      "lut": 125879,
+      "host_percent": 5.200575753093806
+    },
+    {
+      "name": "other_DigitalTop",
+      "lut": 125611,
+      "host_percent": 5.189503578212935
+    },
+    {
+      "name": "host_outside_DigitalTop",
+      "lut": 141093,
+      "host_percent": 5.829128248010107
+    }
+  ],
+  "dcache_children": [
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/addressStats",
+      "name": "addressStats",
+      "module": "PackageAddressStats",
+      "lut": 881587,
+      "ff": 385117,
+      "bram36": 200,
+      "bram18": 24,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    },
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/completionQ",
+      "name": "completionQ",
+      "module": "Queue_44",
+      "lut": 31131,
+      "ff": 9,
+      "bram36": 0,
+      "bram18": 0,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    },
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/crossPackageBarrierStats",
+      "name": "crossPackageBarrierStats",
+      "module": "GHBarrierLatencyStats",
+      "lut": 86896,
+      "ff": 41601,
+      "bram36": 0,
+      "bram18": 0,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    },
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/data",
+      "name": "data",
+      "module": "BoomDuplicatedDataArray",
+      "lut": 18384,
+      "ff": 0,
+      "bram36": 8,
+      "bram18": 0,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    },
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/l1L2BarrierStats",
+      "name": "l1L2BarrierStats",
+      "module": "GHBarrierLatencyStats_2857",
+      "lut": 57262,
+      "ff": 41601,
+      "bram36": 0,
+      "bram18": 0,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    },
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/lfsr_prng",
+      "name": "lfsr_prng",
+      "module": "MaxPeriodFibonacciLFSR_1_2858",
+      "lut": 2,
+      "ff": 16,
+      "bram36": 0,
+      "bram18": 0,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    },
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/meta_0",
+      "name": "meta_0",
+      "module": "L1MetadataArray",
+      "lut": 11698,
+      "ff": 9,
+      "bram36": 0,
+      "bram18": 2,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    },
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/mshrs",
+      "name": "mshrs",
+      "module": "BoomMSHRFile",
+      "lut": 153416,
+      "ff": 17109,
+      "bram36": 0,
+      "bram18": 0,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    },
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/prober",
+      "name": "prober",
+      "module": "BoomProbeUnit",
+      "lut": 54496,
+      "ff": 83,
+      "bram36": 0,
+      "bram18": 0,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    },
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/replayResultQ_0",
+      "name": "replayResultQ_0",
+      "module": "Queue_45",
+      "lut": 17032,
+      "ff": 3,
+      "bram36": 0,
+      "bram18": 0,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    },
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/replayResultQ_1",
+      "name": "replayResultQ_1",
+      "module": "Queue_45_2859",
+      "lut": 332,
+      "ff": 3,
+      "bram36": 0,
+      "bram18": 0,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    },
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/replayResultQ_2",
+      "name": "replayResultQ_2",
+      "module": "Queue_45_2860",
+      "lut": 321,
+      "ff": 3,
+      "bram36": 0,
+      "bram18": 0,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    },
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/replayResultQ_3",
+      "name": "replayResultQ_3",
+      "module": "Queue_45_2861",
+      "lut": 327,
+      "ff": 3,
+      "bram36": 0,
+      "bram18": 0,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    },
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/replayResultQ_4",
+      "name": "replayResultQ_4",
+      "module": "Queue_45_2862",
+      "lut": 322,
+      "ff": 3,
+      "bram36": 0,
+      "bram18": 0,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    },
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/replayResultQ_5",
+      "name": "replayResultQ_5",
+      "module": "Queue_45_2863",
+      "lut": 322,
+      "ff": 3,
+      "bram36": 0,
+      "bram18": 0,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    },
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/svb",
+      "name": "svb",
+      "module": "SpeculativeVersionBuffer",
+      "lut": 59563,
+      "ff": 20710,
+      "bram36": 0,
+      "bram18": 0,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    },
+    {
+      "path": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_/wb",
+      "name": "wb",
+      "module": "BoomWritebackUnit",
+      "lut": 56436,
+      "ff": 883,
+      "bram36": 0,
+      "bram18": 0,
+      "depth": 9,
+      "parent": "/FPGATop/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_/tile_reset_domain__boom_tile_/dcache_"
+    }
+  ],
+  "ideal_zero_address_and_barrier_host_lut": 1351199,
+  "ideal_zero_address_barrier_excess_before_shell": 47519,
+  "fit_claim": false,
+  "owner_memory_savings_already_included": true,
+  "hierarchical_values_are_mapping_attribution_not_isolated_module_areas": true
+}

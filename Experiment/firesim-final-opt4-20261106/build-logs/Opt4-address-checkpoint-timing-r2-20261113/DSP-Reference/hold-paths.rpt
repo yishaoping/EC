@@ -1,0 +1,367 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version      : Vivado v.2021.1 (lin64) Build 3247384 Thu Jun 10 19:36:07 MDT 2021
+| Date              : Fri Nov 13 09:59:17 2026
+| Host              : devjz-ubt20-s01 running 64-bit Ubuntu 20.04.6 LTS
+| Command           : report_timing -delay_type min -path_type full_clock_expanded -max_paths 10 -file /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-address-checkpoint-timing-r2-20261113/DSP-Reference/hold-paths.rpt
+| Design            : FPGATop
+| Device            : xcu280-fsvh2892
+| Speed File        : -2L  PRODUCTION 1.29 11-17-2020
+| Temperature Grade : E
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (VIOLATED) :        -0.060ns  (arrival time - required time)
+  Source:                 io_safeWatermark[0]
+                            (input port clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_safeWatermark_reg[0]/D
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (EC_SCREEN_100MHZ rise@0.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_safeWatermark[0] (IN)
+                         net (fo=259, unset)          0.000     0.000    io_safeWatermark[0]
+                         FDRE                                         r  queue_0_safeWatermark_reg[0]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         FDRE                                         r  queue_0_safeWatermark_reg[0]/C
+                         clock pessimism              0.000     0.000    
+                         FDRE (Hold_FDRE_C_D)         0.060     0.060    queue_0_safeWatermark_reg[0]
+  -------------------------------------------------------------------
+                         required time                         -0.060    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.060    
+
+Slack (VIOLATED) :        -0.060ns  (arrival time - required time)
+  Source:                 io_safeWatermark[10]
+                            (input port clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_safeWatermark_reg[10]/D
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (EC_SCREEN_100MHZ rise@0.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_safeWatermark[10] (IN)
+                         net (fo=259, unset)          0.000     0.000    io_safeWatermark[10]
+                         FDRE                                         r  queue_0_safeWatermark_reg[10]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         FDRE                                         r  queue_0_safeWatermark_reg[10]/C
+                         clock pessimism              0.000     0.000    
+                         FDRE (Hold_FDRE_C_D)         0.060     0.060    queue_0_safeWatermark_reg[10]
+  -------------------------------------------------------------------
+                         required time                         -0.060    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.060    
+
+Slack (VIOLATED) :        -0.060ns  (arrival time - required time)
+  Source:                 io_safeWatermark[11]
+                            (input port clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_safeWatermark_reg[11]/D
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (EC_SCREEN_100MHZ rise@0.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_safeWatermark[11] (IN)
+                         net (fo=259, unset)          0.000     0.000    io_safeWatermark[11]
+                         FDRE                                         r  queue_0_safeWatermark_reg[11]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         FDRE                                         r  queue_0_safeWatermark_reg[11]/C
+                         clock pessimism              0.000     0.000    
+                         FDRE (Hold_FDRE_C_D)         0.060     0.060    queue_0_safeWatermark_reg[11]
+  -------------------------------------------------------------------
+                         required time                         -0.060    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.060    
+
+Slack (VIOLATED) :        -0.060ns  (arrival time - required time)
+  Source:                 io_safeWatermark[12]
+                            (input port clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_safeWatermark_reg[12]/D
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (EC_SCREEN_100MHZ rise@0.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_safeWatermark[12] (IN)
+                         net (fo=259, unset)          0.000     0.000    io_safeWatermark[12]
+                         FDRE                                         r  queue_0_safeWatermark_reg[12]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         FDRE                                         r  queue_0_safeWatermark_reg[12]/C
+                         clock pessimism              0.000     0.000    
+                         FDRE (Hold_FDRE_C_D)         0.060     0.060    queue_0_safeWatermark_reg[12]
+  -------------------------------------------------------------------
+                         required time                         -0.060    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.060    
+
+Slack (VIOLATED) :        -0.060ns  (arrival time - required time)
+  Source:                 io_safeWatermark[13]
+                            (input port clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_safeWatermark_reg[13]/D
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (EC_SCREEN_100MHZ rise@0.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_safeWatermark[13] (IN)
+                         net (fo=259, unset)          0.000     0.000    io_safeWatermark[13]
+                         FDRE                                         r  queue_0_safeWatermark_reg[13]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         FDRE                                         r  queue_0_safeWatermark_reg[13]/C
+                         clock pessimism              0.000     0.000    
+                         FDRE (Hold_FDRE_C_D)         0.060     0.060    queue_0_safeWatermark_reg[13]
+  -------------------------------------------------------------------
+                         required time                         -0.060    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.060    
+
+Slack (VIOLATED) :        -0.060ns  (arrival time - required time)
+  Source:                 io_safeWatermark[14]
+                            (input port clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_safeWatermark_reg[14]/D
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (EC_SCREEN_100MHZ rise@0.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_safeWatermark[14] (IN)
+                         net (fo=259, unset)          0.000     0.000    io_safeWatermark[14]
+                         FDRE                                         r  queue_0_safeWatermark_reg[14]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         FDRE                                         r  queue_0_safeWatermark_reg[14]/C
+                         clock pessimism              0.000     0.000    
+                         FDRE (Hold_FDRE_C_D)         0.060     0.060    queue_0_safeWatermark_reg[14]
+  -------------------------------------------------------------------
+                         required time                         -0.060    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.060    
+
+Slack (VIOLATED) :        -0.060ns  (arrival time - required time)
+  Source:                 io_safeWatermark[15]
+                            (input port clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_safeWatermark_reg[15]/D
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (EC_SCREEN_100MHZ rise@0.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_safeWatermark[15] (IN)
+                         net (fo=259, unset)          0.000     0.000    io_safeWatermark[15]
+                         FDRE                                         r  queue_0_safeWatermark_reg[15]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         FDRE                                         r  queue_0_safeWatermark_reg[15]/C
+                         clock pessimism              0.000     0.000    
+                         FDRE (Hold_FDRE_C_D)         0.060     0.060    queue_0_safeWatermark_reg[15]
+  -------------------------------------------------------------------
+                         required time                         -0.060    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.060    
+
+Slack (VIOLATED) :        -0.060ns  (arrival time - required time)
+  Source:                 io_safeWatermark[16]
+                            (input port clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_safeWatermark_reg[16]/D
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (EC_SCREEN_100MHZ rise@0.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_safeWatermark[16] (IN)
+                         net (fo=259, unset)          0.000     0.000    io_safeWatermark[16]
+                         FDRE                                         r  queue_0_safeWatermark_reg[16]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         FDRE                                         r  queue_0_safeWatermark_reg[16]/C
+                         clock pessimism              0.000     0.000    
+                         FDRE (Hold_FDRE_C_D)         0.060     0.060    queue_0_safeWatermark_reg[16]
+  -------------------------------------------------------------------
+                         required time                         -0.060    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.060    
+
+Slack (VIOLATED) :        -0.060ns  (arrival time - required time)
+  Source:                 io_safeWatermark[17]
+                            (input port clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_safeWatermark_reg[17]/D
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (EC_SCREEN_100MHZ rise@0.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_safeWatermark[17] (IN)
+                         net (fo=259, unset)          0.000     0.000    io_safeWatermark[17]
+                         FDRE                                         r  queue_0_safeWatermark_reg[17]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         FDRE                                         r  queue_0_safeWatermark_reg[17]/C
+                         clock pessimism              0.000     0.000    
+                         FDRE (Hold_FDRE_C_D)         0.060     0.060    queue_0_safeWatermark_reg[17]
+  -------------------------------------------------------------------
+                         required time                         -0.060    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.060    
+
+Slack (VIOLATED) :        -0.060ns  (arrival time - required time)
+  Source:                 io_safeWatermark[18]
+                            (input port clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            queue_0_safeWatermark_reg[18]/D
+                            (rising edge-triggered cell FDRE clocked by EC_SCREEN_100MHZ  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             EC_SCREEN_100MHZ
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (EC_SCREEN_100MHZ rise@0.000ns - EC_SCREEN_100MHZ rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_safeWatermark[18] (IN)
+                         net (fo=259, unset)          0.000     0.000    io_safeWatermark[18]
+                         FDRE                                         r  queue_0_safeWatermark_reg[18]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock EC_SCREEN_100MHZ rise edge)
+                                                      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=387119, unset)       0.000     0.000    clock
+                         FDRE                                         r  queue_0_safeWatermark_reg[18]/C
+                         clock pessimism              0.000     0.000    
+                         FDRE (Hold_FDRE_C_D)         0.060     0.060    queue_0_safeWatermark_reg[18]
+  -------------------------------------------------------------------
+                         required time                         -0.060    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.060    
+
+
+
+

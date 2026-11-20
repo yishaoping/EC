@@ -1,0 +1,24 @@
+{
+  "compile": {
+    "argv": [
+      "iverilog",
+      "-g2012",
+      "-s",
+      "tb",
+      "-o",
+      "candidates/checker-instruction-fault-20261117/bound-tlb.vvp",
+      "candidates/checker-instruction-fault-20261117/bound-TLB_2.sv",
+      "candidates/checker-instruction-fault-20261117/bound-PMPChecker_1.sv",
+      "candidates/checker-instruction-fault-20261117/bound-OptimizationBarrier.sv",
+      "candidates/checker-instruction-fault-20261117/bound-tlb-probe.sv"
+    ],
+    "returncode": 0
+  },
+  "run": {
+    "argv": [
+      "vvp",
+      "candidates/checker-instruction-fault-20261117/bound-tlb.vvp"
+    ],
+    "returncode": 0
+  }
+}

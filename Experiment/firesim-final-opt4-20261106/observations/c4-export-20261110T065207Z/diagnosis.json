@@ -1,0 +1,180 @@
+{
+  "observed_utc": "2026-11-10T06:55:42.371551+00:00",
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "vivado": {
+    "pid": 11088,
+    "start_ticks": "10629",
+    "state": "S",
+    "cpu_seconds": 105754.97,
+    "rss_gib": 31.410289764404297,
+    "io": "rchar: 80647403686\nwchar: 81128325571\nsyscr: 9600095\nsyscw: 17070562\nread_bytes: 11263037440\nwrite_bytes: 81145892864\ncancelled_write_bytes: 4885233664\n",
+    "thread11091_schedstat": [
+      104416952594039,
+      78348299248,
+      10312085
+    ],
+    "scheduling_wait_fraction": 0.0007497782060842247,
+    "cgroup_cpu_quota": "-1"
+  },
+  "vhdl": {
+    "bytes": 3518722048,
+    "mtime_utc": "2026-11-10T04:45:01.805509+00:00",
+    "minutes_since_last_write": 130.67610070705413
+  },
+  "markers": {
+    "dut_end": false,
+    "top_synth_begin": false,
+    "impl": false,
+    "bitstream": false
+  },
+  "memory": [
+    "MemAvailable:   415454424 kB",
+    "SwapTotal:      12005368 kB",
+    "SwapFree:        8438912 kB",
+    "Dirty:              3132 kB",
+    "Writeback:             0 kB"
+  ],
+  "perf": {
+    "frequency_hz": 19,
+    "duration_seconds": 20,
+    "samples": 379,
+    "lost_samples": 0,
+    "top": [
+      {
+        "percent": "38.52%",
+        "symbol": "[.] __memmove_avx_unaligned_erms",
+        "dso": "libc.so.6"
+      },
+      {
+        "percent": "10.03%",
+        "symbol": "[.] HANWNetSpan::equivalentCI",
+        "dso": "librdi_designutils.so"
+      },
+      {
+        "percent": "9.50%",
+        "symbol": "[.] __strcasecmp_l_avx",
+        "dso": "libc.so.6"
+      },
+      {
+        "percent": "9.23%",
+        "symbol": "[.] operator new[]",
+        "dso": "libtcmalloc.so.4"
+      },
+      {
+        "percent": "8.97%",
+        "symbol": "[.] __memcmp_avx2_movbe",
+        "dso": "libc.so.6"
+      },
+      {
+        "percent": "8.18%",
+        "symbol": "[.] tc_deletearray_nothrow",
+        "dso": "libtcmalloc.so.4"
+      },
+      {
+        "percent": "2.64%",
+        "symbol": "[.] std::_Rb_tree<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::_Select1st<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::find",
+        "dso": "libboost_program_options.so"
+      },
+      {
+        "percent": "2.37%",
+        "symbol": "[.] std::__find_if<__gnu_cxx::__normal_iterator<HANWNetSpan*, std::vector<HANWNetSpan, std::allocator<HANWNetSpan> > >, __gnu_cxx::__ops::_Iter_pred<EqualCI> >",
+        "dso": "librdi_designutils.so"
+      },
+      {
+        "percent": "1.85%",
+        "symbol": "[.] HANWNetSpan::getName[abi:cxx11]",
+        "dso": "librdi_designutils.so"
+      },
+      {
+        "percent": "1.85%",
+        "symbol": "[.] HDLHStrings::findName",
+        "dso": "librdi_netlist.so"
+      },
+      {
+        "percent": "1.58%",
+        "symbol": "[.] HANUCvNameMap::getName[abi:cxx11]",
+        "dso": "librdi_netlist.so"
+      },
+      {
+        "percent": "1.58%",
+        "symbol": "[.] __strlen_avx2",
+        "dso": "libc.so.6"
+      },
+      {
+        "percent": "1.06%",
+        "symbol": "[.] HANWNameHandler::getName",
+        "dso": "librdi_designutils.so"
+      },
+      {
+        "percent": "1.06%",
+        "symbol": "[.] std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_create",
+        "dso": "libstdc++.so.6"
+      }
+    ],
+    "hot_stack": [
+      "HANWVhdlIoAnalyzer::analyze",
+      "std::__find_if<...HANWNetSpan...EqualCI>",
+      "HANWNetSpan::equivalentCI",
+      "HANWNetSpan::getName",
+      "memmove/strcasecmp"
+    ],
+    "dwarf_warning": "Offline addr2line debug-info parse warnings only; captured symbol chains available, no CAD runtime error inferred"
+  },
+  "services": [
+    {
+      "file": "coverage-first-state.json",
+      "status": "RUNNING",
+      "updated_utc": "2026-11-10T06:55:23.961132+00:00",
+      "pid": 328019,
+      "start_ticks": "8246797",
+      "next_sample": {
+        "configuration": "Native",
+        "input": "simsmall",
+        "program": "netferret",
+        "repetition": 1
+      }
+    },
+    {
+      "file": "active-0000_21_00.0.json",
+      "status": "RUNNING",
+      "updated_utc": "2026-11-10T06:55:26.538580+00:00",
+      "pid": 1930051,
+      "start_ticks": "10418594",
+      "run_id": "native-netferret-simsmall-r1-20261110T063425Z",
+      "program": "netferret",
+      "input": "simsmall"
+    },
+    {
+      "file": "fpga-continuation-state.json",
+      "status": "WAITING_FOR_EXACT_C4_BITSTREAM",
+      "heartbeat_utc": "2026-11-10T06:52:03.735006+00:00",
+      "pid": 325066,
+      "start_ticks": "8213689",
+      "target_bdf": "0000:21:00.0",
+      "deployment_count": 0
+    },
+    {
+      "file": "software/netstreamcluster-graceful-close.json",
+      "status": "OFFLINE_PASSED_NATIVE_PROFILE_ADMITTED",
+      "pid": 1907602,
+      "start_ticks": "10395508"
+    }
+  ],
+  "formal_samples": {
+    "Native": 42,
+    "C4": 0
+  },
+  "findings": {
+    "proven": "CPU executing VHDL IO name analysis / case-insensitive linear vector search and string copies; not a futex-only deadlock, disk stall or quota throttle",
+    "supported": "Potential high complexity in repeated net/port name comparisons; long names amplify copying. No estimate of completion or proof of unbounded loop.",
+    "not_proven": "Forward progress of current cell, finite convergence, or bitstream correctness not established",
+    "acceleration": "No measured resource bottleneck. More jobs/threads/disk or priority is unlikely to accelerate sampled serial exporter. No safe in-process bypass established. Do not fabricate run completion markers or alter live Tcl."
+  },
+  "actions": {
+    "fpga_operations": false,
+    "signals_to_cad": false,
+    "restarts": false,
+    "input_changes": false,
+    "sampling_only": true
+  }
+}

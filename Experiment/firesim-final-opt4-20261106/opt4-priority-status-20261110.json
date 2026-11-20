@@ -1,0 +1,96 @@
+{
+  "observed_utc": "2026-11-10T00:43:42.339808+00:00",
+  "native_formal_samples": 42,
+  "opt4_formal_samples": 0,
+  "paired_programs": 0,
+  "software_ready": 13,
+  "programs": [
+    "blackscholes",
+    "canneal",
+    "streamcluster",
+    "swaptions",
+    "fluidanimate",
+    "bodytrack",
+    "dedup",
+    "freqmine",
+    "facesim",
+    "ferret",
+    "raytrace",
+    "vips",
+    "x264"
+  ],
+  "cad_status": "RUNNING",
+  "cad_child_pid": 5893,
+  "pending_stages": [
+    "DUT out-of-context synthesis export/report completion",
+    "Top-level synth_1",
+    "opt_design/place_design/phys_opt_design/route_design",
+    "WNS/WHS timing gates; existing QoR retries only if needed",
+    "write_bitstream, durable copy and exact-source/input certification"
+  ],
+  "guard_status": "VIVADO_CONTINUES_WRAPPER_LIMIT_SUSPENDED",
+  "c4_first_gate_policy": "smoke/test/simsmall only, then existing coverage-first owns all formal samples",
+  "scheduler_policy": "ready C4 before Native; within each configuration cover r1 before r2/r3; failures remain explicit",
+  "cad_recent_cpu_intervals": [
+    {
+      "interval_end": "2026-11-10T00:23:57.949113+00:00",
+      "wall_seconds": 300.003881,
+      "cpu_seconds": 299.7800000000134,
+      "one_cpu_fraction": 0.9992537396541661
+    },
+    {
+      "interval_end": "2026-11-10T00:28:58.051356+00:00",
+      "wall_seconds": 300.102243,
+      "cpu_seconds": 298.81999999999243,
+      "one_cpu_fraction": 0.9957273128411521
+    },
+    {
+      "interval_end": "2026-11-10T00:33:58.151246+00:00",
+      "wall_seconds": 300.09989,
+      "cpu_seconds": 299.9100000000035,
+      "one_cpu_fraction": 0.9993672440199944
+    },
+    {
+      "interval_end": "2026-11-10T00:38:58.249023+00:00",
+      "wall_seconds": 300.097777,
+      "cpu_seconds": 299.91999999999825,
+      "one_cpu_fraction": 0.9994076030759743
+    }
+  ],
+  "acceleration_assessment": "Recent single-worker CPU use is close to one core; more launch_jobs or restarting synthesis provides no evidenced benefit. Reuse the completed IPs/DUT checkpoint and remove initial three-repeat priority delay; preserve timing gates and hardware inputs.",
+  "guard_actual_events": [
+    {
+      "action": "PAUSE_ONLY_PYTHON_WRAPPER",
+      "pid": 5526,
+      "resume_elapsed_seconds": 83019.59569732203,
+      "utc": "2026-11-10T00:42:27.657668+00:00"
+    }
+  ],
+  "cad_python_wrapper_pid": 5526,
+  "cad_vivado_worker_pid": 11088,
+  "cad_vivado_worker_start_local": "2026-11-09 09:39:45 +0800",
+  "cad_source_inputs_unchanged": true,
+  "certified_bitstream": false,
+  "opt4_first_validation_status": "WAITING_FOR_EXACT_C4_BITSTREAM",
+  "queue_status": "WAITING_DEPENDENCY_OR_COMPLETE",
+  "queue_scheduling": "ready C4 before Native; within each configuration cover r1 before r2/r3; failures remain explicit",
+  "task_order": [
+    "blackscholes",
+    "canneal",
+    "swaptions",
+    "bodytrack",
+    "streamcluster",
+    "fluidanimate",
+    "dedup",
+    "x264",
+    "vips",
+    "raytrace",
+    "ferret",
+    "facesim",
+    "freqmine",
+    "netdedup",
+    "netferret",
+    "netstreamcluster"
+  ],
+  "documentation": "/data1/gzh/EC/slowdown/final_opt4_freeze_20261106/FIRESIM_START_HERE.md"
+}

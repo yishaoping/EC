@@ -1,0 +1,44 @@
+{
+  "area_saving_unknown": true,
+  "candidate_sha256": "9640ccbe67123f03d256d868565c1026ef8ab7565813226289275d2ecc83e9dc",
+  "completed_utc": "2026-11-12T11:02:33.237727+00:00",
+  "fpga_access": false,
+  "full_host_synthesis": false,
+  "full_module_parity": false,
+  "inputs_sha256": "21bacf290a4e1749b853e09bda1ce422825f2d1430d59241fd72c5d356700250",
+  "production_admission": false,
+  "proof_scope": "Per-arbitrary-bucket next-state encoding relation over160 arbitrary payload bits and arbitrary event/resolve/reset priorities, plus invalid-zero induction. Not complete-module or whole-target formal equivalence.",
+  "source_projection_exact": true,
+  "stages": {
+    "sat-equivalent": {
+      "accepted": true,
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-barrier-valid-masked-storage-r1-20261112/sat-equivalent.log",
+      "log_sha256": "4182382610941a569fab064a28e434b3324e573f7732fd76f8f6fc4d19d2f425",
+      "negative": false,
+      "returncode": 0
+    },
+    "sat-invalid_zero_invariant": {
+      "accepted": true,
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-barrier-valid-masked-storage-r1-20261112/sat-invalid_zero_invariant.log",
+      "log_sha256": "d5718bf3bab62822cd84b48c57a2f7e06a4154662c6088ad103cb7fd7ef24c18",
+      "negative": false,
+      "returncode": 0
+    },
+    "sat-sequence-mask-mutant": {
+      "accepted": true,
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-barrier-valid-masked-storage-r1-20261112/sat-sequence-mask-mutant.log",
+      "log_sha256": "e0a22fe44404a0fa3685a53f80f6b632eee7f8198496feb7065cb6e48e430e1b",
+      "negative": true,
+      "returncode": 1
+    },
+    "scala-compile": {
+      "accepted": true,
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-barrier-valid-masked-storage-r1-20261112/scala-compile.log",
+      "log_sha256": "b82a0e8e69e105dc33ee50474f227054eba1f1366de5db4f8a6c584534544c3b",
+      "negative": false,
+      "returncode": 0
+    }
+  },
+  "started_utc": "2026-11-12T11:02:28.140903+00:00",
+  "status": "PASS_BUCKET_STATE_RELATION_ZERO_INDUCTION_MUTANT_REJECTION_AND_ACTUAL_SCALA_COMPILE_NOT_MODULE_AREA"
+}

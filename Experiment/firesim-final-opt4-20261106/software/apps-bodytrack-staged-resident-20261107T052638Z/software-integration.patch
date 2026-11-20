@@ -1,0 +1,111 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-staged-resident-20261107T052638Z/pristine/TrackingBenchmark/main.cpp
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-staged-resident-20261107T052638Z/src/bodytrack/TrackingBenchmark/main.cpp
+@@ -325,11 +325,37 @@
+ #endif 
+ 
+ 
++#include <map>
++#include <sstream>
++#include <malloc.h>
++static std::map<std::string,std::vector<char> > ec_images;
++FILE *ec_bodytrack_input(const char *path) {
++  std::map<std::string,std::vector<char> >::iterator it=ec_images.find(path);
++  if(it==ec_images.end()) {fprintf(stderr,"unstaged input %s\n",path);exit(125);}
++  FILE *f=fmemopen(it->second.data(),it->second.size(),"rb");
++  if(!f) exit(125);return f;
++}
++static void ec_prepare_images(const std::string &path,int cameras,int frames) {
++  mallopt(M_TRIM_THRESHOLD,-1);mallopt(M_MMAP_MAX,0);
++  volatile char *heap=(volatile char*)malloc(128*1024*1024);
++  if(!heap) exit(125);
++  for(size_t i=0;i<128*1024*1024;i+=4096) heap[i]=0;
++  free((void*)heap);
++  for(int frame=0;frame<frames;frame++) for(int camera=1;camera<=cameras;camera++) for(int kind=0;kind<2;kind++) {
++    char suffix[128];snprintf(suffix,sizeof(suffix),"%s%d/image%04d.bmp",kind?"CAM":"FG",camera,frame);
++    std::string name=path+suffix;FILE *f=fopen(name.c_str(),"rb");if(!f)exit(125);
++    if(fseek(f,0,SEEK_END))exit(125);long n=ftell(f);if(n<=0||fseek(f,0,SEEK_SET))exit(125);
++    std::vector<char> &bytes=ec_images[name];bytes.resize(n);
++    if(fread(bytes.data(),1,n,f)!=(size_t)n||fclose(f))exit(125);
++  }
++}
++
+ //Body tracking Single Threaded
+ int mainSingleThread(string path, int cameras, int frames, int particles, int layers, bool OutputBMP)
+ {
+ 	cout << endl << "Running Single Threaded" << endl << endl;
+ 
++	ec_prepare_images(path,cameras,frames);
+ 	TrackingModel model;
+ 	if(!model.Initialize(path, cameras, layers))										//Initialize model parameters
+ 	{	cout << endl << "Error loading initialization data." << endl;
+@@ -342,7 +368,11 @@
+ 
+ 	cout << "Using dataset : " << path << endl;
+ 	cout << particles << " particles with " << layers << " annealing layers" << endl << endl;
+-	ofstream outputFileAvg((path + "poses.txt").c_str());
++	ofstream ec_actual_output((path + "poses.txt").c_str());
++	if(!ec_actual_output)exit(125);
++	ostringstream outputFileAvg;
++	ostringstream ec_messages;
++	streambuf *ec_old_messages=cout.rdbuf(ec_messages.rdbuf());
+ 
+ 	vector<float> estimate;																//expected pose from particle distribution
+ 
+@@ -364,6 +394,11 @@
+ #if defined(ENABLE_PARSEC_HOOKS)
+         __parsec_roi_end();
+ #endif
++	cout.rdbuf(ec_old_messages);
++	cout << ec_messages.str();
++	ec_actual_output << outputFileAvg.str();
++	ec_actual_output.flush();
++	if(!ec_actual_output)exit(125);
+ 
+ 	return 1;
+ }
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-staged-resident-20261107T052638Z/pristine/FlexImageLib/FlexIO.cpp
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-bodytrack-staged-resident-20261107T052638Z/src/bodytrack/FlexImageLib/FlexIO.cpp
+@@ -19,6 +19,7 @@
+ #endif
+ 
+ #include "FlexIO.h"
++extern FILE *ec_bodytrack_input(const char *);
+ 
+ //Detect endianness of this machine
+ bool isLittleEndian() {
+@@ -105,7 +106,7 @@
+ 	BITMAPFILEHDR bmfh;
+ 	BITMAPINFOHDR bmih;	
+ 
+-	in=fopen(file,"rb");
++	in=ec_bodytrack_input(file);
+ 	if(in == NULL)
+ 		return(false);
+         //WARNING: Extra padding in bmfh causes erroneous reading into all but first field of structure
+@@ -146,7 +147,7 @@
+ 	BITMAPFILEHDR bmfh;
+ 	BITMAPINFOHDR bmih;	
+ 
+-	in=fopen(file,"rb");
++	in=ec_bodytrack_input(file);
+ 	if(in == NULL)
+ 		return(false);	
+         //WARNING: Extra padding in bmfh causes erroneous reading into all but first field of structure
+@@ -188,7 +189,7 @@
+ 	BITMAPFILEHDR bmfh;
+ 	BITMAPINFOHDR bmih;	
+ 
+-	in=fopen(file,"rb");
++	in=ec_bodytrack_input(file);
+ 	if(in == NULL)
+ 		return(false);
+         //WARNING: Extra padding in bmfh causes erroneous reading into all but first field of structure
+@@ -223,7 +224,7 @@
+ 	BITMAPFILEHDR bmfh;
+ 	BITMAPINFOHDR bmih;	
+ 
+-	in=fopen(file,"rb");
++	in=ec_bodytrack_input(file);
+ 	if(in == NULL)
+ 		return(false);
+         //WARNING: Extra padding in bmfh causes erroneous reading into all but first field of structure

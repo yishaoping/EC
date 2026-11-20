@@ -1,0 +1,150 @@
+{
+  "status": "BITSTREAM_PHYSICALLY_CERTIFIED_CARD21_DEPLOYMENT_BLOCKED_BY_SUDO",
+  "observed_utc": "2026-11-16T14:24:00.308976+00:00",
+  "profile": "EC Performance-Only: BJL + four result CDC Mem",
+  "full_PALIMPSEST": false,
+  "hardware_commit": "4915b82c138d63cfb7b74f2fe5249ab96c765d34",
+  "emitted_build_commit": "80da038d800f77baa53dd97ac0436eb352410953",
+  "bitstream": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Opt4-performance-only-4915b82-physical-r3/firesim.bit",
+  "bitstream_bytes": 70974619,
+  "bitstream_sha256": "1617d53ae39b5c4d700dc24de04a055391d163678d6ac7f989d3ba52b1cd1154",
+  "certificate": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Opt4-performance-only-4915b82-physical-r3/certified-build.json",
+  "certificate_sha256": "fbc19bdf3e8824c87a3300dfa506489f0f5bcffe2d39dad1239e464a85fb118b",
+  "timing": {
+    "wns": 0.013,
+    "tns": 0.0,
+    "setup_endpoints": 0,
+    "whs": 0.01,
+    "ths": 0.0,
+    "hold_endpoints": 0
+  },
+  "raw_routing": {
+    "routable": 1131319,
+    "fully_routed": 1131319,
+    "errors": 0,
+    "unrouted": null,
+    "partial": null,
+    "conflicts": null,
+    "legal": true,
+    "fraction": 1.0
+  },
+  "routing_omitted_zero_rows": "Vivado omits zero unrouted/partial/resource-conflict rows. Fully routed equals all routable, routing errors are zero, router verification succeeded; final router log explicitly reports failed/unrouted/partial/overlaps all zero.",
+  "resources": {
+    "Block RAM Tile": {
+      "available": 2016.0,
+      "used": 698.5
+    },
+    "CARRY8": {
+      "available": 162960.0,
+      "used": 14218.0
+    },
+    "CLB LUTs": {
+      "available": 1303680.0,
+      "used": 814600.0
+    },
+    "CLB Registers": {
+      "available": 2607360.0,
+      "used": 448531.0
+    },
+    "DSPs": {
+      "available": 9024.0,
+      "used": 115.0
+    },
+    "URAM": {
+      "available": 960.0,
+      "used": 0.0
+    }
+  },
+  "slr_final": {
+    "Block RAM Tile": {
+      "percent": [
+        52.16,
+        46.73,
+        5.06
+      ],
+      "used": [
+        350.5,
+        314.0,
+        34.0
+      ]
+    },
+    "CLB": {
+      "percent": [
+        85.65,
+        93.59,
+        96.46
+      ],
+      "used": [
+        47075.0,
+        50537.0,
+        52091.0
+      ]
+    },
+    "CLB LUTs": {
+      "percent": [
+        52.28,
+        70.66,
+        64.69
+      ],
+      "used": [
+        229875.0,
+        305250.0,
+        279475.0
+      ]
+    },
+    "CLB Registers": {
+      "percent": [
+        19.91,
+        13.24,
+        18.41
+      ],
+      "used": [
+        175071.0,
+        114399.0,
+        159061.0
+      ]
+    },
+    "DSPs": {
+      "percent": [
+        1.42,
+        0.62,
+        1.79
+      ],
+      "used": [
+        41.0,
+        19.0,
+        55.0
+      ]
+    },
+    "URAM": {
+      "percent": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "used": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "total_slls_used": 4886
+  },
+  "negative_hold_endpoints": 0,
+  "host_target_negative_hold_endpoints": 0,
+  "ddr_negative_hold_endpoints": 0,
+  "host_period_ns": 99.96,
+  "ddr_period_ns": 3.332,
+  "bus_skew_summary_rows": 28,
+  "bus_skew_min_slack_ns": 2.797,
+  "deployment_status": {
+    "status": "CARD21_DEPLOYMENT_FAILED_WITH_EVIDENCE",
+    "certificate": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Opt4-performance-only-4915b82-physical-r3/certified-build.json",
+    "returncode": 1
+  },
+  "deployment_log": "/var/tmp/guozh-ec-rtl-timing-r2-20261115/physical-r3-20261116/deployment21-command.log",
+  "fpga_runtime_validated": false,
+  "fpga_operations_performed_by_failed_handoff": false,
+  "periodic_patrol": false,
+  "resume_after_interactive_sudo_authentication": "env -u PYTHONHOME -u PYTHONPATH -u LD_LIBRARY_PATH -u LD_PRELOAD /usr/bin/python3 -I /data1/gzh/EC/firesim/final-opt4-20261106/Opt4-performance-only-rtl-timing-r2-20261115/candidates/rtl-timing-physical-r3-20261116/after-physical.py"
+}

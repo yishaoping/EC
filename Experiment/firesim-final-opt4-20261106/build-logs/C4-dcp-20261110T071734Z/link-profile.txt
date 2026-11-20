@@ -1,0 +1,59 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 289  of event 'cycles'
+# Event count (approx.): 48869453642
+#
+# Overhead  Command  Shared Object          Symbol                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+# ........  .......  .....................  ..........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+#
+    18.46%  vivado   libc.so.6              [.] __strcmp_avx2
+            |
+            ---__strcmp_avx2
+
+    10.71%  vivado   librdi_designutils.so  [.] HEIYYlex
+            |
+            ---HEIYYlex
+               0x101040101030201
+
+     8.01%  vivado   librdi_netlist.so      [.] HANUCellviewTraversal::getNext
+            |
+            ---HANUCellviewTraversal::getNext
+               |          
+                --5.92%--0x149f36628
+                          0x61850000
+                          0x17003ffffc
+
+     4.54%  vivado   libtcmalloc.so.4       [.] tcmalloc::CentralFreeList::FetchFromOneSpans
+            |
+            ---tcmalloc::CentralFreeList::FetchFromOneSpans
+               tcmalloc::CentralFreeList::RemoveRange
+               tcmalloc::ThreadCache::FetchFromCentralCache
+               |          
+                --4.18%--operator new[]
+
+     4.18%  vivado   librdi_constraints.so  [.] std::_Hashtable<HDLHInstance*, std::pair<HDLHInstance* const, int>, std::allocator<std::pair<HDLHInstance* const, int> >, std::__detail::_Select1st, std::equal_to<HDLHInstance*>, HSTPtrHashFcn<HDLHInstance>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true> >::_M_rehash
+            |
+            ---std::_Hashtable<HDLHInstance*, std::pair<HDLHInstance* const, int>, std::allocator<std::pair<HDLHInstance* const, int> >, std::__detail::_Select1st, std::equal_to<HDLHInstance*>, HSTPtrHashFcn<HDLHInstance>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true> >::_M_rehash
+
+     2.44%  vivado   librdi_netlist.so      [.] 0x00000000003a45dc
+            |
+            ---0x7fe1cc9a45dc
+               HANENetlistDbImpl::sortLibrary
+               0x57850dc05784b34
+
+     2.44%  vivado   librdi_netlist.so      [.] HDLHStrings::findName
+            |
+            ---HDLHStrings::findName
+
+     2.44%  vivado   libc.so.6              [.] __strcasecmp_l_avx
+            |
+            ---__strcasecmp_l_avx
+
+
+
+#
+# (Cannot load tips.txt file, please install perf!)
+#

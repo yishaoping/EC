@@ -1,0 +1,9 @@
+{
+  "schema": "ec-service-job-spec/1",
+  "name": "cad-wall-limit-guard",
+  "argv": ["/usr/bin/python3", "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/guard_cad_wall_limit.py"],
+  "legacy_states": [],
+  "inputs": ["/data1/gzh/EC/firesim/final-opt4-20261106/scripts/guard_cad_wall_limit.py"],
+  "restart_supervisor_on_error": true,
+  "checkpoint_policy": "Exact pidfd identities; preserve existing Vivado child; suspend only Python wrapper before hardcoded 24h timeout and resume it after child exit for original certification. Disk guards retained. No FPGA access or CAD input mutation."
+}

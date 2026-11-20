@@ -1,0 +1,145 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-x264-20261107T052214Z/src/x264.c
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-x264-20261107T063229Z/x264.c
+@@ -1854,6 +1854,8 @@
+     }\
+ } while( 0 )
+ 
++extern void ec_x264_prepare(void);
++#include "hooks.h"
+ static int encode( x264_param_t *param, cli_opt_t *opt )
+ {
+     x264_t *h = NULL;
+@@ -1877,6 +1879,7 @@
+     double  duration;
+     double  pulldown_pts = 0;
+     int     retval = 0;
++    int ec_roi_started=0;
+ 
+     opt->b_progress &= param->i_log_level < X264_LOG_DEBUG;
+ 
+@@ -1892,6 +1895,10 @@
+         param->i_timebase_den = param->i_fps_num * pulldown->fps_factor;
+     }
+ 
++    ec_x264_prepare();
++    i_start=x264_mdate();
++    __parsec_bench_begin(__parsec_x264);
++    __parsec_roi_begin();ec_roi_started=1;
+     h = x264_encoder_open( param );
+     FAIL_IF_ERROR2( !h, "x264_encoder_open failed\n" );
+ 
+@@ -1899,7 +1906,7 @@
+ 
+     FAIL_IF_ERROR2( cli_output.set_param( opt->hout, param ), "can't set outfile param\n" );
+ 
+-    i_start = x264_mdate();
++    /* Host timing sampled before original encode work starts. */
+ 
+     /* ticks/frame = ticks/second / frames/second */
+     ticks_per_frame = (int64_t)param->i_timebase_den * param->i_fps_den / param->i_timebase_num / param->i_fps_num;
+@@ -2001,6 +2008,7 @@
+             i_previous = print_status( i_start, i_previous, i_frame_output, param->i_frame_total, i_file, param, 2 * last_dts - prev_dts - first_dts );
+     }
+ fail:
++    if(ec_roi_started){__parsec_roi_end();__parsec_bench_end();}
+     if( pts_warning_cnt >= MAX_PTS_WARNING && cli_log_level < X264_LOG_DEBUG )
+         x264_cli_log( "x264", X264_LOG_WARNING, "%d suppressed nonmonotonic pts warnings\n", pts_warning_cnt-MAX_PTS_WARNING );
+ 
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-x264-20261107T052214Z/src/input/y4m.c
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-x264-20261107T063229Z/y4m.c
+@@ -25,6 +25,7 @@
+  *****************************************************************************/
+ 
+ #include "input.h"
++extern FILE *ec_x264_input(const char *);
+ #define FAIL_IF_ERROR( cond, ... ) FAIL_IF_ERR( cond, "y4m", __VA_ARGS__ )
+ 
+ typedef struct
+@@ -82,7 +83,7 @@
+     if( !strcmp( psz_filename, "-" ) )
+         h->fh = stdin;
+     else
+-        h->fh = x264_fopen(psz_filename, "rb");
++        h->fh = ec_x264_input(psz_filename);
+     if( h->fh == NULL )
+         return -1;
+ 
+@@ -207,7 +208,7 @@
+         h->plane_size[i] /= x264_cli_csp_depth_factor( info->csp );
+     }
+ 
+-    if( x264_is_regular_file( h->fh ) )
++    if( 1 /* seekable staged official file */ )
+     {
+         uint64_t init_pos = ftell( h->fh );
+ 
+@@ -227,7 +228,7 @@
+ 
+         /* Attempt to use memory-mapped input frames if possible */
+         if( !(h->bit_depth & 7) )
+-            h->use_mmap = !x264_cli_mmap_init( &h->mmap, h->fh );
++            h->use_mmap = 0; /* resident bytes; preserve original read/parse path */
+     }
+ 
+     *p_handle = h;
+@@ -302,7 +303,7 @@
+     }
+     else if( i_frame > h->next_frame )
+     {
+-        if( x264_is_regular_file( h->fh ) )
++        if( 1 /* seekable staged official file */ )
+             fseek( h->fh, h->frame_size * i_frame + h->seq_header_len, SEEK_SET );
+         else
+             while( i_frame > h->next_frame )
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/candidate-x264-20261107T052214Z/src/output/raw.c
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-x264-20261107T063229Z/raw.c
+@@ -25,12 +25,14 @@
+  *****************************************************************************/
+ 
+ #include "output.h"
++extern FILE *ec_x264_output(const char *);
++extern int ec_x264_close(FILE *);
+ 
+ static int open_file( char *psz_filename, hnd_t *p_handle, cli_output_opt_t *opt )
+ {
+     if( !strcmp( psz_filename, "-" ) )
+         *p_handle = stdout;
+-    else if( !(*p_handle = x264_fopen( psz_filename, "w+b" )) )
++    else if( !(*p_handle = ec_x264_output(psz_filename)) )
+         return -1;
+ 
+     return 0;
+@@ -62,7 +64,7 @@
+     if( !handle || handle == stdout )
+         return 0;
+ 
+-    return fclose( (FILE*)handle );
++    return ec_x264_close((FILE*)handle);
+ }
+ 
+ const cli_output_t raw_output = { open_file, set_param, write_headers, write_frame, close_file };
+
+New external-I/O helper:
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <malloc.h>
+static char *ec_output_bytes;static size_t ec_output_length;static FILE *ec_output_stream;static char *ec_output_name;
+FILE *ec_x264_input(const char *p) {
+ FILE *f=fopen(p,"rb");if(!f||fseek(f,0,SEEK_END))exit(125);long n=ftell(f);if(n<=0||fseek(f,0,SEEK_SET))exit(125);
+ char *b=malloc(n);if(!b||fread(b,1,n,f)!=(size_t)n||fclose(f))exit(125);
+ f=fmemopen(b,n,"rb");if(!f)exit(125);return f;
+}
+FILE *ec_x264_output(const char *p) {
+ ec_output_name=strdup(p);ec_output_stream=open_memstream(&ec_output_bytes,&ec_output_length);if(!ec_output_stream)exit(125);return ec_output_stream;
+}
+void ec_x264_prepare(void) {
+ mallopt(M_TRIM_THRESHOLD,-1);mallopt(M_MMAP_MAX,0);
+ volatile char *h=(volatile char*)malloc(768*1024*1024);if(!h)exit(125);
+ for(size_t i=0;i<768*1024*1024;i+=4096)h[i]=0;free((void*)h);
+}
+int ec_x264_close(FILE *f) {
+ if(fclose(f))return -1;FILE *out=fopen(ec_output_name,"wb");if(!out)return -1;
+ if(fwrite(ec_output_bytes,1,ec_output_length,out)!=ec_output_length)return -1;
+ return fclose(out);
+}

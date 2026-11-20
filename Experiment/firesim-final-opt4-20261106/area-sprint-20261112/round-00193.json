@@ -1,0 +1,78 @@
+{
+  "actual_checker_execution_tested": false,
+  "adopted_not_launched_jobs": [
+    "ec-performance-only-support-r6-20261113.service"
+  ],
+  "evidence": [
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round193/owner-observation.json",
+      "sha256": "80c30aaa8f9fefb981a7a4f9a0edc867ecdb6e818de0e55cb4bc32730be55c92"
+    },
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round193/runtime-source-binding.json",
+      "sha256": "bdfc080d9cd42a1e062168e98e1343a0847dcdcaa31c83348aa9284a70d756c2"
+    },
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round193/runtime-bind-verification.json",
+      "sha256": "1bbabe1624caacfae15e13cca977e4ab44cb0ca457da0660157f9d765f2adec1"
+    },
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round193/runtime-handoff.json",
+      "sha256": "05dfa9b26e7bc1c463d2e4445ba216faed75cd9ffa5b19a4ed8686219df353dc"
+    },
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round193/EXACT_SCOPE.md",
+      "sha256": "cc2d466670e6e982d832cf6397a2ec5da9dc656dab5be273d82d6fe0d7aef4ea"
+    }
+  ],
+  "experiment_commits": [
+    "6115b44948c922c33a465090fbeb973843602e21"
+  ],
+  "full_PALIMPSEST": false,
+  "fullshell_ledger": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/area-sprint-20261112/fullshell-adoptions.json",
+    "prototype_not_added": true,
+    "sha256": "4f2f686829b0b34546f0fbb37367f7a69c3b82f69e95e8bbce29465df4c9a2b3"
+  },
+  "hardware_commit": "6fada307bb77be90b39720d3f95404fece0e431b",
+  "hardware_unchanged": true,
+  "launched_jobs": [],
+  "next_action": "Preserve sole R6 synthesis and hardware6fada307 until actual complete-shell postopt. NOTFIT: inspect new hierarchy before targeted substantial cuts. FIT: physical/all-STA/DRC and exact certificate; existing runtime owner safely adopts staged6115b44 bundle without bypassing held locks or rebuilding completed driver; real card21 checker/storage/isolation/drain, then eight simmedium first samples.",
+  "no_CPU_or_SVB_session_control": true,
+  "no_FPGA_IO": true,
+  "no_driver_rebuild": true,
+  "no_healthy_restart": true,
+  "no_new_cuts_before_actual_complete_shell_postopt": true,
+  "no_new_intelligent_supervisor": true,
+  "no_subagents": true,
+  "outcome": "PROGRESS",
+  "profile": "EC Performance-Only: data preservation + cache isolation",
+  "prototype_FIT": null,
+  "prototype_area_LUT": null,
+  "real_progress": {
+    "runtime_bundle": {
+      "FPGA_IO": false,
+      "bundle": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Opt4-performance-only-6fada307-bound-r1/bundle.json",
+      "bundle_sha256": "9dc215a90664c7e85125ffc198c826d91ec7bb16caeb411f1f96cef6c5eec064",
+      "driver_rebuilt_here": false,
+      "existing_runtime_lock_preserved": true,
+      "experiment_commit": "6115b44948c922c33a465090fbeb973843602e21",
+      "handoff": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round193/runtime-handoff.json",
+      "handoff_sha256": "05dfa9b26e7bc1c463d2e4445ba216faed75cd9ffa5b19a4ed8686219df353dc",
+      "offline_verification": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round193/runtime-bind-verification.json",
+      "offline_verification_sha256": "1bbabe1624caacfae15e13cca977e4ab44cb0ca457da0660157f9d765f2adec1",
+      "runtime_certified": false,
+      "service_installed": false,
+      "source_binding": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round193/runtime-source-binding.json",
+      "source_binding_sha256": "bdfc080d9cd42a1e062168e98e1343a0847dcdcaa31c83348aa9284a70d756c2"
+    },
+    "stage": "dut_synth",
+    "whole_CAD_observation_seconds": 715.473122
+  },
+  "retry_after_seconds": 600,
+  "round": 193,
+  "runtime_certified": false,
+  "schema": "ec-area-sprint-round-evidence/1",
+  "summary": "R6 preserved through 715s observation; DUT synthesis remains active, no prototype shell LUT/FIT. Committed runtime-only6115b44: exact R6/new-driver/thirteen-program bundle staged and offline checks PASS. Existing runtime lock preserved; no new service, driver rebuild, FPGA IO or runtime certificate.",
+  "utc": "2026-11-13T04:18:11.933250+00:00"
+}

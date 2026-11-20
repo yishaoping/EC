@@ -1,0 +1,218 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/routes/svb-postroute-recovery-r1-20261111/runtime.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-physical-r1-20261112/runtime.py
+@@ -13,13 +13,13 @@
+ sys.path.insert(0,str(m.W/'scripts'))
+ import board_batch as bb
+ from coverage_first import sample_busy
+-BASE=m.BASE; PROFILE='OriginalSVB32-component-trace'
++BASE=m.BASE; PROFILE='OriginalSVB32-component-trace-host40'
+ SID='b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f'
+ PREP=m.D/'cycleprecise-frozen-svb-fpga-r2-20261111'
+ PROOF=m.D/'cycleprecise-frozen-svb-trace-r4-20261111'
+-L=m.D/'cycleprecise-original-svb-recovered-onboard-r1-20261111'
++L=m.D/'cycleprecise-original-svb-host40-onboard-r1-20261112'
+ ROOT=m.D/'cycleprecise-svb-postroute-recovery-r1-20261111'
+-SPREAD=None
++SPREAD=m.D/'cycleprecise-svb-host40-implementation-r1-20261112'
+ WAITERS=[(m.D/'cycleprecise-original-svb-onboard-r1-20261111','ec-opt4-original-svb-onboard-r1.service'),(m.D/'cycleprecise-original-svb-spread-onboard-r2-20261111','ec-opt4-original-svb-spread-follow-r2.service')]
+ OLD=m.D/'cycleprecise-original-svb-onboard-r1-20261111'
+ CONFIG=C/'svb-component-runtime-r1-inputs.json'
+@@ -40,12 +40,12 @@
+  assert cfg['complete_opt4'] is False
+  for p,h in cfg['pinned_files'].items():assert m.sha(p)==h,('input changed',p)
+  b=m.read(PREP/'binding.json');r=m.read(PROOF/'result.json');d=m.read(PREP/'hardware-driver.json')
+- assert b['profile']==PROFILE and b['source_id']==SID and b['functional_baseline']==BASE and not b['complete_opt4']
++ assert b['profile']=='OriginalSVB32-component-trace' and b['source_id']==SID and b['functional_baseline']==BASE and not b['complete_opt4']
+  assert m.sha(PROOF/'result.json')==b['cycle_proof_sha256']
+  assert m.sha(PROOF/'binding.json')==b['target_binding_sha256']
+  assert r['negative_rejected'] and r['compared_output_values']==42291
+  assert r['output_ports']==127 and r['functional_baseline']==BASE and not r['architectural_restart_tested']
+- assert d['source_id']==SID and d['profile']==PROFILE and d['board_allowlist']==['0000:21:00.0']
++ assert d['source_id']==SID and d['profile']=='OriginalSVB32-component-trace' and d['board_allowlist']==['0000:21:00.0']
+  assert m.sha(d['binary'])==d['binary_sha256']
+  assert m.sha(PROOF/'target-cycles.txt')==d['trace_sha256']
+  assert m.sha(PREP/'simif_xilinx_alveo_u280_21_only.cc')==d['guarded_source_sha256']
+@@ -55,91 +55,21 @@
+  return cfg,b,d
+ 
+ def certify():
+- cfg,b,d=verify_inputs()
+- s=m.read(SPREAD/'result.json')
+- assert s['status']=='BITSTREAM_WRITTEN_PENDING_INDEPENDENT_CERTIFICATION'
+- assert s['functional_baseline']==BASE and s['source_id']==SID
+- assert not s['target_changed'] and not s['fpga_access'] and not s['complete_opt4']
+- assert m.read(SPREAD/'complete.json')['result_sha256']==m.sha(SPREAD/'result.json')
+- assert all(m.sha(p)==h for p,h in s['outputs'].items())
+- pins=m.read(Path(__file__).parent/'inputs.json')
+- assert s['capsule_inputs_sha256']==m.sha(Path(__file__).parent/'inputs.json')
+- bound=m.read(SPREAD/'sealed-inputs.json')
+- assert bound['eligible'] and bound['functional_baseline']==BASE and bound['source_id']==SID
+- assert bound['checkpoint_sha256']==m.sha(bound['sealed_checkpoint'])
+- assert bound['producer_state_sha256']==m.sha(bound['producer_state'])
+- assert all(m.sha(p)==h for p,h in bound['source_input_hashes'].items())
+- routed=SPREAD/'final.dcp'
+- bit=Path(s['bitstream'])
+- assert m.sha(routed)==s['outputs'][str(routed)] and m.sha(bit)==s['bitstream_sha256']==s['outputs'][str(bit)]
+- log=(SPREAD/'recovery.log').read_text(errors='replace')
+- assert 'EC_SVB_RECOVERY_BITSTREAM_COMPLETE' in log
+- # Independently restore the actual routed design. Existing target clock
+- # constraint and original shell settings are retained, never relaxed here.
+- audit=L/'clock-audit.complete.json'
+- if not audit.exists():
+-  tcl=L/'clock-audit.tcl'
+-  code='set_param general.maxThreads 2\nopen_checkpoint {'+str(routed)+'}\n'
+-  code+='if {[llength [get_cells -hier -quiet -filter {IS_BLACKBOX == 1}]]} {error "unresolved cells"}\n'
+-  code+='set pins [get_pins -hier -filter {NAME =~ *RationalClockBridge_clocks_0_buffer/O}]\n'
+-  code+='if {[llength $pins] != 1} {error "target buffer absent"}\nset clks [get_clocks -of_objects $pins]\n'
+-  code+='if {[llength $clks] != 1} {error "target clock absent"}\nset period [get_property PERIOD $clks]\n'
+-  code+='if {$period <= 0 || $period > 20.01 || [llength [all_registers -clock $clks]] < 1000} {error "invalid target clock"}\n'
+-  code+='report_clocks -file {'+str(L/'physical-clocks.rpt')+'}\ncheck_timing -verbose -file {'+str(L/'check-timing.rpt')+'}\n'
+-  code+='report_timing_summary -report_unconstrained -file {'+str(L/'timing-summary.rpt')+'}\nreport_route_status -file {'+str(L/'route-status.rpt')+'}\n'
+-  code+='report_drc -file {'+str(L/'drc.rpt')+'}\n'
+-  code+='set violations [get_drc_violations -quiet -filter {SEVERITY == Error}]\nif {[llength $violations]} {error "DRC errors $violations"}\n'
+-  code+='set setup [get_timing_paths -delay_type max -max_paths 1]\nset hold [get_timing_paths -delay_type min -max_paths 1]\n'
+-  code+='if {![llength $setup] || ![llength $hold]} {error "missing timing paths"}\n'
+-  code+='set wns [get_property SLACK $setup]\nset whs [get_property SLACK $hold]\nif {$wns < 0 || $whs < 0} {error "timing failed"}\n'
+-  code+='puts "EC_SVB_CLOCK_AUDIT_PASS WNS=$wns WHS=$whs period=$period"\nexit 0\n'
+-  if tcl.exists():assert tcl.read_text()==code
+-  else:tcl.write_text(code)
+-  log=L/'clock-audit.log';assert not log.exists(),'partial audit requires versioned recovery'
+-  update(status='AUDITING_SPREAD_ROUTED_COMPONENT_NO_FPGA_IO')
+-  bb.command(['/tools/Xilinx/Vivado/2021.1/bin/vivado','-mode','batch','-nojournal','-log',str(L/'clock-audit.vivado.log'),'-source',str(tcl)],L,log,timeout=3600)
+-  text=log.read_text();assert 'EC_SVB_CLOCK_AUDIT_PASS' in text
+-  timing=(L/'check-timing.rpt').read_text()
+-  assert re.search(r'checking no_clock \(0\)',timing)
+-  assert re.search(r'checking unconstrained_internal_endpoints \(0\)',timing)
+-  bb.save(audit,dict(routed_checkpoint=str(routed),routed_sha256=m.sha(routed),log_sha256=m.sha(log),target_divide=1))
+- else:
+-  a=m.read(audit);assert m.sha(a['routed_checkpoint'])==a['routed_sha256'] and m.sha(L/'clock-audit.log')==a['log_sha256']
+- cert=dict(schema='ec-original-component-certificate/1',status='CERTIFIED_ORIGINAL_SVB_COMPONENT_NOT_FULL_OPT4',
+-  functional_baseline=BASE,profile=PROFILE,source_id=SID,complete_opt4=False,formal_parsec_admission=False,
+-  bitstream=str(bit),bitstream_sha256=m.sha(bit),cad_result=str(SPREAD/'result.json'),cad_result_sha256=m.sha(SPREAD/'result.json'),
+-  driver=d,cycle_proof_sha256=m.sha(PROOF/'result.json'),binding_sha256=m.sha(PREP/'binding.json'),
+-  target_trace='synthetic directed original component; not application payload replay',board_bdf=bb.TARGET_BDF,
+-  board_serial=bb.TARGET_SERIAL,clock_audit_sha256=m.sha(audit),physical_only_retry=True,created_utc=m.now())
+- bb.save(L/'certified-component.json',cert);return cert
++ spec=importlib.util.spec_from_file_location('independent_host40_cert',Path(__file__).parent/'certificate.py')
++ cert=importlib.util.module_from_spec(spec);spec.loader.exec_module(cert)
++ return cert.certify(sys.modules[__name__])
+ 
+-def handoff_waiting_predecessor():
+- held=[]
+- try:
+-  for name in ['maintenance-0000_21_00.0.lock','card-0000_21_00.0.lock']:
+-   f=(m.D/'locks'/name).open('a');held.append(f);fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB)
+- except BlockingIOError:
+-  for f in held:f.close()
+-  update(status='WAITING_EXISTING_21_LOCK_OWNER_BEFORE_HANDOFF')
+-  return None
+- try:
+-  for root,unit in WAITERS:
+-   if (root/'complete.json').exists():
+-    save_metrics(root);update(status='ORIGINAL_SVB_ALREADY_MEASURED_NO_DUPLICATE_DEPLOYMENT');return False
+-   row=m.read(root/'state.json')
+-   if (root/'deployment.json').exists() or row.get('status','').startswith(('RUNNING_','DEPLOYING_','AUDITING_')):
+-    update(status='WAITING_EXISTING_COMPONENT_CERTIFICATION_OR_RUN');return None
+-   pid=subprocess.check_output(['systemctl','show',unit,'-p','MainPID','--value'],text=True).strip()
+-   if pid!='0':
+-    if row.get('status')!='WAITING_COMPONENT_CAD' or row.get('child') or row.get('fpga_access'):
+-     update(status='WAITING_UNVERIFIED_OTHER_FOLLOWER');return None
+-    assert int(pid)==row['pid'] and m.ident(row['pid']).get('start_ticks')==row['start_ticks']
+-    bb.save(L/(unit+'.handoff-before.json'),dict(old=row,certificate_sha256=m.sha(L/'certified-component.json'),cad_signalled=False,both_21_locks_held=True))
+-    subprocess.run(['systemctl','stop',unit],check=True)
+-    bb.save(L/(unit+'.handoff-complete.json'),dict(utc=m.now(),stopped_idle_waiter_pid=int(pid),cad_signalled=False,fpga_operation_performed=False,both_21_locks_held=True))
+-  return True
+- finally:
+-  for f in held:f.close()
++
++def existing_component_winner():
++ for name in ['cycleprecise-original-svb-onboard-r1-20261111','cycleprecise-original-svb-spread-onboard-r2-20261111','cycleprecise-original-svb-recovered-onboard-r1-20261111']:
++  p=m.D/name;r=m.read(p/'result.json');done=m.read(p/'complete.json')
++  if r.get('status')=='VALID_COMPONENT_FPGA_TRACE' and done:
++   assert done['result_sha256']==m.sha(p/'result.json')
++   assert r['source_id']==SID and r['board_bdf']==bb.TARGET_BDF
++   assert r['certificate_sha256']==m.sha(p/'certified-component.json')
++   return p
++ return None
++
+ 
+ def save_metrics(run):
+  out=run/'trace-event-metrics-r1'
+@@ -152,7 +82,7 @@
+  if a.offline:
+   cfg,b,d=verify_inputs();print(json.dumps(dict(status='INPUT_BINDING_PASS_NOT_CAD_CERTIFICATION',source_id=b['source_id'],fpga_access=False)));return
+  assert os.geteuid()==0
+- for path,expected in m.read(Path(__file__).parent/'inputs.json')['files'].items():assert m.sha(path)==expected,('follower input changed',path)
++ for path,expected in m.read(Path(__file__).parent/'runtime-inputs.json')['files'].items():assert m.sha(path)==expected,('follower input changed',path)
+  L.mkdir(exist_ok=True);lock=(L/'instance.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+  if (L/'complete.json').exists():
+   save_metrics(L);return
+@@ -161,29 +91,20 @@
+   configuration=PROFILE,board_bdf=bb.TARGET_BDF,board_serial=bb.TARGET_SERIAL,complete_opt4=False,fpga_access=False)
+  verify_inputs()
+  while True:
+-  for root,unit in WAITERS:
+-   if (root/'complete.json').exists():
+-    save_metrics(root);update(status='ORIGINAL_SVB_ALREADY_MEASURED_NO_DUPLICATE_DEPLOYMENT');return
+-  choice=m.read(ROOT/'chosen-physical-result.json')
+-  if choice:
+-   assert choice['source_id']==SID and choice['functional_baseline']==BASE
+-   result=Path(choice['result']);assert result.is_relative_to(ROOT)
+-   assert m.sha(result)==choice['result_sha256']
+-   SPREAD=result.parent
+-   break
+-  update(status='WAITING_RECOVERY_RESULT_NO_FPGA_IO')
++  winner=existing_component_winner()
++  if winner:
++   update(status='EXISTING_VALID_COMPONENT_WINS_NO_HOST40_REDEPLOYMENT',winner=str(winner));return
++  result=m.read(SPREAD/'result.json')
++  if result.get('status')=='HOST40_BITSTREAM_PENDING_INDEPENDENT_CERTIFICATION':break
++  if result.get('status')=='FAILED_WITH_EVIDENCE':
++   update(status='HOST40_PHYSICAL_FAILURE_PRESERVED_NO_DEPLOYMENT');return
++  update(status='WAITING_INDEPENDENT_HOST40_PHYSICAL_RESULT_NO_FPGA_IO')
+   time.sleep(300)
+  cert=certify();assert cert
+  while True:
+-  handoff=handoff_waiting_predecessor()
+-  if handoff is True:break
+-  if handoff is False:
+-   
+-   for root,unit in WAITERS:
+-    if (root/'complete.json').exists():save_metrics(root)
+-   return
+-  time.sleep(300)
+- while True:
++  winner=existing_component_winner()
++  if winner:
++   update(status='EXISTING_VALID_COMPONENT_WINS_NO_HOST40_REDEPLOYMENT',winner=str(winner));return
+   if whole_priority() or sample_busy():update(status='WAITING_SAFE_21_BOUNDARY_OR_FULL_OPT4_PRIORITY');time.sleep(300);continue
+   locks=[]
+   try:
+@@ -195,6 +116,9 @@
+   if whole_priority() or sample_busy():
+    for f in locks:f.close()
+    time.sleep(300);continue
++  if existing_component_winner():
++   for f in locks:f.close()
++   update(status='EXISTING_VALID_COMPONENT_WINS_AFTER_21_LOCK_NO_REDEPLOYMENT');return
+   check=bb.precheck(target_bdfs=[bb.TARGET_BDF]);bb.save(L/'pre-deployment.json',check)
+   if check['open_devices'] or check['simulation_processes']:
+    for f in locks:f.close()
+@@ -222,7 +146,7 @@
+  with log.open('xb',buffering=0) as f:
+   child=subprocess.Popen(['/usr/bin/stdbuf','-oL','-eL',*argv],cwd=L,stdin=subprocess.DEVNULL,stdout=f,
+    stderr=subprocess.STDOUT,start_new_session=True,env={**os.environ,'LD_LIBRARY_PATH':''})
+-  active=dict(schema='ec-original-component-run/1',run_id=L.name,run_dir=str(L),status='RUNNING',
++  active=dict(schema='ec-original-component-run/1',run_id=L.name,run_dir=str(L),status='RUNNING',physical_host_clock_period_ns=24.9975,
+    configuration=PROFILE,board_bdf=bb.TARGET_BDF,board_serial=bb.TARGET_SERIAL,**m.ident(child.pid))
+   bb.save(m.D/'active-0000_21_00.0.json',active)
+   update(status='RUNNING_ORIGINAL_SVB_FPGA_TRACE_21_ONLY',child=m.ident(child.pid))
+@@ -237,7 +161,7 @@
+  good=rc==0 and 'PASS_SVB_TRACE target_cycles=372 compared_fields=42291' in text and '[SVBProbe]PASS Test' in text
+  good=good and not any(s in text for s in ['TARGET_HOST_MISMATCH','unstable value','*** FAILED','Assertion failed'])
+  result=dict(schema='ec-original-component-measurement/1',status='VALID_COMPONENT_FPGA_TRACE' if good else 'FAILED_WITH_EVIDENCE',
+-  kind='FPGA_ORIGINAL_SVB32_DIRECTED_COMPONENT_TRACE_NOT_FULL_OPT4',functional_baseline=BASE,source_id=SID,
++  kind='FPGA_ORIGINAL_SVB32_HOST40_DIRECTED_COMPONENT_TRACE_NOT_FULL_OPT4',profile=PROFILE,physical_host_clock_period_ns=24.9975,physical_host_clock_frequency_hz=1e9/24.9975,target_frequency_hz=None,target_cycle_definition_changed=False,functional_baseline=BASE,source_id=SID,
+   board_bdf=bb.TARGET_BDF,board_serial=bb.TARGET_SERIAL,returncode=rc,host_wall_seconds=time.monotonic()-start,
+   certificate_sha256=m.sha(L/'certified-component.json'),raw_log_sha256=m.sha(log),raw_log=str(log),
+   target_cycles_replayed=372,defined_cycles_compared=333,compared_output_values=42291 if good else None,

@@ -1,0 +1,39 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-candidate-20261109T045130Z/server.c
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-join-probe-20261109T045906Z/server.c
+@@ -690,6 +690,7 @@
+ #endif
+ 
+ 	tpool_cancel(p_acceptor);
++	for (int ec_i=0; ec_i<p_acceptor->nthreads; ++ec_i) { int ec_rc=pthread_join(p_acceptor->threads[ec_i], NULL); fprintf(stderr, "EC_CANCEL_JOIN_RC=%d\n", ec_rc); assert(ec_rc==0); }
+ 
+ 	tpool_destroy(p_acceptor);
+ 	tpool_destroy(p_load);
+@@ -716,16 +717,27 @@
+ 
+ 	stimer_tuck(&tmr, "QUERY TIME");
+ 
++	fprintf(stderr, "EC_CLEANUP_BEFORE cass_env_close(env, 0)\n");
+ 	ret = cass_env_close(env, 0);
++	fprintf(stderr, "EC_CLEANUP_AFTER cass_env_close(env, 0)\n");
+ 	if (ret != 0) { printf("ERROR: %s\n", cass_strerror(ret)); return 0; }
+ 
++	fprintf(stderr, "EC_CLEANUP_BEFORE cass_cleanup()\n");
+ 	cass_cleanup();
+-
++	fprintf(stderr, "EC_CLEANUP_AFTER cass_cleanup()\n");
++
++	fprintf(stderr, "EC_CLEANUP_BEFORE image_cleanup()\n");
+ 	image_cleanup();
++	fprintf(stderr, "EC_CLEANUP_AFTER image_cleanup()\n");
+ 
+ #ifdef ENABLE_PARSEC_HOOKS
++	fprintf(stderr, "EC_CLEANUP_BEFORE __parsec_bench_end()\n");
+ 	__parsec_bench_end();
++	fprintf(stderr, "EC_CLEANUP_AFTER __parsec_bench_end()\n");
+ #endif
+ 	return 0;
+ }
+ 
++
++extern void __real_abort(void);
++void __wrap_abort(void) { fprintf(stderr, "EC_ABORT_CALLER=%p\n", __builtin_return_address(0)); fflush(stderr); __real_abort(); __builtin_unreachable(); }

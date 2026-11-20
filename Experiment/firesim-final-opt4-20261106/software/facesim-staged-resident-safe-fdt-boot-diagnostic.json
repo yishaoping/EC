@@ -1,0 +1,977 @@
+{
+  "argv": [
+    "/data1/gzh/EC/chipyard/.conda-env/bin/qemu-system-riscv64",
+    "-machine",
+    "virt",
+    "-cpu",
+    "rv64",
+    "-m",
+    "2G",
+    "-smp",
+    "1",
+    "-nographic",
+    "-no-reboot",
+    "-bios",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-firmware-20261107T071424.273722Z/platform/generic/firmware/fw_jump.bin",
+    "-kernel",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T063200Z/arch/riscv/boot/Image",
+    "-append",
+    "console=ttyS0 earlycon=sbi rdinit=/init panic=-1 mem=2G"
+  ],
+  "bios_sha256": "ab1fdae341e59576b31a56683f4aa61c6721eb7b0ce8aa71bbfba30a691fdca3",
+  "child_pid": 515517,
+  "child_start_ticks": "383226",
+  "conclusion": "Archive and software boot diagnostics only; original FPGA boot failure remains unvalidated",
+  "cpio_entries": [
+    {
+      "bytes": 0,
+      "name": "."
+    },
+    {
+      "bytes": 0,
+      "name": "bin"
+    },
+    {
+      "bytes": 1382648,
+      "name": "bin/busybox"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/cat"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/dmesg"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/echo"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/ls"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/mkdir"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/mknod"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/mount"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/poweroff"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/reboot"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/sh"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/sleep"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/umount"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/uname"
+    },
+    {
+      "bytes": 0,
+      "name": "dev"
+    },
+    {
+      "bytes": 0,
+      "name": "etc"
+    },
+    {
+      "bytes": 333,
+      "name": "init"
+    },
+    {
+      "bytes": 0,
+      "name": "opt"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga"
+    },
+    {
+      "bytes": 50047,
+      "name": "opt/ec-fpga/BUILD.json"
+    },
+    {
+      "bytes": 28061,
+      "name": "opt/ec-fpga/SHA256SUMS"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/cases"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/cases/facesim"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/cases/facesim/simmedium"
+    },
+    {
+      "bytes": 19,
+      "name": "opt/ec-fpga/cases/facesim/simmedium/argv"
+    },
+    {
+      "bytes": 1744,
+      "name": "opt/ec-fpga/cases/facesim/simmedium/output-sha256sums"
+    },
+    {
+      "bytes": 13,
+      "name": "opt/ec-fpga/cases/facesim/simmedium/validation-kind"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/cases/facesim/simsmall"
+    },
+    {
+      "bytes": 19,
+      "name": "opt/ec-fpga/cases/facesim/simsmall/argv"
+    },
+    {
+      "bytes": 1744,
+      "name": "opt/ec-fpga/cases/facesim/simsmall/output-sha256sums"
+    },
+    {
+      "bytes": 13,
+      "name": "opt/ec-fpga/cases/facesim/simsmall/validation-kind"
+    },
+    {
+      "bytes": 8140416,
+      "name": "opt/ec-fpga/facesim"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/facesim"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k"
+    },
+    {
+      "bytes": 19,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/attachment_list.txt"
+    },
+    {
+      "bytes": 78712,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/buccinator_left.constitutive_data"
+    },
+    {
+      "bytes": 85672,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/buccinator_right.constitutive_data"
+    },
+    {
+      "bytes": 17592,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/corrugator_supercilii_left.constitutive_data"
+    },
+    {
+      "bytes": 18452,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/corrugator_supercilii_right.constitutive_data"
+    },
+    {
+      "bytes": 27596,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/cranium.attached_nodes"
+    },
+    {
+      "bytes": 29172,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/cranium_extended.attached_nodes"
+    },
+    {
+      "bytes": 30132,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/depressor_anguli_oris_left.constitutive_data"
+    },
+    {
+      "bytes": 27812,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/depressor_anguli_oris_right.constitutive_data"
+    },
+    {
+      "bytes": 35372,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/depressor_labii_inferioris_left.constitutive_data"
+    },
+    {
+      "bytes": 41172,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/depressor_labii_inferioris_right.constitutive_data"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/face_simulation.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/face_simulation_1.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/face_simulation_128.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/face_simulation_16.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/face_simulation_2.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/face_simulation_3.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/face_simulation_32.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/face_simulation_4.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/face_simulation_6.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/face_simulation_64.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/face_simulation_8.tet"
+    },
+    {
+      "bytes": 51025,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/face_simulation_original.log"
+    },
+    {
+      "bytes": 10112,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/flesh.attached_nodes"
+    },
+    {
+      "bytes": 12476,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/flesh_extended.attached_nodes"
+    },
+    {
+      "bytes": 4948,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/jaw.attached_nodes"
+    },
+    {
+      "bytes": 56,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/jaw_joint_parameters"
+    },
+    {
+      "bytes": 24912,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/levator_anguli_oris_left.constitutive_data"
+    },
+    {
+      "bytes": 19812,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/levator_anguli_oris_right.constitutive_data"
+    },
+    {
+      "bytes": 50452,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/levator_labii_superioris_left.constitutive_data"
+    },
+    {
+      "bytes": 35492,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/levator_labii_superioris_right.constitutive_data"
+    },
+    {
+      "bytes": 26192,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/llsan_lateral_left.constitutive_data"
+    },
+    {
+      "bytes": 25972,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/llsan_lateral_right.constitutive_data"
+    },
+    {
+      "bytes": 13912,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/llsan_medial_left.constitutive_data"
+    },
+    {
+      "bytes": 14472,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/llsan_medial_right.constitutive_data"
+    },
+    {
+      "bytes": 24972,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/mentalis_left.constitutive_data"
+    },
+    {
+      "bytes": 25212,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/mentalis_right.constitutive_data"
+    },
+    {
+      "bytes": 693,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/muscle_list.txt"
+    },
+    {
+      "bytes": 21052,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/nasalis_alar_left.constitutive_data"
+    },
+    {
+      "bytes": 23372,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/nasalis_alar_right.constitutive_data"
+    },
+    {
+      "bytes": 55652,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/nasalis_transverse.constitutive_data"
+    },
+    {
+      "bytes": 12,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/node_divisions_1.dat"
+    },
+    {
+      "bytes": 1028,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/node_divisions_128.dat"
+    },
+    {
+      "bytes": 132,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/node_divisions_16.dat"
+    },
+    {
+      "bytes": 20,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/node_divisions_2.dat"
+    },
+    {
+      "bytes": 28,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/node_divisions_3.dat"
+    },
+    {
+      "bytes": 260,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/node_divisions_32.dat"
+    },
+    {
+      "bytes": 36,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/node_divisions_4.dat"
+    },
+    {
+      "bytes": 52,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/node_divisions_6.dat"
+    },
+    {
+      "bytes": 516,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/node_divisions_64.dat"
+    },
+    {
+      "bytes": 68,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/node_divisions_8.dat"
+    },
+    {
+      "bytes": 24492,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/orbicularis_oculi_left.constitutive_data"
+    },
+    {
+      "bytes": 32912,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/orbicularis_oculi_right.constitutive_data"
+    },
+    {
+      "bytes": 212112,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/orbicularis_oris.constitutive_data"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/particle_positions_1.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/particle_positions_128.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/particle_positions_16.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/particle_positions_2.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/particle_positions_3.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/particle_positions_32.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/particle_positions_4.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/particle_positions_6.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/particle_positions_64.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/particle_positions_8.dat"
+    },
+    {
+      "bytes": 943,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/peak_isometric_stress_list.txt"
+    },
+    {
+      "bytes": 32692,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/procerus_left.constitutive_data"
+    },
+    {
+      "bytes": 32752,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/procerus_right.constitutive_data"
+    },
+    {
+      "bytes": 6632,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/risorius_left.constitutive_data"
+    },
+    {
+      "bytes": 8852,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/risorius_right.constitutive_data"
+    },
+    {
+      "bytes": 41092,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/zygomatic_major_left.constitutive_data"
+    },
+    {
+      "bytes": 39752,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/zygomatic_major_right.constitutive_data"
+    },
+    {
+      "bytes": 16752,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/zygomatic_minor_left.constitutive_data"
+    },
+    {
+      "bytes": 13192,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/Front_370k/zygomatic_minor_right.constitutive_data"
+    },
+    {
+      "bytes": 3503568,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/eftychis_cranium_collision_surface.phi"
+    },
+    {
+      "bytes": 72,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/eftychis_cranium_collision_surface.rgd"
+    },
+    {
+      "bytes": 253856,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/eftychis_cranium_collision_surface.tri"
+    },
+    {
+      "bytes": 3542068,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/eftychis_cranium_collision_surface_smoothed.phi"
+    },
+    {
+      "bytes": 72,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/eftychis_cranium_collision_surface_smoothed.rgd"
+    },
+    {
+      "bytes": 253856,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/eftychis_cranium_collision_surface_smoothed.tri"
+    },
+    {
+      "bytes": 7543604,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/eftychis_jaw_collision_surface.phi"
+    },
+    {
+      "bytes": 72,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/eftychis_jaw_collision_surface.rgd"
+    },
+    {
+      "bytes": 227396,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/eftychis_jaw_collision_surface.tri"
+    },
+    {
+      "bytes": 8033324,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/eftychis_jaw_collision_surface_smoothed.phi"
+    },
+    {
+      "bytes": 72,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/eftychis_jaw_collision_surface_smoothed.rgd"
+    },
+    {
+      "bytes": 227396,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Eftychis_840k/eftychis_jaw_collision_surface_smoothed.tri"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Motion_Data"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Motion_Data/Storytelling_Controls"
+    },
+    {
+      "bytes": 288,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Motion_Data/Storytelling_Controls/storytelling_controls.1"
+    },
+    {
+      "bytes": 288,
+      "name": "opt/ec-fpga/inputs/facesim/simmedium/Face_Data/Motion_Data/Storytelling_Controls/storytelling_controls.2"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k"
+    },
+    {
+      "bytes": 19,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/attachment_list.txt"
+    },
+    {
+      "bytes": 78712,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/buccinator_left.constitutive_data"
+    },
+    {
+      "bytes": 85672,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/buccinator_right.constitutive_data"
+    },
+    {
+      "bytes": 17592,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/corrugator_supercilii_left.constitutive_data"
+    },
+    {
+      "bytes": 18452,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/corrugator_supercilii_right.constitutive_data"
+    },
+    {
+      "bytes": 27596,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/cranium.attached_nodes"
+    },
+    {
+      "bytes": 29172,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/cranium_extended.attached_nodes"
+    },
+    {
+      "bytes": 30132,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/depressor_anguli_oris_left.constitutive_data"
+    },
+    {
+      "bytes": 27812,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/depressor_anguli_oris_right.constitutive_data"
+    },
+    {
+      "bytes": 35372,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/depressor_labii_inferioris_left.constitutive_data"
+    },
+    {
+      "bytes": 41172,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/depressor_labii_inferioris_right.constitutive_data"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/face_simulation.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/face_simulation_1.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/face_simulation_128.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/face_simulation_16.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/face_simulation_2.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/face_simulation_3.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/face_simulation_32.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/face_simulation_4.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/face_simulation_6.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/face_simulation_64.tet"
+    },
+    {
+      "bytes": 6921224,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/face_simulation_8.tet"
+    },
+    {
+      "bytes": 51025,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/face_simulation_original.log"
+    },
+    {
+      "bytes": 10112,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/flesh.attached_nodes"
+    },
+    {
+      "bytes": 12476,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/flesh_extended.attached_nodes"
+    },
+    {
+      "bytes": 4948,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/jaw.attached_nodes"
+    },
+    {
+      "bytes": 56,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/jaw_joint_parameters"
+    },
+    {
+      "bytes": 24912,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/levator_anguli_oris_left.constitutive_data"
+    },
+    {
+      "bytes": 19812,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/levator_anguli_oris_right.constitutive_data"
+    },
+    {
+      "bytes": 50452,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/levator_labii_superioris_left.constitutive_data"
+    },
+    {
+      "bytes": 35492,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/levator_labii_superioris_right.constitutive_data"
+    },
+    {
+      "bytes": 26192,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/llsan_lateral_left.constitutive_data"
+    },
+    {
+      "bytes": 25972,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/llsan_lateral_right.constitutive_data"
+    },
+    {
+      "bytes": 13912,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/llsan_medial_left.constitutive_data"
+    },
+    {
+      "bytes": 14472,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/llsan_medial_right.constitutive_data"
+    },
+    {
+      "bytes": 24972,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/mentalis_left.constitutive_data"
+    },
+    {
+      "bytes": 25212,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/mentalis_right.constitutive_data"
+    },
+    {
+      "bytes": 693,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/muscle_list.txt"
+    },
+    {
+      "bytes": 21052,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/nasalis_alar_left.constitutive_data"
+    },
+    {
+      "bytes": 23372,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/nasalis_alar_right.constitutive_data"
+    },
+    {
+      "bytes": 55652,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/nasalis_transverse.constitutive_data"
+    },
+    {
+      "bytes": 12,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/node_divisions_1.dat"
+    },
+    {
+      "bytes": 1028,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/node_divisions_128.dat"
+    },
+    {
+      "bytes": 132,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/node_divisions_16.dat"
+    },
+    {
+      "bytes": 20,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/node_divisions_2.dat"
+    },
+    {
+      "bytes": 28,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/node_divisions_3.dat"
+    },
+    {
+      "bytes": 260,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/node_divisions_32.dat"
+    },
+    {
+      "bytes": 36,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/node_divisions_4.dat"
+    },
+    {
+      "bytes": 52,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/node_divisions_6.dat"
+    },
+    {
+      "bytes": 516,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/node_divisions_64.dat"
+    },
+    {
+      "bytes": 68,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/node_divisions_8.dat"
+    },
+    {
+      "bytes": 24492,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/orbicularis_oculi_left.constitutive_data"
+    },
+    {
+      "bytes": 32912,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/orbicularis_oculi_right.constitutive_data"
+    },
+    {
+      "bytes": 212112,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/orbicularis_oris.constitutive_data"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/particle_positions_1.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/particle_positions_128.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/particle_positions_16.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/particle_positions_2.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/particle_positions_3.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/particle_positions_32.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/particle_positions_4.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/particle_positions_6.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/particle_positions_64.dat"
+    },
+    {
+      "bytes": 322396,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/particle_positions_8.dat"
+    },
+    {
+      "bytes": 943,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/peak_isometric_stress_list.txt"
+    },
+    {
+      "bytes": 32692,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/procerus_left.constitutive_data"
+    },
+    {
+      "bytes": 32752,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/procerus_right.constitutive_data"
+    },
+    {
+      "bytes": 6632,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/risorius_left.constitutive_data"
+    },
+    {
+      "bytes": 8852,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/risorius_right.constitutive_data"
+    },
+    {
+      "bytes": 41092,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/zygomatic_major_left.constitutive_data"
+    },
+    {
+      "bytes": 39752,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/zygomatic_major_right.constitutive_data"
+    },
+    {
+      "bytes": 16752,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/zygomatic_minor_left.constitutive_data"
+    },
+    {
+      "bytes": 13192,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/Front_370k/zygomatic_minor_right.constitutive_data"
+    },
+    {
+      "bytes": 3503568,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/eftychis_cranium_collision_surface.phi"
+    },
+    {
+      "bytes": 72,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/eftychis_cranium_collision_surface.rgd"
+    },
+    {
+      "bytes": 253856,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/eftychis_cranium_collision_surface.tri"
+    },
+    {
+      "bytes": 3542068,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/eftychis_cranium_collision_surface_smoothed.phi"
+    },
+    {
+      "bytes": 72,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/eftychis_cranium_collision_surface_smoothed.rgd"
+    },
+    {
+      "bytes": 253856,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/eftychis_cranium_collision_surface_smoothed.tri"
+    },
+    {
+      "bytes": 7543604,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/eftychis_jaw_collision_surface.phi"
+    },
+    {
+      "bytes": 72,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/eftychis_jaw_collision_surface.rgd"
+    },
+    {
+      "bytes": 227396,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/eftychis_jaw_collision_surface.tri"
+    },
+    {
+      "bytes": 8033324,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/eftychis_jaw_collision_surface_smoothed.phi"
+    },
+    {
+      "bytes": 72,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/eftychis_jaw_collision_surface_smoothed.rgd"
+    },
+    {
+      "bytes": 227396,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Eftychis_840k/eftychis_jaw_collision_surface_smoothed.tri"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Motion_Data"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Motion_Data/Storytelling_Controls"
+    },
+    {
+      "bytes": 288,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Motion_Data/Storytelling_Controls/storytelling_controls.1"
+    },
+    {
+      "bytes": 288,
+      "name": "opt/ec-fpga/inputs/facesim/simsmall/Face_Data/Motion_Data/Storytelling_Controls/storytelling_controls.2"
+    },
+    {
+      "bytes": 3541320,
+      "name": "opt/ec-fpga/roi-smoke"
+    },
+    {
+      "bytes": 3971,
+      "name": "opt/ec-fpga/run-one"
+    },
+    {
+      "bytes": 0,
+      "name": "proc"
+    },
+    {
+      "bytes": 0,
+      "name": "root"
+    },
+    {
+      "bytes": 0,
+      "name": "run"
+    },
+    {
+      "bytes": 0,
+      "name": "sbin"
+    },
+    {
+      "bytes": 0,
+      "name": "sys"
+    },
+    {
+      "bytes": 0,
+      "name": "tmp"
+    },
+    {
+      "bytes": 0,
+      "name": "TRAILER!!!"
+    }
+  ],
+  "diagnostic_only": true,
+  "ended_utc": "2026-11-07T07:14:44.969010+00:00",
+  "firmware_receipt_sha256": "0e009891e587bbe9d8e9cfef57e830d626e15f2837ec5bd356c2b1c181299f88",
+  "firmware_runtime_layout": {
+    "fdt_copy_end": 3219136316,
+    "fdt_copy_start": 3219128320,
+    "kernel_end": 2272060416,
+    "kernel_start": 2149580800,
+    "linux_memory_cap_bytes": 2147483648,
+    "no_overlap": true
+  },
+  "fpga_operations": false,
+  "host_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "kernel_archive_exact_match": true,
+  "kernel_panic": false,
+  "kernel_sha256": "7d6e21da93f0855700a693cd04dd542b2d2871a296dae44b2467be381c078ab0",
+  "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/facesim-staged-resident-safe-fdt-boot-diagnostic-20261107T071434Z/console.log",
+  "measurement_validity": false,
+  "pid": 515494,
+  "qemu_guest_done": true,
+  "qemu_guest_ready": true,
+  "qemu_integrity_passed": true,
+  "qemu_returncode": 0,
+  "rootfs_sha256": "1f06b99dc3c6a90e44ea444f29ffc723ac1f6048622b2d3ab63980cc9478ae5e",
+  "status": "COMPLETE",
+  "timedout": false
+}

@@ -1,0 +1,353 @@
+{
+  "LUT_reduction_percent": 94.0370613202664,
+  "derived_hardware": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+  "error_correction": "r2 regex missed CLB LUTs* total and incorrectly matched zero SLR row; original reported0LUT is invalid; corrected parser selects only total sections with Used/Available and crosschecks hierarchy/primitive counts.",
+  "fpga_access": false,
+  "full_dut_equivalence": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "original_controller_changed": false,
+  "original_state_retained": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-area-analysis-r1-20261111/original-buggy-state.json",
+  "parser_source_sha256": "f436229f1b350f50664a310153c59b6b808f8ee36abdc002b4d008b87aa89d25",
+  "parser_tests": {
+    "MCConfig": {
+      "CARRY8_primitive_disagreement_rejected": true,
+      "SLR_numbers_do_not_affect_total": true,
+      "actual_hierarchy_top_agrees": {
+        "Block RAM Tile": 1.5,
+        "CLB LUTs": 24192.0,
+        "CLB Registers": 32721.0,
+        "DSPs": 0.0,
+        "URAM": 0.0
+      },
+      "actual_starred_total_positive": 24192.0,
+      "duplicate_total_rejected": true,
+      "hierarchy_disagreement_rejected": true,
+      "missing_total_does_not_read_SLR_zero": true,
+      "unstarred_total_supported": true,
+      "wrong_capacity_rejected": true
+    },
+    "PlainConfig": {
+      "CARRY8_primitive_disagreement_rejected": true,
+      "SLR_numbers_do_not_affect_total": true,
+      "actual_hierarchy_top_agrees": {
+        "Block RAM Tile": 0.0,
+        "CLB LUTs": 405706.0,
+        "CLB Registers": 65886.0,
+        "DSPs": 0.0,
+        "URAM": 0.0
+      },
+      "actual_starred_total_positive": 405706.0,
+      "duplicate_total_rejected": true,
+      "hierarchy_disagreement_rejected": true,
+      "missing_total_does_not_read_SLR_zero": true,
+      "unstarred_total_supported": true,
+      "wrong_capacity_rejected": true
+    }
+  },
+  "production_admission": false,
+  "resource_savings": {
+    "Block RAM Tile": -1.5,
+    "CARRY8": 0.0,
+    "CLB LUTs": 381514.0,
+    "CLB Registers": 33165.0,
+    "DSPs": 0.0,
+    "URAM": 0.0
+  },
+  "results": {
+    "MCConfig": {
+      "checkpoint_sha256": "9c68edb1939ab9788b8274cf4441dc4bb32e358b309cdb4850400d28210f0f55",
+      "crosschecks": {
+        "CARRY8_primitive_total": 250.0,
+        "blackboxes": 0
+      },
+      "hierarchical": {
+        "owner_memory_instances": [
+          {
+            "DSP Blocks": "0",
+            "FFs": "2906",
+            "Instance": "Entry_dut_ownerImageMemory_",
+            "LUTRAMs": "0",
+            "Logic LUTs": "6220",
+            "Module": "ownerImageMemory",
+            "RAMB18": "1",
+            "RAMB36": "1",
+            "SRLs": "0",
+            "Total LUTs": "6220",
+            "URAM": "0"
+          }
+        ],
+        "ram_model_instances": [
+          {
+            "DSP Blocks": "0",
+            "FFs": "2906",
+            "Instance": "model",
+            "LUTRAMs": "0",
+            "Logic LUTs": "6122",
+            "Module": "RamModel",
+            "RAMB18": "1",
+            "RAMB36": "1",
+            "SRLs": "0",
+            "Total LUTs": "6122",
+            "URAM": "0"
+          }
+        ],
+        "top": {
+          "DSP Blocks": "0",
+          "FFs": "32721",
+          "Instance": "FPGATop",
+          "LUTRAMs": "24",
+          "Logic LUTs": "24168",
+          "Module": "(top)",
+          "RAMB18": "1",
+          "RAMB36": "1",
+          "SRLs": "0",
+          "Total LUTs": "24192",
+          "URAM": "0"
+        },
+        "validated_resources": {
+          "Block RAM Tile": 1.5,
+          "CLB LUTs": 24192.0,
+          "CLB Registers": 32721.0,
+          "DSPs": 0.0,
+          "URAM": 0.0
+        }
+      },
+      "hierarchical_report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-area-r2-20261111/MCConfig/hierarchical.rpt",
+      "hierarchical_sha256": "35f40f805e343ad8b39c6754d1b09eb2b09308967a3df3a8859f9a7479cb79ea",
+      "host_rtl_sha256": "99f04d704947edcf11c0a42731bf7865aa298a0a0aceeca2d3267df0bb38560d",
+      "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-area-r2-20261111/receipts/area-MCConfig.json",
+      "receipt_sha256": "701077c79b5e2d89185e52a97d17e6c4223b8e19ac4759080df1a7e79ceb0a48",
+      "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-area-r2-20261111/MCConfig/utilization.rpt",
+      "report_sha256": "82fe3646fb4f8bf77b2ec89f6eab19b4dc414e3105a71ce7e7d719dd94999346",
+      "resources": {
+        "Block RAM Tile": {
+          "available": 2016.0,
+          "percent_computed": 0.0744047619047619,
+          "reported_label": "Block RAM Tile",
+          "section": "2. BLOCKRAM",
+          "source_row": {
+            "Available": "2016",
+            "Fixed": "0",
+            "Prohibited": "0",
+            "Site Type": "Block RAM Tile",
+            "Used": "1.5",
+            "Util%": "0.07"
+          },
+          "used": 1.5
+        },
+        "CARRY8": {
+          "available": 162960.0,
+          "percent_computed": 0.15341188021600394,
+          "reported_label": "CARRY8",
+          "section": "1. CLB Logic",
+          "source_row": {
+            "Available": "162960",
+            "Fixed": "0",
+            "Prohibited": "0",
+            "Site Type": "CARRY8",
+            "Used": "250",
+            "Util%": "0.15"
+          },
+          "used": 250.0
+        },
+        "CLB LUTs": {
+          "available": 1303680.0,
+          "percent_computed": 1.8556701030927836,
+          "reported_label": "CLB LUTs*",
+          "section": "1. CLB Logic",
+          "source_row": {
+            "Available": "1303680",
+            "Fixed": "0",
+            "Prohibited": "0",
+            "Site Type": "CLB LUTs*",
+            "Used": "24192",
+            "Util%": "1.86"
+          },
+          "used": 24192.0
+        },
+        "CLB Registers": {
+          "available": 2607360.0,
+          "percent_computed": 1.2549475331369662,
+          "reported_label": "CLB Registers",
+          "section": "1. CLB Logic",
+          "source_row": {
+            "Available": "2607360",
+            "Fixed": "0",
+            "Prohibited": "0",
+            "Site Type": "CLB Registers",
+            "Used": "32721",
+            "Util%": "1.25"
+          },
+          "used": 32721.0
+        },
+        "DSPs": {
+          "available": 9024.0,
+          "percent_computed": 0.0,
+          "reported_label": "DSPs",
+          "section": "3. ARITHMETIC",
+          "source_row": {
+            "Available": "9024",
+            "Fixed": "0",
+            "Prohibited": "0",
+            "Site Type": "DSPs",
+            "Used": "0",
+            "Util%": "0.00"
+          },
+          "used": 0.0
+        },
+        "URAM": {
+          "available": 960.0,
+          "percent_computed": 0.0,
+          "reported_label": "URAM",
+          "section": "2. BLOCKRAM",
+          "source_row": {
+            "Available": "960",
+            "Fixed": "0",
+            "Prohibited": "0",
+            "Site Type": "URAM",
+            "Used": "0",
+            "Util%": "0.00"
+          },
+          "used": 0.0
+        }
+      },
+      "stage_wall_seconds": 197.5177059059788
+    },
+    "PlainConfig": {
+      "checkpoint_sha256": "4b2d2aeb9ae9549c37104a3212d800128a78d408a56fced0c2db8272c61e7ac2",
+      "crosschecks": {
+        "CARRY8_primitive_total": 250.0,
+        "blackboxes": 0
+      },
+      "hierarchical": {
+        "owner_memory_instances": [],
+        "ram_model_instances": [],
+        "top": {
+          "DSP Blocks": "0",
+          "FFs": "65886",
+          "Instance": "FPGATop",
+          "LUTRAMs": "24",
+          "Logic LUTs": "405682",
+          "Module": "(top)",
+          "RAMB18": "0",
+          "RAMB36": "0",
+          "SRLs": "0",
+          "Total LUTs": "405706",
+          "URAM": "0"
+        },
+        "validated_resources": {
+          "Block RAM Tile": 0.0,
+          "CLB LUTs": 405706.0,
+          "CLB Registers": 65886.0,
+          "DSPs": 0.0,
+          "URAM": 0.0
+        }
+      },
+      "hierarchical_report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-area-r2-20261111/PlainConfig/hierarchical.rpt",
+      "hierarchical_sha256": "d640df272bdb6698a94a02a71a2afd403ac30a1355d9ef0edaca6eecfdb6cfd8",
+      "host_rtl_sha256": "d85bcf157457b724570b8a6d25bf1302f432e00564c7046fa75d04efa1bf16f9",
+      "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-area-r2-20261111/receipts/area-PlainConfig.json",
+      "receipt_sha256": "2a46ea0a991060d050719db02b06586df2045943f1f6857041f3aaae2d1a2715",
+      "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-dcache-entry-area-r2-20261111/PlainConfig/utilization.rpt",
+      "report_sha256": "688d095bbae00b9af85f7db882cbab5b78a3865015722ae035c5ccbd760ca082",
+      "resources": {
+        "Block RAM Tile": {
+          "available": 2016.0,
+          "percent_computed": 0.0,
+          "reported_label": "Block RAM Tile",
+          "section": "2. BLOCKRAM",
+          "source_row": {
+            "Available": "2016",
+            "Fixed": "0",
+            "Prohibited": "0",
+            "Site Type": "Block RAM Tile",
+            "Used": "0",
+            "Util%": "0.00"
+          },
+          "used": 0.0
+        },
+        "CARRY8": {
+          "available": 162960.0,
+          "percent_computed": 0.15341188021600394,
+          "reported_label": "CARRY8",
+          "section": "1. CLB Logic",
+          "source_row": {
+            "Available": "162960",
+            "Fixed": "0",
+            "Prohibited": "0",
+            "Site Type": "CARRY8",
+            "Used": "250",
+            "Util%": "0.15"
+          },
+          "used": 250.0
+        },
+        "CLB LUTs": {
+          "available": 1303680.0,
+          "percent_computed": 31.120060137457045,
+          "reported_label": "CLB LUTs*",
+          "section": "1. CLB Logic",
+          "source_row": {
+            "Available": "1303680",
+            "Fixed": "0",
+            "Prohibited": "0",
+            "Site Type": "CLB LUTs*",
+            "Used": "405706",
+            "Util%": "31.12"
+          },
+          "used": 405706.0
+        },
+        "CLB Registers": {
+          "available": 2607360.0,
+          "percent_computed": 2.5269237849779085,
+          "reported_label": "CLB Registers",
+          "section": "1. CLB Logic",
+          "source_row": {
+            "Available": "2607360",
+            "Fixed": "0",
+            "Prohibited": "0",
+            "Site Type": "CLB Registers",
+            "Used": "65886",
+            "Util%": "2.53"
+          },
+          "used": 65886.0
+        },
+        "DSPs": {
+          "available": 9024.0,
+          "percent_computed": 0.0,
+          "reported_label": "DSPs",
+          "section": "3. ARITHMETIC",
+          "source_row": {
+            "Available": "9024",
+            "Fixed": "0",
+            "Prohibited": "0",
+            "Site Type": "DSPs",
+            "Used": "0",
+            "Util%": "0.00"
+          },
+          "used": 0.0
+        },
+        "URAM": {
+          "available": 960.0,
+          "percent_computed": 0.0,
+          "reported_label": "URAM",
+          "section": "2. BLOCKRAM",
+          "source_row": {
+            "Available": "960",
+            "Fixed": "0",
+            "Prohibited": "0",
+            "Site Type": "URAM",
+            "Used": "0",
+            "Util%": "0.00"
+          },
+          "used": 0.0
+        }
+      },
+      "stage_wall_seconds": 668.7024350970169
+    }
+  },
+  "schema": "ec-corrected-real-entry-utilization/1",
+  "scope": "Isolated real ownerImageMemory host-entry with written-mask/reset,35read ports,35captures and PeekPoke; not complete DCache or Opt4",
+  "status": "CORRECTED_AREA_COMPLETE_NOT_FULL_DCACHE_OR_OPT4_FIT",
+  "utc": "2026-11-11T13:20:49.408551+00:00",
+  "whole_fit": false
+}

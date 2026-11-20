@@ -1,0 +1,70 @@
+{
+  "correction": "Vivado zero CARRY8 is absent from primitive list; accept only when total=0, reject missing nonzero. Original reports/controller/failure retained.",
+  "crosschecks": {
+    "CARRY8_primitive_total": 0,
+    "blackboxes": 0
+  },
+  "derived_hardware": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "hierarchy": {
+    "owner_memory_instances": [],
+    "ram_model_instances": [
+      {
+        "DSP Blocks": "0",
+        "FFs": "2906",
+        "Instance": "model",
+        "LUTRAMs": "0",
+        "Logic LUTs": "3245",
+        "Module": "RamModel",
+        "RAMB18": "1",
+        "RAMB36": "1",
+        "SRLs": "0",
+        "Total LUTs": "3245",
+        "URAM": "0"
+      }
+    ],
+    "top": {
+      "DSP Blocks": "0",
+      "FFs": "2906",
+      "Instance": "ownerImageMemory_flattened",
+      "LUTRAMs": "0",
+      "Logic LUTs": "3245",
+      "Module": "(top)",
+      "RAMB18": "1",
+      "RAMB36": "1",
+      "SRLs": "0",
+      "Total LUTs": "3245",
+      "URAM": "0"
+    },
+    "validated_resources": {
+      "Block RAM Tile": 1.5,
+      "CLB LUTs": 3245.0,
+      "CLB Registers": 2906.0,
+      "DSPs": 0.0,
+      "URAM": 0.0
+    }
+  },
+  "missing_nonzero_carry_rejected": true,
+  "resources": {
+    "Block RAM Tile": 1.5,
+    "CARRY8": 0.0,
+    "CLB LUTs": 3245.0,
+    "CLB Registers": 2906.0,
+    "DSPs": 0.0,
+    "URAM": 0.0
+  },
+  "schema": "ec-actual-generated-owner-area-corrected/2",
+  "scope": "Actual whole-GG-generated ownerImageMemory_flattened+RamModel only;294ports, not fullDCache/wholeFIT",
+  "source_evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-owner-generated-area-r1-20261111/hierarchical.rpt": "b8599ffd769de40220b80e611418e348db84b9b2a34e04f0327043459967ff4b",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-owner-generated-area-r1-20261111/map.log": "102cda76e1d9a2956a83a8acd5170957fcaa9c6f00f2edfb10f46e9159b6667d",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-owner-generated-area-r1-20261111/module.dcp": "f34dd19ccd86e30288ddb84a9c9995f8396ab788af7006d984c3ea8129926602",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-owner-generated-area-r1-20261111/utilization.rpt": "1dac5fe68cc77c8a0570bb70030d68ce8f37ac092399ffd9789b726b8a0a19cf",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-owner-generated-area-analysis-r2-20261112/resource_parser.py": "f8ebb4def73915c78b362e70a8b83bebcc57cb08e8f845eb3a183452e01863e2",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-owner-generated-area-r1-20261111/extraction.json": "91b8dfe015fc28da4b121a701b701406492f976d6078ee68dceb1f6486523fa8"
+  },
+  "status": "PASS_SAVED_CAD_REPORT_ZERO_PRIMITIVE_CORRECTION_NOT_FULL_FIT",
+  "utc": "2026-11-12T01:17:57.156246+00:00",
+  "whole_fit": false
+}

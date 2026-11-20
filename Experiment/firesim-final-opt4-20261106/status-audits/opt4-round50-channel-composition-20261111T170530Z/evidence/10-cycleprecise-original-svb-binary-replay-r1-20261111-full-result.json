@@ -1,0 +1,61 @@
+{
+  "actual_payload_mutation_rejected": true,
+  "binary_sha256": "9faeeb3a8e894be3db70b5a818000b2ea4c2e592f5aefd8b4a675841ac18b49f",
+  "completed_utc": "2026-11-11T14:56:54.581959+00:00",
+  "fpga_access": false,
+  "negative": {
+    "argv": [
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-svb-binary-replay-r1-20261111/replay",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-external-observer-r5-20261111/canneal-observer-on/external-events.jsonl.svb-full.bin",
+      "--mutate-data"
+    ],
+    "host_wall_seconds": 36.84597480899538,
+    "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-binary-replay-r1-20261111/full-data-mutation.log",
+    "log_sha256": "119ecc0a7cb516dcfbcca5f1a989384ea83ddbf0cf6bb3d45dec098cf5644b6f",
+    "returncode": 0
+  },
+  "original_full_metasim_result_sha256": "ba9de23f19f458f378cfe5cd34b0f4909692fe987c779d5edab505280a4327cf",
+  "passed": true,
+  "plan_sha256": "fc9e74b88df0ba21c80dd1f8d06a057edc7a4ea06974ef591040fe1dcb465b97",
+  "positive": {
+    "argv": [
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-svb-binary-replay-r1-20261111/replay",
+      "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-external-observer-r5-20261111/canneal-observer-on/external-events.jsonl.svb-full.bin"
+    ],
+    "host_wall_seconds": 36.66001836399664,
+    "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-binary-replay-r1-20261111/full-replay.log",
+    "log_sha256": "9f7e0ef29385a23d8e18137458e64fdd0a7ed46fdc317d74e1f53215a340a2f4",
+    "returncode": 0
+  },
+  "scope": "CPU standalone original target SVB replay, all defined outputs of62 original host ports; not an FPGA sample or whole-system equivalence",
+  "status": "PASS_FULL_REAL_APPLICATION_ORIGINAL_SVB_TARGET_REPLAY_AND_DATA_MUTATION",
+  "trace_integrity": {
+    "bytes": 710636420,
+    "counts": {
+      "ack_accepted": 659,
+      "capture_accepted": 659,
+      "capture_blocked_cycles": 0,
+      "flush_cycles": 175255,
+      "invalidate_cycles": 0,
+      "promote_accepted": 659,
+      "promote_blocked_cycles": 10777,
+      "reset_cycles": 53
+    },
+    "file": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-external-observer-r5-20261111/canneal-observer-on/external-events.jsonl.svb-full.bin",
+    "first_nonreset_target_cycle": 55,
+    "first_reset_target_cycle": 2,
+    "first_target_cycle": 2,
+    "fpga_access": false,
+    "last_target_cycle": 1759002,
+    "layout_sha256": "e3cc9c4c09350fcebd684816d7c55a423ad1f67b8072725fa8b347bad4805af1",
+    "limitations": [
+      "Structure/continuity only; captured ports need independent SVB replay comparison before hardware replay admission",
+      "Entire run is CPU metasimulation, not an FPGA sample"
+    ],
+    "padding_errors": 0,
+    "records": 1759001,
+    "schema": "ec-full-svb-binary-integrity/1",
+    "sha256": "b1d2243c18bb3f512c24c2ea86ddb91dd5674f92d1bdd1798e55d0b16c1122be",
+    "status": "PASS_BINARY_STRUCTURE_AND_CONTIGUOUS_TARGET_EDGES"
+  }
+}

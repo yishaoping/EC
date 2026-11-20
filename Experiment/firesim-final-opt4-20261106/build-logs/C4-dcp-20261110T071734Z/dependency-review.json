@@ -1,0 +1,26 @@
+{
+  "observed_utc": "2026-11-10T07:19:25.396932+00:00",
+  "source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
+  "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "original_input_receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-dcp-20261110T071734Z/original-cad-receipt.json",
+  "frozen_rtl_modified": false,
+  "dependencies": {
+    "dut_synthesis": "Already succeeded; snapshot DCP hash independently checked",
+    "functional_verilog_and_vhdl": "Current generated DUT Tcl emits these inside optional IP cache/simulation export; top synthesis/implementation consume DCP plus synthesis stub, not functional netlists",
+    "stub": "Use original DCP embedded Verilog/VHDL synthesis stubs, matching top port declaration",
+    "top_synthesis": "Original generated synth_1 script, same BD and source/clock constraints, relocated directory only",
+    "sibling_ip": "11 completed IP DCPs copied with hashes, DDR/XDMA included",
+    "implementation": "Original generated script from private project; full scoped DCP/XDC linking must be established, then same Explore directives, physical opt, routing and timing gates",
+    "bitstream": "May only be published after setup/hold timing and normal Vivado DRC; FPGA smoke/checker validation remains required"
+  },
+  "private_directory": "/data1/gzh/EC/firesim/final-opt4-20261106/dcp-work/C4-dcp-20261110T071734Z",
+  "active_original_directory": "/var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z",
+  "snapshot_checkpoint_count": 12,
+  "validation_status": "Vivado DCP read in progress, not yet proof of full top linking",
+  "not_done": [
+    "No final bitstream",
+    "No automatic runtime admission for independent candidate yet",
+    "No board operation"
+  ],
+  "resume_entry": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/C4-dcp-cad-state.json"
+}

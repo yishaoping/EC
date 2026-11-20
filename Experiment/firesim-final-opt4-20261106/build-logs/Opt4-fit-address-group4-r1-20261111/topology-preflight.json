@@ -1,0 +1,64 @@
+{
+  "schema": "ec-opt4-group4-exhaustive-topology-preflight/1",
+  "hardware_commit": "981b890d870130f99ec24a0c5e37acb39362318a",
+  "source_id": "632c20a179a83d030793d1d0f24add9c3f2acd99f84e8ddfe4a4a61da4a66e0d",
+  "source": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-group4-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/AddressBucketGrouped.scala",
+  "source_sha256": "3d1903c9e1572d8460343b277b1b9ab5949de408a22b19bfa26de3c1169264df",
+  "parsed_network": [
+    [
+      0,
+      1
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      0,
+      2
+    ],
+    [
+      1,
+      3
+    ],
+    [
+      1,
+      2
+    ]
+  ],
+  "positive": {
+    "status": "PASS",
+    "key_vectors": 256,
+    "query_cases": 1024
+  },
+  "negative_delete_last_comparator": {
+    "status": "FAIL_SORT",
+    "keys": [
+      0,
+      1,
+      0,
+      1
+    ],
+    "pairs": [
+      [
+        0,
+        1
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        3
+      ]
+    ]
+  },
+  "interpretation": "Four ordinal keys cover all weak orders among four arbitrary unsigned keys. Payloads are symbolic source-index multisets; last-key scatter has exactly the intended source membership.",
+  "limits": "Python model and parsed comparator list only; generated RTL SAT, arithmetic widths, actual-size regression and complete-module comparison remain required. No module map or whole-DUT formal equivalence.",
+  "fpga_access": false
+}

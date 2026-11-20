@@ -1,0 +1,29 @@
+{
+  "schema": "ec-real-check-source-audit/1",
+  "implementation": "Project b3 detection datapath, with three configuration-only matching changes; not final Opt4 with recovery disabled",
+  "source_root": "/data1/gzh/EC-opt4-perf/slowdown/blackscholes_validation/build/matched_check/source/chipyard",
+  "base_commit": "b3d7adddd1e2d2cf428dd933529de878226420cd",
+  "modified_configuration_files": [
+    "chipyard/generators/boom/src/main/scala/common/config-mixins.scala",
+    "chipyard/generators/chipyard/src/main/scala/config/RocketConfigs.scala",
+    "chipyard/generators/rocket-chip/src/main/scala/subsystem/Configs.scala"
+  ],
+  "configuration_patch": "/data1/gzh/EC-opt4-perf/slowdown/blackscholes_validation/build/matched_check/configuration_only.patch",
+  "configuration_patch_sha256": "5f4ba67c8fa0be083ee69082ed304fcca2e924dcf4b652d1bc85a0d4f75dc26e",
+  "simulator": "/data1/gzh/EC-opt4-perf/slowdown/blackscholes_validation/build/matched_check_v5048/verilator/simulator-chipyard-v1Config",
+  "simulator_sha256": "60e66a4a8a7b0c89e75ef9b3e91faededd6cc70da75e0176bb3accee53ab956a",
+  "verilator_manifest": "/data1/gzh/EC-opt4-perf/slowdown/blackscholes_validation/build/matched_check_v5048/build.manifest.json",
+  "verilator_manifest_sha256": "92729749fb96a85d8af956c4142a7b10cf17025daa5db0942e7484bdc592d904",
+  "configuration_evidence": "/data1/gzh/EC-opt4-perf/slowdown/blackscholes_validation/evidence/matched_check_configuration_check.json",
+  "configuration_evidence_sha256": "f6ae0377e0ba11c8cb7cd38d5543dd2fe1a092fc8e37dc3ae7745153d45da1c1",
+  "configuration_errors": [],
+  "firesim_integration": "NOT_PORTED",
+  "goldengate": "NOT_BUILT",
+  "bitstream": "NOT_BUILT",
+  "fpga_validation": "NOT_RUN",
+  "does_not_block_native_opt4": true,
+  "notes": [
+    "This historical Verilator Native kept idle checkers; it is excluded from this FPGA Native denominator.",
+    "Historical Check checker I$ is 32 sets x 1 way x 64B = 2KiB; final Opt4 checker I$ is 4KiB. Retain and explain if Check is later measured; no automatic claim of fully matched checker frontend."
+  ]
+}

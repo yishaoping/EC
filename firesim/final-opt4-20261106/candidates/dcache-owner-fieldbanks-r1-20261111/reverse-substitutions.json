@@ -1,0 +1,14 @@
+[
+  [
+    "  // Independent full-width fields prevent GoldenGate from packing all read\n  // traffic into a 146-bit multi-port memory. Same asynchronous read and edge.\n  val ownerImageMemory = Mem(nSets * nWays, new CacheImageKey)\n  val ownerGenerationMemory = Mem(nSets * nWays, UInt(32.W))\n  val ownerPacketMemory = Mem(nSets * nWays, UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))\n  val ownerTrackedMemory = Mem(nSets * nWays, Bool())\n",
+    "  val ownerMemory = Mem(nSets * nWays, new OwnerPayload)\n"
+  ],
+  [
+    "    val payload = Wire(new OwnerPayload)\n    payload.image := ownerImageMemory.read(index)\n    payload.generation := ownerGenerationMemory.read(index)\n    payload.packetSeq := ownerPacketMemory.read(index)\n    payload.tracked := ownerTrackedMemory.read(index)\n    Mux(ownerWritten(index), payload, 0.U.asTypeOf(new OwnerPayload))\n",
+    "    Mux(ownerWritten(index), ownerMemory.read(index), 0.U.asTypeOf(new OwnerPayload))\n"
+  ],
+  [
+    "    ownerImageMemory.write(ownerWriteIndex, ownerWriteData.image)\n    ownerGenerationMemory.write(ownerWriteIndex, ownerWriteData.generation)\n    ownerPacketMemory.write(ownerWriteIndex, ownerWriteData.packetSeq)\n    ownerTrackedMemory.write(ownerWriteIndex, ownerWriteData.tracked)\n",
+    "    ownerMemory.write(ownerWriteIndex, ownerWriteData)\n"
+  ]
+]

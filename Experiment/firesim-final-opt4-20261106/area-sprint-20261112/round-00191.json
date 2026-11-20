@@ -1,0 +1,90 @@
+{
+  "evidence": [
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round191/functional-regression.json",
+      "sha256": "b79bb7e5378fb1f91f3a6df30fe940424cae139cf35248637c048078a2ad8813"
+    },
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round191/owner-observation.json",
+      "sha256": "4a8a0966d05d557e7a603402ec79546f41540d903d7fc15bd7901480bb05727b"
+    },
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round191/active-owner-with-shell-continuation.json",
+      "sha256": "f0e36ede71e6217276bc90f77b3219c45bfe1105a361d99046570e949916e893"
+    }
+  ],
+  "experiment_commits": [
+    "c4dc2a0c310c554ed2efd21c357f330e033d8ade",
+    "cef2d0bd09ec1480db0f29034c2b0a29a28b949f"
+  ],
+  "full_PALIMPSEST": false,
+  "fullshell_ledger_unchanged": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/area-sprint-20261112/fullshell-adoptions.json",
+    "prototype_result_added": false,
+    "sha256": "4f2f686829b0b34546f0fbb37367f7a69c3b82f69e95e8bbce29465df4c9a2b3"
+  },
+  "functional": {
+    "assertions_enabled": true,
+    "compared_bits": 66503,
+    "compared_signals": 2446,
+    "counts": {
+      "acquires": 149,
+      "c_beats": 0,
+      "cycles": 8192,
+      "e_acks": 149,
+      "grants": 596,
+      "loads": 294,
+      "nacks": 74,
+      "observations": 24575,
+      "packet_events": 2,
+      "pending": 0,
+      "quiet_edges": 3813,
+      "replies": 0,
+      "requests": 368,
+      "reset_edges": 600,
+      "stores": 74
+    },
+    "fpga_access": false,
+    "full_PALIMPSEST": false,
+    "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "generation_taps": 512,
+    "hardware_commit": "6fada307bb77be90b39720d3f95404fece0e431b",
+    "header_recovery": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-performance-only-support-r5-20261113/header-recovery.json",
+    "header_recovery_sha256": "c94b0318b6dc55147fc95871eced00bd3a95ac8154591237e931e65647671477",
+    "log_sha256": "8dc695dd55ef0507d2f8777bc6f643ef0bd4a944f8d4270a69cc25fe2918ebe1",
+    "no_FIT_claim": true,
+    "no_full_formal": true,
+    "no_whole_boot": true,
+    "no_whole_shell_area": true,
+    "oracle_unchanged": true,
+    "preparation_sha256": "089687e7aa4bc2205e19abd81a23905b127810195536df1a51c80d32d46ecde9",
+    "profile": "EC Performance-Only: data preservation + cache isolation",
+    "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-performance-only-support-r5-20261113/dcache-functional-cycle-receipt.json",
+    "receipt_sha256": "9babbbe592f525551a6c1d7e61499c7b02860c9283ef8a38ad5b6776bebaed8d",
+    "schema": "ec-performance-only-finite-dcache-validation/1",
+    "status": "PASS_FINITE_FROZEN_SURVIVING_FUNCTIONAL_OUTPUTS_AND_STATE",
+    "utc": "2026-11-13T03:33:36.994993+00:00"
+  },
+  "hardware_commit": "6fada307bb77be90b39720d3f95404fece0e431b",
+  "launched_jobs": [
+    "ec-performance-only-support-r5-20261113.service",
+    "ec-performance-only-support-r6-20261113.service"
+  ],
+  "next_action": "Preserve R5; actual8192-cycle functional comparison -> indexed-checker MCRams -> one complete shell. Failure: exact release and immutable diagnosed recovery. NOTFIT: actual hierarchy substantial cut. FIT: exact profile physical/ABI/software/boot/storage/checker-drain certification then card21 eight simmedium first samples. R6cef2d0b is sole prewritten shell successor for exact R5missing-cad_engine.py; do not duplicate. Read ACTIVE_OWNER.json first. Whole boot/storage/isolation/checker-drain and new profile physical/ABI/software/card21 certification remain mandatory before samples.",
+  "no_CPU_or_SVB_session_control": true,
+  "no_FPGA_IO": true,
+  "no_healthy_restart": true,
+  "no_new_intelligent_supervisor": true,
+  "no_subagents": true,
+  "old_owner_observation": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round191/owner-observation.json",
+  "outcome": "REAL_EXPERIMENT_STARTED",
+  "profile": "EC Performance-Only: data preservation + cache isolation",
+  "prototype_FIT": null,
+  "prototype_area_LUT": null,
+  "retry_after_seconds": 600,
+  "round": 191,
+  "runtime_certified": false,
+  "schema": "ec-area-sprint-round-evidence/1",
+  "summary": "EC Performance-Only6fada307: diagnosed R4 Verilator VlWide header failure, committed/launched exact R5c4dc2a0 without repeating successful target generation; actual finite DCache8192cycles/24575observations PASS,2446signals/66503bits/512taps/assertions. MCRams host running with validated indexed checker8359b23. Exact R6cef2d0b installed unpinned for missing engine recovery after R5release. Healthy old CAD preserved. No prototype complete-shell area/FIT/bitstream/runtime certificate.",
+  "utc": "2026-11-13T03:34:35.595934+00:00"
+}

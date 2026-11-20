@@ -1,0 +1,39 @@
+diff --git a/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala b/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
+index e5e7ccc..a0f1144 100644
+--- a/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
++++ b/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala
+@@ -557,12 +557,12 @@ class PackageAddressStats(
+   val currentStoreNextWide = Wire(Vec(4, UInt(65.W)))
+   val currentFirstStoreNextWide = Wire(Vec(4, UInt(65.W)))
+   for (g <- 0 until 4) {
+-    currentStoreNextWide(g) := Mux(currentBucketValid,
+-      AddressBucketAccess.select(currentBucketOH, bucketStore.map(_(g))),
+-      0.U(64.W)) +& newStoreCounts(g).pad(64)
+-    currentFirstStoreNextWide(g) := Mux(currentBucketValid,
+-      AddressBucketAccess.select(currentBucketOH, bucketFirstStore.map(_(g))),
+-      0.U(64.W)) +& newFirstStoreCounts(g).pad(64)
++    currentStoreNextWide(g) :=
++      AddressBucketAccess.select(currentBucketOH, bucketStore.map(_(g))) +&
++        newStoreCounts(g).pad(64)
++    currentFirstStoreNextWide(g) :=
++      AddressBucketAccess.select(currentBucketOH, bucketFirstStore.map(_(g))) +&
++        newFirstStoreCounts(g).pad(64)
+   }
+ 
+   val processArithmeticErrorParts = collection.mutable.ArrayBuffer[Bool]()
+@@ -768,12 +768,9 @@ class PackageAddressStats(
+         when (isCurrent) {
+           bucketStore(i)(g) := currentStoreNextWide(g)(63, 0)
+           bucketFirstStore(i)(g) := currentFirstStoreNextWide(g)(63, 0)
+-          bucketLoadFirst(i)(g) := Mux(bucketValid(i),
+-            loadFirstNextWide(i)(g)(63, 0), bucketLoadFirstDelta(i)(g))
+-          bucketStoreFirst(i)(g) := Mux(bucketValid(i),
+-            storeFirstNextWide(i)(g)(63, 0), bucketStoreFirstDelta(i)(g))
+-          bucketStrictWriteRead(i)(g) := Mux(bucketValid(i),
+-            strictWriteReadNextWide(i)(g)(63, 0), bucketStrictWriteReadDelta(i)(g))
++          bucketLoadFirst(i)(g) := loadFirstNextWide(i)(g)(63, 0)
++          bucketStoreFirst(i)(g) := storeFirstNextWide(i)(g)(63, 0)
++          bucketStrictWriteRead(i)(g) := strictWriteReadNextWide(i)(g)(63, 0)
+         }.otherwise {
+           when (bucketLoadFirstDelta(i)(g) =/= 0.U) {
+             bucketLoadFirst(i)(g) := loadFirstNextWide(i)(g)(63, 0)

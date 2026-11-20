@@ -1,0 +1,139 @@
+{
+  "argv": [
+    "python3",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_repetitions.py",
+    "Native",
+    "--program",
+    "bodytrack",
+    "--input",
+    "simmedium",
+    "--repetitions",
+    "3",
+    "--timeout",
+    "14400",
+    "--bdf",
+    "0000:e2:00.0",
+    "--apps-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-staged-output-apps-build.json",
+    "--rootfs-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-staged-output-rootfs-build.json",
+    "--firmware-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/bodytrack-staged-output-firmware-build.json",
+    "--driver-receipt",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json"
+  ],
+  "bitstream_build_operations": false,
+  "child_pid": 2557053,
+  "completed_commands": [
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-queue-logs/Native-streamcluster-test-20261107T052855Z.log",
+      "returncode": 0,
+      "stage": "streamcluster-test"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-queue-logs/Native-streamcluster-simsmall-20261107T052956Z.log",
+      "returncode": 0,
+      "stage": "streamcluster-simsmall"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-queue-logs/Native-streamcluster-formal3-20261107T053223Z.log",
+      "returncode": 0,
+      "stage": "streamcluster-formal3"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-queue-logs/Native-streamcluster-summary-20261107T055903Z.log",
+      "returncode": 0,
+      "stage": "streamcluster-summary"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-queue-logs/Native-streamcluster-publish-20261107T055903Z.log",
+      "returncode": 0,
+      "stage": "streamcluster-publish"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-queue-logs/Native-fluidanimate-test-20261107T055903Z.log",
+      "returncode": 0,
+      "stage": "fluidanimate-test"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-queue-logs/Native-fluidanimate-simsmall-20261107T060021Z.log",
+      "returncode": 2,
+      "stage": "fluidanimate-simsmall"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-queue-logs/Native-fluidanimate-summary-20261107T060307Z.log",
+      "returncode": 0,
+      "stage": "fluidanimate-summary"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-queue-logs/Native-fluidanimate-publish-20261107T060307Z.log",
+      "returncode": 0,
+      "stage": "fluidanimate-publish"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-queue-logs/Native-bodytrack-test-20261107T060307Z.log",
+      "returncode": 0,
+      "stage": "bodytrack-test"
+    },
+    {
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-queue-logs/Native-bodytrack-simsmall-20261107T060514Z.log",
+      "returncode": 0,
+      "stage": "bodytrack-simsmall"
+    }
+  ],
+  "configuration": "Native",
+  "host_boot_id": "09ba1a37-9f6d-4a9e-ad1b-9c057e9ad64c",
+  "interrupted_by_host_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "interruption_observed_utc": "2026-11-07T06:23:47.720446+00:00",
+  "interruption_reason": "confirmed host boot_id change; prior process identity no longer exists",
+  "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-queue-logs/Native-bodytrack-formal3-20261107T060809Z.log",
+  "pid": 1902727,
+  "plan_sha256": "2c2353d9520321827e3c576b4b3ac4385cd82a69df7128c25a5b0809b12dec40",
+  "recovery_deployment_policy": "Only exact certified C4 image after concrete failed guest; board_batch obtains global exclusive maintenance and rechecks conflicts",
+  "schema": "ec-full-suite-queue/1",
+  "stage": "bodytrack-formal3",
+  "start_ticks": "681596",
+  "started_utc": "2026-11-07T05:28:55.296625+00:00",
+  "status": "INTERRUPTED",
+  "tasks": {
+    "blackscholes": {
+      "status": "OWNED_BY_EXISTING_PRIORITY_QUEUE"
+    },
+    "bodytrack": {
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-staged-output-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/bodytrack-staged-output-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-staged-output-rootfs-build.json"
+      },
+      "status": "RUNNING"
+    },
+    "canneal": {
+      "status": "OWNED_BY_EXISTING_PRIORITY_QUEUE"
+    },
+    "fluidanimate": {
+      "ended_utc": "2026-11-07T06:03:07.662556+00:00",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fluidanimate-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-rootfs-build.json"
+      },
+      "status": "FAILED"
+    },
+    "streamcluster": {
+      "ended_utc": "2026-11-07T05:59:03.253901+00:00",
+      "receipts": {
+        "apps": "/data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-formal-apps-build.json",
+        "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json",
+        "firmware": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/streamcluster-staged-formal-firmware-build.json",
+        "rootfs": "/data1/gzh/EC/firesim/final-opt4-20261106/software/streamcluster-staged-formal-rootfs-build.json"
+      },
+      "status": "COMPLETE"
+    },
+    "swaptions": {
+      "reused": true,
+      "status": "COMPLETE"
+    }
+  }
+}

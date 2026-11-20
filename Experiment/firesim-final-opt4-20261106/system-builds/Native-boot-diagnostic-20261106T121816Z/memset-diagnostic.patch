@@ -1,0 +1,169 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/Native/linux/arch/riscv/lib/memset.S
++++ /data1/gzh/EC/firesim/final-opt4-20261106/software/Native/builds/Native-boot-diagnostic-20261106T121816Z/diagnostic-memset.S
+@@ -10,6 +10,166 @@
+ /* void *memset(void *, int, size_t) */
+ ENTRY(__memset)
+ WEAK(memset)
++	li a3, 1048576
++	bltu a2,a3,88f
++	addi sp,sp,-128
++	sd ra,0(sp)
++	sd a0,8(sp)
++	sd a1,16(sp)
++	sd a2,24(sp)
++	sd a3,32(sp)
++	sd a4,40(sp)
++	sd a5,48(sp)
++	sd a6,56(sp)
++	sd a7,64(sp)
++	sd t0,72(sp)
++	sd t1,80(sp)
++	sd t2,88(sp)
++	sd t3,96(sp)
++	sd t4,104(sp)
++	sd t5,112(sp)
++	sd t6,120(sp)
++	li a0,69
++	li a7,1
++	ecall
++	li a0,67
++	li a7,1
++	ecall
++	li a0,95
++	li a7,1
++	ecall
++	li a0,77
++	li a7,1
++	ecall
++	li a0,69
++	li a7,1
++	ecall
++	li a0,77
++	li a7,1
++	ecall
++	li a0,83
++	li a7,1
++	ecall
++	li a0,69
++	li a7,1
++	ecall
++	li a0,84
++	li a7,1
++	ecall
++	li a0,32
++	li a7,1
++	ecall
++	li a0,114
++	li a7,1
++	ecall
++	li a0,97
++	li a7,1
++	ecall
++	li a0,61
++	li a7,1
++	ecall
++	ld t1,0(sp)
++	li t0,60
++77:
++	srl t2,t1,t0
++	andi t2,t2,15
++	li a0,48
++	add a0,a0,t2
++	li t3,10
++	bltu t2,t3,76f
++	addi a0,a0,39
++76:
++	li a7,1
++	ecall
++	addi t0,t0,-4
++	bgez t0,77b
++	li a0,32
++	li a7,1
++	ecall
++	li a0,100
++	li a7,1
++	ecall
++	li a0,115
++	li a7,1
++	ecall
++	li a0,116
++	li a7,1
++	ecall
++	li a0,61
++	li a7,1
++	ecall
++	ld t1,8(sp)
++	li t0,60
++77:
++	srl t2,t1,t0
++	andi t2,t2,15
++	li a0,48
++	add a0,a0,t2
++	li t3,10
++	bltu t2,t3,76f
++	addi a0,a0,39
++76:
++	li a7,1
++	ecall
++	addi t0,t0,-4
++	bgez t0,77b
++	li a0,32
++	li a7,1
++	ecall
++	li a0,98
++	li a7,1
++	ecall
++	li a0,121
++	li a7,1
++	ecall
++	li a0,116
++	li a7,1
++	ecall
++	li a0,101
++	li a7,1
++	ecall
++	li a0,115
++	li a7,1
++	ecall
++	li a0,61
++	li a7,1
++	ecall
++	ld t1,24(sp)
++	li t0,60
++77:
++	srl t2,t1,t0
++	andi t2,t2,15
++	li a0,48
++	add a0,a0,t2
++	li t3,10
++	bltu t2,t3,76f
++	addi a0,a0,39
++76:
++	li a7,1
++	ecall
++	addi t0,t0,-4
++	bgez t0,77b
++	li a0,10
++	li a7,1
++	ecall
++	ld ra,0(sp)
++	ld a0,8(sp)
++	ld a1,16(sp)
++	ld a2,24(sp)
++	ld a3,32(sp)
++	ld a4,40(sp)
++	ld a5,48(sp)
++	ld a6,56(sp)
++	ld a7,64(sp)
++	ld t0,72(sp)
++	ld t1,80(sp)
++	ld t2,88(sp)
++	ld t3,96(sp)
++	ld t4,104(sp)
++	ld t5,112(sp)
++	ld t6,120(sp)
++	addi sp,sp,128
++88:
+ 	move t0, a0  /* Preserve return value */
+ 
+ 	/* Defer to byte-oriented fill for small sizes */

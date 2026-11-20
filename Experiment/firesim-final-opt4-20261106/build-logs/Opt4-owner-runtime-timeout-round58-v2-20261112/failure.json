@@ -1,0 +1,68 @@
+{
+  "cpu_ticks": 10,
+  "cpus": [
+    250,
+    251
+  ],
+  "error": "AssertionError({'status': 'FAIL_LOG_PREFIX_MISMATCH_NO_RUNTIME', 'mc_log': '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-runtime-r1-20261111/run-MCRams.log', 'plain_log': '/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-owner-pair-runtime-r1-20261111/run-Plain.log', 'mc_sha256': '58267d853c22f821e4f3b43f1f704ff63044d5fb79f7b10899a02c1bf4d3f057', 'plain_sha256': '4a5759de06925e98eb8da1d3e1b503b086bd85961ddedc28f447230e6daa0ae9', 'complete_prefix_bytes': 848232449, 'discarded_partial_tail_bytes': 0, 'first_mismatch': {'channel': 'all_non_uart_lines', 'line': 824197, 'mc': '[RUN] hart=0 status=started\\n', 'plain': 'STAGE1_TX S1 source=DCACHE cycle=0000000000024df9 line=0080040bc0 set=2f way=1 epoch=0008 gen=00000000 mshr=00 txn=00000000 req=000000000000c547 effect=0000000000000000 pc=0080035ab2 cmd=00\\n'}, 'counts': {'mc_raw_lines': 6033635, 'plain_raw_lines': 9902202, 'compared_non_uart_lines': 6033633}, 'mc_uart_lines': ['[INIT] checker_mask=0xf status=ready\\n', '[INIT] software_interrupt=pass\\n'], 'uart_prefix_match': True, 'all_other_lines_prefix_match': False, 'partition': 'Only exact bracketed INIT/ROI/OUTPUT/APP/COMPUTATION/END application lines are separate; all remaining bytes retained in other stream.', 'prior_combined_order_failure_sha256': '52d9494aee012a08de64fa908a70c1facf5d00f564408d3ca3494634f33e1a3a', 'full_target_equivalence': False, 'roi_complete': False})",
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "hardware_commit": "3656aec4033ae9fb7f06b03eb0a9ace7cdddbf0c",
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "no_compile": true,
+  "pid": 2234371,
+  "predecessor_exit_guard": {
+    "original": {
+      "exact_cgroups": [
+        {
+          "exists": false,
+          "path": "/sys/fs/cgroup/system.slice/ec-opt4-auto-owner-pair-runtime-r1-3656aec4.service",
+          "process_files": 0
+        },
+        {
+          "exists": false,
+          "path": "/sys/fs/cgroup/systemd/system.slice/ec-opt4-auto-owner-pair-runtime-r1-3656aec4.service",
+          "process_files": 0
+        }
+      ],
+      "unit": {
+        "ActiveState": "inactive",
+        "ControlGroup": "",
+        "MainPID": "0",
+        "SubState": "dead"
+      },
+      "unit_name": "ec-opt4-auto-owner-pair-runtime-r1-3656aec4.service"
+    },
+    "v1": {
+      "exact_cgroups": [
+        {
+          "exists": false,
+          "path": "/sys/fs/cgroup/system.slice/ec-opt4-auto-owner-runtime-timeout-r58-v1-3656aec4.service",
+          "process_files": 0
+        },
+        {
+          "exists": false,
+          "path": "/sys/fs/cgroup/systemd/system.slice/ec-opt4-auto-owner-runtime-timeout-r58-v1-3656aec4.service",
+          "process_files": 0
+        }
+      ],
+      "unit": {
+        "ActiveState": "inactive",
+        "ControlGroup": "",
+        "MainPID": "0",
+        "SubState": "dead"
+      },
+      "unit_name": "ec-opt4-auto-owner-runtime-timeout-r58-v1-3656aec4.service"
+    }
+  },
+  "process_state": "R",
+  "production_admission": false,
+  "rss_bytes": 17387520,
+  "schema": "ec-owner-timeout-recovery/1",
+  "start_ticks": "23919910",
+  "started_utc": "2026-11-11T20:04:38.791054+00:00",
+  "status": "FAILED_WITH_EVIDENCE",
+  "target_changed": false,
+  "updated_utc": "2026-11-11T20:04:49.713710+00:00",
+  "whole_fit": false
+}

@@ -1,0 +1,138 @@
+{
+  "schema": "ec-boot-failure-diagnosis/1",
+  "observed_utc": "2026-11-06T12:41:04.553275+00:00",
+  "symptom": "Linux 6.2 illegal instruction at 0xffffffff80012ea8, instruction 0x68079073; panic killing init",
+  "immediate": "csrw hgatp,a5 in kvm_riscv_gstage_mode_detect on BOOM without H",
+  "cause": "riscv,isa uppercase concatenated Z extensions parsed as single letters by Linux 6.2, falsely detecting h in Zihpm",
+  "proof": [
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T123007Z/uart.log",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T122810Z/uart.log"
+  ],
+  "repair_layer": "Software FDT canonical ISA metadata only; no DUT or kernel instruction change",
+  "before": "rv64imafdcZicsr_Zifencei_Zihpm",
+  "after": "rv64imafdc_zicsr_zifencei_zihpm",
+  "validation": "NATIVE_FPGA_VALID_SMOKE_AND_PARSEC_TEST",
+  "dt_receipts": {
+    "Native": {
+      "schema": "ec-firesim-fdt/1",
+      "phase": "fdt",
+      "configuration": "Native",
+      "returncode": 0,
+      "elaboration_result": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-roi-v5/B-elaborate-20261102T092109.491588Z/result.json",
+      "elaboration_result_sha256": "f6192e954858e575ecd210c35b106355e387b92bf98d36b3f604a60f6c168590",
+      "source_dts": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-elaborate-20261102T092109.491588Z/firesim.firesim.FireSim.dts",
+      "source_dts_sha256": "b97f7f1d8422f020b697facd6bf95db88d57b70d7add510b3106b5837db83e0f",
+      "dts": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T123813Z/Native.dts",
+      "dts_sha256": "ae3c9dff86de8a5a22d08ef719799dfa709b0f232b2101fa28d7ad23a11a9f6b",
+      "fdt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T123813Z/Native.dtb",
+      "sha256": "fae79acb1713f9249a35e89961f3be014e526820a0713644531abf7b5eaae6ac",
+      "command": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/dtc",
+        "-I",
+        "dts",
+        "-O",
+        "dtb",
+        "-p",
+        "4096",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T123813Z/Native.dtb",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T123813Z/Native.dts"
+      ],
+      "bootargs": "console=ttySIF0,115200 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+      "linux_harts": [
+        0
+      ],
+      "firmware_checker_harts": [],
+      "target_memory_base": 2147483648,
+      "target_memory_bytes": 17179869184,
+      "linux_mem_cap": 2147483648,
+      "linux_profile_sha256": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1",
+      "target_boom_hz": 200000000,
+      "target_checker_hz": null,
+      "runtime_validation": "NOT_RUN",
+      "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-build.json",
+      "parent_receipt_sha256": "9a3f5287b60a9ec72e4c29eb9c6edc867f1110487998bee19e19f39b14c52948",
+      "profile": "matched-guest-mem2g-phys36-canonical-isa",
+      "isa_normalization": [
+        {
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm",
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm"
+        }
+      ],
+      "normalizer_sha256": "cdc93d5c3bd0f2f013eb5029a1addb1a0c53a4e72b8f23ebbe814439cbc4a59e"
+    },
+    "C4": {
+      "schema": "ec-firesim-fdt/1",
+      "phase": "fdt",
+      "configuration": "C4",
+      "returncode": 0,
+      "elaboration_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-elaborate-20261106T100250.032318Z/result.json",
+      "elaboration_result_sha256": "4284a54a160a374491cd0050611ba35719df94d896faf8b4667f66691407e3ac",
+      "source_dts": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-elaborate-20261106T100250.032318Z/firesim.firesim.FireSim.dts",
+      "source_dts_sha256": "abe88f0748a092c769cdc5c4b402fed7471500f5c93e01d1a90ad42652458ee9",
+      "dts": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T123813Z/C4.dts",
+      "dts_sha256": "05373b9e52861de5e62dddf585a28158290f149df2470bcbf240f10c49a43a32",
+      "fdt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T123813Z/C4.dtb",
+      "sha256": "39b0cadc97a40e3a641fb98852707def8d9c9afc445b1b8c3a45df975d4160cd",
+      "command": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/dtc",
+        "-I",
+        "dts",
+        "-O",
+        "dtb",
+        "-p",
+        "4096",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T123813Z/C4.dtb",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T123813Z/C4.dts"
+      ],
+      "bootargs": "console=ttySIF0,115200 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+      "linux_harts": [
+        0
+      ],
+      "firmware_checker_harts": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "target_memory_base": 2147483648,
+      "target_memory_bytes": 17179869184,
+      "linux_mem_cap": 2147483648,
+      "linux_profile_sha256": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1",
+      "target_boom_hz": 200000000,
+      "target_checker_hz": 100000000,
+      "runtime_validation": "NOT_RUN",
+      "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-build.json",
+      "parent_receipt_sha256": "a92f79fb153318e3ade9f1531d9ee48ea97f9e1aee8005814ff2f159543782c5",
+      "profile": "matched-guest-mem2g-phys36-canonical-isa",
+      "isa_normalization": [
+        {
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm",
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm"
+        },
+        {
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket",
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket"
+        },
+        {
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket",
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket"
+        },
+        {
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket",
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket"
+        },
+        {
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket",
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket"
+        }
+      ],
+      "normalizer_sha256": "cdc93d5c3bd0f2f013eb5029a1addb1a0c53a4e72b8f23ebbe814439cbc4a59e"
+    }
+  },
+  "runtime_evidence": [
+    "Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T124817Z/result.json",
+    "Experiment/firesim-final-opt4-20261106/runs/native-blackscholes-test-r1-20261106T125530Z/result.json"
+  ]
+}

@@ -1,0 +1,15 @@
+<main>:
+    80000424:	f14027f3          	csrr	a5,mhartid
+    80000428:	0e079663          	bnez	a5,80000514 <common_roi_stop+0xac>
+    8000042c:	fc010113          	addi	sp,sp,-64
+    80000430:	00035517          	auipc	a0,0x35
+    80000434:	3b050513          	addi	a0,a0,944 # 800357e0 <__tbss_end+0x1e>
+    80000438:	02113c23          	sd	ra,56(sp)
+    8000043c:	02813823          	sd	s0,48(sp)
+    80000440:	02913423          	sd	s1,40(sp)
+    80000444:	03213023          	sd	s2,32(sp)
+    80000448:	01313c23          	sd	s3,24(sp)
+    8000044c:	01413823          	sd	s4,16(sp)
+    80000450:	01513423          	sd	s5,8(sp)
+    80000454:	7e22c0ef          	jal	ra,8002cc36 <iprintf>
+    80000458:	25d000ef          	jal	ra,80000eb4 <workload_prepare>

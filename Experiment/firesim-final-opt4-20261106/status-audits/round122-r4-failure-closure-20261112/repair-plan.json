@@ -1,0 +1,91 @@
+{
+  "change": "Remove routing on a private copy of best C checkpoint before previously unsupported B forced-replication command; full strict gate tail unchanged.",
+  "checkpoint": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/C-postroute-clock-skew/final.dcp",
+  "checkpoint_sha256": "51b6ac50f4fd672b6bb118df117a26b62fe478fc857244a81e861c28b5a6dc8c",
+  "complete_opt4": false,
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "installed": false,
+  "launched": false,
+  "prelaunch_requirements": [
+    "Existing authorized administrator installs independently versioned physical/certificate/21-only runtime binding; never reinstall r4 or priority handoff.",
+    "Reverify exact r4 producer PID/start_ticks/boot_id dead and exact recursive cgroup empty; acquire existing extra-component-slot.lock for the full CAD lifetime.",
+    "Reverify 192GiB available/load<128/disk>=150GiB; max3 existing component Vivados; CPUs224,225;64GiB cap; no whole launch.",
+    "Independently bind new result and certificate; all clocks/setup/hold/route/DRC/pulse/skew/target/software/hash gates remain required before directed then same-bit application replay on21 only."
+  ],
+  "prerequisite_results": {
+    "B-shell-FD-replicate": {
+      "completed_utc": "2026-11-12T03:23:45.375328+00:00",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/B-shell-FD-replicate/result.json",
+      "sha256": "dad45676d3d80cc2d1eb43a89d541bb208758da4a138d827e3b92116d575b052"
+    },
+    "C-postroute-clock-skew": {
+      "completed_utc": "2026-11-12T03:48:59.652172+00:00",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/C-postroute-clock-skew/result.json",
+      "sha256": "c005f7e3edbaf4bf539e6758128f4868e59bb1777bca6ee580b09e863c93afe6",
+      "timing": {
+        "drc_error_summary_present": false,
+        "drc_warning_violations": 49,
+        "hold_failing_endpoints": 0,
+        "route_errors": 0,
+        "setup_failing_endpoints": 2130,
+        "tns_ns": -292.97,
+        "whs_ns": 0.001,
+        "wns_ns": -0.411,
+        "worst_reported_path": {
+          "Clock Path Skew": "-0.238ns (DCD - SCD + CPR)",
+          "Data Path Delay": "4.052ns  (logic 0.130ns (3.208%)  route 3.922ns (96.792%))",
+          "Destination": "design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_enable.vul_dma/WR/gen_rdwr_loop[2].gen_rdwr_eng.RDWR_INST/reg_cdc_nn1_reg[0]/R",
+          "Path Group": "xdma_0_axi_aclk",
+          "Path Type": "Setup (Max at Slow Process Corner)",
+          "Requirement": "4.000ns  (xdma_0_axi_aclk rise@4.000ns - xdma_0_axi_aclk rise@0.000ns)",
+          "Source": "design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_enable.vul_dma/WR/gen_rdwr_loop[2].gen_rdwr_eng.RDWR_INST/ctl_rst_reg/C",
+          "slack_ns": -0.411
+        }
+      }
+    },
+    "D-shell-critical-shortest-route": {
+      "completed_utc": "2026-11-12T04:12:55.733882+00:00",
+      "result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/D-shell-critical-shortest-route/result.json",
+      "sha256": "a2de13a30bd04ad69798b58f38fc77f490bd91f9c902f9368461a209659ba5b1",
+      "timing": {
+        "drc_error_summary_present": false,
+        "drc_warning_violations": 49,
+        "hold_failing_endpoints": 0,
+        "route_errors": 0,
+        "setup_failing_endpoints": 2299,
+        "tns_ns": -343.017,
+        "whs_ns": 0.001,
+        "wns_ns": -0.503,
+        "worst_reported_path": {
+          "Clock Path Skew": "-0.195ns (DCD - SCD + CPR)",
+          "Data Path Delay": "3.529ns  (logic 0.280ns (7.934%)  route 3.249ns (92.066%))",
+          "Destination": "design_1_i/ddr4_0/inst/u_ddr_axi/USE_UPSIZER.upsizer_d2/USE_WRITE.write_data_inst/WORD_LANE[0].USE_ALWAYS_PACKER.BYTE_LANE[54].USE_RTL_DATA.USE_REGISTER.M_AXI_WDATA_I_reg[432]/CE",
+          "Path Group": "mmcm_clkout0",
+          "Path Type": "Setup (Max at Slow Process Corner)",
+          "Requirement": "3.332ns  (mmcm_clkout0 rise@3.332ns - mmcm_clkout0 rise@0.000ns)",
+          "Source": "design_1_i/axi_dwidth_converter_0/inst/gen_upsizer.gen_full_upsizer.axi_upsizer_inst/USE_WRITE.gen_pktfifo_w_upsizer.pktfifo_write_data_inst/M_AXI_WVALID_i_reg/C",
+          "slack_ns": -0.503
+        }
+      }
+    }
+  },
+  "process_signals": [],
+  "profile": "OriginalSVB32-component-trace-host40",
+  "queued": false,
+  "resource_admission": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/fpga-exclusive-takeover-20261112T030000Z/same-small-svb-slot-measured-readmission.json",
+  "resource_admission_sha256": "3b4c46ee3c126741d50e12e1f68a58f99c84c0e249304429c1c66961f293f78b",
+  "root_operations": [],
+  "schema": "ec-svb-host40-preroute-replication-preparation/1",
+  "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+  "status": "PREPARED_UNLAUNCHED_REQUIRES_EXISTING_AUTHORIZED_ADMINISTRATOR",
+  "target_rtl_changed": false,
+  "template": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/round122-r4-failure-closure-20261112/recover-preroute-replication.tcl.in",
+  "template_sha256": "98264c0287a9be6aa05758da11b4116c72592000b96c170aff7239e5fd6857d5",
+  "validation": {
+    "actual_vivado_execution": false,
+    "command_support_after_unroute_unproven": true,
+    "strict_gate_tail_identical": true,
+    "tcl_control_flow": "PASS_TCL_CONTROL_FLOW_ONLY_NO_VIVADO_CERTIFICATION"
+  }
+}

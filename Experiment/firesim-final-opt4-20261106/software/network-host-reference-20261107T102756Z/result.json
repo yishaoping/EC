@@ -1,0 +1,542 @@
+{
+  "binaries": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/client/netdedup_client": "c066a7757031fa1866adb986a1394d657d4bbda14eaed7c2398216791597adc9",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/netdedup": "54ec38754a14bdc0c8e3983bd99559dc4961e2c890679d41c130e229493015d0",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/client/client": "82fe4560936e17b90a16fb835ac808349442b33ff2a5a51f293dbd0920468dc9",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server/parsec/bin/ferret-pthreads": "a11897b388086314db7b56e0307edb6807c3c88c3fd39fd89cee34b7ac7eab59",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/client/client": "91a0b37607eafc808c592b414b7cf215a6a42e18a3daf1d3ff63a48f4d77a06c",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/server/server": "c62452fc3b3d943bbf84f8c90253efa7736f79886b83929b41b818547e250b81"
+  },
+  "commands": [
+    {
+      "argv": [
+        "make",
+        "clean",
+        "ARCH=x86_64"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/000-stack-clean.log",
+      "log_sha256": "a61da7eed2995a1b6e75901e8005727bf3d33341621313291fd739def8f8c0da",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j4",
+        "ARCH=x86_64",
+        "CC=gcc",
+        "CXX=g++",
+        "GCC_OX=-O2 -g -fcommon -fno-strict-aliasing"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/001-stack.log",
+      "log_sha256": "d87c5e2e1c4878ad1e30b1dc67f50f9e6113c0f40b4d5458b8f47d57b9ac31c1",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "gcc",
+        "-O2",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/diagnostic-hooks.c",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/diagnostic-hooks.o"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/002-hooks.log",
+      "log_sha256": "997fb5182392de895de2e4fd932bb9cb9e5f9a1ae68d0b681c76f44815e22db3",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "g++",
+        "-O2",
+        "-g",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/server/streamcluster.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/diagnostic-hooks.o",
+        "-static",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "-luptcp",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/server/server"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/003-netstreamcluster-server.log",
+      "log_sha256": "7b99e4f04922c9619a07a9eb89e0fca00925c7ac7146cee1d6fde5bc76174524",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "g++",
+        "-O2",
+        "-g",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/client/client.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/diagnostic-hooks.o",
+        "-static",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "-luptcp.client",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/client/client"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/004-netstreamcluster-client.log",
+      "log_sha256": "798e9d90e74e36341a7a37c6b282b402e7b7366bbfa7a759dae5b85dd13fa4ed",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "gcc",
+        "-O2",
+        "-g",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server",
+        "-DENABLE_GZIP_COMPRESSION",
+        "-DENABLE_STATISTICS",
+        "-D_XOPEN_SOURCE=600",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/hashtable.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/util.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/dedup.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/rabin.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/encoder.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/decoder.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/mbuffer.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/sha.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/diagnostic-hooks.o",
+        "-static",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "-luptcp",
+        "-lz",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/netdedup"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/005-netdedup-server.log",
+      "log_sha256": "6b9a9d02c68eaeaf85f9fcc0464b1f1e571cfac76189617f3d65c23660c324cd",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "gcc",
+        "-O2",
+        "-g",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server",
+        "-DENABLE_GZIP_COMPRESSION",
+        "-DENABLE_STATISTICS",
+        "-D_XOPEN_SOURCE=600",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/client/dedup_client.c",
+        "-static",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "-luptcp.client",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/client/netdedup_client"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/006-netdedup-client.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "dirs",
+        "version=pthreads",
+        "CC=gcc",
+        "CXX=g++",
+        "AR=ar",
+        "CFLAGS=-O2 -g -fcommon -fno-strict-aliasing -D_GNU_SOURCE -DENABLE_PARSEC_HOOKS -DENABLE_PARSEC_UPTCPIP -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib -I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server/include -I/data1/gzh/EC/Software/PARSEC/pkgs/libs/gsl/inst/amd64-linux.gcc-serial/include -I/data1/gzh/EC/Software/PARSEC/pkgs/libs/libjpeg/inst/amd64-linux.gcc-serial/include -pthread",
+        "LDFLAGS=-static -L/data1/gzh/EC/Software/PARSEC/pkgs/libs/gsl/inst/amd64-linux.gcc-serial/lib -L/data1/gzh/EC/Software/PARSEC/pkgs/libs/libjpeg/inst/amd64-linux.gcc-serial/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server/parsec/lib",
+        "LIBS=/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/diagnostic-hooks.o -pthread"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/007-netferret-dirs.log",
+      "log_sha256": "511a93e08baa10f631d3e10c910b7c0badd689a16cd6c9eb44fc12fff6c8c948",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j4",
+        "lib",
+        "version=pthreads",
+        "CC=gcc",
+        "CXX=g++",
+        "AR=ar",
+        "CFLAGS=-O2 -g -fcommon -fno-strict-aliasing -D_GNU_SOURCE -DENABLE_PARSEC_HOOKS -DENABLE_PARSEC_UPTCPIP -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib -I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server/include -I/data1/gzh/EC/Software/PARSEC/pkgs/libs/gsl/inst/amd64-linux.gcc-serial/include -I/data1/gzh/EC/Software/PARSEC/pkgs/libs/libjpeg/inst/amd64-linux.gcc-serial/include -pthread",
+        "LDFLAGS=-static -L/data1/gzh/EC/Software/PARSEC/pkgs/libs/gsl/inst/amd64-linux.gcc-serial/lib -L/data1/gzh/EC/Software/PARSEC/pkgs/libs/libjpeg/inst/amd64-linux.gcc-serial/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server/parsec/lib",
+        "LIBS=/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/diagnostic-hooks.o -pthread"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/008-netferret-libs.log",
+      "log_sha256": "5efc1345eb3f4d47c32bddca29a3ffe346bae62751ef740da6b31d8767e239d9",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j4",
+        "benchmark",
+        "version=pthreads",
+        "CC=gcc",
+        "CXX=g++",
+        "AR=ar",
+        "CFLAGS=-O2 -g -fcommon -fno-strict-aliasing -D_GNU_SOURCE -DENABLE_PARSEC_HOOKS -DENABLE_PARSEC_UPTCPIP -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib -I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server/include -I/data1/gzh/EC/Software/PARSEC/pkgs/libs/gsl/inst/amd64-linux.gcc-serial/include -I/data1/gzh/EC/Software/PARSEC/pkgs/libs/libjpeg/inst/amd64-linux.gcc-serial/include -pthread",
+        "LDFLAGS=-static -L/data1/gzh/EC/Software/PARSEC/pkgs/libs/gsl/inst/amd64-linux.gcc-serial/lib -L/data1/gzh/EC/Software/PARSEC/pkgs/libs/libjpeg/inst/amd64-linux.gcc-serial/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server/parsec/lib",
+        "LIBS=/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/diagnostic-hooks.o -pthread"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/009-netferret-server.log",
+      "log_sha256": "af13c3f5ffdc85acbdf19c1efefcc72109fcd3eee4d9116961dce134869bc272",
+      "returncode": 2
+    },
+    {
+      "argv": [
+        "make",
+        "clean",
+        "ARCH=x86_64"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/010-stack-clean.log",
+      "log_sha256": "a61da7eed2995a1b6e75901e8005727bf3d33341621313291fd739def8f8c0da",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j4",
+        "ARCH=x86_64",
+        "CC=gcc",
+        "CXX=g++",
+        "GCC_OX=-O2 -g -fcommon -fno-strict-aliasing"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/011-stack.log",
+      "log_sha256": "789ce4003010278b15bc0db70219b1f78b2102d52505baa28d1c8b5d69a8061d",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "gcc",
+        "-O2",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/diagnostic-hooks.c",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/diagnostic-hooks.o"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/012-hooks.log",
+      "log_sha256": "997fb5182392de895de2e4fd932bb9cb9e5f9a1ae68d0b681c76f44815e22db3",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "g++",
+        "-O2",
+        "-g",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/server/streamcluster.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/diagnostic-hooks.o",
+        "-static",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "-luptcp",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/server/server"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/013-netstreamcluster-server.log",
+      "log_sha256": "7b99e4f04922c9619a07a9eb89e0fca00925c7ac7146cee1d6fde5bc76174524",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "g++",
+        "-O2",
+        "-g",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/client/client.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/diagnostic-hooks.o",
+        "-static",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "-luptcp.client",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netstreamcluster/client/client"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/014-netstreamcluster-client.log",
+      "log_sha256": "798e9d90e74e36341a7a37c6b282b402e7b7366bbfa7a759dae5b85dd13fa4ed",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "gcc",
+        "-O2",
+        "-g",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server",
+        "-DENABLE_GZIP_COMPRESSION",
+        "-DENABLE_STATISTICS",
+        "-D_XOPEN_SOURCE=600",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/hashtable.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/util.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/dedup.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/rabin.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/encoder.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/decoder.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/mbuffer.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/sha.c",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/diagnostic-hooks.o",
+        "-static",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "-luptcp",
+        "-lz",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server/netdedup"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/015-netdedup-server.log",
+      "log_sha256": "6b9a9d02c68eaeaf85f9fcc0464b1f1e571cfac76189617f3d65c23660c324cd",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "gcc",
+        "-O2",
+        "-g",
+        "-fcommon",
+        "-fno-strict-aliasing",
+        "-D_GNU_SOURCE",
+        "-DENABLE_PARSEC_HOOKS",
+        "-DENABLE_PARSEC_UPTCPIP",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/server",
+        "-DENABLE_GZIP_COMPRESSION",
+        "-DENABLE_STATISTICS",
+        "-D_XOPEN_SOURCE=600",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/client/dedup_client.c",
+        "-static",
+        "-L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "-luptcp.client",
+        "-pthread",
+        "-lm",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netdedup/client/netdedup_client"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/016-netdedup-client.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "bash",
+        "configure",
+        "--host=x86_64-pc-linux-gnu",
+        "--build=x86_64-pc-linux-gnu",
+        "--prefix=/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies",
+        "--disable-shared",
+        "--enable-static"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-gsl",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/017-gsl-configure.log",
+      "log_sha256": "9933e1405b21339f083c9fcfed85bcb202992519e48736f0a2f20640d832e387",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j4"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-gsl",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/018-gsl-build.log",
+      "log_sha256": "3912b9e0121099c9758f447c2f0b856f0ba58385415d38c33bd13b0f01ee253e",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "install"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-gsl",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/019-gsl-install.log",
+      "log_sha256": "2448aed491fbb6dc9b96154c22bf572491018b564ea9f585a4ed9af9e932ae74",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "bash",
+        "configure",
+        "--host=x86_64-pc-linux-gnu",
+        "--build=x86_64-pc-linux-gnu",
+        "--prefix=/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies",
+        "--disable-shared",
+        "--enable-static"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-libjpeg",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/020-libjpeg-configure.log",
+      "log_sha256": "8acfcc7b3522cdd0389b6ae3f1d249cf42736c82341d514aeaa056af7178eea0",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j4"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-libjpeg",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/021-libjpeg-build.log",
+      "log_sha256": "13843373dfaa4327cf6ddce7fe7dbb69699870042c80d4a9aa407502be43c00d",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "install"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-libjpeg",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/022-libjpeg-install.log",
+      "log_sha256": "91bf8a2f4e4745d38b4315e0c28c26496229a3ca248348ceec5298d2342ccdd3",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "dirs",
+        "version=pthreads",
+        "CC=gcc",
+        "CXX=g++",
+        "AR=ar",
+        "CFLAGS=-O2 -g -fcommon -fno-strict-aliasing -D_GNU_SOURCE -DENABLE_PARSEC_HOOKS -DENABLE_PARSEC_UPTCPIP -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib -I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server/include -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/include -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/include -pthread",
+        "LDFLAGS=-static -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server/parsec/lib",
+        "LIBS=/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/diagnostic-hooks.o -pthread"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/023-netferret-dirs.log",
+      "log_sha256": "511a93e08baa10f631d3e10c910b7c0badd689a16cd6c9eb44fc12fff6c8c948",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j4",
+        "lib",
+        "version=pthreads",
+        "CC=gcc",
+        "CXX=g++",
+        "AR=ar",
+        "CFLAGS=-O2 -g -fcommon -fno-strict-aliasing -D_GNU_SOURCE -DENABLE_PARSEC_HOOKS -DENABLE_PARSEC_UPTCPIP -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib -I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server/include -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/include -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/include -pthread",
+        "LDFLAGS=-static -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server/parsec/lib",
+        "LIBS=/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/diagnostic-hooks.o -pthread"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/024-netferret-libs.log",
+      "log_sha256": "eab34d4a8233b10a69593d6248c1eb37ee2758c339afc6d0111d2ed0239f497d",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j4",
+        "benchmark",
+        "version=pthreads",
+        "CC=gcc",
+        "CXX=g++",
+        "AR=ar",
+        "CFLAGS=-O2 -g -fcommon -fno-strict-aliasing -D_GNU_SOURCE -DENABLE_PARSEC_HOOKS -DENABLE_PARSEC_UPTCPIP -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib -I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server/include -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/include -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/include -pthread",
+        "LDFLAGS=-static -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server/parsec/lib",
+        "LIBS=/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/diagnostic-hooks.o -pthread"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/025-netferret-server.log",
+      "log_sha256": "18499c91a755aac80d6d8b05984c07742a06701968bb9806f1c2f9a93e7e46ce",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "make",
+        "-j4",
+        "CC=gcc",
+        "CFLAGS=-O2 -g -fcommon -fno-strict-aliasing -D_GNU_SOURCE -DENABLE_PARSEC_HOOKS -DENABLE_PARSEC_UPTCPIP -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib -I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/src/hooks -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/server/include -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/include -I/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/include -pthread",
+        "LDFLAGS=-static -L/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/uptcpip/lib",
+        "LIBS=-pthread"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/netferret/client",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z/026-netferret-client.log",
+      "log_sha256": "948ad1076039a51c89bfd036134b3b76eb9e27bb51e4122b0fe63464171871c8",
+      "returncode": 0
+    }
+  ],
+  "dependencies": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/lib/libgsl.a": "df8076f13774ef832f4233ba91f5ada3f1d57460e73559763d7638c172fe73bd",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/lib/libgslcblas.a": "ba3aa15b67958072b704994526a2f12e76ef9d00b51916e12f8aaa4baebe4112",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z/host-dependencies/lib/libjpeg.a": "9f850323ba61352ae1e3548ba21989203c405ad629e7ec1a95a9504d141e377b"
+  },
+  "ended_utc": "2026-11-07T10:30:10.591420+00:00",
+  "fpga_eligible": false,
+  "host_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-host-reference-20261107T102756Z",
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-host-reference-20261107T102756Z",
+  "pid": 2305179,
+  "software_scope": "Original x86_64 user TCP and unmodified application computations; diagnostic hooks at original ROI",
+  "start_ticks": "1549683",
+  "status": "COMPILED"
+}

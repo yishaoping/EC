@@ -1,0 +1,657 @@
+{
+  "argv": [
+    "/data1/gzh/EC/chipyard/.conda-env/bin/qemu-system-riscv64",
+    "-machine",
+    "virt",
+    "-cpu",
+    "rv64",
+    "-m",
+    "2G",
+    "-smp",
+    "1",
+    "-nographic",
+    "-no-reboot",
+    "-bios",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-firmware-20261107T071445.113086Z/platform/generic/firmware/fw_jump.bin",
+    "-kernel",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T055636Z/arch/riscv/boot/Image",
+    "-append",
+    "console=ttyS0 earlycon=sbi rdinit=/init panic=-1 mem=2G"
+  ],
+  "bios_sha256": "ab1fdae341e59576b31a56683f4aa61c6721eb7b0ce8aa71bbfba30a691fdca3",
+  "child_pid": 520743,
+  "child_start_ticks": "384942",
+  "conclusion": "Archive and software boot diagnostics only; original FPGA boot failure remains unvalidated",
+  "cpio_entries": [
+    {
+      "bytes": 0,
+      "name": "."
+    },
+    {
+      "bytes": 0,
+      "name": "bin"
+    },
+    {
+      "bytes": 1382648,
+      "name": "bin/busybox"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/cat"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/dmesg"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/echo"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/ls"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/mkdir"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/mknod"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/mount"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/poweroff"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/reboot"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/sh"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/sleep"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/umount"
+    },
+    {
+      "bytes": 7,
+      "name": "bin/uname"
+    },
+    {
+      "bytes": 0,
+      "name": "dev"
+    },
+    {
+      "bytes": 0,
+      "name": "etc"
+    },
+    {
+      "bytes": 333,
+      "name": "init"
+    },
+    {
+      "bytes": 0,
+      "name": "opt"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga"
+    },
+    {
+      "bytes": 26725,
+      "name": "opt/ec-fpga/BUILD.json"
+    },
+    {
+      "bytes": 11635,
+      "name": "opt/ec-fpga/SHA256SUMS"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/cases"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/cases/ferret"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/cases/ferret/simmedium"
+    },
+    {
+      "bytes": 37,
+      "name": "opt/ec-fpga/cases/ferret/simmedium/argv"
+    },
+    {
+      "bytes": 77,
+      "name": "opt/ec-fpga/cases/ferret/simmedium/output-sha256sums"
+    },
+    {
+      "bytes": 13,
+      "name": "opt/ec-fpga/cases/ferret/simmedium/validation-kind"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/cases/ferret/simsmall"
+    },
+    {
+      "bytes": 37,
+      "name": "opt/ec-fpga/cases/ferret/simsmall/argv"
+    },
+    {
+      "bytes": 77,
+      "name": "opt/ec-fpga/cases/ferret/simsmall/output-sha256sums"
+    },
+    {
+      "bytes": 13,
+      "name": "opt/ec-fpga/cases/ferret/simsmall/validation-kind"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/cases/ferret/test"
+    },
+    {
+      "bytes": 35,
+      "name": "opt/ec-fpga/cases/ferret/test/argv"
+    },
+    {
+      "bytes": 77,
+      "name": "opt/ec-fpga/cases/ferret/test/output-sha256sums"
+    },
+    {
+      "bytes": 13,
+      "name": "opt/ec-fpga/cases/ferret/test/validation-kind"
+    },
+    {
+      "bytes": 4831848,
+      "name": "opt/ec-fpga/ferret"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/ferret"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/corel"
+    },
+    {
+      "bytes": 8959,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/corel/__cass.env"
+    },
+    {
+      "bytes": 12027480,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/corel/corel.raw"
+    },
+    {
+      "bytes": 6053632,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/corel/lsh.lsh"
+    },
+    {
+      "bytes": 302318,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/corel/map_corel.map"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries"
+    },
+    {
+      "bytes": 6986,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/acorn.jpg"
+    },
+    {
+      "bytes": 1894,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/air-fighter.jpg"
+    },
+    {
+      "bytes": 1831,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/airplane-2.jpg"
+    },
+    {
+      "bytes": 5100,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/airplane-takeoff-3.jpg"
+    },
+    {
+      "bytes": 3334,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/alcatraz-island-prison.jpg"
+    },
+    {
+      "bytes": 3378,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/american-flag-3.jpg"
+    },
+    {
+      "bytes": 2174,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/apartment.jpg"
+    },
+    {
+      "bytes": 2509,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/apollo-2.jpg"
+    },
+    {
+      "bytes": 1318,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/apollo-earth.jpg"
+    },
+    {
+      "bytes": 6611,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/apple-11.jpg"
+    },
+    {
+      "bytes": 5850,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/apple-14.jpg"
+    },
+    {
+      "bytes": 6708,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/apple-16.jpg"
+    },
+    {
+      "bytes": 6471,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/apple-7.jpg"
+    },
+    {
+      "bytes": 6322,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/aquarium-fish-25.jpg"
+    },
+    {
+      "bytes": 2468,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/arches-9.jpg"
+    },
+    {
+      "bytes": 2922,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/arches.jpg"
+    },
+    {
+      "bytes": 4835,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/archipelago-2.jpg"
+    },
+    {
+      "bytes": 4821,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/archipelago.jpg"
+    },
+    {
+      "bytes": 3374,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/balboa-park.jpg"
+    },
+    {
+      "bytes": 2266,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/balloons-14.jpg"
+    },
+    {
+      "bytes": 3099,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/banana-1.jpg"
+    },
+    {
+      "bytes": 1939,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/bay.jpg"
+    },
+    {
+      "bytes": 1953,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/beach-2.jpg"
+    },
+    {
+      "bytes": 3698,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/bee.jpg"
+    },
+    {
+      "bytes": 3111,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/bird-2.jpg"
+    },
+    {
+      "bytes": 6186,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/black-currant-4.jpg"
+    },
+    {
+      "bytes": 8224,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/black-headed-sheep.jpg"
+    },
+    {
+      "bytes": 4691,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/boat-race.jpg"
+    },
+    {
+      "bytes": 3087,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/bookshelf.jpg"
+    },
+    {
+      "bytes": 6392,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/branch-2.jpg"
+    },
+    {
+      "bytes": 5534,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/buttercup-2.jpg"
+    },
+    {
+      "bytes": 4510,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/cable-2.jpg"
+    },
+    {
+      "bytes": 2402,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/cabrillo-national-monument.jpg"
+    },
+    {
+      "bytes": 5590,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/cactus-115.jpg"
+    },
+    {
+      "bytes": 5853,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/cactus-71.jpg"
+    },
+    {
+      "bytes": 4133,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/caesars-palace-2.jpg"
+    },
+    {
+      "bytes": 2098,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/canyon.jpg"
+    },
+    {
+      "bytes": 5560,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/cheese-plate.jpg"
+    },
+    {
+      "bytes": 4032,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/church-tower-with-mountain-in-background.jpg"
+    },
+    {
+      "bytes": 2801,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/civic-si-2.jpg"
+    },
+    {
+      "bytes": 2970,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/clip-3.jpg"
+    },
+    {
+      "bytes": 6398,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/clock-2.jpg"
+    },
+    {
+      "bytes": 5314,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/clock.jpg"
+    },
+    {
+      "bytes": 2586,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/clouds-2.jpg"
+    },
+    {
+      "bytes": 2184,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/coast.jpg"
+    },
+    {
+      "bytes": 3472,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/coffee-beans-2.jpg"
+    },
+    {
+      "bytes": 2042,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/columbia-start.jpg"
+    },
+    {
+      "bytes": 3434,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/concrete-cross.jpg"
+    },
+    {
+      "bytes": 4088,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/crawfish-3.jpg"
+    },
+    {
+      "bytes": 2397,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/death-valley-sand-dunes.jpg"
+    },
+    {
+      "bytes": 2814,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/duck-4.jpg"
+    },
+    {
+      "bytes": 4268,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/duck-5.jpg"
+    },
+    {
+      "bytes": 2412,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/egret-2.jpg"
+    },
+    {
+      "bytes": 3142,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/ellen-browning-scripps-park.jpg"
+    },
+    {
+      "bytes": 2986,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/field-20.jpg"
+    },
+    {
+      "bytes": 2424,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/figs.jpg"
+    },
+    {
+      "bytes": 1925,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/fireworks-11.jpg"
+    },
+    {
+      "bytes": 3246,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/fly.jpg"
+    },
+    {
+      "bytes": 2352,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/food-18.jpg"
+    },
+    {
+      "bytes": 4411,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/forest-16.jpg"
+    },
+    {
+      "bytes": 4191,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/forest-3.jpg"
+    },
+    {
+      "bytes": 4035,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/forest-38.jpg"
+    },
+    {
+      "bytes": 2943,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/forest-54.jpg"
+    },
+    {
+      "bytes": 4316,
+      "name": "opt/ec-fpga/inputs/ferret/simmedium/queries/forest-65.jpg"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/corel"
+    },
+    {
+      "bytes": 8959,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/corel/__cass.env"
+    },
+    {
+      "bytes": 3000000,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/corel/corel.raw"
+    },
+    {
+      "bytes": 1509120,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/corel/lsh.lsh"
+    },
+    {
+      "bytes": 77972,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/corel/map_corel.map"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries"
+    },
+    {
+      "bytes": 6986,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries/acorn.jpg"
+    },
+    {
+      "bytes": 1894,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries/air-fighter.jpg"
+    },
+    {
+      "bytes": 1831,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries/airplane-2.jpg"
+    },
+    {
+      "bytes": 5100,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries/airplane-takeoff-3.jpg"
+    },
+    {
+      "bytes": 3334,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries/alcatraz-island-prison.jpg"
+    },
+    {
+      "bytes": 3378,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries/american-flag-3.jpg"
+    },
+    {
+      "bytes": 2174,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries/apartment.jpg"
+    },
+    {
+      "bytes": 2509,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries/apollo-2.jpg"
+    },
+    {
+      "bytes": 1318,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries/apollo-earth.jpg"
+    },
+    {
+      "bytes": 6611,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries/apple-11.jpg"
+    },
+    {
+      "bytes": 5850,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries/apple-14.jpg"
+    },
+    {
+      "bytes": 6708,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries/apple-16.jpg"
+    },
+    {
+      "bytes": 6471,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries/apple-7.jpg"
+    },
+    {
+      "bytes": 6322,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries/aquarium-fish-25.jpg"
+    },
+    {
+      "bytes": 2468,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries/arches-9.jpg"
+    },
+    {
+      "bytes": 2922,
+      "name": "opt/ec-fpga/inputs/ferret/simsmall/queries/arches.jpg"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/ferret/test"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/ferret/test/corel"
+    },
+    {
+      "bytes": 8959,
+      "name": "opt/ec-fpga/inputs/ferret/test/corel/__cass.env"
+    },
+    {
+      "bytes": 904,
+      "name": "opt/ec-fpga/inputs/ferret/test/corel/corel.raw"
+    },
+    {
+      "bytes": 576,
+      "name": "opt/ec-fpga/inputs/ferret/test/corel/lsh.lsh"
+    },
+    {
+      "bytes": 26,
+      "name": "opt/ec-fpga/inputs/ferret/test/corel/map_corel.map"
+    },
+    {
+      "bytes": 0,
+      "name": "opt/ec-fpga/inputs/ferret/test/queries"
+    },
+    {
+      "bytes": 2184,
+      "name": "opt/ec-fpga/inputs/ferret/test/queries/coast.jpg"
+    },
+    {
+      "bytes": 3541320,
+      "name": "opt/ec-fpga/roi-smoke"
+    },
+    {
+      "bytes": 3970,
+      "name": "opt/ec-fpga/run-one"
+    },
+    {
+      "bytes": 0,
+      "name": "proc"
+    },
+    {
+      "bytes": 0,
+      "name": "root"
+    },
+    {
+      "bytes": 0,
+      "name": "run"
+    },
+    {
+      "bytes": 0,
+      "name": "sbin"
+    },
+    {
+      "bytes": 0,
+      "name": "sys"
+    },
+    {
+      "bytes": 0,
+      "name": "tmp"
+    },
+    {
+      "bytes": 0,
+      "name": "TRAILER!!!"
+    }
+  ],
+  "diagnostic_only": true,
+  "ended_utc": "2026-11-07T07:14:54.106007+00:00",
+  "firmware_receipt_sha256": "9bceb83c5005da74c461e54fa7fb47badf855e7c527f69c2a7563898c5b1bc2e",
+  "firmware_runtime_layout": {
+    "fdt_copy_end": 3219136316,
+    "fdt_copy_start": 3219128320,
+    "kernel_end": 2186077184,
+    "kernel_start": 2149580800,
+    "linux_memory_cap_bytes": 2147483648,
+    "no_overlap": true
+  },
+  "fpga_operations": false,
+  "host_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "kernel_archive_exact_match": true,
+  "kernel_panic": false,
+  "kernel_sha256": "1b80f74336bd537ff2e6fd62a63497b783d11b560f9463a9a50ae78002768926",
+  "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/ferret-safe-fdt-boot-diagnostic-20261107T071451Z/console.log",
+  "measurement_validity": false,
+  "pid": 520739,
+  "qemu_guest_done": true,
+  "qemu_guest_ready": true,
+  "qemu_integrity_passed": true,
+  "qemu_returncode": 0,
+  "rootfs_sha256": "13527eb26caa6ba0af790f3f286dbb91fc75ce5dd65c663712edb672410f9d7c",
+  "status": "COMPLETE",
+  "timedout": false
+}

@@ -1,0 +1,72 @@
+{
+  "build_receipt_sha256": "983fbb4c03cb2666f9413919d74a79db0233aa275df5f935f01abf4124d24563",
+  "complete_trace_records": 1759001,
+  "completed_utc": "2026-11-11T19:48:20.417299+00:00",
+  "fpga_access": false,
+  "negative": {
+    "FMR": 228.0,
+    "FMR_scope": "GoldenGate host cycles / fastest target cycles as reported by runtime; MMIO test harness included",
+    "argv": [
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-svb-gg-stream-replay-r2-20261111/VSVBStreamingReplay",
+      "+svb-force-all-inputs",
+      "+svb-trace=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-external-observer-r5-20261111/canneal-observer-on/external-events.jsonl.svb-full.bin",
+      "+svb-state=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-gg-stream-replay-r3-20261111/application-payload-negative-progress.json",
+      "+svb-mutate-data"
+    ],
+    "host_wall_seconds": 4778.325628470018,
+    "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-gg-stream-replay-r3-20261111/application-payload-negative.log",
+    "log_sha256": "aa7e6a83a2e00286f0daebdb23258307d2d66613cb3a755b25b9fb90c3877874",
+    "mutation_applied": true,
+    "mutation_payload_rejected": true,
+    "pass_test": false,
+    "returncode": 1,
+    "summary": null,
+    "timeout_seconds": 27158
+  },
+  "observer_result_sha256": "ba9de23f19f458f378cfe5cd34b0f4909692fe987c779d5edab505280a4327cf",
+  "passed": true,
+  "positive": {
+    "FMR": 228.4,
+    "FMR_scope": "GoldenGate host cycles / fastest target cycles as reported by runtime; MMIO test harness included",
+    "argv": [
+      "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-svb-gg-stream-replay-r2-20261111/VSVBStreamingReplay",
+      "+svb-force-all-inputs",
+      "+svb-trace=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-external-observer-r5-20261111/canneal-observer-on/external-events.jsonl.svb-full.bin",
+      "+svb-state=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-gg-stream-replay-r3-20261111/application-positive-progress.json"
+    ],
+    "host_wall_seconds": 7984.405287197005,
+    "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-gg-stream-replay-r3-20261111/application-positive.log",
+    "log_sha256": "82b5f7cc582cdaa654a7fac2e15a99f6187bb2bd9dba01fe792a0981f0291d87",
+    "mutation_applied": false,
+    "mutation_payload_rejected": false,
+    "pass_test": true,
+    "replayed_target_cycles_per_host_second": 220.30457331876156,
+    "returncode": 0,
+    "summary": {
+      "acked": 659,
+      "capture_accepted": 659,
+      "defined_output_fields": 19537248,
+      "defined_output_word_checks": 19698670,
+      "first_source_tick": 2,
+      "host_wall_seconds": 7984.29,
+      "input_cache_enabled": 0,
+      "input_word_writes": 84432048,
+      "last_source_tick": 1759002,
+      "mismatches": 0,
+      "mutation_applied": 0,
+      "promote_accepted": 659,
+      "records": 1759001,
+      "reset_edges": 53,
+      "target_cycles": 1759001
+    },
+    "throughput_scope": "Host-controlled exact MMIO trace replay, not autonomous SVB throughput or targetarchitecture slowdown",
+    "timeout_seconds": 27158
+  },
+  "real_application_payload_mutation_rejected": true,
+  "scope": "CPU GG adapter exactfullrealapplication binary; every targetedge,62 originalemittedports withdefinedmasks. Not FPGAmeasurement/fullOpt4formalequivalence/rollback.",
+  "standalone_result_sha256": "c2dc67665d70ec7ef95034d894455dbd6ed522fa2ad3e40f14bc1fc4bba2bd53",
+  "status": "PASS_COMPLETE_REAL_APPLICATION_GG_STREAM_REPLAY",
+  "strict_checker_join_sha256": "1fabe1c1e4094214e14eaf2fc89482cdb23326317c64e61eac2030f6d7b9ec66",
+  "trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-external-observer-r5-20261111/canneal-observer-on/external-events.jsonl.svb-full.bin",
+  "trace_sha256": "b1d2243c18bb3f512c24c2ea86ddb91dd5674f92d1bdd1798e55d0b16c1122be"
+}

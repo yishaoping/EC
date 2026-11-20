@@ -1,0 +1,19 @@
+{
+  "actual_api_probe": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/svb-r6-continuation-20261112/vivado-api-probe/vivado.log",
+  "board_allowlist": [
+    "0000:21:00.0"
+  ],
+  "constraints_changed": false,
+  "fpga_access_before_independent_certificate": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "no_global_unroute": true,
+  "predecessor": "r7 must exhaust and exit with exact empty cgroup; r7 winner cancels successor",
+  "prior_failure": "r6 J: timing_path has no POINTS property; r7 immutable M retains same selector",
+  "proven_query": "get_pins -quiet -of_objects $path returns four pins on actual worst negative path; no POINTS or TIMING_POINTS property exists",
+  "schema": "ec-svb-vivado2021-path-object-api-recovery/1",
+  "strategies": [
+    "N reroutes actual failing shell data nets including highfanout counter/tvalid/CE paths",
+    "O only reroutes actual failing shell SRL output nets if still present"
+  ],
+  "target_rtl_changed": false
+}

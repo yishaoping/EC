@@ -1,0 +1,56 @@
+{
+  "app_elf_input_roi_unchanged": true,
+  "bitstream_rebuild": false,
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/prepare_safe_fdt_profile.py",
+        "vips"
+      ],
+      "label": "firmware-only",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/vips-safe-fdt-recovery-20261109T122830Z/firmware-only.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/diagnose_dedup_boot.py",
+        "--profile",
+        "vips-safe-fdt",
+        "--bios-kind",
+        "firmware-jump"
+      ],
+      "label": "qemu-boot-integrity",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/vips-safe-fdt-recovery-20261109T122830Z/qemu-boot-integrity.log",
+      "returncode": 0
+    }
+  ],
+  "driver_modified": false,
+  "ended_utc": "2026-11-09T12:28:39.362614+00:00",
+  "fpga_validation": "NOT_RUN",
+  "hardware_modified": false,
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/vips-safe-fdt-recovery-20261109T122830Z",
+  "new_plan_sha256": "936af0a707f33d16b5baf83e54f1d89cba9ff1f45777e4c69cc4a5ef4c636237",
+  "next_action": "Existing coverage-first sees distinct safe-FDT firmware signature; run test/small/formal via its normal 21-only locks. C4 keeps priority when ready.",
+  "old_plan_sha256": "8e03e094bdcb29dc1b6df6ce01fe5bf6f1ebdeaace3de529176c4a6ca6ca278a",
+  "original_layout": {
+    "default_fdt_copy": "0x82200000",
+    "kernel_end": "0x826ce400",
+    "kernel_start": "0x80200000",
+    "overlap": true,
+    "root_cause_boundary": "Default OpenSBI FDT destination lies within embedded kernel image. FPGA proof of repair still required.",
+    "symptom": "Vips old guest panics before EC_GUEST_READY; preserve original evidence"
+  },
+  "pid": 2624047,
+  "plan_archive": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/plan-history/before-vips-safe-fdt-20261109T122830Z.json",
+  "qemu_boot_diagnostic": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/vips-safe-fdt-boot-diagnostic.json",
+    "sha256": "ea0406dd9f3a934e9b1d3e592c468248eba6ba95efc2e0defa86100317db5aa7"
+  },
+  "scheduler_modified": false,
+  "stage": "qemu-boot-integrity",
+  "start_ticks": "3903045",
+  "status": "BOUND_FOR_EXISTING_QUEUE"
+}

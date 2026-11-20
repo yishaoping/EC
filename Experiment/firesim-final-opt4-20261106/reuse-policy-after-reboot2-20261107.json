@@ -1,0 +1,43 @@
+{
+  "schema": "ec-firesim-reuse-policy/1",
+  "updated_utc": "2026-11-07T03:57:39.855157+00:00",
+  "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "bitstream_rebuild_triggers": [
+    "functional DUT or target configuration change",
+    "GoldenGate/bridge hardware change",
+    "invalid provenance, failed implementation or unavailable original bitstream"
+  ],
+  "no_rebuild_for": [
+    "benchmark/input/repetition changes",
+    "guest application or immutable initramfs update with unchanged DUT interfaces",
+    "host-only driver instrumentation using matching generated ABI"
+  ],
+  "reset_policy": "C4 first sample fresh deployment; second sample target-reset probe with previous clean powerdown and full current checker/output validation; reuse unchanged deployment only after success",
+  "native_formal_samples_reused": 3,
+  "storage": {
+    "cad_root": "/var/tmp/guozh-firesim-final-opt4-20261107-cad",
+    "free_gib": 359.3392143249512,
+    "data_free_gib": 43.200138092041016,
+    "extra_deletions_this_turn": []
+  },
+  "scripts": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_bitstream.py": "26cfc7fc77c25b1b72637e84ff30dcf90676914bebcf26139146b083e478db1e",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_cad.tcl": "d11b647f2375d3f5aa88650b939aebbada85258a6866fbcf5152351278f93fc2",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/continue_fpga.py": "742c9170ff91d57eae713b86033557a252efde37abc7a92f47cdd8d0d8df76ce",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_isolated_sample.py": "e0fa439580a89de2d3197b36b77de6540c2e2796f7bb913aa552d2f7f61d4d6a",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_repetitions.py": "a42e9ddc9a99c281ac6cb1b98d74abf254ffc49ef9a9e71e55a8d7eb42934690",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/summarize_results.py": "9e53357afe449bd29323f1654456643f0b13eed9c2b5ec83d82da02c6496a25a",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/publish_live.py": "1472790e5f8ff60871239eb7f8af3b9ad5688e8e30e29abcdd40092873c962f2"
+  },
+  "native_restart_validation": [
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261107T031102Z/result.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-canneal-test-r1-20261107T031341Z/result.json"
+  ],
+  "c4_continuation_pid": 500621,
+  "cad_pid": 345417,
+  "host_boot_id": "09ba1a37-9f6d-4a9e-ad1b-9c057e9ad64c",
+  "cad_resume_receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261107T034842Z/reuse.json",
+  "cad_complete_checkpoints_reused": 11,
+  "no_regenerated_elaboration_or_goldengate": true,
+  "canneal_profile_receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/canneal-formal-software-reuse.json"
+}

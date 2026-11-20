@@ -1,0 +1,22 @@
+--- a/run.py
++++ b/run.py
+@@ -227,7 +227,7 @@
+                     with uartin.open('ab',buffering=0) as f:
+                         f.write(b'/bin/busybox sync; /bin/poweroff -f\n');os.fsync(f.fileno())
+                     shutdown=True;done=elapsed
+-                fatal=any(t in u for t in [b'Kernel panic',b'EC_OPT4_INVALID',b'EC_SAMPLE_FAILED'])
++                fatal=any(t in u for t in [b'Kernel panic',b'EC_OPT4_INVALID',b'EC_SAMPLE_FAILED',b'sbi_trap_error:'])
+                 timedout=elapsed>row['timeout_seconds'] or (not sent and elapsed>row['boot_timeout_seconds'])
+                 budget=sum(p.stat().st_size for p in out.iterdir() if p.is_file())>32*2**30
+                 if fatal or timedout or budget or (done is not None and elapsed-done>30):
+--- a/sample_verify.py
++++ b/sample_verify.py
+@@ -40,7 +40,7 @@
+     uart=(out/'uart.log').read_text(errors='replace').replace('\r','');rid=identity['run_id'];issues=[]
+     if uart.count('EC_SAMPLE_GUEST_DONE run_id='+rid+' ')!=1:issues.append('missing unique successful output validation')
+     if not re.search(r'^EC_COMMAND_EXIT=0$',uart,re.M):issues.append('missing successful application command exit')
+-    if 'Kernel panic' in uart or 'EC_OPT4_INVALID' in uart or 'EC_SAMPLE_FAILED' in uart:issues.append('guest failure/scope violation')
++    if 'Kernel panic' in uart or 'EC_OPT4_INVALID' in uart or 'EC_SAMPLE_FAILED' in uart or 'sbi_trap_error:' in uart:issues.append('guest failure/scope violation')
+     if timedout:issues.append('host timeout')
+     if exitcode!=0 and not controlled_stop:issues.append('unexpected driver exit')
+     counts=None;raw=None;cycles=None;drain=None;participation=None

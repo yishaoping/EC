@@ -1,0 +1,309 @@
+{
+  "candidate_source_sha256": "709ae6f54a62eb9bb94773c7bce69b5f36b2c9a10b348d798c6993ce41292350",
+  "changed_diagnostic_locations": [
+    {
+      "candidate_line": 994,
+      "identical_source_line": "  assert(!(wb.io.meta_read.fire ^ wb.io.data_req.fire))",
+      "parent_line": 984
+    },
+    {
+      "candidate_line": 1057,
+      "identical_source_line": "      assert(s0_selected_req(w).request_token_valid && s0_selected_req(w).effect_token_valid,",
+      "parent_line": 1047
+    },
+    {
+      "candidate_line": 1093,
+      "identical_source_line": "    assert(!(io.lsu.s1_kill(w) && !RegNext(io.lsu.req.fire) && !RegNext(io.lsu.req.bits(w).valid)))",
+      "parent_line": 1083
+    },
+    {
+      "candidate_line": 1166,
+      "identical_source_line": "  assert(!(s2_type === t_replay && !s2_hit(0)), \"Replays should always hit\")",
+      "parent_line": 1156
+    },
+    {
+      "candidate_line": 1167,
+      "identical_source_line": "  assert(!(s2_type === t_wb && !s2_hit(0)), \"Writeback should always see data hit\")",
+      "parent_line": 1157
+    },
+    {
+      "candidate_line": 1222,
+      "identical_source_line": "  assert(debug_sc_fail_cnt < 100.U, \"L1DCache failed too many SCs in a row\")",
+      "parent_line": 1212
+    },
+    {
+      "candidate_line": 1328,
+      "identical_source_line": "    assert(s2_replay_owner_match, \"replay reached a revoked slot owner\")",
+      "parent_line": 1318
+    },
+    {
+      "candidate_line": 1369,
+      "identical_source_line": "    assert(!(s2_send_resp(w) && s2_send_nack(w)))",
+      "parent_line": 1359
+    },
+    {
+      "candidate_line": 1413,
+      "identical_source_line": "    assert(!(mshrs.io.req(w).valid && s2_type === t_replay), \"Replays should not need to go back into MSHRs\")",
+      "parent_line": 1403
+    },
+    {
+      "candidate_line": 1415,
+      "identical_source_line": "      assert(s2_type === t_lsu && s2_raw_req(w).uop.mem_cmd === M_XRD &&",
+      "parent_line": 1405
+    },
+    {
+      "candidate_line": 1419,
+      "identical_source_line": "      assert(!mshrs.io.req(w).valid,",
+      "parent_line": 1409
+    },
+    {
+      "candidate_line": 1421,
+      "identical_source_line": "      assert(s2_before_freeze(w),",
+      "parent_line": 1411
+    },
+    {
+      "candidate_line": 1433,
+      "identical_source_line": "      assert(!slotReserved(set)(way), \"duplicate destination reservation\")",
+      "parent_line": 1423
+    },
+    {
+      "candidate_line": 1435,
+      "identical_source_line": "        assert(r.slot_epoch =/= 0.U, \"slot epoch exhausted\")",
+      "parent_line": 1425
+    },
+    {
+      "candidate_line": 1470,
+      "identical_source_line": "      assert(slotEpoch(pset)(pway) =/= ~0.U(16.W), \"slot epoch exhausted\")",
+      "parent_line": 1460
+    },
+    {
+      "candidate_line": 1519,
+      "identical_source_line": "    assert(installPreservationAllowed, \"same-address refill would destroy an unpreserved image\")",
+      "parent_line": 1509
+    },
+    {
+      "candidate_line": 1535,
+      "identical_source_line": "      assert(slotEpoch(installSet)(installWay) + 1.U === installReq.slot_epoch,",
+      "parent_line": 1525
+    },
+    {
+      "candidate_line": 1571,
+      "identical_source_line": "    assert(refillPreservationAllowed, \"refill bypassed L1 preservation gate\")",
+      "parent_line": 1561
+    },
+    {
+      "candidate_line": 1577,
+      "identical_source_line": "  when (mshrs.io.refill.valid) { assert(refillReqOwnerMatch, \"active refill owner changed\") }",
+      "parent_line": 1567
+    },
+    {
+      "candidate_line": 1602,
+      "identical_source_line": "    assert(!completionPending(set)(way), \"publish before functional completion\")",
+      "parent_line": 1592
+    },
+    {
+      "candidate_line": 1633,
+      "identical_source_line": "      assert(!svb.io.releaseBlocked(if (q == 3) 2 else q), \"ORDER-1: normal WB overtook retained SVB predecessor\")",
+      "parent_line": 1623
+    },
+    {
+      "candidate_line": 1633,
+      "identical_source_line": "      assert(!svb.io.releaseBlocked(if (q == 3) 2 else q), \"ORDER-1: normal WB overtook retained SVB predecessor\")",
+      "parent_line": 1623
+    },
+    {
+      "candidate_line": 1633,
+      "identical_source_line": "      assert(!svb.io.releaseBlocked(if (q == 3) 2 else q), \"ORDER-1: normal WB overtook retained SVB predecessor\")",
+      "parent_line": 1623
+    },
+    {
+      "candidate_line": 1682,
+      "identical_source_line": "    assert(wbAckMatches, \"invalid/unmatched response on the voluntary WB source\")",
+      "parent_line": 1672
+    },
+    {
+      "candidate_line": 1728,
+      "identical_source_line": "    assert(!sourceConflict, \"C release source reused or missing shared WB reservation\")",
+      "parent_line": 1718
+    },
+    {
+      "candidate_line": 1734,
+      "identical_source_line": "    assert(releaseSourceBusy && releaseSourceSent, \"ACK without complete outstanding C release\")",
+      "parent_line": 1724
+    },
+    {
+      "candidate_line": 1952,
+      "identical_source_line": "    assert(svbCapturePending && svbCaptureIssued,",
+      "parent_line": 1942
+    },
+    {
+      "candidate_line": 1954,
+      "identical_source_line": "    assert(wb.io.snapshot_key.asUInt === svbFastKey.asUInt &&",
+      "parent_line": 1944
+    },
+    {
+      "candidate_line": 1962,
+      "identical_source_line": "      assert(!svb.io.capture.fire, \"cancelled snapshot allocated in a new epoch\")",
+      "parent_line": 1952
+    },
+    {
+      "candidate_line": 1966,
+      "identical_source_line": "      assert(svb.io.capture.fire, \"live snapshot consumed without durable SVB owner\")",
+      "parent_line": 1956
+    },
+    {
+      "candidate_line": 1967,
+      "identical_source_line": "      assert(!svbFastLineValid, \"OWNER-1: capture overwrote an outstanding fast-line lease\")",
+      "parent_line": 1957
+    },
+    {
+      "candidate_line": 1976,
+      "identical_source_line": "  assert(!(svbCapturePending && crossPackagePending),",
+      "parent_line": 1966
+    },
+    {
+      "candidate_line": 1989,
+      "identical_source_line": "    assert(!svbFastLineValid, \"DEADLOCK-1: stale fast-line lease survived revocation\")",
+      "parent_line": 1979
+    },
+    {
+      "candidate_line": 1992,
+      "identical_source_line": "    assert(crossPackageBlockCondition,",
+      "parent_line": 1982
+    },
+    {
+      "candidate_line": 2080,
+      "identical_source_line": "    assert(!crossPackagePending && svbCapturePending && !svbCaptureIssued &&",
+      "parent_line": 2070
+    },
+    {
+      "candidate_line": 2526,
+      "identical_source_line": "    assert(!crossPackageMetaClearBlock && !crossPackageSlotConflict &&",
+      "parent_line": 2516
+    },
+    {
+      "candidate_line": 2572,
+      "identical_source_line": "        assert(L1Preservation.safe(crossPackagePendingKey, safePacketWatermark),",
+      "parent_line": 2562
+    },
+    {
+      "candidate_line": 2583,
+      "identical_source_line": "    assert(!crossPackagePending && !crossPackageMetaClearPending &&",
+      "parent_line": 2573
+    },
+    {
+      "candidate_line": 2617,
+      "identical_source_line": "    assert(slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) === crossPackagePendingEpoch,",
+      "parent_line": 2607
+    },
+    {
+      "candidate_line": 2619,
+      "identical_source_line": "    assert(slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) =/= ~0.U(16.W), \"slot epoch exhausted\")",
+      "parent_line": 2609
+    },
+    {
+      "candidate_line": 3061,
+      "identical_source_line": "    assert(!(io.lsu.nack(w).valid && s2_type =/= t_lsu && !staleStoreNack))",
+      "parent_line": 3051
+    },
+    {
+      "candidate_line": 3078,
+      "identical_source_line": "  assert(!(s2_write_grant && svbEpochWriteBarrier), \"write grant crossed a live SVB epoch boundary\")",
+      "parent_line": 3068
+    },
+    {
+      "candidate_line": 3170,
+      "identical_source_line": "  when (s3_valid) { assert(!s3_stale_or_revoked, \"held write grant owner revoked\") }",
+      "parent_line": 3160
+    },
+    {
+      "candidate_line": 3251,
+      "identical_source_line": "    assert(s3_image_match, \"write grant has stale image dependency\")",
+      "parent_line": 3241
+    },
+    {
+      "candidate_line": 3252,
+      "identical_source_line": "    assert(s3_preservationAllowed, \"write grant bypassed L1 preservation\")",
+      "parent_line": 3242
+    },
+    {
+      "candidate_line": 3256,
+      "identical_source_line": "    assert(!(s3_effect_fire && s3_set === svbFastSet && s3_way_idx === svbFastWay),",
+      "parent_line": 3246
+    },
+    {
+      "candidate_line": 3258,
+      "identical_source_line": "    assert(!(dataWriteArb.io.in(1).fire && refillReqSet === svbFastSet && refillReqWay === svbFastWay),",
+      "parent_line": 3248
+    },
+    {
+      "candidate_line": 3262,
+      "identical_source_line": "    assert(!(s3_effect_fire && s3_set === crossPackagePendingSet &&",
+      "parent_line": 3252
+    },
+    {
+      "candidate_line": 3264,
+      "identical_source_line": "    assert(!(dataWriteArb.io.in(1).fire && refillReqSet === crossPackagePendingSet &&",
+      "parent_line": 3254
+    },
+    {
+      "candidate_line": 3295,
+      "identical_source_line": "    assert(!completionPending(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)),",
+      "parent_line": 3285
+    },
+    {
+      "candidate_line": 3306,
+      "identical_source_line": "    assert((completionPending(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) ||",
+      "parent_line": 3296
+    },
+    {
+      "candidate_line": 3382,
+      "identical_source_line": "      assert(replayResultQ(i).io.enq.ready, \"replay result reservation exhausted\")",
+      "parent_line": 3372
+    },
+    {
+      "candidate_line": 3382,
+      "identical_source_line": "      assert(replayResultQ(i).io.enq.ready, \"replay result reservation exhausted\")",
+      "parent_line": 3372
+    },
+    {
+      "candidate_line": 3382,
+      "identical_source_line": "      assert(replayResultQ(i).io.enq.ready, \"replay result reservation exhausted\")",
+      "parent_line": 3372
+    },
+    {
+      "candidate_line": 3382,
+      "identical_source_line": "      assert(replayResultQ(i).io.enq.ready, \"replay result reservation exhausted\")",
+      "parent_line": 3372
+    },
+    {
+      "candidate_line": 3382,
+      "identical_source_line": "      assert(replayResultQ(i).io.enq.ready, \"replay result reservation exhausted\")",
+      "parent_line": 3372
+    },
+    {
+      "candidate_line": 3382,
+      "identical_source_line": "      assert(replayResultQ(i).io.enq.ready, \"replay result reservation exhausted\")",
+      "parent_line": 3372
+    },
+    {
+      "candidate_line": 3499,
+      "identical_source_line": "    assert(imageSerial =/= ~0.U(32.W), \"local image serial exhausted\")",
+      "parent_line": 3489
+    },
+    {
+      "candidate_line": 3543,
+      "identical_source_line": "    assert(svbFastAcquiredPrevious, \"OWNER-1: lease acquired without snapshot\")",
+      "parent_line": 3533
+    },
+    {
+      "candidate_line": 3546,
+      "identical_source_line": "    assert(svbFastReleasedPrevious, \"OWNER-1: lease released without a terminal event\")",
+      "parent_line": 3536
+    }
+  ],
+  "method": "Only assertion diagnostic source line numbers mapped through exact identical git source lines; every condition/statement/format/data expression retained.",
+  "normalized_module_sha256": "5318efa9d654340136d07182f171a9dd220ed18f9bf878aed89d67c587fd52a9",
+  "parent_source_sha256": "0d8457e6a38ce2bbd00807e6e5685f31d5000f3c86acf6437110b1b683902f52",
+  "raw_module_sha256": "74f7e1c2e171bf69d990f4954da53481573b001de6b148a432a1cec0f07d0dcb"
+}

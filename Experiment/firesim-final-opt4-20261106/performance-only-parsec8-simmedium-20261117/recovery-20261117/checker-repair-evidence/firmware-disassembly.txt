@@ -1,0 +1,90 @@
+
+/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/C4-firmware-20261107T030118.611141Z/platform/generic/firmware/fw_payload.elf:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+0000000080006a20 <ec_opt4_secondary+0x20>:
+    80006a20:	3040                	fld	fs0,160(s0)
+    80006a22:	30205073          	csrwi	medeleg,0
+    80006a26:	30305073          	csrwi	mideleg,0
+    80006a2a:	00000797          	auipc	a5,0x0
+    80006a2e:	08678793          	addi	a5,a5,134 # 80006ab0 <ec_opt4_trap>
+    80006a32:	30579073          	csrw	mtvec,a5
+    80006a36:	67f9                	lui	a5,0x1e
+    80006a38:	3007a073          	csrs	mstatus,a5
+    80006a3c:	0000f717          	auipc	a4,0xf
+    80006a40:	cc470713          	addi	a4,a4,-828 # 80015700 <ec_opt4_context>
+    80006a44:	631c                	ld	a5,0(a4)
+    80006a46:	e781                	bnez	a5,80006a4e <ec_opt4_secondary+0x4e>
+    80006a48:	0001                	nop
+    80006a4a:	631c                	ld	a5,0(a4)
+    80006a4c:	dff5                	beqz	a5,80006a48 <ec_opt4_secondary+0x48>
+    80006a4e:	0220000f          	fence	r,r
+    80006a52:	631c                	ld	a5,0(a4)
+    80006a54:	0489                	addi	s1,s1,2
+    80006a56:	048e                	slli	s1,s1,0x3
+    80006a58:	94ba                	add	s1,s1,a4
+    80006a5a:	e49c                	sd	a5,8(s1)
+    80006a5c:	0110000f          	fence	w,w
+    80006a60:	6708                	ld	a0,8(a4)
+    80006a62:	6b0c                	ld	a1,16(a4)
+    80006a64:	008000ef          	jal	ra,80006a6c <ec_opt4_enter>
+    80006a68:	351030ef          	jal	ra,8000a5b8 <sbi_hart_hang>
+
+0000000080006a6c <ec_opt4_enter>:
+    80006a6c:	18051073          	csrw	satp,a0
+    80006a70:	12000073          	sfence.vma
+    80006a74:	0000100f          	fence.i
+    80006a78:	f14022f3          	csrr	t0,mhartid
+    80006a7c:	fff28293          	addi	t0,t0,-1
+    80006a80:	00329293          	slli	t0,t0,0x3
+    80006a84:	0000f317          	auipc	t1,0xf
+    80006a88:	c7c30313          	addi	t1,t1,-900 # 80015700 <ec_opt4_context>
+    80006a8c:	00530333          	add	t1,t1,t0
+    80006a90:	180023f3          	csrr	t2,satp
+    80006a94:	06733c23          	sd	t2,120(t1)
+    80006a98:	0330000f          	fence	rw,rw
+    80006a9c:	34159073          	csrw	mepc,a1
+    80006aa0:	000222b7          	lui	t0,0x22
+    80006aa4:	8882829b          	addiw	t0,t0,-1912
+    80006aa8:	3002b073          	csrc	mstatus,t0
+    80006aac:	30200073          	mret
+
+0000000080006ab0 <ec_opt4_trap>:
+    80006ab0:	f14022f3          	csrr	t0,mhartid
+    80006ab4:	fff28293          	addi	t0,t0,-1 # 21fff <_fw_start-0x7ffde001>
+    80006ab8:	00329293          	slli	t0,t0,0x3
+    80006abc:	0000f317          	auipc	t1,0xf
+    80006ac0:	c4430313          	addi	t1,t1,-956 # 80015700 <ec_opt4_context>
+    80006ac4:	00530333          	add	t1,t1,t0
+    80006ac8:	342023f3          	csrr	t2,mcause
+    80006acc:	00800e13          	li	t3,8
+    80006ad0:	01c39c63          	bne	t2,t3,80006ae8 <ec_opt4_trap+0x38>
+    80006ad4:	45435e37          	lui	t3,0x45435
+    80006ad8:	f50e0e1b          	addiw	t3,t3,-176
+    80006adc:	01c89663          	bne	a7,t3,80006ae8 <ec_opt4_trap+0x38>
+    80006ae0:	00100e93          	li	t4,1
+    80006ae4:	0100006f          	j	80006af4 <ec_opt4_trap+0x44>
+    80006ae8:	1003e393          	ori	t2,t2,256
+    80006aec:	04733c23          	sd	t2,88(t1)
+    80006af0:	00000e93          	li	t4,0
+    80006af4:	00200593          	li	a1,2
+    80006af8:	2c05a02b          	0x2c05a02b
+    80006afc:	a000002b          	0xa000002b
+    80006b00:	18001073          	csrw	satp,zero
+    80006b04:	12000073          	sfence.vma
+    80006b08:	0330000f          	fence	rw,rw
+    80006b0c:	000e8663          	beqz	t4,80006b18 <ec_opt4_trap+0x68>
+    80006b10:	03d33c23          	sd	t4,56(t1)
+    80006b14:	0330000f          	fence	rw,rw
+    80006b18:	10500073          	wfi
+    80006b1c:	ffdff06f          	j	80006b18 <ec_opt4_trap+0x68>
+
+0000000080006b20 <generic_early_exit>:
+    80006b20:	0000e797          	auipc	a5,0xe
+    80006b24:	5487b783          	ld	a5,1352(a5) # 80015068 <generic_plat>
+    80006b28:	c385                	beqz	a5,80006b48 <generic_early_exit+0x28>
+    80006b2a:	779c                	ld	a5,40(a5)
+    80006b2c:	cf91                	beqz	a5,80006b48 <generic_early_exit+0x28>
+    80006b2e:	1141                	addi	sp,sp,-16

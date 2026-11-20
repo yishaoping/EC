@@ -1,0 +1,117 @@
+{
+  "observed_utc": "2026-11-17T11:18:16.447622+00:00",
+  "status": "FAILED_HEALTH_ROI_SEAL_NO_AUTOMATIC_RETRY",
+  "board_bdf": "0000:21:00.0",
+  "board_serial": "21770433G02LA",
+  "linux_user_space": true,
+  "guest_ready": {
+    "observed_utc": "2026-11-17T10:51:40.263281+00:00",
+    "elapsed_seconds": 2177.2017407019157,
+    "uart_bytes": 9451,
+    "deadline_failure": null,
+    "phase": "PREPARATION",
+    "phase_elapsed_seconds": 0.0,
+    "command_sent_seconds": 2177.2017407019157,
+    "sample_start_seconds": null,
+    "target_cycle": 1443963451,
+    "cycle_idle_seconds": 4.008665711968206,
+    "boot_timeout_seconds": 3600,
+    "prepare_timeout_seconds": 3600,
+    "execution_timeout_seconds": 1800,
+    "cycle_stall_timeout_seconds": 120,
+    "boot_cycle_limit": 2400000000
+  },
+  "preparation_seconds": 1227.2802658890141,
+  "sample_start": {
+    "observed_utc": "2026-11-17T11:12:07.542742+00:00",
+    "elapsed_seconds": 3404.48200659093,
+    "uart_bytes": 9806,
+    "deadline_failure": null,
+    "phase": "EXECUTION",
+    "phase_elapsed_seconds": 0.0,
+    "command_sent_seconds": 2177.2017407019157,
+    "sample_start_seconds": 3404.48200659093,
+    "target_cycle": 2264205130,
+    "cycle_idle_seconds": 1.0036903489381075,
+    "boot_timeout_seconds": 3600,
+    "prepare_timeout_seconds": 3600,
+    "execution_timeout_seconds": 1800,
+    "cycle_stall_timeout_seconds": 120,
+    "boot_cycle_limit": 2400000000
+  },
+  "installed_harts": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "checker_execution_passed": false,
+  "checker_package_events": 0,
+  "parsec_started": false,
+  "valid_parsec": 0,
+  "slowdown": null,
+  "new_fatal_trap": null,
+  "timedout": false,
+  "guest_error": "DAC ROI end/seal failed: Input/output error",
+  "application_exit": 125,
+  "command_exit": 1,
+  "heartbeat": {
+    "samples": 297,
+    "strictly_increasing": true,
+    "first": [
+      7577513,
+      18
+    ],
+    "last": [
+      2271473596,
+      3414
+    ],
+    "maximum_recorded_gap_seconds": 12
+  },
+  "final_target_cycles": 2275408277,
+  "driver_wall_seconds": 3419.9965196909616,
+  "bitstream": {
+    "path": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Opt4-performance-only-checker-privilege-8f67d03-r1/firesim.bit",
+    "sha256": "a6a3c73e82222b2ce11f86042be73f518a198f927ee99ba32d774dcde08e8b13",
+    "expected_sha256": "a6a3c73e82222b2ce11f86042be73f518a198f927ee99ba32d774dcde08e8b13",
+    "unchanged": true
+  },
+  "static_marker_chain": {
+    "generated_path": "/var/tmp/guozh-ec-checker-fault-20261117/full-r2/host/FireSim-generated.sv",
+    "generated_sha256": "0967039e6fea83fed56a9843a2a5e2c8724c7362b223f31f16d58ff8f02e838a",
+    "project_generated_sha256": "0967039e6fea83fed56a9843a2a5e2c8724c7362b223f31f16d58ff8f02e838a",
+    "read_memory_depth": 1,
+    "runtime_write_assignments": [],
+    "limitation": "No post-synthesis probe, retired-PC trace, CSR/PTE dump or four-checker execution was collected; initialization under RANDOMIZE is not a functional write."
+  },
+  "sources": {
+    "chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_Config.scala": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-checker-fault-repair-20261117/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_Config.scala",
+      "sha256": "1cc46659da7a51bd39ada2ab70f59cfcc242fc4b16ca50f7515b8efa789ccee5",
+      "identical_to_pre_privilege_baseline": true
+    },
+    "chipyard/generators/boom/src/main/scala/exu/rob.scala": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-checker-fault-repair-20261117/chipyard/generators/boom/src/main/scala/exu/rob.scala",
+      "sha256": "81406711678554e6fa40354b8f169bc3ebff4c3868d645c2df479572ff703b38",
+      "identical_to_pre_privilege_baseline": true
+    },
+    "chipyard/generators/boom/src/main/scala/exu/core.scala": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-checker-fault-repair-20261117/chipyard/generators/boom/src/main/scala/exu/core.scala",
+      "sha256": "1883cef9fa9c24cb5f39715a132d0b89aa104e8b2aefa594bc812ad5e03c74c8",
+      "identical_to_pre_privilege_baseline": true
+    },
+    "chipyard/generators/rocket-chip/src/main/scala/util/DacRoi.scala": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-checker-fault-repair-20261117/chipyard/generators/rocket-chip/src/main/scala/util/DacRoi.scala",
+      "sha256": "e41828d04b47ad2a209defc28c700113e3a74e53451e00a846c0ab63df9c4ed2",
+      "identical_to_pre_privilege_baseline": true
+    }
+  },
+  "actions": {
+    "fpga_reset": false,
+    "driver_stop_by_this_diagnostic": false,
+    "runtime_modified": false,
+    "rtl_modified": false,
+    "cad_started": false,
+    "periodic_patrol": false
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "current_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+  "job": "native",
+  "observed_utc": "2026-11-07T06:40:48.733851+00:00",
+  "schema": "ec-job-identity-audit/1",
+  "states": [
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-native-queue-state.json",
+      "processes": [
+        {
+          "expected_start_ticks": "105049",
+          "field": "pid",
+          "identity_live": true,
+          "observed": {
+            "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/suite_queue.py Native ",
+            "pid": 93647,
+            "process_state": "S",
+            "start_ticks": "105049"
+          },
+          "old_boot": false
+        },
+        {
+          "expected_start_ticks": null,
+          "field": "child_pid",
+          "identity_live": true,
+          "observed": {
+            "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_repetitions.py Native --program bodytrack --input simmedium --repetitions 3 --timeout 14400 --bdf 0000:e2:00.0 --apps-receipt /data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-staged-output-apps-build.json --rootfs-receipt /data1/gzh/EC/firesim/final-opt4-20261106/software/bodytrack-staged-output-rootfs-build.json --firmware-receipt /data1/gzh/EC/firesim/final-opt4-20261106/software/Native/bodytrack-staged-output-firmware-build.json --driver-receipt /data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json ",
+            "pid": 105549,
+            "process_state": "S",
+            "start_ticks": "121711"
+          },
+          "old_boot": false
+        }
+      ],
+      "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+      "status": "RUNNING"
+    },
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/active-0000_e2_00.0.json",
+      "processes": [
+        {
+          "expected_start_ticks": "154185",
+          "field": "pid",
+          "identity_live": true,
+          "observed": {
+            "cmdline": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-efficiency-driver-20261106T135905Z/FireSim-xilinx_alveo_u280 +permissive +domain=0000 +bus=e2 +device=00 +function=0 +bar=0 +pci-vendor=10ee +pci-device=903f +uart-in0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-bodytrack-simmedium-r2-20261107T063624Z/uart.in +uart-out0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-bodytrack-simmedium-r2-20261107T063624Z/uart.log +fesvr-step-size=2004765 +mm_readLatency_0=30 +mm_readMaxReqs_0=4 +mm_relaxFunctionalModel_0=0 +mm_writeLatency_0=30 +mm_writeMaxReqs_0=4 +ec-dac-roi-log=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-bodytrack-simmedium-r2-20261107T063624Z/roi-raw.jsonl +ec-dac-snapshot-seconds=30 +permissive-off +prog0=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-firmware-20261107T053200.600369Z/platform/generic/firmware/fw_payload.elf ",
+            "pid": 142889,
+            "process_state": "R",
+            "start_ticks": "154185"
+          },
+          "old_boot": false
+        }
+      ],
+      "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+      "status": "RUNNING"
+    },
+    {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/native/state.json",
+      "processes": [
+        {
+          "expected_start_ticks": "89098",
+          "field": "pid",
+          "identity_live": true,
+          "observed": {
+            "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run native ",
+            "pid": 86135,
+            "process_state": "S",
+            "start_ticks": "89098"
+          },
+          "old_boot": false
+        },
+        {
+          "expected_start_ticks": "89103",
+          "field": "child_pid",
+          "identity_live": true,
+          "observed": {
+            "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_campaign_native.py ",
+            "pid": 86136,
+            "process_state": "S",
+            "start_ticks": "89103"
+          },
+          "old_boot": false
+        }
+      ],
+      "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+      "status": "RUNNING"
+    }
+  ]
+}

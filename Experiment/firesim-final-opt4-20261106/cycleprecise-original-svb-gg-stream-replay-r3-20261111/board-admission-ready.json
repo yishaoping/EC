@@ -1,0 +1,61 @@
+{
+  "board_allowlist": [
+    "0000:21:00.0"
+  ],
+  "complete_opt4": false,
+  "control_header_sha256": "50b3a87a49ed7e640b0eaff44f7d45c830862c7852f9ff629d92a0028a2c048f",
+  "cpu_proof": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-original-svb-gg-stream-replay-r3-20261111/full-result.json",
+  "cpu_proof_sha256": "2da55256d836394585a0e1bd111a8c50abd0a81d2b4c20bbf2b91a4a927d77b7",
+  "driver": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/full-svb-gg-stream-replay-r2-20261111/SVBStreamingReplay-xilinx_alveo_u280",
+  "driver_args": [
+    "+svb-force-all-inputs"
+  ],
+  "driver_sha256": "24cfc8cea3a33e956fa36e7d2539298cf102d96682cda1a653a282a56bfa0fa8",
+  "expected_summary": {
+    "acked": 659,
+    "capture_accepted": 659,
+    "defined_output_fields": 19537248,
+    "defined_output_word_checks": 19698670,
+    "first_source_tick": 2,
+    "host_wall_seconds": 7984.29,
+    "input_cache_enabled": 0,
+    "input_word_writes": 84432048,
+    "last_source_tick": 1759002,
+    "mismatches": 0,
+    "mutation_applied": 0,
+    "promote_accepted": 659,
+    "records": 1759001,
+    "reset_edges": 53,
+    "target_cycles": 1759001
+  },
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_rtl_sha256": "3dc8f6762c32177f926857bc280840ef2655820fe5725259259c1bfddb5811ca",
+  "pass_markers": [
+    "exit0",
+    "[SVBProbe]PASS Test",
+    "SVB_GG_STREAM_SUMMARY mismatches=0 records=target_cycles=trace_records input_cache_enabled=0 and expected eventcounts"
+  ],
+  "profile": "OriginalSVB32-component-trace",
+  "required_before_run": [
+    "Same exact certified originalSVBbitstream/headerABI",
+    "Existing21only deployment and device/run locks",
+    "Oldsynthetic task completed; no active21task",
+    "Independentmutableoutputdirectory; preserve all372cycle proof"
+  ],
+  "required_driver_args": [
+    "+svb-force-all-inputs",
+    "+domain=0000",
+    "+bus=21",
+    "+device=00",
+    "+function=0",
+    "+bar=0",
+    "+svb-trace=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-external-observer-r5-20261111/canneal-observer-on/external-events.jsonl.svb-full.bin"
+  ],
+  "source_id": "b1d917ca49290fe8732de71bfad9e99edc421fba574f6aff0d1142c1fb248a3f",
+  "status": "READY_FOR_CONTROLLED_21_ONLY_BOARD_ADMISSION_NOT_EXECUTED",
+  "throughput_scope": "Host MMIO trace replay targetcycles/hostsecond, not autonomous SVB throughput; targeteventlatencies come from identical replayed targetedge trace",
+  "trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-gg-external-observer-r5-20261111/canneal-observer-on/external-events.jsonl.svb-full.bin",
+  "trace_records": 1759001,
+  "trace_sha256": "b1d2243c18bb3f512c24c2ea86ddb91dd5674f92d1bdd1798e55d0b16c1122be"
+}

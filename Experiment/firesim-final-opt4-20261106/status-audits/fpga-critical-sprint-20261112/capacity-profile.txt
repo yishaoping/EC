@@ -1,0 +1,102 @@
+# To display the perf.data header info, please use --header/--header-only options.
+#
+#
+# Total Lost Samples: 0
+#
+# Samples: 1K of event 'cpu-clock'
+# Event count (approx.): 24734693556
+#
+# Overhead  Command  Shared Object      Symbol                                                                                                                               IPC   [IPC Coverage]
+# ........  .......  .................  ...................................................................................................................................  ....................
+#
+    19.97%  vivado   libc.so.6          [.] pthread_mutex_unlock@@GLIBC_2.2.5                                                                                                -      -            
+            |
+            ---pthread_mutex_unlock@@GLIBC_2.2.5
+
+    19.39%  vivado   libc.so.6          [.] pthread_mutex_lock@@GLIBC_2.2.5                                                                                                  -      -            
+            |
+            ---pthread_mutex_lock@@GLIBC_2.2.5
+
+    10.73%  vivado   librdi_synth.so    [.] NDesC::objHasDirective                                                                                                           -      -            
+            |
+            ---NDesC::objHasDirective
+               |          
+                --10.48%--0xad4a1b00
+
+     5.78%  vivado   librdi_synth.so    [.] ConstProp::getEquivalentNet                                                                                                      -      -            
+            |
+            ---ConstProp::getEquivalentNet
+               |          
+                --2.39%--0x34150020
+
+     5.53%  vivado   librdi_synth.so    [.] ConstProp::getBDDsOfInputs                                                                                                       -      -            
+            |
+            ---ConstProp::getBDDsOfInputs
+               |          
+                --4.79%--0x34150020
+                          |          
+                           --1.24%--0
+
+     5.53%  vivado   librdi_synth.so    [.] HARTNDb::loadOptimizedGenomes                                                                                                    -      -            
+            |
+            ---HARTNDb::loadOptimizedGenomes
+
+     3.80%  vivado   librdi_synth.so    [.] pthread_mutex_unlock@plt                                                                                                         -      -            
+            |
+            ---pthread_mutex_unlock@plt
+
+     3.63%  vivado   librdi_synth.so    [.] ConstProp::~ConstProp                                                                                                            -      -            
+            |
+            ---ConstProp::~ConstProp
+
+     3.30%  vivado   librdi_synth.so    [.] ConstProp::evaluateCombinational                                                                                                 -      -            
+            |
+            ---ConstProp::evaluateCombinational
+               ConstProp::evaluate
+               0xad4a1b00
+
+     2.72%  vivado   librdi_synth.so    [.] ConstProp::evaluate                                                                                                              -      -            
+            |
+            ---ConstProp::evaluate
+               0xad4a1b00
+
+     2.39%  vivado   librdi_synth.so    [.] UHashSet<void*, void*, UEKey<void*>, UHashMapNode<void*, NNet>, NNet, UEValue<NNet, UHashMapNode<void*, NNet> > >::quickAdd      -      -            
+            |
+            ---UHashSet<void*, void*, UEKey<void*>, UHashMapNode<void*, NNet>, NNet, UEValue<NNet, UHashMapNode<void*, NNet> > >::quickAdd
+
+     2.23%  vivado   libtcmalloc.so.4   [.] tcmalloc::CentralFreeList::FetchFromOneSpans                                                                                     -      -            
+            |
+            ---tcmalloc::CentralFreeList::FetchFromOneSpans
+               |          
+                --1.49%--tcmalloc::CentralFreeList::RemoveRange
+                          tcmalloc::ThreadCache::FetchFromCentralCache
+                          operator new[]
+
+     1.98%  vivado   libtcmalloc.so.4   [.] operator new[]                                                                                                                   -      -            
+            |
+            ---operator new[]
+
+     1.40%  vivado   librdi_synth.so    [.] UHashSet<NInstC*, NInstC*, UEKey<NInstC*>, UHashSetNode<NInstC*>, NInstC*, UEValue<NInstC*, UHashSetNode<NInstC*> > >::quickAdd  -      -            
+            |
+            ---UHashSet<NInstC*, NInstC*, UEKey<NInstC*>, UHashSetNode<NInstC*>, NInstC*, UEValue<NInstC*, UHashSetNode<NInstC*> > >::quickAdd
+
+     1.32%  vivado   libtcmalloc.so.4   [.] tcmalloc::CentralFreeList::ReleaseToSpans                                                                                        -      -            
+            |
+            ---tcmalloc::CentralFreeList::ReleaseToSpans
+               |          
+                --1.16%--tcmalloc::CentralFreeList::ReleaseListToSpans
+                          tcmalloc::CentralFreeList::InsertRange
+                          tcmalloc::ThreadCache::ReleaseToCentralCache
+                          tcmalloc::ThreadCache::ListTooLong
+                          tc_deletearray_nothrow
+                          ConstProp::~ConstProp
+
+     1.24%  vivado   librdi_synth.so    [.] pthread_mutex_lock@plt                                                                                                           -      -            
+            |
+            ---pthread_mutex_lock@plt
+
+
+
+#
+# (Cannot load tips.txt file, please install perf!)
+#

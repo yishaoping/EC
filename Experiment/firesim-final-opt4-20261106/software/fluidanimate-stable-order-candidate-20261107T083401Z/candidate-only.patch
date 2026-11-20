@@ -1,0 +1,20 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/src/fluidanimate/serial.cpp
++++ serial.cpp (candidate only)
+@@ -499,7 +499,7 @@
+             for(int iparNeigh = 0; iparNeigh < numNeighPars; ++iparNeigh)
+             {
+               //Check address to make sure densities are computed only once per pair
+-              if(&neigh->p[iparNeigh % PARTICLES_PER_CELL] < &cell->p[ipar % PARTICLES_PER_CELL])
++              if(cindexNeigh < cindex || (cindexNeigh == cindex && iparNeigh < ipar))
+               {
+                 fptype distSq = (cell->p[ipar % PARTICLES_PER_CELL] - neigh->p[iparNeigh % PARTICLES_PER_CELL]).GetLengthSq();
+                 if(distSq < hSq)
+@@ -561,7 +561,7 @@
+             for(int iparNeigh = 0; iparNeigh < numNeighPars; ++iparNeigh)
+             {
+               //Check address to make sure forces are computed only once per pair
+-              if(&neigh->p[iparNeigh % PARTICLES_PER_CELL] < &cell->p[ipar % PARTICLES_PER_CELL])
++              if(cindexNeigh < cindex || (cindexNeigh == cindex && iparNeigh < ipar))
+               {
+                 Vec3 disp = cell->p[ipar % PARTICLES_PER_CELL] - neigh->p[iparNeigh % PARTICLES_PER_CELL];
+                 fptype distSq = disp.GetLengthSq();

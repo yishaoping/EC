@@ -1,0 +1,22 @@
+[Unit]
+Description=EC PARSEC campaign opt4-fit-priority-proof
+After=local-fs.target network-online.target
+RequiresMountsFor=/data1/gzh/EC/firesim/final-opt4-20261106 /data1/gzh/EC/Experiment/firesim-final-opt4-20261106 /var/tmp/guozh-firesim-final-opt4-20261107-cad
+StartLimitIntervalSec=600
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/data1/gzh/EC/firesim/final-opt4-20261106
+ExecStart=/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run opt4-fit-priority-proof
+Restart=on-failure
+RestartSec=30
+KillMode=control-group
+TimeoutStopSec=90
+StandardOutput=append:/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/opt4-fit-priority-proof/service.log
+StandardError=append:/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/opt4-fit-priority-proof/service.log
+UMask=0022
+
+[Install]
+WantedBy=multi-user.target

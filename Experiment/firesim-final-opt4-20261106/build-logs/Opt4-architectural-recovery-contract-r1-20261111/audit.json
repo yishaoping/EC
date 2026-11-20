@@ -1,0 +1,143 @@
+{
+  "existing_svb_invalidation_ack_test": "PASS_REAL_RTL_SVB_INVALIDATION_OWNER_DATA_AND_NEGATIVE_ACK_NOT_ARCHITECTURAL_ROLLBACK",
+  "fpga_access": false,
+  "full_architectural_restore_proven": false,
+  "hardware_commit": "f2d2ca3ea0b12c918f2ccd2d1131be2709960470",
+  "main_optimization_blocked": false,
+  "observations": {
+    "dcache": [
+      {
+        "line": 57,
+        "text": "val snapshot_valid = Output(Bool())"
+      },
+      {
+        "line": 58,
+        "text": "val snapshot_ready = Input(Bool())"
+      },
+      {
+        "line": 59,
+        "text": "val snapshot_line = Output(UInt(coreMaxAddrBits.W))"
+      },
+      {
+        "line": 60,
+        "text": "val snapshot_key = Output(new CacheImageKey)"
+      },
+      {
+        "line": 61,
+        "text": "val snapshot_epoch = Output(UInt(16.W))"
+      },
+      {
+        "line": 62,
+        "text": "val snapshot_param = Output(UInt(TLPermissions.cWidth.W))"
+      },
+      {
+        "line": 63,
+        "text": "val snapshot_data = Output(Vec(refillCycles, UInt(encRowBits.W)))"
+      },
+      {
+        "line": 70,
+        "text": "val snapshotKey = Reg(new CacheImageKey)"
+      },
+      {
+        "line": 71,
+        "text": "val snapshotEpoch = Reg(UInt(16.W))"
+      },
+      {
+        "line": 72,
+        "text": "val snapshotGeneration = Reg(UInt(32.W))"
+      },
+      {
+        "line": 73,
+        "text": "val snapshotImageValid = Reg(Bool())"
+      },
+      {
+        "line": 85,
+        "text": "val snapshotValid = RegInit(false.B)"
+      },
+      {
+        "line": 1908,
+        "text": "val svbSnapshotConsumed = wb.io.snapshot_valid && wb.io.snapshot_ready"
+      },
+      {
+        "line": 3490,
+        "text": "val svbFastLeaseAcquire = wb.io.snapshot_valid && svb.io.capture.fire"
+      }
+    ],
+    "firmware": [
+      {
+        "line": 45,
+        "text": "/* Version 6 deliberately permits one context per boot. No asynchronous"
+      }
+    ],
+    "firmware_trap": [],
+    "main_core": [
+      {
+        "line": 270,
+        "text": "val snapshot_dispatch_block = WireInit(false.B)"
+      },
+      {
+        "line": 2108,
+        "text": "val l2BarrierErrorAny = l2BarrierError.asUInt.orR"
+      },
+      {
+        "line": 2265,
+        "text": "val snapshot_commit_prev = RegNext(rob.io.commit.valids.asUInt.orR, true.B)"
+      },
+      {
+        "line": 2266,
+        "text": "val snapshot_rsu_prev    = RegNext(rsu_master.io.rsu_busy.asBool, true.B)"
+      },
+      {
+        "line": 2267,
+        "text": "val snapshot_csr_prev    = RegNext(csr.io.csr_stall, true.B)"
+      },
+      {
+        "line": 2268,
+        "text": "val snapshot_excp_prev   = RegNext(csr.io.trace(0).exception, true.B)"
+      },
+      {
+        "line": 2272,
+        "text": "val snapshot_no_redirect = !arch_redirect_valid &&"
+      },
+      {
+        "line": 2275,
+        "text": "val snapshot_quiet ="
+      },
+      {
+        "line": 2288,
+        "text": "val snapshot_quiet_armed = RegNext(snapshot_quiet, false.B)"
+      },
+      {
+        "line": 2397,
+        "text": "val snapshot_reg                                 = RegInit(0.U(1.W))"
+      },
+      {
+        "line": 2440,
+        "text": "io.r_arfs(w)                                  := Cat(rsu_master.io.arfs_index(w), rsu_master.io.arfs_merge(w))"
+      }
+    ],
+    "rob": [],
+    "snapshot_export": [
+      {
+        "line": 30,
+        "text": "val snapshot = Input(UInt(1.W))"
+      },
+      {
+        "line": 32,
+        "text": "val snapshot_priv = Input(Bool())"
+      }
+    ]
+  },
+  "schema": "ec-opt4-recovery-contract-gap/1",
+  "source_hashes": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-svb-tree-r1-20261111/chipyard/generators/boom/src/main/scala/exu/core.scala": "1883cef9fa9c24cb5f39715a132d0b89aa104e8b2aefa594bc812ad5e03c74c8",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-svb-tree-r1-20261111/chipyard/generators/boom/src/main/scala/exu/rob.scala": "81406711678554e6fa40354b8f169bc3ebff4c3868d645c2df479572ff703b38",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-svb-tree-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/dcache.scala": "0fb9e4b3931827120aed8311dbbc87a2d25e697c76505717af7162a0a9f1663d",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-svb-tree-r1-20261111/chipyard/generators/rocket-chip/src/main/scala/r/R_RSU.scala": "05d61838bf7a1dd053da324183c41882d7c9885a0b904efd99c98ee96dd9a9b9",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/opensbi/lib/sbi/ec_opt4.c": "b94345d9966d8134db069b22e2b37f33a3b56e7913210efe5c5bb8a598c99783",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/opensbi/lib/sbi/ec_opt4_entry.S": "090f4b75bf0f73eb84199497d166b7bded97385987097bc246a7010099d84587"
+  },
+  "source_id": "f678ac806ea4b0f801596b26ec8bf9ef914a3161b39f92564ac25452abd8eafc",
+  "status": "ARCHITECTURAL_RECOVERY_MECHANISM_CONTRACT_REQUIRED_NOT_JUST_OBSERVABILITY",
+  "utc": "2026-11-11T01:20:19.420096+00:00"
+}

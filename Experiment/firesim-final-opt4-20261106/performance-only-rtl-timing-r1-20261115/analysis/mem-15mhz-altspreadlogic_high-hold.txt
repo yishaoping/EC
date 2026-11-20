@@ -1,0 +1,105 @@
+Slack (VIOLATED) :        -0.188ns  (arrival time - required time)
+  Source:                 design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/intsource_11/reg_/reg__reg/C
+                            (rising edge-triggered cell FDRE clocked by buildtop_reference_clock  {rise@0.000ns fall@33.320ns period=66.640ns})
+  Destination:            design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_3/intsink_2/chain/output_chain/sync_1_reg_srl2/D
+                            (rising edge-triggered cell SRL16E clocked by tileClockGroup_tile_1  {rise@0.000ns fall@33.320ns period=66.640ns})
+  Path Group:             tileClockGroup_tile_1
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (tileClockGroup_tile_1 rise@0.000ns - buildtop_reference_clock rise@0.000ns)
+  Data Path Delay:        0.784ns  (logic 0.058ns (7.398%)  route 0.726ns (92.602%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.388ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    6.410ns
+    Source Clock Delay      (SCD):    7.140ns
+    Clock Pessimism Removal (CPR):    -1.118ns
+  Inter-SLR Compensation: 0.555ns  ((SCD + DPD - CCD) * PF)
+    Source Clock Delay      (SCD):    7.140ns
+    Data Path Delay         (DPD):    0.784ns
+    Common Clock Delay      (CCD):    4.224ns
+    Prorating Factor         (PF):    0.150
+  Clock Net Delay (Source):      2.739ns (routing 1.129ns, distribution 1.610ns)
+  Clock Net Delay (Destination): 3.106ns (routing 1.246ns, distribution 1.860ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock buildtop_reference_clock rise edge)
+                                                      0.000     0.000 r  
+    BJ43                                              0.000     0.000 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     0.000    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.671     0.671 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.040     0.711    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     0.711 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.344     1.055    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                      0.630     1.685 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.215     1.900    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y43         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.024     1.924 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+                         net (fo=25108, routed)       1.607     3.531    design_1_i/clk_wiz_0/inst/clk_in1
+    MMCM_X0Y2            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                      0.630     4.161 r  design_1_i/clk_wiz_0/inst/mmcme4_adv_inst/CLKOUT0
+                         net (fo=4, routed)           0.216     4.377    design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lopt
+    BUFGCE_X0Y53         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.024     4.401 r  design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/clockBridge_clocks_0_buffer/O
+    X3Y5 (CLOCK_ROOT)    net (fo=297541, routed)      2.739     7.140    design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/intsource_11/reg_/clockBridge_clocks_0_buffer_O
+    SLR Crossing[0->1]   
+    SLICE_X128Y465       FDRE                                         r  design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/intsource_11/reg_/reg__reg/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X128Y465       FDRE (Prop_DFF_SLICEM_C_Q)
+                                                      0.058     7.198 r  design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/intsource_11/reg_/reg__reg/Q
+                         net (fo=1, routed)           0.726     7.924    design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_3/intsink_2/chain/output_chain/tile_prci_domain_3_auto_int_in_clock_xing_in_1_sync_0
+    SLR Crossing[1->2]   
+    SLICE_X126Y517       SRL16E                                       r  design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_3/intsink_2/chain/output_chain/sync_1_reg_srl2/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock tileClockGroup_tile_1 rise edge)
+                                                      0.000     0.000 r  
+    BJ43                                              0.000     0.000 r  sysclk0_clk_p (IN)
+                         net (fo=0)                   0.000     0.000    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/I
+    HPIOBDIFFINBUF_X0Y35 DIFFINBUF (Prop_DIFFINBUF_HPIOBDIFFINBUF_DIFF_IN_P_O)
+                                                      0.782     0.782 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/DIFFINBUF_INST/O
+                         net (fo=1, routed)           0.050     0.832    design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/OUT
+    BJ43                 IBUFCTRL (Prop_IBUFCTRL_HPIOB_M_I_O)
+                                                      0.000     0.832 r  design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_mig_ddr4_phy/inst/u_ddr4_phy_pll/diff_input_clk.u_ibufg_sys_clk/IBUFCTRL_INST/O
+                         net (fo=2, routed)           0.397     1.229    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clk_in
+    MMCM_X0Y1            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                     -0.127     1.102 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/gen_mmcme4.u_mmcme_adv_inst/CLKOUT0
+                         net (fo=1, routed)           0.245     1.347    design_1_i/ddr4_0/inst/u_ddr4_infrastructure/mmcm_clkout0
+    BUFGCE_X0Y43         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.028     1.375 r  design_1_i/ddr4_0/inst/u_ddr4_infrastructure/u_bufg_divClk/O
+                         net (fo=25108, routed)       1.783     3.158    design_1_i/clk_wiz_0/inst/clk_in1
+    MMCM_X0Y2            MMCME4_ADV (Prop_MMCM_CLKIN1_CLKOUT0)
+                                                     -0.127     3.031 r  design_1_i/clk_wiz_0/inst/mmcme4_adv_inst/CLKOUT0
+                         net (fo=4, routed)           0.245     3.276    design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lopt
+    BUFGCE_X0Y48         BUFGCE (Prop_BUFCE_BUFGCE_I_O)
+                                                      0.028     3.304 r  design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/clockBridge_clocks_1_buffer/O
+    X3Y5 (CLOCK_ROOT)    net (fo=333303, routed)      3.106     6.410    design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_3/intsink_2/chain/output_chain/clockBridge_clocks_1_buffer_O
+    SLR Crossing[0->2]   
+    SLICE_X126Y517       SRL16E                                       r  design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_3/intsink_2/chain/output_chain/sync_1_reg_srl2/CLK
+                         clock pessimism              1.118     7.528    
+                         inter-SLR compensation       0.555     8.083    
+    SLICE_X126Y517       SRL16E (Hold_A6LUT_SLICEM_CLK_D)
+                                                      0.029     8.112    design_1_i/firesim_wrapper_0/inst/firesim_top/top/sim/target/FireSim__/lazyModule_/system_/tile_prci_domain_3/intsink_2/chain/output_chain/sync_1_reg_srl2
+  -------------------------------------------------------------------
+                         required time                         -8.112    
+                         arrival time                           7.924    
+  -------------------------------------------------------------------
+                         slack                                 -0.188    
+
+
+
+
+
+---------------------------------------------------------------------------------------------------
+From Clock:  mmcm_clkout0
+  To Clock:  pll_clk[0]_DIV
+
+Setup :           11  Failing Endpoints,  Worst Slack       -0.674ns,  Total Violation       -4.165ns
+Hold  :            0  Failing Endpoints,  Worst Slack        0.557ns,  Total Violation        0.000ns
+---------------------------------------------------------------------------------------------------
+
+
+Max Delay Paths
+--------------------------------------------------------------------------------------

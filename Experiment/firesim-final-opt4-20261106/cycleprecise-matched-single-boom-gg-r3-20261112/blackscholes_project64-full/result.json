@@ -1,0 +1,49 @@
+{
+  "application_rows": [
+    "[ROI] hart=0 start=19433 stop=5917514 cycles=5898081",
+    "[OUTPUT] benchmark=blackscholes checksum=1187d037cad2df6f verified=1 options=64 runs=100",
+    "[APP] protected=0 start=19433 end=5917514 cycles=5898081 instret=3556953 session_stop=5917514",
+    "[COMPUTATION] status=PASS scope=official_serial_kernel",
+    "[END] hart=0 status=PASS"
+  ],
+  "benchmark": "blackscholes",
+  "binary_sha256": "9b09d88e468078265d0002bcfeea56de5b5513bee912f3a5363a919006b72e40",
+  "completed_utc": "2026-11-12T03:10:07.133471+00:00",
+  "compressed_log_sha256": "1a40294733d86f936ab505119bb346301096568515ae28d656a3e148749cee89",
+  "elf_sha256": "04333396109de81371d0a37a721533746ac38f1097236c1fc7b4db1c4488ec47",
+  "faults": [],
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "host_wall_seconds": 2039.626261774043,
+  "input_profile": "blackscholes_project64",
+  "kind": "CPU_GOLDENGATE_TRUE_SINGLE_BOOM_MATCHED_SOURCE_PROFILE",
+  "memory_plusargs": [
+    "+mm_readLatency_0=30",
+    "+mm_readMaxReqs_0=4",
+    "+mm_relaxFunctionalModel_0=0",
+    "+mm_writeLatency_0=30",
+    "+mm_writeMaxReqs_0=4"
+  ],
+  "native_adapter_difference": "Original EC startup replaced with clean Native main; no EC instruction ignoring",
+  "native_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+  "output": [
+    "benchmark=blackscholes checksum=1187d037cad2df6f verified=1 options=64 runs=100"
+  ],
+  "protected_reference_elf_sha256": "63958341b07cf07fd64e171ddd5ddf5c91e7fec6f63afe4dbfb3dc7d07086e8b",
+  "raw_stdout_bytes": 1845,
+  "raw_stdout_sha256": "5a90f37b06dbc97cbbb6645c14441e8662a369611cdedf0833b4fcd71650b42b",
+  "returncode": 0,
+  "roi_cycles": 5898081,
+  "roi_end_csr": 5917514,
+  "roi_instructions": 3556953,
+  "roi_scope": "workload_run call only, two adjacent CSR samples at each boundary; setup/STOP/checker completion/output excluded",
+  "roi_start_csr": 19433,
+  "same_ec_elf": false,
+  "source_kernel_and_input_identical": true,
+  "status": "PASS_TRUE_SINGLE_BOOM_COMPLETE_MATCHED_KERNEL_ROI",
+  "target_boom_hz": 200000000,
+  "threads": 1,
+  "timeout": false,
+  "total_fastest_target_cycles": 6014002,
+  "valid": true
+}

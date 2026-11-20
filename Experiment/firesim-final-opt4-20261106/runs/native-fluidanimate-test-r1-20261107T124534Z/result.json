@@ -1,0 +1,158 @@
+{
+  "checker_latency": null,
+  "counts": null,
+  "drain_cycles": 0,
+  "driver_returncode": 0,
+  "driver_stop_after_guest_powerdown": false,
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-test-r1-20261107T124534Z/heartbeat.csv": "f7f3109849e6a905b8427a0ea4f11155625978913264c057b3c5b804bc41e33f",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-test-r1-20261107T124534Z/host.log": "6e16ecb326e8836ee0f222aea50f0174e609a2683288fa0fec03b5946b3d09bf",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-test-r1-20261107T124534Z/latency_histogram.csv": "7348bacc4d184cc676cfcf89f8d0ec40dd28eeaa86ae0f6fefa797b43dc6d210",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-test-r1-20261107T124534Z/manifest.json": "b053173bf9fe8e55fdc864c197497ffd5814cb865b53b3a3fefeb1ed081af3e0",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-test-r1-20261107T124534Z/memory_stats0.csv": "6679c5006d14d8413ec36ba18171c1f179c0196e04b362e4af778b06baad416e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-test-r1-20261107T124534Z/roi-parser-source.py": "e55944240285ee0197b1b8bd3bedbe10a4a72305511ac72018fe668578d5f8c1",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-test-r1-20261107T124534Z/roi-raw.jsonl": "35a1fa3ac85ee33a9a10f74bccabf886792524360114c091416ec7f9be05ca84",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-test-r1-20261107T124534Z/runner-source.py": "228d941ada4a5d1bf671f220e90955389b30a32ac4647b6de86ef614eb27825a",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-test-r1-20261107T124534Z/snapshot.json": "85fa8f6d77f4d6e0bb928c0d3cfc40612e4bc22b15ef96bac9237e37178e2af4",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-test-r1-20261107T124534Z/state.json": "cb99c4511be4a99d26505104d926e6ee90af03e9422478f69b1beb3b6a3a6111",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-test-r1-20261107T124534Z/uart.in": "8cc5da8052ec6b714499c0f282902878b88368f49e72424e85aadbf8c96180b0",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-fluidanimate-test-r1-20261107T124534Z/uart.log": "5e7db09940e1b7144f59b414455ead0c8973fedc5e38d6de25816267ecb55130"
+  },
+  "fased_readback": {
+    "readLatency": 30,
+    "readMaxReqs": 4,
+    "relaxFunctionalModel": 0,
+    "writeLatency": 30,
+    "writeMaxReqs": 4
+  },
+  "formal": false,
+  "fpga_execution": true,
+  "guest_power_down_observed": true,
+  "host_efficiency": {
+    "host_delta": 3811005324,
+    "host_simulation_wall_seconds": 76.222647,
+    "measurement_scope": "host simulation efficiency, separate from architecture ROI",
+    "simulation_throughput_cycles_per_second": 16280533.002,
+    "target_delta": 1240945320,
+    "target_end": 373008580667,
+    "target_start": 371767635347
+  },
+  "host_wall_seconds": 76.30012252199958,
+  "identity": {
+    "apps_manifest_sha256": "bc25fb95b171933b65f5f13a944b5888d01d7740b017d4ae0ff7ffae7981cd44",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:e2:00.0",
+    "board_serial": "21770433G001A",
+    "case": {
+      "algorithm_unchanged": false,
+      "argv": [
+        "1",
+        "1",
+        "in_5K.fluid",
+        "out.fluid"
+      ],
+      "diagnostic_roi_syscalls": [],
+      "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-stable-candidate-20261107T083942Z/trace-test.log",
+      "fpga_validation": "NOT_RUN",
+      "input": "test",
+      "input_archive": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/inputs/input_test.tar",
+      "input_archive_sha256": "cb6fb5c56afff6c8c962ec59d0b51e403b3f4ce72f2c963b5c37212492f561e0",
+      "input_files": {
+        "in_5K.fluid": "0ecf8072144a42a1d096b7e0cfee8ce1a5a217856b4858112a2ce05d88a62ae2"
+      },
+      "program": "fluidanimate",
+      "reference_outputs": {
+        "out.fluid": "3282157bfae2662113c115cb286574a554de8ad5aa6313811bd25cee47d55cb8"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/parsec/test.runconf",
+      "runconf_sha256": "fb9396fa40d9978db8f258dcfa5e6eaf9b46a635ad571b4afcfad6f0d3a6d07a",
+      "software_bugfix": "Stable cell/particle index pair ordering instead of cross-allocation pointer ordering",
+      "software_reference": "STABLE_PAIR_ORDER_RISCV_REFERENCE",
+      "software_semantics_label": "Authorized repair of original address-dependent omitted particle interactions; separate from original profile",
+      "threads": 1,
+      "validation": {
+        "files": {
+          "out.fluid": "3282157bfae2662113c115cb286574a554de8ad5aa6313811bd25cee47d55cb8"
+        },
+        "kind": "files_sha256"
+      },
+      "warmups": 0
+    },
+    "configuration": "Native",
+    "driver_receipt_sha256": "6707c8ad38ccd0f3676599cc7e37a755348df9294a4575e76f3c0e9c7ddbe9ce",
+    "driver_sha256": "ebdbe142890c7c306396d3dc860db4a85d2e206a504ff0b361aa2bf386db7407",
+    "elf_sha256": "41f5a050564f052d6ead9033fa8ff8bb6c5e9ab99ed3db8571aa0d1a2bc0e2d5",
+    "fdt_sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+    "firmware_receipt_sha256": "54d42c05e90e74686f042d102e5919f8f096c5d3ad93bffe2e0094151b5ea2a1",
+    "firmware_sha256": "371684043c83017484f30fe2a6aa7319042fdbcc2b4d196dea3aeb49607f692e",
+    "formal": false,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "host_bridge_restart": true,
+    "input": "test",
+    "linux_bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+    "linux_memory_cap_bytes": 2147483648,
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "previous_run_id": null,
+    "program": "fluidanimate",
+    "repetition": 1,
+    "rootfs_sha256": "a6cff2a023de0da30e47d4db95f1f361b578a5c26b2febaaa99704b751055973",
+    "run_id": "native-fluidanimate-test-r1-20261107T124534Z",
+    "software_diagnostic": false,
+    "software_profile": "fluidanimate-stable-index-pairing-authorized-repair",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "target_reset_probe": false,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "53b5090cebc2e25943cfd5f19c051b72ad9700aed7142305ccd82e7764333122",
+  "issues": [],
+  "participation": null,
+  "post_drain_traffic_counters": {},
+  "raw": {
+    "epochs": [
+      {
+        "aborted": false,
+        "begin_tick": 1171886816,
+        "end_tick": 1200544264,
+        "epoch": 1,
+        "faults": 0,
+        "formal_sample_eligible": false,
+        "reset_seen": false,
+        "roi_cycles": 28657448,
+        "source_boundaries_complete": true,
+        "states": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    ],
+    "excluded_pre_reset_records": 1,
+    "file_sha256": "8d2c23d56fe94d79070c39bd156011682cd1be9d8ce95a481546d45d8574e058",
+    "formal_sample_eligible": false,
+    "last_sequence": 8,
+    "original_journal_sha256": "35a1fa3ac85ee33a9a10f74bccabf886792524360114c091416ec7f9be05ca84",
+    "parsed_records": 9,
+    "partial_tail_bytes": 0,
+    "protocol_issues": [],
+    "runtime_validation": "NOT_ESTABLISHED_BY_RAW_LOG",
+    "schema": "ec-dac-b-raw-roi/1",
+    "warning": "Raw ROI boundaries only. Output/job identity, runtime timebase checks and the formal host collector are still required."
+  },
+  "roi_cycles": 28657448,
+  "schema": "ec-isolated-fpga-result/1",
+  "timedout": false,
+  "valid": true
+}

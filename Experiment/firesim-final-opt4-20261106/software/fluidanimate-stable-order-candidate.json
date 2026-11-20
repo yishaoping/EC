@@ -1,0 +1,407 @@
+{
+  "argv": [
+    "/data1/gzh/EC/chipyard/.conda-env/bin/qemu-system-riscv64",
+    "-machine",
+    "virt",
+    "-cpu",
+    "rv64",
+    "-m",
+    "2G",
+    "-smp",
+    "1",
+    "-nographic",
+    "-no-reboot",
+    "-bios",
+    "default",
+    "-kernel",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T083406Z/arch/riscv/boot/Image",
+    "-append",
+    "console=ttyS0 earlycon=sbi rdinit=/init panic=-1 mem=2G"
+  ],
+  "candidate_not_in_formal_queue": true,
+  "candidate_patch": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/candidate-only.patch",
+  "candidate_patch_sha256": "7fffecefaac1bea88eab05a03df631d0e0551b9515100486d8e728cb0d709f0e",
+  "commands": [
+    {
+      "argv": [
+        "g++",
+        "-O2",
+        "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/src/fluidcmp.cpp",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/fluidcmp"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/build-official-fluidcmp.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/fluidcmp",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/fluidanimate-linux-diagnostic-20261107T081012Z/out.fluid",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/reference-simsmall/out.fluid",
+        "--ptol",
+        "0",
+        "--vtol",
+        "0",
+        "--bbox",
+        "0"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/official-fluidcmp.log",
+      "returncode": 1
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-D_GNU_SOURCE",
+        "-D_XOPEN_SOURCE=600",
+        "-Wno-invalid-offsetof",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/src",
+        "-std=gnu++17",
+        "-DENABLE_PARSEC_HOOKS",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/src/serial.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/src/cellpool.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/diagnostic-hooks.o",
+        "-lm",
+        "-pthread",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/fluidanimate-pair-diagnostic"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/build-pair-diagnostic.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/usr/bin/qemu-riscv64",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/fluidanimate-pair-diagnostic",
+        "1",
+        "5",
+        "in_35K.fluid",
+        "out.fluid"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/user",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/qemu-user.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/build_earlyconsole.py",
+        "Native",
+        "--parent-receipt",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fluidanimate-kernel-build.json",
+        "--rootfs-receipt",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/rootfs-build.json",
+        "--output-receipt",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/kernel-build.json",
+        "--build-root",
+        "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/build-private-kernel.log",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data1/gzh/EC/chipyard/.conda-env/bin/qemu-system-riscv64",
+        "-machine",
+        "virt",
+        "-cpu",
+        "rv64",
+        "-m",
+        "2G",
+        "-smp",
+        "1",
+        "-nographic",
+        "-no-reboot",
+        "-bios",
+        "default",
+        "-kernel",
+        "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T083406Z/arch/riscv/boot/Image",
+        "-append",
+        "console=ttyS0 earlycon=sbi rdinit=/init panic=-1 mem=2G"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/qemu-linux.log",
+      "returncode": 0
+    }
+  ],
+  "completed_utc": "2026-11-07T08:34:25.275819+00:00",
+  "conclusion": "Lower-index neighbor pairs rejected by pointer-address order are never visited in the opposite direction. Diagnostic only; no algorithm fix or correctness override applied.",
+  "cross_environment_output_exact": true,
+  "diagnostic_only": true,
+  "diagnostic_patch": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/diagnostic-only.patch",
+  "diagnostic_patch_sha256": "941ac43b76329645c48c338b6a0193f5c3a8a20c793a2ed66452326f69d220b9",
+  "first_observed_pair_count_divergence": null,
+  "formal_eligible": false,
+  "fpga_operations": false,
+  "instrumentation": "stable pair-order candidate plus counts, never formal",
+  "linux_diagnostic_output_sha256": "f496414b8226b30ca2a4f9bf7164361e908ac274246fb7ef53b0aa5b4f1990c4",
+  "linux_in_radius_omissions": 0,
+  "linux_original_exact": false,
+  "linux_pair_records": [
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 0,
+      "phase": 0,
+      "seen": 3246500,
+      "selected": 3043899
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 0,
+      "phase": 1,
+      "seen": 3246500,
+      "selected": 3043899
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 1,
+      "phase": 0,
+      "seen": 3241225,
+      "selected": 3038946
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 1,
+      "phase": 1,
+      "seen": 3241225,
+      "selected": 3038946
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 2,
+      "phase": 0,
+      "seen": 3296775,
+      "selected": 3104279
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 2,
+      "phase": 1,
+      "seen": 3296775,
+      "selected": 3104279
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 3,
+      "phase": 0,
+      "seen": 3358923,
+      "selected": 3174470
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 3,
+      "phase": 1,
+      "seen": 3358923,
+      "selected": 3174470
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 4,
+      "phase": 0,
+      "seen": 3375273,
+      "selected": 3195016
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 4,
+      "phase": 1,
+      "seen": 3375273,
+      "selected": 3195016
+    }
+  ],
+  "linux_reference": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/fluidanimate-linux-diagnostic-20261107T081012Z/out.fluid",
+  "linux_reference_sha256": "00108e71973751aae83de393245c73e5ba0fa33e1d44d3402ba988e858d2f6fd",
+  "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z",
+  "no_formal_inputs_changed": true,
+  "official_fluidcmp": {
+    "binary_sha256": "b9c1021275a7fdd231450b754d13e1b789b7ba3abca3b2a0ec2282288e52276a",
+    "formal_gate_changed": false,
+    "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z/official-fluidcmp.log",
+    "returncode": 1,
+    "source": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/src/fluidcmp.cpp",
+    "source_sha256": "bcc62a2ca70032902f84f258bd0df57910bfa4bf1e98cf40e98edcd1e9a48799",
+    "tests": "position/velocity/bounding-box, exact zero tolerance"
+  },
+  "original_apps_receipt_sha256": "68213950013bb1198cb07729d69e04f15cfdedbc9ef32d7ae3fe99fec1338c4a",
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-order-candidate-20261107T083401Z",
+  "reference_difference": {
+    "components": [
+      {
+        "component": "px",
+        "different": 34180,
+        "equal": 2324,
+        "max_absolute_error": 0.12986163049936295,
+        "nonfinite": 0
+      },
+      {
+        "component": "py",
+        "different": 34208,
+        "equal": 2296,
+        "max_absolute_error": 0.026896484196186066,
+        "nonfinite": 0
+      },
+      {
+        "component": "pz",
+        "different": 34158,
+        "equal": 2346,
+        "max_absolute_error": 0.00770010007545352,
+        "nonfinite": 0
+      },
+      {
+        "component": "hvx",
+        "different": 35024,
+        "equal": 1480,
+        "max_absolute_error": 1.948692500591278,
+        "nonfinite": 0
+      },
+      {
+        "component": "hvy",
+        "different": 34948,
+        "equal": 1556,
+        "max_absolute_error": 2.0828694105148315,
+        "nonfinite": 0
+      },
+      {
+        "component": "hvz",
+        "different": 35010,
+        "equal": 1494,
+        "max_absolute_error": 2.325676143169403,
+        "nonfinite": 0
+      },
+      {
+        "component": "vx",
+        "different": 35000,
+        "equal": 1504,
+        "max_absolute_error": 1.9235505443066359,
+        "nonfinite": 0
+      },
+      {
+        "component": "vy",
+        "different": 34910,
+        "equal": 1594,
+        "max_absolute_error": 2.1403765976428986,
+        "nonfinite": 0
+      },
+      {
+        "component": "vz",
+        "different": 34986,
+        "equal": 1518,
+        "max_absolute_error": 2.251793682575226,
+        "nonfinite": 0
+      }
+    ],
+    "equal_particle_record_multiset": false,
+    "equal_records": 1440,
+    "exact_bytes_equal": false,
+    "particles": 36504
+  },
+  "stable_order_candidate": true,
+  "stage": "qemu-linux",
+  "started_utc": "2026-11-07T08:34:01.538938+00:00",
+  "status": "COMPLETE_DIAGNOSTIC_ONLY",
+  "user_diagnostic_output_sha256": "f496414b8226b30ca2a4f9bf7164361e908ac274246fb7ef53b0aa5b4f1990c4",
+  "user_in_radius_omissions": 0,
+  "user_original_exact": false,
+  "user_pair_records": [
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 0,
+      "phase": 0,
+      "seen": 3246500,
+      "selected": 3043899
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 0,
+      "phase": 1,
+      "seen": 3246500,
+      "selected": 3043899
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 1,
+      "phase": 0,
+      "seen": 3241225,
+      "selected": 3038946
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 1,
+      "phase": 1,
+      "seen": 3241225,
+      "selected": 3038946
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 2,
+      "phase": 0,
+      "seen": 3296775,
+      "selected": 3104279
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 2,
+      "phase": 1,
+      "seen": 3296775,
+      "selected": 3104279
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 3,
+      "phase": 0,
+      "seen": 3358923,
+      "selected": 3174470
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 3,
+      "phase": 1,
+      "seen": 3358923,
+      "selected": 3174470
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 4,
+      "phase": 0,
+      "seen": 3375273,
+      "selected": 3195016
+    },
+    {
+      "cross_rejected": 0,
+      "cross_rejected_in_radius": 0,
+      "frame": 4,
+      "phase": 1,
+      "seen": 3375273,
+      "selected": 3195016
+    }
+  ],
+  "user_reference": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-20261107T050619Z/reference-simsmall/out.fluid",
+  "user_reference_sha256": "918f0fa738a3bfd533d651cc909cb22285a2011d7a31acc0d9099237206face4"
+}

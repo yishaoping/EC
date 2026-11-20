@@ -1,0 +1,38 @@
+{
+  "actual_mt_stage_reached": false,
+  "all_clock_cone_hops_are_clock_ports": true,
+  "annotation_sha256": "2a101c780e21260c8f0bdcaf562d1ce663ce13a2a3b2e20fe6ba3c1d0268aca5",
+  "audit": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mt-channel-audit-round38-v1-20261111/result.json",
+  "audit_sha256": "ecb920a3dcdcd5b12086343b17fde1671c0006f47bb88849c5d504d4c51c3ad0",
+  "canonical_input": "FireSim.clockBridge_clocks_1",
+  "causal_chain": {
+    "downstream": "FAME transform and MT sharing cannot be reached in this failed run (proven)",
+    "immediate_condition": "Same payload with different clock Port names in 24 channel pairs (proven)",
+    "symptom": "InferModelPorts ModulePortDeduper rejects partially overlapping ports (proven)",
+    "upstream_trigger": "Intermodel hartid and synthesizedPrintf channels select distinct aliases of the same clock wire (proven)"
+  },
+  "compiler_repair_applied": false,
+  "conflicts": 24,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "identical_duplicate_connect_case_passed": true,
+  "identical_payload_and_wire_clock_for_all": true,
+  "multithread_annotated_instances_by_exact_module_type": {
+    "BoomTile": 1,
+    "RocketTile": 1,
+    "RocketTile_1": 1,
+    "RocketTile_2": 1,
+    "RocketTile_3": 1
+  },
+  "next_repair_constraints": [
+    "Use isolated versioned host compiler/stage copies; never modify frozen or live inputs.",
+    "Canonicalize only metadata clock references proven to have the same unconditional wire root; retain every channel, payload, observation and target clock schedule.",
+    "Re-run actual InferModelPorts/FAME validation and mutation rejection on distinct roots before further host build.",
+    "Current FAME5 code filters exact module classes with one instance. All five annotated classes are singletons, so fixing the overlap alone does not prove or imply sharing.",
+    "Any sharing of specialized Rocket variants needs explicit source-bound state/output/cycle equivalence and preserved per-hart identity."
+  ],
+  "scope": "Saved compiler boundary; not universal target equivalence, measured area saving or FPGA admission",
+  "source_fir_sha256": "e4cf17467e05587a5ecd56e14eb48e4c1bc02b88519785668fe2a685335fca3a",
+  "target_changed": false,
+  "unsafe_cases_rejected": 6,
+  "verified_clock_port_hops": 218
+}

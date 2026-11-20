@@ -1,0 +1,67 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2021.1 (lin64) Build 3247384 Thu Jun 10 19:36:07 MDT 2021
+| Date         : Fri Nov 13 04:53:30 2026
+| Host         : devjz-ubt20-s01 running 64-bit Ubuntu 20.04.6 LTS
+| Command      : report_utilization -hierarchical -hierarchical_depth 25 -file /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-dcache-storage-compose-r3-20261112/area/hierarchical.rpt
+| Design       : BoomNonBlockingDCache
+| Device       : xcu280fsvh2892-2L
+| Design State : Synthesized
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++-----------------------------+---------------------------+------------+------------+---------+------+--------+--------+--------+------+------------+
+|           Instance          |           Module          | Total LUTs | Logic LUTs | LUTRAMs | SRLs |   FFs  | RAMB36 | RAMB18 | URAM | DSP Blocks |
++-----------------------------+---------------------------+------------+------------+---------+------+--------+--------+--------+------+------------+
+| BoomNonBlockingDCache       |                     (top) |    1492945 |    1480581 |   12364 |    0 | 647597 |    208 |     26 |    0 |         48 |
+|   (BoomNonBlockingDCache)   |                     (top) |     147272 |     138904 |    8368 |    0 | 136034 |      0 |      0 |    0 |         16 |
+|   addressStats              |       PackageAddressStats |     906857 |     906857 |       0 |    0 | 385585 |    200 |     24 |    0 |          0 |
+|   appliedEffectResultMemory | AppliedEffectResultMemory |       1552 |        368 |    1184 |    0 |      0 |      0 |      0 |    0 |          0 |
+|   completionQ               |                  Queue_44 |       3081 |       2817 |     264 |    0 |     13 |      0 |      0 |    0 |          0 |
+|   crossPackageBarrierStats  |     GHBarrierLatencyStats |      83339 |      83339 |       0 |    0 |  41601 |      0 |      0 |    0 |         16 |
+|   data                      |   BoomDuplicatedDataArray |        326 |        326 |       0 |    0 |      0 |      8 |      0 |    0 |          0 |
+|   l1L2BarrierStats          |   GHBarrierLatencyStats_0 |      58429 |      58429 |       0 |    0 |  41601 |      0 |      0 |    0 |         16 |
+|   lfsr_prng                 |  MaxPeriodFibonacciLFSR_1 |          1 |          1 |       0 |    0 |     16 |      0 |      0 |    0 |          0 |
+|   meta_0                    |           L1MetadataArray |      11668 |      11668 |       0 |    0 |      9 |      0 |      2 |    0 |          0 |
+|   mshrs                     |              BoomMSHRFile |      79264 |      77676 |    1588 |    0 |  20986 |      0 |      0 |    0 |          0 |
+|     (mshrs)                 |              BoomMSHRFile |        138 |         22 |     116 |    0 |   3156 |      0 |      0 |    0 |          0 |
+|     mmios_0                 |                BoomIOMSHR |       2245 |       2245 |       0 |    0 |    584 |      0 |      0 |    0 |          0 |
+|     mshrs_0                 |                  BoomMSHR |      43194 |      42962 |     232 |    0 |   2846 |      0 |      0 |    0 |          0 |
+|       (mshrs_0)             |                  BoomMSHR |      39771 |      39771 |       0 |    0 |    820 |      0 |      0 |    0 |          0 |
+|       rpq                   |    BranchKillableQueue_11 |       3423 |       3191 |     232 |    0 |   2026 |      0 |      0 |    0 |          0 |
+|     mshrs_1                 |                BoomMSHR_1 |       4411 |       4179 |     232 |    0 |   2847 |      0 |      0 |    0 |          0 |
+|       (mshrs_1)             |                BoomMSHR_1 |        465 |        465 |       0 |    0 |    821 |      0 |      0 |    0 |          0 |
+|       rpq                   |    BranchKillableQueue_10 |       3946 |       3714 |     232 |    0 |   2026 |      0 |      0 |    0 |          0 |
+|     mshrs_2                 |                BoomMSHR_2 |       4432 |       4200 |     232 |    0 |   2845 |      0 |      0 |    0 |          0 |
+|       (mshrs_2)             |                BoomMSHR_2 |       1063 |       1063 |       0 |    0 |    821 |      0 |      0 |    0 |          0 |
+|       rpq                   |     BranchKillableQueue_9 |       3369 |       3137 |     232 |    0 |   2024 |      0 |      0 |    0 |          0 |
+|     mshrs_3                 |                BoomMSHR_3 |       3832 |       3600 |     232 |    0 |   2845 |      0 |      0 |    0 |          0 |
+|       (mshrs_3)             |                BoomMSHR_3 |        455 |        455 |       0 |    0 |    821 |      0 |      0 |    0 |          0 |
+|       rpq                   |     BranchKillableQueue_8 |       3377 |       3145 |     232 |    0 |   2024 |      0 |      0 |    0 |          0 |
+|     mshrs_4                 |                BoomMSHR_4 |       4377 |       4145 |     232 |    0 |   2847 |      0 |      0 |    0 |          0 |
+|       (mshrs_4)             |                BoomMSHR_4 |       1164 |       1164 |       0 |    0 |    821 |      0 |      0 |    0 |          0 |
+|       rpq                   |     BranchKillableQueue_7 |       3213 |       2981 |     232 |    0 |   2026 |      0 |      0 |    0 |          0 |
+|     mshrs_5                 |                BoomMSHR_5 |      16346 |      16114 |     232 |    0 |   2855 |      0 |      0 |    0 |          0 |
+|       (mshrs_5)             |                BoomMSHR_5 |        552 |        552 |       0 |    0 |    829 |      0 |      0 |    0 |          0 |
+|       rpq                   |       BranchKillableQueue |      15794 |      15562 |     232 |    0 |   2026 |      0 |      0 |    0 |          0 |
+|     respq                   |     BranchKillableQueue_6 |        289 |        209 |      80 |    0 |    161 |      0 |      0 |    0 |          0 |
+|   prober                    |             BoomProbeUnit |      55283 |      55283 |       0 |    0 |     77 |      0 |      0 |    0 |          0 |
+|   replayResultQ_0           |                  Queue_45 |        255 |         95 |     160 |    0 |      3 |      0 |      0 |    0 |          0 |
+|   replayResultQ_1           |                Queue_45_1 |        259 |         99 |     160 |    0 |      3 |      0 |      0 |    0 |          0 |
+|   replayResultQ_2           |                Queue_45_2 |        242 |         82 |     160 |    0 |      3 |      0 |      0 |    0 |          0 |
+|   replayResultQ_3           |                Queue_45_3 |        250 |         90 |     160 |    0 |      3 |      0 |      0 |    0 |          0 |
+|   replayResultQ_4           |                Queue_45_4 |        247 |         87 |     160 |    0 |      3 |      0 |      0 |    0 |          0 |
+|   replayResultQ_5           |                Queue_45_5 |        266 |        106 |     160 |    0 |      3 |      0 |      0 |    0 |          0 |
+|   svb                       |  SpeculativeVersionBuffer |      81845 |      81845 |       0 |    0 |  20711 |      0 |      0 |    0 |          0 |
+|   wb                        |         BoomWritebackUnit |      62511 |      62511 |       0 |    0 |    946 |      0 |      0 |    0 |          0 |
++-----------------------------+---------------------------+------------+------------+---------+------+--------+--------+--------+------+------------+
+
+

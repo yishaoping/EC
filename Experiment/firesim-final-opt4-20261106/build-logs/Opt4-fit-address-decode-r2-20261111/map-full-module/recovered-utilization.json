@@ -1,0 +1,53 @@
+{
+  "cad_rerun": false,
+  "dcp": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r2-20261111/map-full-module/module.dcp",
+    "sha256": "5a2b4cd36aed5e537a6ef37cee4da0808766721249c15fe4f4c9019287af4e6a"
+  },
+  "fpga_access": false,
+  "full_dut_formal": false,
+  "hardware_commit": "579904b258213630cf00c13e65fde5ea9512bb03",
+  "map_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r2-20261111/map-full-module/map-full-module-attempt-1.log",
+  "map_returncode": 0,
+  "parser_rows": {
+    "Block RAM Tile": {
+      "line": 77,
+      "raw": "| Block RAM Tile    |  216 |     0 |          0 |      2016 | 10.71 |"
+    },
+    "CARRY8": {
+      "line": 44,
+      "raw": "| CARRY8                  |   56070 |     0 |          0 |    162960 |  34.41 |"
+    },
+    "CLB LUTs": {
+      "line": 38,
+      "raw": "| CLB LUTs*               | 1326431 |     0 |          0 |   1303680 | 101.75 |"
+    },
+    "CLB Registers": {
+      "line": 41,
+      "raw": "| CLB Registers           |  390359 |     0 |          0 |   2607360 |  14.97 |"
+    },
+    "DSPs": {
+      "line": 93,
+      "raw": "| DSPs      |    0 |     0 |          0 |      9024 |  0.00 |"
+    }
+  },
+  "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-decode-r2-20261111/map-full-module/utilization.rpt",
+  "report_sha256": "9376d91c7ca4d310cd3cbc4f1745ba017179b48043a0f4dd053e154fd89fe190",
+  "resources": {
+    "Block RAM Tile": 216.0,
+    "CARRY8": 56070.0,
+    "CLB LUTs": 1326431.0,
+    "CLB Registers": 390359.0,
+    "DSPs": 0.0
+  },
+  "root_cause": "The parser scans the entire utilization report and overwrites first-section totals with later hierarchy rows of zero; CLB LUTs is also starred in the summary row. The recovered parser keeps the first design-total row per primitive.",
+  "rtl_sha256": "436fb8056edba112c589e9de0aaa1c7a76b3687243ae1c980c7817d933e87cbe",
+  "schema": "ec-opt4-recovered-module-map/1",
+  "scope": "Complete PackageAddressStats OOC synthesis only; not whole-DUT FIT",
+  "service_wrapper_error": "PermissionError appending CPU_JOB_EXITED to root-owned unattended-opt4/ledger.jsonl after job state COMPLETE and returncode 0",
+  "shared_parser": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r1-20261111/controller.py",
+  "source_id": "9bbb8feb5244affd7d7288a1a3024a6c53b9cf5248cf4077aad3959e00cf088c",
+  "source_parser": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-decode-r2-20261111/controller.py",
+  "status": "RECOVERED_COMPLETED_OOC_REPORT_PARSE",
+  "tcl_sha256": "5c9e55ba86187c461f1bc2988b42edcfa353a6df7df17e4e70cae1285241a1a0"
+}

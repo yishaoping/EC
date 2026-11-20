@@ -1,0 +1,53 @@
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/r/R_RSU.scala b/chipyard/generators/rocket-chip/src/main/scala/r/R_RSU.scala
+index d6eb3b4..5741492 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/r/R_RSU.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/r/R_RSU.scala
+@@ -204,7 +204,11 @@ class R_RSU(val params: R_RSUParams) extends Module with HasR_RSUIO {
+                                                               ((merging_priv === 1.U) && (merge_counter_priv =/= 32.U) && (csr_merge_counter === 0.U)) -> Cat(farfs_ss(merge_counter_priv), arfs_ss(merge_counter_priv)),
+                                                               ((merging_priv === 1.U) && (merge_counter_priv === 32.U) && (csr_merge_counter === 0.U)) -> Cat(zeros_56bits, fcsr_ss, zeros_24bits, pcarf_ss),
+                                                               ((merging_priv === 1.U) && (merge_counter_priv === 32.U) && (csr_merge_counter =/= 0.U) && (csr_merge_counter =/= 7.U)) -> Cat(csrshadow_ss(((csr_merge_counter - 1.U) << 1) + 1.U), csrshadow_ss(((csr_merge_counter - 1.U) << 1))),
+-                                                              ((merging_priv === 1.U) && (merge_counter_priv === 32.U) && (csr_merge_counter =/= 0.U) && (csr_merge_counter === 7.U)) -> Cat(0.U(32.W), csrshadow_ss(((csr_merge_counter - 1.U) << 1)))
++                                                              // CSRsize is odd: the last beat's upper word is
++                                                              // padding. Carry the captured *actual* privilege
++                                                              // here; the header's crt_mode is trap nesting, not
++                                                              // PRV. Width, beat count and backpressure stay fixed.
++                                                              ((merging_priv === 1.U) && (merge_counter_priv === 32.U) && (csr_merge_counter =/= 0.U) && (csr_merge_counter === 7.U)) -> Cat(0.U((params.xLen-PRV.SZ).W), crt_priv, csrshadow_ss(((csr_merge_counter - 1.U) << 1)))
+                                                             )
+                                                           )
+   
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/rocket/CSR.scala b/chipyard/generators/rocket-chip/src/main/scala/rocket/CSR.scala
+index a438a5d..bdece48 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/rocket/CSR.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/rocket/CSR.scala
+@@ -560,6 +560,13 @@ class CSRFile(
+   // are cleared independently of the CSR comparison.
+   val csr_cps_exception_mode = RegInit(false.B)
+   val csr_ecp_exception_mode = RegInit(false.B)
++  // The RSU header encodes exception_mode, not execution privilege. Preserve
++  // the actual privilege carried in the final CSR beat's unused upper word.
++  // In particular an S-mode Linux PC must not be fetched with M-mode VM bypass.
++  val csr_cps_priv = RegInit(PRV.U.U(PRV.SZ.W))
++  when (csr_cps_tail) {
++    csr_cps_priv := io.csr_shadows(xLen + PRV.SZ - 1, xLen)
++  }
+   when (io.clear_ic_status) {
+     csr_cps_exception_mode := false.B
+     csr_ecp_exception_mode := false.B
+@@ -1327,7 +1334,7 @@ class CSRFile(
+         }
+       }
+     }
+-  }.elsewhen(io.check_exception && io.check_priv === 1.U){ //只是为了verilator实验，实际boot linux，这里应该切到S-mode
++  }.elsewhen(io.check_exception && io.check_priv === 1.U){
+     reg_mstatus.v := false.B
+     reg_mstatus.mpv := reg_mstatus.v
+     reg_mstatus.gva := io.gva
+@@ -1338,7 +1345,7 @@ class CSRFile(
+     reg_mstatus.mpie := reg_mstatus.mie
+     reg_mstatus.mpp := trimPrivilege(reg_mstatus.prv)
+     reg_mstatus.mie := false.B
+-    new_prv := PRV.M.U
++    new_prv := csr_cps_priv
+   }
+ 
+   for (i <- 0 until supported_interrupts.getWidth) {

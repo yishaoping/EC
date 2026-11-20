@@ -1,0 +1,441 @@
+{
+  "CAD_started": false,
+  "FPGA_samples": 0,
+  "SVB_A_and_B": {
+    "B_failure": {
+      "error": "Option -force_replication_on_nets is specified but not supported yet for post-route physical synthesis.",
+      "next_verification": "Check supported pre-route physical mode from a separately sealed placed checkpoint or an explicitly unrouted copy; preserve active C/D and all clocks/gates. Do not retry this command on a fully routed design.",
+      "selected_exact_FD_Q_nets": 9,
+      "status": "TOOL_MODE_ERROR_NOT_MEASURED_REPLICATION_FAILURE"
+    },
+    "causality": {
+      "amplifier": "Multiple independent shell domains remain failing; host frequency change alone does not close them.",
+      "immediate_block": "Proven PCIe and DDR shell setup violations; final all-clock gate rejected bitgen.",
+      "symptom": "Proven setup failure, WNS -0.416ns.",
+      "upstream_trigger": "Sampled shell paths are route dominated; physical origin beyond these paths is unproven."
+    },
+    "clock_group_additivity": {
+      "design_TNS_ns": -386.608,
+      "design_unique_endpoints": 2687,
+      "excess_group_memberships": 16,
+      "excess_negative_group_TNS_ns": 0.933,
+      "explanation": "A destination endpoint can fail paths in more than one clock-pair group. These group counts/TNS do not form a nonoverlapping design partition; the design summary remains authoritative.",
+      "failing_group_memberships": 2703,
+      "sum_group_TNS_ns": -387.541
+    },
+    "failing_clock_groups_not_disjoint": [
+      {
+        "destination_clock": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+        "failing_endpoints": 175,
+        "kind": "intra",
+        "source_clock": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+        "tns_ns": -14.743,
+        "wns_ns": -0.213
+      },
+      {
+        "destination_clock": "xdma_0_axi_aclk",
+        "failing_endpoints": 696,
+        "kind": "intra",
+        "source_clock": "xdma_0_axi_aclk",
+        "tns_ns": -149.142,
+        "wns_ns": -0.416
+      },
+      {
+        "destination_clock": "mmcm_clkout0",
+        "failing_endpoints": 1762,
+        "kind": "intra",
+        "source_clock": "mmcm_clkout0",
+        "tns_ns": -217.203,
+        "wns_ns": -0.374
+      },
+      {
+        "destination_clock": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+        "failing_endpoints": 51,
+        "kind": "inter",
+        "source_clock": "xdma_0_axi_aclk",
+        "tns_ns": -3.69,
+        "wns_ns": -0.245
+      },
+      {
+        "destination_clock": "xdma_0_axi_aclk",
+        "failing_endpoints": 19,
+        "kind": "inter",
+        "source_clock": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+        "tns_ns": -2.763,
+        "wns_ns": -0.176
+      }
+    ],
+    "host_clock_group": {
+      "clock": "clk_out1_design_1_clk_wiz_0_0",
+      "failing_endpoints": 0,
+      "tns_ns": 0.0,
+      "whs_ns": 0.01,
+      "wns_ns": 2.987
+    },
+    "not_exhaustive_path_listing": true,
+    "reported_failing_paths": [
+      {
+        "Data Path Delay": "1.968ns  (logic 0.178ns (9.045%)  route 1.790ns (90.955%))",
+        "Destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_cc_output_mux_blk/m_axis_cc_tdata_second_reg_reg[87]/CE",
+        "Logic Levels": "1  (LUT3=1)",
+        "Path Group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+        "Path Type": "Setup (Max at Slow Process Corner)",
+        "Source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/fifo_empty_reg/C",
+        "report_line": 3753,
+        "slack_ns": -0.213
+      },
+      {
+        "Data Path Delay": "4.132ns  (logic 0.080ns (1.936%)  route 4.052ns (98.064%))",
+        "Destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cq_intfc_mod/pcie_4_0_512b_cq_output_mux_blk/m_axis_cq_tdata_second_reg_reg[349]/R",
+        "Logic Levels": "0",
+        "Path Group": "xdma_0_axi_aclk",
+        "Path Type": "Setup (Max at Slow Process Corner)",
+        "Source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_0_init_ctrl_inst/reset_n_o_reg_rep__6/C",
+        "report_line": 4069,
+        "slack_ns": -0.416
+      },
+      {
+        "Data Path Delay": "3.624ns  (logic 0.734ns (20.254%)  route 2.890ns (79.746%))",
+        "Destination": "design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_mc/bgr[2].u_ddr_mc_group/txn_fifo_output_reg[13]/D",
+        "Logic Levels": "6  (LUT2=1 LUT3=1 LUT4=1 LUT5=1 LUT6=2)",
+        "Path Group": "mmcm_clkout0",
+        "Path Type": "Setup (Max at Slow Process Corner)",
+        "Source": "design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_ui/u_ddr_ui_cmd/app_en_r2_reg/C",
+        "report_line": 4387,
+        "slack_ns": -0.374
+      },
+      {
+        "Data Path Delay": "1.958ns  (logic 0.130ns (6.639%)  route 1.828ns (93.361%))",
+        "Destination": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/pcie_4_0_512b_async_fifo_blk/write_data_reg_reg[180]/D",
+        "Logic Levels": "1  (LUT4=1)",
+        "Path Group": "GTYE4_CHANNEL_TXOUTCLK[3]_3",
+        "Path Type": "Setup (Max at Slow Process Corner)",
+        "Source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie4_0_512b_intfc_mod/pcie_4_0_512b_intfc_int_mod/pcie_4_0_512b_cc_intfc_mod/s_axis_cc_tvalid_reg_lower_reg/C",
+        "report_line": 5380,
+        "slack_ns": -0.245
+      },
+      {
+        "Data Path Delay": "4.087ns  (logic 0.965ns (23.611%)  route 3.122ns (76.389%))",
+        "Destination": "design_1_i/xdma_0/inst/udma_wrapper/dma_top/dma_pcie_req/dma_pcie_rq/RQ_FIFO/Head_reg[176]/R",
+        "Logic Levels": "1  (LUT2=1)",
+        "Path Group": "xdma_0_axi_aclk",
+        "Path Type": "Setup (Max at Slow Process Corner)",
+        "Source": "design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_c_e4_inst/CORECLK",
+        "report_line": 5816,
+        "slack_ns": -0.176
+      }
+    ],
+    "summary": {
+      "hold_violators": 0,
+      "pulse_violators": 0,
+      "setup_violators": 2687,
+      "tns_ns": -386.608,
+      "whs_ns": 0.001,
+      "wns_ns": -0.416
+    }
+  },
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "hardware_inputs_modified": false,
+  "inputs": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fpga-critical-diagnosis-round119-v1-20261112/failed-attempt.json": "6448cf2ce90aca52ff331bed607303077199d26eb84b662a0f589944e89f3de6",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-area-r2-20261112/MemMC/hierarchical.rpt": "779cbcd651660d2300567f643b53e93409eda2f8b1fd7a550dbb6525316fc2e8",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-area-r2-20261112/MemMC/utilization.rpt": "ebc721820c7b8bec787d6eaf8327519d560dec3d11ce3c79c51519dc8d9c5d0a",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-area-r2-20261112/Reg/hierarchical.rpt": "3a9c56fe1c7a37046f5cd0ef10ea95b3aa279da7827bc88cd34db8c46ff93cb0",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-area-r2-20261112/Reg/utilization.rpt": "0ff795b0048c5c527915e1a4256f9a31a4a60378c6bb3e6847666c3af944b89c",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-area-r2-20261112/area-decision.json": "4a2948f11ea3ed681f5170458b5538938ed7469d99b5e7d3b46d814befbdcf53",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-area-r2-20261112/result.json": "8b210902fff2ed28e2da5d58ba355a081b9c536fda178ac52f1e46627221dabc",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r2-20261112/A-shell-routing-placement/final-timing.rpt": "02a4ba9093f6950164db150297fdcbcffd50c817c415d3aaa303ac639a6afbd3",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r2-20261112/A-shell-routing-placement/result.json": "1786242ac67e2819b0c4525cd0ca108216623588c94e324e4823e60fe06091b3",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/B-shell-FD-replicate/recovery.log": "256980d4d3a5a87caed1c9cbebfa324339d67fcc936406522fdb59a8823347f6",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/B-shell-FD-replicate/result.json": "dad45676d3d80cc2d1eb43a89d541bb208758da4a138d827e3b92116d575b052",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/src/main/scala/midas/core/Channel.scala": "42442d0deb25e0bbe888c14fa503c940341c8367c1bccda32f207febdd878412",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/src/main/scala/midas/models/sram/AsyncMemModel.scala": "8a871ed96b5433ffc07de7bae0195cd1026f7a145a61391a93ec79616fd9713b",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/fpga-critical-diagnosis-round119-v1-20261112/analyze.py": "ca122cee0a8ceba46bcd1efdbfc7dd251cc4a0fa8baf6dfb89135f61823c2c91",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/fpga-critical-diagnosis-round119-v2-20261112/analyze.py": "b81273a06478b563b3ef9e2e02b10843cb32af076b17de525d28da23263106f6",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mcrams-address-bucket-r5-20261112/Bucket.scala": "3d5b1469401df3e293fb649cd656cb61ca73778c9fbbfbc47be414a391655482"
+  },
+  "paired_area": {
+    "FF_regression": 39227,
+    "LUT_regression": 60726,
+    "MemMC_LUT": 117874,
+    "Reg_LUT": 57148,
+    "generated_model": {
+      "counts": {
+        "read_ports": 258,
+        "read_states_2bit": 258,
+        "response_snapshots_64bit": 258,
+        "write_complete_bits": 256,
+        "write_ports": 256
+      },
+      "inspected_module": "RamModel",
+      "inspected_module_sha256": "1e58e2d749f01b07942d714f71204986080937ce5a44e58179d237ad882169b3",
+      "module_start_line": 321949,
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-mcrams-address-bucket-r5-20261112/MemMC/FireSim-generated.sv",
+      "producer_host_sha256": "719c2fd0a27edc5c66a036ec30f606208e2816ceb01ad3027c572e8e3c70c2b0",
+      "source_declared_response_payload_bits": 16512,
+      "warning": "Source register declarations are not a bit-for-bit mapped cell attribution."
+    },
+    "interpretation": "Serialized RAM with per-reader snapshots and per-port token transport costs more than this register bank. Wide observation and parallel updates remain mandatory.",
+    "memory_transport": {
+      "read_addr": {
+        "FF": 512,
+        "LUT": 242,
+        "count": 256
+      },
+      "read_en": {
+        "FF": 516,
+        "LUT": 6,
+        "count": 258
+      },
+      "response_data": {
+        "FF": 516,
+        "LUT": 0,
+        "count": 258
+      },
+      "write_addr": {
+        "FF": 512,
+        "LUT": 8,
+        "count": 256
+      },
+      "write_data": {
+        "FF": 33280,
+        "LUT": 15487,
+        "count": 256
+      },
+      "write_en": {
+        "FF": 1024,
+        "LUT": 896,
+        "count": 256
+      },
+      "write_mask": {
+        "FF": 512,
+        "LUT": 3,
+        "count": 256
+      }
+    },
+    "next": "Keep this layout rejected. Use actual complete owner-host hierarchy when its existing synthesis completes; do not repeat this losing full-address synthesis.",
+    "nonoverlapping_partition": [
+      {
+        "MemMC": {
+          "DSP": 0,
+          "FF": 36118,
+          "LUT": 23169,
+          "LUTRAM": 20,
+          "RAMB18": 0,
+          "RAMB36": 0,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": 23149
+        },
+        "Reg": {
+          "DSP": 0,
+          "FF": 36121,
+          "LUT": 23177,
+          "LUTRAM": 20,
+          "RAMB18": 0,
+          "RAMB36": 0,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": 23157
+        },
+        "category": "PeekPoke bridge",
+        "delta": {
+          "DSP": 0,
+          "FF": -3,
+          "LUT": -8,
+          "LUTRAM": 0,
+          "RAMB18": 0,
+          "RAMB36": 0,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": -8
+        }
+      },
+      {
+        "MemMC": {
+          "DSP": 0,
+          "FF": 68003,
+          "LUT": 14989,
+          "LUTRAM": 0,
+          "RAMB18": 0,
+          "RAMB36": 0,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": 14989
+        },
+        "Reg": {
+          "DSP": 0,
+          "FF": 68094,
+          "LUT": 22956,
+          "LUTRAM": 0,
+          "RAMB18": 0,
+          "RAMB36": 0,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": 22956
+        },
+        "category": "PeekPoke transport channels",
+        "delta": {
+          "DSP": 0,
+          "FF": -91,
+          "LUT": -7967,
+          "LUTRAM": 0,
+          "RAMB18": 0,
+          "RAMB36": 0,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": -7967
+        }
+      },
+      {
+        "MemMC": {
+          "DSP": 0,
+          "FF": 17284,
+          "LUT": 46784,
+          "LUTRAM": 0,
+          "RAMB18": 0,
+          "RAMB36": 1,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": 46784
+        },
+        "Reg": {
+          "DSP": 0,
+          "FF": 0,
+          "LUT": 0,
+          "LUTRAM": 0,
+          "RAMB18": 0,
+          "RAMB36": 0,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": 0
+        },
+        "category": "RAM model and wrapper",
+        "delta": {
+          "DSP": 0,
+          "FF": 17284,
+          "LUT": 46784,
+          "LUTRAM": 0,
+          "RAMB18": 0,
+          "RAMB36": 1,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": 46784
+        }
+      },
+      {
+        "MemMC": {
+          "DSP": 0,
+          "FF": 36872,
+          "LUT": 16642,
+          "LUTRAM": 0,
+          "RAMB18": 0,
+          "RAMB36": 0,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": 16642
+        },
+        "Reg": {
+          "DSP": 0,
+          "FF": 0,
+          "LUT": 0,
+          "LUTRAM": 0,
+          "RAMB18": 0,
+          "RAMB36": 0,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": 0
+        },
+        "category": "memory transport channels",
+        "delta": {
+          "DSP": 0,
+          "FF": 36872,
+          "LUT": 16642,
+          "LUTRAM": 0,
+          "RAMB18": 0,
+          "RAMB36": 0,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": 16642
+        }
+      },
+      {
+        "MemMC": {
+          "DSP": 0,
+          "FF": 672,
+          "LUT": 1009,
+          "LUTRAM": 4,
+          "RAMB18": 0,
+          "RAMB36": 0,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": 1005
+        },
+        "Reg": {
+          "DSP": 0,
+          "FF": 672,
+          "LUT": 1009,
+          "LUTRAM": 4,
+          "RAMB18": 0,
+          "RAMB36": 0,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": 1005
+        },
+        "category": "other host logic",
+        "delta": {
+          "DSP": 0,
+          "FF": 0,
+          "LUT": 0,
+          "LUTRAM": 0,
+          "RAMB18": 0,
+          "RAMB36": 0,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": 0
+        }
+      },
+      {
+        "MemMC": {
+          "DSP": 0,
+          "FF": 2328,
+          "LUT": 15281,
+          "LUTRAM": 0,
+          "RAMB18": 0,
+          "RAMB36": 0,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": 15281
+        },
+        "Reg": {
+          "DSP": 0,
+          "FF": 17163,
+          "LUT": 10006,
+          "LUTRAM": 0,
+          "RAMB18": 0,
+          "RAMB36": 0,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": 10006
+        },
+        "category": "target adapter or register bank",
+        "delta": {
+          "DSP": 0,
+          "FF": -14835,
+          "LUT": 5275,
+          "LUTRAM": 0,
+          "RAMB18": 0,
+          "RAMB36": 0,
+          "SRL": 0,
+          "URAM": 0,
+          "logic_LUT": 5275
+        }
+      }
+    ]
+  },
+  "schema": "ec-fpga-critical-path-diagnosis/1",
+  "simulator_started": false,
+  "status": "PASS_RECONCILED_SAVED_HIERARCHY_AND_PHYSICAL_FAILURE_DIAGNOSIS",
+  "whole_FIT": false
+}

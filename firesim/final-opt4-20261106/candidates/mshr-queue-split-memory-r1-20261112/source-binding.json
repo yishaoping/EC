@@ -1,0 +1,53 @@
+{
+  "all_payload_fields_retained": true,
+  "area_saving_unknown": true,
+  "entries": 16,
+  "files": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mshr-queue-split-memory-r1-20261112/BoomMSHRBranchKillableQueue.scala": "7de8408afeb8c282e6839a334efff1c160b68ecb486573cc94a460e6fe6e45b6",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mshr-queue-split-memory-r1-20261112/Candidate.scala": "9fb70094de3c5d36b68c7478f5544497d2be091745a9b35c58fd64077b0f1011",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mshr-queue-split-memory-r1-20261112/Emit.scala": "1a599586831577ac3522119ef112ba71fc9bdadf385020eed6000990bac47e3b",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mshr-queue-split-memory-r1-20261112/Reference.scala": "53667ef125d2df410c9de4fc228fd68680c607effbed783e929fd47696b1cf5f",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mshr-queue-split-memory-r1-20261112/controller.py": "07fdc2bdd0745a4f18fd8a0532de08114fb0c416a8d6635fa5fba5b5b5c700f2",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/mshr-queue-split-memory-r1-20261112/mshrs.scala": "23a01b643a8527275aba1da0917af276fc01d3af3242258ca7ac04e2161da63f"
+  },
+  "flow": false,
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "hardware_parent": "fd5de2bafb8f5d236dfe240fbecf3436f8c3468a",
+  "holdable": true,
+  "mshr_callsite_inverse_byte_equal": true,
+  "mutable_branch_masks_retained": true,
+  "parent_mshrs_sha256": "041d108608a7c580c3347515a690fea31dc0c5d6054924186cb05cfbc974bf57",
+  "parent_util_sha256": "eb3a43b8d317d50c19fd20f17b23fe7be8a682c7b151aebdabfca9e16603257c",
+  "production_admission": false,
+  "queue_edits": [
+    [
+      "  val uops    = Reg(Vec(entries, new MicroOp))",
+      "  val uops    = Mem(entries, new MicroOp)\n  val brMasks = Reg(Vec(entries, UInt(maxBrCount.W)))"
+    ],
+    [
+      "    val mask = uops(i).br_mask",
+      "    val mask = brMasks(i)"
+    ],
+    [
+      "    val uop  = uops(i)",
+      "    val uop  = WireInit(uops(i))\n    uop.br_mask := brMasks(i)"
+    ],
+    [
+      "      uops(i).br_mask := GetNewBrMask(io.brupdate, mask)",
+      "      brMasks(i) := GetNewBrMask(io.brupdate, mask)"
+    ],
+    [
+      "    uops(enq_ptr.value).br_mask := GetNewBrMask(io.brupdate, io.enq.bits.uop)",
+      "    brMasks(enq_ptr.value) := GetNewBrMask(io.brupdate, io.enq.bits.uop)"
+    ],
+    [
+      "  out.uop         := uops(deq_ptr.value)",
+      "  out.uop         := uops(deq_ptr.value)\n  out.uop.br_mask := brMasks(deq_ptr.value)"
+    ]
+  ],
+  "queue_projection_inverse_byte_equal": true,
+  "schema": "ec-mshr-split-queue-source/1",
+  "shared_inputs_modified": false,
+  "target_cycle_changes": 0
+}

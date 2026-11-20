@@ -1,0 +1,72 @@
+{
+  "build_script_sha256": "c2f14fd7f7c26cf16c158651efe2859e798c380e3a56cedd9f3377ec0cd7e150",
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/tmp/guozh-firesim-final-opt4-20261106/system-builds/C4-firmware-20261106T124814.577331Z",
+        "PLATFORM=generic",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "FW_PAYLOAD_PATH=/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/builds/C4-earlyconsole-20261106T122508Z/arch/riscv/boot/Image",
+        "FW_PAYLOAD_FDT_PATH=/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/opensbi"
+    }
+  ],
+  "configuration": "C4",
+  "content_checks": {
+    "fdt": {
+      "bytes": 10360,
+      "exact_bytes_present": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb",
+      "payload_offset": 1712,
+      "sha256": "c712fed367c0b57d9a1ed9f6e53688861a646f3732654b253131ff6e8953dda6"
+    },
+    "kernel": {
+      "bytes": 23913472,
+      "exact_bytes_present": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/builds/C4-earlyconsole-20261106T122508Z/arch/riscv/boot/Image",
+      "payload_offset": 2097152,
+      "sha256": "2485b6ad7c107bf378ebbe9ead3013ace4e9d1cc1d462ba4ee83218989d2d186"
+    }
+  },
+  "error": null,
+  "fpga_execution": "NOT_RUN",
+  "input_files": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/system-builds/C4-firmware-20261106T124814.577331Z/bound-fdt-receipt.json": "d07259f391067b08714ba1bed213017e7b4fa25e83f3e4fdc5b6c9e7ae6b49d7",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/system-builds/C4-firmware-20261106T124814.577331Z/bound-kernel-receipt.json": "b8de9c7bbe8d2f6e61171a80c665c4646a4c90591151f3a92afce66431a8b9a8",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/builds/C4-earlyconsole-20261106T122508Z/arch/riscv/boot/Image": "2485b6ad7c107bf378ebbe9ead3013ace4e9d1cc1d462ba4ee83218989d2d186",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb": "c712fed367c0b57d9a1ed9f6e53688861a646f3732654b253131ff6e8953dda6",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/linux-profile.json": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1"
+  },
+  "output_dir": "/tmp/guozh-firesim-final-opt4-20261106/system-builds/C4-firmware-20261106T124814.577331Z",
+  "outputs": {
+    "/tmp/guozh-firesim-final-opt4-20261106/system-builds/C4-firmware-20261106T124814.577331Z/platform/generic/firmware/fw_payload.bin": "cd1419bd3d385aa33ad88f94383c3f0f16ae46436cffcf5e90c81b556195aeaa",
+    "/tmp/guozh-firesim-final-opt4-20261106/system-builds/C4-firmware-20261106T124814.577331Z/platform/generic/firmware/fw_payload.elf": "080af794ce59ab1b5bbda495297dbe40b08e3b99d2ba59dd7d9c0bc840403ff6"
+  },
+  "phase": "firmware",
+  "resources": {
+    "actual_build_root": "/tmp/guozh-firesim-final-opt4-20261106/system-builds",
+    "available_memory_gib": 266.3919143676758,
+    "free_disk_gib": 229.37746047973633,
+    "host_cpus": 256,
+    "jobs": 2,
+    "load_1min": 27.052734375,
+    "log_free_disk_gib": 37.03260040283203
+  },
+  "returncode": 0,
+  "runtime_validation": "NOT_RUN",
+  "schema": "ec-firesim-system-build/1",
+  "source_id": "1b402684b0360b0230f1105bacac6daa78830e35a1969fbe893d11aef90d0527",
+  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/opensbi",
+  "tool_hashes": {
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ld": "10424f5eeafd5806fbca7b88bdae336c202be5a9fa332c1a662a8d0a7ae62fba",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objcopy": "2a38397dae082b022b6370eb9fbfac9c337b95433fc89cb35d384516a0997f1e"
+  },
+  "wall_seconds": 5.113771870732307
+}

@@ -1,0 +1,64 @@
+{
+  "authorized_pruning": [
+    "EC fault rollback/replay/restore/injection only",
+    "Diagnostic-only AddressStats/bucketSequenceMemory/Barrier logic"
+  ],
+  "deterministic_owner_adopted": false,
+  "full_PALIMPSEST": false,
+  "functional_baseline_preserved": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "handoff": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-20261113/HANDOFF.json",
+  "handoff_exists": false,
+  "new_image_gates": [
+    "New hardware identity",
+    "Actual complete-shell post-opt receipt",
+    "Physical timing/DRC/bitstream",
+    "Exact ABI/software certification",
+    "Existing card21 locks and serial binding"
+  ],
+  "no_FPGA_IO": true,
+  "no_new_service": true,
+  "no_new_supervisor_or_subagents": true,
+  "policy_priority": {
+    "allowed_pruning": [
+      "EC fault recovery only",
+      "diagnostic-only statistics"
+    ],
+    "authorized": true,
+    "board_allowlist": [
+      "0000:21:00.0"
+    ],
+    "foreground_preparation_owner": true,
+    "handoff": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-20261113/HANDOFF.json",
+    "must_preserve": [
+      "LSL/SVB actual storage",
+      "Cache Versioning",
+      "isolation",
+      "normal safe commit and release",
+      "real checker",
+      "actual backpressure"
+    ],
+    "not_full_PALIMPSEST": true,
+    "preserve_live_full_cad": true,
+    "profile": "EC Performance-Only: data preservation + cache isolation",
+    "source_branch": "ec-performance-only-fpga-r1-20261113"
+  },
+  "policy_snapshot": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round189/campaign-policy.snapshot.json",
+    "sha256": "2ab9ac819e09704f19f675b45a468d0f96e7139a12870608ec9cccdeb76d97d4"
+  },
+  "preparation_owner": "Existing foreground; do not duplicate branch/controller preparation",
+  "profile": "EC Performance-Only: data preservation + cache isolation",
+  "required": [
+    "Real LSL and SVB storage",
+    "Cache Versioning and isolation",
+    "Genuine checker completion",
+    "Safe normal commit and release",
+    "All functional stalls and backpressure",
+    "Ordinary cache miss replay and CPU recovery",
+    "Full cache geometry",
+    "Omitted diagnostic metrics explicitly unsupported/invalid"
+  ],
+  "schema": "ec-performance-only-priority-adoption/1",
+  "source_branch": "ec-performance-only-fpga-r1-20261113",
+  "utc": "2026-11-13T02:55:20.543025+00:00"
+}

@@ -1,0 +1,262 @@
+{
+  "binaries": {
+    "netdedup": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-runtime-candidates-20261109T044453Z/netdedup/server/netdedup",
+      "sha256": "b65cad95447a164c03c0736c56b2088ad0d7656502beb74d340900e2bb1614c1"
+    },
+    "netdedupclient": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-linger-20261107T105517Z/netdedup_client",
+      "sha256": "8e3ca2b226616fb8f74a069d99d9bcb0615c4655a4108ddffe3be46f95c5aaa8"
+    },
+    "netdedupdecoder": {
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-framed-20261107T111246Z/netdedup/server/netdedup",
+      "sha256": "b6a40cb5bf266d993af0c0442faa9b2f8bbaa0c56f239550d0df0fdfc7920989"
+    }
+  },
+  "c4_incompatible_reason": "Full original network ROI requires syscall, thread scheduling and context support absent from the frozen C4 monitor/firmware protocol. No checker/fault masking or ROI subdivision is permitted.",
+  "cases": [
+    {
+      "algorithm_unchanged": true,
+      "argv": [
+        "-c",
+        "-v",
+        "-t",
+        "1",
+        "-o",
+        "out.ddp"
+      ],
+      "client_argv": [
+        "-i",
+        "test.dat"
+      ],
+      "fpga_validation": "NOT_RUN",
+      "input": "test",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/inputs/input_test.tar": "ada9fb08b78e630669e433d975d3fcd9ef88f6e9b31f8969c3a6566e94f72f0a"
+      },
+      "input_files": {
+        "test.dat": "dc122cd797e76d1e0b07efe6262829098581816f1727d9a883bd4052a4e659ef"
+      },
+      "input_mapping": "simmedium invokes original simlarge for netstreamcluster; netdedup candidate separates server/client flags and uses unchanged formal archive",
+      "offline_evidence": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netdedup-framed-linux-20261107T111554Z/netdedup-test/result.json",
+      "program": "netdedup",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netdedup-test-riscv64/work/out.ddp": "0bac53914c63ca3939aa2977b312b35ee2a440aab8b60ffbbce3ca82b5e1316b"
+      },
+      "roi": "Full original server __parsec_roi_begin/end sites; includes original network/compute/thread/syscall work and elapsed target cycles",
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netdedup/parsec/test.runconf",
+      "runconf_sha256": "8f279c1b9d1bb5ade8f4179c048b043baecce01b4b79af3eda192ac695c129e6",
+      "software_repair": "Existing RISC-V user-TCP/framing integration, original application computation",
+      "thread_definition": "One application worker; original user-TCP/pthread service threads remain enabled",
+      "threads": 1,
+      "validation": {
+        "files": {
+          "decoded.dat": "dc122cd797e76d1e0b07efe6262829098581816f1727d9a883bd4052a4e659ef",
+          "out.ddp": "0bac53914c63ca3939aa2977b312b35ee2a440aab8b60ffbbce3ca82b5e1316b"
+        },
+        "kind": "files_sha256"
+      },
+      "warmups": 0
+    },
+    {
+      "algorithm_unchanged": true,
+      "argv": [
+        "-c",
+        "-v",
+        "-t",
+        "1",
+        "-o",
+        "out.ddp"
+      ],
+      "client_argv": [
+        "-i",
+        "media.dat"
+      ],
+      "fpga_validation": "NOT_RUN",
+      "input": "simsmall",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/inputs/input_simsmall.tar": "195d27a51206430f771d4c2e76e8824797fea76b64a92b9d8a34d96108b48fcd"
+      },
+      "input_files": {
+        "media.dat": "a8959fe42ec93b687bfdd1a8f92624c1d78c7df7e3353587ac5523f51f35dc7a"
+      },
+      "input_mapping": "simmedium invokes original simlarge for netstreamcluster; netdedup candidate separates server/client flags and uses unchanged formal archive",
+      "offline_evidence": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netdedup-framed-linux-20261107T111554Z/netdedup-simsmall/result.json",
+      "program": "netdedup",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netdedup-simsmall-riscv64/work/out.ddp": "a3154e672cd05086a1adbec6226440bd67837c219678d1eb810c77a2ed7fb71b"
+      },
+      "roi": "Full original server __parsec_roi_begin/end sites; includes original network/compute/thread/syscall work and elapsed target cycles",
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netdedup/parsec/simsmall.runconf",
+      "runconf_sha256": "e6b25d3405a43fc5bee7f2925655ef3a6edf7f98ce232d5c1f52cde9f51fbe05",
+      "software_repair": "Existing RISC-V user-TCP/framing integration, original application computation",
+      "thread_definition": "One application worker; original user-TCP/pthread service threads remain enabled",
+      "threads": 1,
+      "validation": {
+        "files": {
+          "decoded.dat": "a8959fe42ec93b687bfdd1a8f92624c1d78c7df7e3353587ac5523f51f35dc7a",
+          "out.ddp": "a3154e672cd05086a1adbec6226440bd67837c219678d1eb810c77a2ed7fb71b"
+        },
+        "kind": "files_sha256"
+      },
+      "warmups": 0
+    },
+    {
+      "algorithm_unchanged": true,
+      "argv": [
+        "-c",
+        "-v",
+        "-t",
+        "1",
+        "-o",
+        "out.ddp"
+      ],
+      "client_argv": [
+        "-i",
+        "media.dat"
+      ],
+      "fpga_validation": "NOT_RUN",
+      "input": "simmedium",
+      "input_archives": {
+        "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/inputs/input_simmedium.tar": "9daba6f32da1082a4e29a49c4f95dbc819ef999e715bacdcc7ca8a40bf046d1a"
+      },
+      "input_files": {
+        "media.dat": "3af825d1a6a6b7308b9c265e807ace1f13489f3758d35ed9cb3e79d93e876d5b"
+      },
+      "input_mapping": "simmedium invokes original simlarge for netstreamcluster; netdedup candidate separates server/client flags and uses unchanged formal archive",
+      "offline_evidence": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/netdedup-framed-linux-20261107T111554Z/netdedup-simmedium/result.json",
+      "program": "netdedup",
+      "reference_outputs": {
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-qemu-20261107T102859Z/netdedup-simmedium-riscv64/work/out.ddp": "6e24ba26d52c6732eccaff5aa665b6acb40621c4e7fc89f84ea55fcc70ef7fd7"
+      },
+      "roi": "Full original server __parsec_roi_begin/end sites; includes original network/compute/thread/syscall work and elapsed target cycles",
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netdedup/parsec/simmedium.runconf",
+      "runconf_sha256": "4418bbe5bbcee48690b2ad99245965e6f20b71e10b18f97c29e11b1f9858a6ce",
+      "software_repair": "Existing RISC-V user-TCP/framing integration, original application computation",
+      "thread_definition": "One application worker; original user-TCP/pthread service threads remain enabled",
+      "threads": 1,
+      "validation": {
+        "files": {
+          "decoded.dat": "3af825d1a6a6b7308b9c265e807ace1f13489f3758d35ed9cb3e79d93e876d5b",
+          "out.ddp": "6e24ba26d52c6732eccaff5aa665b6acb40621c4e7fc89f84ea55fcc70ef7fd7"
+        },
+        "kind": "files_sha256"
+      },
+      "warmups": 0
+    }
+  ],
+  "configurations_allowed": [
+    "Native"
+  ],
+  "diagnostic_capture_files": [
+    "output.txt",
+    "network-server.log",
+    "network-client.log"
+  ],
+  "formal_eligible": true,
+  "fpga_validation": "NOT_RUN",
+  "native_protocol_sources": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Native/chipyard/generators/rocket-chip/src/main/scala/util/DacRoi.scala": "e68e4a4c6dc4e35ae736c63880f4f2ec30cc59be5de4180a72630a316f992ff9",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/linux/drivers/misc/ec_dac_roi.c": "994d92fb832d210fe2920efb92ef3a545c229c7af236c66c458d71c6d91578ea"
+  },
+  "output_dir": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-native-20261109T153251Z",
+  "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-native-20261109T151913Z/apps-build.json",
+  "parent_receipt_sha256": "df61da839c6fb0d8eb39b33a3a039b9b922a80876689a482055b4fb360286037",
+  "schema": "ec-fpga-apps/1",
+  "smoke": {
+    "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-formal-20261106T123109Z/roi-smoke",
+    "sha256": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8"
+  },
+  "software_profile": "netdedup-original-network-full-roi-native/2",
+  "source_receipts": {
+    "netdedup": {
+      "actual_process_threads": "Includes user-TCP internal threads; argument 1 does not imply single-thread process",
+      "admission": "Do not enroll as formal; need supported complete original ROI, zero faults, real checker comparison/drain and exact output",
+      "application_thread_argument": 1,
+      "binaries": {
+        "client/netdedup_client": {
+          "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-linger-20261107T105517Z/netdedup_client",
+          "sha256": "8e3ca2b226616fb8f74a069d99d9bcb0615c4655a4108ddffe3be46f95c5aaa8"
+        },
+        "server/netdedup": {
+          "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-runtime-candidates-20261109T044453Z/netdedup/server/netdedup",
+          "sha256": "b65cad95447a164c03c0736c56b2088ad0d7656502beb74d340900e2bb1614c1"
+        }
+      },
+      "checker_compatibility": "BLOCKED_ORIGINAL_ROI_CONTEXT_AND_SYSCALLS",
+      "formal_runconf": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netdedup/parsec/simmedium.runconf",
+        "sha256": "4418bbe5bbcee48690b2ad99245965e6f20b71e10b18f97c29e11b1f9858a6ce"
+      },
+      "hooks": "Original application ROI sites linked to real ec_dac_roi begin/end objects",
+      "input_mapping": "Repair CLI wiring: server -c -v -t 1 -o out.ddp; client -i test.dat for test, unchanged media.dat archives for small/formal. Original invalid -p/-i server args and wrapper test.dat mismatch retained as evidence.",
+      "original_roi_preserved": true,
+      "runtime_validation": "NOT_RUN",
+      "source_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-framed-candidate-build.json",
+      "source_receipt_sha256": "62abd6c22742b9533c8e7e5e7c84c2720b5bc51c890c369c6460b3fe5fc3c082"
+    },
+    "netferret": {
+      "algorithm_objects_unchanged": true,
+      "binaries": {
+        "client/client": {
+          "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/netferret/client/client",
+          "sha256": "0592caf89a940d3798a6c3b3ce45393e8b5b055225b146cee39aa0c875beb373"
+        },
+        "server/parsec/bin/ferret-pthreads": {
+          "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-complete-roi-20261109T124132Z/netferret-runtime/server/parsec/bin/ferret-pthreads",
+          "sha256": "149f41d3f340bdc2928e3289d79f42d9a96a265366a2f9a24136b38174a58fb7"
+        }
+      },
+      "formal_eligible": false,
+      "offline_reference": {
+        "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/network-recovery-20261109T043612Z/netferret-stable-joined-candidate-offline-review.json",
+        "sha256": "5c93783b4e36562ef9c3ad80a22b999b6fc2810ed6cb7379e826f2e31ac1552b"
+      },
+      "original_roi_preserved": true,
+      "profile": "netferret-stable-joined-real-hooks/1",
+      "real_checker_validated": false,
+      "roi_objects": {
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/dac_roi.o": "c48cad04fd5a065b3fabe177ef63ae30eed5393d8eb5facf2d1379f00c6d4661",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-20261106T095914Z/hooks.o": "7ddc0541c7c8c574eb59b060894d36f0a47817f5f44d67b0bdcbb7973d56d355"
+      },
+      "runtime_validation": "NOT_RUN",
+      "source_receipt": {
+        "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netferret-stable-joined-candidate-20261109T050006Z/receipt.json",
+        "sha256": "8c64571f74293c6437881d4f3f4b059c534524fb8dd23ae1d2c3fba9b9ec4c31"
+      }
+    },
+    "netstreamcluster": {
+      "actual_process_threads": "Includes user-TCP internal threads; argument 1 does not imply single-thread process",
+      "admission": "Do not enroll as formal; need supported complete original ROI, zero faults, real checker comparison/drain and exact output",
+      "application_thread_argument": 1,
+      "binaries": {
+        "client/client": {
+          "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-riscv-candidate-20261107T102546Z/netstreamcluster/client/client",
+          "sha256": "9420099dcafd7d2ca45d66c424ae97929c9bc78c8732d75f248c35321b442593"
+        },
+        "server/server": {
+          "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-runtime-candidates-20261109T044453Z/netstreamcluster/server/server",
+          "sha256": "cb985b8a39742665c15c0f1027cdde39e32c2afbdfb6302cf253bc289fa981ae"
+        }
+      },
+      "checker_compatibility": "BLOCKED_ORIGINAL_ROI_CONTEXT_AND_SYSCALLS",
+      "formal_runconf": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netstreamcluster/parsec/simmedium.runconf",
+        "sha256": "2cac0d5b10caaa9e2b4b9e344aa772706eee51810c6cc17ff28538cea80468e4"
+      },
+      "hooks": "Original application ROI sites linked to real ec_dac_roi begin/end objects",
+      "input_mapping": "Local simmedium.runconf actually invokes run.sh 1 simlarge; preserve server 10 20 128 16384 16384 1000 none output.txt 1 and client 128 16384 16384 1.",
+      "original_roi_preserved": true,
+      "runtime_validation": "NOT_RUN",
+      "source_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/network-candidate-build.json",
+      "source_receipt_sha256": "1771028d74765386127fbfae6d91fe1b07e51b63eaec22abcd55235e88ba461d"
+    }
+  },
+  "status": "PREPARED_FPGA_NOT_RUN",
+  "validation_decoder": {
+    "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/netdedup-framed-20261107T111246Z/netdedup/server/netdedup",
+    "scope": "Full compressed output decode after measured server exit and genuine ROI end; never a measured or checker workload substitute",
+    "sha256": "b6a40cb5bf266d993af0c0442faa9b2f8bbaa0c56f239550d0df0fdfc7920989"
+  },
+  "version_delta": "Only independent post-ROI correctness decoder uses diagnostic hooks; measured server/client and original compression ROI unchanged"
+}

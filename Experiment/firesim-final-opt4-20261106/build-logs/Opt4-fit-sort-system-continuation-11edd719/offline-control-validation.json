@@ -1,0 +1,50 @@
+{
+  "schema": "ec-offline-next-system-tests/1",
+  "fixture_only": true,
+  "fpga_access": false,
+  "controller_sha256": "93b52862da2a6dba72d9727210ba9251aa0df942d4b145931398d5a46cd28192",
+  "tests": [
+    {
+      "case": "pending_module",
+      "status": "PASS",
+      "observed_state": "WAITING_FOR_VERIFIED_MODULE_MAP",
+      "cad_launches": 0
+    },
+    {
+      "case": "failed_module",
+      "status": "PASS",
+      "observed_state": "BLOCKED_MODULE_FAILURE_EVIDENCE_RETAINED",
+      "cad_launches": 0
+    },
+    {
+      "case": "insufficient_gain",
+      "status": "PASS",
+      "observed_state": "REJECTED_INSUFFICIENT_MEASURED_AREA_GAIN",
+      "cad_launches": 0
+    },
+    {
+      "case": "ready_current",
+      "status": "PASS",
+      "observed_state": "SKIPPED_CURRENT_SYSTEM_BITSTREAM_READY",
+      "cad_launches": 0
+    },
+    {
+      "case": "valid_module_pending_current",
+      "status": "PASS",
+      "observed_state": "BOUND_NEXT_RTL_READY_WAITING_CURRENT_CAPACITY_VERDICT",
+      "cad_launches": 0
+    },
+    {
+      "case": "valid_module_current_failed",
+      "status": "PASS",
+      "observed_state": "BLOCKED_CURRENT_CAD_TOOL_FAILURE_NOT_CAPACITY_VERDICT",
+      "cad_launches": 0
+    },
+    {
+      "case": "valid_module_current_not_fit",
+      "status": "PASS",
+      "observed_state": "BUILT_TIMING_DRC_PASSED_NOT_RUNTIME_VALIDATED",
+      "cad_launches": 1
+    }
+  ]
+}

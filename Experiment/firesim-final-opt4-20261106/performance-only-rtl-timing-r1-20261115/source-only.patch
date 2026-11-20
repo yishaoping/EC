@@ -1,0 +1,40 @@
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_FIFO.scala b/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_FIFO.scala
+index 74ffe83..2a5cbc2 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_FIFO.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/GH_FIFO.scala
+@@ -272,7 +272,12 @@ class GH_FIFO_SC(val params: FIFOParams) extends Module with HasFIFO_SC_IO {
+     d(log2Ceil(params.depth)-1, 0) // max is depth-1 (we keep one slot empty)
+   }
+ 
+-  val mem = RegInit(VecInit(Seq.fill(params.depth)(0.U(params.width.W))))
++  // Keep the asynchronous, same-cycle peek and all speculative/committed
++  // pointer rules. Reset only one validity bit per word rather than the entire
++  // payload; even invalid peek_bits retain the frozen reset-zero observation.
++  // There is no new target pipeline stage and no extra read/write port.
++  val mem = Mem(params.depth, UInt(params.width.W))
++  val written = RegInit(VecInit(Seq.fill(params.depth)(false.B)))
+ 
+   val wptr = RegInit(0.U(log2Ceil(params.depth).W))
+   val sptr = RegInit(0.U(log2Ceil(params.depth).W))
+@@ -289,7 +294,11 @@ class GH_FIFO_SC(val params: FIFOParams) extends Module with HasFIFO_SC_IO {
+   // allow enqueue if not full (considering same-cycle commit freeing space)
+   val do_enq = io.enq_valid && !io.full
+   when (do_enq) {
+-    mem(wptr) := io.enq_bits
++    // RegInit reset used to dominate a simultaneous payload write.
++    when (!reset.asBool) {
++      mem(wptr) := io.enq_bits
++      written(wptr) := true.B
++    }
+     wptr := wptr_next
+   }
+ 
+@@ -316,7 +325,7 @@ class GH_FIFO_SC(val params: FIFOParams) extends Module with HasFIFO_SC_IO {
+   io.peek_valid := !empty_spec
+ 
+   // bypass: if empty_spec but we enqueue into the same slot this cycle, peek the incoming
+-  val peek_raw = mem(sptr)
++  val peek_raw = Mux(written(sptr), mem(sptr), 0.U(params.width.W))
+   io.peek_bits := Mux(empty_spec && do_enq && (wptr === sptr), io.enq_bits, peek_raw)
+ 
+   // occupancy measured between cptr and wptr

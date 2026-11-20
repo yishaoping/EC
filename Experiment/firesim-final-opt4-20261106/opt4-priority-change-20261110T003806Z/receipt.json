@@ -1,0 +1,133 @@
+{
+  "observed_utc": "2026-11-10T00:38:06.897125+00:00",
+  "hardware_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "hardware_inputs_changed": false,
+  "fpga_operations": false,
+  "original_cad_restarted": false,
+  "only_idle_coordinators_reloaded": [
+    "ec-parsec-c4-first.service",
+    "ec-parsec-coverage-first.service"
+  ],
+  "new_service": "ec-parsec-cad-wall-limit-guard.service",
+  "artifacts": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/continue_fpga.py": "2405c97e5496633ad0d40c6b577f4e13dcfbb68b16f5d3741c0f7638b04c347e",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/coverage_first.py": "9aada8e076ca70e01c1a13b1cc1ae0efa6afa50c30e5bd6fc3e860aca331d238",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/guard_cad_wall_limit.py": "5ce70b5aa34aad2e56b64c24f329a2e96a75bf06a0890c1e46f2c977ecfd154f",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/audit_opt4_ready.py": "0fc8ddfedcb324eee56f24eb57dbe238f37db283288d09a661e48e1763af541e",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/publish_live.py": "9d6dcb00ac4ae9c14e0b13ba3856022400446399dcc04d763e5bb632d83d6422",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/job-specs/cad-wall-limit-guard.json": "b9b915f7030006562a7616430e8a04baf85b05262276bbb77d2cf3c31d13b300"
+  },
+  "loaded_services": {
+    "c4-first": {
+      "checkpoint_paths": [
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/fpga-continuation-state.json"
+      ],
+      "child_pid": 325066,
+      "child_start_ticks": "8213689",
+      "command": [
+        "python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/continue_fpga.py"
+      ],
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "input_sha256": {
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/continue_fpga.py": "2405c97e5496633ad0d40c6b577f4e13dcfbb68b16f5d3741c0f7638b04c347e"
+      },
+      "job": "c4-first",
+      "no_instruction_checkpoint": true,
+      "persistent_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/c4-first/console.log",
+      "pid": 325065,
+      "schema": "ec-service-job/1",
+      "service_unit": "ec-parsec-c4-first.service",
+      "spec_sha256": "ef5ea09b37ee3ec8f1dabc93620e50019ed4b947b371ce85571fba4758913925",
+      "start_ticks": "8213683",
+      "started_utc": "2026-11-10T00:26:56.445926+00:00",
+      "status": "RUNNING",
+      "updated_utc": "2026-11-10T00:37:56.539585+00:00"
+    },
+    "coverage-first": {
+      "checkpoint_paths": [
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/coverage-first-state.json"
+      ],
+      "child_pid": 328019,
+      "child_start_ticks": "8246797",
+      "command": [
+        "python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/coverage_first.py"
+      ],
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "input_sha256": {
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/coverage_first.py": "9aada8e076ca70e01c1a13b1cc1ae0efa6afa50c30e5bd6fc3e860aca331d238"
+      },
+      "job": "coverage-first",
+      "no_instruction_checkpoint": true,
+      "persistent_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/coverage-first/console.log",
+      "pid": 328009,
+      "schema": "ec-service-job/1",
+      "service_unit": "ec-parsec-coverage-first.service",
+      "spec_sha256": "4f53f95c450fa0643e318523249f4809d14bce8552bec6be5ab23c8f036b88fc",
+      "start_ticks": "8246791",
+      "started_utc": "2026-11-10T00:32:27.530928+00:00",
+      "status": "RUNNING",
+      "updated_utc": "2026-11-10T00:37:57.558253+00:00"
+    },
+    "cad": {
+      "checkpoint_paths": [
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/C4-runtime-cad-state.json"
+      ],
+      "child_pid": 5526,
+      "child_start_ticks": "2644",
+      "command": [
+        "python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_bitstream.py"
+      ],
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "input_sha256": {
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_bitstream.py": "df05e1c32456550403ae03ca7baba21edbba297cfbf444dec9249e1a0d70e429"
+      },
+      "job": "cad",
+      "no_instruction_checkpoint": true,
+      "persistent_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/cad/console.log",
+      "pid": 5514,
+      "schema": "ec-service-job/1",
+      "service_unit": "ec-parsec-cad.service",
+      "spec_sha256": "66178e5af1d77db7274274f8a8b9fd4199cfce5c953a9d30ddac6ac95f1dd044",
+      "start_ticks": "2639",
+      "started_utc": "2026-11-09T01:38:25.720101+00:00",
+      "status": "RUNNING",
+      "updated_utc": "2026-11-10T00:38:04.249154+00:00"
+    },
+    "cad-wall-limit-guard": {
+      "checkpoint_paths": [],
+      "child_pid": 328014,
+      "child_start_ticks": "8246794",
+      "command": [
+        "/usr/bin/python3",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/guard_cad_wall_limit.py"
+      ],
+      "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+      "input_sha256": {
+        "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/guard_cad_wall_limit.py": "5ce70b5aa34aad2e56b64c24f329a2e96a75bf06a0890c1e46f2c977ecfd154f"
+      },
+      "job": "cad-wall-limit-guard",
+      "no_instruction_checkpoint": true,
+      "persistent_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/cad-wall-limit-guard/console.log",
+      "pid": 328005,
+      "schema": "ec-service-job/1",
+      "service_unit": "ec-parsec-cad-wall-limit-guard.service",
+      "spec_sha256": "b9b915f7030006562a7616430e8a04baf85b05262276bbb77d2cf3c31d13b300",
+      "start_ticks": "8246789",
+      "started_utc": "2026-11-10T00:32:27.498090+00:00",
+      "status": "RUNNING",
+      "updated_utc": "2026-11-10T00:37:57.540814+00:00"
+    }
+  },
+  "readiness": 13,
+  "checks": {
+    "status": "PASS",
+    "fpga_access": false,
+    "checks": [
+      "wrapper pidfd only receives STOP/CONT; child never signalled; finalizer resumes on CAD exit",
+      "C4 priority, Native fallback, C4 first coverage before repeat"
+    ]
+  }
+}

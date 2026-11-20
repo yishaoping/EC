@@ -1,0 +1,7 @@
+read_json negative.json
+miter -equiv -flatten FlatCut MemoryCut equiv
+hierarchy -top equiv
+techmap
+opt -full
+check -assert
+sat -verify -prove trigger 0 -set-def-inputs

@@ -1,0 +1,13 @@
+  val chooseValid = WireDefault(false.B)
+  val chooseIdx = WireDefault(0.U(log2Ceil(entries).W))
+  for (i <- 0 until entries) {
+    val noNewer = (0 until entries).filter(_ != i).map(j =>
+      !(entrySafe(j) && (key(j).contentSeq > key(i).contentSeq ||
+        (key(j).contentSeq === key(i).contentSeq &&
+          (key(j).generation > key(i).generation ||
+           (key(j).generation === key(i).generation && (j > i).B)))))).reduce(_ && _)
+    when (entrySafe(i) && noNewer) {
+      chooseValid := true.B
+      chooseIdx := i.U
+    }
+  }

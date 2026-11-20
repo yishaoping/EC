@@ -1,0 +1,128 @@
+{
+  "algorithm_sources_modified": true,
+  "awaiting_explicit_software_semantics_decision": false,
+  "binaries": {
+    "fluidanimate": {
+      "algorithm_sources_modified": true,
+      "application_threads": 1,
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/roi-retirement-checker-repair-20261117/parsec-continuation-v7-20261118/builds/fluidanimate/fluidanimate",
+      "sha256": "4816b18c1d1515119d3f36aed605a0150c825f5deda5ed8d0819ff8f0ba68c1b"
+    }
+  },
+  "candidate_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-candidate-apps-build.json",
+  "candidate_receipt_sha256": "3c1a575a19b68d28c426efe7d36324dd31b749ddf2e57ac75914b471b8db6da6",
+  "cases": [
+    {
+      "algorithm_unchanged": false,
+      "argv": [
+        "1",
+        "5",
+        "in_100K.fluid",
+        "out.fluid"
+      ],
+      "diagnostic_roi_syscalls": [],
+      "diagnostic_trace": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-stable-candidate-20261107T083942Z/trace-simmedium.log",
+      "fpga_validation": "NOT_RUN",
+      "input": "simmedium",
+      "input_archive": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/inputs/input_simmedium.tar",
+      "input_archive_sha256": "3f4a4b2014282f7db29e2cd8ec307f4c291eb35ce43f8bef2dece2857445bf7b",
+      "input_files": {
+        "in_100K.fluid": "40bf640c419080111ee44a9946545489e695b4b8cf2ac5f7b280de365714294e"
+      },
+      "program": "fluidanimate",
+      "reference_outputs": {
+        "out.fluid": "6309876f3a874fec3f0ae8ab96499026050746e70d9a0cc864b6adb8cbbc58a7"
+      },
+      "runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/parsec/simmedium.runconf",
+      "runconf_sha256": "812e8488f11553480bd154db052a99f5d7f84ddae8d192f46fcc3ac6604e00a0",
+      "software_bugfix": "Stable cell/particle index pair ordering instead of cross-allocation pointer ordering",
+      "software_reference": "STABLE_PAIR_ORDER_RISCV_REFERENCE",
+      "software_semantics_label": "Authorized repair of original address-dependent omitted particle interactions; separate from original profile",
+      "threads": 1,
+      "validation": {
+        "files": {
+          "out.fluid": "6309876f3a874fec3f0ae8ab96499026050746e70d9a0cc864b6adb8cbbc58a7"
+        },
+        "kind": "files_sha256"
+      },
+      "warmups": 0
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-g++",
+        "-O3",
+        "-march=rv64gc",
+        "-mabi=lp64d",
+        "-static",
+        "-D_GNU_SOURCE",
+        "-D_XOPEN_SOURCE=600",
+        "-Wno-invalid-offsetof",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-stable-candidate-20261107T083942Z/src/hooks",
+        "-I/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-stable-candidate-20261107T083942Z/src/fluidanimate",
+        "-std=gnu++17",
+        "-x",
+        "c++",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-stable-candidate-20261107T083942Z/src/fluidanimate/serial.cpp",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-stable-candidate-20261107T083942Z/src/fluidanimate/cellpool.cpp",
+        "-x",
+        "none",
+        "-lm",
+        "-pthread",
+        "-DENABLE_PARSEC_HOOKS",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/apps-fluidanimate-stable-candidate-20261107T083942Z/hooks.o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/roi-retirement-checker-repair-20261117/protocol-drain-repair-20261118/builds/software/apps/dac_roi.o",
+        "-o",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/roi-retirement-checker-repair-20261117/parsec-continuation-v7-20261118/builds/fluidanimate/fluidanimate"
+      ],
+      "cwd": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/roi-retirement-checker-repair-20261117/parsec-continuation-v7-20261118/builds/fluidanimate"
+    }
+  ],
+  "formal_eligible": true,
+  "formal_input_policy": "Official simmedium, 1 thread, 5 frames, full original AdvanceFrame ROI; authorized stable index pair ordering; exact complete output hash; both configurations use identical ELF/input/rootfs",
+  "fpga_validation": "NOT_RUN",
+  "host_log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-stable-candidate-20261107T083942Z",
+  "integration_patch": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/apps-fluidanimate-stable-candidate-20261107T083942Z/stable-pair-order.patch",
+  "integration_patch_sha256": "e251c562c97fdfc4583cfc65e2040bd1fdbc8e98bb39d7298ac231a45c9777b5",
+  "original_apps_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-apps-build.json",
+  "original_apps_receipt_sha256": "68213950013bb1198cb07729d69e04f15cfdedbc9ef32d7ae3fe99fec1338c4a",
+  "output_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/roi-retirement-checker-repair-20261117/parsec-continuation-v7-20261118/builds/fluidanimate",
+  "parsec_commit": "a06d35960951c9bfad61eb4826bca8d167f98c19",
+  "pid": 1417890,
+  "platform_harness_removed": true,
+  "smoke": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/roi-retirement-checker-repair-20261117/protocol-drain-repair-20261118/builds/software/apps/roi-smoke",
+    "sha256": "c4574192963ab182046df3db6022fcd047e20a7ab3ec45dfe97adf13f46fd6b0"
+  },
+  "software_profile": "fluidanimate-stable-index-pairing-authorized-repair",
+  "software_semantics_label": "Authorized repair of original address-dependent omitted particle interactions; separate from original profile",
+  "sources": {
+    "COPYRIGHT": "223cd1c55b89ea5b7d44685895116746ab1f680b2cd8d7e164dadadf3eb9d3d8",
+    "Makefile": "5f9850ad91d2c749d88133d89e8daae5060b2a229de04e427054640881ed47d5",
+    "Makefile.pthreads": "a8aaac778377454a505fa409fffecf4865dd005801a7a8db35268424cc362b56",
+    "Makefile.serial": "38d5801f243c8e4e081d657e162cce868d2b1093cc64fa3f08c41ccdfa758ae3",
+    "Makefile.tbb": "b243ba53cc84b79274b3f540b970d5176d436384d51f16b207fb4243f62e3dcb",
+    "README": "d9b56da0d67bd45bb795653d74d0e32ade51553b5b8daddaa46c4adb7a1a87f4",
+    "cellpool.cpp": "784804a5426b54c88b134955f401901af25dd4fa2268d491078803f57a6ac842",
+    "cellpool.hpp": "30872a5d5911df1f44305501fb8ab16fb9acf7b00f89a7432aecea49f3b6a184",
+    "custom.h": "6e718cb32808c417f1a7b512cd55bfaeb4cd56efeb4e8d50535a4e18f7ec08a1",
+    "encoding.h": "40513cda414c3292dfc9db1c4c83dbadd6424abe94d4cd6f4837dd6292072b39",
+    "fluid.hpp": "be27f1616cdf7579cb941d9d536b7f0ec7f8d733a8edf0f2ba508f99c99f914a",
+    "fluidcmp.cpp": "bcc62a2ca70032902f84f258bd0df57910bfa4bf1e98cf40e98edcd1e9a48799",
+    "fluidview.cpp": "45e20084cc6b13012457aac4392f40f4459fa8589ae83b60b868bfa469fc17e2",
+    "fluidview.hpp": "644edd232a2e5697cee29d7d16f1278a51960117adcc263fe5b9e7c401bc787b",
+    "parsec_barrier.cpp": "7ef2227eb1a775a39ff706917b318674f8ee59fe52f814cafc7d5dc6a365ad0a",
+    "parsec_barrier.hpp": "6df85047234fb7fb6e2bcaf753af207041f4689a8b111f6a74f389eacf32391c",
+    "pthreads.cpp": "b2ffb4721f09b67d7dc6aacf462eefaa317f528f013ad5892426cf4d48ba5fde",
+    "rocc.h": "0153080a79febf77a0f79bf0579c868b9995166d858b29e2729149a1a99b59e4",
+    "serial.cpp": "ed5ca7c52e2451b69cab2ed63e0674be331fe8a3eb9d93ad5e6c6f48b6ce8385",
+    "tbb.cpp": "c7d20ad2ff1b1ec2f56527fe96add719acda6fa3891e12d1b992f1bab48909b8"
+  },
+  "status": "PREPARED_FPGA_NOT_RUN",
+  "user_authorization_receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/fluidanimate-stable-formal-adoption-20261107T090029Z/authorization.json",
+  "user_authorization_sha256": "4a7f7b9f96bfc2882e0aea8e4885c6414630a4d7e40d6d7543efc7e69f4c1946",
+  "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/fluidanimate-stable-formal-apps-build.json",
+  "parent_receipt_sha256": "bc25fb95b171933b65f5f13a944b5888d01d7740b017d4ae0ff7ffae7981cd44",
+  "software_change": "validated U-mode real-drain hook only; v7 kernel/firmware IRQ guard"
+}

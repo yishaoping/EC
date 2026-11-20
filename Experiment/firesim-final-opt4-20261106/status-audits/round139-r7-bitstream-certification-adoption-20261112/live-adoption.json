@@ -1,0 +1,64 @@
+{
+  "completed": [
+    "r5 physical and certification follower exited naturally; PID2692703 absent",
+    "r7 physical exited naturally after complete bitstream",
+    "r8 physical exited after r7 winner without CAD"
+  ],
+  "fpga_operations": [],
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "no_new_job_requests": true,
+  "no_process_signals": true,
+  "no_service_mutations": true,
+  "observation_window_utc": [
+    "2026-11-12T10:17:07Z",
+    "2026-11-12T10:19:48Z"
+  ],
+  "running": [
+    {
+      "cgroup": "/system.slice/ec-opt4-svb-host40-shell-follow-r7.service",
+      "controller_pid": 3192416,
+      "controller_start_ticks": "28717374",
+      "exact_cgroup_verified": true,
+      "kind": "independent_r7_certificate_audit",
+      "pid": 3277916,
+      "start_ticks": "29017649"
+    },
+    {
+      "cgroup": "/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service",
+      "exact_cgroup_verified": true,
+      "kind": "original_MCrams_postopt_checkpoint_write",
+      "pid": 2379656,
+      "start_ticks": "25825451"
+    },
+    {
+      "cgroup": "/system.slice/ec-opt4-auto-field-address-cycle-cad-r3-8d50489a.service",
+      "exact_cgroup_verified": true,
+      "kind": "existing_field_address_DUT_synthesis",
+      "pid": 3138447,
+      "start_ticks": "28529274"
+    },
+    {
+      "cgroup": "/user.slice/user-1008.slice/user@1008.service/ec-opt4-svb-application-metrics-r2-20261112.service",
+      "device_operations": [],
+      "exact_cgroup_verified": true,
+      "kind": "readonly_r2_metrics_consumer",
+      "pid": 3209953,
+      "start_ticks": "28802096"
+    }
+  ],
+  "source": "/proc/PID/stat, /proc/PID/cgroup, exact systemd cgroup.procs, systemctl show",
+  "waiting": [
+    {
+      "cgroup": "/system.slice/ec-opt4-svb-host40-shell-application-follow-r7.service",
+      "exact_cgroup_verified": true,
+      "kind": "r7_same_bit_application_follower",
+      "pid": 3192469,
+      "prerequisite": "independent certificate and valid directed replay",
+      "start_ticks": "28717452"
+    },
+    {
+      "kind": "21-only_directed_replay",
+      "prerequisite": "independent physical certificate and both board locks"
+    }
+  ]
+}

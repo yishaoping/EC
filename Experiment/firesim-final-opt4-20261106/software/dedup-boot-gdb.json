@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/data1/gzh/EC/chipyard/.conda-env/bin/qemu-system-riscv64",
+    "-machine",
+    "virt",
+    "-cpu",
+    "rv64",
+    "-m",
+    "2G",
+    "-smp",
+    "1",
+    "-nographic",
+    "-no-reboot",
+    "-bios",
+    "default",
+    "-kernel",
+    "/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-earlyconsole-20261107T051656Z/arch/riscv/boot/Image",
+    "-append",
+    "console=ttyS0 earlycon=sbi rdinit=/init panic=-1 mem=2G",
+    "-S",
+    "-gdb",
+    "unix:/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/dedup-boot-gdb-20261107T070215Z/gdb.sock,server=on,wait=off"
+  ],
+  "child_pid": 448369,
+  "diagnostic_only": true,
+  "gdb_log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/dedup-boot-gdb-20261107T070215Z/gdb.log",
+  "gdb_returncode": 0,
+  "log_dir": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/software/dedup-boot-gdb-20261107T070215Z",
+  "panic_argument_observed": true,
+  "pid": 448368,
+  "status": "COMPLETE",
+  "unchanged_kernel_sha256": "689d981a568d7031ed6e7eecd91457a54f1b1a5fbf76d5009b2e22d8f82cd77d"
+}

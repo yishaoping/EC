@@ -1,0 +1,239 @@
+diff --git a/fatal_traps.py b/fatal_traps.py
+new file mode 100644
+index 0000000..df98bc0
+--- /dev/null
++++ b/fatal_traps.py
+@@ -0,0 +1,48 @@
++"""Parse fresh UART evidence, never arbitrary mentions of trap-related words.
++
++The caller owns a new per-attempt log. This parser does not concatenate logs
++from earlier attempts. Register values are observations, not privilege proofs:
++the EC checker may expose shadow CSRs while privileged checking is active.
++"""
++import re
++
++_SBI = re.compile(r'^sbi_trap_error: hart(?P<hart>\d+): (?P<body>.+)$')
++_HEADER = re.compile(r'^[A-Za-z][A-Za-z -]* \(error -?\d+\)$')
++_REGS = re.compile(r'^(?:[a-z][a-z0-9]*=0x[0-9a-fA-F]+)(?: +[a-z][a-z0-9]*=0x[0-9a-fA-F]+)*$')
++_HANG = re.compile(r'^sbi_hart_hang(?:\(\))?: hart(?P<hart>\d+)(?:: (?:entering|halted|fatal))?$')
++_REGISTER = re.compile(r'\b([a-z][a-z0-9]*)=(0x[0-9a-fA-F]+)\b')
++
++
++def detect_fatal_traps(uart, checker_harts=(1, 2, 3, 4)):
++    """Return fatal hart records, including interleaved or partial dumps.
++
++    An OpenSBI error header or a correctly formatted register row is already
++    fatal: sbi_trap_error is noreturn in the bound firmware. No need to wait
++    for the complete GPR dump before stopping. Anchors reject echoed shell
++    commands, quoted fixtures, historical prefixes and informational prose.
++    """
++    text = uart.decode('utf-8', errors='replace') if isinstance(uart, bytes) else uart
++    harts = {}
++    for lineno, line in enumerate(text.replace('\r', '').split('\n'), 1):
++        match = _SBI.fullmatch(line)
++        source = 'sbi_trap_error'
++        body = match['body'] if match else ''
++        if match and not (_HEADER.fullmatch(body) or _REGS.fullmatch(body)):
++            match = None
++        if match is None:
++            match = _HANG.fullmatch(line)
++            source = 'sbi_hart_hang'
++        if match is None:
++            continue
++        hart = int(match['hart'])
++        record = harts.setdefault(hart, dict(hartid=hart,
++            role='checker' if hart in checker_harts else 'firmware',
++            registers={}, evidence=[]))
++        record['evidence'].append(dict(line=lineno, text=line, source=source))
++        record['registers'].update({k: v.lower() for k, v in _REGISTER.findall(body)})
++    if not harts:
++        return None
++    records = [harts[h] for h in sorted(harts)]
++    return dict(status='FAILED_CHECKER_TRAP' if any(h in checker_harts for h in harts)
++                else 'FAILED_FIRMWARE_TRAP',
++                harts=records, valid=False, roi_cycles=None, slowdown=None)
+diff --git a/run.py b/run.py
+index a97ecb8..9891b43 100644
+--- a/run.py
++++ b/run.py
+@@ -16,6 +16,8 @@ import sys
+ import time
+ 
+ HERE = Path(__file__).resolve().parent
++sys.path.insert(0, str(HERE))
++from fatal_traps import detect_fatal_traps
+ W = Path('/data1/gzh/EC/firesim/final-opt4-20261106')
+ D = Path('/data1/gzh/EC/Experiment/firesim-final-opt4-20261106')
+ CERT = W/'runtime/Opt4-performance-only-4915b82-physical-r3/certified-build.json'
+@@ -147,10 +149,11 @@ def prepare():
+         bitstream_sha256=cert['bitstream_sha256'],driver=driver,
+         driver_sha256=cert['driver_audit']['compatible_driver_sha256'],memory_model=memory,
+         input='simmedium',threads=1,warmups=0,repetitions=1,programs=rows,
+-        failure_policy='Preserve evidence, skip application, continue next medium input; no substitute inputs',
++        failure_policy='Checker/firmware fatal trap halts suite for repair; ordinary application failures may be skipped; no substitute inputs',
+         deployment_policy='Reprogram certified card21 before each independent guest; no unverified reset reuse',
+         slowdown_policy='Performance-Only ROI target cycles / median of exactly matched valid Native FPGA ROI cycles',
+         runner_sha256=sha(__file__),verification_sha256=sha(HERE/'sample_verify.py'),
++        fatal_detector_sha256=sha(HERE/'fatal_traps.py'),
+         handoff_sha256=sha(HANDOFF),periodic_patrol=False)
+     save(HERE/'plan.json',manifest)
+     print(json.dumps(dict(status='PREPARED_NOT_RUN',ready=[r['program'] for r in rows if r['status']=='READY'],
+@@ -181,6 +184,10 @@ def sample(plan, row, out):
+         fcntl.flock(card,fcntl.LOCK_EX|fcntl.LOCK_NB)
+         check = precheck(target_bdfs=[BDF]);save(out/'pre-run.json',check)
+         assert not check['open_devices'] and not check['simulation_processes'],'card21 busy; no task interrupted'
++        # Never ingest stale evidence or overwrite an earlier attempt.
++        assert not any((out/p).exists() for p in
++                       ['manifest.json','state.json','uart.log','uart.in','host.log','result.json','complete.json']), 'fresh attempt directory required'
++        assert not list(out.glob('rtl-events-*')), 'historical RTL event logs in attempt directory'
+         for k,p in row['receipts'].items():assert sha(p)==row['receipt_sha256'][k]
+         assert sha(plan['driver'])==plan['driver_sha256']
+         assert sha(row['firmware'])==row['firmware_sha256']
+@@ -196,18 +203,24 @@ def sample(plan, row, out):
+             target_boom_hz=row['target_boom_hz'],target_checker_hz=row['target_checker_hz'],
+             memory_model={k:plan['memory_model'][k] for k in ['model','settings']})
+         iid=hashlib.sha256(json.dumps(ident,sort_keys=True).encode()).hexdigest()
+-        uartin=out/'uart.in';uartin.write_bytes(b'')
++        uartin=out/'uart.in'
++        with uartin.open('xb'):
++            pass
++        # O_EXCL reserves the UART log before the pinned driver opens it.
++        with (out/'uart.log').open('xb'):
++            pass
+         argv=[plan['driver'],'+permissive','+domain=0000','+bus=21','+device=00','+function=0',
+               '+bar=0','+pci-vendor=10ee','+pci-device=903f','+uart-in0='+str(uartin),
+               '+uart-out0='+str(out/'uart.log'),'+fesvr-step-size=2004765',
+               *plan['memory_model']['plusargs'],'+print-file='+str(out/'rtl-events-'),
+               '+permissive-off','+prog0='+row['firmware']]
+         save(out/'manifest.json',dict(identity=ident,identity_sha256=iid,argv=argv,
+-             plan_sha256=sha(HERE/'plan.json'),runner_sha256=sha(__file__),verification_sha256=sha(HERE/'sample_verify.py')))
++             plan_sha256=sha(HERE/'plan.json'),runner_sha256=sha(__file__),verification_sha256=sha(HERE/'sample_verify.py'),
++             fatal_detector_sha256=sha(HERE/'fatal_traps.py')))
+         state=dict(status='STARTING',program=row['program'],input='simmedium',configuration='ECPerformanceOnly',
+                    run_id=out.name,run_dir=str(out),identity_sha256=iid,board_bdf=BDF,board_serial=SERIAL,
+                    host_boot_id=Path('/proc/sys/kernel/random/boot_id').read_text().strip(),started_utc=now())
+-        start=time.monotonic();sent=False;shutdown=False;done=None;controlled=False;timedout=False;budget=False;last=0
++        start=time.monotonic();sent=False;shutdown=False;done=None;controlled=False;timedout=False;budget=False;last=0;trap=None
+         env={k:v for k,v in os.environ.items() if k not in ['PYTHONHOME','PYTHONPATH','LD_LIBRARY_PATH','LD_PRELOAD']}
+         with (out/'host.log').open('wb',buffering=0) as log:
+             child=subprocess.Popen(['/usr/bin/nice','-n','10','/usr/bin/stdbuf','-oL','-eL',*argv],cwd=out,
+@@ -219,19 +232,28 @@ def sample(plan, row, out):
+             while child.poll() is None:
+                 elapsed=time.monotonic()-start
+                 u=(out/'uart.log').read_bytes() if (out/'uart.log').exists() else b''
+-                if not sent and b'EC_GUEST_READY' in u:
++                trap=detect_fatal_traps(u)
++                if trap:
++                    # Persist FAILED before waiting for a driver that may hang.
++                    save(out/'fatal-trap.json',dict(**trap,detected_utc=now(),run_id=out.name,uart_sha256=sha(out/'uart.log')))
++                    state.update(status=trap['status'],fatal_trap=trap,updated_utc=now())
++                    save(out/'state.json',state);save(D/'active-0000_21_00.0.json',state)
++                    suite_state=read(HERE/'state.json')
++                    suite_state.update(status=trap['status'],phase='ROOT_CAUSE_REPAIR',fatal_run_dir=str(out),updated_utc=now())
++                    save(HERE/'state.json',suite_state)
++                if not trap and not sent and b'EC_GUEST_READY' in u:
+                     with uartin.open('ab',buffering=0) as f:
+                         f.write(f'/opt/ec-fpga/run-one {row["program"]} simmedium 1 {out.name}; echo EC_COMMAND_EXIT=$?\n'.encode());os.fsync(f.fileno())
+                     sent=True
+-                if sent and not shutdown and re.search(rb'(?:^|\n)EC_COMMAND_EXIT=\d+\r?\n',u):
++                if not trap and sent and not shutdown and re.search(rb'(?:^|\n)EC_COMMAND_EXIT=\d+\r?\n',u):
+                     with uartin.open('ab',buffering=0) as f:
+                         f.write(b'/bin/busybox sync; /bin/poweroff -f\n');os.fsync(f.fileno())
+                     shutdown=True;done=elapsed
+                 fatal=any(t in u for t in [b'Kernel panic',b'EC_OPT4_INVALID',b'EC_SAMPLE_FAILED'])
+                 timedout=elapsed>row['timeout_seconds'] or (not sent and elapsed>row['boot_timeout_seconds'])
+                 budget=sum(p.stat().st_size for p in out.iterdir() if p.is_file())>32*2**30
+-                if fatal or timedout or budget or (done is not None and elapsed-done>30):
+-                    controlled=not timedout and b'Power down' in u
++                if trap or fatal or timedout or budget or (done is not None and elapsed-done>30):
++                    controlled=not trap and not timedout and b'Power down' in u
+                     os.killpg(child.pid,signal.SIGTERM)
+                     try:child.wait(timeout=15)
+                     except subprocess.TimeoutExpired:os.killpg(child.pid,signal.SIGKILL);child.wait()
+@@ -243,7 +265,13 @@ def sample(plan, row, out):
+                 except subprocess.TimeoutExpired:pass
+         result=v.verify(out,ident,child.returncode,controlled,timedout)
+         if budget:result['valid']=False;result['issues'].append('log budget exceeded; raw evidence preserved')
+-        state.update(status='COMPLETE' if result['valid'] else 'TIMEOUT' if timedout else 'FAILED',
++        # Reparse after stop to preserve any GPR rows emitted during shutdown.
++        trap=detect_fatal_traps((out/'uart.log').read_bytes()) or trap
++        if trap:
++            save(out/'fatal-trap.json',dict(**trap,run_id=out.name,ended_utc=now(),uart_sha256=sha(out/'uart.log')))
++            result.update(valid=False,failure_type=trap['status'],fatal_trap=trap,roi_cycles=None,drain_cycles=None)
++            result['issues'].append('fatal checker/firmware trap; suite halted for repair')
++        state.update(status=trap['status'] if trap else 'COMPLETE' if result['valid'] else 'TIMEOUT' if timedout else 'FAILED',
+                      issues=result['issues'],ended_utc=now());save(out/'state.json',state);save(D/'active-0000_21_00.0.json',state)
+         baseline=row.get('native_median_roi_cycles')
+         result.update(schema='ec-performance-only-fpga-result/1',identity=ident,identity_sha256=iid,
+@@ -268,6 +296,7 @@ def run():
+         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+         plan=read(HERE/'plan.json')
+         assert plan['runner_sha256']==sha(__file__) and plan['verification_sha256']==sha(HERE/'sample_verify.py')
++        assert plan['fatal_detector_sha256']==sha(HERE/'fatal_traps.py')
+         assert sha(CERT)==plan['certificate_sha256'] and sha(HANDOFF)==plan['handoff_sha256']
+         state=dict(status='RUNNING',started_utc=now(),pid=os.getpid(),input='simmedium',
+                    configuration='ECPerformanceOnly',full_PALIMPSEST=False,results=[])
+@@ -275,7 +304,11 @@ def run():
+         for row in plan['programs']:
+             destination=HERE/'runs'/row['program'];destination.mkdir(parents=True,exist_ok=True)
+             if (destination/'attempt.json').exists():
+-                state['results'].append(read(destination/'attempt.json'));continue
++                old=read(destination/'attempt.json');state['results'].append(old)
++                if old.get('status') in ['FAILED_CHECKER_TRAP','FAILED_FIRMWARE_TRAP']:
++                    state.update(status=old['status'],phase='ROOT_CAUSE_REPAIR',current_program=row['program'])
++                    save(HERE/'state.json',state);return
++                continue
+             attempt=dict(program=row['program'],input='simmedium',started_utc=now(),out=str(destination))
+             try:
+                 if row['status']!='READY':raise RuntimeError(row.get('reason',row['status']))
+@@ -283,13 +316,18 @@ def run():
+                 deployment(destination)
+                 state['phase']='FPGA_SAMPLE';save(HERE/'state.json',state)
+                 result=sample(plan,row,destination)
+-                attempt.update(status='PASS' if result['valid'] else 'SKIP_FAILED_SAMPLE',
++                attempt.update(status=result.get('failure_type') or ('PASS' if result['valid'] else 'SKIP_FAILED_SAMPLE'),
+                                roi_cycles=result['roi_cycles'],slowdown=result['slowdown'],issues=result['issues'])
+             except Exception as e:
+                 attempt.update(status='SKIP_FAILED_ATTEMPT',reason=repr(e))
+                 print(json.dumps(attempt),flush=True)
+             attempt['ended_utc']=now();save(destination/'attempt.json',attempt)
+-            state['results'].append(attempt);save(HERE/'state.json',state)
++            state['results'].append(attempt)
++            if attempt['status'] in ['FAILED_CHECKER_TRAP','FAILED_FIRMWARE_TRAP']:
++                state.update(status=attempt['status'],phase='ROOT_CAUSE_REPAIR',ended_utc=now())
++                save(HERE/'state.json',state)
++                return
++            save(HERE/'state.json',state)
+             lines=['# EC Performance-Only PARSEC simmedium — one round','',
+                    '| Benchmark | Status | ROI cycles | Slowdown vs matched Native |',
+                    '|---|---|---:|---:|']
+diff --git a/sample_verify.py b/sample_verify.py
+index 70a5ba4..9bff20c 100644
+--- a/sample_verify.py
++++ b/sample_verify.py
+@@ -8,6 +8,8 @@ patterns and acceptance rules, without loading multi-gigabyte logs in RAM.
+ import re
+ from pathlib import Path
+ import sys
++sys.path.insert(0, str(Path(__file__).resolve().parent))
++from fatal_traps import detect_fatal_traps
+ sys.path.insert(0, '/data1/gzh/EC/firesim/dac2026/scripts')
+ from inspect_roi_raw import inspect_bytes
+ 
+@@ -38,6 +40,8 @@ def verify_events(out, contexts, counts):
+ 
+ def verify(out,identity,exitcode,controlled_stop,timedout):
+     uart=(out/'uart.log').read_text(errors='replace').replace('\r','');rid=identity['run_id'];issues=[]
++    trap=detect_fatal_traps(uart)
++    if trap:issues.append(trap['status'])
+     if uart.count('EC_SAMPLE_GUEST_DONE run_id='+rid+' ')!=1:issues.append('missing unique successful output validation')
+     if not re.search(r'^EC_COMMAND_EXIT=0$',uart,re.M):issues.append('missing successful application command exit')
+     if 'Kernel panic' in uart or 'EC_OPT4_INVALID' in uart or 'EC_SAMPLE_FAILED' in uart:issues.append('guest failure/scope violation')
+@@ -97,5 +101,6 @@ def verify(out,identity,exitcode,controlled_stop,timedout):
+     traffic_records=re.findall(r'EC_OPT4_TRAFFIC index=(\d+) value=(\d+)',uart)
+     traffic={int(i):int(v) for i,v in traffic_records}
+     if traffic_records and (len(traffic_records)!=128 or set(traffic)!=set(range(128))):issues.append('incomplete/duplicate post-drain traffic counter readback')
+-    return dict(valid=not issues,issues=sorted(set(issues)),roi_cycles=cycles,drain_cycles=drain,counts=counts,raw=raw,participation=participation,post_drain_traffic_counters=traffic,
++    return dict(valid=not issues,issues=sorted(set(issues)),roi_cycles=None if trap else cycles,drain_cycles=None if trap else drain,
++                failure_type=trap['status'] if trap else None,fatal_trap=trap,counts=counts,raw=raw,participation=participation,post_drain_traffic_counters=traffic,
+                 checker_latency=None,guest_power_down_observed='Power down' in uart,fased_readback=seen,host_efficiency=efficiency)

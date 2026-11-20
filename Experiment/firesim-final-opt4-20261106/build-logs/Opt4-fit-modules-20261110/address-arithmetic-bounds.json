@@ -1,0 +1,66 @@
+{
+  "utc": "2026-11-10T09:23:30.496745+00:00",
+  "kind": "Unsigned reduction bound proof plus boundary/random arithmetic tests",
+  "rows": [
+    {
+      "terms": 8,
+      "max_per_term": 64,
+      "max_sum": 512,
+      "combination_width": 10,
+      "state_width": 64
+    },
+    {
+      "terms": 8,
+      "max_per_term": 16,
+      "max_sum": 128,
+      "combination_width": 8,
+      "state_width": 64
+    },
+    {
+      "terms": 8,
+      "max_per_term": 8,
+      "max_sum": 64,
+      "combination_width": 7,
+      "state_width": 64
+    },
+    {
+      "terms": 8,
+      "max_per_term": 1,
+      "max_sum": 8,
+      "combination_width": 4,
+      "state_width": 64
+    },
+    {
+      "terms": 80,
+      "max_per_term": 64,
+      "max_sum": 5120,
+      "combination_width": 13,
+      "state_width": 64
+    },
+    {
+      "terms": 80,
+      "max_per_term": 16,
+      "max_sum": 1280,
+      "combination_width": 11,
+      "state_width": 64
+    },
+    {
+      "terms": 80,
+      "max_per_term": 8,
+      "max_sum": 640,
+      "combination_width": 10,
+      "state_width": 64
+    },
+    {
+      "terms": 80,
+      "max_per_term": 1,
+      "max_sum": 80,
+      "combination_width": 7,
+      "state_width": 64
+    }
+  ],
+  "vectors": 8000,
+  "proof": "Population count of mask is bounded by mask width. Every nonnegative subset sum <= terms*max_per_term < 2^width; balancing and exact-width slices lose no bits. Original 64-bit totals and all state/outputs stay 64 bits.",
+  "carry_proof": "Universal 128-input-bit SAT proof saved by verification service",
+  "full_design_equivalence": false
+}

@@ -1,0 +1,29 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/sims/firesim/sim/midas/src/main/scala/midas/passes/fame/MultiThreadFAME5Models.scala
++++ /data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-histogram-fame5-r6-20261112/MultiThreadFAME5Models.scala
+@@ -123,11 +123,25 @@
+ 
+   override def execute(state: CircuitState): CircuitState = {
+     val p = state.annotations.collectFirst({ case midas.stage.phases.ConfigParametersAnnotation(p)  => p }).get
+-    if (p(midas.EnableModelMultiThreading)) {
++    val transformed = if (p(midas.EnableModelMultiThreading)) {
+       doTransform(state)
+     } else {
+       state
+     }
++    // Private prototype metadata repair only: FAMETransform consumes the
++    // retained target clock port, but this installed pass has TODO Renames.
++    // Drop only the now-nonexistent histogram clock annotation, never a live
++    // target/host signal, arithmetic, state, handshake or clock constraint.
++    transformed.copy(annotations = transformed.annotations.filterNot {
++      case a: firrtl.transforms.DontTouchAnnotation
++          if a.target.leafModule == "HistogramBucket" && a.target.ref == "clock" =>
++        val exists = transformed.circuit.modules.exists(m =>
++          m.name == a.target.leafModule && m.ports.exists(_.name == a.target.ref))
++        require(!exists, "Do not remove annotation from an existing clock port")
++        println(s"PRIVATE_HISTOGRAM_CONSUMED_CLOCK_METADATA_REMOVED ${a.target.serialize}")
++        true
++      case _ => false
++    })
+   }
+ 
+   private def doTransform(state: CircuitState): CircuitState = {

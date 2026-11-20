@@ -1,0 +1,120 @@
+{
+  "cases": [
+    {
+      "case": "baseline",
+      "expected_valid": true,
+      "issues": [],
+      "observed_valid": true
+    },
+    {
+      "case": "real_compare_fail",
+      "expected_valid": false,
+      "issues": [
+        "task failed/cancelled or lacks true full comparison"
+      ],
+      "observed_valid": false
+    },
+    {
+      "case": "compare_disabled",
+      "expected_valid": false,
+      "issues": [
+        "task failed/cancelled or lacks true full comparison"
+      ],
+      "observed_valid": false
+    },
+    {
+      "case": "unfinished",
+      "expected_valid": false,
+      "issues": [
+        "incomplete real task event coverage"
+      ],
+      "observed_valid": false
+    },
+    {
+      "case": "wrong_sequence",
+      "expected_valid": false,
+      "issues": [
+        "incomplete real task event coverage",
+        "task RESULT without matching BEGIN"
+      ],
+      "observed_valid": false
+    },
+    {
+      "case": "duplicate_result",
+      "expected_valid": false,
+      "issues": [
+        "incomplete real task event coverage",
+        "task RESULT without matching BEGIN"
+      ],
+      "observed_valid": false
+    },
+    {
+      "case": "fault_counter",
+      "expected_valid": false,
+      "issues": [
+        "invalid/missing positive checker accounting and drain"
+      ],
+      "observed_valid": false
+    },
+    {
+      "case": "undrained",
+      "expected_valid": false,
+      "issues": [
+        "invalid/missing positive checker accounting and drain",
+        "missing matching installed/parked checker context"
+      ],
+      "observed_valid": false
+    },
+    {
+      "case": "wrong_context",
+      "expected_valid": false,
+      "issues": [
+        "task context/hart mismatch"
+      ],
+      "observed_valid": false
+    },
+    {
+      "case": "timeout",
+      "expected_valid": false,
+      "issues": [
+        "host timeout"
+      ],
+      "observed_valid": false
+    },
+    {
+      "case": "missing_output",
+      "expected_valid": false,
+      "issues": [
+        "missing unique successful output validation"
+      ],
+      "observed_valid": false
+    },
+    {
+      "case": "memory_mismatch",
+      "expected_valid": false,
+      "issues": [
+        "FASED settings not fully read back"
+      ],
+      "observed_valid": false
+    },
+    {
+      "case": "cancelled",
+      "expected_valid": false,
+      "issues": [
+        "task failed/cancelled or lacks true full comparison"
+      ],
+      "observed_valid": false
+    }
+  ],
+  "fpga_execution": false,
+  "hardware_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+  "limit": "Collector rejection behavior only. Synthetic logs are never stored in runs/ or admitted as FPGA samples; no evidence of hardware fault injection or architectural restart.",
+  "real_checker_execution": false,
+  "rollback_validated": false,
+  "schema": "ec-offline-collector-verification/1",
+  "source_id": "3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561",
+  "status": "PASS_13_SYNTHETIC_FIXTURES",
+  "utc": "2026-11-11T00:25:37.019219+00:00",
+  "validator": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Opt4-fit-9ae9a7fc/scripts/run_isolated_sample.py",
+  "validator_sha256": "83b1656e19abd73a61d4f390310ad937135350c583c4894cb185ce074339ebdf"
+}

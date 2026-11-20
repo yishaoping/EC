@@ -1,0 +1,93 @@
+{
+  "Native_Canneal": {
+    "FPGA_samples": 0,
+    "binding_sha256": "de8a2811fa3f289b00f45f856e65a13bf02668e0c69e39793f6cdc8604c0c7a7",
+    "independent_source_reproof": false,
+    "raw_stdout_verified": true,
+    "reported_result": {
+      "application_rows": [
+        "[ROI] hart=0 start=817128 stop=1129293 cycles=312165",
+        "[OUTPUT] benchmark=canneal checksum=40b2b50000000000 verified=1 routing_cost=4789",
+        "[APP] protected=0 start=817128 end=1129293 cycles=312165 instret=392248 session_stop=1129293",
+        "[COMPUTATION] status=PASS scope=official_serial_kernel",
+        "[END] hart=0 status=PASS"
+      ],
+      "benchmark": "canneal",
+      "binary_sha256": "9b09d88e468078265d0002bcfeea56de5b5513bee912f3a5363a919006b72e40",
+      "completed_utc": "2026-11-12T02:36:07.482202+00:00",
+      "compressed_log_sha256": "6af40671bf3f98af3dc2ce51b54ddc3e13bef7a6ace61dbf460e8f59c685f7cd",
+      "elf_sha256": "f7fd24a123c49189e1da2cb79cf0e8b7fc0fa37dd0c7acfba5bea3eb487866ef",
+      "faults": [],
+      "fpga_access": false,
+      "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+      "host_wall_seconds": 420.8961519000004,
+      "input_profile": "canneal_project400",
+      "kind": "CPU_GOLDENGATE_TRUE_SINGLE_BOOM_MATCHED_SOURCE_PROFILE",
+      "memory_plusargs": [
+        "+mm_readLatency_0=30",
+        "+mm_readMaxReqs_0=4",
+        "+mm_relaxFunctionalModel_0=0",
+        "+mm_writeLatency_0=30",
+        "+mm_writeMaxReqs_0=4"
+      ],
+      "native_adapter_difference": "Original EC startup replaced with clean Native main; no EC instruction ignoring",
+      "native_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+      "output": [
+        "benchmark=canneal checksum=40b2b50000000000 verified=1 routing_cost=4789"
+      ],
+      "protected_reference_elf_sha256": "d0d0e9ae99bd963aeed84a8b395e7096f54985d117d11542d553a38680b8397b",
+      "raw_stdout_bytes": 1878,
+      "raw_stdout_sha256": "e2ce7651a030c48151b8c54989673c7ab43c8d62652b721c8601f46ac66b264f",
+      "returncode": 0,
+      "roi_cycles": 312165,
+      "roi_end_csr": 1129293,
+      "roi_instructions": 392248,
+      "roi_scope": "workload_run call only, two adjacent CSR samples at each boundary; setup/STOP/checker completion/output excluded",
+      "roi_start_csr": 817128,
+      "same_ec_elf": false,
+      "source_kernel_and_input_identical": true,
+      "status": "PASS_TRUE_SINGLE_BOOM_COMPLETE_MATCHED_KERNEL_ROI",
+      "target_boom_hz": 200000000,
+      "threads": 1,
+      "timeout": false,
+      "total_fastest_target_cycles": 1247002,
+      "valid": true
+    },
+    "result_sha256": "3d476e60ca7e29dbb82442ec5f11a65f97c6929989e8af48d5826ca1f86e45f8",
+    "scope": "Completed true single-BOOM CPU source-profile/kernel ROI; different Native startup/ELF. No FPGA comparison or ratio computed in this audit.",
+    "source_identity_claim_from_owner_receipt": true
+  },
+  "created_utc": "2026-11-12T02:46:05.757443+00:00",
+  "full_host_MCRams": {
+    "capacity_status": "PENDING_ACTUAL_WHOLE_HOST_REPORT",
+    "no_injection_or_restart": true,
+    "producer_pid": 2379656,
+    "resource_report_exists": false
+  },
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "local_address_MemMC": {
+    "hierarchy_sha256": "779cbcd651660d2300567f643b53e93409eda2f8b1fd7a550dbb6525316fc2e8",
+    "hierarchy_top_agrees": true,
+    "paired_area_passed": false,
+    "primitive_checks": {
+      "CARRY8_primitive_total": 1584.0,
+      "blackboxes": 0
+    },
+    "producer_not_stopped": true,
+    "report_sha256": "ebc721820c7b8bec787d6eaf8327519d560dec3d11ce3c79c51519dc8d9c5d0a",
+    "resources": {
+      "Block RAM Tile": 1.0,
+      "CARRY8": 1584.0,
+      "CLB LUTs": 117874.0,
+      "CLB Registers": 161277.0,
+      "DSPs": 0.0,
+      "URAM": 0.0
+    },
+    "scope": "Local address bank generated GoldenGate FPGATop only, one side of pending Reg/MemMC pair.",
+    "whole_fit": false,
+    "whole_host_capacity": false
+  },
+  "no_CAD_or_simulation_launch": true,
+  "no_fpga_io": true,
+  "schema": "ec-opt4-round116-new-output-observations/1"
+}

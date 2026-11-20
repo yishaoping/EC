@@ -1,0 +1,79 @@
+{
+  "schema": "ec-opt4-round-area-selection/1",
+  "round": 20,
+  "functional_baseline_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "scope": "Frozen Opt4 function- and cycle-equivalent area optimization only",
+  "evidence": {
+    "whole_dut": {
+      "live_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+      "source_id": "3791dd0e8f7d9c380500cd37f11ece4c92e275bc399894780228fa61449df561",
+      "status": "RUNNING_DUT_SYNTH",
+      "current_resource_report": false,
+      "predecessor_commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+      "predecessor_postopt_luts": 3215683,
+      "u280_lut_limit": 1303680,
+      "predecessor_lut_excess": 1912003,
+      "classification": "LIVE_CANDIDATE_NOT_YET_CLASSIFIED; PREDECESSOR_NOT_FIT"
+    },
+    "structural_root_audit": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-structural-roots-r1-20261111/result.json",
+      "sha256": "0a0423ae8e4df9572a1e83a9f53d44753c98ff54c157b7d7402794991d6b574b",
+      "hierarchical_report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-cad-8da24a26/top-postopt-hierarchical.rpt",
+      "hierarchical_report_sha256": "f16c830318eb2e9b458ad9773cdc0823454e0b562860f2aef44027db7661580e",
+      "source": "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala",
+      "source_sha256": "04985798d9649315c6dabb0cbf336013cb0900e6bfb41f83659048df88561011",
+      "address_stats_clb_luts": 389756,
+      "dcache_clb_luts_inclusive": 786676,
+      "address_counter_state_bits": 327680,
+      "address_counter_definition": "256 buckets x 5 categories x 4 granules x 64 bits",
+      "histogram_shape": "80 strict and overflow sources distributed over 256 buckets",
+      "mshr_hierarchy_note": "Large MSHR0/prober names include hoisted DCache arrays/statistics; not evidence of duplicated MSHR FSM logic",
+      "scope": "Read-only structural and mapped-name audit; no new gain or FIT claim"
+    },
+    "packed_reduction_probe": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-packed-reduction-r1-20261111/result.json",
+      "sha256": "9d3a81fae1b409e2fdeb616d926510012505ca18c8b4e3f30eca3d35f8f92918",
+      "status": "PROVEN_AND_PAIRED_MAPPED_LOCAL_ARITHMETIC_NOT_INTEGRATED",
+      "sat": "PASS; NEGATIVE MUTATION REJECTED",
+      "reference_luts": 372,
+      "candidate_luts": 216,
+      "measured_probe_saving_luts": 156,
+      "candidate_dsp": 1,
+      "scaled_256_bucket_estimate_luts": 39936,
+      "scaled_estimate_is_whole_module_gain": false,
+      "integration_or_full_module_map": false
+    },
+    "active_independent_work": [
+      {
+        "candidate": "32837b0b1987091eb86e4157ec0c6360f5bde58b",
+        "source_id": "ac8e2b03492d7de78ab5ad94d2383827498f530ee3daf40ef4d2184cc3081706",
+        "status": "RUNNING_CEC-G1"
+      },
+      {
+        "candidate": "7e68d3df224fd37fd3f462b9deff376566ed9a79",
+        "source_id": "4c8636670eb9f78b3df716d02c5690dd50b163582fa370c323b5b4fe4dd3cea5",
+        "status": "RUNNING_MAP-FULL-MODULE"
+      },
+      {
+        "candidate": "e0c3737f989c563f99a00f3fd26c1cbd27421775",
+        "source_id": "b058237185f3c6f1c730e4a128e4c3670299eb45a250627fa61aeb3eb631d235",
+        "status": "RTL_READY_REAL_ABI_CHECKED; RUNNING_GOLDENGATE"
+      }
+    ],
+    "dcache_result_storage": {
+      "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-dcache-result-memory-mapping-r3-20261111/result.json",
+      "sha256": "b0b9d9d475bc17f24975c3fa8ad7da3cbc8097e6cc358f5791d684f71e503699",
+      "storage_helper_luts_reference": 34766,
+      "storage_helper_luts_candidate": 1448,
+      "measured_helper_saving_luts": 33318,
+      "full_dcache_comparison": "NOT_RUN_NOT_ADMITTED"
+    }
+  },
+  "selection": {
+    "new_whole_synthesis_started": false,
+    "reason": "The live 9ae whole build has no actual report yet. Packed-reduction area is a local probe estimate and the overlapping group8 candidate remains in CEC. Preserve the existing builds and wait for source-bound module evidence before selecting another whole candidate.",
+    "next_safe_action": "Adopt the live 9ae completion report and active CEC/map receipts; select only a materially larger fully verified equivalent composition, with composed module comparison before another whole build.",
+    "fpga_io": false,
+    "revoked_recovery_branch_used": false
+  }
+}

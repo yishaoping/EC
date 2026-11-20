@@ -1,0 +1,774 @@
+{
+  "discovery": "config/packages/parsec.*.pkgconf: parsec alias AND apps/kernels/netapps group; includes freqmine without workload alias",
+  "parsec_commit": "a06d35960951c9bfad61eb4826bca8d167f98c19",
+  "programs": [
+    {
+      "formal_argv": "1 in_16K.txt prices.txt",
+      "formal_input": "simmedium",
+      "formal_input_archive": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/inputs/input_simmedium.tar",
+        "sha256": "cb50267d053cb4bb841125aa5efa4fa915662817fbff3fe336dd092a7dd94147"
+      },
+      "formal_runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/parsec/simmedium.runconf",
+      "formal_runconf_sha256": "395ed0429ccd6d2bf638363bfc30a3b7f9a7f9cbd84dedb8da169182ebaf73d6",
+      "group": "apps",
+      "input_generation": null,
+      "installed_candidates": [
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/inst/amd64-linux.gcc-serial/bin/blackscholes",
+          "verified_for_current_experiment": false
+        }
+      ],
+      "official_run_exec": "bin/blackscholes",
+      "package_definition": "/data1/gzh/EC/Software/PARSEC/config/packages/parsec.blackscholes.pkgconf",
+      "package_definition_sha256": "45148fd3502d1d8960c721a73f37a9591d4758a487d98992a4f26316d207a441",
+      "program": "blackscholes",
+      "requested_threads": 1,
+      "roi_source_hooks": [
+        {
+          "hooks": [
+            {
+              "line": 439,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 489,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/src/blackscholes.c",
+          "sha256": "d7be2bbc7d2bfa7dc27fb310ecb70d2f3065722a475f9b93b1d46affbb3971ec"
+        },
+        {
+          "hooks": [
+            {
+              "line": 507,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 557,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/src/blackscholes.simd.c",
+          "sha256": "211f2efd708c2600774084a4cc50b190995e4dd8e1252cd15f2a24380371a1fd"
+        }
+      ],
+      "source_dir": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/blackscholes/src",
+      "warmups": 0
+    },
+    {
+      "formal_argv": "sequenceB_2 4 2 2000 5 0 1",
+      "formal_input": "simmedium",
+      "formal_input_archive": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/bodytrack/inputs/input_simmedium.tar",
+        "sha256": "bd768bd4c13e1cdde18f2c2657d8c5cae9fc9970d9bbe4866431bb63107ea725"
+      },
+      "formal_runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/bodytrack/parsec/simmedium.runconf",
+      "formal_runconf_sha256": "84e5aeea7dc1077a505759aaa730e7c206c149c4fbcde4c6c8e4d9c85f99a029",
+      "group": "apps",
+      "input_generation": null,
+      "installed_candidates": [
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/bodytrack/inst/amd64-linux.gcc-serial/bin/bodytrack",
+          "verified_for_current_experiment": false
+        }
+      ],
+      "official_run_exec": "bin/bodytrack",
+      "package_definition": "/data1/gzh/EC/Software/PARSEC/config/packages/parsec.bodytrack.pkgconf",
+      "package_definition_sha256": "e0ad249e9f1d9e15fe54df1a79728e608cd80f878eb3ff6a9af9e825a36c0ab6",
+      "program": "bodytrack",
+      "requested_threads": 1,
+      "roi_source_hooks": [
+        {
+          "hooks": [
+            {
+              "line": 192,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 206,
+              "text": "__parsec_roi_end();"
+            },
+            {
+              "line": 253,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 270,
+              "text": "__parsec_roi_end();"
+            },
+            {
+              "line": 350,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 365,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/bodytrack/src/TrackingBenchmark/main.cpp",
+          "sha256": "3e5cd3da0b8efc70fa5008a4681834b1114432cb1794598d5e869ac825d29841"
+        }
+      ],
+      "source_dir": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/bodytrack/src",
+      "warmups": 0
+    },
+    {
+      "formal_argv": "1 15000 2000 200000.nets 64",
+      "formal_input": "simmedium",
+      "formal_input_archive": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/inputs/input_simmedium.tar",
+        "sha256": "90e184af6f8357c37e5fb797fa6d26519660bbb7dff545d7bc9c369d989f817b"
+      },
+      "formal_runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/parsec/simmedium.runconf",
+      "formal_runconf_sha256": "92bf6703c3faaba5d8b29c12011470c089f672903b9da9ec1d0c07cdfee9e9c9",
+      "group": "kernels",
+      "input_generation": null,
+      "installed_candidates": [],
+      "official_run_exec": "bin/canneal",
+      "package_definition": "/data1/gzh/EC/Software/PARSEC/config/packages/parsec.canneal.pkgconf",
+      "package_definition_sha256": "ade18eb644cc996011a8b9a766d7f9d98e24df0f418705c0245da151bfee0c20",
+      "program": "canneal",
+      "requested_threads": 1,
+      "roi_source_hooks": [
+        {
+          "hooks": [
+            {
+              "line": 110,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 125,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/src/main.cpp",
+          "sha256": "3513c1203a67e3b769615de03a8c5b9163ead082f29caadee33ba419b9786cce"
+        }
+      ],
+      "source_dir": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/canneal/src",
+      "warmups": 0
+    },
+    {
+      "formal_argv": "-c -p -v -t 1 -i media.dat -o output.dat.ddp",
+      "formal_input": "simmedium",
+      "formal_input_archive": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/inputs/input_simmedium.tar",
+        "sha256": "9daba6f32da1082a4e29a49c4f95dbc819ef999e715bacdcc7ca8a40bf046d1a"
+      },
+      "formal_runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/parsec/simmedium.runconf",
+      "formal_runconf_sha256": "607b290bd6027c049d529cb5382b22d0d67b3b4fd3c5bbd2a6e856758cf662e1",
+      "group": "kernels",
+      "input_generation": null,
+      "installed_candidates": [
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/inst/amd64-linux.gcc-serial/bin/dedup",
+          "verified_for_current_experiment": false
+        }
+      ],
+      "official_run_exec": "bin/dedup",
+      "package_definition": "/data1/gzh/EC/Software/PARSEC/config/packages/parsec.dedup.pkgconf",
+      "package_definition_sha256": "e6c8efb5d1fb33710327848a0a1f31fe188ba67fbb77d135d2bab1384e8971e7",
+      "program": "dedup",
+      "requested_threads": 1,
+      "roi_source_hooks": [
+        {
+          "hooks": [
+            {
+              "line": 1475,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 1524,
+              "text": "__parsec_roi_end();"
+            },
+            {
+              "line": 1562,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 1569,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/src/encoder.c",
+          "sha256": "68073b655b148bff0ad1fb0064c62049376c50490d9a904152566dfc86c3c909"
+        },
+        {
+          "hooks": [
+            {
+              "line": 210,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 253,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/src/decoder.c",
+          "sha256": "06616f7eb0687e5c0ee11497655b505012464fe64ac6ab5754c3ff8b8a6b752e"
+        }
+      ],
+      "source_dir": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/src",
+      "warmups": 0
+    },
+    {
+      "formal_argv": "-timing -threads 1",
+      "formal_input": "simmedium",
+      "formal_input_archive": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/facesim/inputs/input_simmedium.tar",
+        "sha256": "a1700a08a043ae6e94f02e5f159b8f999051809bc42830fc6614d94b3a75d9bb"
+      },
+      "formal_runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/facesim/parsec/simmedium.runconf",
+      "formal_runconf_sha256": "8d49a2e04eabadb72f680d1aa56eb193769c29b2f0f8b2ffeb4fba478904106d",
+      "group": "apps",
+      "input_generation": null,
+      "installed_candidates": [],
+      "official_run_exec": "bin/facesim",
+      "package_definition": "/data1/gzh/EC/Software/PARSEC/config/packages/parsec.facesim.pkgconf",
+      "package_definition_sha256": "c005a0e600b11db7e4e6b2189be5f51aee2144b2937aa5bda3724d92079b1644",
+      "program": "facesim",
+      "requested_threads": 1,
+      "roi_source_hooks": [
+        {
+          "hooks": [
+            {
+              "line": 24,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 28,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/facesim/src/Public_Library/Solids_And_Fluids/SOLIDS_FLUIDS_DRIVER.cpp",
+          "sha256": "232efae9c09d0c74fc9247e1b0ca58bafa04f17208f40f6d80d7d14afee6aa7d"
+        }
+      ],
+      "source_dir": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/facesim/src",
+      "warmups": 0
+    },
+    {
+      "formal_argv": "corel lsh queries 10 20 1 output.txt",
+      "formal_input": "simmedium",
+      "formal_input_archive": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inputs/input_simmedium.tar",
+        "sha256": "91ee10d3f47afdaf36d016f422ea0c217f5f4f93359e87a276ad5eccf61fd759"
+      },
+      "formal_runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/parsec/simmedium.runconf",
+      "formal_runconf_sha256": "62c926c979fbd1e26b06bc5145a256a901f1752ab7aa2cccaa3d406461e49903",
+      "group": "apps",
+      "input_generation": null,
+      "installed_candidates": [
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inst/amd64-linux.gcc-serial/bin/cass_add_cfg",
+          "verified_for_current_experiment": false
+        },
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inst/amd64-linux.gcc-serial/bin/cass_add_index",
+          "verified_for_current_experiment": false
+        },
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inst/amd64-linux.gcc-serial/bin/cass_add_map",
+          "verified_for_current_experiment": false
+        },
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inst/amd64-linux.gcc-serial/bin/cass_init",
+          "verified_for_current_experiment": false
+        },
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inst/amd64-linux.gcc-serial/bin/ferret",
+          "verified_for_current_experiment": false
+        },
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inst/amd64-linux.gcc-serial/bin/cass_add_table",
+          "verified_for_current_experiment": false
+        },
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inst/amd64-linux.gcc-serial/bin/cass_import",
+          "verified_for_current_experiment": false
+        },
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inst/amd64-linux.gcc-serial/bin/cass_add_vecset_dist",
+          "verified_for_current_experiment": false
+        },
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inst/amd64-linux.gcc-serial/bin/cass_describe",
+          "verified_for_current_experiment": false
+        },
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inst/amd64-linux.gcc-serial/bin/cass_export",
+          "verified_for_current_experiment": false
+        },
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inst/amd64-linux.gcc-serial/bin/cass_add_vec_dist",
+          "verified_for_current_experiment": false
+        }
+      ],
+      "official_run_exec": "bin/ferret",
+      "package_definition": "/data1/gzh/EC/Software/PARSEC/config/packages/parsec.ferret.pkgconf",
+      "package_definition_sha256": "31b6bb28abbf54996f48d98fdeb9a8e5cfcd1e1c95e7f4fd59833c08a2b487f4",
+      "program": "ferret",
+      "requested_threads": 1,
+      "roi_source_hooks": [
+        {
+          "hooks": [
+            {
+              "line": 522,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 533,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/src/benchmark/ferret-tbb.cpp",
+          "sha256": "adc31bb572aa8a3bdce27ff828edbf52446f89a1cf7ec1c1d41059f114a05ece"
+        },
+        {
+          "hooks": [
+            {
+              "line": 551,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 568,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/src/benchmark/ferret-pthreads.c",
+          "sha256": "78c95c95c86a099c4223f8789975e64285a6f3cb2c727c709d5677958c19e614"
+        }
+      ],
+      "source_dir": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/src",
+      "warmups": 0
+    },
+    {
+      "formal_argv": "1 5 in_100K.fluid out.fluid",
+      "formal_input": "simmedium",
+      "formal_input_archive": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/inputs/input_simmedium.tar",
+        "sha256": "3f4a4b2014282f7db29e2cd8ec307f4c291eb35ce43f8bef2dece2857445bf7b"
+      },
+      "formal_runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/parsec/simmedium.runconf",
+      "formal_runconf_sha256": "812e8488f11553480bd154db052a99f5d7f84ddae8d192f46fcc3ac6604e00a0",
+      "group": "apps",
+      "input_generation": null,
+      "installed_candidates": [
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/inst/amd64-linux.gcc-serial/bin/fluidcmp",
+          "verified_for_current_experiment": false
+        },
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/inst/amd64-linux.gcc-serial/bin/fluidanimate",
+          "verified_for_current_experiment": false
+        }
+      ],
+      "official_run_exec": "bin/fluidanimate",
+      "package_definition": "/data1/gzh/EC/Software/PARSEC/config/packages/parsec.fluidanimate.pkgconf",
+      "package_definition_sha256": "01e39e1e97a507724ec077c35f13af1b4d5135b7455915967194e166fe70816b",
+      "program": "fluidanimate",
+      "requested_threads": 1,
+      "roi_source_hooks": [
+        {
+          "hooks": [
+            {
+              "line": 1373,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 1380,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/src/tbb.cpp",
+          "sha256": "c7d20ad2ff1b1ec2f56527fe96add719acda6fa3891e12d1b992f1bab48909b8"
+        },
+        {
+          "hooks": [
+            {
+              "line": 1135,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 1140,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/src/serial.cpp",
+          "sha256": "a8127e108df72ff832485e3bccfeb2d02081d9107924897f8af11621db76d4d4"
+        },
+        {
+          "hooks": [
+            {
+              "line": 1244,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 1266,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/src/pthreads.cpp",
+          "sha256": "b2ffb4721f09b67d7dc6aacf462eefaa317f528f013ad5892426cf4d48ba5fde"
+        }
+      ],
+      "source_dir": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/fluidanimate/src",
+      "warmups": 0
+    },
+    {
+      "formal_argv": "kosarak_500k.dat 410",
+      "formal_input": "simmedium",
+      "formal_input_archive": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/freqmine/inputs/input_simmedium.tar",
+        "sha256": "5d3d9e97fe7806009d278ef726bbf65dd0b7a791bfadade60618d2be2825ccbf"
+      },
+      "formal_runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/freqmine/parsec/simmedium.runconf",
+      "formal_runconf_sha256": "0c070b44111999f86253a4bfb9ce25cd6c04cb01337f8ad2d8d94594c114ec84",
+      "group": "apps",
+      "input_generation": null,
+      "installed_candidates": [
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/freqmine/inst/amd64-linux.gcc-serial/bin/freqmine",
+          "verified_for_current_experiment": false
+        }
+      ],
+      "official_run_exec": "bin/freqmine",
+      "package_definition": "/data1/gzh/EC/Software/PARSEC/config/packages/parsec.freqmine.pkgconf",
+      "package_definition_sha256": "1983c22d3d0c153378675261c461a7b9032f5a142f4dff66edade7f7513b37e8",
+      "program": "freqmine",
+      "requested_threads": 1,
+      "roi_source_hooks": [
+        {
+          "hooks": [
+            {
+              "line": 153,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 189,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/freqmine/src/fpmax.cpp",
+          "sha256": "8d88c3f081caca35a9791ac1871246238d90a98140f3da1847d5abff38bd4e99"
+        }
+      ],
+      "source_dir": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/freqmine/src",
+      "warmups": 0
+    },
+    {
+      "formal_argv": "-c -p -v -t 1 -i media.dat -o output.dat.ddp",
+      "formal_input": "simmedium",
+      "formal_input_archive": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/dedup/inputs/input_simmedium.tar",
+        "sha256": "9daba6f32da1082a4e29a49c4f95dbc819ef999e715bacdcc7ca8a40bf046d1a"
+      },
+      "formal_runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netdedup/parsec/simmedium.runconf",
+      "formal_runconf_sha256": "4418bbe5bbcee48690b2ad99245965e6f20b71e10b18f97c29e11b1f9858a6ce",
+      "group": "netapps",
+      "input_generation": null,
+      "installed_candidates": [],
+      "official_run_exec": "bin/netdedup",
+      "package_definition": "/data1/gzh/EC/Software/PARSEC/config/packages/parsec.netdedup.pkgconf",
+      "package_definition_sha256": "48b267b1e05e00edb469ea2cfd4cd30660bffa3acc024f7ecb8ae2d94411b75a",
+      "program": "netdedup",
+      "requested_threads": 1,
+      "roi_source_hooks": [
+        {
+          "hooks": [
+            {
+              "line": 1504,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 1582,
+              "text": "__parsec_roi_end();"
+            },
+            {
+              "line": 1620,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 1633,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netdedup/src/server/encoder.c",
+          "sha256": "9f4e7141176521d1167e00f0b6c0fb21bfec30cde4b793bdf910c23d876744f7"
+        },
+        {
+          "hooks": [
+            {
+              "line": 210,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 253,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netdedup/src/server/decoder.c",
+          "sha256": "06616f7eb0687e5c0ee11497655b505012464fe64ac6ab5754c3ff8b8a6b752e"
+        }
+      ],
+      "source_dir": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netdedup/src",
+      "warmups": 0
+    },
+    {
+      "formal_argv": "1 simmedium",
+      "formal_input": "simmedium",
+      "formal_input_archive": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/ferret/inputs/input_simmedium.tar",
+        "sha256": "91ee10d3f47afdaf36d016f422ea0c217f5f4f93359e87a276ad5eccf61fd759"
+      },
+      "formal_runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netferret/parsec/simmedium.runconf",
+      "formal_runconf_sha256": "048a25c3578932066d3506d856a4cac7fc1b715527b506e0d713368be615b4c2",
+      "group": "netapps",
+      "input_generation": null,
+      "installed_candidates": [],
+      "official_run_exec": "bin/run.sh",
+      "package_definition": "/data1/gzh/EC/Software/PARSEC/config/packages/parsec.netferret.pkgconf",
+      "package_definition_sha256": "a64a05d3bca12401b079922b24ac6aa48dbb010022cd223e67edb03ff0d069e4",
+      "program": "netferret",
+      "requested_threads": 1,
+      "roi_source_hooks": [
+        {
+          "hooks": [
+            {
+              "line": 654,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 672,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netferret/src/server/benchmark/ferret-pthreads.c",
+          "sha256": "e600ab10c77ad1dfc70f9d010932ad8adffb5f4ba7d8b553f1c2170a940bee0b"
+        }
+      ],
+      "source_dir": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netferret/src",
+      "warmups": 0
+    },
+    {
+      "formal_argv": "1 simlarge",
+      "formal_input": "simmedium",
+      "formal_input_archive": null,
+      "formal_runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netstreamcluster/parsec/simmedium.runconf",
+      "formal_runconf_sha256": "2cac0d5b10caaa9e2b4b9e344aa772706eee51810c6cc17ff28538cea80468e4",
+      "group": "netapps",
+      "input_generation": null,
+      "installed_candidates": [],
+      "official_run_exec": "bin/run.sh",
+      "package_definition": "/data1/gzh/EC/Software/PARSEC/config/packages/parsec.netstreamcluster.pkgconf",
+      "package_definition_sha256": "ee7fe22a31e709867611da13d57a302a002e7a6cd3ea55e99a1bb9ae95aa511b",
+      "program": "netstreamcluster",
+      "requested_threads": 1,
+      "roi_source_hooks": [
+        {
+          "hooks": [
+            {
+              "line": 2335,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 2341,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netstreamcluster/src/server/streamcluster.cpp",
+          "sha256": "d02dd3d58916fd5d81a8580aeae1c632caad7bed058ca19e2e651e3179dc74ff"
+        }
+      ],
+      "source_dir": "/data1/gzh/EC/Software/PARSEC/pkgs/netapps/netstreamcluster/src",
+      "warmups": 0
+    },
+    {
+      "formal_argv": "happy_buddha.obj -automove -nthreads 1 -frames 3 -res 960 540",
+      "formal_input": "simmedium",
+      "formal_input_archive": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/raytrace/inputs/input_simmedium.tar",
+        "sha256": "267a8e9a1a66c49727c6d473a8d0d0d2cfacf8b0f5051fc5d6faca06588ef16d"
+      },
+      "formal_runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/raytrace/parsec/simmedium.runconf",
+      "formal_runconf_sha256": "adea48a1653fd26a4ecf890e89febe4cf2db5675b39af1f64ffea9d7aedbb406",
+      "group": "apps",
+      "input_generation": null,
+      "installed_candidates": [],
+      "official_run_exec": "bin/rtview",
+      "package_definition": "/data1/gzh/EC/Software/PARSEC/config/packages/parsec.raytrace.pkgconf",
+      "package_definition_sha256": "a832d42bc8f767f024b746c4ab4d094063d0969a308c0cffc87ecc3f3313dc3e",
+      "program": "raytrace",
+      "requested_threads": 1,
+      "roi_source_hooks": [
+        {
+          "hooks": [
+            {
+              "line": 477,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 483,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 491,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/raytrace/src/MiniView/rtview.cxx",
+          "sha256": "9e0ca33bbfac63be5a5eacd7c8aa347d9afa0d5f87d6ed91f9ac341b8e87c04d"
+        }
+      ],
+      "source_dir": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/raytrace/src",
+      "warmups": 0
+    },
+    {
+      "formal_argv": "10 20 64 8192 8192 1000 none output.txt 1",
+      "formal_input": "simmedium",
+      "formal_input_archive": null,
+      "formal_runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/streamcluster/parsec/simmedium.runconf",
+      "formal_runconf_sha256": "4d6d5d9877791e042f03af09828442a7f456142f0bb8f6b923c8ded9265abbb8",
+      "group": "kernels",
+      "input_generation": "original synthetic deterministic generation",
+      "installed_candidates": [
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/streamcluster/inst/amd64-linux.gcc-serial/bin/streamcluster",
+          "verified_for_current_experiment": false
+        }
+      ],
+      "official_run_exec": "bin/streamcluster",
+      "package_definition": "/data1/gzh/EC/Software/PARSEC/config/packages/parsec.streamcluster.pkgconf",
+      "package_definition_sha256": "b3c8f22a086339ac2447a1d295e12609603271279494515f46ab22027a69e3ef",
+      "program": "streamcluster",
+      "requested_threads": 1,
+      "roi_source_hooks": [
+        {
+          "hooks": [
+            {
+              "line": 2031,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 2037,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/streamcluster/src/streamcluster.cpp",
+          "sha256": "5214d638429348e8aad3a83bb9ffdeec25ba95263c6d0ccd182a828afae72efc"
+        }
+      ],
+      "source_dir": "/data1/gzh/EC/Software/PARSEC/pkgs/kernels/streamcluster/src",
+      "warmups": 0
+    },
+    {
+      "formal_argv": "-ns 32 -sm 20000 -nt 1",
+      "formal_input": "simmedium",
+      "formal_input_archive": null,
+      "formal_runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/swaptions/parsec/simmedium.runconf",
+      "formal_runconf_sha256": "acf18b236d1cff30793514f44cb753c8d43cf7c1256812295d23f13d09933927",
+      "group": "apps",
+      "input_generation": "original synthetic deterministic generation",
+      "installed_candidates": [
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/swaptions/inst/amd64-linux.gcc-serial/bin/swaptions",
+          "verified_for_current_experiment": false
+        }
+      ],
+      "official_run_exec": "bin/swaptions",
+      "package_definition": "/data1/gzh/EC/Software/PARSEC/config/packages/parsec.swaptions.pkgconf",
+      "package_definition_sha256": "45f4664805da608ea984c05001f1892c01e47f69ce2f35db15ed863d693e5df3",
+      "program": "swaptions",
+      "requested_threads": 1,
+      "roi_source_hooks": [
+        {
+          "hooks": [
+            {
+              "line": 288,
+              "text": "__parsec_roi_begin();"
+            },
+            {
+              "line": 317,
+              "text": "__parsec_roi_end();"
+            }
+          ],
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/swaptions/src/HJM_Securities.cpp",
+          "sha256": "33cda1c6b09d612e047cc50b5b9bf65385067304d71596f1af91e968caab1aea"
+        }
+      ],
+      "source_dir": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/swaptions/src",
+      "warmups": 0
+    },
+    {
+      "formal_argv": "im_benchmark vulture_2336x2336.v output.v",
+      "formal_input": "simmedium",
+      "formal_input_archive": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/vips/inputs/input_simmedium.tar",
+        "sha256": "a9a2525c26a7d5219f526e33da88aed0a97d91a6231603401e0912ba5bc89487"
+      },
+      "formal_runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/vips/parsec/simmedium.runconf",
+      "formal_runconf_sha256": "adfbd30f12135219679d948f862f3efa3e6580ff02b49efe02ed04e9a6639d3f",
+      "group": "apps",
+      "input_generation": null,
+      "installed_candidates": [],
+      "official_run_exec": "bin/vips",
+      "package_definition": "/data1/gzh/EC/Software/PARSEC/config/packages/parsec.vips.pkgconf",
+      "package_definition_sha256": "b76ca2815d27fbf7a6b329aa681e1df3a0c1059c3b5abe97d55fc62392c7fd2f",
+      "program": "vips",
+      "requested_threads": 1,
+      "roi_source_hooks": [],
+      "source_dir": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/vips/src",
+      "warmups": 0
+    },
+    {
+      "formal_argv": "--quiet --qp 20 --partitions b8x8,i4x4 --ref 5 --direct auto --b-pyramid --weightb --mixed-refs --no-fast-pskip --me umh --subme 7 --analyse b8x8,i4x4 --threads 1 -o eledream.264 eledream_640x360_32.y4m",
+      "formal_input": "simmedium",
+      "formal_input_archive": {
+        "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/x264/inputs/input_simmedium.tar",
+        "sha256": "0f4287eccdaf1179f0f33dbd603eccd5e0a0ab6354589b66af83270ce33aecee"
+      },
+      "formal_runconf": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/x264/parsec/simmedium.runconf",
+      "formal_runconf_sha256": "508791ac4b9a4645a9e8402093540c9f4d257b21f8d6d5543901dbf65cd44198",
+      "group": "apps",
+      "input_generation": null,
+      "installed_candidates": [
+        {
+          "elf": true,
+          "path": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/x264/inst/amd64-linux.gcc-serial/bin/x264",
+          "verified_for_current_experiment": false
+        }
+      ],
+      "official_run_exec": "bin/x264",
+      "package_definition": "/data1/gzh/EC/Software/PARSEC/config/packages/parsec.x264.pkgconf",
+      "package_definition_sha256": "6b0a2b274422e347c050e9613dce710f416a00ad80b735e8842635b5f7a1db74",
+      "program": "x264",
+      "requested_threads": 1,
+      "roi_source_hooks": [],
+      "source_dir": "/data1/gzh/EC/Software/PARSEC/pkgs/apps/x264/src",
+      "warmups": 0
+    }
+  ],
+  "root": "/data1/gzh/EC/Software/PARSEC",
+  "schema": "ec-local-parsec-suite/1"
+}

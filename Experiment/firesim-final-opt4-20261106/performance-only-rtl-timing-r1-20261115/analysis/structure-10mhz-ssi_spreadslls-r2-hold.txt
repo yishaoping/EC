@@ -1,0 +1,67 @@
+Slack (VIOLATED) :        -0.725ns  (arrival time - required time)
+  Source:                 design_1_i/xdma_0/inst/udma_wrapper/dma_top/base/IRQ_INST/clk_msi_req_reg[19]/C
+                            (rising edge-triggered cell FDRE clocked by xdma_0_axi_aclk  {rise@0.000ns fall@2.000ns period=4.000ns})
+  Destination:            design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_c_e4_inst/CFGINTERRUPTMSIINT[19]
+                            (rising edge-triggered cell PCIE4CE4 clocked by GTYE4_CHANNEL_TXOUTCLK[3]_3  {rise@0.000ns fall@1.000ns period=2.000ns})
+  Path Group:             GTYE4_CHANNEL_TXOUTCLK[3]_3
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (GTYE4_CHANNEL_TXOUTCLK[3]_3 rise@0.000ns - xdma_0_axi_aclk rise@0.000ns)
+  Data Path Delay:        0.131ns  (logic 0.058ns (44.275%)  route 0.073ns (55.725%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.281ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    2.363ns
+    Source Clock Delay      (SCD):    2.082ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+  Clock Net Delay (Source):      1.890ns (routing 0.975ns, distribution 0.915ns)
+  Clock Net Delay (Destination): 2.148ns (routing 1.076ns, distribution 1.072ns)
+  Timing Exception:       MultiCycle Path   Setup -end   2    Hold  -end   1
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock xdma_0_axi_aclk rise edge)
+                                                      0.000     0.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     0.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, estimated)        0.078     0.078    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y90        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.114     0.192 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_userclk/O
+    X6Y1 (CLOCK_ROOT)    net (fo=57087, estimated)    1.890     2.082    design_1_i/xdma_0/inst/udma_wrapper/dma_top/base/IRQ_INST/user_clk
+    SLICE_X220Y30        FDRE                                         r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/base/IRQ_INST/clk_msi_req_reg[19]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X220Y30        FDRE (Prop_BFF_SLICEM_C_Q)
+                                                      0.058     2.140 r  design_1_i/xdma_0/inst/udma_wrapper/dma_top/base/IRQ_INST/clk_msi_req_reg[19]/Q
+                         net (fo=1, estimated)        0.073     2.213    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/cfg_interrupt_msi_int[19]
+    PCIE4CE4_X1Y0        PCIE4CE4                                     r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_c_e4_inst/CFGINTERRUPTMSIINT[19]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock GTYE4_CHANNEL_TXOUTCLK[3]_3 rise edge)
+                                                      0.000     0.000 r  
+    GTYE4_CHANNEL_X1Y15  GTYE4_CHANNEL                0.000     0.000 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4c_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4c_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[27].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[3].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK
+                         net (fo=7, estimated)        0.085     0.085    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/DBG_TXOUTCLK[0]
+    BUFG_GT_X1Y92        BUFG_GT (Prop_BUFG_GT_I_O)
+                                                      0.130     0.215 r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_gt_top_i/diablo_gt.diablo_gt_phy_wrapper/phy_clk_i/bufg_gt_coreclk/O
+    X6Y1 (CLOCK_ROOT)    net (fo=6079, estimated)     2.148     2.363    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/CLK_CORECLK
+    PCIE4CE4_X1Y0        PCIE4CE4                                     r  design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_c_e4_inst/CORECLK
+                         clock pessimism              0.000     2.363    
+    PCIE4CE4_X1Y0        PCIE4CE4 (Hold_PCIE4CE4_CORECLK_CFGINTERRUPTMSIINT[19])
+                                                      0.575     2.938    design_1_i/xdma_0/inst/pcie4c_ip_i/inst/design_1_xdma_0_0_pcie4c_ip_pcie_4_0_pipe_inst/pcie_4_c_e4_inst
+  -------------------------------------------------------------------
+                         required time                         -2.938    
+                         arrival time                           2.213    
+  -------------------------------------------------------------------
+                         slack                                 -0.725    
+
+
+
+
+
+---------------------------------------------------------------------------------------------------
+From Clock:  GTYE4_CHANNEL_TXOUTCLK[3]_3
+  To Clock:  pipe_clk
+
+Setup :            0  Failing Endpoints,  Worst Slack        1.292ns,  Total Violation        0.000ns
+Hold  :            2  Failing Endpoints,  Worst Slack       -0.121ns,  Total Violation       -0.234ns
+---------------------------------------------------------------------------------------------------
+
+
+Max Delay Paths
+--------------------------------------------------------------------------------------

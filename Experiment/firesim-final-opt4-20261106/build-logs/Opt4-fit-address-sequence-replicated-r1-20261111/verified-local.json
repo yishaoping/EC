@@ -1,0 +1,38 @@
+{
+  "actual_size_boundary": "PASS_8192_VECTORS_256X32_90_ASYNC_READS_SAME_ADDRESS_ALL_SEQUENCE_BITS_SLOT255_DISABLED_WRITE_GLOBAL_RESET",
+  "full_dut_formal": false,
+  "full_module_regression": "PASS_6144_CYCLES_ALL_52_OUTPUTS_NOT_FORMAL",
+  "hardware_commit": "27f7e7d6d043d2c5e3dff7551fdb0487e5775580",
+  "independent_global_reset_regression": "PASS_GLOBAL_RESET_WITHOUT_RESETSTATS_PHASE_512_513_RESTART_516",
+  "inherited_bucket_tag_verification": "PASS_ALL_256_SLOTS_32BIT_VALID_QUALIFIED_MISMATCH_AND_NEGATIVE_MUTATION",
+  "local_formal": "PASS_FULL32_VALID_PAYLOAD_INDUCTION_MATCHES_RESET_RETIRE_SINGLE_WRITER",
+  "memory_topology": {
+    "covered_read_ports": 90,
+    "leaf_memory": {
+      "ABITS": 8,
+      "RD_CLK_ENABLE": 0,
+      "RD_PORTS": 2,
+      "SIZE": 256,
+      "WIDTH": 32,
+      "WR_CLK_ENABLE": 1,
+      "WR_CLK_POLARITY": 1,
+      "WR_PORTS": 1
+    },
+    "logical_payload_bits": 8192,
+    "physical_payload_bits": 368640,
+    "rejected_topology_mutations": [
+      "io_writeEnable",
+      "io_writeIndex",
+      "io_writeData",
+      "io_readData_0"
+    ],
+    "replicas": 45,
+    "reset_independence": "No leaf reset; no reset pin or reset-controlled memory write",
+    "rtl_sha256": "c9553475e8d5f7e83a685406db1d76d80346a0f4472deaa3df19b7a9e37cada7",
+    "status": "PASS_45_EXACT_REPLICAS_90_ASYNC_READS_BROADCAST_FULL32_SINGLE_EDGE_WRITE",
+    "yosys_json_sha256": "36c9b8e3f78f1d1bf63ff680f3b05a6c0f3834a9376bb16d0e8718a8697c7269"
+  },
+  "negative_mutation_rejected": true,
+  "rtl_sha256": "a23a8c90b09b44d77d4743111d625bd1745790f3acd974cccb4b961a9d06544e",
+  "source_id": "96369486ff5e2c163787b4ce71f5e3d0344346f2b7fb1077d37176ff230bbcdf"
+}

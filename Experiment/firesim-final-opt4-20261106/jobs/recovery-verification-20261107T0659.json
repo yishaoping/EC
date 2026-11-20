@@ -1,0 +1,422 @@
+{
+  "checks": [
+    {
+      "audit": {
+        "current_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+        "job": "native",
+        "observed_utc": "2026-11-07T06:58:04.265869+00:00",
+        "schema": "ec-job-identity-audit/1",
+        "states": [
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-native-queue-state.json",
+            "processes": [
+              {
+                "expected_start_ticks": "105049",
+                "field": "pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/suite_queue.py Native ",
+                  "pid": 93647,
+                  "process_state": "S",
+                  "start_ticks": "105049"
+                },
+                "old_boot": false
+              },
+              {
+                "expected_start_ticks": null,
+                "field": "child_pid",
+                "identity_live": false,
+                "identity_uncertain": true,
+                "observed": {
+                  "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/run_isolated_sample.py Native freqmine simsmall --timeout 7200 --bdf 0000:e2:00.0 --apps-receipt /data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-staged-resident-apps-build.json --rootfs-receipt /data1/gzh/EC/firesim/final-opt4-20261106/software/freqmine-staged-resident-rootfs-build.json --firmware-receipt /data1/gzh/EC/firesim/final-opt4-20261106/software/Native/freqmine-staged-resident-firmware-build.json --driver-receipt /data1/gzh/EC/firesim/final-opt4-20261106/runtime/Native-efficiency-driver.json ",
+                  "pid": 257507,
+                  "process_state": "S",
+                  "start_ticks": "244398"
+                },
+                "old_boot": false
+              }
+            ],
+            "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+            "status": "RUNNING"
+          },
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/active-0000_e2_00.0.json",
+            "processes": [
+              {
+                "expected_start_ticks": "244475",
+                "field": "pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-efficiency-driver-20261106T135905Z/FireSim-xilinx_alveo_u280 +permissive +domain=0000 +bus=e2 +device=00 +function=0 +bar=0 +pci-vendor=10ee +pci-device=903f +uart-in0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-freqmine-simsmall-r1-20261107T065126Z/uart.in +uart-out0=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-freqmine-simsmall-r1-20261107T065126Z/uart.log +fesvr-step-size=2004765 +mm_readLatency_0=30 +mm_readMaxReqs_0=4 +mm_relaxFunctionalModel_0=0 +mm_writeLatency_0=30 +mm_writeMaxReqs_0=4 +ec-dac-roi-log=/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-freqmine-simsmall-r1-20261107T065126Z/roi-raw.jsonl +ec-dac-snapshot-seconds=30 +permissive-off +prog0=/var/tmp/guozh-firesim-final-opt4-20261107-cad/system-builds/Native-firmware-20261107T052427.688503Z/platform/generic/firmware/fw_payload.elf ",
+                  "pid": 257525,
+                  "process_state": "R",
+                  "start_ticks": "244475"
+                },
+                "old_boot": false
+              }
+            ],
+            "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+            "status": "RUNNING"
+          },
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/native/state.json",
+            "processes": [
+              {
+                "expected_start_ticks": "89098",
+                "field": "pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run native ",
+                  "pid": 86135,
+                  "process_state": "S",
+                  "start_ticks": "89098"
+                },
+                "old_boot": false
+              },
+              {
+                "expected_start_ticks": "89103",
+                "field": "child_pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_campaign_native.py ",
+                  "pid": 86136,
+                  "process_state": "S",
+                  "start_ticks": "89103"
+                },
+                "old_boot": false
+              }
+            ],
+            "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+            "status": "RUNNING"
+          }
+        ]
+      },
+      "name": "native",
+      "single_instance_lock_held": true
+    },
+    {
+      "audit": {
+        "current_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+        "job": "cad",
+        "observed_utc": "2026-11-07T06:58:04.267437+00:00",
+        "schema": "ec-job-identity-audit/1",
+        "states": [
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/C4-runtime-cad-state.json",
+            "processes": [
+              {
+                "expected_start_ticks": "192528",
+                "field": "pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_bitstream.py ",
+                  "pid": 175581,
+                  "process_state": "S",
+                  "start_ticks": "192528"
+                },
+                "old_boot": false
+              },
+              {
+                "expected_start_ticks": "192624",
+                "field": "child_pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "runuser -u guozh -- nice -n 15 /tools/Xilinx/Vivado/2021.1/bin/vivado -mode batch -nojournal -log /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261107T064248Z/vivado.log -source /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-resume-20261107T064248Z/resume_cad.tcl -tclargs /var/tmp/guozh-firesim-final-opt4-20261107-cad/C4-runtime-bitstream-20261107T022025.952528Z resume ",
+                  "pid": 175632,
+                  "process_state": "S",
+                  "start_ticks": "192624"
+                },
+                "old_boot": false
+              }
+            ],
+            "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+            "status": "RUNNING"
+          },
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/cad/state.json",
+            "processes": [
+              {
+                "expected_start_ticks": "192523",
+                "field": "pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run cad ",
+                  "pid": 175579,
+                  "process_state": "S",
+                  "start_ticks": "192523"
+                },
+                "old_boot": false
+              },
+              {
+                "expected_start_ticks": "192528",
+                "field": "child_pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/resume_bitstream.py ",
+                  "pid": 175581,
+                  "process_state": "S",
+                  "start_ticks": "192528"
+                },
+                "old_boot": false
+              }
+            ],
+            "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+            "status": "RUNNING"
+          }
+        ]
+      },
+      "name": "cad",
+      "single_instance_lock_held": true
+    },
+    {
+      "audit": {
+        "current_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+        "job": "c4-first",
+        "observed_utc": "2026-11-07T06:58:04.268665+00:00",
+        "schema": "ec-job-identity-audit/1",
+        "states": [
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/fpga-continuation-state.json",
+            "processes": [
+              {
+                "expected_start_ticks": "253762",
+                "field": "pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/continue_fpga.py ",
+                  "pid": 291375,
+                  "process_state": "S",
+                  "start_ticks": "253762"
+                },
+                "old_boot": false
+              }
+            ],
+            "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+            "status": "WAITING_FOR_EXACT_C4_BITSTREAM"
+          },
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/c4-first/state.json",
+            "processes": [
+              {
+                "expected_start_ticks": "253757",
+                "field": "pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run c4-first ",
+                  "pid": 291370,
+                  "process_state": "S",
+                  "start_ticks": "253757"
+                },
+                "old_boot": false
+              },
+              {
+                "expected_start_ticks": "253762",
+                "field": "child_pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/continue_fpga.py ",
+                  "pid": 291375,
+                  "process_state": "S",
+                  "start_ticks": "253762"
+                },
+                "old_boot": false
+              }
+            ],
+            "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+            "status": "RUNNING"
+          }
+        ]
+      },
+      "name": "c4-first",
+      "single_instance_lock_held": true
+    },
+    {
+      "audit": {
+        "current_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+        "job": "c4-suite",
+        "observed_utc": "2026-11-07T06:58:04.269621+00:00",
+        "schema": "ec-job-identity-audit/1",
+        "states": [
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/suite-c4-queue-state.json",
+            "processes": [
+              {
+                "expected_start_ticks": "253764",
+                "field": "pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/suite_queue.py C4 ",
+                  "pid": 291376,
+                  "process_state": "S",
+                  "start_ticks": "253764"
+                },
+                "old_boot": false
+              }
+            ],
+            "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+            "status": "WAITING_EXISTING_PRIORITY_QUEUE"
+          },
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/c4-suite/state.json",
+            "processes": [
+              {
+                "expected_start_ticks": "253759",
+                "field": "pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run c4-suite ",
+                  "pid": 291373,
+                  "process_state": "S",
+                  "start_ticks": "253759"
+                },
+                "old_boot": false
+              },
+              {
+                "expected_start_ticks": "253764",
+                "field": "child_pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/suite_queue.py C4 ",
+                  "pid": 291376,
+                  "process_state": "S",
+                  "start_ticks": "253764"
+                },
+                "old_boot": false
+              }
+            ],
+            "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+            "status": "RUNNING"
+          }
+        ]
+      },
+      "name": "c4-suite",
+      "single_instance_lock_held": true
+    },
+    {
+      "audit": {
+        "current_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+        "job": "publisher",
+        "observed_utc": "2026-11-07T06:58:04.270579+00:00",
+        "schema": "ec-job-identity-audit/1",
+        "states": [
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/live-campaign-monitor.json",
+            "processes": [
+              {
+                "expected_start_ticks": "101915",
+                "field": "pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/live_campaign_monitor.py ",
+                  "pid": 92249,
+                  "process_state": "S",
+                  "start_ticks": "101915"
+                },
+                "old_boot": false
+              }
+            ],
+            "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+            "status": null
+          },
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/publisher/state.json",
+            "processes": [
+              {
+                "expected_start_ticks": "101909",
+                "field": "pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run publisher ",
+                  "pid": 92241,
+                  "process_state": "S",
+                  "start_ticks": "101909"
+                },
+                "old_boot": false
+              },
+              {
+                "expected_start_ticks": "101915",
+                "field": "child_pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/live_campaign_monitor.py ",
+                  "pid": 92249,
+                  "process_state": "S",
+                  "start_ticks": "101915"
+                },
+                "old_boot": false
+              }
+            ],
+            "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+            "status": "RUNNING"
+          }
+        ]
+      },
+      "name": "publisher",
+      "single_instance_lock_held": true
+    },
+    {
+      "audit": {
+        "current_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+        "job": "cad-monitor",
+        "observed_utc": "2026-11-07T06:58:04.271542+00:00",
+        "schema": "ec-job-identity-audit/1",
+        "states": [
+          {
+            "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/jobs/cad-monitor/state.json",
+            "processes": [
+              {
+                "expected_start_ticks": "253755",
+                "field": "pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "/usr/bin/python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/job_service.py run cad-monitor ",
+                  "pid": 291367,
+                  "process_state": "S",
+                  "start_ticks": "253755"
+                },
+                "old_boot": false
+              },
+              {
+                "expected_start_ticks": "253761",
+                "field": "child_pid",
+                "identity_live": true,
+                "identity_uncertain": false,
+                "observed": {
+                  "cmdline": "python3 /data1/gzh/EC/firesim/final-opt4-20261106/scripts/cad_witness.py C4-runtime-cad-state.json ",
+                  "pid": 291374,
+                  "process_state": "S",
+                  "start_ticks": "253761"
+                },
+                "old_boot": false
+              }
+            ],
+            "recorded_boot_id": "e5c9abda-56be-46db-9a2a-03b472f81a5a",
+            "status": "RUNNING"
+          }
+        ]
+      },
+      "name": "cad-monitor",
+      "single_instance_lock_held": true
+    }
+  ],
+  "observed_utc": "2026-11-07T06:58:04.272204+00:00",
+  "read_only_no_restarts": true
+}

@@ -1,0 +1,4 @@
+read_verilog -sv ../target/QueuePair.v
+synth_xilinx -family xcu -top GH_FIFO_SC_Reference -noiopad -noclkbuf
+tee -o stat.json stat -json
+write_json mapped.json

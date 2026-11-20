@@ -1,0 +1,129 @@
+{
+  "binding_path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-svb-trace-r4-20261111/binding.json",
+  "binding_sha256": "a0e252620ac95e6276e46e351fb9a9e27ceef3eec5f0a6c3b4a4c406db6e1f24",
+  "caveats": [
+    "Synthetic directed trace; includes intentional watermark/ready/ACK delays, not an application latency distribution or peak throughput.",
+    "Only matched capture/promote/ACK identities enter latency distributions; all other captures remain explicitly listed as censored. Coalesced/discarded count is reported without guessing per-entry retirement.",
+    "ACK means original SVB completion; it does not prove checker completion or architectural rollback/restart.",
+    "First 39 initialization cycles excluded because their payload values were not covered by the validated all-output replay.",
+    "Edge-index differences preserve target-cycle time; host wall time is reported separately."
+  ],
+  "counters": {
+    "acks": 15,
+    "capture_backpressure_cycles": 0,
+    "captures": 30,
+    "coalesced_entries": 2,
+    "compared_cycles": 333,
+    "discarded_entries": 13,
+    "flush_cycles": 10,
+    "invalidations": 29,
+    "max_occupancy": 2,
+    "nonreset_cycles": 301,
+    "promotion_backpressure_cycles": 69,
+    "promotions": 15,
+    "reset_cycles": 32,
+    "unmatched_capture_records": 15
+  },
+  "distributions": {
+    "capture_to_ack_cycles": {
+      "count": 15,
+      "histogram": {
+        "4": 2,
+        "6": 1,
+        "10": 1,
+        "12": 1,
+        "14": 1,
+        "16": 1,
+        "18": 1,
+        "20": 1,
+        "22": 1,
+        "24": 1,
+        "26": 1,
+        "28": 1,
+        "30": 1,
+        "32": 1
+      },
+      "max": 32,
+      "mean": 17.733333333333334,
+      "median": 18,
+      "p95": 32,
+      "p99": 32,
+      "sum": 266
+    },
+    "capture_to_first_valid_cycles": {
+      "count": 15,
+      "histogram": {
+        "2": 2,
+        "4": 1,
+        "8": 12
+      },
+      "max": 8,
+      "mean": 6.933333333333334,
+      "median": 8,
+      "p95": 8,
+      "p99": 8,
+      "sum": 104
+    },
+    "capture_to_promote_fire_cycles": {
+      "count": 15,
+      "histogram": {
+        "3": 2,
+        "5": 1,
+        "8": 1,
+        "9": 1,
+        "10": 1,
+        "11": 1,
+        "12": 1,
+        "13": 1,
+        "14": 1,
+        "15": 1,
+        "16": 1,
+        "17": 1,
+        "18": 1,
+        "19": 1
+      },
+      "max": 19,
+      "mean": 11.533333333333333,
+      "median": 12,
+      "p95": 19,
+      "p99": 19,
+      "sum": 173
+    },
+    "promote_fire_to_ack_cycles": {
+      "count": 15,
+      "histogram": {
+        "1": 3,
+        "2": 1,
+        "3": 1,
+        "4": 1,
+        "5": 1,
+        "6": 1,
+        "7": 1,
+        "8": 1,
+        "9": 1,
+        "10": 1,
+        "11": 1,
+        "12": 1,
+        "13": 1
+      },
+      "max": 13,
+      "mean": 6.2,
+      "median": 6,
+      "p95": 13,
+      "p99": 13,
+      "sum": 93
+    }
+  },
+  "events_path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-directed-trace-metrics-r1-20261111/events.json",
+  "events_sha256": "e2cf452c47a52e7fa356fb2c1d597acf3351ff5c57a40c732339e5b0ca9394f1",
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "kind": "TARGET_RTL_DIRECTED_TRACE_METRICS_NOT_FPGA",
+  "matched_samples_path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-directed-trace-metrics-r1-20261111/matched_samples.json",
+  "matched_samples_sha256": "c1731bf79f2ec46c042078c00389b347909bb3cc91cc25e699ca8eaa23db78e8",
+  "observed_ack_per_nonreset_target_cycle": 0.04983388704318937,
+  "quantile_definition": "nearest-rank P95/P99; exact 1 target-cycle histogram buckets",
+  "schema": "ec-original-svb-event-metrics/1",
+  "trace_sha256": "1ffdc8878d28135350946c57a1a830f13e5239473c6b965377a174a14fa717a3",
+  "unmatched_capture_records_path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-directed-trace-metrics-r1-20261111/unmatched_capture_records.json",
+  "unmatched_capture_records_sha256": "f883772897b64acf935dc23aad57fe511be044d53d4750496cd70edd5863766f"
+}

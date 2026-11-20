@@ -1,0 +1,6 @@
+read_verilog -sv -DSYNTHESIS /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-controller-round53-v3-20261112/observations-response_payload_equal_9.sv
+prep -top OwnerRamRelation -flatten
+memory_map
+opt -full
+opt_clean
+sat -seq 1 -set relation 1 -prove response_payload_equal_9 1 -verify -timeout 120

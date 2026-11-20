@@ -1,0 +1,45 @@
+--- /data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/B/chipyard/sims/firesim/sim/midas/src/main/cc/bridges/fased_memory_timing_model.cc
++++ /data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-observed-driver-20261106T114520Z/host-sources/fased_memory_timing_model.cc
+@@ -184,6 +184,15 @@
+     }
+   }
+ 
++  // Host-only readback before target stepping; never assumes a write succeeded.
++  for (const auto &[key, expected] : user_configuration) {
++    const auto actual = simif.read(addr_map.r_addr(key));
++    fprintf(stderr, "EC_FASED_READBACK key=%s expected=%u actual=%u\n",
++            key.c_str(), expected, actual);
++    if (actual != expected) throw std::runtime_error("FASED runtime readback mismatch: " + key);
++  }
++  fflush(stderr);
++
+   for (auto &hist : histograms) {
+     hist.init();
+   }
+--- /data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/B/chipyard/sims/firesim/sim/midas/src/main/cc/bridges/synthesized_prints.cc
++++ /data1/gzh/EC/firesim/final-opt4-20261106/builds/Native-observed-driver-20261106T114520Z/host-sources/synthesized_prints.cc
+@@ -1,6 +1,8 @@
+ #include "synthesized_prints.h"
+ 
+ #include <cassert>
++#include <chrono>
++#include <unordered_map>
+ 
+ #include <iomanip>
+ #include <iostream>
+@@ -291,6 +293,15 @@
+   // Pull batch_tokens from the FPGA if at least that many are avaiable
+   // Assumes 1:1 token to dma-beat size
+   process_tokens(batch_beats, batch_beats);
++  using clock = std::chrono::steady_clock;
++  static std::unordered_map<const void *, clock::time_point> last_flush;
++  auto now = clock::now();
++  auto &previous = last_flush[this];
++  if (now - previous >= std::chrono::seconds(5)) {
++    process_tokens(batch_beats, 0);
++    printstream->flush();
++    previous = now;
++  }
+ }
+ 
+ /**

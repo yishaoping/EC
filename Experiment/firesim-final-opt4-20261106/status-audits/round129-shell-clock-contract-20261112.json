@@ -1,0 +1,103 @@
+{
+  "schema": "ec-opt4-shell-clock-contract-audit/1",
+  "round": 129,
+  "observed_utc": "2026-11-12T06:31:33Z",
+  "scope": {
+    "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+    "board_allowlist": ["0000:21:00.0"],
+    "no_target_rtl_change": true,
+    "no_fpga_access": true,
+    "no_CAD_launched": true
+  },
+  "shell_inventory": {
+    "source_completion": "status-audits/round128-shell-collateral-20261112/completion.json",
+    "source_completion_sha256": "33d8905f66fb8cb53f54f7a0b3118c40149437a05e8b06158684701c8d2b7c7f",
+    "collateral_manifest": "status-audits/round128-shell-collateral-20261112/collateral-manifest.json",
+    "collateral_manifest_sha256": "00320607425a10bbc2708c50c607b18e1db5586ed25eab68346e8aeacba8861c",
+    "pinned_collateral_file_count": 521,
+    "tool_generated_implementation_constraint_count": 27,
+    "linked_clock_report": "status-audits/round128-shell-collateral-20261112/linked-shell-clocks.rpt",
+    "linked_clock_report_sha256": "efeb391c5e24447c923f2f812f59ca0defaaf3c651ef34971b494dc1845c6586",
+    "observed_native_host_clock": "clk_out1_design_1_clk_wiz_0_0",
+    "observed_native_host_period_ns": 19.998,
+    "named_host_clock_present": false,
+    "interpretation": "Shell-only linked inventory. It does not establish final fullshell timing or certification."
+  },
+  "conditional_repair_static_validation": {
+    "candidate": "candidates/mcrams-shell-ipcollateral-r4b-20261112",
+    "prepare_source_sha256": "847d80b4d117d54c122f2eb0c4ccf228439829877fee8a2f40aa5d2c79001f59",
+    "physical_source_sha256": "d18335fe557ec534bb1fc71659c91ee886c23a5a51556474d880b0f70b2a3aa7",
+    "input_manifest_sha256": "3d4b705ace345b613fe2637764b023e4b0218b7124dc61d85dfee69ead7cf681",
+    "status": "STATIC_NATIVE_CLOCK_AND_PREPLACE_GATES_PASS",
+    "validation": {
+      "pinned_files_verified": 521,
+      "generated_constraint_files_verified": 27,
+      "BD_added_before_link_design": true,
+      "native_clock_bound_without_alias_or_period_override": true,
+      "generated_divide_by_one_clocks_preserved": 2,
+      "multicycle_contract_preserved_in_source": {
+        "buildtop_reference_clock": {"setup": 1, "hold": 0},
+        "tileClockGroup_tile_1": {"setup": 2, "hold": 1}
+      },
+      "preplace_clock_and_coverage_gates_present": true,
+      "exception_report_emitted": true,
+      "actual_exception_application_verified": false,
+      "fullshell_preplace_timing_test_completed": false,
+      "placement_route_bitstream_commands_present": false
+    },
+    "execution_state": "PREPARED_NOT_ADMITTED_OR_EXECUTED",
+    "next_gate": "The existing r4b observer may submit only after matching actual r3 clock failure and exact predecessor cgroup release. Before placement, inspect actual fullshell preplace exceptions and verify effective exception objects/counts against the pinned source; the current static check does not prove Vivado applied them."
+  },
+  "live_work": {
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "mcrams_full_host_synthesis": {
+      "state": "Experiment/firesim-final-opt4-20261106/Opt4-mcrams-full-host-capacity-r1-state.json",
+      "state_sha256": "654dbb3efa67b573ba77682a7a6bb35922aa9ee4475cebeaed6bc424591164c9",
+      "status": "RUNNING_FULL_HOST_SYNTH_DESIGN",
+      "controller_pid": 2379596,
+      "controller_start_ticks": "25825420",
+      "service": "ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service",
+      "service_active": true,
+      "exact_controller_cgroup": "/system.slice/ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service"
+    },
+    "mcrams_continuation": {
+      "state": "Experiment/firesim-final-opt4-20261106/Opt4-mcrams-full-host-continuation-r2-state.json",
+      "state_sha256": "58cac6bce080a89dc0fd10b41447fbc2a4873a74503e1b3651e0b1f9efc3b54d",
+      "status": "ADOPTING_EXISTING_CAPACITY_AND_PARITY_NO_DUPLICATES",
+      "pid": 2759828,
+      "start_ticks": "27368804",
+      "service": "ec-opt4-mcrams-host-continuation-r3-clock-3656aec4.service",
+      "service_active": true,
+      "exact_cgroup": "/system.slice/ec-opt4-mcrams-host-continuation-r3-clock-3656aec4.service"
+    },
+    "svb_r5": {
+      "physical_state": "Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r5-20261112/state.json",
+      "physical_state_sha256": "799ec3d02f035711bd48716c4e50357d67ac36180584b0526fa2e113a34d0e8d",
+      "physical_pid": 2692645,
+      "start_ticks": "26961211",
+      "onboard_state_sha256": "b7dea6d14789ae990d4722acb47b9333d97707ec0eda5323d70b0bce40457311",
+      "onboard_pid": 2692644,
+      "application_state_sha256": "df2f06ae42b7af14a8696e85519a70af888cc83a04958de2e5eb2ee0c3eac27e",
+      "application_pid": 2692643,
+      "all_three_services_active_with_exact_cgroups": true,
+      "bound_inputs_changed": false,
+      "physical_certification": "PENDING"
+    },
+    "owner_mc_finite_parity": {
+      "result": "cycleprecise-owner-mc-runtime-r2-20261112/result.json",
+      "result_sha256": "02025ffe79f679d0e37dc007d940d9c61eea3d8095acc1f6f234e5fa5a6eb29b",
+      "status": "PASS_FINITE_SAME_TARGET_CAPTURED_CYCLES_OUTPUT_EVENTS_NOT_FULL_EQUIVALENCE",
+      "run_receipt": "cycleprecise-owner-mc-runtime-r2-20261112/receipts/run-MCRams.json",
+      "run_receipt_sha256": "166f91e8788a3a3b88eee1b0407e4cbb761785b914ec3b70b2b2d3f43fea84ec",
+      "returncode": 0,
+      "host_runtime_seconds": 18181.530785459996,
+      "complete": true
+    }
+  },
+  "decision": {
+    "outcome": "PROGRESS",
+    "launched_jobs": [],
+    "changed_live_inputs": false,
+    "next_action": "Preserve fullhost synthesis and all r5 services. Recheck after 600 seconds; require actual fullshell preplace timing and effective exception verification before placement, and allow only the pinned conditional recovery on an actual r3 clock failure."
+  }
+}

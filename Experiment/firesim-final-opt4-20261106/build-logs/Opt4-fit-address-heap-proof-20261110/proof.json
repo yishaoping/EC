@@ -1,0 +1,98 @@
+{
+  "explicit_precondition": "Each original full-width term <= [8,3,2,1], already universal SAT-proved from processTouch in round3",
+  "formal_admission": false,
+  "fpga_access": false,
+  "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "negative_mutation_rejected": true,
+  "original_full_sat": "TIMEOUT_RETAINED_NOT_RELABELED",
+  "pid": 3203180,
+  "production_source_changed": false,
+  "proof": {
+    "compressor_lemmas": {
+      "3": {
+        "cases": 8,
+        "input_bits": 3,
+        "status": "EXHAUSTIVE_UNIVERSAL",
+        "width": 2
+      },
+      "4": {
+        "cases": 16,
+        "input_bits": 4,
+        "status": "EXHAUSTIVE_UNIVERSAL",
+        "width": 3
+      },
+      "5": {
+        "cases": 32,
+        "input_bits": 5,
+        "status": "EXHAUSTIVE_UNIVERSAL",
+        "width": 3
+      },
+      "6": {
+        "cases": 64,
+        "input_bits": 6,
+        "status": "EXHAUSTIVE_UNIVERSAL",
+        "width": 3
+      }
+    },
+    "granularities": [
+      {
+        "compressors": 105,
+        "final_width": 10,
+        "granularity": 0,
+        "leaf_bound": 8,
+        "leaf_count": 80,
+        "maximum_integer_sum": 640,
+        "nonnegative_high_bits": 2,
+        "status": "PARSED_WEIGHTED_CONSERVATION_AND_BOUND_PROVED"
+      },
+      {
+        "compressors": 51,
+        "final_width": 8,
+        "granularity": 1,
+        "leaf_bound": 3,
+        "leaf_count": 80,
+        "maximum_integer_sum": 240,
+        "nonnegative_high_bits": 0,
+        "status": "PARSED_WEIGHTED_CONSERVATION_AND_BOUND_PROVED"
+      },
+      {
+        "compressors": 51,
+        "final_width": 8,
+        "granularity": 2,
+        "leaf_bound": 2,
+        "leaf_count": 80,
+        "maximum_integer_sum": 160,
+        "nonnegative_high_bits": 0,
+        "status": "PARSED_WEIGHTED_CONSERVATION_AND_BOUND_PROVED"
+      },
+      {
+        "compressors": 25,
+        "final_width": 7,
+        "granularity": 3,
+        "leaf_bound": 1,
+        "leaf_count": 80,
+        "maximum_integer_sum": 80,
+        "nonnegative_high_bits": 0,
+        "status": "PARSED_WEIGHTED_CONSERVATION_AND_BOUND_PROVED"
+      }
+    ],
+    "scope": "Combinational arithmetic only, not full module or DUT",
+    "status": "PASS_COMPOSITIONAL_PARSED_RTL_UNDER_EXPLICIT_LEAF_BOUNDS"
+  },
+  "reference": {
+    "node_count": 316,
+    "output_bounds": {
+      "0": 640,
+      "1": 240,
+      "2": 160,
+      "3": 80
+    },
+    "status": "PASS_PARSED_REFERENCE_EXACT_UNDER_LEAF_BOUNDS"
+  },
+  "reference_sha256": "e2904f2dd718c6a2b6c2f3306ff985e2cb0870f03dd847eb086fa9e013230e72",
+  "rtl_sha256": "2de9fe344da55fa08887a63d5d9341a61bb2412249cf546732ce4d17246ee2f4",
+  "schema": "ec-address-heap-compositional-proof/1",
+  "start_ticks": "12484386",
+  "started_utc": "2026-11-10T12:18:43.467975+00:00",
+  "status": "COMPOSITIONAL_PROOF_PASSED_MAPPING"
+}

@@ -1,0 +1,168 @@
+{
+  "schema": "ec-address-sort-verified-regressions/1",
+  "utc": "2026-11-10T14:42:59.619191+00:00",
+  "hardware_commit": "11edd71981aa30ff3a26aab1f2f7327ac0266ee1",
+  "source_id": "f8a4239fe5a4818e15d98791f76d9d877172f342cdc0bc036ac6811e68de3cec",
+  "local_formal": "PASS",
+  "negative_mutation_rejected": true,
+  "real_size_combinational_regression": "PASS_8192_VECTORS_1024_OUTPUTS",
+  "full_module_regression": "PASS_6144_CYCLES_52_OUTPUTS_NOT_FULL_FORMAL",
+  "source_sha256": {
+    "AddressBucketReduction.scala": "14c814e7f80552a3a94dcc209fa0950b709432f530ff258f77581a33303cf7a1",
+    "PackageAddressStats.scala": "af7204e0c8a5fa71dca05981c24de34989bb171861825c7535d6c9c3686fb7ff"
+  },
+  "rtl_sha256": "e0f689ee6c79559ea96b0eb052ba7a111ad53435944db24c43578d8d1f339bd5",
+  "receipts": {
+    "proof-comparator": {
+      "accepted_result": true,
+      "argv": [
+        "nice",
+        "-n",
+        "10",
+        "/usr/local/bin/yosys",
+        "-Q",
+        "-T",
+        "-p",
+        "read_verilog /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/comparator/ComparatorProof.v; prep -top ComparatorProof -flatten; sat -verify -prove io_ok 1 -timeout 240"
+      ],
+      "ended_utc": "2026-11-10T13:59:26.265711+00:00",
+      "expected_failure": false,
+      "hardware_commit": "11edd71981aa30ff3a26aab1f2f7327ac0266ee1",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/comparator/proof-comparator-attempt-1.log",
+      "outputs": {},
+      "pid": 67381,
+      "returncode": 0,
+      "start_ticks": "13088666",
+      "started_utc": "2026-11-10T13:59:26.231770+00:00"
+    },
+    "proof-zero-one": {
+      "accepted_result": true,
+      "argv": [
+        "nice",
+        "-n",
+        "10",
+        "/usr/local/bin/yosys",
+        "-Q",
+        "-T",
+        "-p",
+        "read_verilog /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/zero-one/SortZeroOne.v; prep -top SortZeroOne -flatten; sat -verify -prove io_ok 1 -timeout 240"
+      ],
+      "ended_utc": "2026-11-10T13:59:34.474380+00:00",
+      "expected_failure": false,
+      "hardware_commit": "11edd71981aa30ff3a26aab1f2f7327ac0266ee1",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/zero-one/proof-zero-one-attempt-1.log",
+      "outputs": {},
+      "pid": 67713,
+      "returncode": 0,
+      "start_ticks": "13089098",
+      "started_utc": "2026-11-10T13:59:30.549242+00:00"
+    },
+    "proof-scatter3": {
+      "accepted_result": true,
+      "argv": [
+        "nice",
+        "-n",
+        "10",
+        "/usr/local/bin/yosys",
+        "-Q",
+        "-T",
+        "-p",
+        "read_verilog /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/proof3/reference.v /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/proof3/candidate/Scatter.v /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/proof3/miter.v; prep -top Miter -flatten; sat -verify -prove ok 1 -timeout 240"
+      ],
+      "ended_utc": "2026-11-10T13:59:39.799207+00:00",
+      "expected_failure": false,
+      "hardware_commit": "11edd71981aa30ff3a26aab1f2f7327ac0266ee1",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/proof3/proof-scatter3-attempt-1.log",
+      "outputs": {},
+      "pid": 68563,
+      "returncode": 0,
+      "start_ticks": "13089996",
+      "started_utc": "2026-11-10T13:59:39.532183+00:00"
+    },
+    "proof-scatter4": {
+      "accepted_result": true,
+      "argv": [
+        "nice",
+        "-n",
+        "10",
+        "/usr/local/bin/yosys",
+        "-Q",
+        "-T",
+        "-p",
+        "read_verilog /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/proof4/reference.v /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/proof4/candidate/Scatter.v /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/proof4/miter.v; prep -top Miter -flatten; sat -verify -prove ok 1 -timeout 240"
+      ],
+      "ended_utc": "2026-11-10T13:59:45.998570+00:00",
+      "expected_failure": false,
+      "hardware_commit": "11edd71981aa30ff3a26aab1f2f7327ac0266ee1",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/proof4/proof-scatter4-attempt-1.log",
+      "outputs": {},
+      "pid": 68801,
+      "returncode": 0,
+      "start_ticks": "13090581",
+      "started_utc": "2026-11-10T13:59:45.379950+00:00"
+    },
+    "proof-negative": {
+      "accepted_result": true,
+      "argv": [
+        "nice",
+        "-n",
+        "10",
+        "/usr/local/bin/yosys",
+        "-Q",
+        "-T",
+        "-p",
+        "read_verilog /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/proof3/reference.v /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/proof3/candidate/Scatter.v /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/proof3/negative.v; prep -top Miter -flatten; sat -verify -prove ok 1 -timeout 60"
+      ],
+      "ended_utc": "2026-11-10T13:59:40.021140+00:00",
+      "expected_failure": true,
+      "hardware_commit": "11edd71981aa30ff3a26aab1f2f7327ac0266ee1",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/proof3/proof-negative-attempt-1.log",
+      "outputs": {},
+      "pid": 68570,
+      "returncode": 1,
+      "start_ticks": "13090023",
+      "started_utc": "2026-11-10T13:59:39.804230+00:00"
+    },
+    "micro80-oracle": {
+      "accepted_result": true,
+      "argv": [
+        "nice",
+        "-n",
+        "10",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/micro80/obj/VScatter"
+      ],
+      "ended_utc": "2026-11-10T14:25:51.650625+00:00",
+      "expected_failure": false,
+      "hardware_commit": "11edd71981aa30ff3a26aab1f2f7327ac0266ee1",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/micro80/micro80-oracle-attempt-1.log",
+      "missing_outputs": [],
+      "outputs": {},
+      "pid": 201653,
+      "returncode": 0,
+      "start_ticks": "13243735",
+      "started_utc": "2026-11-10T14:25:16.920644+00:00"
+    },
+    "compare": {
+      "accepted_result": true,
+      "argv": [
+        "nice",
+        "-n",
+        "10",
+        "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/compare/obj/Vtb"
+      ],
+      "ended_utc": "2026-11-10T14:29:45.981258+00:00",
+      "expected_failure": false,
+      "hardware_commit": "11edd71981aa30ff3a26aab1f2f7327ac0266ee1",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-sort-11edd719-20261110/compare/compare-attempt-1.log",
+      "missing_outputs": [],
+      "outputs": {},
+      "pid": 220804,
+      "returncode": 0,
+      "start_ticks": "13264568",
+      "started_utc": "2026-11-10T14:28:45.256832+00:00"
+    }
+  },
+  "formal_admission": false,
+  "full_dut_formal": false,
+  "fpga_access": false
+}

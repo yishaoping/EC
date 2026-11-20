@@ -1,0 +1,100 @@
+{
+  "admission": false,
+  "arithmetic_proof": {
+    "broker_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/jobs/slot-epoch-arithmetic-proof-r2-3d29eff9/state.json",
+    "broker_state_sha256": "46d36336633d2508ed948794f3ac670218acc448c7eb53ad7d942312aa9709ed",
+    "controller_pid": 2868689,
+    "controller_start_ticks": "18724096",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "negative_mutation": "same-cycle incremental cascading rejected",
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-arithmetic-proof-r2-20261111/result.json",
+    "positive_checks": [
+      "full16bit_next_state",
+      "wraparound",
+      "independent_different_slot_writes"
+    ],
+    "sha256": "04e261426a4096460923ba3fdb041e7d6cc0fd8f90b3c567e7e0e1607cd5f65c",
+    "stages": {
+      "compile": {
+        "accepted": true,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-arithmetic-proof-r2-20261111/compile.log",
+        "returncode": 0,
+        "sha256": "61cd872d741a6aedcf9c23e3c743435397bc0f6a9c325da5ffa06275467d955d"
+      },
+      "emit": {
+        "accepted": true,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-arithmetic-proof-r2-20261111/emit.log",
+        "returncode": 0,
+        "sha256": "9106b9cd11f9a3fd29c0c489d8e8ad90a403e530e44ad8a56201e267b9e7b3f5"
+      },
+      "sat-full16": {
+        "accepted": true,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-arithmetic-proof-r2-20261111/sat-full16.log",
+        "returncode": 0,
+        "sha256": "b44037538081aee62ba0a9c6631635292a69c1e3ded2d68a903fa1ab7acdd7ff"
+      },
+      "sat-independent": {
+        "accepted": true,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-arithmetic-proof-r2-20261111/sat-independent.log",
+        "returncode": 0,
+        "sha256": "d9400ef3602b70a7a127413a9817c4a82d6b71ce7580fe85cf14a0d1714a105e"
+      },
+      "sat-negative": {
+        "accepted": true,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-arithmetic-proof-r2-20261111/sat-negative.log",
+        "returncode": 1,
+        "sha256": "ac974c7a9b01bee9813db9c47b93ccc21e7c3ae7b859d4b0d34208f231b2d688"
+      },
+      "sat-wrap": {
+        "accepted": true,
+        "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-slot-epoch-arithmetic-proof-r2-20261111/sat-wrap.log",
+        "returncode": 0,
+        "sha256": "f15d8c68018edbee18d73e83e873dd37f4038a2a4b7fe6f8234a829f9df0be25"
+      }
+    },
+    "status": "PASS_SOURCE_BOUND_FULL16BIT_ARITHMETIC_RESET_PRIORITY_WRAP_AND_NEGATIVE_MUTATION_NOT_FULL_DCACHE"
+  },
+  "certified_bitstream": false,
+  "changed_rtl": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-slot-epoch-static-r2-20261111/chipyard/generators/boom/src/main/scala/lsu/dcache.scala",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-slot-epoch-static-r2-20261111/chipyard/generators/boom/src/main/scala/lsu/SlotEpochBank.scala"
+  ],
+  "fpga_io": false,
+  "fpga_sample": false,
+  "frozen_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "full_dut_formal": false,
+  "hardware_commit": "3d29eff9baf4f8b0c086940321524d403d8ab8aa",
+  "latest_complete_whole_capacity": {
+    "available_luts": 1303680,
+    "commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+    "excess_luts": 1912003,
+    "luts": 3215683,
+    "scope": "Historical predecessor only; live9ae has no actual complete report yet.",
+    "status": "NOT_FIT_POSTOPT"
+  },
+  "latest_observed_whole_utc": "2026-11-11T05:35:29.136784+00:00",
+  "module_job": {
+    "reason": "AssertionError('DEFER_RESOURCE_LIMIT: ordinary synthesis slots full')",
+    "receipt": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/request-results/slot-epoch-static-r4-3d29eff9.json",
+    "request": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/unattended-opt4/requests/slot-epoch-static-r4-3d29eff9.json",
+    "status": "DEFERRED"
+  },
+  "new_area_measurement": false,
+  "next": "At>=300s inspect queued request and latest checkpoint; adopt STARTED service/controller+child identity. Preserve activewhole9ae/e0, no third whole. On actual certifiedFIT prioritize runtime; otherwise continue equivalent structural optimization.",
+  "preserved_live_whole": [
+    "9ae9a7fc",
+    "e0c3737f"
+  ],
+  "remaining": [
+    "Queued512entry decode proof with mutation",
+    "8192cycle actualhelper boundary with full512x16 snapshot",
+    "Paired storage maps preserving12arbitrary readers and full snapshot",
+    "Frozen completeDCache comparison and real completeDCache map",
+    "Source-bound composition before whole admission"
+  ],
+  "schema": "ec-opt4-area-round24/1",
+  "source_id": "b8bb592592e62d4a37fef57674d0800559f01eda2ed45852c289420f3a73d9bf",
+  "source_prepared": true,
+  "source_relation_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/slot-epoch-static-r2-20261111/source-preparation-receipt.json",
+  "utc": "2026-11-11T05:40:17.949875+00:00"
+}

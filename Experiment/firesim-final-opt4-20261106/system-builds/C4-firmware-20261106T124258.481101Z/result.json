@@ -1,0 +1,72 @@
+{
+  "build_script_sha256": "92b1f6f012cbfe5a5fbca80e40ffa3c011eabdf1307ae8ff5a38d40d0ab7ab72",
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/tmp/guozh-firesim-final-opt4-20261106/system-builds/C4-firmware-20261106T124258.481101Z",
+        "PLATFORM=generic",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "FW_PAYLOAD_PATH=/data1/gzh/EC/firesim/final-opt4-20261106/cad-work/system-builds/C4-earlyconsole-20261106T124038Z/arch/riscv/boot/Image",
+        "FW_PAYLOAD_FDT_PATH=/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T123813Z/C4.dtb"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/opensbi"
+    }
+  ],
+  "configuration": "C4",
+  "content_checks": {
+    "fdt": {
+      "bytes": 10360,
+      "exact_bytes_present": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T123813Z/C4.dtb",
+      "payload_offset": 1712,
+      "sha256": "39b0cadc97a40e3a641fb98852707def8d9c9afc445b1b8c3a45df975d4160cd"
+    },
+    "kernel": {
+      "bytes": 23913472,
+      "exact_bytes_present": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/cad-work/system-builds/C4-earlyconsole-20261106T124038Z/arch/riscv/boot/Image",
+      "payload_offset": 2097152,
+      "sha256": "6797a3a548f4572f700f1c5828a9353621f5ef5b6ef98a3ade302fe424fa55a4"
+    }
+  },
+  "error": null,
+  "fpga_execution": "NOT_RUN",
+  "input_files": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/cad-work/system-builds/C4-earlyconsole-20261106T124038Z/arch/riscv/boot/Image": "6797a3a548f4572f700f1c5828a9353621f5ef5b6ef98a3ade302fe424fa55a4",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T123813Z/C4.dtb": "39b0cadc97a40e3a641fb98852707def8d9c9afc445b1b8c3a45df975d4160cd",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-build.json": "32ccb02a5d8aa1228901ea2f952e03060424646039911ae3ea5621201e96483c",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/formal-kernel-build.json": "b643715e4617e99a4c0e1dc45a83533987fab459ea31ecdb20cd54ac23453af7",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/linux-profile.json": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1"
+  },
+  "output_dir": "/tmp/guozh-firesim-final-opt4-20261106/system-builds/C4-firmware-20261106T124258.481101Z",
+  "outputs": {
+    "/tmp/guozh-firesim-final-opt4-20261106/system-builds/C4-firmware-20261106T124258.481101Z/platform/generic/firmware/fw_payload.bin": "6e725d95c9f8ab72b31b112e30cefc0d63e6c32bcf3d73f3b70414959f7f9bb4",
+    "/tmp/guozh-firesim-final-opt4-20261106/system-builds/C4-firmware-20261106T124258.481101Z/platform/generic/firmware/fw_payload.elf": "7ac89c18d988d1d7c3cbf33082a19166b0ad410e8d70729979938322d2e40a83"
+  },
+  "phase": "firmware",
+  "resources": {
+    "actual_build_root": "/tmp/guozh-firesim-final-opt4-20261106/system-builds",
+    "available_memory_gib": 236.2801856994629,
+    "free_disk_gib": 229.57816696166992,
+    "host_cpus": 256,
+    "jobs": 2,
+    "load_1min": 34.9453125,
+    "log_free_disk_gib": 36.78087615966797
+  },
+  "returncode": 0,
+  "runtime_validation": "NOT_RUN",
+  "schema": "ec-firesim-system-build/1",
+  "source_id": "1b402684b0360b0230f1105bacac6daa78830e35a1969fbe893d11aef90d0527",
+  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/opensbi",
+  "tool_hashes": {
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ld": "10424f5eeafd5806fbca7b88bdae336c202be5a9fa332c1a662a8d0a7ae62fba",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objcopy": "2a38397dae082b022b6370eb9fbfac9c337b95433fc89cb35d384516a0997f1e"
+  },
+  "wall_seconds": 4.924247359856963
+}

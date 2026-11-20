@@ -1,0 +1,62 @@
+[
+  [
+    "  val reservedEpoch = Reg(Vec(nSets, Vec(nWays, UInt(16.W))))\n  val reservedTransaction = Reg(Vec(nSets, Vec(nWays, UInt(32.W))))\n  val reservedMshr = Reg(Vec(nSets, Vec(nWays, UInt(8.W))))\n  val reservedNewOwner = Reg(Vec(nSets, Vec(nWays, Bool())))\n  val reservedTag = Reg(Vec(nSets, Vec(nWays, UInt(tagBits.W))))\n",
+    "  // Area-only representation: preserve uninitialized payload and clock edge.\n  // The frozen single-issue port has exactly one reservation writer. Wider\n  // configurations retain their original nested register/last-connect logic.\n  class ReservationStorage[T <: Data](gen: T) {\n    private val payload = if (memWidth == 1) Some(Mem(nSets * nWays, gen)) else None\n    private val registers = if (memWidth != 1) Some(Reg(Vec(nSets, Vec(nWays, gen)))) else None\n    def apply(set: UInt)(way: UInt): T = {\n      if (memWidth == 1) payload.get.read(Cat(set, way)) else registers.get(set)(way)\n    }\n    def write(set: UInt, way: UInt, data: T): Unit = {\n      if (memWidth == 1) payload.get.write(Cat(set, way), data)\n      else registers.get(set)(way) := data\n    }\n  }\n  val reservedEpoch = new ReservationStorage(UInt(16.W))\n  val reservedTransaction = new ReservationStorage(UInt(32.W))\n  val reservedMshr = new ReservationStorage(UInt(8.W))\n  val reservedNewOwner = new ReservationStorage(Bool())\n  val reservedTag = new ReservationStorage(UInt(tagBits.W))\n"
+  ],
+  [
+    "      reservedEpoch(set)(way) := r.slot_epoch",
+    "      reservedEpoch.write(set, way, r.slot_epoch)"
+  ],
+  [
+    "      reservedTransaction(set)(way) := r.transaction_token",
+    "      reservedTransaction.write(set, way, r.transaction_token)"
+  ],
+  [
+    "      reservedMshr(set)(way) := r.replay_mshr_id",
+    "      reservedMshr.write(set, way, r.replay_mshr_id)"
+  ],
+  [
+    "      reservedNewOwner(set)(way) := r.admission === CacheAdmission.primary",
+    "      reservedNewOwner.write(set, way, r.admission === CacheAdmission.primary)"
+  ],
+  [
+    "      reservedTag(set)(way) := r.addr >> untagBits",
+    "      reservedTag.write(set, way, r.addr >> untagBits)"
+  ],
+  [
+    "  val installedImage = Reg(Vec(nSets, Vec(nWays, new CacheImageKey)))",
+    "  val installedImage = Mem(nSets * nWays, new CacheImageKey)"
+  ],
+  [
+    "    installedImage(installSet)(installWay) := mshrs.io.install.bits.image",
+    "    installedImage.write(Cat(installSet, installWay), mshrs.io.install.bits.image)"
+  ],
+  [
+    "installedImage(refillReqSet)(refillReqWay).asUInt",
+    "installedImage.read(Cat(refillReqSet, refillReqWay)).asUInt"
+  ],
+  [
+    "  val appliedEffectResult = Reg(Vec(nSets, Vec(nWays, UInt(xLen.W))))",
+    "  // Full-width unreset result payload; exact original write and read edges.\n  val appliedEffectResultMemory = Module(new AppliedEffectResultMemory(nSets, nWays, xLen))\n  appliedEffectResultMemory.io.writeEnable := false.B\n  appliedEffectResultMemory.io.writeSet := 0.U\n  appliedEffectResultMemory.io.writeWay := 0.U\n  appliedEffectResultMemory.io.writeData := 0.U"
+  ],
+  [
+    "    s3_result := Mux(duplicate, appliedEffectResult(set)(way),",
+    "    s3_result := Mux(duplicate, appliedEffectResultMemory.io.readData(0),"
+  ],
+  [
+    "  when (s2_write_grant) {\n    val set = s2_req(0).addr(idxMSB, idxLSB)",
+    "  appliedEffectResultMemory.io.readSet(0) := s2_req(0).addr(idxMSB, idxLSB)\n  appliedEffectResultMemory.io.readWay(0) := OHToUInt(s2_effective_req(0).way_en)\n  when (s2_write_grant) {\n    val set = s2_req(0).addr(idxMSB, idxLSB)"
+  ],
+  [
+    "    s3_result := appliedEffectResult(s3_set)(s3_way_idx)",
+    "    s3_result := appliedEffectResultMemory.io.readData(1)"
+  ],
+  [
+    "  when (s3_valid && s3_duplicate_effect) {",
+    "  appliedEffectResultMemory.io.readSet(1) := s3_set\n  appliedEffectResultMemory.io.readWay(1) := s3_way_idx\n  when (s3_valid && s3_duplicate_effect) {"
+  ],
+  [
+    "      appliedEffectResult(set)(way) := s3_result",
+    "      appliedEffectResultMemory.io.writeEnable := true.B\n      appliedEffectResultMemory.io.writeSet := set\n      appliedEffectResultMemory.io.writeWay := way\n      appliedEffectResultMemory.io.writeData := s3_result"
+  ]
+]

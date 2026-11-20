@@ -1,0 +1,68 @@
+--- /data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-update-sequence-cad-r3-20261111/build.py
++++ /data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-update-sequence-cad-r4-20261111/build.py
+@@ -31,6 +31,48 @@
+ 
+ def now(): return dt.datetime.now(dt.timezone.utc).isoformat()
+ def read(p): return json.loads(Path(p).read_text())
++
++def generated_owner_admission():
++    """Require authenticated completed cut-proof, never a partial SAT snapshot."""
++    state = D/'Opt4-fit-dcache-generated-owner-proof-r3-state.json'
++    result = D/'build-logs/Opt4-fit-dcache-generated-owner-proof-r3-20261111/result.json'
++    proof = read(state) if state.exists() else {}
++    expected = 'PASS_ACTUAL_GENERATED_512WORD_TRANSITION_AND_TAPS_WITH_REAL_WRITE_MUTATION_NOT_FULL_DCACHE_FORMAL'
++    assert proof.get('status') == expected, 'WAITING_GENERATED_OWNER_PROOF_COMPLETE: ' + str(proof.get('status'))
++    assert proof['hardware_commit'] == '2210930f510eccf5518c444dadca4a51bcf6f851'
++    assert proof['source_id'] == '548c7b8e1066ba82388ab759127e6d3b5c2a794f2f32ebcdc27b7f653b71d66c'
++    assert proof['covered_count'] == 512 and proof['covered_slots'] == list(range(512))
++    assert proof['actual_write_data_mutation_rejected'] is True
++    assert proof['whole_dut_formal'] is False and proof['complete_dcache_formal'] is False
++    assert read(result) == proof, 'partial/mismatched proof result'
++    job = read(D/'unattended-opt4/jobs/dcache-generated-owner-proof-r3b-2210930f/state.json')
++    assert job['status'] == 'COMPLETE' and job['returncode'] == 0
++    assert job['outputs'][str(result)] == sha(result), 'proof result hash mismatch'
++    root = result.parent
++    covered = set()
++    for p in sorted(root.glob('slots-*/result.json')):
++        row = read(p)
++        assert row['miter_sha256'] == sha(p.parent/'miter.v')
++        assert row['log_sha256'] == sha(p.parent/'proof.log')
++        if row['accepted']:
++            assert row['returncode'] == 0 and not row['timeout']
++            covered.update(row['slots'])
++        else:
++            assert row['timeout'], 'actual semantic proof failure'
++    assert covered == set(range(512)), 'missing authenticated partitions'
++    negdir = root/'negative-write-data-bitflip'
++    neg = read(negdir/'result.json')
++    assert neg['accepted'] and neg['negative_write_data_mutation'] and not neg['timeout']
++    assert neg['miter_sha256'] == sha(negdir/'miter.v') and neg['log_sha256'] == sha(negdir/'proof.log')
++    original = D/'build-logs/Opt4-fit-dcache-generated-owner-proof-r2-20261111'
++    contract = read(original/'extraction-contract.json')
++    assert proof['contract_sha256'] == sha(original/'extraction-contract.json')
++    assert proof['miter_sha256'] == sha(original/'GeneratedOwnerTransition.v') == contract['miter_sha256']
++    for row in contract['inputs'].values():
++        assert sha(row['path']) == row['sha256']
++    return dict(path=str(result), sha256=sha(result), covered_words=512,
++                source_id=proof['source_id'], proof_scope=proof['proof_scope'],
++                real_write_data_mutation_rejected=True, whole_dut_formal=False)
+ 
+ def main():
+     lock = (D/'.opt4-fit-owner-update-sequence-cad.lock').open('a')
+@@ -66,6 +108,7 @@
+         st.update(updated_utc=now(), rtl_status=r.get('status')); save(S, st)
+         time.sleep(60)
+     # Admit only actual matched full module gain and exact component proofs.
++    generated_proof = generated_owner_admission()
+     prep=read(D/'Opt4-fit-owner-update-sequence-system-r2-state.json')
+     assert prep['status']=='RTL_READY_REAL_ABI_CHECKED' and prep['hardware_commit']==COMMIT and prep['source_id']==b['source_id']
+     combo_path=D/'build-logs/Opt4-fit-owner-update-sequence-system-r2-20261111/combined-equivalence.json'
+@@ -75,7 +118,7 @@
+     assert address['status']=='VERIFIED_AND_MAPPED_COMPLETE_ADDRESS_MODULE_NOT_WHOLE_DUT' and address['full_module_map']['resources']['CLB LUTs']<872880
+     for row in list(full['maps'].values())+[address['full_module_map']]:assert sha(row['report'])==row['report_sha256']
+     policy=read(D/'unattended-opt4/campaign-policy.json');assert policy['functional_baseline_commit']==b['frozen_commit'] and policy['area_equivalence_only'] and not policy['functional_extensions_allowed']
+-    save(L/'selection.json',dict(hardware_commit=COMMIT,source_id=b['source_id'],decision='VERIFIED_EXACT_COMPONENT_COMPOSITION_AND_ACTUAL_FULL_MODULE_GAIN',composition_sha256=sha(combo_path),full_dcache_pair=full['maps'],address_full_module=address['full_module_map'],whole_dut_fit_not_inferred=True,utc=now()))
++    save(L/'selection.json',dict(hardware_commit=COMMIT,source_id=b['source_id'],decision='VERIFIED_EXACT_COMPONENT_COMPOSITION_AND_ACTUAL_FULL_MODULE_GAIN',composition_sha256=sha(combo_path),full_dcache_pair=full['maps'],address_full_module=address['full_module_map'],whole_dut_fit_not_inferred=True,generated_owner_proof=generated_proof,utc=now()))
+     assert r['source_id'] == b['source_id']
+     assert r['configuration_matches_frozen_parameters'] and r['modified_class_origins_verified']
+     gg = Path(r['goldengate_dir'])

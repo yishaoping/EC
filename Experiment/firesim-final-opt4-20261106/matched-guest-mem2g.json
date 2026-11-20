@@ -1,0 +1,141 @@
+{
+  "schema": "ec-matched-guest-memory/1",
+  "profile": "matched-guest-mem2g-phys36",
+  "guest_ram_bytes": 2147483648,
+  "guest_visible_interval": [
+    2149580800,
+    4297064448
+  ],
+  "hardware_ram_bytes": 17179869184,
+  "MAX_PHYSMEM_BITS": 36,
+  "SECTION_SIZE_BITS": 27,
+  "changes": "Identical mem=2G boot parameter in both DTs; hardware layout, kernel and application instructions unchanged",
+  "first_inputs": [
+    "Blackscholes test/simsmall/simmedium",
+    "Canneal test/simsmall",
+    "Streamcluster synthetic test/simsmall"
+  ],
+  "budget_reason": "2 GiB exceeds first workload buffers and the 24.9MB immutable initramfs by a wide margin; no workload algorithm/input reduction. Native/Correction must use this exact profile for paired results.",
+  "runtime_peak_memory_validation": "REQUIRED; not yet observed",
+  "not_combinable_with": "16GiB/no-cap boot attempts or diagnostic32MiB profiles",
+  "records": [
+    {
+      "schema": "ec-firesim-fdt/1",
+      "phase": "fdt",
+      "configuration": "Native",
+      "returncode": 0,
+      "elaboration_result": "/data1/gzh/EC/Experiment/dac2026/build-logs/opt4-roi-v5/B-elaborate-20261102T092109.491588Z/result.json",
+      "elaboration_result_sha256": "f6192e954858e575ecd210c35b106355e387b92bf98d36b3f604a60f6c168590",
+      "source_dts": "/data1/gzh/EC/firesim/dac2026/work/opt4-roi-v5/builds/B-elaborate-20261102T092109.491588Z/firesim.firesim.FireSim.dts",
+      "source_dts_sha256": "b97f7f1d8422f020b697facd6bf95db88d57b70d7add510b3106b5837db83e0f",
+      "dts": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T124737Z/Native.dts",
+      "dts_sha256": "253c1f8fce439f9ea55338803369dc04aafa598f26152c0d1ead5ef6a0216f06",
+      "fdt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T124737Z/Native.dtb",
+      "sha256": "44a794604601fc9343758e784407347c929f0fef499c906f0baa4a78d494d2e5",
+      "command": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/dtc",
+        "-I",
+        "dts",
+        "-O",
+        "dtb",
+        "-p",
+        "4096",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T124737Z/Native.dtb",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T124737Z/Native.dts"
+      ],
+      "bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+      "linux_harts": [
+        0
+      ],
+      "firmware_checker_harts": [],
+      "target_memory_base": 2147483648,
+      "target_memory_bytes": 17179869184,
+      "linux_mem_cap": 2147483648,
+      "linux_profile_sha256": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1",
+      "target_boom_hz": 200000000,
+      "target_checker_hz": null,
+      "runtime_validation": "NOT_RUN",
+      "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-build.json",
+      "parent_receipt_sha256": "9a3f5287b60a9ec72e4c29eb9c6edc867f1110487998bee19e19f39b14c52948",
+      "profile": "matched-guest-mem2g-phys36-canonical-isa",
+      "isa_normalization": [
+        {
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm",
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm"
+        }
+      ],
+      "normalizer_sha256": "cdc93d5c3bd0f2f013eb5029a1addb1a0c53a4e72b8f23ebbe814439cbc4a59e"
+    },
+    {
+      "schema": "ec-firesim-fdt/1",
+      "phase": "fdt",
+      "configuration": "C4",
+      "returncode": 0,
+      "elaboration_result": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/C4-elaborate-20261106T100250.032318Z/result.json",
+      "elaboration_result_sha256": "4284a54a160a374491cd0050611ba35719df94d896faf8b4667f66691407e3ac",
+      "source_dts": "/data1/gzh/EC/firesim/final-opt4-20261106/builds/C4-elaborate-20261106T100250.032318Z/firesim.firesim.FireSim.dts",
+      "source_dts_sha256": "abe88f0748a092c769cdc5c4b402fed7471500f5c93e01d1a90ad42652458ee9",
+      "dts": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dts",
+      "dts_sha256": "3551cc6bb2f3dd19fc716bdea11db8db4343080af7e35da921cd99100d271210",
+      "fdt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb",
+      "sha256": "c712fed367c0b57d9a1ed9f6e53688861a646f3732654b253131ff6e8953dda6",
+      "command": [
+        "/data1/gzh/EC/firesim/envs/manager-1.17.1/bin/dtc",
+        "-I",
+        "dts",
+        "-O",
+        "dtb",
+        "-p",
+        "4096",
+        "-o",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dtb",
+        "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-mem2g-20261106T124737Z/C4.dts"
+      ],
+      "bootargs": "console=ttySIF0,3686400 earlycon=sbi loglevel=7 rdinit=/init panic=-1 maxcpus=1 mem=2G",
+      "linux_harts": [
+        0
+      ],
+      "firmware_checker_harts": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "target_memory_base": 2147483648,
+      "target_memory_bytes": 17179869184,
+      "linux_mem_cap": 2147483648,
+      "linux_profile_sha256": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1",
+      "target_boom_hz": 200000000,
+      "target_checker_hz": 100000000,
+      "runtime_validation": "NOT_RUN",
+      "parent_receipt": "/data1/gzh/EC/firesim/final-opt4-20261106/software/C4/fdt-build.json",
+      "parent_receipt_sha256": "a92f79fb153318e3ade9f1531d9ee48ea97f9e1aee8005814ff2f159543782c5",
+      "profile": "matched-guest-mem2g-phys36-canonical-isa",
+      "isa_normalization": [
+        {
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm",
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm"
+        },
+        {
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket",
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket"
+        },
+        {
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket",
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket"
+        },
+        {
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket",
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket"
+        },
+        {
+          "original": "rv64imafdcZicsr_Zifencei_Zihpm_Xrocket",
+          "canonical": "rv64imafdc_zicsr_zifencei_zihpm_xrocket"
+        }
+      ],
+      "normalizer_sha256": "cdc93d5c3bd0f2f013eb5029a1addb1a0c53a4e72b8f23ebbe814439cbc4a59e"
+    }
+  ],
+  "interval_definition": "Native UART observed Linux interval after OpenSBI 2MiB reservation; C4 runtime confirmation pending"
+}

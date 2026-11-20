@@ -1,0 +1,102 @@
+diff --git a/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/BarrierLatencyStats.scala b/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/BarrierLatencyStats.scala
+index 843952f..0e12a76 100644
+--- a/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/BarrierLatencyStats.scala
++++ b/chipyard/generators/rocket-chip/src/main/scala/guardiancouncil/BarrierLatencyStats.scala
+@@ -3,6 +3,17 @@ package freechips.rocketchip.guardiancouncil
+ import chisel3._
+ import chisel3.util._
+ 
++/** Exact read of a power-of-two slot array using a shared full decoder.
++  * The selector is unqualified: invalid slots and overflow observations retain
++  * exactly the same payload as the dynamic Vec access.
++  */
++object GHBarrierEventAccess {
++  def read(select: Seq[Bool], data: Seq[UInt]): UInt = {
++    require(select.nonEmpty && select.size == data.size)
++    Mux1H(select, data)
++  }
++}
++
+ /** Per-package storage for a non-stalling barrier-latency measurement.
+   *
+   * Events are grouped by the package whose verification makes them safe.
+@@ -88,8 +99,15 @@ class GHBarrierLatencyStats(val window: Int) extends Module {
+   val eventImmediate = io.event.valid && io.event.bits <= io.safeWatermark
+   val eventNeedsBucket = io.event.valid && !eventImmediate
+   val eventIndex = io.event.bits(indexBits - 1, 0)
+-  val eventBucketAvailable = !buckets.valid(eventIndex) ||
+-    bucketResolve(eventIndex) || buckets.seq(eventIndex) === io.event.bits
++  // Decode once for the five complete, unqualified asynchronous reads.
++  // All bucket registers, writes, resets and reduction logic are unchanged.
++  val eventSelect = (0 until window).map(i => eventIndex === i.U)
++  val eventValid = GHBarrierEventAccess.read(eventSelect, buckets.valid.map(_.asUInt)).asBool
++  val eventResolve = GHBarrierEventAccess.read(eventSelect, bucketResolve.map(_.asUInt)).asBool
++  val eventSeq = GHBarrierEventAccess.read(eventSelect, buckets.seq.toSeq)
++  val eventCount = GHBarrierEventAccess.read(eventSelect, buckets.count.toSeq)
++  val eventRequestCycleSum = GHBarrierEventAccess.read(eventSelect, buckets.requestCycleSum.toSeq)
++  val eventBucketAvailable = !eventValid || eventResolve || eventSeq === io.event.bits
+   val eventAccepted = eventNeedsBucket && eventBucketAvailable
+   val eventDropped = eventNeedsBucket && !eventBucketAvailable
+ 
+@@ -104,11 +122,11 @@ class GHBarrierLatencyStats(val window: Int) extends Module {
+   val pendingUnderflow = resolvedBucketsWide > pendingBeforeResolve
+   val pendingNextWide = pendingBeforeResolve - resolvedBucketsWide
+ 
+-  val bucketCountOverflow = eventAccepted && buckets.valid(eventIndex) &&
+-    !bucketResolve(eventIndex) && buckets.count(eventIndex) === ~0.U(64.W)
+-  val bucketCycleOverflow = eventAccepted && buckets.valid(eventIndex) &&
+-    !bucketResolve(eventIndex) &&
+-    buckets.requestCycleSum(eventIndex) > (~0.U(64.W) - io.currentCycle)
++  val bucketCountOverflow = eventAccepted && eventValid &&
++    !eventResolve && eventCount === ~0.U(64.W)
++  val bucketCycleOverflow = eventAccepted && eventValid &&
++    !eventResolve &&
++    eventRequestCycleSum > (~0.U(64.W) - io.currentCycle)
+   val reductionOverflow = resolvedThisCycleWide(72, 64).orR ||
+     requestThisCycleWide(72, 64).orR || safeThisCycleWide(136, 64).orR ||
+     pendingNextWide(72, 64).orR
+@@ -148,15 +166,15 @@ class GHBarrierLatencyStats(val window: Int) extends Module {
+     }
+ 
+     when (eventAccepted) {
+-      when (!buckets.valid(eventIndex) || bucketResolve(eventIndex)) {
++      when (!eventValid || eventResolve) {
+         buckets.valid(eventIndex) := true.B
+         buckets.seq(eventIndex) := io.event.bits
+         buckets.count(eventIndex) := 1.U
+         buckets.requestCycleSum(eventIndex) := io.currentCycle
+       }.otherwise {
+-        buckets.count(eventIndex) := buckets.count(eventIndex) + 1.U
++        buckets.count(eventIndex) := eventCount + 1.U
+         buckets.requestCycleSum(eventIndex) :=
+-          buckets.requestCycleSum(eventIndex) + io.currentCycle
++          eventRequestCycleSum + io.currentCycle
+       }
+     }
+ 
+diff --git a/lineage.json b/lineage.json
+index 187822a..387e077 100644
+--- a/lineage.json
++++ b/lineage.json
+@@ -1,14 +1,14 @@
+ {
+-  "schema": "ec-opt4-fit-lineage/1",
++  "branch": "opt4/barrier-event-read-r1-20261111",
++  "core_features": "C4, SVB32, L2 report-permission repair; no checker/rollback/EC disabling",
+   "created_utc": "2026-11-10T09:12:05.475254+00:00",
+-  "purpose": "Independent derived Opt4-fit optimization. Never identity-equivalent to frozen hardware by name.",
++  "formal_admission": false,
+   "frozen_commit": "8491167d84b6d9521b151a743673c1516926a1f8",
+   "frozen_source_id": "c9f51d3a94aac7783c750682162cd25e9d1460b04974bde9b7541f1d9f4120e7",
++  "full_dut_build_authorized_only_after_resource_gate": true,
+   "parent_source": "/data1/gzh/EC/firesim/final-opt4-20261106/C4/chipyard",
+-  "branch": "opt4-fit/20261110",
++  "purpose": "Independent latency event read decoder; no state, update, overflow, cycle or instrumentation changes.",
++  "schema": "ec-opt4-fit-lineage/1",
+   "snapshot_baseline_commit": "0390a808ff557e2ac7da329fbee063857d46159c",
+-  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-20261110/chipyard",
+-  "core_features": "C4, SVB32, L2 report-permission repair; no checker/rollback/EC disabling",
+-  "formal_admission": false,
+-  "full_dut_build_authorized_only_after_resource_gate": true
++  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-barrier-event-read-r1-20261111/chipyard"
+ }

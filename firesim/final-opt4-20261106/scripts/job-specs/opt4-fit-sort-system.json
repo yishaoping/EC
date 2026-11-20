@@ -1,0 +1,32 @@
+{
+  "schema": "ec-service-job-spec/1",
+  "name": "opt4-fit-sort-system",
+  "argv": [
+    "runuser",
+    "-u",
+    "guozh",
+    "--",
+    "python3",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/continue_opt4_fit_sort_system.py"
+  ],
+  "inputs": [
+    "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/continue_opt4_fit_sort_system.py",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-sort-20261110/pipeline/templates.json"
+  ],
+  "legacy_states": [
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-fit-sort-system-continuation-state.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-fit-sort-integration-compile-state.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-fit-sort-rtl-state.json",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-fit-sort-cad-state.json"
+  ],
+  "completion_state": {
+    "path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-fit-sort-system-continuation-state.json",
+    "statuses": [
+      "BUILT_TIMING_DRC_PASSED_NOT_RUNTIME_VALIDATED",
+      "NOT_FIT_POSTOPT",
+      "REJECTED_INSUFFICIENT_MEASURED_AREA_GAIN",
+      "SKIPPED_CURRENT_SYSTEM_BITSTREAM_READY"
+    ]
+  },
+  "checkpoint_policy": "Wait for exact verified module map and >=25 percent measured LUT reduction, isolated six-source compile and GoldenGate with parameter equality and private origins. Start new whole-DUT only after original 8da post-opt NOT FIT. Never modify current live jobs, access FPGA or publish runtime admission."
+}

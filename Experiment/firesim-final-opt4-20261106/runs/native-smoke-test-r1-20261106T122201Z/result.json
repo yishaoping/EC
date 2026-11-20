@@ -1,0 +1,89 @@
+{
+  "checker_latency": null,
+  "counts": null,
+  "drain_cycles": null,
+  "driver_returncode": 0,
+  "driver_stop_after_guest_powerdown": false,
+  "evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T122201Z/heartbeat.csv": "aa1e08506d7c5507feb0821d38cc1a8285291c6e8c4e42c231636e1daf2a7efd",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T122201Z/host.log": "719352c6f7e65be9a98de6e77bbf8bd13d7fd7d93b39f472d98a0763aae040be",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T122201Z/latency_histogram.csv": "7348bacc4d184cc676cfcf89f8d0ec40dd28eeaa86ae0f6fefa797b43dc6d210",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T122201Z/manifest.json": "8c0380f0439dbab154bd10cd2c55fd7ac263be87be87096e6e27608095ea52dc",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T122201Z/memory_stats0.csv": "6679c5006d14d8413ec36ba18171c1f179c0196e04b362e4af778b06baad416e",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T122201Z/roi-raw.jsonl": "ab65e43ef60e8bdda55817fa8d0044b8dbeecca96277a7ded8fe2d4232a353ec",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T122201Z/snapshot.json": "a91483bbee117972b5afb26b52e0964bad49dc0f992562a7bbe18edeec7ae485",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T122201Z/state.json": "a91483bbee117972b5afb26b52e0964bad49dc0f992562a7bbe18edeec7ae485",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T122201Z/uart.in": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/runs/native-smoke-test-r1-20261106T122201Z/uart.log": "64d71c0d22c438df67cbb4567b8b98fc96449a32cd05e3441544490c52ec1907"
+  },
+  "fased_readback": {
+    "readLatency": 30,
+    "readMaxReqs": 4,
+    "relaxFunctionalModel": 0,
+    "writeLatency": 30,
+    "writeMaxReqs": 4
+  },
+  "formal": false,
+  "fpga_execution": true,
+  "guest_power_down_observed": false,
+  "host_wall_seconds": 181.47967235185206,
+  "identity": {
+    "apps_manifest_sha256": "9c59fd0424f57c2d2387e61c8a30703c044d497b10620f4c15c67f147e8406bf",
+    "bitstream_sha256": "bbe70b655538fa8d17deb72c4307ac66167ee0510aa12d0270ce2c9e37a34aea",
+    "board_bdf": "0000:e2:00.0",
+    "board_serial": "21770433G001A",
+    "case": null,
+    "configuration": "Native",
+    "driver_receipt_sha256": "d5a615cc0928ebce6c285d04003dab39e10123f8a144ba30775485965eb9bcea",
+    "driver_sha256": "9cfeb80105d39d9cd9e0bc86979f298893aea154bb6a5f28587ae29722bd68c6",
+    "elf_sha256": "1a11e3cb01f12bb5afdfaa7d9da5de4d5cc23a394f7ec0470bd86604be8d82f8",
+    "firmware_receipt_sha256": "abfb243e911d97021b9177e1fe732274c65a423361258efcfd254f70c601c3f3",
+    "firmware_sha256": "d73f2f2f2147764778b4f69c1e57675a9a50f8cb424290ede017f4a6643dfe5e",
+    "formal": false,
+    "hardware_commit": null,
+    "hardware_source_id": "be443a3dc2992eb52be4d3da55d687e13e9a21a0dccc1d136a2f23c2c3f436e4",
+    "input": "test",
+    "memory_model": {
+      "model": "LatencyBandwidthPipe",
+      "settings": {
+        "readLatency": 30,
+        "readMaxReqs": 4,
+        "relaxFunctionalModel": 0,
+        "writeLatency": 30,
+        "writeMaxReqs": 4
+      }
+    },
+    "program": "smoke",
+    "repetition": 1,
+    "rootfs_sha256": "a33e7b7d5a6ae0810b69c91b9b256fa8c2a5a6376cd76ac865b26048dfb5aff1",
+    "run_id": "native-smoke-test-r1-20261106T122201Z",
+    "target_boom_hz": 200000000,
+    "target_checker_hz": null,
+    "threads": 1,
+    "warmups": 0
+  },
+  "identity_sha256": "20d91b9a86169c64c6fe3a858e5ff71dadcb05a94a659781a682d3ee3542561b",
+  "issues": [
+    "host timeout",
+    "incomplete Native ROI boundaries/transport",
+    "missing successful application command exit",
+    "missing unique successful output validation"
+  ],
+  "participation": null,
+  "raw": {
+    "epochs": [],
+    "file_sha256": "ab65e43ef60e8bdda55817fa8d0044b8dbeecca96277a7ded8fe2d4232a353ec",
+    "formal_sample_eligible": false,
+    "last_sequence": 9,
+    "parsed_records": 10,
+    "partial_tail_bytes": 0,
+    "protocol_issues": [],
+    "runtime_validation": "NOT_ESTABLISHED_BY_RAW_LOG",
+    "schema": "ec-dac-b-raw-roi/1",
+    "warning": "Raw ROI boundaries only. Output/job identity, runtime timebase checks and the formal host collector are still required."
+  },
+  "roi_cycles": null,
+  "schema": "ec-isolated-fpga-result/1",
+  "timedout": true,
+  "valid": false
+}

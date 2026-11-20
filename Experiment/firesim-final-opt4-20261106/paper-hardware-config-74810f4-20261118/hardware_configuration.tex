@@ -1,0 +1,39 @@
+% Requires array, tabularx; uses the surrounding document font.
+\begin{table}[t]
+\centering
+\scriptsize
+\caption{Hardware configuration of the EC Performance-Only FPGA prototype (revision \texttt{74810f4}). Target-model frequencies are distinct from the physical host clock.}
+\label{tab:ec-hardware-config}
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{@{}>{\bfseries}p{0.23\columnwidth}X@{}}
+\hline
+\multicolumn{2}{c}{\textbf{Big Core}} \\ \hline
+Core & 1 x 3-wide OoO SonicBOOM (RV64GC) \\
+Pipeline & 42-entry ROB; 72-entry IQ (32 INT + 16 MEM + 24 FP); 16-entry LDQ and 16-entry STQ \\
+Registers / execution & 128 INT / 128 FP physical registers; 3 INT execution lanes, 1 MEM lane, 1 FP lane \\
+Branch prediction & TAGE-L + loop/BIM/BTB/micro-BTB; 6 TAGE tables per bank, 2-64-bit histories; 16-entry RAS; BTB: 128 sets x 2 ways per bank \\
+Target frequency & 200 MHz (model assignment; not a measured FPGA core frequency) \\
+\hline
+\multicolumn{2}{c}{\textbf{Memory Hierarchy}} \\ \hline
+L1 I-Cache & 32 KiB, 8-way, 2-cycle pipeline; one outstanding refill transaction \\
+L1 D-Cache & 32 KiB, 2-way, 6 MSHRs; fixed end-to-end hit latency not independently established \\
+Shared L2 Cache & 1 MiB, 16-way; 4 MSHRs (2 general + 2 B/C-reserved); memCycles=12 is not hit latency \\
+Cache line & 64 B \\
+Target memory & 16 GiB address space; FASED Latency-Bandwidth Pipe (not DDR3-1066 timing) \\
+Runtime memory settings & readLatency=30, writeLatency=30 target-model cycles; 4 outstanding reads + 4 writes (hardware ceilings: 16 each) \\
+\hline
+\multicolumn{2}{c}{\textbf{Little Cores}} \\ \hline
+Cores & 4 x in-order Rocket, 5-stage pipeline; 100 MHz target model assignment \\
+Arithmetic & mulUnroll=8, divUnroll=8; SP/DP FMA latency: 3/4 cycles \\
+L1 Cache & 4 KiB, 2-way each for I/D; I-cache pipeline: 2 cycles; blocking D-cache (nMSHRs=0) \\
+LSL / checker & 2 x 255 x 130-bit arrays; 3.98 KiB data payload, 8.09 KiB including address/type (excluding control and CSR/RoCC queues) \\
+Package instruction limit & 5,000 configured instructions; early seal trigger at 4,955 plus ROB drain (not a cycle timeout) \\
+\hline
+\multicolumn{2}{c}{\textbf{FPGA Implementation}} \\ \hline
+Platform / profile & Alveo U280; EC Performance-Only, revision 74810f4 \\
+Physical host clock & 10.004 MHz (99.960 ns); target 2:1 clock relationship represented by FireSim scheduling and multicycle constraints \\
+\hline
+\end{tabularx}
+\vspace{2pt}
+\parbox{\columnwidth}{\scriptsize Runtime settings are from the diagnostic launch manifest. L2 memCycles is not hit latency; LSL capacities exclude auxiliary queues and control. The target address space is 16 GiB; the diagnostic Linux launch uses mem=2G. This prototype does not establish full-PALIMPSEST validation.}
+\end{table}

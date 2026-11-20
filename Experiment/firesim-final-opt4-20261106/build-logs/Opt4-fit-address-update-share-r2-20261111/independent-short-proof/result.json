@@ -1,0 +1,51 @@
+{
+  "fpga_access": false,
+  "hardware_commit": "00847dc2b8f6be3f1e1ff0639c1104d33334ddc9",
+  "inputs": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-update-share-r2-20261111/candidate-binding.json": "961562dfbf0e923f4ecf2bb032c7e29993aa31eaf7d706c85650faa188a7c22e",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-update-share-r2-20261111/chipyard/generators/boom/src/main/scala/lsu/AddressBucketUpdate.scala": "935721540dbdd03ad7eb89e0894677336c962fa08b2cadfe98da40673633ae4a",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-update-share-r2-20261111/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala": "58e9f8ec8b2ae65f28915825f21cf8dd2d07732b2243c473321d461ad4e57fe4",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-update-share-review-r1-20261111/allstate-proof.v": "e0ffe43097139693c6b20e3f3e40944cc3f8a639c716500154e607789362eec9",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-update-share-review-r1-20261111/prove_short.py": "42d529a9b768fbf6604455468204fd09de1265033397d3d798f198e56ba97dcb",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-update-share-review-r1-20261111/review.py": "79008584446542a4cff5351c76a2056ec379e23893274570f42594b3dfa44372"
+  },
+  "limits": "This short proof uses a hand-written Verilog arithmetic model. Generated-Chisel proof, 256-slot boundary test, complete-module reset stress comparison and OOC map remain deferred in the exact broker job. It is not full-DUT formal equivalence.",
+  "results": [
+    {
+      "accepted": true,
+      "argv": [
+        "/usr/local/bin/yosys",
+        "-Q",
+        "-T",
+        "-p",
+        "read_verilog /data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-update-share-review-r1-20261111/allstate-proof.v; prep -top AllStateUpdateProof -flatten; sat -verify -prove equivalent 1 -prove global_reset_equivalent 1 -prove allocation_equivalent 1 -timeout 5"
+      ],
+      "label": "unconditional",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-share-r2-20261111/independent-short-proof/unconditional.log",
+      "log_sha256": "a57549c3b2f8524f7808fa120ec78f49790050e89c8152598d19a82b67f59920",
+      "negative": false,
+      "returncode": 0,
+      "wall_seconds": 0.11437726399162784
+    },
+    {
+      "accepted": true,
+      "argv": [
+        "/usr/local/bin/yosys",
+        "-Q",
+        "-T",
+        "-p",
+        "read_verilog /data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-update-share-review-r1-20261111/allstate-proof.v; prep -top AllStateUpdateProof -flatten; sat -verify -set global_reset 1 -set current 1 -set event_commit 1 -set reset_stats 0 -prove mutant_equivalent 1 -show-inputs -timeout 5"
+      ],
+      "label": "negative-invalid-zero-mutation",
+      "log": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fit-address-update-share-r2-20261111/independent-short-proof/negative-invalid-zero-mutation.log",
+      "log_sha256": "d8596ffbdd750b938c939f2c7b7efe949dd450fb1f0c0fba30addcace50d211f",
+      "negative": true,
+      "returncode": 1,
+      "wall_seconds": 0.06415250300779007
+    }
+  ],
+  "schema": "ec-opt4-independent-allstate-arithmetic-proof/1",
+  "scope": "All 64-bit counter/delta values and boolean valid/current/event/retire/statistics-reset/global-reset choices in the independent scalar model; source confinement review binds the arithmetic relation to the only changed production block.",
+  "source_id": "6b0de8636ec9d88f7d9702769c03325df78ab43c3c1fe527fff9dc1a3aafbbdb",
+  "status": "PASS_UNCONDITIONAL_64BIT_MODEL_AND_REJECTED_GLOBAL_RESET_MUTATION"
+}

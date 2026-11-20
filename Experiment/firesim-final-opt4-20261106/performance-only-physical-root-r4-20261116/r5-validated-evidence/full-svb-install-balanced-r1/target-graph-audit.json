@@ -1,0 +1,36 @@
+{
+  "status": "PASS_EXACT_TARGET_GRAPH_OUTSIDE_PROVEN_SVB_AND_INSTALL",
+  "reference": {
+    "outside_svb_sha256": "7a3d74f22e372de6f81152a81c019c30cff1892c55a9c8237354c4a7d9c8af98",
+    "boundaries": {
+      "BoomNonBlockingDCache/svb": {
+        "module": "SpeculativeVersionBuffer",
+        "proof": "PROVEN_CAPTURE_EDGE_ORDER_RELATIONS_SVB32"
+      },
+      "BoomMSHRFile/installArb": {
+        "module": "Arbiter_8",
+        "proof": "PROVEN_FULL_PAYLOAD_FIXED_PRIORITY_INSTALL_ARBITER"
+      }
+    },
+    "reached_modules": 4895
+  },
+  "candidate": {
+    "outside_svb_sha256": "7a3d74f22e372de6f81152a81c019c30cff1892c55a9c8237354c4a7d9c8af98",
+    "boundaries": {
+      "BoomNonBlockingDCache/svb": {
+        "module": "SpeculativeVersionBuffer",
+        "proof": "PROVEN_CAPTURE_EDGE_ORDER_RELATIONS_SVB32"
+      },
+      "BoomMSHRFile/installArb": {
+        "module": "OneHotInstallArbiter",
+        "proof": "PROVEN_FULL_PAYLOAD_FIXED_PRIORITY_INSTALL_ARBITER"
+      }
+    },
+    "reached_modules": 4895
+  },
+  "ignored_metadata": [
+    "source annotations",
+    "module definition numbering",
+    "decimal assertion diagnostic source line"
+  ]
+}

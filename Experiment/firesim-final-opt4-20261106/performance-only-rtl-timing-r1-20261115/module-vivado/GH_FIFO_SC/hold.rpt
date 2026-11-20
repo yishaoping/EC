@@ -1,0 +1,777 @@
+Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------
+| Tool Version      : Vivado v.2021.1 (lin64) Build 3247384 Thu Jun 10 19:36:07 MDT 2021
+| Date              : Sun Nov 15 10:57:39 2026
+| Host              : devjz-ubt20-s01 running 64-bit Ubuntu 20.04.6 LTS
+| Command           : report_timing -delay_type min -max_paths 20 -input_pins -nets -file hold.rpt
+| Design            : GH_FIFO_SC
+| Device            : xcu280-fsvh2892
+| Speed File        : -2L  PRODUCTION 1.29 11-17-2020
+| Temperature Grade : E
+---------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[1]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_0_6/RAMB/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[1] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_0_6/DIB
+    SLICE_X154Y416       RAMD64E                                      r  mem_reg_0_63_0_6/RAMB/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_0_6/WCLK
+    SLICE_X154Y416       RAMD64E                                      r  mem_reg_0_63_0_6/RAMB/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X154Y416       RAMD64E (Hold_B6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_0_6/RAMB
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[2]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_0_6/RAMC/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[2] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_0_6/DIC
+    SLICE_X154Y416       RAMD64E                                      r  mem_reg_0_63_0_6/RAMC/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_0_6/WCLK
+    SLICE_X154Y416       RAMD64E                                      r  mem_reg_0_63_0_6/RAMC/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X154Y416       RAMD64E (Hold_C6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_0_6/RAMC
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[5]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_0_6/RAMF/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[5] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_0_6/DIF
+    SLICE_X154Y416       RAMD64E                                      r  mem_reg_0_63_0_6/RAMF/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_0_6/WCLK
+    SLICE_X154Y416       RAMD64E                                      r  mem_reg_0_63_0_6/RAMF/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X154Y416       RAMD64E (Hold_F6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_0_6/RAMF
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[6]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_0_6/RAMG/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[6] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_0_6/DIG
+    SLICE_X154Y416       RAMD64E                                      r  mem_reg_0_63_0_6/RAMG/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_0_6/WCLK
+    SLICE_X154Y416       RAMD64E                                      r  mem_reg_0_63_0_6/RAMG/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X154Y416       RAMD64E (Hold_G6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_0_6/RAMG
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[15]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_14_20/RAMB/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[15] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_14_20/DIB
+    SLICE_X154Y433       RAMD64E                                      r  mem_reg_0_63_14_20/RAMB/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_14_20/WCLK
+    SLICE_X154Y433       RAMD64E                                      r  mem_reg_0_63_14_20/RAMB/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X154Y433       RAMD64E (Hold_B6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_14_20/RAMB
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[16]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_14_20/RAMC/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[16] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_14_20/DIC
+    SLICE_X154Y433       RAMD64E                                      r  mem_reg_0_63_14_20/RAMC/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_14_20/WCLK
+    SLICE_X154Y433       RAMD64E                                      r  mem_reg_0_63_14_20/RAMC/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X154Y433       RAMD64E (Hold_C6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_14_20/RAMC
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[19]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_14_20/RAMF/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[19] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_14_20/DIF
+    SLICE_X154Y433       RAMD64E                                      r  mem_reg_0_63_14_20/RAMF/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_14_20/WCLK
+    SLICE_X154Y433       RAMD64E                                      r  mem_reg_0_63_14_20/RAMF/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X154Y433       RAMD64E (Hold_F6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_14_20/RAMF
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[20]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_14_20/RAMG/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[20] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_14_20/DIG
+    SLICE_X154Y433       RAMD64E                                      r  mem_reg_0_63_14_20/RAMG/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_14_20/WCLK
+    SLICE_X154Y433       RAMD64E                                      r  mem_reg_0_63_14_20/RAMG/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X154Y433       RAMD64E (Hold_G6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_14_20/RAMG
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[22]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_21_27/RAMB/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[22] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_21_27/DIB
+    SLICE_X157Y424       RAMD64E                                      r  mem_reg_0_63_21_27/RAMB/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_21_27/WCLK
+    SLICE_X157Y424       RAMD64E                                      r  mem_reg_0_63_21_27/RAMB/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X157Y424       RAMD64E (Hold_B6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_21_27/RAMB
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[23]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_21_27/RAMC/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[23] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_21_27/DIC
+    SLICE_X157Y424       RAMD64E                                      r  mem_reg_0_63_21_27/RAMC/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_21_27/WCLK
+    SLICE_X157Y424       RAMD64E                                      r  mem_reg_0_63_21_27/RAMC/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X157Y424       RAMD64E (Hold_C6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_21_27/RAMC
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[26]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_21_27/RAMF/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[26] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_21_27/DIF
+    SLICE_X157Y424       RAMD64E                                      r  mem_reg_0_63_21_27/RAMF/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_21_27/WCLK
+    SLICE_X157Y424       RAMD64E                                      r  mem_reg_0_63_21_27/RAMF/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X157Y424       RAMD64E (Hold_F6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_21_27/RAMF
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[27]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_21_27/RAMG/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[27] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_21_27/DIG
+    SLICE_X157Y424       RAMD64E                                      r  mem_reg_0_63_21_27/RAMG/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_21_27/WCLK
+    SLICE_X157Y424       RAMD64E                                      r  mem_reg_0_63_21_27/RAMG/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X157Y424       RAMD64E (Hold_G6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_21_27/RAMG
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[29]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_28_34/RAMB/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[29] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_28_34/DIB
+    SLICE_X161Y417       RAMD64E                                      r  mem_reg_0_63_28_34/RAMB/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_28_34/WCLK
+    SLICE_X161Y417       RAMD64E                                      r  mem_reg_0_63_28_34/RAMB/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X161Y417       RAMD64E (Hold_B6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_28_34/RAMB
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[30]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_28_34/RAMC/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[30] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_28_34/DIC
+    SLICE_X161Y417       RAMD64E                                      r  mem_reg_0_63_28_34/RAMC/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_28_34/WCLK
+    SLICE_X161Y417       RAMD64E                                      r  mem_reg_0_63_28_34/RAMC/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X161Y417       RAMD64E (Hold_C6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_28_34/RAMC
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[33]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_28_34/RAMF/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[33] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_28_34/DIF
+    SLICE_X161Y417       RAMD64E                                      r  mem_reg_0_63_28_34/RAMF/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_28_34/WCLK
+    SLICE_X161Y417       RAMD64E                                      r  mem_reg_0_63_28_34/RAMF/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X161Y417       RAMD64E (Hold_F6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_28_34/RAMF
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[34]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_28_34/RAMG/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[34] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_28_34/DIG
+    SLICE_X161Y417       RAMD64E                                      r  mem_reg_0_63_28_34/RAMG/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_28_34/WCLK
+    SLICE_X161Y417       RAMD64E                                      r  mem_reg_0_63_28_34/RAMG/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X161Y417       RAMD64E (Hold_G6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_28_34/RAMG
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[36]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_35_41/RAMB/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[36] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_35_41/DIB
+    SLICE_X149Y433       RAMD64E                                      r  mem_reg_0_63_35_41/RAMB/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_35_41/WCLK
+    SLICE_X149Y433       RAMD64E                                      r  mem_reg_0_63_35_41/RAMB/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X149Y433       RAMD64E (Hold_B6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_35_41/RAMB
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[37]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_35_41/RAMC/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[37] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_35_41/DIC
+    SLICE_X149Y433       RAMD64E                                      r  mem_reg_0_63_35_41/RAMC/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_35_41/WCLK
+    SLICE_X149Y433       RAMD64E                                      r  mem_reg_0_63_35_41/RAMC/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X149Y433       RAMD64E (Hold_C6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_35_41/RAMC
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[40]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_35_41/RAMF/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[40] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_35_41/DIF
+    SLICE_X149Y433       RAMD64E                                      r  mem_reg_0_63_35_41/RAMF/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_35_41/WCLK
+    SLICE_X149Y433       RAMD64E                                      r  mem_reg_0_63_35_41/RAMF/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X149Y433       RAMD64E (Hold_F6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_35_41/RAMF
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+Slack (VIOLATED) :        -0.135ns  (arrival time - required time)
+  Source:                 io_enq_bits[41]
+                            (input port clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            mem_reg_0_63_35_41/RAMG/I
+                            (rising edge-triggered cell RAMD64E clocked by queue  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             queue
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (queue rise@0.000ns - queue rise@0.000ns)
+  Data Path Delay:        0.000ns  (logic 0.000ns (0.000%)  route 0.000ns (0.000%))
+  Logic Levels:           0  
+  Input Delay:            0.000ns
+  Clock Path Skew:        0.057ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    0.057ns
+    Source Clock Delay      (SCD):    0.000ns
+    Clock Pessimism Removal (CPR):    -0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock queue rise edge)      0.000     0.000 r  
+                         input delay                  0.000     0.000    
+                                                      0.000     0.000 r  io_enq_bits[41] (IN)
+                         net (fo=4, unset)            0.000     0.000    mem_reg_0_63_35_41/DIG
+    SLICE_X149Y433       RAMD64E                                      r  mem_reg_0_63_35_41/RAMG/I
+  -------------------------------------------------------------------    -------------------
+
+                         (clock queue rise edge)      0.000     0.000 r  
+                                                      0.000     0.000 r  clock (IN)
+                         net (fo=669, unset)          0.057     0.057    mem_reg_0_63_35_41/WCLK
+    SLICE_X149Y433       RAMD64E                                      r  mem_reg_0_63_35_41/RAMG/CLK
+                         clock pessimism              0.000     0.057    
+    SLICE_X149Y433       RAMD64E (Hold_G6LUT_SLICEM_CLK_I)
+                                                      0.078     0.135    mem_reg_0_63_35_41/RAMG
+  -------------------------------------------------------------------
+                         required time                         -0.135    
+                         arrival time                           0.000    
+  -------------------------------------------------------------------
+                         slack                                 -0.135    
+
+
+
+

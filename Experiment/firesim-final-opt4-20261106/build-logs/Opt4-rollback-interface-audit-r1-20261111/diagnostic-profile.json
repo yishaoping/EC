@@ -1,0 +1,29 @@
+{
+  "activation_allowed": false,
+  "bitstream_sha256": null,
+  "board_bdf": "0000:21:00.0",
+  "board_serial": "21770433G02LA",
+  "formal": false,
+  "fpga_execution": false,
+  "hardware_commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+  "name": "rollback-interface-gap-r1",
+  "rejected_as_rollback_evidence": [
+    "normal zero-fault strict success",
+    "fault flag only",
+    "cancellation only",
+    "promotion ACK or recoveryFromSvb count",
+    "host/target reset and new boot"
+  ],
+  "required_witnesses": [
+    "actual full-compare FAIL and its sequence",
+    "architectural checkpoint restoration",
+    "restart PC and retired replay",
+    "memory recovery with correct final output",
+    "checker cleanup and complete drain"
+  ],
+  "schema": "ec-opt4-rollback-diagnostic-profile/1",
+  "software_built": false,
+  "source_audit": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-rollback-interface-audit-r1-20261111/audit.json",
+  "source_id": "7e77ddda28298ac88be13c28dbe98771982bc6ca9587f810adf875bffd580cc1",
+  "status": "NOT_RUN_NO_CERTIFIED_BITSTREAM_OR_SUPPORTED_RESTART_INTERFACE"
+}

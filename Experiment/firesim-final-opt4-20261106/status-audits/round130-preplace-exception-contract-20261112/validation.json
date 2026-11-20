@@ -1,0 +1,71 @@
+{
+  "cases": [
+    {
+      "expected_pass": true,
+      "name": "original_1_0_2_1",
+      "observed_reason": "native_clock clk_out1_design_1_clk_wiz_0_0 native_period_ns 19.998 valid_exceptions {{buildtop_reference_clock setup} 1 {buildtop_reference_clock hold} 0 {tileClockGroup_tile_1 setup} 2 {tileClockGroup_tile_1 hold} 1} buildtop_reference_clock {coverage {setup 2 hold 2} max {requirement_ns 19.998 exception {MultiCycle Path   Setup -end   1} startpoint r1/C endpoint r0/D} min {requirement_ns 0.000 exception {MultiCycle Path   Setup -end   1    Hold  -start 0} startpoint r1/C endpoint r0/D}} tileClockGroup_tile_1 {coverage {setup 2 hold 2} max {requirement_ns 39.996 exception {MultiCycle Path   Setup -end   2} startpoint r3/C endpoint r2/D} min {requirement_ns 0.000 exception {MultiCycle Path   Setup -end   2    Hold  -start 1} startpoint r3/C endpoint r2/D}}",
+      "rejected": false
+    },
+    {
+      "expected_pass": false,
+      "name": "conflicting_checker_setup",
+      "observed_reason": "duplicate target exception: tileClockGroup_tile_1 setup",
+      "rejected": true
+    },
+    {
+      "expected_pass": false,
+      "name": "conflicting_checker_hold",
+      "observed_reason": "duplicate target exception: tileClockGroup_tile_1 hold",
+      "rejected": true
+    },
+    {
+      "expected_pass": false,
+      "name": "absent_checker_hold",
+      "observed_reason": "missing or changed valid target exception: tileClockGroup_tile_1 hold expected=1",
+      "rejected": true
+    },
+    {
+      "expected_pass": false,
+      "name": "checker_false_path",
+      "observed_reason": "unexpected valid target exception: set_false_path  -from [get_clocks {tileClockGroup_tile_1}]  -to [get_clocks {tileClockGroup_tile_1}]",
+      "rejected": true
+    },
+    {
+      "expected_pass": false,
+      "name": "partially_overridden_checker",
+      "observed_reason": "noncanonical exception touches a target clock domain: set_false_path  -from [get_pins {r3/C}]  -to [get_pins {r2/D}]",
+      "rejected": true
+    },
+    {
+      "expected_pass": false,
+      "name": "pin_specific_checker_multicycle",
+      "observed_reason": "noncanonical exception touches a target clock domain: set_multicycle_path 3 -setup  -from [get_pins {r3/C}]  -to [get_pins {r2/D}]",
+      "rejected": true
+    },
+    {
+      "expected_pass": false,
+      "name": "doubled_physical_checker_clock",
+      "observed_reason": "target physical clock contract failed: tileClockGroup_tile_1",
+      "rejected": true
+    },
+    {
+      "expected_pass": true,
+      "name": "restored_1_0_2_1",
+      "observed_reason": "native_clock clk_out1_design_1_clk_wiz_0_0 native_period_ns 19.998 valid_exceptions {{buildtop_reference_clock setup} 1 {buildtop_reference_clock hold} 0 {tileClockGroup_tile_1 setup} 2 {tileClockGroup_tile_1 hold} 1} buildtop_reference_clock {coverage {setup 2 hold 2} max {requirement_ns 19.998 exception {MultiCycle Path   Setup -end   1} startpoint r1/C endpoint r0/D} min {requirement_ns 0.000 exception {MultiCycle Path   Setup -end   1    Hold  -start 0} startpoint r1/C endpoint r0/D}} tileClockGroup_tile_1 {coverage {setup 2 hold 2} max {requirement_ns 39.996 exception {MultiCycle Path   Setup -end   2} startpoint r3/C endpoint r2/D} min {requirement_ns 0.000 exception {MultiCycle Path   Setup -end   2    Hold  -start 1} startpoint r3/C endpoint r2/D}}",
+      "rejected": false
+    }
+  ],
+  "export_parser_cases_passed": 5,
+  "fixture": "four FDRE and two BUFG primitive netlist",
+  "fixture_cases_passed": 9,
+  "fullshell_test_completed": false,
+  "gate_sha256": "fe9b9e042cf5d3c2c96267cf59b9a99a315fa7b0a773d4a87b3bbb7aa21bb685",
+  "installed": false,
+  "live_sources_changed": false,
+  "manifest_sha256": "cf2abea374dbf48a9947a9dd202c541aa8ee877c6d94857a08a1fc2057cf88ff",
+  "no_synthesis_opt_design_place_route_bitstream_or_device_operations": true,
+  "render_sha256": "f83a2e27c5210f6e2439ed0b8767505cfe4871378521d09de9146883a5c9aad0",
+  "report_only_coverage_insufficient_counterexample": true,
+  "schema": "ec-target-exception-contract-validation/1",
+  "tool": "Vivado 2021.1"
+}

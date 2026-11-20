@@ -1,0 +1,19 @@
+{
+  "utc": "2026-11-14T11:58:42.609833+00:00",
+  "evidence_scope": "Previous 15 MHz final path and current 10 MHz clock report are separate observations; current worst endpoint not yet reported",
+  "previous_15mhz": {
+    "report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-15mhz-altspreadlogic_high/timing.rpt",
+    "sha256": "d87d6e04354b093725ae74660e5aa5041c6916464ea5532ab0feeabbf97a1d60",
+    "worst_setup": "Slack (VIOLATED) :        -3.457ns  (required time - arrival time)\n  Source:                 design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/u_ddr_cal/u_ddr_cal_addr_decode/ub_ready_reg/C\n                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})\n  Destination:            design_1_i/ddr4_0/inst/u_ddr4_mem_intfc/u_ddr_cal_top/mcal_PAR_dly_reg[0][6]/D\n                            (rising edge-triggered cell FDRE clocked by mmcm_clkout0  {rise@0.000ns fall@1.666ns period=3.332ns})\n  Path Group:             mmcm_clkout0\n  Path Type:              Setup (Max at Slow Process Corner)\n  Requirement:            3.332ns  (mmcm_clkout0 rise@3.332ns - mmcm_clkout0 rise@0.000ns)\n  Data Path Delay:        6.657ns  (logic 0.492ns (7.391%)  route 6.165ns (92.609%))\n  Logic Levels:           4  (LUT3=1 LUT5=1 LUT6=2)\n  Clock Path Skew:        -0.105ns (DCD - SCD + CPR)\n    Destination Clock Delay (DCD):    3.624ns = ( 6.956 - 3.332 ) \n    Source Clock Delay      (SCD):    3.298ns\n    Clock Pessimism Removal (CPR):    -0.430ns\n  Clock Uncertainty:      0.052ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE\n    Total System Jitter     (TSJ):    0.071ns\n    Discrete Jitter          (DJ):    0.077ns\n    Phase Error              (PE):    0.000ns\n  Clock Net Delay (Source):      1.923ns (routing 0.707ns, distribution 1.216ns)\n  Clock Net Delay (Destination): 1.700ns (routing 0.646ns, distribution 1.054ns)\n\n"
+  },
+  "current_10mhz": {
+    "clock_report": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/performance-only-cdc-lowfreq-r1-20261114/physical/candidates/mem-10mhz-recovery-r2/repaired-clocks.rpt",
+    "sha256": "6e16b1ae21cb8b966e5be5a7160c33ed2893d200e4f20f2624dcb19ca7b7a1ad",
+    "clocks": [
+      "lopt 99.960 {0.000 49.980} P,G,A",
+      "mmcm_clkout0 3.332 {0.000 1.666} P,G,A",
+      "xdma_0_axi_aclk 4.000 {0.000 2.000} P,G,A"
+    ]
+  },
+  "conclusion": "Host slowdown does not relax the DDR 3.332 ns or PCIe 4 ns clocks; previous DDR setup violation was dominated by 6.165 ns routing delay. Exact 10 MHz worst path awaits final report."
+}

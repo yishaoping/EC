@@ -1,0 +1,49 @@
+{
+  "FPGA_samples": 0,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "observed_comparison": {
+    "application_output_match": true,
+    "cycle_equal": false,
+    "equivalence_conclusion": "NOT_ESTABLISHED: different memory models and clock/environment integration; counts and cycles differ, no alignment assumed",
+    "package_count_difference": -5,
+    "roi_cycles_difference": 51127,
+    "roi_instruction_match": true,
+    "roi_relative_difference": 0.10534503398725392
+  },
+  "original_full_GoldenGate_metasim": {
+    "end_to_end_drain": "UNOBSERVED",
+    "host_wall_seconds": 3136.112563636998,
+    "local_checker_failed": 0,
+    "local_checker_pass": 131,
+    "output_correct": true,
+    "roi_cycles": 536456,
+    "roi_instructions": 392248,
+    "simulator_target_cycles_per_second": 563.4756703078451
+  },
+  "original_target_RTL": {
+    "host_wall_seconds": 2107.6796125940164,
+    "output": [
+      "benchmark=canneal checksum=40b2b50000000000 verified=1 routing_cost=4789"
+    ],
+    "package_results": {
+      "CANCELLED": 0,
+      "FAIL": 0,
+      "PASS": 136,
+      "ROI_work_drain_tail_cycles": 262,
+      "accepted_results": 136,
+      "generated": 136
+    },
+    "roi_cycles": 485329,
+    "roi_instructions": 392248
+  },
+  "schema": "ec-two-route-evidence-comparison/1",
+  "scope": "Observed finite no-fault bare-metal Canneal project400; not Linux PARSEC formal, not FPGA, not matched memory-environment equivalence",
+  "source_evidence": {
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-full-gg-package-analysis-round37-v1-20261111/result.json": "9fea42a2dcd852fc58f9c338ba3460f608dc65158dc3b55728223a10a043b3a8",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-canneal-20261111/fresh-event-intervals.json": "a604f903b1725317e655e49b66440e4f045cebef33e1f0ac890be846a28f1be8",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-canneal-20261111/result.json": "405da344595e4f8b92b8b6d935d8cb2a07a74d58b323e19fd60791239d4a68ce",
+    "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-frozen-full-metasim-sample-r1-20261111/result.json": "d60cbf5eff236254c910cc4639aba0151e265c45253011ae015482200741a960"
+  },
+  "strict_latency": "NOT_MEASURED; local checker duration is not checker-done minus BOOM-done",
+  "utc": "2026-11-11T12:28:14.175116+00:00"
+}

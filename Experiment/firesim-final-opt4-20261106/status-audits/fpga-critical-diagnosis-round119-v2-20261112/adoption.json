@@ -1,0 +1,98 @@
+{
+  "actions": {
+    "CAD_started": 0,
+    "CPU_comparison_consumers_touched": false,
+    "FPGA_IO": false,
+    "FPGA_samples": 0,
+    "jobs_launched": 0,
+    "live_inputs_changed": false,
+    "processes_signalled": 0,
+    "services_installed": 0,
+    "services_restarted": 0
+  },
+  "adopted_services_observed_active": [
+    {
+      "controller_start_ticks": "26486048",
+      "systemd_main_pid": 2551972,
+      "unit": "ec-opt4-fpga-priority-handoff-r1.service"
+    },
+    {
+      "controller_start_ticks": "26532915",
+      "systemd_main_pid": 2561977,
+      "unit": "ec-opt4-svb-host40-shell-physical-r4.service"
+    },
+    {
+      "systemd_main_pid": 2561978,
+      "unit": "ec-opt4-svb-host40-shell-follow-r4.service"
+    },
+    {
+      "systemd_main_pid": 2561979,
+      "unit": "ec-opt4-svb-host40-shell-application-follow-r4.service"
+    },
+    {
+      "controller_pid": 2379596,
+      "controller_start_ticks": "25825420",
+      "systemd_main_pid": 2379594,
+      "unit": "ec-opt4-auto-mcrams-full-host-capacity-r1-3656aec4.service",
+      "vivado_pid": 2379656,
+      "vivado_start_ticks": "25825451"
+    },
+    {
+      "controller_pid": 2403708,
+      "systemd_main_pid": 2403707,
+      "unit": "ec-opt4-auto-mcrams-host-continuation-r2-3656aec4.service"
+    }
+  ],
+  "diagnosis_complete": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fpga-critical-diagnosis-round119-v2-20261112/complete.json",
+  "diagnosis_complete_sha256": "4dc84fbc2b47f8e80fc193a41e11bb44636cbc4fb96565ebee0ef7d3783d0c69",
+  "foreground_recovery_reservation": {
+    "directory": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/svb-host40-shell-recovery-r4-20261112",
+    "installation_sha256": "a73b5b58ab1d25f9fac3c50d955d9833c7b77bd622390c210ec1e7b16cabad61",
+    "live_cad_signalled": false,
+    "only_single_python_idle_physical_waiters_transferred": [
+      "r2",
+      "r3"
+    ],
+    "physical_or_target_gates_changed": false,
+    "resource_readmission": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/fpga-exclusive-takeover-20261112T030000Z/same-small-svb-slot-measured-readmission.json",
+    "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/state.json",
+    "status": "INSTALLED_ACTIVE_B_ATTEMPT_COMPLETED_C_RUNNING",
+    "units": [
+      "ec-opt4-svb-host40-shell-application-follow-r4.service",
+      "ec-opt4-svb-host40-shell-follow-r4.service",
+      "ec-opt4-svb-host40-shell-physical-r4.service"
+    ],
+    "utc": "2026-11-12T03:25:54.676220+00:00"
+  },
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "identity_host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+  "limits": "Saved hierarchy is an isolated state-interface harness; no complete-address/DCache/whole-FIT or new FPGA claim. SVB clock-group endpoint/TNS values overlap and are not additive.",
+  "next_safe_action": "At CAD cadence >=600s adopt r4 C/D exit receipts and complete-owner capacity report. Existing followers alone advance actual certified FIT to 21-only replay. If C/D fail, preserve them and establish supported pre-route physical replication on a separate saved checkpoint only after exact producer exit/empty cgroup; do not prepare a competing reserved service. Use measured complete-host hierarchy for any next capacity optimization.",
+  "preserved_v1_failure": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-fpga-critical-diagnosis-round119-v1-20261112/failed-attempt.json",
+  "process_verification": "Exact /proc/PID/stat start_ticks and cgroup were checked for priority controller, r4 physical controller, owner-host controller and owner-host Vivado; no broad process scan.",
+  "saved_state_observations": {
+    "owner_capacity": {
+      "actual_LUT_report_available": false,
+      "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-mcrams-full-host-capacity-r1-state.json",
+      "status": "RUNNING_FULL_HOST_SYNTH_DESIGN",
+      "updated_utc": "2026-11-12T03:30:14.306958+00:00"
+    },
+    "owner_continuation": {
+      "MC_live": true,
+      "area_live": true,
+      "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-mcrams-full-host-continuation-r2-state.json",
+      "status": "ADOPTING_EXISTING_CAPACITY_AND_PARITY_NO_DUPLICATES",
+      "updated_utc": "2026-11-12T03:30:44.380635+00:00"
+    },
+    "r4": {
+      "mode": "C-postroute-clock-skew",
+      "state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/cycleprecise-svb-host40-shell-recovery-r4-20261112/state.json",
+      "status": "RUNNING_ADMITTED_HOST40_SHELL_RECOVERY",
+      "updated_utc": "2026-11-12T03:28:46.409164+00:00"
+    }
+  },
+  "schema": "ec-fpga-round-adoption/1",
+  "scope": "FPGA/Vivado/CAD and existing owner-MCRams equivalence prerequisite only",
+  "utc": "2026-11-12T03:36:22.187016+00:00",
+  "verification": "V2 execution PASS, repeated invocation ADOPTED_IMMUTABLE_COMPLETE_DIAGNOSIS; 16 input hashes and 4 output hashes verified; CSV independently sums +60726 LUT and +39227 FF."
+}

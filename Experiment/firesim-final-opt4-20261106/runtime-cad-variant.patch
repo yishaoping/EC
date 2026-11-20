@@ -1,0 +1,89 @@
+--- firesim/final-opt4-20261106/scripts/build_bitstream.py
++++ firesim/final-opt4-20261106/scripts/build_bitstream_runtime.py
+@@ -29,10 +29,10 @@
+ 
+ 
+ def main():
+-    lock = (D/'.final-cad.lock').open('a')
++    lock = (D/'.final-runtime-cad.lock').open('a')
+     fcntl.flock(lock, fcntl.LOCK_EX|fcntl.LOCK_NB)
+-    common = Path('/data1/gzh/EC/firesim/dac2026/work/.dac-compile.lock').open('a')
+-    fcntl.flock(common, fcntl.LOCK_EX|fcntl.LOCK_NB)
++    # Independent read-only source/RTL inputs and private CAD directory. The
++    # baseline job owns the shared legacy lock; neither job mutates its inputs.
+     cad_root = (W/'cad-work').resolve()
+     assert cad_root.stat().st_uid == os.getuid()
+     disk = shutil.disk_usage(cad_root)
+@@ -58,7 +58,7 @@
+         for f,h in r['outputs'].items():assert sha(f)==h,f
+     assert driver['input_result']==str(ggpath)
+     stamp = dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ')
+-    label = 'C4-bitstream-'+stamp
++    label = 'C4-runtime-bitstream-'+stamp
+     out = cad_root/label
+     logs = D/'build-logs'/label
+     logs.mkdir()
+@@ -76,6 +76,9 @@
+     boards = Path('/data1/gzh/EC/firesim/dac2026/deps/boards')
+     wrapper = out/'scripts/dac_compile.tcl'
+     wrapper.write_text('set_param general.maxThreads 2\nset_param board.repoPaths {'+str(boards)+'}\nsource [file join [pwd] scripts main.tcl]\n')
++    synthesis = out/'scripts/synthesis.tcl'
++    synthesis.write_text(synthesis.read_text().replace('launch_runs ${synth_run}',
++        'set_property STEPS.SYNTH_DESIGN.ARGS.DIRECTIVE RuntimeOptimized [get_runs -filter {IS_SYNTHESIS == 1}]\nlaunch_runs ${synth_run}',1))
+     effective = {str(f):sha(f) for f in sorted(out.rglob('*')) if f.is_file()}
+     env = os.environ.copy()
+     env.update(OMP_NUM_THREADS='2',MAKEFLAGS='-j1',TMPDIR=str(out/'tmp'))
+@@ -88,13 +91,13 @@
+                  golden_gate_result=str(ggpath),driver_result=str(drpath),output_dir=str(out),log_dir=str(logs),
+                  inputs=inputs,effective_cad_inputs=effective,argv=argv,host_fpga_clock_mhz=50,
+                  target_boom_clock_mhz=200,target_checker_clock_mhz=100,jobs=2,max_threads=2,
+-                 no_fpga_device_access=True,runtime_validation='NOT_RUN',started_utc=dt.datetime.now(dt.timezone.utc).isoformat(),
++                 synthesis_directive='RuntimeOptimized',alternative_to=str(D/'C4-cad-state.json'),reason='Original synthesis hot spot HOptDfg reconvergent graph merging; retain original while trying supported runtime directive with identical DUT/GG RTL/clock constraints',no_fpga_device_access=True,runtime_validation='NOT_RUN',started_utc=dt.datetime.now(dt.timezone.utc).isoformat(),
+                  disk_budget=dict(filesystem_device=cad_root.stat().st_dev,initial_free_gib=disk.free/2**30,
+                                   start_minimum_gib=80,stop_free_below_gib=60,max_growth_gib=120),
+                  script_sha256=sha(__file__),returncode=None,certified_bitstream=False)
+     (logs/'build-script.py').write_bytes(Path(__file__).read_bytes())
+     save(logs/'command.json',state)
+-    (W/'cad-current.json').write_text(json.dumps(dict(output_dir=str(out),log_dir=str(logs)),indent=2)+'\n')
++    (W/'cad-runtime-current.json').write_text(json.dumps(dict(output_dir=str(out),log_dir=str(logs)),indent=2)+'\n')
+     start=time.monotonic()
+     child=None
+     stopped=None
+@@ -108,7 +111,7 @@
+         child=subprocess.Popen(argv,cwd=out,env=env,stdout=stream,stderr=subprocess.STDOUT,start_new_session=True)
+         state.update(status='RUNNING',child_pid=child.pid,child_pgid=child.pid,
+                      child_start_ticks=Path(f'/proc/{child.pid}/stat').read_text().split()[21])
+-        save(D/'C4-cad-state.json',state)
++        save(D/'C4-runtime-cad-state.json',state)
+         print(json.dumps(dict(pid=child.pid,pgid=child.pid,output=str(out),log=str(logs))),flush=True)
+         while child.poll() is None:
+             try:child.wait(timeout=30)
+@@ -116,7 +119,7 @@
+             free=shutil.disk_usage(cad_root).free
+             state.update(elapsed_seconds=time.monotonic()-start,disk_free_gib=free/2**30,
+                          updated_utc=dt.datetime.now(dt.timezone.utc).isoformat())
+-            save(D/'C4-cad-state.json',state)
++            save(D/'C4-runtime-cad-state.json',state)
+             if child.poll() is None and (free < 60*2**30 or disk.free-free > 120*2**30 or time.monotonic()-start>24*3600):
+                 stopped='RESOURCE_LIMIT_OR_TIMEOUT'
+                 os.killpg(child.pid,signal.SIGTERM)
+@@ -131,7 +134,7 @@
+                  certified_bitstream=rc==0,ended_utc=dt.datetime.now(dt.timezone.utc).isoformat(),
+                  wall_seconds=time.monotonic()-start,outputs={str(bit):sha(bit)} if bit.exists() else {})
+     save(logs/'result.json',state)
+-    save(D/'C4-cad-state.json',state)
++    save(D/'C4-runtime-cad-state.json',state)
+     if rc==0:
+         destination=W/'images'/label
+         destination.mkdir(parents=True)
+@@ -140,8 +143,8 @@
+         state['durable_bitstream']=str(destination/'firesim.bit')
+         state['durable_bitstream_sha256']=sha(destination/'firesim.bit')
+         save(destination/'result.json',state)
+-        save(W/'bitstream-build.json',state)
+-        save(D/'C4-cad-state.json',state)
++        save(W/'bitstream-runtime-build.json',state)
++        save(D/'C4-runtime-cad-state.json',state)
+     print(json.dumps(dict(status=state['status'],returncode=rc,result=str(logs/'result.json'))),flush=True)
+     return rc or (1 if stopped else 0)
+ 

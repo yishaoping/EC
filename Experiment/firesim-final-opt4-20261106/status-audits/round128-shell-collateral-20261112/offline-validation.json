@@ -1,0 +1,54 @@
+{
+  "source_pin_verification": "PASS_521_EXISTING_COLLATERAL_FILES_AND_ORIGINAL_R3_PLAN",
+  "tcl_clock_cases": {
+    "valid_native_1_1": {
+      "passed": true,
+      "returncode": 0,
+      "output": "PASS"
+    },
+    "wrong_physical_pin_clock": {
+      "passed": true,
+      "returncode": 23,
+      "output": "actual physical clock differs from pinned shell evidence: physical=other native=clk_out1_design_1_clk_wiz_0_0"
+    },
+    "doubled_checker_rejected": {
+      "passed": true,
+      "returncode": 23,
+      "output": "clock differs from exact generated divide_by=1 contract: tileClockGroup_tile_1"
+    },
+    "wrong_generated_master": {
+      "passed": true,
+      "returncode": 23,
+      "output": "generated target clock has wrong physical master: buildtop_reference_clock"
+    }
+  },
+  "observer_cases": {
+    "wait_then_matching_failure": {
+      "passed": true,
+      "result": "SUBMITTED_VERSIONED_CHECKPOINT_ONLY_REPAIR_AFTER_ACTUAL_R3_FAILURE",
+      "repair_requests": 1,
+      "admission_calls": 1
+    },
+    "wrapper_exit_race_then_failure": {
+      "passed": true,
+      "result": "SUBMITTED_VERSIONED_CHECKPOINT_ONLY_REPAIR_AFTER_ACTUAL_R3_FAILURE",
+      "repair_requests": 1,
+      "admission_calls": 2
+    },
+    "different_failure_no_repair": {
+      "passed": true,
+      "result": "PREDECESSOR_FAILURE_RETAINED_REQUIRES_INDEPENDENT_REVIEW",
+      "repair_requests": 0,
+      "admission_calls": 1
+    },
+    "successful_r3_no_repair": {
+      "passed": true,
+      "result": "R3_TERMINAL_RESULT_RETAINED_NO_REPAIR_NEEDED",
+      "repair_requests": 0,
+      "admission_calls": 0
+    }
+  },
+  "source_binding_only_exact_reversal": "PASS_BOTH_DIVIDE_BY_1_AND_SETUP_HOLD_1_0_2_1_UNCHANGED",
+  "rendered_tcl_syntax_complete": true,
+  "no_CAD_or_FPGA_started_by_validation": true
+}

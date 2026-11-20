@@ -1,0 +1,48 @@
+{
+  "actual_fired_flag_assignments": {
+    "lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_MPORT_10_addr_fired_0": [
+      "1'h0",
+      "~clockBridge_clocks_0_enabled",
+      "lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_MPORT_10_addr_fired_0\n         |\n        lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_MPORT_10_addr_source_ready\n         &\n        lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_MPORT_10_addr_source_valid"
+    ],
+    "lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_MPORT_10_data_fired_0": [
+      "hostReset | _GEN_7568"
+    ]
+  },
+  "clock_enable_expressions": {
+    "clockBridge_clocks_0_buffer_CE": "clockBridge_clocks_0_enabled & targetCycleFinishing & ~hostReset",
+    "clockBridge_clocks_1_buffer_CE": "clockBridge_clocks_1_enabled & targetCycleFinishing & ~hostReset"
+  },
+  "complete_fame_equivalence": false,
+  "created_utc": "2026-11-11T19:22:10.245456+00:00",
+  "existing_token_audit": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-token-audit-round49-v3-20261111/result.json",
+  "forbidden_shortcuts": [
+    "No RAM entry/host wrapper LUT sum interpreted as full DCache or whole FIT.",
+    "No host reset interpreted as initialized target RAM contents.",
+    "No replacement of incoming next-clock-token rule with current target clock enable."
+  ],
+  "fpga_access": false,
+  "functional_baseline": "8491167d84b6d9521b151a743673c1516926a1f8",
+  "owner_command_count": 74,
+  "owner_response_count": 35,
+  "prerequisites": [
+    "Joined RAM/adapter/109 FIFO transaction proof must pass with no free RAM endpoints.",
+    "Retain exact current-enabled outgoing and next-clock-token incoming response recurrences.",
+    "Connect all 1308 actual targetCycleFinishing factors through existing token-control evidence, without assuming owner-only readiness advances the target.",
+    "Prove nth target read/write alignment across two-entry lookahead queues and host microsteps.",
+    "Compose original DCache written-mask reset semantics and all 35 owner read observations.",
+    "Compare the complete frozen target transition/output/observation boundary; finite Canneal parity alone does not discharge it."
+  ],
+  "representative_actual_assignments": {
+    "lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_MPORT_10_addr_source_valid": "~\n    lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_MPORT_10_addr_fired_0",
+    "lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_MPORT_10_data_sink_ready": "targetCycleFinishing & ~\n    lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_MPORT_10_data_fired_0",
+    "lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_MPORT_5_data_sink_ready": "targetCycleFinishing & ~\n    lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_MPORT_5_data_fired_0",
+    "lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_MPORT_data_source_valid": "lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_refillPreservationAllowed_MPORT_data_sink_valid\n     &\n    lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_s3_l1PreservationAllowed_MPORT_data_sink_valid\n     &\n    lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_svbCaptureResidentMatch_MPORT_data_sink_valid\n     &\n    lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_crossPackageResidentMatch_MPORT_data_sink_valid\n     & ~\n    lazyModule_system_tile_prci_domain_tile_reset_domain_boom_tile_dcache_ownerImageMemory_flattened_MPORT_data_fired_0"
+  },
+  "schema": "ec-owner-fame-next-boundary/1",
+  "source": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/owner-channel-composition-round50-v3-20261111/evidence/FireSim.sv",
+  "source_sha256": "22031010ff1ed43636e51240c061821e8086950eba5504a0315f70bc07c20dd0",
+  "status": "SOURCE_BOUND_NEXT_OBLIGATIONS_ONLY_NOT_PROVED",
+  "target_changed": false,
+  "whole_fit": false
+}

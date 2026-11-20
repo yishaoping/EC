@@ -1,0 +1,6 @@
+read_verilog -sv -DSYNTHESIS /data1/gzh/EC/Experiment/firesim-final-opt4-20261106/build-logs/Opt4-owner-ram-transaction-round55-v1-20261112/bits-36-44-step.sv
+prep -top OwnerRamTransaction -flatten
+memory_map
+opt -full
+opt_clean
+sat -seq 2 -set reader_legal 1 -set selectors_stable 1 -set-at 1 relation 1 -prove-skip 1 -prove relation 1 -verify -timeout 120

@@ -1,0 +1,72 @@
+{
+  "build_script_sha256": "624638668baf271383cc55d97fe22f2148712f68aede08c83c43fb04fbc083de",
+  "commands": [
+    {
+      "argv": [
+        "nice",
+        "-n",
+        "15",
+        "make",
+        "-j2",
+        "O=/tmp/guozh-firesim-final-opt4-20261106/system-builds/Native-firmware-20261106T123855.937401Z",
+        "PLATFORM=generic",
+        "CROSS_COMPILE=/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-",
+        "FW_PAYLOAD_PATH=/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/builds/Native-earlyconsole-20261106T122508Z/arch/riscv/boot/Image",
+        "FW_PAYLOAD_FDT_PATH=/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T123813Z/Native.dtb"
+      ],
+      "cwd": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/opensbi"
+    }
+  ],
+  "configuration": "Native",
+  "content_checks": {
+    "fdt": {
+      "bytes": 7996,
+      "exact_bytes_present": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T123813Z/Native.dtb",
+      "payload_offset": 1712,
+      "sha256": "fae79acb1713f9249a35e89961f3be014e526820a0713644531abf7b5eaae6ac"
+    },
+    "kernel": {
+      "bytes": 23913472,
+      "exact_bytes_present": true,
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/builds/Native-earlyconsole-20261106T122508Z/arch/riscv/boot/Image",
+      "payload_offset": 2097152,
+      "sha256": "378185131aeae8f01925d0071a94c30f3e8cb4c2612caa9d438539132e25d124"
+    }
+  },
+  "error": null,
+  "fpga_execution": "NOT_RUN",
+  "input_files": {
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/builds/Native-earlyconsole-20261106T122508Z/arch/riscv/boot/Image": "378185131aeae8f01925d0071a94c30f3e8cb4c2612caa9d438539132e25d124",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/earlyconsole-kernel-build.json": "3413559e4b8be9cba04ee500438000ff60895d70e9c348e3f62b948557e4f27b",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-20261106T123813Z/Native.dtb": "fae79acb1713f9249a35e89961f3be014e526820a0713644531abf7b5eaae6ac",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/fdt-mem2g-build.json": "8642fb303bdda81fd1b256d6142f5da777934305acd885ae05d95116001d0b17",
+    "/data1/gzh/EC/firesim/final-opt4-20261106/software/linux-profile.json": "7e5dda7c2be3ad64695ae50811624d8e802c20eabb17b3969a5e232058bbf6f1"
+  },
+  "output_dir": "/tmp/guozh-firesim-final-opt4-20261106/system-builds/Native-firmware-20261106T123855.937401Z",
+  "outputs": {
+    "/tmp/guozh-firesim-final-opt4-20261106/system-builds/Native-firmware-20261106T123855.937401Z/platform/generic/firmware/fw_payload.bin": "3c3c189adc650d4d4a814889e8e1fafa392b2c32c7f89d99bd60a6863096907d",
+    "/tmp/guozh-firesim-final-opt4-20261106/system-builds/Native-firmware-20261106T123855.937401Z/platform/generic/firmware/fw_payload.elf": "a8c8c2d6b9842a34a6e4b79131e7f2d3962436075dc5f7abf9b9ce22c64eec04"
+  },
+  "phase": "firmware",
+  "resources": {
+    "actual_build_root": "/tmp/guozh-firesim-final-opt4-20261106/system-builds",
+    "available_memory_gib": 265.70834732055664,
+    "free_disk_gib": 230.09135055541992,
+    "host_cpus": 256,
+    "jobs": 2,
+    "load_1min": 32.47021484375,
+    "log_free_disk_gib": 38.070655822753906
+  },
+  "returncode": 0,
+  "runtime_validation": "NOT_RUN",
+  "schema": "ec-firesim-system-build/1",
+  "source_id": "ba806bac1c35a13384eb18ea30f828503a7469f67b14abe4318215ec4b542ad4",
+  "source_tree": "/data1/gzh/EC/firesim/final-opt4-20261106/software/Native/opensbi",
+  "tool_hashes": {
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-gcc": "21bd10dbea240af3d5f12d5270dc4b4d3fdc3389467846ce276ef980db007053",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-ld": "10424f5eeafd5806fbca7b88bdae336c202be5a9fa332c1a662a8d0a7ae62fba",
+    "/data1/gzh/EC/firesim/envs/manager-1.17.1/riscv-tools/bin/riscv64-unknown-linux-gnu-objcopy": "2a38397dae082b022b6370eb9fbfac9c337b95433fc89cb35d384516a0997f1e"
+  },
+  "wall_seconds": 4.6973890122026205
+}

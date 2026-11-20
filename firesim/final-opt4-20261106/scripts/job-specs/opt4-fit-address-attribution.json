@@ -1,0 +1,9 @@
+{
+  "schema": "ec-service-job-spec/1",
+  "name": "opt4-fit-address-attribution",
+  "argv": ["runuser", "-u", "guozh", "--", "nice", "-n", "15", "python3", "/data1/gzh/EC/firesim/final-opt4-20261106/scripts/audit_opt4_fit_address_dcp.py"],
+  "inputs": ["/data1/gzh/EC/firesim/final-opt4-20261106/scripts/audit_opt4_fit_address_dcp.py"],
+  "legacy_states": ["/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-fit-address-attribution-state.json"],
+  "completion_state": {"path": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-fit-address-attribution-state.json", "statuses": ["COMPLETE_READ_ONLY_ATTRIBUTION"]},
+  "checkpoint_policy": "Read completed first-fit address DCP only; compressed EDIF streaming primitive name census. No build inputs, FPGA or live tasks changed. Retain report with source/RTL identity."
+}

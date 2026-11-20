@@ -1,0 +1,30 @@
+{
+  "fpga_access": false,
+  "full_module_counterexample": "Not yet simulated; source/algebra evidence suffices to withhold admission.",
+  "hardware_commit": "eada7948b15146fd33bbc91aad7bac4ab9ec44b7",
+  "live_map_action": "Preserved without input changes or termination. Any measured map remains conditional, not admitted.",
+  "next": "An isolated successor retains zero-versus-payload current addend selection and consolidates writes with Mux(current && !valid, delta, sum), which is exact for arbitrary counter values. Add independent global-reset cycles to frozen-module regression.",
+  "proof_limit": "Current SAT assumes invalid slot payload is zero, established by io.resetStats. It does not establish that property across an independent global hardware reset.",
+  "scalar_counterexample": {
+    "candidate_current_sum": 2,
+    "current": true,
+    "delta": 1,
+    "frozen_current_sum": 1,
+    "retained_payload": 1,
+    "valid": false
+  },
+  "schema": "ec-opt4-candidate-admission-hold/1",
+  "source_evidence": [
+    {
+      "finding": "bucketValid is RegInit(false), five 64-bit payload banks are Reg without reset. Only io.resetStats or retirement clears payload. Removing allocation mux changes cold/stale invalid payload behavior.",
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-update-share-r1-20261111/chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala",
+      "sha256": "f2bf5a8e660f625f3c53e3d50baa0f4506649e663876c928c97ff6b480296f9b"
+    },
+    {
+      "finding": "line 669: traffic_reset is driven from debug_perf_sel reset control bit, without a source-level OR with reset.",
+      "path": "/data1/gzh/EC/firesim/final-opt4-20261106/Opt4-fit-address-update-share-r1-20261111/chipyard/generators/boom/src/main/scala/common/tile.scala"
+    }
+  ],
+  "source_id": "89a95f25bc2b2413464e4cd94c5ed5b3a69673f16f0ebf18521baf1cc1cb8a29",
+  "status": "DO_NOT_PROMOTE_RESET_INVARIANT_PRECONDITION_UNRESOLVED"
+}

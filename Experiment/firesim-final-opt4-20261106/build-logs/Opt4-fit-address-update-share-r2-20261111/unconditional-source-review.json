@@ -1,0 +1,19 @@
+{
+  "changed_files": [
+    "chipyard/generators/boom/src/main/scala/lsu/AddressBucketUpdate.scala",
+    "chipyard/generators/boom/src/main/scala/lsu/PackageAddressStats.scala",
+    "lineage.json"
+  ],
+  "controller": "/data1/gzh/EC/firesim/final-opt4-20261106/candidates/address-update-share-r2-20261111/controller.py",
+  "fpga_access": false,
+  "full_dut_formal": false,
+  "hardware_commit": "00847dc2b8f6be3f1e1ff0639c1104d33334ddc9",
+  "limits": "Scalar arithmetic review supplements the detached generated-RTL SAT, 8192 actual-size vectors, and global-reset complete-module comparison. Their receipts must be collected before admission.",
+  "reference_commit": "9ae9a7fcf231a75259e23973b12a93896a443cbb",
+  "scalar_cases": 4608,
+  "scalar_domain": "12 full-width values/deltas including 2^64-1 and overflow x all valid/current/event/retire/reset boolean combinations; stale invalid payloads included",
+  "schema": "ec-opt4-update-share-unconditional-review/1",
+  "source_id": "6b0de8636ec9d88f7d9702769c03325df78ab43c3c1fe527fff9dc1a3aafbbdb",
+  "source_scope": "All PackageAddressStats text outside the counter-write block is exactly equal to verified 9ae9a7fc; all five banks remain 256x4x64. Current addend selection, all overflow flags, reset, retirement, error handling, and instrumentation are unchanged.",
+  "status": "PASS_STATIC_WRITE_BLOCK_CONFINEMENT_AND_SCALAR_BOUNDARIES"
+}

@@ -1,0 +1,42 @@
+{
+  "FPGA_IO": false,
+  "activate_only_after_exact_physical_and_certificate": true,
+  "activation_requires_existing_runtime_owner_handoff_and_all_21_locks": true,
+  "actual_checker_execution_tested": false,
+  "bundle": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Opt4-performance-only-6fada307-bound-r1/bundle.json",
+  "bundle_sha256": "9dc215a90664c7e85125ffc198c826d91ec7bb16caeb411f1f96cef6c5eec064",
+  "existing_runtime_lock": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/locks/opt4-fit-runtime.lock",
+  "existing_runtime_lock_held": true,
+  "existing_runtime_owner": {
+    "actual_start_ticks": "12439082",
+    "actual_state": "S",
+    "cgroup": "13:devices:/system.slice/ec-parsec-opt4-fit-runtime.service\n12:misc:/\n11:net_cls,net_prio:/\n10:blkio:/system.slice/ec-parsec-opt4-fit-runtime.service\n9:memory:/system.slice/ec-parsec-opt4-fit-runtime.service\n8:cpuset:/\n7:hugetlb:/\n6:perf_event:/\n5:pids:/system.slice/ec-parsec-opt4-fit-runtime.service\n4:freezer:/\n3:rdma:/\n2:cpu,cpuacct:/system.slice/ec-parsec-opt4-fit-runtime.service\n1:name=systemd:/system.slice/ec-parsec-opt4-fit-runtime.service\n0::/system.slice/ec-parsec-opt4-fit-runtime.service\n",
+    "hardware_commit": "8da24a269b98a0d6a8f57b030353a310812c4344",
+    "host_boot_id": "d6c6e410-10ad-4326-86ba-79b657eabd96",
+    "pid": 3135212,
+    "source_id": "7e77ddda28298ac88be13c28dbe98771982bc6ca9587f810adf875bffd580cc1",
+    "start_ticks": "12439082",
+    "status": "WAITING_FOR_DERIVED_BITSTREAM"
+  },
+  "experiment_commit": "6115b44948c922c33a465090fbeb973843602e21",
+  "hardware_commit": "6fada307bb77be90b39720d3f95404fece0e431b",
+  "next": "Preserve R6 and existing runtime locks. No cuts before postopt. FIT: bind actual final physical evidence and certificate, then existing safe runtime owner adopts staged bundle; no unchanged driver rebuild. NOTFIT: use actual new hierarchy before targeted cuts.",
+  "no_lock_bypass": true,
+  "profile": "EC Performance-Only: data preservation + cache isolation",
+  "remaining": [
+    "Actual R6 complete-shell postopt capacity",
+    "Actual final-checkpoint all-STA/pulse/skew/clock coverage/route/DRC receipt and exact bitstream certificate",
+    "Existing runtime safe-boundary handoff without bypassing its held lock",
+    "Integrated card21 checker/storage/isolation/drain validation before simmedium"
+  ],
+  "runtime_certified": false,
+  "schema": "ec-performance-only-staged-runtime-handoff/1",
+  "service_installed": false,
+  "source_binding": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round193/runtime-source-binding.json",
+  "source_binding_sha256": "bdfc080d9cd42a1e062168e98e1343a0847dcdcaa31c83348aa9284a70d756c2",
+  "source_id": "461e1b98833d1a78a8bd27c0eed2d3353c648dfbf29ae5588db31bbce0f77369",
+  "staged_entry": "/data1/gzh/EC/firesim/final-opt4-20261106/runtime/Opt4-performance-only-6fada307-bound-r1/scripts/continue_priority.py",
+  "utc": "2026-11-13T04:15:20.456930+00:00",
+  "verification": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/status-audits/performance-only-priority-20261113/round193/runtime-bind-verification.json",
+  "verification_sha256": "1bbabe1624caacfae15e13cca977e4ab44cb0ca457da0660157f9d765f2adec1"
+}
