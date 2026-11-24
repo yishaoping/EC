@@ -275,6 +275,7 @@ class BoomFrontendIO(implicit p: Parameters) extends BoomBundle
   val brupdate          = Output(new BrUpdateInfo)
 
   // Redirects change the PC
+  val rollback_reset = Output(Bool()) // P2-08: fresh FTQ at reset and SCP restart
   val redirect_flush   = Output(Bool()) // Flush and hang the frontend?
   val redirect_val     = Output(Bool()) // Redirect the frontend?
   val redirect_pc      = Output(UInt()) // Where do we redirect to?
@@ -870,7 +871,7 @@ class BoomFrontendModule(outer: BoomFrontend) extends LazyModuleImp(outer)
     Module(new Queue(new FetchBundle, 1, pipe=true, flow=false))}
 
   val fb  = Module(new FetchBuffer)
-  val ftq = Module(new FetchTargetQueue)
+  val ftq = withReset(reset.asBool || io.cpu.rollback_reset) { Module(new FetchTargetQueue) }
 
   // When we mispredict, we need to repair
 
@@ -957,7 +958,7 @@ class BoomFrontendModule(outer: BoomFrontend) extends LazyModuleImp(outer)
   ftq.io.deq := io.cpu.commit
   ftq.io.brupdate := io.cpu.brupdate
 
-  ftq.io.redirect.valid   := io.cpu.redirect_val
+  ftq.io.redirect.valid   := io.cpu.redirect_val && !io.cpu.rollback_reset
   ftq.io.redirect.bits    := io.cpu.redirect_ftq_idx
   fb.io.clear := false.B
 
@@ -988,7 +989,8 @@ class BoomFrontendModule(outer: BoomFrontend) extends LazyModuleImp(outer)
     s0_tsrc      := BSRC_C
     s0_is_replay := false.B
 
-    ftq.io.redirect.valid := io.cpu.redirect_val
+    // A fresh SCP redirect has no old FTQ entry to repair or RAS to restore.
+    ftq.io.redirect.valid := io.cpu.redirect_val && !io.cpu.rollback_reset
     ftq.io.redirect.bits  := io.cpu.redirect_ftq_idx
   }
 

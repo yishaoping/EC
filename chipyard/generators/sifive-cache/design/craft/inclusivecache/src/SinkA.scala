@@ -95,6 +95,10 @@ class SinkA(params: InclusiveCacheParameters) extends Module
   io.req.bits.packetSeq := UInt(0)
   io.req.bits.packetTracked := Bool(false)
   io.req.bits.image := 0.U.asTypeOf(new freechips.rocketchip.tilelink.CacheImageKey)
+  // Acquire image is a recovery-candidate hint, never the resident byte key.
+  when (a.bits.opcode === TLMessages.AcquireBlock || a.bits.opcode === TLMessages.AcquirePerm) {
+    io.req.bits.image := a.bits.user.lift(CacheImage).getOrElse(0.U.asTypeOf(new CacheImageKey))
+  }
 
   putbuffer.io.push.bits.index := put
   putbuffer.io.push.bits.data.data    := a.bits.data

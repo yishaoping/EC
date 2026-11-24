@@ -60,6 +60,10 @@ class R_ICSLIO(params: R_ICSLParams) extends Bundle {
   // is still outstanding.  New package admission must use context_idle rather
   // than cleanup_done so execution contexts cannot leak across packages.
   val context_idle                               = Output(Bool())
+  // Seq transport may clear old package tags while an unowned management
+  // trap waits for the frozen cache hierarchy. It must preserve that trap
+  // and keep new execution gated by context_idle until the real xRET.
+  val package_idle                               = Output(Bool())
   val return_pending                             = Output(Bool())
   val trap_depth                                 = Output(UInt(4.W))
   val icsl_status                                = Output(UInt(2.W))
@@ -432,8 +436,9 @@ class R_ICSL (val params: R_ICSLParams) extends Module with HasR_ICSLIO {
     (fsm_state === fsm_postchecking || fsm_state === fsm_postchecking_priv) &&
       package_completion_ready && !io.returned_to_special_address_valid.asBool ||
       cancellation_return_pending
-  io.context_idle := io.cleanup_done && !io.excpt_mode && trap_depth === 0.U &&
+  io.package_idle := io.cleanup_done && trap_depth === 0.U &&
     !trap_depth_overflow && !io.return_pending
+  io.context_idle := io.package_idle && !io.excpt_mode
   io.trap_depth := trap_depth
   // A privileged return changes the architectural register state.  Issue it
   // only after ARF, CSR, LSL and packet ingress have reached the common package

@@ -431,9 +431,9 @@ class TLB(instruction: Boolean, lgMaxSize: Int, cfg: TLBConfig)(implicit edge: T
   val real_hits = hitsVec.asUInt
   val hits = Cat(!vm_enabled, real_hits)
 
-  // use ptw response to refill
-  // permission bit arrays
-  when (do_refill) {
+  // Keep the response handshake for the outstanding walk, but discard all
+  // translation data if a fence invalidates that walk.
+  when (do_refill && !invalidate_refill) {
     val pte = io.ptw.resp.bits.pte
     val refill_v = r_vstage1_en || r_stage2_en
     val newEntry = Wire(new TLBEntryData)
@@ -466,7 +466,6 @@ class TLB(instruction: Boolean, lgMaxSize: Int, cfg: TLBConfig)(implicit edge: T
       val waddr = Mux(r_superpage_hit.valid && usingHypervisor.B, r_superpage_hit.bits, r_superpage_repl_addr)
       for ((e, i) <- superpage_entries.zipWithIndex) when (r_superpage_repl_addr === i.U) {
         e.insert(r_refill_tag, refill_v, io.ptw.resp.bits.level, newEntry)
-        when (invalidate_refill) { e.invalidate() }
       }
     // refill sectored_hit
     }.otherwise {
@@ -475,7 +474,6 @@ class TLB(instruction: Boolean, lgMaxSize: Int, cfg: TLBConfig)(implicit edge: T
       for ((e, i) <- sectored_entries(r_memIdx).zipWithIndex) when (waddr === i.U) {
         when (!r_sectored_hit.valid) { e.invalidate() }
         e.insert(r_refill_tag, refill_v, 0.U, newEntry)
-        when (invalidate_refill) { e.invalidate() }
       }
     }
 

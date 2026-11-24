@@ -1,3 +1,736 @@
+# Current: 单主核功能验收完成，69项VERIFIED；物理签核独立 (2026-11-24)
+
+当前 **69 VERIFIED、0 IN_PROGRESS、0 CODE_READY**。最终来源复核和12个完整程序/31负例已通过，P2-07/P4-10/P4-13/P5-10真正关闭；P4-12已完成新Scheduler来源完整复验。旧69项提前声明仍为superseded，原FAIL不改写。
+
+- 当前5配置Scala/Chisel/LowFIR/CheckCombLoops/SV/C++模型与observer全部0。12完整程序raw/oracle0：normal IRQ/trap/Sv39/output/AMO、Fault8 trap/Sv39、Fault18 IRQ/output/AMO、Fault40Seq41、25MHzHistory压力。
+- 严格联合 `grantack_preemption_system_acceptance/result.json` PASS。normal/Fault18各16set/clear/精确MSIP trap/匹配MEPC xRET；恢复与未安全设备效果交叠时IRQ阻止。IRQ14负例全拒绝。
+- CLINT写16/回读16、AMO旧值16/回读16，Fault18原效果到journal重放只有1次设备A；Fault40Seq41真实8reset/8新Seq1 PASS/48设备读，9负例拒绝。Sv39 normal16物理/16提交，Fault8含2次恢复废弃共18物理、存活16。
+- 最终满History完整程序：Seq1真实seal/END/count64，tick255884实际64/64，269708回收48空槽，后续143个Checker PASS，最终free64/checksum974ea63763416da0，8负例拒绝。
+- 本轮最终RTL修复：IOMSHR已有live owner并入effectPending，消除设备A至D建journal前的MSIP中断空窗；Scheduler仅含E且无数据/目录/park操作的调度可越过同组C/BC抢占，解除C→History→外层E循环。两项均0新寄存器/队列/FSM。原seal回执/最小scratch shadow RMW修复保留。
+- 原normal IRQ line0x80032f80、Seq0/gen4的C首末拍仍0xfe115/0xfe127，新源码D0xfe20d匹配ReleaseAck，完整程序退出。有效协议fixture含真实Main Acquire T、SVB3、C7/SW3及peer TtoN，旧1/新0；早期缺权限fixture不作为最终证据。生产Hierarchy、4发布/压力组件及当前整核全部通过。
+- 来源核对 `final_review_current_scheduler/result.json`：69项当前文件、5模型、12完整激励、计分器和报告哈希通过；三主要目标1083份SV逐字节不变，仅Scheduler.sv变化。关闭记录 `final_closure_current_scheduler.json`，长期状态见 `AI/Design/SingleCore_RTL_Baseline/System_Acceptance.json`。
+- 用户要求先RTL/功能仿真，暂不推进比特流与时序仿真。辅助物理观察已独立冻结：`final_physical_observation_20261124/observation.json`。Scheduler2way5ns OOC WNS-10.841→-11.019ns均FAIL；完整ChipTop在观察时尚无最终报告、来源早于owner/Scheduler增量。无完整Core布局布线/端口延时/物理CDC签核，不宣称全面签核。
+
+最终功能基线已由guarded `freeze_final_baseline.py`建立，9296份文件均从归档独立解压读取并核验哈希通过。位置与SHA256见 `final_freeze_location.json`；最终文档/构建包装工具补充包与正式完整回执见 `AI/Design/SingleCore_RTL_Baseline/Functional_Baseline_Archive.json`。功能完成、物理签核未完成。
+
+---
+
+# Superseded provisional closure (not final acceptance)
+
+# Current: EC 单核功能闭环完成，物理签核独立保留 (2026-11-24)
+
+当前功能任务状态为 **69 VERIFIED、0 CODE_READY、0 IN_PROGRESS**。五项最后任务已在当前生产 `core.scala` / `CSR.scala` 来源上完成整核动态验收；物理综合/布局布线/完整Core STA 仍单独标记，不能把功能闭环描述为全芯片物理签核。
+
+- 生产 RTL 最终两项最小修正已合入：容量保持在 `producer_seal_ready` 回执前不释放；MSCRATCH/SSCRATCH 影子 W/S/C 使用本包 CPS shadow 作为读改写旧值。两项均为 0 新寄存器、0 新队列、0 新 FSM。精确 before/after、源码哈希和测试理由见 `AI/TMP/singlecore_function_closure_20261123/capacity_scratch_production_integration/result.json`。
+- 当前来源 normal/Fault8/Fault18 三目标已通过 Scala/Chisel/FIRRTL、组合环检查、firtool RTL 生成和 C++ 模型构建。来源关系见 `integrated_capacity_scratch_candidate/effective_production_source_relation.json` 与 `firrtl_validation.json`。
+- 最终整核组合严格验收在 `final_integrated_closure/`：normal 5 profiles（IRQ、Sv39、trap_io、CLINT output、CLINT AMO）、Fault8 2 profiles（Sv39、trap_io）、Fault18 3 profiles（IRQ、CLINT output、CLINT AMO）全部 raw exit 0、架构 oracle 0。trap、Sv39、output、AMO、IRQ 五个严格 scoreboard 全部 PASS。
+- IRQ 证据要求 16 次 MSIP set、16 次 handler clear、16 次实际 trap；Fault18 在 recovery stop 和未结效果交叠期间保持 IRQ 阻止，设备效果只发射一次。计分器已修正为按 live stop/I/O boundary 判定；`journalValid` 是已提交效果的保留重放记录，不能单独作为未完成效果。
+- History/容量最终验收已通过：原 25 MHz 同 ELF 的旧 first bad 消失，Seq1 真实 END、最终 count=64、Seq1/Seq2 及后续结果 PASS；实际 `freeCount=0`（64/64）后回收至 48 空槽，后续 Seq82 仍前进，最终完整程序 oracle PASS，checksum=`974ea63763416da0`。证据 `capacity_seal_fastlink/history_full_observed.json`、`run.exit`、`oracle.exit`。
+- Fault40+Seq32 独立完整验收保留并复核：8 次真实物理 reset、8 个新 Seq1 PASS、48 次设备读、9 个负例全拒绝，checksum=`75f3f507c3419640`。证据 `io_rebase_complete_closure.json` 和 `io_rebase_complete_negative_retry/results.json`。
+- CSR 组件最终长期 runner 覆盖两个 scratch、normal/priv W/S/C 共 12 组合、management 隔离、SSCRATCH ECP 和物理 MPRV；结果 PASS。完整组合回归进一步证明 CSR、中断、Sv39、精确异常、I/O 屏障和恢复一致。
+- 当前功能固化文件已重新生成：任务板、Feature/Verification Matrix、Function Closure Audit、implementation manifest、状态机/接口/不变量/决策文档均与 69 VERIFIED 状态同步。最终机器可读汇总为 `AI/TMP/singlecore_function_closure_20261123/final_functional_closure.json`。
+- 物理实现状态独立记录在 `physical_signoff_status.json`：既有 GHM OOC 综合结果保留（98,895 LUT、336,652 FF、内部 5 ns WNS +1.448 ns）；带 memory models 的完整 ChipTop 尝试完成 RTL elaboration，但未产出最终 utilization/timing/CDC 报告，未布局布线，也未完成 AsyncQueue data CE/Gray 偏斜签核。因此物理 signoff 仍未完成。
+
+---
+
+# Historical milestone: 最终owner/CDC组合恢复里程碑通过 (2026-11-23)
+
+69项逐项盘点、原定义和状态变更见 `AI/Design/SingleCore_RTL_Baseline/Function_Closure_Audit.json/.md`、任务板及manifest。当前 **64 VERIFIED、5 IN_PROGRESS、0 CODE_READY**。本批证据根目录 `AI/TMP/singlecore_function_closure_20261123/`。
+
+- 最终组合整核 `integrated_owner_seq_candidate_wired/` 的 Scala/Chisel/FIRRTL、C++构建、完整异常/MMIO程序与严格oracle全部0；23次真实物理重基均有新Seq1 PASS，checksum=75f3f507c3419640。GHM/DCache候选与合入生产逐字节一致，通用同步器只有物理属性差异且状态转移相同；实际firtool采用综合前XDC。运行输入哈希已复核。
+- `recovery_integration_closure.json`逐项关闭原P2-05/P2-08/P2-10、P3-04/P3-05/P3-08/P3-09/P3-11/P3-12/P3-13/P3-15、P4-01/P4-02/P4-03/P4-05。依据最终整核与生产Hierarchy/SeqTransport、真实0xffff slot完整终态、32位CurGen真实维护证书、四同址发布/回收和当前完整C/E配对；没有重构已通过功能。
+- 既有17项VERIFIED保留：Seq32跨域生命周期、基线发布/回收、I/O效果屏障、有限owner及版本生命周期；各closure JSON保留原理由和来源。
+- `reviewed_control_milestone/result.json`五项严格计分全0、9个完整程序raw0，正常/Fault8 trap_io、原Sv39物理+提交配对、Seq16、CLINT16写/16回读与uncached AMO16旧值/16回读均PASS。原`control_chain_fullcore.driver.exit=1`保留，旧Sv39错误物理次数oracle及停止冗余运行已单独解释。Sv39 fault18次物理读取含2次恢复废弃，存活16次且废弃值也检查；四负例拒绝。
+- 生产`final_owner_components` SeqTransport/Hierarchy来源前后相同并PASS。`production_slot_epoch_boundary`四次真实同组替换及完整MSHR安装/终态PASS；原0xffff分配1/安装0反例FAIL保留。`production_generation_boundary`只加速32位reset标签，真实外写/ACK阻止提前清标签，真实证书后归零/空上下文/再次rollback并读对存活字节PASS，未伪造维护ACK。
+- `baseline_publication_four_current`四真实生产L2联合用例PASS，逐外写beat检查：同址3/5/7、SW扫描、迟到C6、可信Put、held ACK3下安全9合并、EVT5..8与外写owner并发，最终查询无泄漏。
+- 生产GHM同top U250综合exit0：原4个组合前置CDC-10和4个ACK SRL CDC-13消失，226项CDC-3；98,895 LUT/336,652 FF，5ns内部综合WNS+1.448ns。1742项AsyncQueue数据CE warning仍未签核；未布局布线、无接口外延时，不能宣称完整Core物理CDC/面积/时序达标。
+
+当前新增必要验证（不调整watchdog、不放宽计分、不删除TMP）：
+
+1. `concurrency_fullcore/`已完成三配置Scala/Chisel/FIRRTL降级、全部普通C++单元；三个完整模拟器构建现已exit0，已开始同一完整程序。已真实观察FAIL8/FAIL24两次同SCP PC恢复，但完整程序尚未退出；Fault40效果重放、推迟至Seq45以及首次实际reset已发生。已经启动当前生产normal、两次真实比较器FAIL8/FAIL24、Fault40+Seq41三配置整核构建和完整程序。新长期入口`concurrency_regression.py`、`concurrency_scoreboard.py`、只读`concurrency_observer.cc`。需要真实退出与全部oracle，350000周期旧首段不替代完整验收。
+2. 双FAIL仅扩展既有f0注入参数，默认空不生成额外状态；每个选定Seq只注入一次，未修改PASS/result或Controller。`concurrency_components`首次F0/双注入均PASS，但CheckerRecovery夹具新增seq端口漏接导致初始化失败，已接固定Seq8，原driver1保留，`concurrency_components_retry`重跑中。后续必须回收当前来源PASS。
+3. 剩余6个IN_PROGRESS：P2-07/P4-10真实中断与未结I/O/恢复交叠；P3-14同一完整程序两次独立FAIL；P4-12完整Core实际History满资源前进性；P4-13/P5-10完整Fault40+Seq41及上述压力/中断。P5-07 CODE_READY仍按原定义与已有证据逐项完成验收，不能一律当作功能未实现或一律提升。
+
+当前静态来源/69任务检查 `recovery_closed_retry.static.log` PASS；原漏同步feature状态的静态失败保留，已同步49 features和summary。双FAIL组件retry已实际PASS且来源前后相同。中断候选无注入模型也有FAIL：first_divergence/normal_retry在tick85652、hart1、Seq23观察所有32个整数/FP相等而CSR idx3(mscratch) expected0/checker栈地址不同，尚需定位更上游写入时刻；P2-07/P4-10保持未完成。完整History普通1024行探针仅占用2槽，未覆盖满表，另启动真实同组store burst，不强制owner。中断原normal最终pipeline hang/exit1保留，Fault18虽然完整exit0且16轮oracle成功，但额外非注入FAIL存在，仍不通过严格验收。CSR_minimal.scala已用长期真实CSRFile runner验证原反例消失、normal/priv写shadow/management隔离PASS；生产尚未合入。独立normal/Fault18候选完整Core已生成，后端构建及IRQ/旧trap/Sv39/CLINT/AMO回归在途。实际同L2 set压力已用96条stride65536、DRAM0x81000000显式初始化绕开BSS空洞，尚未满；额外25MHz慢Checker配置已真实生成，复用全部原协议，无强制owner/ACK。后续回收三配置构建与候选完整Core，继续真实满History验收，不建立新版本号作为目标。
+
+---
+
+# Historical: V10 已关闭包 owner 修复整核回归中，V9 整核 FIRRTL 通过 (2026-11-23)
+
+证据根目录 AI/TMP/singlecore_checker_20261122_082540/。用户要求逐项稳步推进。
+69 项仍为 34 CODE_READY、32 IN_PROGRESS、3 VERIFIED，整体未完成。
+
+- V7 实时 restart 检查修复迟到Probe反例，15组件PASS；整核FIRRTL因最终IFU
+  redirect→snapshot→RSU busy→quiesced→restart反馈FAIL。V8只拆redirect仍因
+  SCP discard→capture.ready→snapshot→RSU busy反馈FAIL，两份正常driver.exit2
+  均保留；V7冗余fault/seq构建主动停止exit143。
+- V9复用并前移原snapshot_rsu_prev，R_IC以recoveryStop禁止新snapshot，RSU
+  仅观察既有工作排空，cache/LSU/Checker继续实时门控。恢复原snapshot guard，
+  无新增寄存器/队列/FSM。真实正常整核Scala/Chisel/FIRRTL已PASS，原两条环
+  消失；firrtl_validation.json保存低FIR及原来源哈希。V9后续firtool/C++构建
+  主动停止exit143，完整动态回归统一交V10，不当作整核运行PASS。
+- 原V6 Sv39 Fault8根因已确认。sv39_capacity_owner_probe_v6/在tick559795
+  记录producer_open=0、protected=0、R_IC=presch、retained activeSeq=35，迟到
+  L2请求Seq35却启动capacityStart。次拍capacityClosing锁住，563384原请求退出
+  后仍等不存在的successor而永久保持退休。原watchdog与575000周期诊断exit2
+  保留。完整信号链在capacity_closed_owner_candidate_v10/design.json。
+- V10在barrierCloseForActivePackage加入已有traffic_package_open，一位组合
+  条件，无新状态；迟到请求仍走R_IC原barrierAlreadyClosed ACK。三配置整核
+  normal/fault/seq_rtl_v10/已启动，run_fullcore_v10.py安排同一trap_io ELF及
+  原Sv39正常/Fault8完整程序、16次实际译址读和严格配对；尚无V10通过结论。
+- rtl_regression_v8/的15项组件实际PASS。固定14个FIR哈希及全部CPP/fixture
+  不变；生成之后6个已知Core/config/整核测试文件变化导致原source-cmp exit1，
+  保留原失败，独立reviewed.exit0。组件不含Core，不能证明V9/V10生产改动。
+- V6 CLINT写正常800769、Fault18 939211周期退出，完整严格配对和同次effects
+  联合计分PASS：唯一FAIL18、同PC0x800005cc恢复、Seq21直接重放ACK且无第二
+  次A。实际mtimecmp 16写/16回读值及顺序正确，128ecall和架构oracle通过。
+  长期compact-mmio-output/Fault18/--require-output已固化，重编loadmem与候选
+  完全一致；长期计分PASS并拒绝4个后续轮次损坏负例。新RTL入口未完整重跑，
+  uncached AMO整核仍缺。
+- V6 Seq16异常/MMIO完整程序23次重基PASS。Fault40长期入口完整联合验收PASS。
+  Fault40+Seq41首次交叠计分PASS，journal未结不预留，Seq43重放PASS及释放后
+  Seq45归零、新Seq1 PASS；350000周期诊断exit2只证明首段，非组合完整程序。
+- 静态69项检查PASS，不代替整核动态验收。历史U250 5ns/WNS=-9.608ns为旧
+  Stage3 FAIL，不代表当前整核面积/时序。
+
+下一步先回收V10生成来源/FIRRTL/编译，再按原Sv39 first bad及完整oracle验收，
+并继续uncached AMO、真实I-TLB/旧物理响应及其他多owner未完成项。
+新独立归档AI/TMP/palimpsest_checkpoint_20261123_103556_v10_owner_and_rsu/
+已完成：162份文件校验、80个源码覆盖文件，完整源哈希
+cc5dcf1327cefc22c33713ea35fc98493af06494dac5fddbb4b9649daf675825。
+归档complete=false，旧失败与在途边界保留。V10三配置Chisel FIR与输入均匹配
+sources_v10.json，保护在v10_generation_checkpoint.json；生成不等于FIRRTL或运行。
+
+---
+
+# Historical: V9 复用既有 RSU 排空寄存器，CLINT 写已固化；Sv39 capacity owner 取证中 (2026-11-23)
+
+证据根目录 AI/TMP/singlecore_checker_20261122_082540/。用户要求逐项稳步推进。
+69 项仍为 34 CODE_READY、32 IN_PROGRESS、3 VERIFIED，整体未完成。
+
+- V7 实时 restart 门控的 15 项组件全部实际通过。完整 Core 的 FIRRTL 失败：
+  restart→最终 IFU redirect→snapshot→RSU busy→quiesced→restart 成环。正常
+  driver.exit2，冗余 Fault8/Seq16 生成已停止且exit143，来源和原失败保留。
+- V8 仅将snapshot guard改为已注册的普通redirect来源，实际FIRRTL仍失败：
+  restart→SCP discard→capture.ready→snapshot→RSU busy→restart，driver.exit2。
+  该修订不充分，不得宣称PASS。V8原FIR及来源独立保护；rtl_regression_v8/
+  已生成14个FIR并在运行15项组件。前后来源会因V9 Core和长期测试修改而不同，
+  原source-cmp失败保留；组件不含Core，新生产Core仍须真实整核验证。
+- V9撤回V8的redirect-only修改，恢复原snapshot guard，前移/复用原先已有的
+  snapshot_rsu_prev。在recoveryStop禁止新snapshot的前提下，用该寄存器证明
+  已接受RSU capture/merge工作已结束。cache/LSU/Checker继续实时重查，故新
+  Probe仍撤回restart。没有新寄存器/队列/FSM/接口。根因及差异在
+  restart_rsu_drain_candidate_v9/，完整来源sources_v9.json。normal_rtl_v9/
+  正编译生成；尚无V9整核通过结论。Bug见restart-snapshot-loop长期记录。
+- V6 CLINT写正常800769、Fault18 939211周期退出，完整严格配对和同次effects
+  计分PASS：唯一FAIL18，PC0x800005cc恢复，Seq21直接重放ACK、无第二次A。
+  实际mtimecmp共16写/16回读，全部操作数/值/顺序正确，128ecall和架构oracle
+  通过。长期compact-mmio-output/Fault18/--require-output已固化；重新编译后的
+  loaded sections及loadmem与候选逐字节一致。长期计分重判PASS，4个后续轮次
+  负例均拒绝。新RTL长期入口尚未运行，uncached AMO整核仍缺。
+- V6 Fault40+Seq41首次交叠计分PASS：Seq41不在未结journal时预留，Seq43重放
+  PASS、journal释放后才以Seq45物理reset，同PC重启、新Seq1 PASS。
+  extended/ run.exit2是350000周期诊断上限，仅计分scope首段，非完整程序。
+- Sv39原V6正常通过；Fault8完成16次映射读后HTIF fromhost轮询watchdog仍FAIL。
+  sv39_watchdog_probe_v6/确认tick559800..619900 capacityBoundaryHold=1，其他
+  恢复/重基/I/O/RSU stall和缓存均空闲，R_IC=presch、ROB head固定。原模型的
+  sv39_capacity_owner_probe_v6/正在记录capacity启动/包owner/activeSeq转变，
+  未确认上游触发之前不patch。该运行575000周期诊断上限，使用原V6库。
+- V6长期Fault40完整联合验收与Seq16异常/MMIO的23次重基完整程序均PASS。
+  历史U250 5ns/WNS=-9.608ns为旧Stage3 FAIL，不代表当前整核时序。
+
+下一步优先回收V9整核FIRRTL，再回收Sv39 first bad；确认后才动下一处RTL。
+本轮新冻结归档仍待生成；旧v6_io_and_tracked_c归档早于本轮结果。
+
+---
+
+# Historical: V8 消除整核 restart/snapshot 组合反馈，CLINT 写联合验收通过 (2026-11-23)
+
+证据根目录 AI/TMP/singlecore_checker_20261122_082540/。用户要求逐项稳步推进。
+69 项仍为 34 CODE_READY、32 IN_PROGRESS、3 VERIFIED，整体未完成。
+
+- V7 的 15 项组件实际全部通过，来源前后一致；真实 L1 满 C/BASE 外写 ACK/
+  FAIL8→FAIL7 的原 restart 反例消失，组件撤回就绪也通过。外层 zsh 只读 status
+  收尾错误保留 driver.exit1，独立 reviewed.exit0。不能当作整核已通过。
+- V7 正常整核 FIRRTL CheckCombLoops 失败，driver.exit2。最终 IFU redirect→
+  snapshot→RSU busy→实时 quiesced→restart→IFU redirect 成环。三份已生成 FIR
+  与来源清单保护在 v7_generation_checkpoint.json。Fault8/Seq16 冗余构建停止，
+  各 exit143，停止清单保留；不得当作设计成功或运行结果。
+- V8 只改 Core snapshot guard，直接读取原已注册 arch_redirect_valid 与 B2
+  mispredict，正常准入等价；恢复期间仍由 recoveryStop 禁止 snapshot。保留
+  Controller 实时 owner/SCP 检查，无新增硬件状态。根因及唯一生产差异在
+  restart_redirect_candidate_v8/；sources_v8.json。normal_rtl_v8/ 正生成与构建，
+  rtl_regression_v8/ 等待同一串行 SBT 锁后执行15组件，尚无V8通过结论。
+- V6 CLINT 写正常800769周期、Fault18 939211周期退出，完整严格配对和同次
+  effects联合计分均PASS。Seq18在PC0x800005cc的首个写效果后FAIL，Seq21直接
+  journal ACK重放且无第二次A。实际mtimecmp为16写/16回读，全部操作数与顺序
+  正确，128ecall、内存、FP、CSR oracle通过。证据 mmio_output_candidate_v6/
+  full/fault18/full_effect_report.json 与 device_rounds_report.json；长期profile
+  尚待固化，uncached AMO整核仍缺。
+- V6 Fault40+Seq41首次交叠链计分PASS：tick123963分配Seq41不预留，journal
+  释放125148后才于125156预留Seq45，227899物理reset，同PC重启且新Seq1 PASS。
+  extended/ run.exit2为350000周期诊断上限，scoreboard.exit0仅适用首次交叠，
+  不能记组合完整程序PASS。原180000周期缺reset的失败记录保留。
+- Sv39原V6正常通过；Fault8完成16次映射读后HTIF fromhost轮询watchdog仍FAIL。
+  sv39_watchdog_probe_v6/ 在tick559800..619900确认capacityBoundaryHold=1，
+  恢复/重基/I/O/RSU stall均0且缓存最后空闲；R_IC=presch、ROB head固定。
+  原模型已链接更窄的 sv39_capacity_owner_probe_v6/，记录capacity启动、包owner、
+  activeSeq和封口请求的转变。上游触发尚未证明，不先patch。
+- V6长期Fault40完整联合验收PASS；Seq16异常/MMIO完整退出及23次重基PASS，
+  原200万周期timeout保留。当前回归不能用旧V6证据替代V8。
+
+下一步先确认V8整核无组合环，再回收capacity owner探针证明Sv39 first bad；
+固化CLINT写长期profile，并继续真实译址/旧响应、多owner和uncached AMO缺口。
+历史U250 5ns/WNS=-9.608ns为旧Stage3 FAIL，不代表当前整核时序。
+本轮尚未生成新冻结归档；旧v6_io_and_tracked_c归档早于上述结果。
+
+---
+
+# Historical: V7 重启实时排空检查回归，V6 I/O 与 Seq16 结果已回收 (2026-11-23)
+
+证据根目录 AI/TMP/singlecore_checker_20261122_082540/。用户要求逐项稳步推进。
+任务仍为 34 CODE_READY、32 IN_PROGRESS、3 VERIFIED，整体未完成。
+
+- V6 长期 Fault40 入口与原 O1 联合观察均 PASS：929646 周期退出，唯一 FAIL40，
+  同 PC 恢复，Seq43 重放原值0x26b，设备 A 握手一次。完整程序与设备信号同次判定。
+- Seq16 的两份 200 万周期运行均 timeout，保留 run.exit2 和计分失败。使用同一
+  模型和 ELF 增加到300万预算后，2061735周期完整 PASS；23次重基后均有 Seq1
+  PASS，128ecall、MMIO、内存、FP及CSR全部正确。没有修改硬件 watchdog。
+- V6 真实 L1 满 C、Pending7、同址 BASE 外写 ACK 与 FAIL8→FAIL7 的新反例，
+  在重查 Probe 到达时触发 restart assertion。旧 Controller 在 cycle981
+  收到排空，982接受新 Probe，984却仍发 restart。SCP始终有效。
+  独立组件反例 cycle152 也失败。来源在 hierarchy_real_tracked_c_trace_v6/
+  和 recovery_late_owner_before_v7_retry/，根因已记录于 bugs/。
+- V7 的 PalimpsestRollbackController 在 restart.valid 重新检查当前 quiesced
+  和 checkpointReady。等待新owner期间保持stop和SCP，不增加硬件状态。长期
+  Recovery 和 Hierarchy 已增加反例。rtl_regression_v7/ 的15项回归正在执行，
+  normal/fault/seq_rtl_v7/ 正在生成/构建并执行同一异常MMIO程序。
+- Sv39正常676834周期成功退出。Fault8在同PC0x800004bc恢复后完成16次真实映射
+  读，并输出SV39_RESULT；随后在HTIF fromhost轮询期间触发Main watchdog，
+  run.exit1。不得记为完整PASS。sv39_watchdog_probe_v6/ 正使用旧生成库观察
+  阻塞信号，未经确认不修改译址或HTIF逻辑。
+- CLINT写正常运行800769周期成功退出。真实效果包号为Seq18，fault18_build/
+  已完成，full/fault18/ 正运行并观察同PC写重放和设备握手次数。纯写journal保存
+  ACK、不保存读数，计分器相应以journalWord=0而非陈旧grant_word判断原写终态。
+- Fault40+Seq41原180000周期诊断只证明journal未结时分配Seq41不预留重基；
+  journal释放后Seq45才成为重基目标。原计分缺reset，失败保留。extended/
+  用同一原模型增加至350000周期，继续验收第一次真正归零和新Seq1 PASS。
+
+下一步先回收V7组件及真实L1反例，然后按Sv39停滞、外设写、重基与未结效果顺序
+推进。旧I-TLB/物理迟到响应整核组合、uncached AMO仍未完整验收。
+历史U250 5ns/WNS=-9.608ns仍为FAIL，不代表V7整核时序。
+
+---
+
+# Historical: V6 Fault40 整核 I/O 效果联合验收通过 (2026-11-22)
+
+证据根目录 `AI/TMP/singlecore_checker_20261122_082540/`。
+用户要求逐项稳步推进。69项仍为34 CODE_READY、32 IN_PROGRESS、3 VERIFIED，整体未完成。
+
+- `fault40_io_ledger_o1_v6/trap_io/` 的 run.exit 与 scoreboard.exit 均为0。
+  同一次完整 Fault40 模拟在929646周期成功退出。唯一FAIL40、同PC0x80000858
+  恢复、Seq43重放0x26b及一次设备A握手均由日志证明。128次ecall与内存/FP/CSR
+  严格配对通过。联合判定在 `full_effect_report.json`，长期配置展开与候选的
+  Chisel FIR 一致，`fault40_longterm_v6/` 正独立复跑长期测试入口。
+- Seq16的两个异常/MMIO运行中，独立模型与原优化模型分别已观测至少22次和15次
+  完成重基，无FAIL或CANCELLED，完整oracle仍待退出。临时Fault40+Seq41配置的
+  只读探针会记录同一次运行的SCP分配、effectPending、rebasePending和缓存归零。
+- Sv39 正常/Fault8 同一 ELF 已经观察到实际两页交替；故障版在 Seq8 恢复后
+  继续读到两页对应的数据。最终检查要求16次真实物理读、同PC恢复和完整程序
+  严格配对。真实I-TLB、旧物理响应与恢复同拍仍待单独覆盖。
+- 新的 CLINT 写测试使用 hart0 的 mtimecmp，写入远大于观测期间 mtime 的值，
+  并检查每轮读回。正常运行与 Fault40 第一段定位已经启动，将以实际写入包号
+  确定故障配置。uncached AMO 现仍只有组件证据。
+
+## V6 本阶段先前记录
+
+- V6 `postReady := io.lsu.ioIssueReady` 一处生产接线修改保持。15项组件同次通过，
+  原优化模型compact正常/Fault8严格配对、Seq16两次重基也通过。
+- 本轮回收 `v6_fast_model/fault/trap_io/`：967701周期成功退出，128ecall、MMIO、
+  内存/FP/CSR oracle均正确。正常808703周期、353包全PASS；故障运行353包PASS、
+  唯一FAIL8、无CANCELLED，仅一次EVT/restore/restart。严格配对在
+  `v6_trap_io_pair_review/`，scoreboard.exit0。两个大型C++单元O0，来源与原O1运行分开。
+- `fullcore_scoreboard.py`明确拒绝额外FAIL/CANCELLED/EVT/restore/restart，并核对
+  Seq重基的EVT→restore→compact→reset→同PC restart→Seq1 PASS完整顺序。
+  原V6 compact正常/Fault8及Seq16日志重判通过；`strict_scoreboard_v6/negative/`
+  用真实事件日志构造11种负例，全部拒绝。旧计分器和前后哈希已保留。
+- `fault40_fast_model_v6_observed/fault40/trap_io/`仍执行：首次CLINT效果后FAIL40，
+  同PC0x80000858恢复，Seq43 journal重放已出现，尚无完整程序退出/配对结果。
+  旧观察器混用stdout导致日志交错，不能据其缺字段记录证明raw word或设备次数。
+- 已固化 `io_effect_observer.cc`、`build_io_observer.py`、`io_effect_scoreboard.py`。
+  观察器只读每次eval后的IOMSHR寄存器，独立流并逐事件flush，不写硬件状态。
+  `fault40_io_ledger_v6/focused/`使用同一生成库，180000周期仅作诊断信号证据。
+  已见123951真实A握手→123955存journal_word=0x26b→124156 replay标志→
+  124952 Seq43直接idle→response，grant_word仍0x26b，无第二次A；短探针已按180000周期诊断上限exit2，信号链计分exit0，结果在focused/effect_chain.json；5个损坏/错误信号负例全部被拒绝。
+- 原Fault40 O1编译exit0，driver只因新增5个验证脚本的source-cmp失败。
+  复核器初次核对时发现helper在build-end前后有已知修订，拒绝继续；原失败保留。
+  retry核验旧helper可重建哈希、固定FIR及精确脚本差异后，用原O1库链接同一只读
+  观察器。`fault40_io_ledger_o1_v6/trap_io/`正在运行，完整结束后自动严格配对和效果计分。
+- Seq16完整trap_io仍在运行，有持续重基和新包PASS，但尚未完整oracle；
+  原O1三配置trap_io独立运行也未回收。不得以部分重基或正常/Fault8通过代替。
+- 新脚本只改验证输入。硬件/FIR仍是原V6；后续原构建source-cmp若失败保留原记录。
+  当前脚本来源另存 `sources_v6_io_validation.json`，旧清单和归档不覆盖。
+
+新增 `tracked_c_longterm_reused_v6/` 与 `tracked_c_pressure_v6/`：长期Baseline
+复用原fullC流程，增加Seq8 tracked Probe数据、Pending7、BASE外写ACK背压和
+FAIL8→FAIL7组合。两个EVT安装期间两拍C队列保持满；重查的第二次BtoN完成后
+返回BASE，逐accepted外写beat检查八个字，SW跨8之后仍无dead字节发布。
+最终Baseline全套与共享agent的Pressure重编回归均exit0。原候选include宏冲突
+编译失败、漏回第二次Probe导致的激励超时均保留；均不属于RTL缺陷。
+此项仅真实L2+协议host，不关闭真实L1多层同时迁移。
+
+原O1正常和Fault8的异常MMIO严格配对已PASS，
+见`v6_trap_io_o1_pair.log/.exit`。正常O1与独立模型的970个PALIMPSEST事件相同。
+`sv39_workload_candidate_v6/`已编译并用原正常/Fault8模型运行。该激励通过真实
+三层页表和MPRV模式读验证两页重映射，每轮修改PTE并执行SFENCE，使用同一ELF。
+此阶段正在确认真实译址，仍缺 I-TLB 与物理旧响应在回滚时在途的联合证据。历史U250 5ns WNS=-9.608ns仍为FAIL，非V6整核时序结论。
+
+---
+
+# Historical: V6 I/O后置封口最小修复，首轮回归 (2026-11-22)
+
+证据根目录 `AI/TMP/singlecore_checker_20261122_082540/`。用户要求逐项稳步推进。
+本轮先处理V3/V4异常/I/O组合的额外CANCELLED恢复，不改watchdog和严格计分。
+69项状态仍为34 CODE_READY、32 IN_PROGRESS、3 VERIFIED，整体未完成。
+
+- `trap_io_store_owner_probe_v4/` 已结束：诊断上限126000、run.exit2，非验收。
+  MMIO123959退休后，唯一STQ2为年轻未提交store，PC=0x800005c4；head与commit_head
+  都为2，无functional inflight。DCache ordered于123957恢复1。全STQ非空导致
+  fencei_rdy持续0，closeAfter与retirementHold互相等待，后续无ECP/seal，Checker
+  package_progress_timeout。根因链和信号在selected_evidence.json，长期根因记录已更新。
+- `trap_io_rsu_phase_probe_v4/`已结束，逐eval观察确认RSU118820已空闲，
+  snapshot_rsu_prev118821降0，此后保持0。旧首eval探针漏掉下降沿，不能用其末值
+  断言RSU等待；新证据排除第二条owner阻塞，不扩大生产修改。诊断exit2非验收。
+- V6仅将Core的postReady改用已有LSU ioIssueReady，等待已提交前缀、DCache ordered、
+  HellaCache idle；不等年轻未提交STQ。不新增状态、寄存器、队列或FSM。实际修改及
+  前后哈希在io_post_boundary_candidate_v6/，当前源码清单sources_v6.json。
+- `rtl_regression_v6/`同一次长期15项全PASS、driver exit0、前后清单一致，`run_fullcore_v6.py`构建正常/Fault8/Seq16
+  并执行compact和同一compact-trap-io，尚无V6整核PASS。IoBoundary直接激励不能
+  证明Core接线，本项必须等真实反例及严格配对/重基计分通过。
+- 在V6修改前核验三份V5 Chisel FIR和输入哈希，新增v5_pre_v6_generation_checkpoint.json。
+  V5三配置仍构建，来源比较因后续V6修改可能失败，原失败保留。
+  run_reviewed_v5_frozen.py等待构建完成，核验原FIR、原清单与唯一已知V6差异后才运行，
+  结果单独写reviewed_v5_fullcore_frozen/。不能混作V6验收。
+
+`hierarchy_longterm_v6/`新增两种Pending历史+在途多拍外写+FAIL8/更早FAIL7
+联合场景，全套长期Hierarchy通过，build/run exit0、逐accepted外写beat及邻字检查。
+只改长期C++激励，差异在v6_test_only_changes.json，sources_v6_stimulus.json；
+原V6组件和FIR保留旧激励哈希。原V6整核build的末尾source-cmp预计因该测试变化
+返回1，保留原失败；run_reviewed_v6_frozen.py核验固定FIR及唯一测试差异后运行。
+
+旧V5独立复核已回收Fault8 compact和Seq16 compact，模拟器与计分器均exit0；
+Seq16真实两次reset→Restart→Seq1 PASS。正常compact和异常/I/O组合仍在运行。
+V5原构建source-cmp exit1保留，独立来源见reviewed_v5_fullcore_frozen/*/provenance.json。
+
+V6独立O0大型文件模型三配置已开始trap_io；正常Seq0x28及后续CLINT边界
+Seq0x29..0x2d均PASS，无取消/Restart（部分观测，尚非完整验收）。旧first bad
+局部已消失，证据v6_io_old_firstbad_review.json。V5正常/Fault8 compact独立
+严格配对已PASS，见v5_compact_pair_review/。
+
+相邻覆盖：`fault40_config_v6/`候选仅用生产PalimpsestFaultSeq=40（首项CLINT
+效果段），不改生产RTL。已开始fault40_rtl_v6构建；原配置/额外Scala哈希独立记录。
+目标是FAIL40后同PC journal重放及无第二次设备发射，最终严格--failed-seq40配对。
+候选尚未验收，未作为长期配置或PASS。独立低优化大文件runner亦已准备等待生成。
+
+V6原优化模型compact正常/Fault8严格配对PASS，checksum=75f3f507c3419640，
+SCP8→FAIL8→同PC restore/restart成立。证据v6_compact_pair_review/及
+reviewed_v6_fullcore_frozen/；trap_io还在执行。
+
+V6独立模型正常trap_io已完整PASS：808703周期exit0、128ecall/MMIO/最终
+checksum正确，353包PASS，零FAIL/CANCELLED/Restart。证据v6_fast_model/normal/trap_io/。
+V6原优化模型Seq compact也已严格PASS，两次reset→Restart→Seq1；Fault8配对及
+Seq16的trap_io仍在执行。
+
+三份V6 Chisel FIR及before清单均已核验，哈希保存在v6_generation_checkpoint.json。
+
+下一步：回收V6整核，优先运行正常trap_io核对原123959后的
+后置封口与Seq0x28是否仍取消；严格检查Fault8和Seq16；若失败继续取first bad。
+其他缓存迁移、多owner、真实Sv39/CSR/迟到响应组合仍未完成，不能提前标全VERIFIED。
+
+---
+
+# Historical: V5 翻译路径修复与 V4 整核结果 (2026-11-22)
+
+证据根目录 `AI/TMP/singlecore_checker_20261122_082540/`。整体未完成：
+69项仍为34 CODE_READY、32 IN_PROGRESS、3 VERIFIED。只读取消探针正在定位
+异常/I/O组合的额外恢复；不得以程序exit0或最终checksum替代严格事件计分。
+
+- V5在DTLB和共享Rocket TLB统一使用 `do_refill && !invalidate_refill` 门控。
+  旧walk只释放owner，不写回旧翻译。两个真实反例分别在cycle7与cycle64失败。
+  `rtl_regression_v5` 的Scala/Chisel/FIRRTL及14项组件全部通过，driver exit0，
+  来源前后一致。`rtl_translation_v5_ptw`复跑长期双TLB和生产PTW测试，两项
+  PASS、driver exit0、来源一致。真实PTW验证迟到non-leaf和leaf响应、L2命中、
+  邻页non-leaf命中与SFENCE同拍；PTW生产源码未改。
+- V3正常/Fault8 compact配对PASS，故障在SCP8同一PC恢复，新Epoch1包PASS，
+  最终checksum=75f3f507c3419640。V3 Seq16 watchdog仍FAIL，属修复前证据。
+- V4完整生成来源在 `v4_pre_v5_generation_checkpoint.json` 保护，原整核构建因
+  Chisel生成之后工作树修改而source-cmp exit1，保留原结果。独立
+  `reviewed_v4_fullcore_frozen`核验原FIR和源码覆盖包后运行同一模型。
+  compact正常/Fault8配对PASS，Seq16真实两次归零→Restart→Seq1 PASS。
+- V3与V4的compact-trap-io，正常与Fault8均成功退出，128次ecall/MMIO/架构
+  oracle成立；严格配对却FAIL：正常配置seq0x28以CANCELLED完成，触发额外普通
+  回滚，restart PC在get_mtime的0x80000858。V4 Seq profile两次重基后也有
+  seq0xa普通取消恢复，严格重基计分FAIL。只读探针确认取消由package_progress_timeout触发，producer_sealed保持0；Main上游条件仍在定位，不能修改watchdog
+  或放松计分冒充关闭。只读V4 hart1窄探针在 `trap_io_cancel_probe_v4_retry`，
+  初次C++字符串换行编译失败保留。三配置V5整核构建在 `*_rtl_v5` 启动，
+  此时硬件与长期输入已冻结到 `sources_v5_ptw.json`。
+
+设计入口：[实现基准](../../Design/SingleCore_RTL_Baseline/README.md)。
+翻译根因：[SFENCE/迟到响应](../bugs/bug-palimpsest-translation-refill.md)。
+管理trap等待环：[Seq transport](../bugs/bug-palimpsest-seq-management-trap.md)。
+历史Stage3 U250 5ns时序FAIL/WNS=-9.608ns，不能代表V5整核或有效证书增量。
+
+---
+
+# Historical: V4 Seq transport 与管理异常清理修复 (2026-11-22)
+
+证据根目录 `AI/TMP/singlecore_checker_20261122_082540/`。V2正常整核exit0且
+计分器PASS，Fault8在700000拍超时exit2，Seq16在tick496000触发Main watchdog
+exit1。V1只读窄探针证实：L2维护完成、四个GHM permit为高，hart2/3却在维护
+开始后进入无包管理异常，新的访存/取指被维护冻结，无法xRET；transport ACK
+又等待context_idle，形成循环等待。包FSM、结果及RSUSL/LSL owner实际已空。
+详细事件/来源见 `bug-palimpsest-seq-management-trap.md`。
+
+V4已在R_ICSL输出复用现有状态的package_idle；RocketCore仅在Seq reset使用
+包空条件，admission/COPY/结果handoff继续要求context_idle。没有清异常、
+伪造返回或修改watchdog，没有新增寄存器/队列/FSM。修复前GHM＋R_ICSL组合
+反例cycle4455 exit1；原夹具import和Verilator搜索路径错误各自保留。
+长期SeqTransport增加管理异常保持与包内trap→取消→xRET→special-PC返回用例。
+不同地址0x1111/0x2222的冷交接输入已并入长期Hierarchy。
+
+V4聚焦GHM＋R_ICSL组合在`seq_management_v4_focused/`已exit0：管理异常保持、
+包内trap→取消→xRET→special-PC返回及既有CDC均PASS。首次激励跨两Checker
+上升沿产生两次trap却预期深度1，失败保留；只修激励单边沿脉冲，硬件库未变。
+V4 Scala及全部Chisel/FIRRTL已通过；`reviewed_v4_components/`13项均exit0，
+无assertion/UNCOVERED，生产源码前后相同。原组件driver的旧Seq激励FAIL和
+C++修正后的source cmp失败继续保留；修正激励使用同一V4生成模型，哈希已核验。
+三配置`*_rtl_v4/`仍在编译/回归，尚无整核V4 PASS。
+后续C++修正造成原source cmp失败时，由独立核验runner确认生产源码未变再运行。
+V3完整源码73581文件快照及各Chisel FIR哈希保存在`v3_generation_checkpoint/`。
+在途V3原driver将保留因后续V4源码变化产生的比较失败，独立`run_reviewed_v3.py`
+只在核验固定FIR、完整来源清单和已知后续变化后运行原模型，不混作V4验收。
+任务仍为34 CODE_READY、32 IN_PROGRESS、3 VERIFIED，整体未完成。
+
+---
+
+# Historical: V3 冷查询交接修复与整核验证 (2026-11-22)
+
+证据根目录仍为 `AI/TMP/singlecore_checker_20261122_082540/`。Fault8 归档模型
+只读探针证实：完成的空查询在另一冷 offer 出现时先回 Idle，LSU 下一拍重新仲裁
+回原地址，查询反复执行而没有请求进入 S0。未修改 V2 的真实层次反例在
+`cold_handoff_before_v3/`：cycle8665 失败，8000 拍 51 次查询、零接受。
+V3 DCache 在 Miss 当拍用 `beginColdLookup()` 捕获接替地址，复用已有 FSM、
+寄存器和查询 payload。源码修改前快照见 `before_v3/`，长期输入为
+`hierarchy_test.cpp::alternatingColdHandoff`，根因详见冷查询故障记录。
+
+`rtl_regression_v3/` 的 Scala 编译和全部 Chisel 生成成功，13 项定向仿真 PASS；
+driver 完成且前后源码清单相同。为补齐原会话未保留的 PTY 退出结果，
+`reviewed_v3_components/` 仅重跑已编译模型，13项均记录 exit0，无 assertion/
+UNCOVERED。`cold_handoff_distinct_v3/` 另用0x1111/0x2222区分两地址基线，
+整套Hierarchy同样exit0，输入和库哈希独立保存。三个 V3 整核构建由
+`run_fullcore_v3.py` 使用同一 SBT 锁串行生成，C++ 构建可并行；每个模型先跑
+compact，再跑已保存的 compact-trap-io ELF。当前不能记为整核 PASS。
+
+V1 Seq 只读探针已走完 L2 的 set0..0x3ff，`maintState=maintDone`，Main 发出
+transportRequest，但未收到完整清理回执，最终在tick496000触发流水线watchdog，
+run.exit=1。故不是 L2 扫描不前进；`seq_transport_detail_v1/` 新增 GHM/Checker
+窄探针继续区分 source-empty、permit、local ready 与 ACK，未据此修改生产RTL。
+先前不完整信号集的 `seq_transport_probe_v1/` 在采样前被新探针替代，明确标为
+INTERRUPTED。模拟器 `sc_time_stamp()`
+等于每个完整高低时钟周期递增一次的 `trace_count`，不是 FST 半周期时间。
+V2 整核原构建的来源检查失败仍保留。`reviewed_v2/` 已结束：正常配置 exit0、
+计分器 PASS（checksum=75f3f507c3419640）；Fault8 在700000拍超时 exit2；
+Seq16 在tick496000触发Main watchdog exit1，无reset/restart，均不能记为通过。
+Seq窄探针见 hart2/3 已无包/结果 owner，却仍 excpt_mode=1，context_idle和
+packet_seq_reset_ready为0；正在追查真实 trap/xRET 生命周期，尚未修改清理条件。
+任务状态仍为 34 CODE_READY、32 IN_PROGRESS、3 VERIFIED，整体未完成。
+
+---
+
+# Historical: 整核停滞取证、V2 构建恢复及长期边界测试 (2026-11-22)
+
+上一会话中断终止了在途 EC 构建和诊断；未得到退出码的运行按 INTERRUPTED 保留，
+不能作为测试 FAIL 或 PASS。`AI/TMP/singlecore_checker_20261122_082540/resume_v2/`
+从原生成物恢复三个 V2 C++ 构建。`generation_inputs/` 保存硬件生成完成时与
+`sources_v2.json` 完全一致的源码检查，以及所有生成 C++/头文件/Makefile 哈希。
+之后新增长期测试会使原 driver 的末尾工作树比较失败，该失败保留；`reviewed_v2/`
+独立核验实际编译输入后运行，不能把原 driver 改记为0。
+
+长期 `hierarchy_test.cpp` 已纳入满 EVT 的 FAIL64→FAIL63 场景，并和全部既有
+Hierarchy 用例共同通过。结果和单独重编的激励哈希在 `hierarchy_longterm_v2/`；
+硬件仍为 `grant_sw_v2`，无整核执行结论。原34次物理维护也同次通过。
+
+`compact-trap-io` 长期工作负载已编译：128次ecall、每轮CLINT输入及原架构oracle。
+`fullcore_scoreboard.py --require-trap-io` 还要求128次及非零输入结果；`--single`
+严格检查单日志的正确RESULT、END和成功模拟器退出。最终动态场景仍为NOT_RUN。
+软件输出在 `trap_io_workload_longterm/`，不可与早先临时候选ELF混用。
+
+V1只读探针在 `seq_stall_probe_v1/` 和 `fault_stall_probe_v1/`。
+Seq16已经到Controller resume，Main与Checker排空后确实发出maintenanceRequest；
+因此不能归因为Checker ACK未释放。`seq_maintenance_probe_v1/` 正在采集L2扫描
+状态和MSHR终态条件，根因尚未证实。Fault8已有正确RESULT但无END，重复冷查询
+原因仍在取证，尚未为此修改生产RTL。
+
+V2 Stage3综合已完成：LUT21521、FF16041、BRAM7.5；5ns时序WNS=-9.608ns，FAIL。
+夹具未协商新响应证书，相关逻辑被裁剪，不能代表证书增量或整核开销。
+任务仍为34 CODE_READY、32 IN_PROGRESS、3 VERIFIED，整体未完成。
+
+---
+
+# Current: SW/Grant 竞态已复现，V2 响应证书验证中 (2026-11-22)
+
+新真实 Hierarchy 反例在 cycle1037 失败：L2 以 SW6 选好 Grant 后再推进 Main SW8，
+V1 按本地 SW 丢掉 Pending7，返回旧 BASE。V1 的 13 项 PASS 不能覆盖这个窗口。
+V2 已在生产 RTL 加入一位 CacheRecoverySafe，随 SourceD 响应选择冻结；Acquire
+只用既有 CacheImage 携带候选身份，L1 首个 Grant 按证书固定 payload/key。
+Bank 级只做一次 Seq/SW 共享比较，移除 Main 的较晚分类，保留 publishPending。
+详见 [可信写与 SW/Grant 根因](../bugs/bug-palimpsest-trusted-refill-recovery.md)。
+
+V2 Hierarchy/Baseline/Pressure 及其余十项组件回归全部 PASS，driver exit0 且
+前后源码清单一致，证据 directed_results_v2.json。三个 V2 整核构建正在执行。
+V1 模型另作诊断，不能作为 V2 验收。中间 rebase_rtl 的320k周期探针已超时：未观察到旧
+235514处 tsi_fail，但没有 Seq reset/restart/END，不算整核通过；该模型还缺最终
+CPS-ready 条件。任务仍为 34 CODE_READY、32 IN_PROGRESS、3 VERIFIED。
+
+证据归档 `AI/TMP/singlecore_checker_20261122_082540`，新增反例使用
+`grant_sw_stimulus_v3.cpp/.sha256`；其来源差异说明和原 driver 失败均保留。
+V1 L2 综合成功，5ns 时序 FAIL。V2 Stage3 粗综合通用单元11315，技术综合在执行；
+该夹具不协商新证书位，不能用它量化证书有效开销。当前不可宣称全部功能完成。
+
+补充真实层次测试 full_evt_earlier_fail_v2 已通过：满32区间、Pending63 时
+FAIL64→FAIL63 合并相邻区间并释放容量，恢复 SCP63/epoch33，实际读回安全 Seq61。
+初版激励误等不再需要的物理维护，错误预期和修正说明均保留，无生产 RTL patch。
+该额外激励仍需纳入长期 Hierarchy 源码，临时输入及哈希已单独保存。
+
+---
+
+# Current: Checker cancel-before-COPY 修复及整核回归进行中 (2026-11-22)
+
+本轮进一步证实 Fault8 的 HTIF 失败：只读主机探针显示清零 tohost 和设置 fromhost
+均已完成后，旧指针再次出现；返回值 125 随后被作为 syscall 编号。见
+[冷恢复覆盖可信写](../bugs/bug-palimpsest-trusted-refill-recovery.md)。
+MSHR 改为首个 Grant fire 才固定未提交前驱，安全候选采用真实一致性 refill；
+DCache 移除二次覆盖，Scheduler 在其他 set 的 preservation 锁期间保持 D 发布屏障。
+Hierarchy 新增真实独立 TL host，修复前 cycle 1156 稳定失败，修复版两个 host
+用例及其余 12 项定向回归全部通过，driver exit=0 且前后源码清单一致。
+三个最终整核配置正在构建，完成后自动运行同一 compact workload。
+本轮中间 rebase_rtl 仅含最初 Checker 修复；最终版本还包括 CPS ready 和缓存修复，
+不可把该中间版本的结果当作最终全 RTL 的 PASS。
+
+整核旧版本：正常 v1 完成 checksum、END 和 serial_success；Fault8 checksum 正确但
+随后 bad syscall #125，无 END；Seq16 在 cycle 235514 以 tohost=2 失败。
+窄探针证实 hart 2 的 Seq16 在 COPY 前取消，迟到 COPY 仍改写寄存器，JLR
+随后在 nonchecking 模式执行 Main。见 [故障记录](../bugs/bug-palimpsest-checker-cancel-before-copy.md)。
+
+RocketCore 已加入 COPY/JLR 存活 owner 门控，并复用 core_hang_up 等复制尾拍后
+释放结果。本轮尚未得到修复后整核 PASS。计分器也要求成功模拟器退出并拒绝
+bad syscall、FAILED 或 terminate。新归档为 `AI/TMP/singlecore_checker_20261122_082540`，before/ 与 before.json
+保存本轮修改前状态；rebase_rtl 正在整核编译，fault_host_trace 在采集旧版 HTIF
+读写。不要将未完成的生成或运行标为 PASS。全部任务状态继续为 34 CODE_READY、
+32 IN_PROGRESS、3 VERIFIED；并非硬件全部完成。
+
+---
+
+# Current: PALIMPSEST 单主核 SourceC 压力与整核回归 (2026-11-21)
+
+旧整核模型的 bank 级屏障在 History 达到保留容量后阻塞安全 BASE victim。现行 Scheduler 按实际 victim 的安全资格、发布顺序和 set owner 准入 SourceC。bank 继续用原带 Seq 屏障请求 Main 封口。Pressure 在 SW=0 下检查一次实际外写、真实 ReleaseAck 和 Checker Grant。恢复 bank 级门控的同激励对照在该 Acquire 上超时。整核旧轨迹、对照激励和对应哈希见 [故障记录](../bugs/bug-palimpsest-sourcec-pressure.md)。
+
+SBT 编译和 13 项定向仿真已通过。Hierarchy 使用真实 L1/L2 检查 Figure 4、较早 FAIL、慢 Checker 收据和冷查询重试。三种整核配置的完成情况、综合数据及源码版本见 [验证矩阵](../../Design/SingleCore_RTL_Baseline/Verification_Matrix.md)。任务状态和源码位置见 [实现基准](../../Design/SingleCore_RTL_Baseline/README.md)。证据保存在 `AI/TMP/singlecore_rtl_20261121_171154`。
+
+---
+
+# Historical: PALIMPSEST C 发布及 EVT 安装回执 (2026-11-21)
+
+单主核交付仍在进行。最新任务允许执行 Scala 编译、Chisel 生成、仿真和综合。任务板以 `AI/Design/05_SingleCore_Taskboard.json` 为准。完整实现、接口、不变量及运行证据集中在 [SingleCore_RTL_Baseline](../../Design/SingleCore_RTL_Baseline/RTL_Architecture.md)。
+
+真实 Hierarchy 首次发现完整 C staging 等待同组在途外写时，L2 将 EVT 安装卡在地址查询门控。FAIL7 已到达，Main 仍等 FAIL8 的 bank 回执。DCache、InclusiveCache 和 Scheduler 在原四相邮箱中加入 `installOnly`，各域装载后回执，原地址查询仍等待 C 数据可见。最新 Hierarchy 在保持外写背压时完成第二次安装，接着检查 SCP7 重启和实际读数。前后运行和哈希见 [C 与 EVT 故障记录](../bugs/bug-palimpsest-c-baseline-order.md)。
+
+同一 RTL 版本的 Scala 编译、Chisel 展开及 13 项定向测试通过。Baseline 七项检查包括 fullC 两拍队列、同组和同址 Probe、迟到 ReleaseData、SW 边沿和可信 A 写。SeqTransport 验证 GHM 空证书和 ACK 高低，PreciseException 验证生产 ROB 退休到异常的顺序。三种整核配置的生成、仿真和最终 oracle 见 [验证矩阵](../../Design/SingleCore_RTL_Baseline/Verification_Matrix.md)。
+
+证据目录为 `AI/TMP/singlecore_rtl_20261121_171154`。后面的状态为历史记录。
+
+---
+
+# Current: Checker context receipts + real result CDC join; overall INCOMPLETE (2026-11-21)
+
+Latest frozen single-Main task continues. No Scala/SBT/Mill, Chisel/elaboration,
+RTL generation, Verilator lint/build/simulation, synthesis, FI or hardware tests
+run. No commit or TMP cleanup. Unrelated DOC deletions left untouched.
+
+69 tasks: CODE_READY=37, IN_PROGRESS=32, VERIFIED=0; 49 features retained,
+47 InScope, C5/D17 Deferred. New local ready P5-04 is a directed component
+join, NOT proof of full Rocket/BOOM architectural recovery.
+
+New production changes: Rocket uses PalimpsestHistoryReceiver (existing bundled
+payload/request synchronization/context, plus held install ACK). Main waits for
+all banks AND all four Checkers during both mailbox high and low phases. L2
+maintenance certificate is rejoined with L1 real quiesced/SVB/archive/package
+owner conditions before compact; physical-resident-empty assertion added.
+History pending covers the current SW-change cycle; safe direct resident Put
+cannot overtake an already-owned history scan/publication. Full BASE/C/SourceC
+same-address ordering remains incomplete.
+
+Authored, NOT RUN: Hierarchy slow Checker ACK-high/ACK-low freeze and compacted
+empty-context freeze; Baseline SW-edge dirty BASE candidate/history arbitration
+and subsequent trusted writeback; CheckerRecovery actual RSUSL -> complete GHM
+result AsyncQueue -> production Controller/SCP/EVT, PASS and f0 FAIL8, stopped
+Checker clock, held Main release, cache/restore/restart ACK backpressure. The
+fixture supplies local result permission and Main ownership/cache/restore ACKs;
+it does not instantiate Rocket package-tail/cleanup or BOOM pipeline.
+user_build.sh now emits 10 tops, builds 11 executables. Never run it as Codex.
+
+Latest allowed static source check PASS: 35 Scala lexical scans, 13 C/C++ scans,
+69/49 mapping/DAG/render/path, Python AST, bash -n and diff checks. This checks
+no Scala types, Chisel, CDC, TileLink or runtime behavior. Final manifests live
+under AI/TMP/palimpsest_frozen_20261121: after.json, after/ and
+sources.after.20261121_receipts.json; static check in static_receipts.log.
+Initial before/baseline preserved.
+
+Next: cross-Rocket/Tile/GHM CDC/tagged-table Seq32 safe reuse; full same-address
+SVB/C/SourceC/trusted BASE ordering; persistent I/O mismatch and full-core CSR/
+PTW/exception/pressure close; full C staging/multibeat WB/earlier FAIL multi-owner
+composition. Do not reset only Main Seq/SW or mark these tasks ready.
+
+---
+
+# Current: PALIMPSEST owner fixes + rare EVT maintenance; overall INCOMPLETE (2026-11-21)
+
+Latest user task and frozen U-D01–U-D10 remain authoritative. Source-only work:
+NO Scala/SBT/Mill compile, Chisel/elaboration/RTL generation, Verilator lint/build/
+simulation, synthesis, FI, hardware testbench or regression executed. No commit,
+no TMP cleanup, no unrelated DOC reverts. Baseline HEAD remains
+75f2905693d6eec3b92d733e65bafa7a9c4be6dc; initial relevant dirty sources saved in
+AI/TMP/palimpsest_frozen_20261121/before, hashes in baseline.json.
+
+Taskboard: 69 tasks, CODE_READY=36, IN_PROGRESS=33, NEEDS_FIX=0, BLOCKED=0,
+VERIFIED=0; 49 original features, 47 InScope, C5/D17 Deferred. New local ready:
+P4-11 (actual pre/post close controller + directed source), P5-08 (actual dirty
+victim/Probe/accepted multibeat WB/FAIL8 + full history fixtures). P3-15 remains
+IN_PROGRESS: ordinary identity cycling and EVT maintenance written; Seq32 safe
+reuse across Rocket monotonic package filters/CDC/tagged tables is incomplete.
+
+Current actual changes: sequential real integer/FP PRF restore and owner done;
+registered Gray/single-step SW; RAM history scanner/passive coalescing/four reserved
+credits; pre/post device boundary; persistent exactly-once journal. Fix capacity
+park/baselineReady/quiescent waiting for never-issued Acquire's Grant. Probe may
+finish before parking; no external Release/Acquire is abandoned. Checker escape
+way now covers non-image-aware Get AND coherent Acquire/translation reads. New
+baselineObsolete receipt prevents old resident bytes satisfying new A after a
+newer history DRAM ACK. Full same-address trusted BASE ordering remains open.
+
+Core now directly uses production PalimpsestIoBoundary. Every live state has
+synchronous flush cancellation; no combinational ROB flush->retirementHold loop.
+Journal effectPending stays independent of drain busy, masks interrupts across
+rollback until replay verifies. Uncached AMO owns both old-value response and
+write completion, with independent backpressure. Mismatch preview requests the
+current attempt's existing SCP recovery path without issuing a second device A;
+persistent mismatch convergence/full-core privileged composition remain open.
+
+EVT adjacent dead intervals merge. At full capacity (or Epoch/G near boundary),
+THIS stopped rollback waits for SW=tail, all Checker package owners released,
+LSU/cache quiescence and empty SVB/archive. A held CDC service request makes L2
+use the existing directory read port, sequential set/way enumeration and the
+original flush/Probe/Release/ACK path. Old EVT stays active: live safe bytes go to
+DRAM, dead bytes release permission only. Empty cache/history plus real terminal
+ACKs certify compaction; L1 clears EVT/Epoch/G, then publishes empty context via
+original mailbox before restart. Ordinary rollback remains lazy/no cache scan.
+Seq/SW do NOT reset. A replay-needed journal cannot become safe just because an
+old EVT interval was retired. Full System Seq32 rebasing is NOT implemented.
+
+Authored, NOT RUN: Io RD/WR/AMO independent terminal/two rollbacks/mismatch;
+IoBoundary production FSM (prefix Pending, RSU, stores, new package, single-step,
+flush in all states, interrupt mask across restart); Pressure real Scheduler full
+64 entries/four-beat ProbeAckData/Main park/Checker Get+Acquire/resume after PASS;
+Hierarchy dirty victim first accepted multibeat WB held across FAIL8/EVT, actual
+late ACK and neighbor/lazy-load checks; 34 disjoint rollbacks with actual physical
+maintenance, ACK backpressure, safe baseline and no retired dead revival. Recovery
+has 96 adjacent retries preserving Pending7/A7, local compact and missing-certificate
+fail-closed component tests. Full-core workload/oracle/scoreboard already written.
+User-only user_build.sh emits 9 tops and builds 10 executables. See Design/08.
+
+Open: Seq32 cross-Checker/CDC safe reuse; persistent I/O mismatch fault semantics
+and full Core CSR/LSU/R_IC/PTW/exception composition; pressure close/full C staging/
+earlier FAIL multi-owner combinations; complete same-address SVB/C/SourceC/trusted
+BASE publication ordering. All are concrete source/test gaps, not requests for
+reconfirming frozen decisions. Do not mark all 69 ready or any task VERIFIED.
+
+Latest allowed static check: 69/49 mapping/DAG/render, 34 Scala lexical delimiter
+scans, 11 C/C++ lexical scans, Python AST, bash -n, git diff --check PASS. These do
+not check Scala types, Chisel circuits, TileLink behavior, CDC or functional results.
+Continue from Design/05/06/07/08/09. Older state sections below are historical.
+
+---
+
+# Current: PALIMPSEST identity guards + real hierarchy fixture; overall INCOMPLETE (2026-11-21)
+
+Resumed the source-only user task. No Scala/SBT/Mill compile, Chisel/RTL emission,
+Verilator lint/build/simulation, testbench, synthesis or regression was executed.
+No commit; no TMP cleanup or unrelated file overwrite. Baseline unchanged.
+
+Taskboard now: 69 tasks; 30 CODE_READY, 32 IN_PROGRESS, 7 BLOCKED, 0 VERIFIED.
+49 original features retained: 47 InScope, C5/D17 Deferred. JSON is authoritative.
+New local CODE_READY: P3-15/P4-06/P5-05/P5-06. P5-08 is now IN_PROGRESS.
+
+Production changes: complete-batch LSU functional/strict identity allocator;
+saturating L1 slotEpoch + epoch0 primary gate; L2 preservation/release serial
+capture/allocate/reload guards; sticky Controller fatal overriding ready restart,
+with pinned SCP retained. L2 identity-unavailable level is synchronized to L1 and
+connected via Tile/Core with LSU and R_IC Seq exhaustion. MSHR busy is separate
+from allocation readiness. rollbackQuiesced now includes recoveryCacheIdle,
+covering independent prober/snapshot/capture and killed-store replay owners.
+
+New IdentityHarness + identity_test.cpp and ready-restart race in recovery_test.
+New HierarchyGenerate.scala + hierarchy_test.cpp: real BOOM L1 + InclusiveCache +
+CacheCork + Controller/SCP + host DRAM. Three authored Figure4 cases: A7 archived,
+FAIL during migration, and accepted miss with delayed memory response. Scoreboard
+checks actual load A7, unchanged adjacent A1, SCP8/new Epoch/Seq9 and no A8 DRAM
+write. It does not instantiate BOOM pipeline. All tests NOT_RUN_BY_CODEX.
+user_build.sh now prepares five tops; only the user may execute it or simulators.
+
+Source blockers B-IDENTITY and B-HIERARCHY-TEST are closed at task-local code level.
+Open: MMIO pre-I/O/replay/recovery-floor wait cycle; reserved close/drain capacity;
+all-address baseline publication ordering; full dirty victim/probe/multibeat WB
+concurrency and BOOM end-to-end workload/scoreboard. Overall recovery is INCOMPLETE.
+
+Allowed static checks: 69/49 mapping/DAG/features/summary/render, 30 Scala lexical
+scans, Python AST, bash -n, git diff --check PASS. No Scala typing/Chisel/TL/CDC or
+functional validation. Continue from Design/05-09; never reuse old run evidence.
+
+---
+
+# Current: PALIMPSEST single-Main rollback INCOMPLETE (2026-11-21)
+
+Latest user task: source implementation only; no Scala/SBT/Mill compile, Chisel
+elaboration/RTL generation, Verilator lint/build/simulation, testbench, synthesis,
+regression or fault injection may be executed by Codex. No hardware run performed.
+No commit. Baseline HEAD 75f2905693d6eec3b92d733e65bafa7a9c4be6dc.
+
+Taskboard: AI/Design/05_SingleCore_Taskboard.json (69 tasks; 26 CODE_READY,
+32 IN_PROGRESS, 11 BLOCKED, 0 VERIFIED). All 49 original features mapped;
+47 InScope; C5/D17 Deferred. CODE_READY is task-local source readiness only.
+Overall recovery is INCOMPLETE, not hardware ready/validated.
+
+Added persistent SCP/controller/EVT, BOOM PRF/rename/CSR restore, f0 comparator fix,
+CurGen cold lookup/install, SVB-to-L2 independent archive mailbox, addressed L2
+history, Checker tombstone cancellation and LSU cancellation/drain handling.
+Controller order: pin SCP -> publish EVT -> drain -> reset/restore -> restart.
+Three component fixtures under AI/Debug/scripts/rollback; no real combined
+BOOM+L1+L2 recovery fixture. User-only build commands and limits in Design/08.
+
+Open implementation blockers: current-segment MMIO/SW/ROB close cycle;
+archive/segment-close reserved capacity/forward progress; complete per-address
+baseline publication ordering; slot/token exhaustion functional guards; full
+hierarchy/in-flight/end-to-end testbench/workload/scoreboard. No component test
+was run. Static delimiter/doc-DAG/AST/shell/diff checks PASS; no Scala typecheck.
+
+Do not use old Opt4/Stage2/Stage3 artifacts as evidence for these modified sources.
+Do not resume historical optimization/benchmark commands below for this task.
+Continue from Design/05, contracts/06, changes/07, tests/08, actual summary/09.
+All hardware execution status: NOT_RUN_BY_CODEX; await explicit user-run evidence
+before any VERIFIED status. Known source blockers must still be implemented.
+
+---
+
 # Current: Opt4 frozen, optimization PAUSED (2026-11-02)
 
 Latest user request supersedes every historical READY/NEXT_ACTION command below.
@@ -1754,3 +2487,9 @@ The successful Optimization 1 run `slowdown/optimization_1/runs/optimization_1_2
 The Opt1 trace was replayed offline into `AI/TMP/optimization2_rootcause_and_impl_20261025_d9703cb7/opt1_causal/`. Pending samples separate target PASS absence at the observed endpoint (3,012,446 cycles), result/prefix propagation (88,235 cycles), and post-safe WB/meta-clear stages (about 77k cycles). The first category is not an optimization proof; the prefix category has only 12 intervals and lacks per-predecessor/epoch evidence. R_IC gate ownership/snapshot conditions do not consume the L1 safe watermark directly. No common safe predecessor root cause is closed.
 
 Decision: `NO_SIMULATION_YET`. No Optimization 2 RTL, patch, build, elaboration, Verilator run, or workload was executed. `RUN_PROVENANCE=UNRESOLVED` and full cache/package/DRAM drain remain unresolved. Future evidence must add checker instruction/tail progress, per-slot predecessor state, R_ICSL/RocketCore cleanup/result lifecycle, and complete MSHR release joins before any safe release optimization is designed.
+
+
+本批后续新增观察：`concurrency_fullcore/io-rebase`完整程序仍在运行，已观察重基后另一个数值Seq40的FAIL。原故障配置为所有Checker各自一个injectedOnce，Seq归零后可在其他Checker再次注入，不能按“一次全局故障”宽松计分。`io_rebase_injection_scope`用真实注入位只读探针确认初始owner；将独立测试配置只给该owner保留原Seq40一次性注入，其他Checker关闭同Seq注入，不增加硬件状态。该候选仍未合入生产，原多注入运行/严格失败预期保留。另有独立物理namespace计分，按真实reset区分可合法复用的数值Seq，完整16轮还必须有48次实际高/低/高timer读，未完成程序不得PASS。
+
+
+连续恢复完整里程碑已通过：`two_independent_faults_closure.json`记录normal/双FAIL同ELF完整退出、严格配对PASS，双FAIL985629周期，恰好FAIL8/24及对应两次SCP/EVT/Restore/Restart/fresh epoch PASS，架构/128ecall/MMIO一致。8个第二故障/PC/Epoch/reconciled/取消/额外FAIL/缺oracle/checksum负例均拒绝。关闭原P3-14和P5-07，当前64 VERIFIED、5 IN_PROGRESS、0 CODE_READY。原io-rebase仍按独立范围待验收，不要求整个含失败子批次为0才保留两个已有完整成功程序；所有来源/输入已逐项复核。

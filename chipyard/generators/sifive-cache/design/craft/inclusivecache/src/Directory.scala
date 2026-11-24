@@ -37,9 +37,13 @@ class DirectoryEntry(params: InclusiveCacheParameters) extends InclusiveCacheBun
   val tag     = UInt(width = params.tagBits)
   val packetSeq = UInt(width = GH_GlobalParams.GH_PACKET_SEQ_BITS)
   val packetTracked = Bool()
+  // Resident key, or the acknowledged baseline key while baselineObsolete.
   val image = new freechips.rocketchip.tilelink.CacheImageKey
-  // Receipt for this exact key. Semantic changes revoke it; validation does not.
+  // Receipt for this exact key. A newer byte update revokes it.
   val outerPreserved = Bool()
+  // P3-10: a newer safe history image has reached DRAM. These bytes may
+  // retain coherence obligations, but must never satisfy a new A request.
+  val baselineObsolete = Bool()
 }
 
 class DirectoryWrite(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
@@ -53,6 +57,9 @@ class DirectoryRead(params: InclusiveCacheParameters) extends InclusiveCacheBund
 {
   val set = UInt(width = params.setBits)
   val tag = UInt(width = params.tagBits)
+  val checkerFetch = Bool() // P4-12: replay text/translation-read allocation escape
+  val maintenance = Bool()
+  val maintenanceWay = UInt(width = params.wayBits)
 }
 
 class DirectoryResult(params: InclusiveCacheParameters) extends DirectoryEntry(params)
@@ -125,7 +132,20 @@ class Directory(params: InclusiveCacheParameters) extends Module
   val victimSums = Seq.tabulate(params.cache.ways) { i => UInt((1 << InclusiveCacheParameters.lfsrBits)*i / params.cache.ways) }
   val victimLTE  = Cat(victimSums.map { _ <= victimLFSR }.reverse)
   val victimSimp = Cat(UInt(0, width=1), victimLTE(params.cache.ways-1, 1), UInt(1, width=1))
-  val victimWayOH = victimSimp(params.cache.ways-1,0) & ~(victimSimp >> 1)
+  val rawVictimWayOH = victimSimp(params.cache.ways-1,0) & ~(victimSimp >> 1)
+  // P4-12/U-D09: reuse one physical way for non-image-aware read/permission
+  // misses. Replay text and coherent page-table reads must progress even if
+  // all data history is occupied. Main D misses cannot allocate this way.
+  // Hits still search every way and all coherence obligations are unchanged.
+  val checkerFetch = params.dirReg(RegEnable(io.read.bits.checkerFetch, ren), ren1)
+  val escape = params.p(PalimpsestCheckerEscapeWay)
+  require(!escape || params.cache.ways > 1, "checker escape way requires at least two ways")
+  val victimWayOH = if (escape) {
+    val ordinary = rawVictimWayOH & UInt((BigInt(1) << (params.cache.ways - 1)) - 1,
+      width = params.cache.ways)
+    Mux(checkerFetch, UInt(BigInt(1) << (params.cache.ways - 1), width = params.cache.ways),
+      Mux(ordinary.orR, ordinary, UInt(1, width = params.cache.ways)))
+  } else rawVictimWayOH
   val victimWay = OHToUInt(victimWayOH)
   assert (!ren2 || victimLTE(0) === UInt(1))
   assert (!ren2 || ((victimSimp >> 1) & ~victimSimp) === UInt(0)) // monotone
@@ -150,6 +170,18 @@ class Directory(params: InclusiveCacheParameters) extends Module
   io.result.bits := Mux(hit, Mux1H(hits, ways), Mux(setQuash && (tagMatch || wayMatch), bypass.data, Mux1H(victimWayOH, ways)))
   io.result.bits.hit := hit || (setQuash && tagMatch && bypass.data.state =/= INVALID)
   io.result.bits.way := Mux(hit, OHToUInt(hits), Mux(setQuash && tagMatch, bypass.way, victimWay))
+  // U-D07: rare capacity maintenance enumerates physical metadata using the
+  // existing directory port. Normal accesses retain the original hit path.
+  val maintenance = params.dirReg(RegEnable(io.read.bits.maintenance, ren), ren1)
+  val maintenanceWay = params.dirReg(RegEnable(io.read.bits.maintenanceWay, ren), ren1)
+  val maintenanceEntry = Mux(setQuash && bypass.way === maintenanceWay, bypass.data, ways(maintenanceWay))
+  when (maintenance) {
+    for (name <- (new DirectoryEntry(params)).elements.keys) {
+      io.result.bits.elements(name) := maintenanceEntry.elements(name)
+    }
+    io.result.bits.hit := maintenanceEntry.state =/= INVALID
+    io.result.bits.way := maintenanceWay
+  }
 
   params.ccover(ren2 && setQuash && tagMatch, "DIRECTORY_HIT_BYPASS", "Bypassing write to a directory hit")
   params.ccover(ren2 && setQuash && !tagMatch && wayMatch, "DIRECTORY_EVICT_BYPASS", "Bypassing a write to a directory eviction")

@@ -39,10 +39,11 @@ class SpeculativeVersionCompletion(entryBits: Int)(implicit p: Parameters) exten
   * A bounded, global associative buffer for the one case in which the old
   * L1 image is an unsafe predecessor of a younger same-line store.
   *
-  * Entries never participate in ordinary L1 load selection.  A watermark
-  * classifies them safe; the largest safe package sequence is selected for
-  * promotion.  The entry remains valid through every C beat and until the
-  * matching ReleaseAck, so it remains a recovery source during WB_WAIT.
+  * Entries participate in addressed recovery, independently of ordinary L1
+  * hit selection. Surviving entries transfer in ascending Seq/serial order
+  * through the archive mailbox. WB_WAIT owns its bytes until the exact
+  * archive receipt; that receipt transfers storage, not coherence permission
+  * and not DRAM safety. Safety is HistoryValid && Seq <= SW at publication.
   */
 class SpeculativeVersionBuffer(val entries: Int)
     (implicit edge: TLEdgeOut, p: Parameters)
@@ -53,6 +54,13 @@ class SpeculativeVersionBuffer(val entries: Int)
   val io = IO(new Bundle {
     val capture = Flipped(Decoupled(new SpeculativeVersionSnapshot(refillCycles, encRowBits)))
     val safeWatermark = Input(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+    // P3-06/P3-09: an addressed, held recovery response, independent of WB.
+    val query = Flipped(Decoupled(UInt(coreMaxAddrBits.W)))
+    val recovered = Decoupled(new SpeculativeVersionSnapshot(refillCycles, encRowBits))
+    val recoveredFound = Output(Bool())
+    val entrySeq = Output(Vec(entries, UInt(32.W)))
+    val historyValid = Input(Vec(entries, Bool()))
+
     val currentEpoch = Input(UInt(16.W))
     val diagnosticDump = Input(Bool())
     val diagnosticCycle = Input(UInt(64.W))
@@ -109,6 +117,36 @@ class SpeculativeVersionBuffer(val entries: Int)
   val activeIdx = Reg(UInt(log2Ceil(entries).W))
   val sent = RegInit(false.B)
 
+  io.entrySeq := key.map(_.contentSeq)
+  val recoveryPending = RegInit(false.B)
+  val recoveryFound = RegInit(false.B)
+  val recoveryPayload = Reg(new SpeculativeVersionSnapshot(refillCycles, encRowBits))
+  val matches = VecInit((0 until entries).map(i => valid(i) && io.historyValid(i) &&
+    line(i) === io.query.bits))
+  val winners = VecInit((0 until entries).map(i => matches(i) &&
+    (0 until entries).filter(_ != i).map(j => !matches(j) ||
+      key(i).contentSeq > key(j).contentSeq ||
+      (key(i).contentSeq === key(j).contentSeq &&
+        (key(i).generation > key(j).generation ||
+          (key(i).generation === key(j).generation && (i < j).B))))
+      .foldLeft(true.B)(_ && _)))
+  io.query.ready := !recoveryPending && !io.flush && !io.invalidate.valid
+  io.recovered.valid := recoveryPending
+  io.recovered.bits := recoveryPayload
+  io.recoveredFound := recoveryFound
+  when (io.query.fire) {
+    val i = PriorityEncoder(winners.asUInt)
+    recoveryPending := true.B
+    recoveryFound := winners.asUInt.orR
+    recoveryPayload.line := io.query.bits
+    recoveryPayload.key := key(i)
+    recoveryPayload.epoch := epoch(i)
+    recoveryPayload.param := param(i)
+    recoveryPayload.data := data(i)
+    assert(PopCount(winners) <= 1.U, "ambiguous SVB recovery candidate")
+  }
+  when (io.recovered.fire) { recoveryPending := false.B }
+
   val freeVec = VecInit((0 until entries).map(i => !valid(i)))
   for (q <- 0 until 4) {
     val blockedByEntry = VecInit((0 until entries).map(i => valid(i) && line(i) === io.releaseLines(q)))
@@ -121,9 +159,19 @@ class SpeculativeVersionBuffer(val entries: Int)
   val freeAny = freeVec.asUInt.orR
   val allocOH = PriorityEncoderOH(freeVec.asUInt)
   io.capture.ready := freeAny && !io.flush
+  // P1-09/U-D05: same-Seq intermediate values are not checkpoint
+  // predecessors. Among safe values only the latest per address is needed
+  // by any outstanding SCP (>SW). Never coalesce the accepted WB owner.
+  val coalesce = VecInit((0 until entries).map(i => io.capture.fire &&
+    valid(i) && state(i) === stSpec && io.historyValid(i) &&
+    !(active && activeIdx === i.U) && line(i) === io.capture.bits.line &&
+    (io.capture.bits.key.contentSeq > key(i).contentSeq ||
+      (io.capture.bits.key.contentSeq === key(i).contentSeq && io.capture.bits.key.generation > key(i).generation)) &&
+    (io.capture.bits.key.contentSeq === key(i).contentSeq ||
+      (key(i).contentSeq <= io.safeWatermark && io.capture.bits.key.contentSeq <= io.safeWatermark))))
 
   val entrySafe = VecInit((0 until entries).map(i =>
-    valid(i) && state(i) === stSpec && epoch(i) === io.currentEpoch &&
+    valid(i) && state(i) === stSpec && io.historyValid(i) &&
       (!key(i).valid || key(i).contentSeq === 0.U ||
        key(i).contentSeq <= io.safeWatermark)))
 
@@ -170,15 +218,18 @@ class SpeculativeVersionBuffer(val entries: Int)
   // Compare every candidate; equal-package versions on the same line are
   // ordered by the immutable writer generation, never by reusable slot ID.
   // This also prevents selection of an entry coalesced in this same cycle.
+  // P4-03/P4-13: transfer unsafe snapshots to the addressed L2 archive too.
+  // The archive receipt transfers responsibility; it is not a DRAM-safe claim.
+  val transferable = VecInit((0 until entries).map(i => valid(i) && state(i) === stSpec && io.historyValid(i) && !coalesce(i)))
   val chooseValid = WireDefault(false.B)
   val chooseIdx = WireDefault(0.U(log2Ceil(entries).W))
   for (i <- 0 until entries) {
-    val noNewer = (0 until entries).filter(_ != i).map(j =>
-      !(entrySafe(j) && (key(j).contentSeq > key(i).contentSeq ||
+    val noOlder = (0 until entries).filter(_ != i).map(j =>
+      !(transferable(j) && (key(j).contentSeq < key(i).contentSeq ||
         (key(j).contentSeq === key(i).contentSeq &&
-          (key(j).generation > key(i).generation ||
-           (key(j).generation === key(i).generation && (j > i).B)))))).reduce(_ && _)
-    when (entrySafe(i) && noNewer) {
+          (key(j).generation < key(i).generation ||
+           (key(j).generation === key(i).generation && (j > i).B)))))).foldLeft(true.B)(_ && _)
+    when (transferable(i) && noOlder) {
       chooseValid := true.B
       chooseIdx := i.U
     }
@@ -225,7 +276,7 @@ class SpeculativeVersionBuffer(val entries: Int)
   io.activeEntry := Mux(io.selected, chooseIdx, activeIdx)
   io.activeLine := line(io.activeEntry)
   io.activeKey := key(io.activeEntry)
-  io.queued := PopCount(entrySafe) + (active && !sent).asUInt
+  io.queued := PopCount(transferable) + (active && !sent).asUInt
   io.promote.valid := active && !sent
   io.promote.bits.entry := activeIdx
   io.promote.bits.line := line(activeIdx)
@@ -239,7 +290,7 @@ class SpeculativeVersionBuffer(val entries: Int)
   io.promotion := io.promote.fire
   io.acked := io.ack.valid && active && sent &&
     io.ack.bits.entry === activeIdx && io.ack.bits.key.asUInt === key(activeIdx).asUInt
-  io.recoveryFromSvb := io.acked
+  io.recoveryFromSvb := io.recovered.fire && io.recoveredFound
   when (io.ack.valid) {
     assert(io.acked, "SVB completion does not match the outstanding entry/key")
   }
@@ -264,8 +315,7 @@ class SpeculativeVersionBuffer(val entries: Int)
   when (io.selected) {
     assert(valid(chooseIdx) && state(chooseIdx) === stSpec,
       "SVB scheduler reselected WB_WAIT or invalid entry")
-    assert(epoch(chooseIdx) === io.currentEpoch,
-      "SVB selected a stale-epoch entry")
+    assert(io.historyValid(chooseIdx), "SVB selected discarded execution history")
     active := true.B
     activeIdx := chooseIdx
     sent := false.B
@@ -277,12 +327,6 @@ class SpeculativeVersionBuffer(val entries: Int)
   // A complete newer safe image supersedes an older safe image on the same
   // line.  WB entries are deliberately excluded: until their ACK they still
   // own a valid lower-level recovery copy.
-  val coalesce = VecInit((0 until entries).map(i => entrySafe(i) &&
-    (0 until entries).map(j => entrySafe(j) && line(i) === line(j) &&
-      key(i).writer === key(j).writer &&
-      (key(i).contentSeq < key(j).contentSeq ||
-       (key(i).contentSeq === key(j).contentSeq &&
-        key(i).generation < key(j).generation))).reduce(_ || _)))
   io.coalesced := PopCount(coalesce)
   io.discarded := PopCount((0 until entries).map(i => valid(i) && state(i) === stSpec &&
     !coalesce(i) && (io.flush || (io.invalidate.valid && key(i).valid &&
@@ -309,9 +353,9 @@ class SpeculativeVersionBuffer(val entries: Int)
     active := false.B
   }
 
-  // A failed/cancelled package invalidates versions newer than the current
-  // safe watermark. Safe predecessors remain available for recovery and
-  // promotion; a WB entry is retained until its ACK in all cases.
+  // P1-03/P1-04: invalidate.bits is the last surviving sequence, NEVER SW.
+  // Surviving unsafe predecessors must remain queryable. An accepted WB
+  // retains its original owner through ACK, independently of invalidation.
   when (io.invalidate.valid) {
     for (i <- 0 until entries) {
       when (valid(i) && state(i) === stSpec &&

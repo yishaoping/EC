@@ -89,6 +89,24 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     val csr_cycle          = Output(UInt(xLen.W)) // 当前 CSR cycle/time 值，作为统计时间戳。
     val active_packet_seq  = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)) // 当前活动校验包序号。
     val traffic_package_open = Output(Bool()) // Includes owned package drain.
+    // P2-01/P4-01: explicit single-Main cache/recovery participants.
+    val cacheEarlyClose = Input(Bool())
+    val cacheEarlyCloseSeq = Input(UInt(32.W))
+    val rollbackError = Flipped(Decoupled(new PalimpsestError))
+    val rollbackHistory = Decoupled(UInt(32.W))
+    val rollbackHistoryUnavailable = Input(Bool())
+    val rollbackIdentityUnavailable = Input(Bool())
+    val rollbackEpoch = Input(UInt(32.W))
+    val rollbackSafe = Input(UInt(32.W))
+    val rollbackCacheQuiesced = Input(Bool())
+    val rollbackMemoryReady = Input(Bool())
+    val rollbackRebase = Output(Bool())
+    val sequenceReset = Input(Bool())
+    val ioEffectPending = Input(Bool())
+    val rollbackAllCheckersDrained = Output(Bool())
+    val rollbackStop = Output(Bool())
+    val rollbackTarget = Output(UInt(32.W))
+    val rollbackReset = Output(Bool())
     val packet_alloc_valid = Output(Bool()) // 本周期是否分配了新的校验包。
     val packet_alloc_seq   = Output(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)) // 新分配包的序号。
     // Candidate seal from the BOOM architectural boundary. BoomTile adds the
@@ -153,13 +171,31 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   // construct all of the modules
 
   // Only holds integer-registerfile execution units.
-  val exe_units = new boom.exu.ExecutionUnits(fpu=false)
+  // P2-02/P2-08: separate architectural restoration from ordinary ROB
+  // speculative rollback. Only pulse the local pipeline reset after cache
+  // transaction responsibility has been reconciled.
+  val recoveryStop = WireDefault(false.B)
+  val rebasePending = RegInit(false.B)
+  val recoveryReset = WireDefault(false.B)
+  val recoveryRestore = WireDefault(false.B)
+  val recoveryRestart = WireDefault(false.B)
+  val recoveryPC = WireDefault(0.U(40.W))
+  val recoveryInt = WireDefault(0.U.asTypeOf(Vec(32, UInt(xLen.W))))
+  val recoveryFP = WireDefault(0.U.asTypeOf(Vec(32, UInt(xLen.W))))
+  val recoveryCSR = WireDefault(0.U(8192.W))
+  val ioBoundaryHold = WireDefault(false.B) // P4-09: stop retirement at committed prefix
+  val ioInterruptHold = WireDefault(false.B)
+  val ioSnapshotBoundary = WireDefault(false.B)
+  val capacityBoundaryHold = WireDefault(false.B)
+  val capacitySnapshotBoundary = WireDefault(false.B)
+  val pipelineReset = reset.asBool || recoveryReset
+  val exe_units = withReset(pipelineReset) { new boom.exu.ExecutionUnits(fpu=false) }
   val jmp_unit_idx = exe_units.jmp_unit_idx
   val jmp_unit = exe_units(jmp_unit_idx)
 
   // Meanwhile, the FP pipeline holds the FP issue window, FP regfile, and FP arithmetic units.
   var fp_pipeline: FpPipeline = null
-  if (usingFPU) fp_pipeline = Module(new FpPipeline)
+  if (usingFPU) fp_pipeline = withReset(pipelineReset) { Module(new FpPipeline) }
 
   // ********************************************************
   // Clear fp_pipeline before use
@@ -180,35 +216,35 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   val numIntRenameWakeupPorts = numIntIssueWakeupPorts
   val numFpWakeupPorts        = if (usingFPU) fp_pipeline.io.wakeups.length else 0
 
-  val decode_units     = for (w <- 0 until decodeWidth) yield { val d = Module(new DecodeUnit); d }
-  val dec_brmask_logic = Module(new BranchMaskGenerationLogic(coreWidth))
-  val rename_stage     = Module(new RenameStage(coreWidth, numIntPhysRegs, numIntRenameWakeupPorts, false))
-  val fp_rename_stage  = if (usingFPU) Module(new RenameStage(coreWidth, numFpPhysRegs, numFpWakeupPorts, true)) else null
-  val pred_rename_stage = Module(new PredRenameStage(coreWidth, ftqSz, 1))
+  val decode_units     = for (w <- 0 until decodeWidth) yield { val d = withReset(pipelineReset) { Module(new DecodeUnit) }; d }
+  val dec_brmask_logic = withReset(pipelineReset) { Module(new BranchMaskGenerationLogic(coreWidth)) }
+  val rename_stage     = withReset(pipelineReset) { Module(new RenameStage(coreWidth, numIntPhysRegs, numIntRenameWakeupPorts, false)) }
+  val fp_rename_stage  = if (usingFPU) withReset(pipelineReset) { Module(new RenameStage(coreWidth, numFpPhysRegs, numFpWakeupPorts, true)) } else null
+  val pred_rename_stage = withReset(pipelineReset) { Module(new PredRenameStage(coreWidth, ftqSz, 1)) }
   val rename_stages    = if (usingFPU) Seq(rename_stage, fp_rename_stage, pred_rename_stage) else Seq(rename_stage, pred_rename_stage)
 
-  val mem_iss_unit     = Module(new IssueUnitCollapsing(memIssueParam, numIntIssueWakeupPorts))
+  val mem_iss_unit     = withReset(pipelineReset) { Module(new IssueUnitCollapsing(memIssueParam, numIntIssueWakeupPorts)) }
   mem_iss_unit.suggestName("mem_issue_unit")
-  val int_iss_unit     = Module(new IssueUnitCollapsing(intIssueParam, numIntIssueWakeupPorts))
+  val int_iss_unit     = withReset(pipelineReset) { Module(new IssueUnitCollapsing(intIssueParam, numIntIssueWakeupPorts)) }
   int_iss_unit.suggestName("int_issue_unit")
 
   val issue_units      = Seq(mem_iss_unit, int_iss_unit)
-  val dispatcher       = Module(new BasicDispatcher)
+  val dispatcher       = withReset(pipelineReset) { Module(new BasicDispatcher) }
 
   // val iregfile         = Module(new RegisterFileSynthesizable(
   //                            numIntPhysRegs,
   //                            numIrfReadPorts,
   //                            numIrfWritePorts,
   //                            xLen,
-  //                            Seq.fill(memWidth) {true} ++ exe_units.bypassable_write_port_mask)) // bypassable ll_wb
+  //                            Seq.fill(memWidth) {true} ++ exe_units.bypassable_write_port_mask))
 //===== GuardianCouncil Function: Start ====//
-  val r_syscall                                    = Wire(Bool())
   val iregfile         = Module(new RegisterFileSynthesizable(
                              numIntPhysRegs,
                              numIrfReadPorts + coreWidth, // additional ports for GH_Subsystem
                              numIrfWritePorts,
                              xLen,
-                             Seq.fill(memWidth) {true} ++ exe_units.bypassable_write_port_mask)) // bypassable ll_wb
+                             Seq.fill(memWidth) {true} ++ exe_units.bypassable_write_port_mask,
+                             architecturalRestore = true)) // bypassable ll_wb
   //===== GuardianCouncil Function: End  ====//
 
   val pregfile         = Module(new RegisterFileSynthesizable(
@@ -217,6 +253,12 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
                             1,
                             1,
                             Seq(true))) // The jmp unit is always bypassable
+  iregfile.restore.get.valid := recoveryRestore
+  iregfile.restore.get.bits := recoveryInt
+  if (usingFPU) {
+    fp_pipeline.io.architecturalRestore.valid := recoveryRestore
+    fp_pipeline.io.architecturalRestore.bits := recoveryFP
+  }
   pregfile.io := DontCare // Only use the IO if enableSFBOpt
 
   // wb arbiter for the 0th ll writeback
@@ -224,17 +266,17 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   val ll_wbarb         = Module(new Arbiter(new ExeUnitResp(xLen), 1 +
                                                                    (if (usingFPU) 1 else 0) +
                                                                    (if (usingRoCC) 1 else 0)))
-  val iregister_read   = Module(new RegisterRead(
+  val iregister_read   = withReset(pipelineReset) { Module(new RegisterRead(
                            issue_units.map(_.issueWidth).sum,
                            exe_units.withFilter(_.readsIrf).map(_.supportedFuncUnits).toSeq,
                            numIrfReadPorts,
                            exe_units.withFilter(_.readsIrf).map(x => 2).toSeq,
                            exe_units.numTotalBypassPorts,
                            jmp_unit.numBypassStages,
-                           xLen))
-  val rob              = Module(new Rob(
+                           xLen)) }
+  val rob              = withReset(pipelineReset) { Module(new Rob(
                            numIrfWritePorts + numFpWakeupPorts, // +memWidth for ll writebacks
-                           numFpWakeupPorts))
+                           numFpWakeupPorts)) }
   // Used to wakeup registers in rename and issue. ROB needs to listen to something else.
   val int_iss_wakeups  = Wire(Vec(numIntIssueWakeupPorts, Valid(new ExeUnitResp(xLen))))
   val int_ren_wakeups  = Wire(Vec(numIntRenameWakeupPorts, Valid(new ExeUnitResp(xLen))))
@@ -860,10 +902,23 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     io.ifu.redirect_flush   := true.B
   }
 
+  io.ifu.rollback_reset := recoveryReset || recoveryRestart
+  when (recoveryStop) {
+    io.ifu.redirect_flush := true.B
+    io.ifu.redirect_val := false.B
+  }
+  when (recoveryRestart) {
+    io.ifu.redirect_val := true.B
+    io.ifu.redirect_flush := true.B
+    io.ifu.redirect_pc := recoveryPC
+    io.ifu.redirect_ftq_idx := 0.U
+    io.ifu.redirect_ghist := 0.U.asTypeOf(chiselTypeOf(io.ifu.redirect_ghist))
+  }
+
   // Feed only the architectural (flush/exception) redirect back to the ROB's
   // committed next-PC tracker.  The tracker handles branch targets when the
   // corresponding uop retires.
-  rob.io.arch_redirect_valid := arch_redirect_valid
+  rob.io.arch_redirect_valid := (arch_redirect_valid && !recoveryStop) || recoveryRestart
   rob.io.arch_redirect_pc    := io.ifu.redirect_pc(39, 0)
 
   // Tell the FTQ it can deallocate entries by passing youngest ftq_idx.
@@ -884,6 +939,11 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
 
   //-------------------------------------------------------------
   //-------------------------------------------------------------
+  // P2-07/P2-08: discard translations after privileged state is restored.
+  when (recoveryRestore) {
+    io.ifu.sfence.valid := true.B
+    io.ifu.sfence.bits := 0.U.asTypeOf(chiselTypeOf(io.ifu.sfence.bits))
+  }
   // **** Branch Prediction ****
   //-------------------------------------------------------------
   //-------------------------------------------------------------
@@ -1019,7 +1079,8 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
 
   // Inputs
   for (rename <- rename_stages) {
-    rename.io.kill := io.ifu.redirect_flush
+    rename.io.architecturalRestore := recoveryRestore
+    rename.io.kill := io.ifu.redirect_flush || recoveryStop
     rename.io.brupdate := brupdate
 
     rename.io.debug_rob_empty := rob.io.empty
@@ -1135,7 +1196,6 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
 //===== GuardianCouncil Function: Start   ====//
   val rsu_stall = WireInit(0.U(1.W))
   val ic_stall = WireInit(0.U(1.W))
-  val r_exception_record = RegInit(0.U(1.W))
   // Assigned after the optional L2 barrier wiring below.
   // rob.io.gh_stall  := (io.gh_stall|rsu_stall|ic_stall|io.big_hang) & (~r_exception_record) & (io.if_correct_process) & (~csr.io.r_exception) & (~csr.io.trace(0).exception.asUInt)
   //  rob.io.gh_stall  := (io.gh_stall|rsu_stall|ic_stall) & (~r_exception_record) & (io.if_correct_process) & (~csr.io.r_exception) & (~csr.io.trace(0).exception.asUInt)
@@ -1436,13 +1496,15 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   val wb_wdata = csr_exe_unit.io.iresp.bits.data
 
   csr.io.rw.addr        := csr_exe_unit.io.iresp.bits.uop.csr_addr
-  csr.io.rw.cmd         := freechips.rocketchip.rocket.CSR.maskCmd(csr_exe_unit.io.iresp.valid, csr_rw_cmd)
+  csr.io.rw.cmd         := freechips.rocketchip.rocket.CSR.maskCmd(csr_exe_unit.io.iresp.valid && !recoveryStop, csr_rw_cmd)
   csr.io.rw.wdata       := wb_wdata
 
   // Extra I/O
   // Delay retire/exception 1 cycle
   csr.io.retire    := RegNext(PopCount(rob.io.commit.arch_valids.asUInt))
-  csr.io.exception := RegNext(rob.io.com_xcpt.valid)
+  // Stop takes priority at both ROB selection and the delayed CSR delivery.
+  // A selected trap overtaken by FAIL will be seen again if replay reaches it.
+  csr.io.exception := RegNext(rob.io.com_xcpt.valid, false.B) && !recoveryStop
   // csr.io.pc used for setting EPC during exception or CSR.io.trace.
 
   csr.io.pc        := (boom.util.AlignPCToBoundary(io.ifu.get_pc(0).com_pc, icBlockBytes)
@@ -1494,6 +1556,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
 
   csr.io.hartid := io.hartid
   csr.io.interrupts := io.interrupts
+  when (recoveryStop || ioInterruptHold) { csr.io.interrupts := 0.U.asTypeOf(chiselTypeOf(csr.io.interrupts)) }
 
   // we do not support the H-extension
   csr.io.htval := DontCare
@@ -1951,8 +2014,8 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
       // These csr signals do not exactly match up with the ROB commit signals.
       io.trace(w).priv       := RegNext(csr.io.status.prv)
       // Can determine if it is an interrupt or not based on the MSB of the cause
-      io.trace(w).exception  := RegNext(rob.io.com_xcpt.valid && !rob.io.com_xcpt.bits.cause(xLen - 1)) && (w == 0).B
-      io.trace(w).interrupt  := RegNext(rob.io.com_xcpt.valid && rob.io.com_xcpt.bits.cause(xLen - 1)) && (w == 0).B
+      io.trace(w).exception  := csr.io.exception && !csr.io.cause(xLen - 1) && (w == 0).B
+      io.trace(w).interrupt  := csr.io.exception && csr.io.cause(xLen - 1) && (w == 0).B
       io.trace(w).cause      := RegNext(rob.io.com_xcpt.bits.cause)
       io.trace(w).tval       := RegNext(csr.io.tval)
     }
@@ -1966,12 +2029,11 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
 //===== EC: Start =====//
   val if_mret_or_sret                             = Wire(Vec(coreWidth, Bool()))
   val if_ecall                                    = Wire(Vec(coreWidth, Bool()))
-  val exception_mode_test                         = RegInit(false.B)
-  when(csr.io.trace(0).exception){
-    exception_mode_test := true.B
-  }.elsewhen(if_mret_or_sret.reduce(_ || _)){
-    exception_mode_test := false.B
-  }
+  val trapTracker = Module(new PalimpsestTrapTracker)
+  trapTracker.io.trap := csr.io.trace(0).exception
+  trapTracker.io.returns := if_mret_or_sret.reduce(_ || _)
+  trapTracker.io.exception := csr.io.r_exception.asBool
+  trapTracker.io.stop := recoveryStop
 
   val crnt_priv                                   = csr.io.status.prv    
   val old_priv                                    = RegNext(csr.io.status.prv) 
@@ -1995,12 +2057,13 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   }
   
   val ic_incr                                     = arch_valids_extended.reduce(_ + _)
+  trapTracker.io.countedRetire := ic_incr =/= 0.U
 
 
   val numARFS                                     = 32
   val pcarf                                       = RegInit(0.U(40.W))
-  val arfs                                        = Reg(Vec(numARFS, UInt(xLen.W)))
-  val farfs                                       = Reg(Vec(numARFS, UInt(xLen.W)))
+  val arfs                                        = RegInit(VecInit(Seq.fill(numARFS)(0.U(xLen.W))))
+  val farfs                                       = RegInit(VecInit(Seq.fill(numARFS)(0.U(xLen.W))))
   // val csrrfs                                      = Reg(Vec(CSRshadows.allshadows.size, UInt(xLen.W)))
 
   for (w <- 0 until coreWidth) {
@@ -2040,6 +2103,142 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   /* R Features */
   val rsu_master = Module(new R_RSU(R_RSUParams(xLen, numARFS, 1)))
   val ic_master = Module(new R_IC(R_ICParams(GH_GlobalParams.GH_NUM_CORES, 16)))
+  // P4-09/P4-11/U-D08: split before a device instruction, then close its
+  // single-instruction effect segment before allowing younger retirement.
+  // The held ROB head is not part of the pre-I/O ECP. CSR/unique operations
+  // cannot dispatch across this hold (existing empty-pipeline constraint).
+  val ioBoundary = Module(new PalimpsestIoBoundary(robAddrSz, coreWidth))
+  val ioProtected = io.if_correct_process.asBool && ic_master.io.active_packet_seq =/= 0.U
+  ioBoundary.io.protectedExecution := ioProtected
+  ioBoundary.io.request := io.lsu.ioRequest
+  ioBoundary.io.head := rob.io.palimpsestHead.bits.rob_idx
+  ioBoundary.io.activeSeq := ic_master.io.active_packet_seq
+  ioBoundary.io.safe := io.rollbackSafe
+  ioBoundary.io.boundaryReady := io.lsu.ioBoundaryReady
+  ioBoundary.io.issueReady := io.lsu.ioIssueReady
+  // Younger speculative stores stay in the STQ while retirement is held.
+  // Close the effect segment after its committed stores and device traffic
+  // finish; requiring the entire STQ empty would wait on that same hold.
+  ioBoundary.io.postReady := io.lsu.ioIssueReady
+  ioBoundary.io.producerIdle := !rsu_master.io.rsu_busy.asBool && !rsu_master.io.core_hang_up.asBool
+  ioBoundary.io.packageOpen := ic_master.io.traffic_package_open
+  ioBoundary.io.stop := recoveryStop
+  ioBoundary.io.flush := rob.io.flush.valid
+  ioBoundary.io.effectPending := io.ioEffectPending
+  for (w <- 0 until coreWidth) {
+    ioBoundary.io.retired(w).valid := rob.io.commit.arch_valids(w)
+    ioBoundary.io.retired(w).bits := rob.io.commit.uops(w).rob_idx
+  }
+  ioBoundaryHold := ioBoundary.io.retirementHold
+  ioInterruptHold := ioBoundary.io.interruptHold
+  ioSnapshotBoundary := !recoveryStop && (capacitySnapshotBoundary || ioBoundary.io.snapshotBoundary)
+  io.lsu.palimpsestHead := rob.io.palimpsestHead
+  io.lsu.ioPermit := ioBoundary.io.permit && !rebasePending
+  rob.io.palimpsestSingleStep := ioBoundary.io.singleStep
+  val ioForceClose = ioBoundary.io.forceClose
+  val ioCloseSeq = ioBoundary.io.closeSeq
+  // P2-02/P2-03/P2-04: permanent Starting CP independent of Checker RAM.
+  val seqRebaseThreshold = p(freechips.rocketchip.tilelink.PalimpsestSeqRebaseThreshold)
+  val seqRebaseEnabled = seqRebaseThreshold > 0
+  require(seqRebaseThreshold < (BigInt(1) << 32) - 1)
+  val rollback = Module(new PalimpsestRollbackController(seqRebaseEnabled))
+  val contexts = Module(new PalimpsestContextMemory(xLen, 40, 8192))
+  rollback.io.error <> io.rollbackError
+  contexts.io.read <> rollback.io.checkpoint
+  contexts.io.safeWatermark := io.rollbackSafe
+  contexts.io.discard.valid := rollback.io.restart.fire
+  contexts.io.discard.bits := rollback.io.target
+  contexts.io.response.ready := rollback.io.restart.fire
+  contexts.io.abort := rollback.io.abandonCheckpoint
+  rollback.io.checkpointReady := contexts.io.response.valid
+  rollback.io.checkpointMissing := contexts.io.missing
+  // Reuse the snapshot guard's registered busy indication for recovery drain.
+  // R_IC forbids new snapshots while stopped, so it covers all previously
+  // accepted RSU capture/merge work without feeding a new snapshot offer back
+  // through restart and SCP release. Cache/LSU owners still veto restart live.
+  val snapshot_rsu_prev = RegNext(rsu_master.io.rsu_busy.asBool, true.B)
+  rollback.io.quiesced := io.rollbackCacheQuiesced && ic_master.io.recoveryDrained &&
+    !snapshot_rsu_prev
+  io.rollbackHistory <> rollback.io.commitHistory
+  rollback.io.historyUnavailable := io.rollbackHistoryUnavailable
+  rollback.io.identityUnavailable := io.rollbackIdentityUnavailable || ic_master.io.identityUnavailable
+  dontTouch(rollback.io.fatal)
+  recoveryStop := rollback.io.stop
+  if (seqRebaseEnabled) {
+    // A retained I/O effect may still need architectural replay to acquire
+    // its new Seq. Freezing that checkpoint would block the very instruction
+    // that can retire the journal. Retry at the next reserved checkpoint.
+    val reservedCheckpoint = ic_master.io.packet_alloc_valid &&
+      ic_master.io.packet_alloc_seq >= seqRebaseThreshold.U && !io.ioEffectPending
+    when (reservedCheckpoint) { rebasePending := true.B }
+    when (recoveryStop) { rebasePending := false.B }
+    val request = rollback.io.rebase.get
+    request.valid := rebasePending && ic_master.io.producerSettled && !io.ioEffectPending
+    request.bits := ic_master.io.active_packet_seq
+    when (request.fire) {
+      printf("PALIMPSEST_SEQ_REBASE_TARGET seq=%x\n", request.bits)
+    }
+  }
+  io.rollbackRebase := rollback.io.rebasing.getOrElse(false.B)
+  ic_master.io.sequenceReset := io.sequenceReset
+  rob.io.palimpsestRecoveryStop := recoveryStop || rebasePending
+  io.rollbackStop := recoveryStop
+  io.rollbackTarget := rollback.io.target
+  val restoreWasRequested = RegNext(rollback.io.restore, false.B)
+  recoveryReset := rollback.io.restore && !restoreWasRequested
+  io.rollbackReset := recoveryReset
+  recoveryRestore := rollback.io.restore && restoreWasRequested
+  // P2-10/D03: no global latency assumption. Each state owner acknowledges
+  // its own writes; the SCP stays pinned while the PRFs stream their import.
+  rollback.io.restored := recoveryRestore && iregfile.restoreDone.get &&
+    (if (usingFPU) fp_pipeline.io.architecturalRestoreDone else true.B) &&
+    rename_stages.map(_.io.architecturalRestoreDone).reduce(_ && _) &&
+    csr.io.palimpsestRestored && rob.io.empty
+  rollback.io.restart.ready := io.rollbackMemoryReady
+  recoveryRestart := rollback.io.restart.fire
+  recoveryPC := contexts.io.response.bits.pc
+  recoveryInt := contexts.io.response.bits.integer
+  recoveryFP := contexts.io.response.bits.floating
+  recoveryCSR := contexts.io.response.bits.csr
+  contexts.io.capture.valid := ic_master.io.packet_alloc_valid
+  contexts.io.capture.bits.seq := ic_master.io.packet_alloc_seq
+  contexts.io.capture.bits.epoch := io.rollbackEpoch
+  contexts.io.capture.bits.pc := rob.io.r_next_pc
+  contexts.io.capture.bits.integer := arfs
+  contexts.io.capture.bits.integer(0) := 0.U
+  contexts.io.capture.bits.floating := farfs
+  contexts.io.capture.bits.csr := csr.io.palimpsestSnapshot
+  contexts.io.capture.bits.trap := trapTracker.io.snapshot
+  trapTracker.io.restore.valid := recoveryRestore
+  trapTracker.io.restore.bits := contexts.io.response.bits.trap
+  when (contexts.io.capture.valid) {
+    assert(contexts.io.capture.ready, "persistent SCP capacity exceeded")
+    assert(rob.io.empty || ioSnapshotBoundary, "SCP captured outside a held architectural boundary")
+    printf("PALIMPSEST_SCP_CAPTURE seq=%x epoch=%x pc=%x\n",
+      contexts.io.capture.bits.seq, contexts.io.capture.bits.epoch, contexts.io.capture.bits.pc)
+  }
+  when (recoveryRestore) {
+    arfs := recoveryInt
+    arfs(0) := 0.U
+    farfs := recoveryFP
+  }
+  when (recoveryRestore && !RegNext(recoveryRestore, false.B)) {
+    printf("PALIMPSEST_ARCH_RESTORE seq=%x epoch=%x pc=%x\n",
+      contexts.io.response.bits.seq, io.rollbackEpoch, recoveryPC)
+  }
+  when (recoveryRestart) {
+    printf("PALIMPSEST_RESTART target=%x epoch=%x pc=%x reconciled=%x\n",
+      rollback.io.target, io.rollbackEpoch, recoveryPC, rollback.io.quiesced)
+  }
+  when (rollback.io.fatal && !RegNext(rollback.io.fatal, false.B)) {
+    printf("PALIMPSEST_FATAL target=%x state=%x history_unavailable=%x identity_unavailable=%x\n",
+      rollback.io.target, rollback.io.state, io.rollbackHistoryUnavailable, rollback.io.identityUnavailable)
+  }
+  ic_master.io.recoveryStop := recoveryStop
+  ic_master.io.recoveryRestart := recoveryRestart
+  io.rollbackAllCheckersDrained := ic_master.io.allPackagesDrained
+  ic_master.io.recoveryTarget := rollback.io.target
+
   // L2 requests a package close before the functional barrier can stall the
   // cache path. The request is a level and is consumed by the existing R_IC
   // close/finish machinery; no request is generated when the feature is off.
@@ -2102,17 +2301,45 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
       0.U, barrierServiceBank + 1.U)
     barrierServiceSeq := 0.U
   }
-  val barrierForceClose = p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B &&
-    barrierServiceActive && l2BarrierReq(barrierServiceBank)
+  val capacityClosing = RegInit(false.B)
+  val capacitySeq = Reg(UInt(32.W))
+  val barrierCloseSeq = Mux(ioForceClose, ioCloseSeq, Mux(capacityClosing, capacitySeq,
+    Mux(io.cacheEarlyClose, io.cacheEarlyCloseSeq, barrierServiceSeq)))
+  val barrierForceClose = ioForceClose || capacityClosing || io.cacheEarlyClose || (p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B &&
+    barrierServiceActive && l2BarrierReq(barrierServiceBank))
   val barrierCloseForActivePackage = barrierForceClose &&
-    barrierServiceSeq =/= 0.U &&
-    ic_master.io.active_packet_seq === barrierServiceSeq
+    barrierCloseSeq =/= 0.U &&
+    // active_packet_seq is retained after the producer/session closes. A late
+    // request for that old identity must use R_IC's already-closed ACK path,
+    // not hold retirement waiting for a successor package outside the session.
+    ic_master.io.traffic_package_open &&
+    ic_master.io.active_packet_seq === barrierCloseSeq
+  // P4-11/P4-12: a resource close seals the committed prefix, without
+  // waiting for an uncommitted memory instruction that needs the full
+  // history to make progress. Its speculative PRF result is outside the CP.
+  // Unique/CSR operations retain the normal empty-ROB boundary.
+  val capacityHead = rob.io.palimpsestHead.valid &&
+    (rob.io.palimpsestHead.bits.uses_ldq || rob.io.palimpsestHead.bits.uses_stq) &&
+    !rob.io.palimpsestHead.bits.is_unique
+  val capacityStart = !capacityClosing && barrierCloseForActivePackage && !ioForceClose &&
+    !io.lsu.ioRequest &&
+    ioBoundary.io.idle && capacityHead && !recoveryStop
+  capacityBoundaryHold := capacityStart || capacityClosing
+  capacitySnapshotBoundary := capacityBoundaryHold && capacityHead
+  when (capacityStart) { capacityClosing := true.B; capacitySeq := ic_master.io.active_packet_seq }
+  // The held nonempty ROB remains the captured committed boundary until
+  // BoomTile has sealed it. RSU idle can precede the CDC becoming ready.
+  when (capacityClosing && ic_master.io.active_packet_seq > capacitySeq &&
+    io.producer_seal_ready &&
+    !rsu_master.io.rsu_busy.asBool && !rsu_master.io.core_hang_up.asBool) { capacityClosing := false.B }
+  when (recoveryStop) { capacityClosing := false.B }
 
   // R_IC holds the old identity through its protected capture/merge phase.
   val producerSealTargetValid = ic_master.io.closing_valid
   val producerSealTargetSeq = ic_master.io.closing_seq
   ic_master.io.close_tail_ready := io.producer_seal_ready
-  rob.io.gh_stall := io.gh_stall || rsu_stall.asBool || ic_stall.asBool || io.big_hang
+  rob.io.gh_stall := io.gh_stall || rsu_stall.asBool || ic_stall.asBool || io.big_hang ||
+    recoveryStop || rebasePending || ioBoundaryHold || capacityBoundaryHold
   // SLOWDOWN_TRACE_BEGIN: observation-only; no functional consumers.
   val slowdown_gate_gh = chisel3.WireInit(io.gh_stall)
   chisel3.dontTouch(slowdown_gate_gh)
@@ -2144,7 +2371,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   val release_wait4 = freechips.rocketchip.util.WideCounter(32)
 
   ic_master.io.barrier_force_close := barrierForceClose
-  ic_master.io.barrier_force_close_seq := barrierServiceSeq
+  ic_master.io.barrier_force_close_seq := barrierCloseSeq
   for (bank <- 0 until p(BankedL2Key).nBanks) {
     val bankAck = p(GH_GlobalParams.GH_REAL_BARRIER_ENABLED).B &&
       barrierServiceActive && barrierServiceBank === bank.U &&
@@ -2187,21 +2414,15 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   assert(!release_wait3(checkerHangWatchdogBit), "little core 3 release protocol timeout")
   assert(!release_wait4(checkerHangWatchdogBit), "little core 4 release protocol timeout")
 
-  val r_exception_record_2                         = RegInit(0.U(1.W))
-  r_exception_record_2                            := Mux(csr.io.r_exception.asBool, 1.U, Mux(ic_incr =/= 0.U && r_exception_record_2.asBool, 0.U, r_exception_record_2))
-  r_exception_record                              := Mux(csr.io.r_exception.asBool, 1.U, Mux(ic_incr =/= 0.U && r_exception_record.asBool && !r_exception_record_2.asBool, 0.U, r_exception_record))
-  r_syscall                                       := Mux((ic_incr =/= 0.U) && (r_exception_record.asBool || csr.io.r_exception.asBool), true.B, false.B)
-  
   ic_master.io.ic_run_isax                        := io.icctrl(0)
   ic_master.io.ic_exit_isax                       := io.icctrl(1)
-  ic_master.io.ic_syscall                         := io.icctrl(2) | RegNext(r_syscall)
+  ic_master.io.ic_syscall                         := io.icctrl(2) | RegNext(trapTracker.io.syscall, false.B)
   ic_master.io.ic_syscall_back                    := (io.icctrl(3) | if_mret_or_sret.reduce(_||_)) && (csr.io.r_exception === 0.U)
   // Do not accept a checker snapshot until the ROB is empty and the previous
   // cycle is quiet.  The guards are registered because the live commit/RSU
   // outputs feed gh_stall/core_hang_up and must not be read back into the
   // same combinational path that drives if_dosnap.
   val snapshot_commit_prev = RegNext(rob.io.commit.valids.asUInt.orR, true.B)
-  val snapshot_rsu_prev    = RegNext(rsu_master.io.rsu_busy.asBool, true.B)
   val snapshot_csr_prev    = RegNext(csr.io.csr_stall, true.B)
   val snapshot_excp_prev   = RegNext(csr.io.trace(0).exception, true.B)
   // Use the registered architectural redirect indication here.  Reading the
@@ -2211,7 +2432,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
                              !io.ifu.redirect_val &&
                              (csr.io.r_exception === 0.U)
   val snapshot_quiet =
-    rob.io.empty &&
+    (rob.io.empty || ioSnapshotBoundary) &&
     rob.io.r_next_pc_valid &&
     snapshot_no_redirect &&
     !snapshot_commit_prev &&
@@ -2224,8 +2445,8 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   // packet_alloc_valid, but its sequential packet sequence register misses
   // the pulse.  Arm readiness for a full cycle before allowing acceptance.
   val snapshot_quiet_armed = RegNext(snapshot_quiet, false.B)
-  ic_master.io.if_ready_snap_shot                 := (snapshot_quiet_armed && snapshot_no_redirect).asUInt
-  ic_master.io.rob_empty                           := rob.io.empty
+  ic_master.io.if_ready_snap_shot                 := (snapshot_quiet_armed && snapshot_no_redirect && contexts.io.capture.ready && !recoveryStop).asUInt
+  ic_master.io.rob_empty                           := rob.io.empty || ioSnapshotBoundary
   ic_master.io.rsu_busy                           := rsu_master.io.rsu_busy
   // Reserve all still-dispatched ROB entries plus the threshold observation
   // cycle. Drain commits remain part of the old package's instruction limit.
@@ -2239,7 +2460,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   ic_master.io.priv_lower                         := priv_lower
   ic_master.io.mode_switch                        := mode_switch_forverilator
   ic_master.io.mode_ret                           := RegNext(if_mret_or_sret.reduce(_ || _))
-  ic_master.io.excp_mode                          := exception_mode_test
+  ic_master.io.excp_mode                          := trapTracker.io.snapshot.inHandler
   ic_stall                                        := ic_master.io.if_pipeline_stall
 
   // Keep new uops out of the ROB while it drains and through R_RSU's delayed
@@ -2252,14 +2473,15 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   snapshot_dispatch_block :=
     ((ic_master.io.snapshot_drain.asBool || barrierCloseForActivePackage) &&
       io.if_correct_process.asBool && rob.io.r_next_pc_valid) ||
-    rsu_master.io.core_hang_up.asBool
+    rsu_master.io.core_hang_up.asBool || recoveryStop || rebasePending ||
+    ioBoundary.io.dispatchHold || capacityBoundaryHold
 
   // BOOM has reached the architectural package boundary only after the ROB,
   // delayed commit observation, and RSU merge path are all quiet.  BoomTile
   // adds the GH_BUF drain condition before exporting this as a sticky seal.
   val producerSealCoreReady = producerSealTargetValid &&
     producerSealTargetSeq =/= 0.U &&
-    rob.io.empty &&
+    (rob.io.empty || ioSnapshotBoundary) &&
     !rob.io.commit.valids.asUInt.orR &&
     !snapshot_commit_prev &&
     !rsu_master.io.rsu_busy.asBool &&
@@ -2271,7 +2493,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   // A snapshot is an architectural boundary, so accepting it with a live
   // ROB or a simultaneous architectural retirement is a protocol violation.
   when (ic_master.io.snapshot_capture) {
-    assert(rob.io.empty, "checker snapshot accepted while BOOM ROB is not empty")
+    assert(rob.io.empty || ioSnapshotBoundary, "checker snapshot accepted outside a held committed boundary")
     assert(rob.io.r_next_pc_valid,
       "checker snapshot accepted without a committed architectural next PC")
     assert(!rob.io.commit.valids.asUInt.orR,
@@ -2339,13 +2561,15 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     rsu_master.io.arfs_in(i)                      := arfs(i)
     rsu_master.io.farfs_in(i)                     := farfs(i)
   }
-  rsu_master.io.excp_mode                         := exception_mode_test
+  rsu_master.io.excp_mode                         := trapTracker.io.snapshot.inHandler
   rsu_master.io.priv                              := csr.io.status.prv
   rsu_master.io.snapshot_priv                     := ic_master.io.if_dosnap_priv
   rsu_master.io.merge_priv                        := RegNext(ic_master.io.if_dosnap_priv.asBool)
   rsu_master.io.pcarf_in                          := rob.io.r_next_pc
   rsu_master.io.fcsr_in                           := csr.io.fcsr_read
   rsu_master.io.snapshot                          := ic_master.io.if_dosnap
+  csr.io.palimpsestRestore.valid := recoveryRestore
+  csr.io.palimpsestRestore.bits := recoveryCSR
   csr.io.pfarf_valid                              := 0.U
   csr.io.fcsr_in                                  := 0.U
   csr.io.arfs_is_CPS                              := false.B

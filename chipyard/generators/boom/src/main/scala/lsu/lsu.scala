@@ -207,6 +207,11 @@ class LSUCoreIO(implicit p: Parameters) extends BoomBundle()(p)
 
   val commit      = Input(new CommitSignals)
   val commit_load_at_rob_head = Input(Bool())
+  val palimpsestHead = Input(Valid(new MicroOp))
+  val ioRequest = Output(Bool()) // P4-09: unexecuted device operation at ROB head
+  val ioBoundaryReady = Output(Bool())
+  val ioIssueReady = Output(Bool())
+  val ioPermit = Input(Bool())
 
   // Stores clear busy bit when stdata is received
   // memWidth for int, 1 for fp (to avoid back-pressure fpstdat)
@@ -253,6 +258,12 @@ class LSUIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
   val ptw   = new rocket.TLBPTWIO
   val core  = new LSUCoreIO
   val dmem  = new LSUDMemIO
+  // P2-08/P4-01: keep accepted completion owners live until cache drain.
+  val rollbackStop = Input(Bool())
+  val rollbackTarget = Input(UInt(32.W))
+  val rollbackReset = Input(Bool())
+  val rollbackDrained = Output(Bool())
+  val rollbackIdentityUnavailable = Output(Bool())
 
   val hellacache = Flipped(new freechips.rocketchip.rocket.HellaCacheIO)
 }
@@ -324,6 +335,11 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   with rocket.HasL1HellaCacheParameters
 {
   val io = IO(new LSUIO)
+  val rollbackStop = io.rollbackStop
+  val rollbackTarget = io.rollbackTarget
+  val rollbackReset = io.rollbackReset
+  val rollbackDrained = io.rollbackDrained
+  val rollbackIdentityUnavailable = io.rollbackIdentityUnavailable
 
 
   val ldq = Reg(Vec(numLdqEntries, Valid(new LDQEntry)))
@@ -386,9 +402,15 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   val strictLoadCacheResponse = RegInit(0.U(64.W))
   val strictLoadForward = RegInit(0.U(64.W))
   val strictStorePending = RegInit(0.U(64.W))
+  // P4-03: a discarded store is a distinct terminal outcome, not an effect.
+  // Physical completion counters retain their meaning across rollback.
+  val cancelledStoreCache = RegInit(0.U(64.W))
+  val cancelledStoreUncache = RegInit(0.U(64.W))
+  val cancelledStrictStores = WireInit(VecInit(Seq.fill(numStqEntries)(false.B)))
   // Monotonic across traffic windows so an old replay cannot alias a new
   // store after traffic_reset.  The token is allocated at ROB commit.
-  val strictStoreTokenCounter = RegInit(1.U(64.W))
+  val strictStoreTokens = Module(new PalimpsestIdentityAllocator(64, coreWidth))
+  val strictStoreTokenCounter = strictStoreTokens.io.next
   val trafficCounterAssertFail = RegInit(0.U(64.W))
   val trafficSessionSeen = RegInit(false.B)
   val trafficFinalChecked = RegInit(false.B)
@@ -415,10 +437,13 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   strictPending := strictStorePending
   val trafficFinalCheck = trafficSessionSeen &&
     !trafficFinalChecked && !io.dmem.traffic_reset &&
-    !io.dmem.traffic_counting && strictPending === 0.U
-  val trafficFinalMismatch = strictStoreTotal =/= archStoreTotal ||
-    strictStoreCache =/= archStoreCache ||
-    strictStoreUncache =/= archStoreUncache ||
+    !io.dmem.traffic_counting && strictPending === 0.U && !rollbackStop
+  val accountedStoreCache = strictStoreCache + cancelledStoreCache
+  val accountedStoreUncache = strictStoreUncache + cancelledStoreUncache
+  val accountedStoreTotal = strictStoreTotal + cancelledStoreCache + cancelledStoreUncache
+  val trafficFinalMismatch = accountedStoreTotal =/= archStoreTotal ||
+    accountedStoreCache =/= archStoreCache ||
+    accountedStoreUncache =/= archStoreUncache ||
     strictLoadTotal =/= archLoadTotal ||
     strictLoadCache =/= archLoadCache ||
     strictLoadUncache =/= archLoadUncache ||
@@ -426,10 +451,10 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   // 统计窗口关闭且所有 store 尾部完成时，硬件直接检查架构与
   // 严格口径。checker 的跨 hart 比较留给软件，避免引入跨时钟域路径。
   when (trafficFinalCheck) {
-    assert(strictStoreTotal === archStoreTotal,
+    assert(accountedStoreTotal === archStoreTotal,
       "[traffic] BOOM store dismatch")
-    assert(strictStoreCache === archStoreCache &&
-      strictStoreUncache === archStoreUncache,
+    assert(accountedStoreCache === archStoreCache &&
+      accountedStoreUncache === archStoreUncache,
       "[traffic] BOOM store cache/uncache dismatch")
     assert(strictLoadTotal === archLoadTotal,
       "[traffic] BOOM load dismatch")
@@ -488,7 +513,13 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   // Decode stage
   var ld_enq_idx = ldq_tail
   var st_enq_idx = stq_tail
-  val functionalTokenCounter = RegInit(1.U(64.W))
+  // Keep the historical high-bit assertion as a second line of defense;
+  // admission now stops *before* a full dispatch+Hella group can reach it.
+  val functionalTokens = Module(new PalimpsestIdentityAllocator(64, coreWidth + 1,
+    (BigInt(1) << 63) - 1))
+  val functionalTokenCounter = functionalTokens.io.next
+  val tokensAvailable = functionalTokens.io.available && strictStoreTokens.io.available
+  rollbackIdentityUnavailable := !tokensAvailable
   val hellaFunctionalToken = Reg(UInt(64.W))
   var nextFunctionalToken = functionalTokenCounter
 
@@ -500,15 +531,18 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   for (w <- 0 until coreWidth)
   {
     ldq_full = WrapInc(ld_enq_idx, numLdqEntries) === ldq_head
-    io.core.ldq_full(w)    := ldq_full
+    io.core.ldq_full(w)    := ldq_full || !tokensAvailable
     io.core.dis_ldq_idx(w) := ld_enq_idx
 
     stq_full = WrapInc(st_enq_idx, numStqEntries) === stq_head
-    io.core.stq_full(w)    := stq_full
+    io.core.stq_full(w)    := stq_full || !tokensAvailable
     io.core.dis_stq_idx(w) := st_enq_idx
 
     val dis_ld_val = io.core.dis_uops(w).valid && io.core.dis_uops(w).bits.uses_ldq && !io.core.dis_uops(w).bits.exception
     val dis_st_val = io.core.dis_uops(w).valid && io.core.dis_uops(w).bits.uses_stq && !io.core.dis_uops(w).bits.exception
+    when (dis_ld_val || dis_st_val) {
+      assert(tokensAvailable, "LSQ dispatch ignored identity backpressure")
+    }
     when (dis_ld_val)
     {
       ldq(ld_enq_idx).valid                := true.B
@@ -572,13 +606,36 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     nextFunctionalToken = nextFunctionalToken + (dis_ld_val || dis_st_val).asUInt
   }
 
-  functionalTokenCounter := nextFunctionalToken + io.hellacache.req.fire.asUInt
+  functionalTokens.io.consume := PopCount(io.core.dis_uops.map(u =>
+    u.valid && (u.bits.uses_ldq || u.bits.uses_stq) && !u.bits.exception)) +& io.hellacache.req.fire.asUInt
   assert(!functionalTokenCounter(63), "functional request token exhausted")
   when (io.hellacache.req.fire) { hellaFunctionalToken := nextFunctionalToken }
 
   ldq_tail := ld_enq_idx
   stq_tail := st_enq_idx
 
+  rollbackDrained := !stq.map(e => e.valid && (e.bits.functional_inflight ||
+    (e.bits.committed && !e.bits.functional_done && e.bits.packet_seq < rollbackTarget))).reduce(_ || _) &&
+    io.dmem.ordered && hella_state === h_ready
+  // P4-09/U-D08: only the committed prefix belongs in the pre-I/O ECP.
+  // Younger speculative PRF values never enter the committed ARF shadow.
+  val ioHeadLoad = ldq(ldq_head)
+  val ioHeadStore = stq(stq_commit_head)
+  val ioLoad = io.core.palimpsestHead.valid && ioHeadLoad.valid &&
+    io.core.palimpsestHead.bits.rob_idx === ioHeadLoad.bits.uop.rob_idx &&
+    ioHeadLoad.bits.addr.valid && !ioHeadLoad.bits.addr_is_virtual &&
+    ioHeadLoad.bits.addr_is_uncacheable && !ioHeadLoad.bits.succeeded
+  val ioStore = io.core.palimpsestHead.valid && ioHeadStore.valid &&
+    io.core.palimpsestHead.bits.rob_idx === ioHeadStore.bits.uop.rob_idx &&
+    ioHeadStore.bits.addr.valid && !ioHeadStore.bits.addr_is_virtual &&
+    !ioHeadStore.bits.traffic_cacheable && ioHeadStore.bits.data.valid &&
+    !ioHeadStore.bits.committed
+  io.core.ioRequest := ioLoad || ioStore
+  io.core.ioBoundaryReady := ioLoad || ioStore
+  // Prefix stores may still need validation to release history capacity.
+  // They are included in the ECP, but must finish before the device effect.
+  io.core.ioIssueReady := stq_head === stq_commit_head &&
+    io.dmem.ordered && hella_state === h_ready
   io.dmem.force_order   := io.core.fence_dmem
   io.core.fencei_rdy    := !stq_nonempty && io.dmem.ordered
 
@@ -623,6 +680,11 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       exe_req := VecInit(Seq.fill(memWidth) { io.core.exe(i).req })
     }
   }
+  // Execution results can arrive on the edge that a held Error stops Main.
+  // These speculative requests have no accepted memory owner yet. Discard
+  // their Valid offers uniformly; committed-prefix stores and HellaCache
+  // responses drain through their independent paths before backend reset.
+  when (rollbackStop) { exe_req.foreach(_.valid := false.B) }
 
   // -------------------------------
   // Assorted signals for scheduling
@@ -673,7 +735,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   // Determine what can fire
 
   // Can we fire a incoming load
-  val can_fire_load_incoming = widthMap(w => exe_req(w).valid && exe_req(w).bits.uop.ctrl.is_load)
+  val can_fire_load_incoming = widthMap(w => !rollbackStop && exe_req(w).valid && exe_req(w).bits.uop.ctrl.is_load)
 
   // Can we fire an incoming store addrgen + store datagen
   val can_fire_stad_incoming = widthMap(w => exe_req(w).valid && exe_req(w).bits.uop.ctrl.is_sta
@@ -696,7 +758,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   io.dmem.release.ready     := will_fire_release.reduce(_||_)
 
   // Can we retry a load that missed in the TLB
-  val can_fire_load_retry    = widthMap(w =>
+  val can_fire_load_retry    = widthMap(w => !rollbackStop &&
                                ( ldq_retry_e.valid                            &&
                                  ldq_retry_e.bits.addr.valid                  &&
                                  ldq_retry_e.bits.addr_is_virtual             &&
@@ -730,6 +792,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
                                 !stq_commit_e.bits.uop.is_fence               &&
                                 !mem_xcpt_valid                               &&
                                 !stq_commit_e.bits.uop.exception              &&
+                                (stq_commit_e.bits.traffic_cacheable || stq_commit_e.bits.committed || io.core.ioPermit) &&
                                 (w == 0).B                                    &&
                                 (stq_commit_e.bits.committed || ( stq_commit_e.bits.uop.is_amo      &&
                                                                   stq_commit_e.bits.addr.valid      &&
@@ -738,7 +801,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
 
   // Can we wakeup a load that was nack'd
   val block_load_wakeup = WireInit(false.B)
-  val can_fire_load_wakeup = widthMap(w =>
+  val can_fire_load_wakeup = widthMap(w => !rollbackStop &&
                              ( ldq_wakeup_e.valid                                      &&
                                ldq_wakeup_e.bits.addr.valid                            &&
                               !ldq_wakeup_e.bits.succeeded                             &&
@@ -750,7 +813,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
                               !store_needs_order                                       &&
                               !block_load_wakeup                                       &&
                               (w == memWidth-1).B                                      &&
-                              (!ldq_wakeup_e.bits.addr_is_uncacheable || (io.core.commit_load_at_rob_head &&
+                              (!ldq_wakeup_e.bits.addr_is_uncacheable || (io.core.ioPermit && io.core.commit_load_at_rob_head &&
                                                                           ldq_head === ldq_wakeup_idx &&
                                                                           ldq_wakeup_e.bits.st_dep_mask.asUInt === 0.U))))
 
@@ -896,6 +959,10 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   }
   dtlb.io.kill                      := exe_kill.reduce(_||_)
   dtlb.io.sfence                    := exe_sfence
+  when (rollbackReset) {
+    dtlb.io.sfence.valid := true.B
+    dtlb.io.sfence.bits := 0.U.asTypeOf(chiselTypeOf(dtlb.io.sfence.bits))
+  }
 
   // exceptions
   val ma_ld = widthMap(w => will_fire_load_incoming(w) && exe_req(w).bits.mxcpt.valid) // We get ma_ld in memaddrcalc
@@ -1073,7 +1140,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       s0_executing_loads(ldq_retry_idx) := dmem_req_fire(w)
       assert(!ldq_retry_e.bits.executed)
     } .elsewhen (will_fire_store_commit(w)) {
-      dmem_req(w).valid         := true.B
+      dmem_req(w).valid         := !rollbackStop || stq_commit_e.bits.packet_seq < rollbackTarget
       dmem_req(w).bits.addr     := stq_commit_e.bits.addr.bits
       dmem_req(w).bits.data     := (new freechips.rocketchip.rocket.StoreGen(
                                     stq_commit_e.bits.uop.mem_size, 0.U,
@@ -1084,7 +1151,13 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       dmem_req(w).bits.traffic_check := stq_commit_e.bits.traffic_check
       dmem_req(w).bits.traffic_arch_check := stq_commit_e.bits.traffic_arch_check
       dmem_req(w).bits.traffic_cacheable := stq_commit_e.bits.traffic_cacheable
-      dmem_req(w).bits.packet_seq := stq_commit_e.bits.packet_seq
+      // An uncached AMO executes before ROB commit. Its pre-I/O boundary may
+      // have opened a new effect package since address generation; attach
+      // that live package at authorization, as committed stores do at retire.
+      val uncachedAmo = !stq_commit_e.bits.traffic_cacheable &&
+        stq_commit_e.bits.uop.is_amo && !stq_commit_e.bits.committed
+      dmem_req(w).bits.packet_seq := Mux(uncachedAmo,
+        io.core.active_packet_seq, stq_commit_e.bits.packet_seq)
       dmem_req(w).bits.strict_store_token_valid :=
         stq_commit_e.bits.strict_store_token_valid
       dmem_req(w).bits.strict_store_token := stq_commit_e.bits.strict_store_token
@@ -1098,6 +1171,9 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       stq(stq_execute_head).bits.succeeded := false.B
       when (dmem_req_fire(w)) {
         stq(stq_execute_head).bits.functional_inflight := true.B
+        when (uncachedAmo) {
+          stq(stq_execute_head).bits.packet_seq := io.core.active_packet_seq
+        }
       }
     } .elsewhen (will_fire_load_wakeup(w)) {
       dmem_req(w).valid      := true.B
@@ -1242,8 +1318,12 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     r.write_domain_valid := rocket.isWrite(r.uop.mem_cmd)
     r.write_domain_seq := r.packet_seq
     when (r.uop.uses_ldq) {
-      r.packet_seq := Mux(ldq(r.uop.ldq_idx).bits.traffic_scope_valid,
-        ldq(r.uop.ldq_idx).bits.packet_seq, io.core.active_packet_seq)
+      r.packet_seq := Mux(!r.traffic_cacheable && !r.is_hella,
+        io.core.active_packet_seq, Mux(ldq(r.uop.ldq_idx).bits.traffic_scope_valid,
+        ldq(r.uop.ldq_idx).bits.packet_seq, io.core.active_packet_seq))
+      when (dmem_req_fire(w) && !r.traffic_cacheable && !r.is_hella) {
+        ldq(r.uop.ldq_idx).bits.packet_seq := io.core.active_packet_seq
+      }
     }
     when (dmem_req_fire(w)) {
       printf("STAGE1_TX ISSUE source=LSU cmd=%x stq=%x ldq=%x req=%x effect=%x seq=%x addr=%x cycle=%x\n",
@@ -2042,6 +2122,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     {
       assert(stq(idx).valid, "[lsu] trying to commit an un-allocated store entry.")
       stq(idx).bits.committed := true.B
+      // The pre-I/O boundary may have changed Seq since address generation.
+      stq(idx).bits.packet_seq := io.core.active_packet_seq
       // 只有架构有效的普通 store 才允许在后续 DCache 完成点进入严格计数。
       stq(idx).bits.traffic_arch_check := arch_store_in_scope
       when (arch_store_in_scope) {
@@ -2097,7 +2179,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   }
   stq_commit_head := temp_stq_commit_head
   ldq_head        := temp_ldq_head
-  strictStoreTokenCounter := temp_strict_store_token
+  strictStoreTokens.io.consume := PopCount(archStoreEvents)
 
   // 架构计数在提交点结算，严格 store 在实际完成点结算。严格 load 的
   // 路径已在响应或 forwarding 阶段锁存，并在同一架构提交事件中结算。
@@ -2119,7 +2201,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       stq(uncacheCompletionIdx).bits.strict_store_token ===
         io.dmem.traffic_store_uncache_complete_token
   val completedStrictStores =
-    cacheCompletionAccepted.asUInt + uncacheCompletionAccepted.asUInt
+    cacheCompletionAccepted.asUInt +& uncacheCompletionAccepted.asUInt
   when (cacheCompletionAccepted) {
     printf("STAGE1_TX BOOM_STAT kind=STORE class=STRICT_COMPLETE source=BOOM token=%x strict_token=%x addr=%x pc=%x cacheable=1\n",
       stq(cacheCompletionIdx).bits.functional_token,
@@ -2139,8 +2221,10 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       IsOlder(io.dmem.nack(w).bits.uop.stq_idx, stq_execute_head, stq_head)
   }.reduce(_ || _)
   val strictStorePendingBase = strictStorePending + committedStrictStores
+  val cancelledStrictCount = PopCount(cancelledStrictStores)
+  val terminalStrictCount = completedStrictStores +& cancelledStrictCount
   val strictStorePendingUnderflow =
-    completedStrictStores > strictStorePendingBase
+    terminalStrictCount > strictStorePendingBase
   assert(!strictStorePendingUnderflow,
     "[traffic] strict store completion events exceed committed in-flight count")
 
@@ -2160,6 +2244,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     strictLoadCacheResponse := 0.U
     strictLoadForward := 0.U
     strictStorePending := 0.U
+    cancelledStoreCache := 0.U
+    cancelledStoreUncache := 0.U
     for (i <- 0 until numStqEntries) {
       stq(i).bits.strict_store_token_valid := false.B
       stq(i).bits.strict_store_token := 0.U
@@ -2174,10 +2260,16 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     when (trafficFinalCheck) {
       trafficFinalChecked := true.B
     }
-    when (committedStrictStores =/= 0.U || completedStrictStores =/= 0.U) {
+    when (committedStrictStores =/= 0.U || terminalStrictCount =/= 0.U) {
       // 发生异常完成时饱和到零，避免无符号减法下溢导致 STOP 永久等待。
       strictStorePending := Mux(strictStorePendingUnderflow, 0.U,
-        strictStorePendingBase - completedStrictStores)
+        strictStorePendingBase - terminalStrictCount)
+    }
+    when (cancelledStrictCount =/= 0.U) {
+      cancelledStoreCache := cancelledStoreCache + PopCount((0 until numStqEntries).map(i =>
+        cancelledStrictStores(i) && stq(i).bits.traffic_cacheable))
+      cancelledStoreUncache := cancelledStoreUncache + PopCount((0 until numStqEntries).map(i =>
+        cancelledStrictStores(i) && !stq(i).bits.traffic_cacheable))
     }
     when (archStoreEvents.reduce(_|_)) {
       archStoreTotal := archStoreTotal + PopCount(archStoreEvents)
@@ -2257,6 +2349,23 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       stq_head, stq_execute_head, stq_commit_head)
   }
 
+  // P4-03: cancel only suffix stores that have not entered DCache. Accepted
+  // owners remain until STORE_DONE; reset is permitted only after that drain.
+  when (rollbackStop) {
+    for (i <- 0 until numStqEntries) {
+      when (stq(i).valid && !stq(i).bits.functional_inflight && !stq(i).bits.functional_done &&
+        (!stq(i).bits.committed || stq(i).bits.packet_seq >= rollbackTarget)) {
+        cancelledStrictStores(i) := stq(i).bits.strict_store_token_valid
+        stq(i).bits.strict_store_token_valid := false.B
+        stq(i).bits.functional_done := true.B
+        stq(i).bits.committed := true.B
+      }
+    }
+    when (stq(stq_execute_head).valid && stq(stq_execute_head).bits.functional_done &&
+      !stq(stq_execute_head).bits.functional_inflight) {
+      stq_execute_head := WrapInc(stq_execute_head, numStqEntries)
+    }
+  }
   // store has been committed AND successfully sent data to memory
   io.dmem.store_done.ready := true.B
   val functionalDoneReq = io.dmem.store_done.bits.req
@@ -2271,14 +2380,21 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       functionalDoneReq.uop.mem_cmd, functionalDoneReq.uop.mem_size, functionalDoneReq.uop.stq_idx,
       functionalDoneReq.request_token, functionalDoneReq.effect_token,
       io.dmem.store_done.bits.status, io.dmem.store_done.bits.data, io.dmem.csr_cycle)
-    assert(functionalDoneMatches, "store completion does not match live functional STQ owner")
+    // A branch-killed, uncommitted AMO may already have lost its LSQ slot.
+    // Only a no-effect CANCEL is allowed to outlive that slot.
+    assert(functionalDoneMatches || io.dmem.store_done.bits.status === CacheTerminal.cancel,
+      "store completion does not match live functional STQ owner")
     assert(io.dmem.store_done.bits.status =/= CacheTerminal.retry,
       "RETRY is not a store terminal completion")
     when (functionalDoneMatches) {
       assert(!stq(functionalDoneIdx).bits.functional_done, "duplicate functional completion")
       stq(functionalDoneIdx).bits.functional_done := true.B
       stq(functionalDoneIdx).bits.functional_inflight := false.B
-      stq(functionalDoneIdx).bits.succeeded := true.B
+      stq(functionalDoneIdx).bits.succeeded := io.dmem.store_done.bits.status =/= CacheTerminal.cancel
+      when (io.dmem.store_done.bits.status === CacheTerminal.cancel) {
+        cancelledStrictStores(functionalDoneIdx) := stq(functionalDoneIdx).bits.strict_store_token_valid
+        stq(functionalDoneIdx).bits.strict_store_token_valid := false.B
+      }
       // A delayed continuation may finish after a nack rewound this pointer.
       // Completion advances it using functional identity, independently of
       // whether the request was counted in a strict measurement window.
@@ -2340,7 +2456,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   io.hellacache.s2_xcpt   := (0.U).asTypeOf(new rocket.HellaCacheExceptions)
   io.hellacache.resp.valid := false.B
   when (hella_state === h_ready) {
-    io.hellacache.req.ready := true.B
+    // Drain previously accepted PTW requests; stop admitting fresh owners.
+    io.hellacache.req.ready := !rollbackStop && tokensAvailable
     when (io.hellacache.req.fire) {
       hella_req   := io.hellacache.req.bits
       hella_traffic_seen := false.B
@@ -2409,12 +2526,12 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   // for the live_store_mask, need to kill stores that haven't been committed
   val st_exc_killed_mask = WireInit(VecInit((0 until numStqEntries).map(x=>false.B)))
 
-  when (reset.asBool || io.core.exception)
+  when (reset.asBool || rollbackReset || io.core.exception)
   {
     ldq_head := 0.U
     ldq_tail := 0.U
 
-    when (reset.asBool)
+    when (reset.asBool || rollbackReset)
     {
       stq_head := 0.U
       stq_tail := 0.U
@@ -2428,6 +2545,9 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         stq(i).bits.vaddr.valid:= false.B
         stq(i).bits.data.valid := false.B
         stq(i).bits.uop        := NullMicroOp
+        stq(i).bits.functional_inflight := false.B
+        stq(i).bits.functional_done := false.B
+        stq(i).bits.committed := false.B
         stq(i).bits.traffic_seen := false.B
         stq(i).bits.traffic_scope_valid := false.B
         stq(i).bits.traffic_check := false.B
@@ -2485,9 +2605,18 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
   // (could maybe be re-produced from the stq_head/stq_tail, but need to know include spec_killed entries)
 
   // TODO is this the most efficient way to compute the live store mask?
-  live_store_mask := next_live_store_mask &
+  live_store_mask := Mux(rollbackReset, 0.U, next_live_store_mask &
                     ~(st_brkilled_mask.asUInt) &
-                    ~(st_exc_killed_mask.asUInt)
+                    ~(st_exc_killed_mask.asUInt))
+  when (rollbackReset) {
+    assert(rollbackDrained, "LSQ rollback reset before accepted owners drained")
+    assert(strictStorePending === 0.U, "rollback lost strict store completion/cancellation")
+    clr_bsy_valid.foreach(_ := false.B)
+    stdf_clr_bsy_valid := false.B
+    r_xcpt_valid := false.B
+  }
+  dontTouch(cancelledStoreCache)
+  dontTouch(cancelledStoreUncache)
 
   //===== GuardianCouncil Function: Start ====//
   //===== EC watchdog diagnostics: observation only ====//

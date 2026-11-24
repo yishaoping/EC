@@ -14,12 +14,15 @@ import sifive.blocks.inclusivecache._
   * Monitors are disabled to inject stale/duplicate/early completion echoes.
   */
 object EmitModule extends App {
-  implicit val p: Parameters = (new chipyard.v1Config).alterPartial { case MonitorsEnabled => false }
+  implicit val p: Parameters = (new chipyard.v1Config).alterPartial {
+    case MonitorsEnabled => false
+    case PalimpsestSeqRebaseThreshold => BigInt(0)
+  }
   val block = TransferSizes(64, 64)
   val range = Seq(AddressSet(BigInt("80000000", 16), BigInt("0fffffff", 16)))
   val cp = CacheParameters(2, 2, 2, 64, 16, false)
   val mp = InclusiveCacheMicroParameters(8, memCycles = 8,
-    innerBuf = InclusiveCachePortParameters.none)
+    innerBuf = InclusiveCachePortParameters.fullC)
   class Harness extends LazyModule {
     // The hand-built inner edge has no negotiated path. Mark only the BOOM-like
     // coherent origin, using the same endpoint contract as production BOOM.
@@ -53,12 +56,25 @@ object EmitModule extends App {
           requestKeys = Seq(CacheImage), responseFields = Seq(CacheImageField())), p, UnlocatableSourceInfo)
       val params = InclusiveCacheParameters(cp, mp, true, inner, client.out.head._2)
       val s = Module(new Scheduler(params, trace = true))
+      s.io.historyResult.ready := true.B
       client.out.head._1 <> s.io.out
       // Match InclusiveCache.Impl's bank-address restoration exactly.
       client.out.head._1.a.bits.address := params.restoreAddress(s.io.out.a.bits.address)
       client.out.head._1.c.bits.address := params.restoreAddress(s.io.out.c.bits.address)
       val io = IO(new Bundle {
         val safe = Input(UInt(32.W))
+        val maintenance = Input(Bool()); val maintenanceAck = Output(Bool())
+        val historyValid = Input(Bool()); val historyReady = Output(Bool())
+        val historyInstallOnly = Input(Bool())
+        val historyDeadLower = Input(UInt(32.W)); val historyDeadUpper = Input(UInt(32.W))
+        val historyAddress = Input(UInt(40.W))
+        val historyResult = Output(Bool()); val historyFound = Output(Bool())
+        val historySeq = Output(UInt(32.W))
+        // Rollback baseline test: use the same archive ingress as the real
+        // SVB mailbox; all publication/receipt/data-array work stays in RTL.
+        val archiveValid = Input(Bool()); val archiveReady = Output(Bool())
+        val archiveAddress = Input(UInt(40.W)); val archiveSeq = Input(UInt(32.W))
+        val archiveSerial = Input(UInt(32.W)); val archiveData = Input(UInt(64.W))
         val av = Input(Bool()); val ar = Output(Bool()); val aa = Input(UInt(40.W))
         val ao = Input(UInt(3.W)); val ap = Input(UInt(3.W)); val al = Input(UInt(64.W)); val ah = Input(UInt(64.W))
         val asrc = Input(UInt(8.W)); val csrc = Input(UInt(8.W))
@@ -82,12 +98,36 @@ object EmitModule extends App {
         val ack = Output(Bool())
         val blocked = Output(Bool()); val blockedSeq = Output(UInt(32.W)); val active = Output(Bool())
         val bankWrite = Output(Bool()); val metaWrite = Output(Bool())
+        val baselineCommit = Output(Bool())
+        val historyPressure = Output(Bool()); val historyEscapeAvailable = Output(Bool())
         val drain = Output(new Stage3DrainStatus(params))
         val flushStatus = Output(new MSHRFlushStatus(params))
         val clientWaiting = Output(UInt(8.W))
         val clientValidationBlock = Output(Bool()); val clientValidationSeq = Output(UInt(32.W))
       })
-      s.io.safeWatermark := io.safe; s.io.barrier_allow := true.B
+      val historyQuery = WireDefault(0.U.asTypeOf(new PalimpsestHistoryQuery))
+      historyQuery.address := io.historyAddress
+      historyQuery.installOnly := io.historyInstallOnly
+      historyQuery.occupied(0) := io.historyDeadLower =/= 0.U
+      historyQuery.lower(0) := io.historyDeadLower
+      historyQuery.upper(0) := io.historyDeadUpper
+      s.io.historyQuery.valid := io.historyValid
+      s.io.historyQuery.bits := historyQuery
+      io.historyReady := s.io.historyQuery.ready
+      io.historyResult := s.io.historyResult.valid
+      io.historyFound := s.io.historyResult.bits.found
+      io.historySeq := s.io.historyResult.bits.line.key.contentSeq
+      s.io.historyArchive.valid := io.archiveValid
+      s.io.maintenance := io.maintenance
+      io.maintenanceAck := s.io.maintenanceAck
+      s.io.historyArchive.bits.address := io.archiveAddress
+      s.io.historyArchive.bits.key := 0.U.asTypeOf(new CacheImageKey)
+      s.io.historyArchive.bits.key.valid := true.B
+      s.io.historyArchive.bits.key.contentSeq := io.archiveSeq
+      s.io.historyArchive.bits.key.generation := io.archiveSerial
+      s.io.historyArchive.bits.data := Fill(8, io.archiveData)
+      io.archiveReady := s.io.historyArchive.ready
+      s.io.safeWatermark := io.safe
       s.io.bank := 0.U
       s.io.ways := 0.U.asTypeOf(chiselTypeOf(s.io.ways)); s.io.divs := 0.U.asTypeOf(chiselTypeOf(s.io.divs))
       val t = s.io.in
@@ -122,6 +162,9 @@ object EmitModule extends App {
       io.counts := s.io.preservationCounters; io.txn := s.io.preservationTxn; io.ack := s.io.preservationAck
       io.blocked := s.io.validationBlock; io.blockedSeq := s.io.validationSeq
       io.active := s.io.active; io.bankWrite := s.io.bankWrite; io.metaWrite := s.io.metaWrite
+      io.baselineCommit := s.io.baselineCommit
+      io.historyPressure := s.io.historyPressure
+      io.historyEscapeAvailable := s.io.historyEscapeAvailable
       io.drain := s.io.drain
       io.flushStatus := s.io.flushStatus
       io.clientWaiting := s.io.clientWaiting

@@ -161,6 +161,9 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
 
   val core = Module(new BoomCore()(outer.p))
   val lsu  = Module(new LSU()(outer.p, outer.dcache.module.edge))
+  lsu.rollbackStop := core.io.rollbackStop
+  lsu.rollbackTarget := core.io.rollbackTarget
+  lsu.rollbackReset := core.io.rollbackReset
 
   val ght_bridge = Module(new GH_Bridge(GH_BridgeParams(1)))
   val ghe_bridge = Module(new GH_Bridge(GH_BridgeParams(3)))
@@ -670,6 +673,24 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
   outer.dcache.module.io.traffic_start := debug_perf_sel(GH_GlobalParams.GH_PERF_CTRL_START_BIT)
   outer.dcache.module.io.traffic_stop := debug_perf_sel(GH_GlobalParams.GH_PERF_CTRL_STOP_BIT)
   outer.dcache.module.io.csr_cycle := core.io.csr_cycle
+  core.io.cacheEarlyClose := outer.dcache.module.io.cacheEarlyClose
+  core.io.cacheEarlyCloseSeq := outer.dcache.module.io.cacheEarlyCloseSeq
+  core.io.rollbackError <> outer.dcache.module.io.rollbackError
+  outer.dcache.module.io.rollbackHistory <> core.io.rollbackHistory
+  core.io.rollbackHistoryUnavailable := outer.dcache.module.io.rollbackHistoryUnavailable
+  core.io.rollbackIdentityUnavailable := outer.dcache.module.io.rollbackIdentityUnavailable ||
+    lsu.rollbackIdentityUnavailable
+  outer.dcache.module.io.rollbackStop := core.io.rollbackStop
+  outer.dcache.module.io.rollbackTarget := core.io.rollbackTarget
+  outer.dcache.module.io.rollbackReset := core.io.rollbackReset
+  core.io.rollbackEpoch := outer.dcache.module.io.rollbackEpoch
+  core.io.rollbackSafe := outer.dcache.module.io.rollbackSafe
+  core.io.rollbackCacheQuiesced := outer.dcache.module.io.rollbackQuiesced && lsu.rollbackDrained
+  core.io.rollbackMemoryReady := outer.dcache.module.io.rollbackMemoryReady
+  outer.dcache.module.io.rollbackRebase := core.io.rollbackRebase
+  core.io.sequenceReset := outer.dcache.module.io.sequenceReset
+  core.io.ioEffectPending := outer.dcache.module.io.ioEffectPending
+  outer.dcache.module.io.allCheckersDrained := core.io.rollbackAllCheckersDrained
   outer.dcache.module.io.packet_alloc_valid := core.io.packet_alloc_valid
   outer.dcache.module.io.packet_alloc_seq := core.io.packet_alloc_seq
   outer.dcache.module.io.packet_seq_baseline := core.io.active_packet_seq

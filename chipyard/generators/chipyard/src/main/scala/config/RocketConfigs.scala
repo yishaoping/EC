@@ -7,6 +7,10 @@ import org.chipsalliance.cde.config._
 
 //===== EC Config: Start =====//
 class v1Config extends Config(
+  new Config((site, here, up) => {
+    case freechips.rocketchip.tilelink.PalimpsestCheckerEscapeWay => true
+    case freechips.rocketchip.tilelink.PalimpsestSeqRebaseThreshold => (BigInt(1) << 32) - 257
+  }) ++
   new chipyard.config.WithTileFrequency(200, Some(0)) ++
   new chipyard.config.WithTileFrequency(100, Some(1)) ++
   new chipyard.config.WithTileFrequency(100, Some(2)) ++

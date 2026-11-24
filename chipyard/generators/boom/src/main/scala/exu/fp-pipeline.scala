@@ -36,6 +36,8 @@ class FpPipeline(implicit p: Parameters) extends BoomModule with tile.HasFPUPara
   val io = IO(new Bundle {
     val brupdate         = Input(new BrUpdateInfo())
     val flush_pipeline   = Input(Bool())
+    val architecturalRestore = Input(Valid(Vec(32, UInt(fLen.W))))
+    val architecturalRestoreDone = Output(Bool()) // P2-10: actual PRF import completion
     val fcsr_rm          = Input(UInt(width=freechips.rocketchip.tile.FPConstants.RM_SZ.W))
     val status           = Input(new freechips.rocketchip.rocket.MStatus())
 
@@ -71,8 +73,14 @@ class FpPipeline(implicit p: Parameters) extends BoomModule with tile.HasFPUPara
                          exe_units.numFrfWritePorts + memWidth,
                          fLen+1,
                          // No bypassing for any FP units, + memWidth for ll_wb
-                         Seq.fill(exe_units.numFrfWritePorts + memWidth){ false }
+                         Seq.fill(exe_units.numFrfWritePorts + memWidth){ false },
+                         architecturalRestore = true
                          ))
+  fregfile.restore.get.valid := io.architecturalRestore.valid
+  io.architecturalRestoreDone := fregfile.restoreDone.get
+  for (i <- 0 until 32) {
+    fregfile.restore.get.bits(i) := recode(io.architecturalRestore.bits(i), true.B)
+  }
   val fregister_read = Module(new RegisterRead(
                          issue_unit.issueWidth,
                          exe_units.withFilter(_.readsFrf).map(_.supportedFuncUnits).toSeq,

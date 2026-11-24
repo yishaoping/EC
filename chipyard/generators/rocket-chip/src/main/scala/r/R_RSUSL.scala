@@ -6,9 +6,17 @@ import chisel3.experimental.{BaseModule}
 import freechips.rocketchip.guardiancouncil._
 import freechips.rocketchip.rocket.RegFileshadow
 
+// P5-11: opt-in, one-shot real comparator injection. Normal configs use 0.
+case object PalimpsestFaultSeq extends org.chipsalliance.cde.config.Field[BigInt](BigInt(0))
+// Test configurations may select further independent comparator failures.
+// Empty in production; no injection registers or comparators are elaborated.
+case object PalimpsestAdditionalFaultSeqs extends org.chipsalliance.cde.config.Field[Seq[BigInt]](Seq.empty)
+
 case class R_RSUSLParams(
   xLen: Int,
-  numARFS: Int
+  numARFS: Int,
+  faultSeq: BigInt = BigInt(0),
+  additionalFaultSeqs: Seq[BigInt] = Seq.empty
 )
 
 class R_RSUSLIO(params: R_RSUSLParams) extends Bundle {
@@ -310,7 +318,9 @@ class R_RSUSL(val params: R_RSUSLParams) extends Module with HasR_RSUSLIO {
   val apply_counter                               = RegInit(20.U(8.W))
   val apply_counter_memdelay                      = RegInit(0.U(8.W))
   val do_check                                    = RegInit(0.U(1.W))
-  val checking_counter                            = RegInit(1.U(8.W))
+  // P1-01: x0 is constant, f0 is architectural state. Iterate both banks
+  // from zero; the ECP x0 slot is normalized on receipt above.
+  val checking_counter                            = RegInit(0.U(8.W))
   val checking_counter_memdelay                   = RegInit(0.U(8.W))
   val compare_reads_issued                        = RegInit(false.B)
   val compare_read_valid                          = RegInit(false.B)
@@ -322,6 +332,13 @@ class R_RSUSL(val params: R_RSUSLParams) extends Module with HasR_RSUSLIO {
   val compare_done_epoch_reg                      = RegInit(0.U(8.W))
   val compare_done_error_reg                      = RegInit(false.B)
   val checker_arfs_snapshot = RegInit(VecInit(Seq.fill(params.numARFS)(0.U(params.xLen.W))))
+  private val faultSeqs = (Seq(params.faultSeq) ++ params.additionalFaultSeqs).filter(_ != 0)
+  require(faultSeqs.distinct.size == faultSeqs.size &&
+    faultSeqs.forall(s => s > 0 && s < (BigInt(1) << GH_GlobalParams.GH_PACKET_SEQ_BITS)))
+  val injectedOnce = faultSeqs.map(_ => RegInit(false.B))
+  val injectF0 = injectedOnce.zip(faultSeqs).map { case (used, seq) =>
+    !used && io.package_seq === seq.U
+  }.reduceOption(_ || _).getOrElse(false.B)
   val checker_farfs_snapshot = RegInit(VecInit(Seq.fill(params.numARFS)(0.U(params.xLen.W))))
 
 
@@ -442,7 +459,7 @@ class R_RSUSL(val params: R_RSUSLParams) extends Module with HasR_RSUSLIO {
 
   when (io.package_clear || io.package_start) {
     do_check := 0.U
-    checking_counter := 1.U
+    checking_counter := 0.U
     checking_counter_memdelay := 0.U
     compare_reads_issued := false.B
     compare_read_valid := false.B
@@ -455,7 +472,7 @@ class R_RSUSL(val params: R_RSUSLParams) extends Module with HasR_RSUSLIO {
     compare_done_error_reg := false.B
   }.elsewhen (io.compare_abort || ecp_frame_start) {
     do_check := 0.U
-    checking_counter := 1.U
+    checking_counter := 0.U
     checking_counter_memdelay := 0.U
     compare_reads_issued := false.B
     compare_read_valid := false.B
@@ -473,7 +490,7 @@ class R_RSUSL(val params: R_RSUSLParams) extends Module with HasR_RSUSLIO {
     }
     when (io.compare_start && !do_check.asBool && !compare_done_valid_reg) {
       do_check := 1.U
-      checking_counter := 1.U
+      checking_counter := 0.U
       checking_counter_memdelay := 0.U
       compare_reads_issued := false.B
       compare_read_valid := false.B
@@ -481,8 +498,11 @@ class R_RSUSL(val params: R_RSUSLParams) extends Module with HasR_RSUSLIO {
       compare_seq_reg := io.package_seq
       compare_epoch_reg := ecp_frame_epoch
       for (i <- 0 until params.numARFS) {
-        checker_arfs_snapshot(i) := io.core_arfs_in(i)
-        checker_farfs_snapshot(i) := io.core_farfs_in(i)
+        checker_arfs_snapshot(i) := (if (i == 0) 0.U else io.core_arfs_in(i))
+        checker_farfs_snapshot(i) := (if (i == 0) Mux(injectF0, io.core_farfs_in(i) ^ 1.U, io.core_farfs_in(i)) else io.core_farfs_in(i))
+      }
+      for ((used, seq) <- injectedOnce.zip(faultSeqs)) {
+        when (io.package_seq === seq.U) { used := true.B }
       }
     }.elsewhen (do_check.asBool) {
       when (compare_issue) {

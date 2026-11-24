@@ -1,0 +1,45 @@
+# GHM维护请求与同步链物理映射
+
+证据边界：本批control_chain_components生成的生产GHM；U250 OOC综合exit0，
+5ns仅约束寄存器内部，未布线，接口未加input/output delay。完整Core
+四配置使用原固定来源，此处实验没有改变其生产输入。长期综合约束只设置已有同步器
+属性，源端4位寄存器仍是独立候选；不需要在整个通用同步器中引入新的数据逻辑。
+
+直接工具症状：4个CDC-10从Main的组合forwardDrained到Checker的8级request
+同步链；4个CDC-13从Checker localCleared到映射成SRL的Main ACK同步链。
+另218个缺ASYNC_REG与1742个AsyncQueue数据CE结构警告。完整路径见
+AI/TMP/singlecore_function_closure_20261123/ghm_ooc_synthesis/cdc_details.rpt。
+
+源码确认：GHM把seqTransportRequest && forwardDrained直接送跨域同步器。
+forwardDrained含队列Gray指针比较与owner组合条件；源域必须先寄存，避免
+瞬态组合等值成为清标签许可。通用SynchronizerPrimitiveShiftReg没有属性，
+Vivado实际把部分8级ACK链改为SRL。该结构不提供分立触发器的亚稳态收敛保证。
+这属于已确认物理实现缺口；未声称RTL数字仿真已经发生亚稳态或错误释放。
+
+最小方案：复用原四Checker请求路径各增加一个Main源端寄存器，保留原8级
+同步与ACK四相协议；给既有同步器primitive寄存器加ASYNC_REG及SHREG_EXTRACT
+属性。没有新队列或独立维护FSM。全同步器属性只描述物理实现意图。
+
+生成物可行性实验cdc_mapping_experiment/数字高位/四相/FINISH通过，Vivado
+Critical与缺属性警告消失；映射LUT98742→98773，寄存器336628→337298。
+后者还包含保留原同步级而不合并/映射SRL的成本。1742个FIFO数据CE警告
+未豁免。生产修复尚待cdc_scala_candidate/实际Scala生成、两条Verilog生成
+路径保留属性及生产回归；实验不计VERIFIED。
+
+后续候选Scala已实际独立编译，legacy Chisel/FIRRTL生成与实际生产ExtraLow/
+barstools/firtool生成的数字SeqTransport均exit0。普通firrtl.AttributeAnnotation
+保留在JSON却被现用firtool忽略，实际SV无属性；此事实不以legacy生成物替代。
+长期synthesis/synchronizers.xdc在真实firtool生成物上、synth_design前读入，
+U250 Harness OOC综合exit0，报告全部8条request/ACK链均CDC-3 depth8，无
+Critical/缺属性警告，144项同步器Info及275项AsyncQueue数据CE警告。夹具裁剪
+使它与旧GHM单独top的资源/警告数量不同，不能当作全GHM数据路径已完成。
+生产Main源端registeredRequest尚未应用，以保留C/E四配置固定来源；完整Core
+物理CDC仍须总线偏斜/数据保持约束及实现后检查。candidate_progress.json记录
+工具入口失败及最终匹配生产流程结果，未静默覆盖任何失败。
+
+生产合入Main源端registeredRequest后实际SBT重新生成SeqTransport/Hierarchy
+全部PASS、driver0且来源前后同；未修改通用SynchronizerReg。使用同原报告
+未裁剪GHM top与长期综合前XDC的生产独立综合exit0，4个组合前置和4个
+ACK SRL Critical全部消失，226同步器CDC-3 Info，原1742数据CE警告保留。
+LUT98895/FF336652，5ns仅内部综合WNS+1.448ns，未布局布线/接口约束；
+不能宣称完整Core物理CDC或时序完成。完整组合Seq16实际运行在途。

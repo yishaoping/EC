@@ -103,6 +103,7 @@ class R_RSU(val params: R_RSUParams) extends Module with HasR_RSUIO {
 
   
   when (doSnapshot === 1.U) {
+      crt_mode                                   := 0.U
       for (i <- 0 until params.numARFS) {
         arfs_ss(i)                               := io.arfs_in(i)
         farfs_ss(i)                              := io.farfs_in(i)

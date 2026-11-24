@@ -96,6 +96,9 @@ class RobIo(
   // tell the LSU that the head of the ROB is a load
   // (some loads can only execute once they are at the head of the ROB).
   val com_load_is_at_rob_head = Output(Bool())
+  val palimpsestHead = Output(Valid(new MicroOp)) // P4-09: actual first valid lane
+  val palimpsestSingleStep = Input(Bool())
+  val palimpsestRecoveryStop = Input(Bool())
 
   // Communicate exceptions to the CSRFile
   val com_xcpt = Valid(new CommitExceptionSignals())
@@ -705,25 +708,31 @@ class Rob(
   var will_throw_exception = false.B
   var block_xcpt   = false.B
 
+  io.palimpsestHead.valid := rob_head_vals.asUInt.orR
+  io.palimpsestHead.bits := PriorityMux(rob_head_vals, io.commit.uops)
   for (w <- 0 until coreWidth) {
-    will_throw_exception = (can_throw_exception(w) && !block_commit && !block_xcpt) || will_throw_exception
+    will_throw_exception = (can_throw_exception(w) && !block_commit && !block_xcpt &&
+      !io.palimpsestRecoveryStop) || will_throw_exception
 
     will_commit(w)       := can_commit(w) && !can_throw_exception(w) && !block_commit
     block_commit         = (rob_head_vals(w) &&
-                           (!can_commit(w) || can_throw_exception(w))) || block_commit
+                           (!can_commit(w) || can_throw_exception(w))) || block_commit ||
+                           (io.palimpsestSingleStep && will_commit(w))
 
     //===== GuardianCouncil Function: Start ====//                       
     will_commit_noGC(w)  := can_commit_noGC(w) && !can_throw_exception(w) && !block_commit_noGC
     block_commit_noGC    = (rob_head_vals(w) &&
                            (!can_commit_noGC(w) || can_throw_exception(w))) || block_commit_noGC
     //===== GuardianCouncil Function: End ====//
-    block_xcpt           = will_commit(w)
+    block_xcpt           = block_xcpt || will_commit(w)
   }
   // Note: exception must be in the commit bundle.
   // Note: exception must be the first valid instruction in the commit bundle.
   exception_thrown := will_throw_exception
   val is_mini_exception = io.com_xcpt.bits.cause === MINI_EXCEPTION_MEM_ORDERING
   io.com_xcpt.valid := exception_thrown && !is_mini_exception
+  assert(!io.palimpsestRecoveryStop || !exception_thrown,
+    "stopped ROB delivered an exception from the invalidated suffix")
   io.com_xcpt.bits.cause := r_xcpt_uop.exc_cause
 
   io.com_xcpt.bits.badvaddr := Sext(r_xcpt_badvaddr, xLen)

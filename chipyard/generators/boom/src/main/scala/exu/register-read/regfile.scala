@@ -76,12 +76,15 @@ abstract class RegisterFile(
   numReadPorts: Int,
   numWritePorts: Int,
   registerWidth: Int,
-  bypassableArray: Seq[Boolean]) // which write ports can be bypassed to the read ports?
+  bypassableArray: Seq[Boolean], // which write ports can be bypassed to the read ports?
+  architecturalRestore: Boolean = false)
   (implicit p: Parameters) extends BoomModule
 {
   val io = IO(new BoomBundle {
     val read_ports = Vec(numReadPorts, new RegisterFileReadPortIO(maxPregSz, registerWidth))
     val write_ports = Flipped(Vec(numWritePorts, Valid(new RegisterFileWritePort(maxPregSz, registerWidth))))
+    val restore = if (architecturalRestore) Some(Input(Valid(Vec(32, UInt(registerWidth.W))))) else None
+    val restoreDone = if (architecturalRestore) Some(Output(Bool())) else None
   })
 
   private val rf_cost = (numReadPorts + numWritePorts) * (numReadPorts + 2*numWritePorts)
@@ -108,13 +111,37 @@ class RegisterFileSynthesizable(
    numReadPorts: Int,
    numWritePorts: Int,
    registerWidth: Int,
-   bypassableArray: Seq[Boolean])
+   bypassableArray: Seq[Boolean],
+   architecturalRestore: Boolean = false)
    (implicit p: Parameters)
-   extends RegisterFile(numRegisters, numReadPorts, numWritePorts, registerWidth, bypassableArray)
+   extends RegisterFile(numRegisters, numReadPorts, numWritePorts, registerWidth, bypassableArray, architecturalRestore)
 {
   // --------------------------------------------------------------
 
   val regfile = Mem(numRegisters, UInt(registerWidth.W))
+  // P2-06/P2-10 (D03): reuse write port 0 while stopped. The pinned SCP
+  // holds the payload until done; no 32-port restore RAM is inferred.
+  val restore = io.restore
+  val restoreDone = io.restoreDone
+  val restoreWrite = WireDefault(false.B)
+  val restoreAddress = WireDefault(0.U(maxPregSz.W))
+  val restoreData = WireDefault(0.U(registerWidth.W))
+  restore.foreach { r =>
+    require(numRegisters > 32)
+    val index = RegInit(0.U(6.W))
+    val done = RegInit(false.B)
+    restoreDone.get := done
+    restoreWrite := r.valid && !done
+    restoreAddress := index
+    restoreData := Mux(index === 0.U, 0.U, r.bits((index - 1.U)(4, 0)))
+    when (!r.valid) { index := 0.U; done := false.B }
+    when (restoreWrite) {
+      assert(!io.write_ports.map(_.valid).reduce(_ || _), "PRF restore overlaps writeback")
+      when (index === 32.U) { done := true.B }
+        .otherwise { index := index + 1.U }
+    }
+  }
+
 
   // --------------------------------------------------------------
   // Read ports.
@@ -158,9 +185,16 @@ class RegisterFileSynthesizable(
   // --------------------------------------------------------------
   // Write ports.
 
-  for (wport <- io.write_ports) {
-    when (wport.valid) {
-      regfile(wport.bits.addr) := wport.bits.data
+  for ((wport, i) <- io.write_ports.zipWithIndex) {
+    val restoring = restore.map(_.valid).getOrElse(false.B)
+    val normal = wport.valid && !restoring
+    if (i == 0) {
+      when (restoreWrite || normal) {
+        regfile(Mux(restoreWrite, restoreAddress, wport.bits.addr)) :=
+          Mux(restoreWrite, restoreData, wport.bits.data)
+      }
+    } else {
+      when (normal) { regfile(wport.bits.addr) := wport.bits.data }
     }
   }
 

@@ -275,6 +275,10 @@ class CSRDecodeIO(implicit p: Parameters) extends CoreBundle {
 
 class CSRFileIO(implicit p: Parameters) extends CoreBundle
     with HasCoreParameters {
+  // P2-07: raw privileged checkpoint, used only while the Main is stopped.
+  val palimpsestSnapshot = Output(UInt(8192.W))
+  val palimpsestRestore = Input(Valid(UInt(8192.W)))
+  val palimpsestRestored = Output(Bool()) // P2-07/P2-10: owner confirms imported state
   val ungated_clock = Input(Clock())
   val interrupts = Input(new CoreInterrupts())
   val hartid = Input(UInt(hartIdLen.W))
@@ -841,7 +845,7 @@ class CSRFile(
     (if (usingHypervisor) "H" else "") +
     (if (usingUser) "U" else "")
   val isaMax = (BigInt(log2Ceil(xLen) - 4) << (xLen-2)) | isaStringToMask(isaString)
-  val reg_misa = RegInit(isaMax.U)
+  val reg_misa = RegInit(isaMax.U(xLen.W))
   val read_mstatus  = Mux(io.checker_priv_mode, reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mstatus), io.status.asUInt.extract(xLen-1,0))
   val read_mie      = Mux(io.checker_priv_mode, reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mie), reg_mie)
   val read_mtvec    = Mux(io.checker_priv_mode, formTVec(reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mtvec)).padTo(xLen), formTVec(reg_mtvec).padTo(xLen))
@@ -1638,8 +1642,12 @@ class CSRFile(
     }
     when (decoded_addr(CSRs.mscratch) && !io.checker_priv_mode) {
       reg_mscratch := wdata 
-    }.elsewhen(decoded_addr(CSRs.mscratch) && io.checker_priv_mode){
-      reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mscratch) := wdata
+    }
+    // Normal replay keeps its physical CSR behavior and mirrors scratch
+    // writes into the existing architectural comparison context.
+    when (decoded_addr(CSRs.mscratch) && (io.checker_mode || io.checker_priv_mode)){
+      reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mscratch) := readModifyWriteCSR(io.rw.cmd,
+        reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mscratch), io.rw.wdata)
     }
     if (mtvecWritable)
       when (decoded_addr(CSRs.mtvec) && !io.checker_priv_mode)  {
@@ -1769,8 +1777,12 @@ class CSRFile(
 
       when (decoded_addr(CSRs.sscratch) && !io.checker_priv_mode) { 
         reg_sscratch := wdata 
-      }.elsewhen(decoded_addr(CSRs.sscratch) && io.checker_priv_mode){
-        reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.sscratch) := wdata
+      }
+      // Normal replay keeps its physical CSR behavior and mirrors scratch
+      // writes into the existing architectural comparison context.
+      when (decoded_addr(CSRs.sscratch) && (io.checker_mode || io.checker_priv_mode)){
+        reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.sscratch) := readModifyWriteCSR(io.rw.cmd,
+        reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.sscratch), io.rw.wdata)
       }
 
       when (decoded_addr(CSRs.sepc) && !io.checker_priv_mode)     { 
@@ -2134,4 +2146,46 @@ class CSRFile(
   io.r_exception_nocall := exception_nocall
   dontTouch(io.shadow_read)
   //===== GuardianCouncil Function: End ====//
+  // P2-07: keep packing local to the owner of the actual CSR registers.
+  // Asynchronous pending inputs and wall-clock time are not rolled back.
+  // PMP, delegation, translation and custom CSR state are included; the
+  // opaque image is versioned by its enclosing SCP, never by Checker slot.
+  val palimpsestRegisters: Seq[Data] = (Seq(
+    reg_mstatus, reg_dcsr, reg_debug, reg_dpc, reg_dscratch0, reg_singleStepped,
+    reg_mie, reg_mideleg, reg_medeleg, reg_mip,
+    reg_mepc, reg_mcause, reg_mtval, reg_mtval2, reg_mscratch, reg_mtvec,
+    reg_mnscratch, reg_mnepc, reg_mncause, reg_mnstatus, reg_rnmie,
+    reg_mcounteren, reg_scounteren, reg_hideleg, reg_hedeleg, reg_hcounteren,
+    reg_hstatus, reg_hgatp, reg_htval, reg_vsstatus, reg_vsscratch,
+    reg_vsepc, reg_vscause, reg_vstval, reg_vsatp,
+    reg_sepc, reg_scause, reg_stval, reg_sscratch, reg_stvec, reg_satp,
+    reg_fflags, reg_frm, reg_mcountinhibit, reg_misa, reg_tselect, reg_bp
+  ) ++ reg_dscratch1.toSeq ++ reg_mcontext.toSeq ++ reg_scontext.toSeq ++
+    reg_pmp.toSeq ++ reg_custom.toSeq ++ reg_hpmevent.toSeq).filter(_.getWidth > 0)
+  val palimpsestWidths = palimpsestRegisters.map(_.getWidth)
+  val palimpsestCounters = Seq(reg_instret) ++ reg_hpmcounter
+  val palimpsestCounterWidths = palimpsestCounters.map(_.value.getWidth)
+  require(palimpsestWidths.forall(_ > 0) && palimpsestWidths.sum + palimpsestCounterWidths.sum <= 8192,
+    "PALIMPSEST CSR snapshot capacity exceeded")
+  io.palimpsestSnapshot := Cat((palimpsestRegisters.map(_.asUInt) ++ palimpsestCounters.map(_.value)).reverse).pad(8192)
+  var palimpsestOffset = 0
+  for ((reg, width) <- palimpsestRegisters.zip(palimpsestWidths)) {
+    when (io.palimpsestRestore.valid) {
+      reg := io.palimpsestRestore.bits(palimpsestOffset + width - 1, palimpsestOffset)
+        .asTypeOf(chiselTypeOf(reg))
+    }
+    palimpsestOffset += width
+  }
+  for ((counter, width) <- palimpsestCounters.zip(palimpsestCounterWidths)) {
+    when (io.palimpsestRestore.valid) {
+      counter := io.palimpsestRestore.bits(palimpsestOffset + width - 1, palimpsestOffset)
+    }
+    palimpsestOffset += width
+  }
+  when (io.palimpsestRestore.valid) {
+    assert(io.retire === 0.U && !io.exception, "CSR restore overlaps architectural effects")
+    reg_wfi := false.B
+  }
+  io.palimpsestRestored := RegNext(io.palimpsestRestore.valid, false.B)
+
 }

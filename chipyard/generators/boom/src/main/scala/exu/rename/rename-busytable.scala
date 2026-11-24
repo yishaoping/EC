@@ -36,6 +36,8 @@ class RenameBusyTable(
 
   val io = IO(new BoomBundle()(p) {
     val ren_uops = Input(Vec(plWidth, new MicroOp))
+    val architecturalRestore = Input(Bool())
+    val architecturalRestoreDone = Output(Bool())
     val busy_resps = Output(Vec(plWidth, new BusyResp))
     val rebusy_reqs = Input(Vec(plWidth, Bool()))
 
@@ -53,7 +55,8 @@ class RenameBusyTable(
   val busy_table_next = busy_table_wb | (io.ren_uops zip io.rebusy_reqs)
     .map {case (uop, req) => UIntToOH(uop.pdst) & Fill(numPregs, req.asUInt)}.reduce(_|_)
 
-  busy_table := busy_table_next
+  busy_table := Mux(io.architecturalRestore, 0.U, busy_table_next)
+  io.architecturalRestoreDone := RegNext(io.architecturalRestore, false.B)
 
   // Read the busy table.
   for (i <- 0 until plWidth) {

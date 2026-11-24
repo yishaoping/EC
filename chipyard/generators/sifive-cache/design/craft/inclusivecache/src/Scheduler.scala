@@ -78,13 +78,14 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
     val dcacheWritebackRequestDirty = Bool()
     val dcacheWritebackRequestPacketSeq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
     val dcacheWritebackRequestPacketTracked = Bool()
-    val dcacheWritebackRequestCandidate = Bool()
-    val dcacheWritebackRequestCandidateDirty = Bool()
-    val dcacheWritebackRequestCandidatePacketSeq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W)
-    val dcacheWritebackRequestCandidatePacketTracked = Bool()
-    val barrier_allow = Input(Bool())
     val safeWatermark = Input(UInt(32.W))
     val bank = Input(UInt(8.W))
+    val historyArchive = Decoupled(new PalimpsestHistoryLine).flip // P4-08
+    val historyQuery = Decoupled(new PalimpsestHistoryQuery).flip
+    val historyResult = Decoupled(new PalimpsestHistoryResult)
+    val maintenance = Input(Bool()) // held rare EVT-capacity service request
+    val maintenanceAck = Bool()
+
     val clientValidationBlock = Bool()
     val clientValidationSeq = UInt(width = 32)
     val clientWaiting = UInt(width = params.inner.bundle.sourceBits + 1)
@@ -95,8 +96,12 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
     val preservationAck = Bool()
     val preservationCounters = Vec(6, UInt(width = 64))
     val active = Bool()
+    val identityUnavailable = Bool()
     val bankWrite = Bool()
     val metaWrite = Bool()
+    val baselineCommit = Bool() // addressed receipt write, allowed under its own lock
+    val historyPressure = Bool()
+    val historyEscapeAvailable = Bool()
     val drain = new Stage3DrainStatus(params)
     val flushStatus = new MSHRFlushStatus(params)
   }
@@ -110,6 +115,68 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   val preservation = Module(new L2Preservation(params))
   preservation.io.watermark := io.safeWatermark
   preservation.io.bank := io.bank
+  // P3-07/P4-08: history is an addressed sidecar, not extra same-tag ways.
+  val versionHistory = Module(new PalimpsestVersionHistory(
+    params.p(PalimpsestHistoryEntries), params.p(PalimpsestEscapeEntries)))
+  versionHistory.io.watermark := io.safeWatermark
+  io.historyPressure := versionHistory.io.pressure
+  io.historyEscapeAvailable := versionHistory.io.escapeAvailable
+  val maintIdle :: maintDrain :: maintRead :: maintWait :: maintFlush :: maintResponse :: maintDone :: Nil = chisel3.util.Enum(7)
+  val maintState = RegInit(maintIdle)
+  val maintSet = RegInit(UInt(0, width = params.setBits))
+  val maintWay = RegInit(UInt(0, width = params.wayBits))
+  val maintFinished = RegInit(Bool(false))
+  val maintAddress = Reg(UInt(width = params.inner.bundle.addressBits))
+  val maintActive = io.maintenance || maintState =/= maintIdle
+  val maintReadFire = Wire(init = Bool(false))
+  val maintReadResponse = params.dirReg(RegNext(maintReadFire, Bool(false)))
+  io.maintenanceAck := maintState === maintDone
+  when (io.maintenance && maintState === maintIdle) {
+    maintSet := UInt(0); maintWay := UInt(0); maintFinished := Bool(false)
+    maintState := maintDrain
+  }
+  when (!io.maintenance && maintState === maintDone) { maintState := maintIdle }
+  def advanceMaintenance(): Unit = {
+    when (maintWay === UInt(params.cache.ways - 1)) {
+      maintWay := UInt(0)
+      when (maintSet === UInt(params.cache.sets - 1)) { maintFinished := Bool(true) }
+        .otherwise { maintSet := maintSet + UInt(1) }
+    }.otherwise { maintWay := maintWay + UInt(1) }
+    maintState := maintDrain
+  }
+  val recoveryContext = RegInit(0.U.asTypeOf(new PalimpsestHistoryQuery))
+  when (io.historyQuery.fire()) { recoveryContext := io.historyQuery.bits }
+  versionHistory.io.context := recoveryContext
+  def historySafe(key: CacheImageKey): Bool =
+    recoveryContext.survives(key.contentSeq) && CacheImage.safe(key, io.safeWatermark)
+
+  val trustedQuery = Wire(Decoupled(new PalimpsestHistoryQuery))
+  val trustedResult = Wire(Valid(new PalimpsestHistoryResult))
+  val trustedQueryInFlight = RegInit(Bool(false))
+  io.historyResult.valid := versionHistory.io.result.valid && !trustedQueryInFlight
+  io.historyResult.bits := versionHistory.io.result.bits
+  trustedResult.valid := versionHistory.io.result.valid && trustedQueryInFlight
+  trustedResult.bits := versionHistory.io.result.bits
+  versionHistory.io.result.ready := trustedQueryInFlight || io.historyResult.ready
+  when (trustedQuery.fire()) { trustedQueryInFlight := Bool(true) }
+  when (trustedResult.valid) { trustedQueryInFlight := Bool(false) }
+  preservation.io.historyPublish <> versionHistory.io.publish
+  versionHistory.io.published := preservation.io.historyPublished
+  val (publishTag, publishSet, _) = params.parseAddress(versionHistory.io.publish.bits.address)
+  val publishKey = versionHistory.io.publish.bits.key
+  def pendingSafeBaseline(tag: UInt, set: UInt): Bool =
+    versionHistory.io.publish.valid && historySafe(publishKey) && publishTag === tag && publishSet === set
+  val historyCaptureArb = Module(new chisel3.util.Arbiter(new PalimpsestHistoryLine, 3))
+  val preserveCredit = preservation.io.lock.valid && !historySafe(preservation.io.lock.bits.image)
+  historyCaptureArb.io.in(0) <> preservation.io.archive
+  historyCaptureArb.io.in(1).valid := io.historyArchive.valid && !preserveCredit
+  historyCaptureArb.io.in(1).bits := io.historyArchive.bits
+  io.historyArchive.ready := historyCaptureArb.io.in(1).ready && !preserveCredit
+  versionHistory.io.capture <> historyCaptureArb.io.out
+  versionHistory.io.captureEscape := historyCaptureArb.io.chosen =/= UInt(1)
+
+  preservation.io.historyContext := recoveryContext
+  sourceC.io.historyContext := recoveryContext
   sourceC.io.watermark := io.safeWatermark
 
 
@@ -120,7 +187,10 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   io.out.e <> sourceE.io.e
   io.in.b <> sourceB.io.b
   io.in.d <> sourceD.io.d
-  io.resp <> sourceX.io.x
+  io.resp.valid := sourceX.io.x.valid && maintState =/= maintResponse
+  io.resp.bits := sourceX.io.x.bits
+  sourceX.io.x.ready := Mux(maintState === maintResponse, Bool(true), io.resp.ready)
+  when (maintState === maintResponse && sourceX.io.x.fire()) { advanceMaintenance() }
 
   val sinkA = Module(new SinkA(params))
   val sinkC = Module(new SinkC(params))
@@ -128,8 +198,62 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   val sinkE = Module(new SinkE(params))
   val sinkX = Module(new SinkX(params))
 
-  sinkA.io.a <> io.in.a
-  sinkC.io.c <> io.in.c
+  // No new A owner enters while the rare physical sweep is in progress.
+  // Already accepted SinkA/MSHR work, Probe/C responses and outer ACKs finish.
+  sinkA.io.a.valid := io.in.a.valid && !maintActive
+  sinkA.io.a.bits := io.in.a.bits
+  io.in.a.ready := sinkA.io.a.ready && !maintActive
+  // Keep the configured C queue in front of SinkC admission. A ProbeAckData
+  // waiting there for its predecessor checkpoint owns no history staging yet.
+  val bufferedC = if (params.firstLevel) io.in.c else params.micro.innerBuf.c(io.in.c)
+  // Capture every admitted authored C image, including a migrating Current.
+  // Hold the complete staging line until the history RAM accepts it.
+  val historyCPending = RegInit(Bool(false))
+  val historyCPartial = RegInit(Bool(false))
+  val historyCChecked = RegInit(Bool(false))
+  val historyCLine = Reg(new PalimpsestHistoryLine)
+  sinkC.io.c.valid := bufferedC.valid && !historyCPending
+  sinkC.io.c.bits := bufferedC.bits
+  bufferedC.ready := sinkC.io.c.ready && !historyCPending
+  val (_, historyCLast, _, historyCBeat) = params.inner.count(sinkC.io.c)
+  val historyCKey = sinkC.io.c.bits.user.lift(CacheImage).getOrElse(0.U.asTypeOf(new CacheImageKey))
+  when (sinkC.io.c.fire() && params.inner.hasData(sinkC.io.c.bits) && historyCKey.valid) {
+    val (tag, set, _) = params.parseAddress(sinkC.io.c.bits.address)
+    historyCLine.address := params.restoreAddress(params.expandAddress(tag, set, UInt(0)))
+    historyCLine.key := historyCKey
+    val rows = Wire(init = historyCLine.data.asTypeOf(Vec(
+      params.cache.blockBytes / params.inner.manager.beatBytes, UInt(width = params.inner.bundle.dataBits))))
+    rows(historyCBeat) := sinkC.io.c.bits.data
+    historyCLine.data := rows.asUInt
+    historyCPartial := !historyCLast
+    // The held publish offer remains searchable and cannot take its set
+    // lock while this same-line Probe is writing data. A covered older
+    // response must still complete C, but must not re-enter history.
+    val coveredProbe = sinkC.io.c.bits.opcode === TLMessages.ProbeAckData &&
+      pendingSafeBaseline(tag, set) &&
+      CacheImage.coveredTracked(historyCKey, publishKey)
+    when (historyCLast && !coveredProbe) {
+      historyCPending := Bool(true)
+      historyCChecked := historyCKey.contentSeq === UInt(0)
+    }
+  }
+  val (historyCTag, historyCSet, _) = params.parseAddress(historyCLine.address)
+  val historyCCaptureAllowed = Wire(Bool())
+  historyCaptureArb.io.in(2).valid := historyCPending && historyCChecked && !preserveCredit && historyCCaptureAllowed
+  historyCaptureArb.io.in(2).bits := historyCLine
+  when (historyCaptureArb.io.in(2).fire()) { historyCPending := Bool(false) }
+
+  // Include the staged incoming C owner in the query barrier: an ACKed L1
+  // snapshot must be searchable before the bank returns its query response.
+  val historyQueryClear = !historyCPending && !historyCPartial && !bufferedC.valid && !io.in.c.valid
+  val installOnly = io.historyQuery.bits.installOnly
+  // An EVT installation has no line result. Its receipt must be independent
+  // of old owners, which can still need the outer terminal beat to finish.
+  versionHistory.io.query.valid := Mux(io.historyQuery.valid, !installOnly, trustedQuery.valid) &&
+    historyQueryClear
+  versionHistory.io.query.bits := Mux(io.historyQuery.valid, io.historyQuery.bits, trustedQuery.bits)
+  io.historyQuery.ready := installOnly || (versionHistory.io.query.ready && historyQueryClear)
+  trustedQuery.ready := versionHistory.io.query.ready && historyQueryClear && !io.historyQuery.valid
   sinkE.io.e <> io.in.e
   val checkpointResponse = io.out.d.bits.source ===
     UInt(InclusiveCacheParameters.out_mshrs(params.cache, params.micro))
@@ -138,28 +262,88 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   sinkD.io.d.valid := io.out.d.valid && !checkpointResponse
   sinkD.io.d.bits := io.out.d.bits
   io.out.d.ready := Mux(checkpointResponse, preservation.io.d.ready, sinkD.io.d.ready)
-  sinkX.io.x <> io.req
+  sinkX.io.x.valid := Mux(maintActive, maintState === maintFlush, io.req.valid)
+  sinkX.io.x.bits.address := Mux(maintActive, maintAddress, io.req.bits.address)
+  io.req.ready := sinkX.io.x.ready && !maintActive
+  when (maintState === maintFlush && sinkX.io.x.fire()) { maintState := maintResponse }
 
   io.out.b.ready := Bool(true) // disconnected
 
   val directory = Module(new Directory(params))
+  // Reuse the addressed directory port before handing tracked C to History.
+  // An exact outer receipt remains in the directory after History retires
+  // the data entry, so a later older C cannot republish the retired version.
+  val historyCCheckFire = Wire(init = Bool(false))
+  val historyCCheckWaiting = RegInit(Bool(false))
+  val historyCCheckResponse = params.dirReg(RegNext(historyCCheckFire, Bool(false)))
+  when (historyCCheckFire) { historyCCheckWaiting := Bool(true) }
+  when (historyCCheckResponse && directory.io.result.valid) {
+    historyCCheckWaiting := Bool(false)
+    val resident = directory.io.result.bits
+    when (resident.hit && resident.outerPreserved && historySafe(resident.image) &&
+      CacheImage.coveredTracked(historyCLine.key, resident.image)) {
+      historyCPending := Bool(false)
+    }.otherwise { historyCChecked := Bool(true) }
+  }
+  // P3-10/U-D06: after a history DRAM ACK, update the existing resident
+  // receipt before releasing the address lock or accepting another archive.
+  // This is one addressed directory read/write, never a cache-wide scan or
+  // an unbounded published-address CAM.
+  val baselineIdle :: baselineRead :: baselineWait :: baselineWrite :: baselineDone :: Nil = chisel3.util.Enum(5)
+  val baselineState = RegInit(baselineIdle)
+  val baselineResult = Reg(new DirectoryResult(params))
+  val baselineActive = baselineState =/= baselineIdle || preservation.io.baseline.valid
+  val baselineReadFire = Wire(init = Bool(false))
+  val baselineReadResponse = params.dirReg(RegNext(baselineReadFire, Bool(false)))
+  preservation.io.baseline.ready := baselineState === baselineDone
+  when (preservation.io.baseline.valid && baselineState === baselineIdle) { baselineState := baselineRead }
+  when (baselineReadFire) { baselineState := baselineWait }
+  when (baselineState === baselineWait && directory.io.result.valid && baselineReadResponse) {
+    baselineResult := directory.io.result.bits
+    baselineState := Mux(directory.io.result.bits.hit, baselineWrite, baselineDone)
+  }
+  when (preservation.io.baseline.fire()) { baselineState := baselineIdle }
   val bankedStore = Module(new BankedStore(params))
   val requests = Module(new ListBuffer(ListBufferParameters(new QueuedRequest(params), 3*params.mshrs, params.secondary, false)))
   val mshrs = Seq.tabulate(params.mshrs) { i => Module(new MSHR(params, trace, i)) }
   val abc_mshrs = mshrs.init.init
   val bc_mshr = mshrs.init.last
   val c_mshr = mshrs.last
+  // The caller has stopped Main and established SW=allocatedTail. The old
+  // EVT remains installed for the ENTIRE sweep. Publish all surviving safe
+  // history, drop dead data through normal permission-only releases, and
+  // wait for every original terminal acknowledgement before certifying empty.
+  val maintNoWaiters = Wire(init = Bool(false))
+  val maintDrained = maintNoWaiters && !mshrs.map(_.io.status.valid).reduce(_||_) &&
+    !requests.io.valid.orR && sourceD.io.idle && sourceC.io.idle && !sinkC.io.bankBusy &&
+    !sinkA.io.req.valid && !sinkX.io.req.valid && !sourceX.io.x.valid &&
+    historyQueryClear && !io.historyArchive.valid &&
+    !preservation.io.lock.valid && !baselineActive && versionHistory.io.empty
+  when (maintState === maintDrain && maintDrained) {
+    maintState := Mux(maintFinished, maintDone, maintRead)
+  }
+  when (maintReadFire) { maintState := maintWait }
+  when (maintState === maintWait && maintReadResponse && directory.io.result.valid) {
+    when (directory.io.result.bits.hit) {
+      maintAddress := params.expandAddress(directory.io.result.bits.tag, maintSet, UInt(0))
+      maintState := maintFlush
+    }.otherwise { advanceMaintenance() }
+  }
   // Select one active control transaction for diagnostics; no protocol consumer.
   val flushStatusOH = PriorityEncoderOH(Vec(mshrs.map(_.io.flushStatus.active)).asUInt)
   io.flushStatus := Mux1H(flushStatusOH, mshrs.map(_.io.flushStatus))
   // One independent slot per real unaware source. A TL source cannot have
   // two live A requests. Slots hold no MSHR, set lock, bank or D pipeline.
   // The dummy slot makes the all-aware configuration legal without empty Vecs.
-  val waitSources = if (params.unawareSourceIds.nonEmpty) params.unawareSourceIds else Seq(-1)
+  // One metadata-only wait slot per actual TL source. Capacity parking also
+  // applies to Main misses, so they cannot monopolize a Checker's set.
+  val waitSources = params.inner.client.clients.flatMap(c => c.sourceId.start until c.sourceId.end).distinct
+  require(waitSources.nonEmpty)
   val clientWaitValid = waitSources.map(_ => RegInit(Bool(false)))
+  maintNoWaiters := !clientWaitValid.reduce(_||_)
   val clientWait = waitSources.map(_ => Reg(new ClientWaitRequest(params)))
   val clientWaitRunnable = Vec(clientWaitValid.zip(clientWait).map { case (v, q) =>
-    v && q.seq <= io.safeWatermark && !mshrs.map(m =>
+    v && (q.seq <= io.safeWatermark || !recoveryContext.survives(q.seq)) && !mshrs.map(m =>
       m.io.status.valid && m.io.status.bits.set === q.request.set).reduce(_||_)
   }).asUInt
   val clientReplayOH = PriorityEncoderOH(clientWaitRunnable)
@@ -171,7 +355,7 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
     printf("STAGE3_TX L2_CLIENT_RETRY bank=%x source=%x set=%x tag=%x watermark=%x\n",
       io.bank, clientReplay.bits.source, clientReplay.bits.set, clientReplay.bits.tag, io.safeWatermark)
   }
-  val waitingUnsafe = clientWaitValid.zip(clientWait).map { case (v, q) => v && q.seq > io.safeWatermark }
+  val waitingUnsafe = clientWaitValid.zip(clientWait).map { case (v, q) => v && q.seq > io.safeWatermark && recoveryContext.survives(q.seq) }
   io.clientValidationBlock := waitingUnsafe.reduce(_||_)
   io.clientValidationSeq := Mux1H(PriorityEncoderOH(Vec(waitingUnsafe).asUInt), clientWait.map(_.seq))
   io.clientWaiting := PopCount(Vec(clientWaitValid))
@@ -180,12 +364,29 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   io.preservationTxn := preservation.io.txn
   io.preservationAck := preservation.io.completed.valid
   io.preservationCounters := preservation.io.counters
+  io.identityUnavailable := preservation.io.identityUnavailable || mshrs.map(_.io.identityUnavailable).reduce(_ || _)
   io.active := mshrs.map(_.io.status.valid).reduce(_||_) || !sourceD.io.idle ||
-    !sourceC.io.idle || sinkC.io.bankBusy || clientWaitValid.reduce(_||_)
+    !sourceC.io.idle || sinkC.io.bankBusy || clientWaitValid.reduce(_||_) || maintActive
   io.bankWrite := sourceD.io.bs_wadr.fire() || (sinkC.io.bs_adr.fire() && !sinkC.io.bs_adr.bits.noop)
   io.metaWrite := directory.io.write.fire()
+  io.baselineCommit := directory.io.write.fire() && baselineState === baselineWrite
 
-  mshrs.foreach { m => m.io.preserved := preservation.io.completed; m.io.bank := io.bank; m.io.watermark := io.safeWatermark }
+  mshrs.foreach { m =>
+    m.io.preserved := preservation.io.completed; m.io.bank := io.bank
+    m.io.watermark := io.safeWatermark; m.io.historyContext := recoveryContext
+    m.io.pauseExecute := versionHistory.io.publishPending
+    m.io.capacityBlocked := !versionHistory.io.escapeAvailable
+  }
+  mshrs.foreach { m =>
+    m.io.baseline.valid := preservation.io.baseline.fire()
+    m.io.baseline.bits := preservation.io.baseline.bits
+    // Share the receipt comparison with the pre-admission drain check.
+    when (versionHistory.io.publish.valid) {
+      m.io.baseline.bits.set := publishSet
+      m.io.baseline.bits.tag := publishTag
+      m.io.baseline.bits.image := publishKey
+    }
+  }
   // Candidate selection observes production MSHR metadata and the actual
   // ProbeAck input, before any bank write. Identical keys are immutable copies.
   val candidates = mshrs.map { m =>
@@ -197,8 +398,13 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
     val releaseChange = d.bits.prio(2) && d.bits.opcode === TLMessages.ReleaseData &&
       !releaseSameUnsafePackage &&
       (!d.bits.image.valid || d.bits.image.asUInt =/= r.image.asUInt)
-    val trustedChange = d.bits.prio(0) && !d.bits.opcode(2) && !d.bits.bad
-    val destructive = m.io.resident.valid && r.hit && d.valid && (releaseChange || trustedChange)
+    val trustedChange = m.io.trustedWrite
+    // P4-12/U-D09: an unsafe victim can move into the recovery domain's
+    // reserved history space, then release permission without dirty bytes.
+    // Waiting for SW here can block a Checker's instruction fetch miss.
+    val unsafeEvict = m.io.schedule.bits.c.valid &&
+      recoveryContext.survives(r.image.contentSeq) && !CacheImage.safe(r.image, io.safeWatermark)
+    val destructive = m.io.resident.valid && ((r.hit && ((d.valid && releaseChange) || trustedChange)) || unsafeEvict)
     x.valid := destructive && L2Preservation.blocked(r.image, r.dirty, r.outerPreserved, io.safeWatermark)
     x.bits.set := m.io.status.bits.set; x.bits.way := r.way; x.bits.tag := r.tag
     x.bits.image := r.image; x.bits.dirty := r.dirty; x.bits.outerPreserved := r.outerPreserved
@@ -216,7 +422,9 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   val probeChange = sinkC.io.probe.valid && probeFound &&
     !probeSameUnsafePackage &&
     (!sinkC.io.probe.bits.image.valid || probeResident.image.asUInt =/= sinkC.io.probe.bits.image.asUInt)
-  val probeNeedsGate = probeChange && L2Preservation.blocked(probeResident.image,
+  val historyCoversProbeResident = pendingSafeBaseline(sinkC.io.probe.bits.tag, sinkC.io.probe.bits.set) &&
+    (CacheImage.earlier(probeResident.image, publishKey) || probeResident.image.asUInt === publishKey.asUInt)
+  val probeNeedsGate = probeChange && !historyCoversProbeResident && L2Preservation.blocked(probeResident.image,
     probeResident.dirty, probeResident.outerPreserved, io.safeWatermark)
   // System builds need the incoming identity as well as the resident key:
   // validation-only logs cannot distinguish a true cross-package waiter from
@@ -254,18 +462,31 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   val allCandidates = probeCandidate +: selectableCandidates
   val candidateQuiescent = Seq(Bool(true)) ++ mshrs.map(_.io.quiescent)
   val runnable = Vec(allCandidates.zip(candidateQuiescent).map { case (x, q) =>
-    x.valid && q && CacheImage.safe(x.bits.image, io.safeWatermark)
+    val safe = CacheImage.safe(x.bits.image, io.safeWatermark)
+    // The sidecar scanner may not yet have raised publish.valid. A direct
+    // safe resident Put must wait for already-owned safe history,
+    // just like SourceC below; otherwise a newer Put can precede old history.
+    // Unsafe preservation still consumes escape credit and can unblock C.
+    x.valid && q && Mux(safe, !versionHistory.io.publishPending && !historyCPending && !historyCPartial,
+      versionHistory.io.escapeAvailable)
   }).asUInt
   // Unsafe waiters do not monopolize the shared checkpoint engine. Stop new
   // bank pipeline work while draining, so capture cannot starve behind a
   // continuous stream of otherwise independent SourceD/SourceC operations.
   val candidateOH = Mux(runnable.orR, PriorityEncoderOH(runnable),
     PriorityEncoderOH(Vec(allCandidates.map(_.valid)).asUInt))
-  val drainForCheckpoint = runnable.orR && !preservation.io.lock.valid
-  preservation.io.candidate.valid := allCandidates.map(_.valid).reduce(_||_)
+  val drainForCheckpoint = (runnable.orR || versionHistory.io.publishPending) && !preservation.io.lock.valid
+  // No set lock is acquired until the complete-line storage credit exists.
+  // The active lock then excludes competing archive ingress above.
+  preservation.io.candidate.valid := runnable.orR
   preservation.io.candidate.bits := Mux1H(candidateOH, allCandidates.map(_.bits))
   preservation.io.drained := sourceD.io.idle && sourceC.io.idle && !sinkC.io.bankBusy &&
-    Mux1H(candidateOH, candidateQuiescent)
+    (!preservation.io.candidate.valid || Mux1H(candidateOH, candidateQuiescent)) &&
+    mshrs.map(m => !versionHistory.io.publish.valid ||
+      m.io.status.bits.set =/= publishSet ||
+      // Drain outer refill/writeback across the set and wait for only those
+      // probes whose resident could change upon receipt.
+      (m.io.baselineOuterReady && m.io.baselineProbeReady)).reduce(_ && _)
   io.drain.state := preservation.io.debugState
   io.drain.candidate := preservation.io.candidate.valid
   io.drain.safe := CacheImage.safe(preservation.io.candidate.bits.image, io.safeWatermark)
@@ -310,6 +531,14 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
     }
   }
   def locked(set: UInt): Bool = preservation.io.lock.valid && preservation.io.lock.bits.set === set
+  // A new receipt may finish after the directory check. Delay handoff during
+  // its lock and use the receipt's actual key when it arrives.
+  historyCCaptureAllowed := !locked(historyCSet)
+  when (historyCPending && preservation.io.baseline.fire() &&
+    historyCSet === preservation.io.baseline.bits.set && historyCTag === preservation.io.baseline.bits.tag &&
+    CacheImage.coveredTracked(historyCLine.key, preservation.io.baseline.bits.image)) {
+    historyCPending := Bool(false)
+  }
   sinkC.io.probeAllow := !probeNeedsGate && !locked(sinkC.io.probe.bits.set)
   when (sinkC.io.probe.valid) {
     assert(probeFound, "Stage3 ProbeAckData has no resident owner")
@@ -319,8 +548,8 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
     m.io.schedule.valid && d.valid && d.bits.prio(0) && !d.bits.control && !d.bits.bad &&
       CacheImage.exposesResident(d.bits.opcode) &&
       !params.isImageAware(d.bits.source) &&
-      (!CacheImage.safe(d.bits.image, io.safeWatermark) ||
-       (m.io.resident.bits.hit && !CacheImage.safe(m.io.resident.bits.image, io.safeWatermark) &&
+      (!historySafe(d.bits.image) ||
+       (m.io.resident.bits.hit && !historySafe(m.io.resident.bits.image) &&
         (d.bits.opcode === TLMessages.ArithmeticData || d.bits.opcode === TLMessages.LogicalData)))
   }
   val parkReady = mshrs.map { m =>
@@ -329,19 +558,82 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
       Bool(source >= 0) && p.bits.request.source === UInt(source max 0) && !clientWaitValid(i)
     }.reduce(_||_))
   }
+  // The shared indexed history reader checks the address of a trusted Put or
+  // AMO after coherence has finished returning predecessors. No checker or
+  // history publication owns this reservation while the request is parked.
+  val trustedChecked = RegInit(Bool(false))
+  val trustedMshr = Reg(UInt(width = log2Ceil(params.mshrs)))
+  val trustedAddress = Reg(UInt(width = 64))
+  val trustedSeq = Reg(UInt(width = 32))
+  val trustedInvalidated = RegInit(Bool(false))
+  val trustedCheckVec = Vec(mshrs.zip(candidates).map { case (m, x) =>
+    m.io.trustedWrite && !x.valid && !locked(m.io.status.bits.set)
+  }).asUInt
+  val trustedCheckOH = PriorityEncoderOH(trustedCheckVec)
+  // A query starts with both C ingress and queue empty. Watch every later
+  // ingress beat, including any that queues behind a blocked head, so a
+  // matching line invalidates the query before it can authorize a write.
+  val ingressKey = io.in.c.bits.user.lift(CacheImage).getOrElse(0.U.asTypeOf(new CacheImageKey))
+  val trustedIncoming = (io.in.c.valid && params.inner.hasData(io.in.c.bits) && ingressKey.valid &&
+    params.restoreAddress(io.in.c.bits.address) === trustedAddress) ||
+    ((historyCPending || historyCPartial) && historyCLine.address === trustedAddress) ||
+    (io.historyArchive.valid && io.historyArchive.bits.address === trustedAddress) ||
+    (preservation.io.archive.valid && preservation.io.archive.bits.address === trustedAddress)
+  val trustedOrderBusy = versionHistory.io.publishPending || io.historyQuery.valid
+  val historyKnownEmpty = versionHistory.io.empty && historyQueryClear &&
+    !io.historyArchive.valid && !preservation.io.archive.valid
+  trustedQuery.valid := trustedCheckVec.orR && !trustedChecked && !trustedQueryInFlight &&
+    !trustedOrderBusy && !historyKnownEmpty && !io.historyArchive.valid && !preservation.io.archive.valid
+  trustedQuery.bits := recoveryContext
+  trustedQuery.bits.installOnly := Bool(false)
+  trustedQuery.bits.address := Mux1H(trustedCheckOH, mshrs.map(_.io.trustedAddress))
+  when (trustedQuery.fire()) {
+    trustedMshr := OHToUInt(trustedCheckOH)
+    trustedAddress := trustedQuery.bits.address
+    trustedInvalidated := Bool(false)
+  }
+  when (trustedQueryInFlight && (trustedIncoming || trustedOrderBusy)) { trustedInvalidated := Bool(true) }
+  when (trustedResult.valid) {
+    trustedChecked := !trustedInvalidated && !trustedIncoming && !trustedOrderBusy
+    trustedSeq := Mux(trustedResult.bits.found, trustedResult.bits.line.key.contentSeq, UInt(0))
+  }
+  val trustedMatches = mshrs.zipWithIndex.map { case (m, i) =>
+    trustedMshr === UInt(i) && m.io.trustedWrite && m.io.trustedAddress === trustedAddress
+  }
+  when (trustedChecked && (trustedIncoming || trustedOrderBusy || !Vec(trustedMatches).asUInt.orR)) {
+    trustedChecked := Bool(false)
+  }
+  val trustedApproved = trustedMatches.map(_ && trustedChecked && !trustedIncoming && !trustedOrderBusy)
+  mshrs.zip(trustedApproved).foreach { case (m, approved) =>
+    m.io.trustedWait.valid := approved && trustedSeq > io.safeWatermark
+    m.io.trustedWait.bits := trustedSeq
+    m.io.trustedAllow := historyKnownEmpty || (approved && trustedSeq === UInt(0))
+    when (approved && m.io.schedule.fire() &&
+      (m.io.schedule.bits.d.valid || m.io.schedule.bits.park.valid)) { trustedChecked := Bool(false) }
+  }
   val stage3Allowed = mshrs.zip(candidates).map { case (m, x) =>
-    val outerSafe = !m.io.schedule.bits.c.valid || CacheImage.safe(m.io.resident.bits.image, io.safeWatermark)
-    !x.valid && !locked(m.io.status.bits.set) && outerSafe &&
+    val awaitingCReceiptCheck = historyCPending && !historyCChecked &&
+      historyCSet === m.io.status.bits.set && historyCTag === m.io.resident.bits.tag
+    val outerSafe = !m.io.schedule.bits.c.valid ||
+      (!awaitingCReceiptCheck && (historySafe(m.io.resident.bits.image) || m.io.resident.bits.outerPreserved ||
+        !recoveryContext.survives(m.io.resident.bits.image.contentSeq)) &&
+        ((!m.io.resident.bits.dirty || m.io.resident.bits.outerPreserved) ||
+          (!versionHistory.io.publishPending && !historyCPending && !historyCPartial)))
+    !baselineActive && (!x.valid || m.io.schedule.bits.park.valid) && !locked(m.io.status.bits.set) && outerSafe &&
       (!m.io.schedule.bits.c.valid || (!preservation.io.lock.valid && !drainForCheckpoint)) &&
-      (!m.io.schedule.bits.d.valid || !drainForCheckpoint)
+      // A safe history candidate must reach the coherent baseline before D
+      // can expose an older resident. Keep this barrier while the shared
+      // preservation engine owns a different set as well.
+      (!m.io.schedule.bits.d.valid || (!drainForCheckpoint && !versionHistory.io.publishPending))
   }
   val unsafeVictims = mshrs.map(m => m.io.schedule.valid && m.io.schedule.bits.c.valid &&
-    !CacheImage.safe(m.io.resident.bits.image, io.safeWatermark))
+    !historySafe(m.io.resident.bits.image))
   val unsafeSameLine = allCandidates.map(x => x.valid && !CacheImage.safe(x.bits.image, io.safeWatermark))
   val unsafeOH = PriorityEncoderOH(Vec(unsafeVictims ++ unsafeSameLine).asUInt)
-  io.validationBlock := (unsafeVictims ++ unsafeSameLine).reduce(_||_)
-  io.validationSeq := Mux1H(unsafeOH, mshrs.map(_.io.resident.bits.image.contentSeq) ++
-    allCandidates.map(_.bits.image.contentSeq))
+  io.validationBlock := (unsafeVictims ++ unsafeSameLine).reduce(_||_) || versionHistory.io.pressure
+  io.validationSeq := Mux(versionHistory.io.pressure, versionHistory.io.pressureSeq,
+    Mux1H(unsafeOH, mshrs.map(_.io.resident.bits.image.contentSeq) ++
+      allCandidates.map(_.bits.image.contentSeq)))
   val victimBlocked = RegNext(Vec(unsafeVictims).asUInt, UInt(0, width = params.mshrs))
   mshrs.zipWithIndex.foreach { case (m, i) =>
     when (unsafeVictims(i) && !victimBlocked(i)) {
@@ -383,21 +675,21 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
     params.ccover(mshr_stall_bc && bc_mshr.io.status.valid, "SCHEDULER_BC_INTERLOCK", "BC MSHR interlocked due to pre-emption")
 
   // Consider scheduling an MSHR only if all the resources it requires are available
-  val mshr_request_unbarred = Cat(mshrs.zip(mshr_stall).zip(stage3Allowed).zipWithIndex.map { case (((m, s), allowed), i) =>
-    m.io.schedule.valid && !s && allowed && parkReady(i) && !peerResponseBlocked(i) &&
+  // stage3Allowed checks the actual victim's safety, pending publications
+  // and set ownership. A producer close request caused by unrelated history
+  // pressure must leave eligible C traffic running, including Checker victims.
+  val mshr_request = Cat(mshrs.zip(mshr_stall).zip(stage3Allowed).zipWithIndex.map { case (((m, s), allowed), i) =>
+    // A nested C can wait for History publication while that publication
+    // drains the preempted plan's accepted outer Grant. Its terminal E has
+    // no bank/directory effect and must be allowed to break this wait cycle.
+    // The schedule remains all-or-none: never bypass with another operation.
+    val q = m.io.schedule.bits
+    val grantAckOnly = q.e.valid && !q.a.valid && !q.b.valid && !q.c.valid &&
+      !q.d.valid && !q.x.valid && !q.dir.valid && !q.park.valid
+    m.io.schedule.valid && (!s || grantAckOnly) && allowed && parkReady(i) && !peerResponseBlocked(i) &&
       (sourceA.io.req.ready || !m.io.schedule.bits.a.valid) &&
       (sourceB.io.req.ready || !m.io.schedule.bits.b.valid) &&
       (sourceC.io.req.ready || !m.io.schedule.bits.c.valid) &&
-      (sourceD.io.req.ready || !m.io.schedule.bits.d.valid) &&
-      (sourceE.io.req.ready || !m.io.schedule.bits.e.valid) &&
-      (sourceX.io.req.ready || !m.io.schedule.bits.x.valid) &&
-      (directory.io.write.ready || !m.io.schedule.bits.dir.valid)
-  }.reverse)
-  val mshr_request = Cat(mshrs.zip(mshr_stall).zip(stage3Allowed).zipWithIndex.map { case (((m, s), allowed), i) =>
-    m.io.schedule.valid && !s && allowed && parkReady(i) && !peerResponseBlocked(i) &&
-      (sourceA.io.req.ready || !m.io.schedule.bits.a.valid) &&
-      (sourceB.io.req.ready || !m.io.schedule.bits.b.valid) &&
-      (sourceC.io.req.ready && io.barrier_allow || !m.io.schedule.bits.c.valid) &&
       (sourceD.io.req.ready || !m.io.schedule.bits.d.valid) &&
       (sourceE.io.req.ready || !m.io.schedule.bits.e.valid) &&
       (sourceX.io.req.ready || !m.io.schedule.bits.x.valid) &&
@@ -413,7 +705,6 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
       selectOH2(params.mshrs - 1, 0)
   }
   val mshr_selectOH = selectMshr(mshr_request)
-  val mshr_selectOH_unbarred = selectMshr(mshr_request_unbarred)
   val mshr_select = OHToUInt(mshr_selectOH)
   val schedule = Mux1H(mshr_selectOH, mshrs.map(_.io.schedule.bits))
   val scheduleTag = Mux1H(mshr_selectOH, mshrs.map(_.io.status.bits.tag))
@@ -430,18 +721,12 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   sourceA.io.req := schedule.a
   sourceB.io.req := schedule.b
   sourceC.io.req := schedule.c
-  val candidateVec = mshrs.map { m =>
-    m.io.schedule.valid && m.io.schedule.bits.c.valid &&
-      m.io.schedule.bits.c.bits.dcache
+  // P4-05: release coherence permission for discarded bytes without writing
+  // them to outer memory. The normal Release/ReleaseAck lifecycle remains.
+  when (!recoveryContext.survives(schedule.c.bits.image.contentSeq)) {
+    sourceC.io.req.bits.dirty := Bool(false)
+    sourceC.io.req.bits.opcode := schedule.c.bits.opcode & UInt(6, width = 3)
   }
-  val candidateSeqs = mshrs.map(_.io.schedule.bits.c.bits.packetSeq)
-  val candidateTracked = mshrs.map(_.io.schedule.bits.c.bits.packetTracked)
-  val candidateDirty = mshrs.map(_.io.schedule.bits.c.bits.dirty)
-  val selectedCandidate = mshr_selectOH_unbarred & Vec(candidateVec).asUInt
-  io.dcacheWritebackRequestCandidate := selectedCandidate.orR
-  io.dcacheWritebackRequestCandidateDirty := Mux1H(selectedCandidate, candidateDirty)
-  io.dcacheWritebackRequestCandidatePacketSeq := Mux1H(selectedCandidate, candidateSeqs)
-  io.dcacheWritebackRequestCandidatePacketTracked := Mux1H(selectedCandidate, candidateTracked)
   when (schedule.park.valid) {
     val p = schedule.park.bits
     val matches = Vec(waitSources.map(source => Bool(source >= 0) && p.request.source === UInt(source max 0)))
@@ -458,11 +743,17 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
       p.seq, io.safeWatermark, schedule.dir.valid)
   }
   sourceD.io.req := schedule.d
+  // Classify the selected Acquire hint at the response selection boundary.
+  // SourceD freezes this bit with the payload selection in its existing pipe.
+  // publishPending below/at admission prevents certification before History
+  // publication; one shared comparison replaces Main's later SW comparison.
+  val recoverySeq = Mux1H(mshr_selectOH, mshrs.map(_.io.recoverySeq))
+  sourceD.io.req.bits.recoverySafe := recoverySeq <= io.safeWatermark
   when (sourceD.io.req.fire() && sourceD.io.req.bits.prio(0) &&
         !sourceD.io.req.bits.control && !sourceD.io.req.bits.bad &&
         CacheImage.exposesResident(sourceD.io.req.bits.opcode)) {
     assert(params.isImageAware(sourceD.io.req.bits.source) ||
-      (CacheImage.safe(sourceD.io.req.bits.image, io.safeWatermark) &&
+      (historySafe(sourceD.io.req.bits.image) &&
        (!(sourceD.io.req.bits.opcode === TLMessages.ArithmeticData ||
           sourceD.io.req.bits.opcode === TLMessages.LogicalData) ||
         !Mux1H(mshr_selectOH, mshrs.map(_.io.resident.bits.hit)) ||
@@ -481,6 +772,24 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   sourceE.io.req := schedule.e
   sourceX.io.req := schedule.x
   directory.io.write := schedule.dir
+  when (baselineState === baselineWrite) {
+    val old = baselineResult.image
+    val newer = preservation.io.baseline.bits.image
+    val obsolete = old.contentSeq < newer.contentSeq ||
+      (old.contentSeq === newer.contentSeq && old.generation <= newer.generation)
+    val strictlyOlder = old.contentSeq < newer.contentSeq ||
+      (old.contentSeq === newer.contentSeq && old.generation < newer.generation)
+    directory.io.write.valid := Bool(true)
+    directory.io.write.bits.set := preservation.io.baseline.bits.set
+    directory.io.write.bits.way := baselineResult.way
+    for (name <- (new DirectoryEntry(params)).elements.keys) {
+      directory.io.write.bits.data.elements(name) := baselineResult.elements(name)
+    }
+    directory.io.write.bits.data.outerPreserved := baselineResult.outerPreserved || obsolete
+    directory.io.write.bits.data.baselineObsolete := baselineResult.baselineObsolete || strictlyOlder
+    when (strictlyOlder) { directory.io.write.bits.data.image := newer }
+    when (directory.io.write.fire()) { baselineState := baselineDone }
+  }
 
   // Count a writeback at the first beat accepted by the outer C channel. This
   // matches the L1->L2 accounting point and includes any SourceC queue delay.
@@ -512,6 +821,7 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   nestedwb.packetTracked := c_mshr.io.schedule.bits.dir.bits.data.packetTracked
   nestedwb.image := c_mshr.io.schedule.bits.dir.bits.data.image
   nestedwb.outerPreserved := c_mshr.io.schedule.bits.dir.bits.data.outerPreserved
+  nestedwb.baselineObsolete := c_mshr.io.schedule.bits.dir.bits.data.baselineObsolete
 
   // Pick highest priority request
   val preferClientReplay = RegInit(Bool(false))
@@ -523,15 +833,17 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   clientReplay.ready := clientA.ready && useClientReplay
   when (clientA.fire()) { preferClientReplay := !useClientReplay }
   val request = Wire(Decoupled(new FullRequest(params)))
-  request.valid := directory.io.ready && !locked(request.bits.set) &&
+  val requestEnabled = directory.io.ready && !baselineActive &&
+    !locked(request.bits.set) && !io.identityUnavailable
+  request.valid := requestEnabled &&
     (clientA.valid || sinkX.io.req.valid || sinkC.io.req.valid)
   request.bits := Mux(sinkC.io.req.valid, sinkC.io.req.bits,
                   Mux(sinkX.io.req.valid, sinkX.io.req.bits, clientA.bits))
   io.drain.requestValid := request.valid
   io.drain.requestReady := request.ready
-  sinkC.io.req.ready := directory.io.ready && request.ready && !locked(request.bits.set)
-  sinkX.io.req.ready := directory.io.ready && request.ready && !locked(request.bits.set) && !sinkC.io.req.valid
-  clientA.ready := directory.io.ready && request.ready && !locked(request.bits.set) && !sinkC.io.req.valid && !sinkX.io.req.valid
+  sinkC.io.req.ready := requestEnabled && request.ready
+  sinkX.io.req.ready := requestEnabled && request.ready && !sinkC.io.req.valid
+  clientA.ready := requestEnabled && request.ready && !sinkC.io.req.valid && !sinkX.io.req.valid
 
   // If no MSHR has been assigned to this set, we need to allocate one
   val setMatches = Cat(mshrs.map { m => m.io.status.valid && m.io.status.bits.set === request.bits.set }.reverse)
@@ -576,8 +888,8 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
                       Mux(c_pop || request.bits.prio(2), !c_pop, Mux(b_pop || request.bits.prio(1), !b_pop, !a_pop))
   val may_pop = a_pop || b_pop || c_pop
   val bypass = request.valid && queue && bypassMatches
-  val will_reload = schedule.reload && (may_pop || bypass)
-  val will_pop = schedule.reload && may_pop && !bypass
+  val will_reload = schedule.reload && (may_pop || bypass) && !io.identityUnavailable
+  val will_pop = schedule.reload && may_pop && !bypass && !io.identityUnavailable
 
   params.ccover(mshr_selectOH.orR && bypass, "SCHEDULER_BYPASS", "Bypass new request directly to conflicting MSHR")
   params.ccover(mshr_selectOH.orR && will_reload, "SCHEDULER_RELOAD", "Back-to-back service of two requests")
@@ -594,7 +906,7 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
                         Mux(c_pop || request.bits.prio(2), !c_pop, Mux(b_pop || request.bits.prio(1), !b_pop, !a_pop))
     val may_pop = a_pop || b_pop || c_pop
     val bypass = request.valid && queue && bypassMatches
-    val will_reload = m.io.schedule.bits.reload && (may_pop || bypass)
+    val will_reload = m.io.schedule.bits.reload && (may_pop || bypass) && !io.identityUnavailable
     m.io.allocate.bits := Mux(bypass, Wire(new QueuedRequest(params), init = request.bits), requests.io.data)
     m.io.allocate.bits.set := m.io.status.bits.set
     m.io.allocate.bits.repeat := m.io.allocate.bits.tag === m.io.status.bits.tag
@@ -623,13 +935,47 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
      (alloc && !mshr_uses_directory_assuming_no_bypass && mshr_free) ||
      (nestB && !mshr_uses_directory_assuming_no_bypass && !bc_mshr.io.status.valid && !c_mshr.io.status.valid) ||
      (nestC && !mshr_uses_directory_assuming_no_bypass && !c_mshr.io.status.valid)
-  request.ready := request_alloc_cases || (queue && (bypassQueue || requests.io.push.ready))
+  request.ready := !io.identityUnavailable &&
+    (request_alloc_cases || (queue && (bypassQueue || requests.io.push.ready)))
   val alloc_uses_directory = request.valid && request_alloc_cases
 
   // When a request goes through, it will need to hit the Directory
   directory.io.read.valid := mshr_uses_directory || alloc_uses_directory
   directory.io.read.bits.set := Mux(mshr_uses_directory_for_lb, scheduleSet,          request.bits.set)
   directory.io.read.bits.tag := Mux(mshr_uses_directory_for_lb, requests.io.data.tag, request.bits.tag)
+  directory.io.read.bits.checkerFetch :=
+    Mux(mshr_uses_directory_for_lb, requests.io.data.prio(0), request.bits.prio(0)) &&
+    CacheImage.exposesResident(Mux(mshr_uses_directory_for_lb, requests.io.data.opcode, request.bits.opcode)) &&
+    !params.isImageAware(Mux(mshr_uses_directory_for_lb, requests.io.data.source, request.bits.source))
+  directory.io.read.bits.maintenance := Bool(false)
+  directory.io.read.bits.maintenanceWay := UInt(0)
+  when (baselineState === baselineRead && directory.io.ready &&
+    !(mshr_uses_directory || alloc_uses_directory)) {
+    directory.io.read.valid := Bool(true)
+    directory.io.read.bits.set := preservation.io.baseline.bits.set
+    directory.io.read.bits.tag := preservation.io.baseline.bits.tag
+    directory.io.read.bits.checkerFetch := Bool(false)
+    baselineReadFire := Bool(true)
+  }
+  when (maintState === maintRead && directory.io.ready && !baselineActive &&
+    !(mshr_uses_directory || alloc_uses_directory)) {
+    directory.io.read.valid := Bool(true)
+    directory.io.read.bits.set := maintSet
+    directory.io.read.bits.tag := UInt(0)
+    directory.io.read.bits.checkerFetch := Bool(false)
+    directory.io.read.bits.maintenance := Bool(true)
+    directory.io.read.bits.maintenanceWay := maintWay
+    maintReadFire := Bool(true)
+  }
+  when (historyCPending && !historyCChecked && !historyCCheckWaiting &&
+    directory.io.ready && !baselineActive && !locked(historyCSet) &&
+    maintState =/= maintRead && !(mshr_uses_directory || alloc_uses_directory)) {
+    directory.io.read.valid := Bool(true)
+    directory.io.read.bits.set := historyCSet
+    directory.io.read.bits.tag := historyCTag
+    directory.io.read.bits.checkerFetch := Bool(false)
+    historyCCheckFire := Bool(true)
+  }
 
   // Enqueue the request if not bypassed directly into an MSHR
   requests.io.push.valid := request.valid && queue && !bypassQueue
@@ -776,7 +1122,7 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
 
   // The reservation covers physical effects, not just candidate selection.
   when (preservation.io.lock.valid) {
-    assert(!(directory.io.write.fire() && locked(directory.io.write.bits.set)), "L2_PREMATURE_OVERWRITE_ERROR directory")
+    assert(!(directory.io.write.fire() && locked(directory.io.write.bits.set) && baselineState =/= baselineWrite), "L2_PREMATURE_OVERWRITE_ERROR directory")
     assert(!(sourceD.io.bs_wadr.fire() && locked(sourceD.io.bs_wadr.bits.set)), "L2_PREMATURE_OVERWRITE_ERROR SourceD")
     assert(!(sinkC.io.bs_adr.fire() && !sinkC.io.bs_adr.bits.noop && locked(sinkC.io.bs_adr.bits.set)), "L2_PREMATURE_OVERWRITE_ERROR SinkC")
     assert(!(sinkD.io.bs_adr.fire() && !sinkD.io.bs_adr.bits.noop && locked(sinkD.io.bs_adr.bits.set)), "L2_PREMATURE_OVERWRITE_ERROR refill")
@@ -784,7 +1130,7 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   when (sourceC.io.req.fire()) {
     assert(sourceC.io.req.bits.source < UInt(InclusiveCacheParameters.out_mshrs(params.cache, params.micro)),
       "L2 MSHR release aliases checkpoint source")
-    assert(CacheImage.safe(sourceC.io.req.bits.image, io.safeWatermark), "L2_SPEC_OUTER_WRITE_ERROR victim")
+    assert(!sourceC.io.req.bits.dirty || historySafe(sourceC.io.req.bits.image), "L2_SPEC_OUTER_WRITE_ERROR victim")
     printf("STAGE3_TX L2_VICTIM_REQ bank=%x txn=%x source=%x set=%x way=%x tag=%x valid=%x writer=%x gen=%x seq=%x dirty=%x reason=%x\n",
       io.bank, sourceC.io.req.bits.txn, sourceC.io.req.bits.source, sourceC.io.req.bits.set,
       sourceC.io.req.bits.way, sourceC.io.req.bits.tag, sourceC.io.req.bits.image.valid,
@@ -814,8 +1160,6 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   chisel3.dontTouch(slowdown_scheduler_request_source)
   val slowdown_scheduler_candidates = chisel3.WireInit(mshr_request)
   chisel3.dontTouch(slowdown_scheduler_candidates)
-  val slowdown_scheduler_unbarred = chisel3.WireInit(mshr_request_unbarred)
-  chisel3.dontTouch(slowdown_scheduler_unbarred)
   val slowdown_scheduler_selected = chisel3.WireInit(mshr_selectOH)
   chisel3.dontTouch(slowdown_scheduler_selected)
   val slowdown_scheduler_set = chisel3.WireInit(scheduleSet)
@@ -834,8 +1178,6 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   chisel3.dontTouch(slowdown_validation_block)
   val slowdown_client_validation_block = chisel3.WireInit(io.clientValidationBlock)
   chisel3.dontTouch(slowdown_client_validation_block)
-  val slowdown_barrier_allow = chisel3.WireInit(io.barrier_allow)
-  chisel3.dontTouch(slowdown_barrier_allow)
   val slowdown_preservation_lock = chisel3.WireInit(io.preservationLock.valid)
   chisel3.dontTouch(slowdown_preservation_lock)
   val slowdown_preservation_txn = chisel3.WireInit(io.preservationTxn)

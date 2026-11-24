@@ -189,6 +189,8 @@ trait HasCoreIO extends HasTileParameters {
     val packet_lsl = Vec(GH_GlobalParams.GH_TOTAL_PACKETS,UInt(GH_GlobalParams.GH_WIDITH_PACKETS.W)).asInput
     val packet_seq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W).asInput
     val packet_seq_valid = Bool().asInput
+    val packet_seq_reset = Bool().asInput
+    val packet_seq_reset_ready = Bool().asOutput
     val package_result_valid = Bool().asOutput
     val package_result_seq = UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W).asOutput
     val package_result_status = UInt(GH_GlobalParams.GH_CHECKER_STATUS_BITS.W).asOutput

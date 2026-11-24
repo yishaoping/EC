@@ -36,10 +36,14 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
   with HasL1HellaCacheParameters
 {
   val io = IO(new Bundle {
+    val recovery = Input(Valid(new PalimpsestHistoryLine)) // P3-11: held until install
+
     val id = Input(UInt())
 
     val req_pri_val = Input(Bool())
     val req_pri_rdy = Output(Bool())
+    val busy = Output(Bool())
+    val identityUnavailable = Output(Bool())
     val req_sec_val = Input(Bool())
     val req_sec_rdy = Output(Bool())
 
@@ -137,9 +141,20 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
 
   val req     = Reg(new BoomDCacheReqInternal)
   val transactionSerial = RegInit(0.U(32.W))
+  // Retirement and allocation readiness are different predicates: an idle
+  // exhausted MSHR must not look like an in-flight transaction to drain.
+  io.busy := !state.isOneOf(s_invalid, s_prefetch)
+  io.identityUnavailable := false.B // D07: reuse only from invalid/prefetch (no live owner)
   val writeDomainValid = RegInit(false.B)
   val writeDomainSeq = Reg(UInt(freechips.rocketchip.guardiancouncil.GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
   val refillImage = Reg(new CacheImageKey)
+  val recoveryActive = RegInit(false.B)
+  val recoveryData = Reg(new PalimpsestHistoryLine)
+  val recoveryLive = WireDefault(false.B)
+  val recoveryMatches = WireDefault(false.B)
+  val recoveredLine = Mux(recoveryLive, io.recovery.bits, recoveryData)
+  val recoveredImage = Mux(recoveryLive || recoveryActive, recoveredLine.key, refillImage)
+
   val grantFirst = RegInit(true.B)
   val installStarted = RegInit(false.B)
   val protocolFault = RegInit(false.B)
@@ -148,24 +163,35 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
   val rowValid = RegInit(false.B)
   val rowData = Reg(UInt(encRowBits.W))
   io.owner := req
-  io.next_transaction_token := transactionSerial + 1.U
+  io.next_transaction_token := Mux(transactionSerial.andR, 1.U, transactionSerial + 1.U)
   io.write_domain_valid := writeDomainValid
   io.write_domain_seq := writeDomainSeq
   io.install.valid := false.B
   io.install.bits.req := req
   io.install.bits.new_owner := !req.tag_match
-  io.install.bits.image := refillImage
+  io.install.bits.image := recoveredImage
   io.retired.valid := false.B
   io.retired.bits := req
   val req_idx = req.addr(untagBits-1, blockOffBits)
   val req_tag = req.addr >> untagBits
   val req_block_addr = (req.addr >> blockOffBits) << blockOffBits
+  recoveryMatches := state =/= s_invalid && io.recovery.valid && io.recovery.bits.address === req_block_addr
+  // L2 classifies the Acquire hint when selecting its response, after its
+  // History publication barrier. The local SW may have advanced since then.
+  // Freeze the choice with the acquired permission through install/replay.
+  val responseRecoverySafe = io.mem_grant.bits.user.lift(CacheRecoverySafe).getOrElse(false.B)
+  recoveryLive := state === s_refill_resp && grantFirst && io.mem_grant.fire &&
+    recoveryMatches && !responseRecoverySafe
+  when (recoveryLive) { recoveryActive := true.B; recoveryData := io.recovery.bits }
+  val recoveredLbResp = Mux(recoveryActive || recoveryLive,
+    recoveredLine.data.asTypeOf(Vec(cacheDataBeats, UInt(encRowBits.W)))(io.lb_read.bits.offset), io.lb_resp)
+
   val req_needs_wb = RegInit(false.B)
 
   val new_coh = RegInit(ClientMetadata.onReset)
   val (_, shrink_param, coh_on_clear) = req.old_meta.coh.onCacheControl(M_FLUSH)
-  val grow_param = new_coh.onAccess(req.uop.mem_cmd)._2
-  val coh_on_grant = new_coh.onGrant(req.uop.mem_cmd, io.mem_grant.bits.param)
+  val grow_param = new_coh.onAccess(Mux(recoveryMatches || recoveryActive, M_XWR, req.uop.mem_cmd))._2
+  val coh_on_grant = new_coh.onGrant(Mux(recoveryLive || recoveryActive, M_XWR, req.uop.mem_cmd), io.mem_grant.bits.param)
 
   // We only accept secondary misses if the original request had sufficient permissions
   val (cmd_requires_second_acquire, is_hit_again, _, dirtier_coh, dirtier_cmd) =
@@ -370,6 +396,7 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
     transactionSerial := io.req.transaction_token
     assert(io.req.transaction_token =/= 0.U, "MSHR transaction token exhausted")
     installStarted := false.B
+    recoveryActive := false.B
     rowValid := false.B
     protocolFault := false.B
     grantFirst := true.B
@@ -409,6 +436,10 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
       toAddress       = Cat(req_tag, req_idx) << blockOffBits,
       lgSize          = lgCacheBlockBytes.U,
       growPermissions = grow_param)._2)
+    // A carries only the candidate identity. L2 must still label its actual
+    // coherent response using the directory image, never this hint.
+    io.mem_acquire.bits.user.lift(CacheImage).foreach(_ :=
+      Mux(recoveryMatches, io.recovery.bits.key, 0.U.asTypeOf(new CacheImageKey)))
     when (io.mem_acquire.fire) {
       state := s_refill_resp
     }
@@ -424,6 +455,14 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
     }
 
     when (io.mem_grant.fire) {
+      when (recoveryMatches) {
+        assert(io.mem_grant.bits.user.lift(CacheRecoverySafe).isDefined.B,
+          "recovery Grant lacks L2 response certificate")
+        when (!grantFirst) {
+          assert(recoveryActive === !responseRecoverySafe,
+            "Grant recovery certificate changed between beats")
+        }
+      }
       val incomingImage = io.mem_grant.bits.user.lift(CacheImage).getOrElse(0.U.asTypeOf(new CacheImageKey))
       assert(incomingImage.valid || incomingImage.asUInt === 0.U, "malformed BASE image")
       assert(!incomingImage.valid || incomingImage.generation =/= 0.U, "authored image has no generation")
@@ -451,7 +490,7 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
     // drain all loads for now
     val rp_addr = Cat(req_tag, req_idx, rpq.io.deq.bits.addr(blockOffBits-1,0))
     val word_idx  = if (rowWords == 1) 0.U else rp_addr(log2Up(rowWords*coreDataBytes)-1, log2Up(wordBytes))
-    val data      = io.lb_resp
+    val data      = recoveredLbResp
     val data_word = data >> Cat(word_idx, 0.U(log2Up(coreDataBits).W))
     val loadgen = new LoadGen(rpq.io.deq.bits.uop.mem_size, rpq.io.deq.bits.uop.mem_signed,
       Cat(req_tag, req_idx, rpq.io.deq.bits.addr(blockOffBits-1,0)),
@@ -553,7 +592,7 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
     val install_row_read_fire = io.lb_read.fire &&
       state === s_commit_line && installStarted && grant_had_data && !protocolFault
     when (install_row_read_fire) {
-      rowData := io.lb_resp
+      rowData := recoveredLbResp
       rowValid := true.B
     }
     io.refill.valid := grant_had_data && rowValid && !protocolFault
@@ -568,7 +607,7 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
     io.refill.bits.transaction_token := req.transaction_token
     io.refill.bits.mshr_id := io.id
     io.refill.bits.owner_context_valid := req.owner_context_valid
-    io.refill.bits.image := refillImage
+    io.refill.bits.image := recoveredImage
     when (io.refill.fire) {
       rowValid := false.B
       refill_ctr := refill_ctr + 1.U
@@ -597,10 +636,11 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
       state := s_meta_write_req
     }
   } .elsewhen (state === s_meta_write_req) {
+    when (recoveryActive) { new_coh := new_coh.onAccess(M_XWR)._3 }
     io.meta_write.valid         := true.B
     io.meta_write.bits.idx      := req_idx
     io.meta_write.bits.tag      := req_tag
-    io.meta_write.bits.data.coh := new_coh
+    io.meta_write.bits.data.coh := Mux(recoveryActive, new_coh.onAccess(M_XWR)._3, new_coh)
     io.meta_write.bits.data.tag := req_tag
     io.meta_write.bits.way_en   := req.way_en
     when (io.meta_write.fire) {
@@ -635,11 +675,17 @@ class BoomMSHR(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
   }
 }
 
-class BoomIOMSHR(id: Int)(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
+class BoomIOMSHR(id: Int, protectedJournal: Boolean = true)(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()(p)
   with HasL1HellaCacheParameters
 {
   val io = IO(new Bundle {
     val req  = Flipped(Decoupled(new BoomDCacheReq))
+    val preview = Input(Bool()) // candidate exists even when journal deasserts req.ready
+    val watermark = Input(UInt(32.W))
+    val historyContext = Input(new PalimpsestHistoryQuery)
+    val busy = Output(Bool())
+    val effectPending = Output(Bool()) // accepted device owner through journal safety
+    val replayFault = Output(Valid(UInt(32.W)))
     val resp = Decoupled(new BoomDCacheResp)
     val mem_access = Decoupled(new TLBundleA(edge.bundle))
     val completion = Decoupled(new BoomCacheCompletion)
@@ -664,7 +710,44 @@ class BoomIOMSHR(id: Int)(implicit edge: TLEdgeOut, p: Parameters) extends BoomM
   val s_idle :: s_mem_access :: s_mem_ack :: s_resp :: Nil = Enum(4)
 
   val state = RegInit(s_idle)
-  io.req.ready := state === s_idle
+  // P4-09/U-D08: one device effect survives a rollback of its effect segment.
+  // Core closes/verifies this segment before another protected I/O. On a
+  // retry, return the recorded raw word (or write ACK), without a second A.
+  val journalValid = RegInit(false.B)
+  val journalReplay = RegInit(false.B)
+  val journalSeq = Reg(UInt(32.W))
+  val journalAddress = Reg(UInt(coreMaxAddrBits.W))
+  val journalPC = Reg(chiselTypeOf(io.req.bits.uop.debug_pc))
+  val journalCommand = Reg(chiselTypeOf(io.req.bits.uop.mem_cmd))
+  val journalSize = Reg(chiselTypeOf(io.req.bits.uop.mem_size))
+  val journalOperand = Reg(UInt(coreDataBits.W))
+  val journalWord = Reg(UInt(wordBits.W))
+  // Once replay is required, retiring an EVT interval must not certify the
+  // already external effect. Only rebinding it to a successful new attempt
+  // can make it safe again.
+  val journalSafe = journalValid && !journalReplay &&
+    io.historyContext.survives(journalSeq) && journalSeq <= io.watermark
+  val replayMatch = journalReplay && journalValid &&
+    io.req.bits.addr === journalAddress && io.req.bits.uop.debug_pc === journalPC &&
+    io.req.bits.uop.mem_cmd === journalCommand && io.req.bits.uop.mem_size === journalSize &&
+    (!isWrite(io.req.bits.uop.mem_cmd) || io.req.bits.data === journalOperand)
+  io.req.ready := state === s_idle && (!journalValid || journalSafe || replayMatch)
+  io.busy := state =/= s_idle // retained replay record is an isolated owner, not a drain dependency
+  // Keep interrupt/rebase responsibility continuous from request acceptance.
+  // The device may assert MSIP before D installs its retained journal. Without
+  // the live owner term, that A-to-D window briefly admits an interrupt whose
+  // handler then reads the masked MIP and returns without clearing MSIP.
+  val inFlightEffect = protectedJournal.B && state =/= s_idle && req.packet_seq =/= 0.U
+  io.effectPending := inFlightEffect || (journalValid && !journalSafe)
+  // A mismatching retry has produced no second device effect. Re-enter the
+  // existing SCP recovery path for that attempt instead of waiting forever
+  // for a request whose operands cannot change inside this pipeline owner.
+  io.replayFault.valid := io.preview && state === s_idle && journalReplay && journalValid &&
+    !replayMatch && io.req.bits.packet_seq =/= 0.U &&
+    io.historyContext.survives(io.req.bits.packet_seq)
+  io.replayFault.bits := io.req.bits.packet_seq
+  when (journalSafe) { journalValid := false.B; journalReplay := false.B }
+  when (journalValid && !io.historyContext.survives(journalSeq)) { journalReplay := true.B }
 
   val loadgen = new LoadGen(req.uop.mem_size, req.uop.mem_signed, req.addr, grant_word, false.B, wordBytes)
 
@@ -696,7 +779,9 @@ class BoomIOMSHR(id: Int)(implicit edge: TLEdgeOut, p: Parameters) extends BoomM
   io.mem_access.valid := state === s_mem_access
   io.mem_access.bits  := Mux(isAMO(req.uop.mem_cmd), atomics, Mux(isRead(req.uop.mem_cmd), get, put))
 
-  val send_resp = isRead(req.uop.mem_cmd) && !isWrite(req.uop.mem_cmd)
+  // AMOs own BOTH the old-value response (ROB/PRF) and the write terminal
+  // (STQ). A completion alone cannot wake the architectural destination.
+  val send_resp = isRead(req.uop.mem_cmd)
   val responseDone = RegInit(false.B)
   val completionDone = RegInit(false.B)
 
@@ -729,15 +814,34 @@ class BoomIOMSHR(id: Int)(implicit edge: TLEdgeOut, p: Parameters) extends BoomM
     responseDone := false.B
     completionDone := false.B
     assert(!io.req.bits.owner_context_valid, "MMIO cannot own a cache slot")
-    state := s_mem_access
+    when (replayMatch) {
+      grant_word := journalWord
+      journalSeq := io.req.bits.packet_seq
+      journalReplay := false.B
+      state := s_resp
+      printf("PALIMPSEST_IO_REPLAY seq=%x pc=%x addr=%x\n",
+        io.req.bits.packet_seq, io.req.bits.uop.debug_pc, io.req.bits.addr)
+    }.otherwise { state := s_mem_access }
   }
   when (io.mem_access.fire) {
     state := s_mem_ack
   }
   when (state === s_mem_ack && io.mem_ack.valid) {
+    assert(!io.mem_ack.bits.denied && !io.mem_ack.bits.corrupt, "device response failed")
     state := s_resp
     when (isRead(req.uop.mem_cmd)) {
       grant_word := wordFromBeat(req.addr, io.mem_ack.bits.data)
+    }
+    when (req.packet_seq =/= 0.U && protectedJournal.B) {
+      journalValid := true.B
+      journalReplay := !io.historyContext.survives(req.packet_seq)
+      journalSeq := req.packet_seq
+      journalAddress := req.addr
+      journalPC := req.uop.debug_pc
+      journalCommand := req.uop.mem_cmd
+      journalSize := req.uop.mem_size
+      journalOperand := req.data
+      journalWord := Mux(isRead(req.uop.mem_cmd), wordFromBeat(req.addr, io.mem_ack.bits.data), 0.U)
     }
   }
   when (state === s_resp) {
@@ -779,6 +883,16 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
   with HasL1HellaCacheParameters
 {
   val io = IO(new Bundle {
+    val safeWatermark = Input(UInt(32.W)) // P4-09: pre-accept I/O barrier
+    val executionTail = Input(UInt(32.W))
+    val historyContext = Input(new PalimpsestHistoryQuery)
+    val rollbackStop = Input(Bool())
+    val mmioBlocked = Output(Bool())
+    val mmioBlockedSeq = Output(UInt(32.W))
+    val ioEffectPending = Output(Bool())
+    val mmioReplayFault = Output(Valid(UInt(32.W)))
+    val recovery = Input(Valid(new PalimpsestHistoryLine)) // P3-11: held until install
+
     val req  = Flipped(Vec(memWidth, Decoupled(new BoomDCacheReqInternal))) // Req from s2 of DCache pipe
     val lookup = Input(Vec(memWidth, new BoomDCacheReqInternal))
     val admission = Output(Vec(memWidth, new BoomCacheAdmission))
@@ -834,6 +948,7 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
     // Observation only: parked s_prefetch owners are ready for a new primary
     // request and have no active transaction. Include busy uncached MSHRs.
     val active_transactions = Output(UInt(log2Ceil(cfg.nMSHRs + cfg.nMMIOs + 1).W))
+    val identityUnavailable = Output(Bool())
     val probe_rdy = Output(Bool())
     val traffic_strict_store_complete = Output(Bool())
     val traffic_strict_store_complete_stq_idx = Output(UInt(stqAddrSz.W))
@@ -949,7 +1064,8 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
 
   val mshr_alloc_idx = Wire(UInt())
   val pri_rdy = WireInit(false.B)
-  val pri_val = req.valid && sdq_rdy && cacheable && !idx_match(req_idx)
+  val slotIdentityAvailable = raw.tag_match || raw.slot_epoch =/= 0.U
+  val pri_val = req.valid && sdq_rdy && cacheable && !idx_match(req_idx) && slotIdentityAvailable
   val mshrs = (0 until cfg.nMSHRs) map { i =>
     val mshr = Module(new BoomMSHR)
     mshr.io.id := i.U(log2Ceil(cfg.nMSHRs).W)
@@ -975,6 +1091,7 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
 
     mshr.io.req_sec_val  := req.valid && sdq_rdy && tag_match(req_idx) && idx_matches(req_idx)(i) && cacheable
     mshr.io.req          := req.bits
+    mshr.io.recovery := io.recovery
     installArb.io.in(i) <> mshr.io.install
     mshr.io.install_fault := io.install_fault(i)
     mshr.io.refill_fault := io.refill_fault(i)
@@ -1039,7 +1156,7 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
     sec_rdy   = sec_rdy || (mshr.io.req_sec_rdy && mshr.io.req_sec_val)
     resp_arb.io.in(i) <> mshr.io.resp
 
-    when (!mshr.io.req_pri_rdy) {
+    when (mshr.io.busy) {
       io.fence_rdy := false.B
     }
     for (w <- 0 until memWidth) {
@@ -1084,21 +1201,32 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
   val mmio_alloc_arb = Module(new Arbiter(Bool(), nIOMSHRs))
 
 
+  val ioSeq = req.bits.packet_seq
+  val mmioPermit = !io.rollbackStop && io.historyContext.survives(ioSeq) &&
+    Mux(ioSeq === 0.U, io.executionTail <= io.safeWatermark, ioSeq - 1.U <= io.safeWatermark)
+  io.mmioBlocked := req.valid && !cacheable && !mmioPermit
+  io.mmioBlockedSeq := Mux(ioSeq === 0.U, io.executionTail, ioSeq)
   var mmio_rdy = false.B
 
   val mmios = (0 until nIOMSHRs) map { i =>
     val id = cfg.nMSHRs + 1 + i // +1 for wb unit
-    val mshr = Module(new BoomIOMSHR(id))
+    val mshr = Module(new BoomIOMSHR(id, protectedJournal = i == 0))
+    mshr.io.watermark := io.safeWatermark
+    mshr.io.historyContext := io.historyContext
+    mshr.io.preview := (i == 0).B && req.valid && !cacheable && mmioPermit && ioSeq =/= 0.U
 
-    mmio_alloc_arb.io.in(i).valid := mshr.io.req.ready
+    // All protected effects use the one persistent journal. Unprotected
+    // platform requests retain the existing parallel IOMSHR allocation.
+    val journalOwner = (i == 0).B || ioSeq === 0.U
+    mmio_alloc_arb.io.in(i).valid := mshr.io.req.ready && journalOwner
     mmio_alloc_arb.io.in(i).bits  := DontCare
-    mshr.io.req.valid := mmio_alloc_arb.io.in(i).ready
+    mshr.io.req.valid := mmio_alloc_arb.io.in(i).ready && mmio_alloc_arb.io.in(i).valid && mmioPermit
     BoomDCacheReq.copyBase(mshr.io.req.bits, req.bits)
     mshr.io.req.bits.owner_context_valid := false.B
     mshr.io.req.bits.owner_way := 0.U
     mmioCompletionArb.io.in(i) <> mshr.io.completion
 
-    mmio_rdy = mmio_rdy || mshr.io.req.ready
+    mmio_rdy = mmio_rdy || (mshr.io.req.ready && mmioPermit && journalOwner)
 
     mshr.io.mem_ack.bits  := io.mem_grant.bits
     mshr.io.mem_ack.valid := io.mem_grant.valid && io.mem_grant.bits.source === id.U
@@ -1107,14 +1235,17 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
     }
 
     resp_arb.io.in(cfg.nMSHRs + i) <> mshr.io.resp
-    when (!mshr.io.req.ready) {
+    when (mshr.io.busy) {
       io.fence_rdy := false.B
     }
     mshr
   }
 
   io.active_transactions := PopCount(VecInit(
-    mshrs.map(m => !m.io.req_pri_rdy) ++ mmios.map(m => !m.io.req.ready)))
+    mshrs.map(m => m.io.busy) ++ mmios.map(m => m.io.busy)))
+  io.identityUnavailable := mshrs.map(_.io.identityUnavailable).reduce(_ || _)
+  io.ioEffectPending := mmios.map(_.io.effectPending).reduce(_ || _)
+  io.mmioReplayFault := mmios.head.io.replayFault // protected effects have exactly this journal owner
 
   val strictStoreComplete = mmios.map(_.io.traffic_strict_store_complete)
   io.traffic_strict_store_complete := strictStoreComplete.reduce(_||_)
@@ -1123,7 +1254,7 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
   io.traffic_strict_store_complete_token :=
     Mux1H(strictStoreComplete, mmios.map(_.io.traffic_strict_store_complete_token))
 
-  mmio_alloc_arb.io.out.ready := req.valid && !cacheable
+  mmio_alloc_arb.io.out.ready := req.valid && !cacheable && mmioPermit
 
   TLArbiter.lowestFromSeq(edge, io.mem_acquire, mshrs.map(_.io.mem_acquire) ++ mmios.map(_.io.mem_access))
   TLArbiter.lowestFromSeq(edge, io.mem_finish,  mshrs.map(_.io.mem_finish))
@@ -1136,7 +1267,8 @@ class BoomMSHRFile(implicit edge: TLEdgeOut, p: Parameters) extends BoomModule()
 
   for (w <- 0 until memWidth) {
     io.req(w).ready      := (w.U === req_idx) &&
-      Mux(!cacheable, mmio_rdy, sdq_rdy && Mux(idx_match(w), tag_match(w) && sec_rdy, pri_rdy))
+      Mux(!cacheable, mmio_rdy, sdq_rdy && Mux(idx_match(w), tag_match(w) && sec_rdy,
+        pri_rdy && slotIdentityAvailable))
     io.secondary_miss(w) := idx_match(w) && way_match(w) && !tag_match(w)
     io.block_hit(w)      := idx_match(w) && tag_match(w)
   }

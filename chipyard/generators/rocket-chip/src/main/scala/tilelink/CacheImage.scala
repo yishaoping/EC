@@ -22,6 +22,17 @@ class CacheImageKey extends Bundle {
   */
 trait CacheImageClient
 
+/** The Acquire's recovery hint was already safe when L2 selected this D
+  * response, after ordered History publication. Frozen with the response;
+  * a later local watermark cannot classify an already selected payload.
+  * This bit certifies the hint, not the image identity of the returned bytes.
+  */
+case object CacheRecoverySafe extends ControlKey[Bool]("cache_recovery_safe")
+case class CacheRecoverySafeField() extends BundleField(CacheRecoverySafe) {
+  def data = Output(Bool())
+  def default(x: Bool): Unit = { x := false.B }
+}
+
 case object CacheImage extends ControlKey[CacheImageKey]("cache_image") {
   // HintAck/AccessAck do not expose resident bytes or permissions. AMOs
   // return the pre-write value even when the final directory image is BASE.
@@ -31,6 +42,13 @@ case object CacheImage extends ControlKey[CacheImageKey]("cache_image") {
     opcode === TLMessages.LogicalData
   def safe(key: CacheImageKey, watermark: UInt): Bool =
     !key.valid || key.contentSeq === 0.U || key.contentSeq <= watermark
+  def earlier(a: CacheImageKey, b: CacheImageKey): Bool =
+    a.contentSeq < b.contentSeq || (a.contentSeq === b.contentSeq && a.generation < b.generation)
+  // Seq0 may be a new trusted write after the tracked interval. Only
+  // tracked C has an order comparable to an acknowledged tracked baseline.
+  def coveredTracked(incoming: CacheImageKey, receipt: CacheImageKey): Bool =
+    incoming.valid && incoming.contentSeq =/= 0.U && receipt.valid &&
+      (earlier(incoming, receipt) || incoming.asUInt === receipt.asUInt)
   def samePackageIdentity(key: CacheImageKey, writer: UInt, seq: UInt): Bool =
     key.valid && key.writer === writer && seq =/= 0.U && key.contentSeq === seq
   def sameSpeculativePackage(a: CacheImageKey, b: CacheImageKey): Bool =
@@ -51,7 +69,8 @@ case object CacheImage extends ControlKey[CacheImageKey]("cache_image") {
 
 /** Echoed end-to-end, including across CacheCork and TLToAXI4/UserYanker.
   * A source ID alone is reusable and cannot authenticate a delayed completion.
-  * The serial names one immutable snapshot; serial exhaustion is fail-stop.
+  * The serial names one immutable snapshot; its owner must terminate before
+  * that serial can cycle. Persistent Seq ordering does not use this label.
   */
 case object CachePreserveTxn extends ControlKey[UInt]("cache_preserve_txn")
 case class CachePreserveTxnField() extends BundleField(CachePreserveTxn) {

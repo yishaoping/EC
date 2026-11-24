@@ -61,6 +61,8 @@ abstract class AbstractRenameStage(
     val ren_stalls = Output(Vec(plWidth, Bool()))
 
     val kill = Input(Bool())
+    val architecturalRestore = Input(Bool()) // P2-06: fixed PRF mapping after full flush
+    val architecturalRestoreDone = Output(Bool())
 
     val dec_fire  = Input(Vec(plWidth, Bool())) // will commit state updates
     val dec_uops  = Input(Vec(plWidth, new MicroOp()))
@@ -268,6 +270,11 @@ class RenameStage(
   maptable.io.ren_br_tags := ren2_br_tags
   maptable.io.brupdate      := io.brupdate
   maptable.io.rollback    := io.rollback
+  maptable.io.architecturalRestore := io.architecturalRestore
+  freelist.io.architecturalRestore := io.architecturalRestore
+  busytable.io.architecturalRestore := io.architecturalRestore
+  io.architecturalRestoreDone := maptable.io.architecturalRestoreDone &&
+    freelist.io.architecturalRestoreDone && busytable.io.architecturalRestoreDone
 
   // Maptable outputs.
   for ((uop, w) <- ren1_uops.zipWithIndex) {
@@ -398,4 +405,9 @@ class PredRenameStage(
   current_ftq_idx := next_ftq_idx
 
   busy_table := ((busy_table.asUInt | to_busy.asUInt) & ~unbusy.asUInt).asBools
+  when (io.architecturalRestore) {
+    busy_table := VecInit(Seq.fill(ftqSz)(false.B))
+    current_ftq_idx := 0.U
+  }
+  io.architecturalRestoreDone := RegNext(io.architecturalRestore, false.B)
 }

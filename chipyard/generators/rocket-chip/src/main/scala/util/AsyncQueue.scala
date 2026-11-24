@@ -71,6 +71,7 @@ class AsyncQueueSource[T <: Data](gen: T, params: AsyncQueueParams = AsyncQueueP
   val io = IO(new Bundle {
     // These come from the source domain
     val enq = Flipped(Decoupled(gen))
+    val empty = Output(Bool())
     // These cross to the sink clock domain
     val async = new AsyncBundle(gen, params)
   })
@@ -90,6 +91,8 @@ class AsyncQueueSource[T <: Data](gen: T, params: AsyncQueueParams = AsyncQueueP
 
   val widx_reg = withReset(reset.asAsyncReset)(RegNext(next=widx, init=0.U).suggestName("widx_gray"))
   io.async.widx := widx_reg
+  // This receipt is conservative when the sink clock is slow or stopped.
+  io.empty := sink_ready && widx_reg === ridx && !io.enq.fire
 
   io.async.index match {
     case Some(index) => io.async.mem(0) := mem(index)
@@ -219,8 +222,12 @@ object ToAsyncBundle
   }
 }
 
+class AsyncQueueIO[T <: Data](gen: T) extends CrossingIO(gen) {
+  val enq_empty = Output(Bool())
+}
+
 class AsyncQueue[T <: Data](gen: T, params: AsyncQueueParams = AsyncQueueParams()) extends Crossing[T] {
-  val io = IO(new CrossingIO(gen))
+  val io = IO(new AsyncQueueIO(gen))
   val source = Module(new AsyncQueueSource(gen, params))
   val sink   = Module(new AsyncQueueSink  (gen, params))
 
@@ -230,6 +237,7 @@ class AsyncQueue[T <: Data](gen: T, params: AsyncQueueParams = AsyncQueueParams(
   sink.reset := io.deq_reset
 
   source.io.enq <> io.enq
+  io.enq_empty := source.io.empty
   io.deq <> sink.io.deq
   sink.io.async <> source.io.async
 }

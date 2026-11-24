@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-24",
+  "functional_task_counts": {
+    "VERIFIED": 69,
+    "CODE_READY": 0,
+    "IN_PROGRESS": 0
+  },
+  "overall": "FUNCTIONAL_VALIDATION_COMPLETE_PHYSICAL_SIGNOFF_SEPARATE",
+  "areas": {
+    "rtl_functional_implementation": {
+      "status": "PASS",
+      "evidence": [
+        "AI/TMP/singlecore_function_closure_20261123/final_closure_current_scheduler.json",
+        "AI/TMP/singlecore_function_closure_20261123/final_review_current_scheduler/result.json"
+      ],
+      "open": []
+    },
+    "fullcore_build": {
+      "status": "PASS_CURRENT_SCHEDULER_FIX_FIVE_MODELS",
+      "evidence": [
+        "AI/TMP/singlecore_function_closure_20261123/continuous_io_owner_fullcore/three_targets_firrtl_review.json",
+        "AI/TMP/singlecore_function_closure_20261123/continuous_io_owner_fullcore/build_review.json",
+        "AI/TMP/singlecore_function_closure_20261123/continuous_io_owner_rebase/io-rebase/build.exit",
+        "AI/TMP/singlecore_function_closure_20261123/grantack_preemption_fullcore/firrtl_stage_review.json",
+        "AI/TMP/singlecore_function_closure_20261123/grantack_preemption_fix/five_targets_firrtl_review.json",
+        "AI/TMP/singlecore_function_closure_20261123/grantack_preemption_fix/build_review.json"
+      ],
+      "prior": "当前最终源码五配置Scala/Chisel/LowFIR/组合环/SV/C++模型均实际通过。"
+    },
+    "fullcore_functional_regression": {
+      "status": "PASS",
+      "evidence": [
+        "AI/TMP/singlecore_function_closure_20261123/grantack_preemption_system_acceptance/result.json",
+        "AI/TMP/singlecore_function_closure_20261123/grantack_preemption_fix/first_bad_resolved.json"
+      ],
+      "actual": "12完整程序raw/oracle0、全部严格配对及31负例通过；原normal IRQ写回FAIL保留且旧firstbad已消失。"
+    },
+    "key_invariants": {
+      "status": "PASS_REQUIRED_DIRECTED_COVERAGE",
+      "evidence": [
+        "AI/TMP/singlecore_function_closure_20261123/final_closure_current_scheduler.json",
+        "AI/TMP/singlecore_function_closure_20261123/grantack_preemption_system_acceptance/result.json"
+      ],
+      "open": [],
+      "scope": "冻结单主核/瞬态故障/一致I/O输入假设下的必要组件、断言和整核组合；不声称形式化穷尽证明。"
+    },
+    "functional_freeze": {
+      "status": "FROZEN_AND_CONTENT_VERIFIED",
+      "evidence": [
+        "AI/Design/SingleCore_RTL_Baseline/Functional_Baseline_Archive.json",
+        "AI/TMP/singlecore_function_closure_20261123/final_freeze_location.json"
+      ],
+      "actual": "Primary archive9296 files contentverified; final documentation/reproducibility supplement and formal receipt jointly identify baseline.",
+      "open": []
+    },
+    "synthesis": {
+      "status": "COMPONENT_PASS_WHOLECORE_RESULT_NOT_AVAILABLE_AT_CUTOFF",
+      "evidence": [
+        "AI/TMP/singlecore_function_closure_20261123/io_pending_owner_synthesis/reviewed_result.json",
+        "AI/TMP/singlecore_function_closure_20261123/final_physical_checks_retry/progress.json",
+        "AI/TMP/singlecore_function_closure_20261123/grantack_preemption_synthesis_with_resources/reviewed_result.json"
+      ],
+      "measured": "IOMSHR361→364LUT,416FFunchanged; current CSR5461LUT/4769FF; IoBoundary122LUT/73FF. Full ChipTop uses RTL before IOMSHR pending delta. Scheduler2way OOC22876→22634LUT,17708→17662FF; no new logical storage.",
+      "observation": "AI/TMP/singlecore_function_closure_20261123/final_physical_observation_20261124/observation.json"
+    },
+    "timing_and_physical_signoff": {
+      "status": "FAIL_SCHEDULER_5NS_PRE_ROUTE_NOT_SIGNED_OFF",
+      "evidence": [
+        "AI/TMP/singlecore_function_closure_20261123/io_pending_owner_synthesis/reviewed_result.json",
+        "AI/TMP/singlecore_function_closure_20261123/grantack_preemption_synthesis_with_resources/reviewed_result.json"
+      ],
+      "measured": "IOMSHR5ns OOC WNS3.116→3.080ns, CSR2.997ns, IoBoundary3.648ns; no missing clocks in reviewed component checks. Scheduler2way5ns WNS-10.841→-11.019ns (bothFAIL), History valid→s_pprobe67→65logic levels; no-clock0/loops0.",
+      "missing": [
+        "Full final-source Core utilization/STA/CDC reports",
+        "Input/output interface delays",
+        "Placement/routing and clock skew",
+        "AsyncQueue data CE/Gray max-delay and bus-skew physical closure"
+      ],
+      "user_priority": "暂不推进比特流/时序仿真；5ns辅助OOC时序FAIL如实保留，未来物理工作单列。"
+    }
+  },
+  "execution_priority": "User2026-11-24: RTL functionality, functional simulation and fullcore regression first; defer bitstream and timing simulation. Existing synthesis/STA estimates are auxiliary and independent."
+}

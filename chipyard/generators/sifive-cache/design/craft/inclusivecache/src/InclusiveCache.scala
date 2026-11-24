@@ -100,7 +100,7 @@ class InclusiveCache(
       endSinkId  = InclusiveCacheParameters.all_mshrs(cache, micro),
       minLatency = 2,
       requestKeys = Seq(CacheImage),
-      responseFields = Seq(CacheImageField()))
+      responseFields = Seq(CacheImageField(), CacheRecoverySafeField()))
     })
 
   val ctlnode = control.map { c => TLRegisterNode(
@@ -190,10 +190,68 @@ class InclusiveCache(
 
       val params = InclusiveCacheParameters(cache, micro, control.isDefined, edgeIn, edgeOut)
       val scheduler = Module(new Scheduler(params))
+      // Rare U-D07 service uses a held four-phase control transaction. No
+      // ordinary rollback invokes this physical enumeration.
+      val maintenanceRaw = chisel3.WireDefault(false.B)
+      BoringUtils.addSink(maintenanceRaw, "PALIMPSEST_EVT_MAINTENANCE_REQUEST")
+      scheduler.io.maintenance := AsyncResetSynchronizerShiftReg(maintenanceRaw, sync = 8)
+      BoringUtils.addSource(scheduler.io.maintenanceAck, s"PALIMPSEST_EVT_MAINTENANCE_ACK_$bank")
+      // P4-08: the single-bank v1Config is the implemented recovery topology.
+      // Historical data never uses ReleaseData while a newer L1 owner lives.
+      require(node.in.size == 1, "PALIMPSEST archive mailbox requires the single-bank configuration")
+      val archiveReqRaw = chisel3.WireDefault(false.B)
+      val archiveLineRaw = chisel3.WireDefault(0.U.asTypeOf(new PalimpsestHistoryLine))
+      BoringUtils.addSink(archiveReqRaw, "PALIMPSEST_ARCHIVE_REQUEST")
+      BoringUtils.addSink(archiveLineRaw, "PALIMPSEST_ARCHIVE_PAYLOAD")
+      val archiveReqSync = AsyncResetSynchronizerShiftReg(archiveReqRaw, sync = 8)
+      val archiveLineSync = AsyncResetSynchronizerShiftReg(archiveLineRaw.asUInt, sync = 3)
+        .asTypeOf(new PalimpsestHistoryLine)
+      val archiveAck = RegInit(false.B)
+      val archiveKey = Reg(new CacheImageKey)
+      scheduler.io.historyArchive.valid := archiveReqSync && !archiveAck
+      scheduler.io.historyArchive.bits := archiveLineSync
+      when (scheduler.io.historyArchive.fire()) { archiveAck := true.B; archiveKey := archiveLineSync.key }
+      when (!archiveReqSync) { archiveAck := false.B }
+      BoringUtils.addSource(archiveAck, "PALIMPSEST_ARCHIVE_ACK")
+      BoringUtils.addSource(archiveKey, "PALIMPSEST_ARCHIVE_KEY")
       require(bank < 256, "Stage3 bank provenance width exceeded")
       scheduler.io.bank := UInt(bank, width = 8)
-      val barrierAllow = chisel3.WireDefault(true.B)
-      scheduler.io.barrier_allow := barrierAllow
+      BoringUtils.addSource(scheduler.io.identityUnavailable, s"PALIMPSEST_L2_IDENTITY_UNAVAILABLE_$bank")
+      // P3-08/P4-05: bundled-data four-phase recovery mailbox. The source
+      // holds payload from request assertion until every bank ACK returns low.
+      // Request qualifies five destination cycles after the synchronized bus;
+      // result payload remains stable through the complete ACK phase.
+      // Install-only requests are acknowledged once the bank and Scheduler
+      // have loaded the context. Only line queries wait for a scan result.
+      val historyRequestRaw = chisel3.WireDefault(false.B)
+      val historyPayloadRaw = chisel3.WireDefault(0.U.asTypeOf(new PalimpsestHistoryQuery))
+      BoringUtils.addSink(historyRequestRaw, "PALIMPSEST_HISTORY_REQUEST")
+      BoringUtils.addSink(historyPayloadRaw, "PALIMPSEST_HISTORY_PAYLOAD")
+      val historyPayloadSync = AsyncResetSynchronizerShiftReg(historyPayloadRaw.asUInt, sync = 3)
+        .asTypeOf(new PalimpsestHistoryQuery)
+      val historyRequestSync = AsyncResetSynchronizerShiftReg(historyRequestRaw, sync = 8)
+      val bankHistoryContext = RegInit(0.U.asTypeOf(new PalimpsestHistoryQuery))
+      val historyQuerySent = RegInit(false.B)
+      val historyAck = RegInit(false.B)
+      val historyResult = Reg(new PalimpsestHistoryResult)
+      scheduler.io.historyQuery.valid := historyRequestSync && !historyQuerySent
+      scheduler.io.historyQuery.bits := historyPayloadSync
+      scheduler.io.historyResult.ready := historyQuerySent && !historyAck
+      when (scheduler.io.historyQuery.fire()) {
+        bankHistoryContext := historyPayloadSync
+        historyQuerySent := true.B
+        when (historyPayloadSync.installOnly) {
+          historyResult := 0.U.asTypeOf(new PalimpsestHistoryResult)
+          historyAck := true.B
+        }
+      }
+      when (scheduler.io.historyResult.fire()) {
+        historyResult := scheduler.io.historyResult.bits
+        historyAck := true.B
+      }
+      when (!historyRequestSync) { historyQuerySent := false.B; historyAck := false.B }
+      BoringUtils.addSource(historyAck, s"PALIMPSEST_HISTORY_ACK_$bank")
+      BoringUtils.addSource(historyResult, s"PALIMPSEST_HISTORY_RESULT_$bank")
 
       scheduler.io.in <> in
       out <> scheduler.io.out
@@ -282,26 +340,47 @@ class InclusiveCache(
       val barrierActive = RegInit(false.B)
       val barrierSeq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
       val barrierTimeout = RegInit(0.U(16.W))
-      val outerCandidateUnsafe = scheduler.io.validationBlock || (scheduler.io.dcacheWritebackRequestCandidate &&
-        scheduler.io.dcacheWritebackRequestCandidateDirty &&
-        scheduler.io.dcacheWritebackRequestCandidatePacketTracked &&
-        scheduler.io.dcacheWritebackRequestCandidatePacketSeq =/= 0.U &&
-        scheduler.io.dcacheWritebackRequestCandidatePacketSeq > l2SafeWatermark)
-      // Peer waits use the existing sequenced package-close command, but do
-      // not freeze SourceC. The parked requester owns no cache resource.
-      val barrierCandidateUnsafe = outerCandidateUnsafe || scheduler.io.clientValidationBlock
-      val outerBarrierSeq = Mux(scheduler.io.validationBlock, scheduler.io.validationSeq,
-        scheduler.io.dcacheWritebackRequestCandidatePacketSeq)
-      val stage3BarrierSeq = Mux(outerCandidateUnsafe, outerBarrierSeq, scheduler.io.clientValidationSeq)
-      val barrierBlocksOuter = RegInit(false.B)
+      val seqWatermarkRequest = chisel3.WireDefault(false.B)
+      if (p(PalimpsestSeqRebaseThreshold) > 0) {
+        val rawRequest = chisel3.WireDefault(false.B)
+        val ack = RegInit(false.B)
+        BoringUtils.addSink(rawRequest, "PALIMPSEST_SEQ_WATERMARK_REQUEST")
+        BoringUtils.addSource(ack, s"PALIMPSEST_SEQ_WATERMARK_ACK_$bank")
+        seqWatermarkRequest := AsyncResetSynchronizerShiftReg(rawRequest, sync = 8)
+        // A Gray jump to zero is allowed only with every publishing owner
+        // already stopped. Accept it after the new registered value has
+        // passed the synchronizer and is stable in this bank.
+        val watermarkZero = l2SafeWatermark === 0.U
+        val watermarkStable = watermarkZero && RegNext(watermarkZero, false.B)
+        when (!seqWatermarkRequest) { ack := false.B }
+          .elsewhen (scheduler.io.maintenanceAck && watermarkStable &&
+              !barrierActive && !barrierCloseAckSync && !barrierFailureSync) {
+            ack := true.B
+            barrierSeq := 0.U
+          }
+      }
+      // Scheduler admits each outer write against its immutable image and
+      // publication order. This sequenced barrier asks Main to close a package
+      // to make validation progress while those independent owners drain.
+      val localValidationBlock = scheduler.io.validationBlock
+      val stage3BarrierSeq = Mux(localValidationBlock, scheduler.io.validationSeq, scheduler.io.clientValidationSeq)
+      // A cold pressure scan may not have selected its Seq yet. Never latch
+      // a close transaction for Seq0 (or an already covered predecessor):
+      // neither needs another Checker close to free safe history entries.
+      val barrierCandidateUnsafe = (localValidationBlock || scheduler.io.clientValidationBlock) &&
+        stage3BarrierSeq =/= 0.U && stage3BarrierSeq > l2SafeWatermark &&
+        bankHistoryContext.survives(stage3BarrierSeq)
+      val barrierFromPeer = RegInit(false.B)
       val barrierCloseAccepted = barrierCloseAckSync &&
         barrierCloseAckSeqSync === barrierSeq
       val barrierTimedOut = barrierActive && barrierTimeout === 0xffff.U
       val barrierFailed = barrierActive && barrierFailureSync &&
         barrierFailureSeqSync =/= 0.U && barrierFailureSeqSync <= barrierSeq
-      val barrierErrorDetected = barrierTimedOut || barrierFailed
+      // P4-01: a Checker failure starts recovery; only a local timeout is
+      // a barrier protocol error. Tombstoned work releases its close waiter.
+      val barrierErrorDetected = barrierTimedOut && bankHistoryContext.survives(barrierSeq)
       val barrierReleased = barrierActive &&
-        barrierCloseAccepted && barrierSeq <= l2SafeWatermark
+        (barrierSeq <= l2SafeWatermark || !bankHistoryContext.survives(barrierSeq))
       // OPTIMIZATION_1_TRACE_BEGIN: these are observation-only per-bank
       // watermark and validation-barrier stages.  They let the one planned
       // run distinguish result/CDC/prefix delay from L2 barrier delay.
@@ -315,7 +394,7 @@ class InclusiveCache(
       chisel3.dontTouch(slowdown_opt1_l2_validation_block)
       val slowdown_opt1_l2_client_validation_block = chisel3.WireInit(scheduler.io.clientValidationBlock)
       chisel3.dontTouch(slowdown_opt1_l2_client_validation_block)
-      val slowdown_opt1_l2_outer_candidate_unsafe = chisel3.WireInit(outerCandidateUnsafe)
+      val slowdown_opt1_l2_outer_candidate_unsafe = chisel3.WireInit(localValidationBlock)
       chisel3.dontTouch(slowdown_opt1_l2_outer_candidate_unsafe)
       val slowdown_opt1_l2_barrier_candidate_unsafe = chisel3.WireInit(barrierCandidateUnsafe)
       chisel3.dontTouch(slowdown_opt1_l2_barrier_candidate_unsafe)
@@ -341,11 +420,8 @@ class InclusiveCache(
       chisel3.dontTouch(slowdown_opt1_l2_barrier_close_ack_seq)
       // OPTIMIZATION_1_TRACE_END
       if (realBarrierEnabled) {
-        barrierAllow := (!barrierActive && !outerCandidateUnsafe) || barrierReleased ||
-          (barrierActive && !barrierBlocksOuter && !outerCandidateUnsafe)
         barrierRequest := barrierActive && !barrierReleased
       } else {
-        barrierAllow := true.B
         barrierRequest := false.B
       }
       barrierRequestSeq := barrierSeq
@@ -360,12 +436,12 @@ class InclusiveCache(
       BoringUtils.addSource(barrierError,
         s"${GH_GlobalParams.GH_L2_BARRIER_ERROR_BORE}_$bank")
       if (realBarrierEnabled) {
-        when (!barrierActive && barrierCandidateUnsafe) {
+        when (!barrierActive && !seqWatermarkRequest && barrierCandidateUnsafe) {
           barrierActive := true.B
-          barrierBlocksOuter := outerCandidateUnsafe
+          barrierFromPeer := !localValidationBlock
           barrierSeq := stage3BarrierSeq
           barrierTimeout := 0.U
-          when (!outerCandidateUnsafe) {
+          when (!localValidationBlock) {
             printf("STAGE3_TX L2_CLIENT_CLOSE bank=%x cycle=%x seq=%x watermark=%x waiting=%x\n",
               bank.U, l2Cycle, stage3BarrierSeq, l2SafeWatermark, scheduler.io.clientWaiting)
           }
@@ -376,7 +452,7 @@ class InclusiveCache(
           when (barrierReleased) {
             barrierActive := false.B
             barrierTimeout := 0.U
-            when (!barrierBlocksOuter) {
+            when (barrierFromPeer) {
               printf("STAGE3_TX L2_CLIENT_VALIDATED bank=%x cycle=%x seq=%x watermark=%x\n",
                 bank.U, l2Cycle, barrierSeq, l2SafeWatermark)
             }

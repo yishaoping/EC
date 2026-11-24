@@ -131,6 +131,7 @@ object EmitModule extends App {
         val msReplyData = Output(UInt(64.W)); val msReplyKey = Output(new CacheImageKey)
       })
       val dut = cache.module
+      dut.io.allCheckersDrained := true.B // no Checker/source owner in this component fixture
       // The standalone fixture has neither InclusiveCache's stats consumers
       // nor TestHarness's exit probes. Consume all 33 real L1 source annotations;
       // otherwise source-only wiring fails before RTL emission. These wires
@@ -140,12 +141,51 @@ object EmitModule extends App {
         BoringUtils.addSink(value, name)
         dontTouch(value)
       }
+      // P5-01/P5-06: this standalone L1 has a baseline-only lower agent.
+      // Consume query sources and return an empty history through the same
+      // held four-phase mailbox; the full-bank fixture is still required.
+      val historyRequest = WireDefault(false.B)
+      val historyPayload = WireDefault(0.U.asTypeOf(new PalimpsestHistoryQuery))
+      BoringUtils.addSink(historyRequest, "PALIMPSEST_HISTORY_REQUEST")
+      BoringUtils.addSink(historyPayload, "PALIMPSEST_HISTORY_PAYLOAD")
+      // Component-only Checker endpoints: exercise the production receiver;
+      // these context receipts do not certify a physical maintenance sweep.
+      for (hart <- GH_GlobalParams.GH_NUM_BIG_CORES until GH_GlobalParams.GH_NUM_CORES) {
+        val receiver = Module(new PalimpsestHistoryReceiver)
+        receiver.io.request := historyRequest
+        receiver.io.payload := historyPayload
+        BoringUtils.addSource(receiver.io.ack, s"PALIMPSEST_CHECKER_HISTORY_ACK_$hart")
+      }
+      for (bank <- 0 until params(freechips.rocketchip.subsystem.BankedL2Key).nBanks) {
+        val ack = RegNext(historyRequest, false.B)
+        val result = WireDefault(0.U.asTypeOf(new PalimpsestHistoryResult))
+        BoringUtils.addSource(ack, s"PALIMPSEST_HISTORY_ACK_$bank")
+        BoringUtils.addSource(result, s"PALIMPSEST_HISTORY_RESULT_$bank")
+        val identityUnavailable = WireDefault(false.B)
+        BoringUtils.addSource(identityUnavailable, s"PALIMPSEST_L2_IDENTITY_UNAVAILABLE_$bank")
+        val maintenanceAck = WireDefault(false.B) // this fixture cannot certify a physical sweep
+        BoringUtils.addSource(maintenanceAck, s"PALIMPSEST_EVT_MAINTENANCE_ACK_$bank")
+      }
+      val archiveRequest = WireDefault(false.B)
+      val archiveLine = WireDefault(0.U.asTypeOf(new PalimpsestHistoryLine))
+      BoringUtils.addSink(archiveRequest, "PALIMPSEST_ARCHIVE_REQUEST")
+      val maintenanceRequest = WireDefault(false.B)
+      BoringUtils.addSink(maintenanceRequest, "PALIMPSEST_EVT_MAINTENANCE_REQUEST")
+      dontTouch(maintenanceRequest)
+      BoringUtils.addSink(archiveLine, "PALIMPSEST_ARCHIVE_PAYLOAD")
+      val archiveAck = RegNext(archiveRequest, false.B)
+      val archiveKey = RegEnable(archiveLine.key, archiveRequest)
+      BoringUtils.addSource(archiveAck, "PALIMPSEST_ARCHIVE_ACK")
+      BoringUtils.addSource(archiveKey, "PALIMPSEST_ARCHIVE_KEY")
       observeBore(GH_GlobalParams.GH_L2_STATS_RESET_BORE, 1)
       observeBore(GH_GlobalParams.GH_L2_STATS_ENABLE_BORE, 1)
       observeBore(GH_GlobalParams.GH_L2_BARRIER_FAILURE_BORE, 1)
       observeBore(GH_GlobalParams.GH_L2_BARRIER_FAILURE_SEQ_BORE, GH_GlobalParams.GH_PACKET_SEQ_BITS)
       observeBore(GH_GlobalParams.GH_L1_L2_SAFE_WATERMARK_GRAY_BORE, GH_GlobalParams.GH_PACKET_SEQ_BITS)
       for (i <- 0 until 28) { observeBore(s"stage1_cache_${tile.hartId}_$i", 64) }
+      dut.io.rollbackError.ready := true.B
+      dut.io.rollbackHistory.valid := false.B; dut.io.rollbackHistory.bits := 0.U
+      dut.io.rollbackStop := false.B; dut.io.rollbackTarget := 0.U; dut.io.rollbackReset := false.B
       dut.io.traffic_check_state := false.B
       dut.io.traffic_reset := false.B; dut.io.traffic_start := false.B; dut.io.traffic_stop := false.B
       val cycle = RegInit(0.U(64.W)); cycle := cycle + 1.U; dut.io.csr_cycle := cycle
@@ -258,6 +298,12 @@ object EmitModule extends App {
         managers, base, UnlocatableSourceInfo)
       val mcp = InclusiveCacheParameters(cp.cache, cp.micro, false, trustedInner, outer)(base)
       val ms = Module(new MSHR(mcp))
+      ms.io.historyContext := 0.U.asTypeOf(new PalimpsestHistoryQuery)
+      ms.io.baseline := 0.U.asTypeOf(chiselTypeOf(ms.io.baseline))
+      ms.io.pauseExecute := false.B
+      ms.io.trustedWait := 0.U.asTypeOf(chiselTypeOf(ms.io.trustedWait))
+      ms.io.trustedAllow := true.B
+      ms.io.capacityBlocked := false.B
       ms.io.bank := 0.U
       ms.io.preserved := 0.U.asTypeOf(chiselTypeOf(ms.io.preserved))
       ms.io.releaseSent := 0.U.asTypeOf(chiselTypeOf(ms.io.releaseSent))

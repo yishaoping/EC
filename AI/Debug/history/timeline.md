@@ -290,3 +290,20 @@ cache dirs removed; heavyweight/unknown artifacts kept. SourceC never ran. Stabl
 entry slowdown/OPT4_BASELINE.md; recovery slowdown/analysis_archive/RESUME_OPTIMIZATION.md.
 
 Local freeze commit: `962c4b87db2a810bc025a87f5f7289dd7aedc5cf` — `ec: freeze Opt4 as stable optimization baseline`. Functional source still476a76091; no hardware tree change.
+
+- 2026-11-23 功能闭环批次：全69项逐项盘点、原32 IN_PROGRESS分类与34 CODE_READY源码复核已长期化。Seq32数字生命周期关闭P2-09/P3-03/P5-09；新增同址多版本/SW/迟到C/可信Put/held外写ACK合并联合长期验收，关闭P1-09/P3-10。当前32 CODE_READY、29 IN_PROGRESS、8 VERIFIED。11项固定来源组件全部PASS，四配置Core的Scala/Chisel/FIRRTL已通过、C++编译在途。已修正常Sv39 session FINISH、stop在途执行、uncached AMO包号与重复响应四处真实接口缺陷，完整原ELF验收尚待结果。GHM U250实际综合揭示4个组合前置与4个SRL同步器Critical；独立最小候选消除告警，实际Scala双生成流数字PASS，firtool丢属性问题需后端约束验收，未计为生产完成。证据singlecore_function_closure_20261123/，未新建版本号/冻结归档。
+
+## 2026-11-24：单核功能闭环完成
+
+当前生产 `core.scala` / `CSR.scala` 的容量 seal 与 CSR shadow RMW 最小修正完成整核闭环。normal/Fault8/Fault18 的完整程序、Sv39、CLINT output/AMO、中断/MSIP、History 64/64 回收、Fault40+Seq32 均通过严格 oracle；69 项任务统一为 VERIFIED。IRQ 计分器明确按 live stop/I/O boundary 判断，已提交 journal 记录不再被误判为未完成效果。物理 signoff 单独保留：既有 GHM OOC 综合结果有效，完整 ChipTop memory-model 综合未产出最终 utilization/timing/CDC 报告，未完成布局布线和 STA。
+
+
+- 2026-11-24：连续设备owner修复后的normal IRQ在16轮精确MSIP trap/xRET后checksum
+  收尾watchdog。638信号只读链确认同set C→History→外层GrantAck→C循环。
+  Scheduler仅含E调度越过同组抢占、保留全部数据/目录/发布门控，0新存储/FSM。
+  最终同bench旧1/修复0，长期runner及4发布/压力组件PASS；5配置完整Core回归在途，
+  65 VERIFIED/4 IN_PROGRESS保持。Scheduler2way OOC5ns前后WNS-10.841/-11.019ns
+  均FAIL，辅助物理检查独立记录。用户随后明确先做RTL功能和功能仿真，暂不推进
+  比特流或时序仿真。根因详见bug-palimpsest-grantack-preemption.md。
+
+- 2026-11-24最终功能验收：5个当前生产模型构建全部0，12完整程序raw/oracle0，所有严格评分与IRQ14/重基9/压力8负例通过。normal IRQ原C0xfe115/0xfe127得到D0xfe20d匹配ACK并完成checksum；真实权限+History交叠fixture旧1/新0。P2-07/P4-10/P4-13/P5-10依据实际证据关闭，P4-12完成当前Scheduler来源复验。69 VERIFIED/0进行中；物理签核独立，用户暂缓比特流/时序仿真。

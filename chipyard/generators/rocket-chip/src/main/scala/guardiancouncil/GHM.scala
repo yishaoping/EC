@@ -3,6 +3,7 @@ package freechips.rocketchip.guardiancouncil
 
 import chisel3._
 import chisel3.util._
+import chisel3.util.experimental.BoringUtils
 import chisel3.experimental.{BaseModule}
 import org.chipsalliance.cde.config.{Field, Parameters}
 import freechips.rocketchip.subsystem.{BaseSubsystem, HierarchicalLocation, HasTiles, TLBusWrapperLocation}
@@ -13,6 +14,7 @@ import freechips.rocketchip.guardiancouncil._
 
 // import boom.common.{BoomTile}
 import freechips.rocketchip.util._
+import freechips.rocketchip.tilelink.PalimpsestSeqRebaseThreshold
 
 case class GHMParams(
   number_of_little_cores: Int,
@@ -100,6 +102,18 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
     // sufficient across clock domains and was the source of the watchdog
     // deadlock seen in the previous protocol.
     val result_release_pending = RegInit(VecInit(Seq.fill(params.number_of_little_cores)(false.B)))
+    val rebaseEnabled = p(PalimpsestSeqRebaseThreshold) > 0
+    val seqTransportRequest = WireDefault(false.B)
+    val seqTransportAck = RegInit(false.B)
+    val forwardDrained = Wire(Vec(params.number_of_little_cores, Bool()))
+    val checkerResetAcks = Wire(Vec(params.number_of_little_cores, Bool()))
+    val resetMainTags = seqTransportRequest && checkerResetAcks.asUInt.andR && !seqTransportAck
+    if (rebaseEnabled) {
+      BoringUtils.addSink(seqTransportRequest, "PALIMPSEST_SEQ_TRANSPORT_REQUEST")
+      BoringUtils.addSource(seqTransportAck, "PALIMPSEST_SEQ_TRANSPORT_ACK")
+      when (resetMainTags) { seqTransportAck := true.B }
+      when (!seqTransportRequest && !checkerResetAcks.asUInt.orR) { seqTransportAck := false.B }
+    }
     // ghm_status_in(0)(31) is a stable BOOM-domain level.  It remains in the
     // legacy control path for diagnostics; session completion itself uses the
     // acknowledged control protocol below rather than this edge.
@@ -225,6 +239,7 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
       val end_pending = RegInit(false.B)
       val end_seq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
       val end_count = RegInit(0.U(15.W))
+      val resetCheckerTags = WireDefault(false.B)
       // A cancelled checker can release its source slot before END is accepted.
       // Retain this transaction independently of the live allocation fields.
       when (!end_pending && sealed_at_source && selected_count(15) &&
@@ -274,6 +289,7 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
           seq := Mux(end_pending, end_seq,
             Mux(if_data_en, selected_packet_seq, selected_segment_seq))
         }
+        when (resetMainTags) { seq := 0.U }
         seq
       }
       val anchor_target_seq = Mux(end_pending, end_seq, selected_segment_seq)
@@ -293,6 +309,7 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
         end_pending := false.B
         end_seq_sent := end_seq
       }
+      when (resetMainTags) { end_seq_sent := 0.U }
       // Bit 4 is the dedicated checker-side packet dequeue permission.  Bit 0
       // is a legacy event/near-full indication and is not a reliable level:
       // it may be sampled from an older GHE event while the checker is already
@@ -340,6 +357,7 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
         when (u_data_cdc(i).io.deq.fire) {
           seq := dataHeadSeq
         }
+        when (resetCheckerTags) { seq := 0.U }
         seq
       }
       val receivedCount = withClockAndReset(
@@ -370,6 +388,7 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
             count := liveCount
           }
         }
+        when (resetCheckerTags) { seq := 0.U; count := 0.U; done := false.B }
         Cat(seq =/= 0.U, seq, 0.U(4.W), done, count)
       }
       checkerCount(i) := receivedCount
@@ -498,7 +517,11 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
       u_session_ctrl_cdc(i).io.enq_reset := io.ghm_reset(0)
       u_session_ctrl_cdc(i).io.deq_clock := io.ghm_clock(i + GH_GlobalParams.GH_NUM_BIG_CORES).asClock
       u_session_ctrl_cdc(i).io.deq_reset := io.ghm_reset(i + GH_GlobalParams.GH_NUM_BIG_CORES)
-      u_session_ctrl_cdc(i).io.enq.valid := startPending || finishPending
+      // Ingress empty only proves that the Checker has received the packet.
+      // Keep its software session alive until R_IC releases the last packet
+      // and the source-side FIFO receipts certify that all forward traffic
+      // has drained. Reuse the same ownership fence as Seq32 tag reset.
+      u_session_ctrl_cdc(i).io.enq.valid := startPending || (finishPending && forwardDrained(i))
       u_session_ctrl_cdc(i).io.enq.bits := Mux(startPending,
         Cat(GH_GlobalParams.GH_SESSION_PROTOCOL_VERSION.U(GH_GlobalParams.GH_SESSION_VERSION_BITS.W),
           GH_GlobalParams.GH_SESSION_START.U(GH_GlobalParams.GH_SESSION_TYPE_BITS.W),
@@ -575,6 +598,45 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
       checker_result_release(i) := result_release_pending(i) || result_deq_fire
       io.checker_results_out(i) := Mux(result_deq_fire,
         Cat(true.B, u_result_cdc(i).io.deq.bits), 0.U)
+      // The Main is stopped before this request. Each outgoing FIFO certifies
+      // that the remote read pointer reached its last accepted write pointer.
+      forwardDrained(i) := !selected_segment_valid && !end_pending && !countPending &&
+        !u_data_cdc(i).io.enq.valid && !u_arfs_cdc(i).io.enq.valid &&
+        u_data_cdc(i).io.enq_empty && u_arfs_cdc(i).io.enq_empty &&
+        u_b2l_ctrl_cdc(i).io.enq_empty && !checker_result_release(i)
+      if (rebaseEnabled) {
+        val hart = i + GH_GlobalParams.GH_NUM_BIG_CORES
+        val ack = WireDefault(false.B)
+        BoringUtils.addSink(ack, s"PALIMPSEST_SEQ_CHECKER_ACK_$hart")
+        // The source receipt is combinational (including synchronized Gray
+        // pointer comparisons). Register it in Main before crossing domains
+        // so a transient equality cannot become a Checker reset permit.
+        val registeredRequest = withClockAndReset(io.ghm_clock(0).asClock,
+          io.ghm_reset(0).asAsyncReset) {
+          RegNext(seqTransportRequest && forwardDrained(i), false.B)
+        }
+        val localCleared = withClockAndReset(io.ghm_clock(hart).asClock, io.ghm_reset(hart).asAsyncReset) {
+          val request = AsyncResetSynchronizerShiftReg(registeredRequest, sync = 8)
+          val permit = WireInit(request && u_result_cdc(i).io.enq_empty &&
+            !u_result_cdc(i).io.enq.valid)
+          BoringUtils.addSource(permit, s"PALIMPSEST_SEQ_CHECKER_PERMIT_$hart")
+          resetCheckerTags := ack
+          when (ack) {
+            assert(!u_data_cdc(i).io.deq.valid && !u_arfs_cdc(i).io.deq.valid &&
+              !u_b2l_ctrl_cdc(i).io.deq.valid, "old ingress after Checker Seq reset")
+          }
+          // The edge observing Rocket's ACK also clears the GHM consumer
+          // tags. A stopped Checker clock must not hide this final edge.
+          RegNext(ack, false.B)
+        }
+        checkerResetAcks(i) := AsyncResetSynchronizerShiftReg(localCleared, sync = 8)
+      } else {
+        checkerResetAcks(i) := false.B
+      }
+      when (resetMainTags) {
+        assert(forwardDrained(i) && !u_result_cdc(i).io.deq.valid,
+          "old transport owner at Main Seq reset")
+      }
     }
     dontTouch(l_wctrl)
     dontTouch(b_wctrl)

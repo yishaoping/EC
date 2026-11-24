@@ -15,7 +15,7 @@ import freechips.rocketchip.util._
 import freechips.rocketchip.prci.{ClockSinkParameters}
 //===== GuardianCouncil Function: Start ====//
 import freechips.rocketchip.guardiancouncil._
-import chisel3.dontTouch
+import chisel3.{WireDefault, dontTouch}
 //===== GuardianCouncil Function: End   ====//
 //这里使用的Chisel包,里面东西都很旧,
 case class RocketTileParams(
@@ -240,10 +240,23 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
   val cycleSeqAccepted = dataSeqAccepted || arfsSeqAccepted
   val cycleSeq = Mux(dataSeqAccepted, dataSeq, arfsSeq)
   val packetSeqHighWatermark = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  val packetSeqReset = WireDefault(false.B)
+  if (p(PalimpsestSeqRebaseThreshold) > 0) {
+    val permit = WireDefault(false.B)
+    val ack = RegInit(false.B)
+    chisel3.util.experimental.BoringUtils.addSink(permit, s"PALIMPSEST_SEQ_CHECKER_PERMIT_${outer.tileParams.hartId}")
+    chisel3.util.experimental.BoringUtils.addSource(ack, s"PALIMPSEST_SEQ_CHECKER_ACK_${outer.tileParams.hartId}")
+    packetSeqReset := permit && !ack && core.io.packet_seq_reset_ready &&
+      !dataHeadValid && !arfsSeqValid
+    when (packetSeqReset) { ack := true.B }
+    when (!permit) { ack := false.B }
+  }
+  core.io.packet_seq_reset := packetSeqReset
 
   when (cycleSeqAccepted && cycleSeq > packetSeqHighWatermark) {
     packetSeqHighWatermark := cycleSeq
   }
+  when (packetSeqReset) { packetSeqHighWatermark := 0.U }
   core.io.packet_seq_valid := cycleSeqAccepted
   core.io.packet_seq := Mux(cycleSeqAccepted, cycleSeq, packetSeqHighWatermark)
   core.io.packet_protocol_error := dataSeqAccepted &&

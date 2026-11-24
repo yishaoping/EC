@@ -99,6 +99,7 @@ class NestedWriteback(params: InclusiveCacheParameters) extends InclusiveCacheBu
   val packetTracked = Bool()
   val image = new CacheImageKey
   val outerPreserved = Bool()
+  val baselineObsolete = Bool()
 }
 
 sealed trait CacheState
@@ -134,9 +135,22 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
     val sinke     = Valid(new SinkEResponse(params)).flip
     val nestedwb  = new NestedWriteback(params).flip
     val resident = Valid(new DirectoryResult(params))
+    val recoverySeq = UInt(width = 32)
     val preserved = Valid(new L2PreservationCandidate(params)).flip
     val releaseSent = Valid(UInt(width = 64)).flip
     val quiescent = Bool()
+    val identityUnavailable = Bool()
+    val historyContext = new PalimpsestHistoryQuery().flip // P4-05
+    val baseline = Valid(new L2PublishedBaseline(params)).flip
+    val baselineReady = Bool()
+    val baselineOuterReady = Bool()
+    val baselineProbeReady = Bool()
+    val pauseExecute = Bool().flip
+    val trustedWait = Valid(UInt(width = 32)).flip
+    val trustedAllow = Bool().flip
+    val trustedWrite = Bool()
+    val trustedAddress = UInt(width = 64)
+    val capacityBlocked = Bool().flip
     val watermark = UInt(width = 32).flip
     val bank = UInt(width = 8).flip
     val flushStatus = new MSHRFlushStatus(params)
@@ -144,12 +158,14 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
 
   val request_valid = RegInit(Bool(false))
   val request = Reg(new FullRequest(params))
+  io.recoverySeq := request.image.contentSeq
   val meta_valid = RegInit(Bool(false))
   val meta = Reg(new DirectoryResult(params))
   val planStarted = RegInit(Bool(false))
   io.resident.valid := request_valid && meta_valid
   io.resident.bits := meta
   val releaseGeneration = RegInit(UInt(0, width = 64))
+  io.identityUnavailable := Bool(false) // D07: new plan follows prior plan's ACKs
   val releaseSent = RegInit(Bool(false))
   val releaseIssued = RegInit(Bool(false))
   val releaseSnapshot = Reg(new DirectoryResult(params))
@@ -218,6 +234,7 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
       meta.packetTracked := io.nestedwb.packetTracked
       meta.image := io.nestedwb.image
       meta.outerPreserved := io.nestedwb.outerPreserved
+      meta.baselineObsolete := io.nestedwb.baselineObsolete
     }
     when (io.nestedwb.b_toB) { meta.state := BRANCH }
     when (io.nestedwb.b_toN) { meta.hit := Bool(false) }
@@ -245,7 +262,16 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
 
   // Scheduler requests
   val no_wait = w_rprobeacklast && w_releaseack && w_grantlast && w_pprobeacklast && w_grantack
-  io.quiescent := w_rprobeacklast && w_pprobeacklast && w_grantlast
+  io.quiescent := w_rprobeacklast && w_pprobeacklast && (!s_acquire || w_grantlast)
+  // Planned outer waits are not accepted owners. Publication itself blocks
+  // C/D admission while it drains, so waiting for an unsent Acquire's Grant
+  // would cycle through that same publication barrier. !s_acquire proves
+  // no A has left this plan; an issued A still needs its entire Grant + E.
+  io.baselineOuterReady := !request_valid || (meta_valid &&
+    (!s_acquire || (w_grantlast && s_grantack)) &&
+    (!releaseIssued || w_releaseack))
+  io.baselineReady := io.baselineOuterReady &&
+    (!request_valid || (w_rprobeacklast && w_pprobeacklast))
   io.schedule.bits.a.valid := !s_acquire && s_release && w_releaseack && s_pprobe
   io.schedule.bits.b.valid := !s_rprobe || !s_pprobe
   io.schedule.bits.c.valid := (!s_release && w_rprobeacklast) || (!s_probeack && w_pprobeacklast)
@@ -256,6 +282,20 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
   // neither an invalid tag nor an acquire/refill may overtake ReleaseAck.
   io.schedule.bits.dir.valid := !s_writeback && no_wait
   io.schedule.bits.reload := no_wait
+  // History publication may need to replace an older resident baseline.
+  // Let already accepted outer Grants return their E while holding the new
+  // inner response. Replanning below then has no abandoned outer owner.
+  val trustedMutation = request.prio(0) && !request.control && !request.opcode(2) && !bad_grant
+  val trustedHold = trustedMutation && !s_execute && !io.trustedAllow
+  when ((io.pauseExecute || trustedHold) && !s_execute) {
+    io.schedule.bits.d.valid := Bool(false)
+    io.schedule.bits.dir.valid := Bool(false)
+    io.schedule.bits.reload := Bool(false)
+  }
+  when (trustedHold) {
+    io.schedule.bits.a.valid := Bool(false)
+    io.schedule.bits.c.valid := Bool(false)
+  }
   io.schedule.valid := io.schedule.bits.a.valid || io.schedule.bits.b.valid || io.schedule.bits.c.valid ||
                        io.schedule.bits.d.valid || io.schedule.bits.e.valid || io.schedule.bits.x.valid ||
                        io.schedule.bits.dir.valid
@@ -263,18 +303,46 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
   val peerExposure = request.prio(0) && !request.control && !params.isImageAware(request.source) &&
     CacheImage.exposesResident(request.opcode)
   val peerUnsafe = request_valid && meta_valid && meta.hit && peerExposure &&
-    !CacheImage.safe(meta.image, io.watermark)
+    (!io.historyContext.survives(meta.image.contentSeq) || !CacheImage.safe(meta.image, io.watermark))
   // Before any Probe/Acquire, park immediately. If the key first becomes unsafe
   // in ProbeAckData, finish those handshakes and outer GrantAck before parking.
   // Neither case has executed SourceD or granted the peer ownership.
   val parkEarly = peerUnsafe && !planStarted
   val parkLate = peerUnsafe && !s_execute && w_pprobeacklast && w_rprobeacklast &&
     w_grantlast && s_grantack && s_acquire && s_pprobe && s_rprobe && w_releaseack
-  val parkPeer = parkEarly || parkLate
+  // U-D09: isolate completed Probe work, then retain only the original A
+  // request in the existing scheduler wait slot. Holding this MSHR/set while
+  // waiting for an unsafe victim's validation can block Checker instruction
+  // fetches even when their replacement way is reserved.
+  val capacityWait = io.capacityBlocked && request_valid && meta_valid &&
+    request.prio(0) && !request.control && !meta.hit &&
+    meta.state =/= INVALID && !meta.outerPreserved &&
+    io.historyContext.survives(meta.image.contentSeq) &&
+    !CacheImage.safe(meta.image, io.watermark)
+  // A Probe may have discovered a newer unsafe owner after the plan began.
+  // Once every Probe response is complete, no Release/Acquire has left yet:
+  // commit the probed resident below, then release the set as for peer park.
+  // A miss clears w_grantlast/s_grantack while creating its plan, BEFORE
+  // sending A. Those planned waits cannot be drain dependencies here: the
+  // capacity barrier is precisely what prevents that A from being issued.
+  // !s_acquire proves A is still pending; !releaseIssued proves no outer C
+  // owner escaped. Only the already issued inner Probes need to finish.
+  val capacityIsolated = !releaseIssued && !s_acquire && !s_execute &&
+    s_rprobe && w_rprobeacklast && s_pprobe && w_pprobeacklast
+  val parkCapacity = capacityWait && (!planStarted || capacityIsolated)
+  // Trusted A writes must be ordered after the surviving history at their
+  // address. By now Probe/Grant/Release owners have reached their terminals.
+  // Park in the existing per-source wait slot so a Checker can use this set.
+  io.trustedWrite := request_valid && meta_valid && trustedMutation && !s_execute &&
+    s_pprobe && s_rprobe && w_pprobeacklast && w_rprobeacklast && !peerUnsafe
+  io.trustedAddress := params.restoreAddress(params.expandAddress(request.tag, request.set, UInt(0)))
+  val parkTrusted = io.trustedWrite && io.trustedWait.valid &&
+    !releaseIssued && (!s_acquire || (w_grantlast && s_grantack))
+  val parkPeer = parkEarly || parkLate || parkCapacity || parkTrusted
   val parkCommit = parkPeer && planStarted
   io.schedule.bits.park.valid := parkPeer
   io.schedule.bits.park.bits.request := request
-  io.schedule.bits.park.bits.seq := meta.image.contentSeq
+  io.schedule.bits.park.bits.seq := Mux(parkTrusted, io.trustedWait.bits, meta.image.contentSeq)
   // Suppress only the unsafe execution while outstanding probes/refill/outer E
   // drain. In particular E must not be coupled to a blocked D admission.
   when (peerUnsafe) {
@@ -300,16 +368,16 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
   when (io.schedule.ready) {
     planStarted := Bool(true)
                                     s_rprobe     := Bool(true)
-    when (w_rprobeacklast)        { s_release    := Bool(true) }
+    when (io.schedule.bits.c.valid && !s_release) { s_release := Bool(true) }
                                     s_pprobe     := Bool(true)
-    when (s_release && w_releaseack && s_pprobe) { s_acquire := Bool(true) }
+    when (io.schedule.bits.a.valid)            { s_acquire := Bool(true) }
     when (w_releaseack)           { s_flush      := Bool(true) }
     when (w_pprobeacklast)        { s_probeack   := Bool(true) }
     when (w_grantfirst)           { s_grantack   := Bool(true) }
     when (io.schedule.bits.d.valid) { s_execute := Bool(true) }
     when (io.schedule.bits.dir.valid) { s_writeback := Bool(true) }
     // Await the next operation
-    when ((no_wait && !peerUnsafe) || parkPeer) {
+    when (io.schedule.bits.reload) {
       request_valid := Bool(false)
       meta_valid := Bool(false)
     }
@@ -329,6 +397,8 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
 
   // Resulting meta-data
   val final_meta_writeback = Wire(init = meta)
+  val residentHasSafeCopy = meta.outerPreserved && CacheImage.safe(meta.image, io.watermark) &&
+    io.historyContext.survives(meta.image.contentSeq)
 
   val req_clientBit = params.clientBit(request.source)
   val req_needT = needT(request.opcode, request.param)
@@ -342,7 +412,7 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
     final_meta_writeback.state   := Mux(request.param =/= TtoT && meta.state === TRUNK, TIP, meta.state)
     final_meta_writeback.clients := meta.clients & ~Mux(isToN(request.param), req_clientBit, UInt(0))
     final_meta_writeback.hit     := Bool(true) // chained requests are hits
-  } .elsewhen (request.control && Bool(params.control)) { // request.prio(0)
+  } .elsewhen (request.control) { // external flush or internal capacity maintenance
     when (meta.hit) {
       final_meta_writeback.dirty   := Bool(false)
       final_meta_writeback.dcache  := Bool(false)
@@ -350,6 +420,7 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
       final_meta_writeback.packetTracked := Bool(false)
       final_meta_writeback.image := 0.U.asTypeOf(new CacheImageKey)
       final_meta_writeback.outerPreserved := Bool(false)
+      final_meta_writeback.baselineObsolete := Bool(false)
       final_meta_writeback.state   := INVALID
       final_meta_writeback.clients := meta.clients & ~probes_toN
     }
@@ -376,6 +447,7 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
       // New refill came from the coherent outer image. It is clean; no
       // authored inner version is inferred from permission-only transitions.
       final_meta_writeback.outerPreserved := Bool(true)
+      final_meta_writeback.baselineObsolete := Bool(false)
     }
   }
 
@@ -400,6 +472,7 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
       final_meta_writeback.packetTracked := Bool(false)
       final_meta_writeback.image := 0.U.asTypeOf(new CacheImageKey)
       final_meta_writeback.outerPreserved := Bool(false)
+      final_meta_writeback.baselineObsolete := Bool(false)
       final_meta_writeback.state   := INVALID
       final_meta_writeback.clients := UInt(0)
     }
@@ -414,6 +487,15 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
     final_meta_writeback.image := request.image
     final_meta_writeback.outerPreserved := meta.outerPreserved &&
       request.image.valid && meta.image.asUInt === request.image.asUInt
+    final_meta_writeback.baselineObsolete := meta.baselineObsolete &&
+      !(request.image.contentSeq > meta.image.contentSeq ||
+        (request.image.contentSeq === meta.image.contentSeq && request.image.generation > meta.image.generation))
+    when (residentHasSafeCopy && CacheImage.coveredTracked(request.image, meta.image)) {
+      final_meta_writeback.image := meta.image
+      final_meta_writeback.outerPreserved := Bool(true)
+      final_meta_writeback.baselineObsolete := meta.baselineObsolete ||
+        CacheImage.earlier(request.image, meta.image)
+    }
   }
 
   // Denial retains the previous bytes/key (or the invalid BASE on a miss).
@@ -423,6 +505,7 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
     final_meta_writeback.packetSeq := 0.U
     final_meta_writeback.packetTracked := Bool(false)
     final_meta_writeback.outerPreserved := Bool(false)
+    final_meta_writeback.baselineObsolete := Bool(false)
   }
 
   when (parkPeer) {
@@ -482,6 +565,7 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
   io.schedule.bits.d.bits.sink    := UInt(0)
   io.schedule.bits.d.bits.way     := meta.way
   io.schedule.bits.d.bits.bad     := bad_grant
+  io.schedule.bits.d.bits.recoverySafe := Bool(false) // classified once per bank in Scheduler
   // C replies echo the protected snapshot; A grants name the resident bytes.
   io.schedule.bits.d.bits.image := Mux(request.prio(2), request.image, final_meta_writeback.image)
   io.schedule.bits.e.bits.sink    := sink
@@ -509,7 +593,7 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
   val c = !params.firstLevel // can be acquired
   val m = params.inner.client.clients.exists(!_.supports.probe)   // can be written (or read)
   val r = params.outer.manager.managers.exists(!_.alwaysGrantsT) // read-only devices exist
-  val f = params.control     // flush control register exists
+  val f = true              // internal maintenance reuses flush even without MMIO control
   val cfg = (p, c, m, r, f)
   val b = r || p // can reach branch state (via probe downgrade or read-only device)
 
@@ -786,6 +870,15 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
       meta.image := io.sinkc.bits.image
       meta.outerPreserved := meta.outerPreserved && io.sinkc.bits.image.valid &&
         meta.image.asUInt === io.sinkc.bits.image.asUInt
+      meta.baselineObsolete := meta.baselineObsolete &&
+        !(io.sinkc.bits.image.contentSeq > meta.image.contentSeq ||
+          (io.sinkc.bits.image.contentSeq === meta.image.contentSeq &&
+            io.sinkc.bits.image.generation > meta.image.generation))
+      when (residentHasSafeCopy && CacheImage.coveredTracked(io.sinkc.bits.image, meta.image)) {
+        meta.image := meta.image
+        meta.outerPreserved := Bool(true)
+        meta.baselineObsolete := meta.baselineObsolete || CacheImage.earlier(io.sinkc.bits.image, meta.image)
+      }
     }
   }
   when (io.sinkd.valid) {
@@ -826,7 +919,10 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
   }
   when (io.schedule.fire()) {
     assert(!io.schedule.bits.a.valid || w_releaseack, "L2_PREMATURE_OVERWRITE_ERROR acquire")
-    assert(!io.schedule.bits.dir.valid || w_releaseack, "L2_PREMATURE_OVERWRITE_ERROR victim tag")
+    val updatesOriginalVictim = parkCommit && !releaseIssued &&
+      io.schedule.bits.dir.bits.data.tag === meta.tag
+    assert(!io.schedule.bits.dir.valid || w_releaseack || updatesOriginalVictim,
+      "L2_PREMATURE_OVERWRITE_ERROR victim tag")
     when (io.schedule.bits.c.valid) {
       assert(!releaseIssued, "L2_DUP_PRESERVE_ERROR victim request")
       releaseIssued := Bool(true)
@@ -846,14 +942,46 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
       "L2 receipt raced a resident mutation")
     meta.outerPreserved := Bool(true)
   }
+  // P3-10/U-D06: a newer safe DRAM line suppresses older resident bytes;
+  // retain its normal coherence ownership and permission-only release.
+  val baselineOlder = CacheImage.earlier(meta.image, io.baseline.bits.image)
+  val baselineSameVersion = meta.image.contentSeq === io.baseline.bits.image.contentSeq &&
+    meta.image.generation === io.baseline.bits.image.generation
+  val baselineCoversResident = meta_valid && request.set === io.baseline.bits.set &&
+    meta.tag === io.baseline.bits.tag && (baselineOlder || baselineSameVersion)
+  val baselineMatch = io.baseline.valid && baselineCoversResident
+  // A receipt that cannot touch this Probe's resident needs no Probe drain.
+  // The scheduler independently drains accepted outer traffic for the set.
+  io.baselineProbeReady := !baselineCoversResident || io.baselineReady
+  when (baselineMatch) {
+    assert(io.baselineReady, "baseline receipt overtook an accepted outer owner")
+    meta.outerPreserved := Bool(true)
+    meta.baselineObsolete := meta.baselineObsolete || baselineOlder
+    // While obsolete, image denotes the acknowledged baseline rank, and
+    // the bank bytes must be ignored. Keep the rank through late C receipts.
+    when (baselineOlder) { meta.image := io.baseline.bits.image }
+  }
   when (io.sinke.valid) {
     w_grantack := Bool(true)
   }
 
   // Bootstrap new requests
   val allocate_as_full = Wire(new FullRequest(params), init = io.allocate.bits)
-  val new_meta = Mux(io.allocate.valid && io.allocate.bits.repeat, final_meta_writeback, io.directory.bits)
   val new_request = Mux(io.allocate.valid, allocate_as_full, request)
+  val rebase = baselineMatch && baselineOlder && meta.hit && request.prio(0) &&
+    !request.control && !s_execute
+  val rebaseMeta = Wire(init = meta)
+  rebaseMeta.hit := Bool(false)
+  rebaseMeta.outerPreserved := Bool(true)
+  rebaseMeta.baselineObsolete := Bool(true)
+  rebaseMeta.image := io.baseline.bits.image
+  val new_meta = Wire(init = Mux(rebase, rebaseMeta,
+    Mux(io.allocate.valid && io.allocate.bits.repeat, final_meta_writeback, io.directory.bits)))
+  // Physical C ownership remains a hit so Release/ProbeAck can terminate.
+  // Only a new A lookup treats dead/obsolete bytes as a victim, retaining
+  // the old tag, way and sharers for the standard eviction protocol.
+  when (new_request.prio(0) && !new_request.control && (new_meta.baselineObsolete ||
+    !io.historyContext.survives(new_meta.image.contentSeq))) { new_meta.hit := Bool(false) }
   val new_needT = needT(new_request.opcode, new_request.param)
   val new_clientBit = params.clientBit(new_request.source)
   val new_skipProbe = Mux(skipProbeN(new_request.opcode, params.cache.hintsSkipProbe), new_clientBit, UInt(0))
@@ -886,9 +1014,9 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
   }
 
   // Create execution plan
-  when (io.directory.valid || (io.allocate.valid && io.allocate.bits.repeat)) {
-    assert(!releaseGeneration.andR, "L2 release serial exhausted")
-    releaseGeneration := releaseGeneration + UInt(1)
+  val createPlan = io.directory.valid || (io.allocate.valid && io.allocate.bits.repeat) || rebase
+  when (createPlan) {
+    releaseGeneration := Mux(releaseGeneration.andR, UInt(1, width = 64), releaseGeneration + UInt(1))
     releaseSent := Bool(false)
     releaseIssued := Bool(false)
     meta_valid := Bool(true)
@@ -941,7 +1069,7 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
       assert (new_meta.hit)
     }
     // For X channel requests (ie: flush)
-    .elsewhen (new_request.control && Bool(params.control)) { // new_request.prio(0)
+    .elsewhen (new_request.control) { // external flush or internal capacity maintenance
       s_flush := Bool(false)
       // Do we need to actually do something?
       when (new_meta.hit) {

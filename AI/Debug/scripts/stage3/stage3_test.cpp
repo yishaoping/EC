@@ -25,6 +25,11 @@ static void check(bool ok, const std::string& why) { if(!ok) throw std::runtime_
 // updates and receipts come from the production Scheduler and CacheCork.
 struct Run {
   VStage3Harness t;
+  explicit Run(VerilatedContext* context=Verilated::threadContextp()) : t(context) {
+    t.io_archiveValid=0; t.io_maintenance=0;
+    t.io_historyValid=0; t.io_historyInstallOnly=0;
+    t.io_historyDeadLower=0; t.io_historyDeadUpper=0; t.io_historyAddress=0;
+  }
   uint64_t cycles=0, puts=0, grants=0, releases=0, reads=0, flushes=0, probes=0, writes=0, metas=0, memoryGets=0;
   uint32_t nextGen=1, nextSeq=1, watermark=0;
   bool holdWrites=false, memoryReady=true, flushing=false;
@@ -33,6 +38,8 @@ struct Run {
   std::deque<Reply> rq, wq, inject;
   std::deque<int> eq;
   std::map<uint64_t,Line> durable;
+  // Optional per-accepted-beat oracle for lines that may publish only BASE.
+  std::map<uint64_t,Line> expectedOuter;
   std::set<std::pair<int,uint64_t>> issued;
   std::set<int> outstandingA;
   std::set<int> outstandingC;
@@ -204,7 +211,7 @@ struct Run {
     // Those are not protocol handshakes: never mutate ANY host ledger/counter
     // or stalled-valid history while reset is asserted. Still clock the DUT.
     if(t.reset) {
-      t.clock=1; t.eval(); Verilated::timeInc(1); ++cycles;
+      t.clock=1; t.eval(); t.contextp()->timeInc(1); ++cycles;
       return;
     }
     if(bool(t.io_pending)!=wasPending||t.io_ack) {
@@ -231,7 +238,10 @@ struct Run {
     sampledWatermark=watermark;
     if(t.io_pending) {
       check(!t.io_bankWrite,"bank mutation before checkpoint ACK");
-      check(!t.io_metaWrite,"metadata mutation before checkpoint ACK");
+      // The history publisher holds the set through its addressed receipt
+      // write AFTER real DRAM ACK. No bank data or ordinary metadata writer
+      // may overtake that owner; its own receipt write is the completion.
+      check(!t.io_metaWrite||t.io_baselineCommit,"unrelated metadata mutation under checkpoint lock");
     }
     if(t.io_av&&t.io_ar) {
       auto& a=aq.front();
@@ -343,6 +353,10 @@ struct Run {
           ++puts;
         }
         check(addr==assembling.addr&&t.io_ms==assembling.source&&t.io_mt==assembling.txn,"outer identity changed under backpressure");
+        const auto expected=expectedOuter.find(addr);
+        if(expected!=expectedOuter.end())
+          check(t.io_ml==expected->second[2*putBeat]&&t.io_mh==expected->second[2*putBeat+1],
+            "Pending or dead C/history bytes appeared on an accepted outer beat");
         assembling.data[2*putBeat]=t.io_ml; assembling.data[2*putBeat+1]=t.io_mh;
         if(++putBeat==4) {
           putBeat=0; wq.push_back(assembling); lastPutTxn=assembling.txn; lastPutSource=assembling.source;
@@ -350,8 +364,8 @@ struct Run {
         }
       } else check(false,"unexpected terminal A opcode");
     }
-    t.clock=1; t.eval(); Verilated::timeInc(1); ++cycles;
-    check(!Verilated::gotFinish(),"hardware assertion/finish");
+    t.clock=1; t.eval(); t.contextp()->timeInc(1); ++cycles;
+    check(!t.contextp()->gotFinish(),"hardware assertion/finish");
     check(cycles<150000,"global timeout");
   }
   void pump(int n=20) { while(n-->0) tick(); }

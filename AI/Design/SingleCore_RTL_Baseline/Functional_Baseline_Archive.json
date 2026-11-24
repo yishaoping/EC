@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-24T16:55:46.671227+08:00",
+  "status": "FUNCTIONAL_BASELINE_FROZEN_AND_BOTH_ARCHIVES_CONTENT_VERIFIED",
+  "functional_counts": {
+    "VERIFIED": 69,
+    "CODE_READY": 0,
+    "IN_PROGRESS": 0
+  },
+  "primary": {
+    "status": "FROZEN_AND_CONTENT_VERIFIED",
+    "archive": "/data1/gzh/EC/AI/TMP/singlecore_function_closure_20261123/palimpsest_singlecore_functional_baseline_20261124_165056/baseline.tar.gz",
+    "archive_sha256": "66e89500555c4884f63a18f9adbd83587d17b83f39727f31e4e5ca6e352fc156",
+    "files": 9296,
+    "manifest": "/data1/gzh/EC/AI/TMP/singlecore_function_closure_20261123/palimpsest_singlecore_functional_baseline_20261124_165056/manifest.json",
+    "physical_signoff": "FAIL_SCHEDULER_5NS_PRE_ROUTE_NOT_SIGNED_OFF"
+  },
+  "final_metadata_and_tools": {
+    "archive": "/data1/gzh/EC/AI/TMP/singlecore_function_closure_20261123/palimpsest_singlecore_functional_baseline_20261124_165056/final_metadata_and_build_tools.tar.gz",
+    "sha256": "21178638e24c443fdc3beb2f047b3d6f638cda7c9fb488d9efaf4d2c4ac5fa8b",
+    "manifest": "/data1/gzh/EC/AI/TMP/singlecore_function_closure_20261123/palimpsest_singlecore_functional_baseline_20261124_165056/final_metadata_manifest.json",
+    "files": 100,
+    "content_verified": true
+  },
+  "verification": {
+    "models": 5,
+    "complete_programs": 12,
+    "negative_mutations_rejected": 31,
+    "strict_system_acceptance": "/data1/gzh/EC/AI/TMP/singlecore_function_closure_20261123/grantack_preemption_system_acceptance/result.json",
+    "all69_source_review": "/data1/gzh/EC/AI/TMP/singlecore_function_closure_20261123/final_review_current_scheduler/result.json",
+    "static_check": "/data1/gzh/EC/AI/TMP/singlecore_function_closure_20261123/final_review_current_scheduler/static_after_freeze.log"
+  },
+  "restore": "Extract primary first, then metadata_and_build_tools supplement at identical workspace root (commands record/data1/gzh/EC); original frozen runtimeJARs included. External Java/Scala/Verilator/compiler/Vivado installations not bundled.",
+  "scope": "SingleMain functional baseline under frozen transientfault andconsistentI/Oinput assumptions.",
+  "physical_signoff_complete": false,
+  "physical_limitations": "Scheduler2way5nsOOC WNS-11.019ns FAIL; fullfinalCoreSTA/route/portdelays/AsyncQueuephysicalCDC closure notdone.",
+  "bitstream_and_timing_simulation": "DEFERRED_PER_USER"
+}

@@ -19,7 +19,7 @@ import freechips.rocketchip.rocket._
 import freechips.rocketchip.guardiancouncil.{GH_GlobalParams, GHBarrierLatencyStats}
 
 import boom.common._
-import boom.exu.BrUpdateInfo
+import boom.exu.{BrUpdateInfo, PalimpsestError, PalimpsestExecutionHistory}
 import boom.util.{IsKilledByBranch, GetNewBrMask, BranchKillableQueue, IsOlder, UpdateBrMask, AgePriorityEncoder, WrapInc, Transpose}
 
 
@@ -536,7 +536,8 @@ class BoomBankedDataArray(implicit p: Parameters) extends AbstractBoomDataArray 
  *
  * @param hartid hardware thread for the cache
  */
-class BoomNonBlockingDCache(staticIdForMetadataUseOnly: Int)(implicit p: Parameters) extends LazyModule
+class BoomNonBlockingDCache(staticIdForMetadataUseOnly: Int, val checkerHistoryReceipts: Boolean = true)
+    (implicit p: Parameters) extends LazyModule
 {
   val staticImageWriter = staticIdForMetadataUseOnly
   private val tileParams = p(TileKey)
@@ -556,7 +557,7 @@ class BoomNonBlockingDCache(staticIdForMetadataUseOnly: Int)(implicit p: Paramet
     cacheClientParameters ++ mmioClientParameters,
     minLatency = 1,
     requestFields = Seq(CacheImageField()),
-    responseKeys = Seq(CacheImage)))) with CacheImageClient
+    responseKeys = Seq(CacheImage, CacheRecoverySafe)))) with CacheImageClient
 
 
   lazy val module = new BoomNonBlockingDCacheModule(this)
@@ -577,6 +578,23 @@ class BoomDCacheBundle(implicit p: Parameters, edge: TLEdgeOut) extends BoomBund
   val traffic_stop = Input(Bool())
   val csr_cycle = Input(UInt(64.W))
   val traffic_counter = Output(Vec(GH_GlobalParams.GH_TRAFFIC_COUNTERS, UInt(64.W)))
+  val cacheEarlyClose = Output(Bool())
+  val cacheEarlyCloseSeq = Output(UInt(32.W))
+  val rollbackError = Decoupled(new PalimpsestError)
+  val ioEffectPending = Output(Bool())
+  val allCheckersDrained = Input(Bool())
+  val rollbackHistory = Flipped(Decoupled(UInt(32.W)))
+  val rollbackHistoryUnavailable = Output(Bool())
+  val rollbackIdentityUnavailable = Output(Bool())
+  val rollbackStop = Input(Bool())
+  val rollbackTarget = Input(UInt(32.W))
+  val rollbackReset = Input(Bool())
+  val rollbackRebase = Input(Bool())
+  val sequenceReset = Output(Bool())
+  val rollbackEpoch = Output(UInt(32.W))
+  val rollbackSafe = Output(UInt(32.W))
+  val rollbackQuiesced = Output(Bool())
+  val rollbackMemoryReady = Output(Bool())
   val packet_alloc_valid = Input(Bool())
   val packet_alloc_seq = Input(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
   val packet_seq_baseline = Input(UInt(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
@@ -629,6 +647,27 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // The normal writeback/probe path remains the fallback when this buffer is
   // full or the event is outside the deliberately narrow fast-path scope.
   val svb = Module(new SpeculativeVersionBuffer(entries = nSVBEntries))
+  // P3-01/P3-02: all result acceptance and recovery candidates share one EVT.
+  val seqRebaseEnabled = p(PalimpsestSeqRebaseThreshold) > 0
+  val executionHistory = Module(new PalimpsestExecutionHistory(32, io.checker_results.length, seqRebaseEnabled))
+  executionHistory.io.compact := false.B
+  executionHistory.io.allocated.valid := io.packet_alloc_valid
+  executionHistory.io.allocated.bits := io.packet_alloc_seq
+  val historyCommitAllowed = WireDefault(false.B)
+  executionHistory.io.rollback.valid := io.rollbackHistory.valid && historyCommitAllowed
+  executionHistory.io.rollback.bits := io.rollbackHistory.bits
+  io.rollbackHistory.ready := executionHistory.io.rollback.ready && historyCommitAllowed
+  io.rollbackHistoryUnavailable := executionHistory.io.full
+  io.rollbackEpoch := executionHistory.io.epoch
+  def survives(seq: UInt): Bool = seq === 0.U ||
+    !(0 until 32).map(i => executionHistory.io.occupied(i) &&
+      seq >= executionHistory.io.lower(i) && seq <= executionHistory.io.upper(i)).reduce(_ || _)
+  for (i <- 0 until nSVBEntries) { svb.io.historyValid(i) := survives(svb.io.entrySeq(i)) }
+  svb.io.query.valid := false.B
+  svb.io.query.bits := 0.U
+  svb.io.recovered.ready := false.B
+  io.rollbackMemoryReady := false.B // asserted by the recovery data participant below
+
   val svbCapturePending = RegInit(false.B)
   val svbCaptureIssued = RegInit(false.B)
   val svbFastLineValid = RegInit(false.B)
@@ -662,7 +701,38 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   svb.io.countStats := trafficCounting && !trafficStopPulse
   svb.io.flush := svbFlush
   svb.io.invalidate := svbInvalidate
-  svb.io.ack := wb.io.svb_done
+  // P1-08/P4-08: SVB snapshots transfer storage responsibility without
+  // claiming that the newer resident gave up TileLink permissions.
+  val archiveIdle :: archiveWait :: archiveLower :: Nil = Enum(3)
+  val archiveState = RegInit(archiveIdle)
+  val archivePayload = Reg(new PalimpsestHistoryLine)
+  val archiveEntry = Reg(UInt(log2Ceil(nSVBEntries).W))
+  val archiveRequest = archiveState === archiveWait
+  val archiveAckRaw = WireDefault(false.B)
+  val archiveKeyRaw = WireDefault(0.U.asTypeOf(new CacheImageKey))
+  BoringUtils.addSource(archiveRequest, "PALIMPSEST_ARCHIVE_REQUEST")
+  BoringUtils.addSource(archivePayload, "PALIMPSEST_ARCHIVE_PAYLOAD")
+  BoringUtils.addSink(archiveAckRaw, "PALIMPSEST_ARCHIVE_ACK")
+  BoringUtils.addSink(archiveKeyRaw, "PALIMPSEST_ARCHIVE_KEY")
+  val archiveAck = freechips.rocketchip.util.AsyncResetSynchronizerShiftReg(archiveAckRaw, sync = 8)
+  val archiveKey = freechips.rocketchip.util.AsyncResetSynchronizerShiftReg(archiveKeyRaw.asUInt, sync = 3)
+    .asTypeOf(new CacheImageKey)
+  svb.io.promote.ready := archiveState === archiveIdle
+  when (svb.io.promote.fire) {
+    archivePayload.address := svb.io.promote.bits.line
+    archivePayload.key := svb.io.promote.bits.key
+    archivePayload.data := svb.io.promote.bits.data.asUInt
+    archiveEntry := svb.io.promote.bits.entry
+    archiveState := archiveWait
+  }
+  svb.io.ack.valid := archiveState === archiveWait && archiveAck
+  svb.io.ack.bits.entry := archiveEntry
+  svb.io.ack.bits.key := archiveKey
+  when (svb.io.ack.valid) {
+    assert(archiveKey.asUInt === archivePayload.key.asUInt, "SVB archive ACK key mismatch")
+    archiveState := archiveLower
+  }
+  when (archiveState === archiveLower && !archiveAck) { archiveState := archiveIdle }
   val svbCaptureWbReq = Wire(Decoupled(new WritebackReq(edge.bundle)))
   val prober = Module(new BoomProbeUnit)
   val mshrs = Module(new BoomMSHRFile)
@@ -693,7 +763,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // tags
   def onReset = L1Metadata(0.U, ClientMetadata.onReset)
   val meta = Seq.fill(memWidth) { Module(new L1MetadataArray(onReset _)) }
-  val metaWriteArb = Module(new Arbiter(new L1MetaWriteReq, 3))
+  val metaWriteArb = Module(new Arbiter(new L1MetaWriteReq, 4))
   val dirtyPacketSeq = RegInit(VecInit(Seq.fill(nSets)(VecInit(
     Seq.fill(nWays)(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))))))
   val dirtyPacketTracked = RegInit(VecInit(Seq.fill(nSets)(VecInit(
@@ -703,6 +773,9 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // generation changes only at an actual local semantic data effect.
   val slotEpoch = RegInit(VecInit(Seq.fill(nSets)(VecInit(
     Seq.fill(nWays)(0.U(16.W))))))
+  // D07: slot reuse follows terminal WB/probe/refill handshakes. No old
+  // transaction can still name a slot when its next owner is installed.
+  def nextSlotEpoch(epoch: UInt): UInt = Mux(epoch.andR, 1.U, epoch + 1.U)
   // Mirrors atomic metadata writes for freeze/drain rechecks. Invalidating a
   // victim keeps its identity here until the incoming install commits.
   val residentTag = Reg(Vec(nSets, Vec(nWays, UInt(tagBits.W))))
@@ -718,9 +791,296 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val imageKey = RegInit(VecInit(Seq.fill(nSets)(VecInit(
     Seq.fill(nWays)(0.U.asTypeOf(new CacheImageKey))))))
   val lowerPreserved = RegInit(VecInit(Seq.fill(nSets)(VecInit(Seq.fill(nWays)(false.B)))))
+  // P3-04/P3-06..12: lazy recovery is serialized on the cold path.
+  // Normal hits retain the existing data path; stale mappings are qualified
+  // before the LSU request is accepted. A miss obtains normal coherence
+  // permission, then replaces the granted bytes with the selected history.
+  require(memWidth == 1 && encRowBits * refillCycles == 512,
+    "single-Main recovery currently requires one memory lane and raw 64-byte lines")
+  val currentGeneration = RegInit(VecInit(Seq.fill(nSets)(VecInit(Seq.fill(nWays)(0.U(32.W))))))
+  val recoveryIdle :: recoveryQuery :: recoveryCollect :: recoveryLower :: recoveryWrite :: recoveryWaitWB :: recoveryClear :: recoveryMiss :: Nil = Enum(8)
+  val memoryRecoveryState = RegInit(recoveryIdle)
+  val historyMaintenanceReady = WireDefault(true.B)
+  val historyMaintenanceBusy = WireDefault(false.B)
+  val recoveryLine = Reg(UInt(coreMaxAddrBits.W))
+  val recoveryWay = Reg(UInt(log2Ceil(nWays max 2).W))
+  val recoveryHadResident = Reg(Bool())
+  val recoveryBeat = RegInit(0.U(log2Ceil(refillCycles max 2).W))
+  val recoveryCandidate = Reg(new PalimpsestHistoryLine)
+  val recoveryFound = RegInit(false.B)
+  val historyRequest = RegInit(false.B)
+  val historySync = RegInit(false.B)
+  val historyPayload = Reg(new PalimpsestHistoryQuery)
+  BoringUtils.addSource(historyRequest, "PALIMPSEST_HISTORY_REQUEST")
+  BoringUtils.addSource(historyPayload, "PALIMPSEST_HISTORY_PAYLOAD")
+  val historyAcks = Wire(Vec(p(freechips.rocketchip.subsystem.BankedL2Key).nBanks, Bool()))
+  val historyResults = Wire(Vec(p(freechips.rocketchip.subsystem.BankedL2Key).nBanks, new PalimpsestHistoryResult))
+  for (bank <- historyAcks.indices) {
+    val rawAck = WireDefault(false.B)
+    val rawResult = WireDefault(0.U.asTypeOf(new PalimpsestHistoryResult))
+    BoringUtils.addSink(rawAck, s"PALIMPSEST_HISTORY_ACK_$bank")
+    BoringUtils.addSink(rawResult, s"PALIMPSEST_HISTORY_RESULT_$bank")
+    historyAcks(bank) := freechips.rocketchip.util.AsyncResetSynchronizerShiftReg(rawAck, sync = 8)
+    historyResults(bank) := freechips.rocketchip.util.AsyncResetSynchronizerShiftReg(rawResult.asUInt, sync = 3)
+      .asTypeOf(new PalimpsestHistoryResult)
+  }
+  // A slow Checker must install the EVT before the source lowers request.
+  // Bank query completion alone is not a receipt from every clock domain.
+  // The unprotected TraceGenerator has no Rocket/rollback context consumers.
+  // It opts out at elaboration; protected Main always waits for every Checker.
+  val checkerHistoryAcks = (if (outer.checkerHistoryReceipts)
+    GH_GlobalParams.GH_NUM_BIG_CORES until GH_GlobalParams.GH_NUM_CORES else 0 until 0).map { hart =>
+    val ack = WireDefault(false.B)
+    BoringUtils.addSink(ack, s"PALIMPSEST_CHECKER_HISTORY_ACK_$hart")
+    freechips.rocketchip.util.AsyncResetSynchronizerShiftReg(ack, sync = 8)
+  }
+  val historyAllAccepted = historyAcks.asUInt.andR && checkerHistoryAcks.foldLeft(true.B)(_ && _)
+  val historyAllLowered = !historyAcks.asUInt.orR && checkerHistoryAcks.foldLeft(true.B)((done, ack) => done && !ack)
+  val recoveryIngressPermit = WireDefault(false.B)
+  val recoveryCacheIdle = WireDefault(false.B)
+  val recoveryEvict = Wire(Decoupled(new WritebackReq(edge.bundle)))
+  val recoveryReleaseKey = Reg(new CacheImageKey)
+  val recoveryReleaseEpoch = Reg(UInt(16.W))
+  val ingressLine = (io.lsu.req.bits(0).bits.addr >> blockOffBits) << blockOffBits
+  val ingressSet = io.lsu.req.bits(0).bits.addr(idxMSB, idxLSB)
+  val ingressTag = io.lsu.req.bits(0).bits.addr >> untagBits
+  val ingressMatches = VecInit((0 until nWays).map(w => residentValid(ingressSet)(w) &&
+    residentTag(ingressSet)(w) === ingressTag))
+  val ingressWay = PriorityEncoder(ingressMatches.asUInt)
+  val ingressMapped = ingressMatches.asUInt.orR &&
+    currentGeneration(ingressSet)(ingressWay) === executionHistory.io.generation &&
+    survives(imageKey(ingressSet)(ingressWay).contentSeq)
+  // P4-01: a surviving committed-prefix store may still need its cold line
+  // after EVT publication. Blocking all cold recovery while stopped would
+  // make drain wait for a store whose cache request can never be admitted.
+  val ingressSurvivingDrain = io.lsu.req.bits(0).bits.packet_seq < io.rollbackTarget &&
+    survives(io.lsu.req.bits(0).bits.packet_seq)
+  val ingressCacheable = edge.manager.supportsAcquireBFast(io.lsu.req.bits(0).bits.addr, lgCacheBlockBytes.U)
+  val ingressStale = executionHistory.io.generation =/= 0.U && ingressCacheable && !ingressMapped
+  val ingressValid = io.lsu.req.valid && io.lsu.req.bits(0).valid
+  val ingressRecoveryLine = ingressCacheable && ingressLine === recoveryLine
+  recoveryIngressPermit := (memoryRecoveryState === recoveryIdle && !ingressStale) ||
+    (memoryRecoveryState === recoveryMiss && (ingressRecoveryLine || !ingressStale))
+  def beginColdLookup(): Unit = {
+    when (ingressMatches.asUInt.orR && survives(imageKey(ingressSet)(ingressWay).contentSeq)) {
+      // A surviving resident Current is newer than all of its own predecessors.
+      currentGeneration(ingressSet)(ingressWay) := executionHistory.io.generation
+      memoryRecoveryState := recoveryIdle
+    }.otherwise {
+      recoveryLine := ingressLine
+      recoveryWay := ingressWay
+      recoveryHadResident := ingressMatches.asUInt.orR
+      recoveryFound := false.B
+      recoveryBeat := 0.U
+      historyPayload.installOnly := false.B
+      historyPayload.address := ingressLine
+      historyPayload.occupied := executionHistory.io.occupied
+      historyPayload.lower := executionHistory.io.lower
+      historyPayload.upper := executionHistory.io.upper
+      memoryRecoveryState := recoveryQuery
+    }
+  }
+  when (memoryRecoveryState === recoveryIdle && ingressValid &&
+      ingressStale && (!io.rollbackStop || ingressSurvivingDrain) && recoveryCacheIdle) {
+    beginColdLookup()
+  }
+  svb.io.query.valid := memoryRecoveryState === recoveryQuery && !historySync
+  svb.io.query.bits := recoveryLine
+  when (svb.io.query.fire || (memoryRecoveryState === recoveryQuery && historySync)) {
+    historyRequest := true.B
+    memoryRecoveryState := recoveryCollect
+  }
+  svb.io.recovered.ready := memoryRecoveryState === recoveryCollect && !historySync && historyAllAccepted
+  when (svb.io.recovered.fire) {
+    var found = svb.io.recoveredFound
+    val local = Wire(new PalimpsestHistoryLine)
+    local.address := recoveryLine
+    local.key := svb.io.recovered.bits.key
+    local.data := svb.io.recovered.bits.data.asUInt
+    var candidate = local
+    for (bank <- historyResults.indices) {
+      val r = historyResults(bank)
+      val better = r.found && (!found || r.line.key.contentSeq > candidate.key.contentSeq ||
+        (r.line.key.contentSeq === candidate.key.contentSeq && r.line.key.generation > candidate.key.generation))
+      candidate = Mux(better, r.line, candidate)
+      found = found || r.found
+    }
+    recoveryFound := found
+    recoveryCandidate := candidate
+    printf("PALIMPSEST_LOOKUP line=%x found=%x seq=%x serial=%x data0=%x\n",
+      recoveryLine, found, candidate.key.contentSeq, candidate.key.generation, candidate.data(63, 0))
+  }
+  when (svb.io.recovered.fire || (memoryRecoveryState === recoveryCollect && historySync && historyAllAccepted)) {
+    historyRequest := false.B
+    memoryRecoveryState := recoveryLower
+  }
+  when (memoryRecoveryState === recoveryLower && historyAllLowered) {
+    memoryRecoveryState := Mux(historySync, recoveryIdle, Mux(recoveryHadResident,
+      recoveryWrite, recoveryMiss))
+    when (historySync) { historySync := false.B }
+  }
+  val recoverySet = recoveryLine(idxMSB, idxLSB)
+  // The MSHR selects and freezes the image at the coherent Grant. Do not
+  // reapply the earlier lookup here: a trusted writer can supersede a safe
+  // candidate between query completion and the actual acquisition.
+  val recoveredRefillImage = mshrs.io.refill.bits.image
+  val recoveredInstallImage = mshrs.io.install.bits.image
+  mshrs.io.recovery.valid := memoryRecoveryState === recoveryMiss && recoveryFound
+  mshrs.io.recovery.bits := recoveryCandidate
+  when (io.rollbackHistory.fire) {
+    printf("PALIMPSEST_EVT target=%x tail=%x next_epoch=%x next_generation=%x\n",
+      io.rollbackHistory.bits, executionHistory.io.allocatedTail,
+      executionHistory.io.epoch + 1.U, executionHistory.io.generation + 1.U)
+    // Publish the EVT to every L2 bank before SW may cross tombstones or
+    // execution restarts. Installing the EVT does not consume line data.
+    historySync := true.B
+    recoveryLine := 0.U
+    recoveryHadResident := false.B
+    recoveryFound := false.B
+    historyPayload.installOnly := true.B
+    historyPayload.address := 0.U
+    historyPayload.occupied := executionHistory.io.occupied
+    historyPayload.lower := executionHistory.io.lower
+    historyPayload.upper := executionHistory.io.upper
+    memoryRecoveryState := recoveryQuery
+  }
+  // EVT registers update at commit. Capture the post-commit value when
+  // raising request. The mailbox synchronizes payload before request.
+  when (historySync && memoryRecoveryState === recoveryQuery) {
+    historyPayload.occupied := executionHistory.io.occupied
+    historyPayload.lower := executionHistory.io.lower
+    historyPayload.upper := executionHistory.io.upper
+  }
+  // LSU re-arbitrates retries and can drop valid between attempts. Keep the
+  // completed lookup through those gaps. An unrelated mapped access can
+  // proceed. Once owners drain, a different cold offer must claim the slot
+  // in this cycle: returning idle first lets LSU arbitration replace that
+  // offer again, repeatedly querying the old address without admitting either.
+  when (memoryRecoveryState === recoveryMiss && recoveryCacheIdle) {
+    when (io.rollbackStop && (!ingressValid || !ingressSurvivingDrain)) {
+      memoryRecoveryState := recoveryIdle
+    }.elsewhen (ingressValid && ingressStale && !ingressRecoveryLine) {
+      beginColdLookup()
+    }
+  }
+  io.rollbackMemoryReady := memoryRecoveryState === recoveryIdle && historyMaintenanceReady
+  // A full table may still merge an earlier FAIL and thereby free entries.
+  // Do not prevent that recovery while waiting for safe-prefix validation.
+  historyCommitAllowed := memoryRecoveryState === recoveryIdle && !historySync && !historyMaintenanceBusy
+
   val safePacketWatermark = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
   svb.io.safeWatermark := safePacketWatermark
-  val imageSerial = RegInit(1.U(32.W))
+  io.rollbackSafe := safePacketWatermark
+  mshrs.io.safeWatermark := safePacketWatermark
+  mshrs.io.executionTail := executionHistory.io.allocatedTail
+  mshrs.io.rollbackStop := io.rollbackStop
+  mshrs.io.historyContext := 0.U.asTypeOf(new PalimpsestHistoryQuery)
+  mshrs.io.historyContext.occupied := executionHistory.io.occupied
+  mshrs.io.historyContext.lower := executionHistory.io.lower
+  mshrs.io.historyContext.upper := executionHistory.io.upper
+  // U-D07: at full EVT capacity, use THIS stopped rollback's safe boundary
+  // for a rare service sweep. All prior PASS/EVT decisions remain installed
+  // until every L1/L2/cache/history reference has a real terminal receipt.
+  // Ordinary rollback and normal load hit never enumerate physical lines.
+  val maintenanceRequest = RegInit(false.B)
+  val maintenanceLower = RegInit(false.B)
+  val sequenceReset = WireDefault(false.B)
+  val holdMaintenance = WireDefault(false.B)
+  val transportLowered = WireDefault(true.B)
+  val rebaseCommitAllowed = WireDefault(true.B)
+  val rebaseComplete = WireDefault(true.B)
+  val releaseAfterReset = WireDefault(false.B)
+  io.sequenceReset := sequenceReset
+  executionHistory.io.rebase.foreach(_ := sequenceReset)
+  BoringUtils.addSource(maintenanceRequest, "PALIMPSEST_EVT_MAINTENANCE_REQUEST")
+  val maintenanceAcks = Wire(Vec(historyAcks.length, Bool()))
+  for (bank <- maintenanceAcks.indices) {
+    val ack = WireDefault(false.B)
+    BoringUtils.addSink(ack, s"PALIMPSEST_EVT_MAINTENANCE_ACK_$bank")
+    maintenanceAcks(bank) := freechips.rocketchip.util.AsyncResetSynchronizerShiftReg(ack, sync = 8)
+  }
+  historyMaintenanceReady := !executionHistory.io.maintenanceRequired &&
+    !maintenanceRequest && !maintenanceLower && rebaseComplete
+  historyMaintenanceBusy := maintenanceRequest || maintenanceLower
+  val maintenanceLocalDrained = io.rollbackQuiesced && svb.io.occupancy === 0.U &&
+    archiveState === archiveIdle && io.allCheckersDrained
+  val maintenanceNeeded = executionHistory.io.maintenanceRequired || (io.rollbackRebase && !rebaseComplete)
+  when (maintenanceNeeded && io.rollbackStop && maintenanceLocalDrained &&
+    safePacketWatermark === executionHistory.io.allocatedTail && !maintenanceLower &&
+    !io.rollbackHistory.valid && memoryRecoveryState === recoveryIdle) {
+    maintenanceRequest := true.B
+  }
+  // The bank certificate terminates L2 owners. Rejoin L1's probe/metadata
+  // tails explicitly as well; a CDC synchronizer is not an owner-done delay.
+  val physicalDrained = maintenanceRequest && maintenanceAcks.asUInt.andR && maintenanceLocalDrained
+  if (seqRebaseEnabled) {
+    val transportRequest = RegInit(false.B)
+    val resetPublished = RegInit(false.B)
+    val done = RegInit(false.B)
+    val transportAck = WireDefault(false.B) // GHM Main side uses this clock
+    BoringUtils.addSource(transportRequest, "PALIMPSEST_SEQ_TRANSPORT_REQUEST")
+    BoringUtils.addSink(transportAck, "PALIMPSEST_SEQ_TRANSPORT_ACK")
+    val watermarkAcks = maintenanceAcks.indices.map { bank =>
+      val ack = WireDefault(false.B)
+      BoringUtils.addSink(ack, s"PALIMPSEST_SEQ_WATERMARK_ACK_$bank")
+      freechips.rocketchip.util.AsyncResetSynchronizerShiftReg(ack, sync = 8)
+    }
+    BoringUtils.addSource(resetPublished, "PALIMPSEST_SEQ_WATERMARK_REQUEST")
+    val watermarkAccepted = watermarkAcks.reduce(_ && _)
+    val watermarkLowered = !watermarkAcks.reduce(_ || _)
+    when (physicalDrained && io.rollbackRebase && !resetPublished) { transportRequest := true.B }
+    sequenceReset := physicalDrained && io.rollbackRebase && transportRequest &&
+      transportAck && !resetPublished
+    when (sequenceReset) { resetPublished := true.B }
+    when (releaseAfterReset) {
+      resetPublished := false.B
+      transportRequest := false.B
+      done := true.B
+    }
+    when (!io.rollbackRebase) { done := false.B }
+    rebaseComplete := !io.rollbackRebase || done
+    rebaseCommitAllowed := !io.rollbackRebase || sequenceReset
+    holdMaintenance := io.rollbackRebase
+    releaseAfterReset := resetPublished && watermarkAccepted &&
+      memoryRecoveryState === recoveryIdle && !historySync
+    transportLowered := !transportAck && watermarkLowered
+  }
+  when (physicalDrained && rebaseCommitAllowed) {
+    assert(io.rollbackStop && safePacketWatermark === executionHistory.io.allocatedTail,
+      "EVT maintenance lost its stopped, validated prefix")
+    assert(!residentValid.map(_.asUInt.orR).reduce(_ || _),
+      "EVT maintenance certificate left a physical L1 resident")
+    executionHistory.io.compact := true.B
+    when (!holdMaintenance) {
+      maintenanceRequest := false.B
+      maintenanceLower := true.B
+    }
+    // Reuse the existing held context mailbox to publish the compacted EVT
+    // before restart. Only a Seq reset also waits for the bank's SW receipt.
+    historySync := true.B
+    recoveryLine := 0.U; recoveryHadResident := false.B; recoveryFound := false.B
+    historyPayload.installOnly := true.B
+    historyPayload.address := 0.U
+    memoryRecoveryState := recoveryQuery
+    printf("PALIMPSEST_EVT_COMPACT tail=%x old_epoch=%x\n",
+      executionHistory.io.allocatedTail, executionHistory.io.epoch)
+  }
+  when (releaseAfterReset) {
+    maintenanceRequest := false.B
+    maintenanceLower := true.B
+  }
+  when (maintenanceLower && !maintenanceAcks.asUInt.orR && transportLowered) { maintenanceLower := false.B }
+  io.cacheEarlyClose := mshrs.io.mmioBlocked || svb.io.occupancy >= (nSVBEntries - 2).U
+  io.cacheEarlyCloseSeq := Mux(mshrs.io.mmioBlocked, mshrs.io.mmioBlockedSeq, executionHistory.io.allocatedTail)
+  val imageSerial = Wire(UInt(32.W)) // D07: ordered within (address, writer, Seq)
+  val l2IdentityUnavailable = Wire(Vec(historyAcks.length, Bool()))
+  for (bank <- historyAcks.indices) {
+    val raw = WireDefault(false.B)
+    BoringUtils.addSink(raw, s"PALIMPSEST_L2_IDENTITY_UNAVAILABLE_$bank")
+    l2IdentityUnavailable(bank) := freechips.rocketchip.util.AsyncResetSynchronizerShiftReg(raw, sync = 3)
+  }
+  io.rollbackIdentityUnavailable := mshrs.io.identityUnavailable || l2IdentityUnavailable.asUInt.orR
+  io.ioEffectPending := mshrs.io.ioEffectPending
   val imageValid = RegInit(VecInit(Seq.fill(nSets)(VecInit(Seq.fill(nWays)(false.B)))))
   val slotReserved = RegInit(VecInit(Seq.fill(nSets)(VecInit(Seq.fill(nWays)(false.B)))))
   val reservedEpoch = Reg(Vec(nSets, Vec(nWays, UInt(16.W))))
@@ -794,7 +1154,45 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
 
   // data
   val data = Module(if (boomParams.numDCacheBanks == 1) new BoomDuplicatedDataArray else new BoomBankedDataArray)
-  val dataWriteArb = Module(new Arbiter(new L1DataWriteReq, 2))
+  val dataWriteArb = Module(new Arbiter(new L1DataWriteReq, 3))
+  // P3-11/P4-07: do not modify a potentially B-only resident in place.
+  // Drop its permission through the real Release/ReleaseAck path, then obtain
+  // T permission and install the selected history through the normal MSHR.
+  dataWriteArb.io.in(2).valid := false.B
+  dataWriteArb.io.in(2).bits := 0.U.asTypeOf(new L1DataWriteReq)
+  recoveryEvict.valid := memoryRecoveryState === recoveryWrite && !svb.io.releaseBlocked(2)
+  recoveryEvict.bits := 0.U.asTypeOf(new WritebackReq(edge.bundle))
+  recoveryEvict.bits.source := cfg.nMSHRs.U
+  recoveryEvict.bits.idx := recoverySet
+  recoveryEvict.bits.tag := recoveryLine >> untagBits
+  recoveryEvict.bits.way_en := UIntToOH(recoveryWay, nWays)
+  recoveryEvict.bits.param := residentCoh(recoverySet)(recoveryWay).onCacheControl(M_FLUSH)._2
+  recoveryEvict.bits.voluntary := true.B
+  recoveryEvict.bits.svb_capture := false.B
+  when (recoveryEvict.fire) {
+    recoveryReleaseKey := imageKey(recoverySet)(recoveryWay)
+    recoveryReleaseEpoch := slotEpoch(recoverySet)(recoveryWay)
+    memoryRecoveryState := recoveryWaitWB
+  }
+  when (memoryRecoveryState === recoveryWaitWB && wb.io.done.valid &&
+    wb.io.done_epoch === recoveryReleaseEpoch && wb.io.done.bits.asUInt === recoveryReleaseKey.asUInt) {
+    memoryRecoveryState := recoveryClear
+  }
+  metaWriteArb.io.in(3).valid := memoryRecoveryState === recoveryClear
+  metaWriteArb.io.in(3).bits := 0.U.asTypeOf(new L1MetaWriteReq)
+  metaWriteArb.io.in(3).bits.idx := recoverySet
+  metaWriteArb.io.in(3).bits.tag := recoveryLine >> untagBits
+  metaWriteArb.io.in(3).bits.way_en := UIntToOH(recoveryWay, nWays)
+  metaWriteArb.io.in(3).bits.data.tag := recoveryLine >> untagBits
+  metaWriteArb.io.in(3).bits.data.coh := ClientMetadata.onReset
+  when (metaWriteArb.io.in(3).fire) {
+    slotEpoch(recoverySet)(recoveryWay) := nextSlotEpoch(slotEpoch(recoverySet)(recoveryWay))
+    imageValid(recoverySet)(recoveryWay) := false.B
+    lowerPreserved(recoverySet)(recoveryWay) := false.B
+    appliedEffectValid(recoverySet)(recoveryWay) := false.B
+    memoryRecoveryState := recoveryMiss
+  }
+
   // 0 goes to pipeline, 1 goes to MSHR refills
   val dataReadArb = Module(new Arbiter(new BoomL1DataReadReq, 3))
   // 0 goes to MSHR replays, 1 goes to wb, 2 goes to pipeline
@@ -854,7 +1252,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // A metadata clear writes one way but must drain all lookups to its set.
   // WaitSafe permits only the qualified hit-only reads above; all same-set
   // LSU traffic is held outside S1/S2 once the safe/clear boundary begins.
-  val lsu_clear_freeze_allowed = !killed_store_replay_valid &&
+  val lsu_clear_freeze_allowed = recoveryIngressPermit && !killed_store_replay_valid &&
     !lsu_clear_freeze_set_conflict
   val killed_replay_clear_freeze_allowed = !killed_replay_clear_freeze_set_conflict
   io.lsu.req.ready := lsu_clear_freeze_allowed && lsu_pipeline_ready
@@ -957,11 +1355,11 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   prefetch_req    := 0.U.asTypeOf(Vec(memWidth, new BoomDCacheReq))
   prefetch_req(0) := mshrs.io.prefetch.bits
   // Tag read for prefetch
-  metaReadArb.io.in(5).valid              := mshrs.io.prefetch.valid
+  metaReadArb.io.in(5).valid              := mshrs.io.prefetch.valid && memoryRecoveryState === recoveryIdle && !io.rollbackStop
   metaReadArb.io.in(5).bits.req(0).idx    := mshrs.io.prefetch.bits.addr >> blockOffBits
   metaReadArb.io.in(5).bits.req(0).way_en := DontCare
   metaReadArb.io.in(5).bits.req(0).tag    := DontCare
-  mshrs.io.prefetch.ready := metaReadArb.io.in(5).ready
+  mshrs.io.prefetch.ready := metaReadArb.io.in(5).ready && memoryRecoveryState === recoveryIdle && !io.rollbackStop
   // Prefetch does not need to read data array
 
   val s0_valid = Mux(io.lsu.req.fire, VecInit(io.lsu.req.bits.map(_.valid)),
@@ -1195,7 +1593,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     s2_lookup(w).old_meta := Mux(s2_tag_match(w),
       L1Metadata(s2_raw_req(w).addr >> untagBits, s2_hit_state(w)), s2_repl_meta(w))
     s2_lookup(w).way_en := candidateWay
-    s2_lookup(w).slot_epoch := slotEpoch(set)(way) + (!s2_tag_match(w)).asUInt
+    s2_lookup(w).slot_epoch := Mux(s2_tag_match(w), slotEpoch(set)(way), nextSlotEpoch(slotEpoch(set)(way)))
     s2_lookup(w).line_generation := lineGeneration(set)(way)
     s2_lookup(w).image_valid := s2_tag_match(w) && imageValid(set)(way)
     mshrs.io.lookup(w) := s2_lookup(w)
@@ -1393,8 +1791,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
 
   // probes and releases
   svb.io.releaseLines(3) := (tl_out.b.bits.address >> blockOffBits) << blockOffBits
-  prober.io.req.valid   := tl_out.b.valid && !lrsc_valid && !svb.io.releaseBlocked(3)
-  tl_out.b.ready        := prober.io.req.ready && !lrsc_valid && !svb.io.releaseBlocked(3)
+  prober.io.req.valid   := tl_out.b.valid && !lrsc_valid && !svb.io.releaseBlocked(3) && memoryRecoveryState.isOneOf(recoveryIdle, recoveryMiss)
+  tl_out.b.ready        := prober.io.req.ready && !lrsc_valid && !svb.io.releaseBlocked(3) && memoryRecoveryState.isOneOf(recoveryIdle, recoveryMiss)
   prober.io.req.bits    := tl_out.b.bits
   prober.io.way_en      := s2_tag_match_way(0)
   prober.io.block_state := s2_hit_state(0)
@@ -1409,8 +1807,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     val pset = prober.io.meta_write.bits.idx
     val pway = OHToUInt(prober.io.meta_write.bits.way_en)
     when (!slotReserved(pset)(pway)) {
-      assert(slotEpoch(pset)(pway) =/= ~0.U(16.W), "slot epoch exhausted")
-      slotEpoch(pset)(pway) := slotEpoch(pset)(pway) + 1.U
+      slotEpoch(pset)(pway) := nextSlotEpoch(slotEpoch(pset)(pway))
     }
     appliedEffectValid(pset)(pway) := false.B
     when (!slotReserved(pset)(pway)) {
@@ -1441,7 +1838,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val installExistingMatch = installReservationMatch && installReq.owner_context_valid &&
     slotEpoch(installSet)(installWay) === installReq.slot_epoch
   val installOwnerMatch = Mux(mshrs.io.install.bits.new_owner,
-    installReservationMatch && slotEpoch(installSet)(installWay) + 1.U === installReq.slot_epoch,
+    installReservationMatch && nextSlotEpoch(slotEpoch(installSet)(installWay)) === installReq.slot_epoch,
     installExistingMatch)
   val installDrain = !(s3_valid && s3_req.addr(idxMSB, idxLSB) === installSet &&
     s3_way === installReq.way_en) && !completionPending(installSet)(installWay) &&
@@ -1455,7 +1852,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val installPreservationAllowed = !mshrs.io.install.bits.has_data ||
     mshrs.io.install.bits.new_owner || L1Preservation.copyAllowed(
       imageValid(installSet)(installWay), imageKey(installSet)(installWay),
-      lowerPreserved(installSet)(installWay), mshrs.io.install.bits.image, safePacketWatermark)
+      lowerPreserved(installSet)(installWay), recoveredInstallImage, safePacketWatermark)
   mshrs.io.install.ready := installOwnerMatch && installDrain && installPreservationAllowed
   when (mshrs.io.install.valid && installOwnerMatch && installDrain) {
     assert(installPreservationAllowed, "same-address refill would destroy an unpreserved image")
@@ -1472,9 +1869,9 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       installReq.request_token, installReq.effect_token,
       mshrs.io.install.bits.new_owner)
     installActive(installSet)(installWay) := true.B
-    installedImage(installSet)(installWay) := mshrs.io.install.bits.image
+    installedImage(installSet)(installWay) := recoveredInstallImage
     when (mshrs.io.install.bits.new_owner) {
-      assert(slotEpoch(installSet)(installWay) + 1.U === installReq.slot_epoch,
+      assert(nextSlotEpoch(slotEpoch(installSet)(installWay)) === installReq.slot_epoch,
         "resident epoch changed under incoming reservation")
       // The resident retains its old identity during the frozen row writes.
       // The final data fire commits the incoming owner below.
@@ -1492,18 +1889,18 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     mshrs.io.refill.bits.line_addr(blockOffBits-1, 0) === 0.U &&
     mshrs.io.refill.bits.line_addr(idxMSB, idxLSB) === refillReqSet &&
     installActive(refillReqSet)(refillReqWay) && selectedRefillSlotReserved &&
-    mshrs.io.refill.bits.image.asUInt === installedImage(refillReqSet)(refillReqWay).asUInt &&
+    recoveredRefillImage.asUInt === installedImage(refillReqSet)(refillReqWay).asUInt &&
     mshrs.io.refill.bits.slot_epoch === selectedRefillReservedEpoch &&
     mshrs.io.refill.bits.transaction_token === reservedTransaction(refillReqSet)(refillReqWay) &&
     mshrs.io.refill.bits.mshr_id === reservedMshr(refillReqSet)(refillReqWay) &&
     (mshrs.io.refill.bits.line_addr >> untagBits) === reservedTag(refillReqSet)(refillReqWay) &&
     Mux(reservedNewOwner(refillReqSet)(refillReqWay),
-      selectedRefillSlotEpoch + 1.U === selectedRefillReservedEpoch,
+      nextSlotEpoch(selectedRefillSlotEpoch) === selectedRefillReservedEpoch,
       selectedRefillSlotEpoch === selectedRefillReservedEpoch)
   val refillPreservationAllowed = reservedNewOwner(refillReqSet)(refillReqWay) ||
     L1Preservation.copyAllowed(imageValid(refillReqSet)(refillReqWay),
       imageKey(refillReqSet)(refillReqWay), lowerPreserved(refillReqSet)(refillReqWay),
-      mshrs.io.refill.bits.image, safePacketWatermark)
+      recoveredRefillImage, safePacketWatermark)
   dataWriteArb.io.in(1).valid := mshrs.io.refill.valid && refillReqOwnerMatch && refillPreservationAllowed
   for (name <- (new L1DataWriteReq).elements.keys) {
     dataWriteArb.io.in(1).bits.elements(name) := mshrs.io.refill.bits.elements(name)
@@ -1544,19 +1941,24 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     assert(!completionPending(set)(way), "publish before functional completion")
     slotReserved(set)(way) := false.B
     installActive(set)(way) := false.B
+    when (memoryRecoveryState === recoveryMiss && set === recoverySet &&
+      mshrs.io.meta_write.bits.tag === (recoveryLine >> untagBits)) {
+      currentGeneration(set)(way) := executionHistory.io.generation
+      memoryRecoveryState := recoveryIdle
+    }
   }
 
   tl_out.e <> mshrs.io.mem_finish
 
   // writebacks
-  val wbArb = Module(new Arbiter(new WritebackReq(edge.bundle), 4))
+  val wbArb = Module(new Arbiter(new WritebackReq(edge.bundle), 5))
   // 0 goes to prober, 1 to MSHR evictions, 2 to the SVB snapshot reader,
   // 3 to the legacy cross-package WaitSafe shadow writeback.
   def wbLine(r: WritebackReq): UInt = (Cat(r.tag, r.idx) << blockOffBits).pad(coreMaxAddrBits)
   svb.io.releaseLines(0) := wbLine(prober.io.wb_req.bits)
   svb.io.releaseLines(1) := wbLine(mshrs.io.wb_req.bits)
   val crossPackageWbReq = Wire(Decoupled(new WritebackReq(edge.bundle)))
-  svb.io.releaseLines(2) := wbLine(crossPackageWbReq.bits)
+  svb.io.releaseLines(2) := Mux(memoryRecoveryState === recoveryWrite, recoveryLine, wbLine(crossPackageWbReq.bits))
   // Correctness ordering, independent of source allocation: ordinary WB and
   // probe data may not overtake an older snapshot on the SAME physical line.
   // Gate before arbitration so a blocked normal request cannot starve SVB.
@@ -1567,6 +1969,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   wbArb.io.in(1).bits := mshrs.io.wb_req.bits
   mshrs.io.wb_req.ready := wbArb.io.in(1).ready && victimDrainReady && !svb.io.releaseBlocked(1)
   wbArb.io.in(2) <> svbCaptureWbReq
+  wbArb.io.in(4) <> recoveryEvict
   wbArb.io.in(3).valid := crossPackageWbReq.valid && !svb.io.releaseBlocked(2)
   wbArb.io.in(3).bits := crossPackageWbReq.bits
   crossPackageWbReq.ready := wbArb.io.in(3).ready && !svb.io.releaseBlocked(2)
@@ -1600,7 +2003,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   wb.io.packet_tracked := dirtyPacketTracked(wbReqSet)(wbReqWay)
   wb.io.data_resp       := s2_data_muxed(0)
   wb.io.snapshot_ready  := svb.io.capture.ready
-  wb.io.svb_req <> svb.io.promote
+  wb.io.svb_req.valid := false.B
+  wb.io.svb_req.bits := 0.U.asTypeOf(chiselTypeOf(wb.io.svb_req.bits))
   wb.io.req_is_mshr := wbArb.io.chosen === 1.U
   svb.io.capture.valid := wb.io.snapshot_valid
   svb.io.capture.bits.line := wb.io.snapshot_line
@@ -1763,7 +2167,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val s2_overwrittenPacketSeq = dirtyPacketSeq(s2_store_set)(s2_store_way)
   val s2_overwrittenPacketTracked = dirtyPacketTracked(s2_store_set)(s2_store_way)
   val s2_overwrittenKey = imageKey(s2_store_set)(s2_store_way)
-  val s2_preservationAllowed = L1Preservation.allow(
+  val s2_preservationAllowed = (io.rollbackStop && s2_req(0).packet_seq >= io.rollbackTarget) || L1Preservation.allow(
     imageValid(s2_store_set)(s2_store_way), s2_overwrittenKey,
     lowerPreserved(s2_store_set)(s2_store_way), s2_req(0).packet_seq, safePacketWatermark, outer.staticImageWriter.U)
   // A fast-line lease grants permission for exactly one resident incarnation.
@@ -1778,13 +2182,18 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val svbFastLineMatch = svbFastPreservationConflict && svbCaptureResidentMatch &&
     s2_store_way === svbFastWay && s2_req(0).packet_seq === svbFastSeq
   val crossPackageDomainWaitRaw = s2_valid(0) && s2_type.isOneOf(t_lsu, t_replay) &&
-    s2_tag_match(0) && isWrite(s2_req(0).uop.mem_cmd) && !s2_preservationAllowed
+    s2_tag_match(0) && isWrite(s2_req(0).uop.mem_cmd) && !s2_preservationAllowed &&
+    !(io.rollbackStop && s2_req(0).packet_seq >= io.rollbackTarget)
   // Once the predecessor is durably in SVB, this line no longer waits for
   // the watermark. The held store still carries the fast-line identity and
   // is admitted only after the capture handshake below.
   val crossPackageDomainWait = crossPackageDomainWaitRaw && !svbFastLineMatch
+  // The snapshot protects the whole predecessor line before the write.
+  // A cached AMO uses the same S3 effect owner and must not wait for PASS
+  // merely because it also returns the old word.
+  val svbWrite = s2_req(0).uop.mem_cmd === M_XWR || isAMO(s2_req(0).uop.mem_cmd)
   val svbEligibleCandidate = crossPackageDomainWaitRaw && !svbFastLineMatch &&
-    s2_type === t_lsu && s2_req(0).uop.mem_cmd === M_XWR &&
+    s2_type === t_lsu && svbWrite &&
     s2_req(0).traffic_cacheable && s2_req(0).packet_seq =/= 0.U &&
     s2_req(0).packet_seq > s2_overwrittenKey.contentSeq &&
     s2_overwrittenKey.valid && !L1Preservation.safe(s2_overwrittenKey, safePacketWatermark) &&
@@ -2007,7 +2416,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val probeBusyAge = RegInit(0.U(32.W))
   val writebackBusy = wb.io.idx.valid || wb.io.pending_idx.valid
   val writebackBusyAge = RegInit(0.U(32.W))
-  val promotionBusy = svb.io.promote.valid || wb.io.pending_svb
+  val promotionBusy = svb.io.promote.valid || archiveState =/= archiveIdle
   val promotionBusyAge = RegInit(0.U(32.W))
   val preservationAgeReported = RegInit(false.B)
   val probeBusyAgeReported = RegInit(false.B)
@@ -2180,14 +2589,19 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       wbArb.io.chosen === 0.U, wbArb.io.out.bits.source, wb.io.debug_state,
       wb.io.req.valid)
   }
-  when (wb.io.done.valid || wb.io.svb_done.valid || wb.io.probe_done) {
+  when (wb.io.done.valid || wb.io.probe_done) {
     lastWbCompletionCycle := io.csr_cycle
-    when (wb.io.svb_done.valid) { lastSvbCompletionCycle := io.csr_cycle }
     printf("WB_COMPLETE cycle=%x kind=%x line=%x entry=%x seq=%x generation=%x probe=%x\n",
       io.csr_cycle, Mux(wb.io.svb_done.valid, 2.U, Mux(wb.io.probe_done, 3.U, 1.U)),
       Mux(wb.io.pending_idx.valid, wb.io.pending_line, wb.io.snapshot_line),
       wb.io.pending_entry, wb.io.pending_key.contentSeq, wb.io.pending_key.generation,
       wb.io.probe_done)
+  }
+  when (svb.io.acked) {
+    lastSvbCompletionCycle := io.csr_cycle
+    printf("PALIMPSEST_ARCHIVE_RECEIPT cycle=%x entry=%x line=%x seq=%x generation=%x\n",
+      io.csr_cycle, archiveEntry, archivePayload.address,
+      archivePayload.key.contentSeq, archivePayload.key.generation)
   }
   when (!svbFastLineValid) {
     fastLineAge := 0.U
@@ -2466,18 +2880,25 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       crossPackagePendingSeq)
     assert(slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) === crossPackagePendingEpoch,
       "clear descriptor lost resident owner")
-    assert(slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) =/= ~0.U(16.W), "slot epoch exhausted")
     crossPackageMetaClearPending := false.B
     crossPackagePending := false.B
     crossPackagePendingSeq := 0.U
     slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) :=
-      slotEpoch(crossPackagePendingSet)(crossPackagePendingWay) + 1.U
+      nextSlotEpoch(slotEpoch(crossPackagePendingSet)(crossPackagePendingWay))
     appliedEffectValid(crossPackagePendingSet)(crossPackagePendingWay) := false.B
     imageValid(crossPackagePendingSet)(crossPackagePendingWay) := false.B
     lowerPreserved(crossPackagePendingSet)(crossPackagePendingWay) := false.B
   }
   // A legitimate probe may retire the old resident while WaitSafe is parked.
   // Retire that pending clear only after any already-issued WB has finished.
+  when (io.rollbackStop && crossPackagePending && !crossPackageIssued && !crossPackageMetaClearPending) {
+    crossPackagePending := false.B
+  }
+  when (io.rollbackReset) {
+    killed_store_replay_valid := false.B
+    svbFastLineValid := false.B
+    lrsc_count := 0.U
+  }
   when (crossPackagePending &&
       !crossPackageResidentMatch &&
       !crossPackageIssued && !wb.io.idx.valid && !wb.io.pending_idx.valid && !crossPackageSlotConflict) {
@@ -2524,7 +2945,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     val duplicateThisCycle = if (i == 0) false.B else
       (0 until i).map(j => resultAccepted(j) &&
         io.checker_results(j)(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0) === seq).reduce(_ || _)
-    resultStale(i) := valid && seq =/= 0.U && seq <= safePacketWatermark
+    executionHistory.io.query(i) := seq
+    resultStale(i) := valid && seq =/= 0.U && (seq <= safePacketWatermark || !survives(seq))
     resultAccepted(i) := valid && !resultStale(i) && statusKnown && seq =/= 0.U &&
       ((bitmapAllocated(idx) && bitmapSeq(idx) === seq) || allocatedThisCycle) &&
       !bitmapCompleted(idx) && !duplicateThisCycle
@@ -2548,48 +2970,75 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       lastCheckerResultCycle := io.csr_cycle
       completedNext(idx) := true.B
       passedNext(idx) := pass
+      printf("PALIMPSEST_RESULT seq=%x pass=%x fail=%x cancelled=%x\n",
+        seq, pass, resultFailed(i), resultCancelled(i))
     }
     // Functional PASS/FAIL tracking remains live outside measurement windows.
   }
 
-  val barrierFailureAny = resultFailed.asUInt.orR || resultCancelled.asUInt.orR
+  val checkerFailureAny = resultFailed.asUInt.orR || resultCancelled.asUInt.orR
   val barrierFailureCandidates = VecInit(io.checker_results.map(result =>
     result(GH_GlobalParams.GH_PACKET_SEQ_BITS - 1, 0)))
-  val barrierFailureOH = PriorityEncoderOH(
-    VecInit(io.checker_results.indices.map(i =>
-      resultFailed(i) || resultCancelled(i))).asUInt)
+  // P1-04/P2-11: checker index has no ordering relationship to segment age.
+  val barrierFailureOH = VecInit(io.checker_results.indices.map(i =>
+    (resultFailed(i) || resultCancelled(i)) &&
+      io.checker_results.indices.filter(_ != i).map(j =>
+        !(resultFailed(j) || resultCancelled(j)) ||
+          barrierFailureCandidates(i) < barrierFailureCandidates(j) ||
+          (barrierFailureCandidates(i) === barrierFailureCandidates(j) && (i < j).B)
+      ).foldLeft(true.B)(_ && _))).asUInt
+  val checkerFailureSeq = Mux1H(barrierFailureOH, barrierFailureCandidates)
+  val ioRetrySeq = mshrs.io.mmioReplayFault.bits
+  val ioRetryIndex = ioRetrySeq(statsIndexBits - 1, 0)
+  val ioRetryFailure = mshrs.io.mmioReplayFault.valid && !io.rollbackStop &&
+    ioRetrySeq > safePacketWatermark && survives(ioRetrySeq) &&
+    ((bitmapAllocated(ioRetryIndex) && bitmapSeq(ioRetryIndex) === ioRetrySeq) ||
+      (functionalPacketAlloc && io.packet_alloc_seq === ioRetrySeq))
+  val ioRetryFirst = ioRetryFailure && (!checkerFailureAny || ioRetrySeq < checkerFailureSeq)
+  val barrierFailureAny = checkerFailureAny || ioRetryFailure
+  val earliestFailure = Mux(ioRetryFirst, ioRetrySeq, checkerFailureSeq)
+  val earliestCancelled = !ioRetryFirst && Mux1H(barrierFailureOH, resultCancelled)
+  when (ioRetryFailure) {
+    printf("PALIMPSEST_IO_RETRY seq=%x reason=journal_mismatch\n", ioRetrySeq)
+  }
   val barrierFailureSeq = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
-  when (barrierFailureSeq === 0.U && barrierFailureAny) {
-    barrierFailureSeq := Mux1H(barrierFailureOH, barrierFailureCandidates)
+  when (barrierFailureAny && (barrierFailureSeq === 0.U || earliestFailure < barrierFailureSeq)) {
+    barrierFailureSeq := earliestFailure
   }
+  val errorPending = RegInit(false.B)
+  val errorPayload = Reg(new PalimpsestError)
+  io.rollbackError.valid := errorPending
+  io.rollbackError.bits := errorPayload
+  when (io.rollbackError.fire) { errorPending := false.B }
+  when (barrierFailureAny && (!errorPending || io.rollbackError.fire || earliestFailure < errorPayload.seq)) {
+    errorPending := true.B
+    errorPayload.seq := earliestFailure
+    errorPayload.cancelled := earliestCancelled
+  }
+  when (io.rollbackHistory.fire) { barrierFailureSeq := 0.U }
   val barrierFailureSticky = barrierFailureSeq =/= 0.U
-  // Session reset/exception are epoch boundaries. A checker failure only
-  // invalidates versions newer than the safe watermark, preserving a safe
-  // predecessor that may still be waiting for promotion or ACK.
-  svbFlush := io.traffic_reset || io.lsu.exception
+  // P1-03/P1-04: a pipeline exception and a measurement RESET do not
+  // discard committed execution history. Keep surviving unsafe predecessors
+  // (e.g. Seq7 with SW6 on FAIL8); only the failed execution suffix is dead.
+  // WB_WAIT remains owned until its original matching ACK in the SVB.
+  svbFlush := false.B
   svbInvalidate.valid := barrierFailureAny
-  svbInvalidate.bits := safePacketWatermark
-  when (io.traffic_reset) {
-    svbEpoch := 0.U
-  }.elsewhen (io.lsu.exception) {
-    when (svbEpoch =/= ~0.U(16.W)) { svbEpoch := svbEpoch + 1.U }
-  }
+  svbInvalidate.bits := earliestFailure - 1.U
   BoringUtils.addSource(barrierFailureSticky,
     GH_GlobalParams.GH_L2_BARRIER_FAILURE_BORE)
   BoringUtils.addSource(barrierFailureSeq,
     GH_GlobalParams.GH_L2_BARRIER_FAILURE_SEQ_BORE)
 
-  var contiguous = true.B
-  var safeAdvance = 0.U((statsIndexBits + 1).W)
-  for (offset <- 1 to statsWindow) {
-    val seq = safePacketWatermark + offset.U
-    val idx = seq(statsIndexBits - 1, 0)
-    val slotPass = allocatedNext(idx) && seqNext(idx) === seq &&
-      completedNext(idx) && passedNext(idx)
-    contiguous = contiguous && slotPass
-    safeAdvance = Mux(contiguous, offset.U, safeAdvance)
-  }
-  val newSafePacketWatermark = safePacketWatermark + safeAdvance
+  // U-D02/P1-02: the only consumer is a +0/+1 register update. Looking at
+  // all 256 following slots adds a prefix chain without changing behavior.
+  val nextSafeSeq = safePacketWatermark + 1.U
+  val nextSafeIndex = nextSafeSeq(statsIndexBits - 1, 0)
+  val nextSafePass = allocatedNext(nextSafeIndex) && seqNext(nextSafeIndex) === nextSafeSeq &&
+    completedNext(nextSafeIndex) && passedNext(nextSafeIndex)
+  val discardedNext = !survives(safePacketWatermark + 1.U) &&
+    safePacketWatermark < executionHistory.io.allocatedTail
+  val newSafePacketWatermark = Mux(sequenceReset, 0.U, Mux(historySync, safePacketWatermark,
+    safePacketWatermark + (discardedNext || nextSafePass).asUInt))
 
   // Commit-ordered physical-address statistics use the same package bitmap
   // watermark but retain their own tagged table.  The input watermark is the
@@ -2599,6 +3048,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val addressStats = Module(new PackageAddressStats(
     coreWidth, coreMaxAddrBits, cfg.blockBytes, statsWindow))
   addressStats.io.resetStats := io.traffic_reset
+  addressStats.io.seqRebase := sequenceReset
   addressStats.io.start := io.traffic_start
   addressStats.io.stop := io.traffic_stop
   addressStats.io.events := io.lsu.address_stats_event
@@ -2606,7 +3056,9 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   addressStats.io.sequenceBaseline := io.packet_seq_baseline
   addressStats.io.fatalProtocolError := addressStatsFatal
 
-  val safeWatermarkGray = newSafePacketWatermark ^ (newSafePacketWatermark >> 1)
+  // P1-02/P3-02: register Gray at the source; a combinational encoder can
+  // glitch while binary SW changes multiple bits at its register outputs.
+  val safeWatermarkGray = RegNext(newSafePacketWatermark ^ (newSafePacketWatermark >> 1), 0.U)
   BoringUtils.addSource(safeWatermarkGray,
     GH_GlobalParams.GH_L1_L2_SAFE_WATERMARK_GRAY_BORE)
 
@@ -2614,7 +3066,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val bitmapCompletedFinal = WireInit(completedNext)
   val bitmapPassedFinal = WireInit(passedNext)
   for (i <- 0 until statsWindow) {
-    when (allocatedNext(i) && seqNext(i) <= newSafePacketWatermark) {
+    when (sequenceReset || (allocatedNext(i) &&
+      (seqNext(i) <= newSafePacketWatermark || !survives(seqNext(i))))) {
       bitmapAllocatedFinal(i) := false.B
       bitmapCompletedFinal(i) := false.B
       bitmapPassedFinal(i) := false.B
@@ -2624,12 +3077,19 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   bitmapCompleted := bitmapCompletedFinal
   bitmapPassed := bitmapPassedFinal
   bitmapSeq := seqNext
+
   when (newSafePacketWatermark =/= safePacketWatermark) {
     lastWatermarkProgressCycle := io.csr_cycle
     printf("WATERMARK_ADVANCE cycle=%x old=%x new=%x\n",
       io.csr_cycle, safePacketWatermark, newSafePacketWatermark)
   }
   safePacketWatermark := newSafePacketWatermark
+  when (sequenceReset) {
+    errorPending := false.B
+    barrierFailureSeq := 0.U
+    measurementSeqFloor := 0.U
+    printf("PALIMPSEST_SEQ_REBASE_RESET old_tail=%x\n", executionHistory.io.allocatedTail)
+  }
 
   // Buckets intentionally use separate storage from the verification bitmap:
   // one package may generate multiple dirty writebacks.
@@ -2867,11 +3327,20 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   terminalResponse.request_token_valid := completionQ.io.deq.bits.req.request_token_valid
   terminalResponse.request_token := completionQ.io.deq.bits.req.request_token
   val completionCancelled = completionQ.io.deq.bits.status === CacheTerminal.cancel
-  io.lsu.store_done.valid := completionQ.io.deq.valid && responseSlotAvailable && !completionCancelled
+  // IOMSHR already supplies an uncached AMO's old-value response. Its later
+  // terminal only releases the STQ owner; responding here as well would
+  // write the same ROB destination twice. Cached AMOs use this terminal as
+  // their sole architectural response and retain the existing path.
+  val completionHasResponse = !isAMO(completionQ.io.deq.bits.req.uop.mem_cmd) ||
+    completionQ.io.deq.bits.req.traffic_cacheable
+  // P4-03: CANCEL still terminates the accepted STQ responsibility. It must
+  // reach the LSU, but must never become an architectural load/AMO response.
+  io.lsu.store_done.valid := completionQ.io.deq.valid && responseSlotAvailable
   io.lsu.store_done.bits := completionQ.io.deq.bits
-  completionQ.io.deq.ready := responseSlotAvailable && (completionCancelled || io.lsu.store_done.ready)
+  completionQ.io.deq.ready := responseSlotAvailable && io.lsu.store_done.ready
   uncache_resp.bits := Mux(completionQ.io.deq.valid, terminalResponse, mshrs.io.resp.bits)
-  uncache_resp.valid := Mux(completionQ.io.deq.valid, io.lsu.store_done.fire, mshrs.io.resp.valid)
+  uncache_resp.valid := Mux(completionQ.io.deq.valid,
+    io.lsu.store_done.fire && !completionCancelled && completionHasResponse, mshrs.io.resp.valid)
   mshrs.io.resp.ready := responseSlotAvailable && !completionQ.io.deq.valid // We can backpressure the MSHRs, but not cache hits
 
   val resp = WireInit(cache_resp)
@@ -3039,7 +3508,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   staleS3StoreReq.replay_retry := s3_replay
   val s3_pre_effect_kill = s3_valid && !s3_applied &&
     (IsKilledByBranch(io.lsu.brupdate, s3_req.uop) ||
-      (io.lsu.exception && s3_req.uop.uses_ldq))
+      (io.lsu.exception && s3_req.uop.uses_ldq) ||
+      (io.rollbackStop && s3_req.packet_seq >= io.rollbackTarget))
   when (s3_pre_effect_kill) { s3_cancelled := true.B }
   when (s3_pre_effect_kill) {
     printf("STAGE1_TX KILL cycle=%x phase=S3 req=%x\n", io.csr_cycle, s3_req.request_token)
@@ -3078,6 +3548,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     imageKey(s3_set)(s3_way_idx), lowerPreserved(s3_set)(s3_way_idx),
     s3_req.packet_seq, safePacketWatermark, outer.staticImageWriter.U) ||
     s3_svbOwnsPredecessor
+  imageSerial := Mux(imageKey(s3_set)(s3_way_idx).contentSeq === s3_req.packet_seq,
+    lineGeneration(s3_set)(s3_way_idx) + 1.U, 1.U)
   val s3_effect_eligible = s3_valid && !s3_applied && s3_owner_match &&
     s3_image_match && s3_preservationAllowed && !s3_duplicate_effect && !s3_owner_revoked && !s3_pre_effect_kill && !s3_cancelled
   when (s3_valid && !s3_applied && !s3_duplicate_effect && !s3_cancelled && !s3_pre_effect_kill) {
@@ -3131,6 +3603,13 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       slotEpoch(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) === r.slot_epoch,
       "completion lost its live slot responsibility")
     completionPending(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) := false.B
+    // D07: duplicate-effect suppression belongs to the live transaction.
+    // After STORE_DONE the original owner cannot replay another semantic
+    // write; MSHR retirement retains its queued result independently.
+    when (r.effect_token_valid &&
+      appliedEffectToken(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) === r.effect_token) {
+      appliedEffectValid(r.addr(idxMSB, idxLSB))(OHToUInt(r.owner_way)) := false.B
+    }
   }
   when (completionQ.io.deq.fire) {
     printf("STAGE1_TX TERMINAL cycle=%x status=%x cmd=%x size=%x stq=%x req=%x effect=%x txn=%x data=%x admission=%x is_hella=%x\n",
@@ -3283,7 +3762,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   when (trafficCounting && svbFastLineValid && !RegNext(svbFastLineValid, false.B)) {
     svbBypassCount := svbBypassCount + 1.U
   }
-  when (trafficCounting && wb.io.svb_release_done) { svbPromotionCount := svbPromotionCount + 1.U }
+  when (trafficCounting && svb.io.promote.fire) { svbPromotionCount := svbPromotionCount + 1.U }
   when (trafficCounting && svb.io.acked) { svbAckCount := svbAckCount + 1.U }
   when (trafficCounting && svb.io.recoveryFromSvb) { svbRecoveryCount := svbRecoveryCount + 1.U }
 
@@ -3298,15 +3777,16 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     val way = refillReqWay
     when (selectedRefillSlotReserved) {
       slotEpoch(set)(way) := reservedEpoch(set)(way)
-      dirtyPacketSeq(set)(way) := mshrs.io.refill.bits.image.contentSeq
-      dirtyPacketTracked(set)(way) := mshrs.io.refill.bits.image.valid &&
-        mshrs.io.refill.bits.image.contentSeq =/= 0.U
-      lineGeneration(set)(way) := mshrs.io.refill.bits.image.generation
-      imageKey(set)(way) := mshrs.io.refill.bits.image
+      dirtyPacketSeq(set)(way) := recoveredRefillImage.contentSeq
+      dirtyPacketTracked(set)(way) := recoveredRefillImage.valid &&
+        recoveredRefillImage.contentSeq =/= 0.U
+      lineGeneration(set)(way) := recoveredRefillImage.generation
+      imageKey(set)(way) := recoveredRefillImage
       printf("STAGE2_TX IMPORT line=%x epoch=%x gen=%x seq=%x writer=%x valid=%x\n",
         mshrs.io.refill.bits.line_addr, reservedEpoch(set)(way),
-        mshrs.io.refill.bits.image.generation, mshrs.io.refill.bits.image.contentSeq,
-        mshrs.io.refill.bits.image.writer, mshrs.io.refill.bits.image.valid)
+        recoveredRefillImage.generation, recoveredRefillImage.contentSeq,
+        recoveredRefillImage.writer, recoveredRefillImage.valid)
+      currentGeneration(set)(way) := executionHistory.io.generation
       imageValid(set)(way) := true.B
       lowerPreserved(set)(way) := true.B
       appliedEffectValid(set)(way) := false.B
@@ -3317,12 +3797,13 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   // Every semantic write revokes the current receipt. Same-package writes
   // retain their already-preserved safe predecessor, not an intermediate key.
   when (dataWriteArb.io.in(0).fire) {
-    assert(imageSerial =/= ~0.U(32.W), "local image serial exhausted")
+    assert(s3_req.packet_seq === 0.U || imageSerial =/= 0.U,
+      "segment exceeded the bounded per-line content serial range")
     val set = s3_req.addr(idxMSB, idxLSB)
     val way = OHToUInt(s3_way)
     when (s3_svbOwnsPredecessor) {
       // The younger image now owns L1.  The SVB entry remains the recovery
-      // owner until its own safe promotion receives the L2 ACK.
+      // owner until its archive transfer receives the exact L2 receipt.
       printf("FASTLINE_RELEASE cycle=%x line=%x set=%x tag=%x seq=%x epoch=%x acquire_cycle=%x release_reason=matching_semantic_write\n",
         io.csr_cycle, svbFastLine, svbFastSet, svbFastTag, svbFastSeq,
         svbFastEpoch, svbFastAcquireCycle)
@@ -3331,7 +3812,6 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     }
     lineGeneration(set)(way) := imageSerial
     imageValid(set)(way) := true.B
-    imageSerial := imageSerial + 1.U
     printf("STAGE2_TX MODIFY line=%x epoch=%x old_gen=%x old_seq=%x old_writer=%x old_valid=%x lower=%x safe=%x new_gen=%x new_seq=%x writer=%x replay=%x cmd=%x req=%x\n",
       (s3_req.addr >> blockOffBits) << blockOffBits, s3_req.slot_epoch,
       imageKey(set)(way).generation, imageKey(set)(way).contentSeq,
@@ -3339,6 +3819,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       L1Preservation.safe(imageKey(set)(way), safePacketWatermark),
       imageSerial, s3_req.packet_seq, outer.staticImageWriter.U, s3_replay,
       s3_req.uop.mem_cmd, s3_req.request_token)
+    currentGeneration(set)(way) := executionHistory.io.generation
     imageKey(set)(way).valid := true.B
     imageKey(set)(way).writer := outer.staticImageWriter.U
     imageKey(set)(way).generation := imageSerial
@@ -3354,7 +3835,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   }
   val svbFastLeaseAcquire = wb.io.snapshot_valid && svb.io.capture.fire
   val svbFastLeaseRelease = svbFastLineValid &&
-    (svbFastLeaseRevoked || (s3_effect_fire && s3_svbOwnsPredecessor) || svbFlush)
+    (svbFastLeaseRevoked || (s3_effect_fire && s3_svbOwnsPredecessor) || svbFlush || io.rollbackReset)
   val svbFastWasValid = RegNext(svbFastLineValid, false.B)
   val svbFastAcquiredPrevious = RegNext(svbFastLeaseAcquire, false.B)
   val svbFastReleasedPrevious = RegNext(svbFastLeaseRelease, false.B)
@@ -4144,7 +4625,7 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   chisel3.dontTouch(slowdown_opt1_mshr_req_fire)
   val slowdown_opt1_safe_watermark = chisel3.WireInit(safePacketWatermark)
   chisel3.dontTouch(slowdown_opt1_safe_watermark)
-  val slowdown_opt1_safe_advance = chisel3.WireInit(safeAdvance)
+  val slowdown_opt1_safe_advance = chisel3.WireInit((newSafePacketWatermark - safePacketWatermark)(statsIndexBits, 0))
   chisel3.dontTouch(slowdown_opt1_safe_advance)
   val slowdown_opt1_new_safe_watermark = chisel3.WireInit(newSafePacketWatermark)
   chisel3.dontTouch(slowdown_opt1_new_safe_watermark)
@@ -4316,16 +4797,21 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
         key.valid.asUInt, epoch, first.asUInt, last.asUInt, matched.asUInt,
         releaseSourceBusy.asUInt, size), 0.U, true.B)
   }
-  releaseProtocolLog(19, svb.io.selected, true.B, svb.io.activeEntry,
-    svb.io.activeLine, svb.io.activeKey, cfg.nMSHRs.U, TLMessages.ReleaseData, svbEpoch)
+  // Archive events have a separate schema; they are not TileLink C releases.
+  SafeChainObservation.emit(33, clock, reset.asBool, io.csr_cycle, io.csr_cycle,
+    0.U, true.B, svb.io.promote.fire,
+    Seq(1.U, svb.io.activeEntry, svb.io.activeLine, svb.io.activeKey.contentSeq,
+      svb.io.activeKey.generation), 0.U, true.B)
   releaseProtocolLog(20, releaseFirst || releaseLast, wb.io.pending_svb,
     wb.io.pending_entry, tl_out.c.bits.address, cReleaseKey, tl_out.c.bits.source,
     tl_out.c.bits.opcode, wb.io.done_epoch, c_first, c_last, !sourceConflict, tl_out.c.bits.size)
   releaseProtocolLog(21, wbAck, wb.io.pending_svb, wb.io.pending_entry,
     wb.io.pending_line, wbAckKey, tl_out.d.bits.source, tl_out.d.bits.opcode,
     wb.io.done_epoch, matched = !invalidReleaseAck, size = tl_out.d.bits.size)
-  releaseProtocolLog(22, wb.io.svb_done.valid, true.B, wb.io.svb_done.bits.entry,
-    wb.io.pending_line, wb.io.svb_done.bits.key, cfg.nMSHRs.U, TLMessages.ReleaseAck, wb.io.done_epoch)
+  SafeChainObservation.emit(34, clock, reset.asBool, io.csr_cycle, io.csr_cycle,
+    0.U, true.B, svb.io.acked,
+    Seq(1.U, archiveEntry, archivePayload.address, archivePayload.key.contentSeq,
+      archivePayload.key.generation), 0.U, true.B)
   releaseProtocolLog(23, svbSourceBlocked && !svbSourceBlockedPrevious, true.B,
     svb.io.activeEntry, svb.io.activeLine, svb.io.activeKey, cfg.nMSHRs.U,
     TLMessages.ReleaseData, svbEpoch)
@@ -4427,7 +4913,16 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     Seq(safeChainResetPulse.asUInt, safeChainStartPulse.asUInt, trafficStopPulse.asUInt),
     0.U, true.B)
   // SAFE_CHAIN_OBSERVATION_END
+  recoveryCacheIdle := mshrs.io.fence_rdy && !s1_valid.reduce(_||_) && !s2_valid.reduce(_||_) &&
+    !s3_valid && completionQ.io.count === 0.U && !wb.io.idx.valid && !wb.io.pending_idx.valid &&
+    !svbCapturePending && !crossPackagePending && !prober.io.state.valid &&
+    !mshrs.io.replay.valid && !killed_store_replay_valid
+  // P4-01/P4-07: fence-ready alone does not cover the independent probe
+  // owner or the WB snapshot capture. Backend reset must wait for both the
+  // LSU completion path and the complete cache-owner drain predicate.
+  io.rollbackQuiesced := io.lsu.ordered && recoveryCacheIdle &&
+    memoryRecoveryState === recoveryIdle && !historySync
   io.lsu.ordered := mshrs.io.fence_rdy && !s1_valid.reduce(_||_) && !s2_valid.reduce(_||_) &&
-    !s3_valid && completionQ.io.count === 0.U && replayResultQ.map(_.io.count === 0.U).reduce(_ && _) &&
+    !s3_valid && archiveState === archiveIdle && completionQ.io.count === 0.U && replayResultQ.map(_.io.count === 0.U).reduce(_ && _) &&
     !wb.io.idx.valid && !wb.io.pending_idx.valid && !crossPackagePending
 }

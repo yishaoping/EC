@@ -25,6 +25,8 @@ class BoomLSUShim(implicit p: Parameters) extends BoomModule()(p)
 
   io.lsu.tsc_reg := 0.U(1.W)
   io.lsu.active_packet_seq := 0.U
+  io.lsu.palimpsestHead := 0.U.asTypeOf(chiselTypeOf(io.lsu.palimpsestHead))
+  io.lsu.ioPermit := true.B // unprotected trace generator
 
   val rob_sz = numRobEntries
   val rob = Reg(Vec(rob_sz, new HellaCacheReq))
@@ -215,7 +217,8 @@ class BoomTraceGenTile private(
   val boom_params = p.alterMap(Map(TileKey -> BoomTileParams(
     dcache=params.dcache,
     core=BoomCoreParams(nPMPs=0, numLdqEntries=16, numStqEntries=16, useVM=false))))
-  val dcache = LazyModule(new BoomNonBlockingDCache(staticIdForMetadataUseOnly)(boom_params))
+  val dcache = LazyModule(new BoomNonBlockingDCache(staticIdForMetadataUseOnly,
+    checkerHistoryReceipts = false)(boom_params)) // no Checker or rollback source
 
 
   val masterNode: TLOutwardNode = TLIdentityNode() := visibilityNode := dcache.node
@@ -239,6 +242,15 @@ class BoomTraceGenTileModuleImp(outer: BoomTraceGenTile)
   outer.dcache.module.io.lsu <> lsu.io.dmem
   outer.dcache.module.io.traffic_check_state := false.B
   outer.dcache.module.io.traffic_reset := false.B
+  lsu.rollbackStop := false.B; lsu.rollbackTarget := 0.U; lsu.rollbackReset := false.B
+  outer.dcache.module.io.rollbackError.ready := true.B
+  outer.dcache.module.io.rollbackHistory.valid := false.B
+  outer.dcache.module.io.rollbackHistory.bits := 0.U
+  outer.dcache.module.io.rollbackStop := false.B
+  outer.dcache.module.io.allCheckersDrained := true.B
+  outer.dcache.module.io.rollbackRebase := false.B
+  outer.dcache.module.io.rollbackTarget := 0.U
+  outer.dcache.module.io.rollbackReset := false.B
   outer.dcache.module.io.traffic_start := false.B
   outer.dcache.module.io.traffic_stop := false.B
   outer.dcache.module.io.csr_cycle := 0.U

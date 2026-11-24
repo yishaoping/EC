@@ -173,8 +173,9 @@ class NBDTLB(instruction: Boolean, lgMaxSize: Int, cfg: TLBConfig)(implicit edge
   val hits = widthMap(w => Cat(!vm_enabled(w), real_hits(w)))
   val ppn = widthMap(w => Mux1H(hitsVec(w) :+ !vm_enabled(w), all_entries.map(_.ppn(vpn(w))) :+ vpn(w)(ppnBits-1, 0)))
 
-    // permission bit arrays
-  when (do_refill) {
+  // A walk issued before SFENCE still returns to release the request owner.
+  // Its PTE belongs to the old context and cannot enter any refill array.
+  when (do_refill && !invalidate_refill) {
     val pte = io.ptw.resp.bits.pte
     val newEntry = Wire(new EntryData)
     newEntry.ppn := pte.ppn

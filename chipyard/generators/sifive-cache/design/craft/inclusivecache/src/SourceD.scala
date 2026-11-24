@@ -29,6 +29,7 @@ class SourceDRequest(params: InclusiveCacheParameters) extends FullRequest(param
   val sink = UInt(width = params.inner.bundle.sinkBits)
   val way  = UInt(width = params.wayBits)
   val bad  = Bool()
+  val recoverySafe = Bool()
 }
 
 class SourceDHazard(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
@@ -243,6 +244,7 @@ class SourceD(params: InclusiveCacheParameters) extends Module
   earlyD.bits.corrupt := s3_req.bad && earlyD.bits.opcode(0)
 
   earlyD.bits.user.lift(CacheImage).foreach(_ := s3_req.image)
+  earlyD.bits.user.lift(CacheRecoverySafe).foreach(_ := s3_req.recoverySafe)
 
   queue.io.deq.ready := s3_valid && s4_ready && s3_need_r
   assert (!s3_full || !s3_need_r || queue.io.deq.valid)

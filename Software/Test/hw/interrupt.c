@@ -2,6 +2,9 @@
 
 #include <riscv-pk/encoding.h>
 
+#if defined(PALIMPSEST_TRAP_IO_WORKLOAD)
+volatile timer_flag_t palimpsest_ecall_counts[8] = {0};
+#endif
 volatile timer_flag_t timer_flags[TIMER_HARTS] = {0};
 
 /* 以高低字顺序一致地读取 CLINT mtime。 */
@@ -116,6 +119,9 @@ void handle_trap(void)
     } else {
         switch (cause_code) {
         case 11:
+#if defined(PALIMPSEST_TRAP_IO_WORKLOAD)
+            palimpsest_ecall_counts[hart_id].value += 1;
+#endif
             write_csr(mepc, read_csr(mepc) + 4);
             __asm__ volatile("csrr a0, mepc");
             break;

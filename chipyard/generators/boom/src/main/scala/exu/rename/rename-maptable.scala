@@ -64,6 +64,8 @@ class RenameMapTable(
     // Signals for restoring state following misspeculation.
     val brupdate      = Input(new BrUpdateInfo)
     val rollback    = Input(Bool())
+    val architecturalRestore = Input(Bool())
+    val architecturalRestoreDone = Output(Bool())
   })
 
   // The map table register array and its branch snapshots.
@@ -107,6 +109,14 @@ class RenameMapTable(
     // Update mappings.
     map_table := remap_table(plWidth)
   }
+
+  // P2-06: logical f0 is writable and maps to p1; integer x0 stays p0.
+  when (io.architecturalRestore) {
+    for (i <- 0 until numLregs) {
+      map_table(i) := (if (i == 0 && !float) 0 else i + 1).U
+    }
+  }
+  io.architecturalRestoreDone := RegNext(io.architecturalRestore, false.B)
 
   // Read out mappings.
   for (i <- 0 until plWidth) {

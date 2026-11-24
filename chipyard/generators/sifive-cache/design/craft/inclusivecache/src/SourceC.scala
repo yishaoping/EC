@@ -66,6 +66,7 @@ class SourceC(params: InclusiveCacheParameters) extends Module
     val c_last = Bool()
     val idle = Bool()
     val drainBusy = UInt(width = 4) // observation only: queue, s3, s2, busy
+    val historyContext = new PalimpsestHistoryQuery().flip // P4-05
     val watermark = UInt(width = 32).flip
     // BankedStore port
     val bs_adr = Decoupled(new BankedStoreOuterAddress(params))
@@ -172,12 +173,12 @@ class SourceC(params: InclusiveCacheParameters) extends Module
   io.c_first := queue.io.deq.bits.first
   io.c_last := queue.io.deq.bits.last
   when (io.req.fire() && io.req.bits.dirty) {
-    assert(CacheImage.safe(io.req.bits.image, io.watermark), "L2_SPEC_OUTER_WRITE_ERROR sourceC request")
+    assert(io.historyContext.survives(io.req.bits.image.contentSeq) && CacheImage.safe(io.req.bits.image, io.watermark), "L2_SPEC_OUTER_WRITE_ERROR sourceC request")
   }
   when (io.req.fire()) {
     assert(io.req.bits.dirty === io.req.bits.opcode(0), "L2 outer data/provenance mismatch")
   }
   when (io.c.fire() && queue.io.deq.bits.dirty) {
-    assert(CacheImage.safe(queue.io.deq.bits.image, io.watermark), "L2_SPEC_OUTER_WRITE_ERROR sourceC beat")
+    assert(io.historyContext.survives(queue.io.deq.bits.image.contentSeq) && CacheImage.safe(queue.io.deq.bits.image, io.watermark), "L2_SPEC_OUTER_WRITE_ERROR sourceC beat")
   }
 }

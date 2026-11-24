@@ -92,6 +92,7 @@ class PackageAddressStats(
 
   val io = IO(new Bundle {
     val resetStats = Input(Bool())
+    val seqRebase = Input(Bool())
     val start = Input(Bool())
     // STOP is an inclusive boundary: events committed on the STOP edge are
     // still accepted, while later cycles only drain the already queued events
@@ -888,6 +889,27 @@ class PackageAddressStats(
     }
     queueCount := queueCount +
       Mux(acceptIncoming, incomingCount, 0.U) - issueRead.asUInt
+  }
+  when (io.seqRebase) {
+    // The statistics tables have their own lifetime. Invalidate the RAM
+    // tags without sweeping the data, and keep already accumulated totals.
+    sessionTag := sessionTag + 1.U
+    processedSafeWatermark := 0.U
+    enqPtr := 0.U
+    deqPtr := 0.U
+    queueCount := 0.U
+    processValid := false.B
+    strictOverflowValid.foreach(_ := false.B)
+    bucketValid.foreach(_ := false.B)
+    onlineStore.foreach(_ := 0.U)
+    onlineFirstStore.foreach(_ := 0.U)
+    onlineLoadFirst.foreach(_ := 0.U)
+    onlineStoreFirst.foreach(_ := 0.U)
+    onlineStrictWriteRead.foreach(_ := 0.U)
+    // Discarded accounting work must not be reported as a complete sample.
+    when (queueCount =/= 0.U || processValid || processedSafeWatermark =/= io.safeWatermark) {
+      statsValid := false.B
+    }
   }
 
   for (g <- 0 until 4) {

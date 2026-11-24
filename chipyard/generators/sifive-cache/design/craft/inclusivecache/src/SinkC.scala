@@ -74,8 +74,8 @@ class SinkC(params: InclusiveCacheParameters) extends Module
     io.probe := 0.U.asTypeOf(chisel3.chiselTypeOf(io.probe))
     io.bankBusy := Bool(false)
   } else {
-    // No restrictions on the type of buffer
-    val c = params.micro.innerBuf.c(io.c)
+    // Scheduler owns the input queue and observes this admission handshake.
+    val c = io.c
 
     val (tag, set, offset) = params.parseAddress(c.bits.address)
     val (first, last, _, beat) = params.inner.count(c)

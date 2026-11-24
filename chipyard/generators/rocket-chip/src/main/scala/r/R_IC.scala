@@ -12,6 +12,14 @@ case class R_ICParams(
 
 // Revisit: add check of the correct_process!
 class R_ICIO(params: R_ICParams) extends Bundle {
+  val recoveryStop = Input(Bool()) // P2-09/P2-10
+  val recoveryRestart = Input(Bool())
+  val recoveryTarget = Input(UInt(32.W))
+  val sequenceReset = Input(Bool())
+  val producerSettled = Output(Bool())
+  val recoveryDrained = Output(Bool())
+  val allPackagesDrained = Output(Bool())
+  val identityUnavailable = Output(Bool()) // P3-15: no Seq reuse after finite exhaustion
   val ic_run_isax                                = Input(UInt(1.W))
   val ic_exit_isax                               = Input(UInt(1.W))
   val ic_syscall                                 = Input(UInt(1.W))
@@ -128,6 +136,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   val checker_big_owner_reg                      = RegInit(VecInit(Seq.fill(params.totalnumber_of_cores)(0.U(4.W))))
   val checker_segment_id_reg                     = RegInit(VecInit(Seq.fill(params.totalnumber_of_cores)(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))))
   val packet_seq_counter                         = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
+  io.identityUnavailable := packet_seq_counter.andR
   val active_packet_seq                          = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
   val barrierCloseAckReg                         = RegInit(false.B)
   val barrierCloseAckSeqReg                      = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
@@ -194,6 +203,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   // FSM to control the R_IC
   val fsm_reset :: fsm_presch :: fsm_sch :: fsm_cooling :: fsm_snap :: fsm_trans :: fsm_check :: fsm_postcheck :: Nil = Enum(8)
   val fsm_state                                 = RegInit(fsm_reset)
+  io.producerSettled := fsm_state === fsm_check && producer_open
   val fsm_ini                                   = RegInit(0.U(1.W))
   val cooling_counter                           = RegInit(0.U(4.W))
   val cooling_threshold                         = 0.U
@@ -230,7 +240,7 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
   val snapshot_accept_candidate                  = (fsm_state === fsm_snap) &&
                                                    snapshot_armed &&
                                                    snapshot_ready
-  val snapshot_allowed = snapshot_accept_candidate &&
+  val snapshot_allowed = snapshot_accept_candidate && !packet_seq_counter.andR && !io.recoveryStop &&
     (producer_open || (!exit_requested && selected_available)) &&
     (capture_ctrl(0) || io.if_correct_process.asBool)
   if_dosnap := (snapshot_allowed && !capture_priv).asUInt
@@ -482,6 +492,42 @@ class R_IC (val params: R_ICParams) extends Module with HasR_ICIO {
     }
   }
 
+
+  // P2-09/P2-10: keep pending-prefix checkers and the sequence allocator.
+  // Suffix slots release only through the original result/CDC handshake.
+  // Restart returns to scheduling so its first snapshot is the new SCP.
+  io.recoveryDrained := !(0 until params.totalnumber_of_cores).map(i =>
+    package_owned(i) && checker_segment_id_reg(i) >= io.recoveryTarget).reduce(_ || _)
+  io.allPackagesDrained := !package_owned.asUInt.orR
+  when (io.recoveryStop) {
+    if_pipeline_stall := 1.U
+    fsm_state := fsm_sch
+    producer_open := false.B
+    boundary_has_old := false.B
+    boundary_priv := false.B
+    snapshot_armed := false.B
+    final_pending := false.B
+  }
+  when (io.recoveryRestart) {
+    fsm_state := fsm_sch
+    ctrl := 0.U
+    producer_open := false.B
+    boundary_has_old := false.B
+    active_packet_seq := 0.U
+    snapshot_armed := false.B
+    if_pipeline_stall := 1.U
+
+  }
+  when (io.sequenceReset) {
+    assert(io.recoveryStop && io.allPackagesDrained && !producer_open && !boundary_has_old,
+      "Seq allocator rebased with a producer or checker owner")
+    packet_seq_counter := 0.U
+    active_packet_seq := 0.U
+    packet_alloc_seq_reg := 0.U
+    boundary_seq := 0.U
+    barrierCloseAckReg := false.B
+    barrierCloseAckSeqReg := 0.U
+  }
 
   if (GH_GlobalParams.GH_DEBUG == 1) {
     when ((io.ic_incr =/= 0.U) && (fsm_state === fsm_check) && (io.core_trace.asBool)) {

@@ -8,6 +8,7 @@ import chisel3.util._
 import chisel3.withClock
 import org.chipsalliance.cde.config.Parameters
 import freechips.rocketchip.tile._
+import freechips.rocketchip.tilelink.{PalimpsestHistoryQuery, PalimpsestHistoryReceiver}
 import freechips.rocketchip.util._
 import freechips.rocketchip.util.property
 import freechips.rocketchip.scie._
@@ -323,6 +324,8 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val id_npc = (ibuf.io.pc.asSInt + ImmGen(IMM_UJ, id_inst(0))).asUInt
 
   val csr = Module(new CSRFile(perfEvents, coreParams.customCSRs.decls))
+  csr.io.palimpsestRestore.valid := false.B
+  csr.io.palimpsestRestore.bits := 0.U
   val id_csr_en = id_ctrl.csr.isOneOf(CSR.S, CSR.C, CSR.W)
   val id_system_insn = id_ctrl.csr === CSR.I
   val id_csr_ren = id_ctrl.csr.isOneOf(CSR.S, CSR.C) && id_expanded_inst(0).rs1 === 0.U
@@ -336,6 +339,10 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
 
   /* R Features */
   val rsu_pc = Reg(UInt(40.W))
+  // COPY and the custom replay jump can arrive after their package was
+  // cancelled. Their architectural effects use the same live owner below.
+  val checker_copy_allowed = Wire(Bool())
+  val checker_replay_owned = Wire(Bool())
   val checker_mode = Wire(UInt(1.W))
   val checker_priv_mode = Wire(UInt(1.W))
   ibuf.io.checker_mode := checker_mode
@@ -734,7 +741,8 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
     mem_reg_hls_or_dv := io.dmem.req.bits.dv
     mem_reg_pc := ex_reg_pc
     // IDecode ensured they are 1H
-    mem_reg_wdata := Mux((ex_ctrl.jalr && ex_reg_inst(12) === 1.U), rsu_pc,  
+    mem_reg_wdata := Mux((ex_ctrl.jalr && ex_reg_inst(12) === 1.U),
+      Mux(checker_replay_owned, rsu_pc, pc_special),
       Mux1H(Seq(
       ex_scie_unpipelined -> ex_scie_unpipelined_wdata,
       ex_ctrl.zbk         -> ex_zbk_wdata,
@@ -830,7 +838,8 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   ))
 //===== GuardianCouncil Function: Start ====//
   /* R Features */
-  val rsu_slave = Module(new R_RSUSL(R_RSUSLParams(xLen, 32)))
+  val rsu_slave = Module(new R_RSUSL(R_RSUSLParams(xLen, 32, p(PalimpsestFaultSeq),
+    p(PalimpsestAdditionalFaultSeqs))))
   val lsl_flush = WireInit(false.B)
   val lsl = withReset(reset.asBool || lsl_flush) {
     Module(new R_LSL(R_LSLParams(255, xLen)))
@@ -1128,8 +1137,14 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   val arf_paste_reg = RegInit(0.U(1.W))
   val start_check   = RegInit(false.B)
   arf_paste_reg := io.arf_copy_in
-  val icsl_copy_start_accepted = arf_paste_reg.asBool && !io.record_and_store(0).asBool
-  rsu_slave.io.paste_arfs := arf_paste_reg | check_exception.asUInt
+  val icsl_copy_start_accepted = arf_paste_reg.asBool &&
+    !io.record_and_store(0).asBool && checker_copy_allowed
+  // A management poll may have observed RSU ready before EVT cancelled the
+  // package. Ignore that stale COPY, preserving management registers; its
+  // following custom jump returns to pc_special and polls again. Restoring
+  // the management snapshot at session end remains independent of a package.
+  rsu_slave.io.paste_arfs := (arf_paste_reg.asBool &&
+    (io.record_and_store(0).asBool || checker_copy_allowed) || check_exception).asUInt
   rsu_slave.io.clear_ic_status := icsl.io.clear_ic_status
   rsu_slave.io.record_context := io.record_and_store(1)
   rsu_slave.io.store_from_checker := io.record_and_store(0)
@@ -1297,6 +1312,19 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
 
   // The checker result is packet-scoped. ARF/FARF and CSR shadow checks run
   // independently, so neither completion pulse alone is the package tail.
+  // P2-09/P4-05: cancel owned discarded packages through the original
+  // cleanup/result CDC path. Prefix checkers continue independently.
+  val rollbackRequestRaw = WireDefault(false.B)
+  val rollbackPayloadRaw = WireDefault(0.U.asTypeOf(new PalimpsestHistoryQuery))
+  chisel3.util.experimental.BoringUtils.addSink(rollbackRequestRaw, "PALIMPSEST_HISTORY_REQUEST")
+  chisel3.util.experimental.BoringUtils.addSink(rollbackPayloadRaw, "PALIMPSEST_HISTORY_PAYLOAD")
+  val rollbackHistoryReceiver = Module(new PalimpsestHistoryReceiver)
+  rollbackHistoryReceiver.io.request := rollbackRequestRaw
+  rollbackHistoryReceiver.io.payload := rollbackPayloadRaw
+  val rollbackContext = rollbackHistoryReceiver.io.context
+  val rollbackHistoryAck = WireInit(rollbackHistoryReceiver.io.ack)
+  chisel3.util.experimental.BoringUtils.addSource(rollbackHistoryAck,
+    s"PALIMPSEST_CHECKER_HISTORY_ACK_${tileParams.hartId}")
   val package_seq_reg = RegInit(0.U(GH_GlobalParams.GH_PACKET_SEQ_BITS.W))
   icsl.io.debug_stat_token := package_seq_reg
   val package_check_active = RegInit(false.B)
@@ -1346,10 +1374,11 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   // for the very packet that is needed to perform admission.  CDC dequeue is
   // separately backpressured below, so this predicate only describes the
   // local checker resources owned by the previous package.
-  val checker_local_cleanup_done = icsl.io.context_idle &&
-    (rsu_slave.io.rsu_status === 0.U) && lsl.io.quiescent &&
+  val checker_storage_idle = (rsu_slave.io.rsu_status === 0.U) && lsl.io.quiescent &&
     rsu_slave.io.compare_idle && rsu_slave.io.ecp_idle &&
+    !rsu_slave.io.core_hang_up.asBool &&
     io.imem.checker_clear_done && !checker_clear_pending
+  val checker_local_cleanup_done = icsl.io.context_idle && checker_storage_idle
   val checker_cleanup_done = checker_local_cleanup_done
   val no_result_pending = !package_result_outstanding &&
     !package_result_waiting && !package_cleanup_pending
@@ -1500,8 +1529,15 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   // an owned transport fault or a bounded no-progress condition terminates the
   // current ownership transaction.
   val package_cancelled = package_owned && !full_check_complete &&
-    (arf_wait_timeout || package_exec_timeout || package_progress_timeout ||
+    (!rollbackContext.survives(package_seq_reg) || arf_wait_timeout || package_exec_timeout || package_progress_timeout ||
       package_transport_error || package_transport_error_now)
+  checker_copy_allowed := (package_start_pending || new_package) &&
+    icsl.io.context_idle && rsu_slave.io.rsu_status === 1.U &&
+    !csr.io.trace(0).exception && !package_cancelled &&
+    rollbackContext.survives(Mux(new_package, new_package_seq, package_seq_reg))
+  checker_replay_owned := package_check_active && rollbackContext.survives(package_seq_reg)
+  assert(!icsl_copy_start_accepted || icsl_normal_start_allowed,
+    "Checker COPY modified registers without accepting its live package")
   // RSUSL consumes packet fragments through a one-cycle input pipeline. Delay
   // package initialization to that same boundary and use the sequence already
   // captured by RocketCore. Besides aligning the owner with the first ECP beat,
@@ -1561,6 +1597,21 @@ class Rocket(tile: RocketTile)(implicit p: Parameters) extends CoreModule()(p)
   io.package_result_status := package_result_queue.io.deq.bits(
     GH_GlobalParams.GH_PACKET_SEQ_BITS + GH_GlobalParams.GH_CHECKER_STATUS_BITS - 1,
     GH_GlobalParams.GH_PACKET_SEQ_BITS)
+  // L2 maintenance freezes new A requests until this receipt. An idle
+  // checker's management trap can therefore be waiting for that very freeze
+  // to end. It owns no package tags: preserve its architectural context and
+  // clear transport tags once the package FSM and all local owners are empty.
+  // Admission, COPY and result handoff still require context_idle above.
+  io.packet_seq_reset_ready := icsl.io.package_idle && checker_storage_idle && no_result_pending &&
+    !package_owned && !pending_package_seq_valid && !package_result_queue.io.deq.valid &&
+    !rsu_package_clear
+  when (io.packet_seq_reset) {
+    assert(io.packet_seq_reset_ready && !io.packet_seq_valid, "Seq reset with a Checker owner")
+    package_seq_reg := 0.U
+    pending_package_seq := 0.U
+    icsl_start_request_pending := false.B
+    package_result_seq_waiting := 0.U
+  }
 
   // If the result queue is temporarily full, package_result_event is retained
   // in the waiting registers below; it is still a valid handoff, not a lost

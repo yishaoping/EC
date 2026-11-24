@@ -29,6 +29,8 @@ class RenameFreeList(
   val io = IO(new BoomBundle()(p) {
     // Physical register requests.
     val reqs          = Input(Vec(plWidth, Bool()))
+    val architecturalRestore = Input(Bool())
+    val architecturalRestoreDone = Output(Bool())
     val alloc_pregs   = Output(Vec(plWidth, Valid(UInt(pregSz.W))))
 
     // Pregs returned by the ROB.
@@ -75,6 +77,14 @@ class RenameFreeList(
   // Update the free list.
   free_list := (free_list & ~sel_mask | dealloc_mask) & ~(1.U(numPregs.W))
 
+  // P2-06: maps occupy p1..p32 for FP, p2..p32 for integer.
+  when (io.architecturalRestore) {
+    val reserved = ((BigInt(1) << 33) - 1) & (if (numLregs == 31) ~BigInt(2) else ~BigInt(0))
+    free_list := (((BigInt(1) << numPregs) - 1) & ~reserved).U(numPregs.W)
+    for (i <- 0 until maxBrCount) { br_alloc_lists(i) := 0.U }
+  }
+  io.architecturalRestoreDone := RegNext(io.architecturalRestore, false.B)
+
   // Pipeline logic | hookup outputs.
   for (w <- 0 until plWidth) {
     val can_sel = sels(w).orR
@@ -82,6 +92,7 @@ class RenameFreeList(
     val r_sel   = RegEnable(OHToUInt(sels(w)), sel_fire(w))
 
     r_valid := r_valid && !io.reqs(w) || can_sel
+    when (io.architecturalRestore) { r_valid := false.B }
     sel_fire(w) := (!r_valid || io.reqs(w)) && can_sel
 
     io.alloc_pregs(w).bits  := r_sel
