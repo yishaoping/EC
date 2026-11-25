@@ -38,6 +38,18 @@ int main(int argc,char**argv){
  d.io_mode=1;d.io_address=0x300;d.io_data=1ULL<<17;d.io_write=1;tick();d.io_write=0;tick();
  require(d.io_physicalMprv,"normal mstatus write no longer controls physical MPRV");
  d.io_data=0;d.io_write=1;tick();d.io_write=0;tick();require(!d.io_physicalMprv,"MPRV did not clear");
+ // Ordinary CPS seeds both scratch CSRs before the first replayed read.
+ d.io_clear=1;tick();d.io_clear=0;
+ d.io_mode=0;d.io_cps=1;d.io_index=8;d.io_beat=1;
+ d.io_pair[0]=0x89abcdef;d.io_pair[1]=0x01234567;
+ d.io_pair[2]=0x76543210;d.io_pair[3]=0xfedcba98;
+ tick();d.io_beat=0;
+ d.io_mode=1;d.io_address=0x340;d.eval();
+ require(d.io_read==0x0123456789abcdefULL,"ordinary CPS did not seed mscratch");
+ d.io_address=0x140;d.eval();
+ require(d.io_read==0xfedcba9876543210ULL,"ordinary CPS did not seed sscratch");
+ d.io_mode=0;d.eval();
+ require(d.io_read==0x8888,"ordinary CPS modified management sscratch");
  // Every architectural scratch command uses CPS state even when the
  // physical management stack differs; ordinary physical writes still work.
  for(unsigned address: {0x340u,0x140u}) for(unsigned mode: {1u,2u}) {
@@ -47,7 +59,9 @@ int main(int argc,char**argv){
      const uint64_t expected=operation==5?operand:operation==6?(oldValue|operand):(oldValue&~operand);
      d.io_operation=5;d.io_mode=0;d.io_address=address;d.io_data=management;d.io_write=1;tick();d.io_write=0;tick();
      d.io_clear=1;tick();d.io_clear=0;frame(true,oldValue,oldValue);
-     d.io_mode=mode;d.io_address=address;d.io_data=operand;d.io_operation=operation;d.io_write=1;tick();d.io_write=0;tick();
+     d.io_mode=mode;d.io_address=address;d.eval();
+     require(d.io_read==oldValue,"scratch RMW returned a stale pre-write value");
+     d.io_data=operand;d.io_operation=operation;d.io_write=1;tick();d.io_write=0;tick();
      d.io_mode=2;d.eval();require(d.io_read==expected,"scratch W/S/C lost CPS-based architectural state");
      // A later management write cannot corrupt this package result.
      d.io_operation=5;d.io_mode=0;d.io_data=0x9999;d.io_write=1;tick();d.io_write=0;tick();

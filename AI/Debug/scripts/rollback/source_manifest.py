@@ -16,9 +16,10 @@ def capture():
         'AI/Debug/scripts/stage3', 'AI/Debug/scripts/baseline_publication',
         'AI/Debug/scripts/finite_identity', 'AI/Debug/scripts/sv39',
         'AI/Debug/scripts/synthesis', 'AI/Debug/scripts/csr_shadow',
-        'AI/Debug/scripts/fullcore_concurrency', 'Software/Test',
+        'AI/Debug/scripts/fullcore_concurrency',
+        'Software/EC-Test', 'Software/GAPBS', 'Software/Test',
     ], cwd=REPO).split(b'\0')
-    suffixes = {'.scala', '.sbt', '.v', '.sv', '.h', '.c', '.cpp', '.cc', '.sh', '.py', '.xdc', '.tcl'}
+    suffixes = {'.scala', '.sbt', '.v', '.sv', '.h', '.c', '.cpp', '.cc', '.sh', '.py', '.mk', '.xdc', '.tcl'}
     sources = {}
     for raw in sorted(set(paths)):
         if not raw:

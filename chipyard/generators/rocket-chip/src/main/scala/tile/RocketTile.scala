@@ -317,7 +317,10 @@ class RocketTileModuleImp(outer: RocketTile) extends BaseTileModuleImp(outer)
     ght.io.ght_cfg_valid := ght_cfg_v_bridge.io.out
     outer.ght_packet_out_SRNode.bundle := ght.io.ght_packet_out
     outer.ght_packet_dest_SRNode.bundle := ght.io.ght_packet_dest
-    core.io.clk_enable_gh := ~(outer.bigcore_hang_in_SKNode.bundle) 
+    val cdcBusy = outer.bigcore_hang_in_SKNode.bundle
+    val checkerCount = GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES
+    core.io.clk_enable_gh := ~(cdcBusy(checkerCount - 1, 0) |
+      cdcBusy(2 * checkerCount - 1, checkerCount))
     outer.ghe_event_out_SRNode.bundle := ghe_bridge.io.out
     ght.io.core_na := outer.sch_na_inSKNode.bundle
     ght.io.new_commit := core.io.new_commit

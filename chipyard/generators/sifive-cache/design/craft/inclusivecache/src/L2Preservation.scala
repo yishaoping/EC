@@ -44,6 +44,8 @@ class L2Preservation(params: InclusiveCacheParameters) extends Module {
     val historyContext = new PalimpsestHistoryQuery().flip
 
     val drained = Bool().flip
+    val publishDrained = Bool().flip
+    val preserveBlockedProbe = Bool().flip
     val watermark = UInt(width = 32).flip
     val bank = UInt(width = 8).flip
     val lock = Valid(new L2PreservationCandidate(params))
@@ -85,8 +87,9 @@ class L2Preservation(params: InclusiveCacheParameters) extends Module {
   io.counters := counts
   val safe = CacheImage.safe(io.candidate.bits.image, io.watermark)
   val need = io.candidate.valid && !io.candidate.bits.outerPreserved && (!safe || io.candidate.bits.dirty)
-  val historyCapture = state === idle && io.historyPublish.valid && io.drained
-  val capture = state === idle && need && io.drained && !io.historyPublish.valid
+  val historyCapture = io.historyPublish.fire()
+  val capture = state === idle && need && io.drained &&
+    (!io.historyPublish.valid || io.preserveBlockedProbe)
   io.txn := Mux(capture || historyCapture, nextSerial, serial)
   val active = state =/= idle
   io.lock.valid := active || capture || historyCapture
@@ -120,7 +123,7 @@ class L2Preservation(params: InclusiveCacheParameters) extends Module {
       io.candidate.bits.image.valid, io.candidate.bits.image.writer,
       io.candidate.bits.image.generation, io.candidate.bits.image.contentSeq, io.candidate.bits.reason)
   }
-  io.historyPublish.ready := state === idle && io.drained
+  io.historyPublish.ready := state === idle && io.drained && io.publishDrained
   when (historyCapture) {
     serial := nextSerial
     val (tag, set, _) = params.parseAddress(io.historyPublish.bits.address)

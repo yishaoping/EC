@@ -1,4 +1,22 @@
-# Current: 单主核功能验收完成，69项VERIFIED；物理签核独立 (2026-11-24)
+# Current: Test 统一公共运行环境 (2026-11-25)
+
+公共运行环境的 17 个文件已直接移入 `Software/Test/{cfg,core,hw,stat}` 和 `htif.mk`，原独立运行环境目录已移除。EC-Test、GAPBS 的 Makefile 及五个有效回归脚本改用 Test 路径；Test 的 benchmark 分派机制保持不变。EC-Test → GAPBS → 默认 EC-Test 构建通过，两个 ELF 与迁移前逐字节相同，dump 和既有 HEX 匹配。未修改硬件、仿真器或 Verilator 构建规则。用户最后要求仅做简单移动合并、不要仿真，剩余仿真已停止，不再追加验证。
+
+正式入口已恢复到 `chipyard/sims/verilator`。v1 fast/FST、Fault8 fast/debug、12.5 MHz History 和 Seq 重基的现有模型及构建树已复制并修正路径，默认四线程，HEX 已准备；普通 Make 运行不需要 `simroot`、`sim_dir`、`BREAK_SIM_PREREQ` 或初始化脚本。用户随后取消本轮完整仿真验收及硬件生成要求；尚在运行的压力和重复 FST 已停止，不作为通过证据。新增只读压力 Make 目标，保留原软件和全部硬件功能。日常命令以 [正式环境报告](../history/reports/verilator-formal-environment-20261125.md) 为准；下方为本日先前功能验收记录。
+
+本轮目标为修复 MSIP 组合场景及后续前进性错误、验收 EC-Test，并交付日常和 FST 仿真入口。当前生产 RTL 与 `probe-publication` 模型对应。六个配置构建成功，七组组件通过。EC-Test ELF、反汇编和 HEX 已生成。 [根因及验收报告](../bugs/bug-palimpsest-arf-data-backpressure.md) · [S8 专项报告](../bugs/palimpsest-s8-injection.md) · [本轮产物](../../TMP/ec-test-20261125/probe-publication/)
+
+- 正常 345597 周期、321.686 秒、97 PASS／0 FAIL。FST 同周期和结果，507.045 秒。Fault8 为 422873 周期、341.397 秒、126 PASS／1 次预期 Seq 8 FAIL。三条 Make 命令均实际退出 0。S8 波形确认 hart 4 一次翻位，SCP/RESTART PC 为 `0x80000964`。 [运行日志](../../TMP/ec-test-20261125/probe-publication/acceptance/) · [S8 波形](../../TMP/ec-test-20261125/probe-publication/acceptance/s8-compare.trace)
+- 强制重基 677729 周期、593.563 秒、退出 0。六次物理 reset 后的新 Seq 1 分别通过。原第四次重基反例中，旧 STQ 2 NACK 已清 inflight，指针回退被随后跳过取消项的赋值覆盖。修改复用 `olderStoreNackForcesReplay`。 [强制重基日志](../../TMP/ec-test-20261125/probe-publication/PalimpsestSeqRebaseTestConfig/ec-rebase/) · [原 STQ 停点](../../TMP/ec-test-20261125/maintenance-drain/PalimpsestSeqRebaseTestConfig/ec-rebase-stq/)
+- 12.5 MHz 的 EC-Test 压力在 1234316 周期、1013.127 秒退出 0，实测封口、占满 64 槽、重分配、回收和最终空表。冻结 16 轮 ELF 在 1162441 周期、930.117 秒退出 0，原严格计分通过 Seq 1 END/count 64、64/64、回到 48 个空槽且检查包前进、54 次 Checker PASS、最终全空及 checksum。25 MHz 同一冻结 ELF 在 759165 周期退出 0，其原严格计分因 END/count 16 保留失败，容量峰值 40/64。 [EC-Test 容量计分](../../TMP/ec-test-20261125/probe-publication/acceptance/12p5-ec-pressure.json) · [冻结严格计分](../../TMP/ec-test-20261125/probe-publication/acceptance/12p5-frozen-strict.json) · [25 MHz 严格结果](../../TMP/ec-test-20261125/probe-publication/acceptance/25-frozen-strict.log)
+- L2 由 `hasData && CacheImage.valid` 决定哪些 C 拍等待 History 暂存。冻结 ELF 的两次 Checker 停点分别涉及无数据 ProbeAck 和无版本身份的 ProbeAckData。之后的 HTIF 停点来自两个不同组的 Probe 前驱依赖。仅当 History 唯一待发布行在另一组且等该组 drain 时，允许队头的安全前驱走原外写和 ACK。定向组件对照在旧版 944 周期失败，新版 589 周期通过。 [旧反例](../../TMP/ec-test-20261125/probe-publication/directed-c-staging.log) · [现有基线回归](../../TMP/ec-test-20261125/probe-publication/baseline-with-directed.run.log)
+- 历史重基原判据通过，2085846 周期、1679.60 秒、23 次物理 reset 和 23 个新 Seq 1 PASS。Sv39 原判据通过，正常／Fault8 分别 547623／589140 周期，物理读次数 16／18，其中 Fault8 的 2 次由回滚废弃，两边均有 16 次存活提交。历史 IRQ 和 AMO 正常／Fault18 均退出 0，严格计分通过各 16 轮及 journal 重放前仅一次实际设备 TL A。 [历史重基判据](../../TMP/ec-test-20261125/probe-publication/PalimpsestSeqRebaseTestConfig/historical-rebase/oracle.log) · [Sv39 判据](../../TMP/ec-test-20261125/probe-publication/sv39-driver.log) · [设备判据](../../TMP/ec-test-20261125/probe-publication/acceptance/historical-io.log)
+- 17:43 CST 整核实验收齐。正常与 Fault8 的只读观测各确认四次物理 MSIP set/clear、四次精确中断和匹配 xRET、四次设备 AMO 及读回，联合计分退出 0。本轮整核、组件与计分均已结束。日常、FST、Fault8 和 12.5 MHz 压力命令已写入验收报告。 [联合计分](../../TMP/ec-test-20261125/probe-publication/acceptance/ec-observer.json) · [运行汇总](../../TMP/ec-test-20261125/probe-publication/make-and-regression-driver.log) · [运行命令](../bugs/bug-palimpsest-arf-data-backpressure.md#运行命令)
+- 下方 69 项记录属于 11 月 24 日封存基线。当前测试未进行物理布局或时序签核。12.5 MHz 严格通过的证据覆盖实际触发的容量与前进性边界。
+
+---
+
+# 单主核功能验收完成，69项VERIFIED；物理签核独立 (2026-11-24)
 
 当前 **69 VERIFIED、0 IN_PROGRESS、0 CODE_READY**。最终来源复核和12个完整程序/31负例已通过，P2-07/P4-10/P4-13/P5-10真正关闭；P4-12已完成新Scheduler来源完整复验。旧69项提前声明仍为superseded，原FAIL不改写。
 

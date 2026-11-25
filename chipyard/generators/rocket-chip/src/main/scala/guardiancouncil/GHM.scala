@@ -37,7 +37,7 @@ class GHMIO(params: GHMParams) extends Bundle {
   val clear_ic_status                            = Input(Vec(params.number_of_little_cores, UInt(1.W)))
 
   val clear_ic_status_tomain                     = Output(UInt(GH_GlobalParams.GH_NUM_CORES.W))
-  val bigcore_hang                               = Output(Vec(params.number_of_little_cores, UInt(1.W)))  // per-checker backpressure
+  val bigcore_hang                               = Output(UInt((2 * params.number_of_little_cores).W))
   val bigcore_comp                               = Output(Vec(GH_GlobalParams.GH_NUM_BIG_CORES, UInt(3.W)))
   val debug_bp                                   = Output(UInt(2.W))
   val ic_counter                                 = Input(Vec(GH_GlobalParams.GH_NUM_BIG_CORES, UInt((16*GH_GlobalParams.GH_NUM_CORES).W)))
@@ -190,6 +190,7 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
       }
       val if_data_en = sel_data.reduce(_|_)
       val if_arfs_en = sel_arfs.reduce(_|_)
+      val if_cps_en = arfs_dest_vec.map(_ === (i + 1).U).reduce(_ || _)
       dontTouch(if_data_en)
       //data  
       u_data_cdc(i).io.enq_clock := io.ghm_clock(0).asClock
@@ -248,13 +249,9 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
         end_seq := selected_segment_seq
         end_count := selected_count(14, 0)
       }
-      // A segment id is allocated before the last committing instruction is
-      // necessarily visible at GH_BUF.  Therefore a low `if_data_en` in the
-      // allocation cycle means only "no data is visible yet".  Do not turn
-      // that observation into an empty packet.  The source-side empty level
-      // must remain high for a settling window that starts after this segment
-      // id is observed.  A later real data beat resets the window and always
-      // wins over the empty-anchor path.
+      // CPS starts a new checker context while its predecessor may still
+      // have packets in GH_BUF. Retain this permission until the marker
+      // can enqueue. Real data for this checker wins arbitration.
       val emptyAnchorSettleCycles = 3
       val emptyAnchorSettleWidth = log2Ceil(emptyAnchorSettleCycles + 1)
       val emptyAnchorReady = withClockAndReset(
@@ -269,18 +266,14 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
           waitCount := 0.U
         } .elsewhen (!waitActive || selected_segment_seq =/= waitSeq) {
           waitSeq := selected_segment_seq
-          waitCount := 0.U
+          waitCount := Mux(if_cps_en, emptyAnchorSettleCycles.U, 0.U)
           waitActive := true.B
-        } .elsewhen (if_data_en || !producerEmpty) {
-          // Data may still be produced after the allocation edge.  Restart
-          // the observation window whenever the producer is non-empty or a
-          // real packet is visible.
-          waitCount := 0.U
+        } .elsewhen (if_cps_en) {
+          waitCount := emptyAnchorSettleCycles.U
         } .elsewhen (waitCount < emptyAnchorSettleCycles.U) {
-          waitCount := waitCount + 1.U
+          waitCount := Mux(if_data_en || !producerEmpty, 0.U, waitCount + 1.U)
         }
-        waitActive && producerEmpty && !if_data_en &&
-          waitCount >= emptyAnchorSettleCycles.U
+        waitActive && waitSeq === selected_segment_seq && waitCount === emptyAnchorSettleCycles.U
       }
       val anchor_seq_sent = withClockAndReset(
         io.ghm_clock(0).asClock, io.ghm_reset(0).asAsyncReset) {
@@ -764,11 +757,9 @@ class GHM (val params: GHMParams)(implicit p: Parameters) extends LazyModule
       debug_gcounter                             := debug_gcounter + 1.U
     }
 
-    // Per-checker backpressure: each checker's CDC busy is broadcast to all big cores
-    // Each big core filters with its own checker_enable_mask in BoomTile
-    for (i <- 0 until params.number_of_little_cores) {
-      io.bigcore_hang(i) := cdc_busy(i) | arfs_cdc_busy(i)
-    }
+    // The ARF receiver waits for a data anchor. A full ARF queue must
+    // still allow GH_BUF to drain and the data side to emit that anchor.
+    io.bigcore_hang := Cat(arfs_cdc_busy.asUInt, cdc_busy.asUInt)
     // Per-big-core bigcore_comp: AND only checkers owned by each big core.
     // Unrelated checkers contribute 0x7 (all 1s) so they don't block the AND.
     val global_owner_for_comp = io.checker_big_owner_bigcore.reduce(_|_)
@@ -813,7 +804,7 @@ object GHMCore {
     println("#### Jessica #### Tieing off GHM **Nodes**, core number:", number_of_ghes,"...!!")
 
     // Creating nodes for connections.
-    val bigcore_hang_SRNode                        = BundleBridgeSource[UInt](Some(() => UInt(params.number_of_little_cores.W)))  // per-checker bits
+    val bigcore_hang_SRNode                        = BundleBridgeSource[UInt](Some(() => UInt((2 * params.number_of_little_cores).W)))
     val bigcore_comp_SRNodes                       = Seq.fill(GH_GlobalParams.GH_NUM_BIG_CORES)(BundleBridgeSource[UInt](Some(() => UInt(3.W))))
     val debug_bp_SRNode                            = BundleBridgeSource[UInt](Some(() => UInt(2.W)))
     var ghm_ght_packet_in_SKNodes                  = Seq[BundleBridgeSink[UInt]]()

@@ -1618,6 +1618,7 @@ object CSRshadows{
   val csrshadow_seq = (CSRshadows.allshadows_for_filter.map(_.asUInt)).toSeq
 
   val CSRsize = allshadows.size
+  val scratchPairIndex = 8
 
   
 }

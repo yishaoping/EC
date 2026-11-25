@@ -23,6 +23,12 @@ _Static_assert(_Alignof(timer_flag_t) == TIMER_CONTROL_BLOCK_BYTES,
                "timer control slots must start on a coherence block");
 
 extern volatile timer_flag_t timer_flags[TIMER_HARTS];
+#ifdef EC_TEST_MSIP
+extern volatile timer_flag_t palimpsest_msip_counts[NUM_HARTS];
+#endif
+#ifdef PALIMPSEST_TRAP_IO_WORKLOAD
+extern volatile timer_flag_t palimpsest_ecall_counts[8];
+#endif
 
 /* 读取 CLINT 的 mtime 计数器。 */
 uint64_t get_mtime(void);

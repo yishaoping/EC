@@ -29,6 +29,7 @@ class SinkDResponse(params: InclusiveCacheParameters) extends InclusiveCacheBund
   val sink   = UInt(width = params.outer.bundle.sinkBits)
   val denied = Bool()
   val txn = UInt(width = 64)
+  val historyImage = new CacheImageKey
 }
 
 class SinkD(params: InclusiveCacheParameters) extends Module
@@ -46,6 +47,10 @@ class SinkD(params: InclusiveCacheParameters) extends Module
     // WaR hazard
     val grant_req = new SourceDHazard(params)
     val grant_safe = Bool().flip
+    val newFill = Bool()
+    val fillDone = Bool()
+    val historyReady = Bool().flip
+    val history = Valid(new PalimpsestHistoryLine).flip
   }
 
   // No restrictions on buffer
@@ -53,6 +58,9 @@ class SinkD(params: InclusiveCacheParameters) extends Module
 
   val (first, last, _, beat) = params.outer.count(d)
   val hasData = params.outer.hasData(d.bits)
+  io.newFill := d.valid && first && d.bits.opcode === TLMessages.GrantData && !d.bits.denied
+  io.fillDone := d.fire() && last && d.bits.opcode === TLMessages.GrantData
+  val allowFirst = io.grant_safe && io.historyReady
 
   io.source := Mux(d.valid, d.bits.source, RegEnable(d.bits.source, d.valid))
   io.grant_req.way := io.way
@@ -60,8 +68,8 @@ class SinkD(params: InclusiveCacheParameters) extends Module
 
   // Also send Grant(NoData) to BS to ensure correct data ordering
   io.resp.valid := (first || last) && d.fire()
-  d.ready := io.bs_adr.ready && (!first || io.grant_safe)
-  io.bs_adr.valid := !first || (d.valid && io.grant_safe)
+  d.ready := io.bs_adr.ready && (!first || allowFirst)
+  io.bs_adr.valid := !first || (d.valid && allowFirst)
   params.ccover(d.valid && first && !io.grant_safe, "SINKD_HAZARD", "Prevented Grant data hazard with backpressure")
   params.ccover(io.bs_adr.valid && !io.bs_adr.ready, "SINKD_SRAM_STALL", "Data SRAM busy")
 
@@ -72,13 +80,17 @@ class SinkD(params: InclusiveCacheParameters) extends Module
   io.resp.bits.sink   := d.bits.sink
   io.resp.bits.denied := d.bits.denied
   io.resp.bits.txn := d.bits.echo.lift(CachePreserveTxn).getOrElse(UInt(0, width = 64))
+  io.resp.bits.historyImage := Mux(io.history.valid,
+    io.history.bits.key, 0.U.asTypeOf(new CacheImageKey))
 
   io.bs_adr.bits.noop := !d.valid || !hasData
   io.bs_adr.bits.way  := io.way
   io.bs_adr.bits.set  := io.set
   io.bs_adr.bits.beat := Mux(d.valid, beat, RegEnable(beat + io.bs_adr.ready.asUInt, d.valid))
   io.bs_adr.bits.mask := ~UInt(0, width = params.outerMaskBits)
-  io.bs_dat.data      := d.bits.data
+  val historyBeats = io.history.bits.data.asTypeOf(Vec(
+    params.cache.blockBytes / params.outer.manager.beatBytes, UInt(width = params.outer.bundle.dataBits)))
+  io.bs_dat.data      := Mux(io.history.valid, historyBeats(beat), d.bits.data)
 
   assert (!(d.valid && d.bits.corrupt && !d.bits.denied), "Data poisoning unsupported")
 }

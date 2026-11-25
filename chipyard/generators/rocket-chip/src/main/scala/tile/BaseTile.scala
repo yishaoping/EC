@@ -281,7 +281,7 @@ abstract class BaseTile private (val crossing: ClockCrossingType, q: Parameters)
   val ghe_revent_out_SRNode       = BundleBridgeSource[UInt](Some(() => UInt(1.W)))
 
   println("#### Jessica #### Generating GHE **Nodes** on the tile, HartID:", tileParams.hartId, "...!!")
-  val bigcore_hang_in_SKNode      = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES).W)))  // per-checker hang
+  val bigcore_hang_in_SKNode      = BundleBridgeSink[UInt](Some(() => UInt((2 * (GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES)).W)))
   val bigcore_comp_in_SKNode      = BundleBridgeSink[UInt](Some(() => UInt(3.W)))
   val debug_bp_in_SKNode          = BundleBridgeSink[UInt](Some(() => UInt(2.W)))
   // val if_big_complete_req_SKNode  = BundleBridgeSink[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES-1).W)))

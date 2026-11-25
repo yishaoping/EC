@@ -590,6 +590,7 @@ class BoomDCacheBundle(implicit p: Parameters, edge: TLEdgeOut) extends BoomBund
   val rollbackTarget = Input(UInt(32.W))
   val rollbackReset = Input(Bool())
   val rollbackRebase = Input(Bool())
+  val rollbackLsuDrained = Input(Bool())
   val sequenceReset = Output(Bool())
   val rollbackEpoch = Output(UInt(32.W))
   val rollbackSafe = Output(UInt(32.W))
@@ -841,7 +842,8 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val recoveryEvict = Wire(Decoupled(new WritebackReq(edge.bundle)))
   val recoveryReleaseKey = Reg(new CacheImageKey)
   val recoveryReleaseEpoch = Reg(UInt(16.W))
-  val ingressLine = (io.lsu.req.bits(0).bits.addr >> blockOffBits) << blockOffBits
+  val ingressRequest = io.lsu.req.bits(0).bits
+  val ingressLine = (ingressRequest.addr >> blockOffBits) << blockOffBits
   val ingressSet = io.lsu.req.bits(0).bits.addr(idxMSB, idxLSB)
   val ingressTag = io.lsu.req.bits(0).bits.addr >> untagBits
   val ingressMatches = VecInit((0 until nWays).map(w => residentValid(ingressSet)(w) &&
@@ -859,6 +861,28 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   val ingressStale = executionHistory.io.generation =/= 0.U && ingressCacheable && !ingressMapped
   val ingressValid = io.lsu.req.valid && io.lsu.req.bits(0).valid
   val ingressRecoveryLine = ingressCacheable && ingressLine === recoveryLine
+  val recoveryOwnerValid = RegInit(false.B)
+  val recoveryOwnerRob = Reg(UInt(robAddrSz.W))
+  val recoveryOwnerMask = Reg(UInt(maxBrCount.W))
+  val recoveryOwnerOrdered = Reg(Bool())
+  val ingressOrdered = ingressRequest.is_hella ||
+    (ingressRequest.effect_token_valid && !ingressRequest.uop.is_amo)
+  val ingressOlder = Mux(ingressOrdered, !recoveryOwnerOrdered,
+    !recoveryOwnerOrdered && IsOlder(ingressRequest.uop.rob_idx, recoveryOwnerRob, io.lsu.rob_head_idx))
+  val recoveryOwnerIssued = RegNext(memoryRecoveryState === recoveryMiss &&
+    io.lsu.req.fire && ingressRecoveryLine && ingressRequest.uop.rob_idx === recoveryOwnerRob, false.B)
+  // A forwarding completion can retire a load even when the cache
+  // never accepted its offer.
+  val recoveryOwnerForwarded = io.lsu.forwarded.map { f =>
+    f.valid && f.bits === recoveryOwnerRob
+  }.reduce(_ || _)
+  val recoveryOwnerLive = recoveryOwnerValid &&
+    !IsKilledByBranch(io.lsu.brupdate, recoveryOwnerMask) &&
+    (recoveryOwnerOrdered || !io.lsu.exception) &&
+    !(recoveryOwnerForwarded && !recoveryOwnerOrdered) &&
+    !(recoveryOwnerIssued && io.lsu.s1_kill(0))
+  recoveryOwnerValid := recoveryOwnerLive
+  recoveryOwnerMask := GetNewBrMask(io.lsu.brupdate, recoveryOwnerMask)
   recoveryIngressPermit := (memoryRecoveryState === recoveryIdle && !ingressStale) ||
     (memoryRecoveryState === recoveryMiss && (ingressRecoveryLine || !ingressStale))
   def beginColdLookup(): Unit = {
@@ -868,6 +892,11 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
       memoryRecoveryState := recoveryIdle
     }.otherwise {
       recoveryLine := ingressLine
+      recoveryOwnerValid := !IsKilledByBranch(io.lsu.brupdate, ingressRequest.uop) &&
+        (ingressOrdered || !io.lsu.exception)
+      recoveryOwnerRob := ingressRequest.uop.rob_idx
+      recoveryOwnerMask := GetNewBrMask(io.lsu.brupdate, ingressRequest.uop)
+      recoveryOwnerOrdered := ingressOrdered
       recoveryWay := ingressWay
       recoveryHadResident := ingressMatches.asUInt.orR
       recoveryFound := false.B
@@ -951,16 +980,17 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
     historyPayload.lower := executionHistory.io.lower
     historyPayload.upper := executionHistory.io.upper
   }
-  // LSU re-arbitrates retries and can drop valid between attempts. Keep the
-  // completed lookup through those gaps. An unrelated mapped access can
-  // proceed. Once owners drain, a different cold offer must claim the slot
-  // in this cycle: returning idle first lets LSU arbitration replace that
-  // offer again, repeatedly querying the old address without admitting either.
+  // LSU rotates unaccepted offers while History responds. Keep the lookup
+  // for its live owner across those offers. Older work can take the slot,
+  // and unrelated mapped requests continue through the normal ingress.
   when (memoryRecoveryState === recoveryMiss && recoveryCacheIdle) {
     when (io.rollbackStop && (!ingressValid || !ingressSurvivingDrain)) {
       memoryRecoveryState := recoveryIdle
-    }.elsewhen (ingressValid && ingressStale && !ingressRecoveryLine) {
+    }.elsewhen (ingressValid && ingressStale && !ingressRecoveryLine &&
+      (!recoveryOwnerLive || ingressOlder)) {
       beginColdLookup()
+    }.elsewhen (!recoveryOwnerLive && !(ingressValid && ingressRecoveryLine)) {
+      memoryRecoveryState := recoveryIdle
     }
   }
   io.rollbackMemoryReady := memoryRecoveryState === recoveryIdle && historyMaintenanceReady
@@ -1002,7 +1032,9 @@ class BoomNonBlockingDCacheModule(outer: BoomNonBlockingDCache) extends LazyModu
   historyMaintenanceReady := !executionHistory.io.maintenanceRequired &&
     !maintenanceRequest && !maintenanceLower && rebaseComplete
   historyMaintenanceBusy := maintenanceRequest || maintenanceLower
-  val maintenanceLocalDrained = io.rollbackQuiesced && svb.io.occupancy === 0.U &&
+  // A committed prefix store may still be waiting in the LSU when the cache
+  // is idle. The sweep closes L2 A admission, so wait for that store too.
+  val maintenanceLocalDrained = io.rollbackQuiesced && io.rollbackLsuDrained && svb.io.occupancy === 0.U &&
     archiveState === archiveIdle && io.allCheckersDrained
   val maintenanceNeeded = executionHistory.io.maintenanceRequired || (io.rollbackRebase && !rebaseComplete)
   when (maintenanceNeeded && io.rollbackStop && maintenanceLocalDrained &&

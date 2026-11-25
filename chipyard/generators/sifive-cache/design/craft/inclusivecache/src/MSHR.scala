@@ -32,6 +32,7 @@ class ClientWaitRequest(params: InclusiveCacheParameters) extends InclusiveCache
 {
   val request = new FullRequest(params)
   val seq = UInt(width = 32)
+  val capacity = Bool()
 }
 
 class ScheduleRequest(params: InclusiveCacheParameters) extends InclusiveCacheBundle(params)
@@ -136,6 +137,7 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
     val nestedwb  = new NestedWriteback(params).flip
     val resident = Valid(new DirectoryResult(params))
     val recoverySeq = UInt(width = 32)
+    val refillFromHistory = Bool()
     val preserved = Valid(new L2PreservationCandidate(params)).flip
     val releaseSent = Valid(UInt(width = 64)).flip
     val quiescent = Bool()
@@ -158,6 +160,7 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
 
   val request_valid = RegInit(Bool(false))
   val request = Reg(new FullRequest(params))
+  val refillHistoryImage = RegInit(0.U.asTypeOf(new CacheImageKey))
   io.recoverySeq := request.image.contentSeq
   val meta_valid = RegInit(Bool(false))
   val meta = Reg(new DirectoryResult(params))
@@ -245,6 +248,8 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
   io.status.bits.set    := request.set
   io.status.bits.tag    := request.tag
   io.status.bits.way    := meta.way
+  io.refillFromHistory := request_valid && meta_valid && !meta.hit &&
+    request.prio(0) && params.isImageAware(request.source)
   io.status.bits.blockB := !meta_valid || ((!w_releaseack || !w_rprobeacklast || !w_pprobeacklast) && !w_grantfirst)
   io.status.bits.nestB  := meta_valid && w_releaseack && w_rprobeacklast && w_pprobeacklast && !w_grantfirst
   // The above rules ensure we will block and not nest an outer probe while still doing our
@@ -343,6 +348,7 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
   io.schedule.bits.park.valid := parkPeer
   io.schedule.bits.park.bits.request := request
   io.schedule.bits.park.bits.seq := Mux(parkTrusted, io.trustedWait.bits, meta.image.contentSeq)
+  io.schedule.bits.park.bits.capacity := parkCapacity && !parkEarly && !parkLate && !parkTrusted
   // Suppress only the unsafe execution while outstanding probes/refill/outer E
   // drain. In particular E must not be coupled to a blocked D admission.
   when (peerUnsafe) {
@@ -448,6 +454,13 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
       // authored inner version is inferred from permission-only transitions.
       final_meta_writeback.outerPreserved := Bool(true)
       final_meta_writeback.baselineObsolete := Bool(false)
+      when (refillHistoryImage.valid) {
+        final_meta_writeback.dirty := Bool(true)
+        final_meta_writeback.packetSeq := refillHistoryImage.contentSeq
+        final_meta_writeback.packetTracked := refillHistoryImage.contentSeq =/= UInt(0)
+        final_meta_writeback.image := refillHistoryImage
+        final_meta_writeback.outerPreserved := Bool(false)
+      }
     }
   }
 
@@ -765,7 +778,10 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
     transition(S_INVALID,  S_TIP_CD,   false)  // acquire does not cause dirty immediately
     transition(S_INVALID,  S_TIP_D,    m)      // MMIO write
     transition(S_INVALID,  S_TRUNK_C,  c)      // acquire
-    transition(S_INVALID,  S_TRUNK_CD, false)  // acquire does not cause dirty immediately
+    transition(S_INVALID,  S_TRUNK_CD, c)      // an Acquire can reload a dirty Current from History
+    when (before === S_INVALID.code && after === S_TRUNK_CD.code) {
+      assert(refillHistoryImage.valid, "Dirty Acquire miss without a History image")
+    }
 
     transition(S_BRANCH,   S_INVALID,  b && p) // probe can do this (flushes run as evictions)
     transition(S_BRANCH,   S_BRANCH_C, b && c) // acquire
@@ -886,6 +902,7 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
       sink := io.sinkd.bits.sink
       w_grantfirst := Bool(true)
       w_grantlast := io.sinkd.bits.last
+      refillHistoryImage := io.sinkd.bits.historyImage
       // Record if we need to prevent taking ownership
       bad_grant := io.sinkd.bits.denied
       // Allow wormhole routing for requests whose first beat has offset 0
@@ -1011,6 +1028,7 @@ class MSHR(params: InclusiveCacheParameters, trace: Boolean = false, id: Int = 0
     assert (!request_valid || (((no_wait && !peerUnsafe) || parkPeer) && io.schedule.fire()))
     request_valid := Bool(true)
     request := io.allocate.bits
+    refillHistoryImage := 0.U.asTypeOf(new CacheImageKey)
   }
 
   // Create execution plan

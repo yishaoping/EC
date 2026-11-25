@@ -134,7 +134,8 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
     val r_arfs        = Output(Vec(1, UInt((xLen * 2 + 8 + 1).W))) // {9 位索引, 2*XLEN 位 ARF/FARF 数据}。
     val r_arfs_pidx   = Output(Vec(1, UInt(8.W))) // 合并片段的包内位置索引。
     val arfs_ecp_dest = Output(UInt(8.W)) // R_RSU 快照恢复/ECP 目的标识。
-    val big_hang      = Input(Bool()) // GHM CDC 无空间时暂停 R_RSU 和 ROB。
+    val big_hang      = Input(Bool()) // Aggregate CDC backpressure for retirement.
+    val arf_cdc_busy  = Input(Bool())
 
     // R_IC：checker 调度控制、计数、状态和当前 checker 目标。
     val icctrl                 = Input(UInt(4.W)) // run/exit/syscall/syscall-back 控制位。
@@ -2595,7 +2596,7 @@ class BoomCore()(implicit p: Parameters) extends BoomModule
   rsu_master.io.core_trace                        := io.core_trace
   rsu_master.io.ic_trace                          := io.ic_trace 
   rsu_stall                                       := rsu_master.io.core_hang_up
-  rsu_master.io.big_hang                          := io.big_hang
+  rsu_master.io.big_hang                          := io.arf_cdc_busy
   io.arfs_ecp_dest                                := rsu_master.io.arfs_ecp_dest
   for (w <- 0 until 1){
     io.r_arfs(w)                                  := Cat(rsu_master.io.arfs_index(w), rsu_master.io.arfs_merge(w))

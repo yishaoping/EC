@@ -581,10 +581,14 @@ class CSRFile(
 
   val shadow_check_error = WireDefault(false.B)
   if(tileParams.hartId != 0){
-    when(io.arfs_is_CPS && io.arfs_is_CSR){
+    val scratchPair = io.shadow_idx === CSRshadows.scratchPairIndex.U
+    when(io.arfs_is_CPS && io.arfs_is_CSR && scratchPair) {
+      reg_shadow.get(CSRshadowsindex.mscratch) := io.csr_shadows(63, 0)
+      reg_shadow.get(CSRshadowsindex.sscratch) := io.csr_shadows(127, 64)
+    }.elsewhen(io.arfs_is_CPS && io.arfs_is_CSR){
       reg_shadow.get((io.shadow_idx - 1.U) << 1)         := io.csr_shadows(63, 0)
       reg_shadow.get(((io.shadow_idx - 1.U) << 1) + 1.U) := io.csr_shadows(127, 64)
-    }.elsewhen(!io.arfs_is_CPS && io.arfs_is_CSR){
+    }.elsewhen(!io.arfs_is_CPS && io.arfs_is_CSR && !scratchPair){
       reg_shadow_ECP.get.write(((io.shadow_idx - 1.U) << 1), io.csr_shadows(63, 0))
       reg_shadow_ECP.get.write((((io.shadow_idx - 1.U) << 1) + 1.U), io.csr_shadows(127, 64))
     }
@@ -849,7 +853,8 @@ class CSRFile(
   val read_mstatus  = Mux(io.checker_priv_mode, reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mstatus), io.status.asUInt.extract(xLen-1,0))
   val read_mie      = Mux(io.checker_priv_mode, reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mie), reg_mie)
   val read_mtvec    = Mux(io.checker_priv_mode, formTVec(reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mtvec)).padTo(xLen), formTVec(reg_mtvec).padTo(xLen))
-  val read_mscratch = Mux(io.checker_priv_mode, reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mscratch), reg_mscratch)
+  val replayScratch = io.checker_mode || io.checker_priv_mode
+  val read_mscratch = Mux(replayScratch, reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mscratch), reg_mscratch)
   val read_mepc     = Mux(io.checker_priv_mode, reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mepc), readEPC(reg_mepc).sextTo(xLen))
   val read_stvec   = formTVec(reg_stvec).sextTo(xLen)
 
@@ -962,7 +967,7 @@ class CSRFile(
     // val read_sip = read_mip & sie_mask   
     val read_sie = Mux(io.checker_priv_mode, reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.sie), reg_mie & sie_mask)
     val read_sip = Mux(io.checker_priv_mode, reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.sip), read_mip & sie_mask)
-    val read_sscratch = Mux(io.checker_priv_mode, reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.sscratch), reg_sscratch)
+    val read_sscratch = Mux(replayScratch, reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.sscratch), reg_sscratch)
     val read_sepc = Mux(io.checker_priv_mode, reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.sepc), readEPC(reg_sepc).sextTo(xLen))
     val read_scause = Mux(io.checker_priv_mode, reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.scause), reg_scause)
     val read_stval = Mux(io.checker_priv_mode, reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.stval), reg_stval.sextTo(xLen))
@@ -1641,11 +1646,11 @@ class CSRFile(
       reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mepc) := formEPC(wdata)
     }
     when (decoded_addr(CSRs.mscratch) && !io.checker_priv_mode) {
-      reg_mscratch := wdata 
+      reg_mscratch := readModifyWriteCSR(io.rw.cmd, reg_mscratch, io.rw.wdata)
     }
     // Normal replay keeps its physical CSR behavior and mirrors scratch
     // writes into the existing architectural comparison context.
-    when (decoded_addr(CSRs.mscratch) && (io.checker_mode || io.checker_priv_mode)){
+    when (decoded_addr(CSRs.mscratch) && replayScratch){
       reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mscratch) := readModifyWriteCSR(io.rw.cmd,
         reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.mscratch), io.rw.wdata)
     }
@@ -1776,11 +1781,11 @@ class CSRFile(
       }
 
       when (decoded_addr(CSRs.sscratch) && !io.checker_priv_mode) { 
-        reg_sscratch := wdata 
+        reg_sscratch := readModifyWriteCSR(io.rw.cmd, reg_sscratch, io.rw.wdata)
       }
       // Normal replay keeps its physical CSR behavior and mirrors scratch
       // writes into the existing architectural comparison context.
-      when (decoded_addr(CSRs.sscratch) && (io.checker_mode || io.checker_priv_mode)){
+      when (decoded_addr(CSRs.sscratch) && replayScratch){
         reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.sscratch) := readModifyWriteCSR(io.rw.cmd,
         reg_shadow.getOrElse(VecInit(Seq.fill(CSRshadows.CSRsize)(1.U)))(CSRshadowsindex.sscratch), io.rw.wdata)
       }

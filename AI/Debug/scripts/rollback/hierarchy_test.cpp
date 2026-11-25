@@ -142,6 +142,7 @@ public:
     d.io_hostReq=0; d.io_hostWrite=0; d.io_hostAddress=A; d.io_hostData=0;
     frozenCheckers=checkerClockLevels=0; d.io_checkerClocks=0;
     d.io_req=0; d.io_address=A; d.io_data=0; d.io_command=0; d.io_seq=0; d.io_token=0; d.io_size=3;
+    d.io_robIdx=0;
     d.io_doneReady=1; d.io_allocate=0; d.io_pass=0; d.io_fail=0; d.io_restartReady=0;
     d.reset=1; ticks(5); d.reset=0; ticks(300);
   }
@@ -575,7 +576,7 @@ public:
     std::puts("CASE real_tracked_c_outer_owner PASS");
   }
 
-  void alternatingColdHandoff() {
+  void alternatingColdHandoff(bool olderTakesOver) {
     reset();
     for(unsigned seq=1;seq<=6;++seq) { allocate(seq); pass(seq); }
     allocate(7); access(1,A,7,0xa7); allocate(8); access(1,A,8,0xa8);
@@ -583,18 +584,46 @@ public:
     constexpr uint64_t first=0x80004000ULL, other=0x80005000ULL;
     line(first).fill(0x1111); line(other).fill(0x2222);
     start(0,first,9);
-    // Reproduce the actual LSU arbitration window: the completed lookup
-    // sees another cold request, then the next arbitration chooses first.
-    // No ready/valid contract requires this LSU to retain a denied offer.
+    // A denied LSU offer can change. An older request can take over; a
+    // younger retry must leave the result available for the original owner.
+    bool retryOther = true;
     for(unsigned n=0;n<8000&&active;++n) {
-      if(issuing) d.io_address = d.rootp->HierarchyHarness__DOT__l1__DOT__memoryRecoveryState==7 ? other:first;
+      if (issuing) {
+        bool lookupReady = d.rootp->HierarchyHarness__DOT__l1__DOT__memoryRecoveryState == 7;
+        bool offerOther = lookupReady && (olderTakesOver || retryOther);
+        retryOther = !offerOther;
+        d.io_address = offerOther ? other : first;
+        d.io_robIdx = offerOther == olderTakesOver ? 1 : 2;
+      }
       step();
     }
     std::printf("COLD_HANDOFF lookups=%u active=%u issuing=%u\n",lookupRequests,active,issuing);
     check(!active,"cold-query handoff livelocked under LSU arbitration");
-    check(answer==0x2222,"cold-query handoff returned incorrect baseline");
-    check(access(0,first,9)==0x1111,"original cold address did not make progress after handoff");
-    std::puts("CASE alternating_cold_handoff PASS");
+    check(answer == (olderTakesOver ? 0x2222 : 0x1111),"cold-query handoff returned incorrect baseline");
+    d.io_robIdx = 0;
+    check(access(0, olderTakesOver ? first : other, 9) == (olderTakesOver ? 0x1111 : 0x2222),
+      "second cold address did not make progress after handoff");
+    std::printf("CASE alternating_cold_handoff older_takes_over=%u PASS\n", unsigned(olderTakesOver));
+  }
+
+  void refillMigratedCurrent() {
+    reset();
+    allocate(1);
+    access(1,A,1,0x7777);
+    // Keep Seq 1 pending while the same-set misses drive A out of L1 and L2.
+    for (unsigned i=1; i<=32; ++i)
+      access(0, A + i*4096, 1);
+    check(d.io_safe==0 && line(A)[0]==0xa1,"unsafe Current reached DRAM");
+    check(access(0,A,1)==0x7777,"ordinary refill lost migrated Current");
+    access(1,A+1,1,0x88,0);
+    check(access(0,A,1)==0x8877,"same-sequence byte update lost its predecessor");
+    // Evict the new dirty L1 owner before checking the terminal memory.
+    for (unsigned i=33; i<=40; ++i)
+      access(0, A + i*4096, 1);
+    check(line(A)[0]==0xa1,"byte update reached DRAM before validation");
+    pass(1);
+    until([&]{return line(A)[0]==0x8877;},"updated Current never reached DRAM");
+    std::puts("CASE refill_migrated_current PASS");
   }
 
 };
@@ -602,7 +631,9 @@ int main(int argc,char **argv) {
   Verilated::commandArgs(argc,argv);
   Test t;
   t.realTrackedC();
-  t.alternatingColdHandoff();
+  t.alternatingColdHandoff(true);
+  t.alternatingColdHandoff(false);
+  t.refillMigratedCurrent();
   t.watermarkAfterGrantOffer();
   t.trustedHostAfterRollback();
   t.trustedHostAfterRollback(true);

@@ -494,7 +494,7 @@ trait CanAttachTile {
     } else {
       val useless_bigcore_ic_counter_SRNode= BundleBridgeSink[UInt](Some(() => UInt((16*GH_GlobalParams.GH_NUM_CORES).W)))
       val useless_debug_maincore_status_SRNode= BundleBridgeSink[UInt](Some(() => UInt((4.W))))
-      val useless_bigcore_hang_SRNode      = BundleBridgeSource[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES).W)))  // per-checker
+      val useless_bigcore_hang_SRNode      = BundleBridgeSource[UInt](Some(() => UInt((2 * (GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES)).W)))
       val useless_bigcore_comp_SRNode      = BundleBridgeSource[UInt](Some(() => UInt(3.W)))
       val useless_debug_bp_SRNode          = BundleBridgeSource[UInt](Some(() => UInt(2.W)))
       // val useless_if_big_complete_req_SRNode          = BundleBridgeSource[UInt](Some(() => UInt((GH_GlobalParams.GH_NUM_CORES-1).W)))

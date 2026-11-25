@@ -55,6 +55,7 @@ object EmitHierarchy extends App {
       override def desiredName = "HierarchyHarness"
       val io = IO(new Bundle {
         val req = Input(Bool()); val ready = Output(Bool())
+        val robIdx = Input(UInt(6.W))
         val address = Input(UInt(40.W)); val data = Input(UInt(64.W))
         val command = Input(UInt(5.W)); val seq = Input(UInt(32.W)); val token = Input(UInt(64.W))
         val size = Input(UInt(2.W)); val doneData = Output(UInt(64.W))
@@ -105,6 +106,7 @@ object EmitHierarchy extends App {
       h.e.valid := false.B; h.e.bits := 0.U.asTypeOf(h.e.bits)
       dut.io.allCheckersDrained := true.B // host fixture has no Checker/CDC sources
       dut.io.rollbackRebase := false.B
+      dut.io.rollbackLsuDrained := true.B // host waits for each request to complete
       // The actual Rocket context receiver, with independently driven slow
       // clocks. Package execution/results remain host stimulus in this fixture.
       val historyRequest = WireDefault(false.B)
@@ -175,11 +177,13 @@ object EmitHierarchy extends App {
       r.bits.uop.mem_cmd := io.command; r.bits.uop.mem_size := io.size; r.bits.uop.mem_signed := true.B
       r.bits.uop.uses_stq := isWrite(io.command); r.bits.uop.uses_ldq := !isWrite(io.command)
       r.bits.uop.is_amo := isAMO(io.command)
+      r.bits.uop.rob_idx := io.robIdx
       r.bits.packet_seq := io.seq
       r.bits.request_token_valid := true.B; r.bits.request_token := io.token
       r.bits.effect_token_valid := isWrite(io.command); r.bits.effect_token := io.token
       r.bits.write_domain_valid := isWrite(io.command); r.bits.write_domain_seq := io.seq
       dut.io.lsu.s1_kill := 0.U.asTypeOf(chiselTypeOf(dut.io.lsu.s1_kill))
+      dut.io.lsu.forwarded := 0.U.asTypeOf(chiselTypeOf(dut.io.lsu.forwarded))
       dut.io.lsu.brupdate.b1 := 0.U.asTypeOf(chiselTypeOf(dut.io.lsu.brupdate.b1))
       dut.io.lsu.brupdate.b2.elements.filterNot(_._1 == "target_offset").foreach { case (_, d) =>
         d := 0.U.asTypeOf(chiselTypeOf(d))

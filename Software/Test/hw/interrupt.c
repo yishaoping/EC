@@ -2,6 +2,9 @@
 
 #include <riscv-pk/encoding.h>
 
+#ifdef EC_TEST_MSIP
+volatile timer_flag_t palimpsest_msip_counts[NUM_HARTS];
+#endif
 #if defined(PALIMPSEST_TRAP_IO_WORKLOAD)
 volatile timer_flag_t palimpsest_ecall_counts[8] = {0};
 #endif
@@ -55,6 +58,9 @@ void handle_trap(void)
             volatile uint32_t *msip =
                 (uint32_t *)(CLINT_BASE + CLINT_MSIP_OFFSET(hart_id));
             *msip = 0x0;
+#ifdef EC_TEST_MSIP
+            palimpsest_msip_counts[hart_id].value += 1;
+#endif
         } else if ((read_csr(mip) & 0x80) != 0) {
             unsigned long long current_time = get_mtime();
             if (hart_id == 0) {

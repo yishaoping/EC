@@ -36,7 +36,7 @@ sim_prefix = simulator
 sim = $(sim_dir)/$(sim_prefix)-$(MODEL_PACKAGE)-$(CONFIG)
 sim_debug = $(sim_dir)/$(sim_prefix)-$(MODEL_PACKAGE)-$(CONFIG)-debug
 
-WAVEFORM_FLAG=-v$(sim_out_name).vcd
+WAVEFORM_FLAG=-v$(sim_out_name).$(if $(filter 0,$(VERILATOR_FST_MODE)),vcd,fst)
 
 include $(base_dir)/sims/common-sim-flags.mk
 
@@ -107,7 +107,7 @@ HELP_COMPILATION_VARIABLES += \
 "   VERILATOR_PROFILE      = 'none' if no verilator profiling (default)" \
 "                            'all' if full verilator runtime profiling" \
 "                            'threads' if runtime thread profiling only" \
-"   VERILATOR_THREADS      = how many threads the simulator will use (default 1)" \
+"   VERILATOR_THREADS      = how many threads the simulator will use (default 4)" \
 "   VERILATOR_FST_MODE     = enable FST waveform instead of VCD. use with debug build"
 HELP_SIMULATION_VARIABLES += \
 "   VERILATOR_TIMEOUT_CYCLES = default Verilator timeout in clock cycles (default 500000000)"
@@ -127,8 +127,12 @@ RUNTIME_PROFILING_VFLAGS := $(if $(filter $(VERILATOR_PROFILE),all),\
                               $(if $(filter $(VERILATOR_PROFILE),threads),\
 								--prof-threads,))
 
-VERILATOR_THREADS ?= 1
+VERILATOR_THREADS ?= 4
 RUNTIME_THREADS := --threads $(VERILATOR_THREADS) --threads-dpi all
+
+# Clang PCH records forced includes. ccache's base-dir rewriting makes the
+# unguarded plusArgs header appear twice when the PCH is consumed.
+export CCACHE_BASEDIR :=
 
 VERILATOR_FST_MODE ?= 1
 TRACING_OPTS := $(if $(filter $(VERILATOR_FST_MODE),0),\
@@ -277,6 +281,23 @@ $(sim): $(model_mk) $(dramsim_lib)
 
 $(sim_debug): $(model_mk_debug) $(dramsim_lib)
 	$(MAKE) VM_PARALLEL_BUILDS=1 -C $(model_dir_debug) -f V$(VLOG_MODEL).mk
+
+# Reuse the existing read-only History observer without changing the RTL model.
+pressure_observer_dir = $(base_dir)/../AI/Debug/scripts/fullcore_concurrency
+pressure_sim = $(model_dir)/pressure-observer/simulator
+HELP_COMMANDS += "   run-binary-pressure-hex      = run with the read-only History observer; save a fresh output/$(long_name)/pressure.* directory"
+
+$(pressure_sim): $(sim) $(pressure_observer_dir)/pressure_observer.mk $(pressure_observer_dir)/pressure_observer.cc $(pressure_observer_dir)/../rollback/io_effect_observer.cc
+	$(MAKE) -C $(model_dir) -f $(pressure_observer_dir)/pressure_observer.mk pressure-observer/simulator
+
+.PHONY: run-binary-pressure-hex
+run-binary-pressure-hex: $(pressure_sim) check-binary $(binary_hex) | $(output_dir)
+	@run=$$(mktemp -d $(output_dir)/pressure.XXXXXX) || exit; \
+	 echo "History observer output: $$run"; \
+	 (set -o pipefail; PALIMPSEST_IRQ_LOG=$$run/history.log PALIMPSEST_IO_EFFECT_LOG=$$run/effects.log \
+	 $(NUMA_PREFIX) $(pressure_sim) $(PERMISSIVE_ON) $(SIM_FLAGS) $(EXTRA_SIM_FLAGS) $(SEED_FLAG) +verbose \
+	 +loadmem=$(binary_hex) +loadmem_addr=80000000 $(PERMISSIVE_OFF) $(BINARY) </dev/null 2>&1 | tee $$run/test.log); \
+	 status=$$?; echo $$status > $$run/run.exit; exit $$status
 
 #########################################################################################
 # create a verilator vpd rule

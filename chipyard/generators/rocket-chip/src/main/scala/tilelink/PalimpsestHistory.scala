@@ -105,6 +105,7 @@ class PalimpsestVersionHistory(entries: Int = 64, escapeEntries: Int = 4) extend
     val published = Input(Valid(new CacheImageKey))
     val publishPending = Output(Bool())
     val pressure = Output(Bool())
+    val onlyPublisher = Output(Bool())
     val escapeAvailable = Output(Bool())
     val pressureSeq = Output(UInt(32.W))
     val empty = Output(Bool()) // safe maintenance completion, not a reclaim request
@@ -137,6 +138,7 @@ class PalimpsestVersionHistory(entries: Int = 64, escapeEntries: Int = 4) extend
   val scanWatermark = Reg(UInt(32.W))
   val free = ~valid.asUInt
   val freeCount = PopCount(free)
+  io.onlyPublisher := wb && freeCount === (entries - 1).U && !capturePending
   io.pressure := freeCount <= escapeEntries.U
   // The accepted ingress already owns one slot, even before its scan commits.
   // Do not advertise that same last credit to a cache preservation reader.

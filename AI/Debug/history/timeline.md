@@ -307,3 +307,14 @@ Local freeze commit: `962c4b87db2a810bc025a87f5f7289dd7aedc5cf` — `ec: freeze 
   比特流或时序仿真。根因详见bug-palimpsest-grantack-preemption.md。
 
 - 2026-11-24最终功能验收：5个当前生产模型构建全部0，12完整程序raw/oracle0，所有严格评分与IRQ14/重基9/压力8负例通过。normal IRQ原C0xfe115/0xfe127得到D0xfe20d匹配ACK并完成checksum；真实权限+History交叠fixture旧1/新0。P2-07/P4-10/P4-13/P5-10依据实际证据关闭，P4-12完成当前Scheduler来源复验。69 VERIFIED/0进行中；物理签核独立，用户暂缓比特流/时序仿真。
+
+## 2026-11-25 EC-Test 组合回归
+
+Seq 15/16 的 ARF/DATA 跨域互等已解除。组合复验先后修复普通 CPS scratch 初值、冷查询 owner、History Current 回填、容量重试、维护入口的 LSU 排空和 store NACK 优先级。冻结压力最终新增两处 Scheduler 修复，允许不占暂存的 C 拍通过，并在唯一待发布 History 行所等待的回执位于另一组的 C 队头之后时，允许队头安全前驱按原 ACK 完成。
+
+最终正常及 FST 均在 345597 周期退出 0，Fault8 在 422873 周期退出 0，注入一次。强制重基六次均有新 Seq 1 PASS。冻结压力 ELF 在 12.5 MHz 以 1162441 周期完整退出并通过原计分，包括 64/64、最终全空和 checksum。25 MHz 同 ELF 软件退出 0，原满容量计分未达到。 [根因和结果](../bugs/bug-palimpsest-arf-data-backpressure.md) · [S8 证据](../bugs/palimpsest-s8-injection.md)
+
+
+## 2026-11-25 正式 Verilator 环境
+
+已复用并迁移六个主仿真器和四类 CONFIG 构建树，恢复 `chipyard/sims/verilator` 默认路径，保留原临时证据。修正路径和依赖时间戳、默认四线程、FST 扩展名、同名 ELF 的 HEX 切换及 ccache/Clang PCH 问题，并接入原只读压力观测器。未重新生成 RTL 或全量编译整机 C++。用户随后取消完整仿真验收及硬件生成要求；停止剩余压力及重复 FST，不将中止结果计为通过。配套检查和最终命令见 [正式环境报告](reports/verilator-formal-environment-20261125.md)。

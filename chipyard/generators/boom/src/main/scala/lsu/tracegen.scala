@@ -249,6 +249,7 @@ class BoomTraceGenTileModuleImp(outer: BoomTraceGenTile)
   outer.dcache.module.io.rollbackStop := false.B
   outer.dcache.module.io.allCheckersDrained := true.B
   outer.dcache.module.io.rollbackRebase := false.B
+  outer.dcache.module.io.rollbackLsuDrained := lsu.rollbackDrained
   outer.dcache.module.io.rollbackTarget := 0.U
   outer.dcache.module.io.rollbackReset := false.B
   outer.dcache.module.io.traffic_start := false.B

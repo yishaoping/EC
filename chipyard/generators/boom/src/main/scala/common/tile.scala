@@ -329,18 +329,17 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
     gh_buf.io.gh_can_fwd                         := RegNext(ght_bridge.io.out | (!if_correct_process_bridge.io.out), 1.U)
     // Per-checker hang filtered by checker_enable_mask: only stall on my own checkers
     val num_chk = GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES
-    val hang_bits = outer.bigcore_hang_in_SKNode.bundle(num_chk-1, 0)
+    val hang_bits = outer.bigcore_hang_in_SKNode.bundle
     val mask_bits = checker_mask_rd_bridge.io.in(num_chk-1, 0)  // persistent reg from R_IC
-    val cdc_not_ready = (hang_bits & mask_bits).orR
+    val cdc_not_ready = (hang_bits(num_chk-1, 0) & mask_bits).orR
+    val arf_cdc_not_ready = (hang_bits(2*num_chk-1, num_chk) & mask_bits).orR
     gh_buf.io.cdc_not_ready                      := cdc_not_ready
     gh_buf.io.ic_crnt_target                     := RegNext(core.io.ic_crnt_target)
     dontTouch(hang_bits)
     dontTouch(mask_bits)
                         
-    // R_RSU emits ARF/CPS entries without a ready signal.  Feed the GHM CDC
-    // backpressure into the BOOM core so a full ARF queue pauses the merge
-    // counter instead of dropping one-cycle producer pulses.
-    core.io.big_hang                             := cdc_not_ready
+    core.io.big_hang                             := cdc_not_ready || arf_cdc_not_ready
+    core.io.arf_cdc_busy                         := arf_cdc_not_ready
 
     ght_buffer_status_bridge.io.in               := gh_buf.io.ght_buffer_status
     debug_mcounter_bridge.io.in                  := 0.U
@@ -688,6 +687,7 @@ class BoomTileModuleImp(outer: BoomTile) extends BaseTileModuleImp(outer){
   core.io.rollbackCacheQuiesced := outer.dcache.module.io.rollbackQuiesced && lsu.rollbackDrained
   core.io.rollbackMemoryReady := outer.dcache.module.io.rollbackMemoryReady
   outer.dcache.module.io.rollbackRebase := core.io.rollbackRebase
+  outer.dcache.module.io.rollbackLsuDrained := lsu.rollbackDrained
   core.io.sequenceReset := outer.dcache.module.io.sequenceReset
   core.io.ioEffectPending := outer.dcache.module.io.ioEffectPending
   outer.dcache.module.io.allCheckersDrained := core.io.rollbackAllCheckersDrained

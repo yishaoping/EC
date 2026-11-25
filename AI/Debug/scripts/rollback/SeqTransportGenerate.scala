@@ -54,6 +54,9 @@ object EmitSeqTransport extends App {
         val arfSeq = Output(UInt(32.W))
         val arfWord = Output(UInt(64.W))
         val producerBusy = Output(Bool())
+        val arfBusy = Output(Bool())
+        val producerHasData = Input(Bool())
+        val arfIsCps = Input(Bool())
         val session = Input(UInt(2.W))
         val sessionDone = Output(Bool())
       })
@@ -65,9 +68,9 @@ object EmitSeqTransport extends App {
         Cat(8.U(8.W), 0.U(64.W), io.payload), 0.U)
       transport.checker_segment_id_bigcore(0) := io.segment << 32
       transport.ghm_packet_dest := 0.U
-      transport.ghm_status_in(0) := "h80000000".U | io.session
+      transport.ghm_status_in(0) := Cat(!io.producerHasData, 0.U(29.W), io.session)
       io.sessionDone := transport.ghm_status_outs(0) === GH_GlobalParams.GH_SESSION_FINISH.U
-      transport.producer_seal_bigcore(0) := Cat(io.segment =/= 0.U, io.segment) << 33
+      transport.producer_seal_bigcore(0) := Cat(io.segment =/= 0.U && !io.producerHasData, io.segment) << 33
       transport.ic_counter(0) := Mux(io.segment =/= 0.U, "h80010000".U, 0.U)
       transport.ghe_event_in := VecInit(Seq(Mux(io.ingressReady, 16.U(6.W), 0.U(6.W))) ++ Seq.fill(3)(16.U(6.W)))
       transport.clear_ic_status := 0.U.asTypeOf(chiselTypeOf(transport.clear_ic_status))
@@ -77,8 +80,10 @@ object EmitSeqTransport extends App {
       transport.if_agg_free := 1.U
       transport.core_r_arfs_in := 0.U.asTypeOf(chiselTypeOf(transport.core_r_arfs_in))
       transport.core_r_arfs_in(0) := Mux(io.arfBeat,
-        Cat(0.U(8.W), 8.U(8.W), true.B, io.payload.pad(GH_GlobalParams.GH_WIDITH_PACKETS)), 0.U)
+        Cat(Mux(io.arfIsCps, "h0008".U(16.W), "h0800".U(16.W)),
+          true.B, io.payload.pad(GH_GlobalParams.GH_WIDITH_PACKETS)), 0.U)
       io.producerBusy := transport.bigcore_hang(0).asBool
+      io.arfBusy := transport.bigcore_hang(GH_GlobalParams.GH_NUM_CORES - GH_GlobalParams.GH_NUM_BIG_CORES)
       transport.ic_status_bigcore(0) := Mux(io.owned, 2.U, 0.U)
       transport.checker_result_in := VecInit(Seq(Cat(io.resultValid, 1.U(2.W), io.resultSeq)) ++ Seq.fill(3)(0.U(35.W)))
       val resultSeen = RegInit(0.U(32.W))

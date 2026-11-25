@@ -248,6 +248,46 @@ static void trustedPutWaitsForUnsafeHistory() {
   r.t.final();
 }
 
+static void probePredecessorUnblocksDisjointPublication() {
+  Run r;
+  r.t.reset=1; r.pump(8); r.t.reset=0; r.pump(30);
+  constexpr uint64_t head=0x80006000, published=head+64;
+  const auto base=bytes(0xa0), newer=bytes(0xa1);
+  Line safe; safe.fill(0xb7);
+  r.fill(head,Key{},base);
+  r.acquire(head);
+  r.acquire(published,kPeerSource);
+  r.begin("probe_predecessor_unblocks_disjoint_publication");
+  r.watermark=6;
+  r.t.io_archiveAddress=published; r.t.io_archiveSeq=7;
+  r.t.io_archiveSerial=1; r.t.io_archiveData=safe[0]; r.t.io_archiveValid=1;
+  r.until([&]{return bool(r.t.io_archiveReady);},"History ingress");
+  r.tick(); r.t.io_archiveValid=0;
+  r.pump(160);
+  const auto probeCount=r.probes, readCount=r.reads;
+  r.aq.push_back(Upper{head,{}, {},4,0,kUncachedSource});
+  r.aq.push_back(Upper{published,{}, {},4,0,kPressureSource});
+  r.until([&]{return r.probes==probeCount+2;},"both MSHRs issued Probe");
+  r.validate(Key{1,7,0,true});
+  r.pump(160);
+  check(r.wq.empty()&&r.pendingProbes.size()==2,"publisher must wait for the same-set Probe");
+  r.holdWrites=true;
+  r.enqueue(head,Key{},newer,5,1,kCoherentSource);
+  r.enqueue(published,Key{1,7,0,true},safe,5,1,kPeerSource);
+  r.until([&]{return !r.wq.empty();},"C head predecessor did not acquire the writeback owner",500);
+  check(r.wq.front().addr==head&&r.wq.front().data==base,"wrong bytes in prerequisite writeback");
+  check(r.reads==readCount&&r.pendingProbes.size()==2,"Probe advanced before predecessor ACK");
+  r.holdWrites=false;
+  r.until([&]{return r.writes>=2;},"publication did not resume");
+  r.until([&]{return r.reads==readCount+2;},"both clients must finish");
+  r.idle();
+  check(r.durable[published]==safe,"validated History bytes changed");
+  r.flush(head);
+  check(r.durable[head]==newer,"dirty Probe data was lost after the predecessor ACK");
+  r.pass("probe_predecessor_unblocks_disjoint_publication");
+  r.t.final();
+}
+
 int main(int argc, char **argv) {
   Verilated::commandArgs(argc, argv);
   try {
@@ -256,6 +296,8 @@ int main(int argc, char **argv) {
     bufferedProbePreservesBeforeCapture();
     Verilated::threadContextp()->time(0);
     safeHistoryDisjointFromPendingProbe();
+    Verilated::threadContextp()->time(0);
+    probePredecessorUnblocksDisjointPublication();
     Verilated::threadContextp()->time(0);
     simultaneousSameLineHistoryAndProbe();
     Verilated::threadContextp()->time(0);

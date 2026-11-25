@@ -23,7 +23,7 @@ static void fullHistoryProbeAndPark(Run& r) {
   r.acquire(victim); // Main owns T; it may author A200 before the Probe.
   r.begin("full_history_probe_park_checker_escape");
   // Distinct addresses prevent same-address coalescing from faking pressure.
-  for(unsigned i=0;i<60;++i) archive(r,0x80010000ULL+64*i,10+i);
+  for(unsigned i=0;i<60;++i) archive(r,0x80010000ULL+64*i,2+i);
   check(r.t.io_historyPressure,"UNCOVERED: ordinary history did not reach reserve");
   r.t.io_archiveAddress=0x80020000ULL; r.t.io_archiveSeq=90;
   r.t.io_archiveValid=1; r.pump(5);
@@ -56,8 +56,11 @@ static void fullHistoryProbeAndPark(Run& r) {
   check(r.memoryGets>peerGets&&r.t.io_clientWaiting!=0,"UNCOVERED: coherent Checker did not escape parked Main");
   check(r.grantsBySource[kCoherentSource]==beforeMain,"unsafe Main resumed during Checker escape");
   check(r.puts==putsBefore&&r.durable[victim]==bytes(0xa1),"unsafe Probe data reached DRAM");
+  r.validate(Key{1,5,0,true});
+  r.until([&]{return r.grantsBySource[kCoherentSource]==beforeMain+1;},
+    "parked Main did not resume when unrelated History freed capacity",12000);
+  check(r.durable[victim]==bytes(0xa1),"unsafe Probe data reached DRAM on capacity retry");
   r.validate(probed);
-  r.until([&]{return r.grantsBySource[kCoherentSource]==beforeMain+1;},"parked Main did not resume after validation",12000);
   r.until([&]{return r.durable[victim]==bytes(0xc8);},"verified Probe bytes were lost",12000);
   r.pump(400); r.idle();
   check(!r.t.io_clientWaiting,"wait slot leaked after replay");

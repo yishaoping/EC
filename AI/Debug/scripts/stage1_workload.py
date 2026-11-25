@@ -15,8 +15,9 @@ def sha(path):
 
 
 def sources():
-    paths = [p for p in (REPO / 'Software/Test').rglob('*')
-             if p.suffix in ('.c', '.h', '.S', '.ld') or p.name == 'compile.sh']
+    paths = [p for directory in ('GAPBS', 'Test')
+             for p in (REPO / 'Software' / directory).rglob('*')
+             if p.suffix in ('.c', '.h', '.S', '.ld', '.mk') or p.name == 'Makefile']
     for rel in ('chipyard/toolchains/libgloss/build/libgloss_htif.a',
                 'chipyard/toolchains/libgloss/util/htif_nano.specs',
                 'chipyard/toolchains/libgloss/util/htif.ld',

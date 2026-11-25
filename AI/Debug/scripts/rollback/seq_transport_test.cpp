@@ -55,6 +55,8 @@ int main(int argc, char **argv) {
   d.io_localStart = d.io_localTrap = d.io_localRet = 0;
   d.io_localCancel = d.io_localReturned = 0;
   d.io_dataBeat = d.io_arfBeat = 0;
+  d.io_producerHasData = 0;
+  d.io_arfIsCps = 0;
   d.io_payload = 0;
   d.io_session = 0;
   d.reset = 1; t.ticks(20); d.reset = 0; t.ticks(100);
@@ -205,6 +207,46 @@ int main(int argc, char **argv) {
   d.io_owned=0;d.io_segment=0;
   t.until([&]{return d.io_sessionDone;},"session FINISH missing after actual release");
   std::puts("CASE session_finish_waits_for_package_release PASS");
+
+  d.io_session = 0;
+  d.reset = 1; t.ticks(20); d.reset = 0; t.ticks(100);
+  d.io_segment = 1;
+  d.io_producerHasData = 1;
+  d.io_payload = 0x76543210;
+  unsigned queuedArfs = 0;
+  while (!d.io_arfBusy && queuedArfs < 16) {
+    d.io_arfBeat = 1;
+    t.step();
+    ++queuedArfs;
+  }
+  d.io_arfBeat = 0;
+  t.check(d.io_arfBusy && !d.io_arfCount && !d.io_anchors, "ARF queue did not fill before DATA");
+  t.check(!d.io_producerBusy, "full ARF queue prevented delivery of its DATA anchor");
+  d.io_dataBeat = 1;
+  t.step();
+  d.io_dataBeat = d.io_producerHasData = 0;
+  t.until([&]{ return d.io_receivedEnd && d.io_arfCount == queuedArfs && !d.io_arfBusy; },
+          "DATA anchor did not drain the full ARF queue");
+  t.check(d.io_anchors == 1 && d.io_dataSeq == 1 && d.io_arfSeq == 1 &&
+          d.io_dataWord == d.io_payload && d.io_arfWord == d.io_payload,
+          "DATA/ARF ownership changed while releasing backpressure");
+  std::puts("CASE full_arf_queue_allows_data_anchor PASS");
+
+  d.io_segment = 2;
+  d.io_producerHasData = d.io_arfIsCps = 1;
+  d.io_arfBeat = 1;
+  t.step();
+  d.io_arfBeat = 0;
+  t.until([&]{ return d.io_arfCount == queuedArfs + 1; },
+          "CPS waited for unrelated predecessor data in the producer");
+  t.check(d.io_producerHasData && d.io_anchors == 2 && d.io_dataSeq == 2 &&
+          d.io_arfSeq == 2 && d.io_arfWord == d.io_payload &&
+          !(d.io_receivedEnd && d.io_receivedSeq == 2),
+          "CPS did not receive a sequence-qualified startup marker");
+  d.io_producerHasData = 0;
+  t.until([&]{ return d.io_receivedEnd && d.io_receivedSeq == 2; },
+          "CPS marker was mistaken for package completion");
+  std::puts("CASE cps_anchor_bypasses_unrelated_producer_data PASS");
   std::puts("PALIMPSEST_SEQ_TRANSPORT=PASS");
   d.final();
 }

@@ -153,13 +153,15 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   val trustedQuery = Wire(Decoupled(new PalimpsestHistoryQuery))
   val trustedResult = Wire(Valid(new PalimpsestHistoryResult))
   val trustedQueryInFlight = RegInit(Bool(false))
-  io.historyResult.valid := versionHistory.io.result.valid && !trustedQueryInFlight
+  val refillQuery = Wire(Decoupled(new PalimpsestHistoryQuery))
+  val refillQueryInFlight = RegInit(Bool(false))
+  io.historyResult.valid := versionHistory.io.result.valid && !trustedQueryInFlight && !refillQueryInFlight
   io.historyResult.bits := versionHistory.io.result.bits
   trustedResult.valid := versionHistory.io.result.valid && trustedQueryInFlight
   trustedResult.bits := versionHistory.io.result.bits
-  versionHistory.io.result.ready := trustedQueryInFlight || io.historyResult.ready
   when (trustedQuery.fire()) { trustedQueryInFlight := Bool(true) }
   when (trustedResult.valid) { trustedQueryInFlight := Bool(false) }
+  when (refillQuery.fire()) { refillQueryInFlight := Bool(true) }
   preservation.io.historyPublish <> versionHistory.io.publish
   versionHistory.io.published := preservation.io.historyPublished
   val (publishTag, publishSet, _) = params.parseAddress(versionHistory.io.publish.bits.address)
@@ -212,12 +214,15 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   val historyCPartial = RegInit(Bool(false))
   val historyCChecked = RegInit(Bool(false))
   val historyCLine = Reg(new PalimpsestHistoryLine)
-  sinkC.io.c.valid := bufferedC.valid && !historyCPending
+  // Only authored data needs the History staging line.
+  val historyCKey = bufferedC.bits.user.lift(CacheImage).getOrElse(0.U.asTypeOf(new CacheImageKey))
+  val historyCTracksData = params.inner.hasData(bufferedC.bits) && historyCKey.valid
+  val historyCAdmit = !historyCPending || !historyCTracksData
+  sinkC.io.c.valid := bufferedC.valid && historyCAdmit
   sinkC.io.c.bits := bufferedC.bits
-  bufferedC.ready := sinkC.io.c.ready && !historyCPending
+  bufferedC.ready := sinkC.io.c.ready && historyCAdmit
   val (_, historyCLast, _, historyCBeat) = params.inner.count(sinkC.io.c)
-  val historyCKey = sinkC.io.c.bits.user.lift(CacheImage).getOrElse(0.U.asTypeOf(new CacheImageKey))
-  when (sinkC.io.c.fire() && params.inner.hasData(sinkC.io.c.bits) && historyCKey.valid) {
+  when (sinkC.io.c.fire() && historyCTracksData) {
     val (tag, set, _) = params.parseAddress(sinkC.io.c.bits.address)
     historyCLine.address := params.restoreAddress(params.expandAddress(tag, set, UInt(0)))
     historyCLine.key := historyCKey
@@ -249,11 +254,14 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   val installOnly = io.historyQuery.bits.installOnly
   // An EVT installation has no line result. Its receipt must be independent
   // of old owners, which can still need the outer terminal beat to finish.
-  versionHistory.io.query.valid := Mux(io.historyQuery.valid, !installOnly, trustedQuery.valid) &&
-    historyQueryClear
-  versionHistory.io.query.bits := Mux(io.historyQuery.valid, io.historyQuery.bits, trustedQuery.bits)
+  versionHistory.io.query.valid := Mux(io.historyQuery.valid, !installOnly && historyQueryClear,
+    refillQuery.valid || (trustedQuery.valid && historyQueryClear))
+  versionHistory.io.query.bits := Mux(io.historyQuery.valid, io.historyQuery.bits,
+    Mux(refillQuery.valid, refillQuery.bits, trustedQuery.bits))
   io.historyQuery.ready := installOnly || (versionHistory.io.query.ready && historyQueryClear)
-  trustedQuery.ready := versionHistory.io.query.ready && historyQueryClear && !io.historyQuery.valid
+  refillQuery.ready := versionHistory.io.query.ready && !io.historyQuery.valid
+  trustedQuery.ready := versionHistory.io.query.ready && historyQueryClear &&
+    !io.historyQuery.valid && !refillQuery.valid
   sinkE.io.e <> io.in.e
   val checkpointResponse = io.out.d.bits.source ===
     UInt(InclusiveCacheParameters.out_mshrs(params.cache, params.micro))
@@ -342,8 +350,12 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   val clientWaitValid = waitSources.map(_ => RegInit(Bool(false)))
   maintNoWaiters := !clientWaitValid.reduce(_||_)
   val clientWait = waitSources.map(_ => Reg(new ClientWaitRequest(params)))
-  val clientWaitRunnable = Vec(clientWaitValid.zip(clientWait).map { case (v, q) =>
-    v && (q.seq <= io.safeWatermark || !recoveryContext.survives(q.seq)) && !mshrs.map(m =>
+  val clientCanRetry = clientWait.map { q =>
+    q.seq <= io.safeWatermark || !recoveryContext.survives(q.seq) ||
+      (q.capacity && versionHistory.io.escapeAvailable)
+  }
+  val clientWaitRunnable = Vec(clientWaitValid.zip(clientWait).zip(clientCanRetry).map { case ((v, q), retry) =>
+    v && retry && !mshrs.map(m =>
       m.io.status.valid && m.io.status.bits.set === q.request.set).reduce(_||_)
   }).asUInt
   val clientReplayOH = PriorityEncoderOH(clientWaitRunnable)
@@ -355,7 +367,7 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
     printf("STAGE3_TX L2_CLIENT_RETRY bank=%x source=%x set=%x tag=%x watermark=%x\n",
       io.bank, clientReplay.bits.source, clientReplay.bits.set, clientReplay.bits.tag, io.safeWatermark)
   }
-  val waitingUnsafe = clientWaitValid.zip(clientWait).map { case (v, q) => v && q.seq > io.safeWatermark && recoveryContext.survives(q.seq) }
+  val waitingUnsafe = clientWaitValid.zip(clientCanRetry).map { case (v, retry) => v && !retry }
   io.clientValidationBlock := waitingUnsafe.reduce(_||_)
   io.clientValidationSeq := Mux1H(PriorityEncoderOH(Vec(waitingUnsafe).asUInt), clientWait.map(_.seq))
   io.clientWaiting := PopCount(Vec(clientWaitValid))
@@ -461,13 +473,22 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   }
   val allCandidates = probeCandidate +: selectableCandidates
   val candidateQuiescent = Seq(Bool(true)) ++ mshrs.map(_.io.quiescent)
-  val runnable = Vec(allCandidates.zip(candidateQuiescent).map { case (x, q) =>
+  // Wait for accepted outer work and probes that can change the published line.
+  val publishDrained = mshrs.map(m => m.io.status.bits.set =/= publishSet ||
+    (m.io.baselineOuterReady && m.io.baselineProbeReady)).reduce(_ && _)
+  // The blocked ProbeAckData is ahead of responses needed by another set's publisher.
+  val preserveBlockedProbe = versionHistory.io.publish.valid && !publishDrained &&
+    versionHistory.io.onlyPublisher && probeCandidate.bits.set =/= publishSet &&
+    historySafe(probeCandidate.bits.image) && !historyCPending && !historyCPartial
+  val runnable = Vec(allCandidates.zip(candidateQuiescent).zipWithIndex.map { case ((x, q), i) =>
     val safe = CacheImage.safe(x.bits.image, io.safeWatermark)
     // The sidecar scanner may not yet have raised publish.valid. A direct
     // safe resident Put must wait for already-owned safe history,
     // just like SourceC below; otherwise a newer Put can precede old history.
     // Unsafe preservation still consumes escape credit and can unblock C.
-    x.valid && q && Mux(safe, !versionHistory.io.publishPending && !historyCPending && !historyCPartial,
+    x.valid && q && Mux(safe,
+      (!versionHistory.io.publishPending && !historyCPending && !historyCPartial) ||
+        ((i == 0).B && preserveBlockedProbe),
       versionHistory.io.escapeAvailable)
   }).asUInt
   // Unsafe waiters do not monopolize the shared checkpoint engine. Stop new
@@ -480,13 +501,10 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
   // The active lock then excludes competing archive ingress above.
   preservation.io.candidate.valid := runnable.orR
   preservation.io.candidate.bits := Mux1H(candidateOH, allCandidates.map(_.bits))
+  preservation.io.preserveBlockedProbe := runnable(0) && preserveBlockedProbe
+  preservation.io.publishDrained := publishDrained
   preservation.io.drained := sourceD.io.idle && sourceC.io.idle && !sinkC.io.bankBusy &&
-    (!preservation.io.candidate.valid || Mux1H(candidateOH, candidateQuiescent)) &&
-    mshrs.map(m => !versionHistory.io.publish.valid ||
-      m.io.status.bits.set =/= publishSet ||
-      // Drain outer refill/writeback across the set and wait for only those
-      // probes whose resident could change upon receipt.
-      (m.io.baselineOuterReady && m.io.baselineProbeReady)).reduce(_ && _)
+    (!preservation.io.candidate.valid || Mux1H(candidateOH, candidateQuiescent))
   io.drain.state := preservation.io.debugState
   io.drain.candidate := preservation.io.candidate.valid
   io.drain.safe := CacheImage.safe(preservation.io.candidate.bits.image, io.safeWatermark)
@@ -1029,6 +1047,22 @@ class Scheduler(params: InclusiveCacheParameters, trace: Boolean = false) extend
             abc_mshrs.map(_.io.status.bits.way)))
   sinkD.io.way := Vec(mshrs.map(_.io.status.bits.way))(sinkD.io.source)
   sinkD.io.set := Vec(mshrs.map(_.io.status.bits.set))(sinkD.io.source)
+  // A migrated unsafe Current may already have released its directory way.
+  // Reuse the indexed History reader and the existing coherent refill port.
+  val refillNeedsHistory = sinkD.io.newFill && !versionHistory.io.empty &&
+    Vec(mshrs.map(_.io.refillFromHistory))(sinkD.io.source)
+  refillQuery.valid := refillNeedsHistory && !refillQueryInFlight
+  refillQuery.bits := recoveryContext
+  refillQuery.bits.installOnly := Bool(false)
+  refillQuery.bits.address := params.restoreAddress(params.expandAddress(
+    Vec(mshrs.map(_.io.status.bits.tag))(sinkD.io.source), sinkD.io.set, UInt(0)))
+  val refillResultValid = refillQueryInFlight && versionHistory.io.result.valid
+  sinkD.io.historyReady := !refillNeedsHistory || refillResultValid
+  sinkD.io.history.valid := refillResultValid && versionHistory.io.result.bits.found
+  sinkD.io.history.bits := versionHistory.io.result.bits.line
+  versionHistory.io.result.ready := Mux(refillQueryInFlight, sinkD.io.fillDone,
+    trustedQueryInFlight || io.historyResult.ready)
+  when (sinkD.io.fillDone) { refillQueryInFlight := Bool(false) }
 
   // CACHE_OPPORTUNITY_OBSERVATION_ONLY: actual accepted lookups/traffic and
   // input-only host shadow models. No ready/valid, replacement, or barrier

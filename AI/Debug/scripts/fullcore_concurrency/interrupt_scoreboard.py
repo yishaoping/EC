@@ -49,6 +49,7 @@ def effects(path):
 
 
 def interrupts(path, rounds, require_overlap):
+    expected_rounds = len(rounds)
     samples, footer = [], None
     with Path(path).open() as stream:
         for line in stream:
@@ -79,7 +80,7 @@ def interrupts(path, rounds, require_overlap):
              if s['pending'] and (n == 0 or not scoped[n-1][1]['pending'])]
     falls = [s for n, (i, s) in enumerate(scoped)
              if n and not s['pending'] and scoped[n-1][1]['pending']]
-    assert len(rises) == len(falls) == 16, 'missing or duplicate CLINT pending transition'
+    assert len(rises) == len(falls) == expected_rounds, 'missing or duplicate CLINT pending transition'
     for i, (rise, fall) in enumerate(zip(rises, falls)):
         assert rounds[i]['set']['tick'] <= rise['tick'] < rounds[i]['clear']['tick'] <= fall['tick']
         offers = [s for s in samples if rise['tick'] <= s['tick'] <= fall['tick'] and s['irq']]
@@ -115,9 +116,9 @@ def interrupts(path, rounds, require_overlap):
         assert overlap, 'UNCOVERED: pending MSIP with recovery and outstanding effect'
     software_traps = [s for _, s in scoped if s['trap'] and
                       s['trap_cause'] == 0x8000000000000003]
-    assert len(software_traps) == 16, 'missing or duplicate software-interrupt trap'
-    return {'rounds': 16, 'pending_rises': len(rises), 'pending_falls': len(falls),
-            'software_traps': len(software_traps), 'matched_returns': 16,
+    assert len(software_traps) == expected_rounds, 'missing or duplicate software-interrupt trap'
+    return {'rounds': expected_rounds, 'pending_rises': len(rises), 'pending_falls': len(falls),
+            'software_traps': len(software_traps), 'matched_returns': expected_rounds,
             'recovery_effect_overlap': overlap}
 
 

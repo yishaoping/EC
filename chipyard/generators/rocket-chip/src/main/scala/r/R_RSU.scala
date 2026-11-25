@@ -108,9 +108,9 @@ class R_RSU(val params: R_RSUParams) extends Module with HasR_RSUIO {
         arfs_ss(i)                               := io.arfs_in(i)
         farfs_ss(i)                              := io.farfs_in(i)
       }
-      // for (i <- 0 until CSRshadows.CSRsize){
-      //   csrshadow_ss(i)                          := io.shadowcsr_in(i)
-      // }
+      for (i <- Seq(CSRshadowsindex.mscratch, CSRshadowsindex.sscratch)) {
+        csrshadow_ss(i) := io.shadowcsr_in(i)
+      }
       pcarf_ss                                   := io.pcarf_in
       fcsr_ss                                    := io.fcsr_in
   }.elsewhen(doSnapshot_priv){
@@ -157,8 +157,8 @@ class R_RSU(val params: R_RSUParams) extends Module with HasR_RSUIO {
     // The destination field is suppressed while GHM applies backpressure.
     // Do not retire the merge state in that cycle, otherwise the terminal
     // PC/FCSR ARF entry is lost without an enqueue/fire acknowledgement.
-    merging                                      := Mux((merge_counter === 32.U) && merge_cdc_counter === 1.U && !io.big_hang, 0.U, 1.U)
-    merge_counter                                := Mux((!io.big_hang) && merge_cdc_counter === 1.U, Mux((merge_counter === 32.U), 0.U, merge_counter + 1.U), merge_counter)    
+    merging                                      := Mux((merge_counter === 33.U) && merge_cdc_counter === 1.U && !io.big_hang, 0.U, 1.U)
+    merge_counter                                := Mux((!io.big_hang) && merge_cdc_counter === 1.U, Mux((merge_counter === 33.U), 0.U, merge_counter + 1.U), merge_counter)
     merge_cdc_counter                            := merge_cdc_counter + 1.U
   } .otherwise {
     merging                                      := merging
@@ -194,11 +194,12 @@ class R_RSU(val params: R_RSUParams) extends Module with HasR_RSUIO {
   val five_3bits                                  = WireInit(5.U(3.W))
 
 
-  val merge_data      =                           MuxCase(0.U,
-                                                         Array(((merging === 1.U) && (merge_counter =/= 32.U)) -> Cat(farfs_ss(merge_counter), arfs_ss(merge_counter)),
-                                                               ((merging === 1.U) && (merge_counter === 32.U)) -> Cat(zeros_56bits, fcsr_ss, zeros_24bits, pcarf_ss)
-                                                              )
-                                                         )
+  // Seed ordinary replay before the PC beat makes the CPS executable.
+  val normalScratchBeat = merge_counter === 32.U
+  val normalPcBeat = merge_counter === 33.U
+  val merge_data = MuxCase(Cat(farfs_ss(merge_counter), arfs_ss(merge_counter)), Seq(
+    normalScratchBeat -> Cat(csrshadow_ss(CSRshadowsindex.sscratch), csrshadow_ss(CSRshadowsindex.mscratch)),
+    normalPcBeat -> Cat(zeros_56bits, fcsr_ss, zeros_24bits, pcarf_ss)))
 
   val merge_data_priv =                           MuxCase(0.U,
                                                             Array(
@@ -227,11 +228,13 @@ class R_RSU(val params: R_RSUParams) extends Module with HasR_RSUIO {
 
   // io.arfs_index(0)                               := Mux((merging === 1.U), (merge_counter), 0.U)
   // io.arfs_index(0)                               := Mux(merging === 1.U, Mux(csr_merge_counter =/= 0.U, Cat(1.U(1.W), io.priv, csr_merge_counter), Cat(0.U(1.W), io.priv, merge_counter)), 0.U)
-  io.arfs_index(0)                               := Mux(merging === 1.U, Cat(0.U(1.W), Cat(0.U(1.W), crt_mode), merge_counter), Mux(merging_priv === 1.U, Mux(csr_merge_counter =/= 0.U, Cat(1.U(1.W), Cat(0.U(1.W), crt_mode), csr_merge_counter), Cat(0.U(1.W), Cat(0.U(1.W), crt_mode), merge_counter_priv)), 0.U))
+  val normalIndex = Cat(normalScratchBeat, 0.U(2.W),
+    Mux(normalScratchBeat, CSRshadows.scratchPairIndex.U, Mux(normalPcBeat, 32.U, merge_counter)))
+  io.arfs_index(0)                               := Mux(merging === 1.U, normalIndex, Mux(merging_priv === 1.U, Mux(csr_merge_counter =/= 0.U, Cat(1.U(1.W), Cat(0.U(1.W), crt_mode), csr_merge_counter), Cat(0.U(1.W), Cat(0.U(1.W), crt_mode), merge_counter_priv)), 0.U))
   // io.arfs_index(0)                               := Mux(merging === 1.U, Cat(0.U(1.W), io.priv, merge_counter), Mux(merging_priv === 1.U, Mux(csr_merge_counter =/= 0.U, Cat(1.U(2.W), io.priv, csr_merge_counter), Cat(0.U(1.W), io.priv, merge_counter_priv)), 0.U))
 
   io.arfs_pidx(0)                                := Mux((merging === 1.U)&&(merge_cdc_counter === 1.U)&&(!io.big_hang), Cat(io.ic_crnt_target(4,0), seven_3bits), Mux((merging_priv === 1.U)&&(merge_cdc_counter_priv === 1.U)&&(!io.big_hang), Cat(io.ic_crnt_target(4,0), seven_3bits), 0.U))
-  io.arfs_ecp_dest                               := Mux((merging === 1.U)&&(merge_cdc_counter === 1.U)&&(!io.big_hang), Cat(io.ic_old_crnt_target(4,0), seven_3bits), Mux((merging_priv === 1.U)&&(merge_cdc_counter_priv === 1.U)&&(!io.big_hang), Cat(io.ic_old_crnt_target(4,0), seven_3bits), 0.U))
+  io.arfs_ecp_dest                               := Mux((merging === 1.U)&&(merge_cdc_counter === 1.U)&&(!normalScratchBeat)&&(!io.big_hang), Cat(io.ic_old_crnt_target(4,0), seven_3bits), Mux((merging_priv === 1.U)&&(merge_cdc_counter_priv === 1.U)&&(!io.big_hang), Cat(io.ic_old_crnt_target(4,0), seven_3bits), 0.U))
 
   dontTouch(merging)
   dontTouch(merging_priv)

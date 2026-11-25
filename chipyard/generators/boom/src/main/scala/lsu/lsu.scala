@@ -142,6 +142,7 @@ class LSUDMemIO(implicit p: Parameters, edge: TLEdgeOut) extends BoomBundle()(p)
   // In our response stage, if we get a nack, we need to reexecute
   val nack        = Flipped(Vec(memWidth, new ValidIO(new BoomDCacheReq)))
   val store_done  = Flipped(Decoupled(new BoomCacheCompletion))
+  val forwarded   = Output(Vec(memWidth, Valid(UInt(robAddrSz.W))))
 
   val brupdate       = Output(new BrUpdateInfo)
   val exception    = Output(Bool())
@@ -1878,6 +1879,8 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
     }
 
 
+    io.dmem.forwarded(w).valid := false.B
+    io.dmem.forwarded(w).bits := ldq(wb_forward_ldq_idx(w)).bits.uop.rob_idx
     when (dmem_resp_fired(w) && wb_forward_valid(w))
     {
       // Twiddle thumbs. Can't forward because dcache response takes precedence
@@ -1905,6 +1908,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       io.core.exe(w).fresp.bits.data := loadgen.data
 
       when (data_ready && live) {
+        io.dmem.forwarded(w).valid := true.B
         ldq(f_idx).bits.succeeded := data_ready
         ldq(f_idx).bits.forward_std_val := true.B
         ldq(f_idx).bits.forward_stq_idx := wb_forward_stq_idx(w)
@@ -2362,7 +2366,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
       }
     }
     when (stq(stq_execute_head).valid && stq(stq_execute_head).bits.functional_done &&
-      !stq(stq_execute_head).bits.functional_inflight) {
+      !stq(stq_execute_head).bits.functional_inflight && !olderStoreNackForcesReplay) {
       stq_execute_head := WrapInc(stq_execute_head, numStqEntries)
     }
   }

@@ -343,7 +343,7 @@ run-binary: $(SIM_PREREQ) check-binary | $(output_dir)
 
 # run simulator as fast as possible (no insn disassembly)
 run-binary-fast: $(SIM_PREREQ) check-binary | $(output_dir)
-	(set -o pipefail && $(NUMA_PREFIX) $(sim) $(PERMISSIVE_ON) $(SIM_FLAGS) $(EXTRA_SIM_FLAGS) $(SEED_FLAG) $(PERMISSIVE_OFF) $(BINARY) </dev/null | tee $(sim_out_name).log)
+	(set -o pipefail && $(NUMA_PREFIX) $(sim) $(PERMISSIVE_ON) $(SIM_FLAGS) $(EXTRA_SIM_FLAGS) $(SEED_FLAG) $(PERMISSIVE_OFF) $(BINARY) </dev/null 2>&1 | tee $(sim_out_name).log)
 
 # run simulator with as much debug info as possible
 run-binary-debug: $(SIM_DEBUG_PREREQ) check-binary | $(output_dir)
@@ -354,8 +354,16 @@ run-fast: run-asm-tests-fast run-bmark-tests-fast
 #########################################################################################
 # helper rules to run simulator with fast loadmem via hex files
 #########################################################################################
-$(binary_hex): $(firstword $(BINARY)) | $(output_dir)
-	$(base_dir)/scripts/smartelf2hex.sh $(firstword $(BINARY)) > $(binary_hex)
+# Different benchmark directories can contain same-named ELFs with older
+# timestamps. Compare the selected ELF as well as tracking normal prerequisites.
+.PHONY: check-binary-hex
+check-binary-hex:
+
+$(binary_hex): $(firstword $(BINARY)) $(base_dir)/scripts/smartelf2hex.sh check-binary-hex | $(output_dir)
+	@if [ ! -f "$@" ] || [ "$(base_dir)/scripts/smartelf2hex.sh" -nt "$@" ] || ! cmp -s "$<" "$@.elf"; then \
+		$(base_dir)/scripts/smartelf2hex.sh "$<" > "$@.tmp" && \
+		mv "$@.tmp" "$@" && cp "$<" "$@.elf"; \
+	fi
 
 run-binary-hex: check-binary
 run-binary-hex: $(SIM_PREREQ) $(binary_hex) | $(output_dir)

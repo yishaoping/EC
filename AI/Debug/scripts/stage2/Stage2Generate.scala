@@ -186,6 +186,7 @@ object EmitModule extends App {
       dut.io.rollbackError.ready := true.B
       dut.io.rollbackHistory.valid := false.B; dut.io.rollbackHistory.bits := 0.U
       dut.io.rollbackStop := false.B; dut.io.rollbackTarget := 0.U; dut.io.rollbackReset := false.B
+      dut.io.rollbackLsuDrained := true.B
       dut.io.traffic_check_state := false.B
       dut.io.traffic_reset := false.B; dut.io.traffic_start := false.B; dut.io.traffic_stop := false.B
       val cycle = RegInit(0.U(64.W)); cycle := cycle + 1.U; dut.io.csr_cycle := cycle
@@ -205,6 +206,7 @@ object EmitModule extends App {
       r.bits.effect_token_valid := isWrite(io.cmd); r.bits.effect_token := io.token
       r.bits.write_domain_valid := isWrite(io.cmd); r.bits.write_domain_seq := io.seq
       dut.io.lsu.s1_kill := 0.U.asTypeOf(chiselTypeOf(dut.io.lsu.s1_kill))
+      dut.io.lsu.forwarded := 0.U.asTypeOf(chiselTypeOf(dut.io.lsu.forwarded))
       dut.io.lsu.brupdate.b1 := 0.U.asTypeOf(chiselTypeOf(dut.io.lsu.brupdate.b1))
       dut.io.lsu.brupdate.b2.elements.filterNot(_._1 == "target_offset").foreach { case (_, d) =>
         d := 0.U.asTypeOf(chiselTypeOf(d))
