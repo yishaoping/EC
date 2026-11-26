@@ -1,7 +1,6 @@
-BENCHMARK ?= EC-Test
+BENCHMARK ?= GAPBS
 
 .PHONY: all
 all:
-	$(MAKE) -C ../$(BENCHMARK) OUTPUT_DIR=.build
+	$(MAKE) -C ../$(BENCHMARK) OUTPUT_DIR=.build .build/test.riscv
 	cmp -s ../$(BENCHMARK)/.build/test.riscv test.riscv || cp ../$(BENCHMARK)/.build/test.riscv test.riscv
-	cmp -s ../$(BENCHMARK)/.build/test.dump test.dump || cp ../$(BENCHMARK)/.build/test.dump test.dump

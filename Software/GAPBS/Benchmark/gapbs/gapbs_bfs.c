@@ -271,7 +271,7 @@ void gapbs_bfs_run_14(gapbs_bfs_result_t *result)
 
 /*
  * 内置图版本：每个节点有 16 条有向边，图在启动时建立双向 CSR 邻接表，
- * 节点 i 指向 (i+1) 到 (i+16) 的模 N 节点。四档规模共用这套图生成与 BFS
+ * 节点 i 指向 (i+1) 到 (i+16) 的模 N 节点。五档规模共用这套图生成与 BFS
  * 逻辑，避免裸机环境依赖文件系统或把大数组压入栈。
  */
 #define GAPBS_DEGREE 16U
@@ -440,6 +440,11 @@ static void gapbs_bfs_run_size(gapbs_bfs_result_t *result,
         }
     }
     result->verified = verify_result(node_count);
+}
+
+void gapbs_bfs_run_256(gapbs_bfs_result_t *result)
+{
+    gapbs_bfs_run_size(result, GAPBS_BFS_256_NODE_COUNT);
 }
 
 void gapbs_bfs_run_512(gapbs_bfs_result_t *result)

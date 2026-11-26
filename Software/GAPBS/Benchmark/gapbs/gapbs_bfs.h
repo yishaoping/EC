@@ -15,6 +15,7 @@ typedef struct {
 
 /* 可用的内置 GAPBS 图规模；每个节点固定 16 条有向边（14 节点图除外）。 */
 #define GAPBS_BFS_14_NODE_COUNT 14U
+#define GAPBS_BFS_256_NODE_COUNT 256U
 #define GAPBS_BFS_512_NODE_COUNT 512U
 #define GAPBS_BFS_1024_NODE_COUNT 1024U
 #define GAPBS_BFS_2048_NODE_COUNT 2048U
@@ -22,6 +23,9 @@ typedef struct {
 
 /* [BENCHMARK SIZE] 可在 test.c 调用点切换到这些明确的节点规模。 */
 void gapbs_bfs_run_14(gapbs_bfs_result_t *result);
+
+/* 执行 256 节点的方向优化 BFS。 */
+void gapbs_bfs_run_256(gapbs_bfs_result_t *result);
 
 /* 执行 512 节点的方向优化 BFS。 */
 void gapbs_bfs_run_512(gapbs_bfs_result_t *result);

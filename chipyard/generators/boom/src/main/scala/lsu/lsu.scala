@@ -2085,7 +2085,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         io.dmem.address_stats_event(w).bits.addr := stq(idx).bits.addr.bits
         io.dmem.address_stats_event(w).bits.size := stq(idx).bits.uop.mem_size
         io.dmem.address_stats_event(w).bits.isStore := true.B
-        io.dmem.address_stats_event(w).bits.packetSeq := stq(idx).bits.packet_seq
+        io.dmem.address_stats_event(w).bits.packetSeq := io.core.active_packet_seq
       }
     }
     when (arch_load_in_scope) {
@@ -2101,7 +2101,7 @@ class LSU(implicit p: Parameters, edge: TLEdgeOut) extends BoomModule()(p)
         io.dmem.address_stats_event(w).bits.addr := ldq(idx).bits.addr.bits
         io.dmem.address_stats_event(w).bits.size := ldq(idx).bits.uop.mem_size
         io.dmem.address_stats_event(w).bits.isStore := false.B
-        io.dmem.address_stats_event(w).bits.packetSeq := ldq(idx).bits.packet_seq
+        io.dmem.address_stats_event(w).bits.packetSeq := io.core.active_packet_seq
       }
       strictLoadEvents(w) := load_path_is_valid
       strictLoadCacheEvents(w) := load_path_is_cache
