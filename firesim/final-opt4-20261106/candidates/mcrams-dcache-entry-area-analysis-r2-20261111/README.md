@@ -1,1 +1,0 @@
-Immutable independent resource analysis r2. Reads completed original CAD receipts and reports. On first completion atomically publishes result and hash receipt. Subsequent timer invocations validate source evidence and reuse exact completed bytes; only monitor-state.json changes. No CAD, driver, FPGA or task operations. Previous mutable r1 remains evidence only.

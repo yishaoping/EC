@@ -1,9 +1,0 @@
-# Original SVB host40 independent physical profile
-
-Profile `OriginalSVB32-component-trace-host40`; frozen target functional baseline8491167d. Actual MMCM CLKOUT0_DIVIDE_F30 replaces24; physical host period24.9975ns (tool displays24.997). No XDC relaxation, targetRTL change, bridge-ratio change, new EC function, or architectural target-frequency claim. Original driver/trace ABI reuses its exact source/digest and token-step protocol; two control/DMA converters are asynchronous with3stage synchronizers. No external memory model channel is used. See hostclock-interface-audit.json.
-
-The controller waits for completed hash-sealed STA probe, exact r51 service/cgroup exit, the shared ROOT/instance.lock (mutually exclusive with r4), at most one existing component worker and unchanged128GiB memory/96GiB disk/load48 guards. CPUs250-251,2threads. It cannot create a third component route, modify live inputs, synthesize RTL or access a device. Recovery retains full shell/target setup/hold, route, DRC, pulse, coverage and bus-skew gates.
-
-Independent certification/runtime/application follower paths are distinct from50MHz outputs/certificates. Root services hold both shared21 locks and use shared board_batch21-only tools. Existing valid original component wins; no duplicate redeployment. An application follower never deploys and requires the exact certified bitstream still matches latest-deployment. Complete Opt4 keeps priority. No e2 or global driver operation.
-
-CPU CAD: cycleprecise-svb-host40-implementation-r1-20261112; directed FPGA: cycleprecise-original-svb-host40-onboard-r1-20261112; real application trace: cycleprecise-original-svb-host40-application-onboard-r1-20261112. All under Experiment/firesim-final-opt4-20261106. Each includes persistent state/logs and immutable results/atomic complete marks. No bitstream, timing certification or FPGA result claimed merely by installation.

@@ -1,7 +1,0 @@
-{
-  "previous_state": "/data1/gzh/EC/Experiment/firesim-final-opt4-20261106/Opt4-mt-host-continue-round40-v3-state.json",
-  "previous_failure_preserved": true,
-  "cause": "Original MT creates additional unused memory helper classes without threaded in the name. All existing module/top-statement identity checks passed before this overly strict name guard.",
-  "fix": "Prove full module reachability from the existing top and reject any added definition in that closure; preserve complete old-definition and normalized-top AST identity checks.",
-  "target_changes": false
-}

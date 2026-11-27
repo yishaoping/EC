@@ -1,1 +1,0 @@
-Versioned stimulus-only recovery of r4. At cycle642 a load carried write_domain_valid=1 and violated frozen mshrs.scala:368. Correct it to store. All RTL, 2534 compared signals, 71589 bits, all original outputs, 512 generation taps, assertions and original coverage thresholds are preserved. Reuse completed r4 compiled model read-only. No whole admission or area claim.

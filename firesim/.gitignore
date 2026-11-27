@@ -1,5 +1,34 @@
-# Source and package pins are captured in Experiment/dac2026/preparation.
-# Keep independent repositories and installed binaries out of the EC parent git.
-upstream/
+env.sh
+riscv-tools-install
+*memory_stats.csv
+sim/ucli.key
+target-design/switch/switchconfig.h
+sim[0-9]
+build-setup-log
+tags
+build
+scala-doc-env.sh
+*.swp
+/.conda-env
+.metals
+vivado*.log
+vivado*.jou
+
+# Existing userspace environment and preserved reference artifacts.
 envs/
-conda-env/
+deploy/bitstreams/
+deploy/workloads/legacy-native-ferret/
+
+# Keep the local environment selection reviewable.
+!env.sh
+
+# Downloaded sources belong to EC. Generated files remain local.
+**/.git
+**/__pycache__/
+**/target/
+**/.java_tmp/
+**/.sbt/
+**/.ivy2/
+**/.bloop/
+**/.metals/
+deploy/runs/

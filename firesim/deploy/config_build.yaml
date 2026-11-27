@@ -1,0 +1,11 @@
+# FireSim 1.17.1 / official Chipyard 336f225; no hardware build performed.
+build_farm:
+  base_recipe: build-farm-recipes/externally_provisioned.yaml
+  recipe_arg_overrides:
+    default_build_dir: /data1/gzh/EC/firesim/deploy/results-build
+    build_farm_hosts:
+    - localhost
+builds_to_run:
+- alveo_u280_firesim_rocket_singlecore_no_nic
+agfis_to_share: []
+share_with_accounts: {}

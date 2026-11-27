@@ -1,1 +1,0 @@
-Normalize the parsed saved production reference through stock ResolveAndCheck before exact IR body equality. Preserve bank serialized text, strict resolved IR equality, ports, selection, compiler source and all original completed local and sequential regression receipts. No hardware edit, no full GoldenGate/area or FPGA operation.
